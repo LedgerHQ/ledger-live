@@ -40,7 +40,8 @@ type Props = {
 };
 
 export const DeviceManagementKitProvider: React.FC<Props> = ({ children, disabled }) => {
-  const ldmkTransportFlag = !disabled && !!useFeature("ldmkTransport")?.enabled;
+  const ldmkTransportFeature = useFeature("ldmkTransport");
+  const ldmkTransportFlag = !disabled && !!ldmkTransportFeature?.enabled;
 
   const deviceManagementKit = useMemo(() => {
     if (!ldmkTransportFlag) return null;

@@ -25,7 +25,7 @@ const targets = [
 
 const familiesExtracted = ["xrp", "stellar"];
 
-// Coins using coin-framework
+// Coins using their own package
 const familiesWPackage = [
   "aleo",
   "algorand",

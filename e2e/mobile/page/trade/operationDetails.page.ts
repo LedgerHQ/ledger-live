@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -13,6 +14,7 @@ export default class OperationDetailsPage {
     DELEGATE: "Delegated",
     STAKE: "Staked",
     LOCK: "Locked",
+    VOTE: "Voted",
   };
   operationDetailsConfirmed = "operation-details-text-confirmed";
   operationDetailsAccount = "operationDetails-account";
@@ -20,6 +22,7 @@ export default class OperationDetailsPage {
   operationDetailsIdentifier = "operationDetails-identifier";
   operationDetailsDate = "operationDetails-date";
   operationDetailsScrollViewId = "operation-details-scroll-view";
+  celoValidatorGroupId = "celo-operationDetails-validatorGroup";
 
   title = () => getElementById(this.titleId);
   account = () => getElementById(this.operationDetailsAccount);
@@ -84,6 +87,26 @@ export default class OperationDetailsPage {
   @Step("Check transaction type")
   async checkTransactionType(type: keyof typeof this.operationsType) {
     await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+  }
+
+  @Step("Check CELO validator group in operation details")
+  async checkCeloValidatorGroup(validatorGroup: string) {
+    await scrollToId(this.celoValidatorGroupId, this.operationDetailsScrollViewId);
+    await detoxExpect(getElementById(this.celoValidatorGroupId)).toHaveText(validatorGroup);
+  }
+
+  @Step("Check operation infos")
+  async checkOperationInfos(
+    transaction: TransactionType,
+    isSentTransaction: boolean = true,
+    operationType?: keyof typeof this.operationsType,
+  ) {
+    await this.waitForOperationDetails();
+    await this.checkAccount(transaction.accountToDebit.currency.name);
+    await this.checkRecipientAddress(
+      isSentTransaction ? transaction.accountToCredit : transaction.accountToCredit.parentAccount!,
+    );
+    if (operationType) await this.checkTransactionType(operationType);
   }
 
   @Step("Check that transaction details are displayed")

@@ -1,14 +1,14 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
+import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
   MapMemo,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {

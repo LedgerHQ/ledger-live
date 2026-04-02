@@ -1,4 +1,4 @@
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { FeatureId } from "@ledgerhq/types-live";
 
 export const MODULAR_DRAWER_FEATURE_FLAGS: FeatureId[] = ["lldModularDrawer"];

@@ -41,6 +41,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 
 /* Initial state */
 
@@ -130,6 +131,8 @@ export type SettingsState = {
   hasSeenWalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
+  lastAnalyticsConsentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -231,6 +234,8 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenWalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
+  lastAnalyticsConsentDate: null,
+  privacyPolicyVersion: null,
 };
 
 export const AFTER_ONBOARDING_STATE: SettingsState = {
@@ -301,6 +306,10 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
+  SET_ANALYTICS_CONSENT_INFO: {
+    consentDate: Date;
+    privacyPolicyVersion: number;
+  };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -527,6 +536,14 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
+  }),
+  SET_ANALYTICS_CONSENT_INFO: (
+    state: SettingsState,
+    { payload: { consentDate, privacyPolicyVersion } },
+  ) => ({
+    ...state,
+    lastAnalyticsConsentDate: consentDate.toISOString(),
+    privacyPolicyVersion: privacyPolicyVersion,
   }),
 };
 
@@ -760,10 +777,37 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
-export const trackingEnabledSelector = createSelector(
-  settingsStoreSelector,
-  s => s.shareAnalytics || s.sharePersonalizedRecommandations,
-);
+
+// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
+export const trackingEnabledSelector = (state: State) => {
+  const s = state.settings;
+
+  if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
+    return false;
+  }
+
+  const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
+  if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
+  const oneYearAgo = new Date(now.getTime());
+
+  oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
+
+  if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
+    return false;
+  }
+
+  if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
+    return false;
+  }
+
+  return s.shareAnalytics || s.sharePersonalizedRecommandations;
+};
+
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>
@@ -799,8 +843,7 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
-export const featureFlagsButtonVisibleSelector = (state: State) =>
-  state.featureFlags.bannerVisible;
+export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
@@ -826,3 +869,11 @@ export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasS
 // Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
 export const hasOnboardedDeviceSelector = (state: State) =>
   !!lastOnboardedDeviceSelector(state) || lastSeenDeviceSelector(state) !== null;
+
+export const analyticsConsentInfoSelector = (state: State) => ({
+  consentDate:
+    state.settings.lastAnalyticsConsentDate !== null
+      ? new Date(state.settings.lastAnalyticsConsentDate)
+      : null,
+  privacyPolicyVersion: state.settings.privacyPolicyVersion,
+});

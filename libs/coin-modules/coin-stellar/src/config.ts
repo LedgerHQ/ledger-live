@@ -1,8 +1,7 @@
 import buildCoinConfig, {
   type CoinConfig,
   type CurrencyConfig,
-} from "@ledgerhq/coin-framework/config";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+} from "@ledgerhq/coin-module-framework/config";
 
 export type StellarConfig = {
   explorer: {
@@ -17,7 +16,7 @@ export type StellarCoinConfig = CurrencyConfig & StellarConfig;
 
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<StellarCoinConfig>) => void;
-  getCoinConfig: (currency?: CryptoCurrency) => StellarCoinConfig;
+  getCoinConfig: (currencyId?: string) => StellarCoinConfig;
 } = buildCoinConfig<StellarCoinConfig>();
 
 export default coinConfig;

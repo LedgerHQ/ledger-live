@@ -3,7 +3,7 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -23,7 +23,7 @@ function internalTransactionsFetcher(
   nodeApi: NodeApi,
   currency: CryptoCurrency,
 ): (height: number) => Promise<Map<string, BlockOperation[]>> {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
 
   async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {

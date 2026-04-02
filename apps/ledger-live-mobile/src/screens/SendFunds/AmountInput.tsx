@@ -14,7 +14,7 @@ import TranslatedError from "~/components/TranslatedError";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { TransferFeeCalculated } from "@ledgerhq/live-common/families/solana/types";
 import Alert from "~/components/Alert";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 
 type Props = {
   account: AccountLike;

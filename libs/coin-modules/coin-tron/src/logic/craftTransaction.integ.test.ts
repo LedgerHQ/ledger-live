@@ -1,4 +1,4 @@
-import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";

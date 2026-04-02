@@ -6,6 +6,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 interface PortfolioSectionActions {
   onPressShowAll: () => void;
@@ -45,8 +46,9 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
         page: "Wallet",
       });
       if (asset.isPlaceholder) {
+        const currencyId = dadaIdToMarketId(asset.marketId ?? asset.currency.id);
         navigation.navigate(ScreenName.MarketDetail, {
-          currencyId: asset.marketId ?? asset.currency.id,
+          currencyId,
         });
       } else {
         navigation.navigate(NavigatorName.Accounts, {

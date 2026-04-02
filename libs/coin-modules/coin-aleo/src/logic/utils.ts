@@ -7,13 +7,12 @@ import type {
   Operation as AlpacaOperation,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import {
   decodeAccountId,
   encodeAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import type {
@@ -45,7 +44,7 @@ export function parseMicrocredits(microcreditsU64: string): string {
 }
 
 export function getNetworkConfig(currency: CryptoCurrency) {
-  const config = aleoConfig.getCoinConfig(currency);
+  const config = aleoConfig.getCoinConfig(currency.id);
 
   return {
     nodeUrl: config.apiUrls.node,
@@ -221,8 +220,7 @@ export const generateUniqueUsername = (address: string): string => {
 
 export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
   if (typeof configOrCurrencyId === "string") {
-    const currency = getCryptoCurrencyById(configOrCurrencyId);
-    const config = aleoConfig.getCoinConfig(currency);
+    const config = aleoConfig.getCoinConfig(configOrCurrencyId);
     return config;
   }
 
@@ -237,6 +235,31 @@ export function getTransactionType(intent: TransactionIntent): TransactionType {
   return transactionType;
 }
 
+function getAmountToSpend({
+  account,
+  transaction,
+  estimatedFees,
+}: {
+  account: AleoAccount;
+  transaction: Transaction;
+  estimatedFees: BigNumber;
+}): BigNumber {
+  if (!transaction.useAllAmount) {
+    return transaction.amount;
+  }
+
+  if (isPrivateTransaction(transaction)) {
+    const commitment = transaction.properties.amountRecordCommitment;
+    const amountRecord = commitment ? getRecordByCommitment({ account, commitment }) : null;
+
+    return new BigNumber(amountRecord?.microcredits ?? "0");
+  }
+
+  const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
+
+  return BigNumber.max(0, transparentBalance.minus(estimatedFees));
+}
+
 export function calculateAmount({
   account,
   transaction,
@@ -246,12 +269,7 @@ export function calculateAmount({
   transaction: Transaction;
   estimatedFees: BigNumber;
 }) {
-  let amount = transaction.amount;
-
-  if (transaction.useAllAmount) {
-    const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
-    amount = BigNumber.max(0, transparentBalance.minus(estimatedFees));
-  }
+  const amount = getAmountToSpend({ account, transaction, estimatedFees });
 
   const totalSpent = amount.plus(estimatedFees);
 

@@ -109,6 +109,7 @@ export interface SwapRoute {
   fromPath?: string;
   toCurrency?: string;
   fromCurrency?: string;
+  toAccountId?: string;
 }
 
 export interface BridgeRoute {

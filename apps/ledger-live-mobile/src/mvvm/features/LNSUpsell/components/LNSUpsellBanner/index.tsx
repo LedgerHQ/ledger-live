@@ -22,6 +22,7 @@ export function LNSUpsellBanner({ location, ...styledProps }: Props) {
 }
 
 function View({
+  location: _location,
   isShown,
   tracking,
   handleCTAPress,

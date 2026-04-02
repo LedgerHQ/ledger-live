@@ -2,7 +2,7 @@ import {
   CraftedTransaction,
   FeeEstimation,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";

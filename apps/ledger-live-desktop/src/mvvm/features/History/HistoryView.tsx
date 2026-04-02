@@ -11,11 +11,18 @@ export function HistoryView({
   rowVirtualizer,
   flatItems,
   onRowClick,
+  onExportClick,
+  operationsCount,
+  hasPendingOperations,
 }: Readonly<HistoryViewModel>) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24">
-      <TrackPage category="History" />
-      <HistoryPageHeader onBack={navigateToDashboard} />
+      <TrackPage
+        category="OperationList"
+        operationsCount={operationsCount}
+        has_pending_operations={hasPendingOperations ? true : false}
+      />
+      <HistoryPageHeader onBack={navigateToDashboard} onExportClick={onExportClick} />
       <HistoryList
         table={table}
         parentRef={parentRef}

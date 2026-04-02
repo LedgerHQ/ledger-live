@@ -2,11 +2,13 @@ import { access } from "fs/promises";
 import * as path from "path";
 import { expect } from "@playwright/test";
 import test from "../fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 
 // These tests cover the general Ledger Wallet app behavior
 
 test.describe("App.json cleanup", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     extraUserdataFiles: {
       "app.json.123": "stale",
     },
@@ -27,7 +29,7 @@ test.describe("App.json cleanup", () => {
 });
 
 test.describe("Identities migration from legacy user", () => {
-  test.use({ userdata: "skip-onboarding" });
+  test.use({ teamOwner: Team.WALLET_XP, userdata: "skip-onboarding" });
 
   test(
     "after boot with skip-onboarding userdata, user id is in store identities (same value), deviceIds [], new datadogId",

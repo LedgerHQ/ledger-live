@@ -160,7 +160,7 @@ export function makeGetAccountShape(
       derivationMode,
     });
 
-    const { nativeInstrumentId } = coinConfig.getCoinConfig(currency);
+    const { nativeInstrumentId } = coinConfig.getCoinConfig(currency.id);
     const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
     const pendingTransferProposals = xpubOrAddress
       ? await getPendingTransferProposals(currency, xpubOrAddress)
@@ -217,7 +217,7 @@ export function makeGetAccountShape(
       const balanceKey = isNative
         ? nativeInstrumentId
         : getKey(balance.instrumentId, balance.adminId);
-      const token: TokenCurrency | null = isNative ? null : tokensByKey.get(balanceKey) ?? null;
+      const token: TokenCurrency | null = isNative ? null : (tokensByKey.get(balanceKey) ?? null);
 
       const existing = aggregatedBalances.get(balanceKey);
       if (existing) {
@@ -243,7 +243,7 @@ export function makeGetAccountShape(
     const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
     const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
     const totalBalance = unlockedAmount.plus(lockedAmount);
-    const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency).minReserve || 0);
+    const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency.id).minReserve || 0);
     const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
 
     const instrumentUtxoCounts: Record<string, number> = {};

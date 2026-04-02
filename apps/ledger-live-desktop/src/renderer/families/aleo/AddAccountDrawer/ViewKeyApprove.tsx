@@ -10,7 +10,7 @@ import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 import { ADD_ACCOUNT_FLOW_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { ALEO_ADD_ACCOUNT_PAGE_NAME } from "./analytics/addAccount.types";
 import { AleoTrackAddAccountScreen } from "./analytics/AleoTrackAddAccountScreen";
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export function ViewKeyApprove({ currency, selectedAccounts, onResult, onCancel }: Props) {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const action = useGetViewKeyAction();
 
   const request: Request = useMemo(

@@ -1,9 +1,13 @@
-import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountBridge,
+  BridgeCacheSystem,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { getEnv } from "@ledgerhq/live-env";
 import { Observable, firstValueFrom } from "rxjs";
 import { reduce } from "rxjs/operators";
-import type { BridgeCacheSystem } from "@ledgerhq/types-live";
 
 export type ImportItemMode = "create" | "update" | "id" | "unsupported";
 export type ImportItem = {

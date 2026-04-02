@@ -12,7 +12,7 @@ describe("useSearch", () => {
   it("should initialize with store value", () => {
     const { result } = renderHook(() => useSearch(), {
       initialState: {
-        modularDrawer: {
+        modularDialog: {
           searchedValue: "BTC",
         },
       },
@@ -54,7 +54,7 @@ describe("useSearch", () => {
       result.current.handleDebouncedChange("Bitcoin", "");
     });
 
-    expect(store.getState().modularDrawer.searchedValue).toBe("Bitcoin");
+    expect(store.getState().modularDialog.searchedValue).toBe("Bitcoin");
   });
 
   it("should track search query when manually calling handleDebouncedChange", () => {
@@ -104,7 +104,7 @@ describe("useSearch", () => {
       result.current.handleDebouncedChange("ET", "");
     });
 
-    expect(store.getState().modularDrawer.searchedValue).toBe("ET");
+    expect(store.getState().modularDialog.searchedValue).toBe("ET");
 
     expect(track).toHaveBeenCalledWith("asset_searched", {
       page: "Asset Selection",

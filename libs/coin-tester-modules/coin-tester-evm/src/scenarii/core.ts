@@ -120,7 +120,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    initMswHandlers(getCoinConfig(core).info);
+    initMswHandlers(getCoinConfig(core.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

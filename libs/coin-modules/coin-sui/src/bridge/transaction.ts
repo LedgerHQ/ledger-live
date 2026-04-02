@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,

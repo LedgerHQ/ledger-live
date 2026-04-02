@@ -2,7 +2,7 @@
 import type {
   StakingTransactionIntent,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
 

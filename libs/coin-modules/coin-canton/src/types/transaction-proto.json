@@ -59,9 +59,7 @@
                                 "Node": {
                                   "oneofs": {
                                     "versionedNode": {
-                                      "oneof": [
-                                        "v1"
-                                      ]
+                                      "oneof": ["v1"]
                                     }
                                   },
                                   "fields": {
@@ -114,9 +112,7 @@
                                 "Node": {
                                   "oneofs": {
                                     "versionedNode": {
-                                      "oneof": [
-                                        "v1"
-                                      ]
+                                      "oneof": ["v1"]
                                     }
                                   },
                                   "fields": {
@@ -135,14 +131,10 @@
                             "DeviceMetadata": {
                               "oneofs": {
                                 "_minLedgerEffectiveTime": {
-                                  "oneof": [
-                                    "minLedgerEffectiveTime"
-                                  ]
+                                  "oneof": ["minLedgerEffectiveTime"]
                                 },
                                 "_maxLedgerEffectiveTime": {
-                                  "oneof": [
-                                    "maxLedgerEffectiveTime"
-                                  ]
+                                  "oneof": ["maxLedgerEffectiveTime"]
                                 }
                               },
                               "fields": {
@@ -185,12 +177,7 @@
                                   }
                                 }
                               },
-                              "reserved": [
-                                [
-                                  1,
-                                  1
-                                ]
-                              ],
+                              "reserved": [[1, 1]],
                               "nested": {
                                 "SubmitterInfo": {
                                   "fields": {
@@ -208,9 +195,7 @@
                                 "GlobalKeyMappingEntry": {
                                   "oneofs": {
                                     "_value": {
-                                      "oneof": [
-                                        "value"
-                                      ]
+                                      "oneof": ["value"]
                                     }
                                   },
                                   "fields": {
@@ -230,9 +215,7 @@
                                 "InputContract": {
                                   "oneofs": {
                                     "contract": {
-                                      "oneof": [
-                                        "v1"
-                                      ]
+                                      "oneof": ["v1"]
                                     }
                                   },
                                   "fields": {
@@ -431,12 +414,7 @@
                                     "Node": {
                                       "oneofs": {
                                         "nodeType": {
-                                          "oneof": [
-                                            "create",
-                                            "fetch",
-                                            "exercise",
-                                            "rollback"
-                                          ]
+                                          "oneof": ["create", "fetch", "exercise", "rollback"]
                                         }
                                       },
                                       "fields": {
@@ -683,12 +661,7 @@
                                         "Node": {
                                           "oneofs": {
                                             "nodeType": {
-                                              "oneof": [
-                                                "create",
-                                                "fetch",
-                                                "exercise",
-                                                "rollback"
-                                              ]
+                                              "oneof": ["create", "fetch", "exercise", "rollback"]
                                             }
                                           },
                                           "fields": {
@@ -713,12 +686,7 @@
                                         "NodeDisplay": {
                                           "oneofs": {
                                             "nodeType": {
-                                              "oneof": [
-                                                "create",
-                                                "fetch",
-                                                "exercise",
-                                                "rollback"
-                                              ]
+                                              "oneof": ["create", "fetch", "exercise", "rollback"]
                                             }
                                           },
                                           "fields": {

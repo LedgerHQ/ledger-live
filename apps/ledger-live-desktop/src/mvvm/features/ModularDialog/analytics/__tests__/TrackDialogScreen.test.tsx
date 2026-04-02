@@ -10,7 +10,7 @@ describe("TrackDialogScreen", () => {
     const page = MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
 
-    render(<TrackDialogScreen page={page} />, { initialState: { modularDrawer: params } });
+    render(<TrackDialogScreen page={page} />, { initialState: { modularDialog: params } });
 
     expect(trackPage).toHaveBeenCalledWith(
       "Asset Selection",
@@ -29,7 +29,7 @@ describe("TrackDialogScreen", () => {
     };
 
     render(<TrackDialogScreen page={page} formatAssetConfig assetsConfig={assetsConfig} />, {
-      initialState: { modularDrawer: params },
+      initialState: { modularDialog: params },
     });
 
     expect(trackPage).toHaveBeenCalledWith(
@@ -53,7 +53,7 @@ describe("TrackDialogScreen", () => {
     };
 
     render(<TrackDialogScreen page={page} formatNetworkConfig networksConfig={networksConfig} />, {
-      initialState: { modularDrawer: params },
+      initialState: { modularDialog: params },
     });
 
     expect(trackPage).toHaveBeenCalledWith(

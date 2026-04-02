@@ -20,12 +20,6 @@ export function useCryptoAccountRows(searchValue: string) {
   );
   const flattenedAccounts = useFlattenSortAccounts(flattenOptions);
 
-  const rows = useMemo(() => {
-    return flattenedAccounts.filter(account =>
-      accountMatchesSearch(walletState, searchValue, account),
-    );
-  }, [flattenedAccounts, searchValue, walletState]);
-
   const accountById = useMemo(() => {
     const map = new Map<string, Account>();
     for (const a of nestedAccounts) {
@@ -35,6 +29,16 @@ export function useCryptoAccountRows(searchValue: string) {
     }
     return map;
   }, [nestedAccounts]);
+
+  const rows = useMemo(() => {
+    return flattenedAccounts.filter(account => {
+      const parentAddress =
+        account.type === "TokenAccount"
+          ? accountById.get(account.parentId)?.freshAddress
+          : undefined;
+      return accountMatchesSearch(walletState, searchValue, account, false, parentAddress);
+    });
+  }, [flattenedAccounts, searchValue, walletState, accountById]);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => {

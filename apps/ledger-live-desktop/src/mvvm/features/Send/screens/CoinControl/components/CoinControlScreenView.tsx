@@ -5,14 +5,15 @@ import { CoinControlFooter } from "./CoinControlFooter";
 import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
 import { UtxoSelector } from "./UtxoSelector";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 
 type CoinControlScreenViewProps = Readonly<{
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly StrategyOptionWithLabel[];
-  changeToReturnFormatted: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   onSelectStrategy: (value: string) => void;
   amountValue: string | null;
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -21,8 +22,6 @@ type CoinControlScreenViewProps = Readonly<{
   learnMoreLabel: string;
   onLearnMoreClick: () => void;
   coinToSendLabel: string;
-  changeToReturnLabel: string;
-  enterAmountPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: NetworkFeesViewModel;
@@ -32,12 +31,14 @@ type CoinControlScreenViewProps = Readonly<{
   reviewLoading: boolean;
   onReview: () => void;
   onGetFunds: () => void;
+  isCustomPickingStrategy: boolean;
+  onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
 export function CoinControlScreenView({
   utxoDisplayData,
   strategyOptionsWithLabels,
-  changeToReturnFormatted,
+  changeToReturn,
   onSelectStrategy,
   amountValue,
   onAmountChange,
@@ -46,8 +47,6 @@ export function CoinControlScreenView({
   learnMoreLabel,
   onLearnMoreClick,
   coinToSendLabel,
-  changeToReturnLabel,
-  enterAmountPlaceholder,
   amountToSendLabel,
   amountInputLabel,
   networkFees,
@@ -57,6 +56,8 @@ export function CoinControlScreenView({
   reviewLoading,
   onReview,
   onGetFunds,
+  isCustomPickingStrategy,
+  onToggleUtxoExclusion,
 }: CoinControlScreenViewProps) {
   return (
     <>
@@ -76,13 +77,16 @@ export function CoinControlScreenView({
           amountToSendLabel={amountToSendLabel}
           amountInputLabel={amountInputLabel}
         />
-        <UtxoSelector utxoDisplayData={utxoDisplayData} coinToSendLabel={coinToSendLabel} />
+        <UtxoSelector
+          utxoDisplayData={utxoDisplayData}
+          coinToSendLabel={coinToSendLabel}
+          isCustomPickingStrategy={isCustomPickingStrategy}
+          onToggleUtxoExclusion={onToggleUtxoExclusion}
+        />
       </DialogBody>
 
       <CoinControlFooter
-        changeToReturnFormatted={changeToReturnFormatted}
-        changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={enterAmountPlaceholder}
+        changeToReturn={changeToReturn}
         networkFees={networkFees}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}

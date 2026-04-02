@@ -11,7 +11,6 @@ import type {
   Transaction,
   HederaAccount,
 } from "@ledgerhq/coin-hedera/types/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-hedera/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
@@ -22,9 +21,9 @@ const createSigner: CreateSigner<Hedera> = (transport: Transport) => {
   return new Hedera(transport);
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency) => {
-  invariant(currency, "hedera: currency is required in getCurrencyConfig");
-  return getCurrencyConfiguration<HederaCoinConfig>(currency);
+const getCurrencyConfig = (currencyId?: string) => {
+  invariant(currencyId, "hedera: currencyId is required in getCurrencyConfig");
+  return getCurrencyConfiguration<HederaCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, HederaAccount, TransactionStatus> = createBridges(

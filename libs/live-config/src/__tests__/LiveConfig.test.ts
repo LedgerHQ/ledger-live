@@ -1,6 +1,5 @@
-import { LiveConfig, ConfigSchema } from "../LiveConfig";
+import { ConfigSchema, ConfigInfo, LiveConfig } from "../LiveConfig";
 import { Provider } from "../providers";
-import { ConfigInfo } from "../LiveConfig";
 
 class MockJsonProvider implements Provider {
   getValueByKey(key: string, info: ConfigInfo) {

@@ -7,7 +7,7 @@ import { ActionButtons, IconContainer } from "./components";
 import { AccountsWarningProps } from "./types";
 import { useWarningConfig } from "./useWarningConfig";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 const AccountsWarning = ({
   warningReason,
@@ -17,7 +17,7 @@ const AccountsWarning = ({
   navigateToFundAccount,
   isAccountSelectionFlow,
 }: AccountsWarningProps) => {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const { emptyAccountWarning, noAssociatedAccountsWarning, noAccountsAddedWarning } =
     useWarningConfig(
       currency,

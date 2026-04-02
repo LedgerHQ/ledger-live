@@ -6,10 +6,10 @@ import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDrawer.types";
-import AnimatedScreenWrapper from "../ModularDrawer/components/AnimatedScreenWrapper";
-import { BackButtonArrow } from "../ModularDrawer/components/BackButton";
-import { AccountSelection } from "../ModularDrawer/screens/AccountSelection";
+import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
+import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
+import { BackButtonArrow } from "./components/BackButton";
+import { AccountSelection } from "./screens/AccountSelection";
 import HeaderGradient from "./components/HeaderGradient";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 import AccountsAdded from "./screens/AccountsAdded";
@@ -20,7 +20,7 @@ import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
 import { useDispatch } from "LLD/hooks/redux";
-import { setFlowValue } from "~/renderer/reducers/modularDrawer";
+import { setFlowValue } from "~/renderer/reducers/modularDialog";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 
@@ -190,7 +190,7 @@ const ModularDrawerAddAccountFlowManager = ({
             </Title>
             <AccountSelection
               asset={cryptoCurrency}
-              overridePageName={MODULAR_DRAWER_PAGE_NAME.FUND_ACCOUNT_LIST}
+              overridePageName={MODULAR_DIALOG_PAGE_NAME.FUND_ACCOUNT_LIST}
               onAccountSelected={accountToFund => navigateToFundAccount(accountToFund as Account)}
               hideAddAccountButton
             />

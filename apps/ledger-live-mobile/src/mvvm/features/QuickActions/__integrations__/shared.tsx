@@ -109,11 +109,66 @@ export const overrideStateReadOnly = (state: State): State => {
   };
 };
 
+export const overrideStateWithFundsVariant = (state: State): State => {
+  const baseState = overrideStateWithFunds(state);
+  return {
+    ...baseState,
+    settings: {
+      ...baseState.settings,
+      overriddenFeatureFlags: {
+        ...baseState.settings.overriddenFeatureFlags,
+        lwmWallet40: {
+          enabled: true,
+          params: { quickActionCtas: true, quickActionsCtasVariant: true },
+        },
+      },
+    },
+  };
+};
+
+export const overrideStateWithoutFundsVariant = (state: State): State => {
+  const baseState = overrideStateWithoutFunds(state);
+  return {
+    ...baseState,
+    settings: {
+      ...baseState.settings,
+      overriddenFeatureFlags: {
+        ...baseState.settings.overriddenFeatureFlags,
+        lwmWallet40: {
+          enabled: true,
+          params: { quickActionCtas: true, quickActionsCtasVariant: true },
+        },
+      },
+    },
+  };
+};
+
 export const getCtaButtons = async () => {
   const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
   return {
     container,
     transferButton: within(container).getByRole("button", { name: /transfer/i }),
+    swapButton: within(container).getByRole("button", { name: /swap/i }),
+    buyButton: within(container).getByRole("button", { name: /buy/i }),
+  };
+};
+
+export const getVariantCtaButtons = async () => {
+  const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+  return {
+    container,
+    receiveButton: within(container).getByRole("button", { name: /receive/i }),
+    sendButton: within(container).getByRole("button", { name: /send/i }),
+    swapButton: within(container).getByRole("button", { name: /swap/i }),
+    buyButton: within(container).getByRole("button", { name: /buy/i }),
+  };
+};
+
+export const getVariantNoFundsCtaButtons = async () => {
+  const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+  return {
+    container,
+    receiveButton: within(container).getByRole("button", { name: /receive/i }),
     swapButton: within(container).getByRole("button", { name: /swap/i }),
     buyButton: within(container).getByRole("button", { name: /buy/i }),
   };

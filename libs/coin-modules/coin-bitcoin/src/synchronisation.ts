@@ -33,6 +33,7 @@ import {
   ShieldedSyncResult,
 } from "@ledgerhq/zcash-shielded/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { getCoinConfig } from "./config";
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -225,13 +226,16 @@ const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOpe
 };
 
 export const getTxType = (tx: ShieldedTransaction): OperationType => {
-  if (tx.decryptedData?.orchard_outputs[0].transfer_type === "incoming") {
+  if (tx.decryptedData?.orchard_outputs?.[0]?.transfer_type === "incoming") {
     return "SHIELDED_TX_ORCHARD_IN";
   }
-  if (tx.decryptedData?.orchard_outputs[0].transfer_type === "outgoing") {
+  if (tx.decryptedData?.orchard_outputs?.[0]?.transfer_type === "outgoing") {
     return "SHIELDED_TX_ORCHARD_OUT";
   }
-  return "SHIELDED_TX_INTERNAL";
+  if (tx.decryptedData?.orchard_outputs?.[0]?.transfer_type === "internal") {
+    return "SHIELDED_TX_INTERNAL";
+  }
+  return "UNKNOWN";
 };
 
 type ShieldedScanAccumulated = {
@@ -398,14 +402,14 @@ export function reduceShieldedSyncResult(
   accountId: string,
 ): ShieldedScanAccumulated {
   const processedIds = new Set(accumulated.processedOperations.map(tx => tx.id));
-  const newTransactions = result.operations.filter(tx => !processedIds.has(tx.id));
+  const newTransactions = result.transactions.filter(tx => !processedIds.has(tx.id));
 
   if (newTransactions.length === 0) {
     return {
       ...accumulated,
       accountUpdate: {
         ...accumulated.accountUpdate,
-        blockHeight: result.latestBlockHeight,
+        blockHeight: result.lastProcessedBlock || accumulated.accountUpdate.blockHeight || 0,
       },
     };
   }
@@ -418,6 +422,7 @@ export function reduceShieldedSyncResult(
 
   let balance =
     accumulated.accountUpdate.balance || info.initialAccount?.balance || new BigNumber(0);
+
   for (const op of newOperations) {
     if (ZCASH_SHIELDED_TX_IN_TYPES.includes(op.type)) {
       balance = balance.plus(op.value);
@@ -432,20 +437,20 @@ export function reduceShieldedSyncResult(
     {
       accountId,
       totalOperations: operations.length,
-      latestBlockHeight: result.latestBlockHeight,
+      lastProcessedBlock: result.lastProcessedBlock,
       balance: balance.toString(),
       previousOperations: currentOperations.length,
     },
   );
 
   return {
-    processedOperations: result.operations,
+    processedOperations: [...result.transactions],
     accountUpdate: {
       operations,
       operationsCount: operations.length,
       balance,
       spendableBalance: balance,
-      blockHeight: result.latestBlockHeight,
+      blockHeight: result.lastProcessedBlock || info.initialAccount?.blockHeight || 0,
     },
   };
 }
@@ -531,7 +536,7 @@ export function convertShieldedTransactionsToOperations(
       senders: [],
       recipients: [],
       date: new Date(tx.timestamp),
-      value: new BigNumber(0),
+      value: new BigNumber(tx.decryptedData?.orchard_outputs?.[0]?.amount || 0),
       fee: new BigNumber(tx.fee),
       extra: {},
       transactionSequenceNumber: new BigNumber(tx.blockHeight),
@@ -566,13 +571,11 @@ export function buildSyncObservables(
   const shieldedEnabled = isZcash && typeof ufvk === "string" && ufvk.length > 0;
 
   if (syncType & SYNC_TYPE_SHIELDED && shieldedEnabled) {
-    // TODO: Implement shielded sync
-    // const shieldedSyncRaw = getCoinConfig(currency).family.sync?.(info, syncConfig);
-    const shieldedSyncRaw = new Observable<ShieldedSyncResult>(subscriber => {
-      subscriber.next({ operations: [], latestBlockHeight: initialAccount?.blockHeight ?? 0 });
-      subscriber.complete();
-    });
-    syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
+    const shieldedSyncRaw = getCoinConfig(currency.id).family?.sync?.(info, syncConfig);
+
+    if (shieldedSyncRaw) {
+      syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
+    }
   }
 
   return { syncs, syncType };

@@ -419,7 +419,8 @@
     "webviewErrorDrawer": {
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
-      "code": "Code: {{errorCode}}"
+      "code": "Code",
+      "correlationId": "Reference ID"
     }
   },
   "swap": {
@@ -2513,6 +2514,7 @@
       "coinToSend": "Coin to send",
       "changeToReturn": "Change to return",
       "enterAmount": "Enter amount",
+      "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
     }
@@ -2968,7 +2970,8 @@
     "pickingStrategyLabels": {
       "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
       "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
-      "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+      "MERGE_OUTPUTS": "Minimize future fees (merge coins)",
+      "CUSTOM": "Custom coin selection"
     }
   },
   "celo": {
@@ -8014,6 +8017,16 @@
       "cta": "Learn more"
     }
   },
+  "lnsUpsellMediaBanner": {
+    "opted_in": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers."
+    },
+    "opted_out": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
+    }
+  },
   "modularAssetDrawer": {
     "addAccounts": {
       "title": "Select the accounts you want to add",
@@ -8172,9 +8185,9 @@
     }
   },
   "cryptoAddresses": {
-    "title": "Crypto accounts",
+    "title": "Accounts",
     "tableActions": {
-      "searchAddress": "Search address",
+      "searchAddress": "Search by name, address",
       "addAddress": "Add address"
     },
     "table": {
@@ -8354,6 +8367,7 @@
       }
     },
     "shared": {
+      "sponsoredByProvable": "Sponsored by Provable",
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
@@ -8375,7 +8389,13 @@
       "transparentBalance": "Transparent balance",
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
-      "privateBalanceTooltip": "Balance that is hidden from the public"
+      "privateBalanceTooltip": "Balance that is hidden from the public",
+      "syncButton": {
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "syncAgain": "Sync again",
+        "lastSync": "Last synced: {{date}}"
+      }
     },
     "operations": {
       "type": {
@@ -8388,8 +8408,12 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
+      },
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "error": "Private sync failed. Please try again later."
       }
     }
   },

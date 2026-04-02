@@ -1,13 +1,11 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import {
-  // @ts-expect-error stellar-sdk ts definition missing?
-  AccountRecord,
   BASE_FEE,
   Horizon,
   MuxedAccount,
@@ -414,7 +412,7 @@ export async function broadcastTransaction(signedTransaction: string): Promise<s
   }
 }
 
-export async function loadAccount(addr: string): Promise<AccountRecord | null> {
+export async function loadAccount(addr: string): Promise<Horizon.AccountResponse | null> {
   if (!addr || !addr.length) {
     return null;
   }
@@ -475,7 +473,7 @@ async function recipientAccount(address?: string): Promise<{
     accountAddress = muxedAccount.baseAccount().accountId();
   }
 
-  const account: AccountRecord = await loadAccount(accountAddress);
+  const account: Horizon.AccountResponse | null = await loadAccount(accountAddress);
 
   if (!account) {
     return null;

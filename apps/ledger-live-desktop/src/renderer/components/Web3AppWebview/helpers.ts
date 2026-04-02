@@ -22,11 +22,12 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
-import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const initialWebviewState: WebviewState = {

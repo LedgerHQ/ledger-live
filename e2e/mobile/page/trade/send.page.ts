@@ -27,6 +27,13 @@ export default class SendPage {
   summaryContinueButton = () => getElementById("summary-continue-button");
   feeStrategy = (fee: string) => getElementByText(fee);
 
+  @Step("Navigate to send screen")
+  async navigateToSendScreen(accountName: string) {
+    await app.account.openViaDeeplink();
+    await app.account.goToAccountByName(accountName);
+    await app.account.tapSend();
+  }
+
   @Step("Open send via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
@@ -229,6 +236,7 @@ export default class SendPage {
   @Step("Choose fee strategy")
   async chooseFeeStrategy(fee?: string) {
     if (fee) {
+      await scrollToText(fee);
       const feeBtn = this.feeStrategy(fee);
       await tapByElement(feeBtn);
     }

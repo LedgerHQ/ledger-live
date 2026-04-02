@@ -132,7 +132,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
         },
       },
     });
-    initMswHandlers(getCoinConfig(bnb).info);
+    initMswHandlers(getCoinConfig(bnb.id).info);
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
 
     const { address } = await getAddress("", {

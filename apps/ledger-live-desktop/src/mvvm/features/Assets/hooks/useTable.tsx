@@ -22,7 +22,13 @@ import { CounterValueCell } from "../components/Cells/CounterValueCell";
 import { TrendCell } from "../components/Cells/TrendCell";
 import type { AssetTableItem } from "../types";
 
-export const useTable = (assets: AssetTableItem[]) => {
+export type UseAssetTableOptions = {
+  /** When false, hides the info tooltip on the trend column header (e.g. full crypto assets page). */
+  readonly showTrendColumnTooltip?: boolean;
+};
+
+export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
+  const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
@@ -100,18 +106,22 @@ export const useTable = (assets: AssetTableItem[]) => {
           ),
         meta: {
           align: "end",
-          headerTrailingContent: (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TableInfoIcon />
-              </TooltipTrigger>
-              <TooltipContent>{t("assets.columns.trendTooltip")}</TooltipContent>
-            </Tooltip>
-          ),
+          ...(showTrendColumnTooltip
+            ? {
+                headerTrailingContent: (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TableInfoIcon />
+                    </TooltipTrigger>
+                    <TooltipContent>{t("assets.columns.trendTooltip")}</TooltipContent>
+                  </Tooltip>
+                ),
+              }
+            : {}),
         },
       },
     ],
-    [t, emptyFiatValue],
+    [t, emptyFiatValue, showTrendColumnTooltip],
   );
 
   const table = useLumenDataTable({

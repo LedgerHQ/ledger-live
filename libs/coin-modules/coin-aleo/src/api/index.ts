@@ -13,7 +13,7 @@ import type {
   TransactionValidation,
   MemoNotSupported,
   AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
 import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";

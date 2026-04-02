@@ -60,7 +60,7 @@ const createMockedInitialState = (dialogParams = {}) => ({
         },
       },
     },
-    modularDrawer: {
+    modularDialog: {
       isOpen: true,
       dialogParams: {
         currencies: mockCurrencies,
@@ -191,7 +191,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
         },
       },
       initialState: {
-        modularDrawer: {
+        modularDialog: {
           isOpen: true,
           dialogParams: {
             currencies: mockCurrencies,

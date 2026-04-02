@@ -77,6 +77,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetAnalyticsConsentInfoPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -145,6 +146,8 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
+    totalMarketCap: true,
+    topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
@@ -172,6 +175,10 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   deprecationDoNotRemind: [],
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  },
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -213,6 +220,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       ...filteredPayload,
+      notifications: {
+        ...state.notifications,
+        ...filteredPayload.notifications,
+      },
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
@@ -653,6 +664,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
+  [SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO]: (state: SettingsState, action) => {
+    return {
+      ...state,
+      analyticsConsentInfo: (action as Action<SettingsSetAnalyticsConsentInfoPayload>).payload,
+    };
+  },
+
   [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
     ...state,
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
@@ -888,3 +906,4 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;

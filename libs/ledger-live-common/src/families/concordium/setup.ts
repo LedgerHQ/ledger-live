@@ -6,7 +6,6 @@ import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coi
 import makeCliTools from "@ledgerhq/coin-concordium/test/cli";
 import Concordium from "@ledgerhq/hw-app-concordium";
 import Transport from "@ledgerhq/hw-transport";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
@@ -16,11 +15,11 @@ const createSigner: CreateSigner<ConcordiumSigner> = (transport: Transport): Con
   return new Concordium(transport);
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency) => {
-  if (!currency) {
+const getCurrencyConfig = (currencyId?: string) => {
+  if (!currencyId) {
     throw new Error("currency not defined");
   }
-  return getCurrencyConfiguration<ConcordiumCoinConfig>(currency);
+  return getCurrencyConfiguration<ConcordiumCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, ConcordiumAccount, TransactionStatus> = createBridges(

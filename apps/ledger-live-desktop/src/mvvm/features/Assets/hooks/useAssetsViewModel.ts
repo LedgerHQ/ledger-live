@@ -1,51 +1,29 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { AssetsViewProps, AssetTableItem } from "../types";
+import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";
 import { useSelector } from "LLD/hooks/redux";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { EMPTY_STATE_CRYPTOS, EMPTY_STATE_STABLECOINS, MAX_ITEM_DISPLAYED } from "../constants";
-
-// @FIXME workaround for main tokens & also until we have asset aggregation
-export function resolveMarketId(id: string): string {
-  if (!id.includes(":")) return id;
-  const lastSegment = id.split(":").pop();
-  return lastSegment?.replaceAll("_", "-") ?? id;
-}
-
-const toPlaceholderItem = (
-  currency: CryptoOrTokenCurrency,
-  marketId: string,
-  price?: number,
-): AssetTableItem => ({
-  currency,
-  balance: 0,
-  value: 0,
-  distribution: 0,
-  accounts: [],
-  isPlaceholder: true,
-  placeholderPrice: price,
-  marketId,
-});
-
-export function padItems(
-  realItems: AssetTableItem[],
-  defaults: AssetTableItem[],
-  targetCount: number,
-): AssetTableItem[] {
-  if (realItems.length >= targetCount) return realItems;
-  const ownedIds = new Set(realItems.map(item => item.currency.id));
-  return [
-    ...realItems,
-    ...defaults.filter(d => !ownedIds.has(d.currency.id)).slice(0, targetCount - realItems.length),
-  ];
-}
+import {
+  ASSETS_PAGE_CATEGORY_CRYPTOS,
+  ASSETS_PAGE_CATEGORY_STABLECOINS,
+  EMPTY_STATE_CRYPTOS,
+  EMPTY_STATE_STABLECOINS,
+  MAX_ITEM_DISPLAYED,
+} from "../constants";
+import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
+import { padItems } from "../utils/assetTableHelpers";
+import { track } from "~/renderer/analytics/segment";
+import {
+  ASSETS_TRACKING_PAGE_NAME,
+  CRYPTO_TRACKING_PAGE_NAME,
+} from "../../CryptoAddresses/constants";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 export function useAssetsViewModel(): AssetsViewProps {
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
@@ -70,11 +48,21 @@ export function useAssetsViewModel(): AssetsViewProps {
   const { t } = useTranslation();
 
   const onNavigateToCryptos = useCallback(() => {
-    navigate("/cryptos");
+    track("button_clicked", {
+      button: "account_cta",
+      type: "view",
+      page: CRYPTO_TRACKING_PAGE_NAME,
+    });
+    navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_CRYPTOS));
   }, [navigate]);
 
   const onNavigateToCryptoAssets = useCallback(() => {
-    navigate("/assets");
+    track("button_clicked", {
+      button: "account_cta",
+      type: "view",
+      page: ASSETS_TRACKING_PAGE_NAME,
+    });
+    navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_STABLECOINS));
   }, [navigate]);
 
   const onItemClick = useCallback(
@@ -82,36 +70,20 @@ export function useAssetsViewModel(): AssetsViewProps {
       setTrackingSource("asset allocation");
       navigate(
         item.isPlaceholder
-          ? `/market/${encodeURIComponent(resolveMarketId(item.marketId ?? item.currency.id))}`
+          ? `/market/${encodeURIComponent(dadaIdToMarketId(item.marketId ?? item.currency.id))}`
           : `/asset/${item.currency.id}`,
       );
     },
     [navigate],
   );
 
-  const resolvedDefaults = useMemo(() => {
-    if (!assetsData) return { cryptos: [], stablecoins: [] };
-
-    const cryptos: AssetTableItem[] = [];
-    const stablecoins: AssetTableItem[] = [];
-
-    for (const id of assetsData.currenciesOrder.metaCurrencyIds) {
-      const currency = selectCurrencyForMetaId(id, assetsData);
-      if (!currency) continue;
-
-      const ticker = assetsData.cryptoAssets[id]?.ticker?.toUpperCase() ?? "";
-      const { price, id: marketId } = assetsData.markets?.[currency.id] ?? {};
-      const item = toPlaceholderItem(currency, marketId ?? id, price);
-
-      if (stablecoinTickers.has(ticker)) {
-        stablecoins.push(item);
-      } else {
-        cryptos.push(item);
-      }
-    }
-
-    return { cryptos, stablecoins };
-  }, [assetsData, stablecoinTickers]);
+  const resolvedDefaults = useMemo(
+    () =>
+      assetsData
+        ? buildPlaceholderAssetItemsFromAssetsData(assetsData, stablecoinTickers)
+        : { cryptos: [], stablecoins: [] },
+    [assetsData, stablecoinTickers],
+  );
 
   const sections = useMemo(() => {
     const toRealItems = (items: typeof categorizedAssets.cryptos): AssetTableItem[] =>

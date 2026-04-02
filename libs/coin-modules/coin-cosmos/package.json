@@ -49,7 +49,7 @@
     "@cosmjs/crypto": "^0.36.1",
     "@cosmjs/stargate": "^0.37.0",
     "@keplr-wallet/proto-types": "^0.12.300",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
@@ -73,14 +73,16 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
-    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
+    "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -90,11 +92,13 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   }
 }

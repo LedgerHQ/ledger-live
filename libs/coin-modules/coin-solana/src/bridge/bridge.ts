@@ -20,6 +20,7 @@ import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
 import { broadcast } from "../logic/broadcast";
+import { validateAddress } from "../logic/validateAddress";
 import { ChainAPI, Config } from "../network";
 import nftResolvers from "../nftResolvers";
 import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
@@ -37,7 +38,6 @@ import { SolanaSigner } from "../signer";
 import { getAccountShapeWithAPI } from "../synchronization";
 import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
 import { endpointByCurrencyId } from "../utils";
-import { validateAddress } from "../validateAddress";
 
 function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
   const prepareTransaction: AccountBridge<Transaction, SolanaAccount>["prepareTransaction"] = (

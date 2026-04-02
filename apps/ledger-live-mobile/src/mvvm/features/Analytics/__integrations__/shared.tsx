@@ -2,8 +2,11 @@ import React from "react";
 import Navigator from "../Navigator";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+export { usdcToken };
 
 export const TestNavigatorWrapper: React.FC = () => {
   return <Navigator />;

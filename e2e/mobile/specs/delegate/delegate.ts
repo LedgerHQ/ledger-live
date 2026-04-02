@@ -80,20 +80,20 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
   });
 }
 
-export async function runDelegateCelo(
+export async function runLockCelo(
   delegation: DelegateType,
   tmsLinks: string[],
   tags: string[] = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe(`Delegate flow on CELO`, () => {
+  describe(`Lock flow on CELO`, () => {
     beforeAll(async () => {
       await beforeAllFunction(delegation);
     });
 
-    it(`Delegate on CELO`, async () => {
-      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+    it(`Lock on CELO`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
@@ -112,6 +112,45 @@ export async function runDelegateCelo(
 
       await app.common.successViewDetails();
       await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+    });
+  });
+}
+
+export async function runVoteCelo(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe(`Vote flow on CELO`, () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Vote on CELO with ${delegation.provider}`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.celoManageAssets.checkManagePage();
+      await app.celoManageAssets.clickVote();
+
+      await app.stake.openCeloVoteAmount();
+      await app.stake.setCeloVoteAmount(delegation.amount);
+
+      await device.disableSynchronization();
+      await app.stake.validateCeloVoteAmount();
+      await app.stake.celoVoteSummaryContinue();
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await app.speculos.signDelegationTransaction(delegation);
+
+      await app.common.successViewDetails();
+
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, undefined, "VOTE");
     });
   });
 }
@@ -139,7 +178,7 @@ export async function runDelegateTezos(
     });
 
     it(`Delegate on TEZOS`, async () => {
-      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
       await app.speculos.goToSettings();

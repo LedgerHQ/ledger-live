@@ -40,7 +40,7 @@ import type {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { renderItem } from "LLM/utils/renderItem";
 
 type Props =
@@ -135,7 +135,7 @@ const AccountScreenInner = ({
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   try {
-    currencyConfig = getCurrencyConfiguration(mainAccount.currency);
+    currencyConfig = getCurrencyConfiguration(mainAccount.currency.id);
   } catch (err) {
     console.warn(err);
   }

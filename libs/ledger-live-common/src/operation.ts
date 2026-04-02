@@ -16,7 +16,7 @@ import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 export * from "@ledgerhq/ledger-wallet-framework/operation";
 
 function hasGasTracker(currency: CryptoCurrency): boolean {
-  const config = getCurrencyConfiguration<EvmConfigInfo>(currency);
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
   return !!config.gasTracker;
 }
 

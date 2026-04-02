@@ -7,28 +7,44 @@ import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
+import { Currency } from "../enum/Currency";
+
+const getSignTransactionLabel = (currencyId: string): string => {
+  switch (currencyId) {
+    case Currency.ZEC.id:
+      return DeviceLabels.SIGN_TRANSACTION;
+    default:
+      return DeviceLabels.ACCEPT;
+  }
+};
 
 export const sendBTCBasedCoin = withDeviceController(
   ({ getButtonsController }) =>
-    async (tx: Transaction) => {
-      const buttons = getButtonsController();
-
-      const events = await getSendEvents(tx);
-      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
-
+    async (tx: Transaction, currencyId: string) => {
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+
+      const buttons = getButtonsController();
+
+      const amountStep = await pressUntilTextFound(DeviceLabels.AMOUNT);
+      const isAmountCorrect = containsSubstringInEvent(tx.amount, amountStep);
+      expect(isAmountCorrect).toBeTruthy();
+
+      const addressStep = await pressUntilTextFound(DeviceLabels.ADDRESS);
+      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, addressStep);
       expect(isAddressCorrect).toBeTruthy();
+
+      await pressUntilTextFound(getSignTransactionLabel(currencyId));
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
-        await buttons.both();
-        await waitFor(DeviceLabels.CONFIRM);
-        await pressUntilTextFound(DeviceLabels.ACCEPT);
+        if (currencyId !== Currency.ZEC.id) {
+          await buttons.both();
+          await waitFor(DeviceLabels.CONFIRM);
+          await pressUntilTextFound(DeviceLabels.ACCEPT);
+        }
         await buttons.both();
       }
     },

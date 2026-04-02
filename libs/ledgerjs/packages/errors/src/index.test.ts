@@ -64,8 +64,8 @@ describe("custom errors", () => {
     }
   });
 
-  test("promise error instanceof", () => {
-    expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(AmountRequired);
+  test("promise error instanceof", async () => {
+    await expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(AmountRequired);
   });
 
   test("error is instance of Error", () => {

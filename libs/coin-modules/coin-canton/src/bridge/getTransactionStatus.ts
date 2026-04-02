@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import {
   AmountRequired,
@@ -37,7 +37,9 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency).minReserve || 0);
+  const reserveAmount = new BigNumber(
+    coinConfig.getCoinConfig(account.currency.id).minReserve || 0,
+  );
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 

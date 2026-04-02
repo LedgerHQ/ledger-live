@@ -131,7 +131,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    initMswHandlers(getCoinConfig(ethereum).info);
+    initMswHandlers(getCoinConfig(ethereum.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

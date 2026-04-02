@@ -1,11 +1,13 @@
-import {
+import type {
   AlpacaApi,
+  AddressValidationCurrencyParameters,
+  Balance,
   BroadcastConfig,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
@@ -13,8 +15,12 @@ import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
+import { getNextSequence } from "../logic/getNextSequence";
+import { getStakes } from "../logic/getStakes";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateAddress } from "../logic/validateAddress";
+import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
@@ -68,17 +74,24 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     getValidators: () => {
       throw new Error("getValidators is not supported");
     },
-    getStakes: (_address: string, _cursor?: Cursor) => {
-      throw new Error("getStakes is not supported");
+    getStakes: (address: string, cursor?: Cursor) => {
+      return getStakes(api, address, cursor);
     },
-    validateIntent: () => {
-      throw new Error("validateIntent is not supported");
+    validateIntent: (
+      intent: TransactionIntent,
+      balances: Balance[],
+      customFees?: FeeEstimation,
+    ) => {
+      return validateIntent(intent, balances, customFees);
     },
-    getNextSequence: () => {
-      throw new Error("getNextSequence is not supported");
+    getNextSequence: async (address: string) => {
+      return getNextSequence(address);
     },
-    validateAddress: () => {
-      throw new Error("validateAddress is not supported");
+    validateAddress: (
+      address: string,
+      parameters: Partial<AddressValidationCurrencyParameters>,
+    ) => {
+      return validateAddress(address, parameters);
     },
   };
 }

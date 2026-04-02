@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "../../ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { track } from "~/renderer/analytics/segment";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";

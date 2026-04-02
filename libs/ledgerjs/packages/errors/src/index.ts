@@ -230,6 +230,8 @@ export const DisabledTransactionBroadcastError = createCustomErrorClass(
   "DisabledTransactionBroadcastError",
 );
 
+export const InvalidParameterError = createCustomErrorClass("InvalidParameterError");
+
 // Represents the type of all the classes created with createCustomErrorClass
 export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;
 

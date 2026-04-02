@@ -1,5 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import reducer, {
+  analyticsConsentInfoSelector,
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
   resolvedThemeSelector,
@@ -9,7 +10,8 @@ import reducer, {
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import { importSettings, setTheme } from "../actions/settings";
+import { importSettings, setAnalyticsConsentInfo, setTheme } from "../actions/settings";
+import { SettingsActionTypes } from "../actions/types";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -230,6 +232,69 @@ describe("filterValidSettings", () => {
     expect(filtered.language).toBe("en");
     expect("obsoleteField1" in filtered).toBe(false);
     expect("obsoleteField2" in filtered).toBe(false);
+  });
+});
+
+describe("analyticsConsentInfo initial state", () => {
+  it("should default consentDate and privacyPolicyVersion to null", () => {
+    expect(SETTINGS_INITIAL_STATE.analyticsConsentInfo).toEqual({
+      consentDate: null,
+      privacyPolicyVersion: null,
+    });
+  });
+
+  it("should set analyticsConsentInfo from action payload", () => {
+    const payload = {
+      consentDate: "2025-03-26T12:00:00.000Z",
+      privacyPolicyVersion: 1,
+    };
+    const action = setAnalyticsConsentInfo(payload);
+
+    expect(action.type).toBe(SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO);
+    expect(action.payload).toEqual(payload);
+
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+    expect(newState.analyticsConsentInfo).toEqual(payload);
+  });
+
+  it("should replace analyticsConsentInfo when dispatched again", () => {
+    const first = {
+      consentDate: "2025-01-01T00:00:00.000Z",
+      privacyPolicyVersion: 1,
+    };
+    const second = {
+      consentDate: "2025-06-01T00:00:00.000Z",
+      privacyPolicyVersion: 2,
+    };
+
+    const afterFirst = reducer(SETTINGS_INITIAL_STATE, setAnalyticsConsentInfo(first));
+    const afterSecond = reducer(afterFirst, setAnalyticsConsentInfo(second));
+
+    expect(afterSecond.analyticsConsentInfo).toEqual(second);
+  });
+
+  it("should expose stored value via analyticsConsentInfoSelector", () => {
+    const payload = {
+      consentDate: "2025-03-26T12:00:00.000Z",
+      privacyPolicyVersion: 3,
+    };
+    const settings = reducer(SETTINGS_INITIAL_STATE, setAnalyticsConsentInfo(payload));
+    const state = { ...({} as State), settings };
+
+    expect(analyticsConsentInfoSelector(state)).toEqual(payload);
+  });
+});
+
+describe("filterValidSettings for analyticsConsentInfo", () => {
+  it("should keep analyticsConsentInfo when importing partial settings", () => {
+    const importedSettings: Partial<SettingsState> = {
+      analyticsConsentInfo: {
+        consentDate: "2025-02-01T10:00:00.000Z",
+        privacyPolicyVersion: 2,
+      },
+    };
+
+    expect(filterValidSettings(importedSettings)).toEqual(importedSettings);
   });
 });
 

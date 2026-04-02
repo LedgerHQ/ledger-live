@@ -87,11 +87,7 @@ function useCacheManager() {
 
   useEffect(() => {
     if (!hasNewCountervaluesToExport(lastStateRef.current, state)) return;
-    const exported = exportCountervalues(
-      state,
-      userSettings.trackingPairs,
-      userSettings.selectedTimeRange,
-    );
+    const exported = exportCountervalues(state, userSettings.trackingPairs);
     setKey("app", "countervalues", exported);
     lastStateRef.current = state;
   }, [state, userSettings]);

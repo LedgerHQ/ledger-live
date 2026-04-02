@@ -16,7 +16,7 @@ import type { AccountIdParams, CryptoAssetsStore } from "@ledgerhq/types-live";
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
 
-describe("coin-framework", () => {
+describe("ledger-wallet-framework", () => {
   describe("accountId", () => {
     describe("safeEncodeTokenId", () => {
       it("shouldn't throw with falsy tokenId", () => {

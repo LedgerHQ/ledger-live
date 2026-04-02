@@ -1,5 +1,5 @@
 import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { Operation as APIOperation } from "@ledgerhq/coin-framework/api/types";
+import { Operation as APIOperation } from "@ledgerhq/coin-module-framework/api/types";
 import { Operation } from "@ledgerhq/types-live";
 import {
   BATCH_TRANSFER_TYPES,

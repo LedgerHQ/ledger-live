@@ -1,12 +1,12 @@
 import {
-  TransactionType,
+  AccountAddress,
+  type CredentialDeploymentTransaction,
   pathToBuffer,
   serializeTransfer,
   serializeTransferWithMemo,
-  AccountAddress,
+  TransactionType,
+  type Transaction,
 } from "@ledgerhq/concordium-core";
-import type { Transaction } from "@ledgerhq/concordium-core";
-import type { CredentialDeploymentTransaction } from "@ledgerhq/concordium-core";
 import {
   serializeTransactionPayloads,
   prepareTransferAPDU,

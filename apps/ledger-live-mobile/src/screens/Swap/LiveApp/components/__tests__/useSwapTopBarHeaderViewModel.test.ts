@@ -41,6 +41,7 @@ describe("useSwapTopBarHeaderViewModel", () => {
       isSyncDrawerOpen: false,
       openSyncDrawer: noop,
       closeSyncDrawer: noop,
+      onTryRefresh: noop,
     }));
   });
 

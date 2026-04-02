@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlocksAtHeight, getBlockInfoByHash } from "../../network/proxyClient";
 
 export async function getBlockInfo(height: number, currencyId: string): Promise<BlockInfo> {

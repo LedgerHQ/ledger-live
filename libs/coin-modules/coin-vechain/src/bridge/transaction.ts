@@ -6,7 +6,7 @@ import type {
   TransactionStatusRaw,
 } from "../types";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,

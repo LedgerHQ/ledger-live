@@ -18,7 +18,7 @@ describe("lastBlock", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const config = getCoinConfig(currency);
+      const config = getCoinConfig(currency.id);
       return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });

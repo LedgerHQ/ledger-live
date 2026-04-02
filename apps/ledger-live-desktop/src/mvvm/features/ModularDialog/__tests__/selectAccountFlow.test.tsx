@@ -53,12 +53,12 @@ beforeEach(() => {
 
 const mockCurrencies = currencies.map(currency => currency.id);
 
-const defaultModularDrawerState = {
+const defaultModularDialogState = {
   isOpen: true,
   dialogParams: { currencies: mockCurrencies, onAccountSelected: mockOnAccountSelected },
 };
 
-const createFilteredModularDrawerState = (currencies: string[]) => ({
+const createFilteredModularDialogState = (currencies: string[]) => ({
   searchedValue: undefined,
   isOpen: true,
   dialogParams: {
@@ -75,7 +75,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should render AssetSelection step with correct props", async () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { modularDrawer: defaultModularDrawerState },
+      initialState: { modularDialog: defaultModularDialogState },
     });
 
     expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
@@ -86,7 +86,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { modularDrawer: defaultModularDrawerState },
+      initialState: { modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -102,7 +102,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should navigate to AccountSelection step after network selection", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [ETH_ACCOUNT], modularDrawer: defaultModularDrawerState },
+      initialState: { accounts: [ETH_ACCOUNT], modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -121,7 +121,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should call onSelectAccount after accountSelection", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [ETH_ACCOUNT], modularDrawer: defaultModularDrawerState },
+      initialState: { accounts: [ETH_ACCOUNT], modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -142,7 +142,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id]),
+        modularDialog: createFilteredModularDialogState([ethereumCurrency.id]),
       },
     });
 
@@ -156,7 +156,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id, arbitrumCurrency.id]),
+        modularDialog: createFilteredModularDialogState([ethereumCurrency.id, arbitrumCurrency.id]),
       },
     });
 
@@ -169,7 +169,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: createFilteredModularDrawerState([bitcoinCurrency.id]),
+        modularDialog: createFilteredModularDialogState([bitcoinCurrency.id]),
       },
     });
 
@@ -185,7 +185,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: createFilteredModularDrawerState([bitcoinCurrency.id]),
+        modularDialog: createFilteredModularDialogState([bitcoinCurrency.id]),
       },
     });
 
@@ -208,7 +208,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should go back to AssetSelection step when clicking on back button", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { modularDrawer: defaultModularDrawerState },
+      initialState: { modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -231,7 +231,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        modularDrawer: defaultModularDrawerState,
+        modularDialog: defaultModularDialogState,
       },
     });
 
@@ -254,7 +254,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id]),
+        modularDialog: createFilteredModularDialogState([ethereumCurrency.id]),
       },
     });
 
@@ -266,7 +266,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
-        modularDrawer: createFilteredModularDrawerState([ethereumCurrency.id, arbitrumCurrency.id]),
+        modularDialog: createFilteredModularDialogState([ethereumCurrency.id, arbitrumCurrency.id]),
       },
     });
 
@@ -277,7 +277,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should not re trigger page tracking on asset search", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       initialState: {
-        modularDrawer: {
+        modularDialog: {
           flow: "flowTest",
           source: "sourceTest",
           isOpen: true,
@@ -335,7 +335,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should navigate normaly doing a complex flow", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { modularDrawer: defaultModularDrawerState },
+      initialState: { modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -380,7 +380,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT_WITH_USDC],
-        modularDrawer: createFilteredModularDrawerState([usdcToken.id]),
+        modularDialog: createFilteredModularDialogState([usdcToken.id]),
       },
     });
 
@@ -394,7 +394,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [BASE_ACCOUNT, ARB_ACCOUNT, BTC_ACCOUNT],
-        modularDrawer: createFilteredModularDrawerState([
+        modularDialog: createFilteredModularDialogState([
           baseCurrency.id,
           scrollCurrency.id,
           bitcoinCurrency.id,
@@ -413,10 +413,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        modularDrawer: {
-          ...defaultModularDrawerState,
+        modularDialog: {
+          ...defaultModularDialogState,
           dialogParams: {
-            ...defaultModularDrawerState.dialogParams,
+            ...defaultModularDialogState.dialogParams,
             uiUseCase: "perpetuals",
           },
         },
@@ -436,7 +436,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        modularDrawer: defaultModularDrawerState,
+        modularDialog: defaultModularDialogState,
       },
     });
 
@@ -453,7 +453,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should auto focus on search input when autoFocus is true", async () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { modularDrawer: defaultModularDrawerState },
+      initialState: { modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());
@@ -463,7 +463,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should display description when there are no accounts for the selected network", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [], modularDrawer: defaultModularDrawerState },
+      initialState: { accounts: [], modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -482,7 +482,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should NOT display description when there are accounts for the selected network", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [ETH_ACCOUNT], modularDrawer: defaultModularDrawerState },
+      initialState: { accounts: [ETH_ACCOUNT], modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());

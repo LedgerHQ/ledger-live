@@ -3,7 +3,7 @@ import { FlatList } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LumenTextStyle, LumenViewStyle, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useDistribution } from "~/actions/general";
+import { useDetailedAllocationViewModel } from "./hooks/useDetailedAllocationViewModel";
 import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
@@ -14,7 +14,7 @@ import RingChart from "./components/RingChart";
 const size = normalize(200);
 
 function DetailedAllocation() {
-  const distribution = useDistribution({ showEmptyAccounts: true });
+  const { list } = useDetailedAllocationViewModel();
   const { t } = useTranslation();
 
   const styles = useStyleSheet(
@@ -34,18 +34,18 @@ function DetailedAllocation() {
     <SafeAreaView isFlex edges={["bottom"]}>
       <Box lx={Container}>
         <Box lx={BoxContainer}>
-          <RingChart size={size} data={distribution.list} />
+          <RingChart size={size} data={list} />
           <Box lx={RingChartContainer} pointerEvents="none">
             <Text typography="heading1" lx={Heading}>
-              {distribution.list.length}
+              {list.length}
             </Text>
             <Text typography="body1" lx={Body}>
-              {t("distribution.assets", { count: distribution.list.length })}
+              {t("distribution.assets", { count: list.length })}
             </Text>
           </Box>
         </Box>
         <FlatList
-          data={distribution.list}
+          data={list}
           renderItem={renderItem}
           keyExtractor={item => item.currency.id}
           style={styles.flatList}

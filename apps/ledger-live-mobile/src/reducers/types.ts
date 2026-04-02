@@ -154,6 +154,8 @@ export type DynamicContentState = {
   localCategoriesCards: CategoryContentCard[];
   /** Local/debug mobile cards (merged in selectors, not from Braze) */
   localMobileCards: BrazeContentCard[];
+  /** Local/debug wallet carousel cards (bottom Portfolio carousel, merged in selector) */
+  localWalletCards: WalletContentCard[];
 };
 
 // === IN VIEW STATE ===
@@ -293,6 +295,12 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   deprecationDoNotRemind: string[];
+  analyticsConsentInfo: AnalyticsConsentInfo;
+};
+
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export type NotificationsSettings = {
@@ -300,6 +308,8 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
+  totalMarketCap: boolean;
+  topGainersLosers: boolean;
 };
 
 // === WALLET CONNECT STATE ===

@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
@@ -51,7 +51,7 @@ describe("createApi", () => {
     const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
 
     createApi(mockConfig, mockCurrency.id);
-    const config = coinConfig.getCoinConfig(mockCurrency);
+    const config = coinConfig.getCoinConfig(mockCurrency.id);
 
     expect(mockSetCoinConfig).toHaveBeenCalled();
     expect(config).toMatchObject({

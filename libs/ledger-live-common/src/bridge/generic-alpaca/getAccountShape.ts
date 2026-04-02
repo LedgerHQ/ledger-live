@@ -8,7 +8,7 @@ import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 

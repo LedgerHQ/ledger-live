@@ -2,7 +2,7 @@ import { CosmosMessage, CosmosTx } from "../types";
 
 export type GetAccountDetails = {
   account: /** @warning ⚠️⚠️  This is undocumented and based on real life requests */
-  | {
+    | {
         "@type": "/cosmos.auth.v1beta1.BaseAccount";
         address: string;
         pub_key: {

@@ -4,6 +4,7 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
@@ -13,6 +14,7 @@ import {
   setRefreshStarted,
   setRefreshCompleted,
   setLastUserSyncClickTimestamp,
+  setOfflineRefreshAttempt,
   selectLastSyncTimestamp,
 } from "~/reducers/portfolioRefresh";
 
@@ -43,6 +45,7 @@ function globalSyncRefreshControl<P>(
     const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
     const hasNoAccounts = useSelector(hasNoAccountsSelector);
     const route = useRoute();
+    const { isConnected, isInternetReachable } = useNetInfo();
     const refreshingRef = useRef(refreshing);
     refreshingRef.current = refreshing;
 
@@ -69,6 +72,10 @@ function globalSyncRefreshControl<P>(
     function handleRefresh() {
       if (refreshingRef.current) return;
       if (shouldDisplayBalanceRefreshRework && hasNoAccounts) return;
+      if (shouldDisplayBalanceRefreshRework && (isConnected === false || isInternetReachable === false)) {
+        dispatch(setOfflineRefreshAttempt(Date.now()));
+        return;
+      }
       onRefresh();
     }
 

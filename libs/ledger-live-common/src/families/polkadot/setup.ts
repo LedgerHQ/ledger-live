@@ -15,17 +15,16 @@ import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency): PolkadotCoinConfig => {
-  if (!currency) {
+const getCurrencyConfig = (currencyId?: string): PolkadotCoinConfig => {
+  if (!currencyId) {
     throw new Error("No currency provided");
   }
-  return getCurrencyConfiguration<PolkadotCoinConfig>(currency);
+  return getCurrencyConfiguration<PolkadotCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, PolkadotAccount, TransactionStatus> = createBridges(

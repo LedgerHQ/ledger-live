@@ -1,4 +1,4 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { decode, encodeForSigning } from "ripple-binary-codec";
 import { deriveKeypair, generateSeed, sign } from "ripple-keypairs";
 import { createApi } from ".";

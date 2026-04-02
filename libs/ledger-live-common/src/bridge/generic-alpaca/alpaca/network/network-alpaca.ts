@@ -15,7 +15,7 @@ import type {
   CraftedTransaction,
   Validator,
   AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import network from "@ledgerhq/live-network";
 

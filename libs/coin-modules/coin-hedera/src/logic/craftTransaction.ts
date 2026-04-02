@@ -9,7 +9,7 @@ import {
   TransactionId,
   TransferTransaction,
 } from "@hashgraph/sdk";
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {

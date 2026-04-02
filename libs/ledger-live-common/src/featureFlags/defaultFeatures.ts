@@ -194,6 +194,11 @@ export const DEFAULT_FEATURES: Features = {
     params: { supportedCurrencyIds: ["ethereum"] },
   },
 
+  evmNativeStaking: {
+    enabled: false,
+    params: { supportedCurrencyIds: [] },
+  },
+
   editBitcoinTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["bitcoin"] },
@@ -805,6 +810,7 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      quickActionsCtasVariant: false,
       tour: true,
       mainNavigation: true,
       lazyOnboarding: true,
@@ -821,6 +827,7 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      quickActionsCtasVariant: false,
       mainNavigation: true,
       tour: true,
       lazyOnboarding: true,

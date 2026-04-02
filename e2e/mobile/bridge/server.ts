@@ -124,9 +124,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
   for (const id in flags) {
     if (isFeatureId(id, flags)) {
-      await setFeatureFlag({ id, value: flags[id] });
+      setFeatureFlag({ id, value: flags[id] });
     }
   }
+  await getFlags();
 }
 
 export async function setFeatureFlag(flag: SettingsSetOverriddenFeatureFlagPlayload) {
@@ -142,7 +143,10 @@ async function navigate(name: string) {
 }
 
 export async function swapSetup() {
-  postMessage({ type: "swapSetup", id: uniqueId() });
+  if (!process.env.SWAP_API_BASE) {
+    console.warn("[swapSetup] SWAP_API_BASE env var is not set, will use client-side default");
+  }
+  return fetchData({ type: "swapSetup", id: uniqueId(), swapApiBase: process.env.SWAP_API_BASE });
 }
 
 export async function waitSwapReady() {
@@ -229,6 +233,14 @@ function onMessage(messageStr: string) {
       if (pending) {
         global.pendingCallbacks.delete("getEnvs");
         pending.callback(msg.payload);
+      }
+      break;
+    }
+    case "swapSetupDone": {
+      const pending = global.pendingCallbacks?.get("swapSetup");
+      if (pending) {
+        global.pendingCallbacks.delete("swapSetup");
+        pending.callback("swapSetup done");
       }
       break;
     }

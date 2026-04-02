@@ -22,8 +22,8 @@ const fakeCurrencyWithoutGasTracker: Partial<CryptoCurrency> = {
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
-mockGetConfig.mockImplementation((currency: { id: string }): any => {
-  switch (currency.id) {
+mockGetConfig.mockImplementation((currencyId: string): any => {
+  switch (currencyId) {
     case "my_new_chain": {
       return {
         info: {

@@ -4,7 +4,7 @@ import {
   MemoNotSupported,
   Operation,
   ListOperationsOptions,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
@@ -168,7 +168,7 @@ export async function listOperations(
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
-  const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
+  const explorerOrder = options.limit === undefined ? "desc" : (options.order ?? "desc");
   const {
     lastCoinOperations,
     lastTokenOperations,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -12,6 +12,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
 import { Chip } from "./Chip";
+import { track } from "~/renderer/analytics/segment";
+import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 
 type EditCryptoAddressNameDialogProps = {
   children: React.ReactNode;
@@ -29,31 +31,63 @@ export const EditCryptoAddressNameDialog = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
+  const clickGuardRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      clickGuardRef.current?.abort();
+    };
+  }, []);
 
   const normalizedValue = normalizeName(value);
   const isConfirmDisabled = normalizedValue.length === 0 || normalizedValue === initialValue.trim();
 
-  const handleConfirm = () => {
-    onConfirm(normalizedValue);
-    setOpen(false);
-  };
-
   const handleOpenChange = (newOpen: boolean) => {
+    clickGuardRef.current?.abort();
+    clickGuardRef.current = null;
     if (newOpen) {
       setValue(initialValue);
+      track("button_clicked", { button: "edit_account_name", page: CRYPTO_TRACKING_PAGE_NAME });
     }
     setOpen(newOpen);
+  };
+
+  /** Prevents Radix "ghost click": swallow the resulting click before closing. */
+  const handlePointerDownOutside: NonNullable<
+    React.ComponentProps<typeof DialogContent>["onPointerDownOutside"]
+  > = e => {
+    e.preventDefault();
+    clickGuardRef.current?.abort();
+    const ac = new AbortController();
+    clickGuardRef.current = ac;
+    globalThis.addEventListener(
+      "click",
+      ev => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        handleOpenChange(false);
+      },
+      { capture: true, once: true, signal: ac.signal },
+    );
+  };
+
+  const handleConfirm = () => {
+    onConfirm(normalizedValue);
+    handleOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent data-testid="edit-crypto-address-name-dialog-content">
+      <DialogContent
+        data-testid="edit-crypto-address-name-dialog-content"
+        onPointerDownOutside={handlePointerDownOutside}
+      >
         <DialogHeader
           appearance="expanded"
           title={t("cryptoAddresses.editName.title")}
-          onClose={() => setOpen(false)}
+          onClose={() => handleOpenChange(false)}
         />
         <DialogBody className="flex flex-col gap-16">
           <TextInput

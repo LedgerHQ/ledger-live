@@ -38,7 +38,7 @@ import type {
  * @returns {string}
  */
 const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
-  const config = coinConfig.getCoinConfig(currency);
+  const config = coinConfig.getCoinConfig(currency?.id);
   let sidecarUrl = config.sidecar.url;
 
   if (
@@ -58,7 +58,7 @@ const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
 };
 
 const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
-  return coinConfig.getCoinConfig(currency).staking?.electionStatusThreshold || 25;
+  return coinConfig.getCoinConfig(currency?.id).staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
@@ -72,7 +72,7 @@ async function callSidecar<T>(
   method: "GET" | "POST" = "GET",
   data?: unknown,
 ) {
-  const credentials = coinConfig.getCoinConfig(currency).sidecar.credentials;
+  const credentials = coinConfig.getCoinConfig(currency?.id).sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
   return network<T>({
     headers,

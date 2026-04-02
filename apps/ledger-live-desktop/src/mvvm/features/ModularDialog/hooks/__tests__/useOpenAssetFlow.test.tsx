@@ -1,13 +1,12 @@
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook } from "tests/testSetup";
-import { useOpenAssetFlowDialog } from "../useOpenAssetFlow";
+import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
-describe("useOpenAssetFlowDialog", () => {
-  it("should handle openAssetFlowDialog", () => {
+describe("useOpenAssetFlow", () => {
+  it("should handle openAssetFlow", () => {
     const { result, store } = renderHook(
-      () =>
-        useOpenAssetFlowDialog({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
+      () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
       {
         initialState: {
           settings: {
@@ -24,18 +23,17 @@ describe("useOpenAssetFlowDialog", () => {
       },
     );
 
-    result.current.openAssetFlowDialog();
+    result.current.openAssetFlow();
 
-    expect(store.getState().modularDrawer.isOpen).toBe(true);
-    expect(store.getState().modularDrawer.flow).toBe(ModularDrawerLocation.LIVE_APP);
-    expect(store.getState().modularDrawer.source).toBe("test");
-    expect(store.getState().modularDrawer.dialogParams?.currencies?.length).toBe(0);
+    expect(store.getState().modularDialog.isOpen).toBe(true);
+    expect(store.getState().modularDialog.flow).toBe(ModularDrawerLocation.LIVE_APP);
+    expect(store.getState().modularDialog.source).toBe("test");
+    expect(store.getState().modularDialog.dialogParams?.currencies?.length).toBe(0);
   });
 
-  it("should handle openAssetFlowDialog to accountFlow", () => {
+  it("should handle openAssetFlow to accountFlow", () => {
     const { result, store } = renderHook(
-      () =>
-        useOpenAssetFlowDialog({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
+      () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
       {
         initialState: {
           settings: {
@@ -52,20 +50,19 @@ describe("useOpenAssetFlowDialog", () => {
       },
     );
 
-    result.current.openAssetFlowDialog();
+    result.current.openAssetFlow();
 
-    expect(store.getState().modularDrawer.isOpen).toBe(true);
+    expect(store.getState().modularDialog.isOpen).toBe(true);
 
     result.current.openAddAccountFlow(getCryptoCurrencyById("bitcoin"));
 
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBe(true);
   });
 
   it("should handle openAddAccountFlow", () => {
     const { result, store } = renderHook(
-      () =>
-        useOpenAssetFlowDialog({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
+      () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
       {
         initialState: {
           settings: {
@@ -84,7 +81,7 @@ describe("useOpenAssetFlowDialog", () => {
 
     result.current.openAddAccountFlow(getCryptoCurrencyById("bitcoin"));
 
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBe(true);
   });
 });

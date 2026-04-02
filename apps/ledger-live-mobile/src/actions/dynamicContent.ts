@@ -1,6 +1,6 @@
 import { createAction } from "redux-actions";
 import {
-  WalletContentCard,
+  type WalletContentCard,
   AssetContentCard,
   NotificationContentCard,
   CategoryContentCard,
@@ -16,6 +16,7 @@ import {
   DynamicContentSetLandingStickyCtaCardsPayload,
   DynamicContentAddLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
+  DynamicContentAddLocalWalletCarouselPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -85,3 +86,11 @@ const removeLocalCardAction = createAction<DynamicContentRemoveLocalCardPayload>
 );
 
 export const removeLocalCard = (cardId: string) => removeLocalCardAction(cardId);
+
+const addLocalWalletCarouselCardsAction =
+  createAction<DynamicContentAddLocalWalletCarouselPayload>(
+    DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS,
+  );
+
+export const addLocalWalletCarouselCards = (cards: DynamicContentAddLocalWalletCarouselPayload) =>
+  addLocalWalletCarouselCardsAction(cards);

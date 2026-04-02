@@ -1,4 +1,4 @@
-import { Stake } from "@ledgerhq/coin-framework/api/types";
+import { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
@@ -58,7 +58,7 @@ const getAmountFromDecoded = (currencyId: string, decoded: unknown): bigint => {
 // TODO: tech debt: the call should be implemented in the node API as an optional function (like traceBlock)
 const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
   const { currency, config, address, currencyId, validatorAddress } = stakingContract;
-  const node = getCoinConfig(currency).info.node;
+  const node = getCoinConfig(currency.id).info.node;
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }

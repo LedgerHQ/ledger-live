@@ -8,8 +8,8 @@ import { getExplorerApi } from "./index";
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
-mockGetConfig.mockImplementation((currency: any): any => {
-  switch (currency.id) {
+mockGetConfig.mockImplementation((currencyId: string): any => {
+  switch (currencyId) {
     case "anything-coin":
       return { info: { explorer: { type: "anything", uri: "notworking" } } };
     case "etherscan-coin": {

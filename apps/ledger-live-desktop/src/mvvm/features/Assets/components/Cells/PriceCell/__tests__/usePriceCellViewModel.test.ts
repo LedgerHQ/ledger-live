@@ -14,6 +14,7 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
 }));
 
 jest.mock("~/renderer/hooks/usePrice");
+jest.mock("~/renderer/actions/deprecated/ondemand-countervalues");
 
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
 const mockedUsePrice = jest.mocked(usePrice);
@@ -74,7 +75,8 @@ describe("usePriceCellViewModel", () => {
     );
   });
 
-  it("should format placeholderPrice when provided with a high value", () => {
+  it("should fall back to placeholderPrice (high value) when counterValue is undefined", () => {
+    mockedUsePrice.mockReturnValue(mockUsePriceReturn(undefined));
     mockedFormatCurrencyUnit.mockReturnValue("USD 43,000.00");
 
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency, 43000));
@@ -88,7 +90,8 @@ describe("usePriceCellViewModel", () => {
     );
   });
 
-  it("should format placeholderPrice with subMagnitude for small values", () => {
+  it("should fall back to placeholderPrice with subMagnitude for small values when counterValue is undefined", () => {
+    mockedUsePrice.mockReturnValue(mockUsePriceReturn(undefined));
     mockedFormatCurrencyUnit.mockReturnValue("USD 0.07");
 
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency, 0.07));
@@ -102,17 +105,16 @@ describe("usePriceCellViewModel", () => {
     );
   });
 
-  it("should use placeholderPrice over counterValue when both are available", () => {
+  it("should use counterValue over placeholderPrice when both are available", () => {
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(new BigNumber(50000)));
-    mockedFormatCurrencyUnit.mockReturnValue("USD 43,000.00");
+    mockedFormatCurrencyUnit.mockReturnValue("$50,000.00");
 
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency, 43000));
 
-    expect(result.current.formattedPrice).toBe("USD 43,000.00");
-    const expectedValue = new BigNumber(43000).times(10 ** usdMagnitude);
+    expect(result.current.formattedPrice).toBe("$50,000.00");
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
-      expectedValue,
+      new BigNumber(50000),
       expect.objectContaining({ showCode: true }),
     );
   });

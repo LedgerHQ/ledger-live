@@ -1,6 +1,7 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getSendDescriptor } from "../registry";
 import type {
+  CoinControlConfig,
   CustomFeeConfig,
   FeeAssetsConfig,
   FeePresetOption,
@@ -28,6 +29,7 @@ export const sendFeatures = {
   hasCustomAssets: fromDescriptor(d => d.fees.hasCustomAssets, false),
   getCustomAssetsConfig: fromDescriptor(d => d.fees.customAssets, null as FeeAssetsConfig | null),
   hasCoinControl: fromDescriptor(d => d.fees.hasCoinControl, false),
+  getCoinControlConfig: fromDescriptor(d => d.fees.coinControl, null as CoinControlConfig | null),
   getFeePresetOptions: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,

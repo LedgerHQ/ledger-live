@@ -16,8 +16,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/ZCash.js",
-  "module": "lib-es/ZCash.js",
   "types": "lib/types.d.ts",
   "typesVersions": {
     "*": {
@@ -38,7 +36,7 @@
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
+      "import": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -51,25 +49,29 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "devDependencies": {
     "@swc/core": "catalog:",
-    "@types/node": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
-    "msw": "catalog:"
+    "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
   },
   "dependencies": {
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/zcash-decrypt": "0.1.0",
+    "@ledgerhq/zcash-decrypt": "0.2.0",
     "bignumber.js": "^9.1.2",
     "rxjs": "catalog:"
   }

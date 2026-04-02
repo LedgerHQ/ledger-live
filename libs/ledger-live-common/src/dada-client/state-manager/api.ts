@@ -1,4 +1,10 @@
-import { createApi, fetchBaseQuery, FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
+} from "@reduxjs/toolkit/query/react";
 import { convertApiAssets } from "@ledgerhq/cryptoassets";
 import { RawApiResponse } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
@@ -11,6 +17,14 @@ import {
   ONE_DAY_IN_SECONDS,
   PageParam,
 } from "./types";
+
+const ALLOWED_DADA_HOSTS = new Set(["dada.api.ledger.com", "dada.api.ledger-test.com"]);
+
+function assertDadaApiUrl(url: URL): void {
+  if (!ALLOWED_DADA_HOSTS.has(url.hostname)) {
+    throw new Error(`Blocked request to untrusted host: ${url.hostname}`);
+  }
+}
 
 function transformAssetsResponse(
   response: RawApiResponse,
@@ -27,6 +41,52 @@ function transformAssetsResponse(
       nextCursor,
     },
   };
+}
+
+export async function fetchAllAssetsByCategory(
+  queryArg: GetAssetsByCategoryParams,
+): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta | undefined>> {
+  try {
+    const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
+    const allTickers: string[] = [];
+    let cursor: string | undefined;
+
+    do {
+      const url = new URL(`${baseUrl}/assets`);
+      url.searchParams.set("categories", queryArg.category);
+      url.searchParams.set("product", queryArg.product);
+      url.searchParams.set("pageSize", "100");
+      url.searchParams.set("minVersion", queryArg.version);
+      if (cursor) {
+        url.searchParams.set("cursor", cursor);
+      }
+
+      assertDadaApiUrl(url);
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        return {
+          error: {
+            status: response.status,
+            data: `Failed to fetch assets by category: ${response.statusText}`,
+          },
+        };
+      }
+
+      const data: RawApiResponse = await response.json();
+      allTickers.push(...Object.values(data.cryptoAssets).map(a => a.ticker));
+      cursor = response.headers.get("x-ledger-next") || undefined;
+    } while (cursor);
+
+    return { data: allTickers };
+  } catch (error) {
+    return {
+      error: {
+        status: "FETCH_ERROR",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+    };
+  }
 }
 
 export const assetsDataApi = createApi({
@@ -105,20 +165,9 @@ export const assetsDataApi = createApi({
       transformResponse: transformAssetsResponse,
     }),
     getAssetsByCategory: build.query<string[], GetAssetsByCategoryParams>({
-      query: queryArg => {
-        const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
-        return {
-          url: `${baseUrl}/assets`,
-          params: {
-            categories: queryArg.category,
-            product: queryArg.product,
-            pageSize: 100,
-            minVersion: queryArg.version,
-          },
-        };
+      queryFn: async queryArg => {
+        return fetchAllAssetsByCategory(queryArg);
       },
-      transformResponse: (response: RawApiResponse) =>
-        Object.values(response.cryptoAssets).map(a => a.ticker),
       keepUnusedDataFor: ONE_DAY_IN_SECONDS,
     }),
   }),

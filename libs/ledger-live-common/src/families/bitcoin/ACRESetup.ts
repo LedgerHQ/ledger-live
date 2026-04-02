@@ -23,7 +23,7 @@ const createSigner = (transport: Transport, currency: CryptoCurrency) => {
   return new Acre({ transport, currency: currency.id });
 };
 
-const signerContext: SignerContext = <T>(
+const signerContext: SignerContext = <T,>(
   deviceId: string,
   crypto: CryptoCurrency,
   fn: (signer: Acre) => Promise<T>,
@@ -32,8 +32,8 @@ const signerContext: SignerContext = <T>(
     withDevice(deviceId)((transport: Transport) => from(fn(createSigner(transport, crypto)))),
   );
 
-const getCurrencyConfig = (currency: CryptoCurrency) => {
-  return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
+const getCurrencyConfig = (currencyId: string) => {
+  return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currencyId) };
 };
 
 const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(

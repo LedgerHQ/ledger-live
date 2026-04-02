@@ -137,7 +137,7 @@ describe("Portfolio", () => {
       const account2 = genAccountBitcoin("bitcoin_2");
       const { state, to } = await loadCV(account);
       const portfolio = getPortfolio([account, account2], range, state, to);
-      const { history: history } = getBalanceHistoryWithCountervalue(
+      const { history } = getBalanceHistoryWithCountervalue(
         account,
         range,
         count,
@@ -156,7 +156,7 @@ describe("Portfolio", () => {
     it("should recompose partial cache", async () => {
       const account = genAccountBitcoin("bitcoin_whatever");
       const { state, to } = await loadCV(account);
-      const { history: history } = getBalanceHistoryWithCountervalue(
+      const { history } = getBalanceHistoryWithCountervalue(
         account,
         "month",
         100,
@@ -210,7 +210,7 @@ describe("Portfolio", () => {
       const account2 = genAccountBitcoin("bitcoin_2");
       const { state, to } = await loadCV(account);
       const portfolio = getCurrencyPortfolio([account, account2], range, state, to);
-      const { history: history } = getBalanceHistoryWithCountervalue(
+      const { history } = getBalanceHistoryWithCountervalue(
         account,
         range,
         count,

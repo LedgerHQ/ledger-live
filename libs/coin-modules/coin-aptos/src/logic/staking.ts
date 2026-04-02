@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getMaxSendBalance } from "../bridge/logic";

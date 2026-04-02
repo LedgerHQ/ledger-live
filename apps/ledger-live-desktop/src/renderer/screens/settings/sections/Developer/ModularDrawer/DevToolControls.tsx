@@ -1,5 +1,5 @@
 import React from "react";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { LOCATIONS, LIVE_APPS } from "./constants";
 import { LocationOption, LiveAppOption } from "./types";
 import { VerticalLabeledSelect } from "./VerticalLabeledSelect";

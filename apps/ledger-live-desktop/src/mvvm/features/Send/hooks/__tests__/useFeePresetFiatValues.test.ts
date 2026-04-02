@@ -4,7 +4,7 @@ import { renderHook, waitFor } from "tests/testSetup";
 import { useFeePresetFiatValues } from "../useFeePresetFiatValues";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getCryptoCurrencyById,
@@ -18,7 +18,7 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
   useCalculateCountervalueCallback: jest.fn(),
 }));
-jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit");
+jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit");
 
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedUseCalculateCountervalueCallback = jest.mocked(useCalculateCountervalueCallback);

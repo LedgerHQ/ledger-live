@@ -1,4 +1,4 @@
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";

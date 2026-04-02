@@ -28,7 +28,7 @@ import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";

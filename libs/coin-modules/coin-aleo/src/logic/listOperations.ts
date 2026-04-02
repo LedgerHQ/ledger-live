@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-framework/api/types";
+import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { toAlpacaOperation, toBridgeOperation } from "./utils";

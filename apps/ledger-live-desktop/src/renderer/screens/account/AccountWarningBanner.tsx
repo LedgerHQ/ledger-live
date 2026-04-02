@@ -8,7 +8,7 @@ import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { openURL } from "~/renderer/linking";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 type Props = {
   currency: CryptoCurrency;
@@ -18,7 +18,7 @@ export const AccountWarningCustomBanner = ({ currency }: Props) => {
   let currencyConfig: CurrencyConfig | undefined = undefined;
 
   try {
-    currencyConfig = getCurrencyConfiguration(currency);
+    currencyConfig = getCurrencyConfiguration(currency.id);
   } catch (err) {
     console.warn(err);
   }
@@ -53,7 +53,7 @@ export const AccountWarningBanner = ({ currency }: Props) => {
   let currencyConfig: CurrencyConfig | undefined = undefined;
 
   try {
-    currencyConfig = getCurrencyConfiguration(currency);
+    currencyConfig = getCurrencyConfiguration(currency.id);
   } catch (err) {
     console.warn(err);
   }

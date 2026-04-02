@@ -8,7 +8,7 @@ import {
   CraftedTransaction,
   TransactionIntent,
   AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { type AlgorandCoinConfig } from "../config";
 import {
   broadcast,

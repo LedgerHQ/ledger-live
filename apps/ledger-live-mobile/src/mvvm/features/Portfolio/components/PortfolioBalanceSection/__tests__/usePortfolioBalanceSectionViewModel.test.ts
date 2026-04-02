@@ -46,6 +46,8 @@ function makeReturn(
     areAllAccountsUpToDate: true,
     hasAccounts: true,
     handleSync: jest.fn(),
+    isBridgeSyncPending: false,
+    triggerRefresh: jest.fn(),
     ...overrides,
   };
 }

@@ -2,8 +2,8 @@ import type {
   TransactionIntent,
   CraftedTransaction,
   FeeEstimation,
-} from "@ledgerhq/coin-framework/api/index";
-import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import type { Transaction as AlgoTx } from "algosdk";
 import {
   base64ToBytes,

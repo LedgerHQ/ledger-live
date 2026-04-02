@@ -19,7 +19,8 @@ Business domain entity packages. Each subdirectory is an independent pnpm worksp
 - Package name: `@domain/entity-<name>`
 - Directory name: `domain/entity/<name>/`
 - `package.json` must have `"private": true`
-- `zod` and `@reduxjs/toolkit` as `peerDependencies`
+- for schema definition use `zod` as dependency
+- for slice definition use `@reduxjs/toolkit` as dependency
 - Barrel export via `src/index.ts` (default export = reducer when applicable)
 - Mock and test files are not re-exported from the barrel
 

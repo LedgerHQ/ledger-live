@@ -7,7 +7,23 @@ import {
   mockBitcoinCurrency,
   mockEthereumCurrency,
   mockCardanoCurrency,
+  usdcToken,
 } from "./shared";
+import {
+  createFixtureAccount,
+  createFixtureTokenAccount,
+} from "@ledgerhq/live-common/mock/fixtures/cryptoCurrencies";
+import type { Account } from "@ledgerhq/types-live";
+
+const createMockEthAccountWithUSDC = (): Account => {
+  const ethAccount = createFixtureAccount("01");
+  const usdcSubAccount = createFixtureTokenAccount("01", usdcToken);
+  return {
+    ...ethAccount,
+    subAccounts: [{ ...usdcSubAccount, parentId: ethAccount.id }],
+  };
+};
+
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 
@@ -107,6 +123,46 @@ describe("DetailedAllocation Integration Tests", () => {
     const percentagePattern = /\d+%/;
     const percentages = screen.getAllByText(percentagePattern);
     expect(percentages.length).toBeGreaterThan(0);
+  });
+
+  describe("blacklisted tokens", () => {
+
+    const mockStateWithBlacklistedToken = (state: State): State => {
+     const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+        settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
+      };
+    }
+    const mockStateWithNonBlacklistedToken = (state: State): State => {
+     const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+        settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
+      };
+    }
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should display a token that is not blacklisted", () => {
+      render(<DetailedAllocation />, {
+        overrideInitialState: mockStateWithNonBlacklistedToken,
+      });
+
+      expect(screen.getByText(usdcToken.name)).toBeVisible();
+    });
+
+    it("should not display a blacklisted token in the distribution list", () => {
+      render(<DetailedAllocation />, {
+        overrideInitialState: mockStateWithBlacklistedToken,
+      });
+
+      expect(screen.queryByText(usdcToken.name)).toBeNull();
+    });
   });
 
   it("should track and navigate when distribution card is pressed", async () => {

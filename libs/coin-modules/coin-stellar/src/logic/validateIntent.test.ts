@@ -1,4 +1,4 @@
-import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import * as network from "../network";
 import * as horizon from "../network/horizon";

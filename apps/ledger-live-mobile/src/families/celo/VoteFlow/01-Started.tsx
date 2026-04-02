@@ -72,7 +72,7 @@ export default function VoteStarted({ navigation, route }: Props) {
         <View>
           <Alert type="info" title={t("celo.vote.flow.steps.starter.warning.description")} />
         </View>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="celo-vote-start-button">
           <Trans i18nKey="celo.vote.flow.steps.starter.cta" />
         </Button>
       </View>

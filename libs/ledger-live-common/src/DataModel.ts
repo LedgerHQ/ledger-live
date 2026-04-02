@@ -66,7 +66,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
         sequence: 0,
       };
     }
-    if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency).showNfts) {
+    if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency.id).showNfts) {
       if (Array.isArray(data.operations)) {
         data.operations = data.operations.filter(tx => !("nftOperations" in tx));
       }

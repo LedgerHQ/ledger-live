@@ -8,7 +8,7 @@ export const broadcast: AccountBridge<AleoTransaction, AleoAccount>["broadcast"]
   account,
   signedOperation,
 }) => {
-  const config = aleoCoinConfig.getCoinConfig(account.currency);
+  const config = aleoCoinConfig.getCoinConfig(account.currency.id);
 
   const hash = await logicBroadcast({
     configOrCurrencyId: config,

@@ -13,7 +13,7 @@ import { AccountList, ActionButtons, SuccessIcon, Title } from "./components";
 import { useAccountFormatter } from "./hooks";
 import { AccountsAddedProps } from "./types";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 const AccountsAdded = ({
   accounts,
@@ -22,7 +22,7 @@ const AccountsAdded = ({
   navigateToSelectAccount,
   isAccountSelectionFlow,
 }: Readonly<AccountsAddedProps>) => {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const formatAccount = useAccountFormatter();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
 

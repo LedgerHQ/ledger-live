@@ -1,6 +1,5 @@
-import { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import buildCoinConfig from "@ledgerhq/coin-framework/config";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 
 export type SuiConfig = {
   node: {
@@ -10,9 +9,5 @@ export type SuiConfig = {
 
 export type SuiCoinConfig = CurrencyConfig & SuiConfig;
 
-const { setCoinConfig, getCoinConfig: _getCoinConfig } = buildCoinConfig<SuiCoinConfig>();
-
-const getCoinConfig = (currencyId?: string): SuiCoinConfig =>
-  _getCoinConfig(currencyId ? ({ id: currencyId } as CryptoCurrency) : undefined);
-
+const { setCoinConfig, getCoinConfig } = buildCoinConfig<SuiCoinConfig>();
 export default { setCoinConfig, getCoinConfig };

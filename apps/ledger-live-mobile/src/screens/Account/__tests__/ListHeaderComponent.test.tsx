@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LayoutChangeEvent } from "react-native";
 import { ColorPalette } from "@ledgerhq/native-ui";
 import * as config from "@ledgerhq/live-common/config/index";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { ActionButtonEvent } from "~/components/FabActions";
 import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";

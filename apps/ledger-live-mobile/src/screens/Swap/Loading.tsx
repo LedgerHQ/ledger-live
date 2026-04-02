@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 
 export function Loading({ size = 40, color }: { size?: number; color?: string }) {
   return (

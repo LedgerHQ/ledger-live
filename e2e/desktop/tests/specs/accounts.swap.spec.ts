@@ -1,4 +1,5 @@
 import test from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
@@ -32,6 +33,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
@@ -127,6 +129,7 @@ test.describe("Swap - Rejected on device", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
@@ -235,6 +238,7 @@ for (const {
     setupEnv(true);
 
     test.use({
+      teamOwner: Team.SWAP,
       userdata: "speculos-x-other-account",
       speculosApp: app,
     });
@@ -299,6 +303,7 @@ test.describe("Swap a coin for which you have no account yet - from present to n
   const xrayTicket = "B2CQA-3353";
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account2.currency.speculosApp,
     cliCommandsOnApp: [
@@ -372,6 +377,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
   const xrayTicket = "B2CQA-3354";
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account1.currency.speculosApp,
     cliCommandsOnApp: [
@@ -445,6 +451,7 @@ test.describe("Swap a coin for which you have no account yet - both not present"
   setupEnv(true);
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "1AccountDOT",
     speculosApp: account2.currency.speculosApp,
   });
@@ -513,6 +520,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "speculos-tests-app",
     speculosApp: app,
   });

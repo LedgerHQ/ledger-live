@@ -1,4 +1,4 @@
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import solanaCoinConfig, { SolanaCoinConfig } from "../config";

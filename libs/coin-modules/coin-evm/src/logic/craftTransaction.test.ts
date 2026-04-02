@@ -2,7 +2,7 @@ import {
   BufferTxData,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
@@ -24,7 +24,7 @@ describe("craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const config = getCoinConfig(currency);
+      const config = getCoinConfig(currency.id);
       return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });

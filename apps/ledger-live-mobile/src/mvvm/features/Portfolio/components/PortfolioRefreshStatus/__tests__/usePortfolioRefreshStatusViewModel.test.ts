@@ -1,9 +1,12 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, act } from "@tests/test-renderer";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import * as useWalletFeaturesConfigModule from "@ledgerhq/live-common/featureFlags/index";
 import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
-import { usePortfolioRefreshStatusViewModel } from "../usePortfolioRefreshStatusViewModel";
+import {
+  usePortfolioRefreshStatusViewModel,
+  REFRESH_STATUS_VISIBLE_DURATION_MS,
+} from "../usePortfolioRefreshStatusViewModel";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 jest.mock("@ledgerhq/live-common/featureFlags/index");
@@ -62,4 +65,43 @@ it("outcome becomes error when syncPhase is failed after user refresh", () => {
   rerender({});
   expect(result.current.isRefreshing).toBe(false);
   expect(result.current.outcome).toBe("error");
+});
+
+it("outcome becomes success when syncPhase is synced after user refresh", () => {
+  mockSync("syncing", true);
+  const { result, rerender } = renderHook(() => usePortfolioRefreshStatusViewModel());
+
+  mockSync("synced");
+  rerender({});
+  expect(result.current.outcome).toBe("success");
+  expect(result.current.isVisible).toBe(true);
+});
+
+it("corrects outcome from success to error when syncPhase becomes failed during post-refresh window", () => {
+  mockSync("syncing", true);
+  const { result, rerender } = renderHook(() => usePortfolioRefreshStatusViewModel());
+
+  mockSync("synced");
+  rerender({});
+  expect(result.current.outcome).toBe("success");
+
+  mockSync("failed");
+  rerender({});
+  expect(result.current.outcome).toBe("error");
+});
+
+it("clears outcome to null after REFRESH_STATUS_VISIBLE_DURATION_MS elapses", () => {
+  mockSync("syncing", true);
+  const { result, rerender } = renderHook(() => usePortfolioRefreshStatusViewModel());
+
+  mockSync("synced");
+  rerender({});
+  expect(result.current.outcome).toBe("success");
+
+  act(() => {
+    jest.advanceTimersByTime(REFRESH_STATUS_VISIBLE_DURATION_MS);
+  });
+
+  expect(result.current.outcome).toBeNull();
+  expect(result.current.isVisible).toBe(false);
 });

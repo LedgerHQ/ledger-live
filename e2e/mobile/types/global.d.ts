@@ -27,6 +27,8 @@ import { CLI as CLIType } from "../utils/cliUtils";
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<string, number>;
+  var speculosStartupErrorMessage: string | undefined;
+  var speculosFailureStderr: string | undefined;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;

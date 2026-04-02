@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { XrpMapMemo } from "../types";
 import { XrpInvalidMemoError } from "./errors";
 import { validateIntent } from "./validateIntent";

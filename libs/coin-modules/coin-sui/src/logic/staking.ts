@@ -1,4 +1,4 @@
-import { Cursor, Page, Stake, Reward } from "@ledgerhq/coin-framework/api/types";
+import { Cursor, Page, Stake, Reward } from "@ledgerhq/coin-module-framework/api/types";
 import * as sdk from "../network";
 
 export const getStakes = (

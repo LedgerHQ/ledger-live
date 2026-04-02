@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type {
   HederaAccount,
   HederaEnrichedDelegation,

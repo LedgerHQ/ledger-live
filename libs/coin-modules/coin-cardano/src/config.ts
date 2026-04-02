@@ -1,4 +1,7 @@
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-module-framework/config";
 
 export type CardanoConfig = {
   maxFeesWarning: number;
@@ -7,6 +10,9 @@ export type CardanoConfig = {
 
 export type CardanoCoinConfig = CurrencyConfig & CardanoConfig;
 
-const coinConfig = buildCoinConfig<CardanoCoinConfig>();
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<CardanoCoinConfig>) => void;
+  getCoinConfig: (currencyId?: string) => CardanoCoinConfig;
+} = buildCoinConfig<CardanoCoinConfig>();
 
 export default coinConfig;

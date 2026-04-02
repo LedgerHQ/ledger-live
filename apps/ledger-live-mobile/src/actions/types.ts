@@ -36,6 +36,11 @@ import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/imp
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { UnknownAction } from "redux";
+import type {
+  BrazeContentCard,
+  CategoryContentCard,
+  WalletContentCard,
+} from "../dynamicContent/types";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -184,6 +189,7 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_ADD_LOCAL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_CARDS",
   DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS = "DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS",
   DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
+  DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -199,11 +205,13 @@ export type DynamicContentSetLandingStickyCtaCardsPayload =
 export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
 
 export type DynamicContentAddLocalCardsPayload = {
-  category: import("../dynamicContent/types").CategoryContentCard;
-  cards: import("../dynamicContent/types").BrazeContentCard[];
+  category: CategoryContentCard;
+  cards: BrazeContentCard[];
 };
 
 export type DynamicContentRemoveLocalCardPayload = string;
+
+export type DynamicContentAddLocalWalletCarouselPayload = WalletContentCard[];
 
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
@@ -213,7 +221,8 @@ export type DynamicContentPayload =
   | DynamicContentSetLandingStickyCtaCardsPayload
   | DynamicContentSetMobileCardsPayload
   | DynamicContentAddLocalCardsPayload
-  | DynamicContentRemoveLocalCardPayload;
+  | DynamicContentRemoveLocalCardPayload
+  | DynamicContentAddLocalWalletCarouselPayload;
 
 // === RATINGS ACTIONS ===
 
@@ -306,6 +315,7 @@ export enum SettingsActionTypes {
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
   DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
+  SET_ANALYTICS_CONSENT_INFO = "SET_ANALYTICS_CONSENT_INFO",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -393,6 +403,7 @@ export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTerms
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
@@ -454,6 +465,7 @@ export type SettingsPayload =
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt
+  | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload

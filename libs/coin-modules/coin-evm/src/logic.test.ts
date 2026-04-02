@@ -42,8 +42,8 @@ const mockGetConfig = jest.mocked(getCoinConfig);
 jest.mock("@ledgerhq/ledger-wallet-framework/account/sync");
 const mockedBaseGetSyncHash = jest.mocked(baseGetSyncHash);
 
-mockGetConfig.mockImplementation((currency: { id: string }): any => {
-  switch (currency.id) {
+mockGetConfig.mockImplementation((currencyId: string): any => {
+  switch (currencyId) {
     case "ethereum": {
       return {
         info: {

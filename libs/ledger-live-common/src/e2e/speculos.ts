@@ -464,6 +464,7 @@ export async function startSpeculos(
   } catch (e: unknown) {
     console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
+    throw sanitizeError(e);
   }
 }
 
@@ -489,6 +490,14 @@ interface ResponseData {
 export function getSpeculosAddress(): string {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
   return speculosAddress || "http://127.0.0.1";
+}
+
+const _capturedSpeculosScreenshots = new Map<number, Buffer[]>();
+
+export function drainSpeculosScreenshots(port: number): Buffer[] {
+  const screenshots = _capturedSpeculosScreenshots.get(port) ?? [];
+  _capturedSpeculosScreenshots.delete(port);
+  return screenshots;
 }
 
 export async function retryAxiosRequest<T>(
@@ -595,16 +604,26 @@ export const pressUntilTextFound = withDeviceController(
       const maxAttempts = 18;
       const speculosApiPort = getEnv("SPECULOS_API_PORT");
       const buttons = getButtonsController();
+      const seenScreens = new Set<string>();
+      const portScreenshots = _capturedSpeculosScreenshots.get(speculosApiPort) ?? [];
+      _capturedSpeculosScreenshots.set(speculosApiPort, portScreenshots);
 
       for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const texts = await fetchCurrentScreenTexts(speculosApiPort);
-        if (
-          strictMatch
-            ? texts === targetText
-            : texts.toLowerCase().includes(targetText.toLowerCase())
-        ) {
+        const isMatch = strictMatch
+          ? texts === targetText
+          : texts.toLowerCase().includes(targetText.toLowerCase());
+
+        if (!seenScreens.has(texts)) {
+          seenScreens.add(texts);
+          const screenshot = await takeScreenshot(speculosApiPort);
+          if (screenshot) portScreenshots.push(screenshot);
+        }
+
+        if (isMatch) {
           return await fetchAllEvents(speculosApiPort);
         }
+
         if (isTouchDevice()) {
           await swipeRight();
         } else {
@@ -613,8 +632,9 @@ export const pressUntilTextFound = withDeviceController(
         await waitForTimeOut(200);
       }
 
+      const screensLog = [...seenScreens].map((s, i) => `[${i + 1}] "${s}"`).join(" → ");
       throw new Error(
-        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen. Screens observed during navigation (${seenScreens.size} unique): ${screensLog}`,
       );
     },
 );
@@ -841,7 +861,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.DOGE.id:
     case Currency.BCH.id:
     case Currency.ZEC.id:
-      await sendBTCBasedCoin(tx);
+      await sendBTCBasedCoin(tx, currencyId);
       break;
     case Currency.DOT.id:
       await sendPolkadot(tx);

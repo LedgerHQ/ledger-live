@@ -263,7 +263,7 @@ export function mapJettonTxToOps(
 
     if (isSending) {
       const hash_message = jettonTxMessageHashesMap
-        ? jettonTxMessageHashesMap.get(hash) ?? hash
+        ? (jettonTxMessageHashesMap.get(hash) ?? hash)
         : hash;
 
       ops.push({

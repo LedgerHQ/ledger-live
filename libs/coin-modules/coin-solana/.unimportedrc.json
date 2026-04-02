@@ -21,16 +21,16 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
+    "follow-redirects",
+    "form-data",
     "jest-util",
-      "follow-redirects",
-      "form-data",
-      "proxy-from-env"
+    "proxy-from-env"
   ],
   "ignoreUnimported": [
     "src/datasets/solana.scanAccounts.1.ts",
-    "src/tests/preload.fixtures.ts",
+    "src/supportedFeatures.ts",
     "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/tests/preload.fixtures.ts"
   ],
   "ignoreUnused": []
 }

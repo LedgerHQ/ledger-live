@@ -1,4 +1,4 @@
-import { Balance } from "@ledgerhq/coin-framework/api/index";
+import { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { fetchTronAccount } from "../network";
 import type { AccountTronAPI } from "../network/types";

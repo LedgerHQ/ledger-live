@@ -1,4 +1,13 @@
 import { takeSpeculosScreenshot } from "./utils/speculosUtils";
+import {
+  attachTestExecutionConsoleToAllure,
+  attachFailureLogsToAllure,
+  attachSpeculosStartupErrorToAllure,
+  resetStderrCaptureForCurrentTest,
+  installConsoleCapture,
+  uninstallConsoleCapture,
+} from "./utils/loggingUtils";
+import { getLogs } from "./bridge/server";
 import { Circus } from "@jest/types";
 import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
 import { config as detoxConfig } from "detox/internals";
@@ -145,6 +154,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   async teardown() {
     try {
+      uninstallConsoleCapture();
       if (this.global.webSocket?.wss) {
         this.global.webSocket.wss.close();
         this.global.webSocket.wss = undefined;
@@ -180,14 +190,21 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     if (["hook_failure", "test_fn_failure"].includes(event.name)) {
       this.global.IS_FAILED = true;
-    }
-
-    if (this.global.IS_FAILED && ["test_fn_start", "test_fn_failure"].includes(event.name)) {
       await takeSpeculosScreenshot();
       await takeAppScreenshot("Test Failure");
+      try {
+        await attachTestExecutionConsoleToAllure();
+        await attachSpeculosStartupErrorToAllure();
+        const logsPayload = await getLogs();
+        await attachFailureLogsToAllure(logsPayload);
+      } catch (err) {
+        console.warn("Failed to attach failure logs to Allure:", err);
+      }
     }
 
     if (event.name === "run_start") {
+      resetStderrCaptureForCurrentTest();
+      installConsoleCapture();
       await logMemoryUsage();
     }
   }

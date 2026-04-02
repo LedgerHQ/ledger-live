@@ -4,10 +4,15 @@ import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "~/context/hooks";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import SettingsRow from "~/components/SettingsRow";
-import { addLocalContentCards, clearLocalContentCards } from "~/actions/dynamicContent";
+import {
+  addLocalContentCards,
+  addLocalWalletCarouselCards,
+  clearLocalContentCards,
+} from "~/actions/dynamicContent";
 import {
   buildSampleBanner,
   buildSampleActionCarousel,
+  buildSampleWalletCarousel,
 } from "~/dynamicContent/buildLocalContentCards";
 
 export default function DebugContentCards() {
@@ -27,6 +32,10 @@ export default function DebugContentCards() {
   const onAddSampleActionCarouselImageBackground = useCallback(() => {
     const { category, cards } = buildSampleActionCarousel("imageBackground");
     dispatch(addLocalContentCards({ category, cards }));
+  }, [dispatch]);
+
+  const onAddSampleWalletCarousel = useCallback(() => {
+    dispatch(addLocalWalletCarouselCards(buildSampleWalletCarousel()));
   }, [dispatch]);
 
   const onDismissAll = useCallback(() => {
@@ -56,6 +65,12 @@ export default function DebugContentCards() {
         desc={t("settings.debug.contentCards.addSampleActionCarouselImageBackgroundDesc")}
         iconLeft={<IconsLegacy.LayersMedium size={24} color="black" />}
         onPress={onAddSampleActionCarouselImageBackground}
+      />
+      <SettingsRow
+        title={t("settings.debug.contentCards.addSampleWalletCarousel")}
+        desc={t("settings.debug.contentCards.addSampleWalletCarouselDesc")}
+        iconLeft={<IconsLegacy.WalletMedium size={24} color="black" />}
+        onPress={onAddSampleWalletCarousel}
       />
       <SettingsRow
         title={t("settings.debug.contentCards.dismissAll")}

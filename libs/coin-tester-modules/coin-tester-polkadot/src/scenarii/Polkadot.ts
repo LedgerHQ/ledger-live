@@ -3,7 +3,7 @@ import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";

@@ -39,6 +39,7 @@ export function TopBarView({
   isSyncDrawerOpen,
   openSyncDrawer,
   closeSyncDrawer,
+  onTryRefresh,
 }: Readonly<TopBarViewProps>) {
   const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
@@ -110,6 +111,7 @@ export function TopBarView({
         isOpen={isSyncDrawerOpen}
         onClose={closeSyncDrawer}
         listOfErrorAccountNames={listOfErrorAccountNames}
+        onTryRefresh={onTryRefresh}
       />
     </>
   );

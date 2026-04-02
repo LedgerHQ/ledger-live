@@ -45,12 +45,11 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
         type: "view",
         page: route.name,
       });
-      navigation.navigate(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.CryptoAddresses,
         params: {
           sourceScreenName: ScreenName.Portfolio,
-          showHeader: true,
-          isSyncEnabled: true,
         },
       });
     } else {

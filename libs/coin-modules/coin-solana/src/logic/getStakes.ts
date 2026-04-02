@@ -1,4 +1,4 @@
-import type { Cursor, Page, Stake, StakeState } from "@ledgerhq/coin-framework/api/types";
+import type { Cursor, Page, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/types";
 import { isStakeLockUpInForce, withdrawableFromStake } from "../logic";
 import type { ChainAPI } from "../network";
 import { getStakeAccounts, type StakeAccount } from "../network/chain/stake-activation/rpc";

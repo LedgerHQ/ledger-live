@@ -100,7 +100,7 @@ describe("EVM Family", () => {
             accountId,
             blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
             blockHeight: 38476740,
-            recipients: [""],
+            recipients: [],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             value: new BigNumber("0"),
             fee: new BigNumber("4254163264389158"),
@@ -420,7 +420,7 @@ describe("EVM Family", () => {
             accountId,
             blockHash: "0xcf0072dc5eb6e39ae5377b5323914f750da0cf5d2538f7d3ce7d8739c0624199",
             blockHeight: 36795782,
-            recipients: [""],
+            recipients: [],
             senders: ["0x787aCF62fFC81Bb171d1f46fB8b3Fc6503D503e8"],
             value: new BigNumber("0"),
             fee: new BigNumber("905335872155003804"),
@@ -718,6 +718,80 @@ describe("EVM Family", () => {
             ledgerOperationToOperations(accountId, { ...ledgerOperationIn, status: 0 })[0].value,
           ).toEqual(new BigNumber(ledgerOperationOut.value));
         });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const ledgerOp: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "1000",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            transfer_events: [],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 1,
+            input: null,
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          const result = ledgerOperationToOperations(accountId, ledgerOp);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
+        });
+
+        it("should produce empty senders when from is an empty string", () => {
+          const ledgerOp: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "1000",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "",
+            to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            transfer_events: [],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 1,
+            input: null,
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          const result = ledgerOperationToOperations(accountId, ledgerOp);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].senders).toEqual([]);
+        });
       });
 
       describe("ledgerERC20EventToOperations", () => {
@@ -837,6 +911,20 @@ describe("EVM Family", () => {
             expectedOperation1,
             expectedOperation2,
           ]);
+        });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
+            contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            count: "100000000000000",
+          };
+
+          const result = ledgerERC20EventToOperations(coinOperation, ledgerERC20Event);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
         });
       });
 
@@ -973,6 +1061,22 @@ describe("EVM Family", () => {
             expectedOperation1,
             expectedOperation2,
           ]);
+        });
+
+        it("should produce empty recipients when receiver is an empty string", () => {
+          const ledgerERC721Event: LedgerExplorerER721TransferEvent = {
+            contract: "0x9a29e4e488ab34fb792c0bd9ada78c2c07ebe55a",
+            sender: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            receiver: "",
+            token_id:
+              "49183440411075624253866807957299276245920874859439606792850319902048050479106",
+          };
+
+          const result = ledgerERC721EventToOperations(coinOperation, ledgerERC721Event);
+
+          // sender matches account → NFT_OUT is emitted, but recipients must not contain empty string
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
         });
       });
 
@@ -1226,6 +1330,22 @@ describe("EVM Family", () => {
             expectedOperation4,
           ]);
         });
+
+        it("should produce empty recipients when receiver is an empty string", () => {
+          const ledgerERC1155Event: LedgerExplorerER1155TransferEvent = {
+            contract: "0x2953399124f0cbb46d2cbacd8a89cf0599974963",
+            sender: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            operator: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            receiver: "",
+            transfers: [{ id: "10371", value: "1" }],
+          };
+
+          const result = ledgerERC1155EventToOperations(coinOperation, ledgerERC1155Event);
+
+          // sender matches account → NFT_OUT is emitted, but recipients must not contain empty string
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
+        });
       });
 
       describe("ledgerInternalTransactionToOperations", () => {
@@ -1453,6 +1573,24 @@ describe("EVM Family", () => {
           expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual(
             expectedOperations,
           );
+        });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const ledgerAction: LedgerExplorerInternalTransaction = {
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            input: null,
+            value: "10000000000000000",
+            gas: null,
+            gas_used: null,
+            error: null,
+          };
+
+          const result = ledgerInternalTransactionToOperations(coinOperation, ledgerAction);
+
+          // from matches account → OUT is emitted, but recipients must not contain empty string
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
         });
       });
     });

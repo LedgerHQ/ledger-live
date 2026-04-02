@@ -67,6 +67,7 @@ import {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetAnalyticsConsentInfoPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -260,6 +261,10 @@ export const setSupportedCounterValues = createAction<SettingsSetSupportedCounte
 
 export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
   SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
+);
+
+export const setAnalyticsConsentInfo = createAction<SettingsSetAnalyticsConsentInfoPayload>(
+  SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO,
 );
 
 export const setDismissedContentCard = createAction<SettingsSetDismissedContentCardsPayload>(

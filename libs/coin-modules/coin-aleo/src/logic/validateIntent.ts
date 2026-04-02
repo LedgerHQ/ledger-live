@@ -2,7 +2,7 @@ import type {
   TransactionValidation,
   TransactionIntent,
   FeeEstimation,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 
 export const validateIntent = async (
   _transactionIntent: TransactionIntent,
