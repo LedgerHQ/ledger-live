@@ -312,15 +312,6 @@ export type WalletConnectState = {
   uri?: string;
 };
 
-// === BORROW STATE ===
-
-export type BorrowState = {
-  infoModal?: {
-    message: string;
-    title?: string;
-  };
-};
-
 // === EARN STATE ===
 
 export type OptionMetadata = { button: string; live_app: string; flow: string; link?: string };
@@ -409,7 +400,6 @@ export type State = LLMRTKApiState & {
   ble: BleState;
   countervalues: CountervaluesState;
   deeplinkInstallApp: DeeplinkInstallAppState;
-  borrow: BorrowState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
   featureFlags: FeatureFlagsState;
