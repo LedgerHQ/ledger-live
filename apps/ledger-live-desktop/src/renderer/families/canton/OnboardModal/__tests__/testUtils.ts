@@ -1,6 +1,7 @@
 import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import i18n from "~/renderer/i18n/init";
 import { createMockAccount, createMockCantonCurrency } from "../../__tests__/testUtils";
@@ -75,3 +76,30 @@ export const createMockUserProps = (overrides: Record<string, unknown> = {}) => 
     ...overrides,
   };
 };
+
+/** Real `CryptoCurrency` (e.g. devnet) for bridge + MSW integration tests. */
+export function createCantonIntegUserProps(currency: CryptoCurrency) {
+  const creatableAccount = createMockAccount({
+    currency,
+    used: false,
+    id: `js:2:${currency.id}:creatable:canton`,
+  });
+  const importableAccount = createMockImportableAccount({
+    currency,
+    id: `js:2:${currency.id}:imported:canton`,
+    freshAddress: "imported-address",
+  });
+
+  return {
+    currency,
+    editedNames: {},
+    selectedAccounts: [creatableAccount, importableAccount],
+  };
+}
+
+export function createCantonIntegModalState(device: Device) {
+  return {
+    devices: { currentDevice: device, devices: [device] },
+    modals: { MODAL_CANTON_ONBOARD_ACCOUNT: { isOpened: true } },
+  };
+}
