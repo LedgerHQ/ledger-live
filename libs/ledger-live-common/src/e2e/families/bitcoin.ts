@@ -27,19 +27,23 @@ export const sendBTCBasedCoin = withDeviceController(
 
       const buttons = getButtonsController();
 
-      const amountStep = await pressUntilTextFound(DeviceLabels.AMOUNT);
-      const isAmountCorrect = containsSubstringInEvent(tx.amount, amountStep);
-      expect(isAmountCorrect).toBeTruthy();
-
-      const addressStep = await pressUntilTextFound(DeviceLabels.ADDRESS);
-      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, addressStep);
-      expect(isAddressCorrect).toBeTruthy();
-
-      await pressUntilTextFound(getSignTransactionLabel(currencyId));
-
       if (isTouchDevice()) {
+        const events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+        const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+        expect(isAmountCorrect).toBeTruthy();
+        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+        expect(isAddressCorrect).toBeTruthy();
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
+        const amountStep = await pressUntilTextFound(DeviceLabels.AMOUNT);
+        const isAmountCorrect = containsSubstringInEvent(tx.amount, amountStep);
+        expect(isAmountCorrect).toBeTruthy();
+
+        const addressStep = await pressUntilTextFound(DeviceLabels.ADDRESS);
+        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, addressStep);
+        expect(isAddressCorrect).toBeTruthy();
+
+        await pressUntilTextFound(getSignTransactionLabel(currencyId));
         if (currencyId !== Currency.ZEC.id) {
           await buttons.both();
           await waitFor(DeviceLabels.CONFIRM);
