@@ -2,24 +2,14 @@ import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceIntentExecutorLWM } from "~/components/device-intent-executor";
-import type { DemoIntentDefinitions } from "./intents/types";
-import { timerDemoIntentDef } from "./intents/timerDemoIntent";
-import { getAddressLegacyWithDeviceDemoIntentDef } from "./intents/getAddressLegacyWithDeviceDemoIntent";
-import { getEthAddressDMKSignerDemoIntentDef } from "./intents/getEthAddressDMKSignerDemoIntent";
-import { uninstallAppDemoIntentDef } from "./intents/uninstallAppDemoIntent";
+import { DEMO_INTENT_DEFS } from "./intents/registry";
+import type { DemoIntentDefinitions } from "./intents/orchestrationTypes";
 import { useDemoIntentOrchestration } from "./useDemoIntentOrchestration";
-
-const INTENT_DEFS: DemoIntentDefinitions = {
-  timer: timerDemoIntentDef,
-  getAddressLegacyWithDevice: getAddressLegacyWithDeviceDemoIntentDef,
-  getEthAddressDMKSigner: getEthAddressDMKSignerDemoIntentDef,
-  uninstallApp: uninstallAppDemoIntentDef,
-};
 
 export default function DebugDeviceIntentExecutor() {
   const [tickCount, setTickCount] = useState(5);
 
-  const intentDefs = useMemo(() => INTENT_DEFS, []);
+  const intentDefs = useMemo<DemoIntentDefinitions>(() => DEMO_INTENT_DEFS, []);
 
   const orchestration = useDemoIntentOrchestration({
     tickCount,

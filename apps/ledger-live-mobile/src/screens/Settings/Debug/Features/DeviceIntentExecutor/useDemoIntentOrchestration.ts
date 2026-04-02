@@ -13,7 +13,7 @@ import type {
   AnyDemoExtraProps,
   DemoIntentDefinitions,
   DemoPhase,
-} from "./intents/types";
+} from "./intents/orchestrationTypes";
 
 // ---------------------------------------------------------------------------
 // Constants

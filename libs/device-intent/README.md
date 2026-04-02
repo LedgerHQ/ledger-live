@@ -263,6 +263,63 @@ executor to start a new intent.** The executor detects intent changes by
 **reference equality**. Reusing the same object reference means the executor
 sees no change and will not re-execute.
 
+#### Recommended file organization
+
+When an intent is intended to be reusable across platforms, keep the shared
+contract and execution logic in a shared lib, then bind it to a platform in
+the app or package that owns the renderer.
+
+We recommend this split so the intent interfaces stay separate from the
+concrete definitions and renderers. In practice, an orchestration hook should
+be able to depend on typed intent contracts and injected
+`IntentPlatformDefinition`s rather than importing a specific production intent
+implementation directly. That makes the orchestration logic much easier to unit
+test: tests can inject small mock intents with deterministic jobs and trivial
+components, then assert only the phase transitions, callback ordering, and
+prop wiring they care about.
+
+```text
+libs/my-shared-intents/src/signTransactionDemoIntent/
+├── types.ts
+├── job.ts
+└── intentDefinition.ts
+
+apps/ledger-live-mobile/src/.../signTransactionDemoIntent/
+├── componentLWM.tsx
+└── intentLWMDefinition.ts
+
+apps/ledger-live-desktop/src/.../signTransactionDemoIntent/
+├── componentLWD.tsx
+└── intentLWDDefinition.ts
+```
+
+Recommended responsibilities:
+
+- `types.ts` -- exports the intent's `JobState`, `Input`, and `ExtraProps`
+  types, plus the precomposed aliases for `MyIntentDefinition`,
+  `MyIntentPlatformDefinition`, and runtime `MyIntent`.
+- `job.ts` -- exports the `Job` implementation and any non-React helpers or
+  constants used by that job.
+- `intentDefinition.ts` -- exports the shared `IntentDefinition` object
+  (`label`, execution flags, `job`) with no platform UI dependency.
+- `componentLWM.tsx` / `componentLWD.tsx` -- exports the platform-specific React
+  renderer receiving `jobState` and `extraProps`.
+- `intentLWMDefinition.ts` / `intentLWDDefinition.ts` -- exports the
+  `IntentPlatformDefinition` built by combining the shared definition with the
+  platform component.
+
+`ExtraProps` nuance: even though `ExtraProps` live on
+`IntentPlatformDefinition` rather than `IntentDefinition`, they should still be
+declared in the shared `types.ts` when an orchestrator needs a stable typed
+contract to inject platform-specific data into the renderer. In practice,
+`Input` is the job input, while `ExtraProps` is the orchestrator-to-platform
+injection surface.
+
+If an intent is not shared yet, it is fine to keep the same five-file structure
+inside a single platform package or app first, then move `types.ts`, `job.ts`,
+and `intentDefinition.ts` into a shared lib later without changing the platform
+file naming.
+
 ### Orchestrating a multi-intent flow
 
 The caller owns the business flow. The recommended pattern is an
