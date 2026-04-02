@@ -52,22 +52,20 @@ export function AnalyticsConsentModalView({
   );
 
   const openPrivacyPolicy = useCallback(() => {
-    void openURL(privacyPolicyUrl);
+    openURL(privacyPolicyUrl);
   }, [privacyPolicyUrl]);
 
-  const title =
-    phase === "consentReconfirm"
-      ? t("analyticsConsentModal.reconfirm.title")
-      : phase === "privacy"
-        ? t("analyticsConsentModal.privacy.title")
-        : t("analyticsConsentModal.fresh.title");
+  const title = (() => {
+    if (phase === "consentReconfirm") return t("analyticsConsentModal.reconfirm.title");
+    if (phase === "privacy") return t("analyticsConsentModal.privacy.title");
+    return t("analyticsConsentModal.fresh.title");
+  })();
 
-  const descriptionLead =
-    phase === "consentReconfirm"
-      ? t("analyticsConsentModal.reconfirm.description")
-      : phase === "privacy"
-        ? null
-        : t("analyticsConsentModal.fresh.description");
+  const descriptionLead = (() => {
+    if (phase === "consentReconfirm") return t("analyticsConsentModal.reconfirm.description");
+    if (phase === "privacy") return null;
+    return t("analyticsConsentModal.fresh.description");
+  })();
 
   if (!isModalOpen) {
     return null;
