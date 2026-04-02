@@ -574,6 +574,27 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
+export async function waitForReviewTransaction(): Promise<void> {
+  if (!isTouchDevice()) {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+    return;
+  }
+
+  const port = getEnv("SPECULOS_API_PORT");
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const texts = await fetchCurrentScreenTexts(port);
+    if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
+      return;
+    }
+    if (texts.includes(DeviceLabels.YES_ENABLE)) {
+      await pressAndRelease(DeviceLabels.YES_ENABLE);
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      return;
+    }
+    await waitForTimeOut(500);
+  }
+}
+
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
   const speculosAddress = getSpeculosAddress();
   const response = await retryAxiosRequest(() =>
@@ -983,7 +1004,7 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      await waitForReviewTransaction();
       const events =
         getSpeculosModel() === DeviceModelId.nanoS
           ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
@@ -1011,7 +1032,7 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
           await buttons.both();
         }
       } else {
-        await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+        await waitForReviewTransaction();
       }
 
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -1028,7 +1049,7 @@ export const verifyAmountsAndRejectSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      await waitForReviewTransaction();
       let events: string[] = [];
       if (isTouchDevice()) {
         events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);

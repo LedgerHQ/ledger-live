@@ -2,6 +2,7 @@ import { Transaction } from "../models/Transaction";
 import {
   containsSubstringInEvent,
   fetchCurrentScreenTexts,
+  waitForReviewTransaction,
   pressUntilTextFound,
   waitFor,
 } from "../speculos";
@@ -56,9 +57,7 @@ function validateTransactionData(tx: Transaction, events: string[]) {
 }
 
 async function sendEvmTouchDevices(tx: Transaction) {
-  await waitFor(DeviceLabels.YES_ENABLE);
-  await pressAndRelease(DeviceLabels.YES_ENABLE);
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  await waitForReviewTransaction();
 
   const events: string[] = [];
   if (tx.accountToCredit.ensName) {
@@ -119,8 +118,7 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
 }
 
 export async function approveTokenTouchDevices() {
-  await waitFor(DeviceLabels.YES_ENABLE);
-  await pressAndRelease(DeviceLabels.YES_ENABLE);
+  await waitForReviewTransaction();
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
