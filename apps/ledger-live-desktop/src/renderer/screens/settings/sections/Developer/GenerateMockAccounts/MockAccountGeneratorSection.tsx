@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Text } from "@ledgerhq/react-ui/index";
+import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import MockAccountGenerator from "./MockAccountGenerator";
 import CustomMockAccountGenerator from "./CustomMockAccountGenerator";
 import EmptyAccountGenerator from "./EmptyAccountGenerator";
+import StablecoinMockAccountGenerator from "./StablecoinMockAccountGenerator";
 
 type MockAccountGeneratorSectionContentProps = {
   expanded: boolean;
@@ -18,7 +19,7 @@ export const MockAccountGeneratorSectionContent = ({
 
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
-      <Text>{t("settings.developer.mockAccounts.description")}</Text>
+      <div>{t("settings.developer.mockAccounts.description")}</div>
       {expanded && (
         <Flex flexDirection="column" columnGap={4} mt={2} flexWrap="wrap">
           <CustomMockAccountGenerator
@@ -33,6 +34,10 @@ export const MockAccountGeneratorSectionContent = ({
           <EmptyAccountGenerator
             title={t("settings.developer.mockAccounts.emptyGenerate.title")}
             desc={t("settings.developer.mockAccounts.emptyGenerate.desc")}
+          />
+          <StablecoinMockAccountGenerator
+            title={t("settings.developer.mockAccounts.stablecoinGenerate.title")}
+            desc={t("settings.developer.mockAccounts.stablecoinGenerate.desc")}
           />
         </Flex>
       )}
