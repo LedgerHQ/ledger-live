@@ -17,6 +17,7 @@ import {
   AccountRowActionCell,
   AccountValueCell,
 } from "../Cell";
+import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 
 type UseCryptoDataTableParams = {
   readonly rows: AccountLike[];
@@ -32,6 +33,8 @@ export function useCryptoDataTable({
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
+  const syncPhase = useSyncPhase();
+  const isSyncing = syncPhase === "syncing";
 
   /** One countervalue per row; avoids recalculations in sorting. */
   const balanceSortFiatByAccountId = useMemo(() => {
@@ -91,12 +94,13 @@ export function useCryptoDataTable({
           <AccountRowActionCell
             account={row.original}
             editNameAriaLabel={t("cryptoAddresses.table.editName")}
+            isSyncing={isSyncing}
           />
         ),
         meta: { align: "end" },
       },
     ],
-    [t, walletState, lookupParentAccount, balanceSortFiatByAccountId],
+    [t, walletState, lookupParentAccount, balanceSortFiatByAccountId, isSyncing],
   );
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "balance", desc: true }]);
