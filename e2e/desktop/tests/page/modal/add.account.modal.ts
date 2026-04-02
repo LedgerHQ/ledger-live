@@ -10,7 +10,6 @@ export class AddAccountModal extends Modal {
   readonly addAccountsButton = this.page.getByTestId("add-accounts-import-add-button");
   private deselectAllButton = this.page.getByText("Deselect all");
   private checkbox = this.page.getByTestId("accountRow-checkbox").first();
-  private accountsList = this.page.getByTestId("add-accounts-step-import-accounts-list");
   private stopButton = this.page.getByTestId("add-accounts-import-stop-button");
   private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
   private infoBox = this.page.getByTestId("add-token-infoBox");
@@ -109,12 +108,6 @@ export class AddAccountModal extends Modal {
     await expect(this.successAddLabel).toBeVisible();
   }
 
-  @step("Get fist account name")
-  async getFirstAccountName() {
-    await this.page.waitForTimeout(500);
-    return await this.accountsList.locator("input").first().inputValue();
-  }
-
   @step("Click `Done` button")
   async done() {
     await this.doneButton.click();
@@ -130,10 +123,5 @@ export class AddAccountModal extends Modal {
   async expectModalVisibility() {
     expect(await this.title.textContent()).toBe("Add accounts");
     await expect(this.selectAccount).toBeVisible();
-  }
-
-  @step("Check that add account modal to be visible")
-  async expectAccountModalToBeVisible() {
-    expect(await this.title.textContent()).toBe("Add accounts");
   }
 }

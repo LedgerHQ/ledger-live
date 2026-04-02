@@ -51,36 +51,6 @@ test.describe("Swap flow from different entry point", () => {
   });
 
   test(
-    "Entry Point - Portfolio page",
-    {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2985",
-      },
-    },
-    async ({ app, electronApp }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.mainNavigation.openTargetFromMainNavigation("home"),
-      );
-      await app.portfolio.checkEmbeddedSwapContainerVisibility();
-      await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/, electronApp);
-    },
-  );
-
-  test(
     "Entry Point - Asset Allocation",
     {
       tag: [

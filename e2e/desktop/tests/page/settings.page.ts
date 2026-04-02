@@ -63,11 +63,6 @@ export class SettingsPage extends AppPage {
     await this.manageWalletSyncButton.click();
   }
 
-  @step("Open Wallet Sync Manager")
-  async openWalletSyncManager() {
-    await this.syncWalletSyncButton.click();
-  }
-
   @step("Enable Wallet Sync")
   async enableWalletSync() {
     if (await this.syncWalletSyncButton.isVisible()) {

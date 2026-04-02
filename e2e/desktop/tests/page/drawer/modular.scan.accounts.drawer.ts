@@ -3,7 +3,6 @@ import { step } from "../../misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class ModularScanAccountsDrawer extends Drawer {
-  private drawerContent = this.page.getByTestId("modular-drawer-screen-SCAN_ACCOUNTS");
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private continueButton = this.page.getByRole("button", { name: "Continue" });
   private allowButton = this.page.getByRole("button", { name: "Allow" });
@@ -14,12 +13,6 @@ export class ModularScanAccountsDrawer extends Drawer {
   private successAddLabel = this.page.getByTestId("accounts-added-title");
   private viewKeyWarningStep = this.page.getByTestId("view-key-warning-step");
   private viewKeyConfirmationStep = this.page.getByTestId("view-key-confirmation-step");
-
-  @step("Validate modular scan accounts drawer is visible")
-  async isModularScanAccountsDrawerVisible(): Promise<boolean> {
-    await this.waitForDrawerToBeVisible();
-    return await this.drawerContent.isVisible();
-  }
 
   @step("Click Confirm button on scan accounts drawer")
   async clickConfirmButton() {
