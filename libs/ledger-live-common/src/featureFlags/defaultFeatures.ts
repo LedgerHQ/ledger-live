@@ -500,6 +500,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxBorrowLiveApp: {
+    enabled: true,
+    params: {
+      manifest_id: "borrow",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {
