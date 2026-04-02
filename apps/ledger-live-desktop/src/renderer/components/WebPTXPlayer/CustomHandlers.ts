@@ -39,8 +39,8 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
-import { validateUrl } from "~/renderer/utils/learnUrlValidation";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
