@@ -124,9 +124,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
   for (const id in flags) {
     if (isFeatureId(id, flags)) {
-      await setFeatureFlag({ id, value: flags[id] });
+      setFeatureFlag({ id, value: flags[id] });
     }
   }
+  await getFlags();
 }
 
 export async function setFeatureFlag(flag: SettingsSetOverriddenFeatureFlagPlayload) {
