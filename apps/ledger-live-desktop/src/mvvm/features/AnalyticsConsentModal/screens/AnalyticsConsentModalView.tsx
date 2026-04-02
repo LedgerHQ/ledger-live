@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
@@ -102,7 +102,10 @@ export function AnalyticsConsentModalView({
             <div className="flex w-full flex-col items-center gap-8 text-center">
               <DialogTitle className="heading-4-semi-bold text-base w-full">{title}</DialogTitle>
               {phase === "privacy" ? (
-                <PrivacyDescription onOpenPrivacyPolicy={openPrivacyPolicy} />
+                <PrivacyDescription
+                  privacyPolicyUrl={privacyPolicyUrl}
+                  onOpenPrivacyPolicy={openPrivacyPolicy}
+                />
               ) : (
                 descriptionLead != null && (
                   <DescriptionWithPreferencesLink
@@ -136,7 +139,7 @@ export function AnalyticsConsentModalView({
         </DialogFooter>
         {phase !== "privacy" && (
           <div className="shrink-0 px-24 pt-16">
-            <ConsentFooter onOpenPrivacyPolicy={openPrivacyPolicy} />
+            <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={openPrivacyPolicy} />
           </div>
         )}
       </DialogContent>
