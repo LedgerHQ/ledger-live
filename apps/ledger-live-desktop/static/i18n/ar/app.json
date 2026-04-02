@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "عذراً، حاول مرة أخرى.",
       "description" : "لم يتمكن الخادم من معالجة طلبك. يرجى إعادة المحاولة مرة أخرى لاحقاً أو التواصل مع دعم Ledger.",
-      "code" : "الكود: {{errorCode}}"
+      "code" : "الكود",
+      "correlationId" : "المُعرّف المرجعي"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "العملة المراد إرسالها",
       "changeToReturn" : "المتبقي المراد إرجاعه",
       "enterAmount" : "أدخل المبلغ",
+      "selectSufficientCoins" : "اختر ما يكفي من العملات",
       "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
       "amountInputLabel" : "المبلغ المطلوب إرساله"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (الأول دخولاً هو الأوّل خروجاً)",
       "OPTIMIZE_SIZE" : "تقليل الرسوم (تحقيق الحجم الأمثل)",
-      "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
+      "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)",
+      "CUSTOM" : "اختيار عملات مخصص"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "تعرّف على المزيد"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "قم بترقية جهازك ™Ledger Nano S",
+      "description" : "احصل على خصم %20 حصري على أحدث أجهزة توقيع Ledger."
+    },
+    "opted_out" : {
+      "title" : "قم بترقية جهازك ™Ledger Nano S",
+      "description" : "الذاكرة المحدودة في Ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل (بلوكتشين)، وتحسينات الأمان."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "اختر الحسابات التي ترغب في إضافتها",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "حسابات الأصول المشفرة",
+    "title" : "الحسابات",
     "tableActions" : {
-      "searchAddress" : "ابحث عن العنوان",
+      "searchAddress" : "ابحث عن طريق الاسم، العنوان",
       "addAddress" : "إضافة عنوان"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "برعاية Provable",
       "balanceSelector" : {
         "private" : "الرصيد الخاص",
         "public" : "الرصيد العام",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "الرصيد الشفاف",
       "transparentBalanceTooltip" : "الرصيد المرئي للعامة",
       "privateBalance" : "الرصيد الخاص",
-      "privateBalanceTooltip" : "الرصيد المخفي عن العامة"
+      "privateBalanceTooltip" : "الرصيد المخفي عن العامة",
+      "syncButton" : {
+        "startSync" : "بدء المزامنة",
+        "stopSync" : "إيقاف المزامنة",
+        "syncAgain" : "المزامنة مرة أخرى",
+        "lastSync" : "آخر مزامنة: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "الإرسال من"
       },
       "summary" : {
-        "coveredByProvable" : "برعاية Provable",
         "proofGenerationWarning" : "معاملة Aleo تتطلب إنشاء إثبات. هذا قد يستغرق بعض الوقت."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "مزامنة رصيدك الخاص (%{{percentage}})",
+        "desc" : "يُرجى الانتظار",
+        "error" : "فشلت المزامنة الخاصة. يُرجى إعادة المحاولة لاحقاً."
       }
     }
   },
