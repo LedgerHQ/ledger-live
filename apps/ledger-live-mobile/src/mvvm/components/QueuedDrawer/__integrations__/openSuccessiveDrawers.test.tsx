@@ -137,8 +137,8 @@ describe("QueuedDrawer", () => {
     await user.press(elements.inDrawer1Drawer2Button());
     expect(queryByText(drawer2Text)).toBeNull();
     await user.press(elements.closeButton());
-    expect(queryByText(drawer1Text)).toBeNull();
     expect(await findByText(drawer2Text)).toBeVisible();
+    expect(queryByText(drawer1Text)).toBeNull();
     await user.press(elements.closeButton());
     helpers.expectAllDrawersClosed();
     await helpers.openDrawer1();
