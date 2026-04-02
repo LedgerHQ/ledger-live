@@ -269,7 +269,7 @@ const Separator = styled.div`
 const DeviceSwapSummaryStyled = styled.section`
   margin: ${({ theme }) => theme.space[3]}px;
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: ${({ theme }) => theme.space[4]}px;
 `;
 

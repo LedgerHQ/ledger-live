@@ -149,8 +149,8 @@ const QRCodeComponent = ({ url }: { url: string | null }) => {
   return (
     <>
       <QRContainer
-        height={200}
-        width={200}
+        height={232}
+        width={232}
         borderRadius={24}
         bg="constant.white"
         alignItems="center"
@@ -244,6 +244,7 @@ const MiddleContainer = styled(Flex)`
 
 const QRContainer = styled(Flex)`
   border: 1px solid ${({ theme }) => theme.colors.opacityDefault.c10};
+  overflow: hidden;
 `;
 
 const Italic = styled(Text)`
