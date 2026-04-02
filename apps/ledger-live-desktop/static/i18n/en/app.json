@@ -4672,6 +4672,10 @@
           "title": "Empty generation",
           "desc": "Generate an empty account"
         },
+        "stablecoinGenerate": {
+          "title": "Stablecoin preset",
+          "desc": "Generate Ethereum, Arbitrum, Optimism, Base, Solana, Tron and Algorand accounts with top stablecoins (max 5 per network)"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -4688,7 +4692,9 @@
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
           "generateAccountsQuick": "Generate {{count}} accounts",
-          "generateEmptyAccount": "Generate empty account"
+          "generateEmptyAccount": "Generate empty account",
+          "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
+          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
