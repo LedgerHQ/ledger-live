@@ -5,7 +5,7 @@
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "@testing-library/react";
 import { useSendFlowAmountReviewCore } from "../useSendFlowAmountReviewCore";
-import type { Transaction, TransactionStatus } from "../../../../generated/types";
+import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { AccountLike } from "@ledgerhq/types-live";
 
 const mockCurrency = { ticker: "BTC", type: "CryptoCurrency" as const };

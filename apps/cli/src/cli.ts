@@ -6,12 +6,16 @@ import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";
 import commandsMain from "./commands-index";
 // TODO cli-transaction.js => cli.js
-import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
+import {
+  getRegisteredFamilies,
+  loadSetupForFamily,
+} from "@ledgerhq/live-common/coin-modules/registry";
 
 const commands = {
-  ...Object.values(perFamily)
+  ...getRegisteredFamilies()
+    .map(family => loadSetupForFamily(family).cliTools)
     .map((m: any) => typeof m === "object" && m && m.commands)
-    .reduce((acc, c) => ({ ...acc, ...c }), {}),
+    .reduce((acc: Record<string, unknown>, c) => ({ ...acc, ...c }), {}),
   ...commandsMain,
 };
 

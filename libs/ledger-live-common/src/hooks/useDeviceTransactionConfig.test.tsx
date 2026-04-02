@@ -11,7 +11,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { useDeviceTransactionConfig } from "./useDeviceTransactionConfig";
 import { getDeviceTransactionConfig } from "../transaction/deviceTransactionConfig";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "../generated/types";
+import { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../currencies/index";
 

@@ -4,13 +4,12 @@ import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/typ
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import { Observable, of } from "rxjs";
-import { getEnv } from "@ledgerhq/live-env";
-import perFamilyMock from "../generated/mock";
+import { loadMockAccountForFamily } from "../coin-modules/registry";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
-const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
+const MOCK_DATA_SEED = "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};
 
@@ -35,7 +34,7 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
           balance,
           spendableBalance: balance,
         };
-        const perFamilyOperation = perFamilyMock[acc.currency.id];
+        const perFamilyOperation = loadMockAccountForFamily(acc.currency.family);
         const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
         if (postSyncAccount) return postSyncAccount(nextAcc);
         return nextAcc;
@@ -146,7 +145,7 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
           account.spendableBalance = account.balance = new BigNumber(0);
         }
 
-        const perFamilyOperation = perFamilyMock[currency.id];
+        const perFamilyOperation = loadMockAccountForFamily(currency.family);
         const postScanAccount = perFamilyOperation && perFamilyOperation.postScanAccount;
         if (postScanAccount)
           postScanAccount(account, {

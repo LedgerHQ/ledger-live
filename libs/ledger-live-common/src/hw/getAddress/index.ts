@@ -2,11 +2,12 @@ import invariant from "invariant";
 import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Resolver } from "./types";
-import perFamily from "../../generated/hw-getAddress";
+import { loadSetupForFamily } from "../../coin-modules/registry";
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;
-  const getAddress = perFamily[currency.family];
+  const setup = loadSetupForFamily(currency.family);
+  const getAddress = setup.resolver;
   invariant(getAddress, `getAddress is not implemented for ${currency.id}`);
   return getAddress(transport, opts)
     .then(result => {

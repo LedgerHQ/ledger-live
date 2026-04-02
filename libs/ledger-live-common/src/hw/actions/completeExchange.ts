@@ -6,7 +6,7 @@ import type { AppState } from "./app";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { Exchange } from "../../exchange/types";
-import { Transaction } from "../../generated/types";
+import { Transaction } from "../../coin-modules/transaction-types";
 
 type State = {
   completeExchangeResult: Transaction | null | undefined;

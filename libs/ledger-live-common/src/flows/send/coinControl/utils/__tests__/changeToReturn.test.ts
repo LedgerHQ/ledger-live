@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { getChangeToReturn, hasTxOutputs, type StatusWithTxOutputs } from "../changeToReturn";
-import type { TransactionStatus } from "../../../../../generated/types";
+import type { TransactionStatus } from "../../../../../coin-modules/transaction-types";
 
 const createStatus = (
   overrides: Partial<TransactionStatus> & {
