@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -92,6 +93,20 @@ export default class OperationDetailsPage {
   async checkCeloValidatorGroup(validatorGroup: string) {
     await scrollToId(this.celoValidatorGroupId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.celoValidatorGroupId)).toHaveText(validatorGroup);
+  }
+
+  @Step("Check operation infos")
+  async checkOperationInfos(
+    transaction: TransactionType,
+    isSentTransaction: boolean = true,
+    operationType?: keyof typeof this.operationsType,
+  ) {
+    await this.waitForOperationDetails();
+    await this.checkAccount(transaction.accountToDebit.currency.name);
+    await this.checkRecipientAddress(
+      isSentTransaction ? transaction.accountToCredit : transaction.accountToCredit.parentAccount!,
+    );
+    if (operationType) await this.checkTransactionType(operationType);
   }
 
   @Step("Check that transaction details are displayed")

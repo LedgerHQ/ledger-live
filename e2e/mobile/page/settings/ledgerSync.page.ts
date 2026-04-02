@@ -1,7 +1,24 @@
 import { Step } from "jest-allure2-reporter/api";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
+import { getEnv } from "@ledgerhq/live-env";
+import { getFlags } from "../../bridge/server";
 
 export default class LedgerSyncPage {
+  ledgerKeyRingProtocolArgs = {
+    apiBaseUrl: "",
+    pubKey: "",
+    privateKey: "",
+  };
+
+  ledgerSyncPushDataArgs = {
+    rootId: "",
+    walletSyncEncryptionKey: "",
+    applicationPath: "",
+    push: true,
+    data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
+    cloudSyncApiBaseUrl: "",
+  };
+
   successPage = "walletsync-success";
   confirmDeleteSyncId = "delete-trustchain";
   deleteSyncId = "walletSync-manage-backup";
@@ -63,5 +80,66 @@ export default class LedgerSyncPage {
     await detoxExpect(getElementById(this.backupDeletionSuccessTextId)).toHaveText(
       "Your Ledger Wallet apps are no longer synced",
     );
+  }
+
+  @Step("Initialize Ledger Key Ring Protocol")
+  async initializeLedgerKeyRingProtocol() {
+    const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
+    this.ledgerKeyRingProtocolArgs.apiBaseUrl =
+      environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
+    this.ledgerSyncPushDataArgs.cloudSyncApiBaseUrl =
+      environment == "PROD" ? getEnv("CLOUD_SYNC_API_PROD") : getEnv("CLOUD_SYNC_API_STAGING");
+
+    return CLI.ledgerKeyRingProtocol({
+      initMemberCredentials: true,
+      apiBaseUrl: this.ledgerKeyRingProtocolArgs.apiBaseUrl,
+    }).then(output => {
+      if (output && "pubkey" in output) {
+        this.ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
+        this.ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
+      }
+      return output;
+    });
+  }
+
+  @Step("Initialize then delete trust chain")
+  initializeThenDeleteTrustChain() {
+    return [
+      async () => this.initializeLedgerKeyRingProtocol(),
+      async () => this.initializeLedgerSync(),
+      async () => this.deleteLedgerSyncData(),
+    ];
+  }
+
+  @Step("Delete Ledger Sync data")
+  async deleteLedgerSyncData() {
+    await CLI.ledgerSync({
+      deleteData: true,
+      ...this.ledgerKeyRingProtocolArgs,
+      ...this.ledgerSyncPushDataArgs,
+    });
+
+    await CLI.ledgerKeyRingProtocol({
+      destroyKeyRingTree: true,
+      ...this.ledgerKeyRingProtocolArgs,
+      ...this.ledgerSyncPushDataArgs,
+    });
+  }
+
+  @Step("Initialize Ledger Sync")
+  async initializeLedgerSync() {
+    const output = CLI.ledgerKeyRingProtocol({
+      getKeyRingTree: true,
+      ...this.ledgerKeyRingProtocolArgs,
+    }).then(out => {
+      if (out && "rootId" in out) {
+        this.ledgerSyncPushDataArgs.rootId = out.rootId;
+        this.ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
+        this.ledgerSyncPushDataArgs.applicationPath = out.applicationPath;
+      }
+      return out;
+    });
+    await this.activateLedgerSyncOnSpeculos();
+    return output;
   }
 }
