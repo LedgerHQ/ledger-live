@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "抱歉，请重试。",
       "description" : "服务器无法处理您的请求。请稍后再试或联系 Ledger 客服。",
-      "code" : "代码：{{errorCode}}"
+      "code" : "代码",
+      "correlationId" : "参考 ID "
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "发送币种",
       "changeToReturn" : "要返还的零钱",
       "enterAmount" : "输入数额",
+      "selectSufficientCoins" : "选择足够的加密货币",
       "amountToSendInCurrency" : "发送数额为 ({{ticker}})",
       "amountInputLabel" : "发送数额"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "旧币优先（先入先出）",
       "OPTIMIZE_SIZE" : "令费用最小化（优化大小）",
-      "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）"
+      "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）",
+      "CUSTOM" : "自定义币种选择"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "了解更多"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "升级您的 Ledger Nano S™",
+      "description" : "购买最新 Ledger 签署设备可享八折专属优惠。"
+    },
+    "opted_out" : {
+      "title" : "升级您的 Ledger Nano S™",
+      "description" : "由于 Ledger Nano S 的存储容量有限，您将无法全面体验最新功能、区块链升级及安全增强。"
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "选择您要添加的账户",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "加密货币账户",
+    "title" : "账户",
     "tableActions" : {
-      "searchAddress" : "搜索地址",
+      "searchAddress" : "按名称或地址搜索",
       "addAddress" : "添加地址"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "由 Provable 赞助",
       "balanceSelector" : {
         "private" : "私密余额",
         "public" : "公开余额",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "公开余额",
       "transparentBalanceTooltip" : "公开可见的余额",
       "privateBalance" : "私密余额",
-      "privateBalanceTooltip" : "对外隐藏的余额"
+      "privateBalanceTooltip" : "对外隐藏的余额",
+      "syncButton" : {
+        "startSync" : "开始同步",
+        "stopSync" : "停止同步",
+        "syncAgain" : "再次同步",
+        "lastSync" : "上次同步：{{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "来自"
       },
       "summary" : {
-        "coveredByProvable" : "由 Provable 赞助",
         "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "正在同步您的私密余额 ({{percentage}}%)",
+        "desc" : "请稍候",
+        "error" : "私密数据同步失败请稍后重试。"
       }
     }
   },
