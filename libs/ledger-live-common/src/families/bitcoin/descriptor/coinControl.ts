@@ -12,7 +12,7 @@ import type {
 import type {
   Transaction as SendFlowTransaction,
   TransactionStatus,
-} from "../../../generated/types";
+} from "../../../coin-modules/transaction-types";
 import { getUTXOStatus } from "../logic";
 import {
   bitcoinPickingStrategy,

@@ -7,7 +7,7 @@ import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors
 
 import { useFromAmountStatusMessage } from "./useSwapTransaction";
 import { Result } from "../../../bridge/useBridgeTransaction";
-import { Transaction } from "../../../generated/types";
+import { Transaction } from "../../../coin-modules/transaction-types";
 import BigNumber from "bignumber.js";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 

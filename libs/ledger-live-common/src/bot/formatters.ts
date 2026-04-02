@@ -4,7 +4,7 @@ import { formatOperation, formatAccount } from "../account";
 import { toSignedOperationRaw, formatTransaction, formatTransactionStatus } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
-import type { Transaction } from "../generated/types";
+import type { Transaction } from "../coin-modules/transaction-types";
 
 const formatTimeMinSec = (t: number) => {
   const totalsecs = Math.round(t / 1000);

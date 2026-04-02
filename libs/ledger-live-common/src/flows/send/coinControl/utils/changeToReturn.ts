@@ -1,4 +1,4 @@
-import type { TransactionStatus } from "../../../../generated/types";
+import type { TransactionStatus } from "../../../../coin-modules/transaction-types";
 import { BigNumber } from "bignumber.js";
 
 export type StatusWithTxOutputs = TransactionStatus & {

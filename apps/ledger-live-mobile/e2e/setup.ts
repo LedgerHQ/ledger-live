@@ -1,4 +1,7 @@
 /* eslint-disable no-var */
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { device } from "detox";
 import { getLogs, close as closeBridge } from "./bridge/server";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
@@ -75,6 +78,8 @@ declare global {
   var typeTextByWebTestId: typeof ElementHelpers.typeTextByWebTestId;
 }
 
+registerAllCoins();
+LiveConfig.setConfig(liveConfig);
 setupEnvironment();
 
 global.IS_FAILED = false;

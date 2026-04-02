@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { getMaxAvailable, isInsufficientFundsAmountError } from "../amountReview";
-import type { TransactionStatus } from "../../../../../generated/types";
+import type { TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import { AccountLike } from "@ledgerhq/types-live";
 
 function makeStatus(amountError?: { name: string }): TransactionStatus {

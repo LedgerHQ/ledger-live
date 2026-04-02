@@ -5,7 +5,7 @@ import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
 import { delay } from "../promise";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../generated/types";
+import type { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
