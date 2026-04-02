@@ -12,7 +12,6 @@ import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
 import { importSettings, setAnalyticsConsentInfo, setTheme } from "../actions/settings";
 import { SettingsActionTypes } from "../actions/types";
-
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
 

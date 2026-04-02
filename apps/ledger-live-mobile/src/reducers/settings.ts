@@ -217,6 +217,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const isWallet40Enabled = wallet40FF?.enabled === true;
     const isWallet40GraphReworkEnabled =
       wallet40FF?.params?.graphRework === true && isWallet40Enabled;
+    const analyticsConsentInfo =
+      filteredPayload.analyticsConsentInfo === undefined
+        ? state.analyticsConsentInfo
+        : { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo };
+
     return {
       ...state,
       ...filteredPayload,
@@ -224,6 +229,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
         ...state.notifications,
         ...filteredPayload.notifications,
       },
+      analyticsConsentInfo,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };

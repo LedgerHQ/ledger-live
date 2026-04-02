@@ -542,6 +542,10 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  analyticsOptIn: {
+    enabled: false,
+  },
+
   lldAnalyticsOptInPrompt: {
     enabled: false,
     params: {
