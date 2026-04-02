@@ -192,3 +192,5 @@ minimumReleaseAgeExclude:
   # TypeScript / Node types: new releases are often younger than minimumReleaseAge
   - typescript
   - "@types/node"
+  # Renovate security update: lodash@4.18.1
+  - lodash@4.18.1
