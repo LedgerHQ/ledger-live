@@ -62,6 +62,8 @@ function useDBSaveEffect<D, S>({
   saveAtStart = false,
 }: Props<D, S>) {
   const store = useStore();
+  const storeRef = useRef(store);
+  storeRef.current = store;
   const selectedSlice = useSelector(stateSelector);
   const forceSave = useRef(saveAtStart);
   const lastSavedState = useRef<MaybeState>(undefined);
@@ -78,7 +80,7 @@ function useDBSaveEffect<D, S>({
       throttleFn(async (): Promise<void> => {
         if (isSaving.current) return checkForSave(); // if we are already saving, we re-schedule
         const { lense, save, getChangesStats } = latestProps.current;
-        const state = store.getState() as State;
+        const state = storeRef.current.getState() as State;
         const prev = lastSavedState.current;
         if (prev !== undefined && prev !== null) {
           const changedStats = getChangesStats(prev, state); // we compare last saved with latest state
@@ -93,7 +95,7 @@ function useDBSaveEffect<D, S>({
         lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
         forceSave.current = false;
       }, throttle),
-    [throttle, store],
+    [throttle],
   );
   useFlushMechanism(checkForSave);
   // each time the selected slice or props change, we will checkForSave
