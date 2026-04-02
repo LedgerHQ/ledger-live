@@ -3,6 +3,7 @@ import { useEntryPoint } from "./useEntryPoint";
 import { EntryPoint } from "../types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { INITIAL_STATE } from "../__tests__/shared";
 
 describe("useEntryPoint", () => {
@@ -91,13 +92,52 @@ describe("useEntryPoint", () => {
     expect(result.current.shouldDisplayEntryPoint).toBe(false);
   });
 
-  it("shouldDisplayEntryPoint should be false when lastSeenDevice is unset", async () => {
+  it("shouldDisplayEntryPoint should be false when lastSeenDevice and lastOnboardedDevice are both unset", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
       initialState: {
         ...INITIAL_STATE,
         settings: {
           ...INITIAL_STATE.settings,
           lastSeenDevice: null,
+          lastOnboardedDevice: null,
+        },
+      },
+    });
+
+    expect(result.current.shouldDisplayEntryPoint).toBe(false);
+  });
+
+  it("shouldDisplayEntryPoint should be true when lastSeenDevice is unset but lastOnboardedDevice is eligible", async () => {
+    const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
+      initialState: {
+        ...INITIAL_STATE,
+        settings: {
+          ...INITIAL_STATE.settings,
+          lastSeenDevice: null,
+          lastOnboardedDevice: {
+            deviceId: "",
+            modelId: DeviceModelId.stax,
+            wired: false,
+          } as Device,
+        },
+      },
+    });
+
+    expect(result.current.shouldDisplayEntryPoint).toBe(true);
+  });
+
+  it("shouldDisplayEntryPoint should be false when lastSeenDevice is unset and lastOnboardedDevice is a nanoS", async () => {
+    const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
+      initialState: {
+        ...INITIAL_STATE,
+        settings: {
+          ...INITIAL_STATE.settings,
+          lastSeenDevice: null,
+          lastOnboardedDevice: {
+            deviceId: "",
+            modelId: DeviceModelId.nanoS,
+            wired: false,
+          } as Device,
         },
       },
     });
