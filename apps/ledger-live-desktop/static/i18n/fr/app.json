@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Veuillez réessayer.",
       "description" : "Le serveur n’a pas pu traiter votre demande. Veuillez réessayer ultérieurement ou contacter l’Assistance Ledger.",
-      "code" : "Code : {{errorCode}}"
+      "code" : "Code",
+      "correlationId" : "Référence (ID)"
     }
   },
   "swap" : {
@@ -1575,7 +1576,7 @@
       "clearAll" : "Tout effacer"
     },
     "marketList" : {
-      "crypto" : "Crypto",
+      "crypto" : "Cryptos",
       "price" : "Cours",
       "change" : "Variation",
       "marketCap" : "Capitalisation",
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Crypto à envoyer",
       "changeToReturn" : "Crypto à rendre",
       "enterAmount" : "Entrer le montant",
+      "selectSufficientCoins" : "Sélectionnez un montant suffisant",
       "amountToSendInCurrency" : "Montant à envoyer en {{ticker}}",
       "amountInputLabel" : "Montant à envoyer"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Coins plus anciens en premier (FIFO)",
       "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
-      "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
+      "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)",
+      "CUSTOM" : "Sélection personnalisée"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "En savoir plus"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Passer au niveau supérieur",
+      "description" : "Profitez d’une réduction exclusive de 20% sur les derniers signers Ledger."
+    },
+    "opted_out" : {
+      "title" : "Passez du Ledger Nano S™ à un modèle plus récent",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Sélectionnez le compte à ajouter",
@@ -8128,7 +8141,7 @@
     "buyALedger" : "Acheter un Ledger"
   },
   "assets" : {
-    "cryptos" : "Crypto",
+    "cryptos" : "Cryptos",
     "stablecoins" : "Stablecoins",
     "cryptoAccounts" : "Comptes crypto",
     "accountsCount_one" : "{{count}} compte",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Comptes crypto",
+    "title" : "Comptes",
     "tableActions" : {
-      "searchAddress" : "Rechercher une adresse",
+      "searchAddress" : "Rechercher par nom ou adresse",
       "addAddress" : "Ajouter une adresse"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Sponsorisé par Provable",
       "balanceSelector" : {
         "private" : "Solde privé",
         "public" : "Solde public",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "Solde transparent",
       "transparentBalanceTooltip" : "Le solde qui est visible publiquement.",
       "privateBalance" : "Solde privé",
-      "privateBalanceTooltip" : "Le solde qui est masqué."
+      "privateBalanceTooltip" : "Le solde qui est masqué.",
+      "syncButton" : {
+        "startSync" : "Synchroniser",
+        "stopSync" : "Arrêter la synchro",
+        "syncAgain" : "Resynchroniser",
+        "lastSync" : "Dernière synchro : {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "Envoyer depuis"
       },
       "summary" : {
-        "coveredByProvable" : "Sponsorisé par Provable",
         "proofGenerationWarning" : "Une transaction Aleo nécessite la génération d’une preuve. Vous devrez patienter un peu."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Synchronisation de votre solde privé ({{percentage}}%)",
+        "desc" : "Veuillez patienter",
+        "error" : "Échec de la synchronisation. Veuillez réessayer plus tard."
       }
     }
   },
