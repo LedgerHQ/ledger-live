@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "رؤية جميع الأصول",
     "cryptoAddresses" : {
-      "title" : "حسابات الأصول المشفرة",
+      "title" : "الحسابات",
       "count_one" : "{{count}} حساب",
       "count_other" : "{{count}} حساب",
-      "noAccountsYet" : "لا توجد حسابات بعد"
+      "noAccountsYet" : "لا توجد حسابات بعد",
+      "add" : "إضافة"
     },
     "seeAllAccounts" : "رؤية جميع الحسابات",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "شراء",
       "connect" : "اتصال",
       "buyLedger" : "شراء Ledger",
+      "receive" : "تلقي",
+      "send" : "إرسال",
       "transferDrawer" : {
         "title" : "تحويل",
         "receiveCrypto" : "تلقى عبر عنوان أصل مشفر",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "جارٍ التحديث...",
       "upToDate" : "المحفظة الاستثمارية مُحدّثة",
-      "syncError" : "تعذر تحميل بعض بيانات الحساب"
+      "syncError" : "تعذر تحميل بعض بيانات الحساب",
+      "offline" : "أنت غير متصل بالإنترنت. يرجى التحقق من اتصالك"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "الأصول"
   },
+  "cryptoAddresses" : {
+    "title" : "الحسابات",
+    "addAccount" : "إضافة حساب",
+    "emptyState" : "لا توجد حسابات بعد",
+    "errorState" : "حدث خطأ أثناء تحميل حساباتك"
+  },
   "accounts" : {
     "title" : "الحسابات",
     "cryptoAccountsTitle" : "حسابات {{currencyTicker}}",
@@ -3433,6 +3443,14 @@
         "title" : "تنبيهات المعاملات (بيتا)",
         "desc" : "تلقى إشعارات بخصوص معاملاتك لإيثريوم و Polygon وسلسلة BNB و Avalanche و Ethereum Classic"
       },
+      "totalMarketCap" : {
+        "title" : "إجمالي سقف أسعار السوق (market cap)",
+        "desc" : "احصل على إشعار عندما يتحرك إجمالي سقف أسعار السوق (market cap) للأصول المشفرة بخطوة كبيرة"
+      },
+      "topGainersLosers" : {
+        "title" : "أعلى الرابحين والخاسرين",
+        "desc" : "احصل على تلخيص أسبوعي لأعلى رموز التوكن مكسب وخسارة في السوق"
+      },
       "price" : {
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "لافتة المحتوى مع أيقونات النقاط — شراء، مبادلة، تكديس. يتطلب علامة وضع Braze.",
         "addSampleActionCarouselImageBackground" : "إضافة شريط دوّار للإجراءات (صورة)",
         "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner مع image_background — شراء ومبادلة وتكديس. يتطلب علامة وضع Braze.",
+        "addSampleWalletCarousel" : "إضافة شريط دوّار المحفظة السفلي (محاكاة)",
+        "addSampleWalletCarouselDesc" : "بطاقة صورية واحدة في شريط العرض السفلي للمحفظة الاستثمارية (العلامة، العنوان، الصورة، الرابط). لا Braze.",
         "dismissAll" : "تجاهل كل البطاقات المحلية",
         "dismissAllDesc" : "حذف كل بطاقات المحتوى التي تم إنشاؤها محلياً."
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "عبر التحويل البنكي",
-          "description" : "تلقى العملات المستقرة عبر حساب النقود-إلى-العملات المستقرة. التسجيل مطلوب."
+          "description" : "تلقى العملات المستقرة ببساطة من خلال إرسال النقود.",
+          "description_legacy" : "تلقى العملات المستقرة عبر حساب النقود-إلى-العملات المستقرة. التسجيل مطلوب."
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "العملة المراد إرسالها",
         "changeToReturn" : "المتبقي المراد إرجاعه",
         "enterAmount" : "أدخل المبلغ",
+        "selectSufficientCoins" : "اختر ما يكفي من العملات",
         "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
         "amountInputLabel" : "المبلغ المطلوب إرساله",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (الأول دخولاً هو الأوّل خروجاً)",
             "OPTIMIZE_SIZE" : "تقليل الرسوم (تحقيق الحجم الأمثل)",
-            "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
+            "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)",
+            "CUSTOM" : "اختيار عملات مخصص"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "انتهت صلاحية المعدَّل",
       "description" : "انتهت صلاحية مُعدل الصرف. يُرجى التحديث وإعادة المحاولة."
     },
+    "details" : {
+      "code" : "كود خطأ",
+      "correlationId" : "المُعرّف المرجعي"
+    },
     "default" : {
       "title" : "حدث خطأ ما",
       "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "تعذر تحميل بعض بيانات الحساب",
       "description" : "أصولك آمنة. هذه مشكلة مزامنة مؤقتة.\nالحسابات المتأثرة: {{accounts}}",
+      "tryToRefresh" : "حاول التنشيط",
       "close" : "إغلاق"
     }
   },
