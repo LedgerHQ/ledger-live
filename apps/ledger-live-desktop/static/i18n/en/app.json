@@ -7809,9 +7809,9 @@
     },
     "profileSettings": {
       "personalizedExp": "Personalized experience",
-      "analytics": "Analytics",
-      "personalizedExpDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
-      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience."
+      "analytics": "App performance",
+      "personalizedExpDesc": "Enable Ledger to collect app usage to provide personalized contents",
+      "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience"
     }
   },
   "analytics": {
