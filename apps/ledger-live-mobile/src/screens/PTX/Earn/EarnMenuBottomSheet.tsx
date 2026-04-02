@@ -1,6 +1,7 @@
 import {
   BottomSheetHeader,
   BottomSheetView,
+  type IconProps,
   ListItem,
   ListItemContent,
   ListItemLeading,
@@ -8,7 +9,6 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as LumenSymbols from "@ledgerhq/lumen-ui-rnative/symbols";
-import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigationProp, ParamListBase, useRoute } from "@react-navigation/native";
 import React from "react";
 import { Linking } from "react-native";
@@ -30,11 +30,15 @@ function isValidEarnManifestId(
   return ["earn", "earn-stg", "earn-prd-eks"].includes(manifestId ?? "");
 }
 
-type MenuSymbol = typeof Plus;
+function isLumenSymbolName(name: string): name is keyof typeof LumenSymbols {
+  return name in LumenSymbols;
+}
 
-function resolveMenuItemIcon(iconName: string): MenuSymbol {
-  const Icon = LumenSymbols[iconName as keyof typeof LumenSymbols];
-  return typeof Icon === "function" ? (Icon as MenuSymbol) : Plus;
+function resolveMenuItemIcon(iconName: string): React.ComponentType<IconProps> | null {
+  if (isLumenSymbolName(iconName)) {
+    return LumenSymbols[iconName];
+  }
+  return null;
 }
 
 type EarnMenuBottomSheetProps = Readonly<{
@@ -99,6 +103,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
         <BottomSheetHeader />
         {options.map(({ icon, label, metadata }) => {
           const { link, live_app, ...tracked } = metadata;
+          const IconComponent = resolveMenuItemIcon(icon);
           return link ? (
             <ListItem
               key={label}
@@ -106,7 +111,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
               style={{ marginHorizontal: -8 }}
             >
               <ListItemLeading>
-                <ListItemSpot appearance="icon" icon={resolveMenuItemIcon(icon)} />
+                {IconComponent && <ListItemSpot appearance="icon" icon={IconComponent} />}
                 <ListItemContent>
                   <ListItemTitle>{label}</ListItemTitle>
                 </ListItemContent>
