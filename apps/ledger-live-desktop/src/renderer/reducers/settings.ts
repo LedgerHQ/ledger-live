@@ -782,27 +782,29 @@ export const sharePersonalizedRecommendationsSelector = (state: State) =>
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
 
-  if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
-    return false;
-  }
+  if (state.featureFlags?.resolved?.analyticsOptIn?.enabled) {
+    if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
+      return false;
+    }
 
-  const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
-  if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
-    return false;
-  }
+    const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
+    if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
+      return false;
+    }
 
-  const now = new Date();
-  // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
-  const oneYearAgo = new Date(now.getTime());
+    const now = new Date();
+    // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
+    const oneYearAgo = new Date(now.getTime());
 
-  oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
+    oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
 
-  if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
-    return false;
-  }
+    if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
+      return false;
+    }
 
-  if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
-    return false;
+    if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
+      return false;
+    }
   }
 
   return s.shareAnalytics || s.sharePersonalizedRecommandations;
