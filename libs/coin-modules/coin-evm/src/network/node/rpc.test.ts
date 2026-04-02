@@ -1002,6 +1002,11 @@ describe("EVM Family", () => {
           "debug and trace methods are not supported on your current plan. Enable by upgrading to Growth or Business plan at dashboard.quicknode.com/billing/plan.",
         label: "-32605 (e.g. QuickNode plan limit)",
       },
+      {
+        code: -32053,
+        message: "API key is not allowed to access method",
+        label: "-32053 (e.g. API key cannot call trace_block)",
+      },
     ])(
       "should throw UnsupportedRpcMethodError when trace_block and debug_traceBlockByNumber return $label",
       async ({ code, message }) => {
