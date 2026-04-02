@@ -740,6 +740,7 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "polygon":
         case "core":
         case "blast":
+        case "base":
         case "scroll":
         case "bsc":
           response.push({ id, type: "coin" });
