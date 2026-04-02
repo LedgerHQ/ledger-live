@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import {
   createEmptyHistoryCache,
   encodeAccountId,
