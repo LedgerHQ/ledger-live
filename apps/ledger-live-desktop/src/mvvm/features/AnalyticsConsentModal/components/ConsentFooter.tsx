@@ -3,18 +3,26 @@ import { useTranslation } from "react-i18next";
 import { Link } from "@ledgerhq/lumen-ui-react";
 
 export type ConsentFooterProps = Readonly<{
+  privacyPolicyUrl: string;
   onOpenPrivacyPolicy: () => void;
 }>;
 
-export function ConsentFooter({ onOpenPrivacyPolicy }: ConsentFooterProps) {
+export function ConsentFooter({ privacyPolicyUrl, onOpenPrivacyPolicy }: ConsentFooterProps) {
   const { t } = useTranslation();
   return (
     <p className="body-4 text-muted text-center">
       {t("analyticsConsentModal.footer.lead")}{" "}
-      <Link asChild appearance="inherit" size="inherit">
-        <button type="button" onClick={onOpenPrivacyPolicy}>
-          {t("analyticsConsentModal.footer.privacyLink")}
-        </button>
+      <Link
+        appearance="inherit"
+        size="inherit"
+        href={privacyPolicyUrl}
+        isExternal
+        onClick={e => {
+          e.preventDefault();
+          onOpenPrivacyPolicy();
+        }}
+      >
+        {t("analyticsConsentModal.footer.privacyLink")}
       </Link>
     </p>
   );
