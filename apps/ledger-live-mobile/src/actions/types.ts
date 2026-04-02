@@ -496,6 +496,7 @@ export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
   EARN_INFO_BOTTOM_SHEET = "EARN_INFO_BOTTOM_SHEET",
   EARN_MENU_MODAL = "EARN_MENU_MODAL",
+  EARN_MENU_BOTTOM_SHEET = "EARN_MENU_BOTTOM_SHEET",
   EARN_PROTOCOL_INFO_MODAL = "EARN_PROTOCOL_INFO_MODAL",
 }
 
@@ -505,12 +506,15 @@ export type EarnSetInfoBottomSheetPayload = EarnState["infoBottomSheet"];
 
 export type EarnSetMenuModalPayload = EarnState["menuModal"] | undefined;
 
+export type EarnSetMenuBottomSheetPayload = EarnState["menuBottomSheet"];
+
 export type EarnSetProtocolInfoModalPayload = EarnState["protocolInfoModal"] | undefined;
 
 export type EarnPayload =
   | EarnSetInfoModalPayload
   | EarnSetInfoBottomSheetPayload
   | EarnSetMenuModalPayload
+  | EarnSetMenuBottomSheetPayload
   | EarnSetProtocolInfoModalPayload;
 
 // === IN VIEW ACTIONS ===
