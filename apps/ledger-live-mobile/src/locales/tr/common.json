@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "Tüm varlıkları gör",
     "cryptoAddresses" : {
-      "title" : "Kripto hesapları",
+      "title" : "Hesaplar",
       "count_one" : "{{count}} hesap",
       "count_other" : "{{count}} hesap",
-      "noAccountsYet" : "Henüz hesap yok"
+      "noAccountsYet" : "Henüz hesap yok",
+      "add" : "Ekle"
     },
     "seeAllAccounts" : "Tüm hesapları gör",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "Satın al",
       "connect" : "Bağlan",
       "buyLedger" : "Ledger satın alın",
+      "receive" : "Al",
+      "send" : "Gönder",
       "transferDrawer" : {
         "title" : "Transfer",
         "receiveCrypto" : "Kripto adresiyle transfer alın",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "Yenileniyor...",
       "upToDate" : "Portföy güncel",
-      "syncError" : "Bazı hesap verileri yüklenemedi"
+      "syncError" : "Bazı hesap verileri yüklenemedi",
+      "offline" : "Çevrim dışısınız. Lütfen bağlantınızı kontrol edin."
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "Varlıklar"
   },
+  "cryptoAddresses" : {
+    "title" : "Hesaplar",
+    "addAccount" : "Hesap ekle",
+    "emptyState" : "Henüz hesap yok",
+    "errorState" : "Hesaplarınız yüklenirken bir hata oluştu"
+  },
   "accounts" : {
     "title" : "Hesaplar",
     "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
@@ -3433,6 +3443,14 @@
         "title" : "İşlem Uyarıları (Beta)",
         "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
+      "totalMarketCap" : {
+        "title" : "Toplam Piyasa Değeri",
+        "desc" : "Toplam kripto piyasa değerinde önemli bir değişiklik olduğunda bildirim alın"
+      },
+      "topGainersLosers" : {
+        "title" : "En Çok Yükselenler ve Düşenler",
+        "desc" : "Piyasada en çok yükselen ve en çok düşen token'ların haftalık özetini alın"
+      },
       "price" : {
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "Spot simgeleri içeren ContentBanner - Satın Al, Takas et ve Stake et. Braze yerleştirme bayrağı gerektirir.",
         "addSampleActionCarouselImageBackground" : "Eylem galerisi ekle (resim)",
         "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner ve image_background — Satın Al, Takas Et, Stake Et. Braze yerleştirme bayrağı gerektirir.",
+        "addSampleWalletCarousel" : "Alt cüzdan kaydırmalı görseli ekle (mock).",
+        "addSampleWalletCarouselDesc" : "Portföy alt galerisinde bir adet test kartı (etiket, başlık, resim, bağlantı). Braze yok.",
         "dismissAll" : "Tüm yerel kartları kaldır",
         "dismissAllDesc" : "Yerel olarak oluşturulan tüm içerik kartlarını kaldırın."
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "Banka transferiyle",
-          "description" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
+          "description" : "Kolayca nakit göndererek stabil coin alın",
+          "description_legacy" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "Gönderilecek coin",
         "changeToReturn" : "Dönecek para üstü",
         "enterAmount" : "Tutar girin",
+        "selectSufficientCoins" : "Yeterli miktarda coin seçin",
         "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
         "amountInputLabel" : "Gönderilecek tutar",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Önce en eski coin'ler (FIFO)",
             "OPTIMIZE_SIZE" : "Ücretleri en aza indirin (boyutu optimize edin)",
-            "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)"
+            "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)",
+            "CUSTOM" : "Özel coin seçimi"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "Kurun Süresi Doldu",
       "description" : "Kur zaman aşımına uğradı. Lütfen yenileyip tekrar deneyin."
     },
+    "details" : {
+      "code" : "Hata kodu",
+      "correlationId" : "Referans Kimliği"
+    },
     "default" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "Bazı hesap verileri yüklenemedi",
       "description" : "Varlıklarınız güvendedir. Bu, geçici bir senkronizasyon sorunudur.\nEtkilenen hesaplar: {{accounts}}",
+      "tryToRefresh" : "Yenilemeyi deneyin",
       "close" : "Kapat"
     }
   },
