@@ -506,6 +506,25 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
+                          [NavigatorName.Borrow]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://borrow" will open the borrow screen
+                               *
+                               * @params ?accountId: string
+                               * @params ?currencyId: string
+                               */
+                              [ScreenName.Borrow]: "borrow",
+                            },
+                          },
+                          [NavigatorName.Discover]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://discover" will open the catalog
+                               */
+                              [ScreenName.PlatformCatalog]: "discover",
+                            },
+                          },
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**

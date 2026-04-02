@@ -24,6 +24,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
+import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -604,6 +605,11 @@ export default function BaseNavigator() {
                 }
               : { headerShown: false };
           }}
+        />
+        <Stack.Screen
+          name={NavigatorName.Borrow}
+          component={BorrowLiveAppNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
