@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link as RouterLink } from "react-router";
 import { Link } from "@ledgerhq/lumen-ui-react";
 
 export type DescriptionWithPreferencesLinkProps = Readonly<{
@@ -16,9 +17,15 @@ export function DescriptionWithPreferencesLink({
     <p className="body-2 text-muted text-center">
       {text}{" "}
       <Link asChild appearance="accent" size="sm" underline={false}>
-        <button type="button" onClick={onSetPreferences}>
+        <RouterLink
+          to="/settings/display"
+          onClick={e => {
+            e.preventDefault();
+            onSetPreferences();
+          }}
+        >
           {t("analyticsConsentModal.setPreferences")}
-        </button>
+        </RouterLink>
       </Link>
     </p>
   );

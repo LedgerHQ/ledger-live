@@ -217,7 +217,7 @@ describe("AnalyticsConsentModal on portfolio route", () => {
     });
 
     await screen.findByRole("heading", { name: "Help us improve Ledger" });
-    await user.click(screen.getByRole("button", { name: /set preferences/i }));
+    await user.click(screen.getByRole("link", { name: /set preferences/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId("settings-display-stub")).toBeInTheDocument();
