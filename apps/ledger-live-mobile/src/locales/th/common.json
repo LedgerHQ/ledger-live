@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "ดูสินทรัพย์ทั้งหมด",
     "cryptoAddresses" : {
-      "title" : "บัญชีคริปโต",
+      "title" : "บัญชี",
       "count_one" : "{{count}} บัญชี",
       "count_other" : "{{count}} บัญชี",
-      "noAccountsYet" : "ยังไม่มีบัญชีในตอนนี้"
+      "noAccountsYet" : "ยังไม่มีบัญชีในตอนนี้",
+      "add" : "เพิ่ม"
     },
     "seeAllAccounts" : "ดูบัญชีทั้งหมด",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "ซื้อ",
       "connect" : "เชื่อมต่อ",
       "buyLedger" : "ซื้อ Ledger",
+      "receive" : "รับ",
+      "send" : "ส่ง",
       "transferDrawer" : {
         "title" : "การโอน",
         "receiveCrypto" : "รับผ่านที่อยู่ของคริปโต",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "กำลังรีเฟรช...",
       "upToDate" : "พอร์ตโฟลิโอเป็นปัจจุบันแล้ว",
-      "syncError" : "ไม่สามารถโหลดข้อมูลบัญชีบางส่วนได้"
+      "syncError" : "ไม่สามารถโหลดข้อมูลบัญชีบางส่วนได้",
+      "offline" : "You’re offline. Please check your connection"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "สินทรัพย์"
   },
+  "cryptoAddresses" : {
+    "title" : "บัญชี",
+    "addAccount" : "เพิ่มบัญชี",
+    "emptyState" : "ยังไม่มีบัญชีในตอนนี้",
+    "errorState" : "An error occurred while loading your accounts"
+  },
   "accounts" : {
     "title" : "บัญชี",
     "cryptoAccountsTitle" : "บัญชี {{currencyTicker}}",
@@ -3433,6 +3443,14 @@
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
         "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, BNB Chain, Avalanche และ Ethereum Classic"
       },
+      "totalMarketCap" : {
+        "title" : "มูลค่าหลักทรัพย์ตามราคาตลาดรวม",
+        "desc" : "รับการแจ้งเตือนเมื่อมูลค่าหลักทรัพย์ตามราคาตลาดคริปโตมีการเคลื่อนไหวอย่างมีนัยสำคัญ"
+      },
+      "topGainersLosers" : {
+        "title" : "เหรียญที่ราคาสูงขึ้นและลดลงมากที่สุด",
+        "desc" : "สรุปอันดับโทเคนที่ราคาพุ่งแรงและร่วงหนักที่สุดประจำสัปดาห์"
+      },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
         "desc" : "ตั้งค่าการแจ้งราคาสำหรับเหรียญที่คุณชื่นชอบเพื่อให้คุณไม่พลาดกับทุกการเคลื่อนไหวในตลาด"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "ContentBanner พร้อมไอคอนจุดเด่น — ซื้อ, สวอป, สเตค ต้องมีการตั้งค่าสถานะสำหรับ Braze Placement",
         "addSampleActionCarouselImageBackground" : "เพิ่มแคโรเซล (ภาพ)",
         "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner with image_background — ซื้อ, สวอป, สเตค ต้องมีการตั้งค่าสถานะ Braze Position",
+        "addSampleWalletCarousel" : "Add bottom wallet carousel (mock)",
+        "addSampleWalletCarouselDesc" : "One mock card in the Portfolio bottom carousel (tag, title, image, link). No Braze.",
         "dismissAll" : "ยกเลิกการ์ดเฉพาะที่ทั้งหมด",
         "dismissAllDesc" : "ลบการ์ดเนื้อหาที่สร้างเฉพาะที่ทั้งหมด"
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "โดยการโอนเงินจากบัญชีธนาคาร",
-          "description" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
+          "description" : "Receive stablecoin by simply sending cash.",
+          "description_legacy" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "เหรียญที่จะส่ง",
         "changeToReturn" : "เปลี่ยนเพื่อกลับไป",
         "enterAmount" : "ป้อนจำนวน",
+        "selectSufficientCoins" : "Select sufficient coins",
         "amountToSendInCurrency" : "จำนวนที่ต้องการส่งในรูปแบบ {{ticker}}",
         "amountInputLabel" : "จำนวนที่จะส่ง",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Oldest coins first (FIFO)",
             "OPTIMIZE_SIZE" : "ค่าธรรมเนียมต่ำสุด (ปรับขนาดให้เหมาะสม)",
-            "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)"
+            "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)",
+            "CUSTOM" : "การเลือกเหรียญเฉพาะที่กำหนดเอง"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "อัตรานี้หมดอายุแล้ว",
       "description" : "อัตราแลกเปลี่ยนหมดอายุแล้ว โปรดรีเฟรชและลองอีกครั้ง"
     },
+    "details" : {
+      "code" : "Error code",
+      "correlationId" : "Reference ID"
+    },
     "default" : {
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "ไม่สามารถโหลดข้อมูลบัญชีบางส่วนได้",
       "description" : "สินทรัพย์ของคุณยังปลอดภัย นี่เป็นปัญหาการซิงค์ชั่วคราว\nบัญชีที่ได้รับผลกระทบ: {{accounts}}",
+      "tryToRefresh" : "Try to refresh",
       "close" : "ปิด"
     }
   },
