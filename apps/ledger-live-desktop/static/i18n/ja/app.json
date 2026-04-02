@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "再試行してください。",
       "description" : "サーバーはリクエストを処理できませんでした。再試行するか、Ledgerサポートにお問い合わせください。",
-      "code" : "コード：{{errorCode}}"
+      "code" : "コード",
+      "correlationId" : "参照ID"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "送付するコイン",
       "changeToReturn" : "戻される差額",
       "enterAmount" : "数量を入力",
+      "selectSufficientCoins" : "十分なコインを選択してください",
       "amountToSendInCurrency" : "送金金額 ({{ticker}})",
       "amountInputLabel" : "送付額"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "先入れ先出し方式(FIFO)",
       "OPTIMIZE_SIZE" : "手数料の最小化(サイズの最適化)",
-      "MERGE_OUTPUTS" : "今後の手数料を最小限に抑える(コインを統合)"
+      "MERGE_OUTPUTS" : "今後の手数料を最小限に抑える(コインを統合)",
+      "CUSTOM" : "コインセレクションをカスタマイズ"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "詳細はこちら"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Ledger Nano S™をアップグレード",
+      "description" : "限定特典、最新のLedger署名用デバイスが20%OFF。"
+    },
+    "opted_out" : {
+      "title" : "Ledger Nano S™をアップグレード",
+      "description" : "Ledger Nano Sの限られたメモリでは、最新機能やブロックチェーンの変更、セキュリティ強化が制限されます。"
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "追加したいアカウントを選択する",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "暗号資産アカウント",
+    "title" : "アカウント",
     "tableActions" : {
-      "searchAddress" : "アドレスを検索",
+      "searchAddress" : "Search by name, address",
       "addAddress" : "アドレスを追加"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Provable提供",
       "balanceSelector" : {
         "private" : "プライベート残高",
         "public" : "公開残高",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "トランスペアレント残高",
       "transparentBalanceTooltip" : "一般に公開されている残高",
       "privateBalance" : "プライベート残高",
-      "privateBalanceTooltip" : "一般には非公開の残高"
+      "privateBalanceTooltip" : "一般には非公開の残高",
+      "syncButton" : {
+        "startSync" : "同期を開始",
+        "stopSync" : "同期を停止",
+        "syncAgain" : "Sync again",
+        "lastSync" : "Last synced: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "送付元"
       },
       "summary" : {
-        "coveredByProvable" : "Provable提供",
         "proofGenerationWarning" : "Aleoのトランザクションにはプルーフの生成が必要です。少し時間がかかる場合があります。"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "プライベート残高を同期中（{{percentage}}％）",
+        "desc" : "お待ちください",
+        "error" : "プライベート同期に失敗しました。しばらくしてから、もう一度お試しください。"
       }
     }
   },
