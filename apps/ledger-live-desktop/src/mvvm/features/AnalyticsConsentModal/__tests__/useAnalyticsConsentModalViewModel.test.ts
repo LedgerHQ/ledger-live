@@ -2,18 +2,33 @@ import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { useAnalyticsConsentModalViewModel } from "../useAnalyticsConsentModalViewModel";
+import { track } from "~/renderer/analytics/segment";
+import {
+  ANALYTICS_CONSENT_FLOW,
+  ANALYTICS_CONSENT_MODAL_PAGE,
+  useAnalyticsConsentModalViewModel,
+} from "../hooks/useAnalyticsConsentModalViewModel";
 
 const mockNavigate = jest.fn();
 const mockUseMatch = jest.fn();
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
+jest.mock("~/renderer/analytics/segment", () => ({
+  ...jest.requireActual("~/renderer/analytics/segment"),
+  track: jest.fn(),
+}));
+
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
   useMatch: (args: unknown) => mockUseMatch(args),
 }));
+
+const drawerClosedPayload = {
+  page: ANALYTICS_CONSENT_MODAL_PAGE,
+  flow: ANALYTICS_CONSENT_FLOW,
+};
 
 describe("useAnalyticsConsentModalViewModel", () => {
   const featureFlagsWithAnalyticsOptIn = {
@@ -28,6 +43,20 @@ describe("useAnalyticsConsentModalViewModel", () => {
     jest.clearAllMocks();
     mockUseMatch.mockReturnValue({});
   });
+
+  const consentReconfirmState = {
+    featureFlags: featureFlagsWithAnalyticsOptIn,
+    settings: {
+      ...INITIAL_STATE,
+      hasCompletedOnboarding: true,
+      shareAnalytics: true,
+      sharePersonalizedRecommandations: true,
+      analyticsConsentInfo: {
+        consentDate: null,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+    },
+  };
 
   it("keeps phase closed when portfolio route is not focused", () => {
     mockUseMatch.mockReturnValue(null);
@@ -52,19 +81,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
 
   it("opens consentReconfirm when renewal is needed, policy is current, and share analytics is on", async () => {
     const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: {
-          ...INITIAL_STATE,
-          hasCompletedOnboarding: true,
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-          analyticsConsentInfo: {
-            consentDate: null,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          },
-        },
-      },
+      initialState: consentReconfirmState,
     });
 
     await act(async () => {
@@ -103,19 +120,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
 
   it("dispatches opt-in and closes modal", async () => {
     const { result, store } = renderHook(() => useAnalyticsConsentModalViewModel(), {
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: {
-          ...INITIAL_STATE,
-          hasCompletedOnboarding: true,
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-          analyticsConsentInfo: {
-            consentDate: null,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          },
-        },
-      },
+      initialState: consentReconfirmState,
     });
 
     await act(async () => {
@@ -124,8 +129,8 @@ describe("useAnalyticsConsentModalViewModel", () => {
 
     expect(result.current.phase).toBe("consentReconfirm");
 
-    act(() => {
-      result.current.applyOptIn();
+    await act(async () => {
+      await result.current.applyOptIn();
     });
 
     const s = store.getState().settings;
@@ -136,21 +141,31 @@ describe("useAnalyticsConsentModalViewModel", () => {
     expect(result.current.phase).toBe("closed");
   });
 
+  it("tracks drawer_closed when leaving portfolio while modal is open", async () => {
+    mockUseMatch.mockReturnValue({});
+    const { result, rerender } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+      initialState: consentReconfirmState,
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current.phase).toBe("consentReconfirm");
+
+    mockUseMatch.mockReturnValue(null);
+    rerender(undefined);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", drawerClosedPayload);
+    expect(result.current.phase).toBe("closed");
+  });
+
   it("navigates to settings display when Set preferences is used", async () => {
     const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: {
-          ...INITIAL_STATE,
-          hasCompletedOnboarding: true,
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-          analyticsConsentInfo: {
-            consentDate: null,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          },
-        },
-      },
+      initialState: consentReconfirmState,
     });
 
     await act(async () => {
@@ -161,6 +176,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
       result.current.onSetPreferences();
     });
 
+    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", drawerClosedPayload);
     expect(mockNavigate).toHaveBeenCalledWith("/settings/display");
   });
 });
