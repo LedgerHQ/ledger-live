@@ -13,7 +13,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 import type { AccountIdParams, CryptoAssetsStore } from "@ledgerhq/types-live";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+// oxlint-disable-next-line typescript/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
 
 describe("ledger-wallet-framework", () => {
@@ -70,7 +70,7 @@ describe("ledger-wallet-framework", () => {
       it("should return an accountId and a token", async () => {
         jest
           .spyOn(cryptoAssets, "getCryptoAssetsStore")
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          // oxlint-disable-next-line typescript/consistent-type-assertions
           .mockReturnValue({
             findTokenById: (_: unknown) => Promise.resolve(TOKEN),
             findTokenByAddressInCurrency: (_: unknown, __: unknown) => Promise.resolve(TOKEN),

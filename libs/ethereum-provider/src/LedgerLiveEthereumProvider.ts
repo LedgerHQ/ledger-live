@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable typescript/no-explicit-any */
 import { EventEmitter } from "events";
 import { v4 as uuid } from "uuid";
 
