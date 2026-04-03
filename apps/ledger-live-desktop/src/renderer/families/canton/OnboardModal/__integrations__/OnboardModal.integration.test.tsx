@@ -132,14 +132,25 @@ describe("OnboardModal Integration", () => {
 
     expect(screen.getByText("Set up your new Canton account by clicking Continue")).toBeVisible();
 
+    const reqs: string[] = [];
+    server.events.on("request:start", ({ request }) => {
+      reqs.push(request.url);
+      console.log("MSW intercepted:", request.url);
+    });
+
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("add-accounts-finish-close-button")).toBeVisible();
-      },
-      { timeout: 20_000 },
-    );
+    try {
+      await waitFor(
+        () => {
+          expect(screen.getByTestId("add-accounts-finish-close-button")).toBeVisible();
+        },
+        { timeout: 5000 },
+      );
+    } catch (e) {
+      console.log("DOM AFTER FAIL:", document.body.innerHTML, reqs);
+      throw e;
+    }
   }, 25_000);
 
   it("should show try again when onboarding prepare fails", async () => {
