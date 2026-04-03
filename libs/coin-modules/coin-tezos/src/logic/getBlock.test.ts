@@ -970,7 +970,7 @@ describe("delegation operations", () => {
     const result = await getBlock(5_000_000);
 
     // Then
-    const details = result.transactions[0].operations[0]?.details as Record<string, unknown>;
+    const details = (result.transactions[0].operations[0] as any)?.details as Record<string, unknown>;
     expect(details).not.toHaveProperty("delegate");
     expect(details.operationType).toBe("UNDELEGATE");
   });

@@ -1,7 +1,6 @@
 import { SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { localForger } from "@taquito/local-forging";
 import type { TezosConfig } from "../config";
-import type { TezosApi } from "./types";
 import { createApi } from ".";
 
 const defaultConfig: TezosConfig = {
@@ -23,7 +22,7 @@ const defaultConfig: TezosConfig = {
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: TezosApi;
+  let module: ReturnType<typeof createApi>;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -246,7 +245,7 @@ describe("Tezos Api", () => {
   });
 
   describe("with custom fees settings", () => {
-    let moduleCustomFees: TezosApi;
+    let moduleCustomFees: ReturnType<typeof createApi>;
     const minFees = 600;
     const minEstimatedFees = 550;
 

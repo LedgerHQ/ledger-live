@@ -2,7 +2,6 @@ import { localForger } from "@taquito/local-forging";
 import { OpKind } from "@taquito/rpc";
 import { TezosConfig } from "../config";
 import api from "../network/tzkt";
-import type { TezosApi } from "./types";
 import { createApi } from ".";
 
 /**
@@ -52,7 +51,7 @@ type DecodedOperation = {
  * Use this test suite in last resort
  */
 describe("Tezos Api - Mainnet", () => {
-  let module: TezosApi;
+  let module: ReturnType<typeof createApi>;
 
   beforeAll(() => {
     module = createApi(defaultConfig);
@@ -143,7 +142,7 @@ describe("Tezos Api - Mainnet", () => {
   });
 
   describe("with custom fees settings", () => {
-    let moduleCustomFees: TezosApi;
+    let moduleCustomFees: ReturnType<typeof createApi>;
 
     beforeAll(() => {
       moduleCustomFees = createApi({

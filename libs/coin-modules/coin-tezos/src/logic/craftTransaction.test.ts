@@ -189,10 +189,10 @@ describe("craftTransaction", () => {
 
       const result = await craftTransaction(account, transaction, publicKey);
 
-      const revealOp = result.contents[0];
+      const revealOp = result.contents[0] as any;
       expect(revealOp.kind).toBe(OpKind.REVEAL);
       expect(Number(revealOp.fee ?? 0)).toBe(suggestedRevealFee);
-      const delegationOp = result.contents[1];
+      const delegationOp = result.contents[1] as any;
       expect(Number(delegationOp.fee ?? 0)).toBe(mainOpFee);
     });
 
@@ -223,7 +223,7 @@ describe("craftTransaction", () => {
 
       const result = await craftTransaction(account, transaction, publicKey);
 
-      const revealOp = result.contents[0];
+      const revealOp = result.contents[0] as any;
       expect(revealOp.kind).toBe(OpKind.REVEAL);
       expect(revealOp.fee).toBe(String(minFees));
       expect(revealOp.gas_limit).toBe("300");
@@ -259,8 +259,8 @@ describe("craftTransaction", () => {
       const result = await craftTransaction(account, transaction, publicKey);
 
       expect(result.contents).toHaveLength(2);
-      const revealFee = Number(result.contents[0].fee ?? 0);
-      const delegationFee = Number(result.contents[1].fee ?? 0);
+      const revealFee = Number((result.contents[0] as any).fee ?? 0);
+      const delegationFee = Number((result.contents[1] as any).fee ?? 0);
       const total = revealFee + delegationFee;
       expect(revealFee).toBe(minFees);
       expect(delegationFee).toBe(mainOpFee);
