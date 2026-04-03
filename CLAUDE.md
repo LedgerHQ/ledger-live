@@ -1,16 +1,10 @@
-# Project Context
+ledger-live is a monorepo for "Ledger Wallet" frontend apps and libraries.
 
-## Overview
+Usage:
+    proto use
+    pnpm --filter <scope> build|test|lint|typecheck|lint:fix [-- <path>]
 
-- "Ledger Wallet" (formerly "ledger-live") is a crypto wallet
-- This pnpm and turborepo monorepo provides frontend apps
+notable scopes: ledger-live-desktop, live-mobile, live-common
+  (any package: drop @ledgerhq/ prefix)
 
-## Common Commands
-
-- Use pnpm commands for build, dev, linting and testing.
-- See [/docs/common-commands.md](/docs/common-commands.md)
-
-## Validate Before Finishing
-
-- Before finishing any agentic code change, run static checks for the affected scope
-- See [/docs/dev/validate-before-finishing.md](/docs/dev/validate-before-finishing.md)
+modified app/lib must build, lint, typecheck and pass test.

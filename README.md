@@ -210,6 +210,57 @@ pnpm run test --continue --filter="!./apps/*" --filter="...[HEAD~1]"
 pnpm typecheck --filter="live-mobile"
 ```
 
+### Development commands
+
+All commands must be run from the **repo root**.
+
+```bash
+# Start apps
+pnpm dev:lld                  # Ledger Live Desktop
+pnpm dev:llm:ios              # Mobile on iOS
+pnpm dev:llm:android          # Mobile on Android
+
+# Build
+pnpm build:lld                # Desktop (builds deps first via turbo)
+pnpm build:llm:deps           # All mobile dependencies
+pnpm build:libs               # All libs
+pnpm turbo build --filter=@ledgerhq/<lib-name>  # Specific lib
+
+# Lint / typecheck entire monorepo
+pnpm lint
+pnpm lint:fix
+pnpm typecheck
+```
+
+#### Per-package scripts
+
+Each app/lib exposes a unified set of scripts, runnable via `pnpm <scope> <script>` or `pnpm --filter <package-name> <script>`:
+
+```bash
+pnpm <scope> build            # Compile
+pnpm <scope> test [-- <file>] # Unit tests only; optional file pattern filter
+pnpm <scope> lint             # Lint
+pnpm <scope> lint:fix         # Auto-fix lint issues
+pnpm <scope> typecheck        # TypeScript type check
+```
+
+Notable scopes: `desktop` (ledger-live-desktop), `mobile` (live-mobile), `common` (live-common), `domain` (domain-service).
+
+#### Before finishing any code change
+
+For the affected package(s), run:
+
+```bash
+pnpm <scope> typecheck
+pnpm <scope> test
+```
+
+If typecheck fails due to an import from a local lib, rebuild it first:
+
+```bash
+pnpm turbo build --filter=@ledgerhq/<lib-name>
+```
+
 ## Documentation
 
 Each project folder has a `README.md` file which contains basic documentation.
