@@ -772,6 +772,10 @@ describe("delegation operations", () => {
         operationType: "DELEGATE",
         stakedAmount: 0n,
         delegate: "tz1Baker",
+        counter: 1,
+        gasLimit: undefined,
+        storageLimit: undefined,
+        ledgerOpType: "DELEGATE",
       },
     });
   });
@@ -803,6 +807,10 @@ describe("delegation operations", () => {
         operationType: "UNDELEGATE",
         stakedAmount: 0n,
         delegate: "tz1PrevBaker",
+        counter: 1,
+        gasLimit: undefined,
+        storageLimit: undefined,
+        ledgerOpType: "UNDELEGATE",
       },
     });
   });
