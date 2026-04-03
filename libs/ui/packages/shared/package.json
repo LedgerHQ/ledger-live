@@ -31,12 +31,21 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.build.json && node scripts/transpile",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
     "prepublishOnly": "npm run build",
     "clean": "rimraf lib",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "test": "jest --passWithNoTests"
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "tiny-glob": "^0.2.9"
+    "tiny-glob": "^0.2.9",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/jest": "catalog:",
+    "oxlint": "catalog:"
   }
 }

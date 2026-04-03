@@ -13,6 +13,8 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit --customConditions node"
   },
   "dependencies": {
@@ -88,6 +90,8 @@
     "@types/react-table": "^7.7.20",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:"
+    "jest-environment-jsdom": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }
