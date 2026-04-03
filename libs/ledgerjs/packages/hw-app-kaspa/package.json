@@ -11,7 +11,8 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "test": "jest",
     "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix"
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --customConditions node"
   },
   "repository": {
     "type": "git",
