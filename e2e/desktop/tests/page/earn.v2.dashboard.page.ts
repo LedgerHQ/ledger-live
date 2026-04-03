@@ -72,6 +72,7 @@ export class EarnV2Page extends EarnBasePage {
   @step("Click position row: $0")
   async clickPositionRow(identifier: string) {
     const webview = await this.getWebView();
+    await webview.waitForLoadState("networkidle");
     const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: new RegExp(identifier) });
     await row.first().click();
   }
