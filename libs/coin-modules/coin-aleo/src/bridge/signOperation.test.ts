@@ -86,6 +86,32 @@ describe("buildSignOperation", () => {
     ]);
   });
 
+  it("should emit device-signature-requested with only a type key", async () => {
+    const events = await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    const event = events.find(e => e.type === "device-signature-requested");
+    expect(Object.keys(event!)).toEqual(["type"]);
+  });
+
+  it("should emit device-signature-granted with only a type key", async () => {
+    const events = await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    const event = events.find(e => e.type === "device-signature-granted");
+    expect(Object.keys(event!)).toEqual(["type"]);
+  });
+
   it("should emit a signed event with the optimistic operation and the encoded signed transaction", async () => {
     const events = await firstValueFrom(
       mockSignOperation({
@@ -146,6 +172,33 @@ describe("buildSignOperation", () => {
       mockAccount.freshAddressPath,
       expect.any(Buffer),
     );
+  });
+
+  it("should call signer.signFeeIntent once for non-sponsored transactions", async () => {
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockSigner.signFeeIntent).toHaveBeenCalledTimes(1);
+    expect(mockSigner.signFeeIntent).toHaveBeenCalledWith(expect.any(Buffer));
+  });
+
+  it("should not call signer.signFeeIntent when fee is sponsored", async () => {
+    mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockSigner.signFeeIntent).not.toHaveBeenCalled();
   });
 
   it("should use fee_private function name when transaction is private", async () => {
