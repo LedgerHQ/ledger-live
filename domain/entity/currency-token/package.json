@@ -1,5 +1,5 @@
 {
-  "name": "@domain/entity-token-currency",
+  "name": "@domain/entity-currency-token",
   "version": "0.0.1",
   "private": true,
   "description": "Domain entity for token currencies: Zod schema with FK-based parent currency reference",

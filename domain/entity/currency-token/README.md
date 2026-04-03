@@ -1,4 +1,4 @@
-# @domain/entity-token-currency
+# @domain/entity-currency-token
 
 Domain entity for token currencies: Zod-first schema with FK-based parent currency reference.
 
@@ -11,7 +11,7 @@ No Redux slice, no static registry — tokens are served dynamically via `@domai
 ## Usage
 
 ```ts
-import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-token-currency";
+import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency-token";
 
 const token: TokenCurrency = TokenCurrencySchema.parse({
   type: "TokenCurrency",
@@ -28,7 +28,7 @@ const token: TokenCurrency = TokenCurrencySchema.parse({
 Or use the `token()` helper which calls `parse()` for you:
 
 ```ts
-import { token } from "@domain/entity-token-currency";
+import { token } from "@domain/entity-currency-token";
 
 const usdt = token({
   type: "TokenCurrency",
@@ -64,7 +64,7 @@ pnpm typecheck     # tsc --noEmit
 Mock factory available in `src/schema.mock.ts`:
 
 ```ts
-import { mockTokenCurrency } from "@domain/entity-token-currency/src/schema.mock";
+import { mockTokenCurrency } from "@domain/entity-currency-token/src/schema.mock";
 
 const token = mockTokenCurrency({ delisted: true });
 ```
