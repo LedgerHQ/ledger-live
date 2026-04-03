@@ -8,25 +8,34 @@ describe("createOpenInfoBottomSheetHandler", () => {
   it("should dispatch set info bottom sheet action with params when params are provided", async () => {
     const dispatch = jest.fn();
     const handler = createOpenInfoBottomSheetHandler(dispatch);
+    const linkHref = "https://www.ledger.com";
     const params = {
       title: "Info title",
       message: "Info message",
       linkText: "Learn more",
-      linkHref: "https://example.com",
+      linkHref,
     };
 
     await handler({ params });
 
     expect(dispatch).toHaveBeenCalledTimes(1);
-    expect(dispatch).toHaveBeenCalledWith(makeSetEarnInfoBottomSheetAction(params));
+    expect(dispatch).toHaveBeenCalledWith(
+      makeSetEarnInfoBottomSheetAction({
+        title: "Info title",
+        message: "Info message",
+        linkText: "Learn more",
+        linkHref,
+      }),
+    );
   });
 
   it("should pass through long title and message without truncating (React text escaping handles display)", async () => {
     const dispatch = jest.fn();
     const handler = createOpenInfoBottomSheetHandler(dispatch);
-    const params = { title: "T", message: "M" };
+    const longTitle = `${"a".repeat(120)}<b>x</b>`;
+    const longMessage = `${"m".repeat(800)}<script>x</script>`;
 
-    await handler({ params });
+    await handler({ params: { title: longTitle, message: longMessage } });
 
     expect(dispatch).toHaveBeenCalledWith(
       makeSetEarnInfoBottomSheetAction({

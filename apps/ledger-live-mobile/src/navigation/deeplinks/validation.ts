@@ -69,58 +69,6 @@ function sanitizeString(input: string, maxLength: number): string {
 }
 
 /**
- * Validates and sanitizes a URL to ensure it points to a trusted domain
- */
-function validateUrl(urlString: string): string {
-  if (!urlString || typeof urlString !== "string") {
-    return "";
-  }
-
-  try {
-    const url = new URL(urlString);
-
-    // Check protocol
-    if (!ALLOWED_PROTOCOLS.includes(url.protocol)) {
-      logSecurityEvent("malicious_url", {
-        reason: "invalid_protocol",
-        protocol: url.protocol,
-        url: urlString,
-      });
-      return "";
-    }
-
-    // Handle internal ledgerlive:// scheme - allow all ledgerlive URLs
-    if (url.protocol === "ledgerlive:" || url.protocol === "ledgerwallet:") {
-      return urlString;
-    }
-
-    // Check domain for external HTTPS URLs
-    const hostname = url.hostname.toLowerCase();
-    const isAllowedDomain = ALLOWED_DOMAINS.some(
-      domain => hostname === domain || hostname.endsWith("." + domain),
-    );
-
-    if (!isAllowedDomain) {
-      logSecurityEvent("malicious_url", {
-        reason: "untrusted_domain",
-        hostname: hostname,
-        url: urlString,
-      });
-      return "";
-    }
-
-    return urlString;
-  } catch (error) {
-    logSecurityEvent("malicious_url", {
-      reason: "invalid_url_format",
-      url: urlString,
-      error: String(error),
-    });
-    return "";
-  }
-}
-
-/**
  * Safely parses JSON with validation
  */
 function safeJsonParse<T>(jsonString: string, validator: (obj: unknown) => obj is T): T | null {
