@@ -72,6 +72,6 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     getAssetFromToken: (token: TokenCurrency, owner: string) =>
       getAssetFromToken(currency, token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
-    getBalanceOptions: () => getBalanceOptions(currency),
+    balanceOptions: getBalanceOptions(currency),
   };
 }

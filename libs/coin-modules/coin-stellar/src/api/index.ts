@@ -1,6 +1,7 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
+  BalanceOptions,
   Block,
   BlockInfo,
   CraftedTransaction,
@@ -12,9 +13,7 @@ import {
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
-  AlpacaApi,
-  BalanceOptions,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { LedgerAPI4xx } from "@ledgerhq/errors";

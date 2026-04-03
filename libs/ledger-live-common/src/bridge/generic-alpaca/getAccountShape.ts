@@ -320,7 +320,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const blockInfo = await alpacaApi.lastBlock();
 
-    const balanceOptions: BalanceOptions | undefined = bridgeApi.getBalanceOptions?.();
+    const balanceOptions: BalanceOptions | undefined = bridgeApi.balanceOptions;
     const balanceRes = await alpacaApi.getBalance(address, balanceOptions);
 
     const nativeAsset = extractBalance(balanceRes, "native");

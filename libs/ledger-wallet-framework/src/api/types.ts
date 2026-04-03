@@ -20,5 +20,5 @@ export type BridgeApi = {
    * Whether the chain surfaces staking data through `getBalance`
    */
   stakingSupported?: boolean;
-  getBalanceOptions?: () => BalanceOptions;
+  balanceOptions?: BalanceOptions;
 };

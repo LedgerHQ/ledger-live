@@ -200,9 +200,9 @@ describe("evm bridge", () => {
     const bridgeApi = evmBridge(ethereum);
 
     it("should return a defined BalanceOptions", () => {
-      expect(bridgeApi.getBalanceOptions).toBeDefined();
+      expect(bridgeApi.balanceOptions).toBeDefined();
 
-      const result = bridgeApi.getBalanceOptions!();
+      const result = bridgeApi.balanceOptions;
       expect(result).toEqual({
         includeAssets: expect.any(Function),
       });
@@ -214,10 +214,10 @@ describe("evm bridge", () => {
         assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       };
 
-      expect(bridgeApi.getBalanceOptions).toBeDefined();
-      const balanceOptions = bridgeApi.getBalanceOptions!();
+      expect(bridgeApi.balanceOptions).toBeDefined();
+      const balanceOptions = bridgeApi.balanceOptions;
 
-      expect(await balanceOptions.includeAssets!(supportedAsset)).toEqual(true);
+      expect(await balanceOptions!.includeAssets!(supportedAsset)).toEqual(true);
     });
 
     it("should reject unsupported tokens from includeAssets", async () => {
@@ -226,8 +226,8 @@ describe("evm bridge", () => {
         assetReference: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
       };
 
-      const balanceOptions = bridgeApi.getBalanceOptions!();
-      expect(await balanceOptions.includeAssets!(unsupportedAsset)).toEqual(false);
+      const balanceOptions = bridgeApi.balanceOptions;
+      expect(await balanceOptions!.includeAssets!(unsupportedAsset)).toEqual(false);
     });
 
     it("should not filter native asset from includeAssets", async () => {
@@ -241,8 +241,8 @@ describe("evm bridge", () => {
         name: "ethereum",
       };
 
-      const balanceOptions = bridgeApi.getBalanceOptions!();
-      expect(await balanceOptions.includeAssets!(nativeAsset)).toEqual(true);
+      const balanceOptions = bridgeApi.balanceOptions;
+      expect(await balanceOptions!.includeAssets!(nativeAsset)).toEqual(true);
 
       expect(findTokenByAddressInCurrencySpy).not.toHaveBeenCalled();
     });
