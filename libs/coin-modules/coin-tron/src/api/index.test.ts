@@ -99,6 +99,13 @@ describe("createApi", () => {
 
   it("should not throw when limit is exactly 200", async () => {
     const api: AlpacaApi = createApi(mockTronConfig);
-    await expect(api.listOperations("address", { minHeight: 0, limit: 200 })).resolves.not.toThrow();
+    await expect(api.listOperations("address", { minHeight: 0, limit: 200 })).resolves.toEqual({
+      items: [],
+      next: undefined,
+    });
+    expect(listOperations).toHaveBeenCalledWith(
+      "address",
+      expect.objectContaining({ limit: 200, minTimestamp: 0 }),
+    );
   });
 });

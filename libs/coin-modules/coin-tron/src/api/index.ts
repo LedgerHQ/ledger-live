@@ -29,6 +29,8 @@ import {
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo } from "../types";
 
+const MAX_TRONGRID_LIMIT = 200;
+
 export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
@@ -82,10 +84,10 @@ async function listOperations(
   address: string,
   { minHeight, order, cursor, limit }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  if (limit !== undefined && limit > 200) {
-    throw new Error("limit must be <= 200 for Tron (TronGrid API restriction)");
+  if (limit !== undefined && limit > MAX_TRONGRID_LIMIT) {
+    throw new Error(`limit must be <= ${MAX_TRONGRID_LIMIT} for Tron (TronGrid API restriction)`);
   }
-  const effectiveLimit = limit ?? 200;
+  const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
   const effectiveOrder = order ?? "asc";
 
   let minTimestamp = defaultFetchParams.minTimestamp;
