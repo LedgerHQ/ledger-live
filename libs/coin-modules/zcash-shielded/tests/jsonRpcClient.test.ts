@@ -1,5 +1,11 @@
 import { JsonRpcClient } from "../src/jsonRpcClient";
-import { blockWithMyTx, LAST_BLOCK_COUNT, txNotShielded } from "./testAccounts";
+import {
+  LAST_BLOCK_COUNT,
+  BLOCK_NOT_IN_CHAIN,
+  dummyBlockMock,
+  blockWithMyTx,
+  txShieldedOrchard,
+} from "./mocks/blockchainDataMock";
 import { server } from "./mocks/node";
 import { HttpResponse, http } from "msw";
 import { ZCASH_JSON_RPC_SERVER_TESTNET } from "../src/constants";
@@ -20,9 +26,15 @@ describe("jsonRpcClient", () => {
       expect(block).toMatchObject(blockWithMyTx);
     });
 
+    test("successfully fetches a block from the blockchain", async () => {
+      const jsonRpcClient = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
+      const block = await jsonRpcClient.getBlock("2000000");
+      expect(block).toMatchObject(dummyBlockMock("2000000"));
+    });
+
     test("fails to fetch a block not in the blockchain", async () => {
       const jsonRpcClient = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
-      const block = await jsonRpcClient.getBlock(blockWithMyTx.hash + 1);
+      const block = await jsonRpcClient.getBlock(`"${BLOCK_NOT_IN_CHAIN}"`);
       expect(block).toEqual(undefined);
     });
   });
@@ -30,24 +42,26 @@ describe("jsonRpcClient", () => {
   describe("getRawTransaction", () => {
     test("successfully fetches a raw transaction from the blockchain", async () => {
       const jsonRpcClient = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
-      const tx = await jsonRpcClient.getRawTransaction(txNotShielded.txid);
-      expect(tx).toMatchObject(txNotShielded);
+      const tx = await jsonRpcClient.getRawTransaction(txShieldedOrchard.tx.txid);
+      expect(tx).toMatchObject(txShieldedOrchard.tx);
     });
 
     test("fails to fetch a transaction not in the blockchain", async () => {
       const jsonRpcClient = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
-      const block = await jsonRpcClient.getRawTransaction(txNotShielded.txid + 1);
+      const block = await jsonRpcClient.getRawTransaction(txShieldedOrchard.tx.txid + 1);
       expect(block).toEqual(undefined);
     });
   });
 
   describe("server error", () => {
     test("rethrows on server errors", async () => {
-      server.use(http.post(ZCASH_JSON_RPC_SERVER_TESTNET, () => new HttpResponse(null, { status: 500 })));
+      server.use(
+        http.post(ZCASH_JSON_RPC_SERVER_TESTNET, () => new HttpResponse(null, { status: 500 })),
+      );
       const jsonRpcClient = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
 
       try {
-        await jsonRpcClient.getRawTransaction(txNotShielded.txid);
+        await jsonRpcClient.getRawTransaction(txShieldedOrchard.tx.txid);
       } catch (error) {
         expect(error.message).toMatch(/^API HTTP 500 /);
       }
@@ -62,7 +76,7 @@ describe("jsonRpcClient", () => {
       const jsonRpcClient = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
 
       try {
-        await jsonRpcClient.getRawTransaction(txNotShielded.txid);
+        await jsonRpcClient.getRawTransaction(txShieldedOrchard.tx.txid);
       } catch (error) {
         expect(error.message).toEqual("Network error");
       }
@@ -135,7 +149,9 @@ describe("jsonRpcClient", () => {
     });
 
     test("returns undefined when result is not a number (string)", async () => {
-      server.use(http.post(ZCASH_JSON_RPC_SERVER_TESTNET, () => HttpResponse.json({ result: "100" })));
+      server.use(
+        http.post(ZCASH_JSON_RPC_SERVER_TESTNET, () => HttpResponse.json({ result: "100" })),
+      );
       const client = new JsonRpcClient(ZCASH_JSON_RPC_SERVER_TESTNET);
       const count = await client.getBlockCount();
       expect(count).toBeUndefined();

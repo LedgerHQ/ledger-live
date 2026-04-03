@@ -86,8 +86,8 @@ export class ZCash {
 
         const tx = await this.jsonRpcClient.getRawTransaction(txId);
 
-        // 3. call decryptTransaction for each tx hash containing orchard actions
-        if (tx?.orchard.actions.length) {
+        // 3. decrypt shielded part of the tx
+        if (tx) {
           const decryptedTx = await this.decryptTransaction(tx, viewingKey);
 
           if (decryptedTx) {

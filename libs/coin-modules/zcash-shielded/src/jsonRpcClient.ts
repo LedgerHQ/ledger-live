@@ -55,44 +55,28 @@ export type RawTransaction = {
   hex: string;
   height: number;
   confirmations?: number;
-  vin?: [
-    {
-      coinbase: string;
-      sequence: number;
-    },
-  ];
-  vout?: [
-    {
-      value: number;
-      valueZat: number;
-      n: number;
-      scriptPubKey: {
-        asm: string;
-        hex: string;
-        reqSigs: number;
-        type: string;
-        addresses: string[];
-      };
-    },
-    {
-      value: number;
-      valueZat: number;
-      n: number;
-      scriptPubKey: {
-        asm: string;
-        hex: string;
-        reqSigs: number;
-        type: string;
-        addresses: string[];
-      };
-    },
-  ];
+  vin?: {
+    coinbase: string;
+    sequence: number;
+  }[];
+  vout?: {
+    value?: number;
+    valueZat: number;
+    n?: number;
+    scriptPubKey?: {
+      asm: string;
+      hex: string;
+      reqSigs: number;
+      type: string;
+      addresses: string[];
+    };
+  }[];
   vShieldedSpend?: [];
   vShieldedOutput?: [];
   vjoinsplit?: [];
   orchard: {
-    actions: [];
-    valueBalance: number;
+    actions?: object[];
+    valueBalance?: number;
     valueBalanceZat: number;
   };
   valueBalance?: number;
