@@ -1,10 +1,12 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 import reducer, {
   analyticsConsentInfoSelector,
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
   resolvedThemeSelector,
   themeSelector,
+  trackingEnabledSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
@@ -14,6 +16,213 @@ import { importSettings, setAnalyticsConsentInfo, setTheme } from "../actions/se
 import { SettingsActionTypes } from "../actions/types";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
+
+const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
+  ...({} as State),
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
+    ...settingsPatch,
+    analyticsConsentInfo: {
+      ...SETTINGS_INITIAL_STATE.analyticsConsentInfo,
+      ...settingsPatch.analyticsConsentInfo,
+    },
+  },
+});
+
+/**
+ * `trackingEnabledSelector` runs consent / policy / rolling-window checks only when the
+ * `analyticsOptIn` feature is resolved as enabled; otherwise it only uses the toggles.
+ */
+const withAnalyticsOptInResolved = (base: State): State =>
+  ({
+    ...base,
+    featureFlags: {
+      resolved: {
+        analyticsOptIn: { enabled: true },
+      },
+    },
+  }) as State;
+
+/** Matches `ONE_YEAR_MS` in `trackingEnabledSelector` (365 × 24h). */
+const THREE_SIXTY_FIVE_DAYS_MS = 365 * 24 * 60 * 60 * 1000;
+
+describe("trackingEnabledSelector", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("returns false when consentDate is null and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: 1 },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when analytics opt-in feature is off, consent is incomplete, and analytics is enabled", () => {
+    const state = stateWithSettings({
+      analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: null },
+      analyticsEnabled: true,
+    });
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns false when privacyPolicyVersion is null and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2025-06-01T00:00:00.000Z",
+          privacyPolicyVersion: null,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when consentDate parses to NaN and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "not-a-valid-date",
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when privacy policy version is below current and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2025-06-01T00:00:00.000Z",
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION - 1,
+        },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when consent is older than a 365-day rolling window and analytics opt-in feature is on", () => {
+    jest.useFakeTimers();
+    const now = new Date("2026-06-15T12:00:00.000Z").getTime();
+    jest.setSystemTime(now);
+
+    const expiredConsent = new Date(now - THREE_SIXTY_FIVE_DAYS_MS - 24 * 60 * 60 * 1000).toISOString();
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: expiredConsent,
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when consent is exactly on the 365-day cutoff and analytics opt-in feature is on", () => {
+    jest.useFakeTimers();
+    const now = new Date("2026-01-10T00:00:00.000Z").getTime();
+    jest.setSystemTime(now);
+
+    const consentOnCutoff = new Date(now - THREE_SIXTY_FIVE_DAYS_MS).toISOString();
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: consentOnCutoff,
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns false when consent is valid but analytics and personalized recommendations are off and analytics opt-in feature is on", () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2026-02-01T00:00:00.000Z",
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when analytics opt-in feature is off and both toggles are off despite valid consent", () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
+
+    const state = stateWithSettings({
+      analyticsConsentInfo: {
+        consentDate: "2026-02-01T00:00:00.000Z",
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+      analyticsEnabled: false,
+      personalizedRecommendationsEnabled: false,
+    });
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when consent is valid, analytics opt-in feature is on, and analytics is enabled", () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2026-02-01T00:00:00.000Z",
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns true when consent is valid, analytics opt-in feature is on, and personalized recommendations are enabled", () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2026-02-01T00:00:00.000Z",
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns true when analytics opt-in feature is off and only personalized recommendations are enabled", () => {
+    const state = stateWithSettings({
+      analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: null },
+      analyticsEnabled: false,
+      personalizedRecommendationsEnabled: true,
+    });
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+});
 
 describe("lastConnectedDeviceSelector", () => {
   it("should return the last connected device if the deviceModelId is valid", () => {
