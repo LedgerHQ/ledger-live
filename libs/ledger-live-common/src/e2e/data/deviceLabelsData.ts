@@ -142,6 +142,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
       [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
       [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
+      [AppInfos.SUI.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
