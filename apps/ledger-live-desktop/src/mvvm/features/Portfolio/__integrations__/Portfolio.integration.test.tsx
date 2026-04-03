@@ -90,12 +90,16 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
   }),
 }));
 
-jest.mock("~/renderer/hooks/usePrice", () => ({
-  usePrice: () => ({
-    counterValue: null,
-    counterValueCurrency: { units: [{ name: "USD", code: "USD", magnitude: 2 }] },
-  }),
-}));
+jest.mock("~/renderer/hooks/usePrice", () => {
+  const { getFiatCurrencyByTicker } = jest.requireActual("@ledgerhq/live-common/currencies/index");
+  const usd = getFiatCurrencyByTicker("USD");
+  return {
+    usePrice: () => ({
+      counterValue: null,
+      counterValueCurrency: usd,
+    }),
+  };
+});
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
