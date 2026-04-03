@@ -43,7 +43,7 @@ export default function TabSelector<T extends string>({
   filledVariant = false,
 }: TabSelectorProps<T>): JSX.Element {
   const [containerWidth, setContainerWidth] = useState(0);
-  const initialIndex = initialTab ? labels.findIndex((l) => l.id === initialTab) : 0;
+  const initialIndex = initialTab ? labels.findIndex(l => l.id === initialTab) : 0;
   const translateX = useSharedValue(0);
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 

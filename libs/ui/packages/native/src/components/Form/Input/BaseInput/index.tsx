@@ -93,22 +93,22 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean; has
   display: flex;
   flex-direction: row;
   width: 100%;
-  background: ${(p) => p.theme.colors.background.main};
+  background: ${p => p.theme.colors.background.main};
   height: 48px;
-  border: ${(p) => (p.hasBorder ? `1px solid ${p.theme.colors.opacityDefault.c20}` : "none")};
+  border: ${p => (p.hasBorder ? `1px solid ${p.theme.colors.opacityDefault.c20}` : "none")};
   border-radius: 8px;
-  color: ${(p) => p.theme.colors.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c100};
   align-items: center;
   padding: 0px 16px;
 
-  ${(p) =>
+  ${p =>
     p.disabled &&
     css`
       color: ${p.theme.colors.neutral.c60};
-      background: ${(p) => p.theme.colors.neutral.c30};
+      background: ${p => p.theme.colors.neutral.c30};
     `};
 
-  ${(p) =>
+  ${p =>
     p.focus &&
     !p.error &&
     p.hasBorder &&
@@ -116,31 +116,31 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean; has
       border: 1px solid ${p.theme.colors.primary.c80};
     `};
 
-  ${(p) =>
+  ${p =>
     p.error &&
     !p.disabled &&
     css`
       border: 1px solid ${p.theme.colors.error.c60};
     `};
 
-  ${(p) =>
+  ${p =>
     p.disabled &&
     p.hasBorder &&
     css`
       color: ${p.theme.colors.neutral.c60};
-      background: ${(p) => p.theme.colors.neutral.c30};
+      background: ${p => p.theme.colors.neutral.c30};
     `};
 
-  ${(p) =>
+  ${p =>
     p.disabled &&
     !p.hasBorder &&
     css`
       color: ${p.theme.colors.opacityDefault.c10};
-      background: ${(p) => p.theme.colors.neutral.c30};
+      background: ${p => p.theme.colors.neutral.c30};
     `};
 `;
 
-const BaseInput = styled.TextInput.attrs((p) => ({
+const BaseInput = styled.TextInput.attrs(p => ({
   selectionColor: p.theme.colors.primary.c80 as ColorValue,
   placeholderTextColor: p.theme.colors.neutral.c80 as ColorValue,
 }))<Partial<CommonProps> & { focus?: boolean }>`
@@ -150,11 +150,11 @@ const BaseInput = styled.TextInput.attrs((p) => ({
   flex-shrink: 1;
   display: flex;
   min-height: auto;
-  color: ${(p) => p.theme.colors.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c100};
 `;
 
 const InputErrorText = styled(Text)`
-  color: ${(p) => p.theme.colors.error.c60};
+  color: ${p => p.theme.colors.error.c60};
 `;
 
 export const InputRenderLeftContainer = styled(FlexBox).attrs(() => ({
@@ -239,11 +239,11 @@ function Input<T = string>(props: InputProps<T>, ref?: React.Ref<unknown>): Reac
           editable={!disabled}
           disabled={disabled}
           error={error}
-          onFocus={(e) => {
+          onFocus={e => {
             setFocus(true);
             onFocus?.(e);
           }}
-          onBlur={(e) => {
+          onBlur={e => {
             setFocus(false);
             onBlur?.(e);
           }}

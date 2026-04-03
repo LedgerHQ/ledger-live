@@ -42,6 +42,9 @@
     ],
     "eslint/no-unused-vars": "off",
 
+    "typescript/consistent-type-assertions": ["warn", { "assertionStyle": "never" }],
+    "typescript/no-unsafe-function-type": "warn",
+
     "typescript/no-empty-function": "off",
     "typescript/no-explicit-any": "warn",
     "typescript/no-unused-vars": [

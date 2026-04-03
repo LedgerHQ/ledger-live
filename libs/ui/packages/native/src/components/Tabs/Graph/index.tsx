@@ -5,17 +5,17 @@ import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
 const TabBox = styled.TouchableOpacity`
   text-align: center;
-  border-radius: ${(p) => p.theme.radii[1]}px;
+  border-radius: ${p => p.theme.radii[1]}px;
   box-sizing: border-box;
   overflow: hidden;
-  margin-left: ${(p) => p.theme.space[1]}px;
+  margin-left: ${p => p.theme.space[1]}px;
 `;
 
 type TabTextProps = BaseTextProps & {
   size?: "small" | "medium";
 };
 
-const TabText = styled(Text).attrs<TabTextProps>((p) => ({
+const TabText = styled(Text).attrs<TabTextProps>(p => ({
   // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined,
   lineHeight: p.size === "medium" ? "40px" : "26px",

@@ -9,7 +9,7 @@ export default {
 export const SwitchStory = (args: typeof SwitchStoryArgs) => {
   const [checked, setChecked] = useState(false);
 
-  const handleChange = () => setChecked((prev) => !prev);
+  const handleChange = () => setChecked(prev => !prev);
 
   return (
     <Switch checked={checked} onChange={handleChange} disabled={args.disabled} label={args.label} />

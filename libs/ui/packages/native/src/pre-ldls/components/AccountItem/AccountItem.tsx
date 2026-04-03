@@ -64,7 +64,7 @@ const Wrapper = styled(Pressable)<{ backgroundColor?: string; isClickable: boole
   align-items: center;
   width: 100%;
   overflow: hidden;
-  ${(props) => props.backgroundColor && `background-color: ${props.backgroundColor};`}
+  ${props => props.backgroundColor && `background-color: ${props.backgroundColor};`}
 `;
 
 const ContentContainer = styled(View)`

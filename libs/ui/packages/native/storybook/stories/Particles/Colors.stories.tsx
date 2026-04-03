@@ -13,7 +13,7 @@ export default {
 const ColorArea = styled(Flex)<{ type: keyof ColorPalette; shade: string }>`
   width: 200px;
   aspect-ratio: 1;
-  background-color: ${(p) => {
+  background-color: ${p => {
     // oxlint-disable-next-line typescript/ban-ts-comment
     // @ts-ignore next-line
     return p.theme.colors[p.type][p.shade];

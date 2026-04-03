@@ -21,7 +21,7 @@ export const Base = styled(TouchableOpacity)`
 `;
 
 export const Container = styled(Flex)`
-  background: ${(p) => p.theme.colors.neutral.c20};
+  background: ${p => p.theme.colors.neutral.c20};
   flex-direction: row;
   border-radius: 8px;
 `;
@@ -38,7 +38,7 @@ export const ImageContent = styled(Image)`
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
-  background-color: ${(p) => p.theme.colors.neutral.c30};
+  background-color: ${p => p.theme.colors.neutral.c30};
   position: absolute;
   right: 8px;
   top: 8px;

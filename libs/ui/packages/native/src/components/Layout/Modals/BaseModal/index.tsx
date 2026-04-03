@@ -37,11 +37,11 @@ export type BaseModalProps = {
 } & Partial<RNModalProps>;
 
 const SafeContainer = styled.SafeAreaView`
-  background-color: ${(p) => p.theme.colors.background.drawer};
+  background-color: ${p => p.theme.colors.background.drawer};
 `;
 
 const Container = styled.View`
-  background-color: ${(p) => p.theme.colors.background.drawer};
+  background-color: ${p => p.theme.colors.background.drawer};
   width: 100%;
   padding: 16px;
   min-height: 350px;
@@ -55,14 +55,14 @@ const ContentContainer = styled.View`
 const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
-  margin-bottom: ${(p) => p.theme.space[6]}px;
+  margin-bottom: ${p => p.theme.space[6]}px;
   z-index: 10;
 `;
 
 const BackContainer = styled.View`
   display: flex;
   align-items: flex-start;
-  margin-bottom: ${(p) => p.theme.space[6]}px;
+  margin-bottom: ${p => p.theme.space[6]}px;
   z-index: 10;
 `;
 
@@ -71,7 +71,7 @@ const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs<{ p: number }
 })<{ p?: number }>`
   ${space};
   border-radius: 100px;
-  background-color: ${(p) => p.theme.colors.neutral.c30};
+  background-color: ${p => p.theme.colors.neutral.c30};
 `;
 
 const StyledTitle = styled(Text).attrs({ variant: "h2" })`
@@ -84,7 +84,7 @@ const StyledSubtitle = styled(Text).attrs({
 })`
   text-transform: uppercase;
   text-align: center;
-  margin-bottom: ${(p) => p.theme.space[2]}px;
+  margin-bottom: ${p => p.theme.space[2]}px;
 `;
 
 const defaultModalStyle = {

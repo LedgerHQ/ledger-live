@@ -120,7 +120,7 @@ const NotificationCard = (props: CardProps): React.ReactElement => {
 export const Base = styled(TouchableOpacity)``;
 const StyledText = styled(Text)`
   text-decoration: underline;
-  text-decoration-color: ${(p) => p.theme.colors.neutral.c100};
+  text-decoration-color: ${p => p.theme.colors.neutral.c100};
 `;
 
 export default NotificationCard;

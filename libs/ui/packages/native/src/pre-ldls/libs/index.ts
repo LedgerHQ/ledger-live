@@ -64,7 +64,7 @@ export const useTokens = memoize(
     });
 
     // Add spacing and other tokens
-    [spacing, overrideOther].forEach((obj) => {
+    [spacing, overrideOther].forEach(obj => {
       Object.entries(obj).forEach(([key, value]) => {
         if (usedSet.has(key as OtherToken)) {
           tokens[key] = pxToNumber(value);

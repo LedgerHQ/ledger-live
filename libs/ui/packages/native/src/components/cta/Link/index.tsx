@@ -27,8 +27,7 @@ const IconContainer = styled.View<{
   iconPosition: "right" | "left";
   iconLink?: boolean;
 }>`
-  ${(p) =>
-    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 4px;` : `margin-left: 4px;`}
+  ${p => (p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 4px;` : `margin-left: 4px;`)}
 `;
 
 export const Base = styled(Pressable)`

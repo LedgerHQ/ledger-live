@@ -120,8 +120,8 @@ const CenterCircle = styled(Flex)<{
   border-radius: 9999px;
   width: 16px;
   height: 16px;
-  background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem, p.isNeutral)};
-  border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem, p.isNeutral)};
+  background: ${p => getIconBackground(p.theme, p.status, p.isLastItem, p.isNeutral)};
+  border: 2px solid ${p => getIconBorder(p.theme, p.status, p.isLastItem, p.isNeutral)};
   align-items: center;
   justify-content: center;
 `;

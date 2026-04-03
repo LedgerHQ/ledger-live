@@ -7,8 +7,8 @@ import FlexBox from "../../../Layout/Flex";
 import Text from "../../../Text";
 
 const PercentButton = styled(TouchableOpacity)<{ active?: boolean }>`
-  color: ${(p) => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70)};
-  background-color: ${(p) => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00)};
+  color: ${p => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70)};
+  background-color: ${p => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00)};
   border-radius: 100px;
   border-width: 0;
   height: 31px;
@@ -61,7 +61,7 @@ function NumberInput(
           mr={"8px"}
           flexDirection={"row"}
         >
-          {[0.25, 0.5, 0.75, 1].map((percent) => {
+          {[0.25, 0.5, 0.75, 1].map(percent => {
             const active = !!value && !!max && Number(value) === percent * Number(max);
             return (
               <PercentButton
