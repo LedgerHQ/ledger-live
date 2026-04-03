@@ -8,7 +8,7 @@
     "rootDir": "src",
     "typeRoots": ["./types", "./node_modules/@types"],
     "jsx": "react",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

@@ -8,6 +8,6 @@
     "lib": ["DOM", "ES2017"],
     "isolatedModules": false,
     "target": "ESNext",
-    "types": ["node"]
+    "types": ["node", "jest"]
   }
 }
