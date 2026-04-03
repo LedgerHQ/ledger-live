@@ -2,6 +2,8 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import i18n from "~/renderer/i18n/init";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import StepRecordPickerFooter from "./StepRecordPickerFooter";
@@ -9,6 +11,9 @@ import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
 import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
 
 jest.mock("~/renderer/modals/Send/AccountFooter", () => () => <div data-testid="account-footer" />);
+jest.mock("@ledgerhq/live-common/families/aleo/utils");
+
+const mockIsPrivateTransaction = jest.mocked(isPrivateTransaction);
 
 const mockStatus: TransactionStatus = {
   errors: {},
@@ -17,6 +22,16 @@ const mockStatus: TransactionStatus = {
   amount: new BigNumber(0),
   totalSpent: new BigNumber(0),
 };
+
+const privateTransaction = makeAleoTransaction({
+  mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  properties: { amountRecordCommitment: null, feeRecordCommitment: null },
+});
+
+const privateTransactionWithRecord = makeAleoTransaction({
+  mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  properties: { amountRecordCommitment: "some-commitment", feeRecordCommitment: null },
+});
 
 const defaultProps: StepProps = {
   t: i18n.t.bind(i18n),
@@ -50,6 +65,7 @@ const defaultProps: StepProps = {
 describe("StepRecordPickerFooter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsPrivateTransaction.mockReturnValue(false);
   });
 
   it("should render null when account is null", () => {
@@ -80,5 +96,29 @@ describe("StepRecordPickerFooter", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     expect(transitionTo).toHaveBeenCalledWith("amount");
+  });
+
+  it("should disable continue button when private tx has no record selected", () => {
+    mockIsPrivateTransaction.mockReturnValue(true);
+
+    render(<StepRecordPickerFooter {...defaultProps} transaction={privateTransaction} />);
+
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
+  });
+
+  it("should enable continue button when private tx has a record selected", () => {
+    mockIsPrivateTransaction.mockReturnValue(true);
+
+    render(<StepRecordPickerFooter {...defaultProps} transaction={privateTransactionWithRecord} />);
+
+    expect(screen.getByRole("button", { name: /continue/i })).not.toBeDisabled();
+  });
+
+  it("should enable continue button for a public transaction regardless of record", () => {
+    mockIsPrivateTransaction.mockReturnValue(false);
+
+    render(<StepRecordPickerFooter {...defaultProps} transaction={makeAleoTransaction()} />);
+
+    expect(screen.getByRole("button", { name: /continue/i })).not.toBeDisabled();
   });
 });

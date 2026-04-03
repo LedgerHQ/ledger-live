@@ -415,4 +415,71 @@ describe("StepRecordPicker", () => {
 
     expect(screen.getByText(/Available records:.*15/)).toBeInTheDocument();
   });
+
+  it("should exclude zero-value records from the displayed list", () => {
+    const zeroRecord = makeUnspentRecord("commitment-zero", "0", mockDecryptedData1);
+    const accountWithZeroRecord: AleoAccount = {
+      ...mockAleoAccount,
+      aleoResources: {
+        ...mockAleoAccount.aleoResources!,
+        unspentPrivateRecords: [record1, zeroRecord],
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={accountWithZeroRecord}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+    expect(screen.queryByText("0 ALEO")).not.toBeInTheDocument();
+  });
+
+  it("should exclude zero-value records from the label count", () => {
+    const zeroRecord = makeUnspentRecord("commitment-zero", "0", mockDecryptedData1);
+    const accountWithZeroRecord: AleoAccount = {
+      ...mockAleoAccount,
+      aleoResources: {
+        ...mockAleoAccount.aleoResources!,
+        unspentPrivateRecords: [record1, record2, zeroRecord],
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={accountWithZeroRecord}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByText(/Available records:.*2/)).toBeInTheDocument();
+    expect(screen.queryByText(/Available records:.*3/)).not.toBeInTheDocument();
+  });
+
+  it("should show empty state when all unspent records have zero value", () => {
+    const zeroRecord1 = makeUnspentRecord("commitment-zero-1", "0", mockDecryptedData1);
+    const zeroRecord2 = makeUnspentRecord("commitment-zero-2", "0", mockDecryptedData2);
+    const accountWithOnlyZeroRecords: AleoAccount = {
+      ...mockAleoAccount,
+      aleoResources: {
+        ...mockAleoAccount.aleoResources!,
+        unspentPrivateRecords: [zeroRecord1, zeroRecord2],
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={accountWithOnlyZeroRecords}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByTestId("aleo-empty-records-alert")).toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+  });
 });

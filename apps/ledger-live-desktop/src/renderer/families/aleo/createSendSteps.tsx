@@ -39,7 +39,20 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
       excludeFromBreadcrumb: true,
       component: StepRecordPicker,
       footer: StepRecordPickerFooter,
-      onBack: ({ transitionTo }) => transitionTo("recipient"),
+      onBack: ({ transitionTo, updateTransaction }) => {
+        updateTransaction(t => {
+          if (t.family !== "aleo" || !isPrivateTransaction(t)) return t;
+          return {
+            ...t,
+            properties: {
+              amountRecordCommitment: null,
+              feeRecordCommitment: null,
+            },
+          };
+        });
+
+        transitionTo("recipient");
+      },
     },
     {
       id: "amount",
