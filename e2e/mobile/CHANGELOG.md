@@ -1,5 +1,28 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#15753](https://github.com/LedgerHQ/ledger-live/pull/15753) [`3093380`](https://github.com/LedgerHQ/ledger-live/commit/3093380655b975b6d62f9b201b6a06889392bb11) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Enhance mobile E2E test coverage: add Celo lock/vote tests, character-set validation for language change, and re-enable account rename test
+
+- [#15938](https://github.com/LedgerHQ/ledger-live/pull/15938) [`6d55392`](https://github.com/LedgerHQ/ledger-live/commit/6d5539208dcdde2c166cba895092f54c68f3fb93) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix flaky expectCharacterSet using detox native assertion
+
+- [#15966](https://github.com/LedgerHQ/ledger-live/pull/15966) [`7f5b6a1`](https://github.com/LedgerHQ/ledger-live/commit/7f5b6a18cf8f67f1d84cc1feb87acfaaeb0df264) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix incorrect celo manage assets page assertions and vote flow
+
+- [#15884](https://github.com/LedgerHQ/ledger-live/pull/15884) [`f42c78b`](https://github.com/LedgerHQ/ledger-live/commit/f42c78bd02b8ebde6b5b787a406c36e13515da45) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - test: send icp support
+
+- [#15244](https://github.com/LedgerHQ/ledger-live/pull/15244) [`bacf788`](https://github.com/LedgerHQ/ledger-live/commit/bacf788d12d75ae2a2d5e9da8686041fb1220043) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add accessibility metadata and stable test IDs in swap flows across desktop and mobile, including swap history.
+
+- [#15979](https://github.com/LedgerHQ/ledger-live/pull/15979) [`82d076e`](https://github.com/LedgerHQ/ledger-live/commit/82d076e3fe0a8192d1e6a10302cae36af7975556) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Move spec helper functions into page object files for better test structure
+
+- [#15798](https://github.com/LedgerHQ/ledger-live/pull/15798) [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: use `coin-module-framework` from npmjs and remove the now migrated `coin-framework`
+
+### Patch Changes
+
+- Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/logs@6.17.0-next.0
+
 ## 0.19.0
 
 ### Minor Changes

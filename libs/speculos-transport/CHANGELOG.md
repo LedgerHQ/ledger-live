@@ -1,5 +1,21 @@
 # @ledgerhq/speculos-transport
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#15798](https://github.com/LedgerHQ/ledger-live/pull/15798) [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: use `coin-module-framework` from npmjs and remove the now migrated `coin-framework`
+
+### Patch Changes
+
+- Updated dependencies [[`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/live-env@2.32.0-next.0
+  - @ledgerhq/devices@8.14.0-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.34.0-next.0
+  - @ledgerhq/logs@6.17.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.8.4-next.0
+  - @ledgerhq/live-promise@0.2.3-next.0
+
 ## 0.7.2
 
 ### Patch Changes

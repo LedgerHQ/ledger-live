@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.32.0-next.0
+
+### Minor Changes
+
+- [#15236](https://github.com/LedgerHQ/ledger-live/pull/15236) [`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(libs): prepare lldHideSmallValueTokenOperations FF
+
 ## 2.31.0
 
 ### Minor Changes

@@ -1,5 +1,31 @@
 # @ledgerhq/coin-stellar
 
+## 6.20.0-next.0
+
+### Minor Changes
+
+- [#15887](https://github.com/LedgerHQ/ledger-live/pull/15887) [`5fefc2e`](https://github.com/LedgerHQ/ledger-live/commit/5fefc2e6a4c6e4fdcaae0139f2f8d6f9011b33c8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Remove @ledgerhq/types-cryptoassets dependency from coin-framework by replacing CryptoCurrency parameters with currencyId strings in CoinConfig and getCurrencyConfiguration
+
+- [#15679](https://github.com/LedgerHQ/ledger-live/pull/15679) [`c353f29`](https://github.com/LedgerHQ/ledger-live/commit/c353f29b9174c20c708662c160f55c597020ee58) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(coin-modules): add oxfmt with shared config (Prettier parity)
+
+  - Add libs/coin-modules/.oxfmtrc.json aligned with root .prettierrc and desktop/mobile oxfmt
+  - Add format, format:check, and run oxfmt before oxlint in lint:fix; add oxfmt devDependency
+  - Remove coin-ton prettier script; turbo format/format:check tasks
+  - Initial oxfmt pass on src
+
+- [#15860](https://github.com/LedgerHQ/ledger-live/pull/15860) [`e8c3694`](https://github.com/LedgerHQ/ledger-live/commit/e8c36941b427a4146ab0a0d1a79a646656b8aca7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-stellar): fix unknown SDK type
+
+- [#15798](https://github.com/LedgerHQ/ledger-live/pull/15798) [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: use `coin-module-framework` from npmjs and remove the now migrated `coin-framework`
+
+### Patch Changes
+
+- Updated dependencies [[`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71), [`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8), [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f)]:
+  - @ledgerhq/live-env@2.32.0-next.0
+  - @ledgerhq/errors@6.33.0-next.0
+  - @ledgerhq/cryptoassets@13.45.0-next.0
+  - @ledgerhq/logs@6.17.0-next.0
+  - @ledgerhq/live-network@2.5.0-next.0
+
 ## 6.19.0
 
 ### Minor Changes

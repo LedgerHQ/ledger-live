@@ -1,5 +1,24 @@
 # @ledgerhq/types-live
 
+## 6.104.0-next.0
+
+### Minor Changes
+
+- [#15842](https://github.com/LedgerHQ/ledger-live/pull/15842) [`24e8f80`](https://github.com/LedgerHQ/ledger-live/commit/24e8f80dc314619f954e6966aff8698591d6e05e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add wallet 4.0 quick actions CTAs variant and Lumen receive options drawer
+
+- [#15944](https://github.com/LedgerHQ/ledger-live/pull/15944) [`ea34195`](https://github.com/LedgerHQ/ledger-live/commit/ea34195c1115aaa40c69259ee2d2ee581e0349ab) Thanks [@sarneijim](https://github.com/sarneijim)! - Add mobile analytics opt-in consent drawer, analyticsOptIn feature flag, and settings integration
+
+- [#15236](https://github.com/LedgerHQ/ledger-live/pull/15236) [`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(libs): prepare lldHideSmallValueTokenOperations FF
+
+- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
+
+- [#15953](https://github.com/LedgerHQ/ledger-live/pull/15953) [`55c01bc`](https://github.com/LedgerHQ/ledger-live/commit/55c01bcd8e43f9a54e93a41bb383d6d5c633b35f) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(feature-flag): feature flag and descriptor for native evm staking
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.8.2-next.0
+
 ## 6.103.0
 
 ### Minor Changes
