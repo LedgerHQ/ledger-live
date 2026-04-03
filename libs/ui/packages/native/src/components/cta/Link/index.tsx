@@ -88,7 +88,6 @@ const Link = (props: LinkProps): React.ReactElement => {
   const { type = "main", size = "medium" } = props;
 
   function style(state: PressableStateCallbackType): StyleProp<ViewStyle> {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return [props.style, state.pressed ? { opacity: 0.5 } : {}] as StyleProp<ViewStyle>;
   }
 

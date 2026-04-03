@@ -178,7 +178,7 @@ const cells = Array.from(
   },
 );
 
-// eslint-disable-next-line
+// oxlint-disable-next-line typescript/no-explicit-any
 const DefaultTemplate = ({ gridColumn, gridRow, gridArea, ...args }: any) => {
   return (
     <>
@@ -213,7 +213,7 @@ Default.args = {
   gridGap: 1,
 };
 
-// eslint-disable-next-line
+// oxlint-disable-next-line typescript/no-explicit-any
 const FixedTemplate = ({ gridColumn, gridRow, gridArea, ...args }: any) => (
   <>
     <Text

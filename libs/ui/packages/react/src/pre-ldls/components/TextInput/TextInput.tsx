@@ -190,7 +190,6 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
     const [isFocused, setIsFocused] = React.useState(false);
     const [value, setValue] = React.useState(defaultValue);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     const hideClearDebounced = React.useMemo(

@@ -59,5 +59,4 @@ const proxyStyled = new Proxy(styled, {
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default proxyStyled as typeof styled;

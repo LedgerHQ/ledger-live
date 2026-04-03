@@ -50,7 +50,7 @@ export const RenderSideExemple = (): React.JSX.Element => {
           variant="main"
           outline
           onClick={() => setError(error ? "" : "Error message")}
-          /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+          /* oxlint-disable-next-line typescript/ban-ts-comment */
           // @ts-ignore
           disabled={props.disabled}
         >
