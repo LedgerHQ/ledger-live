@@ -2,16 +2,13 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { craftTransaction, estimateFees } from "../common-logic";
 import coinConfig from "../config";
-import { getNextSequence } from "../network/node";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 
-jest.mock("../network/node");
 jest.mock("../common-logic");
 
 describe("prepareTransaction", () => {
   let estimateFeesSpy: jest.SpyInstance;
-  let getNextSequenceSpy: jest.SpyInstance;
   let craftTransactionSpy: jest.SpyInstance;
 
   beforeAll(async () => {
@@ -26,14 +23,12 @@ describe("prepareTransaction", () => {
     }));
   });
   beforeEach(() => {
-    getNextSequenceSpy = jest.spyOn({ getNextSequence }, "getNextSequence");
     estimateFeesSpy = jest.spyOn({ estimateFees }, "estimateFees");
     craftTransactionSpy = jest.spyOn({ craftTransaction }, "craftTransaction");
     craftTransactionSpy.mockReturnValue({ serializedTransaction: "serialized" });
   });
 
   it("should update fee field if it's different", async () => {
-    getNextSequenceSpy.mockResolvedValue(42);
     const oldTx = { fee: new BigNumber(0) };
     estimateFeesSpy.mockResolvedValue(BigInt(1));
     const newTx = await prepareTransaction({ currency: {} } as Account, oldTx as Transaction);

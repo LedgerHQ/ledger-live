@@ -1,25 +1,25 @@
 import {
   AlpacaApi,
+  Balance,
   Block,
   BlockInfo,
+  CraftedTransaction,
   Cursor,
   FeeEstimation,
+  ListOperationsOptions,
+  Operation,
   Page,
-  Validator,
   Reward,
   Stake,
   TransactionIntent,
-  Operation,
-  Balance,
-  ListOperationsOptions,
-  CraftedTransaction,
   TransactionValidation,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
-import coinConfig, { type CantonConfig } from "../config";
+import coinConfig, { type CantonCoinConfig } from "../config";
 
-export function createApi(config: CantonConfig): AlpacaApi {
+export function createApi(config: CantonCoinConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

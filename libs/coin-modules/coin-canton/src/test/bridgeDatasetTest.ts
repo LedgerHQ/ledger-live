@@ -1,9 +1,9 @@
 import {
+  AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-  AmountRequired,
 } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { DatasetTest } from "@ledgerhq/types-live";

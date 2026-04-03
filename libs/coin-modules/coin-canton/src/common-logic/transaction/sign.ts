@@ -28,7 +28,7 @@ export async function signTransaction(
 
     signature = await signer.signTransaction(derivationPath, {
       transactions,
-      ...(challenge && { challenge }),
+      ...(challenge ? { challenge } : {}),
     });
   }
 

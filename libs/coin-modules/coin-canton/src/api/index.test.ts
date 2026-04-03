@@ -1,9 +1,9 @@
-import { CantonConfig } from "../config";
+import { CantonCoinConfig } from "../config";
 import { createApi } from ".";
 
 describe("createApi", () => {
   it("should return every api methods", () => {
-    expect(createApi({} as CantonConfig)).toEqual({
+    expect(createApi({} as CantonCoinConfig)).toEqual({
       broadcast: expect.any(Function),
       combine: expect.any(Function),
       craftTransaction: expect.any(Function),

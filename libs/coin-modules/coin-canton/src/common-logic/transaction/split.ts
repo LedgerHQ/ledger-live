@@ -44,7 +44,7 @@ export function splitTransaction(
     nodesCount: transactionData.nodes?.length || 0,
     nodeSeeds: (transactionData.nodeSeeds || []).map((seed: any) => ({
       seed: Uint8Array.from(Buffer.from(seed.seed, "base64")),
-      ...(seed.nodeId && seed.nodeId !== 0 && { nodeId: seed.nodeId }),
+      ...(seed.nodeId && seed.nodeId !== 0 ? { nodeId: seed.nodeId } : {}),
     })),
   }).finish();
 
@@ -69,12 +69,16 @@ export function splitTransaction(
     transactionUuid: metadata.transactionUuid,
     submissionTime: Number.parseInt(metadata.preparationTime, 10),
     inputContractsCount: metadata.inputContracts?.length || 0,
-    ...(metadata.minLedgerEffectiveTime && {
-      minLedgerEffectiveTime: Number.parseInt(metadata.minLedgerEffectiveTime, 10),
-    }),
-    ...(metadata.maxLedgerEffectiveTime && {
-      maxLedgerEffectiveTime: Number.parseInt(metadata.maxLedgerEffectiveTime, 10),
-    }),
+    ...(metadata.minLedgerEffectiveTime
+      ? {
+          minLedgerEffectiveTime: Number.parseInt(metadata.minLedgerEffectiveTime, 10),
+        }
+      : {}),
+    ...(metadata.maxLedgerEffectiveTime
+      ? {
+          maxLedgerEffectiveTime: Number.parseInt(metadata.maxLedgerEffectiveTime, 10),
+        }
+      : {}),
   };
 
   const DeviceMetadata = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceMetadata");

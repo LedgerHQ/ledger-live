@@ -1,51 +1,41 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import coinConfig from "../../config";
-import { getLedgerEnd as gatewayGetLedgerEnd } from "../../network/gateway";
-import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
+import { isGatewayEnabled } from "../../network/gateway";
+import { getLedgerEnd } from "../../network/gateway";
+import { createMockCantonCurrency } from "../../test/fixtures";
 import { lastBlock } from "./lastBlock";
 
 jest.mock("../../network/gateway", () => ({
   getLedgerEnd: jest.fn(),
-}));
-jest.mock("../../network/node", () => ({
-  getLedgerEnd: jest.fn(),
+  isGatewayEnabled: jest.fn(() => true),
 }));
 
-jest.mock("../../config", () => ({
-  __esModule: true,
-  default: {
-    getCoinConfig: jest.fn(),
-  },
-}));
-
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockCurrency = createMockCantonCurrency();
+const mockedGetLedgerEnd = jest.mocked(getLedgerEnd);
+const mockedIsGatewayEnabled = jest.mocked(isGatewayEnabled);
 
 describe("lastBlock", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedIsGatewayEnabled.mockReturnValue(true);
   });
 
-  it("should use gateway.getLedgerEnd when useGateway is true", async () => {
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({ useGateway: true });
-    (gatewayGetLedgerEnd as jest.Mock).mockResolvedValue(100);
+  it("should return block info from gateway", async () => {
+    mockedGetLedgerEnd.mockResolvedValue(100);
 
     const result = await lastBlock(mockCurrency);
 
-    expect(result.height).toBe(100);
-    expect(gatewayGetLedgerEnd).toHaveBeenCalledTimes(1);
-    expect(nodeGetLedgerEnd).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      height: 100,
+      hash: "",
+      time: expect.any(Date),
+    });
+    expect(mockedGetLedgerEnd).toHaveBeenCalledTimes(1);
+    expect(mockedGetLedgerEnd).toHaveBeenCalledWith(mockCurrency);
   });
 
-  it("should use node.getLedgerEnd when useGateway is false", async () => {
-    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({ useGateway: false });
-    (nodeGetLedgerEnd as jest.Mock).mockResolvedValue(200);
+  it("should throw when gateway is disabled in config", async () => {
+    mockedIsGatewayEnabled.mockReturnValue(false);
 
-    const result = await lastBlock(mockCurrency);
-
-    expect(result.height).toBe(200);
-    expect(nodeGetLedgerEnd).toHaveBeenCalledTimes(1);
-    expect(gatewayGetLedgerEnd).not.toHaveBeenCalled();
+    await expect(lastBlock(mockCurrency)).rejects.toThrow("Not implemented");
+    expect(mockedGetLedgerEnd).not.toHaveBeenCalled();
   });
 });
