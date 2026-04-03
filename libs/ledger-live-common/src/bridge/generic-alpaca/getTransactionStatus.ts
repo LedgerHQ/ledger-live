@@ -35,6 +35,8 @@ export function genericGetTransactionStatus(
       data: transaction.data,
       type: transaction.type,
       sponsored: transaction.sponsored,
+      valAddress: transaction.valAddress,
+      dstValAddress: transaction.dstValAddress,
     };
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();

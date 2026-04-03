@@ -56,3 +56,14 @@ describe.each([
     expect(createApi(config as EvmConfig, "ethereum")).toEqual(methods);
   });
 });
+
+describe("staking support capability", () => {
+  it("only exposes stakingSupported for currencies with staking configured", () => {
+    expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "ethereum")).not.toHaveProperty(
+      "stakingSupported",
+    );
+    expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm")).toMatchObject({
+      stakingSupported: true,
+    });
+  });
+});

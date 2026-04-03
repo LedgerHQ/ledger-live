@@ -18,6 +18,7 @@ import type {
   BufferTxData,
   AlpacaApi,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { STAKING_CONTRACTS } from "../staking";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";
@@ -120,5 +121,6 @@ export function createApi(
       : {}),
     validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
       validateTransaction(currency, { signature }),
+    ...(STAKING_CONTRACTS[currencyId] ? { stakingSupported: true } : {}),
   };
 }
