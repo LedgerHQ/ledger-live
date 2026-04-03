@@ -262,7 +262,7 @@ export const blocks: Block[] = [
 
 export const dummyBlockMock = (height: string): Block => ({
   hash: "abc123",
-  height: parseInt(height),
+  height: Number.parseInt(height),
   time: 1775057470,
   tx: [],
 });
