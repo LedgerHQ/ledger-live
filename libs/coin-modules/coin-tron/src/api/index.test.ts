@@ -35,6 +35,10 @@ describe("createApi", () => {
   const mockTronConfig: TronConfig = { explorer: { url: "iamaurl" } } as TronConfig;
   let setCoinConfigSpy: jest.SpyInstance;
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should set the coin config value", () => {
     setCoinConfigSpy = jest.spyOn(coinConfig, "setCoinConfig");
 
@@ -95,6 +99,7 @@ describe("createApi", () => {
     await expect(api.listOperations("address", { minHeight: 0, limit: 201 })).rejects.toThrow(
       "limit must be <= 200 for Tron (TronGrid API restriction)",
     );
+    expect(listOperations).not.toHaveBeenCalled();
   });
 
   it("should not throw when limit is exactly 200", async () => {
