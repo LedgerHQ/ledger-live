@@ -378,7 +378,7 @@ describe("findShieldedTxsInBlock", () => {
     expect(transactions).toEqual([]);
   });
 
-  test("edge case: retrieves an empty list when the block has emtpy tx", async () => {
+  test("edge case: retrieves an empty list when the block has empty tx", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const transactions = await zcash.findShieldedTxsInBlock({
       block: { ...dummyBlockMock("3000000"), tx: ["", ""] },
