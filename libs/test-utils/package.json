@@ -12,6 +12,10 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest --passWithNoTests",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -19,7 +23,13 @@
     "serve-handler": "^6.1.3"
   },
   "devDependencies": {
-    "@types/serve-handler": "^6.1.1"
+    "@types/serve-handler": "^6.1.1",
+    "oxlint": "catalog:",
+    "typescript": "catalog:",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/jest": "catalog:"
   },
   "exports": {
     ".": {

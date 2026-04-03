@@ -31,14 +31,20 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
-    "lint:fix": "pnpm lint --fix"
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@ledgerhq/wallet-api-client": "^1.14.0",
     "@ledgerhq/wallet-api-core": "^1.30.0"
   },
   "devDependencies": {
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/jest": "catalog:"
   },
   "exports": {
     ".": {

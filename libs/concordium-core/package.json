@@ -16,6 +16,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
+    "lint:fix": "pnpm lint --fix",
     "unimported": "unimported"
   },
   "dependencies": {
