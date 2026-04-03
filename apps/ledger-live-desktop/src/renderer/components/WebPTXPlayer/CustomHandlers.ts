@@ -8,6 +8,7 @@ import {
   AccountIdFormatsResponse,
 } from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Dispatch } from "redux";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
@@ -381,60 +382,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         return Promise.resolve();
       },
-      "custom.dialog.info": async request => {
-        const { params } = request;
-        if (!params) {
-          throw new Error("Missing params for custom.dialog.info");
-        }
-
-        const { title, message, linkText, linkHref } = params;
-
-        if (typeof title !== "string" || typeof message !== "string") {
-          throw new TypeError(
-            "Invalid params for custom.dialog.info: expected non-empty string 'title' and 'message'.",
-          );
-        }
-
-        const trimmedTitle = title.trim();
-        const trimmedMessage = message.trim();
-        if (!trimmedTitle || !trimmedMessage) {
-          throw new Error(
-            "Invalid params for custom.dialog.info: expected non-empty string 'title' and 'message'.",
-          );
-        }
-
-        if (!!linkText && typeof linkText !== "string") {
-          throw new Error(
-            "Invalid params for custom.dialog.info: 'linkText' must be a string when provided.",
-          );
-        }
-        if (!!linkHref && typeof linkHref !== "string") {
-          throw new Error(
-            "Invalid params for custom.dialog.info: 'linkHref' must be a string when provided.",
-          );
-        }
-
-        const trimmedLinkText = linkText ? linkText.trim() : undefined;
-
-        let validatedLinkHref: string | undefined;
-        if (linkHref) {
-          validatedLinkHref = validateUrl(linkHref) || undefined;
-          if (!validatedLinkHref) {
-            throw new Error(
-              "Invalid params for custom.dialog.info: 'linkHref' is not an allowed URL.",
-            );
-          }
-        }
-
-        dispatch(
-          setPtxInfoDialog({
-            title: trimmedTitle,
-            message: trimmedMessage,
-            linkText: trimmedLinkText,
-            linkHref: validatedLinkHref,
-          }),
-        );
-      },
+      "custom.dialog.info": createDialogInfoHandler(dispatch),
     };
   }, [
     accounts,
@@ -449,4 +397,68 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     getAccount,
     syncAccountsById,
   ]);
+}
+
+export function createDialogInfoHandler(dispatch: Dispatch) {
+  return async (request: {
+    params?: {
+      title: string;
+      message: string;
+      linkText?: string;
+      linkHref?: string;
+    };
+  }) => {
+    const { params } = request;
+    if (!params) {
+      throw new Error("Missing params for custom.dialog.info");
+    }
+
+    const { title, message, linkText, linkHref } = params;
+
+    if (typeof title !== "string" || typeof message !== "string") {
+      throw new TypeError(
+        "Invalid params for custom.dialog.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    const trimmedTitle = title.trim();
+    const trimmedMessage = message.trim();
+    if (!trimmedTitle || !trimmedMessage) {
+      throw new Error(
+        "Invalid params for custom.dialog.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    if (!!linkText && typeof linkText !== "string") {
+      throw new Error(
+        "Invalid params for custom.dialog.info: 'linkText' must be a string when provided.",
+      );
+    }
+    if (!!linkHref && typeof linkHref !== "string") {
+      throw new Error(
+        "Invalid params for custom.dialog.info: 'linkHref' must be a string when provided.",
+      );
+    }
+
+    const trimmedLinkText = linkText ? linkText.trim() : undefined;
+
+    let validatedLinkHref: string | undefined;
+    if (linkHref) {
+      validatedLinkHref = validateUrl(linkHref) || undefined;
+      if (!validatedLinkHref) {
+        throw new Error(
+          "Invalid params for custom.dialog.info: 'linkHref' is not an allowed URL.",
+        );
+      }
+    }
+
+    dispatch(
+      setPtxInfoDialog({
+        title: trimmedTitle,
+        message: trimmedMessage,
+        linkText: trimmedLinkText,
+        linkHref: validatedLinkHref,
+      }),
+    );
+  };
 }
