@@ -1,5 +1,6 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../config";
+import { getBlock } from "../network";
 import { listOperations, ListOperationsOptions } from "./listOperations";
 
 describe("listOperations", () => {
@@ -283,29 +284,28 @@ describe("listOperations", () => {
   describe("Account TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z with failed TriggerSmartContract containing internal_transactions", () => {
     // https://tronscan.org/#/address/TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z
     const testingAccount = "TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z";
-    const options = {
-      ...defaultOptions,
-      minHeight: 63747682,
-      order: "asc" as const,
-      softLimit: 100,
-    };
+    let minTimestamp: number;
 
-    describe("listOperations", () => {
-      it("should return failed transaction with internal_transactions and capture fees", async () => {
-        // https://tronscan.org/#/transaction/2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435
-        // Failed TriggerSmartContract at block 63747682 with fee 2,341,260 sun
-        // This transaction has internal_transactions field populated
-        const txHash = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
-        const [operations] = await listOperations(testingAccount, options);
-        const operation = operations.find(op => op.tx.hash === txHash);
-        expect(operation).toMatchObject({
-          tx: expect.objectContaining({
-            hash: txHash,
-            failed: true,
-            fees: 2341260n,
-          }),
-        });
-      });
+    beforeAll(async () => {
+      const block = await getBlock(63747682);
+      minTimestamp = block.time?.getTime() ?? 0;
     });
+
+    it("should return failed transaction with internal_transactions and capture fees", async () => {
+      // https://tronscan.org/#/transaction/2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435
+      // Failed TriggerSmartContract at block 63747682 with fee 2,341,260 sun
+      // This transaction has internal_transactions field populated
+      const txHash = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
+      const options: ListOperationsOptions = { limit: 100, minTimestamp, order: "asc" };
+      const result = await listOperations(testingAccount, options);
+      const operation = result.items.find(op => op.tx.hash === txHash);
+      expect(operation).toMatchObject({
+        tx: expect.objectContaining({
+          hash: txHash,
+          failed: true,
+          fees: 2341260n,
+        }),
+      });
+    }, 60000);
   });
 });

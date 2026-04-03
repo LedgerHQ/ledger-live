@@ -107,15 +107,4 @@ async function listOperations(
     order: effectiveOrder,
     cursor,
   });
-=======
-  // FIXME ListOperationsOptions allows cursor and limit, but this wrapper ignores both (always using softLimit: 200
-  //  and not validating cursor). If cursor/limit are not supported, please explicitly throw when they are provided;
-  //  otherwise, plumb them through (e.g., map limit to softLimit).
-  const options: Options = {
-    softLimit: 200,
-    minHeight: minHeight,
-    order: order || "asc",
-  } as const;
-  const [items, next] = await logicListOperations(address, options);
-  return { items, next: next || undefined };
 }
