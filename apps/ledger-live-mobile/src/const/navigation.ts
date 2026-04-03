@@ -60,6 +60,7 @@ export enum ScreenName {
   DebugTermsOfUse = "DebugTermsOfUse",
   DebugVideos = "DebugVideos",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
+  DebugMockGenerateAccountsByType = "DebugMockGenerateAccountsByType",
   DebugModularAssetDrawer = "DebugModularAssetDrawer",
   DebugNetwork = "DebugNetwork",
   DebugPlayground = "DebugPlayground",

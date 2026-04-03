@@ -17,8 +17,10 @@ export type CurrencyResult = {
 /**
  * Hook to find a token by its ID
  */
-export function useTokenById(id: string): TokenResult {
-  const result = cryptoAssetsApi.useFindTokenByIdQuery({ id });
+export function useTokenById(id: string, options?: { skip?: boolean }): TokenResult {
+  const result = options
+    ? cryptoAssetsApi.useFindTokenByIdQuery({ id }, options)
+    : cryptoAssetsApi.useFindTokenByIdQuery({ id });
   return {
     token: result.data,
     loading: result.isLoading,
