@@ -28,7 +28,6 @@
 "@ledgerhq/coin-ton": minor
 "@ledgerhq/coin-tron": minor
 "@ledgerhq/coin-vechain": minor
-"@ledgerhq/coin-xrp": minor
 "@ledgerhq/zcash-shielded": minor
 ---
 

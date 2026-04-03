@@ -178,6 +178,7 @@ catalog:
   oxfmt: 0.36.0
   # Modules published by Alpaca
   "@ledgerhq/coin-module-framework": 2.1.0
+  "@ledgerhq/coin-xrp": 7.21.1
 
 overrides:
   node-abi: ^4.9.0

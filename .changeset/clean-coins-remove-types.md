@@ -14,7 +14,6 @@
 "@ledgerhq/coin-tezos": patch
 "@ledgerhq/coin-tron": patch
 "@ledgerhq/coin-vechain": patch
-"@ledgerhq/coin-xrp": patch
 "@ledgerhq/coin-module-boilerplate": patch
 "@ledgerhq/coin-tester-evm": patch
 "ledger-live-desktop": patch

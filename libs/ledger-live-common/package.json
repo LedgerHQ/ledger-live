@@ -220,7 +220,7 @@
     "@ledgerhq/coin-ton": "workspace:^",
     "@ledgerhq/coin-tron": "workspace:^",
     "@ledgerhq/coin-vechain": "workspace:^",
-    "@ledgerhq/coin-xrp": "workspace:^",
+    "@ledgerhq/coin-xrp": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
