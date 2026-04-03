@@ -57,7 +57,7 @@ export const handlers = [
 
       case "getrawtransaction": {
         const txId = body.params[0];
-        for (const transaction of [...testAccount1.transactions]) {
+        for (const transaction of testAccount1.transactions) {
           if (txId === transaction.tx.txid) {
             return HttpResponse.json({
               result: {
