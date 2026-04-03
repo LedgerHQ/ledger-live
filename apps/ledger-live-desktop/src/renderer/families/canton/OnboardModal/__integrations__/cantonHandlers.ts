@@ -8,6 +8,32 @@ export const MOCK_ONBOARD_PARTY_ID = "mock-party-onboard-integ";
 
 export const MOCK_CANTON_PUBLIC_KEY_HEX = "aa".repeat(32);
 
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const gw = escapeRegExp(CANTON_DEVNET_GATEWAY);
+const node = escapeRegExp(CANTON_DEVNET_NODE_ID);
+
+/**
+ * Matches GET party lookup by public key (see `getParty` in coin-canton `gateway.ts`).
+ * Uses RegExp so MSW always matches the real axios URL (path segment length, query), avoiding
+ * path-to-regexp param edge cases that can let requests bypass and hit the real gateway on CI.
+ */
+export const CANTON_DEVNET_PARTY_BY_PUBKEY_RE = new RegExp(
+  `^${gw}/v1/node/${node}/party/[^?#]+\\?[^#]*by=public-key`,
+);
+
+/** POST onboarding/prepare for this gateway + node (pathname must match `prepareOnboarding`). */
+export const CANTON_DEVNET_ONBOARDING_PREPARE_RE = new RegExp(
+  `^${gw}/v1/node/${node}/onboarding/prepare/?$`,
+);
+
+/** POST onboarding/submit */
+export const CANTON_DEVNET_ONBOARDING_SUBMIT_RE = new RegExp(
+  `^${gw}/v1/node/${node}/onboarding/submit/?$`,
+);
+
 const emptyTx = (serialized: string) => ({
   serialized,
   transaction: { operation: "noop", serial: 0, mapping: {} as Record<string, unknown> },
@@ -26,15 +52,12 @@ const defaultPrepareResponse = {
   },
 };
 
-const basePath = `${CANTON_DEVNET_GATEWAY}/v1/node/${CANTON_DEVNET_NODE_ID}`;
-
 const handlers = [
-  // Party lookup: not onboarded → bridge treats as new account (errors are caught in isAccountOnboarded).
-  http.get(`${basePath}/party/:_identifier`, () =>
+  http.get(CANTON_DEVNET_PARTY_BY_PUBKEY_RE, () =>
     HttpResponse.json({ message: "not found" }, { status: 404 }),
   ),
-  http.post(`${basePath}/onboarding/prepare`, () => HttpResponse.json(defaultPrepareResponse)),
-  http.post(`${basePath}/onboarding/submit`, () =>
+  http.post(CANTON_DEVNET_ONBOARDING_PREPARE_RE, () => HttpResponse.json(defaultPrepareResponse)),
+  http.post(CANTON_DEVNET_ONBOARDING_SUBMIT_RE, () =>
     HttpResponse.json({
       party: {
         party_id: MOCK_ONBOARD_PARTY_ID,

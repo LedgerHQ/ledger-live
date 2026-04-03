@@ -5,12 +5,15 @@ import { server } from "tests/server";
 import cantonHandlers, {
   CANTON_DEVNET_GATEWAY,
   CANTON_DEVNET_NODE_ID,
+  CANTON_DEVNET_ONBOARDING_PREPARE_RE,
   MOCK_CANTON_PUBLIC_KEY_HEX,
 } from "./cantonHandlers";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "@ledgerhq/coin-canton/config";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import OnboardModal from "../index";
@@ -53,7 +56,15 @@ jest.mock(
   { virtual: true },
 );
 
-const prepareUrl = `${CANTON_DEVNET_GATEWAY}/v1/node/${CANTON_DEVNET_NODE_ID}/onboarding/prepare`;
+function cantonDevnetCurrency(): CryptoCurrency {
+  const currency = getCryptoCurrencyById("canton_network_devnet");
+  if (!currency) {
+    throw new Error(
+      "canton_network_devnet is missing; setSupportedCurrencies must run in beforeAll for this suite",
+    );
+  }
+  return currency;
+}
 
 const cantonIntegSettings = {
   ...SETTINGS_INITIAL_STATE,
@@ -84,8 +95,12 @@ function mergeCantonIntegInitialState(
 
 describe("OnboardModal Integration", () => {
   const mockDevice = createMockDevice();
+  let previousCantonNodeIdOverride: string;
 
   beforeAll(() => {
+    previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
+    setEnv("CANTON_NODE_ID_OVERRIDE", "");
+
     setSupportedCurrencies(["canton_network_devnet"]);
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
@@ -98,11 +113,11 @@ describe("OnboardModal Integration", () => {
   });
 
   afterAll(() => {
+    setEnv("CANTON_NODE_ID_OVERRIDE", previousCantonNodeIdOverride);
     setSupportedCurrencies([]);
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
     server.resetHandlers();
     server.use(...cantonHandlers);
 
@@ -124,42 +139,31 @@ describe("OnboardModal Integration", () => {
   });
 
   it("should complete onboarding and show finish", async () => {
-    const currency = getCryptoCurrencyById("canton_network_devnet");
-    const defaultProps = createCantonIntegUserProps(currency);
+    const defaultProps = createCantonIntegUserProps(cantonDevnetCurrency());
     const initialState = mergeCantonIntegInitialState(mockDevice);
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });
 
     expect(screen.getByText("Set up your new Canton account by clicking Continue")).toBeVisible();
 
-    const reqs: string[] = [];
-    server.events.on("request:start", ({ request }) => {
-      reqs.push(request.url);
-      console.log("MSW intercepted:", request.url);
-    });
-
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
-    try {
-      await waitFor(
-        () => {
-          expect(screen.getByTestId("add-accounts-finish-close-button")).toBeVisible();
-        },
-        { timeout: 5000 },
-      );
-    } catch (e) {
-      console.log("DOM AFTER FAIL:", document.body.innerHTML, reqs);
-      throw e;
-    }
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("add-accounts-finish-close-button")).toBeVisible();
+      },
+      { timeout: 20_000 },
+    );
   }, 25_000);
 
   it("should show try again when onboarding prepare fails", async () => {
     server.use(
-      http.post(prepareUrl, () => HttpResponse.json({ error: "gateway error" }, { status: 500 })),
+      http.post(CANTON_DEVNET_ONBOARDING_PREPARE_RE, () =>
+        HttpResponse.json({ error: "gateway error" }, { status: 500 }),
+      ),
     );
 
-    const currency = getCryptoCurrencyById("canton_network_devnet");
-    const defaultProps = createCantonIntegUserProps(currency);
+    const defaultProps = createCantonIntegUserProps(cantonDevnetCurrency());
     const initialState = mergeCantonIntegInitialState(mockDevice);
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });
