@@ -2,6 +2,7 @@ import { Transaction } from "../models/Transaction";
 import {
   containsSubstringInEvent,
   fetchCurrentScreenTexts,
+  waitForReviewTransaction,
   pressUntilTextFound,
   waitFor,
 } from "../speculos";
@@ -56,9 +57,7 @@ function validateTransactionData(tx: Transaction, events: string[]) {
 }
 
 async function sendEvmTouchDevices(tx: Transaction) {
-  await waitFor(DeviceLabels.YES_ENABLE);
-  await pressAndRelease(DeviceLabels.YES_ENABLE);
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  await waitForReviewTransaction();
 
   const events: string[] = [];
   if (tx.accountToCredit.ensName) {
@@ -116,4 +115,26 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
   const { x: backX, y: backY } = getDeviceCoordinates("arrowBack");
   await pressAndRelease("<", backX, backY);
   return events;
+}
+
+export async function approveTokenTouchDevices() {
+  await waitForReviewTransaction();
+  await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+}
+
+export const approveTokenButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO);
+      await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      await getButtonsController().both();
+    },
+);
+
+export async function approveToken() {
+  if (isTouchDevice()) {
+    return approveTokenTouchDevices();
+  }
+  return approveTokenButtonDevice();
 }

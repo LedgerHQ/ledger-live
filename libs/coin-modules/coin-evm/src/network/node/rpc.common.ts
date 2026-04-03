@@ -228,6 +228,21 @@ async function getTokenBalance(
   return new BigNumber(balance.toString());
 }
 
+async function getTokenAllowance(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  ownerAddress: string,
+  contractAddress: string,
+  spenderAddress: string,
+): Promise<BigNumber> {
+  const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
+  const allowance = await erc20.allowance(
+    normalizeAddress(ownerAddress),
+    normalizeAddress(spenderAddress),
+  );
+  return new BigNumber(allowance.toString());
+}
+
 async function getTransactionCount(
   api: JsonRpcProvider,
   _currency: CryptoCurrency,
@@ -767,6 +782,7 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
     getBlockByHeight: make(getBlockByHeight, config),
     getCoinBalance: make(getCoinBalance, config),
     getTokenBalance: make(getTokenBalance, config),
+    getTokenAllowance: make(getTokenAllowance, config),
     getTransactionCount: make(getTransactionCount, config),
     getTransaction: make(getTransaction, config),
     getBlockReceipts: make(getBlockReceipts, config),

@@ -55,10 +55,10 @@ export const registerTransportModule = (module: TransportModule): void => {
 };
 
 export const unregisterTransportModule = (moduleId: string): void => {
-  modules.splice(
-    modules.findIndex(m => m.id === moduleId),
-    1,
-  );
+  const index = modules.findIndex(m => m.id === moduleId);
+  if (index !== -1) {
+    modules.splice(index, 1);
+  }
 };
 
 export const unregisterAllTransportModules = (): void => {

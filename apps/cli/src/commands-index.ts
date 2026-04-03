@@ -15,6 +15,7 @@ import signMessage from "./commands/blockchain/signMessage";
 import sync from "./commands/blockchain/sync";
 import testDetectOpCollision from "./commands/blockchain/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/blockchain/testGetTrustedInputFromTxHash";
+import tokenAllowance from "./commands/blockchain/tokenAllowance";
 import app from "./commands/device/app";
 import appUninstallAll from "./commands/device/appUninstallAll";
 import appsCheckAllAppVersions from "./commands/device/appsCheckAllAppVersions";
@@ -76,6 +77,7 @@ export default {
   sync,
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
+  tokenAllowance,
   app,
   appUninstallAll,
   appsCheckAllAppVersions,
