@@ -6,7 +6,6 @@ import {
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
 import { NavigationContainerEventMap } from "@react-navigation/native";
-import { useTheme } from "styled-components/native";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
@@ -40,13 +39,11 @@ const styles = {
   navigator: { backgroundColor: "transparent" } satisfies StyleProp<ViewStyle>,
 } as const;
 
-// Use theme background for scene container to prevent grey flicker when landing on homescreen (LIVE-25288).
-// Material Top Tabs can show a default grey background if sceneStyle is transparent.
-const getScreenOptions = (sceneBackgroundColor: string) => ({
+const screenOptions = {
   lazy: true,
   swipeEnabled: false, // For Contents Cards issue
-  sceneStyle: { backgroundColor: sceneBackgroundColor },
-});
+  sceneStyle: { backgroundColor: "transparent" },
+} as const;
 
 export default function WalletTabNavigator() {
   const dispatch = useDispatch();
@@ -62,13 +59,6 @@ export default function WalletTabNavigator() {
     shouldDisplayWallet40MainNav: shouldDisplayWallet40TopBar,
   } = useWalletFeaturesConfig("mobile");
   const { backgroundColor } = useWallet40Theme("mobile");
-  const { colors } = useTheme();
-  const sceneBackgroundColor = 
-    backgroundColor === "#000000" ? "#000000" : colors.background.main;
-  const screenOptions = useMemo(
-    () => getScreenOptions(sceneBackgroundColor),
-    [sceneBackgroundColor],
-  );
 
   const PortfolioComponent = useMemo(() => {
     if (readOnlyModeEnabled && hasNoAccounts) {
