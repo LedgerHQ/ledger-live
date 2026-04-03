@@ -18,9 +18,9 @@ import coinConfig from "@ledgerhq/coin-canton/config";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import OnboardModal from "../index";
 import {
-  createCantonIntegModalState,
-  createCantonIntegUserProps,
   createMockDevice,
+  generateOnboardModalProps,
+  generateOnboardModalState,
 } from "../__tests__/testUtils";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
@@ -79,7 +79,7 @@ function mergeCantonIntegInitialState(
 ) {
   const { settings: extraSettings, ...rest } = extra;
   return {
-    ...createCantonIntegModalState(device),
+    ...generateOnboardModalState(device),
     ...rest,
     settings: {
       ...cantonIntegSettings,
@@ -139,7 +139,7 @@ describe("OnboardModal Integration", () => {
   });
 
   it("should complete onboarding and show finish", async () => {
-    const defaultProps = createCantonIntegUserProps(cantonDevnetCurrency());
+    const defaultProps = generateOnboardModalProps(cantonDevnetCurrency());
     const initialState = mergeCantonIntegInitialState(mockDevice);
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });
@@ -163,7 +163,7 @@ describe("OnboardModal Integration", () => {
       ),
     );
 
-    const defaultProps = createCantonIntegUserProps(cantonDevnetCurrency());
+    const defaultProps = generateOnboardModalProps(cantonDevnetCurrency());
     const initialState = mergeCantonIntegInitialState(mockDevice);
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });

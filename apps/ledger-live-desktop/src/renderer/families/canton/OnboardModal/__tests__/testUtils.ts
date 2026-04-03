@@ -77,8 +77,8 @@ export const createMockUserProps = (overrides: Record<string, unknown> = {}) => 
   };
 };
 
-/** Real `CryptoCurrency` (e.g. devnet) for bridge + MSW integration tests. */
-export function createCantonIntegUserProps(currency: CryptoCurrency) {
+/** Builds `UserProps` for `OnboardModal` integration tests (real `CryptoCurrency`, e.g. devnet). */
+export function generateOnboardModalProps(currency: CryptoCurrency) {
   const creatableAccount = createMockAccount({
     currency,
     used: false,
@@ -97,7 +97,8 @@ export function createCantonIntegUserProps(currency: CryptoCurrency) {
   };
 }
 
-export function createCantonIntegModalState(device: Device) {
+/** Redux slice shape to open `OnboardModal` with a connected device (integration tests). */
+export function generateOnboardModalState(device: Device) {
   return {
     devices: { currentDevice: device, devices: [device] },
     modals: { MODAL_CANTON_ONBOARD_ACCOUNT: { isOpened: true } },
