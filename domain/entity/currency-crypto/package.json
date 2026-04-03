@@ -1,5 +1,5 @@
 {
-  "name": "@domain/entity-crypto-currency",
+  "name": "@domain/entity-currency-crypto",
   "version": "0.0.1",
   "private": true,
   "description": "Domain entity for crypto currencies: Zod schemas and registry",
