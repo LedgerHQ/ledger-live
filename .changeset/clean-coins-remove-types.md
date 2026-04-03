@@ -1,24 +1,24 @@
 ---
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/coin-aleo": patch
-"@ledgerhq/coin-aptos": patch
-"@ledgerhq/coin-canton": patch
-"@ledgerhq/coin-celo": patch
-"@ledgerhq/coin-concordium": patch
-"@ledgerhq/coin-cosmos": patch
-"@ledgerhq/coin-hedera": patch
-"@ledgerhq/coin-polkadot": patch
-"@ledgerhq/coin-stellar": patch
-"@ledgerhq/coin-sui": patch
-"@ledgerhq/coin-tezos": patch
-"@ledgerhq/coin-tron": patch
-"@ledgerhq/coin-vechain": patch
-"@ledgerhq/coin-xrp": patch
-"@ledgerhq/coin-module-boilerplate": patch
-"@ledgerhq/coin-tester-evm": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-aleo": minor
+"@ledgerhq/coin-aptos": minor
+"@ledgerhq/coin-canton": minor
+"@ledgerhq/coin-celo": minor
+"@ledgerhq/coin-concordium": minor
+"@ledgerhq/coin-cosmos": minor
+"@ledgerhq/coin-hedera": minor
+"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/coin-stellar": minor
+"@ledgerhq/coin-sui": minor
+"@ledgerhq/coin-tezos": minor
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-vechain": minor
+"@ledgerhq/coin-xrp": minor
+"@ledgerhq/coin-module-boilerplate": minor
+"@ledgerhq/coin-tester-evm": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Remove @ledgerhq/types-cryptoassets dependency from coin-framework by replacing CryptoCurrency parameters with currencyId strings in CoinConfig and getCurrencyConfiguration

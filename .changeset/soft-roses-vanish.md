@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Fix impression tracking on OS update banner

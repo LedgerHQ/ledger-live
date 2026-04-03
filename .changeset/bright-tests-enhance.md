@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 "ledger-live-mobile-e2e-tests": minor
 ---
 

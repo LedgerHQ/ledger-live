@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Update English copy for analytics opt-in and personalized experience in general settings
