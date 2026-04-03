@@ -11,6 +11,7 @@ import {
   DynamicContentSetMobileCardsPayload,
   DynamicContentSetLandingStickyCtaCardsPayload,
   DynamicContentAddLocalCardsPayload,
+  DynamicContentAppendLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
   DynamicContentAddLocalWalletCarouselPayload,
 } from "../actions/types";
@@ -64,6 +65,13 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     return {
       ...state,
       localCategoriesCards: [...state.localCategoriesCards, category],
+      localMobileCards: [...state.localMobileCards, ...cards],
+    };
+  },
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_APPEND_LOCAL_CARDS]: (state, action) => {
+    const cards = (action as Action<DynamicContentAppendLocalCardsPayload>).payload;
+    return {
+      ...state,
       localMobileCards: [...state.localMobileCards, ...cards],
     };
   },

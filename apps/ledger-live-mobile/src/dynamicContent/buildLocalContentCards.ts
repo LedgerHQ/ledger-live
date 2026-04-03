@@ -11,6 +11,9 @@ import {
 const SAMPLE_IMAGE =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQec1piP0de4iTT4LlWAg_SSU8DRv12XEfqwQ&s";
 
+const WALLET_CAROUSEL_MOCK_BACKGROUND_IMAGE =
+  "https://images.unsplash.com/photo-1621761191319-6eefa01365c0?auto=format&fit=crop&w=1200&q=80";
+
 function createBrazeLikeCard(
   id: string,
   categoryId: string,
@@ -110,7 +113,33 @@ const ACTION_SAMPLE_ITEMS: {
   },
 ];
 
-export function buildSampleActionCarousel(
+function buildSampleActionCarouselCard(
+  categoryId: string,
+  variant: SampleActionBannerVariant,
+  itemIndex: number,
+  cardId: string,
+): BrazeContentCard {
+  const item = ACTION_SAMPLE_ITEMS[itemIndex % ACTION_SAMPLE_ITEMS.length];
+  return createBrazeLikeCard(
+    cardId,
+    categoryId,
+    ContentCardLocation.TopWallet,
+    ContentCardsType.action,
+    ContentCardsLayout.carousel,
+    ContentCardsType.action,
+    {
+      title: item.title,
+      description: item.description,
+      link: item.link,
+      order: String(itemIndex),
+      ...(variant === "imageBackground"
+        ? { image_background: SAMPLE_IMAGE }
+        : { icon: item.icon }),
+    },
+  );
+}
+
+export function buildSampleActionCarouselInitial(
   variant: SampleActionBannerVariant = "icon",
 ): {
   category: CategoryContentCard;
@@ -132,43 +161,55 @@ export function buildSampleActionCarousel(
     isDismissable: true,
   };
 
-  const cards = ACTION_SAMPLE_ITEMS.map((item, index) =>
-    createBrazeLikeCard(
-      `local-action-${ts}-${index}`,
-      categoryId,
-      ContentCardLocation.TopWallet,
-      ContentCardsType.action,
-      ContentCardsLayout.carousel,
-      ContentCardsType.action,
-      {
-        title: item.title,
-        description: item.description,
-        link: item.link,
-        order: String(index),
-        ...(variant === "imageBackground"
-          ? { image_background: SAMPLE_IMAGE }
-          : { icon: item.icon }),
-      },
-    ),
-  );
-
+  const cards = [buildSampleActionCarouselCard(categoryId, variant, 0, `local-action-${ts}-0`)];
   return { category, cards };
 }
 
-/** Bottom Portfolio wallet carousel (`location: wallet`) — one slide with the same shape as Braze wallet cards. */
-export function buildSampleWalletCarousel(): WalletContentCard[] {
+export function buildSampleActionCarouselAppendCard(
+  categoryId: string,
+  variant: SampleActionBannerVariant,
+  itemIndex: number,
+): BrazeContentCard {
+  const id = `local-action-${categoryId}-${itemIndex}-${Date.now()}`;
+  return buildSampleActionCarouselCard(categoryId, variant, itemIndex, id);
+}
+
+/** Bottom Portfolio wallet carousel (`location: wallet`) — mock with Braze `picto` (crypto icon). */
+export function buildSampleWalletCarouselPicto(): WalletContentCard[] {
   const ts = Date.now();
   return [
     {
-      id: `local-wallet-carousel-${ts}`,
+      id: `local-wallet-carousel-picto-${ts}`,
+      location: ContentCardLocation.Wallet,
+      createdAt: ts,
+      viewed: false,
+      order: 0,
+      picto: "bitcoin",
+      title: "Sample bottom carousel (picto)",
+      link: "https://www.ledger.com/",
+      image: WALLET_CAROUSEL_MOCK_BACKGROUND_IMAGE,
+      image_background: WALLET_CAROUSEL_MOCK_BACKGROUND_IMAGE,
+      background: Background.purple,
+      extras: { source: "local-debug" },
+    },
+  ];
+}
+
+/** Same placement, mock with `tag` only (no picto). */
+export function buildSampleWalletCarouselTag(): WalletContentCard[] {
+  const ts = Date.now();
+  return [
+    {
+      id: `local-wallet-carousel-tag-${ts}`,
       location: ContentCardLocation.Wallet,
       createdAt: ts,
       viewed: false,
       order: 0,
       tag: "Discover",
-      title: "Sample bottom carousel",
+      title: "Sample bottom carousel (tag)",
       link: "https://www.ledger.com/",
-      image: SAMPLE_IMAGE,
+      image: WALLET_CAROUSEL_MOCK_BACKGROUND_IMAGE,
+      image_background: WALLET_CAROUSEL_MOCK_BACKGROUND_IMAGE,
       background: Background.purple,
       extras: { source: "local-debug" },
     },

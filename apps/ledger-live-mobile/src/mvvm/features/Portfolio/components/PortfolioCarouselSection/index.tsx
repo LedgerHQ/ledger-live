@@ -1,9 +1,10 @@
 import React from "react";
-import { Box } from "@ledgerhq/native-ui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { Box, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import Carousel from "~/components/Carousel";
-import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";
-import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 
 interface PortfolioCarouselSectionProps {
   readonly backgroundColor: string;
@@ -11,13 +12,36 @@ interface PortfolioCarouselSectionProps {
 
 export const PortfolioCarouselSection = ({ backgroundColor }: PortfolioCarouselSectionProps) => {
   const { t } = useTranslation();
+  const { bottom } = useSafeAreaInsets();
+  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
+
+  /** Tx History in header: this section is last — safe area + s24 below cards (section only mounts when cards exist). */
+  const carouselBottomPadding = shouldDisplayOperationsList ? bottom + 24 : undefined;
+
+  const styles = useStyleSheet(
+    theme => ({
+      container: {
+        backgroundColor,
+        ...(carouselBottomPadding === undefined ? {} : { paddingBottom: carouselBottomPadding }),
+      },
+    }),
+    [backgroundColor, carouselBottomPadding],
+  );
 
   return (
-    <Box backgroundColor={backgroundColor} key="CarouselTitle">
-      <SectionContainer px={0} minHeight={240} isFirst>
-        <SectionTitle title={t("portfolio.carousel.title")} containerProps={{ mb: 7, mx: 6 }} />
-        <Carousel />
-      </SectionContainer>
+    <Box
+      style={styles.container}
+      lx={{
+        paddingTop: "s32",
+        ...(carouselBottomPadding === undefined ? { paddingBottom: "s24" } : {}),
+      }}
+    >
+      <Subheader>
+        <SubheaderRow lx={{ marginBottom: "s12", marginHorizontal: "s16" }}>
+          <SubheaderTitle>{t("portfolio.carousel.title")}</SubheaderTitle>
+        </SubheaderRow>
+      </Subheader>
+      <Carousel />
     </Box>
   );
 };

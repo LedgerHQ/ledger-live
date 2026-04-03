@@ -3601,11 +3601,13 @@
         "addSampleBanner": "Add sample banner",
         "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
         "addSampleActionCarouselIcon": "Add action carousel (icon)",
-        "addSampleActionCarouselIconDesc": "ContentBanner with Spot icons — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselIconDesc": "Adds one ContentBanner card per tap. Same row as the image variant — mix icon and image cards in one carousel. Cycles Buy → Swap → Stake. Requires Braze placement flag.",
         "addSampleActionCarouselImageBackground": "Add action carousel (image)",
-        "addSampleActionCarouselImageBackgroundDesc": "MediaBanner with image_background — Buy, Swap, Stake. Requires Braze placement flag.",
-        "addSampleWalletCarousel": "Add bottom wallet carousel (mock)",
-        "addSampleWalletCarouselDesc": "One mock card in the Portfolio bottom carousel (tag, title, image, link). No Braze.",
+        "addSampleActionCarouselImageBackgroundDesc": "Adds one MediaBanner card per tap. Same row as the icon variant — mix both in one carousel. Cycles Buy → Swap → Stake. Requires Braze placement flag.",
+        "addSampleWalletCarouselPicto": "Add bottom wallet carousel (picto)",
+        "addSampleWalletCarouselPictoDesc": "One mock card with crypto icon (picto), title, image, link. No Braze.",
+        "addSampleWalletCarouselTag": "Add bottom wallet carousel (tag)",
+        "addSampleWalletCarouselTagDesc": "One mock card with tag, title, image, link. No Braze.",
         "dismissAll": "Dismiss all local cards",
         "dismissAllDesc": "Remove all locally generated content cards."
       }

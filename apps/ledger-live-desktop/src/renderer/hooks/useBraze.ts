@@ -86,8 +86,9 @@ const mapBrazeCardToPortfolioContentCard = (
   order: parseOrder(card.extras?.order),
   path: card.extras?.path,
   tag: card.extras?.tag,
+  picto: card.extras?.picto,
   title: card.extras?.title,
-  url: card.extras?.url,
+  url: card.extras?.url || card.extras?.link,
 });
 
 export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard =>

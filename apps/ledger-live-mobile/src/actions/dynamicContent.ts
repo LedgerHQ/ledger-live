@@ -15,6 +15,7 @@ import {
   DynamicContentSetMobileCardsPayload,
   DynamicContentSetLandingStickyCtaCardsPayload,
   DynamicContentAddLocalCardsPayload,
+  DynamicContentAppendLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
   DynamicContentAddLocalWalletCarouselPayload,
 } from "./types";
@@ -74,6 +75,13 @@ const addLocalContentCardsAction = createAction<DynamicContentAddLocalCardsPaylo
 
 export const addLocalContentCards = (payload: DynamicContentAddLocalCardsPayload) =>
   addLocalContentCardsAction(payload);
+
+const appendLocalContentCardsAction = createAction<DynamicContentAppendLocalCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_APPEND_LOCAL_CARDS,
+);
+
+export const appendLocalContentCards = (cards: DynamicContentAppendLocalCardsPayload) =>
+  appendLocalContentCardsAction(cards);
 
 const clearLocalContentCardsAction = createAction(
   DynamicContentActionTypes.DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS,
