@@ -41,7 +41,8 @@ import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLi
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
-import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
+import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -507,67 +508,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 }
 
 export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
-  return async (request: {
-    params?: {
-      title: string;
-      message: string;
-      linkText?: string;
-      linkHref?: string;
-    };
-  }) => {
-    const { params } = request;
-
-    if (!params) {
-      throw new Error("Missing params for custom.bottomSheet.info");
-    }
-
-    const { title, message, linkText, linkHref } = params;
-
-    if (typeof title !== "string" || typeof message !== "string") {
-      throw new TypeError(
-        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
-      );
-    }
-
-    const trimmedTitle = title.trim();
-    const trimmedMessage = message.trim();
-    if (!trimmedTitle || !trimmedMessage) {
-      throw new Error(
-        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
-      );
-    }
-
-    if (linkText != null && typeof linkText !== "string") {
-      throw new Error(
-        "Invalid params for custom.bottomSheet.info: 'linkText' must be a string when provided.",
-      );
-    }
-    if (linkHref != null && typeof linkHref !== "string") {
-      throw new Error(
-        "Invalid params for custom.bottomSheet.info: 'linkHref' must be a string when provided.",
-      );
-    }
-
-    const trimmedLinkText = linkText ? linkText.trim() || undefined : undefined;
-
-    let validatedLinkHref: string | undefined;
-    if (linkHref != null) {
-      validatedLinkHref = validateUrl(linkHref);
-      if (validatedLinkHref === "") {
-        throw new Error(
-          "Invalid params for custom.bottomSheet.info: 'linkHref' is not an allowed URL.",
-        );
-      }
-    }
-
-    dispatch(
-      makeSetEarnInfoBottomSheetAction({
-        title: trimmedTitle,
-        message: trimmedMessage,
-        linkText: trimmedLinkText,
-        linkHref: validatedLinkHref,
-      }),
-    );
+  return async (request: { params?: InfoDialogParams }) => {
+    const validated = validateInfoDialogParams(request.params, "custom.bottomSheet.info");
+    dispatch(makeSetEarnInfoBottomSheetAction(validated));
   };
 }
 
