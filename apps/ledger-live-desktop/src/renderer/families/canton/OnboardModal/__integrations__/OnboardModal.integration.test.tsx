@@ -1,5 +1,5 @@
 import React from "react";
-import { act, cleanup, render, screen, waitFor } from "tests/testSetup";
+import { act, cleanup, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { http, HttpResponse } from "msw";
 import { server } from "tests/server";
 import cantonHandlers, {
@@ -68,9 +68,6 @@ function cantonDevnetCurrency(): CryptoCurrency {
 
 const cantonIntegSettings = {
   ...SETTINGS_INITIAL_STATE,
-  overriddenFeatureFlags: {
-    cantonSkipPreapprovalStep: { enabled: true },
-  },
 };
 
 function mergeCantonIntegInitialState(
@@ -80,15 +77,11 @@ function mergeCantonIntegInitialState(
   const { settings: extraSettings, ...rest } = extra;
   return {
     ...generateOnboardModalState(device),
+    ...withFlagOverrides({ cantonSkipPreapprovalStep: { enabled: true } }),
     ...rest,
     settings: {
       ...cantonIntegSettings,
       ...extraSettings,
-      overriddenFeatureFlags: {
-        ...cantonIntegSettings.overriddenFeatureFlags,
-        ...(extraSettings?.overriddenFeatureFlags ?? {}),
-        cantonSkipPreapprovalStep: { enabled: true },
-      },
     },
   };
 }
