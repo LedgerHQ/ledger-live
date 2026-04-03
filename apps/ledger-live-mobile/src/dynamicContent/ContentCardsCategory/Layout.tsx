@@ -150,6 +150,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
       return (
         <Carousel
           items={items}
+          showLumenPageIndicator={isContentBannerVariant && cardsSorted.length > 1}
           styles={{
             widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
             pagination: category.hasPagination,

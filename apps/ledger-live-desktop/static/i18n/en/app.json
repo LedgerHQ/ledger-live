@@ -4652,6 +4652,7 @@
             "secondaryCta": "Secondary CTA",
             "cta": "CTA",
             "tag": "Tag",
+            "picto": "Picto (ledger id)",
             "url": "URL",
             "path": "Path"
           }

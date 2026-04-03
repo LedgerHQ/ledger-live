@@ -36,6 +36,7 @@ interface FormState {
   secondaryCta: string;
   cta: string;
   tag?: string;
+  picto?: string;
   url: string;
   path: string;
   order?: number;
@@ -56,6 +57,7 @@ const initialState: FormState = {
   link: "https://www.ledger.com/",
   secondaryCta: "Dummy Dismiss CTA",
   cta: "Dummy CTA",
+  picto: "",
   url: "https://www.ledger.com/",
   path: "https://www.ledger.com/",
   order: undefined,
@@ -96,14 +98,24 @@ export const ModalBody: React.FC = () => {
       secondaryCta,
       cta,
       tag,
+      picto,
       url,
       path,
       order,
     } = formData;
     if (selectedTab === "PortfolioContentCard") {
-      addLocalPortfolioCard(title, description, image, order, url, cta, tag);
+      addLocalPortfolioCard(title, description, image, order, url, cta, tag, picto || undefined);
     } else if (selectedTab === "BottomPortfolioContentCard") {
-      addLocalBottomPortfolioCard(title, description, image, order, url, cta, tag);
+      addLocalBottomPortfolioCard(
+        title,
+        description,
+        image,
+        order,
+        url,
+        cta,
+        tag,
+        picto || undefined,
+      );
     } else if (selectedTab === "ActionContentCard") {
       addLocalActionCard(
         title,
@@ -185,6 +197,11 @@ export const ModalBody: React.FC = () => {
         placeholder: "TAG",
         label: t("settings.developer.brazeTools.modal.fields.tag"),
       },
+      {
+        field: "picto",
+        placeholder: "e.g. bitcoin",
+        label: t("settings.developer.brazeTools.modal.fields.picto"),
+      },
     ],
     BottomPortfolioContentCard: [
       {
@@ -206,6 +223,11 @@ export const ModalBody: React.FC = () => {
         field: "tag",
         placeholder: "TAG",
         label: t("settings.developer.brazeTools.modal.fields.tag"),
+      },
+      {
+        field: "picto",
+        placeholder: "e.g. bitcoin",
+        label: t("settings.developer.brazeTools.modal.fields.picto"),
       },
     ],
     ActionContentCard: [

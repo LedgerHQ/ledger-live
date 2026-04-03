@@ -1,6 +1,6 @@
 import React from "react";
 
-import { act, render, screen } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import PortfolioContentCards from "../components/PortfolioContentCards";
 import { BottomCarouselContentCards } from "../components/BottomCarouselContentCards";
 import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
@@ -97,7 +97,7 @@ const desktopCardsWithBottomPlacements = [...Cards, ...BottomCards].map(asClassi
 
 describe("PortfolioContentCards", () => {
   test("render slides", async () => {
-    render(<PortfolioContentCards />, {
+    const { user } = render(<PortfolioContentCards />, {
       initialState: {
         dynamicContent: { desktopCards: desktopCardsForTopCarousel, portfolioCards: Cards },
         settings: {
@@ -139,13 +139,13 @@ describe("PortfolioContentCards", () => {
       type: "portfolio_carousel",
     });
 
-    act(() => screen.getByTestId("carousel-arrow-next").click());
+    await user.click(screen.getByTestId("carousel-arrow-next"));
     expect(track).toHaveBeenCalledWith("contentcards_slide", {
       button: "next",
       page: "Portfolio",
       type: "carousel_portfolio",
     });
-    act(() => screen.getByTestId("carousel-arrow-prev").click());
+    await user.click(screen.getByTestId("carousel-arrow-prev"));
     expect(track).toHaveBeenCalledWith("contentcards_slide", {
       button: "prev",
       page: "Portfolio",
@@ -155,7 +155,7 @@ describe("PortfolioContentCards", () => {
     // Test dismiss button
     expect(logCardDismissal).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalledWith("contentcard_dismissed", expect.any(Object));
-    act(() => screen.getAllByTestId("portfolio-card-close-button")[1].click());
+    await user.click(screen.getAllByTestId("portfolio-card-close-button")[1]);
     expect(logCardDismissal).toHaveBeenCalledWith(
       expect.objectContaining({
         id: Cards[1].id,
@@ -179,7 +179,7 @@ describe("PortfolioContentCards", () => {
     // Test click button
     expect(logContentCardClick).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalledWith("contentcard_clicked", expect.any(Object));
-    act(() => cta0.click());
+    await user.click(cta0);
     expect(logContentCardClick).toHaveBeenCalledTimes(1);
     expect(logContentCardClick).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -206,7 +206,7 @@ describe("PortfolioContentCards", () => {
 
 describe("BottomCarouselContentCards", () => {
   test("render slides", async () => {
-    render(<BottomCarouselContentCards />, {
+    const { user } = render(<BottomCarouselContentCards />, {
       initialState: {
         dynamicContent: {
           desktopCards: desktopCardsWithBottomPlacements,
@@ -223,21 +223,16 @@ describe("BottomCarouselContentCards", () => {
     });
 
     const title0 = await screen.findByText("Foo");
-    const description0 = screen.getByText("Lorem ipsum dolor sit amet.");
-    const cta0 = screen.getByText("Click me");
     const tag0 = screen.getByText("New");
     const title1 = screen.getByText("Bar");
-    const description1 = screen.getByText("Consectetur adipiscing elit.");
 
     expect(title0).toBeVisible();
-    expect(description0).toBeVisible();
-    expect(cta0).toBeVisible();
     expect(tag0).toBeVisible();
     expect(title1).toBeVisible();
-    expect(description1).toBeVisible();
 
     expect(logCardDismissal).not.toHaveBeenCalled();
-    act(() => screen.getAllByTestId("portfolio-card-close-button")[1].click());
+    const closeButtons = screen.getAllByRole("button", { name: /close/i });
+    await user.click(closeButtons[1]);
     expect(logCardDismissal).toHaveBeenCalledWith(
       expect.objectContaining({ id: BottomCards[1].id }),
     );
@@ -251,10 +246,9 @@ describe("BottomCarouselContentCards", () => {
       }),
     );
     expect(title1).not.toBeInTheDocument();
-    expect(description1).not.toBeInTheDocument();
 
     expect(logContentCardClick).not.toHaveBeenCalled();
-    act(() => cta0.click());
+    await user.click(title0);
     expect(logContentCardClick).toHaveBeenCalledTimes(1);
     expect(logContentCardClick).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -24,7 +24,7 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
       lx={noPaddingHorizontal ? undefined : { paddingHorizontal: "s16" }}
       style={
         variant !== "readOnly" && shouldAddBottomPadding
-          ? { paddingBottom: bottom + 16 }
+          ? { paddingBottom: bottom + 24 }
           : undefined
       }
     >
