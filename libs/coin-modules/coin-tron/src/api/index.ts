@@ -82,6 +82,9 @@ async function listOperations(
   address: string,
   { minHeight, order, cursor, limit }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
+  if (limit !== undefined && limit > 200) {
+    throw new Error("limit must be <= 200 for Tron (TronGrid API restriction)");
+  }
   const effectiveLimit = limit ?? 200;
   const effectiveOrder = order ?? "asc";
 
