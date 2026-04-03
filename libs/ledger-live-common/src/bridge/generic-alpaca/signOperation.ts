@@ -79,7 +79,7 @@ export const genericSignOperation =
           };
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
           const { amount } = await alpacaApi.validateIntent(
-            transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+            transactionToIntent(account, draftTransaction, bridgeApi.computeIntentType),
             extractBalances(account, bridgeApi.getAssetFromToken),
             customFees,
           );
@@ -92,7 +92,7 @@ export const genericSignOperation =
           let transactionIntent = transactionToIntent(
             account,
             { ...transaction },
-            alpacaApi.computeIntentType,
+            bridgeApi.computeIntentType,
           );
           transactionIntent.senderPublicKey = publicKey;
 

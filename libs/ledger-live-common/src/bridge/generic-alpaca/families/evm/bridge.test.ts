@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getAssetFromToken, getTokenFromAsset } from "./bridge";
+import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./bridge";
 
 beforeAll(() => {
   const ethereum = getCryptoCurrencyById("ethereum");
@@ -172,5 +172,26 @@ describe("evm bridge", () => {
     expect(() => getAssetFromToken(sonic, token, "owner")).toThrow(
       "'usdc_on_ethereum' is not a valid token for 'sonic'",
     );
+  });
+
+  describe("computeIntentType", () => {
+    it.each([
+      ["send-eip1559", "a 'send-eip1559' mode", { mode: "send-eip1559" }],
+      ["send-eip1559", "a 'send' mode and '2' type", { mode: "send", type: 2 }],
+      ["send-legacy", "a 'send-legacy' mode", { mode: "send-legacy" }],
+      ["send-legacy", "a 'send' mode and '0' type", { mode: "send", type: 0 }],
+      ["send-legacy", "a 'send' mode no type", { mode: "send" }],
+    ])("detects a '%s' type from %s", (expectedType, _s, transaction) => {
+      expect(computeIntentType(transaction)).toEqual(expectedType);
+    });
+
+    it("throws on unsupported transaction mode", () => {
+      expect(() => computeIntentType({ mode: undefined })).toThrow(
+        "Unsupported transaction mode: undefined",
+      );
+      expect(() => computeIntentType({ mode: "any" })).toThrow(
+        "Unsupported transaction mode: 'any'",
+      );
+    });
   });
 });

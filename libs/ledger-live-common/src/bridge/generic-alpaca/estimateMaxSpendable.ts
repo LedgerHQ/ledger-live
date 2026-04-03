@@ -28,7 +28,7 @@ export function genericEstimateMaxSpendable(
     let fees = transaction?.fees;
     if (!BigNumber.isBigNumber(fees)) {
       const { value } = await alpacaApi.estimateFees(
-        transactionToIntent(mainAccount, draftTransaction, alpacaApi.computeIntentType),
+        transactionToIntent(mainAccount, draftTransaction, bridgeApi.computeIntentType),
       );
 
       fees = new BigNumber(value.toString());
@@ -36,7 +36,7 @@ export function genericEstimateMaxSpendable(
 
     // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
     const { amount } = await alpacaApi.validateIntent(
-      transactionToIntent(account, { ...draftTransaction }, alpacaApi.computeIntentType),
+      transactionToIntent(account, { ...draftTransaction }, bridgeApi.computeIntentType),
       extractBalances(account, bridgeApi.getAssetFromToken),
       bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),
     );

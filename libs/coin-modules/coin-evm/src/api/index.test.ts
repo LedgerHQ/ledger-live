@@ -8,7 +8,6 @@ describe.each([
     {
       broadcast: expect.any(Function),
       combine: expect.any(Function),
-      computeIntentType: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
@@ -32,7 +31,6 @@ describe.each([
     {
       broadcast: expect.any(Function),
       combine: expect.any(Function),
-      computeIntentType: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
