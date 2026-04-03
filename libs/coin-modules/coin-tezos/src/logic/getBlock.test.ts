@@ -750,6 +750,9 @@ describe("delegation operations", () => {
         sender: { address: "tz1Delegator" },
         newDelegate: { address: "tz1Baker" },
         prevDelegate: null,
+        counter: 42,
+        gasLimit: 1000,
+        storageLimit: 257,
       }),
     ]);
 
@@ -772,9 +775,9 @@ describe("delegation operations", () => {
         operationType: "DELEGATE",
         stakedAmount: 0n,
         delegate: "tz1Baker",
-        counter: 1,
-        gasLimit: undefined,
-        storageLimit: undefined,
+        counter: 42,
+        gasLimit: 1000,
+        storageLimit: 257,
         ledgerOpType: "DELEGATE",
       },
     });
@@ -788,6 +791,9 @@ describe("delegation operations", () => {
         sender: { address: "tz1Delegator" },
         newDelegate: null,
         prevDelegate: { address: "tz1PrevBaker" },
+        counter: 7,
+        gasLimit: 500,
+        storageLimit: 100,
       }),
     ]);
 
@@ -807,9 +813,9 @@ describe("delegation operations", () => {
         operationType: "UNDELEGATE",
         stakedAmount: 0n,
         delegate: "tz1PrevBaker",
-        counter: 1,
-        gasLimit: undefined,
-        storageLimit: undefined,
+        counter: 7,
+        gasLimit: 500,
+        storageLimit: 100,
         ledgerOpType: "UNDELEGATE",
       },
     });
