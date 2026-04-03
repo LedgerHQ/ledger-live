@@ -4,8 +4,13 @@ import { useNavigate, useSearchParams } from "react-router";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { useSelector } from "LLD/hooks/redux";
-import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import {
+  hasOnboardedDeviceSelector,
+  counterValueCurrencySelector,
+} from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
+import { useAllCurrencyTrends } from "LLD/features/Assets/hooks/useAllCurrencyTrends";
+import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
@@ -78,6 +83,19 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     resolvedDefaults.stablecoins,
   ]);
 
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const nonPlaceholderCurrencies = useMemo(
+    () => items.filter(i => !i.isPlaceholder).map(i => i.currency),
+    [items],
+  );
+  useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
+
+  const trends = useAllCurrencyTrends(items, "day");
+  const itemsWithTrend = useMemo(
+    () => items.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
+    [items, trends],
+  );
+
   const needsPaddingForCategory =
     category === ASSETS_PAGE_CATEGORY_CRYPTOS
       ? needsCryptoPlaceholders
@@ -113,7 +131,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   return {
     title,
     onBack,
-    items,
+    items: itemsWithTrend,
     isLoading,
     onAssetRowClick,
   };
