@@ -1212,6 +1212,34 @@ describe("createTransactionIntent", () => {
       },
     });
   });
+
+  it("should throw when amountRecordCommitment is null for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: missing amount record commitment",
+    );
+  });
+
+  it("should throw when amountRecordCommitment does not match any unspent record", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: "non-existent-commitment",
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: no amount record found for commitment non-existent-commitment",
+    );
+  });
 });
 
 describe("createFeeTransactionIntent", () => {
@@ -1235,6 +1263,7 @@ describe("createFeeTransactionIntent", () => {
       executionId,
       baseFee,
       priorityFee,
+      isFeeSponsored: false,
     });
 
     expect(result).toEqual({
@@ -1269,6 +1298,7 @@ describe("createFeeTransactionIntent", () => {
       executionId,
       baseFee,
       priorityFee,
+      isFeeSponsored: false,
     });
 
     expect(result).toEqual({
@@ -1305,6 +1335,7 @@ describe("createFeeTransactionIntent", () => {
         executionId,
         baseFee,
         priorityFee,
+        isFeeSponsored: false,
       }),
     ).toThrow("aleo: missing fee record commitment");
   });
@@ -1325,6 +1356,7 @@ describe("createFeeTransactionIntent", () => {
         executionId,
         baseFee,
         priorityFee,
+        isFeeSponsored: false,
       }),
     ).toThrow("aleo: missing fee record commitment");
   });
