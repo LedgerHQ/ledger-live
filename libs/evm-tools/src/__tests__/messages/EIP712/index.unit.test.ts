@@ -77,7 +77,7 @@ describe("evm-tools", () => {
             },
           ];
 
-          mockedAxiosGet.mockReturnValueOnce({
+          mockedAxiosGet.mockResolvedValueOnce({
             data: dynamicCALWithMultipleItems,
           });
 
@@ -97,7 +97,7 @@ describe("evm-tools", () => {
             },
           ];
 
-          mockedAxiosGet.mockReturnValueOnce({
+          mockedAxiosGet.mockResolvedValueOnce({
             data: dynamicCALWithEmptyItems,
           });
 
@@ -111,7 +111,7 @@ describe("evm-tools", () => {
             { eip712_signatures: { "0xcontract2": { hash2: "wrong2" } } },
           ];
 
-          mockedAxiosGet.mockReturnValueOnce({
+          mockedAxiosGet.mockResolvedValueOnce({
             data: dynamicCALWithNoMatch,
           });
 
@@ -188,7 +188,7 @@ describe("evm-tools", () => {
 
       describe("getFiltersForMessage", () => {
         it("should find the filters for a message from dynamic CAL", async () => {
-          mockedAxiosGet.mockReturnValueOnce({
+          mockedAxiosGet.mockResolvedValueOnce({
             data: dynamicCAL,
           });
 
@@ -197,7 +197,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message in static CAL if the message is not in dynamic CAL return", async () => {
-          mockedAxiosGet.mockReturnValueOnce({
+          mockedAxiosGet.mockResolvedValueOnce({
             data: [],
           });
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
@@ -237,7 +237,7 @@ describe("evm-tools", () => {
       describe("getEIP712FieldsDisplayedOnNano", () => {
         beforeEach(() => {
           jest.resetAllMocks();
-          mockedAxiosGet.mockReturnValueOnce({
+          mockedAxiosGet.mockResolvedValueOnce({
             data: {},
           });
         });
