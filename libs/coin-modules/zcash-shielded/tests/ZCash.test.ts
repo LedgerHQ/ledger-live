@@ -2,17 +2,11 @@ import { ZCash } from "../src/ZCash";
 import type { ZcashPrivateInfo } from "../src/types";
 import {
   testAccount1,
+  testAccount2,
   blockWithMyTx,
   txShieldedOrchard,
-  blockWithoutMyTx,
-  blockWithoutAnyTx,
-  txShieldedNotMine,
-  testAccount2,
-  decryptedSaplingData,
-  decryptedOrchardData,
-  txShieldedSapling,
-  LAST_BLOCK_COUNT,
-} from "./testAccounts";
+  dummyBlockMock,
+} from "./mocks/blockchainDataMock";
 import { server } from "./mocks/node";
 import { resetLastBlockCount, setLastBlockCount } from "./mocks/handlers";
 import { ZCASH_JSON_RPC_SERVER_TESTNET, ZCASH_LOG_TYPE } from "../src/constants";
@@ -249,91 +243,83 @@ describe("decryptTransaction", () => {
 
   test("fails to decrypt memo: UFVK decode failed", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
-    const decryptedTx = await zcash.decryptTransaction({ hex: "transaction" }, "viewingkey");
+    const decryptedTx = await zcash.decryptTransaction(
+      {
+        hex: "transaction",
+        height: 0,
+        orchard: {
+          actions: undefined,
+          valueBalance: undefined,
+          valueBalanceZat: 0,
+        },
+        time: 0,
+        txid: "",
+        blockhash: "",
+      },
+      "viewingkey",
+    );
     expect(decryptedTx).toEqual(undefined);
   });
 
   test("fails to decrypt memo: hex decode failed", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const decryptedTx = await zcash.decryptTransaction(
-      { hex: "transaction" },
+      {
+        hex: "transaction",
+        height: 0,
+        orchard: {
+          actions: undefined,
+          valueBalance: undefined,
+          valueBalanceZat: 0,
+        },
+        time: 0,
+        txid: "",
+        blockhash: "",
+      },
       testAccount1.viewingKey,
     );
     expect(decryptedTx).toEqual(undefined);
   });
 
-  test("decrypts an orchard transaction", async () => {
-    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
-    const height = await zcash.decryptTransaction(
-      {
-        hex: txShieldedOrchard.hex,
-        height: 0,
-        orchard: {
-          actions: [],
-          valueBalance: 0,
-          valueBalanceZat: 0,
-        },
-        time: 0,
-        txid: "",
-        blockhash: "",
-      },
-      testAccount1.viewingKey,
-    );
-    expect(height).toMatchObject({
-      decryptedData: decryptedOrchardData,
-    });
-  });
+  describe.each(testAccount1.transactions)(
+    `decrypts transactions for account 1 (sender's viewing key)`,
+    ({ description, tx, decryptedData }) => {
+      test(description, async () => {
+        const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+        const decrypted = await zcash.decryptTransaction(tx, testAccount1.viewingKey);
+        expect(decrypted).toMatchObject({
+          blockHeight: tx.height || 0,
+          id: tx.txid,
+          hex: tx.hex,
+          blockHash: tx.blockhash || "",
+          timestamp: tx.time || 0,
+          decryptedData,
+        });
+      });
+    },
+  );
 
-  test("decrypts a sapling transaction", async () => {
-    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
-    const height = await zcash.decryptTransaction(
-      {
-        hex: txShieldedSapling.hex,
-        height: 0,
-        orchard: {
-          actions: [],
-          valueBalance: 0,
-          valueBalanceZat: 0,
-        },
-        time: 0,
-        txid: "",
-        blockhash: "",
-      },
-      testAccount1.viewingKey,
-    );
-    expect(height).toMatchObject({
-      decryptedData: decryptedSaplingData,
-    });
-  });
-
-  test("returns empty list of actions when ufvk is not correct", async () => {
-    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
-    const height = await zcash.decryptTransaction(
-      {
-        hex: txShieldedSapling.hex,
-        height: 0,
-        orchard: {
-          actions: [],
-          valueBalance: 0,
-          valueBalanceZat: 0,
-        },
-        time: 0,
-        txid: "",
-        blockhash: "",
-      },
-      testAccount2.viewingKey,
-    );
-    expect(height).toMatchObject({
-      decryptedData: {
-        orchard_outputs: [],
-        sapling_outputs: [],
-      },
-    });
-  });
+  describe.each(testAccount1.transactions)(
+    "decrypts transactions for account 2 (receiver's viewing key)",
+    ({ description, tx, decryptedDataReceiver }) => {
+      test(description, async () => {
+        const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+        const decrypted = await zcash.decryptTransaction(tx, testAccount2.viewingKey);
+        expect(decrypted).toMatchObject({
+          blockHeight: tx.height || 0,
+          id: tx.txid,
+          hex: tx.hex,
+          blockHash: tx.blockhash || "",
+          timestamp: tx.time || 0,
+          decryptedData: decryptedDataReceiver,
+        });
+      });
+    },
+  );
 });
 
 describe("findShieldedTxsInBlock", () => {
-  test("retrieves a list of transactions for the viewing key", async () => {
+  test("retrieves outgoing for the sender's viewing key", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const transactions = await zcash.findShieldedTxsInBlock({
       block: blockWithMyTx,
@@ -342,13 +328,33 @@ describe("findShieldedTxsInBlock", () => {
 
     expect(transactions).toEqual([
       {
-        id: txShieldedOrchard.txid,
-        hex: txShieldedOrchard.hex,
+        id: txShieldedOrchard.tx.txid,
+        hex: txShieldedOrchard.tx.hex,
         blockHeight: blockWithMyTx.height,
         blockHash: blockWithMyTx.hash,
         timestamp: blockWithMyTx.time,
-        fee: new BigNumber(txShieldedOrchard.orchard.valueBalanceZat),
-        decryptedData: decryptedOrchardData,
+        fee: new BigNumber(txShieldedOrchard.tx.orchard.valueBalanceZat),
+        decryptedData: txShieldedOrchard.decryptedData,
+      },
+    ]);
+  });
+
+  test("retrieves incoming for the receiver's viewing key", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: blockWithMyTx,
+      viewingKey: testAccount2.viewingKey,
+    });
+
+    expect(transactions).toEqual([
+      {
+        id: txShieldedOrchard.tx.txid,
+        hex: txShieldedOrchard.tx.hex,
+        blockHeight: blockWithMyTx.height,
+        blockHash: blockWithMyTx.hash,
+        timestamp: blockWithMyTx.time,
+        fee: new BigNumber(txShieldedOrchard.tx.orchard.valueBalanceZat),
+        decryptedData: txShieldedOrchard.decryptedDataReceiver,
       },
     ]);
   });
@@ -356,29 +362,17 @@ describe("findShieldedTxsInBlock", () => {
   test("retrieves an empty list of transactions when viewing key doesn't match any", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const transactions = await zcash.findShieldedTxsInBlock({
-      block: blockWithoutMyTx,
-      viewingKey: testAccount1.viewingKey,
+      block: blockWithMyTx,
+      viewingKey: "123abc",
     });
-    expect(transactions).toEqual([
-      {
-        id: txShieldedNotMine.txid,
-        hex: txShieldedNotMine.hex,
-        blockHeight: blockWithoutMyTx.height,
-        blockHash: blockWithoutMyTx.hash,
-        timestamp: blockWithoutMyTx.time,
-        fee: new BigNumber(txShieldedNotMine.orchard.valueBalanceZat),
-        decryptedData: {
-          orchard_outputs: [],
-          sapling_outputs: [],
-        },
-      },
-    ]);
+
+    expect(transactions).toEqual([]);
   });
 
   test("edge case: retrieves an empty list when the block doesn't have tx", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const transactions = await zcash.findShieldedTxsInBlock({
-      block: blockWithoutAnyTx,
+      block: dummyBlockMock("3000000"),
       viewingKey: testAccount1.viewingKey,
     });
     expect(transactions).toEqual([]);
@@ -387,7 +381,7 @@ describe("findShieldedTxsInBlock", () => {
   test("edge case: retrieves an empty list when the block has emtpy tx", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const transactions = await zcash.findShieldedTxsInBlock({
-      block: { ...blockWithoutAnyTx, tx: ["", ""] },
+      block: { ...dummyBlockMock("3000000"), tx: ["", ""] },
       viewingKey: testAccount1.viewingKey,
     });
     expect(transactions).toEqual([]);
@@ -427,63 +421,6 @@ describe("findShieldedTxsInBlock", () => {
     expect(getRawTransactionSpy).toHaveBeenCalledTimes(1);
     expect(getRawTransactionSpy).toHaveBeenCalledWith("tx-valid");
     expect(decryptTransactionSpy).toHaveBeenCalledTimes(1);
-    expect(transactions).toHaveLength(1);
-  });
-
-  test("skips transactions without orchard actions", async () => {
-    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
-    const getRawTransactionSpy = jest
-      .spyOn(zcash.jsonRpcClient, "getRawTransaction")
-      .mockImplementation(async txId => {
-        if (txId === "orchard-tx") {
-          return {
-            txid: "orchard-tx",
-            hex: "hex-orchard",
-            height: blockWithMyTx.height,
-            blockhash: blockWithMyTx.hash,
-            time: blockWithMyTx.time,
-            orchard: {
-              actions: [{}] as unknown as [],
-              valueBalance: 0,
-              valueBalanceZat: 0,
-            },
-          };
-        }
-
-        return {
-          txid: "plain-tx",
-          hex: "hex-plain",
-          height: blockWithMyTx.height,
-          blockhash: blockWithMyTx.hash,
-          time: blockWithMyTx.time,
-          orchard: {
-            actions: [],
-            valueBalance: 0,
-            valueBalanceZat: 0,
-          },
-        };
-      });
-
-    const decryptTransactionSpy = jest.spyOn(zcash, "decryptTransaction").mockResolvedValue({
-      id: "orchard-tx",
-      hex: "hex-orchard",
-      blockHeight: blockWithMyTx.height,
-      blockHash: blockWithMyTx.hash,
-      timestamp: blockWithMyTx.time,
-      fee: new BigNumber(0),
-    });
-
-    const transactions = await zcash.findShieldedTxsInBlock({
-      block: { ...blockWithMyTx, tx: ["plain-tx", "orchard-tx"] },
-      viewingKey: testAccount1.viewingKey,
-    });
-
-    expect(getRawTransactionSpy).toHaveBeenCalledTimes(2);
-    expect(decryptTransactionSpy).toHaveBeenCalledTimes(1);
-    expect(decryptTransactionSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ txid: "orchard-tx" }),
-      testAccount1.viewingKey,
-    );
     expect(transactions).toHaveLength(1);
   });
 
@@ -566,19 +503,25 @@ describe("syncShielded", () => {
   });
 
   test("returns an empty shielded balance when the viewingKey doesn't match any shielded transactions", async () => {
+    const startBlockHeight = testAccount1.transactions[0].tx.height;
+    const lastBlockHeight = testAccount1.transactions[4].tx.height;
+    const nBlocks = lastBlockHeight - startBlockHeight + 1;
+
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const syncedShieldedObs = zcash.syncShielded({
-      startBlockHeight: blockWithMyTx.height,
+      startBlockHeight,
       viewingKey: "abc456",
       maxBatchSize: 1,
     });
     const steps: Partial<ZcashPrivateInfo>[] = [];
 
+    setLastBlockCount(lastBlockHeight);
+
     await syncedShieldedObs.forEach(value => {
       steps.push(value);
     });
 
-    expect(steps.length).toBe(6);
+    expect(steps.length).toBe(nBlocks);
 
     expect(steps).toEqual(
       expect.arrayOf(
@@ -592,46 +535,60 @@ describe("syncShielded", () => {
   });
 
   test("returns the shielded balance", async () => {
+    const startBlockHeight = testAccount1.transactions[0].tx.height;
+    const lastBlockHeight = testAccount1.transactions[4].tx.height;
+
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const syncShieldedObs = zcash.syncShielded({
-      startBlockHeight: blockWithMyTx.height,
+      startBlockHeight,
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 1,
     });
     const steps: Partial<ZcashPrivateInfo>[] = [];
 
-    await syncShieldedObs.forEach(step => steps.push(step));
+    setLastBlockCount(lastBlockHeight);
 
-    expect(steps[steps.length - 1]).toEqual({
-      lastProcessedBlock: LAST_BLOCK_COUNT,
+    await syncShieldedObs.forEach(step => {
+      steps.push(step);
+    });
+
+    expect(steps[steps.length - 1]).toMatchObject({
+      lastProcessedBlock: testAccount1.transactions[4].tx.height,
       syncState: "running",
-      transactions: [
-        {
-          id: txShieldedOrchard.txid,
-          hex: txShieldedOrchard.hex,
-          blockHeight: blockWithMyTx.height,
-          blockHash: blockWithMyTx.hash,
-          timestamp: blockWithMyTx.time,
-          fee: new BigNumber(txShieldedOrchard.orchard.valueBalanceZat),
-          decryptedData: decryptedOrchardData,
-        },
-      ],
+      transactions: testAccount1.transactions.map(({ tx, decryptedData }) => ({
+        id: tx.txid,
+        hex: tx.hex,
+        blockHeight: tx.height,
+        blockHash: tx.blockhash,
+        timestamp: tx.time,
+        decryptedData: decryptedData,
+      })),
     });
   });
 
   test("returns the shielded balance in batches of max size 3", async () => {
-    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const maxBatchSize = 3;
+    const startBlockHeight = testAccount1.transactions[0].tx.height;
+    const lastBlockHeight = testAccount1.transactions[4].tx.height;
+    const nBlocks = lastBlockHeight - startBlockHeight + 1;
+
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+
     const syncedShieldedObs = zcash.syncShielded({
-      startBlockHeight: blockWithMyTx.height,
+      startBlockHeight,
       viewingKey: testAccount1.viewingKey,
       maxBatchSize,
     });
     const steps: Partial<ZcashPrivateInfo>[] = [];
 
+    setLastBlockCount(lastBlockHeight);
+
     await syncedShieldedObs.forEach(syncedShielded => {
       steps.push(syncedShielded);
     });
+
+    // checks that it completes in the correct amount of steps
+    expect(steps.length).toBe(Math.ceil(nBlocks / maxBatchSize));
 
     expect(steps).toEqual(
       expect.arrayOf(
@@ -643,38 +600,41 @@ describe("syncShielded", () => {
       ),
     );
 
-    expect(steps[steps.length - 1]).toEqual({
-      lastProcessedBlock: LAST_BLOCK_COUNT,
+    expect(steps[steps.length - 1]).toMatchObject({
+      lastProcessedBlock: lastBlockHeight,
       syncState: "running",
-      transactions: [
-        {
-          id: txShieldedOrchard.txid,
-          hex: txShieldedOrchard.hex,
-          blockHeight: blockWithMyTx.height,
-          blockHash: blockWithMyTx.hash,
-          timestamp: blockWithMyTx.time,
-          fee: new BigNumber(txShieldedOrchard.orchard.valueBalanceZat),
-          decryptedData: decryptedOrchardData,
-        },
-      ],
+      transactions: testAccount1.transactions.map(({ tx, decryptedData }) => ({
+        id: tx.txid,
+        hex: tx.hex,
+        blockHeight: tx.height,
+        blockHash: tx.blockhash,
+        timestamp: tx.time,
+        decryptedData: decryptedData,
+      })),
     });
   });
 
   test("retrieves and processes also the latest block if a new blocks became available while processing", async () => {
+    const maxBatchSize = 3;
+    const startBlockHeight = testAccount1.transactions[0].tx.height;
+    const lastBlockHeight = testAccount1.transactions[4].tx.height;
+    const additionalLastBlocks = 2;
+
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const syncShieldedObs = zcash.syncShielded({
-      startBlockHeight: blockWithMyTx.height,
+      startBlockHeight,
       viewingKey: testAccount1.viewingKey,
-      maxBatchSize: 3,
+      maxBatchSize,
     });
 
     const steps: Partial<ZcashPrivateInfo>[] = [];
+    setLastBlockCount(lastBlockHeight);
 
     await syncShieldedObs.forEach(value => {
       steps.push(value);
 
       // Note: Last block count increased while processing syncShielded!
-      setLastBlockCount(LAST_BLOCK_COUNT + 1);
+      setLastBlockCount(lastBlockHeight + additionalLastBlocks);
     });
 
     expect(steps).toEqual(
@@ -687,20 +647,17 @@ describe("syncShielded", () => {
       ),
     );
 
-    expect(steps[steps.length - 1]).toEqual({
-      lastProcessedBlock: LAST_BLOCK_COUNT + 1,
+    expect(steps[steps.length - 1]).toMatchObject({
+      lastProcessedBlock: lastBlockHeight + additionalLastBlocks,
       syncState: "running",
-      transactions: [
-        {
-          id: txShieldedOrchard.txid,
-          hex: txShieldedOrchard.hex,
-          blockHeight: blockWithMyTx.height,
-          blockHash: blockWithMyTx.hash,
-          timestamp: blockWithMyTx.time,
-          fee: new BigNumber(txShieldedOrchard.orchard.valueBalanceZat),
-          decryptedData: decryptedOrchardData,
-        },
-      ],
+      transactions: testAccount1.transactions.map(({ tx, decryptedData }) => ({
+        id: tx.txid,
+        hex: tx.hex,
+        blockHeight: tx.height,
+        blockHash: tx.blockhash,
+        timestamp: tx.time,
+        decryptedData: decryptedData,
+      })),
     });
   });
 });

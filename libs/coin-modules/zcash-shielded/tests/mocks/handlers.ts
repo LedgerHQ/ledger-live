@@ -1,5 +1,11 @@
 import { http, HttpResponse } from "msw";
-import { blocks, LAST_BLOCK_COUNT, transactions } from "../../tests/testAccounts";
+import {
+  FIRST_BLOCK_COUNT,
+  LAST_BLOCK_COUNT,
+  testAccount1,
+  blocks,
+  dummyBlockMock,
+} from "./blockchainDataMock";
 import { ZCASH_JSON_RPC_SERVER_TESTNET } from "../../src/constants";
 
 const ERROR_CODE = -5;
@@ -24,14 +30,21 @@ export const handlers = [
       }
 
       case "getblock": {
+        const blockheightOrHash = body.params[0];
         for (const block of blocks) {
-          if (body.params[0] === block.hash || body.params[0] === block.height.toString()) {
+          if (blockheightOrHash === block.hash || blockheightOrHash === block.height.toString()) {
             return HttpResponse.json({
               result: {
                 ...block,
               },
             });
           }
+        }
+
+        if (blockheightOrHash >= FIRST_BLOCK_COUNT && blockheightOrHash <= LAST_BLOCK_COUNT + 5) {
+          return HttpResponse.json({
+            result: dummyBlockMock(blockheightOrHash),
+          });
         }
 
         return HttpResponse.json({
@@ -43,11 +56,12 @@ export const handlers = [
       }
 
       case "getrawtransaction": {
-        for (const transaction of transactions) {
-          if (body.params[0] === transaction.txid) {
+        const txId = body.params[0];
+        for (const transaction of [...testAccount1.transactions]) {
+          if (txId === transaction.tx.txid) {
             return HttpResponse.json({
               result: {
-                ...transaction,
+                ...transaction.tx,
               },
             });
           }
