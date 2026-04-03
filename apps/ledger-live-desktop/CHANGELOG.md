@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.1.0-next.1
+
+### Minor Changes
+
+- [#16008](https://github.com/LedgerHQ/ledger-live/pull/16008) [`896f90c`](https://github.com/LedgerHQ/ledger-live/commit/896f90cd3c89f5edbe52675df31c5a7a23b2c458) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd update bottom carousel card component
+
 ## 4.1.0-next.0
 
 ### Minor Changes
