@@ -1,5 +1,6 @@
 import type { Observable } from "rxjs";
 import { setup, assign, fromObservable, createActor } from "xstate";
+import { log } from "@ledgerhq/logs";
 import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
@@ -8,6 +9,8 @@ import type {
   RequiredDeviceContext,
 } from "./core";
 import type { ExecutorState } from "./executor";
+
+const LOG_TYPE = "DIEStateMachine";
 
 // ---- Listener types ----
 
@@ -77,7 +80,7 @@ type JobInvokeInput<JobState, Input> = {
 // ---- Machine factory ----
 
 function createExecutorMachine<JobState, Input, ExtraProps>() {
-  /** @xstate-layout N4IgpgJg5mDOIC5QBEwDcCWBjMBJAdgC5hECiAHmFgK6ED2ATgHQTrZgDCd++VhG3AMTJSANVwdSAfQ4B5AHLzSHACqlkAbQAMAXUSgADnVgZ+3fSHKIAjNYAcAVibWAbHZcBmAOxeAnG60HOwAaEABPGy1rJg8PXzsAJi0PawAWa18vVIcAXxzQ1EwcAmIyShp6ZlYizm5eLDN8QTlFZRVcBSlSACVu2W7tPSQQIxNGiysEL1imBw83BzSEu2svF2tQiIQAWictf0CHNes4hIyPXPyQQvYSkkIKKlpGJiw6vgF8UgYGRkFu0gqboATUGFlGpk+E0QXgys18vlcHmSsORG3CiG28SYqWW+1iCRcqUcCTyBTYxSI90eFRe1Vu+EhAEMADYYABeTMawjEEmkLTUAA0VFJcPJcO0AIIAGVwAC11GDhhDxsNJrZUr4mD4tElTnYvAbNogXAkvExTWstMlkQ4HKkydcKXgqWUnpUWM6CMy2ZzuWKJbgZfLJe1Oj0+gNdODjJDzGqbN4nHYtH5rA4EvMtI4QhiEMiXExM3EfNYEulCQ6rjdKaUHuVnlUvYz+KyOVzPoIAMqA0XyNT9pWGWOq0DqhypmKJVK61ypFK+BzGhAzuw47zE2K2vWOmsuus0xuemre1u+jtCETiSRSZC4LstJSqRXR5UjqEJhB2DypIvpdYeEkZxZLmWxJkwKz2icUFxHMu7NgeDYehgLYYG2fqfN8vwMP8gIgkOIzvvGY6Jt4RaZLqbh2AaazLkkhaLokQSzqkLi+Lq8Enq69bui8KGIe6nYQNwYBMChaB0AA1qJe53G6tLMPx1JIZ8CDiXQWAXvggwESqH4kQgZZaL+qTTHEvjZHYiJGnmtirEWPhEjm7gJK5nEMgJClidxh7cmAPwvAYLJcgAZowAC2TCyT5SF8TFgncGp+ASZpjQ6a+w5jPplgwvaEH+JmniLgkE6+MuKyFrqZwOL4FxrJ4djubWym8Yp8UVJ2V58re96Pm0L5DJlcb4NCX4-n+rgnEBqyasuQQeEw1ouFoLjrFkDhsaS1YIS1XlKfJtCdj2IpigOKi6URI2frVWjOGx85sV4G1JGVeaJOaCLuJkmZZC4hpNfuu1HvtPEdUIx1SACACKACquAAsgMgKEK50ZYRWXETlCCLL+PhnOWZymck6JbO9TCfY9P2sf921cZ5wPtYd4MqLIAAKfZnRdGNXQZZZlkWGQZpkFkbamy7WIE0TLOkGZJKshUA3JoMMweAU4QCQKgmjemY5MqLao4m3LGarguMui4fQWc6i6sviK4zyE+Wr3a9qdpCDtrl2jV9MQIrqi7rKLoGIBb5NW0SNsrPb9PIRALJgC7J39u7qODejw2jWkfgWt+0zMdMj3ixLWorV4Zx-dk9ouNHQOx-HieQ6QsPw+oSPJ8KXMZ5+6amot1qASsrleLqHji2aWrZPExlAfOVbknTtd8XHCddTed4PgoT5qJonvc5nLhOBcyyZKkuKBIaqRj8PEGmexFxWaf+x5Fc+B0Kw8DDNFMeMDGe-d-ZR8rJZDPkcOwl88zbHsIWbIPdlonBOLPGuB0PT0hwFwHgHxMY6x5ljWwCIcQ+BSKmUsKYlwQOxIudMNUD41TiJ4JBysPRvAwQ0TCatf5d15vglMy1yxRFxJqbwy44hh1WicCyawRaNVph5ReTYuI+nbKOdOyj1QZHNDOAspoyx2nLMuSeOJ5zpmsoseIRwGG+TioojC3AsI-zfH-XmmoEgWnmBcXEFl5jxHFpkZwywFymXcCkLIFjYptRjtlbBmcMi3QtsAg0yJWLLkNC4uYW4Ui4mHoSUJrVvKq2whw1RiBglFlNLEMu6YUzljNm9Visx6ITkJD4DaHgcl7WXoU7K6ozgLQlkPWqQQnqLivrdQCp8wHUUCIBVpz8gA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QBEwDcCWBjMBJAdgC5hECiAHmFgK6ED2ATgHQTrZgDCd++VhG3AMTJSANVwdSAfQ4B5AHLzSHACqlkAbQAMAXUSgADnVgZ+3fSHKIAjNYAcAVibWAbHZcBmAOxeAnG60HOwAaEABPGy1rJg8PXzsAJi0PawAWa18vVIcAXxzQ1EwcAmIyShp6ZlYizm5eLDN8QTlFZRVcBSlSACVu2W7tPSQQIxNGiysEL1imBw83BzSEu2svF2tQiIQAWictf0CHNes4hIyPXPyQQvYSkkIKKlpGJiw6vgF8UgYGRkFu0gqboATUGFlGpk+E0QXgys18vlcHmSsORG3CiG28SYqWW+1iCRcqUcCTyBTYxSI90eFRe1Vu+EhAEMADYYABeTMawjEEmkLTUAA0VFJcPJcO0AIIAGVwAC11GDhhDxsNJrZUr4mD4tElTnYvAbNogXAkvExTWstMlkQ4HKkydcKXgqWUnpUWM6CMy2ZzuWKJbgZfLJe1Oj0+gNdODjJDzGqbN4nHYtH5rA4EvMtI4QhiEMiXExM3EfNYEulCQ6rjdKaUHuVnlUvYz+KyOVzPoIAMqA0XyNT9pWGWOq0DqhypmKJVK61ypFK+BzGhAzuw47zE2K2vWOmsuus0xuemre1u+jtCETiSRSZC4LstJSqRXR5UjqEJhB2DypIvpdYeEkZxeEueaxE4LhaMSDguPE2RzKS1bNgeDYehgLYYG2fqfN8vwMP8gIgkOIzvvGY6Jt4RaZLqbh2AaazLkkhaLokQSzqksG6ruyHUqhLzoSh7qdhA3BgEw6FoHQADWYl7ncbq0swAm8UJ3AIBJdBYBe+CDMRKofuRCBllBOLTHEvjZHYiJGnmtirEWPhEjm7gJK53Enq69buvxnmHtyYA-C8BgslyABmjAALZMHJvl8UpsWqfg6n4JJWmNLpr7DmMBmWDC8wWrqZxBP4RJpMusKFsWGSOPYmb7O5DKCYp4kJRUnZXnyt73o+bQvkMWVxvg0Jfj+f6uCcQGrJqy7FTExzfpWWhuL4DW1ipzXKQptCdj2IpigOKh6aRQ2fv45rLOmCSIn4ZreMudjErMsQrGZiRpKt+7rUem1eW1Qi7VIAIAIoAKq4ACyAyAoQqHZlJHZWRuVTIB2pXROhIpHEGT3Y9cweC9z1nFW5IeU132tdt-0qLIAAKfYHUdCMnYZZZlkWGQZpkFkwamy7WIE0TLOkGZJKsmYuB98m-eTB6BfhAJAqCcP6YjkywgkFpuBji6pksfNLeaKwuPaLiwWa34eJLFNob5cvdr2+2kIOyvHcN7hrhdkFlmjQSpPrLiG64Jtm4aFxW2TNuy3h9sisDYMQ1D-akMKjODcNGa-l45YJEEpsPSs6JbMSWqpI5sHzKLkES0hpNfWhEAsmAMf007sP9fDaefmkfgWt+0xsdMsFeHz-NagbZwB-BHHh3X-EN03ANx+D6iJzDqejkj6amkw1rJBdrleLqHh82aJcOPEUFAfOxNOrXW3143PLXtId4PgoT5qJoLtM8NQcxBmVksi4kCIaP2tkzRaCYA9PwyRiqpBnCtR0+A6CsHgMMGKEdGAxh-l3eyFxliZHgUkI4D1lzbHsIWbIW8Uh2nsBZS2NdGqzybDULgPAPiIxVszTeGQS4+BSKmUsKZQJbCxGuRc6Zz7G3PnETwM974vDeOwhoOE5bYM7izBEUClq6hnEsTUd0wJal8PMACFk1jczsPI6WHp6SUh9O2DeXDf4ZHNDOAspoyx2nLMubIJd5zpmsoseIRxrF+R8g47C3BcJYLfDglmmoNaeE8PaK685YK5i2K45wywFyl3cCkLIYS4otQjjlZxuDfCQMXD4eBBpkQcXKokJ6W4Ui4kPoSYp3l4pR1iQNDekwCRFjovOHwOd1hpPKjMDiSQfAmIKXMLpG157qIGTYM4HhnCFT8BcA058RHrMPjEcsxJiTCMAgwkmTCFHxTQG2CAsgDABW0qsnKkxNROCzqsZEsRD6AULogGqTAanrBOOmZIdE8h5CAA */
   return setup({
     types: {
       context: {} as MachineContext<JobState, Input, ExtraProps>,
@@ -115,6 +118,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
     states: {
       deviceConnection: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: deviceConnection");
           context.listeners.onExecutorStateChanged({ type: "connectingDevice" });
         },
         on: {
@@ -132,6 +136,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       },
       connectionError: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: connectionError", { error: context.error });
           context.listeners.onExecutorStateChanged({
             type: "connectingDeviceError",
             error: context.error,
@@ -146,6 +151,9 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       },
       deviceInitialization: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: deviceInitialization", {
+            requiredContext: context.requiredDeviceContext,
+          });
           context.listeners.onExecutorStateChanged({
             type: "initializingDeviceContext",
           });
@@ -172,6 +180,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       },
       initializationError: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: initializationError", { error: context.error });
           context.listeners.onExecutorStateChanged({
             type: "initializingDeviceContextError",
             error: context.error,
@@ -186,6 +195,9 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       },
       intentExecution: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: intentExecution", {
+            intent: context.currentIntent.label,
+          });
           context.listeners.onExecutorStateChanged({ type: "executingIntent" });
         },
         invoke: {
@@ -200,6 +212,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             actions: ({ event, context }) => {
               const jobState = event.snapshot.context;
               if (jobState !== undefined) {
+                context.currentIntent.onJobStateChanged?.(jobState);
                 context.listeners.onIntentJobStateChanged(context.currentIntent, jobState);
               }
             },
@@ -207,6 +220,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           onDone: {
             target: "idle",
             actions: ({ context }) => {
+              context.currentIntent.onJobComplete?.();
               context.listeners.onIntentJobComplete(context.currentIntent);
             },
           },
@@ -214,6 +228,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             target: "intentError",
             actions: [
               ({ event, context }) => {
+                context.currentIntent.onJobError?.(event.error);
                 context.listeners.onIntentJobError(context.currentIntent, event.error);
               },
               assign({ error: ({ event }) => event.error }),
@@ -226,28 +241,23 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             actions: "resetConnection",
           },
           SET_INTENT: {
-            target: "intentError",
-            actions: [
-              assign({
-                currentIntent: ({ event }) => event.intent,
-                error: () => new Error("Intent changed during execution"),
-              }),
-            ],
+            target: "invalidOperation",
+            actions: assign({
+              error: () => new Error("SET_INTENT received during intent execution"),
+            }),
           },
           SET_REQUIRED_CONTEXT: {
-            target: "intentError",
-            actions: [
-              assign({
-                requiredDeviceContext: ({ event }) => event.context,
-                error: () => new Error("Required context changed during execution"),
-              }),
-            ],
+            target: "invalidOperation",
+            actions: assign({
+              error: () => new Error("SET_REQUIRED_CONTEXT received during intent execution"),
+            }),
           },
           STOP_INTENT: "idle",
         },
       },
       intentError: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: intentError", { error: context.error });
           context.listeners.onExecutorStateChanged({
             type: "executingIntentError",
             error: context.error,
@@ -265,10 +275,19 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
               error: () => null,
             }),
           },
+          SET_REQUIRED_CONTEXT: {
+            target: "deviceInitialization",
+            actions: assign({
+              requiredDeviceContext: ({ event }) => event.context,
+              deviceExtractedContext: () => null,
+              error: () => null,
+            }),
+          },
         },
       },
       idle: {
         entry: ({ context }) => {
+          log(LOG_TYPE, "state: idle");
           context.listeners.onExecutorStateChanged({ type: "idle" });
         },
         on: {
@@ -289,6 +308,18 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             target: "connectionError",
             actions: "resetConnection",
           },
+        },
+      },
+      invalidOperation: {
+        type: "final",
+        entry: ({ context }) => {
+          log(LOG_TYPE, "state: invalidOperation — THIS IS A BUG", {
+            error: context.error,
+          });
+          context.listeners.onExecutorStateChanged({
+            type: "invalidOperation",
+            error: context.error,
+          });
         },
       },
     },
@@ -338,46 +369,56 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
   // -- Component callback events --
 
   deviceConnected(result: DeviceConnectionResult): void {
+    log(LOG_TYPE, "event: deviceConnected");
     this.actor.send({ type: "DEVICE_CONNECTED", result });
   }
 
   connectionError(error: unknown): void {
+    log(LOG_TYPE, "event: connectionError", { error });
     this.actor.send({ type: "CONNECTION_ERROR", error });
   }
 
   deviceContextInitialized(context: DeviceExtractedContext): void {
+    log(LOG_TYPE, "event: deviceContextInitialized", context);
     this.actor.send({ type: "DEVICE_CONTEXT_INITIALIZED", context });
   }
 
   initializationError(error: unknown): void {
+    log(LOG_TYPE, "event: initializationError", { error });
     this.actor.send({ type: "INITIALIZATION_ERROR", error });
   }
 
   deviceDisconnected(): void {
+    log(LOG_TYPE, "event: deviceDisconnected");
     this.actor.send({ type: "DEVICE_DISCONNECTED" });
   }
 
   retry(): void {
+    log(LOG_TYPE, "event: retry");
     this.actor.send({ type: "RETRY" });
   }
 
   // -- Caller-driven events --
 
   setIntent(intent: Intent<JobState, Input, ExtraProps>): void {
+    log(LOG_TYPE, "event: setIntent", { label: intent.label });
     this.actor.send({ type: "SET_INTENT", intent });
   }
 
   setRequiredContext(context: RequiredDeviceContext): void {
+    log(LOG_TYPE, "event: setRequiredContext", context);
     this.actor.send({ type: "SET_REQUIRED_CONTEXT", context });
   }
 
   stopIntent(): void {
+    log(LOG_TYPE, "event: stopIntent");
     this.actor.send({ type: "STOP_INTENT" });
   }
 
   // -- Cleanup --
 
   stop(): void {
+    log(LOG_TYPE, "event: stop");
     this.actor.stop();
   }
 }

@@ -1,6 +1,7 @@
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", "__tests__/test-utils"],
+  coveragePathIgnorePatterns: ["__tests__/test-utils"],
   moduleNameMapper: {
     "^(\\.\\.?/.*)\\.js$": "$1",
   },

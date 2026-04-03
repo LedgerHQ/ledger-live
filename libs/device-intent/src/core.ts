@@ -1,6 +1,5 @@
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { DeviceId } from "@ledgerhq/client-ids/ids";
 import type React from "react";
 import type { Observable } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -22,8 +21,13 @@ export type DeviceConnectionResult = {
   dmk: DeviceManagementKit;
   /** Active DMK session identifier. */
   sessionId: string;
+  /** ConnectedDevice */
+  connectedDevice: ConnectedDevice;
   /** Legacy device identifier, usable by existing `withDevice` / `DeviceAction` flows. */
-  compatDeviceId: DeviceId;
+  compatDeviceId: string;
+  compatDeviceModelId: DeviceModelId;
+  compatDeviceName: string;
+  compatDeviceWired: boolean;
 };
 
 // ---- Device Context ----
@@ -76,9 +80,9 @@ export type DeviceExtractedContext = {
  * updates (`JobState`) as it progresses.
  *
  * @typeParam JobState - Discriminated union of states emitted by this job.
- * @typeParam Input - Data provided to the job at runtime (default `void`).
+ * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  */
-export type Job<JobState, Input = void> = (params: {
+export type Job<JobState, Input = undefined> = (params: {
   deviceConnectionResult: DeviceConnectionResult;
   deviceExtractedContext: DeviceExtractedContext;
   input: Input;
@@ -91,17 +95,17 @@ export type Job<JobState, Input = void> = (params: {
  * UI. This is the unit of reusability **across** LWM and LWD.
  *
  * @typeParam JobState - Discriminated union of states emitted by the job.
- * @typeParam Input - Data provided to the job at runtime (default `void`).
+ * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  */
-export interface IntentDefinition<JobState, Input = void> {
+export interface IntentDefinition<JobState, Input = undefined> {
   /** Human-readable label identifying this intent (used for logging / debugging). */
-  label: string;
+  readonly label: string;
   /** Whether this intent requires an active device connection to run its job. */
-  requiresConnectedDevice: boolean;
+  readonly requiresConnectedDevice: boolean;
   /** When `true`, the executor handles device lock/unlock transitions on behalf of the job. */
-  delegateDeviceLockStateHandlingToExecutor: boolean;
+  readonly delegateDeviceLockStateHandlingToExecutor: boolean;
   /** The execution logic for this intent. */
-  job: Job<JobState, Input>;
+  readonly job: Job<JobState, Input>;
 }
 
 /**
@@ -112,17 +116,36 @@ export interface IntentDefinition<JobState, Input = void> {
  * flows can share the same platform definition for "sign transaction").
  *
  * @typeParam JobState - Discriminated union of states emitted by the job.
- * @typeParam Input - Data provided to the job at runtime (default `void`).
+ * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  * @typeParam ExtraProps - Additional props forwarded to the component by the caller.
  */
-export interface IntentPlatformDefinition<JobState, Input = void, ExtraProps = void>
+export interface IntentPlatformDefinition<JobState, Input = undefined, ExtraProps = void>
   extends IntentDefinition<JobState, Input> {
   /** React component that renders the current {@link JobState}. */
-  component: React.ComponentType<{
+  readonly component: React.ComponentType<{
     jobState: JobState | undefined;
     extraProps: ExtraProps;
   }>;
 }
+
+/**
+ * Optional lifecycle callbacks attached directly to a runtime {@link Intent}.
+ *
+ * When present, these are called by the executor **before** the corresponding
+ * executor-level callbacks (`DeviceIntentExecutorProps.onIntentJob*`), allowing
+ * intent-specific reactions (e.g. storing a derived address) to run before
+ * cross-cutting executor callbacks.
+ *
+ * @typeParam JobState - Discriminated union of states emitted by the job.
+ */
+export type IntentListeners<JobState> = {
+  /** Called when the job observable emits a new state. */
+  readonly onJobStateChanged?: (jobState: JobState) => void;
+  /** Called when the job observable completes. */
+  readonly onJobComplete?: () => void;
+  /** Called when the job observable errors. */
+  readonly onJobError?: (error: unknown) => void;
+};
 
 /**
  * Runtime instance of an intent, created from an {@link IntentPlatformDefinition}
@@ -131,31 +154,43 @@ export interface IntentPlatformDefinition<JobState, Input = void, ExtraProps = v
  * This is the object actually passed to the `DeviceIntentExecutor`.
  *
  * @typeParam JobState - Discriminated union of states emitted by the job.
- * @typeParam Input - Data provided to the job at runtime (default `void`).
+ * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  * @typeParam ExtraProps - Additional props forwarded to the component by the caller.
  */
-export interface Intent<JobState, Input = void, ExtraProps = void>
+export interface Intent<JobState, Input = undefined, ExtraProps = void>
   extends IntentPlatformDefinition<JobState, Input, ExtraProps> {
-  /** Unique identifier for this runtime instance, used to key lifecycle effects. */
-  uuid: string;
+  /** Unique identifier for this runtime instance, useful for logging and debugging. */
+  readonly uuid: string;
   /** Concrete input passed to the job when the executor runs this intent. */
-  input: Input;
+  readonly input: Input;
+  /** Called when the job observable emits a new state. Fires before executor-level callback. */
+  readonly onJobStateChanged?: (jobState: JobState) => void;
+  /** Called when the job observable completes. Fires before executor-level callback. */
+  readonly onJobComplete?: () => void;
+  /** Called when the job observable errors. Fires before executor-level callback. */
+  readonly onJobError?: (error: unknown) => void;
 }
 
 // ---- Helpers ----
 
 /**
- * Instantiate a runtime {@link Intent} from an {@link IntentPlatformDefinition}
- * and concrete input.
+ * Instantiate a runtime {@link Intent} from an {@link IntentPlatformDefinition},
+ * concrete input and optional lifecycle listeners.
  *
- * Each call generates a new `uuid` so the executor can distinguish successive
- * intents even when the same definition is reused.
+ * Each call generates a new `uuid` so intent instances can be told apart in
+ * logs and debugging, even when the same definition is reused.
  */
-export const createIntent = <JobState, Input, ExtraProps>(
+export function createIntent<JobState, Input, ExtraProps>(
   definition: IntentPlatformDefinition<JobState, Input, ExtraProps>,
-  input: Input,
-): Intent<JobState, Input, ExtraProps> => ({
-  ...definition,
-  uuid: uuidv4(),
-  input,
-});
+  ...args: Input extends undefined
+    ? [input?: undefined, listeners?: IntentListeners<JobState>]
+    : [input: Input, listeners?: IntentListeners<JobState>]
+): Intent<JobState, Input, ExtraProps> {
+  const [input, listeners] = args;
+  return {
+    ...definition,
+    uuid: uuidv4(),
+    input: input as Input, // eslint-disable-line @typescript-eslint/consistent-type-assertions
+    ...listeners,
+  };
+}

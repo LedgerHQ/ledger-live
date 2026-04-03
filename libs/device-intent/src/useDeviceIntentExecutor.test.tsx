@@ -43,10 +43,10 @@ import {
   useDeviceIntentExecutor,
   type DeviceIntentExecutorHookState,
 } from "./useDeviceIntentExecutor";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
 import {
   defaultRequiredContext,
   makeExtractedContext,
+  makeConnectionResult as makeBaseConnectionResult,
   makeIntent as makeBaseIntent,
   flushMicrotasks,
 } from "./__tests__/test-utils";
@@ -71,11 +71,10 @@ const makeConnectionResult = (
 ): DeviceConnectionResult & { _sessionStateSubject: Subject<{ deviceStatus: string }> } => {
   const sessionStateSubject = new Subject<{ deviceStatus: string }>();
   return {
+    ...makeBaseConnectionResult(sessionId),
     dmk: {
       getDeviceSessionState: jest.fn(() => sessionStateSubject.asObservable()),
     } as unknown as DeviceConnectionResult["dmk"],
-    sessionId,
-    compatDeviceId: new DeviceId("compat-1"),
     _sessionStateSubject: sessionStateSubject,
   };
 };
@@ -94,6 +93,7 @@ function makeProps(overrides: Partial<TestProps> = {}): TestProps {
     onIntentJobError: jest.fn(),
     enabled: true,
     cancellableUI: false,
+    onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     ...overrides,
   };

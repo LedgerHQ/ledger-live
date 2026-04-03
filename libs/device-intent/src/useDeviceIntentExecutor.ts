@@ -232,5 +232,6 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
     onContextInitialized,
     onInitializationError,
     onRetry,
+    onUserCancel: props.onUserCancel,
   });
 }

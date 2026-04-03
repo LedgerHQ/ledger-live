@@ -11,6 +11,7 @@ import DebugConnectivity, {
 import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
+import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceIntentExecutor";
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
@@ -276,6 +277,13 @@ export default function SettingsNavigator() {
         component={DebugFeatures}
         options={{
           title: "Features",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutor}
+        component={DebugDeviceIntentExecutor}
+        options={{
+          title: "Device Intent Executor",
         }}
       />
       <Stack.Screen
