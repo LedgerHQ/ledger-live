@@ -4,7 +4,7 @@ import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index"
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import EditStuckTransactionPanelBodyHeader from "../EditStuckTransactionPanelBodyHeader";
 import StepFees, { StepFeesFooter } from "../steps/StepFees";
 import { StepSummaryFooter } from "../steps/StepSummaryFooter";
@@ -195,16 +195,7 @@ describe("EVM EditTransaction components", () => {
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            editEvmTx: {
-              enabled: true,
-              params: { supportedCurrencyIds: ["ethereum"] },
-            },
-          },
-        },
-      },
+      initialState: withFlagOverrides({ editEvmTx: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } } }),
     });
 
     expect(screen.getByTestId("shared-stuck-header")).toHaveTextContent("true-true-true");

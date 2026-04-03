@@ -26,7 +26,7 @@ export const lldWalletSyncFeatureFlag = {
   lldWalletSync: {
     enabled: true,
     params: {
-      environment: "STAGING",
+      environment: "STAGING" as const,
       watchConfig: {
         pollingInterval: 10000,
         initialTimeout: 5000,

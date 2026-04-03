@@ -1,5 +1,5 @@
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
@@ -8,18 +8,14 @@ describe("useOpenAssetFlow", () => {
     const { result, store } = renderHook(
       () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              lldModularDrawer: {
-                enabled: true,
-                params: {
-                  [ModularDrawerLocation.LIVE_APP]: true,
-                },
-              },
+        initialState: withFlagOverrides({
+          lldModularDrawer: {
+            enabled: true,
+            params: {
+              [ModularDrawerLocation.LIVE_APP]: true,
             },
           },
-        },
+        }),
       },
     );
 
@@ -35,18 +31,14 @@ describe("useOpenAssetFlow", () => {
     const { result, store } = renderHook(
       () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              lldModularDrawer: {
-                enabled: true,
-                params: {
-                  [ModularDrawerLocation.LIVE_APP]: true,
-                },
-              },
+        initialState: withFlagOverrides({
+          lldModularDrawer: {
+            enabled: true,
+            params: {
+              [ModularDrawerLocation.LIVE_APP]: true,
             },
           },
-        },
+        }),
       },
     );
 
@@ -64,18 +56,14 @@ describe("useOpenAssetFlow", () => {
     const { result, store } = renderHook(
       () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              lldModularDrawer: {
-                enabled: true,
-                params: {
-                  [ModularDrawerLocation.LIVE_APP]: true,
-                },
-              },
+        initialState: withFlagOverrides({
+          lldModularDrawer: {
+            enabled: true,
+            params: {
+              [ModularDrawerLocation.LIVE_APP]: true,
             },
           },
-        },
+        }),
       },
     );
 

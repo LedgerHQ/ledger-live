@@ -3,7 +3,7 @@ import React from "react";
 import axios from "axios";
 import { TFunction } from "i18next";
 import BigNumber from "bignumber.js";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -123,7 +123,7 @@ const setup = (
   mockStatus: Partial<TransactionStatus> | null = {},
   mockTransaction: Partial<Transaction> | null = {},
   account = ethMockAccount,
-  overriddenFeatureFlags?: Record<string, unknown>,
+  featureFlagOverrides?: Parameters<typeof withFlagOverrides>[0],
 ) => {
   return render(
     <DomainServiceProvider>
@@ -137,7 +137,7 @@ const setup = (
         status={{ ...baseMockStatus, ...mockStatus }}
       />
     </DomainServiceProvider>,
-    overriddenFeatureFlags ? { initialState: { settings: { overriddenFeatureFlags } } } : undefined,
+    featureFlagOverrides ? { initialState: withFlagOverrides(featureFlagOverrides) } : undefined,
   );
 };
 

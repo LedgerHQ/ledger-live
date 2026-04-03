@@ -5,8 +5,6 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
-import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -14,32 +12,6 @@ type Props = {
 };
 
 const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) => {
-  // Bridge: mirror legacy settings into the new featureFlags slice so that
-  // tests setting state.settings.overriddenFeatureFlags / featureFlagsButtonVisible
-  // still work with the selector proxies that now read from state.featureFlags.
-  if (state?.settings) {
-    const patch: Partial<State["featureFlags"]> = {};
-
-    const legacyOverrides = state.settings.overriddenFeatureFlags;
-    if (legacyOverrides) {
-      const filtered = Object.fromEntries(
-        Object.entries(legacyOverrides).filter(([, v]) => v !== undefined),
-      );
-      if (Object.keys(filtered).length > 0) {
-        patch.overrides = filtered as State["featureFlags"]["overrides"];
-      }
-    }
-
-    if (state.settings.featureFlagsButtonVisible != null) {
-      patch.bannerVisible = state.settings.featureFlagsButtonVisible;
-    }
-
-    if (Object.keys(patch).length > 0) {
-      const base = state.featureFlags ?? FEATURE_FLAGS_INITIAL_STATE;
-      state = { ...state, featureFlags: { ...base, ...patch } };
-    }
-  }
-
   const store = configureStore({
     reducer: reducers,
     preloadedState: state,

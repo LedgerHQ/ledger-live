@@ -1,8 +1,7 @@
 import React from "react";
-import { cleanup, render, screen, waitFor } from "tests/testSetup";
+import { cleanup, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { of, throwError } from "rxjs";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import OnboardModal from "../index";
 import { createMockAccount, createMockDevice, createMockUserProps } from "./testUtils";
 
@@ -101,12 +100,7 @@ describe("OnboardModal", () => {
     const { user } = render(<OnboardModal {...defaultProps} />, {
       initialState: {
         ...initialState,
-        settings: {
-          ...SETTINGS_INITIAL_STATE,
-          overriddenFeatureFlags: {
-            cantonSkipPreapprovalStep: { enabled: true },
-          },
-        },
+        ...withFlagOverrides({ cantonSkipPreapprovalStep: { enabled: true } }),
       },
     });
 

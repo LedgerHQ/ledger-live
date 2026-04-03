@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
@@ -123,13 +123,7 @@ describe("useCryptoAddressesViewModel", () => {
     const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
     const { result } = renderHook(() => useCryptoAddressesViewModel(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            lwdWallet40: { enabled: true, params: { assetSection: true } },
-          },
-        },
-      },
+      initialState: withFlagOverrides({ lwdWallet40: { enabled: true, params: { assetSection: true } } }),
     });
 
     act(() => {

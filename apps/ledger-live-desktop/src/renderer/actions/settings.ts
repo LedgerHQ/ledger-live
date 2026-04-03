@@ -6,8 +6,6 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import {
   PortfolioRange,
   DeviceModelInfo,
-  FeatureId,
-  Feature,
   DeviceInfo,
 } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
@@ -275,33 +273,6 @@ export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });
-export const setOverriddenFeatureFlag = (featureFlag: {
-  key: FeatureId;
-  value: Feature | undefined;
-}) => ({
-  type: "SET_OVERRIDDEN_FEATURE_FLAG",
-  payload: {
-    key: featureFlag.key,
-    value: featureFlag.value,
-  },
-});
-export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: Partial<{
-    [key in FeatureId]: Feature;
-  }>,
-) => ({
-  type: "SET_OVERRIDDEN_FEATURE_FLAGS",
-  payload: {
-    overriddenFeatureFlags,
-  },
-});
-export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean) => ({
-  type: "SET_FEATURE_FLAGS_BUTTON_VISIBLE",
-  payload: {
-    featureFlagsButtonVisible,
-  },
-});
-
 export const setVaultSigner = (payload: VaultSigner) => ({
   type: "SET_VAULT_SIGNER",
   payload,

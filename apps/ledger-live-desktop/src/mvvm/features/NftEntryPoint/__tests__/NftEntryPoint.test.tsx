@@ -1,6 +1,6 @@
 import React from "react";
 
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import NftEntryPoint from "..";
 import { Entry } from "../types";
 import { track } from "~/renderer/analytics/segment";
@@ -31,35 +31,27 @@ const mockAccountBTC = {
 describe("NftEntryPoint", () => {
   it("should render nothing if isFeatureNftEntryPointEnabled is false", () => {
     const { store } = render(<NftEntryPoint account={mockAccount} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            llNftEntryPoint: {
-              enabled: false,
-            },
-          },
+      initialState: withFlagOverrides({
+        llNftEntryPoint: {
+          enabled: false,
         },
-      },
+      }),
     });
-    expect(store.getState().settings.overriddenFeatureFlags.llNftEntryPoint.enabled).toBeFalsy();
+    expect(store.getState().featureFlags.overrides.llNftEntryPoint?.enabled).toBeFalsy();
   });
 
   it("should render enabled entry points if enabled", () => {
     render(<NftEntryPoint account={mockAccount} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            llNftEntryPoint: {
-              enabled: true,
-              params: {
-                chains: ["ethereum"],
-                [Entry.magiceden]: true,
-                [Entry.opensea]: true,
-              },
-            },
+      initialState: withFlagOverrides({
+        llNftEntryPoint: {
+          enabled: true,
+          params: {
+            chains: ["ethereum"],
+            [Entry.magiceden]: true,
+            [Entry.opensea]: true,
           },
         },
-      },
+      }),
     });
 
     expect(screen.getAllByTestId(/nft-entry-point/i).length).toEqual(2);
@@ -67,20 +59,16 @@ describe("NftEntryPoint", () => {
 
   it("should not render disabled entry points if not enabled", () => {
     render(<NftEntryPoint account={mockAccount} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            llNftEntryPoint: {
-              enabled: true,
-              params: {
-                chains: ["ethereum"],
-                [Entry.magiceden]: true,
-                [Entry.opensea]: false,
-              },
-            },
+      initialState: withFlagOverrides({
+        llNftEntryPoint: {
+          enabled: true,
+          params: {
+            chains: ["ethereum"],
+            [Entry.magiceden]: true,
+            [Entry.opensea]: false,
           },
         },
-      },
+      }),
     });
 
     expect(screen.getAllByTestId(/nft-entry-point/i).length).toEqual(1);
@@ -89,20 +77,16 @@ describe("NftEntryPoint", () => {
 
   it("should render nothing if chainId is not included in chains", () => {
     render(<NftEntryPoint account={mockAccountBTC} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            llNftEntryPoint: {
-              enabled: true,
-              params: {
-                chains: ["ethereum", "solana"],
-                [Entry.magiceden]: true,
-                [Entry.opensea]: true,
-              },
-            },
+      initialState: withFlagOverrides({
+        llNftEntryPoint: {
+          enabled: true,
+          params: {
+            chains: ["ethereum", "solana"],
+            [Entry.magiceden]: true,
+            [Entry.opensea]: true,
           },
         },
-      },
+      }),
     });
 
     expect(screen.queryByTestId(/nft-entry-point/i)).toBeNull();
@@ -110,19 +94,15 @@ describe("NftEntryPoint", () => {
 
   it("should call onClick when a Row is clicked", () => {
     render(<NftEntryPoint account={mockAccount} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            llNftEntryPoint: {
-              enabled: true,
-              params: {
-                chains: ["ethereum"],
-                [Entry.magiceden]: true,
-              },
-            },
+      initialState: withFlagOverrides({
+        llNftEntryPoint: {
+          enabled: true,
+          params: {
+            chains: ["ethereum"],
+            [Entry.magiceden]: true,
           },
         },
-      },
+      }),
     });
 
     const row = screen.getByTestId(`nft-entry-point-${Entry.magiceden}`);

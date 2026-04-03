@@ -14,8 +14,6 @@ import {
   AccountLike,
   DeviceInfo,
   DeviceModelInfo,
-  Feature,
-  FeatureId,
   FirmwareUpdateContext,
   PortfolioRange,
 } from "@ledgerhq/types-live";
@@ -112,10 +110,6 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  overriddenFeatureFlags: {
-    [key in FeatureId]: Feature;
-  };
-  featureFlagsButtonVisible: boolean;
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
@@ -211,10 +205,6 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
-  featureFlagsButtonVisible: false,
-
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
@@ -267,18 +257,6 @@ type HandlersPayloads = {
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
-  };
-  SET_OVERRIDDEN_FEATURE_FLAG: {
-    key: FeatureId;
-    value: Feature;
-  };
-  SET_OVERRIDDEN_FEATURE_FLAGS: {
-    overriddenFeatureFlags: {
-      [key in FeatureId]: Feature;
-    };
-  };
-  SET_FEATURE_FLAGS_BUTTON_VISIBLE: {
-    featureFlagsButtonVisible: boolean;
   };
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
@@ -411,21 +389,6 @@ const handlers: SettingsHandlers = {
       ...state.currenciesSettings,
       [payload.key]: payload.value,
     },
-  }),
-  SET_OVERRIDDEN_FEATURE_FLAG: (state: SettingsState, { payload }) => ({
-    ...state,
-    overriddenFeatureFlags: {
-      ...state.overriddenFeatureFlags,
-      [payload.key]: payload.value,
-    },
-  }),
-  SET_OVERRIDDEN_FEATURE_FLAGS: (state: SettingsState, { payload }) => ({
-    ...state,
-    overriddenFeatureFlags: payload.overriddenFeatureFlags,
-  }),
-  SET_FEATURE_FLAGS_BUTTON_VISIBLE: (state: SettingsState, { payload }) => ({
-    ...state,
-    featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
   SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
     ...state,
@@ -845,7 +808,8 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
-export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
+export const featureFlagsButtonVisibleSelector = (state: State) =>
+  state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;

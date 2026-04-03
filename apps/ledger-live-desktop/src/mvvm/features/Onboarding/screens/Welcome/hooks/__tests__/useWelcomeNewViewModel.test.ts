@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useWelcomeViewModel } from "../useWelcomeViewModel";
 import { AFTER_ONBOARDING_STATE, INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -49,13 +49,13 @@ describe("useWelcomeViewModel", () => {
           settings: {
             ...INITIAL_STATE,
             hasCompletedOnboarding: true,
-            overriddenFeatureFlags: {
-              lwdWallet40: {
-                enabled: true,
-                params: { lazyOnboarding: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { lazyOnboarding: true },
+            },
+          }),
         },
       });
 
@@ -68,14 +68,14 @@ describe("useWelcomeViewModel", () => {
           settings: {
             ...INITIAL_STATE,
             hasCompletedOnboarding: true,
-            overriddenFeatureFlags: {
-              lwdWallet40: {
-                enabled: true,
-                params: { lazyOnboarding: true },
-              },
-            },
             lastSeenDevice: AFTER_ONBOARDING_STATE.lastSeenDevice,
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { lazyOnboarding: true },
+            },
+          }),
         },
       });
 
@@ -103,13 +103,13 @@ describe("useWelcomeViewModel", () => {
           settings: {
             ...INITIAL_STATE,
             hasCompletedOnboarding: false,
-            overriddenFeatureFlags: {
-              lwdWallet40: {
-                enabled: true,
-                params: { lazyOnboarding: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { lazyOnboarding: true },
+            },
+          }),
         },
       });
 

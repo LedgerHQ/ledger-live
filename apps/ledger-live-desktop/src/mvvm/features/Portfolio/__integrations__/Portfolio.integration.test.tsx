@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import i18next from "i18next";
@@ -286,14 +286,13 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ...AFTER_ONBOARDING_STATE.overriddenFeatureFlags,
-              lwdWallet40: {
-                enabled: true,
-                params: { balanceRefreshRework: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { balanceRefreshRework: true },
+            },
+          }),
         },
       });
 
@@ -312,14 +311,13 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ...AFTER_ONBOARDING_STATE.overriddenFeatureFlags,
-              lwdWallet40: {
-                enabled: true,
-                params: { balanceRefreshRework: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { balanceRefreshRework: true },
+            },
+          }),
         },
       });
 
@@ -454,12 +452,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: true,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
         },
       });
 
@@ -471,12 +469,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: false,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: false,
+            },
+          }),
         },
       });
 
@@ -488,12 +486,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: true,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
         },
       });
 
@@ -597,12 +595,12 @@ describe("PortfolioView", () => {
   });
 });
 
-const walletV4TourFlags = {
+const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
     params: { tour: true, mainNavigation: true, marketBanner: true },
   },
-};
+});
 
 describe("Portfolio (Wallet V4 Tour)", () => {
   beforeEach(() => {
@@ -619,8 +617,8 @@ describe("Portfolio (Wallet V4 Tour)", () => {
         settings: {
           ...AFTER_ONBOARDING_STATE,
           hasSeenWalletV4Tour: false,
-          overriddenFeatureFlags: walletV4TourFlags,
         },
+        ...walletV4TourFlagOverrides,
       },
     });
 
@@ -639,8 +637,8 @@ describe("Portfolio (Wallet V4 Tour)", () => {
         settings: {
           ...AFTER_ONBOARDING_STATE,
           hasSeenWalletV4Tour: true,
-          overriddenFeatureFlags: walletV4TourFlags,
         },
+        ...walletV4TourFlagOverrides,
       },
     });
 
