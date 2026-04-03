@@ -953,6 +953,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Quantia muito baixa. Envie pelo menos {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Essa conta de token associada detém outro token"
     },
@@ -2747,7 +2750,16 @@
       "noAccounts" : "Comece depositando fundos\nna sua carteira"
     },
     "seeAllAssets" : "Ver todos os ativos",
+    "cryptoAddresses" : {
+      "title" : "Contas cripto",
+      "count_one" : "{{count}} conta",
+      "count_other" : "{{count}} contas",
+      "noAccountsYet" : "Ainda nenhuma conta"
+    },
     "seeAllAccounts" : "Ver todas as contas",
+    "assetSection" : {
+      "connectionFailed" : "Falha de conexão"
+    },
     "marketPriceSection" : {
       "title" : "preço de mercado de {{currencyTicker}}",
       "currencyPrice" : "preço de 1 {{currencyTicker}}",
@@ -3563,8 +3575,10 @@
         "description" : "Os cartões locais aparecem no Portfólio (e em outros locais) sem o Braze. Eles persistem até que você os descarte ou limpe aqui.",
         "addSampleBanner" : "Adicionar banner de amostra",
         "addSampleBannerDesc" : "Adicione um banner de exemplo ao Portfólio.",
-        "addSampleActionCarousel" : "Adicionar carrossel de ações de amostra",
-        "addSampleActionCarouselDesc" : "Adicione um carrossel de cards de ação (Comprar, Trocar, Fazer staking) no Portfólio.",
+        "addSampleActionCarouselIcon" : "Adicionar carrossel de ação (ícone)",
+        "addSampleActionCarouselIconDesc" : "ContentBanner com ícones Spot — Comprar, Trocar, Aplicar. Requer o indicador de posicionamento Braze.",
+        "addSampleActionCarouselImageBackground" : "Adicionar carrossel de ação (imagem)",
+        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner Com Fundo de Imagem — comprar, trocar e staking. Requer o indicador de posicionamento Braze.",
         "dismissAll" : "Descartar todos os cartões locais",
         "dismissAllDesc" : "Remover todos os cartões de conteúdo gerados localmente."
       }
@@ -4304,7 +4318,21 @@
         "maxFeeBelowPriorityFee" : "A taxa máxima deve ser maior ou igual à taxa de prioridade máxima."
       },
       "coinControl" : {
-        "title" : "Controle de moedas"
+        "title" : "Controle de moedas",
+        "strategy" : "Estratégia",
+        "learnMore" : "Saiba mais",
+        "coinToSend" : "Moeda a enviar",
+        "changeToReturn" : "Alterar para retorno",
+        "enterAmount" : "Insira a quantidade",
+        "amountToSendInCurrency" : "Quantia a enviar em ({{ticker}})",
+        "amountInputLabel" : "Quantia a enviar",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Moedas mais antigas primeiro (FIFO)",
+            "OPTIMIZE_SIZE" : "Minimizar taxas (otimizar o tamanho)",
+            "MERGE_OUTPUTS" : "Minimizar taxas futuras (mesclar moedas)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas.",
@@ -7781,6 +7809,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Cripto",
+      "stablecoins" : "Stablecoin",
       "market" : "Mercado"
     },
     "referralProgram" : "US$20"

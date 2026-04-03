@@ -176,6 +176,21 @@
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다.",
       "description" : ""
     },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "죄송합니다. 자산이 부족합니다"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "메모가 최대 길이를 초과했습니다",
+      "description" : "입력하신 메모는 {{memoLength}}바이트입니다. 최대 {{maxLength}}바이트까지 입력할 수 있습니다. 메모 크기를 줄여주세요."
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "페어링 만료",
+      "description" : "Concordium ID 앱과의 연결 시간이 초과되었습니다. 다시 시도해 주세요."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "세션 만료",
+      "description" : "Concordium ID 앱 세션이 만료되었습니다. 다시 페어링해 주세요."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
       "description" : "아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -937,6 +952,9 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
+    },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "이체 수량이 부족합니다. {{minimumAmount}} 이상을 전송하세요."
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
@@ -2728,11 +2746,20 @@
     },
     "walletBalance" : "지갑 잔액",
     "balance" : {
-      "noSigner" : "가장 안전한\n지갑",
-      "noAccounts" : "소중한 암호화폐를 안전하게"
+      "noSigner" : "믿을 수 있는\n암호화폐 지갑",
+      "noAccounts" : "자산을 입금하고\n시작하세요"
     },
     "seeAllAssets" : "모든 자산 보기",
+    "cryptoAddresses" : {
+      "title" : "암호화폐 계정",
+      "count_one" : "{{count}}개 계정",
+      "count_other" : "{{count}}개 계정",
+      "noAccountsYet" : "아직 계정이 없습니다"
+    },
     "seeAllAccounts" : "모든 계정 보기",
+    "assetSection" : {
+      "connectionFailed" : "연결에 실패했습니다"
+    },
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
@@ -2760,10 +2787,10 @@
       "buyLedger" : "Ledger 구매하기",
       "transferDrawer" : {
         "title" : "전송",
-        "receiveCrypto" : "암호화폐 받기",
+        "receiveCrypto" : "암호화폐 주소로 받기",
         "sendCrypto" : "암호화폐 보내기",
-        "bankTransfer" : "은행 이체",
-        "bankTransferDescription" : "현금 이체로 스테이블 코인 받기"
+        "bankTransfer" : "은행 이체로 받기",
+        "bankTransferDescription" : "현금 입금으로 스테이블코인을 바로 받아보세요."
       }
     },
     "recoverBanner" : {
@@ -2779,8 +2806,8 @@
     },
     "refreshStatus" : {
       "refreshing" : "새로고침 중",
-      "upToDate" : "최신 상태입니다",
-      "syncError" : "일부 계정이 동기화에 실패했습니다"
+      "upToDate" : "포트폴리오 업데이트 완료",
+      "syncError" : "일부 계정 데이터를 로드하지 못했습니다"
     }
   },
   "addAccountsModal" : {
@@ -3548,8 +3575,10 @@
         "description" : "Braze 없이도 로컬 카드가 포트폴리오(및 기타 위치)에 표시되며, 사용자가 직접 종료하거나 삭제할 때까지 여기에서 유지됩니다.",
         "addSampleBanner" : "샘플 배너 추가",
         "addSampleBannerDesc" : "포트폴리오에 샘플 히어로 배너를 추가합니다.",
-        "addSampleActionCarousel" : "샘플 액션 캐러셀 추가",
-        "addSampleActionCarouselDesc" : "포트폴리오에 액션 카드(매수, 스왑, 스테이킹) 캐러셀을 추가합니다.",
+        "addSampleActionCarouselIcon" : "액션 캐러셀(아이콘) 추가",
+        "addSampleActionCarouselIconDesc" : "Spot 아이콘이 있는 ContentBanner — 매수, 스왑, 스테이킹. Braze 배치 플래그 필요.",
+        "addSampleActionCarouselImageBackground" : "액션 캐러셀 추가(이미지)",
+        "addSampleActionCarouselImageBackgroundDesc" : "image_background가 있는 MediaBanner — 매수, 스왑, 스테이킹. Braze 배치 플래그 필요.",
         "dismissAll" : "모든 로컬 카드 거부",
         "dismissAllDesc" : "로컬에서 생성된 콘텐츠 카드를 모두 제거합니다"
       }
@@ -4289,7 +4318,21 @@
         "maxFeeBelowPriorityFee" : "최대 수수료는 최대 우선 수수료보다 크거나 같아야 합니다."
       },
       "coinControl" : {
-        "title" : "코인 컨트롤"
+        "title" : "코인 컨트롤",
+        "strategy" : "전략",
+        "learnMore" : "자세히 알아보기",
+        "coinToSend" : "보낼 코인",
+        "changeToReturn" : "변경하여 돌아가기",
+        "enterAmount" : "금액 입력",
+        "amountToSendInCurrency" : "보낼 수량({{ticker}})",
+        "amountInputLabel" : "전송 금액",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",
+            "OPTIMIZE_SIZE" : "수수료 최소화 (사이즈 최적화)",
+            "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "대기 중인 수신 트랜잭션이 있습니다. 대기 중 트랜잭션은 취소될 수 있으니 주의하시기 바랍니다.",
@@ -7766,6 +7809,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "암호화폐",
+      "stablecoins" : "스테이블코인",
       "market" : "마켓"
     },
     "referralProgram" : "$20"
@@ -8297,7 +8341,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "시장 탐색하기",
+    "title" : "시장 현황 살펴보기",
     "viewAll" : "모두 보기",
     "viewAllAccessibilityHint" : "두 번 탭하면 모든 시장 자산이 표시됩니다",
     "connectionFailed" : "연결에 실패했습니다",
@@ -8579,11 +8623,24 @@
         "title" : "확인",
         "description" : "Concordium은 외부 신원 확인을 요구합니다. 다음의 보안 경고를 세심히 읽어 보세요.",
         "list" : {
-          "1" : "주소 확인 불가 – Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자산 수령에 앞서 주소를 직접 확인하세요.",
-          "2" : "Concordium ID 앱은 별도의 시드 문구를 사용합니다 – Concordium 앱에서 새로운 24개의 단어를 생성해야 합니다. 절대 기존 Ledger 시드 문구를 사용하지 마세요.",
-          "3" : "Ledger Wallet 외부로 리디렉션됩니다 – 신원 확인은 외부 Concordium Wallet 앱에서 진행되며, 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다.",
-          "4" : "트랜잭션 서명은 안전하게 관리됩니다 – 트랜잭션 서명과 계정 생성은 오직 Ledger 장치를 통해서만 가능합니다."
+          "1" : {
+            "title" : "주소 확인 불가",
+            "description" : "Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자금을 수령하기 전에 주소를 직접 확인하세요."
+          },
+          "2" : {
+            "title" : "Concordium ID 앱은 별도의 시드를 사용합니다.",
+            "description" : "Concordium 앱에서 새로운 24개 단어를 생성합니다. 절대 Ledger 시드 문구를 사용하지 마세요."
+          },
+          "3" : {
+            "title" : "Ledger Wallet 외부 페이지로 이동합니다.",
+            "description" : "신원 확인은 외부 Concordium Wallet 앱에서 진행됩니다. 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다."
+          },
+          "4" : {
+            "title" : "트랜잭션 서명은 안전하게 관리됩니다.",
+            "description" : "Ledger 장치에서만 거래 서명과 계정을 생성할 수 있습니다."
+          }
         },
+        "guide" : "계속 진행하기 전에 안내 사항을 읽어주세요.",
         "allow" : "허용"
       },
       "pair" : {
@@ -8591,26 +8648,33 @@
         "connecting" : "연결 중...",
         "scanQRCodeOrDownload" : "다른 기기로 QR 코드를 스캔하거나 Concordium ID 앱을 다운로드하여 계속 진행하세요.",
         "openIdApp" : "Concordium ID 앱 실행하기",
-        "success" : "Concordium ID 앱과 성공적으로 페어링되었습니다.",
-        "error" : "Concordium ID 앱과 페어링에 실패했습니다."
+        "success" : "Concordium ID 앱에 연결되었습니다.",
+        "continue" : "계속",
+        "error" : "Concordium ID 앱 연결에 실패했습니다. 다시 시도해 주세요."
       },
       "create" : {
-        "title" : "계정 생성하기",
+        "title" : "Concordium 계정 추가하기",
         "prepare" : {
-          "title" : "계정을 생성하려면 Concordium ID 앱에서 아래 코드를 입력하세요."
-        }
+          "title" : "계정을 생성하려면 Concordium ID 앱에서 아래 코드를 입력하세요.",
+          "resendButton" : "확인 재전송",
+          "resendDescription" : "{{count}}초 후 재전송 가능"
+        },
+        "submitting" : "계정 생성 중...",
+        "keepDeviceNearby" : "Ledger 장치에서 트랜잭션을 승인합니다. Ledger를 가까운 곳에 두세요.",
+        "success" : "Concordium 계정이 성공적으로 생성되었습니다.",
+        "error" : "계정 생성에 실패했습니다. 다시 시도해 주세요."
       }
     }
   },
   "fearAndGreed" : {
     "title" : "시장 심리 지수",
-    "description" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
+    "description" : "트렌드와 활동을 분석하여 전반적 마켓 분위기를 0부터 100 사이 수치로 표시합니다. 이 지수로 현재 시장 상황을 파악해 보세요. 수치가 낮을수록 공포에 가깝고, 높을수록 탐욕이 커짐을 의미합니다.",
     "levels" : {
-      "extremeFear" : "공포+",
       "fear" : "공포",
+      "cautious" : "신중",
       "neutral" : "중립",
-      "greed" : "탐욕",
-      "extremeGreed" : "탐욕+"
+      "optimistic" : "낙관",
+      "greedy" : "탐욕"
     },
     "tileTitle" : "시장 심리"
   },
@@ -8627,7 +8691,7 @@
   },
   "cardLanding" : {
     "title" : "암호화폐로\n결제하세요",
-    "subtitle" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요",
+    "subtitle" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요.",
     "ctas" : {
       "exploreCards" : "카드 살펴보기",
       "iHaveACard" : "카드가 있습니다"
@@ -8658,6 +8722,7 @@
     "home" : "홈",
     "swap" : "스왑",
     "earn" : "수익 창출",
+    "yield" : "이자",
     "card" : "카드"
   },
   "syncIndicator" : {
@@ -8667,8 +8732,8 @@
       "default" : "동기화"
     },
     "bottomSheet" : {
-      "title" : "일부 계정을 동기화할 수 없습니다.",
-      "description" : "일시적인 네트워크 문제가 발생했습니다. 자산은 안전하니 안심하세요. 영향을 받은 계정 목록: {{accounts}}.",
+      "title" : "일부 계정 데이터를 로드하지 못했습니다",
+      "description" : "자산은 안전하게 보호되고 있습니다. 일시적인 동기화 문제로, 일부 계정에만 영향을 미칩니다.\n영향 받는 계정: {{accounts}}",
       "close" : "닫기"
     }
   },

@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-hyperliquid
 
+## 1.1.0
+
+### Minor Changes
+
+- [#15626](https://github.com/LedgerHQ/ledger-live/pull/15626) [`80bb6c7`](https://github.com/LedgerHQ/ledger-live/commit/80bb6c726281f19a94fac298a03f63f053ddb933) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Update hyperliquid signer version
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#15626](https://github.com/LedgerHQ/ledger-live/pull/15626) [`80bb6c7`](https://github.com/LedgerHQ/ledger-live/commit/80bb6c726281f19a94fac298a03f63f053ddb933) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Update hyperliquid signer version
+
 ## 1.0.0
 
 ### Major Changes

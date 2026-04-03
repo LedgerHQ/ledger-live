@@ -176,6 +176,21 @@
       "title" : "Die Prämien sind niedriger als die geschätzten Gebühren, die anfallen, um sie abzurufen.",
       "description" : ""
     },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo überschreitet zulässige Länge",
+      "description" : "Dein Memo hat eine Länge von {{memoLength}} Byte. Zulässig ist jedoch nur eine Länge von {{maxLength}} Byte. Bitte reduziere die Memogröße."
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "Kopplung abgelaufen",
+      "description" : "Die Verbindung mit der Concordium ID-App ist abgelaufen. Bitte versuche es noch einmal."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "Sitzung abgelaufen",
+      "description" : "Die Concordium ID App-Sitzung ist nicht mehr aktiv. Bitte kopple erneut."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Etwas ist schief gelaufen (Fehler 1)",
       "description" : "Bitte speichere deine Logdateien über die nachstehende Schaltfläche und leite sie dann an den Ledger-Kundenservice weiter."
@@ -937,6 +952,9 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
+    },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Betrag zu niedrig. Sende mindestens {{minimumAmount}}."
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Dieses zugeordnete Tokenkonto enthält ein weiteres Token"
@@ -2728,11 +2746,20 @@
     },
     "walletBalance" : "Kontostand der Wallet",
     "balance" : {
-      "noSigner" : "Die sicherste\nWallet",
-      "noAccounts" : "Deine Kryptos schützen"
+      "noSigner" : "Deine sichere Krypto-Wallet",
+      "noAccounts" : "Beginne mit Einzahlungen in deine Wallet"
     },
     "seeAllAssets" : "Alle Vermögenswerte anzeigen",
+    "cryptoAddresses" : {
+      "title" : "Krypto-Konten",
+      "count_one" : "{{count}} Konto",
+      "count_other" : "{{count}} Konten",
+      "noAccountsYet" : "Noch keine Konten"
+    },
     "seeAllAccounts" : "Alle Konten anzeigen",
+    "assetSection" : {
+      "connectionFailed" : "Verbindung fehlgeschlagen"
+    },
     "marketPriceSection" : {
       "title" : "Marktpreis für {{currencyTicker}}",
       "currencyPrice" : "Preis für 1 {{currencyTicker}}",
@@ -2760,10 +2787,10 @@
       "buyLedger" : "Ledger-Gerät kaufen",
       "transferDrawer" : {
         "title" : "Übertragen",
-        "receiveCrypto" : "Krypto empfangen",
+        "receiveCrypto" : "Über Krypto-Adresse empfangen",
         "sendCrypto" : "Kryptos senden",
-        "bankTransfer" : "Banküberweisung",
-        "bankTransferDescription" : "Erhalte Stablecoins per Bareinzahlung"
+        "bankTransfer" : "Per Banküberweisung empfangen",
+        "bankTransferDescription" : "Erhalte Stablecoins ganz einfach per Bareinzahlung."
       }
     },
     "recoverBanner" : {
@@ -2779,8 +2806,8 @@
     },
     "refreshStatus" : {
       "refreshing" : "Wird neu geladen...",
-      "upToDate" : "Du bist auf dem aktuellen Stand",
-      "syncError" : "Einige Konten konnten nicht synchronisiert werden."
+      "upToDate" : "Portfolio aktuell",
+      "syncError" : "Einige Kontodaten konnten nicht geladen werden"
     }
   },
   "addAccountsModal" : {
@@ -3548,8 +3575,10 @@
         "description" : "Lokale Karten werden auch ohne Braze in Portfolio (und anderswo) angezeigt. Sie bleiben bestehen, bis du sie verwirfst oder hier löschst.",
         "addSampleBanner" : "Beispielbanner hinzufügen",
         "addSampleBannerDesc" : "Hiermit fügst du in Portfolio ein Hero-Beispielbanner hinzu.",
-        "addSampleActionCarousel" : "Aktionskarussell als Beispiel hinzufügen",
-        "addSampleActionCarouselDesc" : "Hiermit fügst du in Portfolio ein Karussell mit Aktionskarten (Kaufen, Swappen, Staken) hinzu.",
+        "addSampleActionCarouselIcon" : "Aktionskarussell hinzufügen (Symbol)",
+        "addSampleActionCarouselIconDesc" : "ContentBanner mit Spot-Symbolen: Kaufen, Swappen, Staken. Erfordert die Braze-Platzierung.",
+        "addSampleActionCarouselImageBackground" : "Aktionskarussell hinzufügen (Bild)",
+        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner mit Bildhintergrund — Kaufen, Swappen, Staken. Erfordert die Braze-Platzierungsflagge.",
         "dismissAll" : "Alle lokalen Karten verwerfen",
         "dismissAllDesc" : "Hiermit entfernst du alle lokal generierten Inhaltskarten."
       }
@@ -4289,7 +4318,21 @@
         "maxFeeBelowPriorityFee" : "Die maximale Gebühr muss größer oder gleich der maximalen Prioritätsgebühr sein."
       },
       "coinControl" : {
-        "title" : "Coin-Kontrolle"
+        "title" : "Coin-Kontrolle",
+        "strategy" : "Strategie",
+        "learnMore" : "Weitere Informationen",
+        "coinToSend" : "Zu sendender Coin",
+        "changeToReturn" : "Wechseln zu Rückgabe",
+        "enterAmount" : "Betrag eingeben",
+        "amountToSendInCurrency" : "Zu sendender Betrag in {{ticker}}",
+        "amountInputLabel" : "Zu sendender Betrag",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
+            "OPTIMIZE_SIZE" : "Gebühren minimieren (Größe optimieren)",
+            "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "Bei dir sind ausstehende Eingangstransaktionen vorhanden. Bitte bedenke, dass ausstehende Transaktionen rückgängig gemacht werden können.",
@@ -7766,6 +7809,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Krypto",
+      "stablecoins" : "Stablecoin",
       "market" : "Markt"
     },
     "referralProgram" : "20 USD"
@@ -8579,11 +8623,24 @@
         "title" : "Bestätigung",
         "description" : "Concordium verlangt eine externe Identitätsprüfung. Bitte beachte die folgenden wichtigen Sicherheitshinweise:",
         "list" : {
-          "1" : "Keine Adressverifizierung: Dein Ledger-Gerät kann Concordium-Empfangsadressen nicht verifizieren. Bitte verifiziere Adressen manuell, bevor du Geld empfängst.",
-          "2" : "Die Concordium ID-App verwendet einen separaten Seed: Du wirst in der Concordium-App 24 NEUE Wörter erstellen. Verwende KEINESFALLS deine Ledger-Seedphrase.",
-          "3" : "Du wirst nach außerhalb von Ledger Wallet weitergeleitet: Die Identitätsverifizierung erfolgt in der externen Concordium Wallet-App. Dies ist gemäß dem Blockchain-Protokoll von Concordium zwingend.",
-          "4" : "Die Signierung der Transaktion bleibt sicher: Nur dein Ledger-Gerät kann Transaktionen signieren und Konten erstellen."
+          "1" : {
+            "title" : "Keine Adressverifizierung",
+            "description" : "Dein Ledger-Gerät kann Concordium-Empfangsadressen nicht verifizieren. Bitte verifiziere Adressen manuell, bevor du Guthaben empfängst."
+          },
+          "2" : {
+            "title" : "Die Concordium ID App verwendet einen separaten Seed",
+            "description" : "Du wirst in der Concordium-App 24 NEUE Wörter erstellen. Verwende KEINESFALLS deine Ledger-Seedphrase."
+          },
+          "3" : {
+            "title" : "Du wirst außerhalb von Ledger Wallet weitergeleitet",
+            "description" : "Die Identitätsverifizierung erfolgt in der externen Concordium Wallet-App. Dies ist gemäß dem Blockchain-Protokoll von Concordium zwingend."
+          },
+          "4" : {
+            "title" : "Die Transaktionssignierung bleibt sicher",
+            "description" : "Nur dein Ledger-Gerät kann Transaktionen signieren und Konten erstellen."
+          }
         },
+        "guide" : "Bitte lies die Anleitung, bevor du fortfährst:",
         "allow" : "Zustimmen"
       },
       "pair" : {
@@ -8591,26 +8648,33 @@
         "connecting" : "Verbinde ...",
         "scanQRCodeOrDownload" : "Scanne den QR-Code mit einem anderen Gerät oder lade die Concordium ID-App herunter, um fortzufahren.",
         "openIdApp" : "Concordium ID-App öffnen",
-        "success" : "Die Kopplung mit der Concordium ID-App wurde erfolgreich hergestellt.",
-        "error" : "Koppeln mit der Concordium ID-App fehlgeschlagen."
+        "success" : "Die Verbindung mit der Concordium ID-App wurde erfolgreich hergestellt.",
+        "continue" : "Weiter",
+        "error" : "Die Verbindung mit der Concordium ID-App ist fehlgeschlagen. Bitte versuche es noch einmal."
       },
       "create" : {
-        "title" : "Konto erstellen",
+        "title" : "Concordium-Konto hinzufügen",
         "prepare" : {
-          "title" : "Zum Erstellen eines Kontos gib den folgenden Code in die Concordium ID-App ein"
-        }
+          "title" : "Zum Erstellen eines Kontos gib den folgenden Code in die Concordium ID-App ein",
+          "resendButton" : "Bestätigung erneut senden",
+          "resendDescription" : "Erneut senden in {{count}}s verfügbar"
+        },
+        "submitting" : "Dein Konto wird erstellt...",
+        "keepDeviceNearby" : "Genehmige die Transaktion auf deinem Ledger-Gerät. Halte dein Ledger-Gerät in der Nähe.",
+        "success" : "Dein Concordium-Konto wurde erfolgreich erstellt.",
+        "error" : "Das Erstellen des Kontos ist fehlgeschlagen. Bitte versuche es noch einmal."
       }
     }
   },
   "fearAndGreed" : {
     "title" : "Stimmungsindex",
-    "description" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+    "description" : "Zeigt die allgemeine Marktstimmung von 0 bis 100 an, basierend auf Trends und Aktivität. Damit kannst du nachvollziehen, wie sich der Markt verhält: Niedrigere Werte deuten auf Angst hin, höhere Werte auf Gier.",
     "levels" : {
-      "extremeFear" : "Angst+",
       "fear" : "Angst",
+      "cautious" : "Vorsichtig",
       "neutral" : "Neutral",
-      "greed" : "Gier",
-      "extremeGreed" : "Gier+"
+      "optimistic" : "Optimistisch",
+      "greedy" : "Gierig"
     },
     "tileTitle" : "Stimmung"
   },
@@ -8626,7 +8690,7 @@
     }
   },
   "cardLanding" : {
-    "title" : "Gib deine Kryptos aus",
+    "title" : "Kryptos ausgeben",
     "subtitle" : "Zahle online oder im Laden mit einer Kryptokarte",
     "ctas" : {
       "exploreCards" : "Karten entdecken",
@@ -8658,6 +8722,7 @@
     "home" : "Startseite",
     "swap" : "Swappen",
     "earn" : "Verdienen",
+    "yield" : "Ertrag",
     "card" : "Card"
   },
   "syncIndicator" : {
@@ -8667,8 +8732,8 @@
       "default" : "Synchronisieren"
     },
     "bottomSheet" : {
-      "title" : "Einige Konten konnten nicht synchronisiert werden",
-      "description" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher. Liste der betroffenen Konten: {{accounts}}.",
+      "title" : "Einige Kontodaten konnten nicht geladen werden",
+      "description" : "Deine Assets sind sicher. Dies ist ein vorübergehendes Synchronisierungsproblem.\nBetroffene Konten: {{accounts}}",
       "close" : "Schließen"
     }
   },
