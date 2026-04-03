@@ -94,9 +94,59 @@ describe("createSendSteps", () => {
       if (isPrivate !== undefined) jest.mocked(isPrivateTransaction).mockReturnValue(isPrivate);
       const step = steps.find(s => s.id === stepId);
       const transitionTo = jest.fn();
-      const stepProps = { transitionTo, transaction: { family: "aleo" } } as unknown as StepProps;
+      const updateTransaction = jest.fn();
+      const stepProps = {
+        transitionTo,
+        updateTransaction,
+        transaction: { family: "aleo" },
+      } as unknown as StepProps;
       step?.onBack?.(stepProps);
       expect(transitionTo).toHaveBeenCalledWith(expectedTarget);
     }
+  });
+
+  it("should clear selected record when going back from record-picker", () => {
+    const step = steps.find(s => s.id === "record-picker");
+    const transitionTo = jest.fn();
+    const updateTransaction = jest.fn();
+    const stepProps = {
+      transitionTo,
+      updateTransaction,
+      transaction: { family: "aleo" },
+    } as unknown as StepProps;
+
+    jest.mocked(isPrivateTransaction).mockReturnValue(true);
+
+    step?.onBack?.(stepProps);
+
+    expect(updateTransaction).toHaveBeenCalledTimes(1);
+    const updater = updateTransaction.mock.calls[0][0];
+    const privateTransaction = {
+      family: "aleo",
+      mode: "transfer_private",
+      properties: { amountRecordCommitment: "some-commitment", feeRecordCommitment: "some-fee" },
+    };
+    const result = updater(privateTransaction);
+    expect(result.properties).toEqual({ amountRecordCommitment: null, feeRecordCommitment: null });
+  });
+
+  it("should not clear record when going back from record-picker on non-private tx", () => {
+    const step = steps.find(s => s.id === "record-picker");
+    const transitionTo = jest.fn();
+    const updateTransaction = jest.fn();
+    const stepProps = {
+      transitionTo,
+      updateTransaction,
+      transaction: { family: "aleo" },
+    } as unknown as StepProps;
+
+    jest.mocked(isPrivateTransaction).mockReturnValue(false);
+
+    step?.onBack?.(stepProps);
+
+    const updater = updateTransaction.mock.calls[0][0];
+    const publicTransaction = { family: "aleo", mode: "transfer_public" };
+    const result = updater(publicTransaction);
+    expect(result).toBe(publicTransaction);
   });
 });

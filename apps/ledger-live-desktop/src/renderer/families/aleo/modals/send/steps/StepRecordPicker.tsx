@@ -102,10 +102,13 @@ const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props
   const formatDate = useDateFormatter(dayFormat);
   const formatHours = useDateFormatter(hourFormat);
 
-  const allUnspentRecords = account.aleoResources?.unspentPrivateRecords ?? [];
+  const allUnspentRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(r =>
+    new BigNumber(r.microcredits).isGreaterThan(0),
+  );
   const unspentRecords = useMemo(
     () =>
-      [...(account.aleoResources?.unspentPrivateRecords ?? [])]
+      (account.aleoResources?.unspentPrivateRecords ?? [])
+        .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
         .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
         .slice(0, MAX_RECORDS_DISPLAYED),
     [account.aleoResources?.unspentPrivateRecords],
