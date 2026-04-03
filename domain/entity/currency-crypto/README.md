@@ -1,4 +1,4 @@
-# @domain/entity-crypto-currency
+# @domain/entity-currency-crypto
 
 Zod-first canonical schema and static registry for the `CryptoCurrency` domain entity.
 
@@ -15,18 +15,23 @@ No Redux slice, no selectors — the currency list is fully static. Consumers re
 | Package | Why |
 |---|---|
 | `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
-| `@domain/entity-unit` | `UnitSchema` embedded value object |
+| `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 
 ## Public API
 
 ```typescript
 // Schema + types (derived via z.infer)
-import { CryptoCurrencySchema } from "@domain/entity-crypto-currency";
-import type { CryptoCurrency, ExplorerView, EthereumLikeInfo, BitcoinLikeInfo } from "@domain/entity-crypto-currency";
+import { CryptoCurrencySchema } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency, ExplorerView, EthereumLikeInfo, BitcoinLikeInfo } from "@domain/entity-currency-crypto";
 
 // Registry
-import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCIES_IDS } from "@domain/entity-crypto-currency";
+import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCIES_IDS } from "@domain/entity-currency-crypto";
+
+// Helper — use in currency definition files
+import { currency } from "@domain/entity-currency-crypto";
 ```
+
+For the full currency union (`CryptoCurrency | TokenCurrency | FiatCurrency`) use `@domain/entity-currency`.
 
 ## File structure
 
@@ -61,4 +66,4 @@ NODE_OPTIONS="--conditions=@ledgerhq/source" npx tsx scripts/generate-currencies
 
 **Static registry, no store.** Currency data never changes at runtime. Putting it in Redux would imply reactivity that doesn't exist — consumers resolve currencies directly from `CRYPTO_CURRENCIES_REGISTRY`.
 
-**No embedded parent reference.** `TokenCurrency` (a sibling package) uses `parentCurrencyId: CurrencyId` (FK) instead of an embedded `CryptoCurrency` object, which eliminates the `fromTokenCurrencyRaw` lookup-at-restore problem that made `cal-client/persistence.ts` complex.
+**No embedded parent reference.** `@domain/entity-currency-token` uses `parentCurrencyId: CurrencyId` (FK) instead of an embedded `CryptoCurrency` object, which eliminates the `fromTokenCurrencyRaw` lookup-at-restore problem that made `cal-client/persistence.ts` complex.

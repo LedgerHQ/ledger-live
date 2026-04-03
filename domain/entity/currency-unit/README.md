@@ -1,4 +1,4 @@
-# @domain/entity-unit
+# @domain/entity-currency-unit
 
 Zod-first schema for the `Unit` value object.
 
@@ -8,7 +8,7 @@ embedded inside currency entities and never stored independently.
 ## Usage
 
 ```ts
-import { UnitSchema, type Unit } from "@domain/entity-unit";
+import { UnitSchema, type Unit } from "@domain/entity-currency-unit";
 
 const unit: Unit = UnitSchema.parse({
   name: "Bitcoin",
@@ -37,7 +37,7 @@ pnpm typecheck     # tsc --noEmit
 Mock factory available in `src/schema.mock.ts`:
 
 ```ts
-import { mockUnit } from "@domain/entity-unit/src/schema.mock";
+import { mockUnit } from "@domain/entity-currency-unit/src/schema.mock";
 
 // override individual fields
 const unit = mockUnit({ magnitude: 0 });

@@ -1,8 +1,8 @@
 {
-  "name": "@domain/entity-unit",
-  "version": "0.1.0",
+  "name": "@domain/entity-currency-crypto",
+  "version": "0.0.1",
   "private": true,
-  "description": "Zod-first schema for the Unit value object",
+  "description": "Domain entity for crypto currencies: Zod schemas and registry",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "sideEffects": false,
@@ -13,13 +13,15 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@domain/entity-currency-unit": "workspace:*",
+    "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@jest/globals": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

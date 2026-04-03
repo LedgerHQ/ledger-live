@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CurrencyIdSchema } from "@shared/schema-primitives";
-import { UnitSchema } from "@domain/entity-unit";
+import { UnitSchema } from "@domain/entity-currency-unit";
 
 /**
  * Blockchain explorer URL templates for a crypto currency.
