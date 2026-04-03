@@ -6,7 +6,7 @@ Currency union types and single entry-point for all currency entity packages.
 
 - Export **`CryptoOrTokenCurrency`** — discriminated union of `CryptoCurrency | TokenCurrency`
 - Export **`Currency`** — discriminated union of `CryptoCurrency | TokenCurrency | FiatCurrency`
-- Re-export everything from the three currency entity packages and `@domain/entity-unit`
+- Re-export everything from the three currency entity packages and `@domain/entity-currency-unit`
 
 This package owns no schemas of its own. It is a pure aggregation layer.
 
@@ -49,7 +49,7 @@ Use `CryptoOrTokenCurrency` when working with on-chain balances or addresses. Us
 
 | Package | Re-exports |
 |---|---|
-| `@domain/entity-unit` | `Unit`, `UnitSchema` |
+| `@domain/entity-currency-unit` | `Unit`, `UnitSchema` |
 | `@domain/entity-currency-crypto` | `CryptoCurrency`, `CRYPTO_CURRENCIES_REGISTRY`, `currency()`, … |
 | `@domain/entity-currency-token` | `TokenCurrency`, `token()`, … |
 | `@domain/entity-currency-fiat` | `FiatCurrency`, `FIAT_CURRENCIES_REGISTRY`, `fiat()`, … |

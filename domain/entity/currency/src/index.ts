@@ -4,7 +4,7 @@ import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 
 // Re-export everything from the three currency entity packages and unit
-export * from "@domain/entity-unit";
+export * from "@domain/entity-currency-unit";
 export * from "@domain/entity-currency-crypto";
 export * from "@domain/entity-currency-token";
 export * from "@domain/entity-currency-fiat";

@@ -2413,9 +2413,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../currency-token
-      '@domain/entity-unit':
+      '@domain/entity-currency-unit':
         specifier: workspace:*
-        version: link:../unit
+        version: link:../currency-unit
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -2438,9 +2438,9 @@ importers:
 
   domain/entity/currency-crypto:
     dependencies:
-      '@domain/entity-unit':
+      '@domain/entity-currency-unit':
         specifier: workspace:*
-        version: link:../unit
+        version: link:../currency-unit
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -2469,9 +2469,9 @@ importers:
 
   domain/entity/currency-fiat:
     dependencies:
-      '@domain/entity-unit':
+      '@domain/entity-currency-unit':
         specifier: workspace:*
-        version: link:../unit
+        version: link:../currency-unit
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -2500,9 +2500,9 @@ importers:
 
   domain/entity/currency-token:
     dependencies:
-      '@domain/entity-unit':
+      '@domain/entity-currency-unit':
         specifier: workspace:*
-        version: link:../unit
+        version: link:../currency-unit
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -2529,7 +2529,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
-  domain/entity/unit:
+  domain/entity/currency-unit:
     dependencies:
       zod:
         specifier: 'catalog:'

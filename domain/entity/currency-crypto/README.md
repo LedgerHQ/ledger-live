@@ -15,7 +15,7 @@ No Redux slice, no selectors — the currency list is fully static. Consumers re
 | Package | Why |
 |---|---|
 | `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
-| `@domain/entity-unit` | `UnitSchema` embedded value object |
+| `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 
 ## Public API
 

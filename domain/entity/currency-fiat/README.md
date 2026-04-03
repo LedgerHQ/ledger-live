@@ -15,7 +15,7 @@ No Redux slice, no selectors — the registry is fully static.
 | Package | Why |
 |---|---|
 | `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
-| `@domain/entity-unit` | `UnitSchema` embedded value object |
+| `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 
 ## Public API
 

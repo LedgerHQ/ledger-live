@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TokenIdSchema, CurrencyIdSchema } from "@shared/schema-primitives";
-import { UnitSchema } from "@domain/entity-unit";
+import { UnitSchema } from "@domain/entity-currency-unit";
 
 /**
  * Canonical Zod-first schema for a token currency entity.

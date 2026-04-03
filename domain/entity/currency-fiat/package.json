@@ -13,7 +13,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@domain/entity-unit": "workspace:*",
+    "@domain/entity-currency-unit": "workspace:*",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },

@@ -16,7 +16,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
-    "@domain/entity-unit": "workspace:*",
+    "@domain/entity-currency-unit": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {
