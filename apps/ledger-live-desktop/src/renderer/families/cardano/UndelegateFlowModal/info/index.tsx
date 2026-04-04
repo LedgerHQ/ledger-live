@@ -60,6 +60,14 @@ export default function CardanoUndelegateSelfTxInfoModal({
                     <p>
                       <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.1" />
                     </p>
+                    <br />
+                    <p>
+                      <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.2" />
+                    </p>
+                    <br />
+                    <p>
+                      <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.3" />
+                    </p>
                   </Text>
                 </Box>
               </Box>

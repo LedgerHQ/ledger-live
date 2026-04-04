@@ -2866,12 +2866,14 @@
         }
       },
       "selfTransactionFlow": {
-        "title": "DRep Delegation Self Transaction",
+        "title": "Prepare Undelegation",
         "steps": {
           "starter": {
             "description": [
-              "You currently have unclaimed staking rewards in your account. It is required to delegate to a DRep to claim staking rewards and to un-delegate your wallet.",
-              "This step will delegate your account to Abstain Auto DRep on the Cardano network. Once processed, you can un-delegate your wallet as usual."
+              "To close your staking account and reclaim your 2 ADA deposit:",
+              "Cardano’s governance now requires you to define your voting status before you can undelegate.",
+              "This step involves a send transaction to your own Ledger address that simply serves to register your choice to abstain from voting. It will cost only the standard network fee and your ADA stays in your wallet.",
+              "Once this preference is recorded, you will be able to undelegate as usual."
             ]
           }
         }
