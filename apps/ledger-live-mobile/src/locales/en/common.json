@@ -5800,6 +5800,10 @@
     "alerts": {
       "withdrawableAssets": "You have a withdrawable balance.",
       "activatableVotes": "You have votes that can now be activated."
+    },
+    "send": {
+      "feeCurrency": "Fee currency",
+      "feeCurrencyOnlyNative": "No alternative fee currency accounts found. Only native CELO is available."
     }
   },
   "cosmos": {

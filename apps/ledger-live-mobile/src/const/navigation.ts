@@ -219,6 +219,7 @@ export enum ScreenName {
   CeloWithdrawSelectDevice = "CeloWithdrawSelectDevice",
   CeloWithdrawConnectDevice = "CeloWithdrawConnectDevice",
   CeloWithdrawAmount = "CeloWithdrawAmount",
+  CeloEditFeeCurrency = "CeloEditFeeCurrency",
 
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",

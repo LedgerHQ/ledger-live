@@ -39,6 +39,10 @@ import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type {
+  CeloAccount,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
+import type {
   Transaction as KaspaTransaction,
   TransactionStatus as KaspaTransactionStatus,
 } from "@ledgerhq/live-common/families/kaspa/types";
@@ -376,6 +380,20 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: TonTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.CeloEditFeeCurrency]: {
+    accountId: string;
+    parentId?: string;
+    account: CeloAccount;
+    transaction: CeloTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
