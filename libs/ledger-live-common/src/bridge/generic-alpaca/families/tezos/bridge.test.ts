@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTokenFromAsset } from "./bridge";
+import { getAssetFromToken, getTokenFromAsset } from "./bridge";
 
 beforeAll(() => {
   const tezos = getCryptoCurrencyById("tezos");
@@ -10,7 +10,10 @@ beforeAll(() => {
       return undefined;
     },
     findTokenByAddressInCurrency: async (token: string, currencyId: string) => {
-      if (token === "USDt" && currencyId === "tezos") {
+      if (
+        (token === "USDt" || token === "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o") &&
+        currencyId === "tezos"
+      ) {
         const usdc: TokenCurrency = {
           type: "TokenCurrency",
           id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
@@ -65,6 +68,33 @@ describe("generic-alpaca Tezos token", () => {
           assetOwner: "unknown-owner",
         }),
       ).resolves.toBeUndefined();
+    });
+  });
+
+  describe("getAssetFromToken", () => {
+    it("returns asset with contractAddress as assetReference and owner as assetOwner", () => {
+      const tezos = getCryptoCurrencyById("tezos");
+      const token: TokenCurrency = {
+        type: "TokenCurrency",
+        id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+        contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
+        parentCurrency: tezos,
+        tokenType: "fa2",
+        name: "Tether USD",
+        ticker: "USDt",
+        delisted: false,
+        disableCountervalue: false,
+        units: [{ name: "Tether USD", code: "USDt", magnitude: 6 }],
+      };
+      const owner = "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL";
+
+      expect(getAssetFromToken(token, owner)).toEqual({
+        type: "fa2",
+        assetReference: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
+        assetOwner: owner,
+        name: "Tether USD",
+        unit: { name: "Tether USD", code: "USDt", magnitude: 6 },
+      });
     });
   });
 });

@@ -14,7 +14,7 @@ import {
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
 import { InvalidAddressBecauseAlreadyDelegated } from "../types/errors";
-import { mapIntentTypeToTezosMode } from "../utils";
+import { parseTezosTokenAsset, resolveTezosOperationMode } from "../utils";
 import { estimateFees } from "./estimateFees";
 
 /**
@@ -53,8 +53,12 @@ function validateTransactionConstraints(
 ): Record<string, Error> {
   const errors: Record<string, Error> = {};
 
-  // send max not allowed on delegated accounts (must undelegate acc first)
-  if (intent.type === "send" && intent.useAllAmount) {
+  // send max not allowed on delegated accounts (must undelegate acc first); native XTZ only
+  if (
+    intent.type === "send" &&
+    intent.useAllAmount &&
+    resolveTezosOperationMode(intent.type, intent.asset) === "send"
+  ) {
     if (senderInfo.type === "user" && senderInfo.delegate?.address) {
       errors.amount = new RecommendUndelegation();
     }
@@ -167,6 +171,9 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
 
     // Estimate fees
     if (senderInfo.revealed) {
+      const tezosMode = resolveTezosOperationMode(intent.type, intent.asset);
+      const tokenInfo =
+        tezosMode === "send_token" ? parseTezosTokenAsset(intent.asset)! : undefined;
       const estimation = await estimateFees({
         account: {
           address: intent.sender,
@@ -175,10 +182,14 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
           xpub: intent.senderPublicKey ?? senderInfo.publicKey,
         },
         transaction: {
-          mode: mapIntentTypeToTezosMode(intent.type),
+          mode: tezosMode,
           recipient: intent.recipient,
           amount: intent.amount,
           useAllAmount: !!intent.useAllAmount,
+          ...(tokenInfo && {
+            contractAddress: tokenInfo.contractAddress,
+            tokenId: tokenInfo.tokenId,
+          }),
         },
       });
       estimatedFees = estimation.estimatedFees;
