@@ -458,6 +458,7 @@ describe("getTransactionStatus", () => {
     // When sending USDT and paying with USDC, totalSpent should be just the USDT amount
     expect(transactionStatus.totalSpent).toEqual(amount);
     expect(transactionStatus.estimatedFees).toEqual(feeInUsdc);
+    expect(transactionStatus.feeCurrencyAccountId).toEqual(usdcTokenAccount.id);
   });
 
   it("should return NotEnoughBalance error when fee token balance is insufficient", async () => {

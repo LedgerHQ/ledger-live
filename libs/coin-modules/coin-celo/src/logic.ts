@@ -12,6 +12,8 @@ import {
 export const PRELOAD_MAX_AGE = 10 * 60 * 1000; // 10 minutes, used for max age in preload strategy
 const LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS = "0x0861a61Bf679A30680510EcC238ee43B82C5e843";
 
+export { FEE_CURRENCY_OPTIONS, FEE_CURRENCY_BY_CONTRACT } from "./constants";
+
 export const availablePendingWithdrawals = (account: CeloAccount): CeloPendingWithdrawal[] => {
   const { pendingWithdrawals } = account.celoResources || {};
 
