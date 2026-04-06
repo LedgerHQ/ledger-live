@@ -49,8 +49,8 @@ export function useAssetsViewModel(): AssetsViewProps {
 
   const onNavigateToCryptos = useCallback(() => {
     track("button_clicked", {
-      button: "account_cta",
-      type: "view",
+      button: "asset_list",
+      type: "crypto",
       page: CRYPTO_TRACKING_PAGE_NAME,
     });
     navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_CRYPTOS));
@@ -58,8 +58,8 @@ export function useAssetsViewModel(): AssetsViewProps {
 
   const onNavigateToCryptoAssets = useCallback(() => {
     track("button_clicked", {
-      button: "account_cta",
-      type: "view",
+      button: "asset_list",
+      type: "stable",
       page: ASSETS_TRACKING_PAGE_NAME,
     });
     navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_STABLECOINS));

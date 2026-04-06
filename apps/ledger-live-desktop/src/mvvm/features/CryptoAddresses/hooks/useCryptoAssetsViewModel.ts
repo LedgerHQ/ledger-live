@@ -116,5 +116,6 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     items,
     isLoading,
     onAssetRowClick,
+    trackingType: category === ASSETS_PAGE_CATEGORY_CRYPTOS ? "crypto" : "stable",
   };
 }

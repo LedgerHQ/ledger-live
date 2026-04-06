@@ -41,13 +41,19 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
 
   const onGoToAccounts = useCallback(() => {
     track("button_clicked", {
-      button: "accounts",
+      button: "account_cta",
+      type: "view",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
     });
     navigate(getAccountsSidebarPath(shouldDisplayAssetSection));
   }, [navigate, shouldDisplayAssetSection]);
 
   const onAddAccount = useCallback(() => {
+    track("button_clicked", {
+      button: "account_cta",
+      type: "add",
+      page: PORTFOLIO_TRACKING_PAGE_NAME,
+    });
     openAssetFlow();
   }, [openAssetFlow]);
 
