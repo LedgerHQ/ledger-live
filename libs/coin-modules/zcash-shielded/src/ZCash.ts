@@ -7,7 +7,7 @@ import type {
   RawTransaction,
   ShieldedTransaction,
   SyncEstimatedTime,
-  ShieldedSyncResult,
+  ZcashPrivateInfo,
 } from "./types";
 import { ZCASH_LOG_TYPE } from "./constants";
 
@@ -183,9 +183,9 @@ export class ZCash {
    *    viewingKey: string
    *    maxBatchSize: number
    * }} args, Block, the UFVK - unified full viewing key, and max batch size.
-   * @returns {Observable<ShieldedSyncResult>} the current synced shielded context.
+   * @returns {Observable<Partial<ZcashPrivateInfo>>} the current synced shielded context.
    */
-  syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
+  syncShielded(args: SyncShieldedArgs): Observable<Partial<ZcashPrivateInfo>> {
     return new Observable((subscriber): TeardownLogic => {
       this._syncShieldedObsFunc(args)(subscriber).then(
         () => subscriber.complete(),
@@ -195,16 +195,12 @@ export class ZCash {
   }
 
   _syncShieldedObsFunc(args: SyncShieldedArgs) {
-    return async (subscriber: Subscriber<ShieldedSyncResult>) => {
+    return async (subscriber: Subscriber<Partial<ZcashPrivateInfo>>) => {
       const { startBlockHeight, viewingKey, maxBatchSize } = args;
-      const syncedShielded: ShieldedSyncResult = {
-        processedBlocks: 0,
-        remainingBlocks: 0,
+      const syncedShielded: Partial<ZcashPrivateInfo> = {
         transactions: [],
         syncState: "running",
-        lastBlockProcessed: startBlockHeight,
-        progress: 0,
-        estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        lastProcessedBlock: startBlockHeight,
       };
 
       // 0. validate args
@@ -254,15 +250,17 @@ export class ZCash {
         const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
 
         // 5. update syncedShielded's context: list of shielded transactions and counters
-        syncedShielded.transactions.push(...shieldedTxs);
-        syncedShielded.processedBlocks++;
-        syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
-        syncedShielded.lastBlockProcessed = block.height;
+        syncedShielded.transactions?.push(...shieldedTxs);
+        syncedShielded.lastProcessedBlock = block.height;
 
-        if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
+        const processedBlockCount = blockHeight - startBlockHeight + 1;
+        const shouldEmit =
+          processedBlockCount % maxBatchSize === 0 || blockHeight === endBlockHeight;
+
+        if (shouldEmit) {
           subscriber.next({
             ...syncedShielded,
-            transactions: [...syncedShielded.transactions],
+            transactions: [...(syncedShielded.transactions ?? [])],
           });
         }
       }
