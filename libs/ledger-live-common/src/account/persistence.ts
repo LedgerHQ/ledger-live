@@ -40,7 +40,7 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     if (prevPrivateInfo.lastSyncTimestamp !== nextPrivateInfo.lastSyncTimestamp) return true;
     if (prevPrivateInfo.lastSyncBlock !== nextPrivateInfo.lastSyncBlock) return true;
     if (prevPrivateInfo.syncState !== nextPrivateInfo.syncState) return true;
-    if (prevPrivateInfo.lastBlockProcessed !== nextPrivateInfo.lastBlockProcessed) return true;
+    if (prevPrivateInfo.lastProcessedBlock !== nextPrivateInfo.lastProcessedBlock) return true;
     if (prevPrivateInfo.currentSync?.state !== nextPrivateInfo.currentSync?.state) return true;
     if (
       prevPrivateInfo.currentSync?.lastBlockDownloaded !==
@@ -48,8 +48,8 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     )
       return true;
     if (
-      prevPrivateInfo.currentSync?.lastBlockProcessed !==
-      nextPrivateInfo.currentSync?.lastBlockProcessed
+      prevPrivateInfo.currentSync?.lastProcessedBlock !==
+      nextPrivateInfo.currentSync?.lastProcessedBlock
     )
       return true;
     if ((prevPrivateInfo.transactions?.length ?? 0) !== (nextPrivateInfo.transactions?.length ?? 0))
