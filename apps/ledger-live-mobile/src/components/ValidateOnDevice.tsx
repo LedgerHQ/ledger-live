@@ -4,7 +4,12 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getMainAccount, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
+import {
+  findSubAccountById,
+  getFeesCurrency,
+  getFeesUnit,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
@@ -55,8 +60,21 @@ function AmountField({ account, status, field }: FieldComponentProps) {
 function FeesField({ account, parentAccount, status, field }: FieldComponentProps) {
   const mainAccount = getMainAccount(account, parentAccount);
   const { estimatedFees } = status;
-  const currency = getFeesCurrency(mainAccount);
-  const feesUnit = getFeesUnit(currency);
+  const feeCurrencyAccountId = status.feeCurrencyAccountId;
+  const feeCurrencyAccount = feeCurrencyAccountId
+    ? findSubAccountById(mainAccount, feeCurrencyAccountId)
+    : null;
+  // useAccountUnit must be called unconditionally (Rules of Hooks).
+  // Its result is only used when a specific fee sub-account is identified via
+  // feeCurrencyAccountId (e.g. Celo custom fee currencies).
+  const feeCurrencyAccountUnit = useAccountUnit(feeCurrencyAccount ?? mainAccount);
+  // Default: derive the unit from account.feesCurrency so that chains like
+  // VeChain (fees paid in VTHO) are displayed correctly. Only override with
+  // the sub-account unit when status.feeCurrencyAccountId points to one.
+  const feesUnit =
+    feeCurrencyAccount
+      ? feeCurrencyAccountUnit
+      : getFeesUnit(getFeesCurrency(mainAccount));
   return <DataRowUnitValue label={field.label} unit={feesUnit} value={estimatedFees} />;
 }
 
