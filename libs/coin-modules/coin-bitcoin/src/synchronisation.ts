@@ -595,6 +595,7 @@ export function buildSyncObservables(
     isZcash &&
     !!zcashInitialAccount &&
     (zcashInitialAccount.privateInfo?.syncState === "ready" ||
+      zcashInitialAccount.privateInfo?.syncState === "stopped" ||
       zcashInitialAccount.privateInfo?.syncState === "outdated");
   const shieldedEnabled = ufvkIsPresent && syncStateIsEnabled;
 
