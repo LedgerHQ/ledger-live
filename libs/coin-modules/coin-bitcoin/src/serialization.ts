@@ -95,7 +95,7 @@ function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoRaw {
     progress: info.progress,
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
-    lastBlockProcessed: info.lastBlockProcessed,
+    lastProcessedBlock: info.lastProcessedBlock,
     transactions: info.transactions.map(tx => ({
       ...tx,
       fee: tx.fee.toString(),
@@ -125,7 +125,7 @@ function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
     progress: info.progress,
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
-    lastBlockProcessed: info.lastBlockProcessed,
+    lastProcessedBlock: info.lastProcessedBlock,
     transactions: info.transactions.map(tx => ({
       ...tx,
       fee: new BigNumber(tx.fee),
