@@ -75,8 +75,8 @@ export type RawTransaction = {
   vShieldedOutput?: [];
   vjoinsplit?: [];
   orchard: {
-    actions?: object[];
-    valueBalance?: number;
+    actions: object[];
+    valueBalance: number;
     valueBalanceZat: number;
   };
   valueBalance?: number;
