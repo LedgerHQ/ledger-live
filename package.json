@@ -355,6 +355,5 @@
       "web3-shh"
     ]
   },
-  "packageManager": "pnpm@10.24.0",
-  "dependencies": {}
+  "packageManager": "pnpm@10.24.0"
 }
