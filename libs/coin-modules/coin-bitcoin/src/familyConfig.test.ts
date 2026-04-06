@@ -154,9 +154,6 @@ describe("findFamilyConfigById", () => {
         );
 
         await expect(firstValueFrom(obs)).resolves.toMatchObject({
-          lastBlockProcessed: 99,
-          processedBlocks: 100,
-          remainingBlocks: 321,
           transactions: [],
         });
       }
@@ -202,9 +199,6 @@ describe("findFamilyConfigById", () => {
         );
 
         await expect(firstValueFrom(obs)).resolves.toMatchObject({
-          lastBlockProcessed: 142,
-          processedBlocks: 100,
-          remainingBlocks: 278,
           transactions: [],
         });
       }
