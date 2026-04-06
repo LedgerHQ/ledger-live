@@ -18,7 +18,7 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   estimatedTimeRemaining: { hours: 0, minutes: 0 },
   birthday: ZCASH_ACTIVATION_DATE_STRING,
   lastSyncTimestamp: null,
-  lastBlockProcessed: null,
+  lastProcessedBlock: null,
   transactions: [],
 };
 export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5000; // 5 seconds

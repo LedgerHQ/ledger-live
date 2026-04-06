@@ -42,7 +42,7 @@ export type ZcashPrivateInfo = {
   ufvk: string | null;
   birthday: string | null;
   lastSyncTimestamp: number | null;
-  lastBlockProcessed: number | null;
+  lastProcessedBlock: number | null;
   transactions: ShieldedTransaction[];
 };
 
@@ -55,7 +55,7 @@ export type ZcashPrivateInfoRaw = {
   ufvk: string | null;
   birthday: string | null;
   lastSyncTimestamp: number | null;
-  lastBlockProcessed: number | null;
+  lastProcessedBlock: number | null;
   transactions: ShieldedTransactionRaw[];
 };
 
@@ -70,16 +70,6 @@ export type ShieldedTransactionRaw = {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
   };
-};
-
-export type ShieldedSyncResult = {
-  syncState: ZcashSyncState;
-  progress: number;
-  estimatedTimeRemaining: SyncEstimatedTime;
-  processedBlocks: number;
-  remainingBlocks: number;
-  lastBlockProcessed: number;
-  transactions: ShieldedTransaction[];
 };
 
 export type SyncEstimatedTime = {
