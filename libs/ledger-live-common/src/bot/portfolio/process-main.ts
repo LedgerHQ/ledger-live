@@ -42,11 +42,6 @@ if (Object.keys(SEEDS).length === 0) {
   throw new Error("SEED* env variables are required");
 }
 
-const specsPerBots = getSpecsPerBots(SEEDS, {
-  currencies: FILTER_CURRENCIES,
-  families: FILTER_FAMILIES,
-});
-
 const parallelRuns = parseInt(process.env.PARALLEL || "6", 10);
 const globalEnv = {
   PATH,
@@ -57,115 +52,127 @@ if (REPORT_FOLDER) {
   mkdirp.sync(REPORT_FOLDER);
 }
 
-let progress = 0;
-
-// run the jobs with a max parallelism to trigger sync of accounts on different bots
-promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed }) => {
-  const localFolder = REPORT_FOLDER
-    ? path.join(REPORT_FOLDER, `${family}-${key}-${seed}`)
-    : undefined;
-
-  if (localFolder) {
-    await mkdirp(localFolder);
-  }
-
-  const reportPromise = new Promise<Report>(resolve => {
-    const child = spawn(
-      "node",
-      [...(localFolder ? ["--prof"] : []), path.join(__dirname, "process-sync.js"), family, key],
-      {
-        cwd: localFolder,
-        env: {
-          ...globalEnv,
-          ...env,
-          REPORT_FOLDER: localFolder,
-          START_TIME: String(Date.now()),
-        },
-      },
-    );
-
-    // TODO timeout
-    let lastResult = null;
-    child.stdout.on("data", data => {
-      const str = data.toString();
-      if (VERBOSE) {
-        // eslint-disable-next-line no-console
-        console.log(`${family}:${key}: stdout: ${str}`);
-      }
-      if (str.startsWith("{")) {
-        lastResult = JSON.parse(str);
-      }
-    });
-    child.stderr.on("data", data => {
-      console.error(`${family}:${key}: stderr: ${data}`);
-    });
-    child.on("error", error => {
-      console.error(`${family}:${key}: error: ${error}`);
-      resolve({ error: String(error) });
-    });
-    child.on("close", code => {
-      if (code === 0) {
-        resolve(lastResult || { error: "no result" });
-      } else {
-        resolve({ error: `child process exited with code ${code}` });
-      }
-    });
+async function main() {
+  const specsPerBots = await getSpecsPerBots(SEEDS, {
+    currencies: FILTER_CURRENCIES,
+    families: FILTER_FAMILIES,
   });
 
-  const report = await reportPromise;
+  let progress = 0;
 
-  progress++;
+  // run the jobs with a max parallelism to trigger sync of accounts on different bots
+  await promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed }) => {
+    const localFolder = REPORT_FOLDER
+      ? path.join(REPORT_FOLDER, `${family}-${key}-${seed}`)
+      : undefined;
 
-  // eslint-disable-next-line no-console
-  console.log(
-    `${Math.floor((progress / specsPerBots.length) * 100)}% progress (${progress}/${
-      specsPerBots.length
-    })`,
-  );
-
-  return report;
-}).then(async (results: Report[]) => {
-  if (REPORT_FOLDER) {
-    const reportDir = path.resolve(REPORT_FOLDER);
-    try {
-      const isolateLogFiles = await globIsolateLogs(reportDir);
-      if (isolateLogFiles.length > 0) {
-        await runNodeProfProcess(reportDir, isolateLogFiles);
-        for (const rel of isolateLogFiles) {
-          await fs.unlink(path.join(reportDir, rel));
-        }
-      }
-    } catch (e) {
-      console.error(e);
+    if (localFolder) {
+      await mkdirp(localFolder);
     }
 
-    // TODO write folder
-    await fs.writeFile(
-      path.join(reportDir, "report.json"),
-      JSON.stringify(
-        results.map((r, i) => {
-          const spb = specsPerBots[i];
-          if (!spb) return r;
-          const { seed, family, key } = spb;
-          return { seed, family, key, ...r };
-        }),
-      ),
+    const reportPromise = new Promise<Report>(resolve => {
+      const child = spawn(
+        "node",
+        [...(localFolder ? ["--prof"] : []), path.join(__dirname, "process-sync.js"), family, key],
+        {
+          cwd: localFolder,
+          env: {
+            ...globalEnv,
+            ...env,
+            REPORT_FOLDER: localFolder,
+            START_TIME: String(Date.now()),
+          },
+        },
+      );
+
+      // TODO timeout
+      let lastResult = null;
+      child.stdout.on("data", data => {
+        const str = data.toString();
+        if (VERBOSE) {
+          // eslint-disable-next-line no-console
+          console.log(`${family}:${key}: stdout: ${str}`);
+        }
+        if (str.startsWith("{")) {
+          lastResult = JSON.parse(str);
+        }
+      });
+      child.stderr.on("data", data => {
+        console.error(`${family}:${key}: stderr: ${data}`);
+      });
+      child.on("error", error => {
+        console.error(`${family}:${key}: error: ${error}`);
+        resolve({ error: String(error) });
+      });
+      child.on("close", code => {
+        if (code === 0) {
+          resolve(lastResult || { error: "no result" });
+        } else {
+          resolve({ error: `child process exited with code ${code}` });
+        }
+      });
+    });
+
+    const report = await reportPromise;
+
+    progress++;
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `${Math.floor((progress / specsPerBots.length) * 100)}% progress (${progress}/${
+        specsPerBots.length
+      })`,
     );
 
-    const csvs = csvReports(results, specsPerBots);
-    for (const { filename, content } of csvs) {
-      const folder = path.join(reportDir, path.dirname(filename));
-      await mkdirp(folder);
-      await fs.writeFile(path.join(folder, path.basename(filename)), content);
+    return report;
+  }).then(async (results: Report[]) => {
+    if (REPORT_FOLDER) {
+      const reportDir = path.resolve(REPORT_FOLDER);
+      try {
+        const isolateLogFiles = await globIsolateLogs(reportDir);
+        if (isolateLogFiles.length > 0) {
+          await runNodeProfProcess(reportDir, isolateLogFiles);
+          for (const rel of isolateLogFiles) {
+            await fs.unlink(path.join(reportDir, rel));
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      // TODO write folder
+      await fs.writeFile(
+        path.join(reportDir, "report.json"),
+        JSON.stringify(
+          results.map((r, i) => {
+            const spb = specsPerBots[i];
+            if (!spb) return r;
+            const { seed, family, key } = spb;
+            return { seed, family, key, ...r };
+          }),
+        ),
+      );
+
+      const csvs = csvReports(results, specsPerBots);
+      for (const { filename, content } of csvs) {
+        const folder = path.join(reportDir, path.dirname(filename));
+        await mkdirp(folder);
+        await fs.writeFile(path.join(folder, path.basename(filename)), content);
+      }
     }
-  }
-  if (SUMMARY) {
-    const markdown = finalMarkdownReport(results, specsPerBots);
-    await fs.writeFile(SUMMARY, markdown, "utf-8");
-  } else {
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(results));
-  }
+    if (SUMMARY) {
+      const markdown = finalMarkdownReport(results, specsPerBots);
+      await fs.writeFile(SUMMARY, markdown, "utf-8");
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(JSON.stringify(results));
+    }
+  });
+}
+
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
 });
 
 /**

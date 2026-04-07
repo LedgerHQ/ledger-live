@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
@@ -33,7 +33,6 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { amount, account, validator } = route.params;
 
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account, undefined);
   const { locale } = useSettings();
 
   const [value, setValue] = useState(new BigNumber(amount));
@@ -42,14 +41,22 @@ const PickAmount = (props: PickAmountPropsType) => {
    * Instantiate the transaction when opening the flow. Only gets runned once.
    */
 
-  const { transaction, updateTransaction } = useBridgeTransaction(() => ({
+  const { transaction, setTransaction, updateTransaction } = useBridgeTransaction(() => ({
     account,
-    transaction: bridge.updateTransaction(bridge.createTransaction(account), {
-      recipient: validator.contract,
-      mode: "unDelegate",
-      amount,
-    }),
   }));
+
+  const undelegateInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !undelegateInitSet.current) {
+      undelegateInitSet.current = true;
+      setTransaction({
+        ...transaction,
+        recipient: validator.contract,
+        mode: "unDelegate",
+        amount,
+      } as typeof transaction);
+    }
+  }, [transaction, setTransaction, validator.contract, amount]);
 
   /*
    * Created a memoized list of all the ratios and expose the calculated value based on each percentage.
@@ -129,15 +136,16 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const updateValue = useCallback(
-    (value: BigNumber) => {
+    async (value: BigNumber) => {
       setValue(value);
+      const bridge = await getAccountBridge(account, undefined);
       updateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           amount: value,
         }),
       );
     },
-    [bridge, updateTransaction],
+    [account, updateTransaction],
   );
 
   /*

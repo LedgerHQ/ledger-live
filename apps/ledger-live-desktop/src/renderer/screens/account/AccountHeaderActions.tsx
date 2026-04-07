@@ -7,7 +7,7 @@ import {
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TFunction } from "i18next";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -221,6 +221,17 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const walletState = useSelector(walletSelector);
   const routeToStakePlatformApp = getRouteToPlatformApp(account, walletState, parentAccount);
 
+  const [canSendAccount, setCanSendAccount] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    canSend(account, parentAccount).then(result => {
+      if (!cancelled) setCanSendAccount(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [account, parentAccount]);
+
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
   const availableOnSwap = currenciesAll.includes(currency.id);
@@ -357,7 +368,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}
-      {canSend(account, parentAccount) ? (
+      {canSendAccount ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />

@@ -1,10 +1,9 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { SuiAccount, Transaction } from "@ledgerhq/live-common/families/sui/types";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
+import { Operation, Account } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -88,17 +87,15 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgePending,
   } = useBridgeTransaction(() => {
     const { account, stakedSuiId, amount } = params;
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
-    const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      mode: "undelegate",
-      stakedSuiId,
-      amount: new BigNumber(amount),
-      useAllAmount: true,
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: {
+        mode: "undelegate",
+        stakedSuiId,
+        amount: new BigNumber(amount),
+        useAllAmount: true,
+      },
     };
   });
 

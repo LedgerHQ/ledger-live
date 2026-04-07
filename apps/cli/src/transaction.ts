@@ -13,6 +13,8 @@ import {
   getRegisteredFamilies,
   loadSetupForFamily,
 } from "@ledgerhq/live-common/coin-modules/registry";
+
+const loadedSetups = new Map<string, any>();
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -50,64 +52,79 @@ export type InferTransactionsOpts = Partial<{
   tokenIds: string;
   quantities: string;
 }>;
+
+const baseTransactionsOpts = [
+  {
+    name: "self-transaction",
+    type: Boolean,
+    desc: "Pre-fill the transaction for the account to send to itself",
+  },
+  {
+    name: "use-all-amount",
+    type: Boolean,
+    desc: "Send MAX of the account balance",
+  },
+  {
+    name: "recipient",
+    type: String,
+    desc: "the address to send funds to",
+    multiple: true,
+  },
+  {
+    name: "amount",
+    type: String,
+    desc: "how much to send in the main currency unit",
+  },
+  {
+    name: "shuffle",
+    type: Boolean,
+    desc: "if using multiple token or recipient, order will be randomized",
+  },
+  {
+    name: "collection",
+    type: String,
+    desc: "collection of an NFT (in corelation with --tokenIds)",
+  },
+  {
+    name: "tokenIds",
+    type: String,
+    desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
+  },
+  {
+    name: "quantities",
+    type: String,
+    desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
+  },
+];
+
+export async function loadAllCliTools(): Promise<void> {
+  await Promise.all(
+    getRegisteredFamilies().map(async f => {
+      loadedSetups.set(f, await loadSetupForFamily(f));
+    }),
+  );
+}
+
+// Returns opts combining base opts with family-specific opts. Call loadAllCliTools() first.
 export const inferTransactionsOpts = uniqBy(
-  [
-    {
-      name: "self-transaction",
-      type: Boolean,
-      desc: "Pre-fill the transaction for the account to send to itself",
-    },
-    {
-      name: "use-all-amount",
-      type: Boolean,
-      desc: "Send MAX of the account balance",
-    },
-    {
-      name: "recipient",
-      type: String,
-      desc: "the address to send funds to",
-      multiple: true,
-    },
-    {
-      name: "amount",
-      type: String,
-      desc: "how much to send in the main currency unit",
-    },
-    {
-      name: "shuffle",
-      type: Boolean,
-      desc: "if using multiple token or recipient, order will be randomized",
-    },
-    {
-      name: "collection",
-      type: String,
-      desc: "collection of an NFT (in corelation with --tokenIds)",
-    },
-    {
-      name: "tokenIds",
-      type: String,
-      desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
-    },
-    {
-      name: "quantities",
-      type: String,
-      desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
-    },
-  ].concat(
+  baseTransactionsOpts.concat(
     flatMap(
-      getRegisteredFamilies().map(family => loadSetupForFamily(family).cliTools),
+      getRegisteredFamilies()
+        .map(f => loadedSetups.get(f)?.cliTools)
+        .filter(Boolean),
       (m: unknown) =>
         (m && typeof m === "object" && "options" in m ? (m as any).options : []) || [],
     ),
   ),
   "name",
 );
+
 export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
-  const bridge = getAccountBridge(mainAccount, null);
-  const specific = loadSetupForFamily(mainAccount.currency.family).cliTools;
+  const bridge = await getAccountBridge(mainAccount, null);
+  const specific = loadedSetups.get(mainAccount.currency.family)?.cliTools;
 
   const inferAccounts: (account: Account, opts: Record<string, unknown>) => AccountLikeArray =
     (specific && "inferAccounts" in specific && (specific.inferAccounts as any)) ||

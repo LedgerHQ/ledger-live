@@ -9,7 +9,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -96,15 +95,10 @@ const Body = ({ t, stepId, device, openModal, onClose, onChangeStepId, params, m
   } = useBridgeTransaction(() => {
     const { account } = params;
     invariant(account, "celo: account required");
-    const bridge = getAccountBridge(account, undefined);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode,
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: { mode },
     };
   });
 

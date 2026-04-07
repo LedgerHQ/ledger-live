@@ -98,7 +98,7 @@ describe("Bitcoin EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { feePerByte: new BigNumber(15) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
+    (getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: bridgeUpdateTransaction,
     });
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
@@ -127,7 +127,7 @@ describe("Bitcoin EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { feePerByte: new BigNumber(15) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
+    (getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: bridgeUpdateTransaction,
     });
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);

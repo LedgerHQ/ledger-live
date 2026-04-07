@@ -68,16 +68,16 @@ const StepAmount = ({
   );
 
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account, parentAccount);
   const onChange = useCallback(
-    (index: number) => {
+    async (index: number) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           index,
         }),
       );
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, parentAccount, transaction, onChangeTransaction],
   );
   const { pendingWithdrawals } = account.celoResources;
   if ((transaction.index === null || transaction.index === undefined) && pendingWithdrawals[0])

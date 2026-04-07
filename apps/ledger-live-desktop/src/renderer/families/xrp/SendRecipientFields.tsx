@@ -13,8 +13,8 @@ type Props = {
 const uint32maxPlus1 = BigNumber(2).pow(32);
 const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
   const onChangeTag = useCallback(
-    (str: string) => {
-      const bridge = getAccountBridge(account);
+    async (str: string) => {
+      const bridge = await getAccountBridge(account);
       const tag = BigNumber(str.replace(/[^0-9]/g, ""));
       const patch = {
         tag:

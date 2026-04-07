@@ -1,11 +1,10 @@
 import invariant from "invariant";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type {
   AlgorandAccount,
   AlgorandTransaction,
@@ -37,19 +36,19 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { locale } = useSettings();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
-  const bridge = getAccountBridge(mainAccount, undefined);
   invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { rewards } = mainAccount.algorandResources;
   const unit = useAccountUnit(mainAccount);
-  const { transaction, status } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
-        mode: "claimReward",
-      }),
-    };
-  });
+  const modeSet = useRef(false);
+  const { transaction, setTransaction, status } = useBridgeTransaction(() => ({
+    account,
+  }));
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...transaction, mode: "claimReward" } as typeof transaction);
+    }
+  }, [transaction, setTransaction]);
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,

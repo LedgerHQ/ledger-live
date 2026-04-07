@@ -6,13 +6,12 @@ import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -94,23 +93,18 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const validators = useHederaValidators(account.currency);
+  const defaultValidator = getDefaultValidator(validators);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(() => {
-      const bridge: AccountBridge<Transaction> = getAccountBridge(account);
-      const t = bridge.createTransaction(account);
-      const defaultValidator = getDefaultValidator(validators);
-
-      const transaction = bridge.updateTransaction(t, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: defaultValidator?.nodeId ?? null,
-        },
-      });
-
       return {
         account,
         parentAccount: undefined,
-        transaction,
+        transactionPatch: {
+          mode: HEDERA_TRANSACTION_MODES.Delegate,
+          properties: {
+            stakingNodeId: defaultValidator?.nodeId ?? null,
+          },
+        },
       };
     });
 

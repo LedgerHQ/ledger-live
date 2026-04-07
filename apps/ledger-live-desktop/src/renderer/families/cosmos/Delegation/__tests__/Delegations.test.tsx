@@ -12,6 +12,11 @@ jest.mock("@ledgerhq/live-common/config/index", () => ({
   getCurrencyConfiguration: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/coin-cosmos/chain/chain", () => ({
+  __esModule: true,
+  default: jest.fn(() => ({ unbondingPeriod: 21 })),
+}));
+
 describe("Cosmos Delegations Component", () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockCosmosAccount = {

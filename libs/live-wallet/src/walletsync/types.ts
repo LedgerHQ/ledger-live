@@ -61,7 +61,7 @@ export interface WalletSyncDataManager<
  * this provide the implementations needed by modules to be integrated at the final projects. This is typically because this library is independant from live-common and this context have all the necessary dependencies. Feel free to evolve and adds what modules need to resolve information. (Also note that LLD/LLM will have different implementations, for instance different backends for bridgeCache)
  */
 export type WalletSyncDataManagerResolutionContext = {
-  getAccountBridge: <T extends TransactionCommon>(account: Account) => AccountBridge<T>;
+  getAccountBridge: <T extends TransactionCommon>(account: Account) => Promise<AccountBridge<T>>;
   bridgeCache: BridgeCacheSystem;
   blacklistedTokenIds?: string[];
 };

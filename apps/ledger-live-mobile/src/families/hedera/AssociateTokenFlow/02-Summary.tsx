@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Trans } from "~/context/Locale";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
@@ -35,29 +34,32 @@ export default function Summary({ navigation, route }: Props) {
   invariant(account, "hedera: account is required");
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(account, parentAccount);
-    const transaction = bridge.createTransaction(account);
-    const updatedTransaction = bridge.updateTransaction(transaction, {
-      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
-      assetReference: token.contractAddress,
-      assetOwner: mainAccount.freshAddress,
-      properties: {
-        token,
-      },
-    } satisfies Partial<Transaction>);
-
-    return {
+  const { transaction, status, bridgeError, bridgePending, setTransaction } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount,
-      transaction: updatedTransaction,
-    };
-  });
+    }),
+  );
+  const associateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !associateModeSet.current) {
+      associateModeSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        assetReference: token.contractAddress,
+        assetOwner: mainAccount.freshAddress,
+        properties: {
+          token,
+        },
+      } as Transaction);
+    }
+  }, [transaction, setTransaction, token, mainAccount.freshAddress]);
 
   const navigateToNext = useCallback(() => {
     navigation.navigate(ScreenName.HederaAssociateTokenSelectDevice, {
       ...route.params,
-      transaction,
+      transaction: (transaction as unknown as Transaction) ?? undefined,
       status,
     });
   }, [navigation, transaction, status, route]);

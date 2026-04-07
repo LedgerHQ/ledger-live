@@ -1,3 +1,4 @@
+import type { Account } from "@ledgerhq/types-live";
 import { map, switchMap } from "rxjs/operators";
 import { accountFormatters, decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -26,7 +27,7 @@ export default {
       switchMap(async account => {
         const { currencyId } = decodeAccountId(account.id);
         const currency = getCryptoCurrencyById(currencyId);
-        const currencyBridge = getCurrencyBridge(currency);
+        const currencyBridge = await getCurrencyBridge(currency);
         const { nftResolvers } = currencyBridge;
 
         return account.nfts?.length && nftResolvers?.nftMetadata
@@ -46,6 +47,8 @@ export default {
             }
           : account;
       }),
-      map(account => (accountFormatters[opts.format] || accountFormatters.default)(account)),
+      map(account =>
+        (accountFormatters[opts.format] || accountFormatters.default)(account as Account),
+      ),
     ),
 };

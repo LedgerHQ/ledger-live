@@ -63,8 +63,8 @@ export default function KaspaSendRowsFee({
     [defaultStrategies, transaction],
   );
   const onFeesSelected = useCallback(
-    ({ label }: SelectFeeStrategy) => {
-      const bridge = getAccountBridge(account, parentAccount);
+    async ({ label }: SelectFeeStrategy) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           feesStrategy: label,

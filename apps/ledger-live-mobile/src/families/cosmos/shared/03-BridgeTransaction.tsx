@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import invariant from "invariant";
 import { Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { ScreenName } from "~/const";
@@ -28,40 +27,41 @@ export default function CosmosBridgeTransaction({ navigation, route }: Props) {
   invariant(account, "account required");
 
   const mainAccount = getMainAccount(account) as CosmosAccount;
-  const bridge = getAccountBridge(account);
   const { transaction: initialTx, mode } = route.params;
 
-  const { transaction, bridgePending, status } = useBridgeTransaction(() => {
-    if (!initialTx) {
-      const t = bridge.createTransaction(mainAccount);
-
+  const { transaction, bridgePending, status, setTransaction } = useBridgeTransaction(() => {
+    if (initialTx) {
+      return { account, transaction: initialTx };
+    }
+    return { account };
+  });
+  const bridgeTxModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !bridgeTxModeSet.current && !initialTx) {
+      bridgeTxModeSet.current = true;
       if (mode === "undelegation") {
         const validator = route.params?.validator;
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "undelegation",
-            validators: [
-              {
-                address: validator?.validatorAddress ?? "",
-                amount: BigNumber(0),
-              },
-            ],
-            recipient: mainAccount.freshAddress,
-          }),
-        };
-      }
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
+        setTransaction({
+          ...transaction,
+          mode: "undelegation",
+          validators: [
+            {
+              address: validator?.validatorAddress ?? "",
+              amount: BigNumber(0),
+            },
+          ],
+          recipient: mainAccount.freshAddress,
+        } as unknown as typeof transaction);
+      } else {
+        setTransaction({
+          ...transaction,
           mode: "redelegate",
           validators: [],
-        }),
-      };
+        } as unknown as typeof transaction);
+      }
     }
-
-    return { account, transaction: initialTx };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction, setTransaction]);
   useEffect(() => {
     if (bridgePending || !transaction) return;
 

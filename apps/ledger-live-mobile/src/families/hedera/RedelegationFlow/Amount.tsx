@@ -1,12 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import type { AccountBridge } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
@@ -36,23 +34,25 @@ function RedelegationAmount({ navigation, route }: Props) {
   invariant(account.type === "Account", "account type must be Account");
 
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
-  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(account);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: HEDERA_TRANSACTION_MODES.Redelegate,
-      properties: {
-        stakingNodeId: route.params.selectedValidator.nodeId,
-      } as const,
-    });
-
-    return {
+  const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount: undefined,
-      transaction,
-    };
-  });
+    }),
+  );
+  const redelegateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !redelegateModeSet.current) {
+      redelegateModeSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: HEDERA_TRANSACTION_MODES.Redelegate,
+        properties: {
+          stakingNodeId: route.params.selectedValidator.nodeId,
+        } as const,
+      } as Transaction);
+    }
+  }, [transaction, setTransaction, route.params.selectedValidator.nodeId]);
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "hedera", "transaction hedera");

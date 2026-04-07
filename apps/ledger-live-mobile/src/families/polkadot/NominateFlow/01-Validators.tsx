@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -68,39 +68,42 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { locale } = useSettings();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
-  const bridge = getAccountBridge(account, parentAccount);
   const [drawerValidator, setDrawerValidator] = useState<PolkadotValidator | null | undefined>();
   const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");
   const bridgeTransaction = useBridgeTransaction(() => {
     const tx = route.params.transaction;
-
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-      const initialValidators = (mainAccount.polkadotResources?.nominations || [])
-        .filter(nomination => !!nomination.status)
-        .map(nomination => nomination.address);
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "nominate",
-          validators: initialValidators,
-        }),
-      };
+    if (tx) {
+      return { account, transaction: tx };
     }
-
-    return {
-      account,
-      transaction: tx,
-    };
+    return { account };
   });
+
+  const nominateInitSet = useRef(false);
+  useEffect(() => {
+    if (bridgeTransaction.transaction && !nominateInitSet.current && !route.params.transaction) {
+      nominateInitSet.current = true;
+      getAccountBridge(account, parentAccount).then(bridge => {
+        const t = bridge.createTransaction(mainAccount);
+        const initialValidators = (mainAccount.polkadotResources?.nominations || [])
+          .filter(nomination => !!nomination.status)
+          .map(nomination => nomination.address);
+        bridgeTransaction.setTransaction(
+          bridge.updateTransaction(t, {
+            mode: "nominate",
+            validators: initialValidators,
+          }) as Transaction,
+        );
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bridgeTransaction.transaction]);
 
   const { setTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
   const { transaction } = bridgeTransaction as { transaction: Transaction };
 
-  invariant(transaction && transaction.validators, "transaction and validators required");
   const [searchQuery, setSearchQuery] = useState("");
-  const validators = useMemo(() => transaction.validators || [], [transaction.validators]);
+  const validators = useMemo(() => transaction?.validators || [], [transaction?.validators]);
   const nominations = useMemo(
     () => polkadotResources.nominations || [],
     [polkadotResources.nominations],
@@ -172,17 +175,18 @@ function NominateSelectValidator({ navigation, route }: Props) {
     });
   }, [navigation, route.params, transaction, status]);
   const onSelect = useCallback(
-    (validator: PolkadotValidator, selected: boolean) => {
+    async (validator: PolkadotValidator, selected: boolean) => {
       setDrawerValidator(undefined);
       const newValidators = selected
         ? validators.filter(v => v !== validator.address)
         : [...validators, validator.address];
+      const bridge = await getAccountBridge(account, parentAccount);
       const tx = bridge.updateTransaction(transaction, {
         validators: newValidators,
       });
       setTransaction(tx);
     },
-    [bridge, setTransaction, transaction, validators],
+    [account, parentAccount, setTransaction, transaction, validators],
   );
   const onOpenExplorer = useCallback(
     (address: string) => {
@@ -249,6 +253,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const ignoreError =
     error instanceof PolkadotErrors.PolkadotValidatorsRequired && !nominations.length;
   // Do not show error on first nominate
+  if (!transaction) return null;
   return (
     <SafeAreaView
       style={[

@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { from } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { useDispatch } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { MANDATORY_SYNC_POLLING_DELAY } from "../constants";
@@ -50,11 +52,10 @@ export const useAleoPrivateSync = ({
 
     let latestPercentage = 0;
     let latestSynced = false;
-    const bridge = getAccountBridge(acc);
-    subscriptionRef.current = bridge
-      .sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED })
+    subscriptionRef.current = from(getAccountBridge(acc))
+      .pipe(switchMap(bridge => bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED })))
       .subscribe({
-        next: updater => {
+        next: (updater: (acc: Account) => Account) => {
           const currentAcc = accountRef.current;
           if (currentAcc?.type !== "Account" || !isAleoAccount(currentAcc)) return;
           dispatch(updateAccountWithUpdater(currentAcc.id, updater));

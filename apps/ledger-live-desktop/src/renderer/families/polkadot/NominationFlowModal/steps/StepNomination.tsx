@@ -19,7 +19,6 @@ export default function StepNomination({
   onClose,
   t,
 }: StepProps) {
-  const bridge = account && getAccountBridge(account);
   const onGoToChill = useCallback(() => {
     onClose();
     openModal("MODAL_POLKADOT_SIMPLE_OPERATION", {
@@ -29,13 +28,16 @@ export default function StepNomination({
   }, [onClose, openModal, account]);
   const updateNomination = useCallback(
     (updater: (a: string[]) => string[]) => {
-      onUpdateTransaction(transaction =>
-        bridge?.updateTransaction(transaction, {
-          validators: updater(transaction.validators || []),
-        }),
-      );
+      if (!account) return;
+      getAccountBridge(account).then(bridge => {
+        onUpdateTransaction(transaction =>
+          bridge.updateTransaction(transaction, {
+            validators: updater(transaction.validators || []),
+          }),
+        );
+      });
     },
-    [bridge, onUpdateTransaction],
+    [account, onUpdateTransaction],
   );
   if (!account || !transaction) return null;
   const { polkadotResources } = account;

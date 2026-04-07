@@ -1,5 +1,5 @@
 import type { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { mergeMap } from "rxjs/operators";
 import invariant from "invariant";
 import type { SignedOperation, Account } from "@ledgerhq/types-live";
 import { fromSignedOperationRaw } from "@ledgerhq/live-common/transaction/signOperation";
@@ -22,7 +22,7 @@ export function inferSignedOperations(
   const file = opts["signed-operation"];
   invariant(file, "--signed-operation file is required");
   return jsonFromFile(file as string).pipe(
-    map(json => {
+    mergeMap(json => {
       invariant(typeof json === "object", "not an object JSON");
       invariant(typeof json.signature === "string", "missing signature");
       invariant(typeof json.operation === "object", "missing operation object");

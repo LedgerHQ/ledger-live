@@ -114,7 +114,7 @@ describe("useStepMethodContinue", () => {
     const bridgeUpdateTransaction = jest.fn().mockReturnValue(updatedTransaction);
 
     (getMainAccount as jest.Mock).mockReturnValue(account);
-    (getAccountBridge as jest.Mock).mockReturnValue({
+    (getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: bridgeUpdateTransaction,
     });
 

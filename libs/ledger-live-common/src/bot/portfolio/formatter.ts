@@ -97,7 +97,7 @@ export function csvReports(
 }
 
 export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[]): string {
-  const data = reports.map((report, i) => ({ report, ...specsPerBots[i] }));
+  const data = reports.map((report, i) => ({ report, ...specsPerBots[i] })).filter(d => d.spec);
   const { table, title } = markdownHelpers(data);
 
   let md = "";
@@ -312,8 +312,8 @@ function markdownHelpers(data: Datapoint[]): {
 } {
   const seedNames = Array.from(new Set(data.map(d => d.seed)));
   seedNames.sort();
-  // specs are assumed to be grouped by family already
-  const specs = Array.from(new Set(data.map(d => d.spec)));
+  // specs are assumed to be grouped by family already; filter out undefined entries
+  const specs = Array.from(new Set(data.map(d => d.spec).filter((s): s is AppSpec<any> => !!s)));
 
   function strong(txt: string): string {
     return "**" + txt + "**";

@@ -49,7 +49,6 @@ export default function StellarFeeRow({
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(mainAccount);
   const fees = transaction.family === "stellar" ? transaction.fees : null;
@@ -58,6 +57,7 @@ export default function StellarFeeRow({
   useEffect(() => {
     if (transaction.family === "stellar" && unit) {
       const fetchEstimatedFees = async () => {
+        const bridge = await getAccountBridge(account, parentAccount);
         const preparedTransaction = await bridge.prepareTransaction(account as Account, {
           ...transaction,
           customFees: { parameters: { fees: null } },
@@ -67,7 +67,7 @@ export default function StellarFeeRow({
 
       fetchEstimatedFees();
     }
-  }, [bridge, transaction, account, mainAccount, unit]);
+  }, [transaction, account, parentAccount, mainAccount, unit]);
 
   if (transaction.family !== "stellar" || !unit) return null;
   const isCustomFee = fees && estimatedFees ? !fees.eq(estimatedFees) : false;
@@ -75,7 +75,7 @@ export default function StellarFeeRow({
 
   const currency = getAccountCurrency(account);
 
-  const onFeeModeChange = (selectCustom: boolean) => {
+  const onFeeModeChange = async (selectCustom: boolean) => {
     setCustomSelected(selectCustom);
     if (selectCustom) {
       navigation.navigate(ScreenName.StellarEditCustomFees, {
@@ -84,6 +84,7 @@ export default function StellarFeeRow({
         transaction,
       });
     } else {
+      const bridge = await getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           fees: estimatedFees,

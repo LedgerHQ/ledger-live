@@ -67,7 +67,7 @@ export const requestAccountLogic = async (
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+      : currentRouteNameRef.current ?? "Unknown";
 
   const flow = manifest.name;
 
@@ -94,7 +94,7 @@ export const broadcastTransactionLogic = (
       parentAccount: Account | undefined,
       signedOperation: SignedOperation,
     ): Promise<string> => {
-      const bridge = getAccountBridge(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
       const mainAccount = getMainAccount(account, parentAccount);
 
       let optimisticOperation: Operation = signedOperation.operation;

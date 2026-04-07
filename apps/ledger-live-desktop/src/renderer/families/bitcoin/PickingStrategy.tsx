@@ -13,7 +13,6 @@ type Props = {
   onChange: (a: (t: Transaction, p: Partial<Transaction>) => void) => void;
 };
 export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
-  const bridge = getAccountBridge(account);
   const { item, options } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   return (
     <Box flow={2} horizontal alignItems="center" justifyContent="space-between">
@@ -24,7 +23,8 @@ export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
         width={300}
         options={options}
         value={item}
-        onChange={item =>
+        onChange={async item => {
+          const bridge = await getAccountBridge(account);
           onChange(
             bridge.updateTransaction(transaction, {
               utxoStrategy: {
@@ -34,8 +34,8 @@ export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
                   : 0,
               },
             }),
-          )
-        }
+          );
+        }}
       />
     </Box>
   );

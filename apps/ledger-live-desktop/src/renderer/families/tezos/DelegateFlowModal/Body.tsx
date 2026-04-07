@@ -7,7 +7,7 @@ import invariant from "invariant";
 import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -145,9 +145,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
 
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
-      setTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
-      );
+      setTransaction({ ...transaction, ...patch } as Transaction);
     }
   }, [account, defaultBaker, stepId, params, parentAccount, setTransaction, transaction]);
 

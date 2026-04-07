@@ -1,5 +1,4 @@
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
@@ -10,7 +9,7 @@ import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import { TrackScreen } from "~/analytics";
@@ -44,8 +43,6 @@ export default function VoteSummary({ navigation, route }: Props) {
   invariant(account, "account must be defined");
 
   const validators = useValidatorGroups();
-  const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {
@@ -55,21 +52,13 @@ export default function VoteSummary({ navigation, route }: Props) {
     return validators[0];
   }, [validators, validator]);
 
+  const modeSet = useRef(false);
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
       const tx = route.params.transaction;
 
       if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "vote",
-            recipient: defaultValidatorGroupAddress(),
-            amount: route.params.amount ?? 0,
-          }),
-        };
+        return { account };
       }
 
       return { account, transaction: tx };
@@ -79,14 +68,26 @@ export default function VoteSummary({ navigation, route }: Props) {
   invariant(transaction.family === "celo", "transaction celo");
 
   useEffect(() => {
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
-        recipient: chosenValidator.address,
-      }),
-    );
+    if (transaction && !modeSet.current && !route.params.transaction) {
+      modeSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: "vote" as const,
+        recipient: defaultValidatorGroupAddress(),
+        amount: new BigNumber(route.params.amount ?? 0),
+      });
+    }
+  }, [transaction, setTransaction, route.params.transaction, route.params.amount]);
+
+  useEffect(() => {
+    if (!transaction) return;
+    setTransaction({
+      ...transaction,
+      amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
+      recipient: chosenValidator.address,
+    });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params.amount, updateTransaction, bridge, setTransaction, chosenValidator]);
+  }, [route.params.amount, updateTransaction, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
 

@@ -1,9 +1,14 @@
 import { setupCalClientStore } from "../../test-helpers/cryptoAssetsStore";
 import "./environment";
 import BigNumber from "bignumber.js";
+import { coinModuleLoaders } from "../../coin-modules/loaders";
+import { registerCoinModules } from "../../coin-modules/registry";
 
 // Integration tests use the real CAL API
 setupCalClientStore();
+
+// Register all coin modules so getCurrencyBridge/getAccountBridge can load them dynamically
+registerCoinModules(coinModuleLoaders);
 
 jest.setTimeout(360000);
 

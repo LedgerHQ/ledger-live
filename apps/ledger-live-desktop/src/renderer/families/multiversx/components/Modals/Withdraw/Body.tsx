@@ -7,7 +7,6 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -20,7 +19,7 @@ import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { StepProps, St, StepId } from "./types";
 import {
   MultiversXAccount,
@@ -92,13 +91,11 @@ const Body = (props: Props) => {
     status,
     parentAccount,
   } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(params.account, undefined);
-    const transaction: Transaction = bridge.createTransaction(params.account);
     return {
       account: params.account,
-      transaction: bridge.updateTransaction(transaction, {
+      transactionPatch: {
         mode: "withdraw",
-      }),
+      },
     };
   });
 

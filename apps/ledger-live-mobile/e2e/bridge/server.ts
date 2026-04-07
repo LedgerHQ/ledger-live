@@ -146,13 +146,16 @@ export async function loadAccountsRaw(
 export async function loadAccounts(accounts: Account[]) {
   delete require.cache[require.resolve("@ledgerhq/live-common/account/index")]; // Clear cache
   const toAccountRaw = require("@ledgerhq/live-common/account/index").toAccountRaw;
+  const payload = await Promise.all(
+    accounts.map(async account => ({
+      version: 1,
+      data: await toAccountRaw(account),
+    })),
+  );
   await postMessage({
     type: "importAccounts",
     id: uniqueId(),
-    payload: accounts.map(account => ({
-      version: 1,
-      data: toAccountRaw(account),
-    })),
+    payload,
   });
 }
 

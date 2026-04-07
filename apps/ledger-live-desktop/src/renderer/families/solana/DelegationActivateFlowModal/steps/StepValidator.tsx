@@ -19,16 +19,17 @@ export default function StepValidator({
 }: StepProps) {
   invariant(transaction, "transaction required");
   const updateValidator = ({ address }: { address: string }) => {
-    const bridge = getAccountBridge(account);
-    onUpdateTransaction(tx => {
-      return bridge.updateTransaction(tx, {
-        model: {
-          ...tx.model,
-          uiState: {
-            ...tx.model.uiState,
-            voteAccAddr: address,
+    getAccountBridge(account).then(bridge => {
+      onUpdateTransaction(tx => {
+        return bridge.updateTransaction(tx, {
+          model: {
+            ...tx.model,
+            uiState: {
+              ...tx.model.uiState,
+              voteAccAddr: address,
+            },
           },
-        },
+        });
       });
     });
   };

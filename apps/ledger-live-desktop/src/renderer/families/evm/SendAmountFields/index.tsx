@@ -2,7 +2,6 @@ import { Transaction as EvmTransaction, Strategy } from "@ledgerhq/coin-evm/type
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
-import { AccountBridge } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import Spinner from "~/renderer/components/Spinner";
@@ -15,8 +14,6 @@ import SelectFeeStrategy from "./SelectFeeStrategy";
 
 const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
-  const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
-
   const [gasOptions, error, loading] = useGasOptions({
     currency: account.currency,
     transaction,
@@ -28,22 +25,27 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   }
 
   useEffect(() => {
-    updateTransaction((tx: EvmTransaction) => bridge.updateTransaction(tx, { ...tx, gasOptions }));
-  }, [bridge, updateTransaction, gasOptions]);
+    getAccountBridge(account).then(bridge => {
+      updateTransaction((tx: EvmTransaction) =>
+        bridge.updateTransaction(tx, { ...tx, gasOptions }),
+      );
+    });
+  }, [account, updateTransaction, gasOptions]);
 
   const [isAdvanceMode, setAdvanceMode] = useState(false);
 
   const shouldUseEip1559 = transaction.type === 2;
 
   const onFeeStrategyClick = useCallback(
-    ({ feesStrategy }: { feesStrategy: Strategy }) => {
+    async ({ feesStrategy }: { feesStrategy: Strategy }) => {
+      const bridge = await getAccountBridge(account);
       updateTransaction((tx: EvmTransaction) =>
         bridge.updateTransaction(tx, {
           feesStrategy,
         }),
       );
     },
-    [updateTransaction, bridge],
+    [updateTransaction, account],
   );
 
   if (loading) {

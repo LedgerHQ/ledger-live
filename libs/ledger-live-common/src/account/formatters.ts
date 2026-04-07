@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Operation, TransactionCommon } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { formatCurrencyUnit } from "../currencies";
@@ -67,7 +67,7 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
   );
 }
 
-const cliFormat = (account, level?: string) => {
+const cliFormat = async (account, level?: string): Promise<string> => {
   const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations } = account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
   const balance = formatCurrencyUnit(getAccountCurrency(account).units[0], account.balance, {
@@ -86,9 +86,10 @@ const cliFormat = (account, level?: string) => {
     getAccountCurrency(account).units[0],
   );
 
-  const formatAccountSpecifics = getAccountBridge(account).formatAccountSpecifics;
-  if (formatAccountSpecifics) {
-    str += formatAccountSpecifics(account);
+  const bridge = await getAccountBridge(account).catch(() => undefined);
+
+  if (bridge?.formatAccountSpecifics) {
+    str += bridge.formatAccountSpecifics(account);
     str += "\n";
   }
 
@@ -123,9 +124,7 @@ const cliFormat = (account, level?: string) => {
           if (ta) return getAccountCurrency(ta).units[0];
           console.error("unexpected missing token account " + id);
         },
-        (operation, unit) => {
-          return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
-        },
+        (operation, unit) => bridge?.formatOperationSpecifics?.(operation, unit) ?? "",
       ),
     )
     .join("");
@@ -183,27 +182,33 @@ const operationBalanceHistory = account => {
   );
 };
 
-export const accountFormatters: { [_: string]: (Account) => any } = {
+export const accountFormatters: { [_: string]: (account: Account) => string | Promise<string> } = {
   operationBalanceHistoryBackwards,
   operationBalanceHistory,
-  json: account => JSON.stringify(toAccountRaw(account)),
+  json: async account => {
+    const bridge = await getAccountBridge(account).catch(() => undefined);
+    return JSON.stringify(await toAccountRaw(account, undefined, bridge));
+  },
   head: account => cliFormat(account, "head"),
   default: account => cliFormat(account),
   basic: account => cliFormat(account, "basic"),
   full: account => cliFormat(account, "full"),
-  stats: account => stats(account),
+  stats: account => JSON.stringify(stats(account)),
   significantTokenTickers: account =>
     (account.subAccounts || [])
       .filter(isSignificantAccount)
       .map(ta => getAccountCurrency(ta).ticker)
       .join("\n"),
 };
-export function formatAccount(account: Account, format = "full"): string {
+export function formatAccount(account: Account, format = "full"): string | Promise<string> {
   const f = accountFormatters[format];
   invariant(f, "missing account formatter=" + format);
   return f(account);
 }
-export function formatOperation(account: Account | null | undefined): (arg0: Operation) => string {
+export function formatOperation(
+  account: Account | null | undefined,
+  bridge?: AccountBridge<TransactionCommon>,
+): (arg0: Operation) => string {
   const unitByAccountId = (id: string) => {
     if (!account) return;
     if (account.id === id) return getAccountCurrency(account).units[0];
@@ -211,11 +216,9 @@ export function formatOperation(account: Account | null | undefined): (arg0: Ope
     if (ta) return getAccountCurrency(ta).units[0];
   };
 
-  const familyExtra = (operation, unit) => {
-    if (!account) return "";
-
-    return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
-  };
+  const familyExtra = bridge?.formatOperationSpecifics
+    ? (operation, unit) => bridge.formatOperationSpecifics!(operation, unit)
+    : (_operation, _unit) => "";
 
   return formatOp(unitByAccountId, familyExtra);
 }

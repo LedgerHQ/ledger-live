@@ -97,7 +97,7 @@ describe("useAmountScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockedGetAccountBridge.mockReturnValue({
+    mockedGetAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
         ...tx,
         ...patch,

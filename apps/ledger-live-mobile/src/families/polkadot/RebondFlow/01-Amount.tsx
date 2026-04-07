@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -41,31 +41,42 @@ export default function PolkadotRebondAmount({ navigation, route }: NavigationPr
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
-  const bridgeTransaction = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "rebond",
-    });
-    return {
-      account: mainAccount,
-      transaction,
-    };
-  });
+  const bridgeTransaction = useBridgeTransaction(() => ({
+    account: mainAccount,
+  }));
   const { setTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as PolkadotTransaction;
+
+  const rebondInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !rebondInitSet.current) {
+      rebondInitSet.current = true;
+      getAccountBridge(account, parentAccount).then(bridge => {
+        const t = bridge.createTransaction(mainAccount);
+        setTransaction(
+          bridge.updateTransaction(t, {
+            mode: "rebond",
+          }) as PolkadotTransaction,
+        );
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
+
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;
     let cancelled = false;
     getAccountBridge(account, parentAccount)
-      .estimateMaxSpendable({
-        account,
-        parentAccount,
-        transaction: debouncedTransaction,
-      })
+      .then(bridge =>
+        bridge.estimateMaxSpendable({
+          account,
+          parentAccount,
+          transaction: debouncedTransaction,
+        }),
+      )
       .then(estimate => {
         if (cancelled) return;
         setMaxSpendable(estimate);
@@ -76,8 +87,9 @@ export default function PolkadotRebondAmount({ navigation, route }: NavigationPr
     };
   }, [account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
       if (!amount.isNaN()) {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount,
@@ -85,10 +97,10 @@ export default function PolkadotRebondAmount({ navigation, route }: NavigationPr
         );
       }
     },
-    [setTransaction, transaction, bridge],
+    [setTransaction, transaction, account, parentAccount],
   );
-  const toggleUseAllAmount = useCallback(() => {
-    const bridge = getAccountBridge(account, parentAccount);
+  const toggleUseAllAmount = useCallback(async () => {
+    const bridge = await getAccountBridge(account, parentAccount);
     if (!transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {

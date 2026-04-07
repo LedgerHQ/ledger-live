@@ -12,8 +12,8 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/coin-bitcoin/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { fromTransactionRaw } from "@ledgerhq/coin-bitcoin/transaction";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useState } from "react";
@@ -53,7 +53,7 @@ function BitcoinEditTransactionSummary({ navigation, route }: Props) {
   }));
 
   const transactionToUpdate = useMemo<BtcTransaction>(
-    () => fromTransactionRaw(transactionRaw) as BtcTransaction,
+    () => fromTransactionRaw(transactionRaw),
     [transactionRaw],
   );
 
@@ -79,34 +79,36 @@ function BitcoinEditTransactionSummary({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [mainAccount, transactionToUpdate.replaceTxId, transactionToUpdate.feePerByte]);
+  }, [mainAccount, transactionToUpdate, transactionToUpdate.replaceTxId, transactionToUpdate.feePerByte]);
 
-  const statusParams: GetEditTransactionStatusParams = {
-    editType,
-    transaction: transaction as BtcTransaction,
-    transactionToUpdate,
-    status: txStatus as TransactionStatus,
-    ...(originalFeePerByte != null ? { originalFeePerByte } : {}),
-  };
+  const statusParams: GetEditTransactionStatusParams | null = transaction
+    ? {
+        editType,
+        transaction: transaction as BtcTransaction,
+        transactionToUpdate,
+        status: txStatus as TransactionStatus,
+        ...(originalFeePerByte != null ? { originalFeePerByte } : {}),
+      }
+    : null;
 
-  const status = getEditTransactionStatus(statusParams);
-
-  invariant(transaction, "transaction is missing");
+  const status = statusParams ? getEditTransactionStatus(statusParams) : null;
 
   useTransactionChangeFromNavigation(setTransaction);
 
-  const { amount, totalSpent, errors, warnings } = status;
   const { highFeesOpen, onAcceptFees, onRejectFees, onContinue } = useEditTransactionSummaryActions(
     {
       navigation,
       nextNavigation,
       routeParams: route.params,
-      transaction,
-      status,
-      feeTooHigh: warnings.feeTooHigh,
+      transaction: transaction!,
+      status: status!,
+      feeTooHigh: status?.warnings.feeTooHigh,
     },
   );
 
+  if (!transaction || !status) return null;
+
+  const { amount, totalSpent, errors, warnings } = status;
   const firstError = errors[Object.keys(errors)[0]];
 
   const currencyOrToken = getAccountCurrency(account);

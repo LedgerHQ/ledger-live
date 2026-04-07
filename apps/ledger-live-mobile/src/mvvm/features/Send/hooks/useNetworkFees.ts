@@ -85,9 +85,9 @@ export function useNetworkFees({
   });
 
   const updateTransactionWithPatch = useCallback(
-    (patch: Partial<Transaction>) => {
+    async (patch: Partial<Transaction>) => {
+      const bridge = await getAccountBridge(account, parentAccount ?? undefined);
       transactionActions.updateTransaction(currentTx => {
-        const bridge = getAccountBridge(account, parentAccount ?? undefined);
         return bridge.updateTransaction(currentTx, patch);
       });
     },

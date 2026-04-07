@@ -19,11 +19,11 @@ type Props = {
 const Root = (props: Props) => {
   const { transaction, trackProperties } = props;
   const { fees } = transaction;
-  const bridge = getAccountBridge(props.account);
   const [estimatedFees, setEstimatedFees] = useState(fees || null);
 
   React.useEffect(() => {
     const fetchEstimatedFees = async () => {
+      const bridge = await getAccountBridge(props.account);
       const preparedTransaction = await bridge.prepareTransaction(props.account, {
         ...transaction,
         customFees: { parameters: { fees: null } },
@@ -32,7 +32,7 @@ const Root = (props: Props) => {
     };
 
     fetchEstimatedFees();
-  }, [bridge, transaction, props.account]);
+  }, [transaction, props.account]);
 
   const isCustomFee = !fees?.eq(estimatedFees || 0);
   const [isCustomMode, setCustomMode] = useState(isCustomFee);
@@ -46,12 +46,14 @@ const Root = (props: Props) => {
     });
     setCustomMode(isCustom);
     if (!isCustom) {
-      props.updateTransaction(t =>
-        bridge.updateTransaction(t, {
-          fees: estimatedFees,
-          customFees: { parameters: { fees: estimatedFees } },
-        }),
-      );
+      getAccountBridge(props.account).then(bridge => {
+        props.updateTransaction(t =>
+          bridge.updateTransaction(t, {
+            fees: estimatedFees,
+            customFees: { parameters: { fees: estimatedFees } },
+          }),
+        );
+      });
     }
   };
   return (

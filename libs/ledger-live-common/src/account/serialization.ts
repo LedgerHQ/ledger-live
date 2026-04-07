@@ -19,7 +19,6 @@ import {
   fromOperationRaw as commonFromOperationRaw,
   toOperationRaw as commonToOperationRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/index";
-import { getAccountBridge } from "../bridge";
 import { getAccountBridgeByFamily } from "../bridge/impl";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
@@ -29,60 +28,52 @@ export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
 export const toOperationRaw = (
   operation: Operation,
   preserveSubOperation?: boolean,
+  bridge?: AccountBridge<TransactionCommon>,
 ): OperationRaw => {
-  let toOperationRaw: AccountBridge<TransactionCommon>["toOperationExtraRaw"] | undefined;
-  if (operation.extra) {
-    const family = inferFamilyFromAccountId(operation.accountId);
-
-    if (family) {
-      const bridge = getAccountBridgeByFamily(family, operation.accountId);
-      toOperationRaw = bridge.toOperationExtraRaw;
-    }
-  }
-
-  return commonToOperationRaw(operation, preserveSubOperation, toOperationRaw);
+  return commonToOperationRaw(operation, preserveSubOperation, bridge?.toOperationExtraRaw);
 };
 
-export const fromOperationRaw = (
+export const fromOperationRaw = async (
   operationRaw: OperationRaw,
   accountId: string,
   subAccounts?: TokenAccount[] | null | undefined,
-): Operation => {
-  let fromOperationRaw: AccountBridge<TransactionCommon>["fromOperationExtraRaw"] | undefined;
-
+): Promise<Operation> => {
+  let fromOperationExtraRaw: AccountBridge<TransactionCommon>["fromOperationExtraRaw"] | undefined;
   if (operationRaw.extra) {
     const family = inferFamilyFromAccountId(operationRaw.accountId);
-
     if (family) {
-      const bridge = getAccountBridgeByFamily(family, accountId);
-      fromOperationRaw = bridge.fromOperationExtraRaw;
+      const bridge = await getAccountBridgeByFamily(family, accountId).catch(() => undefined);
+      fromOperationExtraRaw = bridge?.fromOperationExtraRaw;
     }
   }
-
-  return commonFromOperationRaw(operationRaw, accountId, subAccounts, fromOperationRaw);
+  return commonFromOperationRaw(operationRaw, accountId, subAccounts, fromOperationExtraRaw);
 };
 
 export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
-  const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
-
+  const bridge = await getAccountBridgeByFamily(currency.family, rawAccount.id).catch(
+    () => undefined,
+  );
   return await commonFromAccountRaw(rawAccount, {
-    assignFromAccountRaw: bridge.assignFromAccountRaw,
-    assignFromTokenAccountRaw: bridge.assignFromTokenAccountRaw,
-    fromOperationExtraRaw: bridge.fromOperationExtraRaw,
+    assignFromAccountRaw: bridge?.assignFromAccountRaw,
+    assignFromTokenAccountRaw: bridge?.assignFromTokenAccountRaw,
+    fromOperationExtraRaw: bridge?.fromOperationExtraRaw,
   });
 }
 
-export function toAccountRaw(account: Account, userData?: AccountUserData): AccountRaw {
-  const bridge = getAccountBridge(account);
-
+export async function toAccountRaw(
+  account: Account,
+  userData?: AccountUserData,
+  bridge?: AccountBridge<TransactionCommon>,
+): Promise<AccountRaw> {
+  const resolvedBridge =
+    bridge ??
+    (await getAccountBridgeByFamily(account.currency.family, account.id).catch(() => undefined));
   const commonAccountRaw = commonToAccountRaw(account, {
-    assignToAccountRaw: bridge.assignToAccountRaw,
-    assignToTokenAccountRaw: bridge.assignToTokenAccountRaw,
-    toOperationExtraRaw: bridge.toOperationExtraRaw,
+    assignToAccountRaw: resolvedBridge?.assignToAccountRaw,
+    assignToTokenAccountRaw: resolvedBridge?.assignToTokenAccountRaw,
+    toOperationExtraRaw: resolvedBridge?.toOperationExtraRaw,
   });
-
-  // extend with user data fields
   if (userData) {
     commonAccountRaw.name = userData.name;
     commonAccountRaw.starred = userData.starredIds.includes(commonAccountRaw.id);
@@ -90,7 +81,6 @@ export function toAccountRaw(account: Account, userData?: AccountUserData): Acco
       tokenAccount.starred = userData.starredIds.includes(tokenAccount.id);
     }
   }
-
   return commonAccountRaw;
 }
 

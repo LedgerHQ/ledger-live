@@ -118,8 +118,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
   );
 
   invariant(account, "account must be defined");
-  invariant(transaction, "transaction must be defined");
-  invariant(transaction.family === "tezos", "transaction tezos");
 
   // make sure tx is in sync
   useEffect(() => {
@@ -141,9 +139,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
-      setTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
-      );
+      getAccountBridge(account, parentAccount).then(bridge => {
+        setTransaction(bridge.updateTransaction(transaction, patch));
+      });
     }
   }, [account, defaultBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
 
@@ -194,9 +192,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
   const addr =
-    transaction.mode === "undelegate"
+    (transaction as TezosTransaction)?.mode === "undelegate"
       ? delegation?.address || stakingPositions[0]?.delegate || ""
-      : transaction.recipient;
+      : transaction?.recipient ?? "";
 
   const baker = useBaker(addr);
   const bakerName = baker ? baker.name : shortAddressPreview(addr);
@@ -211,7 +209,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
       ...route.params,
       accountId: account.id,
-      transaction,
+      transaction: transaction as unknown as TezosTransaction,
       status,
     });
   }, [navigation, route.params, account.id, transaction, status]);
@@ -219,6 +217,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const notEnoughBalance = status.errors.amount instanceof NotEnoughBalanceToDelegate;
   const isUndelagating = route.params?.mode === "undelegate";
   const hasNotEnoughBalanceWhenUndelegating = notEnoughBalance && isUndelagating;
+
+  if (!transaction || transaction.family !== "tezos") return null;
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

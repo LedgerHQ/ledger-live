@@ -165,7 +165,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             source:
               currentRouteNameRef.current === "Platform Catalog"
                 ? "Discover"
-                : (currentRouteNameRef.current ?? "Unknown"),
+                : currentRouteNameRef.current ?? "Unknown",
           });
         }),
       [tracking, manifest, deactivatedCurrencyIds, walletState, openModularDrawer],
@@ -222,8 +222,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           { manifest, accounts, tracking },
           accountId,
           transaction,
-          (account, parentAccount, { liveTx }) => {
-            const tx = prepareSignTransaction(account, parentAccount, liveTx);
+          async (account, parentAccount, { liveTx }) => {
+            const tx = await prepareSignTransaction(account, parentAccount, liveTx);
 
             return new Promise((resolve, reject) => {
               let done = false;
@@ -248,7 +248,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     if (done) return;
                     done = true;
                     tracking.platformSignTransactionSuccess(manifest);
-                    resolve(serializePlatformSignedTransaction(signedOperation));
+                    serializePlatformSignedTransaction(signedOperation).then(resolve, onError);
                   },
                   onError,
                 },

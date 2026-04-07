@@ -1,13 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { getAccountBridge } from "../../../bridge/impl";
+import { getAccountBridge } from "../../../bridge";
+import type { Account, AccountBridge, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import type { SendFlowTransactionActions } from "../types";
-import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "../../../generated/types";
 import { getMaxAvailable, isInsufficientFundsAmountError } from "../amount/utils/amountReview";
 
 export type UseSendFlowAmountReviewCoreLabels = Readonly<{
@@ -56,14 +56,22 @@ export function useSendFlowAmountReviewCore({
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
 
+  const bridgeRef = useRef<AccountBridge<TransactionCommon> | undefined>(undefined);
+  useEffect(() => {
+    getAccountBridge(mainAccount).then(bridge => {
+      bridgeRef.current = bridge;
+    }, () => undefined);
+  }, [mainAccount]);
+
   const updateTransactionWithPatch = useCallback(
     (patch: Partial<Transaction>) => {
+      const bridge = bridgeRef.current;
       transactionActions.updateTransaction(currentTx => {
-        const bridge = getAccountBridge(account, parentAccount ?? undefined);
-        return bridge.updateTransaction(currentTx, patch);
+        if (bridge) return bridge.updateTransaction(currentTx, patch) as Transaction;
+        return { ...currentTx, ...patch } as Transaction;
       });
     },
-    [account, parentAccount, transactionActions],
+    [transactionActions],
   );
 
   const rawTransactionAmount = transaction.amount ?? new BigNumber(0);

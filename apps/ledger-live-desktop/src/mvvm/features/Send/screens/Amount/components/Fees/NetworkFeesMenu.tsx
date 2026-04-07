@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
+import { getSendDescriptorFromRegistry } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   getAccountCurrency,
@@ -120,7 +120,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
     sendFeatures.hasCustomFees(currency) && !!sendFeatures.getCustomFeeConfig(currency);
   const hasCoinControl = sendFeatures.hasCoinControl(currency);
   const showCoinControlMenuItem = hasCoinControl && currentStep !== SEND_FLOW_STEP.COIN_CONTROL;
-  const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
+  const legendConfig = getSendDescriptorFromRegistry(currency)?.fees.presets?.legend;
   const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";
 
   const hasMenuOptions = hasPresets || hasCustom || hasCoinControl;

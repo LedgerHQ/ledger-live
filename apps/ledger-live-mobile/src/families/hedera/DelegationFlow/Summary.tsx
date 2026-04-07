@@ -1,17 +1,20 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import Config from "react-native-config";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import {
   getDefaultValidator,
   isStakingTransaction,
 } from "@ledgerhq/live-common/families/hedera/utils";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import type {
+  HederaValidator,
+  Transaction,
+  TransactionStaking,
+} from "@ledgerhq/live-common/families/hedera/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -45,30 +48,33 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const validators = useHederaValidators(account.currency);
   const defaultValidator = getDefaultValidator(validators);
 
-  const { transaction, updateTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
-      const t = bridge.createTransaction(account);
-
-      const transaction = bridge.updateTransaction(t, {
+  const { transaction, updateTransaction, status, bridgePending, bridgeError, setTransaction } =
+    useBridgeTransaction(() => ({
+      account,
+      parentAccount: undefined,
+    }));
+  const delegateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !delegateModeSet.current) {
+      delegateModeSet.current = true;
+      setTransaction({
+        ...transaction,
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         properties: {
           stakingNodeId: defaultValidator?.nodeId ?? null,
         },
-      });
-
-      return {
-        account,
-        parentAccount: undefined,
-        transaction,
-      };
-    });
+      } as Transaction);
+    }
+  }, [transaction, setTransaction, defaultValidator]);
 
   invariant(transaction, "transaction must be defined");
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
+  invariant(
+    isStakingTransaction(transaction as unknown as Transaction),
+    "hedera: staking tx expected",
+  );
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
 
@@ -82,7 +88,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
       ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction,
+      transaction: transaction as unknown as Transaction,
       status,
     });
   }, [route.params, navigation, account.id, parentAccount?.id, transaction, status]);
@@ -93,7 +99,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   });
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
+  const selectedValidatorNodeId =
+    (transaction as unknown as TransactionStaking).properties?.stakingNodeId ?? null;
   const selectedValidator =
     validators.find(v => v.nodeId === selectedValidatorNodeId) ?? defaultValidator ?? undefined;
   const hasErrors = Object.keys(status.errors).length > 0;
@@ -110,7 +117,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
         properties: {
           stakingNodeId: validator?.nodeId ?? null,
         },
-      };
+      } as unknown as typeof prev;
     });
   }, [updateTransaction, defaultValidator, route.params]);
 

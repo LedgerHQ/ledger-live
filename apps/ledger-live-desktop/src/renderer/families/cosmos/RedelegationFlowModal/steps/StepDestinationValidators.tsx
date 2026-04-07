@@ -13,12 +13,12 @@ export default function StepValidators({
   transitionTo,
 }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
   const updateRedelegation = useCallback(
-    (newTransaction: Partial<Transaction>) => {
+    async (newTransaction: Partial<Transaction>) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
-    [bridge, onUpdateTransaction],
+    [account, parentAccount, onUpdateTransaction],
   );
 
   const updateDestinationValidator = useCallback(

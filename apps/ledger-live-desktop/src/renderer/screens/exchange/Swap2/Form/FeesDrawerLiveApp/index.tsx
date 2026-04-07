@@ -47,7 +47,6 @@ export default function FeesDrawerLiveApp({
   const mainAccount = getMainAccount(account, parentAccount);
   const isPreparingRef = useRef(false);
 
-  const bridge = getAccountBridge(mainAccount, parentAccount);
   const { amount: amountError, gasPrice: gasPriceError } = transactionStatus.errors;
 
   const handleSetTransaction = useCallback(
@@ -63,21 +62,22 @@ export default function FeesDrawerLiveApp({
       }
 
       isPreparingRef.current = true;
-      bridge
-        .prepareTransaction(mainAccount, newTransaction)
-        .then(preparedTransaction => {
-          return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
-            setTransactionStatus(status);
-            setTransactionState(preparedTransaction);
-            isPreparingRef.current = false;
-          });
-        })
+      getAccountBridge(mainAccount, parentAccount)
+        .then(bridge =>
+          bridge.prepareTransaction(mainAccount, newTransaction).then(preparedTransaction => {
+            return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+              setTransactionStatus(status);
+              setTransactionState(preparedTransaction);
+              isPreparingRef.current = false;
+            });
+          }),
+        )
         .catch(error => {
           console.error("Error preparing transaction:", error);
           isPreparingRef.current = false;
         });
     },
-    [bridge, mainAccount, transaction],
+    [mainAccount, parentAccount, transaction],
   );
 
   const handleUpdateTransaction = useCallback(
@@ -103,21 +103,22 @@ export default function FeesDrawerLiveApp({
       }
 
       isPreparingRef.current = true;
-      bridge
-        .prepareTransaction(mainAccount, updatedTransaction)
-        .then(preparedTransaction => {
-          return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
-            setTransactionStatus(status);
-            setTransactionState(preparedTransaction);
-            isPreparingRef.current = false;
-          });
-        })
+      getAccountBridge(mainAccount, parentAccount)
+        .then(bridge =>
+          bridge.prepareTransaction(mainAccount, updatedTransaction).then(preparedTransaction => {
+            return bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+              setTransactionStatus(status);
+              setTransactionState(preparedTransaction);
+              isPreparingRef.current = false;
+            });
+          }),
+        )
         .catch(error => {
           console.error("Error updating transaction:", error);
           isPreparingRef.current = false;
         });
     },
-    [bridge, mainAccount, swapDefaultTrack, track, transaction],
+    [mainAccount, parentAccount, swapDefaultTrack, track, transaction],
   );
 
   const mapStrategies = useCallback(

@@ -1,6 +1,6 @@
 import fs from "fs";
 import { from } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { switchMap, mergeMap } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage, { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 import { scan, ScanCommonOpts, scanCommonOpts } from "../../scan";
@@ -50,11 +50,11 @@ export default {
             break;
         }
 
-        const preparedMessage = prepareMessageToSign(
-          account,
-          Buffer.from(opts.message).toString("hex"),
+        return from(prepareMessageToSign(account, Buffer.from(opts.message).toString("hex"))).pipe(
+          mergeMap(preparedMessage =>
+            withDevice(opts.device || "")(t => from(signMessage(t, account, preparedMessage))),
+          ),
         );
-        return withDevice(opts.device || "")(t => from(signMessage(t, account, preparedMessage)));
       }),
     );
   },

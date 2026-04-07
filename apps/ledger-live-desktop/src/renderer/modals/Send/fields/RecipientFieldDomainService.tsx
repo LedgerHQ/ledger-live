@@ -1,10 +1,11 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/index";
 import { isLoaded, isError } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { DomainErrorsView } from "./DomainErrorHandlers";
@@ -27,7 +28,6 @@ type Props<T extends Transaction, TS extends TransactionStatus> = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | string;
-  bridge: AccountBridge<T>;
   onChange: (recipient: string, maybeExtra?: OnChangeExtra | null) => void;
 };
 
@@ -40,7 +40,6 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
   status,
   label,
   value = "",
-  bridge,
   onChange,
 }: Props<T, TS>) => {
   const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
@@ -86,40 +85,40 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
   useEffect(() => {
     const { recipient, recipientDomain } = transaction;
 
-    if (!ensResolution) {
-      // without ENS resolution transaction recipient should always be the user's input
-      const recipientUpdated = recipient === value;
-      // without ENS resolution transaction domain should be undefined
-      const hasDomain = !!recipientDomain;
-      if (!recipientUpdated || hasDomain) {
+    getAccountBridge(account, null).then(bridge => {
+      if (!ensResolution) {
+        // without ENS resolution transaction recipient should always be the user's input
+        const recipientUpdated = recipient === value;
+        // without ENS resolution transaction domain should be undefined
+        const hasDomain = !!recipientDomain;
+        if (!recipientUpdated || hasDomain) {
+          onChangeTransaction(
+            bridge.updateTransaction(transaction, {
+              recipient: value,
+              recipientDomain: undefined,
+            }),
+          );
+        }
+        return;
+      }
+
+      // verify if domain is present in transaction
+      const domainSet = recipientDomain === ensResolution;
+      const recipientSet = isForwardResolution
+        ? // if user's input is a domain, verify that we set the resolution's address as tx recipient
+          recipient === ensResolution?.address
+        : // if user's input is an address, keep the user's input as tx recipient
+          recipient === value;
+      if (!domainSet || !recipientSet) {
         onChangeTransaction(
-          // @ts-expect-error blockchain team must move this global component back to Ethereum world. it doesn't exist in the generic Transaction type
           bridge.updateTransaction(transaction, {
-            recipient: value,
-            recipientDomain: undefined,
+            recipient: isForwardResolution ? ensResolution.address : value,
+            recipientDomain: ensResolution,
           }),
         );
       }
-      return;
-    }
-
-    // verify if domain is present in transaction
-    const domainSet = recipientDomain === ensResolution;
-    const recipientSet = isForwardResolution
-      ? // if user's input is a domain, verify that we set the resolution's address as tx recipient
-        recipient === ensResolution?.address
-      : // if user's input is an address, keep the user's input as tx recipient
-        recipient === value;
-    if (!domainSet || !recipientSet) {
-      onChangeTransaction(
-        // @ts-expect-error blockchain team must move this global component back to Ethereum world. it doesn't exist in the generic Transaction type
-        bridge.updateTransaction(transaction, {
-          recipient: isForwardResolution ? ensResolution.address : value,
-          recipientDomain: ensResolution,
-        }),
-      );
-    }
-  }, [bridge, onChangeTransaction, ensResolution, transaction, isForwardResolution, value]);
+    });
+  }, [account, onChangeTransaction, ensResolution, transaction, isForwardResolution, value]);
 
   return (
     <>

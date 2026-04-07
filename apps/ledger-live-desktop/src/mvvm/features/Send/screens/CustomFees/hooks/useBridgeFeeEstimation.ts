@@ -83,12 +83,15 @@ export function useBridgeFeeEstimation({
     setBridgeHasInsufficientBalance(false);
     bridgeEstimationRequestIdRef.current += 1;
     const requestId = bridgeEstimationRequestIdRef.current;
-    const bridge = getAccountBridge(account, parentAccount ?? undefined);
     const patch = customFeeConfig.buildTransactionPatch(values);
-    const nextTransaction = bridge.updateTransaction(transaction, patch as Partial<Transaction>);
 
     queueMicrotask(async () => {
       try {
+        const bridge = await getAccountBridge(account, parentAccount ?? undefined);
+        const nextTransaction = bridge.updateTransaction(
+          transaction,
+          patch as Partial<Transaction>,
+        );
         const preparedTx = await bridge.prepareTransaction(mainAccount, nextTransaction);
         const nextStatus = await bridge.getTransactionStatus(mainAccount, preparedTx);
         if (bridgeEstimationRequestIdRef.current !== requestId) return;

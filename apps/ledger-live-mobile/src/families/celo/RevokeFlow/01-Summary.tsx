@@ -1,5 +1,3 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
@@ -9,7 +7,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Trans } from "~/context/Locale";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { TrackScreen } from "~/analytics";
@@ -41,8 +39,6 @@ export default function RevokeSummary({ navigation, route }: Props) {
 
   const validators = useValidatorGroups();
   const votes = revokableVotes(account as CeloAccount);
-  const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {
@@ -68,20 +64,13 @@ export default function RevokeSummary({ navigation, route }: Props) {
     return undefined;
   }, [vote, votes]);
 
+  const modeSet = useRef(false);
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
       const tx = route.params.transaction;
 
       if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "revoke",
-            amount: route.params.amount ?? 0,
-          }),
-        };
+        return { account };
       }
 
       return { account, transaction: tx };
@@ -91,15 +80,26 @@ export default function RevokeSummary({ navigation, route }: Props) {
   invariant(transaction.family === "celo", "transaction celo");
 
   useEffect(() => {
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
-        recipient: chosenValidator?.address ?? "",
-        index: chosenVote?.index,
-      }),
-    );
+    if (transaction && !modeSet.current && !route.params.transaction) {
+      modeSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: "revoke" as const,
+        amount: new BigNumber(route.params.amount ?? 0),
+      });
+    }
+  }, [transaction, setTransaction, route.params.transaction, route.params.amount]);
+
+  useEffect(() => {
+    if (!transaction) return;
+    setTransaction({
+      ...transaction,
+      amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
+      recipient: chosenValidator?.address ?? "",
+      index: chosenVote?.index,
+    });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params, updateTransaction, bridge, setTransaction, chosenValidator, chosenVote]);
+  }, [route.params, updateTransaction, setTransaction, chosenValidator, chosenVote]);
 
   const onChangeDelegator = useCallback(() => {
     navigation.navigate(ScreenName.CeloRevokeValidatorSelect, {

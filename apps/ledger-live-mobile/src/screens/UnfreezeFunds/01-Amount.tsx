@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useMemo, useEffect, useState } from "react";
+import React, { useCallback, useMemo, useEffect, useState, useRef } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "~/context/Locale";
@@ -54,7 +54,6 @@ type InnerProps = {
 function UnfreezeAmountInner({ account }: InnerProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigatorNavigation<UnfreezeNavigatorParamList>>();
-  const bridge = getAccountBridge(account, undefined);
   const unit = useAccountUnit(account);
   const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources expected");
@@ -63,18 +62,22 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     [account],
   );
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const t = bridge.createTransaction(account);
-      const transaction = bridge.updateTransaction(t, {
-        mode: "unfreeze",
-        resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
-      });
-      return {
-        account,
-        transaction,
-      };
-    },
+    () => ({ account }),
   );
+  const initApplied = useRef(false);
+  useEffect(() => {
+    if (transaction && !initApplied.current) {
+      initApplied.current = true;
+      getAccountBridge(account, undefined).then(bridge => {
+        setTransaction(
+          bridge.updateTransaction(transaction, {
+            mode: "unfreeze",
+            resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
+          }),
+        );
+      });
+    }
+  }, [account, transaction, setTransaction, canUnfreezeBandwidth]);
   const resource =
     transaction && (transaction as TronTransaction).resource
       ? (transaction as TronTransaction).resource
@@ -93,20 +96,22 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
     if (!transaction) return;
+    const bridge = await getAccountBridge(account, undefined);
     setTransaction(bridge.updateTransaction(transaction, {}));
-  }, [bridge, setTransaction, transaction]);
+  }, [account, setTransaction, transaction]);
   const onChangeResource = useCallback(
-    (resource: string) => {
+    async (resource: string) => {
+      const bridge = await getAccountBridge(account, undefined);
       setTransaction(
         bridge.updateTransaction(transaction, {
           resource,
         }),
       );
     },
-    [bridge, transaction, setTransaction],
+    [account, transaction, setTransaction],
   );
   const error = useMemo(() => {
     const e = Object.values(status.errors)[0];

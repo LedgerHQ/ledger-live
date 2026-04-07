@@ -7,6 +7,7 @@ import { act, renderHook } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/evm/bridge/mock";
+import * as bridgeImpl from "../../../bridge/impl";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
@@ -14,7 +15,11 @@ import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 // Needs to be mocked since userSupportedCurrencies is initially empty.
 jest.mock("../../../account/support");
 const mockedCheckAccount = jest.mocked(checkAccountSupported);
-// Mock to use a custom estimate value and test the result.
+// Mock getAccountBridge to return the mocked ethBridge directly.
+jest.mock("../../../bridge/impl", () => ({
+  ...jest.requireActual("../../../bridge/impl"),
+  getAccountBridge: jest.fn().mockResolvedValue({}),
+}));
 jest.mock("../../../families/evm/bridge/mock");
 const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable);
 
@@ -37,6 +42,7 @@ const account = genTokenAccount(1, parentAccount, USDT);
 
 describe("updateAmountUsingMax", () => {
   const setFromAmount = jest.fn();
+  const mockedGetAccountBridge = jest.mocked(bridgeImpl.getAccountBridge);
 
   const defaultProps = {
     setFromAmount,
@@ -48,6 +54,7 @@ describe("updateAmountUsingMax", () => {
 
   beforeAll(() => {
     mockedCheckAccount.mockImplementation(() => null);
+    mockedGetAccountBridge.mockResolvedValue(ethBridge.accountBridge as any);
   });
 
   afterAll(() => {

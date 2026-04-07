@@ -23,17 +23,17 @@ export default function StepAmount({
   error,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account);
   const { rewardDestination } = transaction;
   const setRewardDestination = useCallback(
-    (rewardDestination: string) => {
+    async (rewardDestination: string) => {
+      const bridge = await getAccountBridge(account);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           rewardDestination,
         }),
       );
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, transaction, onChangeTransaction],
   );
 
   // If account is not a stash, it's a fresh bond transaction.

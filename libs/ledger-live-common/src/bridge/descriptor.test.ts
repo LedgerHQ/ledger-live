@@ -13,12 +13,12 @@ describe("getDescriptor", () => {
     jest.restoreAllMocks();
   });
 
-  it("should return null for undefined currency", () => {
-    const descriptor = getDescriptor(undefined);
+  it("should return null for undefined currency", async () => {
+    const descriptor = await getDescriptor(undefined);
     expect(descriptor).toBeNull();
   });
 
-  it("should return descriptor for bitcoin", () => {
+  it("should return descriptor for bitcoin", async () => {
     const currency = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -27,7 +27,7 @@ describe("getDescriptor", () => {
       },
     });
 
-    const descriptor = getDescriptor(currency);
+    const descriptor = await getDescriptor(currency);
     expect(descriptor).toMatchObject({
       send: {
         inputs: {},
@@ -47,7 +47,7 @@ describe("getDescriptor", () => {
     expect(typeof descriptor?.send.fees.presets?.shouldEstimateWithBridge).toBe("function");
   });
 
-  it("should return descriptor for ethereum", () => {
+  it("should return descriptor for ethereum", async () => {
     const currency = getCryptoCurrencyById("ethereum");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -56,7 +56,7 @@ describe("getDescriptor", () => {
       },
     });
 
-    const descriptor = getDescriptor(currency);
+    const descriptor = await getDescriptor(currency);
     expect(descriptor).toMatchObject({
       send: {
         inputs: { recipientSupportsDomain: true },
@@ -74,7 +74,7 @@ describe("getDescriptor", () => {
     expect(typeof descriptor?.send.amount?.getPlugins).toBe("function");
   });
 
-  it("should return descriptor for solana", () => {
+  it("should return descriptor for solana", async () => {
     const currency = getCryptoCurrencyById("solana");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -83,7 +83,7 @@ describe("getDescriptor", () => {
       },
     });
 
-    const descriptor = getDescriptor(currency);
+    const descriptor = await getDescriptor(currency);
     expect(descriptor).toMatchObject({
       send: {
         inputs: {
@@ -121,15 +121,15 @@ describe("getDescriptor", () => {
     ],
   ];
 
-  it.each(configCases)("should not be affected by config when %s", (_, mockConfig) => {
+  it.each(configCases)("should not be affected by config when %s", async (_, mockConfig) => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue(mockConfig);
 
-    const descriptor = getDescriptor(bitcoin);
+    const descriptor = await getDescriptor(bitcoin);
     expect(descriptor).not.toBeNull();
   });
 
-  it("should not be affected when no features array", () => {
+  it("should not be affected when no features array", async () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -137,23 +137,23 @@ describe("getDescriptor", () => {
       },
     });
 
-    const descriptor = getDescriptor(bitcoin);
+    const descriptor = await getDescriptor(bitcoin);
     expect(descriptor).not.toBeNull();
   });
 
-  it("should not be affected when config throws error", () => {
+  it("should not be affected when config throws error", async () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockImplementation(() => {
       throw new Error("Config not found");
     });
 
-    const descriptor = getDescriptor(bitcoin);
+    const descriptor = await getDescriptor(bitcoin);
     expect(descriptor).not.toBeNull();
   });
 });
 
 describe("getSendDescriptor", () => {
-  it("should return send descriptor", () => {
+  it("should return send descriptor", async () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -162,7 +162,7 @@ describe("getSendDescriptor", () => {
       },
     });
 
-    const sendDescriptor = getSendDescriptor(bitcoin);
+    const sendDescriptor = await getSendDescriptor(bitcoin);
     expect(sendDescriptor).toMatchObject({
       inputs: {},
       fees: {
@@ -180,7 +180,7 @@ describe("getSendDescriptor", () => {
     expect(typeof sendDescriptor?.fees.presets?.shouldEstimateWithBridge).toBe("function");
   });
 
-  it("should not be affected when feature is not active", () => {
+  it("should not be affected when feature is not active", async () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -189,7 +189,7 @@ describe("getSendDescriptor", () => {
       },
     });
 
-    const sendDescriptor = getSendDescriptor(bitcoin);
+    const sendDescriptor = await getSendDescriptor(bitcoin);
     expect(sendDescriptor).not.toBeNull();
   });
 });

@@ -7,8 +7,8 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { MultiversXProvider, Transaction } from "@ledgerhq/live-common/families/multiversx/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { MultiversXProvider, Transaction, MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { UnbondingType } from "~/renderer/families/multiversx/types";
 // FilterOptionOption type for react-select v5 filter callback
 type FilterOptionOption<T> = { label: string; value: string; data: T };
@@ -22,7 +22,7 @@ type EnhancedUnbonding = UnbondingType & {
 export interface Props {
   onChange: (validator: MultiversXProvider) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
-  bridge: AccountBridge<Transaction>;
+  account: MultiversXAccount;
   transaction?: Transaction;
   unbondings: UnbondingType[];
   contract?: string;
@@ -49,7 +49,7 @@ const renderItem = (item: { data: EnhancedUnbonding }) => {
   );
 };
 const DelegationSelectorField = (props: Props) => {
-  const { unbondings, amount, contract, t, onChange, bridge, transaction, onUpdateTransaction } =
+  const { unbondings, amount, contract, t, onChange, account, transaction, onUpdateTransaction } =
     props;
   const options = useMemo(
     () =>
@@ -93,14 +93,16 @@ const DelegationSelectorField = (props: Props) => {
   useEffect(() => {
     const [defaultOption] = options;
     if (defaultOption && transaction && !transaction.recipient && transaction.amount.isEqualTo(0)) {
-      onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, {
-          recipient: defaultOption.contract,
-          amount: BigNumber(defaultOption.amount),
-        }),
-      );
+      getAccountBridge(account).then(bridge => {
+        onUpdateTransaction(transaction =>
+          bridge.updateTransaction(transaction, {
+            recipient: defaultOption.contract,
+            amount: BigNumber(defaultOption.amount),
+          }),
+        );
+      });
     }
-  }, [options, bridge, transaction, onUpdateTransaction]);
+  }, [options, account, transaction, onUpdateTransaction]);
   return (
     <Box flow={1} mt={5}>
       <Label>{t("elrond.withdraw.flow.steps.withdraw.selectLabel")}</Label>

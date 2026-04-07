@@ -5,6 +5,21 @@ import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import { Observable, of } from "rxjs";
 import { loadMockAccountForFamily } from "../coin-modules/registry";
+
+const mockAccountModuleCache = new Map<string, any>();
+function getMockAccountModule(family: string): any | undefined {
+  if (!mockAccountModuleCache.has(family)) {
+    mockAccountModuleCache.set(family, undefined);
+    try {
+      loadMockAccountForFamily(family)
+        .then(m => mockAccountModuleCache.set(family, m))
+        .catch(() => {});
+    } catch {
+      // no mock module for this family
+    }
+  }
+  return mockAccountModuleCache.get(family);
+}
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
@@ -34,7 +49,7 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
           balance,
           spendableBalance: balance,
         };
-        const perFamilyOperation = loadMockAccountForFamily(acc.currency.family);
+        const perFamilyOperation = getMockAccountModule(acc.currency.family);
         const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
         if (postSyncAccount) return postSyncAccount(nextAcc);
         return nextAcc;
@@ -145,7 +160,7 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
           account.spendableBalance = account.balance = new BigNumber(0);
         }
 
-        const perFamilyOperation = loadMockAccountForFamily(currency.family);
+        const perFamilyOperation = getMockAccountModule(currency.family);
         const postScanAccount = perFamilyOperation && perFamilyOperation.postScanAccount;
         if (postScanAccount)
           postScanAccount(account, {

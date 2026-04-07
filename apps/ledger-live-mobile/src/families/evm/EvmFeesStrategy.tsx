@@ -5,7 +5,6 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
-import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useState } from "react";
 import { ScreenName } from "~/const";
@@ -49,7 +48,6 @@ export default function EvmFeesStrategy({
   ...props
 }: Props<Transaction>) {
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
   const { colors } = useTheme();
   const { t } = useTranslation();
   const unit = useAccountUnit(mainAccount);
@@ -68,13 +66,16 @@ export default function EvmFeesStrategy({
 
   useEffect(() => {
     if (shouldPrefillEvmGasOptions) {
-      const updatedTransaction = bridge.updateTransaction(transaction, {
-        ...transaction,
-        gasOptions,
+      getAccountBridge(mainAccount).then(bridge => {
+        const updatedTransaction = bridge.updateTransaction(transaction, {
+          ...transaction,
+          gasOptions,
+        });
+        setTransaction(updatedTransaction);
       });
-      setTransaction(updatedTransaction);
     }
-  }, [bridge, setTransaction, gasOptions, transaction, shouldPrefillEvmGasOptions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setTransaction, gasOptions, shouldPrefillEvmGasOptions]);
 
   /**
    * When the user edits the custom fees, we save the related transaction patch
@@ -164,8 +165,8 @@ export default function EvmFeesStrategy({
   }, [transaction, customStrategyTransactionPatch]);
 
   const onFeesSelected = useCallback(
-    ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
-      const bridge = getAccountBridge(account, parentAccount);
+    async ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
+      const bridge = await getAccountBridge(account, parentAccount);
 
       const patch: Partial<Transaction> =
         feesStrategy === "custom" && customStrategyTransactionPatch

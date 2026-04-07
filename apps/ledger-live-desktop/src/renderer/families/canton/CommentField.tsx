@@ -23,17 +23,16 @@ const CommentField = ({
 
   const { t } = useTranslation();
 
-  const bridge = getAccountBridge(account);
-
   const onCommentFieldChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           memo: value ?? "",
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   // We use transaction as an error here.

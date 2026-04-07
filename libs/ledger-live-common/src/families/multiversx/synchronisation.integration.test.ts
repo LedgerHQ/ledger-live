@@ -31,7 +31,7 @@ describe("ESDT tokens sync functionality", () => {
   });
 
   test("sync finds tokens", async () => {
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const synced = await firstValueFrom(
       bridge
         .sync(account, {

@@ -1,4 +1,5 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import type {
   AccountModule,
   CoinModuleLoader,
@@ -21,35 +22,41 @@ function getLoader(family: string): CoinModuleLoader {
 
 export function registerCoinModules(modules: CoinModuleLoader[]): void {
   for (const mod of modules) loaders.set(mod.family, mod);
+  // Bridge to ledger-wallet-framework: keep isCurrencySupported() in sync with registered families
+  // TODO: in future, we will have to drop libs/ledger-wallet-framework/src/currencies/support.ts, the supported state can be infered by what's available in the registry.
+  setSupportedCurrencies([...loaders.values()].flatMap(m => m.currencyIds));
 }
 
 export function getRegisteredFamilies(): string[] {
   return [...loaders.keys()];
 }
 
-export const loadSetupForFamily = (family: string): FamilySetup =>
+export const loadSetupForFamily = async (family: string): Promise<FamilySetup> =>
   getLoader(family).loadSetup();
 
-export const loadTransactionForFamily = (family: string): TransactionModule =>
+export const loadTransactionForFamily = async (family: string): Promise<TransactionModule> =>
   getLoader(family).loadTransaction();
 
-export const loadDeviceTxConfigForFamily = (
+export const loadDeviceTxConfigForFamily = async (
   family: string,
-): DeviceTransactionConfigFn | undefined => loaders.get(family)?.loadDeviceTxConfig?.();
+): Promise<DeviceTransactionConfigFn | undefined> => loaders.get(family)?.loadDeviceTxConfig?.();
 
-export const loadWalletApiAdapterForFamily = (
+export const loadWalletApiAdapterForFamily = async (
   family: string,
-): WalletApiAdapterModule | undefined => loaders.get(family)?.loadWalletApiAdapter?.();
+): Promise<WalletApiAdapterModule | undefined> => loaders.get(family)?.loadWalletApiAdapter?.();
 
-export const loadPlatformAdapterForFamily = (
+export const loadPlatformAdapterForFamily = async (
   family: string,
-): PlatformAdapterModule | undefined => loaders.get(family)?.loadPlatformAdapter?.();
+): Promise<PlatformAdapterModule | undefined> => loaders.get(family)?.loadPlatformAdapter?.();
 
-export const loadAccountModuleForFamily = (family: string): AccountModule | undefined =>
-  loaders.get(family)?.loadAccount?.();
+export const loadAccountModuleForFamily = async (
+  family: string,
+): Promise<AccountModule | undefined> => loaders.get(family)?.loadAccount?.();
 
-export const loadMockBridgeForFamily = (family: string): MockBridgeModule | undefined =>
-  loaders.get(family)?.loadMockBridge?.();
+export const loadMockBridgeForFamily = async (
+  family: string,
+): Promise<MockBridgeModule | undefined> => loaders.get(family)?.loadMockBridge?.();
 
-export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined =>
-  loaders.get(family)?.loadMockAccount?.();
+export const loadMockAccountForFamily = async (
+  family: string,
+): Promise<MockAccountModule | undefined> => loaders.get(family)?.loadMockAccount?.();

@@ -9,7 +9,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -77,6 +76,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const { account: acc } = params;
+  const initialValidators = (acc?.polkadotResources?.nominations || [])
+    .filter(nomination => !!nomination.status)
+    .map(nomination => nomination.address);
   const {
     transaction,
     setTransaction,
@@ -87,25 +90,14 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
     invariant(
-      account && account.polkadotResources,
+      acc && acc.polkadotResources,
       "polkadot: account and polkadot resources required",
     );
-    const bridge = getAccountBridge(account, undefined);
-    const t = bridge.createTransaction(account);
-    const initialValidators = (account?.polkadotResources?.nominations || [])
-      .filter(nomination => !!nomination.status)
-      .map(nomination => nomination.address);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "nominate",
-      validators: initialValidators,
-      recipient: account.freshAddress,
-    });
     return {
-      account,
+      account: acc,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: { mode: "nominate" as const, validators: initialValidators, recipient: acc.freshAddress },
     };
   });
 

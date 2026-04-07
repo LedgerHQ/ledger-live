@@ -67,7 +67,7 @@ const completeExchange = (
         );
 
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-        const accountBridge = getAccountBridge(mainAccount);
+        const accountBridge = await getAccountBridge(mainAccount);
         const mainPayoutCurrency = getAccountCurrency(mainAccount);
         const payoutCurrency = getAccountCurrency(fromAccount);
 

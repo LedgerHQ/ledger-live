@@ -16,10 +16,12 @@ const mockOnboardAccount = jest.fn(mockObservable);
 const mockAuthorizePreapproval = jest.fn(mockObservable);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: mockOnboardAccount,
-    authorizePreapproval: mockAuthorizePreapproval,
-  })),
+  getCurrencyBridge: jest.fn(() =>
+    Promise.resolve({
+      onboardAccount: mockOnboardAccount,
+      authorizePreapproval: mockAuthorizePreapproval,
+    }),
+  ),
 }));
 
 describe("useOnboardScreenViewModel", () => {

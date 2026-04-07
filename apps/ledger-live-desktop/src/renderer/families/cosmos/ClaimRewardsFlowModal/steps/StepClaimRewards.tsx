@@ -32,13 +32,13 @@ export default function StepClaimRewards({
 }: StepProps) {
   const locale = useSelector(localeSelector);
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
   const unit = useAccountUnit(account);
   const updateClaimRewards = useCallback(
-    (newTransaction: Partial<CosmosLikeTransaction>) => {
+    async (newTransaction: Partial<CosmosLikeTransaction>) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
-    [bridge, onUpdateTransaction],
+    [account, parentAccount, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
     (mode: string) => {

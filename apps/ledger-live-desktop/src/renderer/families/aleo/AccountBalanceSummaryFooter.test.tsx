@@ -60,7 +60,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
     syncSubject = new Subject();
     mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
-    getAccountBridge.mockReturnValue({ sync: mockSync });
+    getAccountBridge.mockResolvedValue({ sync: mockSync });
   });
 
   afterEach(() => {
@@ -187,13 +187,16 @@ describe("AccountBalanceSummaryFooter", () => {
     };
     const completeUpdater = () => completedAccount;
 
-    it("should still show 'Stop sync' and progress immediately after sync completes at 100%", () => {
+    it("should still show 'Stop sync' and progress immediately after sync completes at 100%", async () => {
       jest.useFakeTimers();
       render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
       act(() => {
         fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
       });
+      // Flush the getAccountBridge Promise microtask without using await act(async)
+      // which causes an infinite microtask loop when combined with jest.useFakeTimers().
+      await Promise.resolve();
 
       act(() => {
         syncSubject.next(completeUpdater);
@@ -205,13 +208,14 @@ describe("AccountBalanceSummaryFooter", () => {
       expect(screen.getByText("100%")).toBeInTheDocument();
     });
 
-    it("should transition to 'Sync again' after the 200ms finish delay elapses", () => {
+    it("should transition to 'Sync again' after the 200ms finish delay elapses", async () => {
       jest.useFakeTimers();
       const { rerender } = render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
       act(() => {
         fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
       });
+      await Promise.resolve();
 
       act(() => {
         syncSubject.next(completeUpdater);

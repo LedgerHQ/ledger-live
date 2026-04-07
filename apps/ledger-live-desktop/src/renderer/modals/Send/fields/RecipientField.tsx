@@ -32,7 +32,6 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   initValue,
   resetInitValue,
 }: Props<T, TS>) => {
-  const bridge = getAccountBridge(account, null);
   const [value, setValue] = useState(
     initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
@@ -43,8 +42,10 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value }));
-      resetInitValue?.();
+      getAccountBridge(account, null).then(bridge => {
+        onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value }));
+        resetInitValue?.();
+      });
     }
   }, [account]); // oxlint-disable-line react-hooks/exhaustive-deps
 
@@ -53,13 +54,14 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
       const { currency } = maybeExtra || {};
       const invalidRecipient = currency && currency.scheme !== account.currency.scheme;
       setValue(recipient);
+      const bridge = await getAccountBridge(account, null);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: invalidRecipient ? "" : recipient,
         }),
       );
     },
-    [account.currency.scheme, bridge, onChangeTransaction, transaction],
+    [account, onChangeTransaction, transaction],
   );
 
   if (!status) return null;
@@ -75,7 +77,6 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
       transaction={transaction}
       onChange={onChange}
       onChangeTransaction={onChangeTransaction}
-      bridge={bridge}
     />
   ) : (
     <RecipientFieldBase

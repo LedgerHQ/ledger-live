@@ -2,11 +2,9 @@ import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -25,18 +23,16 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account needed");
 
-  const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
-
-  const { transaction, status } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: "register",
-    });
-
-    return { account, transaction };
-  });
+  const modeSet = useRef(false);
+  const { transaction, setTransaction, status } = useBridgeTransaction(() => ({
+    account,
+  }));
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...(transaction as CeloTransaction), mode: "register" });
+    }
+  }, [transaction, setTransaction]);
 
   invariant(transaction, "transaction required");
 

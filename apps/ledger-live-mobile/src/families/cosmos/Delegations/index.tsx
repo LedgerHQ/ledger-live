@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback, useState, useMemo, useEffect, useRef } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
@@ -85,19 +85,21 @@ function Delegations({ account }: Props) {
     cosmosResources &&
     cosmosResources.unbondings &&
     mapUnbondings(cosmosResources.unbondings, validators, unit);
-  const bridge = getAccountBridge(account, undefined);
-  const { transaction } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const { validatorSrcAddress } = { ...banner };
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
+  const { transaction, setTransaction } = useBridgeTransaction(() => ({ account }));
+  const redelegateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !redelegateModeSet.current) {
+      redelegateModeSet.current = true;
+      const { validatorSrcAddress } = { ...banner };
+      setTransaction({
+        ...transaction,
         mode: "redelegate",
         validators: [],
         sourceValidator: validatorSrcAddress,
-      }),
-    };
-  });
+      } as typeof transaction);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction, setTransaction]);
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
   const { getCanStakeCurrency } = useStake();

@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -159,27 +159,31 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   invariant(account, "account is undefined");
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const bridge = getAccountBridge(account, parentAccount);
-      return {
-        account,
-        parentAccount,
-        transaction: bridge.updateTransaction(route.params?.transaction, {
-          recipient: "",
-        }),
-      };
-    },
+    () => ({
+      account,
+      parentAccount,
+    }),
   );
-  invariant(transaction, "transaction is undefined");
-  let error: Error | null = bridgeError || status.errors.recipient;
 
-  if (error instanceof RecipientRequired) {
-    error = null;
-  }
+  const tezosInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !tezosInitSet.current) {
+      tezosInitSet.current = true;
+      getAccountBridge(account, parentAccount).then(bridge => {
+        setTransaction(
+          bridge.updateTransaction(route.params?.transaction ?? transaction, {
+            recipient: "",
+          }) as TezosTransaction,
+        );
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
 
   const onChangeText = useCallback(
-    (recipient: string) => {
-      const bridge = getAccountBridge(account, parentAccount);
+    async (recipient: string) => {
+      if (!transaction) return;
+      const bridge = await getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           recipient,
@@ -189,6 +193,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction],
   );
   const continueCustom = useCallback(() => {
+    if (!transaction) return;
     setEditingCustom(false);
     navigation.navigate(ScreenName.DelegationSummary, {
       ...route.params,
@@ -209,23 +214,32 @@ export default function SelectValidator({ navigation, route }: Props) {
     setShowInfos(false);
   }, []);
   const onItemPress = useCallback(
-    (baker: Baker) => {
-      const bridge = getAccountBridge(account, parentAccount);
-      const transaction = bridge.updateTransaction(route.params?.transaction, {
+    async (baker: Baker) => {
+      if (!transaction) return;
+      const bridge = await getAccountBridge(account, parentAccount);
+      const newTransaction = bridge.updateTransaction(route.params?.transaction ?? transaction, {
         recipient: baker.address,
       });
       navigation.navigate(ScreenName.DelegationSummary, {
         ...route.params,
-        transaction: transaction as TezosTransaction,
+        transaction: newTransaction as TezosTransaction,
         status,
       });
     },
-    [account, parentAccount, route.params, navigation, status],
+    [account, parentAccount, route.params, transaction, navigation, status],
   );
   const renderItem: ListRenderItem<Baker> = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
     [onItemPress],
   );
+
+  if (!transaction) return null;
+  let error: Error | null = bridgeError || status.errors.recipient;
+
+  if (error instanceof RecipientRequired) {
+    error = null;
+  }
+
   return (
     <SafeAreaView
       style={[

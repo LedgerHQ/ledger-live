@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -39,23 +39,24 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
-  const bridge = getAccountBridge(account, undefined);
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations;
-  const bridgeTransaction = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
+  const bridgeTransaction = useBridgeTransaction(() => ({ account }));
+  const { status, setTransaction } = bridgeTransaction;
+  const transaction = bridgeTransaction.transaction as Transaction;
+  const redelegateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !redelegateModeSet.current) {
+      redelegateModeSet.current = true;
+      setTransaction({
+        ...transaction,
         mode: "redelegate",
         validators: [],
         sourceValidator: route.params?.validatorSrcAddress,
-      }),
-    };
-  });
-  const { status } = bridgeTransaction;
-  const transaction = bridgeTransaction.transaction as Transaction;
+      } as Transaction);
+    }
+  }, [transaction, setTransaction, route.params?.validatorSrcAddress]);
   invariant(transaction && transaction.sourceValidator, "transaction src validator required");
   const [searchQuery, setSearchQuery] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(

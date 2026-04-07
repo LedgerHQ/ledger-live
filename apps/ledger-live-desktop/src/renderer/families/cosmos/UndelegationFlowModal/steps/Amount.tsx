@@ -29,9 +29,9 @@ export default function StepAmount({
   onClose,
 }: StepProps) {
   invariant(account && transaction && transaction.validators, "account and transaction required");
-  const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
-    (validatorFields: Partial<CosmosDelegationInfo>) => {
+    async (validatorFields: Partial<CosmosDelegationInfo>) => {
+      const bridge = await getAccountBridge(account);
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -47,7 +47,7 @@ export default function StepAmount({
         }),
       );
     },
-    [onUpdateTransaction, bridge],
+    [onUpdateTransaction, account],
   );
   const onChangeValidator = useCallback(
     (delegation?: CosmosMappedDelegation | null) => {

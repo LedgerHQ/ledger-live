@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";
@@ -9,8 +9,6 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/ledger-wallet-fram
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/multiversx/constants";
 
-import type { AccountBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { PickMethodPropsType, OptionType, ModalType } from "./types";
 
 import Button from "~/components/Button";
@@ -43,7 +41,6 @@ const PickMethod = (props: PickMethodPropsType) => {
 
   const mainAccount = getMainAccount(account, undefined);
   const currency = getAccountCurrency(mainAccount);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const unit = useAccountUnit(mainAccount);
   const methods = [TransactionMethodEnum.claimRewards, TransactionMethodEnum.reDelegateRewards];
 
@@ -86,7 +83,7 @@ const PickMethod = (props: PickMethodPropsType) => {
    * If no transaction sent through the parameters of the navigation, instantiate a new one, otherwise, return the old one.
    */
 
-  const { transaction, status, updateTransaction } = useBridgeTransaction(() => {
+  const { transaction, status, setTransaction, updateTransaction } = useBridgeTransaction(() => {
     if (route.params.transaction) {
       return {
         account,
@@ -96,13 +93,21 @@ const PickMethod = (props: PickMethodPropsType) => {
 
     return {
       account,
-      transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+    };
+  });
+
+  const initSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !initSet.current && !route.params.transaction) {
+      initSet.current = true;
+      setTransaction({
+        ...transaction,
         recipient,
         mode: TransactionMethodEnum.claimRewards,
         amount: new BigNumber(value),
-      }),
-    };
-  });
+      } as typeof transaction);
+    }
+  }, [transaction, setTransaction, route.params.transaction, recipient, value]);
 
   /*
    * Handle the possible warnings and errors of the transaction status and return the first of each.
@@ -129,13 +134,14 @@ const PickMethod = (props: PickMethodPropsType) => {
    */
 
   const onChangeMode = useCallback(
-    (mode: string) => {
+    async (mode: string) => {
       if (transaction) {
         setMode(mode);
+        const bridge = await getAccountBridge(account);
         updateTransaction(() => bridge.updateTransaction(transaction, { mode }));
       }
     },
-    [transaction, bridge, updateTransaction],
+    [transaction, account, updateTransaction],
   );
 
   /*

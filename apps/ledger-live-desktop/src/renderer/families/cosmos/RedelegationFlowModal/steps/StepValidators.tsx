@@ -61,7 +61,6 @@ export default function StepValidators({
   transitionTo,
 }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
   const sourceValidator = useMemo(() => {
     const found = account.cosmosResources?.delegations.find(
       d => d.validatorAddress === transaction.sourceValidator,
@@ -72,10 +71,11 @@ export default function StepValidators({
     return { address: found.validatorAddress, amount: found.amount };
   }, [account, transaction.sourceValidator]);
   const updateRedelegation = useCallback(
-    (newTransaction: Partial<NonNullable<StepProps["transaction"]>>) => {
+    async (newTransaction: Partial<NonNullable<StepProps["transaction"]>>) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
-    [bridge, onUpdateTransaction],
+    [account, parentAccount, onUpdateTransaction],
   );
 
   const updateSourceValidator = useCallback(

@@ -104,10 +104,12 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               map(() => ({})),
               rejectionOp(),
             )
-          : getAccountBridge(mainAccount).receive(mainAccount, {
-              deviceId: device.deviceId,
-              verify: true,
-            })
+          : await getAccountBridge(mainAccount).then(bridge =>
+              bridge.receive(mainAccount, {
+                deviceId: device.deviceId,
+                verify: true,
+              }),
+            )
       ).subscribe({
         complete: () => {
           if (onSuccess) onSuccess(mainAccount.freshAddress);

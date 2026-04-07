@@ -81,19 +81,23 @@ export const StepCustomFooter = ({
   const initialTransaction = useRef(transaction);
   useEffect(() => {
     // empty the field
-    onChangeTransaction(
-      getAccountBridge(account, parentAccount).updateTransaction(initialTransaction.current, {
-        recipient: "",
-      }),
-    );
+    getAccountBridge(account, parentAccount).then(bridge => {
+      onChangeTransaction(
+        bridge.updateTransaction(initialTransaction.current, {
+          recipient: "",
+        }),
+      );
+    });
   }, [onChangeTransaction, account, parentAccount]);
   const onBack = useCallback(() => {
     // we need to revert
-    onChangeTransaction(
-      getAccountBridge(account, parentAccount).updateTransaction(transaction, {
-        recipient: initialTransaction.current.recipient,
-      }),
-    );
+    getAccountBridge(account, parentAccount).then(bridge => {
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, {
+          recipient: initialTransaction.current.recipient,
+        }),
+      );
+    });
     transitionTo("summary");
   }, [account, parentAccount, onChangeTransaction, transaction, transitionTo]);
   const onNext = useCallback(() => {

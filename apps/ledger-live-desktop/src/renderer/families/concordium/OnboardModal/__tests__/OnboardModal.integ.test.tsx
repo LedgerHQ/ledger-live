@@ -9,6 +9,8 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import coinConfig from "@ledgerhq/coin-concordium/config";
 import OnboardModal from "../index";
 import {
@@ -159,7 +161,12 @@ describe("OnboardModal Integration", () => {
   const defaultProps = createDefaultProps(currency, creatableAccount);
   const initialState = createInitialState(mockDevice);
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    registerAllCoins();
+    // Pre-warm bridge cache first: this imports setup.ts → createBridges() →
+    // concordiumCoinConfig.setCoinConfig(getCurrencyConfig). We must set the test
+    // coin config AFTER, otherwise createBridges overrides it.
+    await getCurrencyBridge(currency);
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
       networkType: "mainnet",

@@ -1,6 +1,5 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import invariant from "invariant";
@@ -22,8 +21,8 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepVote, { StepVoteFooter } from "./steps/StepVote";
-import { CeloAccount, CeloVote, Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { AccountBridge, Operation, Account, TokenAccount } from "@ledgerhq/types-live";
+import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
+import { Operation, Account, TokenAccount } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -85,6 +84,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const { vote } = params;
   const {
     transaction,
     setTransaction,
@@ -95,21 +95,15 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account, vote } = params;
+    const { account } = params;
     invariant(
       account?.type === "Account" && account.celoResources,
       "celo: account and celo resources required",
     );
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
-    const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      mode: "revoke",
-      recipient: vote?.validatorGroup,
-      index: vote?.index,
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: { mode: "revoke" as const, recipient: vote?.validatorGroup, index: vote?.index },
     };
   });
 

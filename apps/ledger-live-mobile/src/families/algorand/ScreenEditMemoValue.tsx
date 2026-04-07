@@ -22,8 +22,8 @@ function AlgorandEditMemo({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [memo, setMemo] = useState(route.params.transaction.memo ?? undefined);
   const account = route.params.account;
-  const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
+  const onValidateText = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,

@@ -11,7 +11,7 @@ import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { TrackScreen } from "~/analytics";
@@ -48,8 +48,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(mainAccount.currency.id);
-  const bridge = getAccountBridge(account, undefined);
-
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {
       return validator;
@@ -63,21 +61,18 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
       const tx = route.params.transaction;
-
-      if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "delegate",
-            validators: [],
-          }),
-        };
+      if (tx) {
+        return { account, transaction: tx };
       }
-
-      return { account, transaction: tx };
+      return { account };
     });
+  const delegateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !delegateModeSet.current && !route.params.transaction) {
+      delegateModeSet.current = true;
+      setTransaction({ ...transaction, mode: "delegate", validators: [] } as typeof transaction);
+    }
+  }, [transaction, setTransaction, route.params.transaction]);
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "cosmos", "transaction cosmos");
@@ -93,16 +88,18 @@ export default function DelegationSummary({ navigation, route }: Props) {
     }
 
     if (chosenValidator && chosenValidator.validatorAddress !== transaction.validators[0].address) {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          validators: [
-            {
-              address: chosenValidator.validatorAddress,
-              amount: transaction.amount,
-            },
-          ],
-        }),
-      );
+      getAccountBridge(account, undefined).then(bridge => {
+        setTransaction(
+          bridge.updateTransaction(transaction, {
+            validators: [
+              {
+                address: chosenValidator.validatorAddress,
+                amount: transaction.amount,
+              },
+            ],
+          }),
+        );
+      });
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params, updateTransaction, setTransaction, chosenValidator]);

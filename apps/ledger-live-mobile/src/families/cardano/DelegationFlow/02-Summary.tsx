@@ -59,7 +59,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const { cardanoResources } = account as CardanoAccount;
   const currentDelegation = cardanoResources.delegation;
-  const bridge = getAccountBridge(account, undefined);
 
   const [isFetchingPoolDetails, setIsFetchingPoolDetails] = useState(false);
   const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
@@ -93,17 +92,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
     return null;
   }, [ledgerPools, pool]);
 
-  let tx = bridge.createTransaction(account);
-  tx = bridge.updateTransaction(tx, { mode: "delegate" });
-
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
-      if (chosenPool) {
-        tx = bridge.updateTransaction(tx, { poolId: chosenPool.poolId });
-      }
-
-      return { account, transaction: tx };
-    });
+    useBridgeTransaction(() => ({
+      account,
+    }));
 
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
@@ -113,10 +105,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
@@ -129,13 +121,13 @@ export default function DelegationSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (chosenPool)
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          mode: "delegate",
-          poolId: chosenPool.poolId,
-        }),
-      );
+    if (chosenPool && transaction) {
+      setTransaction({
+        ...transaction,
+        mode: "delegate" as const,
+        poolId: chosenPool.poolId,
+      });
+    }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params, updateTransaction, setTransaction, chosenPool]);
 

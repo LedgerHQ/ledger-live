@@ -39,13 +39,13 @@ describe("useSendFlowTransaction", () => {
       setAccount: mockSetAccount,
     });
 
-    (bridgeModule.getAccountBridge as jest.Mock).mockReturnValue({
+    (bridgeModule.getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: mockUpdateTransaction,
     });
   });
 
   describe("setRecipient", () => {
-    it("should update recipient address", () => {
+    it("should update recipient address", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: mockAccount,
@@ -53,8 +53,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "cosmos1abc123",
         });
       });
@@ -65,7 +65,7 @@ describe("useSendFlowTransaction", () => {
       expect(mockBridgeSetTransaction).toHaveBeenCalled();
     });
 
-    it("should apply memo for cosmos", () => {
+    it("should apply memo for cosmos", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: mockAccount,
@@ -73,8 +73,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "cosmos1abc123",
           memo: { value: "test memo" },
         });
@@ -86,7 +86,7 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
-    it("should apply memo for solana with nested structure", () => {
+    it("should apply memo for solana with nested structure", async () => {
       const solanaTransaction = {
         family: "solana",
         recipient: "",
@@ -114,8 +114,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "solana-address",
           memo: { value: "solana memo" },
         });
@@ -134,7 +134,7 @@ describe("useSendFlowTransaction", () => {
       );
     });
 
-    it("should apply tag for xrp", () => {
+    it("should apply tag for xrp", async () => {
       const xrpTransaction = {
         family: "xrp",
         recipient: "",
@@ -158,8 +158,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "xrp-address",
           destinationTag: "12345",
         });
@@ -171,7 +171,7 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
-    it("should apply transferId for casper", () => {
+    it("should apply transferId for casper", async () => {
       const casperTransaction = {
         family: "casper",
         recipient: "",
@@ -196,8 +196,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "casper-address",
           memo: { value: "transfer-id-123" },
         });
@@ -209,7 +209,7 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
-    it("should handle both memo and destinationTag for xrp", () => {
+    it("should handle both memo and destinationTag for xrp", async () => {
       const xrpTransaction = {
         family: "xrp",
         recipient: "",
@@ -233,8 +233,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "xrp-address",
           memo: { value: "test" },
           destinationTag: "67890",
@@ -247,7 +247,7 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
-    it("should ignore invalid destinationTag", () => {
+    it("should ignore invalid destinationTag", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: mockAccount,
@@ -255,8 +255,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "xrp-address",
           destinationTag: "invalid",
         });
@@ -267,7 +267,7 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
-    it("should not update when account is null", () => {
+    it("should not update when account is null", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: null,
@@ -275,8 +275,8 @@ describe("useSendFlowTransaction", () => {
         }),
       );
 
-      act(() => {
-        result.current.actions.setRecipient({
+      await act(async () => {
+        await result.current.actions.setRecipient({
           address: "test-address",
         });
       });

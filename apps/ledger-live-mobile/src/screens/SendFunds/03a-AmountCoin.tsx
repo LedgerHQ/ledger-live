@@ -54,11 +54,13 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     if (!account) return;
     let cancelled = false;
     getAccountBridge(account, parentAccount)
-      .estimateMaxSpendable({
-        account,
-        parentAccount,
-        transaction: debouncedTransaction,
-      })
+      .then(bridge =>
+        bridge.estimateMaxSpendable({
+          account,
+          parentAccount,
+          transaction: debouncedTransaction,
+        }),
+      )
       .then(estimate => {
         if (cancelled) return;
         setMaxSpendable(estimate);
@@ -70,10 +72,10 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction]);
   invariant(account, "account is needed");
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
       if (!amount.isNaN()) {
         if (!account) return;
-        const bridge = getAccountBridge(account, parentAccount);
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount,
@@ -83,9 +85,9 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     },
     [setTransaction, account, parentAccount, transaction],
   );
-  const toggleUseAllAmount = useCallback(() => {
+  const toggleUseAllAmount = useCallback(async () => {
     if (!account || !transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
 
     setTransaction(
       bridge.updateTransaction(transaction, {
@@ -111,10 +113,10 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);

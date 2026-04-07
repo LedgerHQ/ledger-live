@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -39,20 +39,20 @@ export default function LockAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
-  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: "lock",
-    });
-
-    return { account: mainAccount, transaction };
-  });
+  const modeSet = useRef(false);
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
+    account: mainAccount,
+  }));
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...(transaction as CeloTransaction), mode: "lock" });
+    }
+  }, [transaction, setTransaction]);
 
   const debouncedTransaction = useDebounce(transaction, 500);
 
@@ -61,11 +61,13 @@ export default function LockAmount({ navigation, route }: Props) {
 
     let cancelled = false;
     getAccountBridge(account, parentAccount)
-      .estimateMaxSpendable({
-        account,
-        parentAccount,
-        transaction: debouncedTransaction,
-      })
+      .then(bridge =>
+        bridge.estimateMaxSpendable({
+          account,
+          parentAccount,
+          transaction: debouncedTransaction,
+        }),
+      )
       .then(estimate => {
         if (cancelled) return;
 
@@ -79,16 +81,17 @@ export default function LockAmount({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction]);
 
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
       if (!amount.isNaN()) {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(bridge.updateTransaction(transaction, { amount }));
       }
     },
-    [setTransaction, transaction, bridge],
+    [setTransaction, transaction, account, parentAccount],
   );
 
-  const toggleUseAllAmount = useCallback(() => {
-    const bridge = getAccountBridge(account, parentAccount);
+  const toggleUseAllAmount = useCallback(async () => {
+    const bridge = await getAccountBridge(account, parentAccount);
     if (!transaction) return;
 
     setTransaction(

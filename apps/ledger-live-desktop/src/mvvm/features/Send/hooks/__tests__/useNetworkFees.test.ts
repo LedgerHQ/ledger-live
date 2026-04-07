@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
-import { renderHook } from "tests/testSetup";
+import { renderHook, waitFor } from "tests/testSetup";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
 import { useNetworkFees } from "../useNetworkFees";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
@@ -17,6 +17,7 @@ jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(() => ({ fees: {}, inputs: {} })),
+  getSendDescriptorFromRegistry: jest.fn(() => ({ fees: {}, inputs: {} })),
 }));
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
@@ -84,7 +85,7 @@ describe("useNetworkFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockedGetAccountBridge.mockReturnValue({
+    mockedGetAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
         ...tx,
         ...patch,
@@ -161,7 +162,7 @@ describe("useNetworkFees", () => {
     expect(result.current.feesRowValue).toBe("--");
   });
 
-  it("onSelectFeeStrategy calls updateTransaction with bridge-updated transaction", () => {
+  it("onSelectFeeStrategy calls updateTransaction with bridge-updated transaction", async () => {
     const params = buildBaseParams({
       transaction: { feesStrategy: "custom" },
       uiConfig: { hasFeePresets: true },
@@ -173,7 +174,7 @@ describe("useNetworkFees", () => {
 
     result.current.onSelectFeeStrategy("medium");
 
-    expect(params.updateTransaction).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(params.updateTransaction).toHaveBeenCalledTimes(1));
     const updater = params.updateTransaction.mock.calls[0][0];
     const currentTx = params.transaction;
     const patched = updater(currentTx);
@@ -189,7 +190,7 @@ describe("useNetworkFees", () => {
     expect(patched.customFees).toBeUndefined();
   });
 
-  it("onSelectFeeStrategy ignores invalid strategy and passes null feesStrategy", () => {
+  it("onSelectFeeStrategy ignores invalid strategy and passes null feesStrategy", async () => {
     const params = buildBaseParams({
       transaction: { feesStrategy: "medium" },
       uiConfig: { hasFeePresets: true },
@@ -201,7 +202,7 @@ describe("useNetworkFees", () => {
 
     result.current.onSelectFeeStrategy("invalid" as string);
 
-    expect(params.updateTransaction).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(params.updateTransaction).toHaveBeenCalledTimes(1));
     const updater = params.updateTransaction.mock.calls[0][0];
     const patched = updater(params.transaction);
 

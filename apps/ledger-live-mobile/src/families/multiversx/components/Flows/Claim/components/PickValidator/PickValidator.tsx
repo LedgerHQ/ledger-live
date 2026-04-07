@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useRef, useEffect } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -24,20 +24,23 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const { account, delegations } = route.params;
   const { colors } = useTheme();
 
-  const mainAccount = getMainAccount(account, undefined);
-  const bridge = getAccountBridge(account, undefined);
   const unit = useAccountUnit(account);
 
   /*
    * Initialize a new transaction on mount and set the mode to "claimRewards".
    */
 
-  const { transaction } = useBridgeTransaction(() => ({
+  const { transaction, setTransaction } = useBridgeTransaction(() => ({
     account,
-    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
-      mode: "claimRewards",
-    }),
   }));
+
+  const modeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...transaction, mode: "claimRewards" } as typeof transaction);
+    }
+  }, [transaction, setTransaction]);
 
   /*
    * Filter the displayed delegations to only include those with rewards bigger than zero.
@@ -54,8 +57,9 @@ const PickValidator = (props: PickValidatorPropsType) => {
    */
 
   const onSelect = useCallback(
-    (validator: onSelectType["validator"], value: onSelectType["value"]) => {
+    async (validator: onSelectType["validator"], value: onSelectType["value"]) => {
       if (validator) {
+        const bridge = await getAccountBridge(account, undefined);
         navigation.navigate(ScreenName.MultiversXClaimRewardsMethod, {
           value,
           account,
@@ -68,7 +72,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         });
       }
     },
-    [navigation, transaction, bridge, account],
+    [navigation, transaction, account],
   );
 
   /*

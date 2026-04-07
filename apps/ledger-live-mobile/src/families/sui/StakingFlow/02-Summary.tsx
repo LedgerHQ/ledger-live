@@ -9,7 +9,7 @@ import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { TrackScreen } from "~/analytics";
@@ -45,38 +45,42 @@ export default function StakingSummary({ navigation, route }: Props) {
   const validators = useLedgerFirstShuffledValidatorsSui("");
   const chosenValidator = validator || validators[0];
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
       const tx = route.params.transaction;
+      if (tx) {
+        return { account, transaction: tx };
+      }
+      return { account };
+    });
 
-      if (!tx) {
+  const suiInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !suiInitSet.current && !route.params.transaction) {
+      suiInitSet.current = true;
+      getAccountBridge(account, undefined).then(bridge => {
         const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
+        setTransaction(
+          bridge.updateTransaction(t, {
             mode: "delegate",
             recipient: chosenValidator?.suiAddress ?? "",
-          }),
-        };
-      }
+          }) as typeof transaction,
+        );
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
 
-      return { account, transaction: tx };
-    });
   const [maxSpenable, setMaxSpendable] = useState(BigNumber(0));
 
   useEffect(() => {
     if (maxSpenable.gt(0)) return;
 
-    bridge
-      .estimateMaxSpendable({ account, parentAccount, transaction })
+    getAccountBridge(account, undefined)
+      .then(bridge => bridge.estimateMaxSpendable({ account, parentAccount, transaction }))
       .then(estimate => setMaxSpendable(estimate));
-  }, [account, bridge, parentAccount, transaction, maxSpenable]);
-
-  invariant(transaction, "transaction must be defined");
-  invariant(transaction.family === "sui", "transaction sui");
+  }, [account, parentAccount, transaction, maxSpenable]);
 
   useEffect(() => {
     const tmpTransaction = route.params.transaction;
@@ -84,19 +88,20 @@ export default function StakingSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (!chosenValidator) return;
+    if (!chosenValidator || !transaction) return;
 
     if (chosenValidator.suiAddress !== transaction.recipient) {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          recipient: chosenValidator.suiAddress,
-        }),
-      );
+      getAccountBridge(account, undefined).then(bridge => {
+        setTransaction(
+          bridge.updateTransaction(transaction, {
+            recipient: chosenValidator.suiAddress,
+          }),
+        );
+      });
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params,
-    bridge,
     setTransaction,
     chosenValidator?.suiAddress,
     updateTransaction,
@@ -141,7 +146,7 @@ export default function StakingSummary({ navigation, route }: Props) {
     rotateAnim.setValue(0);
     navigation.navigate(ScreenName.SuiStakingValidatorSelect, {
       ...route.params,
-      transaction,
+      transaction: transaction ?? undefined,
     });
   }, [rotateAnim, navigation, transaction, route.params]);
 
@@ -149,6 +154,7 @@ export default function StakingSummary({ navigation, route }: Props) {
   const color = getCurrencyColor(currency);
 
   const onChangeAmount = () => {
+    if (!transaction) return;
     navigation.navigate(ScreenName.SuiStakingAmount, {
       ...route.params,
       transaction,
@@ -164,10 +170,12 @@ export default function StakingSummary({ navigation, route }: Props) {
       source: route.params.source,
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction,
+      transaction: transaction ?? undefined,
       status,
     });
   }, [status, account, parentAccount?.id, navigation, transaction, route.params.source]);
+
+  if (!transaction || transaction.family !== "sui") return null;
 
   const error =
     transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { createMockAccount } from "../../screens/Recipient/hooks/__tests__/accounts";
 import { useNetworkFees } from "../useNetworkFees";
 import type { Account } from "@ledgerhq/types-live";
@@ -145,7 +145,7 @@ describe("useNetworkFees", () => {
     jest
       .mocked(useSelector)
       .mockReturnValue(mockCounterValueCurrency as ReturnType<typeof useSelector>);
-    getAccountBridge.mockReturnValue({
+    getAccountBridge.mockResolvedValue({
       updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,
@@ -218,12 +218,12 @@ describe("useNetworkFees", () => {
   });
 
   describe("onSelectFeeStrategy", () => {
-    it("calls transactionActions.updateTransaction and bridge.updateTransaction with valid strategy", () => {
+    it("calls transactionActions.updateTransaction and bridge.updateTransaction with valid strategy", async () => {
       const bridgeUpdateTransaction = jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      getAccountBridge.mockResolvedValue({ updateTransaction: bridgeUpdateTransaction });
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
@@ -232,7 +232,7 @@ describe("useNetworkFees", () => {
         result.current.onSelectFeeStrategy("fast");
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalled();
+      await waitFor(() => expect(mockUpdateTransaction).toHaveBeenCalled());
       const updater = mockUpdateTransaction.mock.calls[0][0];
       const currentTx = createTransaction();
       const nextTx = updater(currentTx);
@@ -240,12 +240,12 @@ describe("useNetworkFees", () => {
       expect(nextTx.feesStrategy).toBe("fast");
     });
 
-    it("updates with feesStrategy null when given invalid strategy", () => {
+    it("updates with feesStrategy null when given invalid strategy", async () => {
       const bridgeUpdateTransaction = jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      getAccountBridge.mockResolvedValue({ updateTransaction: bridgeUpdateTransaction });
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
@@ -254,7 +254,7 @@ describe("useNetworkFees", () => {
         result.current.onSelectFeeStrategy("invalid");
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalled();
+      await waitFor(() => expect(mockUpdateTransaction).toHaveBeenCalled());
       const updater = mockUpdateTransaction.mock.calls[0][0];
       const currentTx = createTransaction();
       updater(currentTx);

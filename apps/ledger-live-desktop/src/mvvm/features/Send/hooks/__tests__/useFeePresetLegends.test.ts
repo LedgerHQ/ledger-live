@@ -2,16 +2,16 @@
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
+import { getSendDescriptorFromRegistry } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import type { SendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useFeePresetLegends } from "../useFeePresetLegends";
 import type { FeePresetOption } from "../useFeePresetOptions";
 
 jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
-  getSendDescriptor: jest.fn(),
+  getSendDescriptorFromRegistry: jest.fn(),
 }));
 
-const mockedGetSendDescriptor = jest.mocked(getSendDescriptor);
+const mockedGetSendDescriptor = jest.mocked(getSendDescriptorFromRegistry);
 
 const currency = {
   type: "CryptoCurrency",

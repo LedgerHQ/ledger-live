@@ -384,7 +384,7 @@ const reducer = (state: State, e: Event): State => {
  * specify an account or a currency without resolving manually the actual
  * applications we depend on in order to access the flow.
  */
-function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
+function inferCommandParams(appRequest: AppRequest, accountModule?: any): ConnectAppRequest {
   let derivationMode;
   let derivationPath;
 
@@ -425,10 +425,8 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
   if (account) {
     derivationMode = account.derivationMode;
     derivationPath = account.freshAddressPath;
-    const m = loadAccountModuleForFamily(account.currency.family);
-
-    if (m && m.injectGetAddressParams) {
-      extra = m.injectGetAddressParams(account);
+    if (accountModule?.injectGetAddressParams) {
+      extra = accountModule.injectGetAddressParams(account);
     }
   } else {
     const modes = getDerivationModesForCurrency(currency);
@@ -470,14 +468,26 @@ export const createAction = (
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion | undefined>(undefined);
 
+    const [accountModule, setAccountModule] = useState<any>(undefined);
+    useEffect(() => {
+      const family = appRequest.account?.currency.family;
+      setAccountModule(undefined);
+      if (family) {
+        loadAccountModuleForFamily(family)
+          .then(setAccountModule)
+          .catch(() => {});
+      }
+    }, [appRequest.account?.currency.family]);
+
     const request = useMemo(
-      () => inferCommandParams(appRequest), // for now i don't have better
+      () => inferCommandParams(appRequest, accountModule), // for now i don't have better
       // oxlint-disable-next-line react-hooks/exhaustive-deps
       [
         appRequest.appName,
         appRequest.account?.id,
         appRequest.currency?.id,
         appRequest.dependencies,
+        accountModule,
       ],
     );
 

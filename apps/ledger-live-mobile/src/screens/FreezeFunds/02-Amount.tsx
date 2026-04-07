@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -63,8 +63,6 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
   invariant(account && account.type === "Account", "account is required");
 
-  const bridge = getAccountBridge(account, undefined);
-
   const defaultUnit = useAccountUnit(account);
   const { spendableBalance } = account;
 
@@ -73,17 +71,23 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const t = bridge.createTransaction(account);
-
-      const transaction = bridge.updateTransaction(t, {
-        mode: "freeze",
-        resource: "BANDWIDTH",
-      });
-
-      return { account, transaction };
-    },
+    () => ({ account }),
   );
+
+  const initApplied = useRef(false);
+  useEffect(() => {
+    if (transaction && !initApplied.current) {
+      initApplied.current = true;
+      getAccountBridge(account, undefined).then(bridge => {
+        setTransaction(
+          bridge.updateTransaction(transaction, {
+            mode: "freeze",
+            resource: "BANDWIDTH",
+          }),
+        );
+      });
+    }
+  }, [account, transaction, setTransaction]);
 
   const options = useMemo(
     () => [
@@ -106,9 +110,10 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   );
 
   const onChange = useCallback(
-    (amount: BigNumber, keepRatio?: boolean) => {
+    async (amount: BigNumber, keepRatio?: boolean) => {
       if (!amount.isNaN()) {
         if (!keepRatio) selectRatio(undefined);
+        const bridge = await getAccountBridge(account, undefined);
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount: getDecimalPart(amount, defaultUnit.magnitude),
@@ -116,7 +121,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
         );
       }
     },
-    [setTransaction, transaction, bridge, defaultUnit],
+    [setTransaction, transaction, account, defaultUnit],
   );
 
   const onContinue = useCallback(() => {
@@ -137,11 +142,12 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
     if (parent) parent.goBack();
   }, [navigation]);
 
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
     if (!transaction) return;
+    const bridge = await getAccountBridge(account, undefined);
     setTransaction(bridge.updateTransaction(transaction, {}));
-  }, [setTransaction, transaction, bridge]);
+  }, [setTransaction, transaction, account]);
 
   const blur = useCallback(() => {
     Keyboard.dismiss();
@@ -165,14 +171,15 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   );
 
   const onChangeResource = useCallback(
-    (optionIndex: number) => {
+    async (optionIndex: number) => {
+      const bridge = await getAccountBridge(account, undefined);
       setTransaction(
         bridge.updateTransaction(transaction, {
           resource: options[optionIndex].value,
         }),
       );
     },
-    [setTransaction, bridge, transaction, options],
+    [setTransaction, account, transaction, options],
   );
 
   /** show amount ratio buttons only if we can ratio the available assets to 25% or less */

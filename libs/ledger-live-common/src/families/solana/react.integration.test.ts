@@ -30,7 +30,7 @@ const cache = makeBridgeCacheSystem({
 describe("solana/react", () => {
   describe("useValidators", () => {
     it("should return validators", async () => {
-      const { prepare, account } = setup();
+      const { prepare, account } = await setup();
       await prepare();
       const { result } = renderHook(() => hooks.useValidators(account.currency));
       const data = getCurrentSolanaPreloadData(account.currency);
@@ -39,7 +39,7 @@ describe("solana/react", () => {
     });
 
     it("should return validators", async () => {
-      const { prepare, account } = setup();
+      const { prepare, account } = await setup();
       await prepare();
       const { result } = renderHook(() => hooks.useValidators(account.currency, "Ledger"));
 
@@ -52,12 +52,12 @@ describe("solana/react", () => {
   });
 });
 
-function setup(): {
+async function setup(): Promise<{
   account: Account;
   currencyBridge: CurrencyBridge;
   transaction: Transaction;
   prepare: () => Promise<any>;
-} {
+}> {
   setEnv("MOCK", "1");
   setEnv("EXPERIMENTAL_CURRENCIES", "solana");
   const seed = "solana-2";
@@ -66,8 +66,8 @@ function setup(): {
     currency,
   });
   const account = genAddingOperationsInAccount(a, 3, seed);
-  const currencyBridge = getCurrencyBridge(currency);
-  const bridge = getAccountBridge(account);
+  const currencyBridge = await getCurrencyBridge(currency);
+  const bridge = await getAccountBridge(account);
   const transaction = bridge.createTransaction(account);
   return {
     account,

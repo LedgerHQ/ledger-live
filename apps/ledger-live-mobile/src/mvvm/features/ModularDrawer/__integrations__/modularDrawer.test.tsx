@@ -25,6 +25,10 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
+jest.mock("~/bridge/cache", () => ({
+  prepareCurrency: jest.fn().mockResolvedValue(undefined),
+}));
+
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 // Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization

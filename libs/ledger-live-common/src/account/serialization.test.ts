@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { toAccountRaw, fromAccountRaw } from "./serialization";
+import { getAccountBridgeByFamily } from "../bridge/impl";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -36,7 +37,8 @@ describe("serialization", () => {
     tokenAcc.state = "initialized";
     acc.subAccounts = [tokenAcc];
 
-    const accRaw: any = toAccountRaw(acc);
+    const bridge = await getAccountBridgeByFamily("solana", acc.id).catch(() => undefined);
+    const accRaw: any = await toAccountRaw(acc, undefined, bridge);
     expect(accRaw.subAccounts?.[0]?.state).toBe("initialized");
 
     const deserializedAcc: any = await fromAccountRaw(accRaw);

@@ -1,11 +1,11 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/index";
 import { isError, isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Platform, StyleSheet, View } from "react-native";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { Trans } from "~/context/Locale";
@@ -41,7 +41,12 @@ const DomainServiceRecipientInput = ({
   warning,
   error,
 }: Props) => {
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridgeRef = useRef<AccountBridge<Transaction> | null>(null);
+  useEffect(() => {
+    getAccountBridge(account, parentAccount).then(bridge => {
+      bridgeRef.current = bridge;
+    });
+  }, [account, parentAccount]);
 
   const domainServiceResponse = useDomain(value, "ens");
   const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
@@ -70,6 +75,8 @@ const DomainServiceRecipientInput = ({
   }, [lowerCaseValue]);
 
   useEffect(() => {
+    const bridge = bridgeRef.current;
+    if (!bridge) return;
     const { recipient, recipientDomain } = transaction;
 
     if (!ensResolution) {
@@ -103,7 +110,7 @@ const DomainServiceRecipientInput = ({
         }),
       );
     }
-  }, [bridge, setTransaction, ensResolution, transaction, isForwardResolution, value]);
+  }, [setTransaction, ensResolution, transaction, isForwardResolution, value]);
 
   return (
     <>

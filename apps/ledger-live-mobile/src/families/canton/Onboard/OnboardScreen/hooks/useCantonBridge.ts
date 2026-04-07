@@ -43,7 +43,7 @@ function isApprovedAuthorizeResult(
 }
 
 interface UseCantonBridgeParams {
-  bridge: CantonCurrencyBridge;
+  bridge: CantonCurrencyBridge | null;
   cryptoCurrency: CryptoCurrency;
   device: Device | null;
   accountToOnboard: Account | undefined;
@@ -74,7 +74,7 @@ export function useCantonBridge({
   const { subscribe, unsubscribe } = useObservable();
 
   const startOnboarding = useCallback(() => {
-    if (!device || !accountToOnboard) {
+    if (!device || !accountToOnboard || !bridge) {
       return;
     }
 
@@ -126,7 +126,7 @@ export function useCantonBridge({
 
   const authorizePreapproval = useCallback(
     (result: CantonOnboardResult) => {
-      if (!device) {
+      if (!device || !bridge) {
         return;
       }
 

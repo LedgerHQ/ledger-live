@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -41,20 +41,20 @@ export default function UnlockAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
-  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: "unlock",
-    });
-
-    return { account: mainAccount, transaction };
-  });
+  const modeSet = useRef(false);
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
+    account: mainAccount,
+  }));
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...(transaction as CeloTransaction), mode: "unlock" });
+    }
+  }, [transaction, setTransaction]);
 
   const debouncedTransaction = useDebounce(transaction, 500);
 
@@ -62,12 +62,14 @@ export default function UnlockAmount({ navigation, route }: Props) {
     if (!account) return;
 
     let cancelled = false;
-    bridge
-      .estimateMaxSpendable({
-        account,
-        parentAccount,
-        transaction: debouncedTransaction,
-      })
+    getAccountBridge(account, parentAccount)
+      .then(bridge =>
+        bridge.estimateMaxSpendable({
+          account,
+          parentAccount,
+          transaction: debouncedTransaction,
+        }),
+      )
       .then(estimate => {
         if (cancelled) return;
 
@@ -78,27 +80,29 @@ export default function UnlockAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction, bridge]);
+  }, [account, parentAccount, debouncedTransaction]);
 
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
       if (!amount.isNaN()) {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(bridge.updateTransaction(transaction, { amount }));
       }
     },
-    [setTransaction, transaction, bridge],
+    [setTransaction, transaction, account, parentAccount],
   );
 
-  const toggleUseAllAmount = useCallback(() => {
+  const toggleUseAllAmount = useCallback(async () => {
     if (!transaction) return;
 
+    const bridge = await getAccountBridge(account, parentAccount);
     setTransaction(
       bridge.updateTransaction(transaction, {
         amount: new BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
-  }, [setTransaction, transaction, bridge]);
+  }, [setTransaction, transaction, account, parentAccount]);
 
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.CeloUnlockSelectDevice, {

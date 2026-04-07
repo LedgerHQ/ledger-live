@@ -23,14 +23,13 @@ const MemoField = ({
 }) => {
   invariant(transaction.family === "internet_computer", "Memo: Internet Computer family expected");
 
-  const bridge = getAccountBridge(account);
-
   const onMemoFieldChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      const bridge = await getAccountBridge(account);
       if (value !== "") onChange(bridge.updateTransaction(transaction, { memo: value }));
       else onChange(bridge.updateTransaction(transaction, { memo: undefined }));
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   // We use transaction as an error here.

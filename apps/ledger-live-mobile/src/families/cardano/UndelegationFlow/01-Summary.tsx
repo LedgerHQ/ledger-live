@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -47,26 +47,25 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const { cardanoResources } = account as CardanoAccount;
   const currentDelegation = cardanoResources.delegation as CardanoDelegation;
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
 
+  const modeSet = useRef(false);
   const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
     () => {
       const tx = route.params.transaction;
 
       if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "undelegate",
-          }),
-        };
+        return { account };
       }
 
       return { account, transaction: tx };
     },
   );
+  useEffect(() => {
+    if (transaction && !modeSet.current && !route.params.transaction) {
+      modeSet.current = true;
+      setTransaction({ ...transaction, mode: "undelegate" as const });
+    }
+  }, [transaction, setTransaction, route.params.transaction]);
 
   const displayError = useMemo(() => {
     return status.errors.amount ? status.errors.amount : "";
@@ -82,7 +81,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     navigation.navigate(ScreenName.CardanoUndelegationSelectDevice, {
       accountId: account.id,
       parentId: parentAccount?.id || undefined,
-      transaction,
+      transaction: transaction ?? undefined,
       status,
     });
   }, [status, account, parentAccount, navigation, transaction]);
@@ -95,10 +94,10 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 

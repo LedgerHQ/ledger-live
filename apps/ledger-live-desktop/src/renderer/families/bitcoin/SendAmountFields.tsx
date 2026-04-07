@@ -33,7 +33,6 @@ const Fields: Props = ({
   mapStrategies,
   trackProperties = {},
 }) => {
-  const bridge = getAccountBridge(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(
@@ -46,12 +45,13 @@ const Fields: Props = ({
   const canNext = account.bitcoinResources?.utxos?.length;
 
   const onFeeStrategyClick = useCallback(
-    ({ amount, feesStrategy }: OnClickType) => {
+    async ({ amount, feesStrategy }: OnClickType) => {
       track("button_clicked2", {
         ...trackProperties,
         button: feesStrategy,
         feePerByte: amount,
       });
+      const bridge = await getAccountBridge(account);
       updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, {
           feePerByte: amount,
@@ -60,7 +60,7 @@ const Fields: Props = ({
       );
     },
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [updateTransaction, bridge],
+    [updateTransaction, account],
   );
   const setAdvanceModeAndTrack = useCallback(
     (state: boolean) => {

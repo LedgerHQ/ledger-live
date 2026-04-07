@@ -5,10 +5,11 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { Subscription } from "rxjs";
+import { from, Subscription } from "rxjs";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import * as RX from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -86,18 +87,22 @@ export function useScanAccounts({
   }, []);
 
   useEffect(() => {
-    scanSubscriptionRef.current = getCurrencyBridge(currency)
-      .scanAccounts({
-        currency,
-        deviceId,
-        syncConfig: {
-          paginationConfig: {
-            operations: 0,
-          },
-          blacklistedTokenIds: blacklistedTokenIds || [],
-        },
-      })
-      .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
+    scanSubscriptionRef.current = from(getCurrencyBridge(currency))
+      .pipe(
+        switchMap(bridge =>
+          bridge.scanAccounts({
+            currency,
+            deviceId,
+            syncConfig: {
+              paginationConfig: {
+                operations: 0,
+              },
+              blacklistedTokenIds: blacklistedTokenIds || [],
+            },
+          }),
+        ),
+        RX.scan((acc: Account[], { account }) => [...acc, account], []),
+      )
       .subscribe({
         next: accounts => {
           setScannedAccounts(accounts);

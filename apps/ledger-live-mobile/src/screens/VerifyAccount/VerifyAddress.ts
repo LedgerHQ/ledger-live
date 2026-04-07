@@ -21,22 +21,30 @@ function VerifyAddress({
   useEffect(() => {
     if (!device) return;
 
-    const sub = getAccountBridge(account)
-      .receive(account, {
-        deviceId: device.deviceId,
-        verify: true,
-      })
-      .subscribe({
-        complete() {
-          onResult(true);
-        },
-        error(err) {
-          onResult(false, err as Error);
-        },
-      });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let sub: any;
+    let cancelled = false;
+
+    getAccountBridge(account).then(bridge => {
+      if (cancelled) return;
+      sub = bridge
+        .receive(account, {
+          deviceId: device.deviceId,
+          verify: true,
+        })
+        .subscribe({
+          complete() {
+            onResult(true);
+          },
+          error(err) {
+            onResult(false, err as Error);
+          },
+        });
+    });
 
     return () => {
-      sub.unsubscribe();
+      cancelled = true;
+      sub?.unsubscribe();
     };
   }, [account, device, onResult]);
 

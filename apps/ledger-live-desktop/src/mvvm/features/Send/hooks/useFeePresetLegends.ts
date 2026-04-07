@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
+import { getSendDescriptorFromRegistry } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FeePresetOption } from "./useFeePresetOptions";
 import { formatFeeRate } from "../utils/gas";
@@ -13,7 +13,7 @@ type Params = Readonly<{
 
 export function useFeePresetLegends({ currency, feePresetOptions }: Params): FeePresetLegendMap {
   return useMemo(() => {
-    const descriptor = getSendDescriptor(currency);
+    const descriptor = getSendDescriptorFromRegistry(currency);
     const legendConfig = descriptor?.fees.presets?.legend;
 
     if (!legendConfig || legendConfig.type === "none") return {};

@@ -8,7 +8,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepProps, St, StepId } from "./types";
 import { Operation } from "@ledgerhq/types-live";
@@ -114,13 +113,9 @@ const Body = ({
       account && account.cardanoResources,
       "cardano: account and cardano resources required",
     );
-    const bridge = getAccountBridge(account, undefined);
-    let transaction = bridge.createTransaction(account);
-    transaction = bridge.updateTransaction(transaction, { mode: "delegate" });
-
     return {
       account,
-      transaction,
+      transactionPatch: { mode: "delegate" },
     };
   });
 

@@ -2,7 +2,7 @@ import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSelector } from "LLD/hooks/redux";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import type { UserProps } from "../types";
@@ -29,10 +29,13 @@ export function useOnboardModalViewModel({
 
   const [stepId, setStepId] = useState<StepId>(StepId.ONBOARD);
 
-  const bridge = useMemo(() => {
-    if (!currency) return null;
+  const [bridge, setBridge] = useState<CantonCurrencyBridge | null>(null);
+  const bridgeCurrencyRef = useRef<typeof currency>(null);
+  useEffect(() => {
+    if (!currency || bridgeCurrencyRef.current === currency) return;
+    bridgeCurrencyRef.current = currency;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return getCurrencyBridge(currency) as CantonCurrencyBridge;
+    getCurrencyBridge(currency).then(b => setBridge(b as CantonCurrencyBridge));
   }, [currency]);
 
   const {

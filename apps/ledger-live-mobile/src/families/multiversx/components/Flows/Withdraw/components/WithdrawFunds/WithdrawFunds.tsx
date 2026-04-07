@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { View } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
@@ -34,7 +34,6 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
 
   const mainAccount = getMainAccount(account, undefined);
   const currency = getAccountCurrency(mainAccount);
-  const bridge = getAccountBridge(account);
   const unit = useAccountUnit(mainAccount);
   const name = validator.identity.name || validator.contract;
 
@@ -42,14 +41,22 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
    * Instantiate a new transaction with the given arguments.
    */
 
-  const { transaction, status } = useBridgeTransaction(() => ({
+  const { transaction, setTransaction, status } = useBridgeTransaction(() => ({
     account,
-    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
-      mode: "withdraw",
-      recipient: validator.contract,
-      amount,
-    }),
   }));
+
+  const withdrawInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !withdrawInitSet.current) {
+      withdrawInitSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: "withdraw",
+        recipient: validator.contract,
+        amount,
+      } as typeof transaction);
+    }
+  }, [transaction, setTransaction, validator.contract, amount]);
 
   /*
    * Callback called when navigating to the next screen of the current flow.

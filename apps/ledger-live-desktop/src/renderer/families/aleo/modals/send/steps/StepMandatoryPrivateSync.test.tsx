@@ -28,7 +28,7 @@ describe("StepMandatoryPrivateSync", () => {
     jest.clearAllMocks();
     syncSubject = new Subject();
     mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
-    getAccountBridge.mockReturnValue({ sync: mockSync });
+    getAccountBridge.mockResolvedValue({ sync: mockSync });
   });
 
   afterEach(() => {
@@ -77,6 +77,9 @@ describe("StepMandatoryPrivateSync", () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
 
+      // Wait for bridge to resolve and sync to be subscribed
+      await waitFor(() => expect(mockSync).toHaveBeenCalled());
+
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());
       });
@@ -89,6 +92,9 @@ describe("StepMandatoryPrivateSync", () => {
     it("should not call transitionTo if the component unmounts before the timer fires", async () => {
       const props = makeStepProps();
       const { unmount } = render(<StepMandatoryPrivateSync {...props} />);
+
+      // Wait for bridge to resolve and sync to be subscribed
+      await waitFor(() => expect(mockSync).toHaveBeenCalled());
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());

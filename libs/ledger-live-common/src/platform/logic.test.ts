@@ -15,6 +15,8 @@ import {
   createFixtureTokenAccount,
 } from "../mock/fixtures/cryptoCurrencies";
 import * as converters from "./converters";
+import { registerCoinModules } from "../coin-modules/registry";
+import { coinModuleLoaders } from "../coin-modules/loaders";
 
 jest.mock("../hw/signMessage/index", () => ({
   ...jest.requireActual("../hw/signMessage/index"),
@@ -146,6 +148,9 @@ describe("completeExchangeLogic", () => {
   const uiNavigation = jest.fn();
 
   beforeAll(() => {
+    registerCoinModules(
+      coinModuleLoaders.filter(l => l.family === "evm" || l.family === "bitcoin"),
+    );
     setSupportedCurrencies(["bitcoin", "ethereum"]);
   });
   afterAll(() => {
@@ -392,7 +397,7 @@ describe("broadcastTransactionLogic", () => {
       // Given
       const expectedResult = "Function called";
       const signedOperation = createSignedOperation();
-      mockedDeserializePlatformSignedTransaction.mockReturnValueOnce(signedOperation);
+      mockedDeserializePlatformSignedTransaction.mockResolvedValueOnce(signedOperation);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
@@ -427,7 +432,7 @@ describe("broadcastTransactionLogic", () => {
       // Given
       const expectedResult = "Function called";
       const signedOperation = createSignedOperation();
-      mockedDeserializePlatformSignedTransaction.mockReturnValueOnce(signedOperation);
+      mockedDeserializePlatformSignedTransaction.mockResolvedValueOnce(signedOperation);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
@@ -497,7 +502,7 @@ describe("signMessageLogic", () => {
       // Given
       const expectedResult = "Function called";
       const formattedMessage = createMessageData();
-      mockedPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
+      mockedPrepareMessageToSign.mockResolvedValueOnce(formattedMessage);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When

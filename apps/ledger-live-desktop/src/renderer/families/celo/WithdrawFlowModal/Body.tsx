@@ -7,7 +7,6 @@ import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -84,15 +83,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgePending,
   } = useBridgeTransaction(() => {
     const { account, parentAccount } = params;
-    const bridge = getAccountBridge(account, parentAccount);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "withdraw",
-    });
     return {
       account,
       parentAccount,
-      transaction,
+      transactionPatch: { mode: "withdraw" as const },
     };
   });
 

@@ -38,32 +38,34 @@ const Fields: Props = ({
   trackProperties = {},
 }) => {
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
-  const bridge = getAccountBridge(account);
 
   const strategies = useFeesStrategy(account, transaction);
 
   useEffect(() => {
-    updateTransaction((t: Transaction) =>
-      bridge.updateTransaction(t, {
-        rbf: true,
-        // initially "fast" is selected - set this feerate
-        feerate: strategies.filter(x => x.label === "fast")[0].amount,
-      }),
-    );
+    getAccountBridge(account).then(bridge => {
+      updateTransaction((t: Transaction) =>
+        bridge.updateTransaction(t, {
+          rbf: true,
+          // initially "fast" is selected - set this feerate
+          feerate: strategies.filter(x => x.label === "fast")[0].amount,
+        }),
+      );
+    });
   }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onFeeStrategyClick = useCallback(
     ({ feesStrategy }: OnClickType) => {
-      updateTransaction(
-        (transaction: Transaction) =>
-          !isAdvanceMode &&
+      if (isAdvanceMode) return;
+      getAccountBridge(account).then(bridge => {
+        updateTransaction((transaction: Transaction) =>
           bridge.updateTransaction(transaction, {
             feesStrategy,
           }),
-      );
+        );
+      });
     },
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [updateTransaction, bridge],
+    [updateTransaction, account, isAdvanceMode],
   );
 
   const setAdvanceModeAndTrack = useCallback(
@@ -74,34 +76,40 @@ const Fields: Props = ({
       });
       setAdvanceMode(state);
       if (state) {
-        updateTransaction((transaction: Transaction) =>
-          bridge.updateTransaction(transaction, {
-            feesStrategy: "custom",
-            customFeeRate: getFeeRate(transaction),
-          }),
-        );
+        getAccountBridge(account).then(bridge => {
+          updateTransaction((transaction: Transaction) =>
+            bridge.updateTransaction(transaction, {
+              feesStrategy: "custom",
+              customFeeRate: getFeeRate(transaction),
+            }),
+          );
+        });
       } else {
-        updateTransaction((transaction: Transaction) =>
-          bridge.updateTransaction(transaction, {
-            feesStrategy: "fast",
-          }),
-        );
+        getAccountBridge(account).then(bridge => {
+          updateTransaction((transaction: Transaction) =>
+            bridge.updateTransaction(transaction, {
+              feesStrategy: "fast",
+            }),
+          );
+        });
       }
     },
-    [trackProperties, updateTransaction, bridge],
+    [trackProperties, updateTransaction, account],
   );
 
   const customFeeChanged = useCallback(
     (feePerByte: BigNumber) => {
-      updateTransaction((transaction: Transaction) =>
-        bridge.updateTransaction(transaction, {
-          feesStrategy: "custom",
-          customFeeRate: feePerByte,
-        }),
-      );
+      getAccountBridge(account).then(bridge => {
+        updateTransaction((transaction: Transaction) =>
+          bridge.updateTransaction(transaction, {
+            feesStrategy: "custom",
+            customFeeRate: feePerByte,
+          }),
+        );
+      });
     },
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [updateTransaction, bridge],
+    [updateTransaction, account],
   );
 
   return (

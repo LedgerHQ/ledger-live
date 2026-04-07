@@ -1,7 +1,6 @@
 import invariant from "invariant";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -19,15 +18,16 @@ type Props = StackNavigatorProps<
 function UndelegationAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const validator = route.params.delegation.validator;
   const amount = route.params.delegation.amount;
-  const { transaction } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
+  const { transaction, setTransaction } = useBridgeTransaction(() => ({ account }));
+  const undelegateModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !undelegateModeSet.current) {
+      undelegateModeSet.current = true;
+      setTransaction({
+        ...transaction,
         mode: "undelegate",
         validators: [
           {
@@ -36,9 +36,9 @@ function UndelegationAmount({ navigation, route }: Props) {
           },
         ],
         recipient: mainAccount.freshAddress,
-      }),
-    };
-  });
+      } as Transaction);
+    }
+  }, [transaction, setTransaction, validator, mainAccount.freshAddress]);
   const newRoute = {
     ...route,
     params: {

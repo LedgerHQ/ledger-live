@@ -1,10 +1,10 @@
 import { getSendUiConfig, DEFAULT_SEND_UI_CONFIG } from "../send/uiConfig";
-import { getSendDescriptor } from "../../bridge/descriptor/registry";
+import { getSendDescriptorFromRegistry } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("../../bridge/descriptor/registry", () => ({
-  getSendDescriptor: jest.fn(),
+  getSendDescriptorFromRegistry: jest.fn(),
 }));
 jest.mock("../../bridge/descriptor/send/features", () => ({
   sendFeatures: {
@@ -19,7 +19,9 @@ jest.mock("../../bridge/descriptor/send/features", () => ({
   },
 }));
 
-const mockedGetSendDescriptor = getSendDescriptor as jest.MockedFunction<typeof getSendDescriptor>;
+const mockedGetSendDescriptor = getSendDescriptorFromRegistry as jest.MockedFunction<
+  typeof getSendDescriptorFromRegistry
+>;
 const mockedSendFeatures = sendFeatures as jest.Mocked<typeof sendFeatures>;
 
 // Test fixtures

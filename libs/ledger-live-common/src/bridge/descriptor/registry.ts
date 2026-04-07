@@ -60,37 +60,59 @@ const descriptorRegistry: Record<string, CoinDescriptor> = {
 };
 
 /**
- * Get the full descriptor for a given currency via the CurrencyBridge
+ * Get the full descriptor for a given currency (sync, registry-only).
  */
-export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): CoinDescriptor | null {
+export function getDescriptorFromRegistry(
+  currency: CryptoOrTokenCurrency | undefined,
+): CoinDescriptor | null {
   if (!currency) {
     return null;
   }
 
   const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-  const bridge = getCurrencyBridge(cryptoCurrency);
+  const fullDescriptor = descriptorRegistry[cryptoCurrency.family];
+  return fullDescriptor ?? null;
+}
+
+/**
+ * Get the full descriptor for a given currency via the CurrencyBridge
+ */
+export async function getDescriptor(
+  currency: CryptoOrTokenCurrency | undefined,
+): Promise<CoinDescriptor | null> {
+  if (!currency) {
+    return null;
+  }
+
+  const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
 
   // Check if bridge implements getDescriptor directly
-  if ("getDescriptor" in bridge && typeof bridge.getDescriptor === "function") {
+  const bridge = await getCurrencyBridge(cryptoCurrency).catch(() => undefined);
+  if (bridge && "getDescriptor" in bridge && typeof bridge.getDescriptor === "function") {
     return bridge.getDescriptor(cryptoCurrency) as CoinDescriptor;
   }
 
   // Fallback: use the descriptor registry
-  const fullDescriptor = descriptorRegistry[cryptoCurrency.family];
-  if (fullDescriptor) {
-    return fullDescriptor;
-  }
+  return descriptorRegistry[cryptoCurrency.family] ?? null;
+}
 
-  return null;
+/**
+ * Get the send flow descriptor for a given currency (sync, registry-only).
+ */
+export function getSendDescriptorFromRegistry(
+  currency: CryptoOrTokenCurrency | undefined,
+): SendDescriptor | null {
+  const descriptor = getDescriptorFromRegistry(currency);
+  return descriptor?.send ?? null;
 }
 
 /**
  * Get the send flow descriptor for a given currency
  */
-export function getSendDescriptor(
+export async function getSendDescriptor(
   currency: CryptoOrTokenCurrency | undefined,
-): SendDescriptor | null {
-  const descriptor = getDescriptor(currency);
+): Promise<SendDescriptor | null> {
+  const descriptor = await getDescriptor(currency);
   return descriptor?.send ?? null;
 }
 
@@ -101,6 +123,6 @@ export function getSendDescriptor(
 export function getStakeDescriptor(
   currency: CryptoOrTokenCurrency | undefined,
 ): StakeDescriptor | null {
-  const descriptor = getDescriptor(currency);
+  const descriptor = getDescriptorFromRegistry(currency);
   return descriptor?.stake ?? null;
 }

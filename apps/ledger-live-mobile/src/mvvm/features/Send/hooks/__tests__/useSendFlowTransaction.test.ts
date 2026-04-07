@@ -1,4 +1,4 @@
-import { renderHook, act } from "@tests/test-renderer";
+import { renderHook, act, waitFor } from "@tests/test-renderer";
 import { useSendFlowTransaction } from "../useSendFlowTransaction";
 import * as bridgeModule from "@ledgerhq/live-common/bridge/index";
 import * as useBridgeTransactionModule from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -39,13 +39,13 @@ describe("useSendFlowTransaction", () => {
       setAccount: mockSetAccount,
     });
 
-    (bridgeModule.getAccountBridge as jest.Mock).mockReturnValue({
+    (bridgeModule.getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: mockUpdateTransaction,
     });
   });
 
   describe("setRecipient", () => {
-    it("should update recipient address", () => {
+    it("should update recipient address", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: mockAccount,
@@ -59,13 +59,15 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
-        recipient: "cosmos1abc123",
-      });
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+          recipient: "cosmos1abc123",
+        }),
+      );
       expect(mockBridgeSetTransaction).toHaveBeenCalled();
     });
 
-    it("should apply memo for cosmos", () => {
+    it("should apply memo for cosmos", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: mockAccount,
@@ -80,13 +82,15 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
-        recipient: "cosmos1abc123",
-        memo: "test memo",
-      });
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+          recipient: "cosmos1abc123",
+          memo: "test memo",
+        }),
+      );
     });
 
-    it("should apply memo for solana with nested structure", () => {
+    it("should apply memo for solana with nested structure", async () => {
       const solanaTransaction = {
         family: "solana",
         recipient: "",
@@ -121,20 +125,22 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(
-        solanaTransaction,
-        expect.objectContaining({
-          recipient: "solana-address",
-          model: expect.objectContaining({
-            uiState: expect.objectContaining({
-              memo: "solana memo",
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(
+          solanaTransaction,
+          expect.objectContaining({
+            recipient: "solana-address",
+            model: expect.objectContaining({
+              uiState: expect.objectContaining({
+                memo: "solana memo",
+              }),
             }),
           }),
-        }),
+        ),
       );
     });
 
-    it("should apply tag for xrp", () => {
+    it("should apply tag for xrp", async () => {
       const xrpTransaction = {
         family: "xrp",
         recipient: "",
@@ -165,13 +171,15 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(xrpTransaction, {
-        recipient: "xrp-address",
-        tag: 12345,
-      });
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(xrpTransaction, {
+          recipient: "xrp-address",
+          tag: 12345,
+        }),
+      );
     });
 
-    it("should apply transferId for casper", () => {
+    it("should apply transferId for casper", async () => {
       const casperTransaction = {
         family: "casper",
         recipient: "",
@@ -203,13 +211,15 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(casperTransaction, {
-        recipient: "casper-address",
-        transferId: "transfer-id-123",
-      });
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(casperTransaction, {
+          recipient: "casper-address",
+          transferId: "transfer-id-123",
+        }),
+      );
     });
 
-    it("should handle both memo and destinationTag for xrp", () => {
+    it("should handle both memo and destinationTag for xrp", async () => {
       const xrpTransaction = {
         family: "xrp",
         recipient: "",
@@ -241,13 +251,15 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(xrpTransaction, {
-        recipient: "xrp-address",
-        tag: 67890,
-      });
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(xrpTransaction, {
+          recipient: "xrp-address",
+          tag: 67890,
+        }),
+      );
     });
 
-    it("should ignore invalid destinationTag", () => {
+    it("should ignore invalid destinationTag", async () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({
           account: mockAccount,
@@ -262,9 +274,11 @@ describe("useSendFlowTransaction", () => {
         });
       });
 
-      expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
-        recipient: "xrp-address",
-      });
+      await waitFor(() =>
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+          recipient: "xrp-address",
+        }),
+      );
     });
 
     it("should not update when account is null", () => {

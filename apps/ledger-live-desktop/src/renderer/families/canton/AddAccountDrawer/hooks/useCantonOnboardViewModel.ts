@@ -5,7 +5,7 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFormatAccount } from "LLD/features/AddAccountDrawer/screens/ScanAccounts/useFormatAccount";
@@ -43,11 +43,14 @@ export function useCantonOnboardViewModel({
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
 
-  const bridge = useMemo(
+  const [bridge, setBridge] = useState<CantonCurrencyBridge | null>(null);
+  const bridgeCurrencyRef = useRef<typeof currency>(null);
+  useEffect(() => {
+    if (!currency || bridgeCurrencyRef.current === currency) return;
+    bridgeCurrencyRef.current = currency;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    () => getCurrencyBridge(currency) as CantonCurrencyBridge,
-    [currency],
-  );
+    getCurrencyBridge(currency).then(b => setBridge(b as CantonCurrencyBridge));
+  }, [currency]);
 
   const {
     onboardingStatus,

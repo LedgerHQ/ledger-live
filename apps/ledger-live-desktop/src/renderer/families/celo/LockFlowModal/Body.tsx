@@ -7,7 +7,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -77,15 +76,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const { account, parentAccount, source } = params;
   const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
     () => {
-      const bridge = getAccountBridge(account, parentAccount);
-      const t = bridge.createTransaction(account);
-      const transaction = bridge.updateTransaction(t, {
-        mode: "lock",
-      });
       return {
         account,
         parentAccount,
-        transaction,
+        transactionPatch: { mode: "lock" as const },
       };
     },
   );

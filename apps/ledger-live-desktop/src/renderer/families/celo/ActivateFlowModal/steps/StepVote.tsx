@@ -57,18 +57,18 @@ const StepVote = ({
     account && transaction && account.celoResources && account.celoResources.votes,
     "account with votes and transaction required",
   );
-  const bridge = getAccountBridge(account, parentAccount);
   const unit = useAccountUnit(account);
 
   const onChange = useCallback(
-    (recipient: string) => {
+    async (recipient: string) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient,
         }),
       );
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, parentAccount, transaction, onChangeTransaction],
   );
   const votes = activatableVotes(account);
   if (!transaction.recipient && votes[0]) onChange(votes[0].validatorGroup);

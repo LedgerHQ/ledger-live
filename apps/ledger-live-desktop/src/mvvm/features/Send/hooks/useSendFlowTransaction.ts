@@ -48,10 +48,10 @@ export function useSendFlowTransaction({
   );
 
   const setRecipient = useCallback(
-    (recipient: RecipientData) => {
+    async (recipient: RecipientData) => {
       if (!account || !transaction) return;
 
-      const bridge = getAccountBridge(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
       const updates: Partial<Transaction> = { recipient: recipient.address };
 
       if (recipient.memo !== undefined) {

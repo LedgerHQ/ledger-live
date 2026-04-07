@@ -21,7 +21,7 @@ import {
   saveTrustchainState,
   saveWalletExportState,
 } from "~/db";
-import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
+import { serializeAccountsState as accountsExportSelector } from "~/reducers/accounts";
 import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
@@ -47,7 +47,7 @@ type Props<Data, Stats> = {
   /** Selector for the minimal state slice this effect cares about. Avoids subscribing to root state. */
   stateSelector: (state: State) => unknown;
   throttle: number;
-  lense: (_: State) => Data;
+  lense: (_: State) => Data | Promise<Data>;
   getChangesStats: (next: State, prev: State) => Stats;
   save: (data: Data, changedStats: Stats) => Promise<void>;
   saveAtStart?: boolean;
@@ -87,7 +87,7 @@ function useDBSaveEffect<D, S>({
           if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
           isSaving.current = true;
           try {
-            await save(lense(state), changedStats); // we save it for real
+            await save(await lense(state), changedStats); // we save it for real
           } finally {
             isSaving.current = false;
           }

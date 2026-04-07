@@ -295,7 +295,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     }
   };
 
-  const startShieldedSync = (account: ZcashAccount) => {
+  const startShieldedSync = async (account: ZcashAccount) => {
     saveSyncState({
       syncState: "running",
       progress: 0,
@@ -306,13 +306,14 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       syncType: SYNC_TYPE_SHIELDED,
     };
 
-    const shieldedSync = getAccountBridge(account)
+    const bridge = await getAccountBridge(account);
+    const shieldedSync = bridge
       .sync(account, syncConfig)
       .subscribe({
-        next(accountUpdater) {
+        next(accountUpdater: Parameters<typeof updateAccountWithUpdater>[1]) {
           dispatch(updateAccountWithUpdater(account.id, accountUpdater));
         },
-        error(err) {
+        error(err: unknown) {
           console.error(err);
         },
         complete() {

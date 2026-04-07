@@ -84,7 +84,7 @@ interface Window {
   // for mocking purposes apparently?
   // eslint-disable-next-line
   mock: {
-    fromTransactionRaw: (rawTransaction: TransactionRaw) => Transaction;
+    fromTransactionRaw: (rawTransaction: TransactionRaw) => Transaction | Promise<Transaction>;
     updater?: {
       setStatus?: (a: UpdateStatus) => void;
       quitAndInstall?: () => void;

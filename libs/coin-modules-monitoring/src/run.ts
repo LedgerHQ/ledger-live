@@ -133,8 +133,8 @@ function toEmptyAccount(currency: CryptoCurrency, info: AccountInfo): Account {
   } as unknown as Account;
 }
 
-function getSync(currency: CryptoCurrency) {
-  const bridge = getAccountBridgeByFamily(currency.family);
+async function getSync(currency: CryptoCurrency) {
+  const bridge = await getAccountBridgeByFamily(currency.family);
 
   return (account: Account) =>
     firstValueFrom(
@@ -166,7 +166,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
     const monitored = currencies[currencyId];
 
     const currency = getCryptoCurrencyById(currencyId);
-    const sync = getSync(currency);
+    const sync = await getSync(currency);
 
     for (const accountType of accountTypes) {
       const info = monitored.accounts[accountType];

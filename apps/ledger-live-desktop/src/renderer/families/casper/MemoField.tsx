@@ -10,15 +10,14 @@ const MemoField = ({ onChange, account, transaction, status, autoFocus }: MemoTa
 
   const { t } = useTranslation();
 
-  const bridge = getAccountBridge(account);
-
   const onTransferIdFieldChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      const bridge = await getAccountBridge(account);
       value = value.replace(/\D/g, "");
       if (value !== "") onChange(bridge.updateTransaction(transaction, { transferId: value }));
       else onChange(bridge.updateTransaction(transaction, { transferId: undefined }));
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   return (

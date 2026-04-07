@@ -36,8 +36,8 @@ function InternetComputerEditMemo({ navigation, route }: NavigationProps) {
     value = str.replace(/\D/g, "");
     setMemo(value === "" ? undefined : value);
   }, []);
-  const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
+  const onValidateText = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,

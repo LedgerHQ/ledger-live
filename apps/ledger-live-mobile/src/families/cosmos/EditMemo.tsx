@@ -23,8 +23,8 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const account = route.params.account;
   const currencyName = account.currency.name;
 
-  const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
+  const onValidateText = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       ...route.params,

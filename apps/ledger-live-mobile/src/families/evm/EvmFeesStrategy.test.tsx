@@ -13,7 +13,7 @@ jest.mock("@ledgerhq/live-common/families/evm/react", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn().mockReturnValue({
+  getAccountBridge: jest.fn().mockResolvedValue({
     updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
   }),
 }));

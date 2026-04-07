@@ -2,7 +2,6 @@ import { getEditTransactionPatch } from "@ledgerhq/coin-bitcoin/editTransaction/
 import { Transaction as BitcoinTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo } from "react";
 import { urls } from "~/config/urls";
@@ -67,7 +66,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   const handleContinueClick = async () => {
     invariant(editType, "editType required");
 
-    const bridge: AccountBridge<BitcoinTransaction> = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
     const patch = await getEditTransactionPatch({

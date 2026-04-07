@@ -20,19 +20,19 @@ export default function StepAsset({
   t,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account);
   const onUpdateAsset = useCallback(
-    (t?: TokenCurrency | null) => {
+    async (t?: TokenCurrency | null) => {
       // NOTE: to match the signature of AsaSelector, i had to change a bit the function
       if (!t) return;
       const { id: assetId } = t;
+      const bridge = await getAccountBridge(account);
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           assetId,
         }),
       );
     },
-    [bridge, onUpdateTransaction],
+    [account, onUpdateTransaction],
   );
   return (
     <Box flow={1}>

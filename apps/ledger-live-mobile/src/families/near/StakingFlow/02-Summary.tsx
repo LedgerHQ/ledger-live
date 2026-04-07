@@ -11,7 +11,7 @@ import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { TrackScreen } from "~/analytics";
@@ -46,7 +46,6 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   const validators = useLedgerFirstShuffledValidatorsNear("");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {
@@ -59,35 +58,37 @@ export default function StakingSummary({ navigation, route }: Props) {
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => {
       const tx = route.params.transaction;
-
-      if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "stake",
-            recipient: chosenValidator.validatorAddress,
-          }),
-        };
+      if (tx) {
+        return { account, transaction: tx };
       }
-
-      return { account, transaction: tx };
+      return { account };
     },
   );
 
-  invariant(transaction, "transaction must be defined");
-  invariant(transaction.family === "near", "transaction near");
+  const stakeInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !stakeInitSet.current && !route.params.transaction) {
+      stakeInitSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: "stake",
+        recipient: chosenValidator?.validatorAddress ?? "",
+      } as typeof transaction);
+    }
+  }, [transaction, setTransaction, chosenValidator, route.params.transaction]);
 
   useEffect(() => {
+    if (!transaction) return;
     if (chosenValidator.validatorAddress !== transaction.recipient) {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          recipient: chosenValidator.validatorAddress,
-        }),
-      );
+      getAccountBridge(account, undefined).then(bridge => {
+        setTransaction(
+          bridge.updateTransaction(transaction, {
+            recipient: chosenValidator.validatorAddress,
+          }),
+        );
+      });
     }
-  }, [bridge, setTransaction, chosenValidator, transaction]);
+  }, [setTransaction, chosenValidator, transaction, account]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
@@ -127,7 +128,7 @@ export default function StakingSummary({ navigation, route }: Props) {
     rotateAnim.setValue(0);
     navigation.navigate(ScreenName.NearStakingValidatorSelect, {
       ...route.params,
-      transaction,
+      transaction: transaction ?? undefined,
     });
   }, [rotateAnim, navigation, transaction, route.params]);
 
@@ -135,6 +136,7 @@ export default function StakingSummary({ navigation, route }: Props) {
   const color = getCurrencyColor(currency);
 
   const onChangeAmount = () => {
+    if (!transaction) return;
     navigation.navigate(ScreenName.NearStakingAmount, {
       ...route.params,
       transaction,
@@ -150,10 +152,12 @@ export default function StakingSummary({ navigation, route }: Props) {
       source: route.params.source,
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction,
+      transaction: transaction ?? undefined,
       status,
     });
   }, [status, account, parentAccount?.id, navigation, transaction, route.params.source]);
+
+  if (!transaction || transaction.family !== "near") return null;
 
   const error =
     transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");

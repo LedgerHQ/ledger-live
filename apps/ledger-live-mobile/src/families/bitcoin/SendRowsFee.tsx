@@ -63,8 +63,8 @@ export default function BitcoinSendRowsFee({
     [defaultStrategies, transaction],
   );
   const onFeesSelected = useCallback(
-    ({ amount, label }: SelectFeeStrategy) => {
-      const bridge = getAccountBridge(account, parentAccount);
+    async ({ amount, label }: SelectFeeStrategy) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           feesStrategy: label,

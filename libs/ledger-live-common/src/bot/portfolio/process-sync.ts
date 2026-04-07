@@ -37,7 +37,9 @@ main().then(
 async function main(): Promise<Report> {
   const report: Report = {};
   const [family, key] = process.argv.slice(2);
-  const spec: AppSpec<any> = allSpecs[family as keyof typeof allSpecs][key as never];
+  const familySpecs = allSpecs[family as keyof typeof allSpecs];
+  if (!familySpecs) throw new Error(`No specs for family: ${family}`);
+  const spec: AppSpec<any> = familySpecs[key];
 
   const { COINAPPS, SEED } = process.env;
 
@@ -90,7 +92,7 @@ async function main(): Promise<Report> {
       },
     });
 
-    const bridge = getCurrencyBridge(currency);
+    const bridge = await getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {},
     };
@@ -117,7 +119,7 @@ async function main(): Promise<Report> {
 
     audit.end();
 
-    const accountsRaw = JSON.stringify(accounts.map(a => toAccountRaw(a)));
+    const accountsRaw = JSON.stringify(await Promise.all(accounts.map(a => toAccountRaw(a))));
     const preloadJSON = JSON.stringify(localCache);
     audit.setAccountsJSONSize(accountsRaw.length);
     audit.setPreloadJSONSize(preloadJSON.length);

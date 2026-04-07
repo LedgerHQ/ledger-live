@@ -190,27 +190,28 @@ const Body = ({
   useEffect(() => {
     if (!transaction) return;
 
-    const bridge = getAccountBridge(account, parentAccount);
-    let updatedTransaction = transaction;
-    let hasChanges = false;
+    getAccountBridge(account, parentAccount).then(bridge => {
+      let updatedTransaction = transaction;
+      let hasChanges = false;
 
-    if (maybeRecipient && !transaction.recipient) {
-      updatedTransaction = bridge.updateTransaction(updatedTransaction, {
-        recipient: maybeRecipient,
-      });
-      hasChanges = true;
-      onResetMaybeRecipient();
-    }
+      if (maybeRecipient && !transaction.recipient) {
+        updatedTransaction = bridge.updateTransaction(updatedTransaction, {
+          recipient: maybeRecipient,
+        });
+        hasChanges = true;
+        onResetMaybeRecipient();
+      }
 
-    if (maybeAmount && !maybeAmount.eq(transaction.amount || new BigNumber(0))) {
-      updatedTransaction = bridge.updateTransaction(updatedTransaction, { amount: maybeAmount });
-      hasChanges = true;
-      onResetMaybeAmount();
-    }
+      if (maybeAmount && !maybeAmount.eq(transaction.amount || new BigNumber(0))) {
+        updatedTransaction = bridge.updateTransaction(updatedTransaction, { amount: maybeAmount });
+        hasChanges = true;
+        onResetMaybeAmount();
+      }
 
-    if (hasChanges) {
-      setTransaction(updatedTransaction);
-    }
+      if (hasChanges) {
+        setTransaction(updatedTransaction);
+      }
+    });
   }, [
     maybeRecipient,
     maybeAmount,

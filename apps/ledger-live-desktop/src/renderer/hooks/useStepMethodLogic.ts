@@ -84,7 +84,7 @@ export const useStepMethodContinue = <T extends TransactionCommon>({
   return useCallback(async () => {
     invariant(editType, "editType required");
 
-    const bridge: AccountBridge<T> = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
     const patch = await getPatch({
       account: mainAccount,

@@ -10,7 +10,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -108,22 +107,19 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     const source = account.cosmosResources?.delegations.find(
       d => d.validatorAddress === validatorAddress,
     );
-    const bridge = getAccountBridge(account, undefined);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "redelegate",
-      validators: [
-        {
-          address: validatorDstAddress,
-          amount: source?.amount ?? BigNumber(0),
-        },
-      ],
-      sourceValidator: validatorAddress,
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: {
+        mode: "redelegate" as const,
+        validators: [
+          {
+            address: validatorDstAddress,
+            amount: source?.amount ?? BigNumber(0),
+          },
+        ],
+        sourceValidator: validatorAddress,
+      },
     };
   });
 

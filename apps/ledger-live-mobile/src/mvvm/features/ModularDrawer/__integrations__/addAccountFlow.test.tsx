@@ -87,32 +87,37 @@ let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
 let triggerError: ((error: Error) => void) | null = null;
 
+jest.mock("~/bridge/cache", () => ({
+  prepareCurrency: jest.fn().mockResolvedValue(undefined),
+}));
+
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
-  getCurrencyBridge: () => ({
-    scanAccounts: () =>
-      new Observable<{ account: Account }>(subscriber => {
-        const originalNext = triggerNext;
-        const originalComplete = triggerComplete;
-        const originalError = triggerError;
-        triggerNext = (accounts: Account[]) => {
-          accounts.forEach(account => subscriber.next({ account }));
-        };
-        triggerComplete = () => {
-          subscriber.complete();
-        };
-        triggerError = (error: Error) => {
-          subscriber.error(error);
-        };
-        return () => {
-          triggerNext = originalNext;
-          triggerComplete = originalComplete;
-          triggerError = originalError;
-        };
-      }),
-    preload: () => Promise.resolve(true),
-    hydrate: () => true,
-  }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      scanAccounts: () =>
+        new Observable<{ account: Account }>(subscriber => {
+          const originalNext = triggerNext;
+          const originalComplete = triggerComplete;
+          const originalError = triggerError;
+          triggerNext = (accounts: Account[]) => {
+            accounts.forEach(account => subscriber.next({ account }));
+          };
+          triggerComplete = () => {
+            subscriber.complete();
+          };
+          triggerError = (error: Error) => {
+            subscriber.error(error);
+          };
+          return () => {
+            triggerNext = originalNext;
+            triggerComplete = originalComplete;
+            triggerError = originalError;
+          };
+        }),
+      preload: () => Promise.resolve(true),
+      hydrate: () => true,
+    }),
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {

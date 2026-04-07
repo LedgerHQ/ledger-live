@@ -1,14 +1,9 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  Transaction,
-  SolanaStakeWithMeta,
-  SolanaAccount,
-} from "@ledgerhq/live-common/families/solana/types";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { SolanaStakeWithMeta, SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
+import { Operation, Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
@@ -95,20 +90,18 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       stake.delegation && stake.activation.state === "deactivating",
       "solana: can reactivate only delegated stake in <deactivating> state",
     );
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
-    const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      model: {
-        kind: "stake.delegate",
-        uiState: {
-          stakeAccAddr: stake.stakeAccAddr,
-          voteAccAddr: stake.delegation.voteAccAddr,
-        },
-      },
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: {
+        model: {
+          kind: "stake.delegate" as const,
+          uiState: {
+            stakeAccAddr: stake.stakeAccAddr,
+            voteAccAddr: stake.delegation!.voteAccAddr,
+          },
+        },
+      },
     };
   });
 

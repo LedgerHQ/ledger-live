@@ -190,10 +190,10 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
   console.log("starting sync on", currencyId, xpubOrAddress);
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const currency = getCryptoCurrencyById(currencyId);
-  const currencyBrige = getCurrencyBridge(currency);
+  const currencyBrige = await getCurrencyBridge(currency);
   const data = await currencyBrige.preload(currency);
   currencyBrige.hydrate(data, currency);
-  const accountBrige = getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
+  const accountBrige = await getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
 
   const syncedAccount = await firstValueFrom(
     accountBrige
@@ -201,7 +201,7 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
       .pipe(reduce((acc, f: (arg0: Account) => Account) => f(acc), mockAccount)),
   );
 
-  const accountRaw = toAccountRaw(syncedAccount);
+  const accountRaw = await toAccountRaw(syncedAccount);
 
   console.log("finishing sync on", currencyId, xpubOrAddress);
   return accountRaw;
@@ -210,10 +210,10 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
 const testSyncAccount = async (account: Account) => {
   console.log("starting sync on", account.currency.id, account.xpub ?? account.freshAddress);
   const currency = getCryptoCurrencyById(account.currency.id);
-  const currencyBrige = getCurrencyBridge(currency);
+  const currencyBrige = await getCurrencyBridge(currency);
   const data = await currencyBrige.preload(currency);
   currencyBrige.hydrate(data, currency);
-  const accountBrige = getAccountBridgeByFamily(account.currency!.family, account.id);
+  const accountBrige = await getAccountBridgeByFamily(account.currency!.family, account.id);
 
   const syncedAccount = await firstValueFrom(
     accountBrige
@@ -221,7 +221,7 @@ const testSyncAccount = async (account: Account) => {
       .pipe(reduce((acc, f: (arg0: Account) => Account) => f(acc), account)),
   );
 
-  const accountRaw = toAccountRaw(syncedAccount);
+  const accountRaw = await toAccountRaw(syncedAccount);
 
   console.log("finishing sync on", account.currency.id, account.xpub ?? account.freshAddress);
   return accountRaw;

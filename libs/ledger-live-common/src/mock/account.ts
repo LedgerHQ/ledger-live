@@ -10,6 +10,21 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "../bridge";
 import { loadMockAccountForFamily } from "../coin-modules/registry";
+
+const mockAccountModuleCache = new Map<string, any>();
+function getMockAccountModule(family: string): any | undefined {
+  if (!mockAccountModuleCache.has(family)) {
+    mockAccountModuleCache.set(family, undefined);
+    try {
+      loadMockAccountForFamily(family)
+        .then(m => mockAccountModuleCache.set(family, m))
+        .catch(() => {});
+    } catch {
+      // no mock module for this family
+    }
+  }
+  return mockAccountModuleCache.get(family);
+}
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
@@ -36,7 +51,9 @@ export function genAddingOperationsInAccount(
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
-  loadMockAccountForFamily(account.currency.family)?.postSyncAccount?.(copy);
+  const perFamilyOperation = getMockAccountModule(account.currency.family);
+  const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
+  if (postSyncAccount) postSyncAccount(copy);
   return copy;
 }
 
@@ -191,22 +208,23 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
           };
           break;
         default: {
-          try {
-            const bridge = getAccountBridge(account);
-            const initAccount = bridge.initAccount;
-            if (initAccount) {
-              initAccount(account);
-            }
-          } catch {
-            // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
-          }
+          getAccountBridge(account)
+            .then(bridge => {
+              const initAccount = bridge.initAccount;
+              if (initAccount) {
+                initAccount(account);
+              }
+            })
+            .catch(() => {
+              // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
+            });
         }
       }
     },
     (account: Account, currency: CryptoCurrency, rng: Prando) => {
-      const perFamilyOperation = loadMockAccountForFamily(currency.family);
+      const perFamilyOperation = getMockAccountModule(currency.family);
       const genAccountEnhanceOperations =
-        perFamilyOperation && (perFamilyOperation as any).genAccountEnhanceOperations;
+        perFamilyOperation && perFamilyOperation.genAccountEnhanceOperations;
       if (genAccountEnhanceOperations) {
         genAccountEnhanceOperations(account, rng);
       }

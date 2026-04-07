@@ -13,14 +13,13 @@ import type {
 import { isOldestBitcoinPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { fromTransactionRaw } from "@ledgerhq/coin-bitcoin/transaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/native-ui";
-import type { Account, AccountBridge } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
-import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
@@ -42,34 +41,26 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const transactionToEdit = useMemo<BtcTransaction>(() => {
-    const transactionRaw = {
-      family: "bitcoin" as const,
-      amount: "0",
-      recipient: mainAccount.freshAddress,
-      rbf: true,
-      replaceTxId: operation.hash,
-      utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-      feePerByte: null,
-      networkInfo: null,
-    };
-
-    return {
-      ...fromTransactionRaw(transactionRaw as TransactionRaw),
-      replaceTxId: operation.hash,
-    } as BtcTransaction;
-  }, [operation.hash, mainAccount.freshAddress]);
+  const transactionToEdit = useMemo<BtcTransaction>(
+    () =>
+      fromTransactionRaw({
+        family: "bitcoin",
+        amount: "0",
+        recipient: mainAccount.freshAddress,
+        rbf: true,
+        replaceTxId: operation.hash,
+        utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+        feePerByte: null,
+        networkInfo: null,
+      } as TransactionRaw),
+    [operation.hash, mainAccount.freshAddress],
+  );
 
   const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(() => ({
     account,
     parentAccount,
     transaction: transactionToEdit,
   }));
-
-  invariant(
-    transaction,
-    "[useBridgeTransaction - MethodSelection] could not find transaction from bridge.",
-  );
 
   useEffect(() => {
     let cancelled = false;
@@ -93,19 +84,21 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const isOldestEditableOperation = isOldestBitcoinPendingOperation(mainAccount, operation.date);
 
-  const bridge: AccountBridge<BtcTransaction> = getAccountBridge(account, parentAccount as Account);
-
   const onSelect = useCallback(
     async (option: EditType) => {
-      const patch = await getEditTransactionPatch({
-        account: mainAccount,
-        transaction: transactionToEdit,
-        editType: option,
-      });
+      if (!transaction) return;
+      const [patch, bridge] = await Promise.all([
+        getEditTransactionPatch({
+          account: mainAccount,
+          transaction: transactionToEdit,
+          editType: option,
+        }),
+        getAccountBridge(account, parentAccount as Account),
+      ]);
       setTransaction(bridge.updateTransaction(transaction, patch));
       setSelectedMethod(option);
     },
-    [mainAccount, transaction, transactionToEdit, bridge, setTransaction],
+    [mainAccount, transaction, transactionToEdit, account, parentAccount, setTransaction],
   );
 
   useEffect(() => {
@@ -139,7 +132,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   }
 
   useEffect(() => {
-    if (!selectedMethod) {
+    if (!selectedMethod || !transaction) {
       return;
     }
     const transactionRaw = {

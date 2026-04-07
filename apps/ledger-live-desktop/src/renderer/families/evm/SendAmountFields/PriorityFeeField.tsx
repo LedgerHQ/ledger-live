@@ -1,7 +1,6 @@
 import { Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
@@ -55,18 +54,19 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   invariant(transaction.family === "evm", "PriorityFeeField: evm family expected");
   invariant(transaction.type === 2, "PriorityFeeField: transaction should be of type 2 (EIP1559)");
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
 
   const onPriorityFeeChange = useCallback(
-    (maxPriorityFeePerGas: BigNumber) =>
+    async (maxPriorityFeePerGas: BigNumber) => {
+      const bridge = await getAccountBridge(account);
       updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, {
           maxPriorityFeePerGas,
           feesStrategy: "custom",
         }),
-      ),
-    [updateTransaction, bridge],
+      );
+    },
+    [updateTransaction, account],
   );
 
   const { gasOptions } = transaction;

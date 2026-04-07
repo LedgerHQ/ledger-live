@@ -1,13 +1,13 @@
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
-import { loadDeviceTxConfigForFamily } from "../coin-modules/registry";
-import type { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
-import { getMainAccount } from "../account";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "@ledgerhq/coin-stacks/bridge/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "@ledgerhq/coin-tron/bridge/deviceTransactionConfig";
+import type { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
+import { getMainAccount } from "../account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { loadDeviceTxConfigForFamily } from "../coin-modules/registry";
 
 type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper
@@ -26,7 +26,7 @@ export async function getDeviceTransactionConfig(arg: {
 }): Promise<Array<DeviceTransactionField>> {
   const mainAccount = getMainAccount(arg.account, arg.parentAccount);
   const family = mainAccount.currency.family;
-  const f = loadDeviceTxConfigForFamily(family);
+  const f = await loadDeviceTxConfigForFamily(family);
   if (!f) return [];
   return await f(arg);
 }

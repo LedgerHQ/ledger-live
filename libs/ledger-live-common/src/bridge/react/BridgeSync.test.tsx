@@ -60,24 +60,34 @@ type AccountUpdater = (arg0: Account) => Account;
 import * as BridgeImpl from "../impl";
 const mockedGetAccountBridge = jest.mocked(BridgeImpl.getAccountBridge);
 
-// Store the original implementation
-const originalGetAccountBridge = jest.requireActual<typeof BridgeImpl>("../impl").getAccountBridge;
+const createMinimalBridge = (sync?: () => Observable<AccountUpdater>) => ({
+  sync:
+    sync ??
+    (() =>
+      new Observable<AccountUpdater>(obs => {
+        obs.complete();
+      })),
+  broadcast: () => Promise.resolve({ operation: null as any, optimisticOperation: null as any }),
+  receive: () => new Observable(),
+  createTransaction: () => ({}),
+  updateTransaction: (t: any) => t,
+  getTransactionStatus: () => Promise.resolve({} as any),
+  prepareTransaction: (a: any, t: any) => Promise.resolve(t),
+  estimateMaxSpendable: () => Promise.resolve(null as any),
+  signOperation: () => new Observable(),
+});
 
 const withMockedAccountBridge = (
   account: Account,
   syncFactory: () => Observable<AccountUpdater>,
 ) => {
-  const originalBridge = originalGetAccountBridge(account);
-  const mockBridge = {
-    ...originalBridge,
-    sync: syncFactory,
-  };
+  const mockBridge = createMinimalBridge(syncFactory);
 
   mockedGetAccountBridge.mockImplementation(acc => {
     if (acc.id === account.id) {
-      return mockBridge;
+      return Promise.resolve(mockBridge) as any;
     }
-    return originalGetAccountBridge(acc);
+    return Promise.resolve(createMinimalBridge()) as any;
   });
 
   return mockedGetAccountBridge;
@@ -99,8 +109,8 @@ const mockBridgeSync = (
 describe("BridgeSync", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset to actual implementation by default
-    mockedGetAccountBridge.mockImplementation(originalGetAccountBridge);
+    // Default: return a minimal bridge whose sync completes immediately
+    mockedGetAccountBridge.mockResolvedValue(createMinimalBridge() as any);
   });
 
   afterEach(() => {
@@ -118,12 +128,14 @@ describe("BridgeSync", () => {
     const futureOpLength = account.operations.length;
     // we remove the first operation to feed it back as a broadcasted one, the mock impl will make it go back to operations
     const lastOp = account.operations.splice(0, 1)[0];
-    Bridge.getAccountBridge(account).broadcast({
-      account,
-      signedOperation: {
-        operation: lastOp,
-        signature: "",
-      },
+    Bridge.getAccountBridge(account).then(bridge => {
+      bridge.broadcast({
+        account,
+        signedOperation: {
+          operation: lastOp,
+          signature: "",
+        },
+      });
     });
     const accounts = [account];
     expect(accounts[0].operations.length).toBe(futureOpLength - 1);

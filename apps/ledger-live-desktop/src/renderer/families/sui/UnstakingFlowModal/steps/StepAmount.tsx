@@ -25,10 +25,10 @@ export default function StepAmount({
   const { t } = useTranslation();
 
   const [staked, setStaked] = useState(transaction.amount);
-  const bridge = getAccountBridge(account);
 
   const updateAmount = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
+      const bridge = await getAccountBridge(account);
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -37,11 +37,12 @@ export default function StepAmount({
         }),
       );
     },
-    [onUpdateTransaction, bridge, staked],
+    [onUpdateTransaction, account, staked],
   );
 
   const updateValidator = useCallback(
-    ({ stakedSuiId, amount }: { stakedSuiId: string; amount: BigNumber }) => {
+    async ({ stakedSuiId, amount }: { stakedSuiId: string; amount: BigNumber }) => {
+      const bridge = await getAccountBridge(account);
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -51,7 +52,7 @@ export default function StepAmount({
         }),
       );
     },
-    [onUpdateTransaction, bridge, staked],
+    [onUpdateTransaction, account, staked],
   );
   const onChangeValidator = useCallback(
     (item?: MappedStake | null) => {

@@ -9,10 +9,11 @@ import { CreateStatus, getConfirmationCode, useOnboarding } from "../hooks/useOn
 let onboardSubject: Subject<unknown>;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: () => ({
-    onboardAccount: () => onboardSubject.asObservable(),
-    pairWalletConnect: jest.fn(),
-  }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      onboardAccount: () => onboardSubject.asObservable(),
+      pairWalletConnect: jest.fn(),
+    }),
 }));
 
 const currency = getCryptoCurrencyById("concordium");
@@ -51,6 +52,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.next({ status: AccountOnboardStatus.SIGN });
     });
@@ -66,6 +68,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.next({ status: AccountOnboardStatus.SUBMIT });
     });
@@ -81,6 +84,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.next({ account: creatableAccount });
     });
@@ -138,13 +142,13 @@ describe("useOnboarding", () => {
     });
   });
 
-  it("should unsubscribe on unmount", () => {
+  it("should unsubscribe on unmount", async () => {
     const onSessionExpired = jest.fn();
     const { unmount } = renderHook(() =>
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
-    expect(onboardSubject.observed).toBe(true);
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
 
     act(() => {
       unmount();

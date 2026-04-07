@@ -1,14 +1,9 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  SolanaAccount,
-  SolanaStakeWithMeta,
-  Transaction,
-} from "@ledgerhq/live-common/families/solana/types";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { SolanaAccount, SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
+import { Operation, Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
@@ -89,19 +84,17 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   } = useBridgeTransaction(() => {
     const { account, stakeWithMeta } = params;
     invariant(account && account.solanaResources, "solana: account and solana resources required");
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
-    const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      model: {
-        kind: "stake.undelegate",
-        uiState: {
-          stakeAccAddr: stakeWithMeta.stake.stakeAccAddr,
-        },
-      },
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: {
+        model: {
+          kind: "stake.undelegate" as const,
+          uiState: {
+            stakeAccAddr: stakeWithMeta.stake.stakeAccAddr,
+          },
+        },
+      },
     };
   });
 

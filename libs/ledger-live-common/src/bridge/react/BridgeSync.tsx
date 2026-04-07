@@ -129,7 +129,7 @@ function useSyncQueue({
     setBridgeSyncState(state => ({ ...state, [accountId]: s }));
   }, []);
   const synchronize = useCallback(
-    ({ accountId, reason }: SyncJob, next: () => void) => {
+    async ({ accountId, reason }: SyncJob, next: () => void) => {
       const state = bridgeSyncState[accountId] || nothingState;
 
       if (state.pending) {
@@ -146,7 +146,7 @@ function useSyncQueue({
 
       // FIXME if we want to stop syncs for specific currency (e.g. api down) we would do it here
       try {
-        const bridge = getAccountBridge(account);
+        const bridge = await getAccountBridge(account);
         setAccountSyncState(accountId, {
           pending: true,
           error: null,

@@ -93,7 +93,6 @@ export const useSignWithDevice = ({
   const mevProtected = useSelector(mevProtectionSelector);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
-    const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
     navigation.setOptions({
@@ -105,93 +104,95 @@ export const useSignWithDevice = ({
       "transaction-summary",
       `✔️ transaction ${transaction && formatTransaction(transaction, mainAccount)}`,
     );
-    subscription.current = bridge
-      .signOperation({
-        account: mainAccount,
-        transaction,
-        // FIXME: deviceId could be undefined apparently
-        deviceId: deviceId!,
-      })
-      .pipe(
-        // FIXME later we will need to treat more events
-        filter(e => e.type === "signed"),
-        concatMap(
-          (
-            e, // later we will have more events
-          ) =>
-            concat(
-              of(e),
-              from(
-                bridge
-                  .broadcast({
-                    account: mainAccount,
-                    signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
-                    broadcastConfig: {
-                      mevProtected,
-                      source: { type: "coin-module", name: "ledger-live-mobile" },
-                    },
-                  })
-                  .then(operation => ({
-                    type: "broadcasted",
-                    operation,
-                  })),
+    getAccountBridge(account, parentAccount).then(bridge => {
+      subscription.current = bridge
+        .signOperation({
+          account: mainAccount,
+          transaction,
+          // FIXME: deviceId could be undefined apparently
+          deviceId: deviceId!,
+        })
+        .pipe(
+          // FIXME later we will need to treat more events
+          filter(e => e.type === "signed"),
+          concatMap(
+            (
+              e, // later we will have more events
+            ) =>
+              concat(
+                of(e),
+                from(
+                  bridge
+                    .broadcast({
+                      account: mainAccount,
+                      signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
+                      broadcastConfig: {
+                        mevProtected,
+                        source: { type: "coin-module", name: "ledger-live-mobile" },
+                      },
+                    })
+                    .then(operation => ({
+                      type: "broadcasted",
+                      operation,
+                    })),
+                ),
               ),
-            ),
-        ),
-      )
-      .subscribe({
-        next: e => {
-          switch (e.type) {
-            case "signed":
-              log(
-                "transaction-summary",
-                `✔️ has been signed! ${JSON.stringify(
-                  (e as { signedOperation?: SignedOperation }).signedOperation,
-                )}`,
-              );
-              setSigned(true);
-              break;
+          ),
+        )
+        .subscribe({
+          next: e => {
+            switch (e.type) {
+              case "signed":
+                log(
+                  "transaction-summary",
+                  `✔️ has been signed! ${JSON.stringify(
+                    (e as { signedOperation?: SignedOperation }).signedOperation,
+                  )}`,
+                );
+                setSigned(true);
+                break;
 
-            case "broadcasted":
-              log(
-                "transaction-summary",
-                `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
-                  e.operation,
-                )}`,
-              );
-              (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
-                context + "ValidationSuccess",
-                {
-                  ...route.params,
-                  result: e.operation,
-                },
-              );
-              updateAccountWithUpdater(mainAccount.id, account =>
-                addPendingOperation(account, e.operation),
-              );
-              break;
+              case "broadcasted":
+                log(
+                  "transaction-summary",
+                  `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
+                    e.operation,
+                  )}`,
+                );
+                (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
+                  context + "ValidationSuccess",
+                  {
+                    ...route.params,
+                    result: e.operation,
+                  },
+                );
+                updateAccountWithUpdater(mainAccount.id, account =>
+                  addPendingOperation(account, e.operation),
+                );
+                break;
 
-            default:
-          }
-        },
-        error: e => {
-          let error = e;
+              default:
+            }
+          },
+          error: e => {
+            let error = e;
 
-          if (e && e.statusCode === 0x6985) {
-            error = new UserRefusedOnDevice();
-          } else {
-            logger.critical(error);
-          }
+            if (e && e.statusCode === 0x6985) {
+              error = new UserRefusedOnDevice();
+            } else {
+              logger.critical(error);
+            }
 
-          (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
-            context + "ValidationError",
-            {
-              ...route.params,
-              error,
-            },
-          );
-        },
-      });
+            (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
+              context + "ValidationError",
+              {
+                ...route.params,
+                error,
+              },
+            );
+          },
+        });
+    });
   }, [
     context,
     account,
@@ -229,7 +230,7 @@ export const broadcastSignedTx = async (
 ): Promise<Operation> => {
   invariant(account, "account not present");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = await getAccountBridge(account, parentAccount);
 
   if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
     return Promise.resolve(signedOperation.operation);

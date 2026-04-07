@@ -41,6 +41,8 @@ import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { setSupportedCurrencies } from "../currencies";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { registerCoinModules } from "../coin-modules/registry";
+import { coinModuleLoaders } from "../coin-modules/loaders";
 
 // Setup mock store for unit tests
 setupMockCryptoAssetsStore();
@@ -187,6 +189,9 @@ describe("completeExchangeLogic", () => {
 
   const uiNavigation = jest.fn();
   beforeAll(() => {
+    registerCoinModules(
+      coinModuleLoaders.filter(l => l.family === "evm" || l.family === "bitcoin"),
+    );
     setSupportedCurrencies(["bitcoin", "ethereum"]);
   });
   afterAll(() => {
@@ -586,7 +591,7 @@ describe("signMessageLogic", () => {
       // Given
       const expectedResult = "Function called";
       const formattedMessage = createMessageData();
-      mockedPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
+      mockedPrepareMessageToSign.mockResolvedValueOnce(formattedMessage);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When

@@ -16,13 +16,12 @@ type Props = {
 const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: Props) => {
   invariant(transaction.family === "stacks", "MemoField: stacks family expected");
 
-  const bridge = getAccountBridge(account);
-
   const onMemoValueChange = useCallback(
-    (memoValue: string) => {
+    async (memoValue: string) => {
+      const bridge = await getAccountBridge(account);
       onChange(bridge.updateTransaction(transaction, { memo: memoValue }));
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   // We use transaction as an error here.

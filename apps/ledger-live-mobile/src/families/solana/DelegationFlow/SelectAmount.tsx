@@ -5,7 +5,7 @@ import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import {
   Keyboard,
@@ -48,46 +48,58 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState(0);
 
-  const bridge = getAccountBridge(account);
-
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
       account,
-      transaction: {
-        ...bridge.createTransaction(account),
-        amount: new BigNumber(route.params.amount ?? 0),
-        family: "solana",
-        model: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: { voteAccAddress: "" },
-          },
-        },
-      },
     }),
   );
 
-  invariant(transaction, "transaction must be defined");
+  const solanaInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !solanaInitSet.current) {
+      solanaInitSet.current = true;
+      getAccountBridge(account).then(bridge => {
+        setTransaction({
+          ...bridge.createTransaction(account),
+          amount: new BigNumber(route.params.amount ?? 0),
+          family: "solana",
+          model: {
+            kind: "stake.createAccount",
+            uiState: {
+              delegate: { voteAccAddress: "" },
+            },
+          },
+        } as typeof transaction);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
 
   useEffect(() => {
+    if (!transaction) return;
     let cancelled = false;
-    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
-      if (cancelled) return;
-      setMaxSpendable(estimate.toNumber());
-    });
+    getAccountBridge(account)
+      .then(bridge => bridge.estimateMaxSpendable({ account, transaction }))
+      .then(estimate => {
+        if (cancelled) return;
+        setMaxSpendable(estimate.toNumber());
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [transaction, setMaxSpendable, bridge, account]);
+  }, [transaction, setMaxSpendable, account]);
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
 
-  const onChange = (amount: BigNumber) => {
+  const onChange = async (amount: BigNumber) => {
+    const bridge = await getAccountBridge(account);
     setTransaction(bridge.updateTransaction(transaction, { amount }));
   };
 
-  const toggleUseAllAmount = () => {
+  const toggleUseAllAmount = async () => {
+    if (!transaction) return;
+    const bridge = await getAccountBridge(account);
     setTransaction(
       bridge.updateTransaction(transaction, {
         useAllAmount: !transaction.useAllAmount,
@@ -111,19 +123,23 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
     if (parent) parent.goBack();
   }, [navigation]);
 
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
+    const bridge = await getAccountBridge(account);
     setTransaction(bridge.updateTransaction(transaction, {}));
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [setTransaction, account, transaction]);
 
   const blur = useCallback(() => Keyboard.dismiss(), []);
 
-  const { useAllAmount } = transaction;
-  const { amount } = status;
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
+
+  if (!transaction) return null;
+
+  const { useAllAmount } = transaction;
+  const { amount } = status;
 
   return (
     <>

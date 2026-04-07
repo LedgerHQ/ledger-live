@@ -3,7 +3,7 @@ import "../../__tests__/test-helpers/environment";
 import { finalMarkdownReport } from "./formatter";
 import { getSpecsPerBots } from "./logic";
 
-test("finalMarkdownReport sample", () => {
+test("finalMarkdownReport sample", async () => {
   const reports = [
     {
       refillAddress: "SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ",
@@ -981,7 +981,7 @@ test("finalMarkdownReport sample", () => {
   expect(
     finalMarkdownReport(
       Array(2).fill(reports).flat(),
-      getSpecsPerBots({
+      await getSpecsPerBots({
         SEED1: "",
         SEED2: "",
       }),

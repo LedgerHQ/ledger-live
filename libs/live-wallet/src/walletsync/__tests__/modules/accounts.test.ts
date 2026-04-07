@@ -64,48 +64,49 @@ function placeholderAccountFromDescriptor(descriptor: AccountDescriptor): Accoun
 }
 
 const dummyContext: WalletSyncDataManagerResolutionContext = {
-  getAccountBridge: () => ({
-    sync: (initial: Account) =>
-      initial.id === account4unsupported.id
-        ? throwError(() => new Error("simulate sync failure"))
-        : // this mock bridge will migrate 0->1 on versions
-          initial.id.startsWith("mock:0")
-          ? of(acc => ({ ...acc, id: acc.id.replace("mock:0", "mock:1") }))
-          : of(acc => acc),
-    receive: () => {
-      throw new Error("not implemented");
-    },
-    createTransaction: () => {
-      throw new Error("not implemented");
-    },
-    updateTransaction: () => {
-      throw new Error("not implemented");
-    },
-    prepareTransaction: () => {
-      throw new Error("not implemented");
-    },
-    getTransactionStatus: () => {
-      throw new Error("not implemented");
-    },
-    estimateMaxSpendable: () => {
-      throw new Error("not implemented");
-    },
-    signOperation: () => {
-      throw new Error("not implemented");
-    },
-    signRawOperation: () => {
-      throw new Error("not implemented");
-    },
-    broadcast: () => {
-      throw new Error("not implemented");
-    },
-    getSerializedAddressParameters: () => {
-      throw new Error("not implemented");
-    },
-    validateAddress: () => {
-      throw new Error("not implemented");
-    },
-  }),
+  getAccountBridge: () =>
+    Promise.resolve({
+      sync: (initial: Account) =>
+        initial.id === account4unsupported.id
+          ? throwError(() => new Error("simulate sync failure"))
+          : // this mock bridge will migrate 0->1 on versions
+            initial.id.startsWith("mock:0")
+            ? of((acc: Account) => ({ ...acc, id: acc.id.replace("mock:0", "mock:1") }))
+            : of((acc: Account) => acc),
+      receive: () => {
+        throw new Error("not implemented");
+      },
+      createTransaction: () => {
+        throw new Error("not implemented");
+      },
+      updateTransaction: () => {
+        throw new Error("not implemented");
+      },
+      prepareTransaction: () => {
+        throw new Error("not implemented");
+      },
+      getTransactionStatus: () => {
+        throw new Error("not implemented");
+      },
+      estimateMaxSpendable: () => {
+        throw new Error("not implemented");
+      },
+      signOperation: () => {
+        throw new Error("not implemented");
+      },
+      signRawOperation: () => {
+        throw new Error("not implemented");
+      },
+      broadcast: () => {
+        throw new Error("not implemented");
+      },
+      getSerializedAddressParameters: () => {
+        throw new Error("not implemented");
+      },
+      validateAddress: () => {
+        throw new Error("not implemented");
+      },
+    }),
   bridgeCache: {
     hydrateCurrency: () => Promise.resolve(null),
     prepareCurrency: () => Promise.resolve(null),

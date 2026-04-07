@@ -79,7 +79,6 @@ export default function useScanDeviceAccountsViewModel({
   );
   const startSubscription = useCallback(() => {
     const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-    const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
         operations: 0,
@@ -87,22 +86,24 @@ export default function useScanDeviceAccountsViewModel({
       blacklistedTokenIds,
     };
     // will be set to false if an existing account is found
-    scanSubscription.current = concat(
-      from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
-      bridge.scanAccounts({
-        currency: cryptoCurrency,
-        deviceId,
-        syncConfig,
-      }),
-    ).subscribe({
-      next: ({ account }) => {
-        setLatestScannedAccount(account);
-      },
-      complete: () => setScanning(false),
-      error: error => {
-        logger.critical(error);
-        setError(error);
-      },
+    getCurrencyBridge(cryptoCurrency).then(bridge => {
+      scanSubscription.current = concat(
+        from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
+        bridge.scanAccounts({
+          currency: cryptoCurrency,
+          deviceId,
+          syncConfig,
+        }),
+      ).subscribe({
+        next: ({ account }) => {
+          setLatestScannedAccount(account);
+        },
+        complete: () => setScanning(false),
+        error: error => {
+          logger.critical(error);
+          setError(error);
+        },
+      });
     });
   }, [blacklistedTokenIds, currency, deviceId]);
 

@@ -7,7 +7,6 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -86,20 +85,15 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(() => {
-      const bridge = getAccountBridge(account);
-      const t = bridge.createTransaction(account);
-
-      const transaction = bridge.updateTransaction(t, {
-        mode: HEDERA_TRANSACTION_MODES.Redelegate,
-        properties: {
-          stakingNodeId: null,
-        },
-      });
-
       return {
         account,
         parentAccount: undefined,
-        transaction,
+        transactionPatch: {
+          mode: HEDERA_TRANSACTION_MODES.Redelegate,
+          properties: {
+            stakingNodeId: null,
+          },
+        },
       };
     });
 

@@ -23,10 +23,9 @@ const MemoField = ({
   trackProperties = {},
   autoFocus,
 }: Props) => {
-  const bridge = getAccountBridge(account);
-
   const onMemoChange = useCallback(
-    (memo: string) => {
+    async (memo: string) => {
+      const bridge = await getAccountBridge(account);
       track("button_clicked2", {
         ...trackProperties,
         button: "input",
@@ -34,7 +33,7 @@ const MemoField = ({
       });
       onChange(bridge.updateTransaction(transaction, { memo }));
     },
-    [trackProperties, onChange, bridge, transaction],
+    [trackProperties, onChange, account, transaction],
   );
 
   return (

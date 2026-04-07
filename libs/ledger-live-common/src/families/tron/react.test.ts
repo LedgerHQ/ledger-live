@@ -4,6 +4,10 @@
 import "../../__tests__/test-helpers/dom-polyfill";
 import { setSupportedCurrencies } from "../../currencies/index";
 setSupportedCurrencies(["tron"]);
+import { registerCoinModules } from "../../coin-modules/registry";
+import { coinModuleLoaders } from "../../coin-modules/loaders";
+// Register tron coin module so fromAccountRaw can deserialize tronResources
+registerCoinModules(coinModuleLoaders.filter(l => l.family === "tron"));
 import { renderHook, act } from "@testing-library/react";
 import {
   useTronSuperRepresentatives,

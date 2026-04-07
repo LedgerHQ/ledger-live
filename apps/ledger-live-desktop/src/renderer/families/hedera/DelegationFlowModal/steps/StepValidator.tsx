@@ -3,9 +3,8 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -25,13 +24,14 @@ export default function StepValidator({
   const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
 
   const updateValidator = (validator: HederaValidator) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(() => {
-      return bridge.updateTransaction(transaction, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: validator.nodeId,
-        },
+    getAccountBridge(account, parentAccount).then(bridge => {
+      onUpdateTransaction(() => {
+        return bridge.updateTransaction(transaction, {
+          mode: HEDERA_TRANSACTION_MODES.Delegate,
+          properties: {
+            stakingNodeId: validator.nodeId,
+          },
+        });
       });
     });
   };

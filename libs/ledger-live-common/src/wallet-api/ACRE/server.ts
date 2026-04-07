@@ -240,7 +240,7 @@ export const handlers = ({
       ? await getCryptoAssetsStore().findTokenById(tokenCurrency)
       : null;
     const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
-    const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
+    const { canEditFees, liveTx, hasFeesProvided } = await getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: transaction,
       account,
     });
@@ -389,7 +389,7 @@ export const handlers = ({
       const mainAccount = getMainAccount(account, parentAccount);
       const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
-      const bridge = getAccountBridge(signerAccount, parentAccount);
+      const bridge = await getAccountBridge(signerAccount, parentAccount);
       const broadcastAccount = getMainAccount(signerAccount, parentAccount);
 
       const networkId =

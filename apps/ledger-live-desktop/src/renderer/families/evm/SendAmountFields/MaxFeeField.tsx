@@ -1,7 +1,6 @@
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
@@ -53,18 +52,19 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   invariant(transaction.family === "evm", "MaxFeeField: evm family expected");
   invariant(transaction.type === 2, "MaxFeeField: transaction should be of type 2 (EIP1559)");
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
 
   const onMaxFeeChange = useCallback(
-    (maxFeePerGas: BigNumber) =>
+    async (maxFeePerGas: BigNumber) => {
+      const bridge = await getAccountBridge(account);
       updateTransaction(() =>
         bridge.updateTransaction(transaction, {
           maxFeePerGas,
           feesStrategy: "custom",
         }),
-      ),
-    [bridge, transaction, updateTransaction],
+      );
+    },
+    [account, transaction, updateTransaction],
   );
 
   const { maxFeePerGas } = transaction;

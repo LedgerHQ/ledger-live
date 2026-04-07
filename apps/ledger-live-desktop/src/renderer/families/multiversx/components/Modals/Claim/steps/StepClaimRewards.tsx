@@ -32,12 +32,12 @@ const StepClaimRewards = (props: StepProps) => {
     contract,
   } = props;
 
-  const bridge = getAccountBridge(account);
   const updateClaimRewards = useCallback(
-    (newTransaction: Partial<Transaction>) => {
+    async (newTransaction: Partial<Transaction>) => {
+      const bridge = await getAccountBridge(account);
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
-    [bridge, onUpdateTransaction],
+    [account, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
     (mode: MultiversXTransactionMode) => {
@@ -96,7 +96,7 @@ const StepClaimRewards = (props: StepProps) => {
         contract={contract!}
         validators={validators!}
         delegations={delegations!}
-        bridge={bridge}
+        account={account}
         onUpdateTransaction={onUpdateTransaction}
         onChange={onDelegationChange}
         transaction={transaction}

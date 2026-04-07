@@ -114,7 +114,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
   const accountsFoundInScanAccountsMap = {};
 
   currenciesRelated.forEach(({ currencyData, currency }) => {
-    const bridge = getCurrencyBridge(currency);
+    let bridge: import("@ledgerhq/types-live").CurrencyBridge;
 
     const scanAccounts = async apdus => {
       const deviceId = await mockDeviceWithAPDUs(apdus, currencyData.mockDeviceOptions);
@@ -153,6 +153,9 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         FIXME_ignoreOperationFields,
         FIXME_ignorePreloadFields,
       } = currencyData;
+      beforeAll(async () => {
+        bridge = await getCurrencyBridge(currency);
+      });
       test("functions are defined", () => {
         expect(typeof bridge.scanAccounts).toBe("function");
         expect(typeof bridge.preload).toBe("function");
@@ -208,11 +211,14 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               });
 
               if (!sa.unstableAccounts) {
-                const raws: AccountRawLike[] = flatMap(accounts, a => {
-                  const main = toAccountRaw(a);
-                  if (!main.subAccounts) return [main];
-                  return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
-                });
+                const rawsNested = await Promise.all(
+                  accounts.map(async a => {
+                    const main = await toAccountRaw(a);
+                    if (!main.subAccounts) return [main];
+                    return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
+                  }),
+                );
+                const raws: AccountRawLike[] = rawsNested.flat();
                 const heads = raws.map(a => {
                   const copy = omit(
                     a,
@@ -250,7 +256,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               const accounts = await scanAccountsCached(sa.apdus);
 
               for (const account of accounts) {
-                const accountBridge = getAccountBridge(account);
+                const accountBridge = await getAccountBridge(account);
                 const estimation = await accountBridge.estimateMaxSpendable({
                   account,
                 });
@@ -349,8 +355,8 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
 
       const getBridge = async () => {
         if (!bridgePromise) {
-          bridgePromise = getAccount().then(account => {
-            const bridge = getAccountBridge(account, null);
+          bridgePromise = getAccount().then(async account => {
+            const bridge = await getAccountBridge(account, null);
             if (!bridge) throw new Error("no bridge for " + account.id);
             return bridge;
           });
@@ -413,7 +419,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           describe("sync", () => {
             makeTest("succeed", async () => {
               const account = await getSynced();
-              expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
+              expect(await fromAccountRaw(await toAccountRaw(account))).toBeDefined();
             });
 
             if (impl !== "mock") {
@@ -529,7 +535,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               const account = await getAccount();
               const bridge = await getBridge();
               const t = bridge.createTransaction(account);
-              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+              expect(await fromTransactionRaw(await toTransactionRaw(t))).toEqual(t);
             });
             makeTest("transaction with amount and recipient correctly serialize", async () => {
               const account = await getSynced();
@@ -539,7 +545,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 amount: new BigNumber(1000),
                 recipient: account.freshAddress,
               };
-              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+              expect(await fromTransactionRaw(await toTransactionRaw(t))).toEqual(t);
             });
           });
 

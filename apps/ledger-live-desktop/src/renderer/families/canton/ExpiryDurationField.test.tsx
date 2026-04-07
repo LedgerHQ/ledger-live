@@ -8,12 +8,13 @@ import { createMockAccount } from "./__tests__/testUtils";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: () => ({
-    updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
-      ...tx,
-      ...patch,
+  getAccountBridge: () =>
+    Promise.resolve({
+      updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
+        ...tx,
+        ...patch,
+      }),
     }),
-  }),
 }));
 
 describe("ExpiryDurationField", () => {

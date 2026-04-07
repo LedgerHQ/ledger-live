@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -87,20 +87,20 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account) as AlgorandAccount;
-  const bridge = getAccountBridge(mainAccount);
   invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
-  const { transaction } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
-        mode: "optIn",
-        assetId: null,
-      }),
-    };
-  });
+  const modeSet = useRef(false);
+  const { transaction, setTransaction } = useBridgeTransaction(() => ({
+    account,
+  }));
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...transaction, mode: "optIn", assetId: null } as typeof transaction);
+    }
+  }, [transaction, setTransaction]);
   const onNext = useCallback(
-    (assetId: string) => {
+    async (assetId: string) => {
+      const bridge = await getAccountBridge(mainAccount);
       navigation.navigate(ScreenName.AlgorandOptInSelectDevice, {
         ...route.params,
         transaction: bridge.updateTransaction(transaction, {
@@ -108,7 +108,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         }),
       });
     },
-    [navigation, route.params, bridge, transaction],
+    [navigation, route.params, mainAccount, transaction],
   );
   const subAccounts = mainAccount.subAccounts;
 

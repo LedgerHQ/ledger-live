@@ -6,7 +6,6 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import ValidatorField from "../fields/ValidatorField";
@@ -34,14 +33,15 @@ export default function StepDelegation({
 
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
-    const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account);
-    onUpdateTransaction(() => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const updatedTransaction = bridge.updateTransaction(transaction as CardanoTransaction, {
-        mode: "delegate",
-        poolId: stakePool.poolId,
+    getAccountBridge(account).then(bridge => {
+      onUpdateTransaction(() => {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        const updatedTransaction = bridge.updateTransaction(transaction as CardanoTransaction, {
+          mode: "delegate",
+          poolId: stakePool.poolId,
+        });
+        return updatedTransaction;
       });
-      return updatedTransaction;
     });
   };
 

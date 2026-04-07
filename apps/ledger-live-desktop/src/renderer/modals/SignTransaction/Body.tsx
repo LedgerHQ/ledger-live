@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback, useState, useMemo, useEffect, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
@@ -20,7 +20,7 @@ import { St, StepId } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ModalData } from "../types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
@@ -134,20 +134,29 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   } = useBridgeTransaction(() => {
     const parentAccount = params && params.parentAccount;
     const account = params && params.account;
-    const bridge = getAccountBridge(account, parentAccount);
-    const tx = bridge.createTransaction(account);
-    const { recipient, ...txData } = transactionData;
-    const tx2 = bridge.updateTransaction(tx, {
-      recipient,
-      subAccountId: isTokenAccount(account) ? account.id : undefined,
-    });
-    const transaction = bridge.updateTransaction(tx2, txData);
     return {
       account,
       parentAccount,
-      transaction,
     };
   });
+
+  const initDone = useRef(false);
+  useEffect(() => {
+    if (transaction && !initDone.current) {
+      initDone.current = true;
+      const parentAccount = params && params.parentAccount;
+      const account = params && params.account;
+      const { recipient, ...txData } = transactionData;
+      getAccountBridge(account, parentAccount).then(bridge => {
+        const tx = bridge.createTransaction(account);
+        const tx2 = bridge.updateTransaction(tx, {
+          recipient,
+          subAccountId: isTokenAccount(account) ? account.id : undefined,
+        });
+        setTransaction(bridge.updateTransaction(tx2, txData));
+      });
+    }
+  }, [transaction, params, transactionData, setTransaction]);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const handleOpenModal = useCallback(
     <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) =>
@@ -192,7 +201,8 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const { fields } = useDeviceTransactionConfig({
     account: params.account,
     parentAccount,
-    transaction,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    transaction: transaction!,
     status,
   });
 

@@ -42,19 +42,15 @@ function StakingAmount({ navigation, route }: Props) {
   const account = useAccountScreen(route).account as SuiAccount;
   const { locale } = useSettings();
 
-  invariant(
-    account?.suiResources && route.params.transaction,
-    "account and sui transaction required",
-  );
-  const bridge = getAccountBridge(account, undefined);
   const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);
   const max = useMemo(() => route?.params?.max ?? new BigNumber(0), [route]);
   const remaining = useMemo(() => max.minus(value), [max, value]);
   const { transaction, updateTransaction, bridgePending, status } = route.params;
-  const onNext = useCallback(() => {
+  const onNext = useCallback(async () => {
     const tx = route.params.transaction;
+    const bridge = await getAccountBridge(account, undefined);
 
     const transaction = bridge.updateTransaction(tx, {
       amount: value,
@@ -66,7 +62,7 @@ function StakingAmount({ navigation, route }: Props) {
       transaction,
       fromSelectAmount: true,
     });
-  }, [navigation, route.params, bridge, value, max]);
+  }, [navigation, route.params, account, value, max]);
   const onChange = useCallback(
     (amount: BigNumber) => {
       if (!amount.isNaN()) {
@@ -82,6 +78,8 @@ function StakingAmount({ navigation, route }: Props) {
       value: max.multipliedBy(ratio).integerValue(),
     })),
   );
+  if (!account?.suiResources || !transaction) return null;
+
   const error =
     transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");

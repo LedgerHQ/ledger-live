@@ -25,18 +25,18 @@ const CommentField = ({
 
   const { t } = useTranslation();
 
-  const bridge = getAccountBridge(account);
   const lldMemoTag = useFeature("lldMemoTag");
 
   const onCommentFieldChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           comment: { isEncrypted: false, text: value ?? "" },
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   const InputField = lldMemoTag?.enabled ? MemoTagField : Input;

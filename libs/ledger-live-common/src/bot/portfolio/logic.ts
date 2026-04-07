@@ -22,11 +22,12 @@ export function getSpecsPerBots(
       .map(f => f.trim())
       .filter(Boolean) || [];
 
-  // allSpecs allows to know and infer what are the coins to sync
   const specs: Array<{ spec: AppSpec<any>; family: string; key: string }> = [];
-  for (const family in allSpecs) {
+  for (const [family, familySpecs] of Object.entries(allSpecs) as [
+    string,
+    Record<string, AppSpec<any>>,
+  ][]) {
     if (filterFamilies.length > 0 && !filterFamilies.includes(family)) continue;
-    const familySpecs = allSpecs[family as keyof typeof allSpecs];
     for (const key in familySpecs) {
       const spec: AppSpec<any> = familySpecs[key];
       if (!isCurrencySupported(spec.currency) || spec.disabled) {

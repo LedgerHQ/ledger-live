@@ -484,7 +484,7 @@ export function useDappLogic({
           if (address.toLowerCase() === ethTX.from.toLowerCase()) {
             let trackingData: DAppTrackingData | undefined;
             try {
-              const signFlowInfos = getWalletAPITransactionSignFlowInfos({
+              const signFlowInfos = await getWalletAPITransactionSignFlowInfos({
                 walletApiTransaction: tx,
                 account: currentAccount,
               });
@@ -532,7 +532,7 @@ export function useDappLogic({
                 }),
               );
 
-              const bridge = getAccountBridge(currentAccount, undefined);
+              const bridge = await getAccountBridge(currentAccount, undefined);
               const mainAccount = getMainAccount(currentAccount, undefined);
 
               let optimisticOperation: Operation = signedTransaction.operation;
@@ -601,7 +601,7 @@ export function useDappLogic({
             const message = stripHexPrefix(data.params[0]);
             tracking.dappPersonalSignRequested(manifest);
 
-            const formattedMessage = prepareMessageToSign(
+            const formattedMessage = await prepareMessageToSign(
               currentAccount.type === "Account" ? currentAccount : currentParentAccount,
               message,
             );
@@ -648,7 +648,7 @@ export function useDappLogic({
 
             tracking.dappSignTypedDataRequested(manifest);
 
-            const formattedMessage = prepareMessageToSign(
+            const formattedMessage = await prepareMessageToSign(
               currentAccount.type === "Account" ? currentAccount : currentParentAccount,
               Buffer.from(message).toString("hex"),
             );

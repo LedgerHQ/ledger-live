@@ -61,13 +61,13 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     setOwnSatPerByte(text.replace(/\D/g, ""));
   }, []);
 
-  const onValidateText = useCallback(() => {
+  const onValidateText = useCallback(async () => {
     if (BigNumber(ownSatPerByte || 0).isZero()) return;
     Keyboard.dismiss();
     if (setSatPerByte) {
       setSatPerByte(BigNumber(ownSatPerByte || 0));
     }
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
     const updatedTransaction = bridge.updateTransaction(transaction, {
       feePerByte: BigNumber(ownSatPerByte || 0),

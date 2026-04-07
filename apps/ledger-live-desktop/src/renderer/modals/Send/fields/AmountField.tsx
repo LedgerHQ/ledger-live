@@ -38,24 +38,26 @@ const AmountField = <T extends TransactionCommon>({
   walletConnectProxy,
   withUseMaxLabel,
 }: Props<T>) => {
-  const bridge = getAccountBridge(account, parentAccount);
-
   useEffect(() => {
     if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
-      resetInitValue?.();
+      getAccountBridge(account, parentAccount).then(bridge => {
+        onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
+        resetInitValue?.();
+      });
     }
   }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onChangeTransaction(bridge.updateTransaction(transaction, { amount }));
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, parentAccount, transaction, onChangeTransaction],
   );
 
   const onChangeSendMax = useCallback(
-    (useAllAmount: boolean) => {
+    async (useAllAmount: boolean) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           useAllAmount,
@@ -63,7 +65,7 @@ const AmountField = <T extends TransactionCommon>({
         }),
       );
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, parentAccount, transaction, onChangeTransaction],
   );
 
   if (!status) return null;

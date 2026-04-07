@@ -25,9 +25,9 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
   const lldMemoTag = useFeature("lldMemoTag");
 
   invariant(transaction.family === "solana", "Memo: solana family expected");
-  const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    (memo: string) => {
+    async (memo: string) => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           model: {
@@ -40,7 +40,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   const InputField = lldMemoTag?.enabled ? MemoTagField : Input;

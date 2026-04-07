@@ -132,8 +132,7 @@ export function useFeePresetFiatValues({
   const amount = useMemo(() => transaction.amount ?? new BigNumber(0), [transaction.amount]);
   const useAllAmount = Boolean(transaction.useAllAmount);
   const presetIdsToEstimate = useMemo(
-    () =>
-      feePresetOptions.length > 0 ? feePresetOptions.map(o => o.id) : (fallbackPresetIds ?? []),
+    () => (feePresetOptions.length > 0 ? feePresetOptions.map(o => o.id) : fallbackPresetIds ?? []),
     [fallbackPresetIds, feePresetOptions],
   );
 
@@ -202,20 +201,20 @@ export function useFeePresetFiatValues({
     requestIdRef.current += 1;
     const requestId = requestIdRef.current;
 
-    const bridge = getAccountBridge(account, parentAccount ?? undefined);
-
     queueMicrotask(() => {
-      estimateFiatValuesForPresets({
-        bridge,
-        mainAccount,
-        transaction,
-        presetIds: presetIdsToEstimate,
-        convertCountervalue,
-        fiatUnit,
-        requestId,
-        requestIdRef,
-        inFlightRef,
-        setFiatByPreset,
+      getAccountBridge(account, parentAccount ?? undefined).then(bridge => {
+        estimateFiatValuesForPresets({
+          bridge,
+          mainAccount,
+          transaction,
+          presetIds: presetIdsToEstimate,
+          convertCountervalue,
+          fiatUnit,
+          requestId,
+          requestIdRef,
+          inFlightRef,
+          setFiatByPreset,
+        });
       });
     });
   }

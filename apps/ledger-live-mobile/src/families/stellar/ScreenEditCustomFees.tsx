@@ -48,10 +48,10 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     setCustomFee(fee);
   };
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
     Keyboard.dismiss();
     setCustomFee(BigNumber(customFee || 0));
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
     popToScreen(navigation, currentNavigation, {
       ...route.params,

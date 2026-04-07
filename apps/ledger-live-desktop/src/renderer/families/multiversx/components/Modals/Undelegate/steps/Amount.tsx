@@ -19,12 +19,13 @@ const StepAmount = (props: StepProps) => {
   const { account, onUpdateTransaction, status, error, contract, amount, delegations } = props;
   const [initialAmount, setInitialAmount] = useState(BigNumber(amount));
   const [value, setValue] = useState(BigNumber(amount));
-  const bridge = account && getAccountBridge(account);
   const updateValidator = useCallback(
-    (payload: Partial<Transaction>) => {
-      onUpdateTransaction(transaction => bridge?.updateTransaction(transaction, payload));
+    async (payload: Partial<Transaction>) => {
+      if (!account) return;
+      const bridge = await getAccountBridge(account);
+      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, payload));
     },
-    [onUpdateTransaction, bridge],
+    [onUpdateTransaction, account],
   );
   const onChangeValidator = useCallback(
     (delegation: DelegationType | null | undefined) => {
@@ -48,15 +49,18 @@ const StepAmount = (props: StepProps) => {
     [updateValidator],
   );
   useEffect(() => {
-    onUpdateTransaction(transaction => {
-      if (transaction.amount.isEqualTo(value)) {
-        return transaction;
-      }
-      return bridge?.updateTransaction(transaction, {
-        amount: value,
+    if (!account) return;
+    getAccountBridge(account).then(bridge => {
+      onUpdateTransaction(transaction => {
+        if (transaction.amount.isEqualTo(value)) {
+          return transaction;
+        }
+        return bridge.updateTransaction(transaction, {
+          amount: value,
+        });
       });
     });
-  }, [bridge, onUpdateTransaction, value]);
+  }, [account, onUpdateTransaction, value]);
   if (!account) return null;
   return (
     <Box flow={1}>

@@ -33,10 +33,9 @@ const ONLY_CURRENCIES = process.env.ONLY_CURRENCIES
 // TODO improve botTransfer by only using "allSpecs" and introduce a "transferMutation" in the specs for all spec to define how to transfer funds out (as well as UNDELEGATING funds)
 
 function getImplicitDeviceAction(currency: CryptoCurrency, forSubAccount: boolean) {
-  for (const family in allSpecs) {
-    const familySpec = allSpecs[family as keyof typeof allSpecs];
-    for (const c in familySpec) {
-      const spec: AppSpec<any> = familySpec[c as keyof typeof familySpec];
+  for (const familySpecs of Object.values(allSpecs) as Record<string, AppSpec<any>>[]) {
+    for (const c in familySpecs) {
+      const spec: AppSpec<any> = familySpecs[c];
       if (spec.currency === currency) {
         if (forSubAccount && spec.genericDeviceActionForSubAccountTransfers) {
           return spec.genericDeviceActionForSubAccountTransfers;
@@ -80,8 +79,9 @@ export default {
           if (!r) return;
           device = r.device;
           await cache.prepareCurrency(currency);
+          const currencyBridge = await getCurrencyBridge(currency);
           const maybeAddress = await firstValueFrom(
-            getCurrencyBridge(currency)
+            currencyBridge
               .scanAccounts({
                 currency,
                 deviceId: device.id,
@@ -124,8 +124,9 @@ export default {
           const r = await createImplicitSpeculos(`speculos:nanos:${currency.id}`);
           if (!r) return;
           device = r.device;
+          const currencyBridgeForPortfolio = await getCurrencyBridge(currency);
           await firstValueFrom(
-            getCurrencyBridge(currency)
+            currencyBridgeForPortfolio
               .scanAccounts({
                 currency,
                 deviceId: r.device.id,
@@ -185,7 +186,7 @@ export default {
           console.log("no recipient to empty account " + account.id);
           return;
         }
-        const accountBridge = getAccountBridge(account);
+        const accountBridge = await getAccountBridge(account);
 
         // TODO in case of cosmos & other funds that can be delegated, we need to also schedule these txs first..
         const plannedTransactions: TransactionCommon[] = [];
@@ -232,7 +233,10 @@ export default {
 
           for (const tx of plannedTransactions) {
             try {
-              const deviceAction = getImplicitDeviceAction(account.currency, "subAccountId" in tx);
+              const deviceAction = await getImplicitDeviceAction(
+                account.currency,
+                "subAccountId" in tx,
+              );
               if (!deviceAction) {
                 throw new Error("no spec found for currency " + account.currency.id);
               }

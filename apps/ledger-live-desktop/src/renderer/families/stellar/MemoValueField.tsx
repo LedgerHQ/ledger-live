@@ -15,12 +15,12 @@ const MemoValueField = ({
   transaction: Transaction;
   status: TransactionStatus;
 }) => {
-  const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    (memoValue: string) => {
+    async (memoValue: string) => {
+      const bridge = await getAccountBridge(account);
       onChange(bridge.updateTransaction(transaction, { memoValue }));
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   // We use transaction as an error here.

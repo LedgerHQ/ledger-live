@@ -14,6 +14,22 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import OnboardScreen from "../OnboardScreen";
 import { cantonOnboardingPrepareUrl, mockOnboardingPrepareResponse } from "@tests/handlers/canton";
+// Load canton setup statically (avoids dynamic .js import issues in Jest)
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const cantonSetup = require("@ledgerhq/live-common/families/canton/setup");
+
+jest.mock("@ledgerhq/live-common/coin-modules/registry", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/coin-modules/registry");
+  return {
+    ...actual,
+    loadSetupForFamily: (family: string) => {
+      if (family === "canton") {
+        return Promise.resolve(cantonSetup);
+      }
+      return actual.loadSetupForFamily(family);
+    },
+  };
+});
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),

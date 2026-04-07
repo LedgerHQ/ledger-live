@@ -42,20 +42,21 @@ type Props = {
 };
 const AmountField = ({ account, onChangeTransaction, transaction, status }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
-  const bridge = getAccountBridge(account);
   const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
-    (value: BigNumber) => {
+    async (value: BigNumber) => {
+      const bridge = await getAccountBridge(account);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           amount: value,
         }),
       );
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, transaction, onChangeTransaction],
   );
   const onChangeUseMax = useCallback(
-    (useAllAmount: boolean) => {
+    async (useAllAmount: boolean) => {
+      const bridge = await getAccountBridge(account);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           useAllAmount,
@@ -63,7 +64,7 @@ const AmountField = ({ account, onChangeTransaction, transaction, status }: Prop
         }),
       );
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, transaction, onChangeTransaction],
   );
   if (!status) return null;
   const { useAllAmount } = transaction;

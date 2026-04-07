@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -80,34 +80,45 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
-  const bridgeTransaction = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "bond",
-      recipient: mainAccount.freshAddress,
-      rewardDestination: "Stash",
-    });
-    return {
-      account: mainAccount,
-      transaction,
-    };
-  });
+  const bridgeTransaction = useBridgeTransaction(() => ({
+    account: mainAccount,
+  }));
   const { setTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as PolkadotTransaction;
+
+  const bondInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !bondInitSet.current) {
+      bondInitSet.current = true;
+      getAccountBridge(account, parentAccount).then(bridge => {
+        const t = bridge.createTransaction(mainAccount);
+        setTransaction(
+          bridge.updateTransaction(t, {
+            mode: "bond",
+            recipient: mainAccount.freshAddress,
+            rewardDestination: "Stash",
+          }) as PolkadotTransaction,
+        );
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
+
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;
     let cancelled = false;
     getAccountBridge(account, parentAccount)
-      .estimateMaxSpendable({
-        account,
-        parentAccount,
-        transaction: debouncedTransaction,
-      })
+      .then(bridge =>
+        bridge.estimateMaxSpendable({
+          account,
+          parentAccount,
+          transaction: debouncedTransaction,
+        }),
+      )
       .then(estimate => {
         if (cancelled) return;
         setMaxSpendable(estimate);
@@ -118,8 +129,9 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     };
   }, [account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
-    (amount: BigNumber) => {
+    async (amount: BigNumber) => {
       if (!amount.isNaN()) {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount,
@@ -127,10 +139,10 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
         );
       }
     },
-    [setTransaction, transaction, bridge],
+    [setTransaction, transaction, account, parentAccount],
   );
-  const toggleUseAllAmount = useCallback(() => {
-    const bridge = getAccountBridge(account, parentAccount);
+  const toggleUseAllAmount = useCallback(async () => {
+    const bridge = await getAccountBridge(account, parentAccount);
     if (!transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {
@@ -154,14 +166,15 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     setInfoModalOpen(false);
   }, [setInfoModalOpen]);
   const onChangeRewardDestination = useCallback(
-    (rewardDestination: string) => {
+    async (rewardDestination: string) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           rewardDestination,
         }),
       );
     },
-    [bridge, transaction, setTransaction],
+    [account, parentAccount, transaction, setTransaction],
   );
   const unit = useMaybeAccountUnit(account);
   if (!account || !transaction || !unit) return null;

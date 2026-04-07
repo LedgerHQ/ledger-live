@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -18,24 +18,33 @@ type Props = BaseComposite<
 function UnstakingAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const { stakedSuiId, principal } = route.params.stakingPosition;
   const {
     transaction: bridgeTransaction,
+    setTransaction,
     updateTransaction,
     status,
     bridgePending,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
-        mode: "undelegate",
-        stakedSuiId,
-      }),
-    };
-  });
+  } = useBridgeTransaction(() => ({
+    account,
+  }));
+
+  const suiUnstakeInitSet = useRef(false);
+  useEffect(() => {
+    if (bridgeTransaction && !suiUnstakeInitSet.current) {
+      suiUnstakeInitSet.current = true;
+      getAccountBridge(account, undefined).then(bridge => {
+        const t = bridge.createTransaction(mainAccount);
+        setTransaction(
+          bridge.updateTransaction(t, {
+            mode: "undelegate",
+            stakedSuiId,
+          }) as typeof bridgeTransaction,
+        );
+      });
+    }
+  }, [bridgeTransaction, setTransaction, account, mainAccount, stakedSuiId]);
 
   const transaction = bridgeTransaction as Transaction;
   const newRoute = {
@@ -46,7 +55,9 @@ function UnstakingAmount({ navigation, route }: Props) {
       max: new BigNumber(principal),
       value: transaction ? transaction.amount : new BigNumber(0),
       nextScreen: ScreenName.SuiUnstakingSelectDevice,
-      updateTransaction,
+      updateTransaction: updateTransaction as unknown as (
+        updater: (arg0: Transaction) => Transaction,
+      ) => void,
       status,
       bridgePending,
     },

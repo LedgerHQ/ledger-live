@@ -10,7 +10,6 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -29,19 +28,20 @@ const StepWithdraw = (props: StepProps) => {
     name,
   } = props;
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const onDelegationChange = useCallback(
     // @ts-expect-error another TS puzzle for another day
     validator => {
-      onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, {
-          ...transaction,
-          recipient: validator.contract,
-          amount: BigNumber(validator.amount),
-        }),
-      );
+      getAccountBridge(account).then(bridge => {
+        onUpdateTransaction(transaction =>
+          bridge.updateTransaction(transaction, {
+            ...transaction,
+            recipient: validator.contract,
+            amount: BigNumber(validator.amount),
+          }),
+        );
+      });
     },
-    [bridge, onUpdateTransaction],
+    [account, onUpdateTransaction],
   );
   return (
     <Box flow={1}>
@@ -77,7 +77,7 @@ const StepWithdraw = (props: StepProps) => {
         unbondings={unbondings}
         t={t}
         amount={amount}
-        bridge={bridge}
+        account={account}
         transaction={transaction}
         onUpdateTransaction={onUpdateTransaction}
         onChange={onDelegationChange}

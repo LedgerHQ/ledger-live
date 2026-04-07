@@ -8,7 +8,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -22,8 +21,8 @@ import StepStake, { StepStakeFooter } from "./steps/StepStake";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { AptosAccount, Transaction } from "@ledgerhq/live-common/families/aptos/types";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { Account, Operation } from "@ledgerhq/types-live";
 
 export type Data = {
   account: AptosAccount;
@@ -92,15 +91,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const { account, source = "Account Page" } = params;
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(() => {
-      const bridge: AccountBridge<Transaction> = getAccountBridge(account);
-      const t = bridge.createTransaction(account);
-      const transaction = bridge.updateTransaction(t, {
-        mode: "stake",
-      });
       return {
         account,
         parentAccount: undefined,
-        transaction,
+        transactionPatch: { mode: "stake" as const },
       };
     });
 

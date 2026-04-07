@@ -9,11 +9,11 @@ import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin
 import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import EditTransactionSummaryView from "~/components/EditTransaction/EditTransactionSummaryView";
 import useEditTransactionSummaryActions from "~/components/EditTransaction/hooks/useEditTransactionSummaryActions";
@@ -51,40 +51,36 @@ function EditTransactionSummary({ navigation, route }: Props) {
     parentAccount,
   }));
 
-  const transactionToUpdate = fromTransactionRaw(transactionRaw) as EvmTransaction;
+  const transactionToUpdate = useMemo<EvmTransaction>(
+    () => fromTransactionRaw(transactionRaw),
+    [transactionRaw],
+  );
 
-  const status = getEditTransactionStatus({
-    transaction: transaction as EvmTransaction,
-    transactionToUpdate,
-    status: txStatus as TransactionStatus,
-    editType,
-  });
-
-  invariant(transaction, "transaction is missing");
+  const status = transaction
+    ? getEditTransactionStatus({
+        transaction: transaction as EvmTransaction,
+        transactionToUpdate,
+        status: txStatus as TransactionStatus,
+        editType,
+      })
+    : null;
 
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
 
-  const { amount, totalSpent, errors, warnings } = status;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currencyOrToken = getAccountCurrency(account);
+
   const { highFeesOpen, onAcceptFees, onRejectFees, onContinue } = useEditTransactionSummaryActions(
     {
       navigation,
       nextNavigation,
       routeParams: route.params,
-      transaction,
-      status,
-      feeTooHigh: warnings.feeTooHigh,
+      transaction: transaction!,
+      status: status!,
+      feeTooHigh: status?.warnings.feeTooHigh,
     },
   );
-
-  const firstError = errors[Object.keys(errors)[0]];
-
-  const mainAccount = getMainAccount(account, parentAccount);
-  const currencyOrToken = getAccountCurrency(account);
-
-  const hasNonEmptySubAccounts =
-    account.type === "Account" &&
-    (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
@@ -95,6 +91,15 @@ function EditTransactionSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
+
+  if (!transaction || !status) return null;
+
+  const { amount, totalSpent, errors, warnings } = status;
+  const firstError = errors[Object.keys(errors)[0]];
+
+  const hasNonEmptySubAccounts =
+    account.type === "Account" &&
+    (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
   // FIXME: why is recipient sometimes empty?
   if (!transaction.recipient) {

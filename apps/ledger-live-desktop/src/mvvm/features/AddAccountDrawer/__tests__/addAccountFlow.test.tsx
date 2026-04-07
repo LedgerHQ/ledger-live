@@ -1,6 +1,7 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
+import { Subject } from "rxjs";
 import { act, render, screen, userEvent } from "tests/testSetup";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
@@ -15,8 +16,11 @@ import {
 import { mockDomMeasurements } from "../../__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
 
+let scanSubject: Subject<{ account: Account }>;
+
 beforeEach(async () => {
   mockDomMeasurements();
+  scanSubject = new Subject();
 });
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
@@ -33,9 +37,6 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   }),
 }));
 
-let triggerNext: (accounts: Account[]) => void = () => null;
-let triggerComplete: () => void = () => null;
-
 const mockAccountBridge = {
   assignToAccountRaw: () => {},
   assignToTokenAccountRaw: () => {},
@@ -44,30 +45,26 @@ const mockAccountBridge = {
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
-  getCurrencyBridge: () => ({
-    scanAccounts: () => ({
-      pipe: () => ({
-        subscribe: ({
-          next,
-          complete,
-        }: {
-          next: (accounts: Account[]) => void;
-          complete: () => void;
-        }) => {
-          triggerNext = accounts => next(accounts);
-          triggerComplete = () => complete();
-        },
-      }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      scanAccounts: () => scanSubject,
+      preload: () => true,
+      hydrate: () => true,
     }),
-    preload: () => true,
-    hydrate: () => true,
-  }),
-  getAccountBridge: () => mockAccountBridge,
+  getAccountBridge: () => Promise.resolve(mockAccountBridge),
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
-  await act(() => triggerComplete());
+  // Flush getCurrencyBridge Promise so subscription is established before emitting
+  await act(async () => {});
+  for (const account of accounts) {
+    await act(() => {
+      scanSubject.next({ account });
+    });
+  }
+  await act(() => {
+    scanSubject.complete();
+  });
 };
 
 const NEW_ARB_ACCOUNT: Account = {

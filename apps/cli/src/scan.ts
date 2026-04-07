@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, from, defer, of, throwError, concat } from "rxjs";
-import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
+import { skip, take, reduce, mergeMap, map, filter, concatMap, switchMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
@@ -248,9 +248,10 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       map(fromAccountRaw),
       prepareCurrency((a: any) => a.currency),
       concatMap((account: Account) =>
-        getAccountBridge(account, null)
-          .sync(account, syncConfig)
-          .pipe(reduce((a, f: (arg: any) => any) => f(a), account)),
+        from(getAccountBridge(account, null)).pipe(
+          switchMap(bridge => bridge.sync(account, syncConfig)),
+          reduce((a: Account, f: any) => f(a), account),
+        ),
       ),
     ) as Observable<Account>;
   }
@@ -372,9 +373,10 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         ).pipe(
           prepareCurrency((a: Account) => a.currency),
           concatMap((account: Account) =>
-            getAccountBridge(account, null)
-              .sync(account, syncConfig)
-              .pipe(reduce((a: Account, f: any) => f(a), account)),
+            from(getAccountBridge(account, null)).pipe(
+              switchMap(bridge => bridge.sync(account, syncConfig)),
+              reduce((a: Account, f: any) => f(a), account),
+            ),
           ),
         );
       }
@@ -383,12 +385,16 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       // otherwise we just scan for accounts
       return concat(
         of(currency).pipe(prepareCurrency((a: any) => a)),
-        getCurrencyBridge(currency).scanAccounts({
-          currency,
-          deviceId: device || "",
-          scheme: scheme && asDerivationMode(scheme),
-          syncConfig,
-        }),
+        from(getCurrencyBridge(currency)).pipe(
+          switchMap(bridge =>
+            bridge.scanAccounts({
+              currency,
+              deviceId: device || "",
+              scheme: scheme && asDerivationMode(scheme),
+              syncConfig,
+            }),
+          ),
+        ),
       ).pipe(
         filter((e: any) => e.type === "discovered"),
         map(e => e.account),

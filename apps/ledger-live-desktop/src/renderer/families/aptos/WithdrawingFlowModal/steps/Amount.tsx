@@ -20,10 +20,10 @@ export default function StepAmount({
   error,
 }: Readonly<StepProps>) {
   const [available, setAvailable] = useState(transaction.amount);
-  const bridge = getAccountBridge(account);
 
   const updateValidator = useCallback(
-    ({ address, amount }: { address: string; amount: BigNumber }) => {
+    async ({ address, amount }: { address: string; amount: BigNumber }) => {
+      const bridge = await getAccountBridge(account);
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -33,7 +33,7 @@ export default function StepAmount({
         }),
       );
     },
-    [onUpdateTransaction, bridge, available],
+    [account, onUpdateTransaction, available],
   );
 
   const onChangeValidator = useCallback(

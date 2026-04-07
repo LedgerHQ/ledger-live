@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
@@ -10,7 +10,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text, Icons } from "@ledgerhq/native-ui";
-import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloAccount,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -42,18 +45,18 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
-  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
+  const modeSet = useRef(false);
   const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
-    () => {
-      const t = bridge.createTransaction(mainAccount);
-      const transaction = bridge.updateTransaction(t, {
-        mode: "withdraw",
-      });
-      return { account: mainAccount, transaction };
-    },
+    () => ({ account: mainAccount }),
   );
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({ ...(transaction as CeloTransaction), mode: "withdraw" });
+    }
+  }, [transaction, setTransaction]);
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "celo", "not a celo transaction");
@@ -62,16 +65,19 @@ export default function WithdrawAmount({ navigation, route }: Props) {
 
   useEffect(() => {
     if (!account) return;
-    bridge.prepareTransaction(account as CeloAccount, debouncedTransaction);
-  }, [account, parentAccount, transaction, bridge, debouncedTransaction]);
+    getAccountBridge(account, parentAccount).then(bridge =>
+      bridge.prepareTransaction(account as CeloAccount, debouncedTransaction),
+    );
+  }, [account, parentAccount, debouncedTransaction]);
 
   const onChange = useCallback(
-    (index: number) => {
+    async (index: number) => {
       if (index != null) {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(bridge.updateTransaction(transaction, { index }));
       }
     },
-    [setTransaction, transaction, bridge],
+    [setTransaction, transaction, account, parentAccount],
   );
 
   const onContinue = () => {

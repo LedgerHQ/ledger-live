@@ -13,6 +13,7 @@ export type State<T extends Transaction = Transaction> = {
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
   transaction: T | null | undefined;
+  transactionPatch: Partial<T> | null | undefined;
   status: TransactionStatus;
   statusOnTransaction: T | null | undefined;
   errorAccount: Error | null | undefined;
@@ -39,6 +40,7 @@ type Actions<T extends Transaction = Transaction> =
       type: "setAccount";
       account: AccountLike;
       parentAccount: Account | null | undefined;
+      bridge?: AccountBridge<T>;
     }
   | {
       type: "setTransaction";
@@ -81,6 +83,7 @@ const initial: State<Transaction> = {
   account: null,
   parentAccount: null,
   transaction: null,
+  transactionPatch: null,
   status: {
     errors: {},
     warnings: {},
@@ -114,7 +117,11 @@ const makeInit =
 
     if (optionalInit) {
       const patch = optionalInit();
-      const { account, parentAccount, transaction } = patch;
+      const { account, parentAccount, transaction, transactionPatch } = patch;
+
+      if (transactionPatch) {
+        s = { ...s, transactionPatch };
+      }
 
       if (account) {
         s = (reducer as Reducer<T>)(s, {
@@ -141,11 +148,21 @@ const reducer = <T extends Transaction = Transaction>(
 ): State<T> => {
   switch (action.type) {
     case "setAccount": {
-      const { account, parentAccount } = action;
+      const { account, parentAccount, bridge } = action;
+
+      if (!bridge) {
+        return {
+          ...initial,
+          transactionPatch: state.transactionPatch,
+          account,
+          parentAccount,
+          syncing: false,
+          synced: false,
+        } as State<T>;
+      }
 
       try {
         const mainAccount = getMainAccount(account, parentAccount);
-        const bridge = getAccountBridge(account, parentAccount) as AccountBridge<T>;
         const subAccountId = account.type !== "Account" && account.id;
         let t = bridge.createTransaction(mainAccount);
 
@@ -166,8 +183,13 @@ const reducer = <T extends Transaction = Transaction>(
           t = { ...t, subAccountId };
         }
 
+        if (state.transactionPatch) {
+          t = bridge.updateTransaction(t, state.transactionPatch);
+        }
+
         return {
           ...initial,
+          transactionPatch: state.transactionPatch,
           account,
           parentAccount,
           transaction: t,
@@ -177,6 +199,7 @@ const reducer = <T extends Transaction = Transaction>(
       } catch (e: any) {
         return {
           ...initial,
+          transactionPatch: state.transactionPatch,
           account,
           parentAccount,
           errorAccount: e,
@@ -251,12 +274,20 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     dispatch,
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit<T>(optionalInit));
   const setAccount = useCallback(
-    (account, parentAccount) =>
+    async (account, parentAccount) => {
+      let bridge: AccountBridge<T> | undefined;
+      try {
+        bridge = await getAccountBridge(account, parentAccount);
+      } catch {
+        // no bridge available (currency not supported or module not loaded)
+      }
       dispatch({
         type: "setAccount",
         account,
         parentAccount,
-      }),
+        bridge,
+      });
+    },
     [dispatch],
   );
 
@@ -287,25 +318,43 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   const statusIsPending = useRef(false); // Stores if status already being processed
   const shouldSync = mainAccount && shouldSyncBeforeTx(mainAccount.currency);
 
+  // When optionalInit provides an account but no transaction, load the bridge on mount
+  // so the reducer can create the initial transaction via bridge.createTransaction.
+  // If a transaction was already provided, the prepareTransaction effect handles the bridge.
+  // makeInit can't call getAccountBridge synchronously (it's now async).
+  useEffect(() => {
+    if (account && !transaction) {
+      setAccount(account, parentAccount ?? null);
+    }
+    // Intentionally empty deps: only runs once on mount for the initial account.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (mainAccount === null || synced || syncing) return;
 
     if (!shouldSync) return; // skip sync if not required by currency config
 
     dispatch({ type: "onStartSync" });
-    const bridge = getAccountBridge(mainAccount, null);
-    const sub = bridge.sync(mainAccount, { paginationConfig: {} }).subscribe({
-      error: (_: Error) => {
-        // we do not block the user in case of error for now but it should be the case
+    let sub: { unsubscribe(): void } | null = null;
+    getAccountBridge(mainAccount, null)
+      .then(bridge => {
+        sub = bridge.sync(mainAccount, { paginationConfig: {} }).subscribe({
+          error: (_: Error) => {
+            // we do not block the user in case of error for now but it should be the case
+            dispatch({ type: "onSync" });
+          },
+          complete: () => {
+            dispatch({ type: "onSync" });
+          },
+        });
+      })
+      .catch(() => {
         dispatch({ type: "onSync" });
-      },
-      complete: () => {
-        dispatch({ type: "onSync" });
-      },
-    });
+      });
 
     return () => {
-      sub.unsubscribe();
+      sub?.unsubscribe();
     };
   }, [mainAccount, synced, syncing, shouldSync]);
 

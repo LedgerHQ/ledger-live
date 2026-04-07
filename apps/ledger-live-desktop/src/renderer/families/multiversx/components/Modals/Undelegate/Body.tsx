@@ -7,7 +7,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import logger from "~/renderer/logger";
@@ -17,9 +16,8 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import {
-  Transaction,
   MultiversXAccount,
   MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
@@ -84,14 +82,12 @@ const Body = (props: Props) => {
     bridgePending,
     status,
   } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(accountProp, undefined);
-    const transaction: Transaction = bridge.createTransaction(accountProp);
     return {
       account: accountProp,
-      transaction: bridge.updateTransaction(transaction, {
+      transactionPatch: {
         recipient: contract || "",
         mode: "unDelegate",
-      }),
+      },
     };
   });
   const steps = useSteps();

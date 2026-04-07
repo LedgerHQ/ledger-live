@@ -39,7 +39,7 @@ describe("useAleoPrivateSync", () => {
     jest.clearAllMocks();
     syncSubject = new Subject();
     mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
-    getAccountBridge.mockReturnValue({ sync: mockSync });
+    getAccountBridge.mockResolvedValue({ sync: mockSync });
   });
 
   afterEach(() => {
@@ -154,7 +154,7 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.progress).toBe(100);
     });
 
-    it("should retry when percentage is 100 but synced is false (scanner not yet ready)", () => {
+    it("should retry when percentage is 100 but synced is false (scanner not yet ready)", async () => {
       jest.useFakeTimers();
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
@@ -167,6 +167,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         result.current.start();
       });
+      await Promise.resolve();
 
       // Emit percentage=100 but synced=false — this is the bug scenario
       act(() => {
@@ -180,6 +181,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
       });
+      await Promise.resolve();
 
       expect(mockSync).toHaveBeenCalledTimes(2);
 
@@ -191,7 +193,7 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.isSyncing).toBe(false);
     });
 
-    it("should retry after polling delay when complete fires with synced=false", () => {
+    it("should retry after polling delay when complete fires with synced=false", async () => {
       jest.useFakeTimers();
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
@@ -204,9 +206,12 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         result.current.start();
       });
+      // await Promise.resolve() flushes the getAccountBridge Promise microtask without
+      // triggering the await act(async) + fake-timers infinite microtask loop.
+      await Promise.resolve();
 
       act(() => {
-        firstSubject.next(() => makeAleoAccount(50));
+        firstSubject.next(() => makeAleoAccount(50, false));
         firstSubject.complete();
       });
 
@@ -215,6 +220,8 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
       });
+      // The retry schedules a new from(getAccountBridge()) subscription; flush it.
+      await Promise.resolve();
 
       expect(mockSync).toHaveBeenCalledTimes(2);
 
@@ -223,13 +230,14 @@ describe("useAleoPrivateSync", () => {
       });
     });
 
-    it("should not retry when stop() is called before complete fires", () => {
+    it("should not retry when stop() is called before complete fires", async () => {
       jest.useFakeTimers();
       const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
 
       act(() => {
         result.current.start();
       });
+      await Promise.resolve();
 
       // stop() unsubscribes before the observable completes naturally
       act(() => {
@@ -280,16 +288,18 @@ describe("useAleoPrivateSync", () => {
   });
 
   describe("autoStart: true", () => {
-    it("should call sync immediately on mount", () => {
+    it("should call sync immediately on mount", async () => {
       renderHook(() => useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }));
+      await act(async () => {});
 
       expect(mockSync).toHaveBeenCalledTimes(1);
     });
 
-    it("should have isSyncing as true on mount", () => {
+    it("should have isSyncing as true on mount", async () => {
       const { result } = renderHook(() =>
         useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }),
       );
+      await act(async () => {});
 
       expect(result.current.isSyncing).toBe(true);
     });
@@ -298,6 +308,7 @@ describe("useAleoPrivateSync", () => {
       const { result } = renderHook(() =>
         useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }),
       );
+      await act(async () => {});
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccount(100, true));

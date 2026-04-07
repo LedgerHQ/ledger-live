@@ -39,8 +39,7 @@ const mockAccountBridge = {
 const mockNavigate = jest.fn();
 
 let progress$: Subject<unknown>;
-let triggerNext: (accounts: Account[]) => void = () => null;
-let triggerComplete: () => void = () => null;
+let scanSubject: Subject<{ account: Account }>;
 
 jest.mock("@ledgerhq/crypto-icons", () => ({
   CryptoIcon: jest.fn(),
@@ -75,25 +74,13 @@ jest.mock("~/renderer/reducers/devices", () => {
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
-  getCurrencyBridge: () => ({
-    scanAccounts: () => ({
-      pipe: () => ({
-        subscribe: ({
-          next,
-          complete,
-        }: {
-          next: (accounts: Account[]) => void;
-          complete: () => void;
-        }) => {
-          triggerNext = accounts => next(accounts);
-          triggerComplete = () => complete();
-        },
-      }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      scanAccounts: () => scanSubject,
+      preload: () => true,
+      hydrate: () => true,
     }),
-    preload: () => true,
-    hydrate: () => true,
-  }),
-  getAccountBridge: () => mockAccountBridge,
+  getAccountBridge: () => Promise.resolve(mockAccountBridge),
 }));
 
 jest.mock("~/renderer/animations", () => ({
@@ -118,8 +105,16 @@ jest.mock("~/renderer/linking", () => ({
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
-  await act(() => triggerComplete());
+  // Flush getCurrencyBridge Promise so subscription is established before emitting
+  await act(async () => {});
+  for (const account of accounts) {
+    await act(() => {
+      scanSubject.next({ account });
+    });
+  }
+  await act(() => {
+    scanSubject.complete();
+  });
 };
 
 const mockViewKeyProgressSubscription = async (
@@ -178,6 +173,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     jest.mocked(track).mockReset();
     jest.mocked(trackPage).mockReset();
     progress$ = new Subject();
+    scanSubject = new Subject();
     setEnv("EXPERIMENTAL_CURRENCIES", "aleo");
   });
 

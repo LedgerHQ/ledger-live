@@ -473,7 +473,7 @@ function useUiHook({ manifest }: Props): UiHook {
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+      : currentRouteNameRef.current ?? "Unknown";
 
   const flow = manifest.name;
 
@@ -550,7 +550,7 @@ function useUiHook({ manifest }: Props): UiHook {
       "storage.set": ({ key, value, storeId }) => {
         storage.save(`${storeId}-${key}`, value);
       },
-      "transaction.sign": ({
+      "transaction.sign": async ({
         account,
         parentAccount,
         signFlowInfos: { liveTx },
@@ -558,7 +558,7 @@ function useUiHook({ manifest }: Props): UiHook {
         onSuccess,
         onError,
       }) => {
-        const tx = prepareSignTransaction(account, parentAccount, liveTx);
+        const tx = await prepareSignTransaction(account, parentAccount, liveTx);
 
         navigation.navigate(NavigatorName.SignTransaction, {
           screen: ScreenName.SignTransactionSummary,
@@ -734,7 +734,7 @@ export function useSelectAccount({
       source:
         currentRouteNameRef.current === "Platform Catalog"
           ? "Discover"
-          : (currentRouteNameRef.current ?? "Unknown"),
+          : currentRouteNameRef.current ?? "Unknown",
     });
   }, [currencyIds, onSelectAccountSuccess, manifest.name]);
 

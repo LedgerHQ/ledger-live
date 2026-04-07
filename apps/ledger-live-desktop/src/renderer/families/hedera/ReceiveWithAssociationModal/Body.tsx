@@ -153,16 +153,12 @@ const Body = ({
     bridgePending,
     updateTransaction,
     setAccount: updateTransactionAccount,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction<Transaction>(() => {
     invariant(account, "hedera: account is required");
-
-    const bridge = getAccountBridge(account, parentAccount);
-    const transaction = bridge.createTransaction(account);
 
     return {
       account,
       parentAccount,
-      transaction,
     };
   });
 
@@ -190,7 +186,7 @@ const Body = ({
       setParentAccount(parentAccount);
 
       updateTransactionAccount(account, parentAccount);
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }));
+      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
     },
     [
       token,
@@ -206,7 +202,7 @@ const Body = ({
     (token?: TokenCurrency | null) => {
       setToken(token ?? null);
 
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }));
+      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
     },
     [getTransactionProperties, updateTransaction],
   );

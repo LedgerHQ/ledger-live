@@ -1,14 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -34,20 +32,22 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
 
   const { selectedDelegation } = route.params;
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
-  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(account);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
-    });
-
-    return {
+  const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount: undefined,
-      transaction,
-    };
-  });
+    }),
+  );
+  const claimModeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !claimModeSet.current) {
+      claimModeSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      } as Transaction);
+    }
+  }, [transaction, setTransaction]);
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "hedera", "transaction hedera");

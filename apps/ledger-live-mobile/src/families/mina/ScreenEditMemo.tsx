@@ -29,8 +29,8 @@ function MinaEditMemo({ navigation, route }: NavigationProps) {
   const onChangeMemoValue = useCallback((str: string) => {
     setMemo(str === "" ? undefined : str);
   }, []);
-  const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
+  const onValidateText = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,

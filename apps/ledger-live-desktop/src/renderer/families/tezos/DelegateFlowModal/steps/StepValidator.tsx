@@ -92,11 +92,13 @@ const StepValidator = ({
 
   const onBakerClick = useCallback(
     (baker: Baker) => {
-      onChangeTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, {
-          recipient: baker.address,
-        }),
-      );
+      getAccountBridge(account, parentAccount).then(bridge => {
+        onChangeTransaction(
+          bridge.updateTransaction(transaction, {
+            recipient: baker.address,
+          }),
+        );
+      });
       transitionTo("summary");
     },
     [account, onChangeTransaction, parentAccount, transaction, transitionTo],

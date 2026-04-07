@@ -9,7 +9,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -87,8 +86,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   } = useBridgeTransaction(() => {
     const { account, validatorAddress } = params;
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
-
-    // preselect validator either one from params or the first one available on the list
     const validators = account.cosmosResources.delegations
       .filter(d =>
         validatorAddress ? d.validatorAddress === validatorAddress : d.pendingRewards.gt(0),
@@ -98,16 +95,13 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         address: validatorAddress,
         amount: pendingRewards,
       }));
-    const bridge = getAccountBridge(account, undefined);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "claimReward",
-      validators,
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: {
+        mode: "claimReward" as const,
+        validators,
+      },
     };
   });
 

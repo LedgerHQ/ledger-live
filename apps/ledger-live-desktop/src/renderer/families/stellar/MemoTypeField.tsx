@@ -19,12 +19,12 @@ const MemoTypeField = ({
   account: Account;
   transaction: Transaction;
 }) => {
-  const bridge = getAccountBridge(account);
   const selectedMemoType =
     options.find(option => option.value === transaction.memoType) || options[0];
   const onMemoTypeChange = useCallback(
     // @ts-expect-error weird type here i cannot find the correct option
-    memoType => {
+    async memoType => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           memoType: memoType.value,
@@ -32,7 +32,7 @@ const MemoTypeField = ({
         }),
       );
     },
-    [onChange, bridge, transaction],
+    [onChange, account, transaction],
   );
   return (
     <div style={{ width: "156px" }}>

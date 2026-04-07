@@ -16,9 +16,9 @@ const MemoField = ({
   autoFocus,
 }: SendAmountProps) => {
   const [memoLength, setMemoLength] = React.useState(0);
-  const bridge = getAccountBridge(account);
   const onMemoChange = useCallback(
-    (memo: string) => {
+    async (memo: string) => {
+      const bridge = await getAccountBridge(account);
       track("button_clicked2", {
         ...trackProperties,
         button: "input",
@@ -31,7 +31,7 @@ const MemoField = ({
       );
       setMemoLength(memo.length);
     },
-    [trackProperties, onChange, bridge, transaction],
+    [trackProperties, onChange, account, transaction],
   );
 
   if (!status) {

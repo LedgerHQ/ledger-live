@@ -29,13 +29,17 @@ export function useCantonAcceptOrRejectOffer({
   account,
   partyId,
 }: UseCantonAcceptOrRejectOfferOptions) {
-  const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
+  const [cantonBridge, setCantonBridge] = useState<CantonCurrencyBridge | null>(null);
+  useEffect(() => {
+    getCurrencyBridge(currency).then(bridge => setCantonBridge(bridge as CantonCurrencyBridge));
+  }, [currency]);
 
   const transferInstruction = useCallback(
     (
       { contractId, deviceId, reason }: TransferInstructionParams,
       type: TransferInstructionType,
     ) => {
+      if (!cantonBridge) throw new Error("Canton bridge not loaded");
       return cantonBridge.transferInstruction(
         currency,
         deviceId,

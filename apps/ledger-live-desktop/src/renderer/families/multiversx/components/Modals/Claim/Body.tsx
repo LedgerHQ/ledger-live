@@ -8,7 +8,6 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -20,12 +19,11 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { Operation, Account } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
   MultiversXAccount,
-  Transaction,
   MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
@@ -92,13 +90,11 @@ const Body = (props: Props) => {
     status,
     parentAccount,
   } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(params.account, undefined);
-    const transaction: Transaction = bridge.createTransaction(params.account);
     return {
       account: params.account,
-      transaction: bridge.updateTransaction(transaction, {
+      transactionPatch: {
         mode: "claimRewards",
-      }),
+      },
     };
   });
 

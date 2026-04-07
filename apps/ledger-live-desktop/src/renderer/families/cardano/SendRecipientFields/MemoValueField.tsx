@@ -25,9 +25,9 @@ const MemoValueField = ({
   autoFocus?: boolean;
 }) => {
   invariant(transaction.family === "cardano", "Memo: cardano family expected");
-  const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    (memo: string) => {
+    async (memo: string) => {
+      const bridge = await getAccountBridge(account);
       track("button_clicked2", {
         ...trackProperties,
         button: "input",
@@ -39,7 +39,7 @@ const MemoValueField = ({
         }),
       );
     },
-    [trackProperties, onChange, bridge, transaction],
+    [trackProperties, onChange, account, transaction],
   );
   return (
     <MemoTagField

@@ -1,12 +1,10 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloValidatorGroup, CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Trans } from "~/context/Locale";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { TrackScreen } from "~/analytics";
@@ -35,8 +33,6 @@ export default function ActivateSummary({ navigation, route }: Props) {
 
   const validators = useValidatorGroups();
   const votes = activatableVotes(account as CeloAccount);
-  const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {
@@ -50,19 +46,13 @@ export default function ActivateSummary({ navigation, route }: Props) {
     return undefined;
   }, [votes, validator, validators]);
 
+  const modeSet = useRef(false);
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
       const tx = route.params.transaction;
 
       if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "activate",
-          }),
-        };
+        return { account };
       }
 
       return { account, transaction: tx };
@@ -72,13 +62,20 @@ export default function ActivateSummary({ navigation, route }: Props) {
   invariant(transaction.family === "celo", "transaction celo");
 
   useEffect(() => {
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        recipient: chosenValidator?.address ?? "",
-      }),
-    );
+    if (transaction && !modeSet.current && !route.params.transaction) {
+      modeSet.current = true;
+      setTransaction({ ...transaction, mode: "activate" as const });
+    }
+  }, [transaction, setTransaction, route.params.transaction]);
+
+  useEffect(() => {
+    if (!transaction) return;
+    setTransaction({
+      ...transaction,
+      recipient: chosenValidator?.address ?? "",
+    });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateTransaction, bridge, setTransaction, chosenValidator]);
+  }, [updateTransaction, setTransaction, chosenValidator]);
 
   const onChangeDelegator = useCallback(() => {
     navigation.navigate(ScreenName.CeloActivateValidatorSelect, {

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Checkbox from "~/renderer/components/CheckBox";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box";
@@ -26,7 +26,6 @@ type CoinControlRowProps = {
   account: BitcoinAccount;
   totalExcludedUTXOS: number;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
-  bridge: AccountBridge<Transaction>;
 };
 const Container = styled(Box).attrs<{
   disabled: boolean;
@@ -62,7 +61,6 @@ export const CoinControlRow = ({
   account,
   totalExcludedUTXOS,
   updateTransaction,
-  bridge,
 }: CoinControlRowProps) => {
   const unit = useAccountUnit(account);
   const s = getUTXOStatus(utxo, utxoStrategy);
@@ -89,7 +87,9 @@ export const CoinControlRow = ({
             ),
       },
     };
-    updateTransaction((t: Transaction) => bridge.updateTransaction(t, patch));
+    getAccountBridge(account).then(bridge => {
+      updateTransaction((t: Transaction) => bridge.updateTransaction(t, patch));
+    });
   };
   return (
     <Container disabled={unconfirmed} flow={2} horizontal alignItems="center" onClick={onClick}>

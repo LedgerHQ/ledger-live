@@ -98,7 +98,7 @@ describe("EVM EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { gasPrice: new BigNumber(10) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
+    (getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: bridgeUpdateTransaction,
     });
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
@@ -128,7 +128,7 @@ describe("EVM EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { gasPrice: new BigNumber(10) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
+    (getAccountBridge as jest.Mock).mockResolvedValue({
       updateTransaction: bridgeUpdateTransaction,
     });
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);

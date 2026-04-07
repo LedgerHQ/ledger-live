@@ -47,7 +47,7 @@ type Params = Readonly<{
 }>;
 
 async function estimateFiatValuesForPresets(params: {
-  bridge: ReturnType<typeof getAccountBridge>;
+  bridge: Awaited<ReturnType<typeof getAccountBridge>>;
   mainAccount: Account;
   transaction: Transaction;
   presetIds: readonly string[];
@@ -178,9 +178,8 @@ export function useFeePresetFiatValues({
     requestIdRef.current += 1;
     const requestId = requestIdRef.current;
 
-    const bridge = getAccountBridge(account, parentAccount ?? undefined);
-
-    queueMicrotask(() => {
+    queueMicrotask(async () => {
+      const bridge = await getAccountBridge(account, parentAccount ?? undefined);
       estimateFiatValuesForPresets({
         bridge,
         mainAccount,

@@ -30,12 +30,13 @@ export function EvmGasOptionsSync({
     if (!isEqual(scheduledGasOptionsRef.current ?? null, evmGasOptions)) {
       scheduledGasOptionsRef.current = evmGasOptions;
       queueMicrotask(() => {
-        transactionActions.updateTransaction(currentTx => {
-          if ("gasOptions" in currentTx && currentTx.gasOptions) {
-            if (isEqual(currentTx.gasOptions, evmGasOptions)) return currentTx;
-          }
-          const bridge = getAccountBridge(account, parentAccount ?? undefined);
-          return bridge.updateTransaction(currentTx, { gasOptions: evmGasOptions });
+        getAccountBridge(account, parentAccount ?? undefined).then(bridge => {
+          transactionActions.updateTransaction(currentTx => {
+            if ("gasOptions" in currentTx && currentTx.gasOptions) {
+              if (isEqual(currentTx.gasOptions, evmGasOptions)) return currentTx;
+            }
+            return bridge.updateTransaction(currentTx, { gasOptions: evmGasOptions });
+          });
         });
       });
     }

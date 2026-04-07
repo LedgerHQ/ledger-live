@@ -26,10 +26,10 @@ function TooManyUtxosModal({ isOpened, onClose, account }: Props) {
   const navigation = useNavigation();
   const learnMoreUrl = useLocalizedUrl(urls.canton.learnMore);
 
-  const handleConsolidate = useCallback(() => {
+  const handleConsolidate = useCallback(async () => {
     onClose();
 
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       recipient: account.xpub || "",

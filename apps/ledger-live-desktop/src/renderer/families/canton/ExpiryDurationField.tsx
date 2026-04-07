@@ -33,8 +33,6 @@ const ExpiryDurationField = ({
   status: TransactionStatus;
 }) => {
   const { t } = useTranslation();
-  const bridge = getAccountBridge(account);
-
   const options: DurationOption[] = useMemo(
     () => [
       {
@@ -72,8 +70,9 @@ const ExpiryDurationField = ({
   }, [options, transaction.expireInSeconds]);
 
   const onExpiryDurationChange = useCallback(
-    (option?: DurationOption | null) => {
+    async (option?: DurationOption | null) => {
       if (option) {
+        const bridge = await getAccountBridge(account);
         onChange(
           bridge.updateTransaction(transaction, {
             expireInSeconds: option.seconds,
@@ -81,7 +80,7 @@ const ExpiryDurationField = ({
         );
       }
     },
-    [onChange, bridge, transaction],
+    [onChange, account, transaction],
   );
 
   return (

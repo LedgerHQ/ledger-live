@@ -1,6 +1,5 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -26,8 +25,8 @@ export default function StepDelegation({
   const { cosmosResources } = account;
   const delegations = cosmosResources.delegations || [];
   const updateValidator = useCallback(
-    ({ address }: { address: string }) => {
-      const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    async ({ address }: { address: string }) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onUpdateTransaction(_tx => {
         return bridge.updateTransaction(transaction, {
           validators: [

@@ -24,13 +24,13 @@ const InputRight = styled(Box).attrs(() => ({
 }))``;
 export const FeesField = ({ transaction, account, onChange, status }: Props) => {
   invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
-  const bridge = getAccountBridge(account);
   const { feePerByte, networkInfo } = transaction;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { units } = account.currency;
   const satoshi = units[units.length - 1];
   const onSelectChange = useCallback(
-    (item: { feePerByte: BigNumber }) => {
+    async (item: { feePerByte: BigNumber }) => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           feePerByte: item.feePerByte,
@@ -38,7 +38,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
   const onInputChange = (feePerByte: BigNumber) =>
     onSelectChange({

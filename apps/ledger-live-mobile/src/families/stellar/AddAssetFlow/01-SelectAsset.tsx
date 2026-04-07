@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -93,21 +93,29 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account);
-  const bridge = getAccountBridge(mainAccount);
   invariant(mainAccount, "stellar Account required");
-  const { transaction, status } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
-        mode: "changeTrust",
-      }),
-    };
-  });
+  const { transaction, setTransaction, status } = useBridgeTransaction(() => ({
+    account,
+  }));
+
+  const stellarInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !stellarInitSet.current) {
+      stellarInitSet.current = true;
+      getAccountBridge(mainAccount).then(bridge => {
+        const t = bridge.createTransaction(mainAccount);
+        setTransaction(bridge.updateTransaction(t, { mode: "changeTrust" }) as StellarTransaction);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
+
   const onNext = useCallback(
-    (assetId: string) => {
+    async (assetId: string) => {
+      if (!transaction) return;
       const tokenId = assetId.split("/")[2];
       const [assetCode, assetIssuer] = tokenId.split(":");
+      const bridge = await getAccountBridge(mainAccount);
       const t = bridge.updateTransaction(transaction, {
         assetReference: assetCode,
         assetOwner: assetIssuer,
@@ -118,7 +126,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         status,
       });
     },
-    [bridge, transaction, navigation, route.params, status],
+    [mainAccount, transaction, navigation, route.params, status],
   );
 
   const { data, loadNext } = useTokensData({

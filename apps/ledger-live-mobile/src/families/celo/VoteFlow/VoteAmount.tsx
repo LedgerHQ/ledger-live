@@ -38,8 +38,6 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState(0);
 
-  const bridge = getAccountBridge(account);
-
   const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
     return {
       account,
@@ -55,21 +53,25 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
-      if (cancelled) return;
-      setMaxSpendable(estimate.toNumber());
-    });
+    getAccountBridge(account)
+      .then(bridge => bridge.estimateMaxSpendable({ account, transaction }))
+      .then(estimate => {
+        if (cancelled) return;
+        setMaxSpendable(estimate.toNumber());
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [transaction, setMaxSpendable, bridge, account]);
+  }, [transaction, setMaxSpendable, account]);
 
-  const onChange = (amount: BigNumber) => {
+  const onChange = async (amount: BigNumber) => {
+    const bridge = await getAccountBridge(account);
     setTransaction(bridge.updateTransaction(transaction, { amount }));
   };
 
-  const toggleUseAllAmount = () => {
+  const toggleUseAllAmount = async () => {
+    const bridge = await getAccountBridge(account);
     setTransaction(
       bridge.updateTransaction(transaction, {
         useAllAmount: !transaction.useAllAmount,

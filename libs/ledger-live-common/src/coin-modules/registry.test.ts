@@ -19,8 +19,9 @@ const stubTxModule: TransactionModule = {
 
 const makeLoader = (family: string, overrides: Partial<CoinModuleLoader> = {}): CoinModuleLoader => ({
   family,
-  loadSetup: () => stubSetup,
-  loadTransaction: () => stubTxModule,
+  currencyIds: [],
+  loadSetup: () => Promise.resolve(stubSetup),
+  loadTransaction: () => Promise.resolve(stubTxModule),
   ...overrides,
 });
 
@@ -32,64 +33,62 @@ describe("registerCoinModules / getRegisteredFamilies", () => {
 });
 
 describe("loadSetupForFamily", () => {
-  it("calls the loader's loadSetup", () => {
+  it("calls the loader's loadSetup", async () => {
     const setup = { bridge: { currencyBridge: {}, accountBridge: {} } } as any;
-    registerCoinModules([makeLoader("bitcoin", { loadSetup: () => setup })]);
-    expect(loadSetupForFamily("bitcoin")).toBe(setup);
+    registerCoinModules([makeLoader("bitcoin", { loadSetup: () => Promise.resolve(setup) })]);
+    expect(await loadSetupForFamily("bitcoin")).toBe(setup);
   });
 
-  it("throws CurrencyNotSupported for unknown family", () => {
-    expect(() => loadSetupForFamily("unknown_family")).toThrow(CurrencyNotSupported);
+  it("throws CurrencyNotSupported for unknown family", async () => {
+    await expect(loadSetupForFamily("unknown_family")).rejects.toThrow(CurrencyNotSupported);
   });
 });
 
 describe("loadTransactionForFamily", () => {
-  it("calls the loader's loadTransaction", () => {
+  it("calls the loader's loadTransaction", async () => {
     const txModule = { fromTransactionRaw: jest.fn() } as any;
-    registerCoinModules([makeLoader("evm", { loadTransaction: () => txModule })]);
-    expect(loadTransactionForFamily("evm")).toBe(txModule);
+    registerCoinModules([makeLoader("evm", { loadTransaction: () => Promise.resolve(txModule) })]);
+    expect(await loadTransactionForFamily("evm")).toBe(txModule);
   });
 });
 
 describe("loadDeviceTxConfigForFamily", () => {
-  it("returns the fn when loader has loadDeviceTxConfig", () => {
+  it("returns the fn when loader has loadDeviceTxConfig", async () => {
     const fn = jest.fn() as any;
-    registerCoinModules([makeLoader("bitcoin", { loadDeviceTxConfig: () => fn })]);
-    expect(loadDeviceTxConfigForFamily("bitcoin")).toBe(fn);
+    registerCoinModules([makeLoader("bitcoin", { loadDeviceTxConfig: () => Promise.resolve(fn) })]);
+    expect(await loadDeviceTxConfigForFamily("bitcoin")).toBe(fn);
   });
 
-  it("returns undefined when loader has no loadDeviceTxConfig", () => {
+  it("returns undefined when loader has no loadDeviceTxConfig", async () => {
     registerCoinModules([makeLoader("evm")]);
-    expect(loadDeviceTxConfigForFamily("evm")).toBeUndefined();
+    expect(await loadDeviceTxConfigForFamily("evm")).toBeUndefined();
   });
 
-  it("returns undefined for unknown family", () => {
-    expect(loadDeviceTxConfigForFamily("unknown_family")).toBeUndefined();
+  it("returns undefined for unknown family", async () => {
+    expect(await loadDeviceTxConfigForFamily("unknown_family")).toBeUndefined();
   });
 });
 
 describe("loadMockBridgeForFamily / loadMockAccountForFamily", () => {
-  it("returns undefined for unknown family", () => {
-    expect(loadMockBridgeForFamily("unknown")).toBeUndefined();
-    expect(loadMockAccountForFamily("unknown")).toBeUndefined();
+  it("returns undefined for unknown family", async () => {
+    expect(await loadMockBridgeForFamily("unknown")).toBeUndefined();
   });
 
-  it("returns undefined when loader has no mock loaders", () => {
+  it("returns undefined when loader has no mock loaders", async () => {
     registerCoinModules([makeLoader("bitcoin")]);
-    expect(loadMockBridgeForFamily("bitcoin")).toBeUndefined();
-    expect(loadMockAccountForFamily("bitcoin")).toBeUndefined();
+    expect(await loadMockBridgeForFamily("bitcoin")).toBeUndefined();
   });
 
-  it("calls loadMockBridge and loadMockAccount when present", () => {
+  it("calls loadMockBridge and loadMockAccount when present", async () => {
     const mockBridge = { currencyBridge: {} as any, accountBridge: {} as any };
     const mockAccount = {};
     registerCoinModules([
       makeLoader("evm", {
-        loadMockBridge: () => mockBridge,
-        loadMockAccount: () => mockAccount,
+        loadMockBridge: () => Promise.resolve(mockBridge),
+        loadMockAccount: () => Promise.resolve(mockAccount),
       }),
     ]);
-    expect(loadMockBridgeForFamily("evm")).toBe(mockBridge);
-    expect(loadMockAccountForFamily("evm")).toBe(mockAccount);
+    expect(await loadMockBridgeForFamily("evm")).toBe(mockBridge);
+    expect(await loadMockAccountForFamily("evm")).toBe(mockAccount);
   });
 });

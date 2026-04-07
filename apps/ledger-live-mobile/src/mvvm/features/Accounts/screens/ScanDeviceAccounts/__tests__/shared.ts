@@ -52,11 +52,13 @@ jest.mock("@react-navigation/core", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
-    scanAccounts: jest.fn(() => scanAccountsObservable),
-    preload: jest.fn(() => Promise.resolve(undefined)),
-    hydrate: jest.fn(),
-  })),
+  getCurrencyBridge: jest.fn(() =>
+    Promise.resolve({
+      scanAccounts: jest.fn(() => scanAccountsObservable),
+      preload: jest.fn(() => Promise.resolve(undefined)),
+      hydrate: jest.fn(),
+    }),
+  ),
 }));
 
 jest.mock("~/bridge/cache", () => ({

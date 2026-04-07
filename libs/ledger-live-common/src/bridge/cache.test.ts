@@ -4,13 +4,26 @@ import { getCryptoCurrencyById } from "../currencies";
 import { setEnv } from "@ledgerhq/live-env";
 import { loadMockBridgeForFamily } from "../coin-modules/registry";
 
+const mockBridge = {
+  getPreloadStrategy: () => ({ preloadMaxAge: 5 * 60 * 1000 }),
+  preload: () => Promise.resolve(null),
+  hydrate: () => {},
+  scanAccounts: () => ({ subscribe: () => {} }),
+};
+
+jest.mock("./impl", () => ({
+  ...jest.requireActual("./impl"),
+  getCurrencyBridge: jest.fn(),
+}));
+
 describe("Bridge Cache", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    const { getCurrencyBridge } = jest.requireMock("./impl");
+    getCurrencyBridge.mockResolvedValue(mockBridge);
   });
 
   beforeAll(() => {
-    setEnv("MOCK", "1");
     setEnv("PLAYWRIGHT_RUN", true);
     // Pre-warm so the solana module's init call to makeLRUCache (makeEstimateMaxSpendable)
     // is not counted by the per-test spies below.
@@ -18,7 +31,6 @@ describe("Bridge Cache", () => {
   });
 
   afterAll(() => {
-    setEnv("MOCK", "");
     setEnv("PLAYWRIGHT_RUN", false);
   });
 

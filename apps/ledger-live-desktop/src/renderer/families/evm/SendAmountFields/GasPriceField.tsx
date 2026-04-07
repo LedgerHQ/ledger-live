@@ -15,9 +15,9 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   updateTransaction,
 }) => {
   invariant(transaction.family === "evm", "GasPriceField: evm family expected");
-  const bridge = getAccountBridge(account);
   const onGasPriceChange = useCallback(
-    (gasPrice: BigNumber) => {
+    async (gasPrice: BigNumber) => {
+      const bridge = await getAccountBridge(account);
       updateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           gasPrice,
@@ -25,7 +25,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
         }),
       );
     },
-    [updateTransaction, bridge],
+    [updateTransaction, account],
   );
 
   const { gasOptions } = transaction;

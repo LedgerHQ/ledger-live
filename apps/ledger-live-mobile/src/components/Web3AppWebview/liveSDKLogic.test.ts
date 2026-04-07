@@ -7,9 +7,9 @@ import {
 } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { getWalletAPITransactionSignFlowInfos } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletAPITransaction } from "@ledgerhq/live-common/wallet-api/types";
-import { getPlatformTransactionSignFlowInfos } from "@ledgerhq/live-common/platform/converters";
+import evmWalletApiAdapter from "@ledgerhq/live-common/families/evm/walletApiAdapter";
+import evmPlatformAdapter from "@ledgerhq/live-common/families/evm/platformAdapter";
 import { PLATFORM_FAMILIES_ENUM, PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 
 import prepareSignTransaction from "./liveSDKLogic";
@@ -17,10 +17,11 @@ import prepareSignTransaction from "./liveSDKLogic";
 // Fake the support of the test currency
 jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => ({
   isCurrencySupported: () => true,
+  setSupportedCurrencies: () => {},
 }));
 
 describe("prepareSignTransaction", () => {
-  it("returns a Transaction for platform", () => {
+  it("returns a Transaction for platform", async () => {
     // Given
     const parentAccount = createAccount("12");
     const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
@@ -46,15 +47,15 @@ describe("prepareSignTransaction", () => {
     // When
     const tx = createPlatformTransaction();
 
-    const { liveTx } = getPlatformTransactionSignFlowInfos(tx);
+    const { liveTx } = evmPlatformAdapter.getPlatformTransactionSignFlowInfos(tx);
 
-    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);
   });
 
-  it("returns a Transaction for wallet-api", () => {
+  it("returns a Transaction for wallet-api", async () => {
     // Given
     const parentAccount = createAccount("12");
     const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
@@ -80,12 +81,12 @@ describe("prepareSignTransaction", () => {
     // When
     const tx = createWalletAPITransaction();
 
-    const { liveTx } = getWalletAPITransactionSignFlowInfos({
+    const { liveTx } = evmWalletApiAdapter.getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: tx,
       account: childAccount,
     });
 
-    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -93,7 +94,7 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createWalletAPITransaction(): WalletAPITransaction {
+function createWalletAPITransaction(): Extract<WalletAPITransaction, { family: "ethereum" }> {
   return {
     family: "ethereum",
     amount: new BigNumber("1000"),
@@ -105,7 +106,7 @@ function createWalletAPITransaction(): WalletAPITransaction {
   };
 }
 
-function createPlatformTransaction(): PlatformTransaction {
+function createPlatformTransaction(): Extract<PlatformTransaction, { family: typeof PLATFORM_FAMILIES_ENUM.ETHEREUM }> {
   return {
     family: PLATFORM_FAMILIES_ENUM.ETHEREUM,
     amount: new BigNumber("1000"),

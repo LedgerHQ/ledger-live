@@ -1,5 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getSendDescriptor } from "../registry";
+import { getSendDescriptorFromRegistry as getSendDescriptor } from "../registry";
 import type {
   CoinControlConfig,
   CustomFeeConfig,

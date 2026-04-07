@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "~/context/Locale";
@@ -56,55 +56,34 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useAccountScreen(route).account as CosmosAccount;
   invariant(account && account.cosmosResources, "account and cosmos transaction required");
-  const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const unit = useAccountUnit(mainAccount);
   const currency = getAccountCurrency(mainAccount);
   const bridgeTransaction = useBridgeTransaction(() => {
     const tx = route.params.transaction;
-
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "claimReward",
-          validators: [
-            {
-              address: route.params.validator.validatorAddress,
-              amount: route.params.value,
-            },
-          ],
-        }),
-      };
+    if (tx) {
+      return { account, transaction: tx };
     }
-
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "claimReward",
-          validators: [
-            {
-              address: route.params.validator.validatorAddress,
-              amount: route.params.value,
-            },
-          ],
-
-          /** @TODO remove this once the bridge handles it */
-          recipient: mainAccount.freshAddress,
-        }),
-      };
-    }
-
-    return {
-      account,
-      transaction: tx,
-    };
+    return { account };
   });
-  const { status, updateTransaction } = bridgeTransaction;
+  const { status, updateTransaction, setTransaction } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as Transaction;
+  const modeSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !modeSet.current) {
+      modeSet.current = true;
+      setTransaction({
+        ...transaction,
+        mode: "claimReward",
+        validators: [
+          {
+            address: route.params.validator.validatorAddress,
+            amount: route.params.value,
+          },
+        ],
+      } as Transaction);
+    }
+  }, [transaction, setTransaction, route.params.validator.validatorAddress, route.params.value]);
   invariant(transaction, "transaction required");
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.CosmosClaimRewardsSelectDevice, {
@@ -113,14 +92,15 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     });
   }, [navigation, transaction, route]);
   const onChangeMode = useCallback(
-    (mode: string) => {
+    async (mode: string) => {
+      const bridge = await getAccountBridge(account, undefined);
       updateTransaction(() =>
         bridge.updateTransaction(transaction, {
           mode,
         }),
       );
     },
-    [transaction, bridge, updateTransaction],
+    [transaction, account, updateTransaction],
   );
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
   const openInfoModal = useCallback(() => {

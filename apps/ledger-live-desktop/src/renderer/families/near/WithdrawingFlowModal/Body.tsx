@@ -8,7 +8,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -22,7 +21,10 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import {
+  NearAccount,
+  Transaction as NearTransaction,
+} from "@ledgerhq/live-common/families/near/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 
 export type Data = {
@@ -64,6 +66,9 @@ function Body({
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
+  const mode = "withdraw" as const;
+  const recipient = validatorAddress;
+  const maxAmount = getMaxAmount(accountProp, { mode, recipient } as NearTransaction);
   const {
     account,
     transaction,
@@ -72,29 +77,15 @@ function Body({
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction<NearTransaction>(() => {
     invariant(accountProp.nearResources, "near: account and near resources required");
-    const bridge = getAccountBridge(accountProp, undefined);
-    const initTx = bridge.createTransaction(accountProp);
-    const mode = "withdraw";
-    const recipient = validatorAddress;
-    const maxAmount = getMaxAmount(accountProp, {
-      ...initTx,
-      mode,
-      recipient,
-    });
-    const newTx = {
-      mode,
-      recipient,
-      amount: maxAmount,
-      useAllAmount: true,
-    };
-    const transaction = bridge.updateTransaction(initTx, newTx);
     return {
       account: accountProp,
-      transaction,
+      parentAccount: undefined,
+      transactionPatch: { mode, recipient, amount: maxAmount, useAllAmount: true },
     };
   });
+
   const steps = useSteps();
   const error = transactionError || bridgeError;
   const handleRetry = useCallback(() => {

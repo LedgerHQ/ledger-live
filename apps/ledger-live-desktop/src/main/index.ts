@@ -188,8 +188,8 @@ app.on("ready", async () => {
     if (!wc) return;
 
     wc.setWindowOpenHandler(({ url }) => {
-      const protocol = new URL(url).protocol;
-      if (["https:", "http:"].includes(protocol)) {
+      const urlProtocol = new URL(url).protocol;
+      if (["https:", "http:"].includes(urlProtocol)) {
         openURL(url);
       }
       return {
@@ -372,8 +372,8 @@ async function installExtensions() {
   });
 }
 
-function clearSessionCache(session: Electron.Session): Promise<void> {
-  return session.clearCache();
+function clearSessionCache(electronSession: Electron.Session): Promise<void> {
+  return electronSession.clearCache();
 }
 function show(win: BrowserWindow) {
   win.show();

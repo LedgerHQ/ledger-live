@@ -34,7 +34,6 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const unit = useAccountUnit(account);
   const { locale } = useSettings();
-  const bridge = getAccountBridge(account);
   const transaction = route.params.transaction as Transaction;
 
   const [maxSpendable, setMaxSpendable] = useState(new BigNumber(0));
@@ -45,8 +44,8 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const getMaxSpendable = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const fetchMaxSpendable = async () => {
+      const bridge = await getAccountBridge(account);
       const amount = await bridge.estimateMaxSpendable({
         account,
         transaction,
@@ -125,13 +124,14 @@ const PickAmount = (props: PickAmountPropsType) => {
    * Callback running when changing the screen to select the device, passing along the needed data.
    */
 
-  const onContinue = useCallback(() => {
+  const onContinue = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     navigation.navigate(ScreenName.MultiversXDelegationValidator, {
       account,
       validators,
       transaction: bridge.updateTransaction(transaction, { amount }),
     });
-  }, [account, validators, bridge, amount, navigation, transaction]);
+  }, [account, validators, amount, navigation, transaction]);
 
   /*
    * Track all callback reference updates and run the effect conditionally.

@@ -10,15 +10,15 @@ import { isOldestPendingOperation } from "@ledgerhq/ledger-wallet-framework/oper
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Flex } from "@ledgerhq/native-ui";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import invariant from "invariant";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -43,20 +43,16 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const transactionToEdit = fromTransactionRaw(
-    operation.transactionRaw as TransactionRaw,
-  ) as EvmTransaction;
+  const transactionToEdit = useMemo<EvmTransaction>(
+    () => fromTransactionRaw(operation.transactionRaw as TransactionRaw),
+    [operation.transactionRaw],
+  );
 
   const { transaction, setTransaction } = useBridgeTransaction<EvmTransaction>(() => ({
     account,
     parentAccount,
     transaction: transactionToEdit,
   }));
-
-  invariant(
-    transaction,
-    "[useBridgeTransaction - MethodSelection] could not found transaction from bridge.",
-  );
 
   const haveFundToCancel = hasMinimumFundsToCancel({
     mainAccount,
@@ -76,11 +72,16 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     mainAccount,
     new BigNumber(transactionToEdit.nonce),
   );
-  const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount as Account);
 
   const onSelect = useCallback(
     async (option: EditType) => {
+      if (!transaction) return;
       log("Edit Transaction - Method Selection", "onSelect Cancel/Speed up", option);
+
+      const bridge: AccountBridge<EvmTransaction> = await getAccountBridge(
+        account,
+        parentAccount as Account,
+      );
 
       const patch = await getEditTransactionPatch({
         account: mainAccount,
@@ -92,7 +93,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
       setSelectedMethod(option);
     },
-    [mainAccount, transaction, transactionToEdit, bridge, setTransaction],
+    [mainAccount, transaction, transactionToEdit, account, parentAccount, setTransaction],
   );
 
   /**
@@ -140,7 +141,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     log("[edit transaction]", "Transaction to edit", transaction);
     log("[edit transaction]", "User balance", mainAccount.balance.toNumber());
 
-    if (!selectedMethod) {
+    if (!selectedMethod || !transaction) {
       return;
     }
 

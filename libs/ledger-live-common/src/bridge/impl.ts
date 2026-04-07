@@ -27,18 +27,29 @@ const alpacaized = {
   solana: false, // TODO: Enable once solana is ready to be used in production
 };
 
-// Alpacaized currency bridges are created on demand; cache ensures referential stability.
+const bridgeCache: Record<string, AccountBridge<any>> = {};
 const currencyBridgeCache: Record<string, CurrencyBridge> = {};
-// All account bridges are wrapped (wrapAccountBridge); cache ensures referential stability.
-const accountBridgeCache: Record<string, AccountBridge<any>> = {};
+const mockBridgeCache: Record<string, any> = {};
 
-export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+/** Lazily load and cache a mock bridge for a family. */
+async function loadMockBridgeForFamilyLazy(family: string): Promise<any> {
+  if (mockBridgeCache[family]) return mockBridgeCache[family];
+  const bridge = await loadMockBridgeForFamily(family);
+  if (bridge !== undefined) mockBridgeCache[family] = bridge;
+  return bridge;
+}
+
+/**
+ * Async: loads the currency bridge for a currency, caching the result.
+ */
+export const getCurrencyBridge = async (currency: CryptoCurrency): Promise<CurrencyBridge> => {
   if (getEnv("MOCK")) {
-    const mockBridge = loadMockBridgeForFamily(currency.family);
-    // TODO Remove once we delete mock bridges tests
-    if (mockBridge) {
-      mockBridge.loadCoinConfig?.();
-      return mockBridge.currencyBridge;
+    const cached = await loadMockBridgeForFamilyLazy(currency.family);
+    if (cached) {
+      if (typeof cached.loadCoinConfig === "function") {
+        cached.loadCoinConfig();
+      }
+      return cached.currencyBridge;
     }
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
       currencyName: currency.id,
@@ -52,19 +63,26 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
     return currencyBridgeCache[currency.family];
   }
 
-  const setup = loadSetupForFamily(currency.family);
+  if (currencyBridgeCache[currency.family]) return currencyBridgeCache[currency.family];
+
+  const setup = await loadSetupForFamily(currency.family);
   if (!setup?.bridge) {
     throw new CurrencyNotSupported("no implementation available for currency " + currency.id, {
       currencyName: currency.id,
     });
   }
-  return setup.bridge.currencyBridge;
+  bridgeCache[currency.family] ??= wrapAccountBridge(setup.bridge.accountBridge);
+  currencyBridgeCache[currency.family] ??= setup.bridge.currencyBridge;
+  return currencyBridgeCache[currency.family];
 };
 
-export const getAccountBridge = (
+/**
+ * Async: loads the account bridge, caching the result.
+ */
+export const getAccountBridge = async (
   account: AccountLike,
   parentAccount?: Account | null,
-): AccountBridge<any> => {
+): Promise<AccountBridge<any>> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
@@ -74,7 +92,7 @@ export const getAccountBridge = (
   }
 
   try {
-    return getAccountBridgeByFamily(currency.family, mainAccount.id);
+    return await getAccountBridgeByFamily(currency.family, mainAccount.id);
   } catch {
     throw new CurrencyNotSupported("currency not supported " + currency.id, {
       currencyName: currency.id,
@@ -82,34 +100,41 @@ export const getAccountBridge = (
   }
 };
 
-export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
+export async function getAccountBridgeByFamily(
+  family: string,
+  accountId?: string,
+): Promise<AccountBridge<any>> {
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 
     if (type === "mock") {
-      const mockBridge = loadMockBridgeForFamily(family);
+      const mockBridge = await loadMockBridgeForFamilyLazy(family);
       // TODO Remove once we delete mock bridges tests
       if (mockBridge) {
-        mockBridge.loadCoinConfig?.();
+        if (typeof mockBridge.loadCoinConfig === "function") {
+          mockBridge.loadCoinConfig();
+        }
         return wrapAccountBridge(mockBridge.accountBridge);
       }
     }
   }
 
-  if (!accountBridgeCache[family]) {
-    let rawBridge: AccountBridge<any>;
-    if (alpacaized[family]) {
-      rawBridge = getAlpacaAccountBridge(family, "local");
-    } else {
-      const setup = loadSetupForFamily(family);
-      if (!setup?.bridge) {
-        throw new CurrencyNotSupported("account bridge not found " + family);
-      }
-      rawBridge = setup.bridge.accountBridge;
+  if (alpacaized[family]) {
+    if (!bridgeCache[family]) {
+      bridgeCache[family] = wrapAccountBridge(getAlpacaAccountBridge(family, "local"));
     }
-    accountBridgeCache[family] = wrapAccountBridge(rawBridge);
+    return bridgeCache[family];
   }
-  return accountBridgeCache[family];
+
+  if (bridgeCache[family]) return bridgeCache[family];
+
+  const setup = await loadSetupForFamily(family);
+  if (!setup?.bridge) {
+    throw new CurrencyNotSupported("account bridge not found " + family);
+  }
+  bridgeCache[family] = wrapAccountBridge(setup.bridge.accountBridge);
+  currencyBridgeCache[family] ??= setup.bridge.currencyBridge;
+  return bridgeCache[family];
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(

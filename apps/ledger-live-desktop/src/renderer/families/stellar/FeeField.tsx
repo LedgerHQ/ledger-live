@@ -27,16 +27,16 @@ const FeeField = ({
   invariant(transaction.family === "stellar", "FeeField: stellar family expected");
 
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account);
   const onFeeValueChange = useCallback(
-    (fees: BigNumber) => {
+    async (fees: BigNumber) => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           customFees: { parameters: { fees: fees } },
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
   const { networkCongestionLevel } = transaction?.networkInfo || {};
 

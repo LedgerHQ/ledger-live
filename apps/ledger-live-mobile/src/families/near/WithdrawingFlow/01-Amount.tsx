@@ -1,9 +1,8 @@
 import invariant from "invariant";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import SelectAmount from "../shared/02-SelectAmount";
@@ -19,24 +18,29 @@ type Props = BaseComposite<
 function WithdrawingAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const { validatorId } = route.params.stakingPosition;
   const {
     transaction: bridgeTransaction,
+    setTransaction,
     updateTransaction,
     status,
     bridgePending,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    return {
-      account,
-      transaction: bridge.updateTransaction(t, {
+  } = useBridgeTransaction(() => ({
+    account,
+  }));
+
+  const withdrawInitSet = useRef(false);
+  useEffect(() => {
+    if (bridgeTransaction && !withdrawInitSet.current) {
+      withdrawInitSet.current = true;
+      setTransaction({
+        ...bridgeTransaction,
         mode: "withdraw",
         recipient: validatorId || "",
-      }),
-    };
-  });
+      } as typeof bridgeTransaction);
+    }
+  }, [bridgeTransaction, setTransaction, validatorId]);
   const transaction = bridgeTransaction as Transaction;
   const newRoute = {
     ...route,
@@ -46,7 +50,9 @@ function WithdrawingAmount({ navigation, route }: Props) {
       max: getMaxAmount(account as NearAccount, transaction, transaction?.fees),
       value: transaction ? transaction.amount : new BigNumber(0),
       nextScreen: ScreenName.NearWithdrawingSelectDevice,
-      updateTransaction,
+      updateTransaction: updateTransaction as unknown as (
+        updater: (arg0: Transaction) => Transaction,
+      ) => void,
       status,
       bridgePending,
     },

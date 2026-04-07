@@ -6,54 +6,48 @@ import type {
   TransactionRaw,
   TransactionStatus,
   TransactionStatusRaw,
-} from "../coin-modules/transaction-types";
+} from "../generated/types";
 import { loadTransactionForFamily } from "../coin-modules/registry";
 import type { Account } from "@ledgerhq/types-live";
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const TM = loadTransactionForFamily(tr.family);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.fromTransactionRaw(tr as any) as unknown as Transaction;
+export const fromTransactionRaw = async (tr: TransactionRaw): Promise<Transaction> => {
+  const TM = await loadTransactionForFamily(tr.family);
+  return TM.fromTransactionRaw(tr) as unknown as Transaction;
 };
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const TM = loadTransactionForFamily(t.family);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.toTransactionRaw(t as any) as unknown as TransactionRaw;
+export const toTransactionRaw = async (t: Transaction): Promise<TransactionRaw> => {
+  const TM = await loadTransactionForFamily(t.family);
+  return TM.toTransactionRaw(t) as unknown as TransactionRaw;
 };
 
-export const fromTransactionStatusRaw = (
+export const fromTransactionStatusRaw = async (
   tr: TransactionStatusRaw,
   family: string,
-): TransactionStatus => {
-  const TM = loadTransactionForFamily(family);
+): Promise<TransactionStatus> => {
+  const TM = await loadTransactionForFamily(family);
   if (!TM.fromTransactionStatusRaw)
     throw new Error(`fromTransactionStatusRaw not implemented for family "${family}"`);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.fromTransactionStatusRaw(tr as any) as unknown as TransactionStatus;
+  return TM.fromTransactionStatusRaw(tr) as unknown as TransactionStatus;
 };
-export const toTransactionStatusRaw = (
+export const toTransactionStatusRaw = async (
   t: TransactionStatus,
   family: string,
-): TransactionStatusRaw => {
-  const TM = loadTransactionForFamily(family);
+): Promise<TransactionStatusRaw> => {
+  const TM = await loadTransactionForFamily(family);
   if (!TM.toTransactionStatusRaw)
     throw new Error(`toTransactionStatusRaw not implemented for family "${family}"`);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.toTransactionStatusRaw(t as any) as unknown as TransactionStatusRaw;
+  return TM.toTransactionStatusRaw(t) as unknown as TransactionStatusRaw;
 };
 
 export const formatTransaction = async (t: Transaction, a: Account): Promise<string> => {
-  const TM = loadTransactionForFamily(t.family);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.formatTransaction ? await TM.formatTransaction(t as any, a as any) : "";
+  const TM = await loadTransactionForFamily(t.family);
+  return TM.formatTransaction ? TM.formatTransaction(t, a) : "";
 };
 
-export const formatTransactionStatus = (
+export const formatTransactionStatus = async (
   t: Transaction,
   ts: TransactionStatus,
   mainAccount: Account,
-): string => {
-  const TM = loadTransactionForFamily(t.family);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.formatTransactionStatus ? TM.formatTransactionStatus(t as any, ts as any, mainAccount as any) : "";
+): Promise<string> => {
+  const TM = await loadTransactionForFamily(t.family);
+  return TM.formatTransactionStatus?.(t, ts, mainAccount) ?? "";
 };

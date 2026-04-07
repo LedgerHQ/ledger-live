@@ -23,12 +23,12 @@ export default function StepAsset({
   t,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
   const onUpdateAsset = useCallback(
-    (token?: TokenCurrency | null) => {
+    async (token?: TokenCurrency | null) => {
       if (!token) return;
       const { id: assetId } = token;
       const { assetCode, assetIssuer } = getAssetObject(assetId);
+      const bridge = await getAccountBridge(account, parentAccount);
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           assetReference: assetCode,
@@ -36,7 +36,7 @@ export default function StepAsset({
         }),
       );
     },
-    [bridge, onUpdateTransaction],
+    [account, parentAccount, onUpdateTransaction],
   );
   return (
     <Box flow={1}>

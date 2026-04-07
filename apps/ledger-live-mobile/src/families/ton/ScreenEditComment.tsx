@@ -35,8 +35,8 @@ function TonEditComment({ navigation, route }: NavigationProps) {
   const onChangeCommentValue = useCallback((str: string) => {
     setComment(str);
   }, []);
-  const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
+  const onValidateText = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,

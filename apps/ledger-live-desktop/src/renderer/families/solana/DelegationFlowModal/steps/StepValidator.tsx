@@ -1,9 +1,5 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  StakeCreateAccountTransaction,
-  Transaction,
-} from "@ledgerhq/live-common/families/solana/types";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { StakeCreateAccountTransaction } from "@ledgerhq/live-common/families/solana/types";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -28,17 +24,18 @@ export default function StepValidator({
     "solana account, resources and transaction required",
   );
   const updateValidator = ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(_tx => {
-      return bridge.updateTransaction(transaction, {
-        model: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: {
-              voteAccAddress: address,
+    getAccountBridge(account, parentAccount).then(bridge => {
+      onUpdateTransaction(_tx => {
+        return bridge.updateTransaction(transaction, {
+          model: {
+            kind: "stake.createAccount",
+            uiState: {
+              delegate: {
+                voteAccAddress: address,
+              },
             },
           },
-        },
+        });
       });
     });
   };

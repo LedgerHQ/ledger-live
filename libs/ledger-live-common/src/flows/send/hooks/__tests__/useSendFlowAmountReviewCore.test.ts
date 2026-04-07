@@ -10,7 +10,9 @@ import type { AccountLike } from "@ledgerhq/types-live";
 
 const mockCurrency = { ticker: "BTC", type: "CryptoCurrency" as const };
 
-jest.mock("../../../../bridge/impl");
+jest.mock("../../../../bridge", () => ({
+  getAccountBridge: jest.fn(),
+}));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
   getMainAccount: jest.fn((acc: AccountLike) => acc),
   getAccountCurrency: jest.fn(() => mockCurrency),
@@ -57,8 +59,8 @@ const mockLabels = {
 describe("useSendFlowAmountReviewCore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    const getAccountBridge = jest.requireMock("../../../../bridge/impl").getAccountBridge;
-    getAccountBridge.mockReturnValue({
+    const getAccountBridge = jest.requireMock("../../../../bridge").getAccountBridge;
+    getAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,

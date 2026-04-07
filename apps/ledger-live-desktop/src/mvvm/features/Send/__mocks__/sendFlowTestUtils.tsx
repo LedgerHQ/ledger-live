@@ -185,28 +185,36 @@ const mockPrepareTransaction = jest.fn((_account: unknown, tx: Transaction) => P
 const mockGetTransactionStatus = jest.fn(() => Promise.resolve(mockStatus));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: mockBridgeUpdateTransaction,
-    prepareTransaction: mockPrepareTransaction,
-    getTransactionStatus: mockGetTransactionStatus,
-    estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
-  })),
-  getCurrencyBridge: jest.fn(() => ({})),
+  getAccountBridge: jest.fn(() =>
+    Promise.resolve({
+      updateTransaction: mockBridgeUpdateTransaction,
+      prepareTransaction: mockPrepareTransaction,
+      getTransactionStatus: mockGetTransactionStatus,
+      estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
+    }),
+  ),
+  getCurrencyBridge: jest.fn(() => Promise.resolve({})),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: mockBridgeUpdateTransaction,
-    prepareTransaction: mockPrepareTransaction,
-    getTransactionStatus: mockGetTransactionStatus,
-    estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
-  })),
-  getCurrencyBridge: jest.fn(() => ({})),
+  getAccountBridge: jest.fn(() =>
+    Promise.resolve({
+      updateTransaction: mockBridgeUpdateTransaction,
+      prepareTransaction: mockPrepareTransaction,
+      getTransactionStatus: mockGetTransactionStatus,
+      estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
+    }),
+  ),
+  getCurrencyBridge: jest.fn(() => Promise.resolve({})),
 }));
 
 jest.mock("@ledgerhq/domain-service/hooks/index", () => ({
   DomainServiceProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useDomain: jest.fn(() => ({ status: "idle", resolutions: [] })),
+}));
+
+jest.mock("@ledgerhq/live-common/families/evm/react", () => ({
+  useGasOptions: jest.fn(() => [undefined, null, false]),
 }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({

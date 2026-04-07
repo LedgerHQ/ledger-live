@@ -124,9 +124,9 @@ export default function SendSelectRecipient({ route }: Props) {
   }, [navigation, transaction, route.params]);
 
   const onChangeText = useCallback(
-    (recipient: string) => {
+    async (recipient: string) => {
       if (!account) return;
-      const bridge = getAccountBridge(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           recipient,
@@ -140,8 +140,8 @@ export default function SendSelectRecipient({ route }: Props) {
   const memoTag = useMemoTagInput(
     mainAccount.currency.family,
     useCallback(
-      patch => {
-        const bridge = getAccountBridge(account, parentAccount);
+      async patch => {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(bridge.updateTransaction(transaction, patch(transaction)));
       },
       [account, parentAccount, setTransaction, transaction],
@@ -151,8 +151,8 @@ export default function SendSelectRecipient({ route }: Props) {
   const expiryDuration = useExpiryDurationInput(
     mainAccount.currency.family,
     useCallback(
-      patch => {
-        const bridge = getAccountBridge(account, parentAccount);
+      async patch => {
+        const bridge = await getAccountBridge(account, parentAccount);
         setTransaction(bridge.updateTransaction(transaction, patch(transaction)));
       },
       [account, parentAccount, setTransaction, transaction],
@@ -170,9 +170,9 @@ export default function SendSelectRecipient({ route }: Props) {
     if (parent) parent.goBack();
   }, [navigation]);
 
-  const onBridgeErrorRetry = useCallback(() => {
+  const onBridgeErrorRetry = useCallback(async () => {
     setBridgeErr(null);
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 

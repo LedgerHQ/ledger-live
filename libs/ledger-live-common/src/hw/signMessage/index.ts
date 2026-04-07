@@ -15,25 +15,29 @@ import type { SignMessage, Result } from "./types";
 import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
 import { decodeAccountId } from "../../account";
 
-export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
+export const prepareMessageToSign = async (
+  account: Account,
+  message: string,
+): Promise<AnyMessage> => {
   const utf8Message = Buffer.from(message, "hex").toString();
-  const setup = loadSetupForFamily(account.currency.family);
+  const setup = await loadSetupForFamily(account.currency.family);
 
   if (!setup.messageSigner) {
     throw new Error("Crypto does not support signMessage");
   }
 
-  if (setup.messageSigner.prepareMessageToSign) {
-    return setup.messageSigner.prepareMessageToSign({ account, message: utf8Message });
+  const prepFn = setup.messageSigner.prepareMessageToSign;
+  if (prepFn) {
+    return prepFn({ account, message: utf8Message });
   }
 
   // Default implementation
   return { message: utf8Message };
 };
 
-const signMessage: SignMessage = (transport, account, opts) => {
+const signMessage: SignMessage = async (transport, account, opts) => {
   const { currency } = account;
-  const setup = loadSetupForFamily(currency.family);
+  const setup = await loadSetupForFamily(currency.family);
   let signMessage = setup.messageSigner?.signMessage;
   if ("type" in opts) {
     switch (opts.type) {

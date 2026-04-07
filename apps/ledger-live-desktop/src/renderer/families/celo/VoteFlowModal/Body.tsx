@@ -1,6 +1,5 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState } from "react";
@@ -22,8 +21,8 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepValidatorGroup, { StepValidatorGroupFooter } from "./steps/StepValidatorGroup";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
-import { CeloAccount, Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { AccountBridge, Operation, Account, TokenAccount } from "@ledgerhq/types-live";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { Operation, Account, TokenAccount } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -95,15 +94,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
-    const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      mode: "vote",
-      recipient: defaultValidatorGroupAddress(),
-    });
     return {
       account,
       parentAccount: undefined,
-      transaction,
+      transactionPatch: { mode: "vote" as const, recipient: defaultValidatorGroupAddress() },
     };
   });
 

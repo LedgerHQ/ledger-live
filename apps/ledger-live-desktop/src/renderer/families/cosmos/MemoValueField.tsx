@@ -21,16 +21,16 @@ const MemoValueField = ({
   autoFocus?: boolean;
 }) => {
   invariant(transaction.family === "cosmos", "MemoTypeField: cosmos family expected");
-  const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    (memo: string) => {
+    async (memo: string) => {
+      const bridge = await getAccountBridge(account);
       onChange(
         bridge.updateTransaction(transaction, {
           memo,
         }),
       );
     },
-    [onChange, transaction, bridge],
+    [onChange, transaction, account],
   );
 
   // We use transaction as an error here.

@@ -8,7 +8,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -72,23 +71,20 @@ function Body({
     status,
   } = useBridgeTransaction(() => {
     invariant(accountProp.cosmosResources, "cosmos: account and cosmos resources required");
-    const delegations = accountProp.cosmosResources.delegations || [];
-    const bridge = getAccountBridge(accountProp, undefined);
-    const initTx = bridge.createTransaction(accountProp);
-    const newTx = {
-      mode: "undelegate",
-      validators: delegations
-        .filter(d => d.validatorAddress === validatorAddress)
-        .slice(0, 1)
-        .map(({ validatorAddress, amount }) => ({
-          address: validatorAddress,
-          amount,
-        })),
-    };
-    const transaction = bridge.updateTransaction(initTx, newTx);
+    const delegations = accountProp.cosmosResources?.delegations || [];
+    const validators = delegations
+      .filter(d => d.validatorAddress === validatorAddress)
+      .slice(0, 1)
+      .map(({ validatorAddress, amount }) => ({
+        address: validatorAddress,
+        amount,
+      }));
     return {
       account: accountProp,
-      transaction,
+      transactionPatch: {
+        mode: "undelegate" as const,
+        validators,
+      },
     };
   });
   const steps = useSteps();

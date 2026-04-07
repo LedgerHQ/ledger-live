@@ -49,10 +49,6 @@ const Evm1559CustomFees = ({
   );
   const [gasLimit, setGasLimit] = useState(getGasLimit(originalTransaction));
 
-  // Creating a new transaction to simulate the bridge status response before updating
-  // the original transaction
-  const bridge = getAccountBridge(account);
-
   const { transaction, setTransaction, status } = useBridgeTransaction<EvmTransactionEIP1559>(
     () => ({
       account,
@@ -105,12 +101,13 @@ const Evm1559CustomFees = ({
   );
 
   const onFeesChange = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<BigNumber>>) => (value: BigNumber) => {
+    (setter: React.Dispatch<React.SetStateAction<BigNumber>>) => async (value: BigNumber) => {
       if (!transaction) return; // type guard
       setter(value); // setMaxPriorityFeePerGas or setMaxFeePerGas
+      const bridge = await getAccountBridge(account);
       setTransaction(bridge.updateTransaction(transaction, transactionPatch));
     },
-    [transaction, bridge, transactionPatch, setTransaction],
+    [transaction, account, transactionPatch, setTransaction],
   );
 
   return (

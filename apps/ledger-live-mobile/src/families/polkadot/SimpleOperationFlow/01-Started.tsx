@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation, Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
@@ -43,21 +43,25 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
   const { polkadotResources } = mainAccount as PolkadotAccount;
   invariant(polkadotResources, "polkadotResources required");
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const t = bridge.createTransaction(mainAccount);
-      const transaction = bridge.updateTransaction(t, {
-        mode,
-      });
-      return {
-        account: mainAccount,
-        transaction,
-      };
-    },
+    () => ({
+      account: mainAccount,
+    }),
   );
+
+  const simpleOpInitSet = useRef(false);
+  useEffect(() => {
+    if (transaction && !simpleOpInitSet.current) {
+      simpleOpInitSet.current = true;
+      getAccountBridge(account, parentAccount).then(bridge => {
+        const t = bridge.createTransaction(mainAccount);
+        setTransaction(bridge.updateTransaction(t, { mode }) as PolkadotTransaction);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction]);
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.PolkadotSimpleOperationSelectDevice, {
       accountId: account.id,

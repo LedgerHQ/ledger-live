@@ -7,9 +7,13 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "i18next";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { DelegationType } from "~/renderer/families/multiversx/types";
-import { Transaction, MultiversXProvider } from "@ledgerhq/live-common/families/multiversx/types";
+import {
+  Transaction,
+  MultiversXProvider,
+  MultiversXAccount,
+} from "@ledgerhq/live-common/families/multiversx/types";
 // FilterOptionOption type for react-select v5 filter callback
 type FilterOptionOption<T> = { label: string; value: string; data: T };
 
@@ -27,7 +31,7 @@ interface DelegationSelectorFieldType {
   onChange: (validator?: MultiversXProvider | null) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   t: TFunction;
-  bridge: AccountBridge<Transaction>;
+  account: MultiversXAccount;
 }
 const renderItem = (item: { data: OptionType }) => {
   const name: string = item.data.identity.name || item.data.contract;
@@ -58,7 +62,7 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
     contract,
     t,
     onChange,
-    bridge,
+    account,
     transaction,
     onUpdateTransaction,
   } = props;
@@ -113,15 +117,17 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
       if (!delegation) {
         return;
       }
-      onUpdateTransaction(
-        (transaction: Transaction): Transaction =>
-          bridge.updateTransaction(transaction, {
-            recipient: delegation.contract,
-            amount: BigNumber(delegation.claimableRewards),
-          }),
-      );
+      getAccountBridge(account).then(bridge => {
+        onUpdateTransaction(
+          (transaction: Transaction): Transaction =>
+            bridge.updateTransaction(transaction, {
+              recipient: delegation.contract,
+              amount: BigNumber(delegation.claimableRewards),
+            }),
+        );
+      });
     }
-  }, [options, bridge, transaction, onUpdateTransaction]);
+  }, [options, account, transaction, onUpdateTransaction]);
   return (
     <Box flow={1} mt={5}>
       <Label>{t("elrond.claimRewards.flow.steps.claimRewards.selectLabel")}</Label>

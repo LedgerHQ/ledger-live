@@ -8,7 +8,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/staking";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -68,6 +67,9 @@ function Body({
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
+  const mode = "restake" as const;
+  const recipient = validatorAddress;
+  const maxAmount = getDelegationOpMaxAmount(accountProp, recipient, mode);
 
   const {
     account,
@@ -79,26 +81,10 @@ function Body({
     status,
   } = useBridgeTransaction(() => {
     invariant(accountProp.aptosResources, "aptos: account and aptos resources required");
-
-    const bridge = getAccountBridge(accountProp, undefined);
-    const initTx = bridge.createTransaction(accountProp);
-    const mode = "restake";
-    const recipient = validatorAddress;
-
-    const maxAmount = getDelegationOpMaxAmount(accountProp, recipient, mode);
-
-    const newTx = {
-      mode,
-      recipient,
-      amount: maxAmount,
-      useAllAmount: true,
-    };
-
-    const transaction = bridge.updateTransaction(initTx, newTx);
-
     return {
       account: accountProp,
-      transaction,
+      parentAccount: undefined,
+      transactionPatch: { mode, recipient, amount: maxAmount, useAllAmount: true },
     };
   });
 

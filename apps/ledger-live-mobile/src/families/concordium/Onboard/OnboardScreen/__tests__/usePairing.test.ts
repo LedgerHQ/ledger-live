@@ -7,10 +7,11 @@ import { PairStatus, usePairing } from "../hooks/usePairing";
 let pairingSubject: Subject<unknown>;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: () => ({
-    pairWalletConnect: () => pairingSubject.asObservable(),
-    onboardAccount: jest.fn(),
-  }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      pairWalletConnect: () => pairingSubject.asObservable(),
+      onboardAccount: jest.fn(),
+    }),
 }));
 
 const currency = getCryptoCurrencyById("concordium");
@@ -33,6 +34,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.next({
         status: ConcordiumPairingStatus.PREPARE,
@@ -50,6 +52,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.next({
         status: ConcordiumPairingStatus.SUCCESS,
@@ -67,8 +70,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
-    expect(pairingSubject.observed).toBe(true);
-
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.next({
         status: ConcordiumPairingStatus.ERROR,
@@ -94,11 +96,11 @@ describe("usePairing", () => {
     });
   });
 
-  it("should unsubscribe on unmount", () => {
+  it("should unsubscribe on unmount", async () => {
     const onPaired = jest.fn();
     const { unmount } = renderHook(() => usePairing(currency, onPaired));
 
-    expect(pairingSubject.observed).toBe(true);
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
 
     act(() => {
       unmount();

@@ -1,13 +1,15 @@
 import React from "react";
-import { screen, fireEvent, render } from "tests/testSetup";
+import { screen, fireEvent, render, waitFor } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import MemoField from "../MemoField";
 import { createMockAccount, createMockConcordiumCurrency } from "../../../__tests__/testUtils";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
-  })),
+  getAccountBridge: jest.fn(() =>
+    Promise.resolve({
+      updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
+    }),
+  ),
 }));
 
 describe("MemoField", () => {
@@ -53,17 +55,19 @@ describe("MemoField", () => {
     expect(screen.getByTestId("memo-tag-input")).toHaveValue("test memo");
   });
 
-  it("should call onChange with updated transaction when memo changes", () => {
+  it("should call onChange with updated transaction when memo changes", async () => {
     const onChange = jest.fn();
     render(<MemoField {...defaultProps} onChange={onChange} />);
 
     const input = screen.getByTestId("memo-tag-input");
     fireEvent.change(input, { target: { value: "new memo" } });
 
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ memo: "new memo" }));
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ memo: "new memo" })),
+    );
   });
 
-  it("should track memo input event", () => {
+  it("should track memo input event", async () => {
     const { track } = jest.requireMock("~/renderer/analytics/segment");
     const trackProperties = { flow: "send" };
 
@@ -72,11 +76,13 @@ describe("MemoField", () => {
     const input = screen.getByTestId("memo-tag-input");
     fireEvent.change(input, { target: { value: "tracked memo" } });
 
-    expect(track).toHaveBeenCalledWith("button_clicked2", {
-      flow: "send",
-      button: "input",
-      memo: "tracked memo",
-    });
+    await waitFor(() =>
+      expect(track).toHaveBeenCalledWith("button_clicked2", {
+        flow: "send",
+        button: "input",
+        memo: "tracked memo",
+      }),
+    );
   });
 
   it("should display error when status has memo error", () => {

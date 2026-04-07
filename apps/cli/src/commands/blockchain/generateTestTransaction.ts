@@ -60,40 +60,40 @@ export default {
               (acc, [t]) =>
                 concat(
                   acc,
-                  from(
-                    defer(() => {
-                      const apdus: string[] = [];
-                      const unsubscribe = listen(log => {
-                        if (log.type === "apdu" && log.message) {
-                          apdus.push(log.message);
-                        }
-                      });
-                      const bridge = getAccountBridge(account);
-                      return bridge
-                        .signOperation({
-                          account,
-                          transaction: t,
-                          deviceId: opts.device || "",
-                        })
-                        .pipe(
-                          filter(e => e.type === "signed"),
-                          map(e => {
-                            // FIXME: will always be true because of filter above
-                            // but ts can't infer the right type for SignOperationEvent
-                            if (e.type === "signed") {
-                              return e.signedOperation;
-                            }
-                          }),
-                          concatMap(signedOperation =>
-                            from(
-                              bridge
-                                .getTransactionStatus(account, t)
-                                .then(s => [signedOperation, s]),
+                  defer(() => {
+                    const apdus: string[] = [];
+                    const unsubscribe = listen(log => {
+                      if (log.type === "apdu" && log.message) {
+                        apdus.push(log.message);
+                      }
+                    });
+                    return from(getAccountBridge(account)).pipe(
+                      switchMap(bridge =>
+                        bridge
+                          .signOperation({
+                            account,
+                            transaction: t,
+                            deviceId: opts.device || "",
+                          })
+                          .pipe(
+                            filter(e => e.type === "signed"),
+                            map(e => {
+                              // FIXME: will always be true because of filter above
+                              // but ts can't infer the right type for SignOperationEvent
+                              if (e.type === "signed") {
+                                return e.signedOperation;
+                              }
+                            }),
+                            concatMap(signedOperation =>
+                              from(
+                                bridge
+                                  .getTransactionStatus(account, t)
+                                  .then(s => [signedOperation, s]),
+                              ),
                             ),
-                          ),
-                          map(([signedOperation, status]) => {
-                            unsubscribe();
-                            return `
+                            map(([signedOperation, status]) => {
+                              unsubscribe();
+                              return `
 {
   name: "NO_NAME",
   transaction: fromTransactionRaw(${JSON.stringify(toTransactionRaw(t))}),
@@ -111,29 +111,26 @@ export default {
 ${apdus.map(a => "  " + a).join("\n")}
   \`
 }`;
-                          }),
-                        );
-                    }),
-                  ),
+                            }),
+                          ),
+                      ),
+                    );
+                  }),
                 ),
               EMPTY as Observable<any>,
             ),
           ),
           reduce((jsCodes, code) => jsCodes.concat(code), []),
-          map(
-            codes => `{
+          concatMap(async codes => {
+            const raw = await toAccountRaw({ ...account, operations: [] });
+            return `{
   name: "${getDefaultAccountNameForCurrencyIndex(account)}",
-  raw: ${JSON.stringify(
-    toAccountRaw({
-      ...account,
-      operations: [],
-    }),
-  )},
+  raw: ${JSON.stringify(raw)},
   transactions: [
     ${codes.join(",")}
   ]
-  }`,
-          ),
+  }`;
+          }),
         ),
       ),
     ),

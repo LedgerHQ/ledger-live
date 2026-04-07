@@ -58,8 +58,9 @@ const StepExport = (props: StepProps) => {
       if (!device) {
         throw new DisconnectedDevice();
       }
+      const bridge = await getAccountBridge(mainAccount);
       await firstValueFrom(
-        getAccountBridge(mainAccount).receive(mainAccount, {
+        bridge.receive(mainAccount, {
           deviceId: device.deviceId,
           verify: true,
         }),

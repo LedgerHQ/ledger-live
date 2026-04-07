@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
@@ -54,7 +53,6 @@ const CoinControlModal = ({
   const totalExcludedUTXOS = account.bitcoinResources?.utxos
     .map(u => getUTXOStatus(u, utxoStrategy))
     .filter(({ excluded }) => excluded).length;
-  const bridge = getAccountBridge(account);
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
   const returning = (status.txOutputs || []).find(output => !!output.isChange);
@@ -105,7 +103,6 @@ const CoinControlModal = ({
                   totalExcludedUTXOS={totalExcludedUTXOS}
                   utxo={utxo}
                   updateTransaction={updateTransaction}
-                  bridge={bridge}
                   status={status}
                   account={account}
                 />

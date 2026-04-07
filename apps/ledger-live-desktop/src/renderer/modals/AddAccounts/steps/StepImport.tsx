@@ -3,7 +3,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
-import { ignoreElements, filter, map, retry } from "rxjs/operators";
+import { ignoreElements, filter, map, retry, switchMap } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
@@ -126,7 +126,6 @@ class StepImport extends PureComponent<
         this.props;
       if (!currency || !device) throw new UnresponsiveDeviceError();
       const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      const bridge = getCurrencyBridge(mainCurrency);
 
       // will be set to false if an existing account is found
       let onlyNewAccounts = true;
@@ -138,11 +137,15 @@ class StepImport extends PureComponent<
       };
       this.scanSubscription = concat(
         from(prepareCurrency(mainCurrency)).pipe(ignoreElements()),
-        bridge.scanAccounts({
-          currency: mainCurrency,
-          deviceId: device.deviceId,
-          syncConfig,
-        }),
+        from(getCurrencyBridge(mainCurrency)).pipe(
+          switchMap(bridge =>
+            bridge.scanAccounts({
+              currency: mainCurrency,
+              deviceId: device.deviceId,
+              syncConfig,
+            }),
+          ),
+        ),
       )
         .pipe(
           filter(e => e.type === "discovered"),

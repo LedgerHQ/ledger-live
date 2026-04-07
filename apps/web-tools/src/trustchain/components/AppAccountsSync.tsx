@@ -1,5 +1,5 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Observable, concat, find, from, ignoreElements, mergeMap, tap } from "rxjs";
+import { Observable, concat, find, from, ignoreElements, mergeMap, switchMap, tap } from "rxjs";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
@@ -311,18 +311,21 @@ function HeadlessAddAccounts({
       if (!currencyId) return;
       setDisabled(true);
       const currency = getCryptoCurrencyById(String(currencyId));
-      const currencyBridge = getCurrencyBridge(currency);
       const sub = appForCurrency(deviceId, currency, () =>
         concat(
           from(bridgeCache.prepareCurrency(currency)).pipe(ignoreElements()),
-          currencyBridge.scanAccounts({
-            currency,
-            deviceId,
-            syncConfig: {
-              paginationConfig: {},
-              blacklistedTokenIds: [],
-            },
-          }),
+          from(getCurrencyBridge(currency)).pipe(
+            switchMap(currencyBridge =>
+              currencyBridge.scanAccounts({
+                currency,
+                deviceId,
+                syncConfig: {
+                  paginationConfig: {},
+                  blacklistedTokenIds: [],
+                },
+              }),
+            ),
+          ),
         ),
       ).subscribe({
         next: event => {

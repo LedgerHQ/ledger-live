@@ -4,6 +4,21 @@
 import "../../../__tests__/test-helpers/dom-polyfill";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account } from "@ledgerhq/types-live";
+
+jest.mock("../../../bridge/impl", () => ({
+  ...jest.requireActual("../../../bridge/impl"),
+  getAccountBridge: jest.fn().mockResolvedValue({
+    createTransaction: () => ({}) as any,
+    updateTransaction: (tx: any) => tx,
+    getTransactionStatus: () => Promise.resolve({ errors: {}, warnings: {} } as any),
+    prepareTransaction: (_: any, tx: any) => Promise.resolve(tx),
+    estimateMaxSpendable: () => Promise.resolve(null as any),
+    sync: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
+    signOperation: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
+    broadcast: () => Promise.resolve({ operation: null as any, optimisticOperation: null as any }),
+    receive: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
+  }),
+}));
 import { renderHook, act } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { selectorStateDefaultValues } from ".";
@@ -107,7 +122,7 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook and set the account and all the related properties", () => {
+  test("call hook and set the account and all the related properties", async () => {
     const { result } = renderHook(() => {
       const bridgeTransaction = useBridgeTransaction();
       return {
@@ -123,7 +138,7 @@ describe("useFromState", () => {
       fromState: selectorStateDefaultValues,
     });
 
-    act(() => {
+    await act(async () => {
       result.current.setFromAccount(mockedTokenAccount);
     });
 

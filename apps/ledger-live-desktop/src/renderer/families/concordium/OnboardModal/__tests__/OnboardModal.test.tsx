@@ -26,10 +26,12 @@ const mockOnboardAccount = jest.fn();
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/bridge/index"),
-  getCurrencyBridge: jest.fn(() => ({
-    pairWalletConnect: mockPairWalletConnect,
-    onboardAccount: mockOnboardAccount,
-  })),
+  getCurrencyBridge: jest.fn(() =>
+    Promise.resolve({
+      pairWalletConnect: mockPairWalletConnect,
+      onboardAccount: mockOnboardAccount,
+    }),
+  ),
 }));
 
 jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => ({

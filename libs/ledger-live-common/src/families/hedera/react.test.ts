@@ -9,6 +9,8 @@ import { apiClient } from "@ledgerhq/coin-hedera/network/api";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { renderHook } from "@testing-library/react";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
+import { coinModuleLoaders } from "../../coin-modules/loaders";
+import { registerCoinModules } from "../../coin-modules/registry";
 import { liveConfig } from "../../config/sharedConfig";
 import { getCryptoCurrencyById } from "../../currencies";
 import * as hooks from "./react";
@@ -29,6 +31,7 @@ describe("hedera/react", () => {
   const currency = getCryptoCurrencyById("hedera");
 
   beforeAll(() => {
+    registerCoinModules(coinModuleLoaders.filter(l => l.family === "hedera"));
     LiveConfig.setConfig(liveConfig);
     jest.spyOn(apiClient, "getNodes").mockResolvedValue({
       nodes: [

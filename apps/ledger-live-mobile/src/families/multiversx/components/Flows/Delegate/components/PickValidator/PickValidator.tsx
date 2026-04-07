@@ -27,7 +27,6 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const { account, validators, transaction } = route.params;
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const bridge = getAccountBridge(account);
 
   /*
    * Filter out the providers, by the search query, and disabled them if not enough delegation cap available.
@@ -39,8 +38,9 @@ const PickValidator = (props: PickValidatorPropsType) => {
    */
 
   const onSelect = useCallback(
-    (validator: onSelectType["validator"]) => {
+    async (validator: onSelectType["validator"]) => {
       if (validator) {
+        const bridge = await getAccountBridge(account);
         navigation.navigate(ScreenName.MultiversXDelegationValidator, {
           account,
           validators,
@@ -50,7 +50,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         });
       }
     },
-    [navigation, bridge, account, transaction, validators],
+    [navigation, account, transaction, validators],
   );
 
   /*
