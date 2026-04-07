@@ -15,6 +15,7 @@ export type Wallet40Params = {
   readonly brazePlacement?: boolean;
   readonly operationsList?: boolean;
   readonly aggregatedAssets?: boolean;
+  readonly myWallet?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -54,4 +55,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayOperationsList: boolean;
   /** Whether to show the aggregated assets */
   readonly shouldDisplayAggregatedAssets: boolean;
+  /** Whether to show the My Wallet component */
+  readonly shouldDisplayMyWallet: boolean;
 }
