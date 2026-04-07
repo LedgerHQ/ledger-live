@@ -171,6 +171,7 @@ export const getVariantNoFundsCtaButtons = async () => {
     receiveButton: within(container).getByRole("button", { name: /receive/i }),
     swapButton: within(container).getByRole("button", { name: /swap/i }),
     buyButton: within(container).getByRole("button", { name: /buy/i }),
+    sendButton: within(container).getByRole("button", { name: /send/i }),
   };
 };
 

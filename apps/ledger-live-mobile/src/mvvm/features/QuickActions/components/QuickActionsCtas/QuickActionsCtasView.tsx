@@ -25,7 +25,11 @@ const QuickActionsCtasView = ({ quickActions, isVariant = false }: QuickActionsC
           {isVariant ? (
             <Text
               typography="body3SemiBold"
-              lx={{ textAlign: "center", color: "base", marginTop: "s2" }}
+              lx={{
+                textAlign: "center",
+                color: action.disabled ? "disabled" : "base",
+                marginTop: "s2",
+              }}
             >
               {action.label}
             </Text>
