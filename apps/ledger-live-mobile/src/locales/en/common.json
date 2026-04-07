@@ -5420,7 +5420,7 @@
       "verificationSuccessTitle": "You have successfully undelegated your assets",
       "dRepDelegationSelfTransactionDrawer": {
         "title": "Prepare Undelegation",
-        "description": "To close your staking account and reclaim your 2 ADA deposit:\n\nCardano’s governance now requires you to define your voting status before you can undelegate.\n\nThis step involves a send transaction to your own Ledger address that simply serves to register your choice to abstain from voting. It will cost only the standard network fee and your ADA stays in your wallet.\n\nOnce this preference is recorded, you will be able to  undelegate as usual."
+        "description": "To close your staking account and reclaim your 2 ADA deposit:\n\nCardano’s governance now requires you to define your voting status before you can undelegate.\n\nThis step involves a send transaction to your own Ledger address that simply serves to register your choice to abstain from voting. It will cost only the standard network fee and your ADA stays in your wallet.\n\nOnce this preference is recorded, you will be able to undelegate as usual."
       }
     },
     "delegation": {
