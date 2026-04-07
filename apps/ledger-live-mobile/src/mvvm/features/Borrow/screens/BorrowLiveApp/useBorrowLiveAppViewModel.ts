@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import {
   useRemoteLiveAppContext,
@@ -17,7 +16,6 @@ import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import { counterValueCurrencySelector, exportSettingsSelector } from "~/reducers/settings";
-import { accountsSelector } from "~/reducers/accounts";
 import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
 import type { RefObject } from "react";
 
@@ -39,7 +37,6 @@ type BorrowLiveAppViewModel = {
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
   webviewInputs: BorrowWebviewInputs;
-  accounts: AccountLike[];
 };
 
 const DEFAULT_MANIFEST_ID =
@@ -49,10 +46,9 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const { t } = useTranslation();
   const borrowConfig = useBorrowLiveConfig();
   const { isConnected } = useNetInfo();
-  const [, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const [_webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const { theme } = useTheme();
   const { language } = useSettings();
-  const accounts = useSelector(accountsSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const exportSettings = useSelector(exportSettingsSelector);
 
@@ -113,6 +109,5 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
     webviewRef,
     onWebviewStateChange,
     webviewInputs,
-    accounts,
   };
 }
