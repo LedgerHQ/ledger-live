@@ -48,10 +48,7 @@ export function genericPrepareTransaction(
   kind: string,
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
-    const { computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
-      account.currency.id,
-      kind,
-    );
+    const { estimateFees, validateIntent } = getAlpacaApi(account.currency.id, kind);
 
     const bridgeApi = getBridgeApi(account.currency, network);
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
@@ -85,7 +82,7 @@ export function genericPrepareTransaction(
         assetReference,
         amount,
       },
-      computeIntentType,
+      bridgeApi.computeIntentType,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       gasPrice: transaction.gasPrice,
@@ -143,7 +140,7 @@ export function genericPrepareTransaction(
               assetOwner,
               assetReference,
             },
-            computeIntentType,
+            bridgeApi.computeIntentType,
           ),
           extractBalances(account, getAssetFromTokenForCurrency),
         );

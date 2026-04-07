@@ -33,7 +33,6 @@ import {
   getBalance,
   getNextSequence,
   validateIntent,
-  computeIntentType,
   refreshOperations,
   getBlock,
   getBlockInfo,
@@ -106,7 +105,6 @@ export function createApi(
       balances: Balance[],
       customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
-    computeIntentType,
     /**
      * Only expose this method if the chain has no explorer (the only chain that passes a function
      * is Celo that works with an explorer)
