@@ -16,7 +16,6 @@ export function PrivacyDescription({ privacyPolicyUrl, onOpenPrivacyPolicy }: Pr
         appearance="base"
         size="sm"
         href={privacyPolicyUrl}
-        isExternal
         onClick={e => {
           e.preventDefault();
           onOpenPrivacyPolicy();

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMatch, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -14,7 +15,9 @@ import {
   setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
@@ -32,8 +35,10 @@ const modalClosedPayload = {
 };
 
 export function useAnalyticsConsentModalViewModel() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const portfolioRouteMatch = useMatch({ path: "/", end: true });
   const isPortfolioRouteFocused = Boolean(portfolioRouteMatch);
 
@@ -51,6 +56,24 @@ export function useAnalyticsConsentModalViewModel() {
   );
 
   const [phase, setPhase] = useState<AnalyticsConsentModalPhase>("closed");
+
+  const title =
+    phase === "consentReconfirm"
+      ? t("analyticsConsentModal.reconfirm.title")
+      : phase === "privacy"
+        ? t("analyticsConsentModal.privacy.title")
+        : t("analyticsConsentModal.fresh.title");
+
+  const descriptionLead =
+    phase === "consentReconfirm"
+      ? t("analyticsConsentModal.reconfirm.description")
+      : phase === "privacy"
+        ? null
+        : t("analyticsConsentModal.fresh.description");
+
+  const onOpenPrivacyPolicy = useCallback(() => {
+    openURL(privacyPolicyUrl);
+  }, [privacyPolicyUrl]);
 
   const handleCloseModal = useCallback(() => {
     setPhase(current => {
@@ -84,12 +107,7 @@ export function useAnalyticsConsentModalViewModel() {
   ]);
 
   const persistAnalyticsConsentAck = useCallback(async () => {
-    dispatch(
-      setAnalyticsConsentInfo({
-        consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-      }),
-    );
+    dispatch(setAnalyticsConsentInfo());
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
@@ -98,25 +116,21 @@ export function useAnalyticsConsentModalViewModel() {
     }
   }, [dispatch]);
 
-  const persistConsentCompletion = useCallback(async () => {
-    await persistAnalyticsConsentAck();
-  }, [persistAnalyticsConsentAck]);
-
   const applyOptIn = useCallback(async () => {
     track("button_clicked", { button: "analytics_consent_opt_in", page: ANALYTICS_CONSENT_MODAL_PAGE });
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
-    await persistConsentCompletion();
+    await persistAnalyticsConsentAck();
     handleCloseModal();
-  }, [dispatch, persistConsentCompletion, handleCloseModal]);
+  }, [dispatch, persistAnalyticsConsentAck, handleCloseModal]);
 
   const applyOptOut = useCallback(async () => {
     track("button_clicked", { button: "analytics_consent_opt_out", page: ANALYTICS_CONSENT_MODAL_PAGE });
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
-    await persistConsentCompletion();
+    await persistAnalyticsConsentAck();
     handleCloseModal();
-  }, [dispatch, persistConsentCompletion, handleCloseModal]);
+  }, [dispatch, persistAnalyticsConsentAck, handleCloseModal]);
 
   const onPrivacyGotIt = useCallback(async () => {
     track("button_clicked", { button: "analytics_consent_privacy_got_it", page: ANALYTICS_CONSENT_MODAL_PAGE });
@@ -135,6 +149,10 @@ export function useAnalyticsConsentModalViewModel() {
   return {
     phase,
     isModalOpen,
+    title,
+    descriptionLead,
+    privacyPolicyUrl,
+    onOpenPrivacyPolicy,
     onPrivacyGotIt,
     applyOptIn,
     applyOptOut,

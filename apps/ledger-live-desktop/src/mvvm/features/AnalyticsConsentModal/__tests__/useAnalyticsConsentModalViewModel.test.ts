@@ -21,6 +21,10 @@ jest.mock("react-router", () => ({
   useMatch: (args: unknown) => mockUseMatch(args),
 }));
 
+jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => url,
+}));
+
 const drawerClosedPayload = {
   page: ANALYTICS_CONSENT_MODAL_PAGE,
   flow: ANALYTICS_CONSENT_FLOW,
