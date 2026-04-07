@@ -22,3 +22,7 @@ export {
   getSwapCode,
   type ErrorHandlerOptions,
 } from "./handleSwapErrors";
+
+// Swap quotes (Wallet API getQuotes)
+export { fetchQuotes } from "./quotes";
+export type * from "./quotes";

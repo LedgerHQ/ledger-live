@@ -10,6 +10,8 @@ import {
   ExchangeSwapParams,
   SwapResult,
   SwapLiveError,
+  type GetQuotesWireArgs,
+  type Quote,
 } from "./types";
 
 export * from "./types";
@@ -176,6 +178,13 @@ export class ExchangeModule extends CustomModule {
     );
 
     return { operationHash, swapId };
+  }
+
+  /**
+   * Fetch swap quotes from the Ledger swap backend (via Wallet API host).
+   */
+  async getQuotes(params: GetQuotesWireArgs): Promise<Quote> {
+    return this.request<GetQuotesWireArgs, Quote>("custom.exchange.getQuotes", params);
   }
 
   /**

@@ -1,122 +1,13 @@
-import { RawTransaction } from "@ledgerhq/wallet-api-core";
-import BigNumber from "bignumber.js";
-
-export enum ExchangeType {
-  SWAP = 0x00,
-  SELL = 0x01,
-  FUND = 0x02,
-}
-
-export type ExchangeStartParams =
-  | ExchangeStartFundParams
-  | ExchangeStartSellParams
-  | ExchangeStartSwapParams
-  | ExchangeStartFundParams;
-
-export type ExchangeStartFundParams = {
-  exchangeType: "FUND";
-  provider: string;
-  fromAccountId: string;
-};
-
-export type ExchangeStartSellParams = {
-  exchangeType: "SELL";
-  provider: string;
-  fromAccountId: string;
-};
-
-export type ExchangeStartSwapParams = {
-  exchangeType: "SWAP";
-  provider: string;
-  fromAccountId: string;
-  toAccountId: string;
-  tokenCurrency?: string;
-};
-
-export type ExchangeSwapParams = ExchangeStartSwapParams & {
-  fromAmount: string;
-  fromAmountAtomic: BigNumber;
-  quoteId?: string;
-  toNewTokenId?: string;
-  feeStrategy: "slow" | "medium" | "fast" | "custom";
-  customFeeConfig?: {
-    [key: string]: BigNumber;
-  };
-  swapAppVersion?: string;
-  sponsored?: boolean;
-  isEmbedded?: boolean;
-  correlationId?: string;
-};
-
-export type ExchangeStartResult = {
-  transactionId: string;
-  device?: { deviceId?: string; modelId?: string };
-};
-
-export type ExchangeFundResult = {
-  transactionId: string;
-  device?: { deviceId?: string; modelId?: string };
-};
-
-export type ExchangeCompleteBaseParams = {
-  provider: string;
-  fromAccountId: string;
-  rawTransaction: RawTransaction;
-  hexBinaryPayload: string;
-  hexSignature: string;
-  feeStrategy: "slow" | "medium" | "fast" | "custom";
-  tokenCurrency?: string;
-};
-
-export type ExchangeCompleteFundParams = ExchangeCompleteBaseParams & {
-  exchangeType: "FUND";
-};
-
-export type ExchangeCompleteSellParams = ExchangeCompleteBaseParams & {
-  exchangeType: "SELL";
-};
-
-export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
-  exchangeType: "SWAP";
-  toAccountId: string;
-  swapId: string;
-};
-
-export type ExchangeCompleteParams =
-  | ExchangeCompleteFundParams
-  | ExchangeCompleteSellParams
-  | ExchangeCompleteSwapParams;
-
-export type ExchangeCompleteResult = {
-  transactionHash: string;
-};
-
-export type SwapResult = {
-  operationHash: string;
-  swapId: string;
-};
-
-export type SwapLiveError = {
-  name: string;
-  message: string;
-  type?: string;
-  cause: {
-    message?: string;
-    swapCode?: string;
-    response?: {
-      data?: {
-        error?: { messageKey?: string; message?: string };
-      };
-    };
-  };
-};
-
-// --- Swap quotes (aligned with ledger-live-common wallet-api/Exchange/quotes/types.ts) ---
-
+/**
+ * Shared domain enums for swap quotes (backend / catalog alignment).
+ */
 export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";
 
+/**
+ * EIP-712 permit payload shape as returned in quote `customFields` (raw JSON).
+ */
 export type RawPermit2Domain = {
   name: string;
   chainId: number;
@@ -142,6 +33,7 @@ export type RawPermit2Types = {
   PermitDetails: { name: string; type: string }[];
 };
 
+/** Permit2 typed-data envelope as embedded in provider-specific quote payloads. */
 export type RawPermit2Message = {
   values: RawPermit2Single;
   message: RawPermit2Single;
@@ -198,8 +90,12 @@ export type RawQuoteCustomFields = {
   };
 };
 
+/**
+ * Successful quote entry as returned by the quotes HTTP API (raw JSON).
+ */
 export type RawQuote = {
   amountFrom?: number;
+  /** Opaque currency reference from the API (normalized in the app). */
   amountToId?: unknown;
   amountFromId?: unknown;
   feeCurrency?: unknown;
@@ -220,6 +116,7 @@ export type RawQuote = {
   tokenAllowanceData?: RawTokenAllowanceData;
   customFields?: RawQuoteCustomFields;
   liquiditySource: "RFQ" | "AMM" | undefined;
+  /** Provider-reported errors on an otherwise successful quote row (raw). */
   errors?: unknown[];
 };
 
@@ -258,6 +155,7 @@ export type GetQuotesArgs = {
   signal?: AbortSignal;
 };
 
+/** JSON-RPC wire payload (no AbortSignal). */
 export type GetQuotesWireArgs = Omit<GetQuotesArgs, "signal">;
 
 export type Quote = {

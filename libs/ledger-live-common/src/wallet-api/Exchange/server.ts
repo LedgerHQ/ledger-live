@@ -50,7 +50,7 @@ import {
 } from "./error";
 import { TrackingAPI } from "./tracking";
 import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "../../exchange/error";
-import { postSwapCancelled } from "../../exchange/swap";
+import { getSwapAPIBaseURL, postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
@@ -59,6 +59,8 @@ import { createStepError, StepError, toError } from "./parser";
 import { handleErrors } from "./handleSwapErrors";
 import get from "lodash/get";
 import { SwapError } from "./SwapError";
+import { fetchQuotes } from "./quotes";
+import type { GetQuotesWireArgs, Quote } from "./quotes";
 
 export { ExchangeType };
 
@@ -71,6 +73,7 @@ type Handlers = {
   "custom.exchange.error": RPCHandler<void, SwapLiveError>;
   "custom.isReady": RPCHandler<void, void>;
   "custom.exchange.swap": RPCHandler<SwapResult, ExchangeSwapParams>;
+  "custom.exchange.getQuotes": RPCHandler<Quote, GetQuotesWireArgs>;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -721,6 +724,14 @@ export const handlers = ({
           },
         }),
       );
+    }),
+
+    "custom.exchange.getQuotes": customWrapper<GetQuotesWireArgs, Quote>(async params => {
+      if (!params) {
+        throw new ServerError(createUnknownError({ message: "params is undefined" }));
+      }
+      const baseURL = getSwapAPIBaseURL();
+      return fetchQuotes(params, baseURL);
     }),
   }) as const satisfies Handlers;
 
