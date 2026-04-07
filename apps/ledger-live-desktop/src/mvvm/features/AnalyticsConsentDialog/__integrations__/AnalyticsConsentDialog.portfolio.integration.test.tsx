@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, within } from "tests/testSetup";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -204,7 +204,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
   });
 
-  it("navigates to display settings when Set preferences is clicked", async () => {
+  it("shows preferences step when Set preferences is clicked", async () => {
     const { user } = render(<TestRouter />, {
       initialRoute: "/",
       initialState: {
@@ -217,10 +217,77 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
     });
 
     await screen.findByRole("heading", { name: "Help us improve Ledger" });
-    await user.click(screen.getByRole("link", { name: /set preferences/i }));
+    const setPreferencesLink = screen.getByRole("link", { name: /set preferences/i });
+
+    await user.click(setPreferencesLink);
 
     await waitFor(() => {
-      expect(screen.getByTestId("settings-display-stub")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Set preferences" })).toBeInTheDocument();
     });
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
   });
+
+  it.each([
+    {
+      label: "both toggles on",
+      expectShareAnalytics: true,
+      expectSharePersonalized: true,
+    },
+    {
+      label: "only App performance on",
+      expectShareAnalytics: true,
+      expectSharePersonalized: false,
+    },
+    {
+      label: "only Personalized experience on",
+      expectShareAnalytics: false,
+      expectSharePersonalized: true,
+    },
+    {
+      label: "all toggles off",
+      expectShareAnalytics: false,
+      expectSharePersonalized: false,
+    },
+  ])(
+    "Set preferences: Confirm closes the modal and sets shareAnalytics and sharePersonalizedRecommandations ($label)",
+    async ({ expectShareAnalytics, expectSharePersonalized }) => {
+      const { user, store } = render(<TestRouter />, {
+        initialRoute: "/",
+        initialState: {
+          featureFlags: featureFlagsWithAnalyticsOptIn,
+          settings: baseSettings({
+            shareAnalytics: false,
+            sharePersonalizedRecommandations: false,
+          }),
+        },
+      });
+
+      await screen.findByRole("heading", { name: "Help us improve Ledger" });
+      await user.click(screen.getByRole("link", { name: /set preferences/i }));
+      const modal = await screen.findByTestId("analytics-consent-dialog");
+      await screen.findByRole("heading", { name: "Set preferences" });
+
+      // Set preferences opens with both switches ON (`onSetPreferences` seeds drafts to true).
+      const switches = within(modal).getAllByRole("switch");
+      expect(switches).toHaveLength(2);
+      const [appPerformanceSwitch, personalizedSwitch] = switches;
+      if (!expectShareAnalytics) {
+        await user.click(appPerformanceSwitch);
+      }
+      if (!expectSharePersonalized) {
+        await user.click(personalizedSwitch);
+      }
+
+      await user.click(screen.getByRole("button", { name: "Confirm" }));
+
+      await waitFor(() => {
+        expect(modal).not.toBeInTheDocument();
+      });
+      const { settings: s } = store.getState();
+      expect(s.shareAnalytics).toBe(expectShareAnalytics);
+      expect(s.sharePersonalizedRecommandations).toBe(expectSharePersonalized);
+      expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
+      expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
+    },
+  );
 });
