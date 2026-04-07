@@ -5,17 +5,15 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { BorrowWebView } from "LLM/features/Borrow/components/BorrowWebView";
 import type { BorrowWebviewInputs } from "./useBorrowLiveAppViewModel";
-import type { AccountLike } from "@ledgerhq/types-live";
 
-type BorrowLiveAppViewProps = {
+type BorrowLiveAppViewProps = Readonly<{
   manifest: LiveAppManifest | undefined;
   error: Error | null;
   isLoading: boolean;
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
   webviewInputs: BorrowWebviewInputs;
-  accounts: AccountLike[];
-};
+}>;
 
 export function BorrowLiveAppView({
   manifest,
@@ -24,7 +22,6 @@ export function BorrowLiveAppView({
   webviewRef,
   onWebviewStateChange,
   webviewInputs,
-  accounts,
 }: BorrowLiveAppViewProps) {
   if (error) {
     return (
@@ -42,7 +39,6 @@ export function BorrowLiveAppView({
           manifest={manifest}
           setWebviewState={onWebviewStateChange}
           inputs={webviewInputs}
-          accounts={accounts}
         />
       )}
     </Flex>
