@@ -8,7 +8,7 @@ import { AnalyticsConsentDialogIllustration } from "../components/AnalyticsConse
 import { ConsentFooter } from "../components/ConsentFooter";
 
 const sheetTopGlowClassName =
-  "pointer-events-none absolute inset-0 bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-light-grey-950-10)_0%,transparent_100%)] dark:bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-dark-grey-950-30)_0%,transparent_100%)]";
+  "pointer-events-none absolute inset-0 bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-light-grey-950-30)_0%,transparent_100%)] dark:bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-dark-grey-950-30)_0%,transparent_100%)]";
 
 export type AnalyticsConsentDialogViewProps = Readonly<{
   phase: AnalyticsConsentDialogPhase;
