@@ -4,7 +4,7 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { AnalyticsConsentModal } from "../index";
+import { AnalyticsConsentDialog } from "../index";
 
 const featureFlagsWithAnalyticsOptIn = {
   ...FEATURE_FLAGS_INITIAL_STATE,
@@ -28,11 +28,11 @@ function baseSettings(overrides: Record<string, unknown> = {}) {
   };
 }
 
-function PortfolioRouteWithModal() {
+function PortfolioRouteWithDialog() {
   return (
     <>
       <div data-testid="portfolio-stub" />
-      <AnalyticsConsentModal />
+      <AnalyticsConsentDialog />
     </>
   );
 }
@@ -40,13 +40,13 @@ function PortfolioRouteWithModal() {
 function TestRouter() {
   return (
     <Routes>
-      <Route path="/" element={<PortfolioRouteWithModal />} />
+      <Route path="/" element={<PortfolioRouteWithDialog />} />
       <Route path="/settings/display" element={<div data-testid="settings-display-stub" />} />
     </Routes>
   );
 }
 
-describe("AnalyticsConsentModal on portfolio route", () => {
+describe("AnalyticsConsentDialog on portfolio route", () => {
   it("shows fresh consent when renewal is needed and share analytics is off", async () => {
     render(<TestRouter />, {
       initialRoute: "/",
