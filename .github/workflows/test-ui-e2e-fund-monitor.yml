@@ -1,0 +1,102 @@
+name: "[Desktop] - E2E Fund Monitor"
+run-name: "E2E Fund Monitor • ${{ github.ref_name }}"
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  fund-monitor:
+    name: "Check e2e wallet balances"
+    runs-on: [ledger-live-linux-e2e-speculos-32CPU-128RAM]
+    timeout-minutes: 40
+    env:
+      NODE_OPTIONS: "--max-old-space-size=14336"
+      FORCE_COLOR: 3
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      npm_config_loglevel: warn
+      TURBO_TELEMETRY_DISABLED: 1
+      DO_NOT_TRACK: 1
+      SPECULOS_DEVICE: nanoSP
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
+      COINAPPS: ${{ github.workspace }}/coin-apps
+
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            ledger-live
+            coin-apps
+
+      - name: Checkout ledger-live
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: LedgerHQ/ledger-live
+          token: ${{ steps.generate-token.outputs.token }}
+          fetch-depth: 1
+
+      - name: Checkout coin-apps (device firmware binaries)
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: LedgerHQ/coin-apps
+          ref: master
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+          fetch-depth: 1
+
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Pull Speculos docker image
+        run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
+
+      - name: Install dependencies and build CLI
+        run: |
+          pnpm install --frozen-lockfile
+          # Build only the CLI and its transitive dependencies — no LLD needed
+          pnpm turbo run build --filter @ledgerhq/live-cli...
+
+      - name: Run fund monitor spec
+        run: |
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
+            -- pnpm exec playwright test \
+            --config playwright.fund-monitor.config.ts
+        working-directory: e2e/desktop
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          CI: "true"
+
+      - name: Upload fund monitor artifacts
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: fund-monitor-artifacts
+          path: |
+            e2e/desktop/tests/artifacts/fund-monitor-report.json
+            e2e/desktop/tests/artifacts/fund-monitor-slack-payload.json
+          if-no-files-found: warn
+
+      - name: Post Slack report
+        if: always()
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d @${{ github.workspace }}/e2e/desktop/tests/artifacts/fund-monitor-slack-payload.json \
+            ${{ secrets.SLACK_QAA_CHANNEL_ID }}
