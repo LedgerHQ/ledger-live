@@ -15,7 +15,6 @@ import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -79,12 +78,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
-    dispatch(
-      setAnalyticsConsentInfo({
-        consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-      }),
-    );
+    dispatch(setAnalyticsConsentInfo());
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
