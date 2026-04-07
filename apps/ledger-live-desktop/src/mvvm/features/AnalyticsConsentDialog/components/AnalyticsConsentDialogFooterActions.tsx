@@ -19,7 +19,8 @@ export function AnalyticsConsentDialogFooterActions({
   const { t } = useTranslation();
 
   return (
-    <DialogFooter className="flex flex-col gap-16 pt-32">
+    // replace pt-32 by mt-32 pt-0 to remove the padding and make Set preferences clickable.
+    <DialogFooter className="flex flex-col gap-16 mt-32 pt-0">
       {phase === "privacy" ? (
         <Button appearance="base" isFull size="lg" onClick={onPrivacyGotIt}>
           {t("analyticsConsentModal.privacy.ctaGotIt")}

@@ -2,8 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "@ledgerhq/lumen-ui-react";
 
-const SETTINGS_DISPLAY_HASH_HREF = "#/settings/display";
-
 export type DescriptionWithPreferencesLinkProps = Readonly<{
   text: string;
   onSetPreferences: () => void;
@@ -18,13 +16,13 @@ export function DescriptionWithPreferencesLink({
     <div className="body-2 text-muted text-center">
       <span>{text}</span>
       <Link
+        onClick={onSetPreferences}
+        href="#set-preferences" // make sure to set href to make the link a11y compliant (even if it's not used)
         appearance="accent"
         size="sm"
         underline={false}
-        href={SETTINGS_DISPLAY_HASH_HREF}
-        onClick={e => {
-          e.preventDefault();
-          onSetPreferences();
+        style={{
+          padding: 1,
         }}
       >
         {t("analyticsConsentModal.setPreferences")}
