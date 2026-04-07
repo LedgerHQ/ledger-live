@@ -33,6 +33,23 @@ The native engine requires the `ledger-zcash-utils` native addon (`.node` binary
 
 ---
 
+## Infrastructure & endpoints
+
+### Ledger staging nodes (gRPC + JSON-RPC)
+
+| Network | gRPC URL | JSON-RPC URL |
+|---------|----------|--------------|
+| **Testnet** | `https://zaino-zec-testnet.nodes.stg.ledger-test.com` | `https://zaino-zec-testnet.nodes.stg.ledger-test.com/jrpc` |
+| **Mainnet** | `https://zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com` | `https://zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com/jrpc` |
+
+### Public community nodes (fallback)
+
+| Network | gRPC URL |
+|---------|----------|
+| **Testnet** | `https://testnet.zec.rocks:443` |
+
+---
+
 ## Installation
 
 ```bash
@@ -59,7 +76,7 @@ node dist/index.js record \
   --ufvk "uviewtest1eacc7l..." \
   --xpub "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4" \
   --birthHeight 280000 \
-  --zainoGrpcUrl "https://testnet.zec.rocks:443" \
+  --zainoGrpcUrl "https://zaino-zec-testnet.nodes.stg.ledger-test.com" \
   --blockbookUrl "https://zcash1.trezor.io" \
   --checkpoints "285000,295000,3932659" \
   --outputDir ./fixtures/alice-testnet-grpc \
@@ -96,7 +113,7 @@ Outputs one `height-<N>.snapshot` per checkpoint plus a `manifest.json`.
 node dist/index.js replay \
   --snapshot ./fixtures/alice-testnet-grpc/height-285000.snapshot \
   --syncTo +1000 \
-  --zainoGrpcUrl "https://testnet.zec.rocks:443" \
+  --zainoGrpcUrl "https://zaino-zec-testnet.nodes.stg.ledger-test.com" \
   --blockbookUrl "https://zcash1.trezor.io" \
   --syncType shielded \
   --assertShieldedBalance "0.00000000" \
@@ -181,7 +198,7 @@ node dist/index.js bench \
   --syncBlocks 500 \
   --iterations 5 \
   --parallelAccounts 1 \
-  --zainoGrpcUrl "https://testnet.zec.rocks:443" \
+  --zainoGrpcUrl "https://zaino-zec-testnet.nodes.stg.ledger-test.com" \
   --blockbookUrl "https://zcash1.trezor.io" \
   --syncType shielded \
   --output ./bench-results.json
@@ -229,7 +246,7 @@ Run in one terminal, then point `bench` / `replay` / `record` at `http://localho
 ```bash
 # Terminal 1 — start proxy with 200ms latency
 node dist/index.js proxy \
-  --upstream "https://testnet.zec.rocks:443" \
+  --upstream "https://zaino-zec-testnet.nodes.stg.ledger-test.com" \
   --latency 200
 
 # Terminal 2 — native engine through the proxy
@@ -285,12 +302,19 @@ Large snapshot sets should be tracked with **Git LFS**.
 # Unit tests (no network)
 pnpm --filter @ledgerhq/coin-tester-zcash test
 
-# Integration tests (requires live Zaino + Blockbook)
-ZCASH_UFVK=uviewtest1... \
-ZCASH_XPUB=xpub6... \
-ZCASH_BIRTH_HEIGHT=280000 \
-ZAINO_URL=https://testnet.zec.rocks:443 \
-BLOCKBOOK_URL=https://zcash1.trezor.io \
+# Integration tests — L1 offline only (no env vars needed)
+pnpm --filter @ledgerhq/coin-tester-zcash test:integ
+
+# Integration tests — L1 + L2 + Bench + L3 (live network)
+ZAINO_GRPC_URL=https://zaino-zec-testnet.nodes.stg.ledger-test.com \
+pnpm --filter @ledgerhq/coin-tester-zcash test:integ
+
+# Integration tests — with fixture recording (opt-in)
+ZCASH_RECORD=1 \
+ZCASH_UFVK=uviewtest1eacc7lytmvgp0sshwjjv4qsg9fnewq00s6zye8hqwndpdsg0tum2ft4k96t86eapddpq56exfycnxnlds75vvpydv8fgj4cecczkmt3rjat8qjfqrk2cdlm9alep2z04785sx6yekqjk6wywkttlthld4c3xmg8fvneg4p97vzxwu9xtuh0xrgfy90p6uuxf8cwl8nxfq6hlte0nnylk59xceldrkx9vge3k4utkue2txu5kpp60aw07q0f0jgp0pv2c0gr7jdm6273uxyskt72jehte5jf2dg94d84le08h2t5rhd93j2d98ja59h46est69f3a7rav7k6744p2u8dxasc7nr9p2k95x7uaknahj0kw7mu5zq9nllj7x2qswq3jswsuzwms7shv7dhxz9s4yudatwu3u3v3wqznkhu6jt7xt8whjh3dkzvsf28p6mj8tya009gwzgszz2at8alquu8y0fmqt7klayrjx7n3ulml5q00fgdr \
+ZCASH_XPUB=xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4 \
+ZCASH_BIRTH_HEIGHT=2542419 \
+ZAINO_GRPC_URL=https://zaino-zec-testnet.nodes.stg.ledger-test.com \
 pnpm --filter @ledgerhq/coin-tester-zcash test:integ
 ```
 
@@ -300,6 +324,52 @@ Set `LOG_LEVEL` to control pino output: `trace`, `debug`, `info` (default), `war
 
 ```bash
 LOG_LEVEL=debug node dist/index.js replay ...
+```
+
+---
+
+## Manual testing (quick reference)
+
+Build the CLI first:
+
+```bash
+pnpm --filter @ledgerhq/coin-tester-zcash build:cli
+cd libs/coin-tester-modules/coin-tester-zcash
+```
+
+### Shielded sync from a given block height (Alice, testnet)
+
+```bash
+node dist/index.js record \
+  --ufvk "uviewtest1eacc7lytmvgp0sshwjjv4qsg9fnewq00s6zye8hqwndpdsg0tum2ft4k96t86eapddpq56exfycnxnlds75vvpydv8fgj4cecczkmt3rjat8qjfqrk2cdlm9alep2z04785sx6yekqjk6wywkttlthld4c3xmg8fvneg4p97vzxwu9xtuh0xrgfy90p6uuxf8cwl8nxfq6hlte0nnylk59xceldrkx9vge3k4utkue2txu5kpp60aw07q0f0jgp0pv2c0gr7jdm6273uxyskt72jehte5jf2dg94d84le08h2t5rhd93j2d98ja59h46est69f3a7rav7k6744p2u8dxasc7nr9p2k95x7uaknahj0kw7mu5zq9nllj7x2qswq3jswsuzwms7shv7dhxz9s4yudatwu3u3v3wqznkhu6jt7xt8whjh3dkzvsf28p6mj8tya009gwzgszz2at8alquu8y0fmqt7klayrjx7n3ulml5q00fgdr" \
+  --xpub "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4" \
+  --birthHeight 2542419 \
+  --zainoGrpcUrl "https://zaino-zec-testnet.nodes.stg.ledger-test.com" \
+  --blockbookUrl "https://zcash1.trezor.io" \
+  --checkpoints "2560000,2700000,2750000" \
+  --outputDir /tmp/zcash-manual \
+  --accountLabel alice-testnet \
+  --network testnet \
+  --syncType shielded
+```
+
+### Inspect a snapshot
+
+```bash
+node dist/index.js inspect /tmp/zcash-manual/height-2700000.snapshot
+```
+
+### Incremental replay from a committed snapshot
+
+```bash
+node dist/index.js replay \
+  --snapshot ./fixtures/alice-testnet/height-2700000.snapshot \
+  --syncTo +50000 \
+  --zainoGrpcUrl "https://zaino-zec-testnet.nodes.stg.ledger-test.com" \
+  --blockbookUrl "https://zcash1.trezor.io" \
+  --syncType shielded \
+  --assertShieldedBalance "0.17692173" \
+  --assertShieldedTxCount 12
 ```
 
 ---

@@ -72,7 +72,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.2.0",
-    "@ledgerhq/zcash-utils": "1.0.0",
+    "@ledgerhq/zcash-utils": "file:/Users/teddy.chambard/Dev/ledger-zcash-utils",
     "bignumber.js": "^9.1.2",
     "rxjs": "catalog:"
   }

@@ -10,7 +10,7 @@ function makeAccount(
   shieldedTxCount: number,
 ): Partial<ZcashAccount> {
   return {
-    balance: new BigNumber(transparentSatoshis),
+    balance: new BigNumber(transparentSatoshis + orchardSatoshis + saplingSatoshis),
     operationsCount: opsCount,
     privateInfo: {
       orchardBalance: new BigNumber(orchardSatoshis),

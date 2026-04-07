@@ -1,0 +1,48 @@
+# Golden values for coin-tester-zcash snapshot verification.
+#
+# Account: Alice — public testnet key, never use with real funds.
+# Seed: "wish puppy smile loan doll curve hole maze file ginger hair nose
+#        key relax knife witness cannon grab despair throw review deal slush frame"
+#
+# Known on-chain transactions (testnet.zec.rocks, shielded):
+#   2,546,396  t→z shielding  (internal note, fee=0 from transparent side)
+#   2,546,324  z→t unshielding (INVISIBLE to shielded sync — no shielded outputs)
+#   2,560,774  z→z incoming   (incoming note 50,000 zat, fee=10,000 zat)
+#   2,700,549  z→z outgoing   (outgoing 10,000 zat + change 1,790,960 zat, fee=10,000)
+#
+# All shielded values observed 2026-04-06 on testnet.zec.rocks (native Rust engine, tonic gRPC).
+
+accounts:
+  - label: alice-testnet
+    ufvkFingerprint: sha256:6b886d99b3466751
+    birthHeight: 2542419
+    network: testnet
+    checkpoints:
+      # Captured at chain-tip 2,592,419 (first 50k-block native batch).
+      # Shielding tx (2,546,396) and first incoming (2,560,774) both fall in this range.
+      # Balance = incoming note only (internal/shielding note contributes 0 to delta).
+      - height: 2560000
+        expectedShieldedBalance: "0.00050000"
+        expectedTransparentBalance: "0.00000000"
+        expectedAvailableBalance: "0.00050000"
+        expectedOperationsCount: 3
+        expectedShieldedTxCount: 3
+        comment: "After first 50k-block batch; shielding + incoming visible"
+
+      # Captured at chain-tip 2,742,419. All txs up to TX_OUTGOING (2,700,549) visible.
+      - height: 2700000
+        expectedShieldedBalance: "0.17692173"
+        expectedTransparentBalance: "0.00000000"
+        expectedAvailableBalance: "0.17692173"
+        expectedOperationsCount: 12
+        expectedShieldedTxCount: 12
+        comment: "All shielded txs (including outgoing + change) visible"
+
+      # Final anchor. Same derived state as 2,700,000 (no new shielded txs after 2,700,549).
+      - height: 2750000
+        expectedShieldedBalance: "0.17692173"
+        expectedTransparentBalance: "0.00000000"
+        expectedAvailableBalance: "0.17692173"
+        expectedOperationsCount: 12
+        expectedShieldedTxCount: 12
+        comment: "Final anchor — stable shielded state"

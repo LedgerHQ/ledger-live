@@ -1,0 +1,27 @@
+{
+  "accountLabel": "alice-testnet",
+  "ufvkFingerprint": "sha256:6b886d99b3466751",
+  "birthHeight": 2542419,
+  "checkpoints": [
+    2560000,
+    2700000,
+    2750000
+  ],
+  "snapshots": [
+    "height-2560000.snapshot",
+    "height-2700000.snapshot",
+    "height-2750000.snapshot"
+  ],
+  "recordedAt": "2026-04-06T17:07:09.343Z",
+  "metrics": {
+    "totalSyncTimeMs": 3001,
+    "blocksProcessed": 250000,
+    "timePerBlockMs": 0.012004,
+    "shieldedTxFound": 36,
+    "peakMemoryMb": 29.883934020996094,
+    "avgMemoryMb": 29.790277099609376,
+    "throughput": {
+      "blocksPerSecond": 83305.56481172942
+    }
+  }
+}
