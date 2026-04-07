@@ -16,6 +16,7 @@ import type { AnalyticsConsentDialogPhase } from "@ledgerhq/live-common/analytic
 import { ConsentFooter } from "../components/ConsentFooter";
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
 import { PrivacyDescription } from "../components/PrivacyDescription";
+import { AnalyticsConsentPreferencesView } from "./AnalyticsConsentPreferencesView";
 
 export type AnalyticsConsentDialogViewProps = Readonly<{
   phase: AnalyticsConsentDialogPhase;
@@ -28,6 +29,12 @@ export type AnalyticsConsentDialogViewProps = Readonly<{
   applyOptOut: () => void;
   onPrivacyGotIt: () => void;
   onSetPreferences: () => void;
+  onBackFromPreferences: () => void;
+  draftShareAnalytics: boolean;
+  draftSharePersonalized: boolean;
+  setDraftShareAnalytics: (value: boolean) => void;
+  setDraftSharePersonalized: (value: boolean) => void;
+  applyPreferences: () => void;
 }>;
 
 export function AnalyticsConsentDialogView({
@@ -41,6 +48,12 @@ export function AnalyticsConsentDialogView({
   applyOptOut,
   onPrivacyGotIt,
   onSetPreferences,
+  onBackFromPreferences,
+  draftShareAnalytics,
+  draftSharePersonalized,
+  setDraftShareAnalytics,
+  setDraftSharePersonalized,
+  applyPreferences,
 }: AnalyticsConsentDialogViewProps) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -66,7 +79,7 @@ export function AnalyticsConsentDialogView({
         className="max-w-[480px] bg-canvas-sheet"
         // Radix Content forwards `style`; @ledgerhq/lumen-ui-react types omit it.
         // @ts-expect-error — see above
-        style={sheetSurfaceStyle}
+        style={phase === "preferences" ? undefined : sheetSurfaceStyle}
         aria-describedby={undefined}
         onPointerDownOutside={e => e.preventDefault()}
         onEscapeKeyDown={e => e.preventDefault()}
@@ -80,54 +93,74 @@ export function AnalyticsConsentDialogView({
           phase={phase}
           refreshSource={false}
         />
-        <DialogBody className="flex flex-col items-center pt-64 pb-16">
-          <div className="flex w-full flex-col items-center gap-24">
-            {phase === "privacy" ? (
-              <Spot appearance="info" size={72} />
-            ) : (
-              <Spot appearance="icon" icon={LedgerLogo} size={72} />
-            )}
-            <div className="flex w-full flex-col items-center gap-8 text-center">
-              <DialogTitle className="heading-4-semi-bold text-base w-full">{title}</DialogTitle>
+        {phase === "preferences" ? (
+          <AnalyticsConsentPreferencesView
+            onBackFromPreferences={onBackFromPreferences}
+            draftShareAnalytics={draftShareAnalytics}
+            draftSharePersonalized={draftSharePersonalized}
+            setDraftShareAnalytics={setDraftShareAnalytics}
+            setDraftSharePersonalized={setDraftSharePersonalized}
+            applyPreferences={applyPreferences}
+            privacyPolicyUrl={privacyPolicyUrl}
+            onOpenPrivacyPolicy={onOpenPrivacyPolicy}
+          />
+        ) : (
+          <div className="w-full">
+            <DialogBody className="flex flex-col items-center pt-64 pb-16">
+              <div className="flex w-full flex-col items-center gap-24">
+                {phase === "privacy" ? (
+                  <Spot appearance="info" size={72} />
+                ) : (
+                  <Spot appearance="icon" icon={LedgerLogo} size={72} />
+                )}
+                <div className="flex w-full flex-col items-center gap-8 text-center">
+                  <DialogTitle className="heading-4-semi-bold w-full text-base">
+                    {title}
+                  </DialogTitle>
+                  {phase === "privacy" ? (
+                    <PrivacyDescription
+                      privacyPolicyUrl={privacyPolicyUrl}
+                      onOpenPrivacyPolicy={onOpenPrivacyPolicy}
+                    />
+                  ) : (
+                    descriptionLead != null && (
+                      <DescriptionWithPreferencesLink
+                        text={descriptionLead}
+                        onSetPreferences={onSetPreferences}
+                      />
+                    )
+                  )}
+                </div>
+              </div>
+            </DialogBody>
+            <DialogFooter className="flex flex-col gap-16 pt-32">
               {phase === "privacy" ? (
-                <PrivacyDescription
+                <Button appearance="base" isFull size="lg" onClick={onPrivacyGotIt}>
+                  {t("analyticsConsentModal.privacy.ctaGotIt")}
+                </Button>
+              ) : (
+                <>
+                  <Button appearance="base" isFull size="lg" onClick={applyOptIn}>
+                    {phase === "consentReconfirm"
+                      ? t("analyticsConsentModal.reconfirm.ctaContinue")
+                      : t("analyticsConsentModal.fresh.ctaAcceptAll")}
+                  </Button>
+                  <Button appearance="gray" isFull size="lg" onClick={applyOptOut}>
+                    {phase === "consentReconfirm"
+                      ? t("analyticsConsentModal.reconfirm.ctaStop")
+                      : t("analyticsConsentModal.fresh.ctaRefuseAll")}
+                  </Button>
+                </>
+              )}
+            </DialogFooter>
+            {phase !== "privacy" && (
+              <div className="shrink-0 px-24 pt-16">
+                <ConsentFooter
                   privacyPolicyUrl={privacyPolicyUrl}
                   onOpenPrivacyPolicy={onOpenPrivacyPolicy}
                 />
-              ) : (
-                descriptionLead != null && (
-                  <DescriptionWithPreferencesLink
-                    text={descriptionLead}
-                    onSetPreferences={onSetPreferences}
-                  />
-                )
-              )}
-            </div>
-          </div>
-        </DialogBody>
-        <DialogFooter className="flex flex-col gap-16 pt-32">
-          {phase === "privacy" ? (
-            <Button appearance="base" isFull size="lg" onClick={onPrivacyGotIt}>
-              {t("analyticsConsentModal.privacy.ctaGotIt")}
-            </Button>
-          ) : (
-            <>
-              <Button appearance="base" isFull size="lg" onClick={applyOptIn}>
-                {phase === "consentReconfirm"
-                  ? t("analyticsConsentModal.reconfirm.ctaContinue")
-                  : t("analyticsConsentModal.fresh.ctaAcceptAll")}
-              </Button>
-              <Button appearance="gray" isFull size="lg" onClick={applyOptOut}>
-                {phase === "consentReconfirm"
-                  ? t("analyticsConsentModal.reconfirm.ctaStop")
-                  : t("analyticsConsentModal.fresh.ctaRefuseAll")}
-              </Button>
-            </>
-          )}
-        </DialogFooter>
-        {phase !== "privacy" && (
-          <div className="shrink-0 px-24 pt-16">
-            <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={onOpenPrivacyPolicy} />
+              </div>
+            )}
           </div>
         )}
       </DialogContent>

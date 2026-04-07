@@ -7,7 +7,8 @@ export type AnalyticsConsentDialogPhase =
   | "closed"
   | "privacy"
   | "consentFresh"
-  | "consentReconfirm";
+  | "consentReconfirm"
+  | "preferences";
 
 export function resolveAnalyticsConsentDialogPhase(
   currentPhase: AnalyticsConsentDialogPhase,

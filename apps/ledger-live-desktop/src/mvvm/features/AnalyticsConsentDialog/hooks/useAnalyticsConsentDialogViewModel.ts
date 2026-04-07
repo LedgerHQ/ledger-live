@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMatch, useNavigate } from "react-router";
+import { useMatch } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -37,7 +37,6 @@ const dialogClosedPayload = {
 export function useAnalyticsConsentDialogViewModel() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const portfolioRouteMatch = useMatch({ path: "/", end: true });
   const isPortfolioRouteFocused = Boolean(portfolioRouteMatch);
@@ -56,6 +55,13 @@ export function useAnalyticsConsentDialogViewModel() {
   );
 
   const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
+  const consentPhaseBeforePreferencesRef = useRef<"consentFresh" | "consentReconfirm">(
+    "consentFresh",
+  );
+
+  /** Preferences-step form only; Redux settings update on Confirm via `applyPreferences`. */
+  const [draftShareAnalytics, setDraftShareAnalytics] = useState(true);
+  const [draftSharePersonalized, setDraftSharePersonalized] = useState(true);
 
   const title =
     phase === "consentReconfirm"
@@ -117,7 +123,10 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [dispatch]);
 
   const applyOptIn = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_opt_in", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_opt_in",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
     await persistAnalyticsConsentAck();
@@ -125,7 +134,10 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [dispatch, persistAnalyticsConsentAck, handleCloseDialog]);
 
   const applyOptOut = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_opt_out", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_opt_out",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
     await persistAnalyticsConsentAck();
@@ -133,16 +145,47 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [dispatch, persistAnalyticsConsentAck, handleCloseDialog]);
 
   const onPrivacyGotIt = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_privacy_got_it", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_privacy_got_it",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     await persistAnalyticsConsentAck();
     handleCloseDialog();
   }, [handleCloseDialog, persistAnalyticsConsentAck]);
 
   const onSetPreferences = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_set_preferences", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_set_preferences",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
+    setDraftShareAnalytics(true);
+    setDraftSharePersonalized(true);
+    setPhase(current => {
+      if (current === "consentFresh" || current === "consentReconfirm") {
+        consentPhaseBeforePreferencesRef.current = current;
+      }
+      return "preferences";
+    });
+  }, []);
+
+  const onBackFromPreferences = () => setPhase(consentPhaseBeforePreferencesRef.current);
+
+  const applyPreferences = useCallback(async () => {
+    track("button_clicked", {
+      button: "analytics_consent_preferences_confirm",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
+    dispatch(setShareAnalytics(draftShareAnalytics));
+    dispatch(setSharePersonalizedRecommendations(draftSharePersonalized));
+    await persistAnalyticsConsentAck();
     handleCloseDialog();
-    navigate("/settings/display");
-  }, [navigate, handleCloseDialog]);
+  }, [
+    dispatch,
+    draftShareAnalytics,
+    draftSharePersonalized,
+    persistAnalyticsConsentAck,
+    handleCloseDialog,
+  ]);
 
   const isDialogOpen = phase !== "closed";
 
@@ -157,5 +200,11 @@ export function useAnalyticsConsentDialogViewModel() {
     applyOptIn,
     applyOptOut,
     onSetPreferences,
+    onBackFromPreferences,
+    draftShareAnalytics,
+    draftSharePersonalized,
+    setDraftShareAnalytics,
+    setDraftSharePersonalized,
+    applyPreferences,
   };
 }

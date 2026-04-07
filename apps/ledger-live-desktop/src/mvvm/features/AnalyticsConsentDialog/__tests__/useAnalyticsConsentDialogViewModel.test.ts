@@ -10,14 +10,12 @@ import {
   useAnalyticsConsentDialogViewModel,
 } from "../hooks/useAnalyticsConsentDialogViewModel";
 
-const mockNavigate = jest.fn();
 const mockUseMatch = jest.fn();
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
-  useNavigate: () => mockNavigate,
   useMatch: (args: unknown) => mockUseMatch(args),
 }));
 
@@ -166,22 +164,5 @@ describe("useAnalyticsConsentDialogViewModel", () => {
 
     expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
     expect(result.current.phase).toBe("closed");
-  });
-
-  it("navigates to settings display when Set preferences is used", async () => {
-    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-      initialState: consentReconfirmState,
-    });
-
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    act(() => {
-      result.current.onSetPreferences();
-    });
-
-    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
-    expect(mockNavigate).toHaveBeenCalledWith("/settings/display");
   });
 });
