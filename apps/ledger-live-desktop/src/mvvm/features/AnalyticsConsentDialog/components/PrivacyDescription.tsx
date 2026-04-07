@@ -7,7 +7,10 @@ export type PrivacyDescriptionProps = Readonly<{
   onOpenPrivacyPolicy: () => void;
 }>;
 
-export function PrivacyDescription({ privacyPolicyUrl, onOpenPrivacyPolicy }: PrivacyDescriptionProps) {
+export function PrivacyDescription({
+  privacyPolicyUrl,
+  onOpenPrivacyPolicy,
+}: PrivacyDescriptionProps) {
   const { t } = useTranslation();
   return (
     <p className="body-2 text-muted text-center">

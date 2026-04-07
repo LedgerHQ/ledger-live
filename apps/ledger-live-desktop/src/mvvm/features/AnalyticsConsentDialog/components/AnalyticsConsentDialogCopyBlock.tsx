@@ -31,7 +31,10 @@ export function AnalyticsConsentDialogCopyBlock({
         />
       ) : (
         descriptionLead != null && (
-          <DescriptionWithPreferencesLink text={descriptionLead} onSetPreferences={onSetPreferences} />
+          <DescriptionWithPreferencesLink
+            text={descriptionLead}
+            onSetPreferences={onSetPreferences}
+          />
         )
       )}
     </div>
