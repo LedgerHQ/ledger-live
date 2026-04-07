@@ -1,21 +1,12 @@
-import React, { useMemo } from "react";
-import { Title as DialogTitle } from "@radix-ui/react-dialog";
-import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  Spot,
-} from "@ledgerhq/lumen-ui-react";
-import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import React from "react";
+import { Dialog, DialogBody, DialogContent } from "@ledgerhq/lumen-ui-react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import type { AnalyticsConsentDialogPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
+import { AnalyticsConsentDialogCopyBlock } from "../components/AnalyticsConsentDialogCopyBlock";
+import { AnalyticsConsentDialogFooterActions } from "../components/AnalyticsConsentDialogFooterActions";
+import { AnalyticsConsentDialogIllustration } from "../components/AnalyticsConsentDialogIllustration";
 import { ConsentFooter } from "../components/ConsentFooter";
-import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
-import { PrivacyDescription } from "../components/PrivacyDescription";
+import { useAnalyticsConsentDialogSheetStyle } from "../hooks/useAnalyticsConsentDialogSheetStyle";
 
 export type AnalyticsConsentDialogViewProps = Readonly<{
   phase: AnalyticsConsentDialogPhase;
@@ -42,18 +33,7 @@ export function AnalyticsConsentDialogView({
   onPrivacyGotIt,
   onSetPreferences,
 }: AnalyticsConsentDialogViewProps) {
-  const { t } = useTranslation();
-  const theme = useTheme();
-
-  /** Light: black @ 30%; dark: white @ 30% — matches react-ui palettes (see shared/palettes). */
-  const sheetSurfaceStyle = useMemo(
-    () => ({
-      backgroundImage: `radial-gradient(43.51% 33.05% at 50.47% 0.14%, ${theme.colors.opacityDefault.c30} 0%, transparent 100%)`,
-      backgroundSize: "100% 100%" as const,
-      backgroundRepeat: "no-repeat" as const,
-    }),
-    [theme.colors.opacityDefault.c30],
-  );
+  const sheetSurfaceStyle = useAnalyticsConsentDialogSheetStyle();
 
   if (!isDialogOpen) {
     return null;
@@ -82,49 +62,23 @@ export function AnalyticsConsentDialogView({
         />
         <DialogBody className="flex flex-col items-center pt-64 pb-16">
           <div className="flex w-full flex-col items-center gap-24">
-            {phase === "privacy" ? (
-              <Spot appearance="info" size={72} />
-            ) : (
-              <Spot appearance="icon" icon={LedgerLogo} size={72} />
-            )}
-            <div className="flex w-full flex-col items-center gap-8 text-center">
-              <DialogTitle className="heading-4-semi-bold text-base w-full">{title}</DialogTitle>
-              {phase === "privacy" ? (
-                <PrivacyDescription
-                  privacyPolicyUrl={privacyPolicyUrl}
-                  onOpenPrivacyPolicy={onOpenPrivacyPolicy}
-                />
-              ) : (
-                descriptionLead != null && (
-                  <DescriptionWithPreferencesLink
-                    text={descriptionLead}
-                    onSetPreferences={onSetPreferences}
-                  />
-                )
-              )}
-            </div>
+            <AnalyticsConsentDialogIllustration phase={phase} />
+            <AnalyticsConsentDialogCopyBlock
+              phase={phase}
+              title={title}
+              descriptionLead={descriptionLead}
+              privacyPolicyUrl={privacyPolicyUrl}
+              onOpenPrivacyPolicy={onOpenPrivacyPolicy}
+              onSetPreferences={onSetPreferences}
+            />
           </div>
         </DialogBody>
-        <DialogFooter className="flex flex-col gap-16 pt-32">
-          {phase === "privacy" ? (
-            <Button appearance="base" isFull size="lg" onClick={onPrivacyGotIt}>
-              {t("analyticsConsentModal.privacy.ctaGotIt")}
-            </Button>
-          ) : (
-            <>
-              <Button appearance="base" isFull size="lg" onClick={applyOptIn}>
-                {phase === "consentReconfirm"
-                  ? t("analyticsConsentModal.reconfirm.ctaContinue")
-                  : t("analyticsConsentModal.fresh.ctaAcceptAll")}
-              </Button>
-              <Button appearance="gray" isFull size="lg" onClick={applyOptOut}>
-                {phase === "consentReconfirm"
-                  ? t("analyticsConsentModal.reconfirm.ctaStop")
-                  : t("analyticsConsentModal.fresh.ctaRefuseAll")}
-              </Button>
-            </>
-          )}
-        </DialogFooter>
+        <AnalyticsConsentDialogFooterActions
+          phase={phase}
+          applyOptIn={applyOptIn}
+          applyOptOut={applyOptOut}
+          onPrivacyGotIt={onPrivacyGotIt}
+        />
         {phase !== "privacy" && (
           <div className="shrink-0 px-24 pt-16">
             <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={onOpenPrivacyPolicy} />
