@@ -32,7 +32,6 @@
 "@ledgerhq/coin-evm": patch
 "@ledgerhq/coin-sui": patch
 "@ledgerhq/coin-ton": patch
-"@ledgerhq/coin-xrp": patch
 "ledger-live-desktop": patch
 "live-mobile": patch
 "@ledgerhq/live-common": patch

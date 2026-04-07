@@ -18,6 +18,9 @@ catalogs:
     '@ledgerhq/coin-module-framework':
       specifier: 2.1.0
       version: 2.1.0
+    '@ledgerhq/coin-xrp':
+      specifier: 7.21.1
+      version: 7.21.1
     '@ledgerhq/crypto-icons':
       specifier: 1.4.0
       version: 1.4.0
@@ -5869,79 +5872,6 @@ importers:
         specifier: 'catalog:'
         version: 1.51.0
 
-  libs/coin-modules/coin-xrp:
-    dependencies:
-      '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 2.1.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../live-network
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/logs
-      bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
-      ripple-address-codec:
-        specifier: ^5.0.0
-        version: 5.0.0
-      ripple-binary-codec:
-        specifier: ^1.3.0
-        version: 1.11.0
-    devDependencies:
-      '@faker-js/faker':
-        specifier: ^8.4.1
-        version: 8.4.1
-      '@ledgerhq/disable-network-setup':
-        specifier: workspace:^
-        version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/invariant':
-        specifier: ^2.2.37
-        version: 2.2.37
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.36.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.51.0
-      ripple-keypairs:
-        specifier: ^2.0.0
-        version: 2.0.0
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-
   libs/coin-modules/zcash-shielded:
     dependencies:
       '@ledgerhq/live-network':
@@ -6969,8 +6899,8 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
-        specifier: workspace:^
-        version: link:../coin-modules/coin-xrp
+        specifier: 'catalog:'
+        version: 7.21.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
@@ -16077,6 +16007,13 @@ packages:
       '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-env': ^2.31.0
 
+  '@ledgerhq/coin-xrp@7.21.1':
+    resolution: {integrity: sha512-RDInlIePtLOCWCPL8Koep83/PzQil/Y3ZY5EKgnmofCPwbQxc/puzOCVgQP9lqdHYLFq9MrqpqFyW4fr9VOsHg==}
+    peerDependencies:
+      '@ledgerhq/errors': ^6.33.0
+      '@ledgerhq/live-network': ^2.4.0
+      '@ledgerhq/logs': ^6.17.0
+
   '@ledgerhq/context-module@1.15.0':
     resolution: {integrity: sha512-PzO/2JdOL29C2NhiVX85K7ZI9kDQN2E0s74d6lOe8kYb8XfN06ETN3RPdzBnTgO0jkLQUHCjS5aKpPa40S14qA==}
     peerDependencies:
@@ -16205,9 +16142,6 @@ packages:
 
   '@ledgerhq/live-env@2.22.0':
     resolution: {integrity: sha512-zOtxXQl0stQpNp/01nvClMyAdc5WLY8b4vAeP8KJvvoDPCY9VfKLNGvjfU7r/AGsTTmJqy8DOSlboQ24CNd+zg==}
-
-  '@ledgerhq/live-env@2.4.1':
-    resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
 
   '@ledgerhq/live-network@2.0.19':
     resolution: {integrity: sha512-KVdqFDQcqEUNoC/TnaOJeo/I7TY39lQhzcVlnkAt2jbp5Xfv5YNuazL9lId5+bBb28jNPAv5uNJSlgvzpSSNIg==}
@@ -40059,7 +39993,7 @@ snapshots:
       '@ledgerhq/evm-tools': 1.3.0
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/logs': 6.14.0
       '@ledgerhq/types-live': 6.53.1
       axios: 1.7.7
       bignumber.js: 9.1.2
@@ -43794,6 +43728,21 @@ snapshots:
       '@ledgerhq/live-env': link:libs/env
       bignumber.js: 9.1.2
 
+  '@ledgerhq/coin-xrp@7.21.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+    dependencies:
+      '@ledgerhq/coin-module-framework': 2.1.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/live-network': link:libs/live-network
+      '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
+      bignumber.js: 9.1.2
+      invariant: 2.2.4
+      ripple-address-codec: 5.0.0
+      ripple-binary-codec: 1.11.0
+    transitivePeerDependencies:
+      - '@ledgerhq/live-env'
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
@@ -43842,7 +43791,7 @@ snapshots:
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     dependencies:
-      '@ledgerhq/live-env': 2.4.1
+      '@ledgerhq/live-env': 2.22.0
       axios: 1.7.7
 
   '@ledgerhq/device-management-kit@1.2.0':
@@ -43989,7 +43938,7 @@ snapshots:
   '@ledgerhq/domain-service@1.2.12':
     dependencies:
       '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/logs': 6.14.0
       '@ledgerhq/types-live': 6.53.1
       axios: 1.7.7
       eip55: 2.1.1
@@ -44007,7 +43956,7 @@ snapshots:
       '@ethersproject/constants': 5.8.0
       '@ethersproject/hash': 5.8.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
-      '@ledgerhq/live-env': 2.4.1
+      '@ledgerhq/live-env': 2.22.0
       axios: 1.7.7
       crypto-js: 4.2.0
 
@@ -44018,7 +43967,7 @@ snapshots:
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/logs': 6.14.0
       rxjs: 7.8.2
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
@@ -44061,15 +44010,10 @@ snapshots:
       rxjs: 7.8.2
       utility-types: 3.11.0
 
-  '@ledgerhq/live-env@2.4.1':
-    dependencies:
-      rxjs: 7.8.2
-      utility-types: 3.11.0
-
   '@ledgerhq/live-network@2.0.19':
     dependencies:
       '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-env': 2.22.0
       '@ledgerhq/live-promise': 0.1.1
       '@ledgerhq/logs': 6.14.0
       axios: 1.11.0
