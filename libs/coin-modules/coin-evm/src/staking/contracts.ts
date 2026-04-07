@@ -12,9 +12,12 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       getStakedBalance: "delegation",
     },
     apiConfig: {
-      baseUrl: "https://sei-api.polkachu.com",
+      baseUrl: "https://rest.sei-apis.com/",
       validatorsEndpoint:
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200",
+    },
+    explorerConfig: {
+      validatorUrl: "https://seistream.app/validators/$address",
     },
   },
 
