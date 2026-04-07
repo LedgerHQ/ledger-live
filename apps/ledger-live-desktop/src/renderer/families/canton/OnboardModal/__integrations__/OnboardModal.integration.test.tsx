@@ -24,7 +24,9 @@ import {
 } from "../__tests__/testUtils";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
-  withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
+  withDevice: jest.fn(() => (job: (transport: unknown) => unknown) =>
+    job({ decorateAppAPIMethods: jest.fn() }),
+  ),
 }));
 
 jest.mock("~/renderer/extra/Snow", () => ({
@@ -33,26 +35,44 @@ jest.mock("~/renderer/extra/Snow", () => ({
   isSnowTime: () => false,
 }));
 
+jest.mock("@ledgerhq/coin-canton/signer", () => ({
+  __esModule: true,
+  default: jest.fn(
+    () =>
+      (_deviceId: string, { path }: { path: string }) =>
+        Promise.resolve({
+          publicKey: MOCK_CANTON_PUBLIC_KEY_HEX,
+          address: "canton_mock_address_integ",
+          path,
+        }),
+  ),
+}));
+
+jest.mock("@ledgerhq/coin-canton/common-logic/transaction/sign", () => ({
+  __esModule: true,
+  signTransaction: jest.fn().mockResolvedValue({
+    signature: "cc".repeat(66),
+  }),
+}));
+
 jest.mock(
   "@ledgerhq/hw-app-canton",
-  () => {
-    return {
-      __esModule: true,
-      default: jest.fn(() => ({
-        getAppConfiguration: jest.fn().mockResolvedValue({ version: "3.0.0" }),
-        getAddress: jest.fn().mockImplementation((path: string) =>
-          Promise.resolve({
-            publicKey: MOCK_CANTON_PUBLIC_KEY_HEX,
-            address: "canton_mock_address_integ",
-            path,
-          }),
-        ),
-        signTransaction: jest.fn().mockResolvedValue({
-          signature: "cc".repeat(66),
+  () => ({
+    __esModule: true,
+    default: jest.fn(() => ({
+      getAppConfiguration: jest.fn().mockResolvedValue({ version: "3.0.0" }),
+      getAddress: jest.fn().mockImplementation((path: string) =>
+        Promise.resolve({
+          publicKey: MOCK_CANTON_PUBLIC_KEY_HEX,
+          address: "canton_mock_address_integ",
+          path,
         }),
-      })),
-    };
-  },
+      ),
+      signTransaction: jest.fn().mockResolvedValue({
+        signature: "cc".repeat(66),
+      }),
+    })),
+  }),
   { virtual: true },
 );
 
