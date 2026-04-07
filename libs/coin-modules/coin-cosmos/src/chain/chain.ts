@@ -25,74 +25,79 @@ const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
   currencyId = currencyId === "osmosis" ? "osmo" : currencyId;
   if (!cosmosChainParams[currencyId]) {
+    let chain: CosmosBase;
     switch (currencyId) {
       case "osmo":
-        cosmosChainParams[currencyId] = new Osmosis();
+        chain = new Osmosis();
         break;
       case "cosmos":
-        cosmosChainParams[currencyId] = new Cosmos();
+        chain = new Cosmos();
         break;
       case "axelar":
-        cosmosChainParams[currencyId] = new Axelar();
+        chain = new Axelar();
         break;
       case "binance_beacon_chain":
-        cosmosChainParams[currencyId] = new BinanceBeaconChain();
+        chain = new BinanceBeaconChain();
         break;
       case "desmos":
-        cosmosChainParams[currencyId] = new Desmos();
+        chain = new Desmos();
         break;
       case "dydx":
-        cosmosChainParams[currencyId] = new Dydx();
+        chain = new Dydx();
         break;
       case "nyx":
-        cosmosChainParams[currencyId] = new Nyx();
+        chain = new Nyx();
         break;
       case "persistence":
-        cosmosChainParams[currencyId] = new Persistence();
+        chain = new Persistence();
         break;
       case "quicksilver":
-        cosmosChainParams[currencyId] = new Quicksilver();
+        chain = new Quicksilver();
         break;
       case "secret_network":
-        cosmosChainParams[currencyId] = new SecretNetwork();
+        chain = new SecretNetwork();
         break;
       case "stargaze":
-        cosmosChainParams[currencyId] = new Stargaze();
+        chain = new Stargaze();
         break;
       case "stride":
-        cosmosChainParams[currencyId] = new Stride();
+        chain = new Stride();
         break;
       case "umee":
-        cosmosChainParams[currencyId] = new Umee();
+        chain = new Umee();
         break;
       case "coreum":
-        cosmosChainParams[currencyId] = new Coreum();
+        chain = new Coreum();
         break;
       case "injective":
-        cosmosChainParams[currencyId] = new Injective();
+        chain = new Injective();
         break;
       case "mantra":
-        cosmosChainParams[currencyId] = new Mantra();
+        chain = new Mantra();
         break;
       case "crypto_org":
-        cosmosChainParams[currencyId] = new CryptoOrg();
+        chain = new CryptoOrg();
         break;
       case "xion":
-        cosmosChainParams[currencyId] = new Xion();
+        chain = new Xion();
         break;
       case "zenrock":
-        cosmosChainParams[currencyId] = new Zenrock();
+        chain = new Zenrock();
         break;
       case "babylon":
-        cosmosChainParams[currencyId] = new Babylon();
+        chain = new Babylon();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);
     }
 
-    const coinConfig = cosmosCoinConfig.getCoinConfig(currencyId);
-    if (coinConfig) {
-      cosmosChainParams[currencyId] = { ...cosmosChainParams[currencyId], ...coinConfig };
+    try {
+      const coinConfig = cosmosCoinConfig.getCoinConfig(currencyId);
+      cosmosChainParams[currencyId] = coinConfig ? ({ ...chain, ...coinConfig } as CosmosBase) : chain;
+    } catch {
+      // coinConfig not yet initialized (bridges not loaded) — return defaults without caching
+      // so enrichment is retried on the next call once bridges are set up
+      return chain;
     }
   }
 
