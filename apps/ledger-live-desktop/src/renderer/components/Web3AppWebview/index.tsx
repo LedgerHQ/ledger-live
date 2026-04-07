@@ -13,6 +13,8 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     {
       manifest,
       currentAccountHistDb,
+      setCurrentAccountHistDb,
+      currentAccountHistDbLoaded,
       inputs,
       customHandlers,
       webviewStyle,
@@ -30,6 +32,8 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
           key={manifest.id}
           manifest={manifest}
           currentAccountHistDb={currentAccountHistDb}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+          currentAccountHistDbLoaded={currentAccountHistDbLoaded}
           inputs={inputs}
           customHandlers={customHandlers}
           onStateChange={onStateChange}
@@ -45,9 +49,10 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
       <PlatformAPIWebview
         key={manifest.id}
         manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}
         onStateChange={onStateChange}
+        currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
         ref={ref}
       />
     );

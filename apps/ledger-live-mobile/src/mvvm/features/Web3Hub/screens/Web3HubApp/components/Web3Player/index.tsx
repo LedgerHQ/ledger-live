@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
 import { useSelector } from "~/context/hooks";
-import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
@@ -41,7 +41,8 @@ const WebPlatformPlayer = ({
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
-  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
+  const [currentAccountHistDb, setCurrentAccountHistDb, currentAccountHistDbLoaded] =
+    useCurrentAccountHistDB();
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -89,7 +90,7 @@ const WebPlatformPlayer = ({
         secure={secure}
         baseUrl={baseUrl}
         manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
         setIsInfoPanelOpened={setIsInfoPanelOpened}
@@ -98,6 +99,8 @@ const WebPlatformPlayer = ({
         ref={webviewAPIRef}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
+        currentAccountHistDbLoaded={currentAccountHistDbLoaded}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
