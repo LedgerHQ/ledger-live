@@ -48,9 +48,9 @@ export function genericPrepareTransaction(
   kind: string,
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
-    const { estimateFees, validateIntent } = getAlpacaApi(account.currency.id, kind);
-
+    const alpacaApi = getAlpacaApi(account.currency.id, kind);
     const bridgeApi = getBridgeApi(account.currency, network);
+
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
     const { assetReference, assetOwner } = getAssetFromTokenForCurrency
       ? await getAssetInfos(transaction, account.freshAddress, getAssetFromTokenForCurrency)
@@ -93,7 +93,7 @@ export function genericPrepareTransaction(
     });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
-      : await estimateFees(intent, customFeesParameters);
+      : await alpacaApi.estimateFees(intent, customFeesParameters);
     const fees = new BigNumber(estimation.value.toString());
 
     if (!bnEq(transaction.fees, fees)) {
@@ -132,7 +132,7 @@ export function genericPrepareTransaction(
         )
       ) {
         // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
-        const { amount } = await validateIntent(
+        const { amount } = await alpacaApi.validateIntent(
           transactionToIntent(
             account,
             {

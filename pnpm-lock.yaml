@@ -6188,9 +6188,6 @@ importers:
 
   libs/coin-tester-modules/coin-tester-solana:
     dependencies:
-      '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 2.1.0(@ledgerhq/live-env@libs+env)
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../coin-modules/coin-solana
@@ -6203,6 +6200,12 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -43720,11 +43723,6 @@ snapshots:
   '@ledgerhq/coin-module-framework@2.1.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)':
     dependencies:
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
-      '@ledgerhq/live-env': link:libs/env
-      bignumber.js: 9.1.2
-
-  '@ledgerhq/coin-module-framework@2.1.0(@ledgerhq/live-env@libs+env)':
-    dependencies:
       '@ledgerhq/live-env': link:libs/env
       bignumber.js: 9.1.2
 

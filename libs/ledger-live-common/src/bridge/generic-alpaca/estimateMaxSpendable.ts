@@ -40,7 +40,7 @@ export function genericEstimateMaxSpendable(
       extractBalances(account, bridgeApi.getAssetFromToken),
       bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),
     );
-    if (["stellar", "tezos", "evm"].includes(network)) {
+    if (["stellar", "tezos", "evm", "solana"].includes(network)) {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
     }
     const bnFee = BigNumber(fees.toString());

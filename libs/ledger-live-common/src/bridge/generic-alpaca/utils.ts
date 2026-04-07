@@ -157,6 +157,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     memo?: string | undefined;
     internal?: boolean;
     feePayer?: string;
+    stake?: { address: string; amount: BigNumber };
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {
@@ -198,6 +199,14 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 
   if (typeof op.tx.feesPayer === "string") {
     extra.feePayer = op.tx.feesPayer;
+  }
+
+  if (op.details?.stake && typeof op.details.stake === "object") {
+    const s = op.details.stake as { address?: string; amount?: bigint | number | string };
+    extra.stake = {
+      address: s.address ?? "",
+      amount: new BigNumber(s.amount?.toString() ?? "0"),
+    };
   }
 
   const bnFees = new BigNumber(op.tx.fees.toString());

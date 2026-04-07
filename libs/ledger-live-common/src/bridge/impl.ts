@@ -26,6 +26,7 @@ const alpacaized = {
   xrp: true,
   stellar: true,
   tezos: true,
+  solana: false, // TODO: Enable once solana is ready to be used in production
 };
 
 // let accountBridgeInstance: AccountBridge<any> | null = null;

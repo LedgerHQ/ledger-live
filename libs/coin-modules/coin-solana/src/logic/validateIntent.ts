@@ -4,6 +4,8 @@ import type {
   FeeEstimation,
   Balance,
   AssetInfo,
+  MemoNotSupported,
+  StringMemo,
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
@@ -16,7 +18,7 @@ import {
 import { isValidBase58Address, isSolanaStakingTransactionIntent } from "../logic";
 
 export async function validateIntent(
-  transactionIntent: TransactionIntent,
+  transactionIntent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {

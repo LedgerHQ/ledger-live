@@ -10,15 +10,18 @@ import "./fixtures";
   }),
 );
 
-describe("Solana Deterministic Tester", () => {
-  it("scenario Solana", async () => {
-    try {
-      await executeScenario(scenarioSolana);
-    } catch (e) {
-      if (e !== "done") {
-        await killAgave();
-        throw e;
+describe.each([["legacy"], ["generic-adapter"]] as const)(
+  "Solana Deterministic Tester (%s strategy)",
+  strategy => {
+    it("scenario Solana", async () => {
+      try {
+        await executeScenario(scenarioSolana, strategy);
+      } catch (e) {
+        if (e !== "done") {
+          await killAgave();
+          throw e;
+        }
       }
-    }
-  });
-});
+    });
+  },
+);

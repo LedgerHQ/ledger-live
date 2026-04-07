@@ -137,7 +137,7 @@ export const makeAccount = (
   };
 };
 
-export function initMSW() {
+export function initMSW(): () => void {
   const mockServer = setupServer(
     http.get("https://crypto-assets-service.api.ledger.com/v1/certificates", ({ request }) => {
       const url = new URL(request.url);
@@ -330,4 +330,5 @@ export function initMSW() {
       throw new Error("Unhandled request");
     },
   });
+  return () => mockServer.close();
 }
