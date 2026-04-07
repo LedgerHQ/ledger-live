@@ -716,7 +716,7 @@ async function getOptimismAdditionalFees(
   const optimismGasOracle = new ethers.Contract(
     // contract address provided here
     // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
-    "0x420000000000000000000000000000000000000F",
+    "0x4f1db3c6AbD250ba86E0928471A8F7DB3AFd88F1",
     OptimismGasPriceOracleAbi,
     api,
   );
