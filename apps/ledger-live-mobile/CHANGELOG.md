@@ -1,5 +1,16 @@
 # live-mobile
 
+## 4.1.0-next.3
+
+### Minor Changes
+
+- [#16101](https://github.com/LedgerHQ/ledger-live/pull/16101) [`8320e62`](https://github.com/LedgerHQ/ledger-live/commit/8320e626e47aada5de3e29c57c9e1f57de9d01ae) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Replace dynamic import of @walletconnect/sign-client with static import and add rspack ProvidePlugin for TextDecoder polyfill to fix mobile code splitting and startup crash
+
+### Patch Changes
+
+- Updated dependencies [[`8320e62`](https://github.com/LedgerHQ/ledger-live/commit/8320e626e47aada5de3e29c57c9e1f57de9d01ae)]:
+  - @ledgerhq/coin-concordium@0.8.0-next.1
+
 ## 4.1.0-next.2
 
 ### Minor Changes

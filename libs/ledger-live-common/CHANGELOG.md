@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.68.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`8320e62`](https://github.com/LedgerHQ/ledger-live/commit/8320e626e47aada5de3e29c57c9e1f57de9d01ae)]:
+  - @ledgerhq/coin-concordium@0.8.0-next.1
+
 ## 34.68.0-next.0
 
 ### Minor Changes
