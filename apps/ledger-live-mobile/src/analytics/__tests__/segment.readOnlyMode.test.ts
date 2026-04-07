@@ -6,7 +6,7 @@ import { waitFor } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import type { AppStore } from "~/reducers";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { setAnalytics, setAnalyticsConsentInfo, setReadOnlyMode } from "~/actions/settings";
 import * as segment from "../segment";
 
