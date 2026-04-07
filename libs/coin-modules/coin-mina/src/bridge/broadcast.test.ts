@@ -1,4 +1,4 @@
-import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
+import { DeepPartial } from "@ledgerhq/coin-module-framework/test/utils";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcastTransaction as broadcastLogic } from "../logic/transaction/broadcast";

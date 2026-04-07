@@ -1,4 +1,4 @@
-import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
+import { DeepPartial } from "@ledgerhq/coin-module-framework/test/utils";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 import makeCliTools from "./cli";

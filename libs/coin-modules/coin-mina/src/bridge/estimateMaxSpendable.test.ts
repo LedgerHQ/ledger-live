@@ -2,7 +2,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 jest.mock("./createTransaction");
 jest.mock("./getEstimatedFees");
 
-import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
+import { DeepPartial } from "@ledgerhq/coin-module-framework/test/utils";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import { MinaAccount, Transaction } from "../types";
