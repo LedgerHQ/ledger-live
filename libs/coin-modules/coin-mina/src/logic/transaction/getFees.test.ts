@@ -1,6 +1,6 @@
 jest.mock("../../network");
 
-import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
+import { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import BigNumber from "bignumber.js";
 import { fetchTransactionMetadata } from "../../network";
 import { Transaction } from "../../types/common";

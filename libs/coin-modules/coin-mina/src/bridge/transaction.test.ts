@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-jest.mock("@ledgerhq/coin-framework/currencies/index", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/index", () => ({
   formatCurrencyUnit: jest.fn().mockReturnValue("1000 MINA"),
 }));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-jest.mock("@ledgerhq/coin-framework/currencies", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies", () => ({
   formatCurrencyUnit: jest.fn().mockReturnValue("0.01 MINA"),
 }));
 
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import BigNumber from "bignumber.js";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
 import type { MinaAccount, TransactionStatus } from "../types/common";

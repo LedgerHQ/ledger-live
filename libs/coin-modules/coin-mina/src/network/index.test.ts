@@ -2,7 +2,7 @@ jest.mock("@ledgerhq/live-network");
 jest.mock("@ledgerhq/logs");
 jest.mock("../config");
 
-import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
+import { DeepPartial } from "@ledgerhq/coin-module-framework/test/utils";
 import { LedgerAPI5xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { getCoinConfig } from "../config";
