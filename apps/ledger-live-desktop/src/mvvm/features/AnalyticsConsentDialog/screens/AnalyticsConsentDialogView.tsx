@@ -6,7 +6,9 @@ import { AnalyticsConsentDialogCopyBlock } from "../components/AnalyticsConsentD
 import { AnalyticsConsentDialogFooterActions } from "../components/AnalyticsConsentDialogFooterActions";
 import { AnalyticsConsentDialogIllustration } from "../components/AnalyticsConsentDialogIllustration";
 import { ConsentFooter } from "../components/ConsentFooter";
-import { useAnalyticsConsentDialogSheetStyle } from "../hooks/useAnalyticsConsentDialogSheetStyle";
+
+const sheetTopGlowClassName =
+  "absolute inset-0 bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-light-grey-950-10)_0%,transparent_100%)] dark:bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-dark-grey-950-30)_0%,transparent_100%)]";
 
 export type AnalyticsConsentDialogViewProps = Readonly<{
   phase: AnalyticsConsentDialogPhase;
@@ -33,8 +35,6 @@ export function AnalyticsConsentDialogView({
   onPrivacyGotIt,
   onSetPreferences,
 }: AnalyticsConsentDialogViewProps) {
-  const sheetSurfaceStyle = useAnalyticsConsentDialogSheetStyle();
-
   if (!isDialogOpen) {
     return null;
   }
@@ -43,25 +43,23 @@ export function AnalyticsConsentDialogView({
     <Dialog open={isDialogOpen}>
       <DialogContent
         data-testid="analytics-consent-dialog"
-        className="max-w-[480px] bg-canvas-sheet"
-        // Radix Content forwards `style`; @ledgerhq/lumen-ui-react types omit it.
-        // @ts-expect-error — see above
-        style={sheetSurfaceStyle}
+        className="max-w-[480px]"
         aria-describedby={undefined}
         onPointerDownOutside={e => e.preventDefault()}
         onEscapeKeyDown={e => e.preventDefault()}
         onOpenAutoFocus={e => e.preventDefault()}
       >
-        <TrackPage
-          key={phase}
-          category="AnalyticsConsentDialog"
-          name="Analytics consent"
-          type="modal"
-          phase={phase}
-          refreshSource={false}
-        />
-        <DialogBody className="flex flex-col items-center pt-64 pb-16">
-          <div className="flex w-full flex-col items-center gap-24">
+        <div aria-hidden className={sheetTopGlowClassName} />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <TrackPage
+            key={phase}
+            category="AnalyticsConsentDialog"
+            name="Analytics consent"
+            type="modal"
+            phase={phase}
+            refreshSource={false}
+          />
+          <DialogBody className="items-center gap-24 pt-64 pb-16">
             <AnalyticsConsentDialogIllustration phase={phase} />
             <AnalyticsConsentDialogCopyBlock
               phase={phase}
@@ -71,19 +69,19 @@ export function AnalyticsConsentDialogView({
               onOpenPrivacyPolicy={onOpenPrivacyPolicy}
               onSetPreferences={onSetPreferences}
             />
-          </div>
-        </DialogBody>
-        <AnalyticsConsentDialogFooterActions
-          phase={phase}
-          applyOptIn={applyOptIn}
-          applyOptOut={applyOptOut}
-          onPrivacyGotIt={onPrivacyGotIt}
-        />
-        {phase !== "privacy" && (
-          <div className="shrink-0 px-24 pt-16">
-            <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={onOpenPrivacyPolicy} />
-          </div>
-        )}
+          </DialogBody>
+          <AnalyticsConsentDialogFooterActions
+            phase={phase}
+            applyOptIn={applyOptIn}
+            applyOptOut={applyOptOut}
+            onPrivacyGotIt={onPrivacyGotIt}
+          />
+          {phase !== "privacy" && (
+            <div className="shrink-0 px-24 pt-16">
+              <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={onOpenPrivacyPolicy} />
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
