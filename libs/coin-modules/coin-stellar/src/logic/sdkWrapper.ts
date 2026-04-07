@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   Account as StellarSdkAccount,
   Operation as StellarSdkOperation,
@@ -6,8 +5,7 @@ import {
   Networks,
   Asset,
 } from "@stellar/stellar-sdk";
-
-const currency = getCryptoCurrencyById("stellar");
+import { stellarUnit } from "./common";
 
 export function buildTransactionBuilder(source: StellarSdkAccount, fee: bigint) {
   const formattedFee = fee.toString();
@@ -54,7 +52,7 @@ export function buildPaymentOperation({
 }
 
 function getFormattedAmount(amount: bigint) {
-  const div = 10 ** currency.units[0].magnitude;
+  const div = 10 ** stellarUnit.magnitude;
   // BigInt division is always an integer, never a float. We need to convert first to a Number.
   return (Number(amount) / div).toString();
 }

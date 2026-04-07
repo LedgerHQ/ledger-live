@@ -5345,16 +5345,10 @@ importers:
         version: 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 2.1.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
+        version: 2.1.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network

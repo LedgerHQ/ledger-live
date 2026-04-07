@@ -1,6 +1,4 @@
-import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
@@ -26,12 +24,12 @@ import {
   NetworkCongestionLevel,
 } from "../types";
 import { getReservedBalance, rawOperationsToOperations } from "./serialization";
+import { parseAPIValue } from "../logic/common";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const FETCH_LIMIT = 100;
-const currency = getCryptoCurrencyById("stellar");
 
 // Horizon client instance is cached to avoid costly rebuild at every request
 // Watch out: cache key is the URL, coin module can be instantiated several times with different URLs
@@ -68,7 +66,7 @@ function useConfigHost(url: string): string {
 }
 
 const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
-  return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
+  return parseAPIValue(getReservedBalance(account).toString());
 };
 
 export async function getAccountSpendableBalance(
@@ -178,7 +176,7 @@ export async function fetchAccount(addr: string): Promise<{
     balance = "0";
   }
 
-  const formattedBalance = parseCurrencyUnit(currency.units[0], balance);
+  const formattedBalance = parseAPIValue(balance);
 
   const spendableBalance = await getAccountSpendableBalance(formattedBalance, account);
 
@@ -297,8 +295,8 @@ export async function fetchOperations({
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
-}): Promise<[Operation[], string]> {
-  const noResult: [Operation[], string] = [[], ""];
+}): Promise<Page<Operation>> {
+  const noResult: Page<Operation> = { items: [], next: "" };
   if (!addr) {
     return noResult;
   }
@@ -327,7 +325,7 @@ export async function fetchOperations({
     const nextCursor =
       filteredOps.length === rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
 
-    return [filteredOps, nextCursor];
+    return { items: filteredOps, next: nextCursor };
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)

@@ -14,7 +14,6 @@ import {
   AlpacaApi,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
 import coinConfig, { type StellarConfig } from "../config";
@@ -124,18 +123,9 @@ async function estimate(_transactionIntent: TransactionIntent): Promise<FeeEstim
 
 async function operations(
   address: string,
-  { minHeight, cursor }: ListOperationsOptions,
+  { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  if (minHeight) {
-    const [items, next] = await operationsFromHeight(address, minHeight);
-    return { items, next: next || undefined };
-  }
-  const isInitSync = !cursor || cursor === "";
-  // FIXME: why bother creating limit and pagingToken here, something is off?!
-  const newPagination = isInitSync
-    ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
-    : { pagingToken: cursor, minHeight: 0 };
-  const [items, next] = await operationsFromHeight(address, newPagination.minHeight);
+  const { items, next } = await operationsFromHeight(address, minHeight);
   return { items, next: next || undefined };
 }
 
@@ -147,10 +137,7 @@ type PaginationState = {
   accumulator: Operation[];
 };
 
-async function operationsFromHeight(
-  address: string,
-  minHeight: number,
-): Promise<[Operation[], string]> {
+async function operationsFromHeight(address: string, minHeight: number): Promise<Page<Operation>> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,
@@ -181,7 +168,7 @@ async function operationsFromHeight(
     }
   }
 
-  return [state.accumulator, state.apiNextCursor ? state.apiNextCursor : ""];
+  return { items: state.accumulator, next: state.apiNextCursor ? state.apiNextCursor : "" };
 }
 
 /**
