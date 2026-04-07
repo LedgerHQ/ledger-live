@@ -40,6 +40,15 @@ import {
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
 import { STAKING_CONTRACTS } from "../staking";
+import { getValidators as getStakingValidators } from "../staking/validators";
+
+const toValidatorBalance = (tokens: number): bigint => {
+  if (!Number.isFinite(tokens) || tokens <= 0) {
+    return 0n;
+  }
+
+  return BigInt(Math.floor(tokens));
+};
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
@@ -94,8 +103,22 @@ export function createApi(
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
+    async getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      const validators = await getStakingValidators(
+        currency.id,
+        STAKING_CONTRACTS[currency.id]?.apiConfig,
+      );
+
+      return {
+        items: validators.map(validator => ({
+          address: validator.validatorAddress,
+          name: validator.name,
+          balance: toValidatorBalance(validator.tokens),
+          commissionRate: validator.commission.toString(),
+          apy: validator.estimatedYearlyRewardsRate,
+        })),
+        next: undefined,
+      };
     },
     getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
     validateAddress,

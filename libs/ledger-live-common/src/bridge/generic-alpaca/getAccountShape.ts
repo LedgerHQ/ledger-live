@@ -317,9 +317,28 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    const blockInfo = await alpacaApi.lastBlock();
+    const validatorsPromise =
+      alpacaApi.stakingSupported === true
+        ? alpacaApi
+            .getValidators()
+            .then(page =>
+              page.items.map(validator => ({
+                validatorAddress: validator.address,
+                name: validator.name ?? validator.address,
+                commission: Number(validator.commissionRate ?? 0),
+                tokens: Number(validator.balance ?? 0n),
+                votingPower: 0,
+                estimatedYearlyRewardsRate: Number(validator.apy ?? 0),
+              })),
+            )
+            .catch(() => [])
+        : Promise.resolve([]);
 
-    const balanceRes = await alpacaApi.getBalance(address, bridgeApi.balanceOptions);
+    const [blockInfo, balanceRes, validators] = await Promise.all([
+      alpacaApi.lastBlock(),
+      alpacaApi.getBalance(address, bridgeApi.balanceOptions),
+      validatorsPromise,
+    ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
@@ -365,6 +384,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       delegatedBalance: new BigNumber(delegatedBalance.toString()),
       pendingRewardsBalance: new BigNumber(pendingRewardsBalance.toString()),
       unbondingBalance: new BigNumber(unbondingBalance.toString()),
+      ...(validators.length > 0 ? { validators } : {}),
     };
 
     // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent
