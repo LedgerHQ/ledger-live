@@ -1,5 +1,5 @@
 import React from "react";
-import { AnalyticsConsentModal } from "LLD/features/AnalyticsConsentModal";
+import { AnalyticsConsentDialog } from "LLD/features/AnalyticsConsentDialog";
 import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
@@ -19,7 +19,7 @@ const Portfolio = () => {
   return (
     <>
       <PortfolioView {...viewModel} />
-      <AnalyticsConsentModal />
+      <AnalyticsConsentDialog />
       <WalletV4TourDialog
         isOpen={isWalletV4TourOpen}
         onClose={handleCloseWalletV4Tour}
