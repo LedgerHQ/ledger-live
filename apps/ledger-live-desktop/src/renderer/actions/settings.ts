@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
   PortfolioRange,
   DeviceModelInfo,
@@ -15,7 +16,6 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
-  AnalyticsConsentInfo,
   VaultSigner,
   SupportedCountervaluesData,
   CurrencySettings,
@@ -69,9 +69,12 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
     sharePersonalizedRecommandations,
   });
 
-export const setAnalyticsConsentInfo = (analyticsConsentInfo: AnalyticsConsentInfo) =>
+export const setAnalyticsConsentInfo = () =>
   saveSettings({
-    analyticsConsentInfo,
+    analyticsConsentInfo: {
+      consentDate: new Date().toISOString(),
+      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+    },
   });
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({

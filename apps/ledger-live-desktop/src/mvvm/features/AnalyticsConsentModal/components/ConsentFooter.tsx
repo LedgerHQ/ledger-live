@@ -16,7 +16,6 @@ export function ConsentFooter({ privacyPolicyUrl, onOpenPrivacyPolicy }: Consent
         appearance="inherit"
         size="inherit"
         href={privacyPolicyUrl}
-        isExternal
         onClick={e => {
           e.preventDefault();
           onOpenPrivacyPolicy();
