@@ -6,13 +6,11 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { BorrowWebviewInputs } from "LLM/features/Borrow/screens/BorrowLiveApp/useBorrowLiveAppViewModel";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
-import type { AccountLike } from "@ledgerhq/types-live";
 
 type Props = {
   manifest: LiveAppManifest;
   setWebviewState: (webviewState: WebviewState) => void;
   inputs: BorrowWebviewInputs;
-  accounts: AccountLike[];
 };
 
 export const BorrowWebView = forwardRef<WebviewAPI, Props>(

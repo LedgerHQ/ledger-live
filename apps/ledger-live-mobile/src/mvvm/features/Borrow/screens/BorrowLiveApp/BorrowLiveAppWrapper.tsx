@@ -3,7 +3,7 @@ import { BorrowLiveAppView } from ".";
 import { useBorrowLiveAppViewModel } from "LLM/features/Borrow/screens/BorrowLiveApp/useBorrowLiveAppViewModel";
 
 export function BorrowLiveAppWrapper() {
-  const { manifest, error, isLoading, webviewRef, onWebviewStateChange, webviewInputs, accounts } =
+  const { manifest, error, isLoading, webviewRef, onWebviewStateChange, webviewInputs } =
     useBorrowLiveAppViewModel();
 
   return (
@@ -14,7 +14,6 @@ export function BorrowLiveAppWrapper() {
       webviewRef={webviewRef}
       onWebviewStateChange={onWebviewStateChange}
       webviewInputs={webviewInputs}
-      accounts={accounts}
     />
   );
 }
