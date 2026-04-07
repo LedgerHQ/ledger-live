@@ -7787,6 +7787,17 @@
       "ctaGotIt": "Got it"
     },
     "setPreferences": "Set preferences",
+    "preferences": {
+      "appPerformance": {
+        "title": "App performance",
+        "description": "Enable Ledger to collect app usage to enhance the experience"
+      },
+      "personalizedExperience": {
+        "title": "Personalized experience",
+        "description": "Enable Ledger to collect app usage to provide personalized contents"
+      },
+      "ctaConfirm": "Confirm"
+    },
     "footer": {
       "lead": "You can revoke your consent anytime in settings.",
       "privacyLink": "Privacy policy"

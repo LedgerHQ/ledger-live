@@ -13,3 +13,4 @@ export {
   ANALYTICS_CONSENT_DIALOG_PAGE,
   useAnalyticsConsentDialogViewModel,
 } from "./hooks/useAnalyticsConsentDialogViewModel";
+export type { AnalyticsConsentDialogPhase } from "./types";
