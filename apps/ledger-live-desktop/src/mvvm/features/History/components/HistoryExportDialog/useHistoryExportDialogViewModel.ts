@@ -27,7 +27,7 @@ export type HistoryExportDialogViewModel = {
 };
 
 type UseHistoryExportDialogViewModelArgs = {
-  setDialogHeight?: (h: "fixed" | "hug") => void;
+  setDialogHeight?: (h: "fixed" | "fit") => void;
 };
 
 export function useHistoryExportDialogViewModel({
@@ -37,7 +37,7 @@ export function useHistoryExportDialogViewModel({
   const names = useBatchMaybeAccountName(rawAccounts);
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
 
-  const handleResult = useCallback(() => setDialogHeight?.("hug"), [setDialogHeight]);
+  const handleResult = useCallback(() => setDialogHeight?.("fit"), [setDialogHeight]);
 
   const {
     success,

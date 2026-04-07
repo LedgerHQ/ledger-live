@@ -5,14 +5,14 @@ import { HistoryExportDialogView } from "./HistoryExportDialogView";
 
 function HistoryExportDialogContent({
   setDialogHeight,
-}: Readonly<{ setDialogHeight: (h: "fixed" | "hug") => void }>) {
+}: Readonly<{ setDialogHeight: (h: "fixed" | "fit") => void }>) {
   const vm = useHistoryExportDialogViewModel({ setDialogHeight });
   return <HistoryExportDialogView {...vm} />;
 }
 
 export function HistoryExportDialog({ children }: Readonly<{ children: React.ReactNode }>) {
   const [open, setOpen] = useState(false);
-  const [dialogHeight, setDialogHeight] = useState<"fixed" | "hug">("fixed");
+  const [dialogHeight, setDialogHeight] = useState<"fixed" | "fit">("fixed");
 
   const handleOpenChange = useCallback((next: boolean) => {
     setOpen(next);
