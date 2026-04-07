@@ -1,4 +1,6 @@
 export * from "./hooks";
+export { initDmk, getDeviceManagementKit, resetDmk } from "./config/dmkInstance";
+export type { DmkInitParams } from "./config/dmkInstance";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";

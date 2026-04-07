@@ -32,6 +32,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
@@ -42,7 +43,6 @@
     "xstate": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/device-management-kit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -58,7 +58,6 @@
     "ws": "catalog:"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "catalog:",
     "react": "catalog:",
     "rxjs": "catalog:"
   },
