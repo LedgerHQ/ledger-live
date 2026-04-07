@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.1.0-next.2
+
+### Minor Changes
+
+- [#16075](https://github.com/LedgerHQ/ledger-live/pull/16075) [`403587e`](https://github.com/LedgerHQ/ledger-live/commit/403587ebbb527ae81e325651b40d4a3dcf0b3a39) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - revert: PR 15542 from LIVE-25288 reverted
+
 ## 4.1.0-next.1
 
 ### Minor Changes
