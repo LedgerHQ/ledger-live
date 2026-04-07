@@ -14,6 +14,7 @@ export type Wallet40Params = {
   readonly onboardingWidget?: boolean;
   readonly brazePlacement?: boolean;
   readonly operationsList?: boolean;
+  readonly aggregatedAssets?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -51,4 +52,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayBrazePlacement: boolean;
   /** Whether to show the TX History section */
   readonly shouldDisplayOperationsList: boolean;
+  /** Whether to show the aggregated assets */
+  readonly shouldDisplayAggregatedAssets: boolean;
 }
