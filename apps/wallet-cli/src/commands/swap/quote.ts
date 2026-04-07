@@ -1,20 +1,14 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { BigNumber } from "bignumber.js";
-import { fetchQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/fetchQuotes";
+import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/getQuotes";
 import {
+  findCryptoCurrencyById,
   findCryptoCurrencyByTicker,
-  formatCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
-import type {
-  RawQuote,
-  RawQuoteNetworkFees,
-  RawQuotePayoutNetworkFees,
-} from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
+import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import { spinner, colors, writeStdout } from "../../shared/ui";
 import { makeEnvelope, makeErrorEnvelope } from "../../shared/response";
 import { HumanFormatter } from "../../wallet/formatter";
-import { getEnv } from "@ledgerhq/live-env";
 import { OutputFormatSchema } from "../../wallet/models";
 
 const DEFAULT_PROVIDERS = ["changelly_v2", "oneinch", "paraswap", "exodus", "swapsxyz"];
@@ -63,22 +57,18 @@ export default defineCommand({
     const spin = isHuman ? spinner("Fetching swap quotes…") : null;
 
     try {
-      const SWAP_API_BASE = getEnv("SWAP_API_BASE");
-      const result = await fetchQuotes(
-        {
-          providers: DEFAULT_PROVIDERS,
-          data: {
-            amount: flags.amount,
-            counterValueCurrency: "USD",
-            uniswapOrderType: "classic",
-            sendCurrencyId: fromId,
-            receiveCurrencyId: toId,
-            sendAddress: flags["from-account"],
-            receiveAddress: flags["to-account"],
-          },
+      const result = await getQuotes({
+        providers: DEFAULT_PROVIDERS,
+        data: {
+          amount: flags.amount,
+          counterValueCurrency: "USD",
+          uniswapOrderType: "classic",
+          sendCurrencyId: fromId,
+          receiveCurrencyId: toId,
+          sendAddress: flags["from-account"],
+          receiveAddress: flags["to-account"],
         },
-        SWAP_API_BASE,
-      );
+      });
 
       if (result.quotes.length === 0 && result.errors.length > 0) {
         if (isHuman) {
@@ -127,35 +117,29 @@ function tickerToId(ticker: string): string {
   return currency.id;
 }
 
-function formatFeeValue(fee: RawQuoteNetworkFees | RawQuotePayoutNetworkFees): string | null {
-  if (fee.value == null) {
-    return null;
+/** Normalized quotes expose network fee currency + gas limit, not raw fee amounts. */
+function formatNetworkFeesDisplay(
+  networkFees: Quote["quoteDetails"]["networkFees"],
+): string | null {
+  const cur = findCryptoCurrencyById(networkFees.currencyId);
+  const label = cur?.ticker ?? networkFees.currencyId;
+  if (networkFees.gasLimit) {
+    return `gas ${networkFees.gasLimit} (${label})`;
   }
-  const currency = findCryptoCurrencyByTicker(fee.currency);
-  if (!currency) {
-    return `${fee.value} ${fee.currency}`;
-  }
-  const unit = currency.units[0];
-  return formatCurrencyUnit(unit, new BigNumber(fee.value), { showCode: true });
+  return label;
 }
 
-function mapQuoteOutput(
-  quote: RawQuote,
-  from: string,
-  to: string,
-  amountFrom: string,
-): QuoteOutput {
-  const networkFee = formatFeeValue(quote.networkFees);
-  const providerFee = quote.payoutNetworkFees ? formatFeeValue(quote.payoutNetworkFees) : null;
+function mapQuoteOutput(quote: Quote, from: string, to: string, amountFrom: string): QuoteOutput {
+  const { quoteDetails } = quote;
 
   return {
-    quoteId: quote.quoteId ?? null,
+    quoteId: quote.id ?? null,
     from,
     to,
-    rate: quote.exchangeRate,
-    providerFee,
-    networkFee,
-    receiveAmount: quote.amountTo,
+    rate: quoteDetails.exchangeRate,
+    providerFee: null,
+    networkFee: formatNetworkFeesDisplay(quoteDetails.networkFees),
+    receiveAmount: quoteDetails.receiveAmount,
     provider: quote.provider,
     amountFrom,
   };
