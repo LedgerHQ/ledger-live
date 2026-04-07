@@ -84,7 +84,7 @@ export class Application {
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private earnDashboardPageInstance = lazyInit(EarnDashboardPage);
-  private earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
+  private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
   @Step("Account initialization")

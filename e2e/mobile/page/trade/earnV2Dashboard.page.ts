@@ -56,7 +56,7 @@ export default class EarnV2DashboardPage {
     await waitWebElementByTestId(this.rewardsSummary);
   }
 
-  private depositRowXPath = (identifier: string) =>
+  private readonly depositRowXPath = (identifier: string) =>
     `//*[starts-with(@data-testid, "deposit-row-") and .//*[contains(text(), "${identifier}")]]`;
 
   @Step("Verify position row present for $0")

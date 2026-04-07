@@ -112,8 +112,7 @@ export async function runHotStartTest(account: Account, tmsLinks: string[], tags
       await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
       await app.earnV2Dashboard.verifyManageDrawerOptions(["Manage", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Manage");
-      await waitForElementById("account-screen-scrollView");
-      await waitForElementByText(account.accountName, undefined, { checkVisibility: false });
+      await app.account.waitForAccountScreenLoaded(account.accountName);
     });
   });
 }
