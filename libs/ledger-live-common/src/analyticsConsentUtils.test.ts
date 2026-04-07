@@ -27,40 +27,38 @@ describe("analyticsConsentUtils", () => {
   });
 
   describe("needsConsentRenewal", () => {
+    const NOW_MS = 2_000_000_000_000;
+
     it("returns true when consent date is null", () => {
       expect(needsConsentRenewal(null, 1_000_000_000_000)).toBe(true);
     });
 
     it("returns false for any past consent date when renewal interval is disabled (default)", () => {
-      const now = 2_000_000_000_000;
-      const iso = new Date(now - YEAR_MS * 10).toISOString();
-      expect(needsConsentRenewal(iso, now)).toBe(false);
+      const iso = new Date(NOW_MS - YEAR_MS * 10).toISOString();
+      expect(needsConsentRenewal(iso, NOW_MS)).toBe(false);
     });
 
     it("returns false within one year when interval is one year in ms", () => {
-      const now = 2_000_000_000_000;
-      const iso = new Date(now - YEAR_MS + 1000).toISOString();
-      expect(needsConsentRenewal(iso, now, YEAR_MS)).toBe(false);
+      const iso = new Date(NOW_MS - YEAR_MS + 1000).toISOString();
+      expect(needsConsentRenewal(iso, NOW_MS, YEAR_MS)).toBe(false);
     });
 
     it("returns true after one year when interval is one year in ms", () => {
-      const now = 2_000_000_000_000;
-      const iso = new Date(now - YEAR_MS - 1000).toISOString();
-      expect(needsConsentRenewal(iso, now, YEAR_MS)).toBe(true);
+      const iso = new Date(NOW_MS - YEAR_MS - 1000).toISOString();
+      expect(needsConsentRenewal(iso, NOW_MS, YEAR_MS)).toBe(true);
     });
 
     it("returns false for old consent when interval is null", () => {
-      const now = 2_000_000_000_000;
-      const iso = new Date(now - YEAR_MS - 1000).toISOString();
-      expect(needsConsentRenewal(iso, now, null)).toBe(false);
+      const iso = new Date(NOW_MS - YEAR_MS - 1000).toISOString();
+      expect(needsConsentRenewal(iso, NOW_MS, null)).toBe(false);
     });
 
     it("returns true when consent date is empty string", () => {
-      expect(needsConsentRenewal("", 2_000_000_000_000)).toBe(true);
+      expect(needsConsentRenewal("", NOW_MS)).toBe(true);
     });
 
     it("returns true when consent date is invalid ISO", () => {
-      expect(needsConsentRenewal("not-a-date", 2_000_000_000_000)).toBe(true);
+      expect(needsConsentRenewal("not-a-date", NOW_MS)).toBe(true);
     });
   });
 
