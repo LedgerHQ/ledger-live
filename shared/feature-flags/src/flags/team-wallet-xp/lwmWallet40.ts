@@ -15,6 +15,8 @@ export const lwmWallet40 = flagWith(
     newReceiveDialog: z.boolean().optional(),
     operationsList: z.boolean(),
     aggregatedAssets: z.boolean(),
+    quickActionsCtasVariant: z.boolean().optional(),
+    brazePlacement: z.boolean().optional(),
   },
   {
     enabled: false,

@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { State } from "~/reducers/types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import { Feature_LwmWallet40 } from "@ledgerhq/types-live";
+import { withFlagOverrides } from "@tests/test-renderer";
 
 function makeMockSettings({
   modelId,
@@ -44,28 +44,28 @@ export function makeOverrideInitialState(args: {
   hasCompletedOnboarding: boolean;
   wired: boolean;
   hasConnectedDevice: boolean;
-  lwmWallet40?: { enabled: boolean; params: Partial<Feature_LwmWallet40["params"]> };
+  lwmWallet40?: Parameters<typeof withFlagOverrides>[0]["lwmWallet40"];
 }) {
-  return (state: State): State => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      ...makeMockSettings({
-        modelId: args.deviceModelId,
-        version: args.version,
-        hasCompletedOnboarding: args.hasCompletedOnboarding,
-        wired: args.wired,
-      }),
-      ...(args.lwmWallet40 !== undefined && {
-        overriddenFeatureFlags: {
-          ...state.settings.overriddenFeatureFlags,
-          lwmWallet40: { enabled: args.lwmWallet40.enabled, params: args.lwmWallet40.params },
-        },
-      }),
-    },
-    appstate: {
-      ...state.appstate,
-      hasConnectedDevice: args.hasConnectedDevice,
-    },
-  });
+  return (state: State): State => {
+    let result: State = {
+      ...state,
+      settings: {
+        ...state.settings,
+        ...makeMockSettings({
+          modelId: args.deviceModelId,
+          version: args.version,
+          hasCompletedOnboarding: args.hasCompletedOnboarding,
+          wired: args.wired,
+        }),
+      },
+      appstate: {
+        ...state.appstate,
+        hasConnectedDevice: args.hasConnectedDevice,
+      },
+    };
+    if (args.lwmWallet40 !== undefined) {
+      result = withFlagOverrides({ lwmWallet40: args.lwmWallet40 })(result);
+    }
+    return result;
+  };
 }

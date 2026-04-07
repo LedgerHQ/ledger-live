@@ -1,4 +1,4 @@
-import { renderHook, act } from "@tests/test-renderer";
+import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
 import { useFirstStepSyncOnboardingViewModel } from "./useFirstStepSyncOnboardingViewModel";
 import {
   FirstStepCompanionStepKey,
@@ -103,16 +103,9 @@ const withProtectServicesMobile =
     enabled: boolean,
     params: { protectId?: string } & Record<string, unknown> = {},
   ): ((state: State) => State) =>
-  (state: State) => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
-      },
-    },
-  });
+    withFlagOverrides({
+      protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
+    });
 
 describe("useFirstStepSyncOnboardingViewModel", () => {
   const device = {

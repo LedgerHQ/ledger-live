@@ -1,3 +1,4 @@
+import { withFlagOverrides } from "@tests/test-renderer";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 import { State } from "~/reducers/types";
 
@@ -26,7 +27,6 @@ export function withConsentDrawerOpeningFresh(options: ConsentDrawerTestOptions 
 
 /**
  * Redux preloaded state for analytics consent drawer tests.
- * Feature flag `analyticsOptIn` is bridged from `settings.overriddenFeatureFlags` by test-renderer createStore.
  */
 
 export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
@@ -39,21 +39,18 @@ export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
     personalizedRecommendationsEnabled = true,
   } = options;
 
-  return (state: State): State => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      hasCompletedOnboarding,
-      analyticsEnabled,
-      personalizedRecommendationsEnabled,
-      analyticsConsentInfo: {
-        consentDate,
-        privacyPolicyVersion,
+  return (state: State): State =>
+    withFlagOverrides({ analyticsOptIn: { enabled: analyticsOptInEnabled } })({
+      ...state,
+      settings: {
+        ...state.settings,
+        hasCompletedOnboarding,
+        analyticsEnabled,
+        personalizedRecommendationsEnabled,
+        analyticsConsentInfo: {
+          consentDate,
+          privacyPolicyVersion,
+        },
       },
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        analyticsOptIn: { enabled: analyticsOptInEnabled },
-      },
-    },
-  });
+    });
 }

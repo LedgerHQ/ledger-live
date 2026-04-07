@@ -1,90 +1,75 @@
-import { renderHook } from "@tests/test-renderer";
-import { State } from "~/reducers/types";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useEntryPoint } from "./useEntryPoint";
 import { EntryPoint } from "../types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { State } from "~/reducers/types";
 
-const entryPointsVisibleState = (state: State) => ({
-  ...state,
-  settings: {
-    ...state.settings,
-    readOnlyModeEnabled: false,
-    overriddenFeatureFlags: {
-      llmWalletSync: {
-        enabled: true,
-        params: {
-          environment: "STAGING",
-          watchConfig: {},
-        },
-      },
-      llmLedgerSyncEntryPoints: {
-        enabled: true,
-        params: {
-          manager: false,
-          accounts: true,
-          settings: true,
-          postOnboarding: true,
-        },
+const entryPointsVisibleState = withFlagOverrides(
+  {
+    llmWalletSync: {
+      enabled: true,
+      params: {
+        environment: "STAGING",
+        watchConfig: {},
       },
     },
-    seenDevices: [
-      {
-        modelId: DeviceModelId.stax,
-      } as DeviceModelInfo,
-    ],
+    llmLedgerSyncEntryPoints: {
+      enabled: true,
+      params: {
+        manager: false,
+        accounts: true,
+        settings: true,
+        postOnboarding: true,
+      },
+    },
   },
-  trustchain: {
-    trustchain: null,
-    memberCredentials: null,
-  },
-});
+  state => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      readOnlyModeEnabled: false,
+      seenDevices: [
+        {
+          modelId: DeviceModelId.stax,
+        } as DeviceModelInfo,
+      ],
+    },
+    trustchain: {
+      trustchain: null,
+      memberCredentials: null,
+    },
+  }),
+);
 
 describe("useEntryPoint", () => {
   it("shouldDisplayEntryPoint should be false when llmWalletSync ff is disabled", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
-      overrideInitialState: (state: State) => {
-        const newState = entryPointsVisibleState(state);
-        return {
-          ...newState,
-          settings: {
-            ...newState.settings,
-            overriddenFeatureFlags: {
-              llmWalletSync: {
-                enabled: false,
-              },
-            },
-          },
-        };
-      },
+      overrideInitialState: withFlagOverrides(
+        { llmWalletSync: { enabled: false } },
+        s => entryPointsVisibleState(s),
+      ),
     });
 
     expect(result.current.shouldDisplayEntryPoint).toBe(false);
   });
 
-  it("shouldDisplayEntryPoint should be false when llmLedgerSyncEntryPoints ff is disabled", async () => {
+  it("shouldDisplayEntryPoint should be false when the postOnboarding entry point is disabled in llmLedgerSyncEntryPoints ff params", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.postOnboarding), {
-      overrideInitialState: (state: State) => {
-        const newState = entryPointsVisibleState(state);
-        return {
-          ...newState,
-          settings: {
-            ...newState.settings,
-            overriddenFeatureFlags: {
-              ...newState.settings.overriddenFeatureFlags,
-              llmLedgerSyncEntryPoints: {
-                enabled: true,
-                params: {
-                  manager: true,
-                  accounts: true,
-                  settings: true,
-                  postOnboarding: false,
-                },
-              },
+      overrideInitialState: withFlagOverrides(
+        {
+          llmLedgerSyncEntryPoints: {
+            enabled: true,
+            params: {
+              manager: true,
+              accounts: true,
+              settings: true,
+              postOnboarding: false,
             },
           },
-        };
-      },
+        },
+        s => entryPointsVisibleState(s),
+      ),
     });
 
     expect(result.current.shouldDisplayEntryPoint).toBe(false);
@@ -108,20 +93,10 @@ describe("useEntryPoint", () => {
 
   it("shouldDisplayEntryPoint should be false when the entry point has been individually disabled in the ff params", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.postOnboarding), {
-      overrideInitialState: (state: State) => {
-        const newState = entryPointsVisibleState(state);
-        return {
-          ...newState,
-          settings: {
-            ...newState.settings,
-            overriddenFeatureFlags: {
-              llmWalletSync: {
-                enabled: false,
-              },
-            },
-          },
-        };
-      },
+      overrideInitialState: withFlagOverrides(
+        { llmWalletSync: { enabled: false } },
+        s => entryPointsVisibleState(s),
+      ),
     });
 
     expect(result.current.shouldDisplayEntryPoint).toBe(false);

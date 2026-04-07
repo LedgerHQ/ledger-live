@@ -1,8 +1,7 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { usePortfolioBalanceSectionViewModel } from "../usePortfolioBalanceSectionViewModel";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
-import type { State } from "~/reducers/types";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 jest.mock("../usePersistedPortfolioBalance", () => ({
@@ -55,15 +54,7 @@ function makeReturn(
 const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
 const withFreezeFlag = {
-  overrideInitialState: (state: State): State => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-      },
-    },
-  }),
+  overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } } }),
 };
 
 describe("usePortfolioBalanceSectionViewModel", () => {

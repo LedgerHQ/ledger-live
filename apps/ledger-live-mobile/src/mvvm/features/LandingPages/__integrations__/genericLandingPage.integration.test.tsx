@@ -54,7 +54,10 @@ describe("GenericLandingPage", () => {
           settings: {
             ...state.settings,
             readOnlyModeEnabled: false,
-            overriddenFeatureFlags: {
+          },
+          featureFlags: {
+            ...state.featureFlags,
+            overrides: {
               flexibleContentCards: {
                 enabled: true,
               },

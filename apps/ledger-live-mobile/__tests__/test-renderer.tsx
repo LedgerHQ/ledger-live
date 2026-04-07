@@ -46,7 +46,8 @@ import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
 import { INITIAL_STATE as PORTFOLIO_REFRESH_INITIAL_STATE } from "~/reducers/portfolioRefresh";
 import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/deeplinkInstallApp";
-import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
@@ -102,19 +103,6 @@ type WrapperProps = { children?: NavigationChildren };
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
   const state = overrideInitialState(INITIAL_STATE);
 
-  // Bridge: mirror legacy settings overrides into the new featureFlags slice
-  // so tests that set state.settings.overriddenFeatureFlags still work with
-  // the selector proxies that now read from state.featureFlags.overrides.
-  const legacyOverrides = state.settings.overriddenFeatureFlags;
-  if (legacyOverrides) {
-    const filteredOverrides = Object.fromEntries(
-      Object.entries(legacyOverrides).filter(([, value]) => value !== undefined),
-    );
-    if (Object.keys(filteredOverrides).length > 0) {
-      state.featureFlags = { ...state.featureFlags, overrides: filteredOverrides };
-    }
-  }
-
   return configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
@@ -134,6 +122,54 @@ export function withReadOnlyDisabled(state: State): State {
   return {
     ...state,
     settings: { ...state.settings, readOnlyModeEnabled: false },
+  };
+}
+
+type LooseFlagOverrides = {
+  [K in FeatureId]?: {
+    enabled?: boolean;
+    params?: Features[K] extends { params?: infer P } ? Partial<NonNullable<P>> : never;
+  };
+};
+
+/**
+ * Returns a state transformer that applies partial feature flag overrides,
+ * merging with FEATURE_FLAGS_DEFAULTS to satisfy the strict PartialFeatures type.
+ *
+ * @example
+ * renderHook(hook, { overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { mainNavigation: true } } }) })
+ */
+export function withFlagOverrides(
+  flags: LooseFlagOverrides,
+  baseTransform?: (state: State) => State,
+): (state: State) => State {
+  return (state: State): State => {
+    const base = baseTransform ? baseTransform(state) : state;
+    const merged: Record<string, Feature> = {};
+    for (const key of Object.keys(flags) as FeatureId[]) {
+      const override = flags[key];
+      const def = FEATURE_FLAGS_DEFAULTS[key] ?? { enabled: false };
+      merged[key] = {
+        ...def,
+        ...(override?.enabled !== undefined && { enabled: override.enabled }),
+        ...(override?.params !== undefined && {
+          params: {
+            ...(def as Record<string, unknown>)["params"] as Record<string, unknown> | undefined,
+            ...override.params,
+          },
+        }),
+      };
+    }
+    return {
+      ...base,
+      featureFlags: {
+        ...base.featureFlags,
+        overrides: {
+          ...base.featureFlags.overrides,
+          ...(merged as unknown as PartialFeatures),
+        },
+      },
+    };
   };
 }
 
@@ -343,4 +379,5 @@ export {
   customRender as render,
   customRenderHook as renderHook,
   renderWithReactQuery,
+  withFlagOverrides,
 };

@@ -7,7 +7,7 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { screen, render, waitFor } from "@tests/test-renderer";
+import { screen, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import coinConfig from "@ledgerhq/coin-canton/config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -84,10 +84,10 @@ function overrideInitialStateSkipPreapproval(state: State): State {
   const withDevice = overrideInitialStateWithDevice(state);
   return {
     ...withDevice,
-    settings: {
-      ...withDevice.settings,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
+    featureFlags: {
+      ...withDevice.featureFlags,
+      overrides: {
+        ...withDevice.featureFlags.overrides,
         cantonSkipPreapprovalStep: { enabled: true },
       },
     },

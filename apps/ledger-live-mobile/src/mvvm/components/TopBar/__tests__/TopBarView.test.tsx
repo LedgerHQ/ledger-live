@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { renderWithReactQuery } from "@tests/test-renderer";
+import { renderWithReactQuery, withFlagOverrides } from "@tests/test-renderer";
 import { TopBarView } from "../TopBarView/index";
 
 jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
@@ -59,13 +59,7 @@ describe("TopBarView", () => {
 
   it("should call expected callbacks when top bar buttons are pressed", async () => {
     const { user, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />, {
-      overrideInitialState: state => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: { lwmWallet40: { enabled: true, params: { operationsList: true } } },
-        },
-      }),
+      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { operationsList: true } } }),
     });
 
     await user.press(getByTestId("topbar-myledger"));
@@ -83,10 +77,7 @@ describe("TopBarView", () => {
 
   it("should not render transaction history icon when operations list is disabled", () => {
     const { queryByTestId, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />, {
-      overrideInitialState: state => ({
-        ...state,
-        settings: { ...state.settings, overriddenFeatureFlags: { lwmWallet40: { enabled: true, params: { operationsList: false } } } },
-      }),
+      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { operationsList: false } } }),
     });
     expect(queryByTestId("topbar-transaction-history")).toBeNull();
     expect(getByTestId("topbar-myledger")).toBeVisible();

@@ -7,9 +7,9 @@ describe("useSupportedLocales", () => {
     const { result } = renderHook(() => useSupportedLocales(), {
       overrideInitialState: (state: State) => ({
         ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: {
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: {
             llmThai: {
               enabled: false,
             },
@@ -25,9 +25,9 @@ describe("useSupportedLocales", () => {
     const { result } = renderHook(() => useSupportedLocales(), {
       overrideInitialState: (state: State) => ({
         ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: {
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: {
             llmThai: {
               enabled: true,
             },

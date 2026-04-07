@@ -5,8 +5,6 @@ import type {
   Account,
   DeviceInfo,
   DeviceModelInfo,
-  Feature,
-  FeatureId,
 } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
@@ -297,9 +295,6 @@ export enum SettingsActionTypes {
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
-  SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
-  SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
-  SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   /* NB: Protect is the former codename for Ledger Recover */
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
@@ -382,13 +377,6 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type DangerouslyOverrideStatePayload = Partial<State>;
-export type SettingsSetOverriddenFeatureFlagPlayload = {
-  id: FeatureId;
-  value: Feature | undefined;
-};
-export type SettingsSetOverriddenFeatureFlagsPlayload = SettingsState["overriddenFeatureFlags"];
-export type SettingsSetFeatureFlagsBannerVisiblePayload =
-  SettingsState["featureFlagsBannerVisible"];
 export type SettingsSetDebugAppLevelDrawerOpenedPayload =
   SettingsState["debugAppLevelDrawerOpened"];
 
@@ -456,9 +444,6 @@ export type SettingsPayload =
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload
-  | SettingsSetOverriddenFeatureFlagPlayload
-  | SettingsSetOverriddenFeatureFlagsPlayload
-  | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
   | SettingsIsOnboardingFlowPayload
   | SettingsIsOnboardingFlowReceiveSuccessPayload

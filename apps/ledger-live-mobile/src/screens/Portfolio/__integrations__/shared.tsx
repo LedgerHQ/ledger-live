@@ -153,7 +153,10 @@ export const INITIAL_STATE = {
     settings: {
       ...state.settings,
       readOnlyModeEnabled: false,
-      overriddenFeatureFlags: {
+    },
+    featureFlags: {
+      ...state.featureFlags,
+      overrides: {
         llmAccountListUI: {
           enabled: true,
         },
