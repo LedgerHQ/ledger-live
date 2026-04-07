@@ -2,8 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runPartnerDappPositionTest } from "./earnV2";
 
 const testConfig = {
-  // Use an ETH account that already has an existing Lido staking position
-  // (synced via liveData) so the position row is rendered on the hot-start page.
   account: Account.ETH_1,
   // Tapping "Manage" opens ledgerlive://discover/lido which routes internally
   // to the PlatformApp screen and loads the Lido dapp webview.

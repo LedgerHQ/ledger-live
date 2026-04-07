@@ -113,7 +113,6 @@ export async function runHotStartTest(account: Account, tmsLinks: string[], tags
       await app.earnV2Dashboard.verifyManageDrawerOptions(["Manage", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Manage");
       await waitForElementById("account-screen-scrollView");
-      // checkVisibility:false avoids Detox sync timeouts caused by the active webview.
       await waitForElementByText(account.accountName, undefined, { checkVisibility: false });
     });
   });
