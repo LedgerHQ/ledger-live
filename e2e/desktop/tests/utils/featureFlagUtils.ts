@@ -22,6 +22,7 @@ export const LWD_WALLET_40_FF_ENABLED: OptionalFeatureMap = {
       graphRework: true,
       quickActionCtas: true,
       mainNavigation: true,
+      assetSection: true,
     },
   },
 };
