@@ -10,6 +10,8 @@ describe("pathnameToActive", () => {
     { pathname: SIDEBAR_VALUE_TO_PATH.swap, expected: "swap" },
     { pathname: "/swap/form", expected: "swap" },
     { pathname: SIDEBAR_VALUE_TO_PATH.earn, expected: "earn" },
+    { pathname: SIDEBAR_VALUE_TO_PATH.borrow, expected: "borrow" },
+    { pathname: "/borrow/extra", expected: "borrow" },
     { pathname: SIDEBAR_VALUE_TO_PATH.discover, expected: "discover" },
     { pathname: "/platform/some-app", expected: "discover" },
     { pathname: SIDEBAR_VALUE_TO_PATH.card, expected: "card" },

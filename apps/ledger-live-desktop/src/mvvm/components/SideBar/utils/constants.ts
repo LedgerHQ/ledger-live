@@ -7,6 +7,7 @@ export const SIDEBAR_VALUE_TO_PATH = {
   cryptos: "/cryptos",
   swap: "/swap",
   earn: "/earn",
+  borrow: "/borrow",
   discover: "/platform",
   card: "/card-new-wallet",
 } as const;
@@ -29,6 +30,7 @@ export const SIDEBAR_VALUE_TO_TRACK_ENTRY: Record<SideBarNavValue, string> = {
   cryptos: "cryptos",
   swap: "swap",
   earn: "earn",
+  borrow: "borrow",
   discover: "platform",
   card: "card",
 } as const;

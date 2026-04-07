@@ -7,6 +7,7 @@ import {
   AddAccountRoute,
   BuyRoute,
   EarnRoute,
+  BorrowRoute,
   ManagerRoute,
   SwapRoute,
   BridgeRoute,
@@ -133,6 +134,15 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
         path,
         cryptoAssetId: query.cryptoAssetId,
         accountId: query.accountId,
+        search,
+      };
+      return route;
+    }
+
+    case "borrow": {
+      const route: BorrowRoute = {
+        type: "borrow",
+        path,
         search,
       };
       return route;

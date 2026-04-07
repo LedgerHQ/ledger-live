@@ -162,6 +162,17 @@ describe("SideBar", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/earn");
     });
 
+    it("should navigate to borrow when clicking Borrow item", async () => {
+      const { user } = renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({ ptxBorrowLiveApp: { enabled: true } }),
+      );
+
+      await user.click(screen.getByText("Borrow"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/borrow");
+    });
+
     it("should navigate to discover when clicking Discover item", async () => {
       const { user } = renderSideBarWithRoute("/");
 
@@ -220,6 +231,16 @@ describe("SideBar", () => {
 
       const swapButton = screen.getByText("Swap").closest("button");
       expect(swapButton).toHaveAttribute("aria-current", "page");
+    });
+
+    it("should set borrow as active when on borrow path", () => {
+      renderSideBarWithRoute(
+        "/borrow",
+        withFeatureFlags({ ptxBorrowLiveApp: { enabled: true } }),
+      );
+
+      const borrowButton = screen.getByText("Borrow").closest("button");
+      expect(borrowButton).toHaveAttribute("aria-current", "page");
     });
 
     it("should not set home as active when on asset sub-path", () => {
