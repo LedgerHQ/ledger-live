@@ -1,5 +1,10 @@
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
+import { getValidators as getStakingValidators } from "../staking/validators";
+
+jest.mock("../staking/validators", () => ({
+  getValidators: jest.fn(),
+}));
 
 describe.each([
   [
@@ -64,6 +69,35 @@ describe("staking support capability", () => {
     );
     expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm")).toMatchObject({
       stakingSupported: true,
+    });
+  });
+
+  it("exposes validators through the api when staking validators are available", async () => {
+    const mockGetStakingValidators = jest.mocked(getStakingValidators);
+    mockGetStakingValidators.mockResolvedValue([
+      {
+        validatorAddress: "seivaloper1validator",
+        name: "Validator One",
+        votingPower: 12,
+        commission: 0.05,
+        estimatedYearlyRewardsRate: 0.11,
+        tokens: 1234,
+      },
+    ]);
+
+    const api = createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm");
+
+    await expect(api.getValidators()).resolves.toEqual({
+      items: [
+        {
+          address: "seivaloper1validator",
+          name: "Validator One",
+          balance: 1234n,
+          commissionRate: "0.05",
+          apy: 0.11,
+        },
+      ],
+      next: undefined,
     });
   });
 });
