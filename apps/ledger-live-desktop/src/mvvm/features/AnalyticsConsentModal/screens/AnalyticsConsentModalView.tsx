@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
@@ -12,9 +12,6 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
 import type { AnalyticsConsentModalPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 import { ConsentFooter } from "../components/ConsentFooter";
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
@@ -23,6 +20,10 @@ import { PrivacyDescription } from "../components/PrivacyDescription";
 export type AnalyticsConsentModalViewProps = Readonly<{
   phase: AnalyticsConsentModalPhase;
   isModalOpen: boolean;
+  title: string;
+  descriptionLead: string | null;
+  privacyPolicyUrl: string;
+  onOpenPrivacyPolicy: () => void;
   applyOptIn: () => void;
   applyOptOut: () => void;
   onPrivacyGotIt: () => void;
@@ -32,6 +33,10 @@ export type AnalyticsConsentModalViewProps = Readonly<{
 export function AnalyticsConsentModalView({
   phase,
   isModalOpen,
+  title,
+  descriptionLead,
+  privacyPolicyUrl,
+  onOpenPrivacyPolicy,
   applyOptIn,
   applyOptOut,
   onPrivacyGotIt,
@@ -39,7 +44,6 @@ export function AnalyticsConsentModalView({
 }: AnalyticsConsentModalViewProps) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
 
   /** Light: black @ 30%; dark: white @ 30% — matches react-ui palettes (see shared/palettes). */
   const sheetSurfaceStyle = useMemo(
@@ -50,22 +54,6 @@ export function AnalyticsConsentModalView({
     }),
     [theme.colors.opacityDefault.c30],
   );
-
-  const openPrivacyPolicy = useCallback(() => {
-    openURL(privacyPolicyUrl);
-  }, [privacyPolicyUrl]);
-
-  const title = (() => {
-    if (phase === "consentReconfirm") return t("analyticsConsentModal.reconfirm.title");
-    if (phase === "privacy") return t("analyticsConsentModal.privacy.title");
-    return t("analyticsConsentModal.fresh.title");
-  })();
-
-  const descriptionLead = (() => {
-    if (phase === "consentReconfirm") return t("analyticsConsentModal.reconfirm.description");
-    if (phase === "privacy") return null;
-    return t("analyticsConsentModal.fresh.description");
-  })();
 
   if (!isModalOpen) {
     return null;
@@ -104,7 +92,7 @@ export function AnalyticsConsentModalView({
               {phase === "privacy" ? (
                 <PrivacyDescription
                   privacyPolicyUrl={privacyPolicyUrl}
-                  onOpenPrivacyPolicy={openPrivacyPolicy}
+                  onOpenPrivacyPolicy={onOpenPrivacyPolicy}
                 />
               ) : (
                 descriptionLead != null && (
@@ -139,7 +127,7 @@ export function AnalyticsConsentModalView({
         </DialogFooter>
         {phase !== "privacy" && (
           <div className="shrink-0 px-24 pt-16">
-            <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={openPrivacyPolicy} />
+            <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={onOpenPrivacyPolicy} />
           </div>
         )}
       </DialogContent>
