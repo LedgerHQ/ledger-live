@@ -6,7 +6,8 @@ import { CryptoAssetsView } from "./CryptoAssetsView";
 import useCryptoAssetsViewModel from "./hooks/useCryptoAssetsViewModel";
 
 export default function CryptoAssets() {
-  const { items, title, isLoading, onAssetRowClick, onBack } = useCryptoAssetsViewModel();
+  const { items, title, isLoading, onAssetRowClick, onBack, trackingType } =
+    useCryptoAssetsViewModel();
   const table = useTable(items, { showTrendColumnTooltip: false });
 
   const onRowClick = useCallback(
@@ -23,6 +24,7 @@ export default function CryptoAssets() {
       isLoading={isLoading}
       table={table}
       onRowClick={onRowClick}
+      trackingType={trackingType}
     />
   );
 }
