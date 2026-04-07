@@ -4,7 +4,11 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  findSubAccountById,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -47,10 +51,14 @@ export default function CeloFeeRow({ account, parentAccount, transaction }: Prop
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const mainAccount = parentAccount ?? account;
+  const mainAccount = getMainAccount(account, parentAccount);
   const fees = (transaction as CeloTransaction).fees;
-  const unit = useAccountUnit(mainAccount);
-  const currency = getAccountCurrency(mainAccount);
+  const feeCurrencyAccountId = (transaction as CeloTransaction).feeCurrencyAccountId;
+  const feeCurrencyAccount = feeCurrencyAccountId
+    ? findSubAccountById(mainAccount, feeCurrencyAccountId)
+    : null;
+  const unit = useAccountUnit(feeCurrencyAccount ?? mainAccount);
+  const currency = getAccountCurrency(feeCurrencyAccount ?? mainAccount);
 
   return (
     <SummaryRow

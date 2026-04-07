@@ -29,6 +29,10 @@ import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/famil
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
+import type {
+  CeloAccount,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type {
   Transaction as KaspaTransaction,
@@ -205,6 +209,20 @@ export type SwapNavigatorParamList = {
     transaction: TonTransaction;
     currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
     nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
+  };
+  [ScreenName.CeloEditFeeCurrency]: {
+    accountId: string;
+    parentId?: string;
+    account: CeloAccount;
+    transaction: CeloTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
   };
   [ScreenName.SwapCustomError]: {
     error?: SwapLiveError | Error;
