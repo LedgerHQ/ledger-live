@@ -1,7 +1,13 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { commonConfig, rootFolder, outputFolder } from "./rspack.common";
-import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
+import {
+  buildMainEnv,
+  buildDotEnvDefine,
+  DOTENV_FILE,
+  getRsdoctorPlugin,
+  isRsdoctorEnabled,
+} from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron main process
@@ -27,12 +33,13 @@ export function createMainConfig(
         type: "commonjs2",
       },
     },
-    devtool: "source-map",
+    devtool: isRsdoctorEnabled() ? false : "source-map",
     resolve: {
       ...commonConfig.resolve,
       mainFields: ["main", "module"],
     },
     plugins: [
+      ...getRsdoctorPlugin("main"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),
