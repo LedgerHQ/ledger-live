@@ -18,6 +18,7 @@ import {
   Chart5,
   Chart5Fill,
   Compass,
+  Bank,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import React from "react";
@@ -73,6 +74,15 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
               activeIcon={Chart5Fill}
               label={viewModel.earnLabel}
             />
+            <FeatureToggle featureId="ptxBorrowLiveApp">
+              <SideBarItem
+                value="borrow"
+                icon={Bank}
+                activeIcon={Bank}
+                label={t("sidebar.borrow")}
+                disabled={viewModel.noAccounts}
+              />
+            </FeatureToggle>
             <SideBarItem
               value="discover"
               icon={Compass}

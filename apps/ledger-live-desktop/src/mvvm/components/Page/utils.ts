@@ -12,6 +12,7 @@ const WALLET_40_PAGES = new Set([
   "/assets",
   "/earn",
   "/perps",
+  "/borrow",
   "/history",
 ]);
 
