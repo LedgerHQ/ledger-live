@@ -1,6 +1,6 @@
 import { useTranslation } from "~/context/Locale";
-import React, { useCallback } from "react";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import React from "react";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { SharedValue } from "react-native-reanimated";
@@ -8,7 +8,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import type { MainProps } from "LLM/features/Web3Hub/types";
 import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import TextInput from "~/components/TextInput";
-import { NavigatorName, ScreenName } from "~/const";
+import useWeb3HubMainHeaderViewModel from "./useWeb3HubMainHeaderViewModel";
 
 const TITLE_HEIGHT = 50;
 const SEARCH_HEIGHT = 60;
@@ -25,12 +25,7 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
   const { colors } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-
-  const goToSearch = useCallback(() => {
-    navigation.push(NavigatorName.Web3Hub, {
-      screen: ScreenName.Web3HubSearch,
-    });
-  }, [navigation]);
+  const { goToSearch, searchInputProps } = useWeb3HubMainHeaderViewModel(navigation);
 
   return (
     <AnimatedBar
@@ -47,18 +42,18 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
         </Text>
       }
     >
-      <Flex height={SEARCH_HEIGHT} ml={5} flexDirection="row" alignItems="center">
+      <Flex height={SEARCH_HEIGHT} mx={5} flexDirection="row" alignItems="center">
         <TouchableOpacity style={styles.inputContainer} onPress={goToSearch}>
-          <View pointerEvents="none">
-            <TextInput
-              role="searchbox"
-              placeholder={t("web3hub.main.header.placeholder")}
-              keyboardType="default"
-              returnKeyType="done"
-              value=""
-              disabled
-            />
-          </View>
+          <TextInput
+            {...searchInputProps}
+            pointerEvents="none"
+            role="searchbox"
+            placeholder={t("web3hub.main.header.placeholder")}
+            keyboardType="default"
+            returnKeyType="done"
+            value=""
+            disabled
+          />
         </TouchableOpacity>
       </Flex>
     </AnimatedBar>
