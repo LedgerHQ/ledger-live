@@ -1,7 +1,7 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import type { MinaAccount, Transaction, TransactionStatus } from "../types/common";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 
 async function getDeviceTransactionConfig({
   transaction,
