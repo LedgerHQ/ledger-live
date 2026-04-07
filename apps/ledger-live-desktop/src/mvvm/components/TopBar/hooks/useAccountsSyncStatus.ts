@@ -1,10 +1,8 @@
-import { useEffect, useMemo } from "react";
-import { useLocation } from "react-router";
+import { useMemo } from "react";
 import {
   useAccountsSyncStatus as useAccountsSyncStatusCommon,
   type AccountWithUpToDateCheck,
 } from "@ledgerhq/live-common/bridge/react/index";
-import { track } from "~/renderer/analytics/segment";
 
 export type { AccountWithUpToDateCheck };
 
@@ -17,8 +15,6 @@ export interface AccountsSyncStatus {
 export function useAccountsSyncStatus(
   accountsWithUpToDateCheck: AccountWithUpToDateCheck[],
 ): AccountsSyncStatus {
-  const location = useLocation();
-
   const { allAccounts, accountsWithError, areAllAccountsUpToDate } =
     useAccountsSyncStatusCommon(accountsWithUpToDateCheck);
 
@@ -29,12 +25,6 @@ export function useAccountsSyncStatus(
     }
     return [...errorTickersSet].join("/");
   }, [accountsWithError]);
-
-  useEffect(() => {
-    for (const account of accountsWithError) {
-      track("SyncError", { currency: account.currency.ticker, page: location.pathname });
-    }
-  }, [accountsWithError, location.pathname]);
 
   return {
     allAccounts,
