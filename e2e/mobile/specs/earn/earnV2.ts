@@ -28,8 +28,12 @@ const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: s
     add: true,
     appjson: userdataPath,
   });
-  account.address = await CLI.getAddressForAccount(account);
-  return account.address;
+  const address = await CLI.getAddressForAccount(account);
+  account.address = address;
+  if (account.parentAccount) {
+    account.parentAccount.address = address;
+  }
+  return address;
 };
 
 async function navigateToEarn() {
@@ -47,7 +51,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
 
 // --- User States ---
 
-export async function runIceColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
   describe("Earn V2 - Ice cold start", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -68,7 +72,7 @@ export async function runIceColdStartTest(account: Account, tmsLinks: string[], 
   });
 }
 
-export async function runColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
   describe(`Earn V2 - Cold start - ${account.currency.ticker}`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -91,7 +95,7 @@ export async function runColdStartTest(account: Account, tmsLinks: string[], tag
   });
 }
 
-export async function runHotStartTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runHotStartTest(account: Account, tmsLinks: string[], tags: string[]) {
   describe(`Earn V2 - Hot start & Position - ${account.currency.ticker}`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -119,11 +123,7 @@ export async function runHotStartTest(account: Account, tmsLinks: string[], tags
 
 // --- Navigation: CTA Flows ---
 
-export async function runNativeStakingCTATest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNativeStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
   describe(`Earn V2 - CTA -> Native staking (${account.currency.ticker})`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -144,7 +144,7 @@ export async function runNativeStakingCTATest(
   });
 }
 
-export async function runScyStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
   describe(`Earn V2 - CTA -> Earn staking (${account.currency.ticker})`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -167,7 +167,7 @@ export async function runScyStakingCTATest(account: Account, tmsLinks: string[],
 
 // --- Partner Dapp Flows ---
 
-export async function runPartnerDappCTATest(
+export function runPartnerDappCTATest(
   account: Account,
   providerId: string,
   dappUrlSubstring: string,
@@ -196,7 +196,7 @@ export async function runPartnerDappCTATest(
   });
 }
 
-export async function runPartnerDappPositionTest(
+export function runPartnerDappPositionTest(
   account: Account,
   dappUrlSubstring: string,
   tmsLinks: string[],
@@ -228,11 +228,7 @@ export async function runPartnerDappPositionTest(
 
 // --- Position Row Flows ---
 
-export async function runPositionToWithdrawalTest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[], tags: string[]) {
   describe(`Earn V2 - Position -> Withdrawal (${account.currency.ticker}) via manage drawer`, () => {
     beforeAll(async () => {
       await beforeAllFunction({

@@ -61,7 +61,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify position row present for $0")
   async verifyPositionRowPresent(identifier: string) {
-    await detoxExpect(web.element(by.web.xpath(this.depositRowXPath(identifier)))).toExist();
+    await waitWebElement(web.element(by.web.xpath(this.depositRowXPath(identifier))));
   }
 
   @Step("Click position row matching text: $0")
