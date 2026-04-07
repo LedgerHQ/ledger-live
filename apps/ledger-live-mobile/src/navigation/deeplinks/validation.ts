@@ -11,8 +11,6 @@ import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validat
 import { isDatadogEnabled } from "../../datadog";
 import type { OptionMetadata } from "../../reducers/types";
 
-export { validateUrl };
-
 // Maximum allowed lengths for string parameters
 const MAX_MESSAGE_LENGTH = 700;
 const MAX_TITLE_LENGTH = 100;
