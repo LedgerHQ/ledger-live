@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import {
-  CurrentAccountHistDB,
+  SetCurrentAccountHistDb,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
@@ -15,14 +15,14 @@ import { NavigatorName, ScreenName } from "~/const";
 
 export type Params = {
   manifest: AppManifest;
-  currentAccountHistDb: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
   onSelectAccount: () => void;
   onClose: () => void;
 };
 
 export default function useSelectAccountModalViewModel({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
   onSelectAccount,
   onClose,
 }: Params) {
@@ -40,7 +40,7 @@ export default function useSelectAccountModalViewModel({
 
   const { setCurrentAccountHist, setCurrentAccount } = useDappCurrentAccount(
     manifest.id,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   );
 
   const onPressCurrencyItem = useCallback((currency: CryptoCurrency) => {
