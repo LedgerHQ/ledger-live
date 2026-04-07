@@ -57,19 +57,23 @@ export function useAnalyticsConsentDialogViewModel() {
 
   const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
 
-  const title =
-    phase === "consentReconfirm"
-      ? t("analyticsConsentModal.reconfirm.title")
-      : phase === "privacy"
-        ? t("analyticsConsentModal.privacy.title")
-        : t("analyticsConsentModal.fresh.title");
+  let title: string;
+  if (phase === "consentReconfirm") {
+    title = t("analyticsConsentModal.reconfirm.title");
+  } else if (phase === "privacy") {
+    title = t("analyticsConsentModal.privacy.title");
+  } else {
+    title = t("analyticsConsentModal.fresh.title");
+  }
 
-  const descriptionLead =
-    phase === "consentReconfirm"
-      ? t("analyticsConsentModal.reconfirm.description")
-      : phase === "privacy"
-        ? null
-        : t("analyticsConsentModal.fresh.description");
+  let descriptionLead: string | null;
+  if (phase === "consentReconfirm") {
+    descriptionLead = t("analyticsConsentModal.reconfirm.description");
+  } else if (phase === "privacy") {
+    descriptionLead = null;
+  } else {
+    descriptionLead = t("analyticsConsentModal.fresh.description");
+  }
 
   const onOpenPrivacyPolicy = useCallback(() => {
     openURL(privacyPolicyUrl);
