@@ -78,7 +78,10 @@ export function AnalyticsConsentDialogView({
           />
           {phase !== "privacy" && (
             <div className="shrink-0 px-24 pt-16">
-              <ConsentFooter privacyPolicyUrl={privacyPolicyUrl} onOpenPrivacyPolicy={onOpenPrivacyPolicy} />
+              <ConsentFooter
+                privacyPolicyUrl={privacyPolicyUrl}
+                onOpenPrivacyPolicy={onOpenPrivacyPolicy}
+              />
             </div>
           )}
         </div>
