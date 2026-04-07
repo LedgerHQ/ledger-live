@@ -164,15 +164,53 @@ export const safeBigInt = (value: string | number | bigint): bigint => {
   }
 };
 
+export const unwrapProxy = (proxy: unknown): unknown => {
+  if (proxy && typeof proxy === "object" && proxy.constructor.name === "Proxy") {
+    return Object.fromEntries(Object.entries(proxy).map(([k, v]) => [k, unwrapProxy(v)]));
+  }
+  if (Array.isArray(proxy)) return proxy.map(unwrapProxy);
+  return proxy;
+};
+
 export const isSeiDelegation = (candidate: unknown): candidate is SeiDelegation => {
+  // Plain object format: { balance: { amount, denom }, delegation: { delegator_address, validator_address, ... } }
+  if (candidate !== null && typeof candidate === "object" && !Array.isArray(candidate)) {
+    const obj = candidate as Record<string, unknown>;
+    const balance = obj.balance;
+    const delegation = obj.delegation;
+    return (
+      balance !== null &&
+      typeof balance === "object" &&
+      !Array.isArray(balance) &&
+      "amount" in balance &&
+      "denom" in balance &&
+      typeof balance.denom === "string" &&
+      delegation !== null &&
+      typeof delegation === "object" &&
+      !Array.isArray(delegation) &&
+      "delegator_address" in delegation &&
+      "validator_address" in delegation &&
+      typeof delegation.delegator_address === "string" &&
+      typeof delegation.validator_address === "string"
+    );
+  }
+
+  // ABI-decoded tuple format from ethers.js: [[amount, denom], [delegator_address, shares, decimals, validator_address]]
+  if (!Array.isArray(candidate) || candidate.length !== 2) return false;
+
+  const [balance, delegation] = candidate;
+
   return (
-    typeof candidate === "object" &&
-    candidate !== null &&
-    "balance" in candidate &&
-    typeof (candidate as Record<string, unknown>).balance === "object" &&
-    (candidate as Record<string, unknown>).balance !== null &&
-    "amount" in ((candidate as Record<string, unknown>).balance as Record<string, unknown>) &&
-    "denom" in ((candidate as Record<string, unknown>).balance as Record<string, unknown>)
+    Array.isArray(balance) &&
+    balance.length === 2 &&
+    typeof balance[0] === "bigint" && // amount
+    typeof balance[1] === "string" && // denom
+    Array.isArray(delegation) &&
+    delegation.length === 4 &&
+    typeof delegation[0] === "string" && // delegator_address
+    typeof delegation[1] === "bigint" && // shares
+    typeof delegation[2] === "bigint" && // decimals
+    typeof delegation[3] === "string" // validator_address
   );
 };
 
@@ -193,17 +231,23 @@ export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefine
   return undefined;
 };
 
+// usei has 6 decimals, sei_evm native token has 18 → scale factor 10^12
+
 /**
- * Gets amount from SEI delegation with safe conversion
+ * Gets amount from SEI delegation with safe conversion.
+ * Converts usei (6 decimals) to the EVM-native unit (18 decimals) by applying a ×10^12 scale.
  */
 export const getSeiDelegationAmount = (delegation: SeiDelegation | undefined): bigint => {
   if (!delegation) {
     return 0n;
   }
 
-  const amount = delegation.balance.amount;
+  const { amount, denom } = delegation.balance;
   if (typeof amount === "string" || typeof amount === "number" || typeof amount === "bigint") {
-    return safeBigInt(amount);
+    const base = safeBigInt(amount);
+    const USEI_TO_EVM_SCALE = 10n ** 12n;
+
+    return denom === "usei" ? base * USEI_TO_EVM_SCALE : base;
   }
 
   return 0n;

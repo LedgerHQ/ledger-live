@@ -55,6 +55,7 @@ export type StakingResources = {
   delegatedBalance: BigNumber;
   pendingRewardsBalance: BigNumber;
   unbondingBalance: BigNumber;
+  validators?: StakingValidatorItem[];
 };
 
 export type StakingResourcesRaw = {
@@ -64,6 +65,7 @@ export type StakingResourcesRaw = {
   delegatedBalance: string;
   pendingRewardsBalance: string;
   unbondingBalance: string;
+  validators?: StakingValidatorItem[];
 };
 
 export type StakingDelegationInfo = {
@@ -94,6 +96,9 @@ export type StakingContractConfig = {
   apiConfig?: {
     baseUrl: string;
     validatorsEndpoint: string;
+  };
+  explorerConfig?: {
+    validatorUrl: string;
   };
 };
 
@@ -158,11 +163,6 @@ export type StakingValidatorItem = {
   estimatedYearlyRewardsRate: number; // value from 0.0 to 1.0 (normalized percentage)
   tokens: number;
 };
-// by convention preload would return a Promise of StakingPreloadData
-export type StakingPreloadData = {
-  validators: StakingValidatorItem[];
-};
-
 export type StakingLikeNetworkInfo = {
   family: string;
   fees: BigNumber;
