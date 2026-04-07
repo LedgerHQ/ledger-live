@@ -6,13 +6,13 @@ import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
-import type { AnalyticsConsentModalPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
+import type { AnalyticsConsentDialogPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
 import { PrivacyUpdateSheet } from "../components/PrivacyUpdateSheet";
 import { TwoCtaConsentSheet } from "../components/TwoCtaConsentSheet";
 
 export type AnalyticsConsentDrawerViewProps = Readonly<{
-  phase: AnalyticsConsentModalPhase;
+  phase: AnalyticsConsentDialogPhase;
   isDrawerOpen: boolean;
   handleCloseDrawer: () => void;
   onPrivacyGotIt: () => void | Promise<void>;

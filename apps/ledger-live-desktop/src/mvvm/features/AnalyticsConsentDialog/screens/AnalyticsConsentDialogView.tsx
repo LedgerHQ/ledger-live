@@ -12,14 +12,14 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import type { AnalyticsConsentModalPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
+import type { AnalyticsConsentDialogPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 import { ConsentFooter } from "../components/ConsentFooter";
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
 import { PrivacyDescription } from "../components/PrivacyDescription";
 
-export type AnalyticsConsentModalViewProps = Readonly<{
-  phase: AnalyticsConsentModalPhase;
-  isModalOpen: boolean;
+export type AnalyticsConsentDialogViewProps = Readonly<{
+  phase: AnalyticsConsentDialogPhase;
+  isDialogOpen: boolean;
   title: string;
   descriptionLead: string | null;
   privacyPolicyUrl: string;
@@ -30,9 +30,9 @@ export type AnalyticsConsentModalViewProps = Readonly<{
   onSetPreferences: () => void;
 }>;
 
-export function AnalyticsConsentModalView({
+export function AnalyticsConsentDialogView({
   phase,
-  isModalOpen,
+  isDialogOpen,
   title,
   descriptionLead,
   privacyPolicyUrl,
@@ -41,7 +41,7 @@ export function AnalyticsConsentModalView({
   applyOptOut,
   onPrivacyGotIt,
   onSetPreferences,
-}: AnalyticsConsentModalViewProps) {
+}: AnalyticsConsentDialogViewProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -55,14 +55,14 @@ export function AnalyticsConsentModalView({
     [theme.colors.opacityDefault.c30],
   );
 
-  if (!isModalOpen) {
+  if (!isDialogOpen) {
     return null;
   }
 
   return (
-    <Dialog open={isModalOpen}>
+    <Dialog open={isDialogOpen}>
       <DialogContent
-        data-testid="analytics-consent-modal"
+        data-testid="analytics-consent-dialog"
         className="max-w-[480px] bg-canvas-sheet"
         // Radix Content forwards `style`; @ledgerhq/lumen-ui-react types omit it.
         // @ts-expect-error — see above
@@ -74,7 +74,7 @@ export function AnalyticsConsentModalView({
       >
         <TrackPage
           key={phase}
-          category="AnalyticsConsentModal"
+          category="AnalyticsConsentDialog"
           name="Analytics consent"
           type="modal"
           phase={phase}
