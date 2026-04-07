@@ -12,12 +12,7 @@ export default function Navigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-  const stackNavigationConfig = useMemo(
-    () => ({
-      ...getStackNavigationConfigV4(theme, true),
-    }),
-    [theme],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme, false), [theme]);
 
   return (
     <Stack.Navigator
