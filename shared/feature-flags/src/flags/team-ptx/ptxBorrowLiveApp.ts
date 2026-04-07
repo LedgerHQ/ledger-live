@@ -6,7 +6,7 @@ export const ptxBorrowLiveApp = flagWith(
     manifest_id: z.string(),
   },
   {
-    enabled: true,
+    enabled: false,
     params: { manifest_id: "borrow" },
   },
 );
