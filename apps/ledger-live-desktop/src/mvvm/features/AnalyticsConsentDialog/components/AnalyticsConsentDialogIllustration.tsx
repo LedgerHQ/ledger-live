@@ -7,7 +7,9 @@ export type AnalyticsConsentDialogIllustrationProps = Readonly<{
   phase: AnalyticsConsentDialogPhase;
 }>;
 
-export function AnalyticsConsentDialogIllustration({ phase }: AnalyticsConsentDialogIllustrationProps) {
+export function AnalyticsConsentDialogIllustration({
+  phase,
+}: AnalyticsConsentDialogIllustrationProps) {
   if (phase === "privacy") {
     return <Spot appearance="info" size={72} />;
   }
