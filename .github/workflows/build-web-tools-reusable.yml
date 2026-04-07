@@ -60,7 +60,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         id: setup-caches
         with:
           use-mise: true
@@ -73,7 +73,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@feat/rsdoctor-simple-pinned
         with:
           turbo-port: ${{ steps.setup-caches.outputs.port }}
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
@@ -101,7 +101,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         id: setup-caches
         with:
           use-mise: true
@@ -114,7 +114,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@feat/rsdoctor-simple-pinned
         with:
           turbo-port: ${{ steps.setup-caches.outputs.port }}
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
@@ -133,7 +133,7 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         id: setup-caches
         with:
           use-mise: true
@@ -146,7 +146,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@feat/rsdoctor-simple-pinned
         with:
           turbo-port: ${{ steps.setup-caches.outputs.port }}
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}

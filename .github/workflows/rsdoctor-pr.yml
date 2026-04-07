@@ -12,6 +12,7 @@ on:
       - main
       - "release/**"
       - feat/rsdoctor-simple
+      - feat/rsdoctor-simple-pinned
   workflow_dispatch:
     inputs:
       ref:
@@ -28,6 +29,7 @@ permissions:
   contents: read
   pull-requests: write
   issues: read
+  actions: read
 
 env:
   NODE_OPTIONS: "--max-old-space-size=8192"
@@ -48,7 +50,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         id: setup-caches
         with:
           install-proto: true
