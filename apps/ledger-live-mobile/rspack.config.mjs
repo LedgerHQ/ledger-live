@@ -77,6 +77,46 @@ const buildTsAlias = (paths = {}) =>
     {},
   );
 
+const RSDOCTOR_LINTER = {
+  level: "Warn",
+  rules: {
+    "duplicate-package": ["Warn", { checkVersion: "major", ignore: [] }],
+    "loader-performance": ["Warn", { threshold: 8000 }],
+    "ecma-version-check": ["Warn", {}],
+    "default-import-check": ["Warn", { ignore: [] }],
+    "module-mixed-chunks": ["Warn", { ignore: ["node_modules/"] }],
+  },
+};
+
+function getRsdoctorPlugin() {
+  if (!process.env.RSDOCTOR || process.env.RSDOCTOR === "0") return [];
+  const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+  const isCI = process.env.CI === "true" || process.env.CI === "1";
+  const reportDir = path.join(projectRootDir, "rsdoctor", "mobile");
+  const options = isCI
+    ? {
+        disableClientServer: true,
+        linter: RSDOCTOR_LINTER,
+        output: {
+          mode: "brief",
+          options: { type: ["json"] },
+          reportDir,
+        },
+      }
+    : {
+        linter: RSDOCTOR_LINTER,
+        output: {
+          mode: "brief",
+          options: {
+            type: ["html", "json"],
+            htmlOptions: { reportHtmlName: "report.html" },
+          },
+          reportDir,
+        },
+      };
+  return [new RsdoctorRspackPlugin(options)];
+}
+
 const withRozeniteUrlFix = rozeniteConfig => {
   return async env => {
     const config = await rozeniteConfig(env);
@@ -140,13 +180,15 @@ export default withRozeniteUrlFix(
     Repack.defineRspackConfig(env => {
       const { mode, platform } = env;
 
+      const isRsdoctor = process.env.RSDOCTOR && process.env.RSDOCTOR !== "0";
       return {
         mode,
         context: __dirname,
         entry: "./index.js",
         // Mobile uses a single Hermes bytecode bundle — async chunks are not supported
         // and hurt performance with Hermes. Disable async chunk creation globally.
-        output: { asyncChunks: false },
+        // When running rsdoctor, also emit main bundle as .js so it's counted as JavaScript (not Other)
+        output: { asyncChunks: false, ...(isRsdoctor && { filename: "[name].js" }) },
         resolve: {
           ...Repack.getResolveOptions(platform, {
             enablePackageExports: true,
@@ -237,6 +279,7 @@ export default withRozeniteUrlFix(
           new rspack.ProvidePlugin({
             TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
           }),
+          ...getRsdoctorPlugin(),
         ],
         stats: "errors-warnings",
         infrastructureLogging: { level: "warn" },

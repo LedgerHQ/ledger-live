@@ -28,3 +28,4 @@ libs/ui/packages/react/rsbuild.config.js.map
 .nx/workspace-data
 .nx/key
 nx.cache-config.json
+rsdoctor/

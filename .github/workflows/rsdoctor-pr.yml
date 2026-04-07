@@ -1,0 +1,83 @@
+# Bundle analysis via Rsdoctor (standalone workflow). Does not replace tools/actions/build-checks on the main PR workflow.
+# Upstream: https://github.com/web-infra-dev/rsdoctor-action
+
+name: "[Rsdoctor] - Bundle reports on PR"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Ref to run (branch, tag, or SHA)"
+        type: string
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  issues: read
+  actions: read
+
+env:
+  NODE_OPTIONS: "--max-old-space-size=8192"
+  CI: "true"
+
+jobs:
+  rsdoctor:
+    name: "Rsdoctor (Desktop + Mobile)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ github.event.inputs.ref || github.sha }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm i
+
+      - name: Build desktop dependencies
+        run: pnpm build:lld:deps
+
+      - name: Build with Rsdoctor (Desktop)
+        run: pnpm --filter ledger-live-desktop run doctor
+
+      - name: Build mobile dependencies
+        run: pnpm build:llm:deps
+
+      - name: Build with Rsdoctor (Mobile)
+        run: pnpm --filter live-mobile run doctor
+
+      - name: Bundle Analysis (Desktop + Mobile)
+        uses: web-infra-dev/rsdoctor-action@71406dd7d0b4815e7e1be27928961544ed618530
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          file_path: rsdoctor/*/rsdoctor-data.json
+          target_branch: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
