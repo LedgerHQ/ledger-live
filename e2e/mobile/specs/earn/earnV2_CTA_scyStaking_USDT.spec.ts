@@ -3,7 +3,7 @@ import { runScyStakingCTATest } from "./earnV2";
 
 const testConfig = {
   account: TokenAccount.ETH_USDT_1,
-  tmsLinks: ["B2CQA-XXXX"], // TODO: replace with actual Xray ticket ID
+  tmsLinks: ["B2CQA-4645"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 

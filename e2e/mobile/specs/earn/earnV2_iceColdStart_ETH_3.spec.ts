@@ -3,7 +3,7 @@ import { runIceColdStartTest } from "./earnV2";
 
 const testConfig = {
   account: Account.ETH_3,
-  tmsLinks: ["B2CQA-XXXX"], // TODO: replace with actual Xray ticket ID
+  tmsLinks: ["B2CQA-4639"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 

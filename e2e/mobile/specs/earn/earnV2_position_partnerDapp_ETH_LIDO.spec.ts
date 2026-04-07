@@ -6,7 +6,7 @@ const testConfig = {
   // Tapping "Manage" opens ledgerlive://discover/lido which routes internally
   // to the PlatformApp screen and loads the Lido dapp webview.
   dappUrlSubstring: "lido.fi",
-  tmsLinks: ["B2CQA-XXXX"], // TODO: replace with actual Xray ticket ID
+  tmsLinks: ["B2CQA-4647"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
