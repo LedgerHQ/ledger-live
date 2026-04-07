@@ -2,7 +2,14 @@ import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, lldRoot } from "./utils";
+import {
+  buildRendererEnv,
+  buildDotEnvDefine,
+  DOTENV_FILE,
+  lldRoot,
+  getRsdoctorPlugin,
+  isRsdoctorEnabled,
+} from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron renderer process
@@ -32,7 +39,7 @@ export function createRendererConfig(
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
-    devtool: isDev ? "eval-source-map" : "source-map",
+    devtool: isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map",
     resolve: {
       ...commonConfig.resolve,
       // Platform-specific file resolution:
@@ -256,6 +263,7 @@ export function createRendererConfig(
       ],
     },
     plugins: [
+      ...getRsdoctorPlugin("renderer"),
       // ElectronTargetPlugin for proper node/electron module handling
       new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({
