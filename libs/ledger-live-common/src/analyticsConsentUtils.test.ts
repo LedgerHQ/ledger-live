@@ -2,7 +2,7 @@ import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
-  resolveAnalyticsConsentDialogPhase,
+  resolveAnalyticsConsentPhase,
 } from "./analyticsConsentUtils";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
@@ -62,28 +62,28 @@ describe("analyticsConsentUtils", () => {
     });
   });
 
-  describe("resolveAnalyticsConsentDialogPhase", () => {
+  describe("resolveAnalyticsConsentPhase", () => {
     it("leaves non-closed phase unchanged", () => {
-      expect(resolveAnalyticsConsentDialogPhase("consentFresh", true, true, true)).toBe("consentFresh");
-      expect(resolveAnalyticsConsentDialogPhase("privacy", false, true, false)).toBe("privacy");
+      expect(resolveAnalyticsConsentPhase("consentFresh", true, true, true)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentPhase("privacy", false, true, false)).toBe("privacy");
     });
 
     it("when closed and renewal: reconfirm if sharing on, else fresh", () => {
-      expect(resolveAnalyticsConsentDialogPhase("closed", true, false, true)).toBe("consentReconfirm");
-      expect(resolveAnalyticsConsentDialogPhase("closed", true, false, false)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentPhase("closed", true, false, true)).toBe("consentReconfirm");
+      expect(resolveAnalyticsConsentPhase("closed", true, false, false)).toBe("consentFresh");
     });
 
     it("when closed, no renewal, privacy stale: privacy", () => {
-      expect(resolveAnalyticsConsentDialogPhase("closed", false, true, true)).toBe("privacy");
+      expect(resolveAnalyticsConsentPhase("closed", false, true, true)).toBe("privacy");
     });
 
     it("when closed, no renewal, no privacy update: fresh", () => {
-      expect(resolveAnalyticsConsentDialogPhase("closed", false, false, false)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentPhase("closed", false, false, false)).toBe("consentFresh");
     });
 
     it("renewal takes precedence over privacy update", () => {
-      expect(resolveAnalyticsConsentDialogPhase("closed", true, true, true)).toBe("consentReconfirm");
-      expect(resolveAnalyticsConsentDialogPhase("closed", true, true, false)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentPhase("closed", true, true, true)).toBe("consentReconfirm");
+      expect(resolveAnalyticsConsentPhase("closed", true, true, false)).toBe("consentFresh");
     });
   });
 });

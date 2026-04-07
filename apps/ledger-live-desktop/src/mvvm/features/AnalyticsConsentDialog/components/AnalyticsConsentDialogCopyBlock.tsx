@@ -1,11 +1,11 @@
 import React from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
-import type { AnalyticsConsentDialogPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
+import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 import { DescriptionWithPreferencesLink } from "./DescriptionWithPreferencesLink";
 import { PrivacyDescription } from "./PrivacyDescription";
 
 export type AnalyticsConsentDialogCopyBlockProps = Readonly<{
-  phase: AnalyticsConsentDialogPhase;
+  phase: AnalyticsConsentPhase;
   title: string;
   descriptionLead: string | null;
   privacyPolicyUrl: string;

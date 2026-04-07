@@ -3,18 +3,18 @@ import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
 /** Ms after `consentDate` to re-prompt; `null`/`Infinity` = never by time. E.g. yearly: `CONSENT_RENEWAL_INTERVAL_MS = 365 * 24 * 60 * 60 * 1000`. */
 export const CONSENT_RENEWAL_INTERVAL_MS: number | null = null;
 
-export type AnalyticsConsentDialogPhase =
+export type AnalyticsConsentPhase =
   | "closed"
   | "privacy"
   | "consentFresh"
   | "consentReconfirm";
 
-export function resolveAnalyticsConsentDialogPhase(
-  currentPhase: AnalyticsConsentDialogPhase,
+export function resolveAnalyticsConsentPhase(
+  currentPhase: AnalyticsConsentPhase,
   needsRenewal: boolean,
   needsUpdatePrivacy: boolean,
   analyticsSharingEnabled: boolean,
-): AnalyticsConsentDialogPhase {
+): AnalyticsConsentPhase {
   if (currentPhase !== "closed") return currentPhase;
   if (needsRenewal) return analyticsSharingEnabled ? "consentReconfirm" : "consentFresh";
   if (needsUpdatePrivacy) return "privacy";
