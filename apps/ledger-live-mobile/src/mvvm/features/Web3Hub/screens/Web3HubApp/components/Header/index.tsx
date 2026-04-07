@@ -11,7 +11,7 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { AppProps } from "LLM/features/Web3Hub/types";
-import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import SelectAccountButton from "../Web3Player/SelectAccountButton";
@@ -29,7 +29,7 @@ type Props = {
   webviewAPIRef: RefObject<WebviewAPI | null>;
   manifest: AppManifest;
   webviewState: WebviewState;
-  currentAccountHistDb: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
   setIsInfoPanelOpened: (isOpened: boolean) => void;
 };
 
@@ -41,7 +41,7 @@ export default function Web3HubAppHeader({
   webviewAPIRef,
   webviewState,
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
   setIsInfoPanelOpened,
 }: Props) {
   const styles = useStyleSheet(
@@ -115,7 +115,10 @@ export default function Web3HubAppHeader({
   return (
     <Box style={styles.barRow}>
       {shouldDisplaySelectAccount ? (
-        <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
+        <SelectAccountButton
+          manifest={manifest}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+        />
       ) : (
         <View style={{ width: 24 }} />
       )}

@@ -5,11 +5,16 @@ import { WalletAPIWebview } from "./WalletAPIWebview";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { WebviewAPI, WebviewProps } from "./types";
 
+const defaultCurrentAccountHistDb = {};
+const defaultSetCurrentAccountHistDb = () => {};
+
 export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
     {
       manifest,
-      currentAccountHistDb,
+      currentAccountHistDb = defaultCurrentAccountHistDb,
+      setCurrentAccountHistDb = defaultSetCurrentAccountHistDb,
+      currentAccountHistDbLoaded = false,
       inputs,
       customHandlers,
       onStateChange,
@@ -26,6 +31,8 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
           onScroll={onScroll}
           manifest={manifest}
           currentAccountHistDb={currentAccountHistDb}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+          currentAccountHistDbLoaded={currentAccountHistDbLoaded}
           inputs={inputs}
           customHandlers={customHandlers}
           onStateChange={onStateChange}
@@ -39,6 +46,8 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
         ref={ref}
         onScroll={onScroll}
         currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
+        currentAccountHistDbLoaded={currentAccountHistDbLoaded}
         manifest={manifest}
         inputs={inputs}
         onStateChange={onStateChange}

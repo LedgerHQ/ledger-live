@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "~/context/Locale";
 import { Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "~/components/Button";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import { useMaybeAccountName } from "~/reducers/wallet";
@@ -10,16 +10,16 @@ import { useSelectAccount } from "../Web3AppWebview/helpers";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
-  currentAccountHistDb: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 };
 
 export default function SelectAccountButton({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: SelectAccountButtonProps) {
   const { handleAddAccountPress, currentAccount } = useSelectAccount({
     manifest,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   });
 
   const currentAccountName = useMaybeAccountName(currentAccount);
