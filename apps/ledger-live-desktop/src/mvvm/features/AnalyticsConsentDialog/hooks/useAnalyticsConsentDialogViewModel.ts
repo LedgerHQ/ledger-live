@@ -21,8 +21,8 @@ import { openURL } from "~/renderer/linking";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
-  resolveAnalyticsConsentDialogPhase,
-  type AnalyticsConsentDialogPhase,
+  resolveAnalyticsConsentPhase,
+  type AnalyticsConsentPhase,
 } from "@ledgerhq/live-common/analyticsConsentUtils";
 
 export const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
@@ -55,7 +55,7 @@ export function useAnalyticsConsentDialogViewModel() {
     feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
   );
 
-  const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
+  const [phase, setPhase] = useState<AnalyticsConsentPhase>("closed");
 
   let title: string;
   if (phase === "consentReconfirm") {
@@ -94,7 +94,7 @@ export function useAnalyticsConsentDialogViewModel() {
       return;
     }
     setPhase(current =>
-      resolveAnalyticsConsentDialogPhase(current, needsRenewal, needsUpdatePrivacy, shareAnalytics),
+      resolveAnalyticsConsentPhase(current, needsRenewal, needsUpdatePrivacy, shareAnalytics),
     );
   }, [
     isPortfolioRouteFocused,

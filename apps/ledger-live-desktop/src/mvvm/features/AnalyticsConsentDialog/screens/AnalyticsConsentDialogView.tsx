@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent } from "@ledgerhq/lumen-ui-react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import type { AnalyticsConsentDialogPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
+import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 import { AnalyticsConsentDialogCopyBlock } from "../components/AnalyticsConsentDialogCopyBlock";
 import { AnalyticsConsentDialogFooterActions } from "../components/AnalyticsConsentDialogFooterActions";
 import { AnalyticsConsentDialogIllustration } from "../components/AnalyticsConsentDialogIllustration";
@@ -11,7 +11,7 @@ const sheetTopGlowClassName =
   "pointer-events-none absolute inset-0 bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-light-grey-950-30)_0%,transparent_100%)] dark:bg-[radial-gradient(43.51%_33.05%_at_50.47%_0.14%,var(--color-dark-grey-950-30)_0%,transparent_100%)]";
 
 export type AnalyticsConsentDialogViewProps = Readonly<{
-  phase: AnalyticsConsentDialogPhase;
+  phase: AnalyticsConsentPhase;
   isDialogOpen: boolean;
   title: string;
   descriptionLead: string | null;
