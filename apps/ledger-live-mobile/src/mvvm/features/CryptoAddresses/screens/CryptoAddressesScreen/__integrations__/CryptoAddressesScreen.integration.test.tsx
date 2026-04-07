@@ -1,15 +1,14 @@
 import React from "react";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
+import { ScreenName } from "~/const";
 import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
 
 jest.mock("../useCryptoAddressesViewModel", () => jest.fn());
 
 jest.mock("~/components/globalSyncRefreshControl", () => {
   const { FlatList } = jest.requireActual("react-native");
-  return <T,>(
-    _Component: React.ComponentType<T>,
-  ): React.ComponentType<T & { testID?: string }> =>
+  return <T,>(_Component: React.ComponentType<T>): React.ComponentType<T & { testID?: string }> =>
     function SyncListMock(props: T & { testID?: string }) {
       return <FlatList {...props} />;
     };
@@ -32,7 +31,6 @@ jest.mock("LLM/features/Accounts/screens/AddAccount", () => {
   };
 });
 
-
 const mockedViewModel = jest.mocked(useCryptoAddressesViewModel);
 
 const mockAccount = { type: "Account", id: "account-1" } as Account;
@@ -50,19 +48,18 @@ const baseViewModel: ReturnType<typeof useCryptoAddressesViewModel> = {
   title: "Accounts",
   addAccountLabel: "Add account",
   emptyStateLabel: "No accounts yet",
-  trackingPage: "CryptoAddresses",
+  trackingPage: ScreenName.Accounts,
   sourceScreenName: undefined,
 };
 
 function renderScreen(vmOverrides: Partial<ReturnType<typeof useCryptoAddressesViewModel>> = {}) {
   mockedViewModel.mockReturnValue({ ...baseViewModel, ...vmOverrides });
 
-  const CryptoAddressesScreen =
-    jest.requireActual("../index").default;
+  const CryptoAddressesScreen = jest.requireActual("../index").default;
 
   return render(
     <CryptoAddressesScreen
-      route={{ params: {}, key: "test", name: "CryptoAddresses" }}
+      route={{ params: {}, key: "test", name: ScreenName.CryptoAddresses }}
       navigation={{} as never}
     />,
   );
@@ -145,9 +142,7 @@ describe("CryptoAddressesScreen", () => {
         error: new Error("sync failed"),
       });
 
-      expect(
-        screen.getByText("An error occurred while loading your accounts"),
-      ).toBeVisible();
+      expect(screen.getByText("An error occurred while loading your accounts")).toBeVisible();
     });
   });
 
