@@ -36,6 +36,7 @@ First, read the config files to determine expected versions. Then run these chec
 | Proto          | `proto --version`              | Installed (recommended, not required)           |
 | Node           | `node --version`               | See version policy below                        |
 | pnpm           | `pnpm --version`               | See version policy below                        |
+| mise           | `mise --version`               | Installed (required)                            |
 
 **Node / pnpm version policy:**
 
@@ -52,6 +53,7 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
 - Docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
 - Docker not running: Open Docker Desktop and wait for it to start
 - Proto: `curl -fsSL https://moonrepo.dev/install/proto.sh | bash` then `proto use` from repo root
+- Mise: `curl https://mise.run | sh` then `mise install` from repo root
 
 **Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Proto absence, Node/pnpm minor/patch drift) should be surfaced but must not block progression.
 
