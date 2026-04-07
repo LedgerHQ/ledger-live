@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/evm-tools/selectors/index";
 import type { Transaction } from "@ethersproject/transactions";
 import { LedgerEthTransactionResolution } from "./services/types";
+export { rlp as RLP };
 
 export {
   ERC20_CLEAR_SIGNED_SELECTORS,

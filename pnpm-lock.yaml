@@ -6995,9 +6995,6 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-btc
-      '@ledgerhq/hw-app-celo':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-celo
       '@ledgerhq/hw-app-concordium':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-concordium
@@ -7100,6 +7097,9 @@ importers:
       '@ledgerhq/live-signer-canton':
         specifier: workspace:^
         version: link:../live-signer-canton
+      '@ledgerhq/live-signer-celo':
+        specifier: workspace:^
+        version: link:../live-signer-celo
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../live-signer-evm
@@ -8057,6 +8057,12 @@ importers:
       '@celo/wallet-ledger':
         specifier: ^8.0.0
         version: 8.0.1
+      '@ethersproject/bytes':
+        specifier: ~5.7.0
+        version: 5.7.0
+      '@ethersproject/keccak256':
+        specifier: ~5.7.0
+        version: 5.7.0
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -10500,6 +10506,43 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
+
+  libs/live-signer-celo:
+    dependencies:
+      '@ledgerhq/coin-celo':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-celo
+      '@ledgerhq/hw-app-celo':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-celo
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-eth
+    devDependencies:
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
@@ -41444,7 +41487,7 @@ snapshots:
     dependencies:
       '@ethersproject/abstract-provider': 5.8.0
       '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/bytes': 5.7.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
 
@@ -41459,8 +41502,8 @@ snapshots:
   '@ethersproject/address@5.7.0':
     dependencies:
       '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/keccak256': 5.7.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/rlp': 5.8.0
 
@@ -41474,7 +41517,7 @@ snapshots:
 
   '@ethersproject/base64@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/bytes': 5.7.0
 
   '@ethersproject/base64@5.8.0':
     dependencies:
@@ -41534,7 +41577,7 @@ snapshots:
 
   '@ethersproject/keccak256@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/bytes': 5.7.0
       js-sha3: 0.8.0
 
   '@ethersproject/keccak256@5.8.0':
@@ -41572,7 +41615,7 @@ snapshots:
 
   '@ethersproject/signing-key@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/bytes': 5.7.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
       bn.js: 5.2.2
@@ -41590,7 +41633,7 @@ snapshots:
 
   '@ethersproject/strings@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.8.0
       '@ethersproject/logger': 5.8.0
 

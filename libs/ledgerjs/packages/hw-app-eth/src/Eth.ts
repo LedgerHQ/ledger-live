@@ -4,7 +4,6 @@ import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import type Transport from "@ledgerhq/hw-transport";
 import { EIP712Message } from "@ledgerhq/types-live";
-import { parse as parseTransaction } from "@ethersproject/transactions";
 import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
 import {
   EthAppNftNotSupported,
@@ -13,7 +12,7 @@ import {
 } from "./errors";
 import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
 import { domainResolutionFlow } from "./modules/Domains";
-import ledgerService from "./services/ledger";
+import ledgerServiceProvided from "./services/ledger";
 import {
   safeChunkTransaction,
   getV,
@@ -24,7 +23,7 @@ import {
   splitPath,
 } from "./utils";
 
-export { ledgerService };
+export { ledgerServiceProvided as ledgerService };
 export * from "./utils";
 
 export type StarkQuantizationType = "eth" | "erc20" | "erc721" | "erc20mintable" | "erc721mintable";
@@ -61,14 +60,22 @@ const remapTransactionRelatedErrors = (e: any, chainId: BigNumber) => {
 export default class Eth {
   transport: Transport;
   loadConfig: LoadConfig;
+  ledgerService: typeof ledgerServiceProvided;
 
   setLoadConfig(loadConfig: LoadConfig): void {
     this.loadConfig = loadConfig;
   }
 
-  constructor(transport: Transport, scrambleKey = "w0w", loadConfig: LoadConfig = {}) {
+  constructor(
+    transport: Transport,
+    scrambleKey = "w0w",
+    loadConfig: LoadConfig = {},
+    ledgerService = ledgerServiceProvided,
+  ) {
     this.transport = transport;
     this.loadConfig = loadConfig;
+    this.ledgerService = ledgerService;
+
     transport.decorateAppAPIMethods(
       this,
       [
@@ -204,7 +211,7 @@ export default class Eth {
           " + import { ledgerService } from '@ledgerhq/hw-app-eth';\n" +
           " + const resolution = await ledgerService.resolveTransaction(rawTxHex);",
       );
-      resolution = await ledgerService
+      resolution = await this.ledgerService
         .resolveTransaction(rawTxHex, this.loadConfig, {
           externalPlugins: true,
           erc20: true,
@@ -248,7 +255,7 @@ export default class Eth {
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");
-    const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+    const parsedTransaction = this.ledgerService.parseTransaction(`0x${rawTx.toString("hex")}`);
     const chainId = new BigNumber(parsedTransaction.chainId);
 
     const paths = splitPath(path);
@@ -299,7 +306,7 @@ export default class Eth {
     resolutionConfig: ResolutionConfig,
     throwOnError = false,
   ): Promise<{ r: string; s: string; v: string }> {
-    const resolution = await ledgerService
+    const resolution = await this.ledgerService
       .resolveTransaction(rawTxHex, this.loadConfig, resolutionConfig)
       .catch(e => {
         console.warn(
