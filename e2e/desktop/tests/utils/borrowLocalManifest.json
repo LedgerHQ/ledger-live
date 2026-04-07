@@ -1,0 +1,35 @@
+{
+  "id": "borrow-local-manifest",
+  "name": "Borrow",
+  "url": "http://localhost:5173",
+  "homepageUrl": "http://localhost:5173",
+  "icon": "",
+  "platforms": ["ios", "android", "desktop"],
+  "apiVersion": "^2.0.0",
+  "manifestVersion": "1",
+  "branch": "stable",
+  "categories": ["defi"],
+  "currencies": "*",
+  "visibility": "complete",
+  "content": {
+    "shortDescription": { "en": "Borrow dashboard" },
+    "description": { "en": "Borrow dashboard" }
+  },
+  "permissions": [
+    "account.list",
+    "account.receive",
+    "account.request",
+    "currency.list",
+    "device.close",
+    "device.exchange",
+    "device.transport",
+    "message.sign",
+    "transaction.sign",
+    "transaction.signAndBroadcast",
+    "wallet.capabilities",
+    "wallet.userId",
+    "wallet.info",
+    "custom.isReady"
+  ],
+  "domains": ["http://localhost:5173", "https://*"]
+}
