@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import SelectAccountButton from "./SelectAccountButton";
 
@@ -12,7 +12,7 @@ type BottomBarProps = {
   manifest: AppManifest;
   webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
-  currentAccountHistDb: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 };
 
 function IconButton({
@@ -40,7 +40,7 @@ export function BottomBar({
   manifest,
   webviewAPIRef,
   webviewState,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: BottomBarProps) {
   const { colors } = useTheme();
   const shouldDisplaySelectAccount = !!manifest.dapp;
@@ -82,7 +82,10 @@ export function BottomBar({
       </Flex>
 
       {shouldDisplaySelectAccount ? (
-        <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
+        <SelectAccountButton
+          manifest={manifest}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+        />
       ) : null}
 
       <IconButton onPress={handleReload} alignSelf="flex-end">
