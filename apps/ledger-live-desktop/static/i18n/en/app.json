@@ -4465,6 +4465,8 @@
     "delegated": "Delegated",
     "completionDate": "Completion date",
     "rewards": "Rewards",
+    "sourceValidator": "Source Validator",
+    "destinationValidator": "Destination Validator",
     "duration": "Duration",
     "durationJustStarted": "Just started",
     "durationDays": "{{count}} day",
