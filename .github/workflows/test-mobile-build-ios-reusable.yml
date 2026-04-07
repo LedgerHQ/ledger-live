@@ -123,7 +123,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "true"
@@ -146,21 +146,21 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm && pnpm nx:write-cache-config --cache-key-prefix "${{ steps.setup-caches.outputs.nx-cache-key-prefix }}"
 
       - name: Flake alert - ArgumentError
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@feat/rsdoctor-simple-pinned
         if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
         with:
           live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           halt_runner: true
 
       - name: Flake alert - Reruns
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@feat/rsdoctor-simple-pinned
         if: success() && steps.install-dependencies.outputs.total_attempts == 2
         with:
           live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
 
       - name: Build iOS app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@feat/rsdoctor-simple-pinned
         env:
           SKIP_JS_BUNDLING: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
@@ -169,7 +169,7 @@ jobs:
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload Detox Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@feat/rsdoctor-simple-pinned
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
@@ -208,7 +208,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -232,13 +232,13 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build JS Bundle app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@feat/rsdoctor-simple-pinned
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios --bundle
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build minified JS Bundle for size analysis
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@feat/rsdoctor-simple-pinned
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios --bundle-size
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -250,7 +250,7 @@ jobs:
           echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@feat/rsdoctor-simple-pinned
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ inputs.ios-js-cache-key }}

@@ -102,7 +102,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         id: setup-caches
         with:
           use-mise: true
@@ -140,7 +140,7 @@ jobs:
           pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="live-cli*..." --unsafe-perm
 
       - name: Build Android app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@feat/rsdoctor-simple-pinned
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
           SKIP_JS_BUNDLING: true
@@ -149,7 +149,7 @@ jobs:
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload Detox Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@feat/rsdoctor-simple-pinned
         with:
           path: |
             ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
@@ -184,7 +184,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -208,13 +208,13 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build JS Bundle app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@feat/rsdoctor-simple-pinned
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build minified JS Bundle for size analysis
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@feat/rsdoctor-simple-pinned
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle-size
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -226,7 +226,7 @@ jobs:
           echo size=`ls -l apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@feat/rsdoctor-simple-pinned
         with:
           path: ${{ github.workspace }}/${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}

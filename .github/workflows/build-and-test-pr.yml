@@ -42,7 +42,7 @@ jobs:
     name: "Affected"
     needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
-    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@feat/rsdoctor-simple-pinned
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
@@ -51,29 +51,29 @@ jobs:
   build-desktop:
     name: "Build Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    if: ${{ !github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(github.event.pull_request.head.ref, 'rsdoctor-simple') || contains(github.event.merge_group.head_ref, 'rsdoctor-simple')) }}
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-desktop:
     name: "Test Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   build-test-mobile:
     name: "Build & Test Mobile"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
+    if: ${{ !github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') || contains(github.event.pull_request.head.ref, 'rsdoctor-simple') || contains(github.event.merge_group.head_ref, 'rsdoctor-simple')) }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
@@ -84,28 +84,28 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-features:
     name: "Test Features"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-design-system:
     name: "Test UI Libs"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
     with:
       build-web-tools: ${{ contains(needs.determine-affected.outputs.paths, 'apps/web-tools') }}
@@ -116,41 +116,41 @@ jobs:
     name: "Test CLI"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   build-wallet-cli:
     name: "Build Wallet CLI"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   test-desktop-e2e-lint:
     name: "Desktop E2E Lint & Typecheck"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
 
   notify-e2e-required:
     name: "Notify E2E Required"
     needs: determine-affected
     if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@feat/rsdoctor-simple-pinned
     secrets: inherit
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
@@ -164,7 +164,7 @@ jobs:
       - test-features
       - build-wallet-cli
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@feat/rsdoctor-simple-pinned
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:

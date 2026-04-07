@@ -45,7 +45,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 2
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/rsdoctor-simple-pinned
         id: setup-caches
         with:
           use-mise: true
