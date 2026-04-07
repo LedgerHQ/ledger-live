@@ -137,8 +137,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     );
     await drawer.back();
     await expect(drawer.selectAssetTitle).toBeVisible();
-
     await drawer.selectCurrency("bitcoin");
+
     await expect(drawer.selectAccountTitle).toBeVisible();
     await drawer.selectAccount("bitcoin");
 

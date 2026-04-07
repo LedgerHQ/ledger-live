@@ -39,7 +39,7 @@ export class Drawer extends Component {
     const currencyButton = this.currencyButton(currency);
     // Wait for currency row to render before clicking (React 19 deferred rendering)
 
-    await currencyButton.waitFor({ state: "visible" });
+    await currencyButton.waitFor({ state: "attached" });
     await currencyButton.click();
   }
 
@@ -49,7 +49,7 @@ export class Drawer extends Component {
   async selectAccount(accountName: string, index = 0) {
     const accountButton = this.getAccountButton(accountName, index);
     // Wait for account row to render before clicking (React 19 deferred rendering)
-    await accountButton.waitFor({ state: "visible" });
+    await accountButton.waitFor({ state: "attached" });
     await accountButton.click();
   }
 
