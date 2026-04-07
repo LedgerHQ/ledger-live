@@ -93,7 +93,9 @@ describe("useAnalyticsConsentDialogViewModel", () => {
   });
 
   it("keeps modal closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
-    const renewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockReturnValue(false);
+    const renewalSpy = jest
+      .spyOn(analyticsConsentUtils, "needsConsentRenewal")
+      .mockReturnValue(false);
     const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
     try {
       const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {

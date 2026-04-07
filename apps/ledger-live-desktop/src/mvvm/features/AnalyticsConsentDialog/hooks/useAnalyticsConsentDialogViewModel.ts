@@ -90,12 +90,7 @@ export function useAnalyticsConsentDialogViewModel() {
       return;
     }
     setPhase(current =>
-      resolveAnalyticsConsentDialogPhase(
-        current,
-        needsRenewal,
-        needsUpdatePrivacy,
-        shareAnalytics,
-      ),
+      resolveAnalyticsConsentDialogPhase(current, needsRenewal, needsUpdatePrivacy, shareAnalytics),
     );
   }, [
     isPortfolioRouteFocused,
@@ -117,7 +112,10 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [dispatch]);
 
   const applyOptIn = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_opt_in", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_opt_in",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
     await persistAnalyticsConsentAck();
@@ -125,7 +123,10 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [dispatch, persistAnalyticsConsentAck, handleCloseDialog]);
 
   const applyOptOut = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_opt_out", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_opt_out",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
     await persistAnalyticsConsentAck();
@@ -133,13 +134,19 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [dispatch, persistAnalyticsConsentAck, handleCloseDialog]);
 
   const onPrivacyGotIt = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_privacy_got_it", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_privacy_got_it",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     await persistAnalyticsConsentAck();
     handleCloseDialog();
   }, [handleCloseDialog, persistAnalyticsConsentAck]);
 
   const onSetPreferences = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_set_preferences", page: ANALYTICS_CONSENT_DIALOG_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_set_preferences",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
     handleCloseDialog();
     navigate("/settings/display");
   }, [navigate, handleCloseDialog]);
