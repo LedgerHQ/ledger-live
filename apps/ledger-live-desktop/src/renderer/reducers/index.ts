@@ -28,6 +28,9 @@ import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 import shieldedSyncSubscriptions, {
   ShieldedSyncSubscriptionsState,
 } from "./shieldedSyncSubscriptions";
+import countervaluesExtraTracking, {
+  CountervaluesExtraTrackingState,
+} from "./countervaluesExtraTracking";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -51,6 +54,7 @@ export type State = LLDRTKApiState & {
   dialogs: DialogsState;
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
+  countervaluesExtraTracking: CountervaluesExtraTrackingState;
 };
 
 const appReducer = combineReducers({
@@ -75,6 +79,7 @@ const appReducer = combineReducers({
   dialogs,
   syncRefresh,
   shieldedSyncSubscriptions,
+  countervaluesExtraTracking,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

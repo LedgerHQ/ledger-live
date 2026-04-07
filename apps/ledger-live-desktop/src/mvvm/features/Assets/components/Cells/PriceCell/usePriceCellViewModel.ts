@@ -2,7 +2,7 @@ import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 import { usePrice } from "~/renderer/hooks/usePrice";
-import { useOnDemandCurrencyCountervalues } from "~/renderer/actions/deprecated/ondemand-countervalues";
+import { useOnDemandCurrencyCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 
 function formatPrice(unit: Unit, value: BigNumber): string {
   const subMagnitude = value.lt(10 ** unit.magnitude) ? 1 : 0;

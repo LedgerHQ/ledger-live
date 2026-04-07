@@ -26,7 +26,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
 import { countervaluesActions } from "./countervalues";
-import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
+import { selectExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
@@ -113,7 +113,7 @@ export function useCalculateCountervaluesUserSettings() {
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
 
   // countervalues for on demand session tracking pairs
-  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
+  const extraSessionTrackingPairs = useSelector(selectExtraTrackingPairs);
 
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
 
