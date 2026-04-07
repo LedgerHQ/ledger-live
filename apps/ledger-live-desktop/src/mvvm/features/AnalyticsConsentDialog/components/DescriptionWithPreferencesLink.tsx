@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link as RouterLink } from "react-router";
 import { Link } from "@ledgerhq/lumen-ui-react";
+
+const SETTINGS_DISPLAY_HASH_HREF = "#/settings/display";
 
 export type DescriptionWithPreferencesLinkProps = Readonly<{
   text: string;
@@ -16,16 +17,17 @@ export function DescriptionWithPreferencesLink({
   return (
     <p className="body-2 text-muted text-center">
       {text}{" "}
-      <Link asChild appearance="accent" size="sm" underline={false}>
-        <RouterLink
-          to="/settings/display"
-          onClick={e => {
-            e.preventDefault();
-            onSetPreferences();
-          }}
-        >
-          {t("analyticsConsentModal.setPreferences")}
-        </RouterLink>
+      <Link
+        appearance="accent"
+        size="sm"
+        underline={false}
+        href={SETTINGS_DISPLAY_HASH_HREF}
+        onClick={e => {
+          e.preventDefault();
+          onSetPreferences();
+        }}
+      >
+        {t("analyticsConsentModal.setPreferences")}
       </Link>
     </p>
   );
