@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useSelector } from "~/context/hooks";
 import Config from "react-native-config";
-import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -14,21 +13,15 @@ import { StartupTimeMarker } from "../../StartupTimeMarker";
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const goToOnboarding = !hasCompletedOnboarding && !Config.SKIP_ONBOARDING;
-  const { colors } = useTheme();
-  const rootScreenOptions = useMemo(
-    () => ({
-      headerShown: false,
-      contentStyle: {
-        backgroundColor: colors.background ?? "#131214",
-      },
-    }),
-    [colors.background],
-  );
 
   return (
     <StartupTimeMarker>
       <AnalyticsContextProvider>
-        <Stack.Navigator screenOptions={rootScreenOptions}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
           {goToOnboarding ? (
             <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingNavigator} />
           ) : null}
