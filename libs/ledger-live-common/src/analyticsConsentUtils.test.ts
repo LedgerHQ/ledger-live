@@ -2,7 +2,7 @@ import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
-  resolveAnalyticsConsentModalPhase,
+  resolveAnalyticsConsentDialogPhase,
 } from "./analyticsConsentUtils";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
@@ -62,28 +62,28 @@ describe("analyticsConsentUtils", () => {
     });
   });
 
-  describe("resolveAnalyticsConsentModalPhase", () => {
+  describe("resolveAnalyticsConsentDialogPhase", () => {
     it("leaves non-closed phase unchanged", () => {
-      expect(resolveAnalyticsConsentModalPhase("consentFresh", true, true, true)).toBe("consentFresh");
-      expect(resolveAnalyticsConsentModalPhase("privacy", false, true, false)).toBe("privacy");
+      expect(resolveAnalyticsConsentDialogPhase("consentFresh", true, true, true)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentDialogPhase("privacy", false, true, false)).toBe("privacy");
     });
 
     it("when closed and renewal: reconfirm if sharing on, else fresh", () => {
-      expect(resolveAnalyticsConsentModalPhase("closed", true, false, true)).toBe("consentReconfirm");
-      expect(resolveAnalyticsConsentModalPhase("closed", true, false, false)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentDialogPhase("closed", true, false, true)).toBe("consentReconfirm");
+      expect(resolveAnalyticsConsentDialogPhase("closed", true, false, false)).toBe("consentFresh");
     });
 
     it("when closed, no renewal, privacy stale: privacy", () => {
-      expect(resolveAnalyticsConsentModalPhase("closed", false, true, true)).toBe("privacy");
+      expect(resolveAnalyticsConsentDialogPhase("closed", false, true, true)).toBe("privacy");
     });
 
     it("when closed, no renewal, no privacy update: fresh", () => {
-      expect(resolveAnalyticsConsentModalPhase("closed", false, false, false)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentDialogPhase("closed", false, false, false)).toBe("consentFresh");
     });
 
     it("renewal takes precedence over privacy update", () => {
-      expect(resolveAnalyticsConsentModalPhase("closed", true, true, true)).toBe("consentReconfirm");
-      expect(resolveAnalyticsConsentModalPhase("closed", true, true, false)).toBe("consentFresh");
+      expect(resolveAnalyticsConsentDialogPhase("closed", true, true, true)).toBe("consentReconfirm");
+      expect(resolveAnalyticsConsentDialogPhase("closed", true, true, false)).toBe("consentFresh");
     });
   });
 });

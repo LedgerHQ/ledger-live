@@ -20,8 +20,8 @@ import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyCon
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
-  resolveAnalyticsConsentModalPhase,
-  type AnalyticsConsentModalPhase,
+  resolveAnalyticsConsentDialogPhase,
+  type AnalyticsConsentDialogPhase,
 } from "@ledgerhq/live-common/analyticsConsentUtils";
 
 export const ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE = "Analytics consent drawer";
@@ -50,7 +50,7 @@ export function useAnalyticsConsentDrawerViewModel() {
     feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
   );
 
-  const [phase, setPhase] = useState<AnalyticsConsentModalPhase>("closed");
+  const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
 
   const handleCloseDrawer = useCallback(() => {
     setPhase(current => {
@@ -67,7 +67,7 @@ export function useAnalyticsConsentDrawerViewModel() {
       return;
     }
     setPhase(current =>
-      resolveAnalyticsConsentModalPhase(
+      resolveAnalyticsConsentDialogPhase(
         current,
         needsRenewal,
         needsUpdatePrivacy,

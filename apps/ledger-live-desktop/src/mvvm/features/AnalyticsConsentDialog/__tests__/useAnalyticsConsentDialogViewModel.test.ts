@@ -6,9 +6,9 @@ import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
   ANALYTICS_CONSENT_FLOW,
-  ANALYTICS_CONSENT_MODAL_PAGE,
-  useAnalyticsConsentModalViewModel,
-} from "../hooks/useAnalyticsConsentModalViewModel";
+  ANALYTICS_CONSENT_DIALOG_PAGE,
+  useAnalyticsConsentDialogViewModel,
+} from "../hooks/useAnalyticsConsentDialogViewModel";
 
 const mockNavigate = jest.fn();
 const mockUseMatch = jest.fn();
@@ -25,12 +25,12 @@ jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: (url: string) => url,
 }));
 
-const drawerClosedPayload = {
-  page: ANALYTICS_CONSENT_MODAL_PAGE,
+const dialogClosedPayload = {
+  page: ANALYTICS_CONSENT_DIALOG_PAGE,
   flow: ANALYTICS_CONSENT_FLOW,
 };
 
-describe("useAnalyticsConsentModalViewModel", () => {
+describe("useAnalyticsConsentDialogViewModel", () => {
   const featureFlagsWithAnalyticsOptIn = {
     ...FEATURE_FLAGS_INITIAL_STATE,
     overrides: {
@@ -60,7 +60,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
 
   it("keeps phase closed when portfolio route is not focused", () => {
     mockUseMatch.mockReturnValue(null);
-    const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
       initialState: {
         featureFlags: featureFlagsWithAnalyticsOptIn,
         settings: {
@@ -76,11 +76,11 @@ describe("useAnalyticsConsentModalViewModel", () => {
       },
     });
     expect(result.current.phase).toBe("closed");
-    expect(result.current.isModalOpen).toBe(false);
+    expect(result.current.isDialogOpen).toBe(false);
   });
 
   it("opens consentReconfirm when renewal is needed, policy is current, and share analytics is on", async () => {
-    const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
       initialState: consentReconfirmState,
     });
 
@@ -89,14 +89,14 @@ describe("useAnalyticsConsentModalViewModel", () => {
     });
 
     expect(result.current.phase).toBe("consentReconfirm");
-    expect(result.current.isModalOpen).toBe(true);
+    expect(result.current.isDialogOpen).toBe(true);
   });
 
   it("keeps modal closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
     const renewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockReturnValue(false);
     const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
     try {
-      const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+      const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
         initialState: {
           featureFlags: featureFlagsWithAnalyticsOptIn,
           settings: {
@@ -117,14 +117,14 @@ describe("useAnalyticsConsentModalViewModel", () => {
       });
 
       expect(result.current.phase).toBe("closed");
-      expect(result.current.isModalOpen).toBe(false);
+      expect(result.current.isDialogOpen).toBe(false);
     } finally {
       renewalSpy.mockRestore();
     }
   });
 
   it("dispatches opt-in and closes modal", async () => {
-    const { result, store } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+    const { result, store } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
       initialState: consentReconfirmState,
     });
 
@@ -148,7 +148,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
 
   it("tracks drawer_closed when leaving portfolio while modal is open", async () => {
     mockUseMatch.mockReturnValue({});
-    const { result, rerender } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+    const { result, rerender } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
       initialState: consentReconfirmState,
     });
 
@@ -164,12 +164,12 @@ describe("useAnalyticsConsentModalViewModel", () => {
       await Promise.resolve();
     });
 
-    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", drawerClosedPayload);
+    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
     expect(result.current.phase).toBe("closed");
   });
 
   it("navigates to settings display when Set preferences is used", async () => {
-    const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
       initialState: consentReconfirmState,
     });
 
@@ -181,7 +181,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
       result.current.onSetPreferences();
     });
 
-    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", drawerClosedPayload);
+    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
     expect(mockNavigate).toHaveBeenCalledWith("/settings/display");
   });
 });
