@@ -315,11 +315,13 @@ async function hydrateCryptoAssets(store: Store, cryptoAssetsCache: PersistedCAL
 function getImportAccounts(store: Store, cryptoAssetHydration: Promise<void>) {
   return async () => {
     try {
-      const accountsData = retry(getAccounts, MAX_RETRIES, RETRY_DELAY);
-      const walletStore = retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY);
+      const accountsData = await retry(getAccounts, MAX_RETRIES, RETRY_DELAY);
       await cryptoAssetHydration; // Ensure crypto assets are hydrated before importing accounts
-      store.dispatch(await importAccountsRaw(await accountsData));
-      store.dispatch(importWalletState(await walletStore)); // TODO: fix the double source of truth for accounts names
+      store.dispatch(await importAccountsRaw(accountsData));
+      const walletState = await retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY);
+      if (walletState) {
+        store.dispatch(importWalletState(walletState)); // TODO: fix the double source of truth for accounts names
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Failed to import accounts during initialization:", error);
