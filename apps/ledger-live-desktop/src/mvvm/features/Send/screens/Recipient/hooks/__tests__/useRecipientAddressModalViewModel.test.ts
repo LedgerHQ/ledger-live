@@ -53,6 +53,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: mockRecipientSearch,
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
     mockedUseAddressValidation.mockReturnValue({
       result: {
@@ -94,6 +95,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "some_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     const { result } = renderHook(() =>
@@ -131,6 +133,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "sanctioned_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({
@@ -171,6 +174,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "invalid_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({
@@ -211,6 +215,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "valid_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({
@@ -251,6 +256,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "source_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     const selfTransferError = new InvalidAddressBecauseDestinationIsAlsoSource();
@@ -292,6 +298,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "invalid.eth" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     const invalidAddressError = new InvalidAddress();
@@ -332,6 +339,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "searching" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({

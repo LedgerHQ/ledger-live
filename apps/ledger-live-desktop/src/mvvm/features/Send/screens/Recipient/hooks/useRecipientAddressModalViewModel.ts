@@ -1,9 +1,9 @@
+import { useCallback, useMemo } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { track } from "~/renderer/analytics/segment";
