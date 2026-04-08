@@ -87,6 +87,7 @@ export type TrongridTxInfo = {
   blockHeight?: number;
   extra?: TrongridExtraTxInfo;
   hasFailed: boolean;
+  feesPayer?: string;
 };
 
 export type TronOperation = Operation<TrongridExtraTxInfo>;
