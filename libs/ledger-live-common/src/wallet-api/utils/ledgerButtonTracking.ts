@@ -1,18 +1,18 @@
 import network from "@ledgerhq/live-network/network";
 
 const LEDGER_BUTTON_API_URL = "https://ledgerb.api.ledger.com/event";
-const LEDGER_BUTTON_REFERER_PREFIX = "LedgerButton_";
+const LEDGER_BUTTON_REFERRER_PREFIX = "LedgerButton_";
 
 interface ReportLedgerButtonBroadcastParams {
   dappId: string;
   chainId: number;
   networkName: string;
   transactionHash: string;
-  referer: string;
+  referrer: string;
 }
 
-export function isLedgerButtonReferer(referer?: string): referer is string {
-  return !!referer?.startsWith(LEDGER_BUTTON_REFERER_PREFIX);
+export function isLedgerButtonReferrer(referrer?: string): referrer is string {
+  return !!referrer?.startsWith(LEDGER_BUTTON_REFERRER_PREFIX);
 }
 
 /**
@@ -23,7 +23,7 @@ export function reportLedgerButtonBroadcast({
   chainId,
   networkName,
   transactionHash,
-  referer,
+  referrer,
 }: ReportLedgerButtonBroadcastParams): void {
   network({
     method: "POST",
@@ -41,7 +41,7 @@ export function reportLedgerButtonBroadcast({
         event_type: "transaction_flow_completion",
         blockchain_network_selected: networkName,
         chain_id: String(chainId),
-        referrer: referer,
+        referrer,
         transaction_hash: transactionHash,
       },
     },
