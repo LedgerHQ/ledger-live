@@ -1,5 +1,13 @@
 # live-mobile
 
+## 4.1.0-next.4
+
+### Minor Changes
+
+- [#16115](https://github.com/LedgerHQ/ledger-live/pull/16115) [`eb33af2`](https://github.com/LedgerHQ/ledger-live/commit/eb33af281dd1000d84049df579612cedcdd38d82) Thanks [@thesan](https://github.com/thesan)! - Reread the accounts before importing them on startup
+
+- [#16115](https://github.com/LedgerHQ/ledger-live/pull/16115) [`ac49171`](https://github.com/LedgerHQ/ledger-live/commit/ac49171f6c8079da0b58273219eb4ceb1d9fec05) Thanks [@thesan](https://github.com/thesan)! - Override stale accounts data with walletStore after import
+
 ## 4.1.0-next.3
 
 ### Minor Changes
