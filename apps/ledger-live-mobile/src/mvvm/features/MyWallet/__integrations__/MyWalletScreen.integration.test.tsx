@@ -48,4 +48,10 @@ describe("MyWalletScreen", () => {
     renderScreen({ hasUnreadNotifications: true });
     expect(screen.getByTestId("my-wallet-header-notifications-button")).toBeVisible();
   });
+
+  it("should render the profile section with avatar and title", () => {
+    renderScreen();
+    expect(screen.getByTestId("my-wallet-avatar")).toBeVisible();
+    expect(screen.getByTestId("my-wallet-profile-title")).toBeVisible();
+  });
 });
