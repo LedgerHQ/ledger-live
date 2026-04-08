@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import {
   ListItem,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemContent,
   ListItemTitle,
   ListItemDescription,
@@ -22,7 +22,7 @@ const TransferListItem = ({ action }: TransferListItemProps) => {
       accessibilityLabel={action.title}
     >
       <ListItemLeading>
-        <ListItemSpot appearance="icon" icon={action.icon} />
+        <Spot appearance="icon" icon={action.icon} />
         <ListItemContent>
           <ListItemTitle>{action.title}</ListItemTitle>
           {action.description && <ListItemDescription>{action.description}</ListItemDescription>}

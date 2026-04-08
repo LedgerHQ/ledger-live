@@ -30,13 +30,13 @@ const ErrorComponentLWM: ErrorComponent = ({ error, onRetry }) => (
   <Flex alignItems="center" justifyContent="center" p={6}>
     <Icons.Warning color="error.c60" size="L" />
     <Text variant="h5" textAlign="center" mt={4} mb={2}>
-      Something went wrong
+      {"Something went wrong"}
     </Text>
     <Text variant="body" color="neutral.c70" textAlign="center" mb={6}>
       {formatError(error)}
     </Text>
     <Button type="main" onPress={onRetry}>
-      Retry
+      {"Retry"}
     </Button>
   </Flex>
 );

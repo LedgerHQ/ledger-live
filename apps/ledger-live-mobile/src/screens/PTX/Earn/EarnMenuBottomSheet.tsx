@@ -5,7 +5,7 @@ import {
   ListItem,
   ListItemContent,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as LumenSymbols from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -111,7 +111,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
               style={{ marginHorizontal: -8 }}
             >
               <ListItemLeading>
-                {IconComponent && <ListItemSpot appearance="icon" icon={IconComponent} />}
+                {IconComponent && <Spot appearance="icon" icon={IconComponent} />}
                 <ListItemContent>
                   <ListItemTitle>{label}</ListItemTitle>
                 </ListItemContent>

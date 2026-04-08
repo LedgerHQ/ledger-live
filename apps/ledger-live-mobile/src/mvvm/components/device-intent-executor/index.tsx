@@ -44,7 +44,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
       preventBackdropClick={!props.cancellableUI}
     >
       <Text variant="h5" mb={4}>
-        Device Intent Executor
+        {"Device Intent Executor"}
       </Text>
       <DeviceIntentExecutor {...props} platformConfig={platformConfig} />
     </QueuedDrawer>

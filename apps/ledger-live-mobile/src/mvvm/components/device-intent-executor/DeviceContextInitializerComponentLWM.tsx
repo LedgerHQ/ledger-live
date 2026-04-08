@@ -102,37 +102,44 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent = 
     };
   }, [connectionResult, requiredDeviceContext, onContextInitialized, onError]);
 
+  const installPlanLine =
+    daState.status === DeviceActionStatus.Pending && daState.intermediateValue.installPlan
+      ? (() => {
+          const plan = daState.intermediateValue.installPlan;
+          const total = plan.installPlan.length;
+          const percent = Math.round(plan.currentProgress * 100);
+          return `Install plan: ${total} app(s), progress: ${plan.currentIndex}/${total} (${percent}%)`;
+        })()
+      : null;
+
   return (
     <Flex p={4}>
       <Text variant="h5" mb={4}>
-        Initializing device context ({requiredDeviceContext.appName})
+        {"Initializing device context "} ({requiredDeviceContext.appName})
       </Text>
       <Text variant="small" color="neutral.c70" mb={2}>
-        Status: {daState.status}
+        {"Status: "} {daState.status}
       </Text>
       {daState.status === DeviceActionStatus.Pending && (
         <>
           <Text variant="small" color="neutral.c70" mb={1}>
-            User interaction: {daState.intermediateValue.requiredUserInteraction}
+            {"User interaction: "} {daState.intermediateValue.requiredUserInteraction}
           </Text>
-          {daState.intermediateValue.installPlan && (
+          {installPlanLine != null && (
             <Text variant="small" color="neutral.c70" mb={1}>
-              Install plan: {daState.intermediateValue.installPlan.installPlan.length} app(s),
-              progress: {daState.intermediateValue.installPlan.currentIndex}/
-              {daState.intermediateValue.installPlan.installPlan.length} (
-              {Math.round(daState.intermediateValue.installPlan.currentProgress * 100)}%)
+              {installPlanLine}
             </Text>
           )}
         </>
       )}
       {daState.status === DeviceActionStatus.Error && (
         <Text variant="small" color="error.c60">
-          Error: {String(daState.error)}
+          {"Error: "} {String(daState.error)}
         </Text>
       )}
       {daState.status === DeviceActionStatus.Completed && (
         <Text variant="small" color="success.c60">
-          Context initialized
+          {"Context initialized"}
         </Text>
       )}
     </Flex>

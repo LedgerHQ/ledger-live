@@ -9,11 +9,10 @@ import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import {
   ListItem,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemContent,
   ListItemTitle,
   ListItemTrailing,
-  ListItemIcon,
   Subheader,
   SubheaderRow,
   SubheaderTitle,
@@ -44,13 +43,13 @@ export const PortfolioPerpsEntryPoint = () => {
       <Flex mb={6} mt={2}>
         <ListItem onPress={handlePress} testID="portfolio-perps-entry-point">
           <ListItemLeading>
-            <ListItemSpot appearance="icon" icon={Infinite} />
+            <Spot appearance="icon" icon={Infinite} />
             <ListItemContent>
               <ListItemTitle>{t("portfolio.perpsEntry.description")}</ListItemTitle>
             </ListItemContent>
           </ListItemLeading>
           <ListItemTrailing>
-            <ListItemIcon icon={ChevronRight} />
+            <ChevronRight size={24} />
           </ListItemTrailing>
         </ListItem>
       </Flex>

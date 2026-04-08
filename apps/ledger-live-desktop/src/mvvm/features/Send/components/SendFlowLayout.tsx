@@ -34,7 +34,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
-  const shouldAnimateHeight = dialogHeight === "hug";
+  const shouldAnimateHeight = dialogHeight === "fit";
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>

@@ -6,7 +6,7 @@ export type SendStepConfig = FlowStepConfig<SendFlowStep> &
   Readonly<{
     addressInput?: boolean;
     showTitle?: boolean;
-    height?: "fixed" | "hug";
+    height?: "fixed" | "fit";
     /**
      * A step that is not in an original order of previous <-> next paradigm
      */
