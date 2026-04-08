@@ -98,6 +98,7 @@ jest.mock("src/renderer/analytics/segment", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
   useTrack: jest.fn(),
+  updateIdentify: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock("src/renderer/analytics/originFlow", () => ({

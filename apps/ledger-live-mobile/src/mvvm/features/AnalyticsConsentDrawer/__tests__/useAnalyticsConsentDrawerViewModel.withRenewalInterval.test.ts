@@ -4,7 +4,7 @@
  * (e.g. if the constant is changed to a yearly value later).
  */
 import { renderHook, waitFor } from "@tests/test-renderer";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { useAnalyticsConsentDrawerViewModel } from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerState } from "./helpers";
 
@@ -16,10 +16,10 @@ jest.mock("@react-navigation/native", () => ({
   useIsFocused: () => true,
 }));
 
-jest.mock("../utils/analyticsConsentDrawerLogic", () => {
+jest.mock("@ledgerhq/live-common/analyticsConsentUtils", () => {
   const renewalMs = 365 * 24 * 60 * 60 * 1000;
-  const actual = jest.requireActual<typeof import("../utils/analyticsConsentDrawerLogic")>(
-    "../utils/analyticsConsentDrawerLogic",
+  const actual = jest.requireActual<typeof import("@ledgerhq/live-common/analyticsConsentUtils")>(
+    "@ledgerhq/live-common/analyticsConsentUtils",
   );
   return {
     ...actual,

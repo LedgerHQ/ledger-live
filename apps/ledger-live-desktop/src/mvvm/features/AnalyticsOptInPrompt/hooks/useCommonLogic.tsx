@@ -29,6 +29,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
+  const analyticsOptInCmpFlag = useFeature("analyticsOptIn");
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
 
   const dispatch = useDispatch();
@@ -62,10 +63,12 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const isFlagEnabled = useMemo(
     () =>
+      !analyticsOptInCmpFlag?.enabled &&
       isEntryPointIncludedInFlagParams &&
       lldAnalyticsOptInPromptFlag?.enabled &&
       (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
     [
+      analyticsOptInCmpFlag?.enabled,
       lldAnalyticsOptInPromptFlag,
       hasSeenAnalyticsOptInPrompt,
       entryPoint,
