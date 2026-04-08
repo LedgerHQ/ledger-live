@@ -307,6 +307,9 @@ apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
+apps/ledger-live-desktop/tests/specs/onboarding/                                               @ledgerhq/engagement
+apps/ledger-live-desktop/tests/specs/postOnboarding/                                           @ledgerhq/engagement
+apps/ledger-live-desktop/tests/specs/syncOnboarding/                                           @ledgerhq/engagement
 
 # Mobile
 apps/ledger-live-mobile/src/notifications/                                                     @ledgerhq/engagement
@@ -314,6 +317,10 @@ apps/ledger-live-mobile/src/analytics/                                          
 apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts                                           @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/specs/onboardingReadOnly.spec.ts                                   @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/page/onboarding/                                                   @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/page/postOnboarding/                                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Settings/Notifications                                     @ledgerhq/engagement
 apps/ledger-live-mobile/src/logic/postOnboarding/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/contentCards/                                                      @ledgerhq/engagement
