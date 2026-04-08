@@ -122,7 +122,7 @@ describe("fromTrongridTxInfoToOperation", () => {
   it("should use feesPayer over from when set (transferFrom case)", () => {
     const txInfo = {
       ...mockTrongridTxInfo,
-      from: mockUserAddress, // ERC20 "from" — our address
+      from: mockUserAddress, // TRC20 "from" — our address
       feesPayer: "actualInitiator", // Tron owner_address — someone else called transferFrom
     };
 

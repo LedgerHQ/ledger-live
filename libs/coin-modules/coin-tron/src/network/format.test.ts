@@ -66,7 +66,7 @@ describe("formatTrongridTrc20TxResponse", () => {
   });
 
   it("should set feesPayer from owner_address when it differs from from (transferFrom case)", () => {
-    // owner_address is the Tron tx initiator (hex); `from` is the ERC20 token source (base58)
+    // owner_address is the Tron tx initiator (hex); `from` is the TRC20 token source (base58)
     const tx = {
       from: "TTokenSourceAddress",
       to: "to",
