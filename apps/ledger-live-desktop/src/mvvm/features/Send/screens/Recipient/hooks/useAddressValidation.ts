@@ -69,6 +69,7 @@ type UseAddressValidationProps = Readonly<{
   account?: AccountLike;
   parentAccount?: Account;
   currentAccountId?: string;
+  recipientSupportsDomain?: boolean;
 }>;
 
 type UseAddressValidationResult = {
@@ -83,6 +84,7 @@ export function useAddressValidation({
   account,
   parentAccount,
   currentAccountId,
+  recipientSupportsDomain = false,
 }: UseAddressValidationProps): UseAddressValidationResult {
   const [validationState, setValidationState] = useState<{
     status: AddressValidationStatus;
@@ -99,17 +101,16 @@ export function useAddressValidation({
 
   const allAccounts = useSelector(accountsSelector);
 
-  const isEthereum = currency.id === "ethereum";
-  const domainServiceResponse = useDomain(isEthereum ? searchValue : "", "ens");
-  const domainIsLoading = isEthereum && isDomainLoading(domainServiceResponse);
+  const domainServiceResponse = useDomain(recipientSupportsDomain ? searchValue : "", "ens");
+  const domainIsLoading = recipientSupportsDomain && isDomainLoading(domainServiceResponse);
 
   const ensResolution = useMemo(() => {
-    if (!isEthereum) return null;
+    if (!recipientSupportsDomain) return null;
     if (isLoaded(domainServiceResponse) && domainServiceResponse.resolutions.length > 0) {
       return domainServiceResponse.resolutions[0];
     }
     return null;
-  }, [domainServiceResponse, isEthereum]);
+  }, [domainServiceResponse, recipientSupportsDomain]);
 
   // Use resolved address for bridge validation (ENS resolved address or original searchValue)
   const addressForBridgeValidation = useMemo(() => {
@@ -127,7 +128,9 @@ export function useAddressValidation({
     account: account ?? null,
     parentAccount: parentAccount ?? null,
     enabled: Boolean(
-      addressForBridgeValidation && account && (!isEthereum || ensResolution || !domainIsLoading),
+      addressForBridgeValidation &&
+        account &&
+        (!recipientSupportsDomain || ensResolution || !domainIsLoading),
     ),
   });
 

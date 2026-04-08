@@ -32,6 +32,7 @@ export function useRecipientAddressModalViewModel({
     account,
     parentAccount,
     currentAccountId: mainAccount.id,
+    recipientSupportsDomain,
   });
 
   const hasSearchValue = recipientSearch.value.length > 0;
