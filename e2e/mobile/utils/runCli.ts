@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import path from "path";
-import type { LiveDataOpts } from "./cliUtils";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import type { LiveDataOpts } from "@ledgerhq/live-common/e2e";
+import { sanitizeError } from "@ledgerhq/live-common/e2e";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 

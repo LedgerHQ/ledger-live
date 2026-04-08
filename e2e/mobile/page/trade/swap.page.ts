@@ -1,12 +1,24 @@
-import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
+import CommonPage from "../common.page";
+import { allure, Step } from "jest-allure2-reporter/api";
+import { openDeeplink, normalizeText, isIos, delay } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  createApproveTokenCommand,
+  createIsTokenAllowanceSufficientCommand,
+  GetTokenAllowanceOpts,
+  TokenApprovalOpts,
+} from "@ledgerhq/live-common/e2e";
+import { getEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
+import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
+import { log } from "detox";
 
-export default class SwapPage {
+export default class SwapPage extends CommonPage {
   baseLink = "swap";
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
@@ -26,6 +38,7 @@ export default class SwapPage {
   exportOperationsButton = "export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
   swapFormTabId = "swap-form-tab";
+  swapCloseButtonCompletedTestId = this.closeButtonTestId + "Completed";
 
   operationDetails = {
     fromAccount: "swap-operation-details-fromAccount",
@@ -194,4 +207,51 @@ export default class SwapPage {
     });
     await tapById(app.common.proceedButtonId);
   }
+
+  @Step("Wait for swap navigation header title completed")
+  async waitForSwapHeaderCompleted() {
+    await waitForElementById(this.swapCloseButtonCompletedTestId);
+  }
+
+  @Step("Ensure token approval")
+  async ensureTokenApproval(
+    fromAccount: Account | TokenAccount,
+    provider: Provider,
+    minAmount: string,
+  ) {
+    if (!provider.contractAddress || !fromAccount.parentAccount) return;
+
+    const currentAllowance = await isTokenAllowanceSufficientCommand(
+      fromAccount,
+      provider.contractAddress!,
+      minAmount,
+    )();
+    log.warn("CLI result: Current Allowance: ", currentAllowance);
+    if (currentAllowance) return;
+
+    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
+    await registerSpeculos(speculos.port);
+    try {
+      const result = await approveTokenCommand(
+        fromAccount,
+        provider.contractAddress,
+        new BigNumber(minAmount).times(12).div(10).toFixed(),
+      )();
+      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+    } finally {
+      await deleteSpeculos(speculos.id);
+      if (previousSpeculosPort > 0) {
+        await registerSpeculos(previousSpeculosPort);
+      }
+    }
+  }
 }
+
+const approveTokenCommand = createApproveTokenCommand((opts: TokenApprovalOpts) =>
+  CLI.tokenApproval(opts),
+);
+
+export const isTokenAllowanceSufficientCommand = createIsTokenAllowanceSufficientCommand(
+  (opts: GetTokenAllowanceOpts) => CLI.getTokenAllowance(opts),
+);

@@ -1,9 +1,7 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
-import { allure } from "jest-allure2-reporter/api";
 import { beforeAllFunctionSwap, liveDataWithAddressCommand } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
 
@@ -21,7 +19,7 @@ export function runSwapDexNativeFlow(
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
-        speculosApp: AppInfos.ETHEREUM,
+        speculosApp: provider.app,
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
@@ -42,7 +40,8 @@ export function runSwapDexNativeFlow(
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
-      const swap = new Swap(fromAccount, toAccount, amountToSwap.toString());
+      const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
+      await app.swap.ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
 
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
@@ -55,8 +54,10 @@ export function runSwapDexNativeFlow(
       await app.swapLiveApp.tapExecuteSwap();
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       await app.send.summaryContinue();
-      allure.issue("QAA-1053");
-      allure.statusDetails({ message: "Skipping tx sign due to QAA-1053" });
+
+      await app.deviceValidation.waitDeviceValidationAndRetry();
+      await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
+      await app.swap.waitForSwapHeaderCompleted();
     });
   });
 }

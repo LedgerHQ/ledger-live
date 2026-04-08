@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
+import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
@@ -15,57 +15,24 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
+import {
+  buildGetAddressCliCommand,
+  buildGetTokenAllowanceCliCommand,
+  buildLiveDataCliCommand,
+  buildTokenApprovalCliCommand,
+  parseGetAddressCliOutput,
+  type GetAddressOpts,
+  type GetTokenAllowanceOpts,
+  type LedgerKeyRingProtocolOpts,
+  type LedgerSyncOpts,
+  type LiveDataOpts,
+  type TokenApprovalOpts,
+} from "@ledgerhq/live-common/e2e";
 import { isSpeculosRemote } from "../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export type LiveDataOpts = {
-  currency: string;
-  index?: number;
-  scheme?: string;
-  appjson?: string;
-  add?: boolean;
-};
-
-type GetAddressOpts = {
-  currency?: string;
-  device?: string;
-  path?: string;
-  derivationMode?: string;
-  verify?: boolean;
-};
-
-type LedgerKeyRingProtocolOpts = {
-  initMemberCredentials?: boolean;
-  apiBaseUrl?: string;
-  applicationId?: number;
-  name?: string;
-  getKeyRingTree?: boolean;
-  pubKey?: string;
-  privateKey?: string;
-  device?: string;
-  destroyKeyRingTree?: boolean;
-  rootId?: string;
-  walletSyncEncryptionKey?: string;
-  applicationPath?: string;
-};
-
-type LedgerSyncOpts = {
-  applicationId?: number;
-  name?: string;
-  apiBaseUrl?: string;
-  pubKey: string;
-  privateKey: string;
-  rootId: string;
-  walletSyncEncryptionKey: string;
-  applicationPath: string;
-  push?: boolean;
-  pull?: boolean;
-  data?: string;
-  version?: number;
-  cloudSyncApiBaseUrl?: string;
-  deleteData?: boolean;
-};
+export type { LiveDataOpts, GetAddressOpts, TokenApprovalOpts, GetTokenAllowanceOpts };
 
 export const CLI = {
   ledgerKeyRingProtocol: async function (opts: LedgerKeyRingProtocolOpts) {
@@ -196,29 +163,11 @@ export const CLI = {
     }
   },
   liveData: function (opts: LiveDataOpts) {
-    const cliOpts = ["liveData"];
-
-    if (opts.currency) {
-      cliOpts.push(`--currency+${opts.currency}`);
-    }
-
-    if (opts.index !== undefined) {
-      cliOpts.push(`--index+${opts.index}`);
-    }
-
-    if (opts.appjson) {
-      cliOpts.push(`--appjson+${opts.appjson}`);
-    }
-
-    if (opts.scheme) {
-      cliOpts.push(`--scheme+${opts.scheme}`);
-    }
-
-    if (opts.add) {
-      cliOpts.push("--add");
-    }
-
-    return runCliCommandWithRetry(cliOpts.join("+"), 5, isSpeculosRemote() ? 5_000 : 2_000);
+    return runCliCommandWithRetry(
+      buildLiveDataCliCommand(opts),
+      5,
+      isSpeculosRemote() ? 5_000 : 2_000,
+    );
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();
@@ -234,37 +183,8 @@ export const CLI = {
     });
   },
   getAddress: async (opts: GetAddressOpts) => {
-    const cliOpts = ["getAddress"];
-
-    if (opts.currency) {
-      cliOpts.push(`--currency+${opts.currency}`);
-    }
-
-    if (opts.device) {
-      cliOpts.push(`--device+${opts.device}`);
-    }
-
-    if (opts.path) {
-      cliOpts.push(`--path+${opts.path}`);
-    }
-
-    if (opts.derivationMode) {
-      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
-    }
-
-    if (opts.verify) {
-      cliOpts.push("--verify");
-    }
-
-    return runCliCommand(cliOpts.join("+")).then(output => {
-      const lines = output
-        .split("\n")
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
-
-      const lastLine = lines[lines.length - 1] ?? "";
-      return JSON.parse(lastLine);
-    });
+    const output = await runCliCommand(buildGetAddressCliCommand(opts));
+    return parseGetAddressCliOutput(output) as { address: string };
   },
   getAddressForAccount: async (account: Account) => {
     if (account.currency.id === Currency.HBAR.id) {
@@ -279,5 +199,11 @@ export const CLI = {
     });
     account.address = addressInfo.address;
     return addressInfo.address;
+  },
+  tokenApproval: function (opts: TokenApprovalOpts) {
+    return runCliCommandWithRetry(buildTokenApprovalCliCommand(opts));
+  },
+  getTokenAllowance: function (opts: GetTokenAllowanceOpts) {
+    return runCliCommandWithRetry(buildGetTokenAllowanceCliCommand(opts));
   },
 };

@@ -1,6 +1,6 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
+import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
@@ -11,73 +11,21 @@ import {
 } from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import {
+  buildGetAddressCliCommand,
+  buildGetTokenAllowanceCliCommand,
+  buildLiveDataCliCommand,
+  buildTokenApprovalCliCommand,
+  parseGetAddressCliOutput,
+  type GetAddressOpts,
+  type GetTokenAllowanceOpts,
+  type LedgerKeyRingProtocolOpts,
+  type LedgerSyncOpts,
+  type LiveDataOpts,
+  type TokenApprovalOpts,
+} from "@ledgerhq/live-common/e2e";
 
-type LiveDataOpts = {
-  currency?: string;
-  index?: number;
-  scheme?: string;
-  appjson?: string;
-  add?: boolean;
-};
-
-type GetAddressOpts = {
-  currency?: string;
-  device?: string;
-  path?: string;
-  derivationMode?: string;
-  verify?: boolean;
-};
-
-type LedgerKeyRingProtocolOpts = {
-  initMemberCredentials?: boolean;
-  apiBaseUrl?: string;
-  applicationId?: number;
-  name?: string;
-  getKeyRingTree?: boolean;
-  pubKey?: string;
-  privateKey?: string;
-  device?: string;
-  destroyKeyRingTree?: boolean;
-  rootId?: string;
-  walletSyncEncryptionKey?: string;
-  applicationPath?: string;
-};
-
-type LedgerSyncOpts = {
-  applicationId?: number;
-  name?: string;
-  apiBaseUrl?: string;
-  pubKey: string;
-  privateKey: string;
-  rootId: string;
-  walletSyncEncryptionKey: string;
-  applicationPath: string;
-  push?: boolean;
-  pull?: boolean;
-  data?: string;
-  version?: number;
-  cloudSyncApiBaseUrl?: string;
-  deleteData?: boolean;
-};
-
-type TokenApprovalOpts = {
-  currency: string;
-  index: number;
-  spender: string;
-  approveAmount?: string;
-  token: string;
-  waitConfirmation?: boolean;
-  mode: "revokeApproval" | "approve";
-};
-
-type GetTokenAllowanceOpts = {
-  currency: string;
-  spenderAddress: string;
-  token: string;
-  index: number | string;
-  format?: "json";
-  ownerAddress: string;
-};
+export type { LiveDataOpts, GetAddressOpts, TokenApprovalOpts, GetTokenAllowanceOpts };
 
 export const CLI = {
   ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
@@ -206,29 +154,7 @@ export const CLI = {
     }
   },
   liveData: function (opts: LiveDataOpts) {
-    const cliOpts = ["liveData"];
-
-    if (opts.currency) {
-      cliOpts.push(`--currency+${opts.currency}`);
-    }
-
-    if (opts.index !== undefined) {
-      cliOpts.push(`--index+${opts.index}`);
-    }
-
-    if (opts.appjson) {
-      cliOpts.push(`--appjson+${opts.appjson}`);
-    }
-
-    if (opts.scheme) {
-      cliOpts.push(`--scheme+${opts.scheme}`);
-    }
-
-    if (opts.add) {
-      cliOpts.push("--add");
-    }
-
-    return runCliCommandWithRetry(cliOpts.join("+"));
+    return runCliCommandWithRetry(buildLiveDataCliCommand(opts));
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     const req: SpeculosHttpTransportOpts = {
@@ -243,78 +169,13 @@ export const CLI = {
     });
   },
   getAddress: async (opts: GetAddressOpts) => {
-    const cliOpts = ["getAddress"];
-
-    if (opts.currency) {
-      cliOpts.push(`--currency+${opts.currency}`);
-    }
-
-    if (opts.device) {
-      cliOpts.push(`--device+${opts.device}`);
-    }
-
-    if (opts.path) {
-      cliOpts.push(`--path+${opts.path}`);
-    }
-
-    if (opts.derivationMode) {
-      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
-    }
-
-    if (opts.verify) {
-      cliOpts.push("--verify");
-    }
-
-    const output = await runCliCommandWithRetry(cliOpts.join("+"));
-    const lines = output
-      .split("\n")
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
-
-    if (lines.length === 0) {
-      throw new Error("CLI getAddress returned empty output");
-    }
-
-    const jsonLine =
-      [...lines].reverse().find(line => line.startsWith("{") || line.startsWith("[")) ?? "";
-
-    if (!jsonLine) {
-      throw new Error("CLI getAddress output does not contain JSON");
-    }
-
-    try {
-      return JSON.parse(jsonLine);
-    } catch {
-      throw new Error("Failed to parse CLI getAddress output");
-    }
+    const output = await runCliCommandWithRetry(buildGetAddressCliCommand(opts));
+    return parseGetAddressCliOutput(output) as { address: string };
   },
   tokenApproval: function (opts: TokenApprovalOpts) {
-    const cliOpts = ["send"];
-    cliOpts.push(`--currency+${opts.currency}`);
-    cliOpts.push(`--mode+${opts.mode}`);
-    cliOpts.push(`--token+${opts.token}`);
-    cliOpts.push(`--spender+${opts.spender}`);
-    cliOpts.push(`--index+${opts.index}`);
-    if (opts.approveAmount) {
-      cliOpts.push(`--approveAmount+${opts.approveAmount}`);
-    }
-    if (opts.waitConfirmation) {
-      cliOpts.push("--wait-confirmation");
-    }
-    return runCliCommandWithRetry(cliOpts.join("+"));
+    return runCliCommandWithRetry(buildTokenApprovalCliCommand(opts));
   },
   getTokenAllowance: function (opts: GetTokenAllowanceOpts) {
-    const cliOpts = ["tokenAllowance"];
-    cliOpts.push(`--currency+${opts.currency}`);
-    cliOpts.push(`--spender+${opts.spenderAddress}`);
-    cliOpts.push(`--token+${opts.token}`);
-    cliOpts.push(`--index+${opts.index}`);
-    if (opts.format === "json") {
-      cliOpts.push("--format+json");
-    }
-    if (opts.ownerAddress) {
-      cliOpts.push(`--ownerAddress+${opts.ownerAddress}`);
-    }
-    return runCliCommandWithRetry(cliOpts.join("+"));
+    return runCliCommandWithRetry(buildGetTokenAllowanceCliCommand(opts));
   },
 };

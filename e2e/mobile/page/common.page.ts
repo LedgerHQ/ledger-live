@@ -21,7 +21,8 @@ export default class CommonPage {
   errorPage = new ErrorPage();
 
   searchBar = () => getElementById(this.searchBarId);
-  closeButton = () => getElementById("NavigationHeaderCloseButton");
+  closeButtonTestId = "NavigationHeaderCloseButton";
+  closeButton = () => getElementById(this.closeButtonTestId);
   backButton = () => getElementById("navigation-header-back-button");
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
