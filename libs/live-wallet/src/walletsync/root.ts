@@ -6,12 +6,16 @@ import { createAggregator } from "./aggregator";
 
 import accounts from "./modules/accounts";
 import accountNames from "./modules/accountNames";
+import ageAttestation from "./modules/ageAttestation";
 import recentAddresses from "./modules/recentAddresses";
+import settings from "./modules/settings";
 
 const modules = {
   accounts,
   accountNames,
+  ageAttestation,
   recentAddresses,
+  settings,
 };
 
 /**

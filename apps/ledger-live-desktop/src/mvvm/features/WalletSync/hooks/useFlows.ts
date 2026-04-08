@@ -56,6 +56,11 @@ export const FlowOptions: Record<
       1: Step.LedgerSyncActivated,
     },
   },
+  [Flow.SyncedData]: {
+    steps: {
+      1: Step.SyncedData,
+    },
+  },
 };
 
 /**
@@ -69,6 +74,7 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.SynchronizedInstances,
   Step.SynchronizeMode,
   Step.SynchronizeWithQRCode,
+  Step.SyncedData,
 ];
 
 export const useFlows = () => {

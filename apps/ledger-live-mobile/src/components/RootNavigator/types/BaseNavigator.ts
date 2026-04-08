@@ -15,6 +15,7 @@ import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
+import type { PassportAttestationNavigatorStackParamList } from "./PassportAttestationNavigator";
 import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
 import type { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
@@ -332,6 +333,9 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.MockedAddAssetButton]: undefined;
 
   [ScreenName.MockedWalletScreen]: undefined;
+
+  // PASSPORT ATTESTATION
+  [NavigatorName.PassportAttestation]: NavigatorScreenParams<PassportAttestationNavigatorStackParamList>;
 
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;

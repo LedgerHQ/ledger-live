@@ -31,6 +31,7 @@ export enum AnalyticsPage {
   PinCodeError = "Pin code error",
   UnbackedError = "Scan attempt with no sync",
 
+  SyncedData = "Synced Data",
   SettingsGeneral = "Settings General",
   LedgerSyncSettings = "Ledger Sync Settings",
 
@@ -93,6 +94,9 @@ export const StepMappedToAnalytics: Record<Step, string> = {
 
   //LedgerSyncActivated
   [Step.LedgerSyncActivated]: AnalyticsPage.LedgerSyncSettings,
+
+  //SyncedData
+  [Step.SyncedData]: AnalyticsPage.SyncedData,
 };
 
 export const StepsOutsideFlow: Step[] = [

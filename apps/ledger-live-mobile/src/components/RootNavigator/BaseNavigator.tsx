@@ -81,6 +81,7 @@ import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import CustomErrorNavigator from "./CustomErrorNavigator";
+import PassportAttestationNavigator from "LLM/features/PassportAttestation/PassportAttestationNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import { DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection } from "LLM/features/DeeplinkInstallApp";
@@ -477,6 +478,11 @@ export default function BaseNavigator() {
             title: t("analytics.operations.title"),
             headerRight: () => null,
           }}
+        />
+        <Stack.Screen
+          name={NavigatorName.PassportAttestation}
+          component={PassportAttestationNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.WalletSync}

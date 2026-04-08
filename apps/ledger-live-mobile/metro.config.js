@@ -118,10 +118,13 @@ const metroConfig = {
     nodeModulesPaths,
     resolverMainFields: ["react-native", "browser", "main"],
     assetExts: [
-      ...new Set([...(defaultConfig.resolver?.assetExts ?? []), "lottie"]),
+      ...new Set([...(defaultConfig.resolver?.assetExts ?? []), "lottie", "wasm", "zkey"]),
     ],
     extraNodeModules: {
       ...require("node-libs-react-native"),
+      // Bypass snarkjs's package exports map (only has "node"/"browser" conditions)
+      // by pointing directly to the self-contained UMD browser build.
+      snarkjs: path.resolve(__dirname, "node_modules/snarkjs/build/snarkjs.min.js"),
       fs: require.resolve("react-native-level-fs"),
       net: require.resolve("react-native-tcp-socket"),
       tls: require.resolve("tls"),
@@ -132,6 +135,15 @@ const metroConfig = {
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {
         return { type: "empty" };
+      }
+
+      // snarkjs only exports "node" and "browser" conditions — bypass its exports
+      // map by pointing directly to the self-contained UMD build.
+      if (moduleName === "snarkjs") {
+        return {
+          filePath: path.resolve(__dirname, "node_modules/snarkjs/build/snarkjs.min.js"),
+          type: "sourceFile",
+        };
       }
 
       try {

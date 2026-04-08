@@ -31,6 +31,7 @@ import {
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
+  PortfolioPassportEntryPoint,
   PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
@@ -128,6 +129,12 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         </Box>,
       );
     }
+
+    sections.push(
+      <Box key="passport" px={6}>
+        <PortfolioPassportEntryPoint />
+      </Box>,
+    );
 
     sections.push(
       <Box key="perps" px={6}>
