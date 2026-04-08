@@ -6,8 +6,8 @@ import type {
   RateMapRaw,
   CounterValuesStatus,
 } from "@ledgerhq/live-countervalues/types";
-import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
-import { Dispatch, SetStateAction } from "react";
+import { StateDB, useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
+import { useCallback } from "react";
 import storage from "LLM/storage";
 import type { User } from "./types/store";
 import type {
@@ -274,16 +274,20 @@ export async function getProtect(): Promise<ProtectState> {
   return protect;
 }
 
+function identitySelector<V>(state: V): V {
+  return state;
+}
+
 export function useDB<State, Selected>(
   key: string,
   initialState: State,
   // @ts-expect-error State !== Selected
-  selector: (state: State) => Selected = state => state,
-): [Selected, Dispatch<SetStateAction<State>>] {
+  selector: (state: State) => Selected = identitySelector,
+): StateDB<State, Selected> {
   return useDBRaw<State, Selected>({
     initialState,
-    getter: () => storage.get(key) as Promise<State>,
-    setter: (state: State) => storage.save(key, state),
+    getter: useCallback(() => storage.get(key) as Promise<State>, [key]),
+    setter: useCallback((state: State) => storage.save(key, state), [key]),
     selector,
   });
 }
