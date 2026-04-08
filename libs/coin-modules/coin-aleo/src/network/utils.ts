@@ -162,6 +162,7 @@ export async function accessProvableApi({
   let uuid = provableApi?.uuid;
   let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
   let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
+  let status;
 
   if (!apiKey || !consumerId) {
     const username = generateUniqueUsername(address);
@@ -204,7 +205,15 @@ export async function accessProvableApi({
     uuid = accountUuid;
   }
 
-  const status = await apiClient.getRecordScannerStatus(currency, jwt.token, uuid);
+  try {
+    status = await apiClient.getRecordScannerStatus(currency, jwt.token, uuid.slice(0, -1) + "1");
+  } catch (error) {
+    if (error instanceof Error && "status" in error && error.status === 422) {
+      return null;
+    }
+    throw error;
+  }
+
   if (status) {
     synced = status.synced;
     percentage = status.percentage;
