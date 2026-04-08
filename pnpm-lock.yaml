@@ -19,8 +19,8 @@ catalogs:
       specifier: 2.1.0
       version: 2.1.0
     '@ledgerhq/coin-xrp':
-      specifier: 7.21.1
-      version: 7.21.1
+      specifier: 7.21.4
+      version: 7.21.4
     '@ledgerhq/crypto-icons':
       specifier: 1.4.0
       version: 1.4.0
@@ -6995,7 +6995,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.21.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 7.21.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
@@ -16169,8 +16169,13 @@ packages:
       '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-env': ^2.31.0
 
-  '@ledgerhq/coin-xrp@7.21.1':
-    resolution: {integrity: sha512-RDInlIePtLOCWCPL8Koep83/PzQil/Y3ZY5EKgnmofCPwbQxc/puzOCVgQP9lqdHYLFq9MrqpqFyW4fr9VOsHg==}
+  '@ledgerhq/coin-module-framework@2.2.0':
+    resolution: {integrity: sha512-mQRrkJBxZHyDU+pDBgrOOx3kOsnIhos/MWo/I4fAx9Mt6r+ZIIiclxpgwpWAi3GDMGzrI7mokkVlIm2kMSbHMg==}
+    peerDependencies:
+      '@ledgerhq/errors': ^6.33.0
+
+  '@ledgerhq/coin-xrp@7.21.4':
+    resolution: {integrity: sha512-PhNab1v/e9jT5zG/wHKKdbdeXJbddrHJyOmRmcEM5rcj9TZ1NfmxoKM1W9DaStrxg1EyMTZ2vrrtBH4LZS+v3w==}
     peerDependencies:
       '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
@@ -20436,7 +20441,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -22724,7 +22729,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -43877,9 +43882,14 @@ snapshots:
       '@ledgerhq/live-env': link:libs/env
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-xrp@7.21.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-module-framework@2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 2.1.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-env@libs+env)
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-xrp@7.21.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+    dependencies:
+      '@ledgerhq/coin-module-framework': 2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
@@ -43888,7 +43898,6 @@ snapshots:
       ripple-address-codec: 5.0.0
       ripple-binary-codec: 1.11.0
     transitivePeerDependencies:
-      - '@ledgerhq/live-env'
       - bufferutil
       - utf-8-validate
 
