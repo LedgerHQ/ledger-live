@@ -47,6 +47,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
+      shouldDisplayMyWallet: isEnabled && Boolean(params?.myWallet),
     };
   }, [walletFeatureFlag]);
 };

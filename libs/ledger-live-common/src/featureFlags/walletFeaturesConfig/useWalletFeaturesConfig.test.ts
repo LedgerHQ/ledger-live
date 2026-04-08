@@ -49,6 +49,7 @@ const makeConfig = (
   shouldDisplayOnboardingWidget: value,
   shouldDisplayBrazePlacement: value,
   shouldDisplayOperationsList: value,
+  shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
   ...overrides,
 });
@@ -68,6 +69,7 @@ const makeParams = (value: boolean): Wallet40Params => ({
   brazePlacement: value,
   operationsList: value,
   aggregatedAssets: value,
+  myWallet: value,
 });
 
 const DISABLED_CONFIG = makeConfig(false);
@@ -134,6 +136,7 @@ describe("useWalletFeaturesConfig hook", () => {
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
         ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
+        ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),

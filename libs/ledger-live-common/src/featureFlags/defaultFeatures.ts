@@ -824,6 +824,7 @@ export const DEFAULT_FEATURES: Features = {
       brazePlacement: true,
       operationsList: true,
       aggregatedAssets: true,
+      myWallet: true,
     },
   },
   lwdWallet40: {
@@ -842,6 +843,7 @@ export const DEFAULT_FEATURES: Features = {
       operationsList: true,
       brazePlacement: true,
       aggregatedAssets: true,
+      myWallet: true,
     },
   },
   addressPoisoningOperationsFilter: {
