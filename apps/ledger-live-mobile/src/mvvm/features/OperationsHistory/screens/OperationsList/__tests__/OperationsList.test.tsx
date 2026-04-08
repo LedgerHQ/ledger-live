@@ -68,11 +68,11 @@ describe("OperationsList", () => {
       render(<MockNavigator />, { overrideInitialState: stateWithAccountsAndOperations });
 
     it("renders the list with correct components", () => {
-      const { getByTestId, queryByTestId } = renderWithOperations();
+      const { getByTestId, queryByTestId, getAllByTestId } = renderWithOperations();
       expect(getByTestId("operations-list-section-list")).toBeVisible();
       expect(queryByTestId("operations-empty-state")).not.toBeVisible();
       expect(getByTestId("bottom-fade-gradient")).toBeVisible();
-      expect(getByTestId("operations-section-header")).toBeVisible();
+      expect(getAllByTestId("operations-section-header")).toHaveLength(2);
     });
 
     it("renders five items", () => {
