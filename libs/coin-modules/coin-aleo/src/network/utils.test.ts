@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { LedgerAPI5xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { EXPLORER_TRANSFER_TYPES } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
@@ -695,6 +695,55 @@ describe("network/utils", () => {
         });
 
         expect(result?.scannerStatus).toEqual({ synced: true, percentage: 100 });
+      });
+
+      it("should return null when getRecordScannerStatus fails with a 422 error", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: false, percentage: 50 },
+        };
+
+        const error422 = new LedgerAPI4xx("Unprocessable Entity", {
+          status: 422,
+          url: undefined,
+          method: "GET",
+        });
+        mockGetRecordScannerStatus.mockRejectedValue(error422);
+
+        const result = await accessProvableApi({
+          currency: mockCurrency,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          provableApi: existingProvableApi,
+        });
+
+        expect(result).toBeNull();
+        expect(mockGetRecordScannerStatus).toHaveBeenCalledTimes(1);
+      });
+
+      it("should throw error when getRecordScannerStatus fails with a non-422 error", async () => {
+        const existingProvableApi: ProvableApi = {
+          apiKey: mockApiKey,
+          consumerId: mockConsumerId,
+          jwt: mockJWT,
+          uuid: mockUUID,
+          scannerStatus: { synced: false, percentage: 50 },
+        };
+
+        const networkError = new LedgerAPI5xx("Internal Server Error");
+        mockGetRecordScannerStatus.mockRejectedValue(networkError);
+
+        await expect(
+          accessProvableApi({
+            currency: mockCurrency,
+            viewKey: mockViewKey,
+            address: mockAddress,
+            provableApi: existingProvableApi,
+          }),
+        ).rejects.toThrow(LedgerAPI5xx);
       });
 
       it("should preserve previous scanner status when status call returns null", async () => {
