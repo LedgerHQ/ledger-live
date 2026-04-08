@@ -2750,6 +2750,12 @@
       "title": "Perpetuals",
       "description": "Trade with leverage"
     },
+    "loansEntry": {
+      "title": "Loans",
+      "cardTitle": "Borrow Stablecoin",
+      "cardDescription": "Unlock liquidity",
+      "cta": "Explore"
+    },
     "recommended": {
       "title": "Recommended"
     },
