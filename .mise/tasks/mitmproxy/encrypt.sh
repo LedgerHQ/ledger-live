@@ -9,16 +9,16 @@ set -euo pipefail
 #USAGE flag "--out-file <string>" help="Output path for the encrypted archive (default: ~/.mitmproxy/logs/mitmproxy-logs.tar.gz.enc)"
 #USAGE arg "<files>" var=#true default="" help="Which files will be encrypted (default: ~/.mitmproxy/logs/mitmproxy.log and ~/.mitmproxy/logs/mitmproxy.flows)"
 
-eval "files=($usage_files)"
-# Filter out empty strings — mise serialises a default="" variadic arg as the
-# literal two-character string `""`, which eval turns into one empty element
-# instead of an empty array, bypassing the default-paths block below.
+# Parse the variadic arg without eval: split on whitespace and drop tokens that
+# are empty or are mise's default-variadic placeholders ("" or '').
+IFS=' ' read -r -a _raw <<< "${usage_files:-}"
 _clean=()
-for _f in "${files[@]+"${files[@]}"}"; do
-	[[ -n "$_f" ]] && _clean+=("$_f")
+for _f in "${_raw[@]+"${_raw[@]}"}"; do
+	[[ -z "$_f" || "$_f" == '""' || "$_f" == "''" ]] && continue
+	_clean+=("$_f")
 done
 files=("${_clean[@]+"${_clean[@]}"}")
-unset _f _clean
+unset _f _clean _raw
 if [ ${#files[@]} -eq 0 ]; then
 	files=(
 		"${HOME}/.mitmproxy/logs/mitmproxy.log"
@@ -111,4 +111,4 @@ main() {
 	report_output
 }
 
-main "${@}"
+main ${@+"${@}"}
