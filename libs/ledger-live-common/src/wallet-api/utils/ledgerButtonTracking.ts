@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network/network";
+import { v4 as uuidv4 } from "uuid";
 
 const LEDGER_BUTTON_API_URL = "https://ledgerb.api.ledger.com/event";
 const LEDGER_BUTTON_REFERRER_PREFIX = "LedgerButton_";
@@ -35,7 +36,7 @@ export function reportLedgerButtonBroadcast({
       name: "transaction-flow-completion",
       type: "transaction_flow_completion",
       data: {
-        event_id: crypto.randomUUID(),
+        event_id: uuidv4(),
         transaction_dapp_id: dappId,
         timestamp_ms: Date.now(),
         event_type: "transaction_flow_completion",
