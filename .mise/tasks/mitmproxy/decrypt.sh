@@ -47,4 +47,4 @@ function main() {
 	log_success "Logs extracted to ${output_dir}"
 }
 
-main "${@}"
+main ${@+"${@}"}

@@ -341,6 +341,21 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
+      - name: Start mitmproxy
+        env:
+          MITMPROXY_LOGS_KEY: ${{ secrets.MITMPROXY_LOGS_KEY }}
+        run: |
+          mise run mitmproxy:decrypt \
+            --file="apps/ledger-live-mobile/tests/mocks/firebase_feature_flags_ios.tar.gz.enc" \
+            --output-dir="apps/ledger-live-mobile/tests/mocks/local"
+
+          mise run mitmproxy:start \
+            --port=9999 \
+            --allow-hosts="firebaseremoteconfig\\.googleapis\\.com|firebaseinstallations\\.googleapis\\.com" \
+            --mock-responses-file="apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags_ios.json" \
+            --setup-ios-simulator="true" \
+            --ios-simulator-name="iOS Simulator,iOS Simulator 2"
+
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
@@ -348,6 +363,23 @@ jobs:
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Stop mitmproxy
+        id: stop-mitmproxy
+        if: ${{ !cancelled() }}
+        env:
+          MITMPROXY_LOGS_KEY: ${{ secrets.MITMPROXY_LOGS_KEY }}
+        run: |
+          mise run mitmproxy:stop
+          rm -f "apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags_ios.json"
+
+      - name: Upload mitmproxy logs
+        if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mitmproxy-logs-detox-ios-${{ matrix.shard }}
+          path: ${{ steps.stop-mitmproxy.outputs.mitmproxy_logs_archive }}
+          retention-days: 1
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

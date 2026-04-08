@@ -3,7 +3,6 @@
 set -euo pipefail
 
 #MISE description="Stop mitmproxy, archive and optionally encrypt and upload its logs."
-#MISE tools={mitmproxy="12.2.1"}
 #MISE raw=true
 
 #USAGE flag "--mitmproxy-pid <pid>" env="MITMPROXY_PID" required=#true help="PID of mitmproxy to gracefully interrupt the process"
@@ -59,6 +58,15 @@ function stop_mitmproxy() {
 }
 
 function remove_certificate_macos() {
+	if [ -n "${GITHUB_ENV:-}" ]; then
+		# GitHub Actions macOS runners are ephemeral — the VM is discarded after
+		# the job, so keychain cleanup is unnecessary. Skipping also avoids a
+		# hang: `security remove-trusted-cert` prompts for keychain authentication
+		# even under passwordless sudo, which blocks the step indefinitely in CI.
+		log_info "GitHub Actions detected: skipping certificate removal (ephemeral runner)"
+		return
+	fi
+
 	if [ ! -f "${CERT}" ]; then
 		log_info "Certificate not found at ${CERT}, skipping removal"
 		return
@@ -130,15 +138,18 @@ function unset_http_proxy() {
 }
 
 function encrypt_logs() {
-	mise run mitmproxy:encrypt --encrypt-key "${usage_encrypt_key}" || \
+	# MITMPROXY_LOGS_KEY is inherited from the environment (set via the
+	# --encrypt-key flag's env= binding). Pass it explicitly so the child
+	# process never has to receive it as a CLI argument (avoids ps exposure).
+	MITMPROXY_LOGS_KEY="${usage_encrypt_key}" mise run mitmproxy:encrypt ||
 		log_info "Encryption failed or no logs to archive, skipping"
 }
 
 function main() {
-	stop_mitmproxy
 	unset_http_proxy
+	stop_mitmproxy
 	remove_certificate
 	encrypt_logs
 }
 
-main "${@}"
+main ${@+"${@}"}
