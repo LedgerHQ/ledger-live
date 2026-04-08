@@ -3,6 +3,7 @@ import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
 import accounts from "./accounts";
+import ageAttestation from "./ageAttestation";
 import appstate from "./appstate";
 import auth from "./auth";
 import ble from "./ble";
@@ -36,6 +37,7 @@ export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  ageAttestation,
   appstate,
   auth,
   ble,

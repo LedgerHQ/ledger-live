@@ -39,7 +39,12 @@ import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
+import type { AgeAttestationLocalState } from "@ledgerhq/live-wallet/walletsync/modules/ageAttestation";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
+
+// === AGE ATTESTATION STATE ===
+
+export type AgeAttestationState = AgeAttestationLocalState;
 
 // === ACCOUNT STATE ===
 
@@ -399,6 +404,7 @@ export type DeeplinkInstallAppState = {
 
 export type State = LLMRTKApiState & {
   accounts: AccountsState;
+  ageAttestation: AgeAttestationState;
   appstate: AppState;
   auth: AuthState;
   ble: BleState;

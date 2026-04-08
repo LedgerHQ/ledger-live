@@ -33,12 +33,14 @@ import {
   WSState,
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
+import { saveSettings } from "~/renderer/actions/settings";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { Language } from "src/config/languages";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -51,6 +53,10 @@ function localStateSelector(state: State): LocalState {
     },
     accountNames: state.wallet.accountNames,
     recentAddresses: state.wallet.recentAddresses,
+    settings: {
+      language: state.settings.language ?? "",
+      counterValue: state.settings.counterValue,
+    },
   };
 }
 
@@ -66,6 +72,12 @@ async function save(
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
     dispatch(setAccountNames(newLocalState.accountNames));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
+    dispatch(
+      saveSettings({
+        language: newLocalState.settings.language as Language | undefined,
+        counterValue: newLocalState.settings.counterValue,
+      }),
+    );
     dispatch(replaceAccounts(newLocalState.accounts.list)); // triggers db middleware to persist accounts
   }
 }

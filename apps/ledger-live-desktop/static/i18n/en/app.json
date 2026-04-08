@@ -7980,7 +7980,19 @@
         "label": "1 Ledger Wallet app synched",
         "label_other": "{{count}} Ledger Wallet apps synched",
         "cta": "Manage"
+      },
+      "syncedData": {
+        "label": "1 synced account",
+        "label_other": "{{count}} synced accounts",
+        "cta": "View"
       }
+    },
+    "syncedData": {
+      "title": "Synced data",
+      "accounts": "Accounts",
+      "settings": "Settings",
+      "language": "Language",
+      "counterValue": "Preferred currency"
     },
     "loading": {
       "title": "Hang tight...",

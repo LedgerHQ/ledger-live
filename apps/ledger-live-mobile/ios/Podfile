@@ -20,6 +20,8 @@ prepare_react_native_project!
 target 'ledgerlivemobile' do
   use_expo_modules!
 
+  pod 'OpenSSL-Universal', '~> 1.1.1900'
+
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
   else

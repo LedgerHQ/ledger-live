@@ -6,6 +6,7 @@ import SynchronizeWallet from "./Synchronize";
 import WalletSyncManageInstances from "./ManageInstances";
 import WalletSyncActivation from "./Activation";
 import WalletSyncManage from "./Manage";
+import WalletSyncSyncedData from "./SyncedData";
 import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 
@@ -36,6 +37,8 @@ export const WalletSyncRouter = forwardRef<BackRef, Props>(({ currentPage }, ref
       return <WalletSyncManageBackup ref={ref} />;
     case Flow.ManageInstances:
       return <WalletSyncManageInstances ref={ref} />;
+    case Flow.SyncedData:
+      return <WalletSyncSyncedData ref={ref} />;
   }
 });
 

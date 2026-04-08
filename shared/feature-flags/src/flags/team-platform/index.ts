@@ -5,6 +5,7 @@ export * from "./lldWalletSync";
 export * from "./llmDatadog";
 export * from "./llmLedgerSyncEntryPoints";
 export * from "./llmMmkvMigration";
+export * from "./llmPassportAgeAttestation";
 export * from "./llmSentry";
 export * from "./llmWalletSync";
 export * from "./lwdLedgerSyncOptimisation";

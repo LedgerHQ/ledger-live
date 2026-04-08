@@ -558,6 +558,13 @@ export enum ScreenName {
   WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
 
+  // Passport Attestation
+  PassportAttestationScanMRZ = "PassportAttestationScanMRZ",
+  PassportAttestationReadNFC = "PassportAttestationReadNFC",
+  PassportAttestationConfirm = "PassportAttestationConfirm",
+  PassportAttestationGenerateProof = "PassportAttestationGenerateProof",
+  PassportAttestationSuccess = "PassportAttestationSuccess",
+
   MockedAddAssetButton = "MockedAddAssetButton",
   MockedModularDrawer = "MockedModularDrawer",
   MockedWalletScreen = "MockedWalletScreen",
@@ -705,6 +712,7 @@ export enum NavigatorName {
   Web3Hub = "Web3Hub",
   Web3HubTab = "Web3HubTab",
 
+  PassportAttestation = "PassportAttestation",
   WalletSync = "WalletSync",
   ModularDrawer = "ModularDrawer",
   DeviceSelection = "DeviceSelection",

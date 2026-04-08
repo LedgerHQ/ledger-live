@@ -36,6 +36,8 @@ import {
 import { State } from "~/reducers/types";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
+import { setLanguage, setCountervalue } from "~/actions/settings";
+import { setAgeAttestation } from "~/reducers/ageAttestation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
@@ -50,7 +52,12 @@ function localStateSelector(state: State): LocalState {
       nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
     },
     accountNames: state.wallet.accountNames,
+    ageAttestation: state.ageAttestation,
     recentAddresses: state.wallet.recentAddresses,
+    settings: {
+      language: state.settings.language,
+      counterValue: state.settings.counterValue,
+    },
   };
 }
 
@@ -66,6 +73,15 @@ async function save(
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
     dispatch(setAccountNames(newLocalState.accountNames));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
+    if (newLocalState.settings.language) {
+      dispatch(setLanguage(newLocalState.settings.language));
+    }
+    if (newLocalState.settings.counterValue) {
+      dispatch(setCountervalue(newLocalState.settings.counterValue));
+    }
+    if (newLocalState.ageAttestation) {
+      dispatch(setAgeAttestation(newLocalState.ageAttestation));
+    }
     dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
   }
 }

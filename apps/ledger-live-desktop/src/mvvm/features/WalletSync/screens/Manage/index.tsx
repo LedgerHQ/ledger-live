@@ -2,7 +2,7 @@ import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { Option, OptionProps } from "./Option";
@@ -15,6 +15,7 @@ import { useLedgerSyncInfo } from "../../hooks/useLedgerSyncInfo";
 import { AlertError } from "../../components/AlertError";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -55,6 +56,13 @@ const WalletSyncManage = ({ currentPage }: Props) => {
   const goToManageInstances = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
     onClickTrack({ button: "Manage Instances", page: currentPage });
+  };
+
+  const accounts = useSelector(accountsSelector);
+
+  const goToSyncedData = () => {
+    dispatch(setFlow({ flow: Flow.SyncedData, step: Step.SyncedData }));
+    onClickTrack({ button: "View synced data", page: currentPage });
   };
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
 
@@ -103,6 +111,20 @@ const WalletSyncManage = ({ currentPage }: Props) => {
       {Options.map((props, index) => (
         <Option {...props} key={index} disabled={disabled} />
       ))}
+
+      <div
+        className="flex cursor-pointer items-center justify-between py-24"
+        onClick={goToSyncedData}
+        data-testid="walletSync-synced-data"
+      >
+        <span className="body-2 text-base" data-testid="walletSync-synced-data-label">
+          {t("walletSync.manage.syncedData.label", { count: accounts.length })}
+        </span>
+        <span className="flex items-center gap-8">
+          <span className="body-2 text-base">{t("walletSync.manage.syncedData.cta")}</span>
+          <Icons.ChevronRight size="S" />
+        </span>
+      </div>
 
       <InstancesRow
         paddingY={24}

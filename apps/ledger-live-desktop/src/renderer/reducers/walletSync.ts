@@ -8,6 +8,7 @@ export enum Flow {
   ManageInstances = "ManageInstances",
   ManageBackup = "ManageBackup",
   LedgerSyncActivated = "LedgerSyncActivated",
+  SyncedData = "SyncedData",
 }
 
 export enum Step {
@@ -47,6 +48,9 @@ export enum Step {
 
   //walletSyncActivated
   LedgerSyncActivated = "LedgerSyncActivated",
+
+  //SyncedData
+  SyncedData = "SyncedData",
 }
 
 export type WalletSyncState = {

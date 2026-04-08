@@ -83,6 +83,12 @@
 	<string>The Ledger Wallet app needs access device</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The Ledger Wallet app needs access to your camera to scan QR codes</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>Ledger Live needs NFC access to read your passport chip for age verification</string>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>A0000002471001</string>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>NSMicrophoneUsageDescription</key>
