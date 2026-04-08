@@ -5895,6 +5895,10 @@
     },
     "recipientWording": {
       "send": "recipient",
+      "transfer_public": "public recipient",
+      "transfer_private": "private recipient",
+      "convert_public_to_private": "private recipient",
+      "convert_private_to_public": "public recipient",
       "delegate": "validator",
       "redelegate": "validator",
       "undelegate": "validator",
