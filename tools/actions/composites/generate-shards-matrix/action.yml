@@ -74,7 +74,7 @@ runs:
           SHARD_COUNT_IOS=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
           SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
-          SHARD_COUNT_IOS=$(( BASE_SHARD < 6 ? BASE_SHARD : 6 ))
+          SHARD_COUNT_IOS=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
           SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         else
           SHARD_COUNT_IOS=$(( BASE_SHARD < 3 ? BASE_SHARD : 3 ))
