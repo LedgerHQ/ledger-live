@@ -7469,7 +7469,7 @@
     "percentageSymbol": "%",
     "fee": "Fee",
     "accountHeaderManageActions": {
-      "changeDelegation": "Change Delegation",
+      "changeDelegation": "Redelegate",
       "earn": "Earn"
     },
     "stakeBanner": {
@@ -7508,7 +7508,7 @@
     "delegation": {
       "listHeader": "Delegation",
       "amount": "Amount",
-      "redelegate": "Change Validator",
+      "redelegate": "Redelegate",
       "undelegate": "Undelegate",
       "totalStake": "Total Stake",
       "commission": "Commission"
