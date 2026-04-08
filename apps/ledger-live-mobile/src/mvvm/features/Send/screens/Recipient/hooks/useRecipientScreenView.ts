@@ -42,6 +42,7 @@ export function useRecipientScreenView({
     account,
     parentAccount,
     currentAccountId: mainAccount.id,
+    recipientSupportsDomain,
   });
 
   const allAccounts = useSelector(accountsSelector);
