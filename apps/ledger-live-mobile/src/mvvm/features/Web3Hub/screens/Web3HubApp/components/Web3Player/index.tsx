@@ -1,23 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, View, BackHandler, Platform } from "react-native";
-import { useSelector } from "~/context/hooks";
-import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
-import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import { WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
-import {
-  useACRECustomHandlers,
-  useDeeplinkCustomHandlers,
-} from "~/components/WebPlatformPlayer/CustomHandlers";
-import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
-import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
-import { flattenAccountsSelector } from "~/reducers/accounts";
 import { InfoPanel } from "./InfoPanel";
 import { AppProps } from "LLM/features/Web3Hub/types";
 import Header from "../Header";
+import useWeb3PlayerViewModel, { type Web3PlayerViewModelValues } from "./useWeb3PlayerViewModel";
 
-type Props = {
+export type Web3PlayerScreenProps = {
   manifest: AppManifest;
   inputs?: Record<string, string | undefined>;
   webviewState: WebviewState;
@@ -28,7 +19,9 @@ type Props = {
   baseUrl: string;
 };
 
-const WebPlatformPlayer = ({
+export type Web3PlayerViewProps = Web3PlayerScreenProps & Web3PlayerViewModelValues;
+
+const Web3PlayerView = ({
   manifest,
   inputs,
   webviewState,
@@ -37,50 +30,14 @@ const WebPlatformPlayer = ({
   initialLoad,
   secure,
   baseUrl,
-}: Props) => {
-  const webviewAPIRef = useRef<WebviewAPI>(null);
-  const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
-
-  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
-
-  const handleHardwareBackPress = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    if (webviewState.canGoBack) {
-      webview.goBack();
-      return true; // prevent default behavior (native navigation)
-    }
-
-    return false;
-  }, [webviewState.canGoBack, webviewAPIRef]);
-
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBackPress,
-      );
-
-      return () => {
-        subscription.remove();
-      };
-    }
-  }, [handleHardwareBackPress]);
-
-  const accounts = useSelector(flattenAccountsSelector);
-  const customACREHandlers = useACRECustomHandlers(manifest, accounts);
-  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
-  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-
-  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
-    return {
-      ...loggerHandlers,
-      ...customACREHandlers,
-      ...customPTXHandlers,
-      ...customDeeplinkHandlers,
-    };
-  }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers]);
-
+  webviewAPIRef,
+  isInfoPanelOpened,
+  setIsInfoPanelOpened,
+  currentAccountHistDb,
+  setCurrentAccountHistDb,
+  currentAccountHistDbLoaded,
+  customHandlers,
+}: Web3PlayerViewProps) => {
   return (
     <View style={styles.root}>
       <Header
@@ -89,7 +46,7 @@ const WebPlatformPlayer = ({
         secure={secure}
         baseUrl={baseUrl}
         manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
         setIsInfoPanelOpened={setIsInfoPanelOpened}
@@ -98,6 +55,8 @@ const WebPlatformPlayer = ({
         ref={webviewAPIRef}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
+        currentAccountHistDbLoaded={currentAccountHistDbLoaded}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
@@ -115,7 +74,16 @@ const WebPlatformPlayer = ({
   );
 };
 
-export default WebPlatformPlayer;
+export default function Web3Player(props: Web3PlayerScreenProps) {
+  const viewModel = useWeb3PlayerViewModel({
+    manifest: props.manifest,
+    webviewState: props.webviewState,
+  });
+
+  return <Web3PlayerView {...props} {...viewModel} />;
+}
+
+export { Web3PlayerView };
 
 const styles = StyleSheet.create({
   root: {
