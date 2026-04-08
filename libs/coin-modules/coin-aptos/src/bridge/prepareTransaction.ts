@@ -73,37 +73,45 @@ const prepareTransaction = async (
 
   const aptosClient = new AptosAPI(account.currency.id);
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
-  const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
-  const gas = BigNumber(estimate.maxGasAmount);
-  const gasPrice = BigNumber(estimate.gasUnitPrice);
 
-  if (transaction.useAllAmount) {
-    const maxAmount = tokenAccount
-      ? getMaxSendBalance(tokenAccount, account, gas, gasPrice)
-      : getMaxSendBalance(account, undefined, gas, gasPrice);
+  try {
+    const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
+    const gas = BigNumber(estimate.maxGasAmount);
+    const gasPrice = BigNumber(estimate.gasUnitPrice);
 
-    if (transaction.mode === "send") {
-      transaction.amount = maxAmount;
-    } else if (
-      transaction.mode === "restake" ||
-      transaction.mode === "unstake" ||
-      transaction.mode === "withdraw"
-    ) {
-      // Reserve a certain amount to cover future network fees to deactivate and withdraw
-      transaction.amount = getDelegationOpMaxAmount(
-        account,
-        transaction.recipient,
-        transaction.mode,
-      );
-    } else if (transaction.mode === "stake") {
-      // Reserve a certain amount to cover future network fees to deactivate and withdraw
-      transaction.amount = maxAmount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
+    if (transaction.useAllAmount) {
+      const maxAmount = tokenAccount
+        ? getMaxSendBalance(tokenAccount, account, gas, gasPrice)
+        : getMaxSendBalance(account, undefined, gas, gasPrice);
+
+      if (transaction.mode === "send") {
+        transaction.amount = maxAmount;
+      } else if (
+        transaction.mode === "restake" ||
+        transaction.mode === "unstake" ||
+        transaction.mode === "withdraw"
+      ) {
+        // Reserve a certain amount to cover future network fees to deactivate and withdraw
+        transaction.amount = getDelegationOpMaxAmount(
+          account,
+          transaction.recipient,
+          transaction.mode,
+        );
+      } else if (transaction.mode === "stake") {
+        // Reserve a certain amount to cover future network fees to deactivate and withdraw
+        transaction.amount = maxAmount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
+      }
     }
-  }
 
-  transaction.fees = fees;
-  transaction.options = estimate;
-  transaction.errors = errors;
+    transaction.fees = fees;
+    transaction.options = estimate;
+    transaction.errors = errors;
+  } catch {
+    return {
+      ...transaction,
+      fees: null,
+    };
+  }
 
   return transaction;
 };

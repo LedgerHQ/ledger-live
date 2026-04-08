@@ -114,5 +114,18 @@ describe("Aptos prepareTransaction", () => {
       const result = await prepareTransaction(account, transaction);
       expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
     });
+
+    it("should return the transaction with fees null when getEstimatedGas throws", async () => {
+      transaction.recipient = "test-recipient";
+      transaction.amount = new BigNumber(100);
+      (getEstimatedGas as jest.Mock).mockRejectedValue(new Error("gas estimation failed"));
+
+      const result = await prepareTransaction(account, transaction);
+
+      expect(result).toEqual({
+        ...transaction,
+        fees: null,
+      });
+    });
   });
 });

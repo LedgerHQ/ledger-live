@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import estimateMaxSpendable from "../../bridge/estimateMaxSpendable";
+import { getEstimatedGas } from "../../bridge/getFeesForTransaction";
 
 jest.mock("../../bridge/getFeesForTransaction", () => ({
   getEstimatedGas: jest.fn(() => ({
@@ -87,6 +88,26 @@ describe("estimateMaxSpendable Test", () => {
       const expected = new BigNumber(99998);
 
       expect(result.isEqualTo(expected)).toBe(true);
+    });
+  });
+
+  describe("when getEstimatedGas throws", () => {
+    it("should fall back to default gas and return spendable minus default total gas", async () => {
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction();
+
+      const spendableBalance = new BigNumber(100000);
+      account.spendableBalance = spendableBalance;
+
+      (getEstimatedGas as jest.Mock).mockRejectedValueOnce(new Error("gas estimation failed"));
+
+      const result = await estimateMaxSpendable({
+        account,
+        transaction,
+      });
+
+      const expected = new BigNumber(80000);
+      expect(result).toStrictEqual(expected);
     });
   });
 });
