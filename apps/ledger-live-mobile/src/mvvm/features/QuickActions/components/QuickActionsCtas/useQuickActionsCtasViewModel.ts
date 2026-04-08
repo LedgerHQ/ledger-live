@@ -201,13 +201,13 @@ export const useQuickActionsCtasViewModel = ({
         onPress: handleBuyPress,
         testID: QUICK_ACTIONS_TEST_IDS.ctas.buy,
       },
-      ...(userState === "has_funds"
+      ...(shouldDisplayQuickActionsCtasVariant
         ? [
             {
               id: "send" as const,
               label: t("portfolio.quickActionsCtas.send"),
               icon: ArrowUp,
-              disabled: false,
+              disabled: userState !== "has_funds",
               onPress: handleSendPress,
               testID: QUICK_ACTIONS_TEST_IDS.ctas.send,
             },
@@ -218,6 +218,7 @@ export const useQuickActionsCtasViewModel = ({
       t,
       isExchangeEnabled,
       userState,
+      shouldDisplayQuickActionsCtasVariant,
       handleReceivePress,
       handleSwapPress,
       handleBuyPress,
