@@ -21,6 +21,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     {
       manifest,
       currentAccountHistDb,
+      setCurrentAccountHistDb,
+      currentAccountHistDbLoaded,
       inputs = {},
       customHandlers,
       onStateChange,
@@ -42,12 +44,14 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
+      isLoadingAccounts,
     } = useWebView(
       {
         manifest,
         inputs,
         customHandlers,
         currentAccountHistDb,
+        setCurrentAccountHistDb,
         manifestDomainCheckEnabled,
       },
       ref,
@@ -65,8 +69,17 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const javaScriptCanOpenWindowsAutomatically =
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
-    if (!!manifest.dapp && noAccounts) {
-      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    if (!!manifest.dapp && noAccounts && setCurrentAccountHistDb) {
+      if (!currentAccountHistDbLoaded || isLoadingAccounts) {
+        return (
+          <View style={styles.root}>
+            <Loader />
+          </View>
+        );
+      }
+      return (
+        <NoAccountScreen manifest={manifest} setCurrentAccountHistDb={setCurrentAccountHistDb} />
+      );
     }
 
     if (isBlockedByDomainCheck) {
@@ -117,9 +130,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
-        injectedJavaScript={
-          Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
-        }
+        injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
         {...webviewProps}
         {...webviewCacheOptions}
       />
