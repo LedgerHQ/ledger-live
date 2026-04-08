@@ -6,6 +6,7 @@ import StepSummaryFromAddress from "./modals/send/steps/StepSummaryFromAddress";
 import StepSummaryPostAlert from "./modals/send/steps/StepSummaryPostAlert";
 import StepSummaryRecipientValue from "./modals/send/steps/StepSummaryRecipientValue";
 import operationDetails from "./operationDetails";
+import transactionConfirmFields from "./TransactionConfirmFields";
 import type { AleoFamily } from "./types";
 
 const family: AleoFamily = {
@@ -14,6 +15,7 @@ const family: AleoFamily = {
   accountHeaderManageActions,
   createSendSteps,
   operationDetails,
+  transactionConfirmFields,
   StepSummaryFromAddress,
   StepSummaryRecipientValue,
   StepSummaryPostAlert,

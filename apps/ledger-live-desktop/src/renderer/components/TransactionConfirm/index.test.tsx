@@ -5,7 +5,7 @@ import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDevic
 import { getLLDCoinFamily } from "~/renderer/families";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/deviceTransactionConfig";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -19,7 +19,14 @@ jest.mock("@ledgerhq/live-common/hooks/useDeviceTransactionConfig");
 jest.mock("~/renderer/families");
 jest.mock("~/renderer/hooks/useTheme");
 jest.mock("~/renderer/hooks/useAccountUnit");
-jest.mock("@ledgerhq/live-common/account/index");
+jest.mock("@ledgerhq/live-common/account/index", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/account/index");
+
+  return {
+    ...actual,
+    getMainAccount: jest.fn(),
+  };
+});
 jest.mock("../DeviceAction/animations");
 jest.mock("~/renderer/animations", () => ({ __esModule: true, default: () => null }));
 
@@ -168,6 +175,45 @@ describe("TransactionConfirm", () => {
     );
     expect(screen.getByText("Recipient")).toBeInTheDocument();
     expect(screen.getByText("test-address-123")).toBeInTheDocument();
+  });
+
+  it("uses a family-specific address field override when provided", () => {
+    const address = "aleo1recipientaddress1234567890";
+    const CustomAddress = ({ field }: { field: DeviceTransactionField }) => {
+      if (field.type !== "address") return null;
+
+      return <div>{shortAddressPreview(field.address)}</div>;
+    };
+
+    (getLLDCoinFamily as jest.Mock).mockReturnValue({
+      transactionConfirmFields: {
+        fieldComponents: {
+          address: CustomAddress,
+        },
+      },
+    });
+    (useDeviceTransactionConfig as jest.Mock).mockReturnValue({
+      fields: [
+        {
+          type: "address",
+          label: "Recipient",
+          address,
+        },
+      ],
+      loading: false,
+    });
+
+    render(
+      <TransactionConfirm
+        device={mockDevice}
+        account={mockAccount}
+        parentAccount={null}
+        transaction={mockTransaction}
+        status={mockStatus}
+      />,
+    );
+
+    expect(screen.getByText(shortAddressPreview(address))).toBeInTheDocument();
   });
 
   it("renders text field correctly", () => {
