@@ -13,9 +13,9 @@ import {
   TopBarActionIcon,
   useMyLedgerTopBarAction,
 } from "LLM/components/CustomTopBar";
+import { useMyWalletTopBarAction } from "LLM/features/MyWallet/useMyWalletTopBarAction";
 import { ICON_SIZE } from "LLM/components/TopBar/const";
 import { SyncErrorBottomSheet } from "../components/SyncErrorBottomSheet";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useTopBarViewModel } from "../useTopBarViewModel";
 
 const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
@@ -26,6 +26,9 @@ type TopBarViewProps = ReturnType<typeof useTopBarViewModel>;
 
 export function TopBarView({
   onMyLedgerPress,
+  onMyWalletPress,
+  shouldDisplayMyWallet,
+  shouldDisplayOperationsList,
   onDiscoverPress,
   onNotificationsPress,
   onSettingsPress,
@@ -41,8 +44,9 @@ export function TopBarView({
   closeSyncDrawer,
   onTryRefresh,
 }: Readonly<TopBarViewProps>) {
-  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
+  const myWalletAction = useMyWalletTopBarAction(onMyWalletPress);
+  const leadingAction = shouldDisplayMyWallet ? myWalletAction : myLedgerAction;
 
   const notificationIcon = useCallback<IconButtonProps["icon"]>(
     ({ size, style }) => {
@@ -94,8 +98,8 @@ export function TopBarView({
   };
 
   const leadingIcons = shouldDisplayOperationsList
-    ? [myLedgerAction, discoverIcon]
-    : [myLedgerAction];
+    ? [leadingAction, discoverIcon]
+    : [leadingAction];
 
   const baseIcons = shouldDisplayOperationsList
     ? [notificationsIcon, transactionHistoryIcon, settingsIcon]

@@ -8,6 +8,7 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
@@ -18,6 +19,7 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { navigateToRebornFlow } = useRebornFlow();
@@ -72,6 +74,13 @@ export function useTopBarViewModel(
     }
   }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
 
+  const onMyWalletPress = useCallback(() => {
+    track("menuentry_clicked", { button: "MyWallet", page });
+    navigation.navigate(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
+    });
+  }, [navigation, page]);
+
   const onDiscoverPress = useCallback(() => {
     track("menuentry_clicked", { button: "Discover", page });
     if (web3hub?.enabled) {
@@ -106,6 +115,9 @@ export function useTopBarViewModel(
 
   return {
     onMyLedgerPress,
+    onMyWalletPress,
+    shouldDisplayMyWallet,
+    shouldDisplayOperationsList,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
