@@ -14,6 +14,7 @@ import {
   DISCOVER_STORE_KEY,
   INITIAL_PLATFORM_STATE,
 } from "@ledgerhq/live-common/wallet-api/constants";
+import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -48,6 +49,10 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   );
 }
 
+function selectLocalLiveAppDB(state: DiscoverDB) {
+  return state.localLiveApp;
+}
+
 function useLocalLiveAppDB() {
-  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.localLiveApp);
+  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, selectLocalLiveAppDB);
 }

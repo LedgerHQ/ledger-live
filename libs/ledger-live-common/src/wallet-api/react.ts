@@ -1368,6 +1368,7 @@ export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
 export type CacheBustedLiveAppsdDB = StateDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>;
 export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
+export type SetCurrentAccountHistDb = CurrentAccountHistDB[1];
 
 export interface LocalLiveApp {
   state: LiveAppManifest[];

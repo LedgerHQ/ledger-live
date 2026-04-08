@@ -1,4 +1,4 @@
-import React, { RefObject, useCallback } from "react";
+import React, { type RefObject } from "react";
 import { Pressable, TouchableOpacity, View } from "react-native";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -11,39 +11,43 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { AppProps } from "LLM/features/Web3Hub/types";
-import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
-import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
+import type { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
+import type { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import SelectAccountButton from "../Web3Player/SelectAccountButton";
+import useHeaderViewModel, { type HeaderViewModelValues } from "./useHeaderViewModel";
 
 const BAR_HEIGHT = 60;
 export const TOTAL_HEADER_HEIGHT = BAR_HEIGHT;
 const URL_BAR_HEIGHT = 40;
 const URL_TEXT_MAX_WIDTH = 128;
 
-type Props = {
+export type Web3HubAppHeaderProps = {
   navigation: AppProps["navigation"];
   initialLoad: boolean;
   secure: boolean;
   baseUrl: string;
-  webviewAPIRef: RefObject<WebviewAPI | null>;
   manifest: AppManifest;
   webviewState: WebviewState;
-  currentAccountHistDb: CurrentAccountHistDB;
-  setIsInfoPanelOpened: (isOpened: boolean) => void;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 };
 
-export default function Web3HubAppHeader({
+type HeaderViewProps = Web3HubAppHeaderProps & HeaderViewModelValues;
+
+const HeaderView = ({
   navigation,
   initialLoad,
   secure,
   baseUrl,
-  webviewAPIRef,
-  webviewState,
   manifest,
-  currentAccountHistDb,
-  setIsInfoPanelOpened,
-}: Props) {
+  webviewState,
+  setCurrentAccountHistDb,
+  shouldDisplaySelectAccount,
+  onForward,
+  onBack,
+  onReload,
+  onInfoPanel,
+}: HeaderViewProps) => {
   const styles = useStyleSheet(
     theme => ({
       barRow: {
@@ -89,33 +93,13 @@ export default function Web3HubAppHeader({
     [],
   );
 
-  const shouldDisplaySelectAccount = !!manifest.dapp;
-
-  const handleForward = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    webview.goForward();
-  }, [webviewAPIRef]);
-
-  const handleBack = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-    webview.goBack();
-  }, [webviewAPIRef]);
-
-  const handleReload = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    webview.reload();
-  }, [webviewAPIRef]);
-
-  const handleInfoPanel = useCallback(() => {
-    setIsInfoPanelOpened(true);
-  }, [setIsInfoPanelOpened]);
-
   return (
     <Box style={styles.barRow}>
       {shouldDisplaySelectAccount ? (
-        <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
+        <SelectAccountButton
+          manifest={manifest}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+        />
       ) : (
         <View style={{ width: 24 }} />
       )}
@@ -130,7 +114,7 @@ export default function Web3HubAppHeader({
                 icon={ChevronLeft}
                 accessibilityLabel="Go back"
                 disabled={!webviewState.canGoBack}
-                onPress={handleBack}
+                onPress={onBack}
               />
               <IconButton
                 appearance="no-background"
@@ -138,11 +122,11 @@ export default function Web3HubAppHeader({
                 icon={ChevronRight}
                 accessibilityLabel="Go forward"
                 disabled={!webviewState.canGoForward}
-                onPress={handleForward}
+                onPress={onForward}
               />
             </View>
 
-            <Pressable style={styles.urlCenter} onPress={handleInfoPanel}>
+            <Pressable style={styles.urlCenter} onPress={onInfoPanel}>
               {secure ? <Lock size={12} color="muted" /> : <Warning size={12} color="error" />}
               <Text
                 typography="body2"
@@ -154,7 +138,7 @@ export default function Web3HubAppHeader({
               </Text>
             </Pressable>
 
-            <TouchableOpacity onPress={handleReload}>
+            <TouchableOpacity onPress={onReload}>
               <RefreshBack size={20} color="muted" />
             </TouchableOpacity>
           </>
@@ -173,4 +157,25 @@ export default function Web3HubAppHeader({
       />
     </Box>
   );
+};
+
+type ContainerProps = Web3HubAppHeaderProps & {
+  webviewAPIRef: RefObject<WebviewAPI | null>;
+  setIsInfoPanelOpened: (isOpened: boolean) => void;
+};
+
+export default function Web3HubAppHeader({
+  webviewAPIRef,
+  setIsInfoPanelOpened,
+  ...rest
+}: ContainerProps) {
+  const viewModel = useHeaderViewModel({
+    webviewAPIRef,
+    manifest: rest.manifest,
+    setIsInfoPanelOpened,
+  });
+
+  return <HeaderView {...rest} {...viewModel} />;
 }
+
+export { HeaderView };

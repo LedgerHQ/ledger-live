@@ -7,7 +7,7 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
-  CurrentAccountHistDB,
+  SetCurrentAccountHistDb,
   useCacheBustedLiveApps,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
@@ -56,10 +56,14 @@ export function useWebView(
   {
     manifest,
     currentAccountHistDb,
+    setCurrentAccountHistDb,
     inputs,
     customHandlers,
     manifestDomainCheckEnabled,
-  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb"> & {
+  }: Pick<
+    WebviewProps,
+    "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb"
+  > & {
     manifestDomainCheckEnabled?: boolean;
   },
   ref: React.ForwardedRef<WebviewAPI>,
@@ -152,10 +156,12 @@ export function useWebView(
     uiHook,
     customHandlers,
   });
-  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState] = useCacheBustedLiveAppsDB();
+  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
+    useCacheBustedLiveAppsDB();
   const { edit, getLatest } = useCacheBustedLiveApps([
     cacheBustedLiveAppsDb,
     setCacheBustedLiveAppsDbState,
+    cacheBustedLoaded,
   ]);
 
   useEffect(() => {
@@ -164,9 +170,10 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage, noAccounts } = useDappLogic({
+  const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     currentAccountHistDb,
+    setCurrentAccountHistDb,
     accounts,
     uiHook,
     postMessage: webviewHook.postMessage,
@@ -256,6 +263,7 @@ export function useWebView(
     webviewProps,
     webviewRef,
     noAccounts,
+    isLoadingAccounts,
   };
 }
 
@@ -690,17 +698,23 @@ function useGetUserId() {
 
 export function useSelectAccount({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: {
   manifest: AppManifest;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 }) {
   const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
     manifest.id,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   );
   const { openDrawer } = useModularDrawerController();
+  // Using a ref because openDrawer's useCallback deps include callbackId
+  // from Redux state (which changes every time the drawer opens)
+  const openDrawerRef = useRef(openDrawer);
+  useEffect(() => {
+    openDrawerRef.current = openDrawer;
+  }, [openDrawer]);
 
   const onSelectAccountSuccess = useCallback(
     (account: AccountLike) => {
@@ -710,8 +724,8 @@ export function useSelectAccount({
     [manifest.id, setCurrentAccountHist, setCurrentAccount],
   );
 
-  const handleAddAccountPress = () => {
-    openDrawer({
+  const handleAddAccountPress = useCallback(() => {
+    openDrawerRef.current({
       currencies: currencyIds,
       areCurrenciesFiltered: true,
       enableAccountSelection: true,
@@ -722,7 +736,7 @@ export function useSelectAccount({
           ? "Discover"
           : (currentRouteNameRef.current ?? "Unknown"),
     });
-  };
+  }, [currencyIds, onSelectAccountSuccess, manifest.name]);
 
   return { handleAddAccountPress, currentAccount, currencyIds, onSelectAccountSuccess };
 }
