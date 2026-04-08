@@ -19,12 +19,12 @@ import Box from "~/renderer/components/Box/Box";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { isAleoAccount } from "./utils";
 
-interface Props {
+interface Props extends Pick<StepProps, "status" | "updateTransaction"> {
   account: AleoAccount;
   transaction: AleoTransaction;
-  updateTransaction: StepProps["updateTransaction"];
 }
 
 interface ButtonState {
@@ -95,12 +95,13 @@ const RecordsLimitDescription = styled.p`
 
 const MAX_RECORDS_DISPLAYED = 10;
 
-const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props) => {
+const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction }: Props) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const formatDate = useDateFormatter(dayFormat);
   const formatHours = useDateFormatter(hourFormat);
+  const recordError = status.errors.feeRecord ?? status.errors.amountRecord;
 
   const allUnspentRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(r =>
     new BigNumber(r.microcredits).isGreaterThan(0),
@@ -152,9 +153,13 @@ const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props
 
   return (
     <Box flow={1}>
-      <Alert data-testid="aleo-pick-records-alert" type="secondary" mb={4}>
-        {t("aleo.shared.recordPicker.alert")}
-      </Alert>
+      {recordError ? (
+        <ErrorBanner dataTestId="aleo-record-picker-error" error={recordError} warning />
+      ) : (
+        <Alert data-testid="aleo-pick-records-alert" type="secondary" mb={4}>
+          {t("aleo.shared.recordPicker.alert")}
+        </Alert>
+      )}
       <Label>
         {t("aleo.shared.recordPicker.label")}: {allUnspentRecords.length}
       </Label>
@@ -193,13 +198,14 @@ const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props
   );
 };
 
-const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
+const StepRecordPicker = ({ account, transaction, status, updateTransaction }: StepProps) => {
   if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
 
   return (
     <AleoStepRecordPicker
       account={account}
       transaction={transaction}
+      status={status}
       updateTransaction={updateTransaction}
     />
   );

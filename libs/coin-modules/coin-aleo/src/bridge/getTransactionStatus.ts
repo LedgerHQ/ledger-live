@@ -18,13 +18,19 @@ import type {
 import { estimateFees, validateAddress } from "../logic";
 import {
   calculateAmount,
+  findBestRecordForFee,
   getAvailableBalance,
   getRecordByCommitment,
   isPrivateTransaction,
   isSelfTransferTransaction,
 } from "../logic/utils";
 import aleoCoinConfig from "../config";
-import { AleoAmountRecordRequired, AleoFeeRecordRequired } from "../errors";
+import {
+  AleoAmountRecordRequired,
+  AleoFeeRecordInsufficientBalance,
+  AleoFeeRecordRequired,
+  AleoTwoRecordsRequired,
+} from "../errors";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
@@ -47,17 +53,18 @@ function validatePrivateTransaction({
   account,
   transaction,
   amount,
+  estimatedFees,
   isFeeSponsored,
 }: {
   account: AleoAccount;
   transaction: TransactionPrivate;
   amount: BigNumber;
+  estimatedFees: BigNumber;
   isFeeSponsored: boolean;
 }): Errors {
   const errors: Errors = {};
-  const { amountRecordCommitment, feeRecordCommitment } = transaction.properties;
+  const { amountRecordCommitment } = transaction.properties;
   const amountRecord = getValidRecord({ account, commitment: amountRecordCommitment });
-  const feeRecord = getValidRecord({ account, commitment: feeRecordCommitment });
 
   if (!amountRecord) {
     errors.amountRecord = new AleoAmountRecordRequired();
@@ -65,11 +72,71 @@ function validatePrivateTransaction({
     errors.amount = new NotEnoughBalance();
   }
 
-  if (!isFeeSponsored && !feeRecord) {
-    errors.feeRecord = new AleoFeeRecordRequired();
+  const feeRecordError = validateFeeRecordStatus({
+    account,
+    transaction,
+    estimatedFees,
+    isFeeSponsored,
+  });
+
+  if (feeRecordError) {
+    errors.feeRecord = feeRecordError;
   }
 
   return errors;
+}
+
+function validateFeeRecordStatus({
+  account,
+  transaction,
+  estimatedFees,
+  isFeeSponsored,
+}: {
+  account: AleoAccount;
+  transaction: TransactionPrivate;
+  estimatedFees: BigNumber;
+  isFeeSponsored: boolean;
+}): Error | null {
+  if (isFeeSponsored) {
+    return null;
+  }
+
+  const availableRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(record =>
+    new BigNumber(record.microcredits).isGreaterThan(0),
+  );
+
+  if (availableRecords.length <= 1) {
+    return new AleoTwoRecordsRequired();
+  }
+
+  const bestFeeRecord = findBestRecordForFee({
+    unspentRecords: availableRecords,
+    selectedAmountRecordCommitment: transaction.properties.amountRecordCommitment ?? null,
+    targetFee: estimatedFees,
+  });
+
+  if (!bestFeeRecord) {
+    return new AleoFeeRecordInsufficientBalance();
+  }
+
+  if (!transaction.properties.amountRecordCommitment) {
+    return null;
+  }
+
+  const feeRecordCommitment = transaction.properties.feeRecordCommitment;
+  const feeRecord = feeRecordCommitment
+    ? getRecordByCommitment({ account, commitment: feeRecordCommitment })
+    : null;
+
+  if (
+    !feeRecord ||
+    feeRecord.commitment === transaction.properties.amountRecordCommitment ||
+    new BigNumber(feeRecord.microcredits).lt(estimatedFees)
+  ) {
+    return new AleoFeeRecordRequired();
+  }
+
+  return null;
 }
 
 async function validateRecipient({
@@ -145,6 +212,7 @@ async function handleTransferTransaction({
         account,
         transaction,
         amount: calculatedAmount.amount,
+        estimatedFees,
         isFeeSponsored: config.isFeeSponsored,
       }),
     );
