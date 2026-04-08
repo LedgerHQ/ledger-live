@@ -12,6 +12,12 @@ import useCryptoViewModel from "./useCryptoViewModel";
 
 type Props = BaseComposite<StackNavigatorProps<CryptoScreenNavigator, ScreenName.Crypto>>;
 
+const LIST_TEST_ID_BY_VARIANT: Record<string, string> = {
+  stablecoin: "StablecoinList",
+  crypto: "CryptoList",
+  all: "CryptoList",
+};
+
 const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   assetsToDisplay,
   onItemPress,
@@ -21,6 +27,7 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   onNavigateBack,
   title,
   trackingType,
+  variant,
 }) => {
   const { top } = useSafeAreaInsets();
 
@@ -28,7 +35,7 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
     <Box style={{ paddingTop: top, flex: 1 }}>
       <TrackScreen name="Assets" source={sourceScreenName} type={trackingType} />
       <NavBar appearance="compact">
-        <NavBarBackButton onPress={onNavigateBack} />
+        <NavBarBackButton onPress={onNavigateBack} testID="navigation-header-back-button" />
       </NavBar>
       <Box lx={titleContainerStyle}>
         <Text typography="heading3SemiBold" lx={titleTextStyle}>
@@ -40,6 +47,7 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
         error={error}
         assetsToDisplay={assetsToDisplay}
         onItemPress={onItemPress}
+        listTestID={LIST_TEST_ID_BY_VARIANT[variant] ?? "CryptoList"}
       />
     </Box>
   );

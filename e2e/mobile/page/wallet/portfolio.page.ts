@@ -1,5 +1,6 @@
+import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
+import { isAndroid, isWallet40, openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import { Feature_Noah } from "@ledgerhq/types-live";
 export default class PortfolioPage {
@@ -54,6 +55,12 @@ export default class PortfolioPage {
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
+  portfolioCryptosListId = "PortfolioCryptosList";
+  portfolioStablecoinsListId = "PortfolioStablecoinsList";
+  cryptoListId = "CryptoList";
+  stablecoinListId = "StablecoinList";
+  cryptosSectionHeaderId = "portfolio-cryptos-section-header";
+  stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -153,6 +160,9 @@ export default class PortfolioPage {
   @Step("Click on Add account button in portfolio")
   async addAccount() {
     await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+    if (isAndroid()) {
+      await element(by.id(this.emptyPortfolioListId)).scroll(200, "down", NaN, 0.3);
+    }
     await tapById(this.addAccountCta);
   }
 
@@ -430,5 +440,64 @@ export default class PortfolioPage {
   @Step("Press transfer bottom sheet bank transfer button")
   async pressTransferBottomSheetBankTransferButton() {
     await tapById(this.transferBottomSheetBankTransferButton);
+  }
+
+  @Step("Check cryptos list section is visible")
+  async checkCryptosListSectionVisible() {
+    await scrollToId(this.portfolioCryptosListId);
+    await detoxExpect(getElementById(this.portfolioCryptosListId)).toBeVisible();
+  }
+
+  @Step("Check stablecoins list section is visible")
+  async checkStablecoinsListSectionVisible() {
+    await scrollToId(this.portfolioStablecoinsListId);
+    await detoxExpect(getElementById(this.portfolioStablecoinsListId)).toBeVisible();
+  }
+
+  @Step("Check add account CTA is visible")
+  async checkAddAccountCtaVisible() {
+    await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+    await detoxExpect(getElementById(this.addAccountCta)).toBeVisible();
+  }
+
+  @Step("Check total asset item count equals expected")
+  async checkTotalAssetItemCount(expected: number) {
+    const count = await countElementsById(this.assetItemRegExp);
+    jestExpect(count).toBe(expected);
+  }
+
+  @Step("Check total asset items does not exceed max")
+  async checkMaxTotalAssetItems(max: number) {
+    const count = await countElementsById(this.assetItemRegExp);
+    jestExpect(count).toBeLessThanOrEqual(max);
+  }
+
+  @Step("Tap first asset item (wallet 4.0)")
+  async tapFirstAssetItemW40() {
+    await tapByElement(getElementById(this.assetItemRegExp, 0));
+  }
+
+  @Step("Tap cryptos section title")
+  async tapCryptosSectionTitle() {
+    await scrollToId(this.quickActionTransferButtonV4, this.accountsListView, 150, "up");
+    await tapById(this.cryptosSectionHeaderId);
+  }
+
+  @Step("Tap stablecoins section title")
+  async tapStablecoinsSectionTitle() {
+    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
+    await tapById(this.stablecoinsSectionHeaderId);
+  }
+
+  @Step("Check full crypto list page is visible")
+  async checkCryptoListPageVisible() {
+    await waitForElementById(this.cryptoListId);
+    await detoxExpect(getElementById(this.cryptoListId)).toBeVisible();
+  }
+
+  @Step("Check full stablecoin list page is visible")
+  async checkStablecoinListPageVisible() {
+    await waitForElementById(this.stablecoinListId);
+    await detoxExpect(getElementById(this.stablecoinListId)).toBeVisible();
   }
 }

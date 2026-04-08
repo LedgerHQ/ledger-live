@@ -11,6 +11,7 @@ interface CryptoContentProps {
   error: Error | null;
   assetsToDisplay: Asset[];
   onItemPress: (asset: Asset) => void;
+  listTestID?: string;
 }
 
 export const CryptoContent: React.FC<CryptoContentProps> = ({
@@ -18,6 +19,7 @@ export const CryptoContent: React.FC<CryptoContentProps> = ({
   error,
   assetsToDisplay,
   onItemPress,
+  listTestID,
 }) => {
   const { t } = useTranslation();
 
@@ -49,7 +51,7 @@ export const CryptoContent: React.FC<CryptoContentProps> = ({
 
   return (
     <Box lx={listContainerStyle}>
-      <CryptoAssetList assets={assetsToDisplay} onItemPress={onItemPress} />
+      <CryptoAssetList assets={assetsToDisplay} onItemPress={onItemPress} testID={listTestID} />
     </Box>
   );
 };

@@ -34,6 +34,7 @@ const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSection
           onPress={hasMore ? onPressShowAll : undefined}
           accessibilityRole={hasMore ? "button" : undefined}
           lx={{ marginBottom: "s12" }}
+          testID="portfolio-stablecoins-section-header"
         >
           <SubheaderTitle>{t("wallet.tabs.stablecoins")}</SubheaderTitle>
           {hasMore && (

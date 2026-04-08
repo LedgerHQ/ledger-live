@@ -9,9 +9,14 @@ const HORIZONTAL_PADDING = 8;
 interface CryptoAssetListProps {
   assets: Asset[];
   onItemPress: (asset: Asset) => void;
+  testID?: string;
 }
 
-export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({ assets, onItemPress }) => {
+export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({
+  assets,
+  onItemPress,
+  testID = "CryptoList",
+}) => {
   const { bottom } = useSafeAreaInsets();
 
   const renderItem = useCallback(
@@ -21,7 +26,7 @@ export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({ assets, onItem
 
   return (
     <FlashList
-      testID="CryptoList"
+      testID={testID}
       renderItem={renderItem}
       data={assets}
       showsVerticalScrollIndicator={false}
