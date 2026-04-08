@@ -2696,6 +2696,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

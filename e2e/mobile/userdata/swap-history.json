@@ -61,8 +61,6 @@
         "acceptedProviders": [],
         "selectableCurrencies": []
       },
-      "overriddenFeatureFlags": {},
-      "featureFlagsButtonVisible": false,
       "vaultSigner": { "enabled": false, "host": "", "token": "", "workspace": "" },
       "supportedCounterValues": [],
       "dismissedContentCards": {},
@@ -47416,6 +47414,10 @@
         }
       ],
       "hashes": { "ethereum": "595335fd322dd2a4165d02c8247813fdf0161f52" }
+    },
+    "featureFlags": {
+      "overrides": {},
+      "bannerVisible": false
     }
   }
 }

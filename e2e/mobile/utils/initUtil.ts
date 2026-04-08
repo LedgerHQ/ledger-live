@@ -11,7 +11,7 @@ import {
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "./speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 function checkTestFailed(): void {
@@ -34,7 +34,7 @@ export type InitOptions = {
   }[];
   userdata?: string;
   testedCurrencies?: string[];
-  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
+  featureFlags?: PartialFeatures;
 };
 
 type Entry = {
@@ -316,6 +316,13 @@ export class InitializationManager {
           marketBanner: isWallet40,
           graphRework: isWallet40,
           quickActionCtas: isWallet40,
+          tour: isWallet40,
+          lazyOnboarding: isWallet40,
+          balanceRefreshRework: isWallet40,
+          assetSection: isWallet40,
+          onboardingWidget: isWallet40,
+          operationsList: isWallet40,
+          aggregatedAssets: isWallet40,
         },
       },
     };

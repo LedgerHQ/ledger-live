@@ -29,6 +29,7 @@
     "@jest/reporters": "catalog:",
     "@jest/types": "^30.2.0",
     "@ledgerhq/devices": "workspace:*",
+    "@shared/feature-flags": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

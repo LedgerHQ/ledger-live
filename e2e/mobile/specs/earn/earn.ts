@@ -17,7 +17,7 @@ const stakeProgramOverride = {
       list: ["ethereum"],
       redirects: {
         "ethereum/erc20/usd__coin": {
-          platform: "earn",
+          platform: "earn" as const,
           name: "Earn - Deposit",
           queryParams: {
             cryptoAssetId: "ethereum/erc20/usd__coin",
