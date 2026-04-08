@@ -381,6 +381,7 @@ function useWebView(
     currentAccountHistDb,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
+    referrer: inputs?.referrer?.toString(),
     mevProtected,
   });
 
