@@ -310,6 +310,23 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amountRecord).toBeInstanceOf(AleoAmountRecordRequired);
     });
 
+    it("adds error when private amount exceeds the selected record value", async () => {
+      const oversizedAmount = new BigNumber("900000");
+      mockCalculateAmount.mockReturnValue({
+        amount: oversizedAmount,
+        totalSpent: oversizedAmount.plus(mockFees),
+      });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        amount: oversizedAmount,
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
     it("adds error when private fee record is missing and fee is not sponsored", async () => {
       mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
 

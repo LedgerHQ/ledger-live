@@ -16,6 +16,7 @@ export const WALLET_40_FEATURE_FLAGS = {
       onboardingWidget: true,
       operationsList: true,
       aggregatedAssets: true,
+      myWallet: true,
     },
   },
 } as const;

@@ -43,7 +43,7 @@ jobs:
     name: "Mobile E2E Lint & Typecheck"
     needs: determine-affected
     if: >-
-      ${{ !github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/mobile') }}
+      ${{ !github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile')) }}
     runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
