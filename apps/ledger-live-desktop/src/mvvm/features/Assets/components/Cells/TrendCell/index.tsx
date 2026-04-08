@@ -1,12 +1,11 @@
 import React from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrendCellView } from "./TrendCellView";
 import { useTrendCellViewModel } from "./useTrendCellViewModel";
 
 type TrendCellProps = {
-  readonly currency: CryptoOrTokenCurrency;
+  readonly trend?: number | null;
 };
 
-export const TrendCell = ({ currency }: TrendCellProps) => (
-  <TrendCellView {...useTrendCellViewModel(currency)} />
+export const TrendCell = ({ trend }: TrendCellProps) => (
+  <TrendCellView {...useTrendCellViewModel(trend)} />
 );

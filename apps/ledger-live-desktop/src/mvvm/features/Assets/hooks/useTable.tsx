@@ -102,7 +102,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
           row.original.isPlaceholder ? (
             <TableCellContent align="end" title={<span className="text-muted">0.00%</span>} />
           ) : (
-            <TrendCell currency={row.original.currency} />
+            <TrendCell trend={row.original.trend} />
           ),
         meta: {
           align: "end",
@@ -127,6 +127,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
   const table = useLumenDataTable({
     data: assets,
     columns,
+    autoResetPageIndex: false,
   });
 
   return table;
