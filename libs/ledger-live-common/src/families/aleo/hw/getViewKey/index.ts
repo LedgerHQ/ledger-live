@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { catchError, concatMap, defer, from, map, scan, type Observable } from "rxjs";
+import { catchError, concatMap, defer, from, map, of, scan, type Observable } from "rxjs";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import type { GetViewKeyOptions } from "@ledgerhq/coin-aleo/signer/getViewKey";
@@ -59,6 +60,10 @@ export const getViewKeyExec = (
           return { accountId: account.id, viewKey };
         }),
         catchError(e => {
+          if (e instanceof UserRefusedOnDevice) {
+            return of({ accountId: account.id, viewKey: null });
+          }
+
           log("hw", `getViewKey ${currency.id} on ${path} FAILED ${String(e)}`);
           throw e;
         }),
