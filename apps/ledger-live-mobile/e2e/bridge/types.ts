@@ -17,7 +17,7 @@ import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import WebSocket from "ws";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 
-type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
+export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
 
 export type ServerData =
   | {
