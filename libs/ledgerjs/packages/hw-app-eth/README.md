@@ -202,6 +202,7 @@ Ethereum API
 *   `transport` **Transport**&#x20;
 *   `scrambleKey`   (optional, default `"w0w"`)
 *   `loadConfig` **LoadConfig**  (optional, default `{}`)
+*   `ledgerService`   (optional, default `ledgerServiceProvided`)
 
 #### Examples
 

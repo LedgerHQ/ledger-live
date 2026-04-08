@@ -28,6 +28,7 @@ For a smooth and quick integration:
 #### Table of Contents
 
 *   [Celo](#celo)
+    *   [Parameters](#parameters)
 
 ### Celo
 
@@ -35,3 +36,7 @@ For a smooth and quick integration:
 
 Heavily inspiried by celo-web-wallet
 <https://github.com/celo-tools/celo-web-wallet/blob/master/src/features/ledger/CeloLedgerApp.ts>
+
+#### Parameters
+
+*   `transport` **Transport**&#x20;
