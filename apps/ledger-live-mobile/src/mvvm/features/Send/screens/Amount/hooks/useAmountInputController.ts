@@ -11,10 +11,7 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useLocale } from "~/context/Locale";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   formatAmountForInput,
   formatFiatForInput,
@@ -37,7 +34,7 @@ type UseAmountInputControllerParams = Readonly<{
  */
 export function useAmountInputController({
   account,
-  parentAccount,
+  parentAccount: _parentAccount,
   transaction,
   status,
   onUpdateTransaction,
@@ -45,13 +42,8 @@ export function useAmountInputController({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { locale } = useLocale();
 
-  const mainAccount = useMemo(
-    () => getMainAccount(account, parentAccount ?? undefined),
-    [account, parentAccount],
-  );
-
-  const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-  const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
+  const accountCurrency = useMemo(() => getAccountCurrency(account), [account]);
+  const accountUnit = useMaybeAccountUnit(account) ?? accountCurrency.units[0];
   const fiatUnit = counterValueCurrency.units[0];
 
   // When useAllAmount is true, the bridge calculates the actual amount (balance - fees)
@@ -103,7 +95,7 @@ export function useAmountInputController({
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
-    inputMode === "fiat" ? (counterValueCurrency.symbol ?? fiatUnit.code) : accountUnit.code;
+    inputMode === "fiat" ? counterValueCurrency.symbol ?? fiatUnit.code : accountUnit.code;
   const currencyPosition: "left" | "right" = inputMode === "fiat" ? "left" : "right";
 
   const secondaryValue = useMemo(() => {
