@@ -30,10 +30,16 @@ jest.mock("~/components/wrappedUi/Button", () => {
 });
 jest.mock("~/images/illustration/Illustration", () => "Illustration");
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockAccount = {
   id: "test-account-id",
   freshAddress: "addr1test...",
   currency: { id: "cardano" },
+  cardanoResources: {
+    protocolParams: {
+      stakeKeyDeposit: "2000000",
+    },
+  },
 } as unknown as CardanoAccount;
 
 const mockBridge = {
@@ -43,7 +49,11 @@ const mockBridge = {
 
 describe("DRepDelegationSelfTransactionInfoDrawer", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockNavigate.mockClear();
+    (getAccountBridge as jest.Mock).mockClear();
+    mockBridge.createTransaction.mockClear();
+    mockBridge.updateTransaction.mockClear();
+
     (getAccountBridge as jest.Mock).mockReturnValue(mockBridge);
   });
 
@@ -56,7 +66,7 @@ describe("DRepDelegationSelfTransactionInfoDrawer", () => {
       />,
     );
 
-    expect(screen.getByText("DRep Delegation Self Transaction")).toBeTruthy();
+    expect(screen.getByText("Prepare Undelegation")).toBeTruthy();
     expect(screen.getByTestId("continue-button")).toBeTruthy();
   });
 
@@ -73,22 +83,24 @@ describe("DRepDelegationSelfTransactionInfoDrawer", () => {
   });
 
   it("creates transaction and navigates on continue", () => {
+    const onClose = jest.fn();
     render(
       <DRepDelegationSelfTransactionInfoDrawer
         account={mockAccount}
         isOpen={true}
-        onClose={jest.fn()}
+        onClose={onClose}
       />,
     );
 
     const continueButton = screen.getByTestId("continue-button");
     fireEvent.press(continueButton);
 
+    expect(onClose).toHaveBeenCalled();
     expect(getAccountBridge).toHaveBeenCalledWith(mockAccount);
     expect(mockBridge.createTransaction).toHaveBeenCalledWith(mockAccount);
     expect(mockBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
       recipient: mockAccount.freshAddress,
-      amount: new BigNumber(2000000),
+      amount: new BigNumber(mockAccount.cardanoResources.protocolParams.stakeKeyDeposit),
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {

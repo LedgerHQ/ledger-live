@@ -12,10 +12,6 @@ import { Trans } from "~/context/Locale";
 import Button from "~/components/wrappedUi/Button";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import BigNumber from "bignumber.js";
-
-// used for internal transaction
-const DEFAULT_TX_AMOUNT = 2000000;
-
 export default function DRepDelegationSelfTransactionInfoDrawer({
   account,
   isOpen,
@@ -28,11 +24,12 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
   const navigation = useNavigation();
 
   const onContinue = useCallback(() => {
+    onClose();
     const bridge = getAccountBridge(account);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       recipient: account.freshAddress,
-      amount: BigNumber(DEFAULT_TX_AMOUNT),
+      amount: new BigNumber(account.cardanoResources.protocolParams.stakeKeyDeposit),
     });
 
     navigation.navigate(NavigatorName.SendFunds, {
@@ -42,7 +39,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
         transaction: updatedTransaction,
       },
     });
-  }, [account, navigation]);
+  }, [account, navigation, onClose]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
