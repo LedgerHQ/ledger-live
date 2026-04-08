@@ -8293,6 +8293,12 @@
       "description": "Trade with leverage",
       "cta": "Discover"
     },
+    "loansEntry": {
+      "title": "Loans",
+      "cardTitle": "Borrow Stablecoin",
+      "cardDescription": "Unlock liquidity",
+      "cta": "Explore"
+    },
     "noDeviceTitle": "Your secure crypto wallet"
   },
   "marketBanner": {
