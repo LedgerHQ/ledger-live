@@ -13,7 +13,7 @@ import {
   Categories,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { SearchRaw, useSearch } from "@ledgerhq/live-common/hooks/useSearch";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import { AppManifest, DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useDB } from "~/renderer/storage";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
@@ -60,17 +60,20 @@ export function useCatalog(
   };
 }
 
+function useRecentlyUsedDBSelector(state: DiscoverDB) {
+  return state.recentlyUsed;
+}
+
 export function useRecentlyUsedDB() {
-  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.recentlyUsed);
+  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, useRecentlyUsedDBSelector);
+}
+
+function useCurrentAccountHistDBSelector(state: DiscoverDB) {
+  return state.currentAccountHist;
 }
 
 export function useCurrentAccountHistDB() {
-  return useDB(
-    "app",
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    state => state.currentAccountHist,
-  );
+  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, useCurrentAccountHistDBSelector);
 }
 
 export type Disclaimer = DisclaimerRaw;

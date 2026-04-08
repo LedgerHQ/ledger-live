@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { useTheme } from "@react-navigation/native";
@@ -9,14 +9,14 @@ import SelectAccountModal from "./SelectAccountModal";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
-  currentAccountHistDb: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 };
 
 export default function SelectAccountButton({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: SelectAccountButtonProps) {
-  const { currentAccount } = useDappCurrentAccount(manifest.id, currentAccountHistDb);
+  const { currentAccount } = useDappCurrentAccount(manifest.id, setCurrentAccountHistDb);
   const { dark } = useTheme();
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -39,7 +39,7 @@ export default function SelectAccountButton({
     <>
       <SelectAccountModal
         manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
         isOpened={modalOpened}
         onSelectAccount={onSelectAccount}
         onClose={onClose}
