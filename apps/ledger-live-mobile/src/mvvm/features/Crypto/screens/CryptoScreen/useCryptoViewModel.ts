@@ -78,7 +78,6 @@ const useCryptoViewModel = ({
     [navigation, resolvedVariant],
   );
 
-  const title = resolvedVariant === "stablecoin" ? t("crypto.stablecoinTitle") : t("crypto.title");
   const trackingType = TRACKING_TYPE_BY_VARIANT[resolvedVariant];
 
   return {
@@ -87,9 +86,7 @@ const useCryptoViewModel = ({
     isLoading: isLoadingStablecoinTickers,
     error: isStablecoinTickersError ? new Error(t("crypto.errorState")) : null,
     sourceScreenName,
-    onNavigateBack: navigation.goBack,
     variant: resolvedVariant,
-    title,
     trackingType,
   };
 };

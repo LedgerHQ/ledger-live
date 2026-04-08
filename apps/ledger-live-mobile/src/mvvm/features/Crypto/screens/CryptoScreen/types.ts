@@ -16,8 +16,6 @@ export interface CryptoScreenViewData {
   isLoading: boolean;
   error: Error | null;
   sourceScreenName: ScreenName | undefined;
-  onNavigateBack: () => void;
   variant: CryptoVariant;
-  title: string;
   trackingType: "crypto" | "stable" | undefined;
 }

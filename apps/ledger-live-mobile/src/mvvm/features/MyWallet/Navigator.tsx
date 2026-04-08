@@ -1,23 +1,44 @@
 import React, { useMemo } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Platform } from "react-native";
+import type { NativeStackHeaderRightProps } from "@react-navigation/native-stack";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
 import { ScreenName } from "~/const";
+import {
+  createLumenNativeStackNavigator,
+  getStackNavigationConfigV4,
+} from "LLM/components/Navigation";
 import { MyWalletScreen } from "./index";
 import { MyWalletNavigatorStackParamList } from "./types";
+import { MyWalletHeaderTrailing } from "./views/Header";
 
-const Stack = createNativeStackNavigator<MyWalletNavigatorStackParamList>();
+function renderMyWalletHeaderTrailing(_props: NativeStackHeaderRightProps) {
+  return <MyWalletHeaderTrailing />;
+}
+
+const Stack = createLumenNativeStackNavigator<MyWalletNavigatorStackParamList>();
 
 export default function MyWalletNavigator() {
-  const { theme: lumenTheme } = useLumenTheme();
-  const stackNavConfigV4 = useMemo(() => getStackNavigationConfigV4(lumenTheme), [lumenTheme]);
+  const { theme } = useLumenTheme();
+
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        ...stackNavigationConfig,
+        gestureEnabled: Platform.OS === "ios",
+      }}
+    >
       <Stack.Screen
         name={ScreenName.MyWallet}
         component={MyWalletScreen}
-        options={{ headerShown: false, ...stackNavConfigV4 }}
+        options={{
+          title: "",
+          lumenNavBar: {
+            renderCenter: () => null,
+            renderTrailing: renderMyWalletHeaderTrailing,
+          },
+        }}
       />
     </Stack.Navigator>
   );

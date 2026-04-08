@@ -1,18 +1,22 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
+import {
+  createLumenNativeStackNavigator,
+  getStackNavigationConfigV4,
+} from "LLM/components/Navigation";
 import { OperationsHistoryNavigatorParamsList } from "./types";
 import OperationsList from "./screens/OperationsList";
-import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
+
+const Stack = createLumenNativeStackNavigator<OperationsHistoryNavigatorParamsList>();
 
 export default function Navigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme, false), [theme]);
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
 
   return (
     <Stack.Navigator
@@ -26,11 +30,8 @@ export default function Navigator() {
         component={OperationsList}
         options={{
           title: t("analytics.operations.title"),
-          headerRight: () => null,
         }}
       />
     </Stack.Navigator>
   );
 }
-
-const Stack = createNativeStackNavigator<OperationsHistoryNavigatorParamsList>();

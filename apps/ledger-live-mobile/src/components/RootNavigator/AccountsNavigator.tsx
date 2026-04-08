@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  type NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSelector } from "~/context/hooks";
@@ -25,12 +28,24 @@ import { CryptoScreen } from "LLM/features/Crypto";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { track } from "~/analytics";
-import { NavigationProp, NavigationState, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  NavigationProp,
+  NavigationState,
+  type RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { TrackingEvent } from "LLM/features/Accounts/enums";
 import AccountsListHeaderRight from "LLM/features/LedgerSyncEntryPoint/components/AccountsListHeaderRight";
 import { CryptoAddressesScreen } from "LLM/features/CryptoAddresses";
+import { useTranslation } from "~/context/Locale";
+import type { LumenNavBarScreenOptions } from "LLM/components/Navigation";
 
 const Stack = createNativeStackNavigator<AccountsNavigatorParamList>();
+
+type V4AccountsScreenOptions = NativeStackNavigationOptions & {
+  lumenNavBar?: LumenNavBarScreenOptions;
+};
 
 type NavType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -45,11 +60,49 @@ const isParamsType = (value: unknown): value is ParamsType =>
   value !== null &&
   Object.prototype.hasOwnProperty.call(value, "params");
 
+function handleAccountsCryptoBackPress(
+  nav: NavType,
+  getState: () => NavigationState | undefined,
+  routeName: string,
+) {
+  const maybeParams = getState()?.routes?.[1]?.params;
+  const hasSpecificAccounts =
+    isParamsType(maybeParams) && Boolean(maybeParams.params?.specificAccounts);
+  const screenName = hasSpecificAccounts
+    ? TrackingEvent.AccountListSummary
+    : TrackingEvent.AccountsList;
+  track("button_clicked", {
+    button: "Back",
+    page: screenName || routeName,
+  });
+  nav.goBack();
+}
+
+function AccountsCryptoNavBarLeading() {
+  const navigation = useNavigation<NavType>();
+  const route = useRoute();
+  const onPress = useCallback(
+    (nav: NavType) => {
+      handleAccountsCryptoBackPress(nav, () => navigation.getState(), route.name);
+    },
+    [navigation, route.name],
+  );
+  return <NavigationHeaderBackButton onPress={onPress} />;
+}
+
+function renderAccountsCryptoNavBarLeading() {
+  return <AccountsCryptoNavBarLeading />;
+}
+
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const { theme: lumenTheme } = useLumenTheme();
+  const { t } = useTranslation();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
-  const stackNavConfigV4 = useMemo(() => getStackNavigationConfigV4(lumenTheme), [lumenTheme]);
+  const stackNavConfigV4Expanded = useMemo(
+    () => getStackNavigationConfigV4(lumenTheme, "expanded"),
+    [lumenTheme],
+  );
   const accountListUIFF = useFeature("llmAccountListUI");
   const route = useRoute();
   const navigation = useNavigation();
@@ -59,20 +112,37 @@ export default function AccountsNavigator() {
 
   const onPressBack = useCallback(
     (nav: NavType) => {
-      // Needed since we use the same screen for different purposes
-      const maybeParams = navigation.getState()?.routes?.[1]?.params;
-      const hasSpecificAccounts =
-        isParamsType(maybeParams) && Boolean(maybeParams.params?.specificAccounts);
-      const screenName = hasSpecificAccounts
-        ? TrackingEvent.AccountListSummary
-        : TrackingEvent.AccountsList;
-      track("button_clicked", {
-        button: "Back",
-        page: screenName || route.name,
-      });
-      nav.goBack();
+      handleAccountsCryptoBackPress(nav, () => navigation.getState(), route.name);
     },
     [navigation, route.name],
+  );
+
+  const cryptoAddressesScreenOptions = useMemo((): V4AccountsScreenOptions => {
+    return {
+      ...stackNavConfigV4Expanded,
+      title: t("cryptoAddresses.title"),
+      lumenNavBar: {
+        renderLeading: renderAccountsCryptoNavBarLeading,
+      },
+    };
+  }, [stackNavConfigV4Expanded, t]);
+
+  const getCryptoScreenOptions = useCallback(
+    ({
+      route: cryptoRoute,
+    }: {
+      route: RouteProp<AccountsNavigatorParamList, ScreenName.Crypto>;
+    }): V4AccountsScreenOptions => ({
+      ...stackNavConfigV4Expanded,
+      title:
+        (cryptoRoute.params?.variant ?? "all") === "stablecoin"
+          ? t("crypto.stablecoinTitle")
+          : t("crypto.title"),
+      lumenNavBar: {
+        renderLeading: renderAccountsCryptoNavBarLeading,
+      },
+    }),
+    [stackNavConfigV4Expanded, t],
   );
 
   return (
@@ -110,12 +180,12 @@ export default function AccountsNavigator() {
       <Stack.Screen
         name={ScreenName.CryptoAddresses}
         component={CryptoAddressesScreen}
-        options={{ headerShown: false, ...stackNavConfigV4 }}
+        options={cryptoAddressesScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.Crypto}
         component={CryptoScreen}
-        options={{ headerShown: false, ...stackNavConfigV4 }}
+        options={getCryptoScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.Asset}

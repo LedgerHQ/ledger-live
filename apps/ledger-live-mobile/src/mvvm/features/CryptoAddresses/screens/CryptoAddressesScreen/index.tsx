@@ -2,8 +2,8 @@ import React, { useCallback, useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList, FlashListProps, ListRenderItemInfo } from "@shopify/flash-list";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Box, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
-import { LumenViewStyle, LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
@@ -32,15 +32,13 @@ function CryptoAddressesView({
   onAccountPress,
   onAddAccountPress,
   onCloseAddAccount,
-  onNavigateBack,
   isAddAccountOpen,
-  title,
   addAccountLabel,
   emptyStateLabel,
   trackingPage,
   sourceScreenName,
 }: Readonly<ReturnType<typeof useCryptoAddressesViewModel>>) {
-  const { top, bottom } = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AccountLike>) => (
       <CryptoAddressesListItem account={item} onPress={onAccountPress} />
@@ -54,16 +52,8 @@ function CryptoAddressesView({
   }, [isLoading, emptyStateLabel]);
 
   return (
-    <Box style={{ paddingTop: top, flex: 1 }}>
+    <Box style={{ flex: 1 }}>
       <TrackScreen name={trackingPage} source={sourceScreenName} />
-      <NavBar appearance="compact">
-        <NavBarBackButton onPress={onNavigateBack} />
-      </NavBar>
-      <Box lx={titleContainerStyle}>
-        <Text typography="heading3SemiBold" lx={titleTextStyle} numberOfLines={2}>
-          {title}
-        </Text>
-      </Box>
       <Box lx={containerStyle}>
         {error ? (
           <CryptoAddressesErrorState />
@@ -96,13 +86,4 @@ export default withDiscreetMode(function CryptoAddressesScreen({ route }: Props)
 const containerStyle: LumenViewStyle = {
   flex: 1,
   paddingHorizontal: "s8",
-};
-
-const titleContainerStyle: LumenViewStyle = {
-  paddingHorizontal: "s16",
-  paddingBottom: "s12",
-};
-
-const titleTextStyle: LumenTextStyle = {
-  color: "base",
 };

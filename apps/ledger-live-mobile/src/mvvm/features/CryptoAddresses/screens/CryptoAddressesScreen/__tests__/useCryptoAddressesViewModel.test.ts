@@ -51,7 +51,6 @@ describe("useCryptoAddressesViewModel", () => {
 
     expect(result.current.accounts.length).toBeGreaterThanOrEqual(1);
     expect(result.current.hasNoAccount).toBe(false);
-    expect(result.current.title).toBe("Accounts");
     expect(result.current.addAccountLabel).toBe("Add account");
     expect(result.current.emptyStateLabel).toBe("No accounts yet");
     expect(result.current.trackingPage).toBe(ScreenName.Accounts);
