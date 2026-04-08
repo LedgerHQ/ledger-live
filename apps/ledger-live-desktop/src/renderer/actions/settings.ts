@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
+  AnalyticsConsentInfo,
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
@@ -76,6 +77,30 @@ export const setAnalyticsConsentInfo = () =>
       privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
     },
   });
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Merges a partial patch into `analyticsConsentInfo` (e.g. force stale privacy version or clear consent date).
+ */
+export const DANGEROUSLY_setAnalyticsConsentInfoForQa = (patch: Partial<AnalyticsConsentInfo>) =>
+  saveSettings({
+    analyticsConsentInfo: patch as AnalyticsConsentInfo,
+  });
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Clears consent metadata and turns off analytics sharing flags to simulate a pre-consent state.
+ */
+export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () =>
+  saveSettings({
+    shareAnalytics: false,
+    sharePersonalizedRecommandations: false,
+    analyticsConsentInfo: {
+      consentDate: null,
+      privacyPolicyVersion: null,
+    },
+  });
+
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,

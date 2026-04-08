@@ -4630,6 +4630,27 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
+      "analyticsConsentOptInQa": {
+        "rowTitle": "Analytics opt-in consent (QA)",
+        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal.",
+        "title": "Analytics opt-in consent — QA",
+        "readSection": "Current settings (read-only)",
+        "storedPrivacyVersion": "Stored privacy policy version: {{version}}",
+        "currentPrivacyVersion": "App current privacy policy version: {{version}}",
+        "consentDate": "Consent date (raw): {{value}}",
+        "inlineOutdatePrivacyVersion": "Outdate version",
+        "inlineRemoveConsentDate": "Remove date",
+        "actionResetForConsentFresh": "Reset for consent fresh (clear consent data, turn off analytics & personalization)",
+        "modalPreviewSection": "Expected modal on portfolio (home)",
+        "modalPreviewNoModalUserOk": "No modal. Privacy policy version and consent date are fine: nothing to renew or re-acknowledge.",
+        "modalPreviewNoModalFeatureOff": "No modal. The analytics opt-in feature flag is off.",
+        "modalPreviewNoModalOnboarding": "No modal. Onboarding is not complete yet.",
+        "modalPreviewFresh": "First-time consent modal (consent fresh). Consent renewal is required (missing or invalid consent date) and Share analytics is off — e.g. no stored privacy ack / no consent date with analytics disabled.",
+        "modalPreviewReconfirm": "Reconfirm consent modal. Consent renewal is required and Share analytics is on — user gets the reconfirm / continue-or-stop flow instead of first-time copy.",
+        "modalPreviewPrivacy": "Privacy update modal. Stored privacy policy version is outdated (lower than the app), and consent renewal is not blocking — user sees the privacy-policy update step first.",
+        "modalPreviewGoToHome": "Open the portfolio home page to see the modal when it should appear.",
+        "note": "Remove date sets consent to null. Outdate version lowers the stored privacy policy version below the app's current version. Reset clears consent metadata and turns off analytics and personalization to reproduce the consent fresh modal. Time-based renewal stays off while CONSENT_RENEWAL_INTERVAL_MS is null in live-common."
+      },
       "brazeTools": {
         "title": "Braze Tools",
         "description": "Generate local braze cards",
