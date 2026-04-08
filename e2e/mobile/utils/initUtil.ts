@@ -323,6 +323,7 @@ export class InitializationManager {
           onboardingWidget: isWallet40,
           operationsList: isWallet40,
           aggregatedAssets: isWallet40,
+          myWallet: isWallet40,
         },
       },
     };
