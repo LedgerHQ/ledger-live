@@ -28,6 +28,9 @@ const generateNewPortfolioContentCard = (
   cta?: string,
   tag?: string,
   picto?: string,
+  path?: string,
+  icon?: string,
+  image_background?: string,
 ): PortfolioContentCard => ({
   id: String(Date.now()),
   title,
@@ -41,6 +44,9 @@ const generateNewPortfolioContentCard = (
   cta,
   tag,
   picto,
+  ...(path !== undefined && path !== "" && { path }),
+  ...(icon !== undefined && icon !== "" && { icon }),
+  ...(image_background !== undefined && image_background !== "" && { image_background }),
 });
 
 const generateNewActionCard = (
@@ -108,6 +114,9 @@ export const useGenerateLocalBraze = () => {
     cta?: string,
     tag?: string,
     picto?: string,
+    path?: string,
+    icon?: string,
+    image_background?: string,
   ) => {
     const newCard = generateNewPortfolioContentCard(
       title,
@@ -119,6 +128,9 @@ export const useGenerateLocalBraze = () => {
       cta,
       tag,
       picto,
+      path,
+      icon,
+      image_background,
     );
     dispatch(setPortfolioCards([...portfolioCards, newCard]));
   };
@@ -132,6 +144,9 @@ export const useGenerateLocalBraze = () => {
     cta?: string,
     tag?: string,
     picto?: string,
+    path?: string,
+    icon?: string,
+    image_background?: string,
   ) => {
     const newCard = generateNewPortfolioContentCard(
       title,
@@ -143,6 +158,9 @@ export const useGenerateLocalBraze = () => {
       cta,
       tag,
       picto,
+      path,
+      icon,
+      image_background,
     );
     dispatch(setBottomPortfolioCards([...bottomPortfolioCards, newCard]));
   };

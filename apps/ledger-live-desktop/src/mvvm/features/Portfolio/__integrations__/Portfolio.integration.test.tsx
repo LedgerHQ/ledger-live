@@ -24,7 +24,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-// Prevent loading ESM-only @braze/web-sdk (pulled in by BottomCarouselContentCards via usePortfolioCarouselCards)
+// Prevent loading ESM-only @braze/web-sdk (pulled in by dynamic content hooks if imported)
 jest.mock("@braze/web-sdk", () => ({
   getCachedContentCards: jest.fn(() => ({ cards: [] })),
   logCardDismissal: jest.fn(),
