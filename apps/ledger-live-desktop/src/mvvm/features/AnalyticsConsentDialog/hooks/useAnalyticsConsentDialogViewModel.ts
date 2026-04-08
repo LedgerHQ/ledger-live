@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMatch, useNavigate } from "react-router";
+import { useMatch } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -22,8 +22,8 @@ import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
-  type AnalyticsConsentPhase,
 } from "@ledgerhq/live-common/analyticsConsentUtils";
+import type { AnalyticsConsentDialogPhase } from "../types";
 
 export const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
 
@@ -37,7 +37,6 @@ const dialogClosedPayload = {
 export function useAnalyticsConsentDialogViewModel() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const portfolioRouteMatch = useMatch({ path: "/", end: true });
   const isPortfolioRouteFocused = Boolean(portfolioRouteMatch);
@@ -55,16 +54,14 @@ export function useAnalyticsConsentDialogViewModel() {
     feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
   );
 
-  const [phase, setPhase] = useState<AnalyticsConsentPhase>("closed");
+  const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
+  const [consentPhaseBeforePreferences, setConsentPhaseBeforePreferences] = useState<
+    "consentFresh" | "consentReconfirm"
+  >("consentFresh");
 
-  let title: string;
-  if (phase === "consentReconfirm") {
-    title = t("analyticsConsentModal.reconfirm.title");
-  } else if (phase === "privacy") {
-    title = t("analyticsConsentModal.privacy.title");
-  } else {
-    title = t("analyticsConsentModal.fresh.title");
-  }
+  /** Preferences-step form only; Redux settings update on Confirm via `applyPreferences`. */
+  const [draftShareAnalytics, setDraftShareAnalytics] = useState(true);
+  const [draftSharePersonalized, setDraftSharePersonalized] = useState(true);
 
   let descriptionLead: string | null;
   if (phase === "consentReconfirm") {
@@ -75,37 +72,41 @@ export function useAnalyticsConsentDialogViewModel() {
     descriptionLead = t("analyticsConsentModal.fresh.description");
   }
 
-  const onOpenPrivacyPolicy = useCallback(() => {
+  const onOpenPrivacyPolicy = () => {
     openURL(privacyPolicyUrl);
-  }, [privacyPolicyUrl]);
+  };
 
-  const handleCloseDialog = useCallback(() => {
+  const handleCloseDialog = () => {
     setPhase(current => {
       if (current !== "closed") {
         track("drawer_closed", dialogClosedPayload);
       }
       return "closed";
     });
-  }, []);
+  };
 
   useEffect(() => {
     if (!isPortfolioRouteFocused || !shouldOffer) {
-      handleCloseDialog();
+      setPhase(current => {
+        if (current !== "closed") {
+          track("drawer_closed", dialogClosedPayload);
+        }
+        return "closed";
+      });
       return;
     }
-    setPhase(current =>
-      resolveAnalyticsConsentPhase(current, needsRenewal, needsUpdatePrivacy, shareAnalytics),
-    );
-  }, [
-    isPortfolioRouteFocused,
-    shouldOffer,
-    needsRenewal,
-    needsUpdatePrivacy,
-    shareAnalytics,
-    handleCloseDialog,
-  ]);
+    setPhase(current => {
+      if (current === "preferences") return current;
+      return resolveAnalyticsConsentPhase(
+        current,
+        needsRenewal,
+        needsUpdatePrivacy,
+        shareAnalytics,
+      );
+    });
+  }, [isPortfolioRouteFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, shareAnalytics]);
 
-  const persistAnalyticsConsentAck = useCallback(async () => {
+  const persistAnalyticsConsentAck = async () => {
     dispatch(setAnalyticsConsentInfo());
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
@@ -113,9 +114,9 @@ export function useAnalyticsConsentDialogViewModel() {
     } catch (error) {
       console.error("Failed to update analytics identify after consent change", error);
     }
-  }, [dispatch]);
+  };
 
-  const applyOptIn = useCallback(async () => {
+  const applyOptIn = async () => {
     track("button_clicked", {
       button: "analytics_consent_opt_in",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
@@ -124,9 +125,9 @@ export function useAnalyticsConsentDialogViewModel() {
     dispatch(setSharePersonalizedRecommendations(true));
     await persistAnalyticsConsentAck();
     handleCloseDialog();
-  }, [dispatch, persistAnalyticsConsentAck, handleCloseDialog]);
+  };
 
-  const applyOptOut = useCallback(async () => {
+  const applyOptOut = async () => {
     track("button_clicked", {
       button: "analytics_consent_opt_out",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
@@ -135,32 +136,51 @@ export function useAnalyticsConsentDialogViewModel() {
     dispatch(setSharePersonalizedRecommendations(false));
     await persistAnalyticsConsentAck();
     handleCloseDialog();
-  }, [dispatch, persistAnalyticsConsentAck, handleCloseDialog]);
+  };
 
-  const onPrivacyGotIt = useCallback(async () => {
+  const onPrivacyGotIt = async () => {
     track("button_clicked", {
       button: "analytics_consent_privacy_got_it",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
     });
     await persistAnalyticsConsentAck();
     handleCloseDialog();
-  }, [handleCloseDialog, persistAnalyticsConsentAck]);
+  };
 
-  const onSetPreferences = useCallback(() => {
+  const onSetPreferences = () => {
     track("button_clicked", {
       button: "analytics_consent_set_preferences",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
     });
+    // Default opt-in: preferences screen opens with both toggles on; user can turn them off before confirming.
+    setDraftShareAnalytics(true);
+    setDraftSharePersonalized(true);
+    setPhase(current => {
+      if (current === "consentFresh" || current === "consentReconfirm") {
+        setConsentPhaseBeforePreferences(current);
+      }
+      return "preferences";
+    });
+  };
+
+  const onBackFromPreferences = () => setPhase(consentPhaseBeforePreferences);
+
+  const applyPreferences = async () => {
+    track("button_clicked", {
+      button: "analytics_consent_preferences_confirm",
+      page: ANALYTICS_CONSENT_DIALOG_PAGE,
+    });
+    dispatch(setShareAnalytics(draftShareAnalytics));
+    dispatch(setSharePersonalizedRecommendations(draftSharePersonalized));
+    await persistAnalyticsConsentAck();
     handleCloseDialog();
-    navigate("/settings/display");
-  }, [navigate, handleCloseDialog]);
+  };
 
   const isDialogOpen = phase !== "closed";
 
   return {
     phase,
     isDialogOpen,
-    title,
     descriptionLead,
     privacyPolicyUrl,
     onOpenPrivacyPolicy,
@@ -168,5 +188,11 @@ export function useAnalyticsConsentDialogViewModel() {
     applyOptIn,
     applyOptOut,
     onSetPreferences,
+    onBackFromPreferences,
+    draftShareAnalytics,
+    draftSharePersonalized,
+    setDraftShareAnalytics,
+    setDraftSharePersonalized,
+    applyPreferences,
   };
 }
