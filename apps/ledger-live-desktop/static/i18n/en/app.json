@@ -8433,7 +8433,8 @@
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "syncAgain": "Sync again",
-        "lastSync": "Last synced: {{date}}"
+        "lastSync": "Last synced: {{date}}",
+        "alreadyRunning": "Sync already in progress"
       }
     },
     "operations": {

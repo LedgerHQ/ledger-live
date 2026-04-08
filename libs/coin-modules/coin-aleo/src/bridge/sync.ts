@@ -114,6 +114,10 @@ export async function performPublicSync(
       privateBalance: preservedPrivateBalance,
       unspentPrivateRecords: initialAccount?.aleoResources?.unspentPrivateRecords ?? null,
       lastPrivateSyncDate: initialAccount?.aleoResources?.lastPrivateSyncDate ?? null,
+      // Preserve running flag so a concurrent private sync isn't inadvertently cleared.
+      ...(initialAccount?.aleoResources?.isPrivateSyncRunning
+        ? { isPrivateSyncRunning: true as const }
+        : {}),
     },
   };
 }
@@ -189,6 +193,7 @@ export async function performPrivateSync(
         aleoResources: {
           ...initialAccount.aleoResources,
           provableApi,
+          isPrivateSyncRunning: true,
         },
       };
     }
@@ -298,6 +303,7 @@ export async function performPrivateSync(
       privateBalance,
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
+      isPrivateSyncRunning: false,
     },
   };
 }
@@ -414,6 +420,28 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
         hasPublic: !!(syncType & SYNC_TYPE_TRANSPARENT),
         hasPrivate: !!(syncType & SYNC_TYPE_SHIELDED),
       });
+
+      // Immediately signal that private sync is starting so other components
+      // can react before the async work completes.
+      // We must spread the full initialAccount here: makeSync uses shouldMergeOps: false, so
+      // any partial emission without `operations` would replace them with [].
+      if (!!(syncType & SYNC_TYPE_SHIELDED) && info.initialAccount) {
+        const { initialAccount } = info;
+        const r = initialAccount.aleoResources;
+        if (r) {
+          o.next({
+            ...initialAccount,
+            aleoResources: {
+              transparentBalance: r.transparentBalance,
+              provableApi: r.provableApi,
+              privateBalance: r.privateBalance,
+              unspentPrivateRecords: r.unspentPrivateRecords,
+              lastPrivateSyncDate: r.lastPrivateSyncDate,
+              isPrivateSyncRunning: true,
+            },
+          });
+        }
+      }
 
       const subscription = merge(...syncs).subscribe({
         next: result => o.next(result),

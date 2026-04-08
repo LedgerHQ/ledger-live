@@ -78,6 +78,9 @@ export interface AleoResources {
   privateBalance: BigNumber | null;
   unspentPrivateRecords: AleoUnspentRecord[] | null;
   lastPrivateSyncDate: Date | null;
+  /** Transient runtime flag — true while a SYNC_TYPE_SHIELDED observable is active for this account.
+   *  Not persisted (absent from AleoResourcesRaw / serialization). */
+  isPrivateSyncRunning?: boolean;
 }
 
 export interface AleoResourcesRaw {

@@ -77,6 +77,12 @@ export const useAleoPrivateSync = ({
           isSyncingRef.current = false;
           setIsSyncing(false);
           setError(err);
+          dispatch(
+            updateAccountWithUpdater(acc.id, (a: Account) => {
+              if (!isAleoAccount(a) || !a.aleoResources) return a;
+              return { ...a, aleoResources: { ...a.aleoResources, isPrivateSyncRunning: false } };
+            }),
+          );
         },
         complete: () => {
           subscriptionRef.current = null;
@@ -91,6 +97,8 @@ export const useAleoPrivateSync = ({
   }, [dispatch]);
 
   const start = useCallback(() => {
+    const acc = accountRef.current;
+    if (acc?.type !== "Account") return;
     if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
     subscriptionRef.current?.unsubscribe();
     subscriptionRef.current = null;
@@ -102,27 +110,46 @@ export const useAleoPrivateSync = ({
   }, [runSync]);
 
   const stop = useCallback(() => {
+    const acc = accountRef.current;
     isSyncingRef.current = false;
     if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
     subscriptionRef.current?.unsubscribe();
     subscriptionRef.current = null;
     setIsSyncing(false);
-  }, []);
+    if (acc?.type === "Account" && isAleoAccount(acc) && acc.aleoResources) {
+      dispatch(
+        updateAccountWithUpdater(acc.id, (a: Account) => {
+          if (!isAleoAccount(a) || !a.aleoResources) return a;
+          return { ...a, aleoResources: { ...a.aleoResources, isPrivateSyncRunning: false } };
+        }),
+      );
+    }
+  }, [dispatch]);
 
   // Auto-start: kick off on mount; cleanup always runs on unmount.
   useEffect(() => {
-    if (autoStart) {
+    const acc = accountRef.current;
+    if (autoStart && acc?.type === "Account") {
       isSyncingRef.current = true;
       setIsSyncing(true);
       runSync();
     }
     return () => {
+      const currentAcc = accountRef.current;
       isSyncingRef.current = false;
       if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
       subscriptionRef.current?.unsubscribe();
       subscriptionRef.current = null;
+      if (currentAcc?.type === "Account" && isAleoAccount(currentAcc) && currentAcc.aleoResources) {
+        dispatch(
+          updateAccountWithUpdater(currentAcc.id, (a: Account) => {
+            if (!isAleoAccount(a) || !a.aleoResources) return a;
+            return { ...a, aleoResources: { ...a.aleoResources, isPrivateSyncRunning: false } };
+          }),
+        );
+      }
     };
-  }, [autoStart, runSync]);
+  }, [autoStart, dispatch, runSync]);
 
   return { isSyncing, progress, error, start, stop };
 };

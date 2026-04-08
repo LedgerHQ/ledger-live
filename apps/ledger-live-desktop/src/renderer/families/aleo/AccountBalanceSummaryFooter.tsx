@@ -30,20 +30,30 @@ const ActionButton = ({
   onStart,
   onStop,
   onSyncAgain,
+  isExternalSyncRunning,
 }: {
   syncState: AleoSyncState;
   onStart: () => void;
   onStop: () => void;
   onSyncAgain: () => void;
+  isExternalSyncRunning: boolean;
 }) => {
   const { t } = useTranslation();
 
   switch (syncState) {
     case "ready":
       return (
-        <SyncActionButton onClick={onStart} buttonTestId="start-private-sync-button">
-          <Text>{t("aleo.account.syncButton.startSync")}</Text>
-        </SyncActionButton>
+        <ToolTip
+          content={isExternalSyncRunning ? t("aleo.account.syncButton.alreadyRunning") : undefined}
+        >
+          <SyncActionButton
+            onClick={onStart}
+            disabled={isExternalSyncRunning}
+            buttonTestId="start-private-sync-button"
+          >
+            <Text>{t("aleo.account.syncButton.startSync")}</Text>
+          </SyncActionButton>
+        </ToolTip>
       );
     case "running":
       return (
@@ -53,9 +63,17 @@ const ActionButton = ({
       );
     case "complete":
       return (
-        <SyncActionButton onClick={onSyncAgain} buttonTestId="sync-again-button">
-          <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
-        </SyncActionButton>
+        <ToolTip
+          content={isExternalSyncRunning ? t("aleo.account.syncButton.alreadyRunning") : undefined}
+        >
+          <SyncActionButton
+            onClick={onSyncAgain}
+            disabled={isExternalSyncRunning}
+            buttonTestId="sync-again-button"
+          >
+            <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
+          </SyncActionButton>
+        </ToolTip>
       );
   }
 };
@@ -116,12 +134,18 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
 
+  const isExternalSyncRunning =
+    account.type === "Account" ? account.aleoResources?.isPrivateSyncRunning ?? false : false;
+
   const {
     isSyncing,
     progress: hookProgress,
     start: handleStart,
     stop: handleStop,
   } = useAleoPrivateSync({ account });
+
+  // External sync is running only if it isn't *this* hook that started it
+  const isOtherSyncRunning = isExternalSyncRunning && !isSyncing;
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -218,6 +242,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             onStart={handleStart}
             onStop={handleStop}
             onSyncAgain={handleStart}
+            isExternalSyncRunning={isOtherSyncRunning}
           />
           <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
         </div>
