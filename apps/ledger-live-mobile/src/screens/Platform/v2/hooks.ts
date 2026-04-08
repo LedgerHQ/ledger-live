@@ -193,26 +193,38 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
   };
 }
 
-function useRecentlyUsedDB() {
+function useRecentlyUsedDBSelector(state: DiscoverDB) {
+  return state.recentlyUsed;
+}
+
+export function useRecentlyUsedDB() {
   return useDB<DiscoverDB, DiscoverDB["recentlyUsed"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
-    state => state.recentlyUsed,
+    useRecentlyUsedDBSelector,
   );
+}
+
+function useCurrentAccountHistDBSelector(state: DiscoverDB) {
+  return state.currentAccountHist;
 }
 
 export function useCurrentAccountHistDB() {
   return useDB<DiscoverDB, DiscoverDB["currentAccountHist"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
-    state => state.currentAccountHist,
+    useCurrentAccountHistDBSelector,
   );
+}
+
+function useCacheBustedLiveAppsDBSelector(state: DiscoverDB) {
+  return state.cacheBustedLiveApps;
 }
 
 export function useCacheBustedLiveAppsDB() {
   return useDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
-    state => state.cacheBustedLiveApps,
+    useCacheBustedLiveAppsDBSelector,
   );
 }

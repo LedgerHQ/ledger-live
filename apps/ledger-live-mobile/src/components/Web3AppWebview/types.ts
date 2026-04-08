@@ -1,12 +1,14 @@
 import type { ComponentProps } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { DiscoverDB, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import WebView from "react-native-webview";
 
 export type WebviewProps = {
   manifest: LiveAppManifest;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  currentAccountHistDb?: DiscoverDB["currentAccountHist"];
+  setCurrentAccountHistDb?: SetCurrentAccountHistDb;
+  currentAccountHistDbLoaded?: boolean;
   inputs?: Record<string, string | undefined>;
   onStateChange?: (webviewState: WebviewState) => void;
   allowsBackForwardNavigationGestures?: boolean;
