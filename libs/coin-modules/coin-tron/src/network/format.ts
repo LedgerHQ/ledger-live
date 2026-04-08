@@ -35,7 +35,7 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     const date = new Date(block_timestamp);
 
     const blockHeight = detail ? detail.blockNumber : undefined;
-    const ownerAddressHex = detail.raw_data?.contract[0]?.parameter.value.owner_address;
+    const ownerAddressHex = detail.raw_data?.contract?.[0]?.parameter?.value?.owner_address;
     const feesPayer = ownerAddressHex ? encode58Check(ownerAddressHex) : from;
     return {
       txID,
