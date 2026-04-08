@@ -22,7 +22,7 @@ export const BorrowWebView = forwardRef<WebviewAPI, Props>(
     );
 
     return (
-      <SafeAreaView edges={["bottom"]} isFlex>
+      <SafeAreaView isFlex>
         <Web3AppWebview
           ref={ref}
           manifest={manifest}
