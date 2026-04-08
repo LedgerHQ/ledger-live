@@ -48,10 +48,14 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
   );
 }
 
+function useLocalLiveAppDBSelector(state: DiscoverDB) {
+  return state.localLiveApp;
+}
+
 function useLocalLiveAppDB() {
   return useDB<DiscoverDB, DiscoverDB["localLiveApp"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
-    state => state.localLiveApp,
+    useLocalLiveAppDBSelector,
   );
 }

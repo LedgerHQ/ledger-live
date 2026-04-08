@@ -1,6 +1,6 @@
 import React from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { useTheme } from "@react-navigation/native";
 import Button from "~/components/Button";
@@ -8,16 +8,16 @@ import { useSelectAccount } from "~/components/Web3AppWebview/helpers";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
-  currentAccountHistDb: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 };
 
 export default function SelectAccountButton({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: SelectAccountButtonProps) {
   const { handleAddAccountPress, currentAccount } = useSelectAccount({
     manifest,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   });
   const { dark } = useTheme();
 

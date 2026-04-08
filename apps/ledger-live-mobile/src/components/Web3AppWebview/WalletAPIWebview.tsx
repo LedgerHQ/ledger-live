@@ -10,7 +10,7 @@ import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/consta
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
-import { NoAccountScreen } from "./NoAccountScreen";
+import { DappAccountGate } from "./DappAccountGate";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 
@@ -21,6 +21,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     {
       manifest,
       currentAccountHistDb,
+      setCurrentAccountHistDb,
+      currentAccountHistDbLoaded,
       inputs = {},
       customHandlers,
       onStateChange,
@@ -42,12 +44,14 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
+      isLoadingAccounts,
     } = useWebView(
       {
         manifest,
         inputs,
         customHandlers,
         currentAccountHistDb,
+        setCurrentAccountHistDb,
         manifestDomainCheckEnabled,
       },
       ref,
@@ -65,8 +69,16 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const javaScriptCanOpenWindowsAutomatically =
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
-    if (!!manifest.dapp && noAccounts) {
-      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    if (!!manifest.dapp && noAccounts && setCurrentAccountHistDb) {
+      return (
+        <DappAccountGate
+          manifest={manifest}
+          isLoadingAccounts={isLoadingAccounts}
+          currentAccountHistDbLoaded={currentAccountHistDbLoaded}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+          Loader={Loader}
+        />
+      );
     }
 
     if (isBlockedByDomainCheck) {
@@ -117,9 +129,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
-        injectedJavaScript={
-          Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
-        }
+        injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
         {...webviewProps}
         {...webviewCacheOptions}
       />
@@ -138,9 +148,6 @@ function DefaultLoader() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   center: {
     flex: 1,
     flexDirection: "column",
