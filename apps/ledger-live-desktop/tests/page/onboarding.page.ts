@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { DeviceAction } from "../models/DeviceAction";
 import { AppPage } from "tests/page/abstractClasses";
 
@@ -48,9 +49,12 @@ export class OnboardingPage extends AppPage {
   }
 
   async hoverDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
-    const locator = this.page.getByTestId(`v3-container-device-${device}`);
-    await locator.waitFor({ state: "attached" });
-    await locator.hover();
+    const container = this.page.getByTestId(`v3-container-device-${device}`);
+    await container.waitFor({ state: "visible" });
+    await this.page.bringToFront();
+    await container.hover();
+    const selectButton = this.page.getByTestId(`v3-device-${device}`);
+    await expect(selectButton).toHaveCSS("opacity", "1");
   }
 
   async waitForDeviceToBeVisible(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
