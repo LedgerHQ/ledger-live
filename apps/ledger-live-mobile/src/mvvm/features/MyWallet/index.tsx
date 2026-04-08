@@ -1,11 +1,14 @@
-import { Box } from "@ledgerhq/lumen-ui-rnative";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { MyWalletHeader } from "./views/Header";
 
 export function MyWalletScreen() {
+  const { top } = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Box />
-    </SafeAreaView>
+    <Box style={{ paddingTop: top, flex: 1 }}>
+      <MyWalletHeader />
+    </Box>
   );
 }
