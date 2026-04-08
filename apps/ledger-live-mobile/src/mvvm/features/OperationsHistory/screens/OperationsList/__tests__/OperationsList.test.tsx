@@ -1,5 +1,6 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account } from "@ledgerhq/types-live";
 import { render } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screen, track } from "~/analytics";
@@ -9,10 +10,24 @@ import { ScreenName } from "~/const/navigation";
 import OperationsList from "../index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 
-const accountWithOperations = genAccount("operations-list-non-empty", {
-  currency: getCryptoCurrencyById("bitcoin"),
-  operationsSize: 5,
-});
+function withTwoCalendarDaySections(account: Account): Account {
+  const newerDayMs = new Date("2020-06-15T15:00:00.000Z").getTime();
+  const olderDayMs = newerDayMs - 24 * 60 * 60 * 1000;
+  return {
+    ...account,
+    operations: account.operations.map((op, index) => ({
+      ...op,
+      date: new Date(index < 2 ? newerDayMs - index * 60_000 : olderDayMs - (index - 2) * 60_000),
+    })),
+  };
+}
+
+const accountWithOperations = withTwoCalendarDaySections(
+  genAccount("operations-list-non-empty", {
+    currency: getCryptoCurrencyById("bitcoin"),
+    operationsSize: 5,
+  }),
+);
 
 function stateWithAccountsAndOperations(base: State): State {
   return {
