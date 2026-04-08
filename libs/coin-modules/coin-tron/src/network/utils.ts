@@ -79,5 +79,3 @@ export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null =
 
   return { to, amount };
 };
-
-export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toString("ascii");

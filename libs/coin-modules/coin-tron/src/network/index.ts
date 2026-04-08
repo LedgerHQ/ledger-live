@@ -30,12 +30,7 @@ import type {
   WithdrawExpireUnfreezeTransactionData,
 } from "../types";
 import { TronTransactionExpired } from "../types/errors";
-import {
-  decode58Check,
-  encode58Check,
-  formatTrongridTrc20TxResponse,
-  formatTrongridTxResponse,
-} from "./format";
+import { decode58Check, formatTrongridTrc20TxResponse, formatTrongridTxResponse } from "./format";
 import {
   AccountTronAPI,
   Block,
@@ -48,7 +43,7 @@ import {
   TransactionTronAPI,
   Trc20API,
 } from "./types";
-import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
+import { abiEncodeTrc20Transfer } from "./utils";
 
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -88,6 +83,22 @@ export async function post<T, U extends object = any>(endPoint: string, body: T)
 
 async function fetch<T extends object = any>(endPoint: string): Promise<T> {
   return fetchWithBaseUrl<T>(`${getBaseApiUrl()}${endPoint}`);
+}
+
+type Witness = {
+  address: string;
+  url: string;
+  name: string;
+  brokerage: number;
+  realTimeVotes: number;
+  producer: boolean;
+};
+
+export async function listWitnesses(): Promise<Array<Witness>> {
+  const { data } = await fetchWithBaseUrl<{
+    data: Array<Witness>;
+  }>("https://apilist.tronscanapi.com/api/pagewitness?witnesstype=0");
+  return data;
 }
 
 async function fetchWithBaseUrl<T extends object = any>(url: string): Promise<T> {
@@ -773,37 +784,6 @@ export const validateAddress = async (address: string): Promise<boolean> => {
   }
 };
 
-// cache for account names (name is unchanged over time)
-const accountNamesCache = makeLRUCache(
-  async (addr: string): Promise<string | null | undefined> => getAccountName(addr),
-  (addr: string) => addr,
-  hours(3, 300),
-);
-
-// cache for super representative brokerages (brokerage is unchanged over time)
-const srBrokeragesCache = makeLRUCache(
-  async (addr: string): Promise<number> => getBrokerage(addr),
-  (addr: string) => addr,
-  hours(3, 300),
-);
-
-export const getAccountName = async (addr: string): Promise<string | null | undefined> => {
-  const tronAcc = await fetchTronAccount(addr);
-  const acc = tronAcc[0];
-  const accountName: string | null | undefined =
-    acc && acc.account_name ? hexToAscii(acc.account_name) : undefined;
-  accountNamesCache.hydrate(addr, accountName); // put it in cache
-
-  return accountName;
-};
-
-export const getBrokerage = async (addr: string): Promise<number> => {
-  const { brokerage } = await fetch(`/wallet/getBrokerage?address=${encodeURIComponent(addr)}`);
-  srBrokeragesCache.hydrate(addr, brokerage); // put it in cache
-
-  return brokerage;
-};
-
 const superRepresentativesCache = makeLRUCache(
   async (): Promise<SuperRepresentative[]> => {
     const superRepresentatives = await fetchSuperRepresentatives();
@@ -827,21 +807,14 @@ export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
 };
 
 const fetchSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
-  const result = await fetch(`/wallet/listwitnesses`);
-  const sorted = result.witnesses.sort((a: any, b: any) => b.voteCount - a.voteCount);
-  const superRepresentatives = await promiseAllBatched(3, sorted, async (w: any) => {
-    const encodedAddress = encode58Check(w.address);
-    const accountName = await accountNamesCache(encodedAddress);
-    const brokerage = await srBrokeragesCache(encodedAddress);
-    return {
-      ...w,
-      address: encodedAddress,
-      name: accountName,
-      brokerage,
-      voteCount: w.voteCount || 0,
-      isJobs: w.isJobs || false,
-    };
-  });
+  const result = await listWitnesses();
+  const sorted = result.sort((a: Witness, b: Witness) => b.realTimeVotes - a.realTimeVotes);
+
+  const superRepresentatives: Array<SuperRepresentative> = sorted.map(w => ({
+    ...w, // address, name, brokerage, url
+    isJobs: w.producer,
+    voteCount: w.realTimeVotes,
+  }));
   hydrateSuperRepresentatives(superRepresentatives); // put it in cache
 
   return superRepresentatives;

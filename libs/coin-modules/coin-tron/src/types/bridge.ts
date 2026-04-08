@@ -186,10 +186,6 @@ export type SuperRepresentative = {
   isJobs: boolean;
   brokerage: number;
   voteCount: number;
-  totalProduced: number | null | undefined;
-  totalMissed: number | null | undefined;
-  latestBlockNum: number | null | undefined;
-  latestSlotNum: number | null | undefined;
 };
 export type TronResources = {
   frozen: {
