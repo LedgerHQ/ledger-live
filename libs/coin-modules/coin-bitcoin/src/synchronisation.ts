@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { getCoinConfig } from "./config";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -592,60 +593,12 @@ export function buildSyncObservables(
       zcashInitialAccount.privateInfo?.syncState === "outdated");
   const shieldedEnabled = ufvkIsPresent && syncStateIsEnabled;
 
-  // Mock block processing time
-  const withDelay = async (fn: () => void) => {
-    await new Promise(resolve => setTimeout(resolve, ZCASH_CHECK_OUTDATED_SYNC_INTERVAL));
-    return fn();
-  };
-
   if (syncType & SYNC_TYPE_SHIELDED && shieldedEnabled) {
-    // TODO: Implement shielded sync
-    // const shieldedSyncRaw = getCoinConfig(currency.id).family?.sync?.(info, syncConfig);
+    const shieldedSyncRaw = getCoinConfig(currency.id).family?.sync?.(info, syncConfig);
 
-    // TODO: Mock sync progress (remove in the future)
-    const shieldedSyncRaw = new Observable<Partial<ZcashPrivateInfo>>(subscriber => {
-      (async () => {
-        subscriber.next({
-          ...zcashInitialAccount.privateInfo,
-          syncState: "running",
-          progress: 0,
-        });
-        await withDelay(() =>
-          subscriber.next({
-            ...zcashInitialAccount.privateInfo,
-            syncState: "running",
-            progress: 25,
-            estimatedTimeRemaining: { hours: 0, minutes: 3 },
-          }),
-        );
-        await withDelay(() =>
-          subscriber.next({
-            ...zcashInitialAccount.privateInfo,
-            syncState: "running",
-            progress: 50,
-            estimatedTimeRemaining: { hours: 0, minutes: 2 },
-          }),
-        );
-        await withDelay(() =>
-          subscriber.next({
-            ...zcashInitialAccount.privateInfo,
-            syncState: "running",
-            progress: 75,
-            estimatedTimeRemaining: { hours: 0, minutes: 1 },
-          }),
-        );
-        await withDelay(() =>
-          subscriber.next({
-            ...zcashInitialAccount.privateInfo,
-            syncState: "complete",
-            progress: 100,
-            estimatedTimeRemaining: { hours: 0, minutes: 0 },
-          }),
-        );
-        subscriber.complete();
-      })();
-    });
-    syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
+    if (shieldedSyncRaw) {
+      syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
+    }
   }
 
   return { syncs, syncType };
