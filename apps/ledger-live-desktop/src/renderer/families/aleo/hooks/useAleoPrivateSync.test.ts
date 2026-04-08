@@ -20,13 +20,13 @@ jest.mock("~/renderer/actions/accounts", () => ({
 
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
 
-const makeAleoAccount = (percentage = 0): AleoAccount => ({
+const makeAleoAccount = (percentage = 0, synced = false): AleoAccount => ({
   ...ALEO_ACCOUNT_1,
   aleoResources: {
     transparentBalance: new BigNumber(0),
     privateBalance: new BigNumber(0),
     unspentPrivateRecords: [],
-    provableApi: { scannerStatus: { synced: false, percentage } },
+    provableApi: { scannerStatus: { synced, percentage } },
     lastPrivateSyncDate: null,
   },
 });
@@ -138,7 +138,7 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.isSyncing).toBe(false);
     });
 
-    it("should set isSyncing to false when complete fires at 100%", async () => {
+    it("should set isSyncing to false when complete fires with synced=true", async () => {
       const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
 
       await act(async () => {
@@ -146,7 +146,7 @@ describe("useAleoPrivateSync", () => {
       });
 
       await act(async () => {
-        syncSubject.next(() => makeAleoAccount(100));
+        syncSubject.next(() => makeAleoAccount(100, true));
         syncSubject.complete();
       });
 
@@ -154,7 +154,44 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.progress).toBe(100);
     });
 
-    it("should retry after polling delay when complete fires at < 100%", () => {
+    it("should retry when percentage is 100 but synced is false (scanner not yet ready)", () => {
+      jest.useFakeTimers();
+      const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
+      const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
+      mockSync
+        .mockReturnValueOnce(firstSubject.asObservable())
+        .mockReturnValueOnce(secondSubject.asObservable());
+
+      const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
+
+      act(() => {
+        result.current.start();
+      });
+
+      // Emit percentage=100 but synced=false — this is the bug scenario
+      act(() => {
+        firstSubject.next(() => makeAleoAccount(100, false));
+        firstSubject.complete();
+      });
+
+      expect(mockSync).toHaveBeenCalledTimes(1);
+      expect(result.current.isSyncing).toBe(true);
+
+      act(() => {
+        jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
+      });
+
+      expect(mockSync).toHaveBeenCalledTimes(2);
+
+      act(() => {
+        secondSubject.next(() => makeAleoAccount(100, true));
+        secondSubject.complete();
+      });
+
+      expect(result.current.isSyncing).toBe(false);
+    });
+
+    it("should retry after polling delay when complete fires with synced=false", () => {
       jest.useFakeTimers();
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
@@ -257,18 +294,98 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.isSyncing).toBe(true);
     });
 
-    it("should update progress and finish when observable completes at 100%", async () => {
+    it("should update progress and finish when observable completes with synced=true", async () => {
       const { result } = renderHook(() =>
         useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }),
       );
 
       await act(async () => {
-        syncSubject.next(() => makeAleoAccount(100));
+        syncSubject.next(() => makeAleoAccount(100, true));
         syncSubject.complete();
       });
 
       expect(result.current.progress).toBe(100);
       expect(result.current.isSyncing).toBe(false);
+    });
+  });
+
+  describe("onAccountUpdated callback", () => {
+    it("should call onAccountUpdated with the updated account on each emission", async () => {
+      const onAccountUpdated = jest.fn();
+      const { result } = renderHook(() =>
+        useAleoPrivateSync({ account: makeAleoAccount(), onAccountUpdated }),
+      );
+
+      await act(async () => {
+        result.current.start();
+      });
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccount(50));
+      });
+
+      expect(onAccountUpdated).toHaveBeenCalledTimes(1);
+      expect(
+        onAccountUpdated.mock.calls[0][0].aleoResources.provableApi.scannerStatus.percentage,
+      ).toBe(50);
+    });
+
+    it("should call onAccountUpdated on each emission independently", async () => {
+      const onAccountUpdated = jest.fn();
+      const { result } = renderHook(() =>
+        useAleoPrivateSync({ account: makeAleoAccount(), onAccountUpdated }),
+      );
+
+      await act(async () => {
+        result.current.start();
+      });
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccount(30));
+        syncSubject.next(() => makeAleoAccount(60));
+      });
+
+      expect(onAccountUpdated).toHaveBeenCalledTimes(2);
+    });
+
+    it("should not call onAccountUpdated when not provided", async () => {
+      // No onAccountUpdated — just confirm it doesn't throw
+      const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
+
+      await act(async () => {
+        result.current.start();
+      });
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccount(50));
+      });
+
+      expect(result.current.progress).toBe(50);
+    });
+
+    it("should use the latest onAccountUpdated ref without restarting sync", async () => {
+      const first = jest.fn();
+      const second = jest.fn();
+
+      const { result, rerender } = renderHook(
+        ({ cb }: { cb: typeof first }) =>
+          useAleoPrivateSync({ account: makeAleoAccount(), onAccountUpdated: cb }),
+        { initialProps: { cb: first } },
+      );
+
+      await act(async () => {
+        result.current.start();
+      });
+
+      // Swap callback without restarting
+      rerender({ cb: second });
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccount(70));
+      });
+
+      expect(first).not.toHaveBeenCalled();
+      expect(second).toHaveBeenCalledTimes(1);
     });
   });
 });

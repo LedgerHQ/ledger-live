@@ -19,15 +19,23 @@ const DescText = styled.p`
   font-weight: 400;
 `;
 
-const StepMandatoryPrivateSync = ({ transitionTo, account }: StepProps) => {
+const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: StepProps) => {
   const { t } = useTranslation();
-  const { progress, error: privateSyncError } = useAleoPrivateSync({ account, autoStart: true });
+  const {
+    progress,
+    isSyncing,
+    error: privateSyncError,
+  } = useAleoPrivateSync({
+    account,
+    autoStart: true,
+    onAccountUpdated: updateAccount,
+  });
 
   useEffect(() => {
-    if (progress < 100) return;
+    if (progress < 100 || isSyncing) return;
     const timer = setTimeout(() => transitionTo("record-picker"), 500);
     return () => clearTimeout(timer);
-  }, [progress, transitionTo]);
+  }, [progress, isSyncing, transitionTo]);
 
   if (privateSyncError) {
     return (

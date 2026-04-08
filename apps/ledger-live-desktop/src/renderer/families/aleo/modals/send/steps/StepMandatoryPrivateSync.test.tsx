@@ -100,4 +100,49 @@ describe("StepMandatoryPrivateSync", () => {
       expect(props.transitionTo).not.toHaveBeenCalled();
     });
   });
+
+  describe("updateAccount callback", () => {
+    it("should call updateAccount with the updated account on each sync emission", async () => {
+      const props = makeStepProps();
+      render(<StepMandatoryPrivateSync {...props} />);
+
+      await act(async () => {
+        syncSubject.next(() => ({
+          ...ALEO_ACCOUNT_1,
+          aleoResources: {
+            transparentBalance: new BigNumber(0),
+            privateBalance: new BigNumber(0),
+            unspentPrivateRecords: [],
+            provableApi: { scannerStatus: { synced: false, percentage: 50 } },
+            lastPrivateSyncDate: null,
+          },
+        }));
+      });
+
+      expect(props.updateAccount).toHaveBeenCalledTimes(1);
+      const updatedAccount = (props.updateAccount as jest.Mock).mock.calls[0][0];
+      expect(updatedAccount.aleoResources.provableApi.scannerStatus.percentage).toBe(50);
+    });
+
+    it("should not throw when updateAccount is not provided", async () => {
+      const props = makeStepProps({ updateAccount: undefined });
+      render(<StepMandatoryPrivateSync {...props} />);
+
+      await act(async () => {
+        syncSubject.next(() => ({
+          ...ALEO_ACCOUNT_1,
+          aleoResources: {
+            transparentBalance: new BigNumber(0),
+            privateBalance: new BigNumber(0),
+            unspentPrivateRecords: [],
+            provableApi: { scannerStatus: { synced: false, percentage: 30 } },
+            lastPrivateSyncDate: null,
+          },
+        }));
+      });
+
+      // No crash — updateAccount being optional is handled gracefully
+      expect(screen.getByText(/30%/)).toBeInTheDocument();
+    });
+  });
 });

@@ -47,6 +47,7 @@ export const makeStepProps = (overrides: Partial<StepProps> = {}): StepProps =>
     onResetMaybeRecipient: jest.fn(),
     onResetMaybeAmount: jest.fn(),
     updateTransaction: jest.fn(),
+    updateAccount: jest.fn(),
     onConfirmationHandler: jest.fn(),
     onFailHandler: jest.fn(),
     ...overrides,
