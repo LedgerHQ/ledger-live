@@ -7,6 +7,20 @@ import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-s
 import { track } from "~/renderer/analytics/segment";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "../components/ContentBannerActionCard/types";
+
+let mockShouldDisplayBrazePlacement = false;
+
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/featureFlags/index");
+  return {
+    ...actual,
+    useWalletFeaturesConfig: (platform: "desktop" | "mobile") => {
+      const config = actual.useWalletFeaturesConfig(platform);
+      return { ...config, shouldDisplayBrazePlacement: mockShouldDisplayBrazePlacement };
+    },
+  };
+});
 
 const brazeExtrasById: Record<string, { canvas_name: string; canvas_step_name: string }> = {
   "0": {
@@ -35,6 +49,28 @@ const Cards = [
     description: "Consectetur adipiscing elit.",
     path: "ledger-live://deep-link",
     location: LocationContentCard.Portfolio,
+  },
+];
+
+/** Eligible for Lumen grid: `image_background` and/or `icon` (not legacy `image` alone). */
+const CardsForBrazeGrid = [
+  {
+    id: "0",
+    title: "Foo",
+    description: "Lorem ipsum dolor sit amet.",
+    cta: "Click me",
+    tag: "New",
+    path: "ledger-live://deep-link",
+    location: LocationContentCard.Portfolio,
+    image_background: "https://example.com/bg.png",
+  },
+  {
+    id: "1",
+    title: "Bar",
+    description: "Consectetur adipiscing elit.",
+    path: "ledger-live://deep-link",
+    location: LocationContentCard.Portfolio,
+    icon: "Settings",
   },
 ];
 
@@ -82,7 +118,9 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-function asClassicBrazeCard(card: (typeof Cards)[number] | (typeof BottomCards)[number]) {
+function asClassicBrazeCard(
+  card: (typeof Cards)[number] | (typeof BottomCards)[number] | (typeof CardsForBrazeGrid)[number],
+) {
   const { id, ...rest } = card;
   const extras = { ...brazeExtrasById[id], ...rest };
   return Object.assign(Object.create(ClassicCard.prototype), { id, extras });
@@ -90,9 +128,11 @@ function asClassicBrazeCard(card: (typeof Cards)[number] | (typeof BottomCards)[
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockShouldDisplayBrazePlacement = false;
 });
 
 const desktopCardsForTopCarousel = Cards.map(asClassicBrazeCard);
+const desktopCardsForBrazeGrid = CardsForBrazeGrid.map(asClassicBrazeCard);
 const desktopCardsWithBottomPlacements = [...Cards, ...BottomCards].map(asClassicBrazeCard);
 
 describe("PortfolioContentCards", () => {
@@ -201,6 +241,77 @@ describe("PortfolioContentCards", () => {
         location: LocationContentCard.Portfolio,
       }),
     );
+  });
+
+  test("renders Braze placement grid with ContentBanner when brazePlacement flag is on", async () => {
+    mockShouldDisplayBrazePlacement = true;
+
+    const { user } = render(<PortfolioContentCards />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: desktopCardsForBrazeGrid,
+          portfolioCards: CardsForBrazeGrid,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+      },
+    });
+
+    const title0 = await screen.findByText("Foo");
+    const title1 = screen.getByText("Bar");
+    expect(title0).toBeVisible();
+    expect(title1).toBeVisible();
+    expect(screen.queryByTestId("carousel-arrow-next")).not.toBeInTheDocument();
+
+    expect(logCardDismissal).not.toHaveBeenCalled();
+    const closeButtons = screen.getAllByRole("button", {
+      name: CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL,
+    });
+    await user.click(closeButtons[1]);
+    expect(logCardDismissal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: CardsForBrazeGrid[1].id,
+        extras: expect.objectContaining(brazeExtrasById[CardsForBrazeGrid[1].id]),
+      }),
+    );
+    expect(title1).not.toBeInTheDocument();
+
+    expect(logContentCardClick).not.toHaveBeenCalled();
+    await user.click(title0);
+    expect(logContentCardClick).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith(
+      "contentcard_clicked",
+      expect.objectContaining({
+        contentcard: "Foo",
+        campaign: "0",
+        page: "Portfolio",
+        type: "portfolio_carousel",
+        location: LocationContentCard.Portfolio,
+      }),
+    );
+  });
+
+  test("renders nothing in Braze placement mode when no card has image_background or icon", () => {
+    mockShouldDisplayBrazePlacement = true;
+
+    render(<PortfolioContentCards />, {
+      initialState: {
+        dynamicContent: { desktopCards: desktopCardsForTopCarousel, portfolioCards: Cards },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+      },
+    });
+
+    expect(screen.queryByText("Foo")).toBeNull();
+    expect(screen.queryByText("Bar")).toBeNull();
   });
 });
 

@@ -13,7 +13,6 @@ const BrazeToolsGenerator = () => (
         onClose={onClose}
         onBack={undefined}
         title={<Trans i18nKey="settings.developer.brazeTools.modal.title" />}
-        noScroll
         render={() => <BrazeModalBody />}
       />
     )}
