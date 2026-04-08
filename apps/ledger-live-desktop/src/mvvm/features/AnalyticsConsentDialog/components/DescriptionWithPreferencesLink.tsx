@@ -15,8 +15,8 @@ export function DescriptionWithPreferencesLink({
 }: DescriptionWithPreferencesLinkProps) {
   const { t } = useTranslation();
   return (
-    <p className="body-2 text-muted text-center">
-      {text}{" "}
+    <div className="body-2 text-muted text-center">
+      <span>{text}</span>
       <Link
         appearance="accent"
         size="sm"
@@ -29,6 +29,6 @@ export function DescriptionWithPreferencesLink({
       >
         {t("analyticsConsentModal.setPreferences")}
       </Link>
-    </p>
+    </div>
   );
 }
