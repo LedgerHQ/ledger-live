@@ -35,8 +35,8 @@ describe("Integration — getAccountShape with real implementations", () => {
               uri: "https://celo.coin.ledger.com/archive",
             },
             explorer: {
-              type: "blockscout",
-              uri: "https://celo.blockscout.com/api",
+              type: "etherscan",
+              uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42220",
             },
           },
         }) as unknown as EvmCoinConfig,
@@ -52,7 +52,7 @@ describe("Integration — getAccountShape with real implementations", () => {
     expect(result.operations?.length).toBeGreaterThan(0);
     expect(result.celoResources?.lockedBalance).toEqual(BigNumber(300000000000000000));
     expect(result.celoResources?.nonvotingLockedBalance).toEqual(BigNumber(300000000000000000));
-  }, 10000);
+  }, 30000);
 
   it("should get account without locked balance", async () => {
     // Call with real implementations - will connect to actual network endpoints
@@ -65,5 +65,5 @@ describe("Integration — getAccountShape with real implementations", () => {
     expect(result.spendableBalance).toEqual(BigNumber(250000000000000000));
     expect(result.celoResources?.lockedBalance).toEqual(BigNumber(0));
     expect(result.celoResources?.nonvotingLockedBalance).toEqual(BigNumber(0));
-  }, 10000);
+  }, 30000);
 });
