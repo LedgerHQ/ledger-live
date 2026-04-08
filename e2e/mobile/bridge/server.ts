@@ -117,6 +117,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   if (data.accounts?.length) {
     postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
+
+  if (data.featureFlags?.overrides) {
+    await setFeatureFlags(data.featureFlags.overrides);
+  }
 }
 
 export async function setFeatureFlags(flags: PartialFeatures) {
