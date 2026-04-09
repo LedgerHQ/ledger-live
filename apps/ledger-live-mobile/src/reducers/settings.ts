@@ -97,6 +97,7 @@ export const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedCustomImageFlow: false,
   hasCompletedOnboarding: false,
+  onboardingCompletionDate: null,
   hasInstalledAnyApp: true,
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
@@ -334,6 +335,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       hasCompletedOnboarding: payload === false ? payload : true,
+      onboardingCompletionDate: payload === false ? null : new Date().toISOString(),
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_ADD_COMPLETION_DATE]: state => {
+    return {
+      ...state,
+      onboardingCompletionDate: new Date().toISOString(),
     };
   },
 
@@ -790,6 +799,8 @@ export const hasCompletedCustomImageFlowSelector = (state: State) =>
   state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
+export const onboardingCompletionDateSelector = (state: State) =>
+  state.settings.onboardingCompletionDate;
 export const isOnboardingFlowSelector = (state: State) => state.settings.isOnboardingFlow;
 export const isOnboardingFlowReceiveSuccessSelector = (state: State) =>
   state.settings.isOnboardingFlowReceiveSuccess;

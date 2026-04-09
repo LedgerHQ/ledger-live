@@ -1,11 +1,7 @@
 import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type {
-  Account,
-  DeviceInfo,
-  DeviceModelInfo,
-} from "@ledgerhq/types-live";
+import type { Account, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
@@ -263,6 +259,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
+  SETTINGS_ADD_COMPLETION_DATE = "SETTINGS_ADD_COMPLETION_DATE",
   SETTINGS_SET_IS_ONBOARDING_FlOW = "SETTINGS_SET_IS_ONBOARDING_FlOW",
   SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS = "SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS",
   SETTINGS_SET_IS_POST_ONBOARDING_FlOW = "SETTINGS_SET_IS_POST_ONBOARDING_FlOW",
