@@ -1,11 +1,11 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
-import identity from "lodash/identity";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelector } from "~/context/hooks";
+import { createSelector } from "~/context/selectors";
+import { useStore, useSelector } from "~/context/hooks";
 import { useTrackingPairs } from "~/actions/general";
 import {
   saveAccounts,
@@ -44,6 +44,8 @@ import {
 type MaybeState = Maybe<State>;
 
 type Props<Data, Stats> = {
+  /** Selector for the minimal state slice this effect cares about. Avoids subscribing to root state. */
+  stateSelector: (state: State) => unknown;
   throttle: number;
   lense: (_: State) => Data;
   getChangesStats: (next: State, prev: State) => Stats;
@@ -52,21 +54,23 @@ type Props<Data, Stats> = {
 };
 
 function useDBSaveEffect<D, S>({
+  stateSelector,
   lense,
   throttle = 500,
   save,
   getChangesStats,
   saveAtStart = false,
 }: Props<D, S>) {
-  const state: MaybeState = useSelector(identity);
+  const store = useStore();
+  const storeRef = useRef(store);
+  storeRef.current = store;
+  const selectedSlice = useSelector(stateSelector);
   const forceSave = useRef(saveAtStart);
-  const lastSavedState = useRef(state);
+  const lastSavedState = useRef<MaybeState>(undefined);
   const isSaving = useRef(false);
-  // we keep an updated version of current props in "latestProps" ref
   const latestProps = useRef({
     lense,
     save,
-    state,
     getChangesStats,
   });
   const checkForSave = useMemo(
@@ -75,9 +79,11 @@ function useDBSaveEffect<D, S>({
       // nb it does not prevent race condition here. save must be idempotent and atomic
       throttleFn(async (): Promise<void> => {
         if (isSaving.current) return checkForSave(); // if we are already saving, we re-schedule
-        const { lense, save, state, getChangesStats } = latestProps.current;
-        if (lastSavedState?.current && state) {
-          const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
+        const { lense, save, getChangesStats } = latestProps.current;
+        const state = storeRef.current.getState() as State;
+        const prev = lastSavedState.current;
+        if (prev !== undefined && prev !== null) {
+          const changedStats = getChangesStats(prev, state); // we compare last saved with latest state
           if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
           isSaving.current = true;
           try {
@@ -85,23 +91,26 @@ function useDBSaveEffect<D, S>({
           } finally {
             isSaving.current = false;
           }
-          lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
-          forceSave.current = false;
         }
+        lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
+        forceSave.current = false;
       }, throttle),
     [throttle],
   );
   useFlushMechanism(checkForSave);
-  // each time a prop changes, we will checkForSave
+  // each time the selected slice or props change, we will checkForSave
   useEffect(() => {
     latestProps.current = {
       lense,
       save,
-      state,
       getChangesStats,
     };
+    const state = store.getState() as State;
+    if (lastSavedState.current === undefined) {
+      lastSavedState.current = state;
+    }
     checkForSave();
-  }, [lense, save, state, checkForSave, getChangesStats]);
+  }, [lense, save, checkForSave, store, getChangesStats, selectedSlice]);
 }
 const flushes: Array<() => void> = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));
@@ -148,6 +157,13 @@ const getAccountsChanged = (
   }
   return null;
 };
+
+/** Memoized so useSelector does not see a new object on every action (accounts + wallet drive account export). */
+const accountsDbSaveSliceSelector = createSelector(
+  (state: State) => state.accounts,
+  (state: State) => state.wallet,
+  (accounts, wallet) => ({ accounts, wallet }),
+);
 const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
 
 const getPostOnboardingStateChanged = (a: State, b: State) =>
@@ -173,18 +189,18 @@ const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identitie
 const extractIdentitiesForPersistence = (state: State) =>
   exportIdentitiesForPersistence(state.identities);
 
-const countervaluesChangesStats = (oldState: State, newState: State) => {
-  return hasNewCountervaluesToExport(
+const countervaluesChangesStats = (oldState: State, newState: State) =>
+  hasNewCountervaluesToExport(
     countervaluesStateSelector(oldState),
     countervaluesStateSelector(newState),
   );
-};
 
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
 
   useDBSaveEffect({
+    stateSelector: countervaluesStateSelector,
     throttle: 2000,
     getChangesStats: countervaluesChangesStats,
     lense: useCallback(
@@ -194,24 +210,28 @@ export const ConfigureDBSaveEffects = () => {
     save: saveCountervalues,
   });
   useDBSaveEffect({
+    stateSelector: (state: State) => state.settings,
     save: saveSettings,
     throttle: 400,
     getChangesStats: getSettingsChanged,
     lense: settingsStoreSelector,
   });
   useDBSaveEffect({
+    stateSelector: accountsDbSaveSliceSelector,
     save: saveAccounts,
     throttle: 500,
     getChangesStats: getAccountsChanged,
     lense: accountsExportSelector,
   });
   useDBSaveEffect({
+    stateSelector: (state: State) => state.ble,
     save: saveBle,
     throttle: 500,
     getChangesStats: bleNotEquals,
     lense: bleSelector,
   });
   useDBSaveEffect({
+    stateSelector: (state: State) => state.postOnboarding,
     save: savePostOnboardingState,
     throttle: 500,
     getChangesStats: getPostOnboardingStateChanged,
@@ -219,6 +239,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.market,
     save: saveMarketState,
     throttle: 500,
     getChangesStats: marketNotEquals,
@@ -226,6 +247,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.trustchain,
     save: saveTrustchainState,
     throttle: 500,
     getChangesStats: trustchainNotEquals,
@@ -233,6 +255,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.wallet,
     save: saveWalletExportState,
     throttle: 500,
     getChangesStats: compareWalletState,
@@ -240,6 +263,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.largeMover,
     save: saveLargeMoverState,
     throttle: 500,
     getChangesStats: largeMoverNotEquals,
@@ -247,6 +271,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.cryptoAssetsApi,
     save: saveCryptoAssetsCacheState,
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
@@ -254,6 +279,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.identities,
     save: saveIdentities,
     throttle: 500,
     getChangesStats: identitiesNotEquals,
@@ -262,6 +288,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.featureFlags,
     save: saveFeatureFlagsState,
     throttle: 400,
     getChangesStats: featureFlagsNotEquals,
