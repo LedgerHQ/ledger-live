@@ -107,7 +107,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
 
         const parentAccount = accounts.find(
-          acc => acc.type === "Account" && acc.id === parentAccountId,
+          acc => isAccount(acc) && acc.id === parentAccountId,
         );
 
         const { token } = await decodeTokenAccountId(accountId);
