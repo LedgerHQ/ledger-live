@@ -30,7 +30,7 @@ export function TopBarActionButton({
     [onTooltipShow],
   );
 
-  const control = cta ? (
+  const button = cta ? (
     <Button
       appearance={appearance}
       size="sm"
@@ -57,7 +57,7 @@ export function TopBarActionButton({
   return (
     <div className="flex items-center gap-12">
       <Tooltip onOpenChange={handleOpenChange}>
-        <TooltipTrigger asChild>{control}</TooltipTrigger>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
         {tooltip && (
           <TooltipContent side="bottom" className={tooltipClassName}>
             {tooltip}

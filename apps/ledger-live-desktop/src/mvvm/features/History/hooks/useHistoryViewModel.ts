@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { useDispatch } from "LLD/hooks/redux";
+import { markOperationsAsSeen } from "~/renderer/reducers/history";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useHistoryOperations } from "./hooks/useHistoryOperations";
-import { useHistoryTable } from "./hooks/useHistoryTable";
-import { useHistoryVirtualization } from "./hooks/useHistoryVirtualization";
-import type { HistoryTable, OperationRow, VirtualItem } from "./types";
+import { useHistoryOperations } from "./useHistoryOperations";
+import { useHistoryTable } from "./useHistoryTable";
+import { useHistoryVirtualization } from "./useHistoryVirtualization";
+import type { HistoryTable, OperationRow, VirtualItem } from "../types";
 import { track } from "~/renderer/analytics/segment";
 
 export type HistoryViewModel = {
@@ -22,7 +24,14 @@ export type HistoryViewModel = {
 };
 
 export function useHistoryViewModel(): HistoryViewModel {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      dispatch(markOperationsAsSeen());
+    };
+  }, [dispatch]);
 
   const navigateToDashboard = useCallback(() => {
     navigate("/");

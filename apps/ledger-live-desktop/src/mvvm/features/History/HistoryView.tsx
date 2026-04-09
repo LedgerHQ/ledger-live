@@ -2,7 +2,7 @@ import React from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import HistoryPageHeader from "./components/HistoryPageHeader";
 import { HistoryList } from "./screens/HistoryList";
-import type { HistoryViewModel } from "./useHistoryViewModel";
+import type { HistoryViewModel } from "./hooks/useHistoryViewModel";
 
 export function HistoryView({
   navigateToDashboard,
