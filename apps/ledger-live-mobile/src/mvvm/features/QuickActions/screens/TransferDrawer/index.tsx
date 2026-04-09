@@ -21,7 +21,7 @@ export const TransferDrawer = () => {
   if (isEnabled) {
     return (
       <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={isOpen}
+        isForcingToBeOpened={isOpen}
         enableDynamicSizing
         onClose={handleClose}
       >
