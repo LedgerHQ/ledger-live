@@ -88,6 +88,7 @@ declare global {
   var getWebElementByTag: typeof WebElementHelpers.getWebElementByTag;
   var getWebElementByTestId: typeof WebElementHelpers.getWebElementByTestId;
   var getWebElementsByCssSelector: typeof WebElementHelpers.getWebElementsByCssSelector;
+  var getWebElementByXpath: typeof WebElementHelpers.getWebElementByXpath;
   var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
   var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
   var getWebElementText: typeof WebElementHelpers.getWebElementText;

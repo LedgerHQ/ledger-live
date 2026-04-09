@@ -1,4 +1,3 @@
-import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { Account, AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -40,7 +39,7 @@ export default class AccountPage {
   @Step("Wait for account detail screen and verify account name: $0")
   async waitForAccountScreenLoaded(accountName: string) {
     await waitForElementById(this.accountScreenScrollView);
-    await detoxExpect(element(by.text(accountName)).atIndex(0)).toExist();
+    await detoxExpect(getElementByText(accountName, 0)).toExist();
   }
 
   @Step("Open accounts list via deeplink")

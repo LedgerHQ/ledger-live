@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 
 export default class EarnV2DashboardPage {
-  // Webview testIDs (shared earn web app v2)
+  // Webview locators (shared earn web app v2)
   footerDisclaimer = "footer-disclaimer";
   maxPotentialRewards = "max-potential-rewards";
   walletHeaderAmount = "wallet-header-amount";
@@ -10,6 +10,18 @@ export default class EarnV2DashboardPage {
   iceColdStartEarnCta = "ice-cold-start-earn-cta";
   assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker}`;
   assetEarnCta = (ticker: string) => `asset-earn-cta-${ticker}`;
+  depositRowXPath = (identifier: string) =>
+    `//*[starts-with(@data-testid, "deposit-row-") and .//*[contains(text(), "${identifier}")]]`;
+
+  // Native locators
+  stakingProvider = (providerId: string) => `staking-provider-${providerId}-title`;
+  earnMenuOption = (label: string) =>
+    `earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`;
+  private static readonly stakingFlowTestIds: Record<string, string> = {
+    ETH: "staking-provider-modal-title",
+    ATOM: "cosmos-delegation-start-button",
+    SOL: "solana-delegation-start-button",
+  };
 
   // --- Ice Cold Start ---
 
@@ -55,17 +67,14 @@ export default class EarnV2DashboardPage {
     await waitWebElementByTestId(this.rewardsSummary);
   }
 
-  private readonly depositRowSelector =
-    "[data-testid='deposits-table'] [data-testid^='deposit-row']";
-
   @Step("Verify position row present for $0")
-  async verifyPositionRowPresent(_identifier: string) {
-    await waitWebElement(getWebElementByCssSelector(this.depositRowSelector));
+  async verifyPositionRowPresent(identifier: string) {
+    await waitWebElement(getWebElementByXpath(this.depositRowXPath(identifier)));
   }
 
-  @Step("Click position row matching text: $0")
-  async clickPositionRow(_identifier: string) {
-    const row = getWebElementByCssSelector(this.depositRowSelector);
+  @Step("Click position row for $0")
+  async clickPositionRow(identifier: string) {
+    const row = getWebElementByXpath(this.depositRowXPath(identifier));
     await tapWebElementByElement(row);
   }
 
@@ -83,13 +92,6 @@ export default class EarnV2DashboardPage {
 
   // --- Staking Flow Verification (native) ---
 
-  // Maps currency ticker to the native testID that appears after clicking the asset CTA
-  private static readonly stakingFlowTestIds: Record<string, string> = {
-    ETH: "staking-provider-modal-title", // EvmStakingDrawer
-    ATOM: "cosmos-delegation-start-button", // CosmosDelegationFlow
-    SOL: "solana-delegation-start-button", // SolanaDelegationFlow
-  };
-
   @Step("Verify staking flow opened for $0")
   async verifyStakingFlowOpened(ticker: string) {
     const testId = EarnV2DashboardPage.stakingFlowTestIds[ticker];
@@ -101,7 +103,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Tap staking provider in EvmStakingDrawer: $0")
   async tapStakingProvider(providerId: string) {
-    await tapById(`staking-provider-${providerId}-title`);
+    await tapById(this.stakingProvider(providerId));
   }
 
   @Step("Verify partner dapp loaded (webview URL contains $0)")
@@ -116,21 +118,19 @@ export default class EarnV2DashboardPage {
     await app.modularDrawer.checkSelectAssetPage();
   }
 
-  // --- Mobile-specific: EarnMenuDrawer (native bottom sheet) ---
-  // Opened via deeplink from webview: ledgerlive://earn?action=menu-modal
-  // Shows options like "Manage", "Earn more", "Withdraw" depending on position type
+  // --- EarnMenuDrawer (native bottom sheet) ---
 
   @Step("Verify manage drawer options present: $0")
   async verifyManageDrawerOptions(options: string[]) {
     for (const option of options) {
-      const testId = `earn-menu-option-${option.toLowerCase().replace(/\s+/g, "-")}`;
-      await waitForElementById(testId, undefined, { checkVisibility: false });
+      await waitForElementById(this.earnMenuOption(option), undefined, {
+        checkVisibility: false,
+      });
     }
   }
 
   @Step("Tap manage drawer option")
   async tapManageDrawerOption(optionText: string) {
-    const testId = `earn-menu-option-${optionText.toLowerCase().replace(/\s+/g, "-")}`;
-    await tapById(testId);
+    await tapById(this.earnMenuOption(optionText));
   }
 }

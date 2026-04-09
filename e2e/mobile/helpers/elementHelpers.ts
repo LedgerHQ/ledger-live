@@ -367,6 +367,11 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
+  getWebElementByXpath(xpath: string, index = 0): WebElement {
+    const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
+    return index > 0 ? base.atIndex(index) : base;
+  },
+
   getWebElementsByIdAndText(id: string, text: string, index = 0): WebElement {
     const xpath = id
       ? `//span[@data-testid="${id}" and text()="${text}"]`
