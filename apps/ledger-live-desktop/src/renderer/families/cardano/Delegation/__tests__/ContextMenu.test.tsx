@@ -40,20 +40,27 @@ jest.mock("~/renderer/components/DropDownSelector", () => {
   };
 });
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockAccountBase = {
   id: "test-account-id",
-  currency: { id: "cardano", name: "Cardano", ticker: "ADA" },
+  currency: {
+    id: "cardano",
+    name: "Cardano",
+    ticker: "ADA",
+  },
   cardanoResources: {
     delegation: {
       rewards: new BigNumber(0),
       dRepHex: undefined,
     },
   },
-} as unknown as CardanoAccount;
+} as CardanoAccount;
 
 describe("Cardano ContextMenu", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    jest.mocked(openModal).mockReturnValue({ type: "OPEN_MODAL" } as ReturnType<typeof openModal>);
   });
 
   const setup = (accountOverrides = {}) => {

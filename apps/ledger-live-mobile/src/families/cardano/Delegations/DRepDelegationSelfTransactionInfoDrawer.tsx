@@ -32,7 +32,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       recipient: account.freshAddress,
-      amount: BigNumber(DEFAULT_TX_AMOUNT),
+      amount: new BigNumber(DEFAULT_TX_AMOUNT),
     });
 
     navigation.navigate(NavigatorName.SendFunds, {
