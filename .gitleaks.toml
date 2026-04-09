@@ -4,15 +4,15 @@ title = "Gitleaks Config"
 useDefault = true
 
 [[rules]]
-id = "seed-24"
-description = "Detected a seed."
-regex = '''(?i)\b(?:(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*)(?:[:=\s]\s*)(?:[\x60'"]\s*)?((?:\w+\s+){23}\w+)(?:\s*[\x60'"])?(?:\s*[,;])?(?:\s*(\n|\r|$))'''
+id = "seed-phrase"
+description = "Detected a BIP39 mnemonic seed phrase."
+regex = '''(?i)\b(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*[:=\s]\s*(?:[\x60'"]\s*)?((?:[a-zA-Z]{3,8}\s+){10,23}[a-zA-Z]{3,8})(?:\s*[\x60'"]|\s*[,;]|\b)'''
 keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
 
 [[rules]]
-id = "seed-12"
-description = "Detected a seed."
-regex = '''(?i)\b(?:(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*)(?:[:=\s]\s*)(?:[\x60'"]\s*)?((?:\w+\s+){11}\w+)(?:\s*[\x60'"])?(?:\s*[,;])?(?:\s*(\n|\r|$))'''
+id = "seed-array"
+description = "Detected a BIP39 mnemonic seed phrase in array format."
+regex = '''(?i)\b(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*[:=]\s*(\[\s*(?:["'][a-zA-Z]{3,8}["']\s*,?\s*){12,24}\])'''
 keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
 
 [[rules]]
@@ -20,19 +20,15 @@ id = "generic-api-key"
 
     [[rules.allowlists]]
     condition = "AND"
-    description = "Ignore tokens in specs."
-    regexTarget = "match"
-    regexes = ['''tokenId\":''']
-    paths = [
-        '''e2e/.+/userdata/.+\.json''',
-        '''libs/.+/.+\.test\.ts\.snap''',
-    ]
-
-    [[rules.allowlists]]
     description = "Ignore public blockchain contract/token addresses by network prefix in tokenId."
     regexTarget = "match"
     regexes = [
         '''(?i)\"?tokenId\"?\s*[=:]\s*[\"']?(?:aleo|algorand|aptos|assethub_polkadot|base|bitcoin|bsc|cardano|celo|cosmos|dogecoin|elrond|ethereum|hedera|injective|internet_computer|kaspa|litecoin|near|optimism|osmo|polygon|ripple|solana|stellar|sui|tezos|ton|tron|vechain|zcash)''',
+    ]
+    paths = [
+        '''e2e/.+/userdata/.+\.json''',
+        '''e2e/desktop/tests/.+/.+\.spec\.ts''',
+        '''libs/.+/.+\.test\.ts\.snap''',
     ]
 
 [[rules]]
