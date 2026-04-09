@@ -11,7 +11,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import { BehaviorSubject, Subscription, firstValueFrom } from "rxjs";
 import { first, tap, timeout } from "rxjs/operators";
-import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { getDeviceManagementKit } from "@ledgerhq/live-dmk-shared";
 
 export const activeDeviceSessionSubject = new BehaviorSubject<{
   transport: DeviceManagementKitHIDTransport;

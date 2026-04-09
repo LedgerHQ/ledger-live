@@ -1,5 +1,5 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import * as dmkUtils from "./useDeviceManagementKit";
+import * as dmkUtils from "@ledgerhq/live-dmk-shared";
 import {
   mapDiscoveredDeviceToHIDDiscoveredDevice,
   useHidDevicesDiscovery,
@@ -8,7 +8,8 @@ import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { Observable, Subject } from "rxjs";
 import { renderHook, act } from "@testing-library/react";
 
-jest.mock("./useDeviceManagementKit", () => ({
+jest.mock("@ledgerhq/live-dmk-shared", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-shared"),
   getDeviceManagementKit: jest.fn(),
   useDeviceManagementKit: jest.fn(),
 }));

@@ -6,18 +6,10 @@ export const DeviceManagementKitContext = createContext<DeviceManagementKit | nu
 
 type Props = {
   children: React.ReactNode;
-  disabled?: boolean;
 };
 
-export const DeviceManagementKitProvider: React.FC<Props> = ({ children, disabled }) => {
-  const deviceManagementKit = useMemo(() => {
-    if (disabled) return null;
-    return getDeviceManagementKit();
-  }, [disabled]);
-
-  if (disabled || deviceManagementKit === null) {
-    return <>{children}</>;
-  }
+export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
+  const deviceManagementKit = useMemo(() => getDeviceManagementKit(), []);
 
   return (
     <DeviceManagementKitContext.Provider value={deviceManagementKit}>

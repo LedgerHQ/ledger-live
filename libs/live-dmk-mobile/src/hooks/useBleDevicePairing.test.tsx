@@ -1,6 +1,6 @@
 import { useBleDevicePairing } from "./useBleDevicePairing";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import * as dmkUtils from "./useDeviceManagementKit";
+import * as dmkUtils from "@ledgerhq/live-dmk-shared";
 import React from "react";
 import { Device } from "@ledgerhq/types-devices";
 import { act, render } from "@testing-library/react";
@@ -16,7 +16,8 @@ const TestComponent: React.FC<{ device: Device }> = ({ device }) => {
   );
 };
 
-jest.mock("./useDeviceManagementKit", () => ({
+jest.mock("@ledgerhq/live-dmk-shared", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-shared"),
   getDeviceManagementKit: jest.fn(),
   useDeviceManagementKit: jest.fn(),
 }));

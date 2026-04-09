@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import type { Subscription } from "rxjs";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { useDeviceManagementKit } from "./useDeviceManagementKit";
+import { dmkToLedgerDeviceIdMap, useDeviceManagementKit } from "@ledgerhq/live-dmk-shared";
 import { HIDDiscoveredDevice } from "./HIDDiscoveredDevice";
 import { log } from "@ledgerhq/logs";
 

@@ -2,26 +2,34 @@ import { BlePlxManager } from "./BlePlxManager";
 import { DeviceManagementKitBLETransport, tracer } from "./DeviceManagementKitBLETransport";
 import { Observable, Subject, Subscription } from "rxjs";
 import { State } from "react-native-ble-plx";
-import { getDeviceManagementKit } from "../hooks";
+import {
+  getDeviceManagementKit,
+  activeDeviceSessionSubject,
+  initDmk,
+  resetDmk,
+} from "@ledgerhq/live-dmk-shared";
 import {
   ConnectedDevice,
   DeviceSessionState,
   DeviceStatus,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { activeDeviceSessionSubject, initDmk, resetDmk } from "@ledgerhq/live-dmk-shared";
 import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 
 describe("DeviceManagementKitBLETransport", () => {
+  let stopDiscoveringSpy: jest.SpyInstance;
+  let closeSpy: jest.SpyInstance;
+
   beforeAll(() => {
     initDmk({ transports: [jest.fn() as never] });
     const dmk = getDeviceManagementKit();
-    jest.spyOn(dmk, "stopDiscovering").mockImplementation(async () => {});
-    jest.spyOn(dmk, "close").mockResolvedValue(undefined as never);
+    stopDiscoveringSpy = jest.spyOn(dmk, "stopDiscovering").mockImplementation(async () => {});
+    closeSpy = jest.spyOn(dmk, "close").mockResolvedValue(undefined as never);
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    stopDiscoveringSpy.mockRestore();
+    closeSpy.mockRestore();
     resetDmk();
   });
 

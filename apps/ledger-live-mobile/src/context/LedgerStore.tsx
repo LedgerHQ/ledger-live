@@ -46,8 +46,9 @@ import {
   PERSISTENCE_VERSION,
   type PersistedCAL,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { identitiesSlice, userIdSelector } from "@ledgerhq/client-ids/store";
 import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
+import { initialiseDmk } from "../initDmk";
 
 interface Props {
   onInitFinished: () => void;
@@ -161,6 +162,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (persistedIdentities) {
         store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
       }
+
+      const userId = userIdSelector(store.getState());
+      initialiseDmk(userId.exportUserIdForAnalytics());
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));

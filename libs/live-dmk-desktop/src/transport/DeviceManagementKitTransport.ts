@@ -6,11 +6,14 @@ import {
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import Transport from "@ledgerhq/hw-transport";
-import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import {
+  dmkToLedgerDeviceIdMap,
+  activeDeviceSessionSubject,
+  getDeviceManagementKit,
+} from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { firstValueFrom, Observer, startWith, pairwise, map, Subscription } from "rxjs";
-import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
 

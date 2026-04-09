@@ -4,7 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-shared";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";

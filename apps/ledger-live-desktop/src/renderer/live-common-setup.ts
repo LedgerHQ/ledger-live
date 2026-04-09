@@ -37,9 +37,10 @@ enum RendererTransportModule {
  */
 export function registerTransportModules(store: Store<State>) {
   const userId = userIdSelector(store.getState());
-  setEnvOnAllThreads("USER_ID", userId.exportUserIdForAnalytics());
+  const userIdStr = userId.exportUserIdForAnalytics();
+  setEnvOnAllThreads("USER_ID", userIdStr);
 
-  initialiseDmk();
+  initialiseDmk(userIdStr);
 
   const vaultTransportPrefixID = "vault-transport:";
 

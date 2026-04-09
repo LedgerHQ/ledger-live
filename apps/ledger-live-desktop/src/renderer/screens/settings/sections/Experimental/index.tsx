@@ -17,7 +17,7 @@ import ExperimentalFloat from "./ExperimentalFloat";
 import LottieTester from "../Developer/LottieTester";
 import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-shared";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const experimentalTypesMap = {

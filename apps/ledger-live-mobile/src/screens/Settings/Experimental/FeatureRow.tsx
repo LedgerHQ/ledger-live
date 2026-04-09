@@ -1,6 +1,6 @@
 import React from "react";
 import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-env";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-shared";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { Feature, isReadOnly } from "../../../experimental";

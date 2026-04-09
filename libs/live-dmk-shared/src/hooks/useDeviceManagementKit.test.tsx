@@ -43,29 +43,6 @@ describe("DeviceManagementKitProvider", () => {
     expect(getByTestId("dmk-value")).toHaveTextContent("has-dmk");
   });
 
-  it("provides null when disabled", () => {
-    initDmk({ transports: [jest.fn()] });
-
-    const { getByTestId } = render(
-      <DeviceManagementKitProvider disabled>
-        <Consumer />
-      </DeviceManagementKitProvider>,
-    );
-
-    expect(getByTestId("dmk-value")).toHaveTextContent("no-dmk");
-  });
-
-  it("renders children even when disabled", () => {
-    initDmk({ transports: [jest.fn()] });
-
-    const { getByTestId } = render(
-      <DeviceManagementKitProvider disabled>
-        <div data-testid="child">hello</div>
-      </DeviceManagementKitProvider>,
-    );
-
-    expect(getByTestId("child")).toHaveTextContent("hello");
-  });
 });
 
 describe("useDeviceManagementKit", () => {

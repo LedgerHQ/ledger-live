@@ -1,11 +1,10 @@
-import { initialiseDmk } from "./initDmk";
 import {
   BottomSheetModalProvider,
   GlobalSelectBottomSheet,
   GlobalTooltipBottomSheet,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-shared";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
@@ -23,8 +22,6 @@ type AppProvidersProps = {
 };
 
 const queryClient = new QueryClient();
-
-initialiseDmk();
 
 function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
   logStartupEvent("AppProviders render");

@@ -19,11 +19,8 @@
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
-import {
-  useBleDevicesScanning,
-  useDeviceManagementKit,
-  type ScannedDevice,
-} from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning, type ScannedDevice } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-shared";
 import type { DeviceConnectionComponent } from "@ledgerhq/device-intent";
 
 const DeviceConnectionComponentLWM: DeviceConnectionComponent = ({
