@@ -294,6 +294,11 @@
       "title": "Sorry, connection failed",
       "description": "Please try again."
     },
+    "CounterfeitDevice": {
+      "title": "This {{productName}} failed the Genuine Check",
+      "description": "It is not safe to use this Ledger device. Please contact Ledger Support.",
+      "contactSupportCTA": "Contact Ledger Support"
+    },
     "DeviceSocketNoBulkStatus": {
       "title": "The connection failed",
       "description": "Please try again."
