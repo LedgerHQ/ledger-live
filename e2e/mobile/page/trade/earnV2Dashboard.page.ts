@@ -1,5 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { web, by, expect as detoxExpect } from "detox";
 
 export default class EarnV2DashboardPage {
   // Webview testIDs (shared earn web app v2)
@@ -17,8 +16,8 @@ export default class EarnV2DashboardPage {
   @Step("Verify ice cold start page")
   async verifyIceColdStartPage() {
     await waitWebElementByTestId(this.footerDisclaimer);
-    await this.expectWebElementNotVisible(this.maxPotentialRewards);
-    await this.expectWebElementNotVisible(this.walletHeaderAmount);
+    await expectWebElementNotVisible(this.maxPotentialRewards);
+    await expectWebElementNotVisible(this.walletHeaderAmount);
   }
 
   @Step("Click ice cold start earn CTA")
@@ -56,17 +55,17 @@ export default class EarnV2DashboardPage {
     await waitWebElementByTestId(this.rewardsSummary);
   }
 
-  private readonly depositRowXPath = (identifier: string) =>
-    `//*[starts-with(@data-testid, "deposit-row-") and .//*[contains(text(), "${identifier}")]]`;
+  private readonly depositRowSelector =
+    "[data-testid='deposits-table'] [data-testid^='deposit-row']";
 
   @Step("Verify position row present for $0")
-  async verifyPositionRowPresent(identifier: string) {
-    await waitWebElement(web.element(by.web.xpath(this.depositRowXPath(identifier))));
+  async verifyPositionRowPresent(_identifier: string) {
+    await waitWebElement(getWebElementByCssSelector(this.depositRowSelector));
   }
 
   @Step("Click position row matching text: $0")
-  async clickPositionRow(identifier: string) {
-    const row = web.element(by.web.xpath(this.depositRowXPath(identifier)));
+  async clickPositionRow(_identifier: string) {
+    const row = getWebElementByCssSelector(this.depositRowSelector);
     await tapWebElementByElement(row);
   }
 
@@ -124,18 +123,14 @@ export default class EarnV2DashboardPage {
   @Step("Verify manage drawer options present: $0")
   async verifyManageDrawerOptions(options: string[]) {
     for (const option of options) {
-      await waitForElementByText(option, undefined, { checkVisibility: false });
+      const testId = `earn-menu-option-${option.toLowerCase().replace(/\s+/g, "-")}`;
+      await waitForElementById(testId, undefined, { checkVisibility: false });
     }
   }
 
   @Step("Tap manage drawer option")
   async tapManageDrawerOption(optionText: string) {
-    await tapByText(optionText);
-  }
-
-  // --- Helpers ---
-
-  private async expectWebElementNotVisible(testId: string) {
-    await detoxExpect(web.element(by.web.cssSelector(`[data-testid="${testId}"]`))).not.toExist();
+    const testId = `earn-menu-option-${optionText.toLowerCase().replace(/\s+/g, "-")}`;
+    await tapById(testId);
   }
 }

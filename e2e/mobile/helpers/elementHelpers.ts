@@ -429,6 +429,10 @@ export const WebElementHelpers = {
     }
   },
 
+  async expectWebElementNotVisible(id: string, index = 0): Promise<void> {
+    await detoxExpect(WebElementHelpers.getWebElementByTestId(id, index)).not.toExist();
+  },
+
   async tapWebElementByTestId(id: string, index = 0): Promise<void> {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
   },

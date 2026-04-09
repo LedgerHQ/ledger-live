@@ -105,6 +105,7 @@ export default class TestEnvironment extends DetoxEnvironment {
     };
 
     const webHelpers = {
+      expectWebElementNotVisible: WebElementHelpers.expectWebElementNotVisible,
       getCurrentWebviewUrl: WebElementHelpers.getCurrentWebviewUrl,
       getValueByWebTestId: WebElementHelpers.getValueByWebTestId,
       getWebElementByCssSelector: WebElementHelpers.getWebElementByCssSelector,
