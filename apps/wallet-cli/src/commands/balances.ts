@@ -36,11 +36,7 @@ export default defineCommand({
       );
 
       const fmt = new HumanFormatter(setupCalClientStore());
-      if (isHuman) {
-        for (const b of balances) {
-          writeStdout(await fmt.formatBalance(b));
-        }
-      } else {
+      if (!isHuman) {
         const jsonFmt = new JsonFormatter(fmt);
         writeStdout(
           JSON.stringify(
@@ -54,17 +50,23 @@ export default defineCommand({
             2,
           ),
         );
+      } else {
+        for (const b of balances) {
+          writeStdout(await fmt.formatBalance(b));
+        }
       }
     } catch (e) {
-      if (isHuman) throw e;
-      writeStdout(
-        JSON.stringify(
-          makeErrorEnvelope("balances", HumanFormatter.formatError(e), descriptor.currencyId),
-          null,
-          2,
-        ),
-      );
-      process.exit(1);
+      if (!isHuman) {
+        writeStdout(
+          JSON.stringify(
+            makeErrorEnvelope("balances", HumanFormatter.formatError(e), descriptor.currencyId),
+            null,
+            2,
+          ),
+        );
+        process.exit(1);
+      }
+      throw e;
     }
   },
 });

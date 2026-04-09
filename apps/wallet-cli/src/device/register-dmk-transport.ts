@@ -49,7 +49,10 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   if (!device) {
     throw new Error("No Ledger device found. Unlock the device and try again.");
   }
-  const sessionId = await dmk.connect({ device });
+  const sessionId = await dmk.connect({
+    device,
+    sessionRefresherOptions: { isRefresherDisabled: true },
+  });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
     () => null,
@@ -72,9 +75,8 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
 /**
  * Ensures a DMK USB session exists and returns the shared transport (same instance across `open()` calls until reset).
  *
- * The session refresher is left enabled (default) so the DMK periodically pings the device and
- * keeps session state (CONNECTED / LOCKED / BUSY) up to date — matching the DMK sample app behaviour.
- * If the initial session state is BUSY we disconnect and ask the user to retry.
+ * DMK's DevicePinger.ping() silently swallows errors (returns null). With `isRefresherDisabled`,
+ * a broken transport can leave the session stuck BUSY. We detect that and ask the user to retry.
  */
 export async function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
   if (singleton) {

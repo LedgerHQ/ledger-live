@@ -10,46 +10,6 @@ import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { spinner, colors, writeStdout } from "../shared/ui";
 import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
 
-type SendFlags = {
-  account?: string;
-  to: string;
-  amount: string;
-  "fee-per-byte"?: string;
-  rbf?: boolean;
-  mode?: string;
-  validator?: string;
-  "stake-account"?: string;
-  memo?: string;
-  "dry-run": boolean;
-  output: "human" | "json";
-};
-
-type IntentBuilder = (flags: SendFlags) => unknown;
-
-const INTENT_BUILDERS: Record<string, IntentBuilder> = {
-  bitcoin: flags => ({
-    family: "bitcoin",
-    recipient: flags.to,
-    amount: flags.amount,
-    feePerByte: flags["fee-per-byte"],
-    rbf: flags.rbf,
-  }),
-  evm: flags => ({
-    family: "evm",
-    recipient: flags.to,
-    amount: flags.amount,
-  }),
-  solana: flags => ({
-    family: "solana",
-    recipient: flags.to,
-    amount: flags.amount,
-    mode: flags.mode,
-    validator: flags.validator,
-    stakeAccount: flags["stake-account"],
-    memo: flags.memo,
-  }),
-};
-
 export default defineCommand({
   name: "send",
   description: "Sign and broadcast a transaction (bridge only, no Alpaca)",
@@ -103,13 +63,30 @@ export default defineCommand({
 
     // Build the TransactionIntent based on the currency family
     const { family } = getCryptoCurrencyById(descriptor.currencyId);
-    const builder = INTENT_BUILDERS[family];
-    if (!builder) {
-      throw new Error(
-        `Unsupported family: ${family}. Supported: ${Object.keys(INTENT_BUILDERS).join(", ")}`,
-      );
+    let intentData: unknown;
+    if (family === "bitcoin") {
+      intentData = {
+        family: "bitcoin",
+        recipient: flags.to,
+        amount: flags.amount,
+        feePerByte: flags["fee-per-byte"],
+        rbf: flags.rbf,
+      };
+    } else if (family === "evm") {
+      intentData = { family: "evm", recipient: flags.to, amount: flags.amount };
+    } else if (family === "solana") {
+      intentData = {
+        family: "solana",
+        recipient: flags.to,
+        amount: flags.amount,
+        mode: flags.mode,
+        validator: flags.validator,
+        stakeAccount: flags["stake-account"],
+        memo: flags.memo,
+      };
+    } else {
+      throw new Error(`Unsupported family: ${family}. Supported: bitcoin, evm, solana`);
     }
-    const intentData = builder(flags as SendFlags);
 
     let intent: TransactionIntent;
     try {

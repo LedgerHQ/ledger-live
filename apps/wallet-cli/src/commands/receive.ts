@@ -32,7 +32,9 @@ export default defineCommand({
     const outputAddress = (address: string) =>
       writeStdout(isHuman ? address : JSON.stringify({ address }));
 
-    if (flags.verify) {
+    if (!flags.verify) {
+      outputAddress(await wallet.getFreshAddress(descriptor));
+    } else {
       const spin = isHuman
         ? spinner(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`)
         : null;
@@ -46,8 +48,6 @@ export default defineCommand({
       });
 
       outputAddress(address);
-    } else {
-      outputAddress(await wallet.getFreshAddress(descriptor));
     }
   },
 });

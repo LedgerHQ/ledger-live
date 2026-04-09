@@ -37,20 +37,17 @@ export class HumanFormatter {
   /** @deprecated Use formatDiscoveredAccount — kept for any internal callers during migration. */
   formatAccountDescriptor(d: AccountDescriptor): string {
     const mode = d.derivationMode ? colors.dim(` (${d.derivationMode})`) : "";
-    const indexLabel = `#${d.index}`;
-    const label = `${colors.bold(colors.cyan(d.currencyId))} account ${colors.bold(indexLabel)}${mode}  ${d.freshAddress}`;
-    const idIndex = `${d.id}:${d.index}`;
-    return `${label}\n  ${colors.dim(idIndex)}`;
+    const label = `${colors.bold(colors.cyan(d.currencyId))} account ${colors.bold(`#${d.index}`)}${mode}  ${d.freshAddress}`;
+    return `${label}\n  ${colors.dim(`${d.id}:${d.index}`)}`;
   }
 
   formatDiscoveredAccount(d: DiscoveredAccount): string {
     const { descriptor, freshAddress } = d;
     const v1str = serializeV1(descriptor);
     const networkStr = `${descriptor.network.name}:${descriptor.network.env}`;
-    const rawIndex = descriptor.path.split("/")[3]?.replaceAll(/[h']/g, "") ?? "?";
+    const rawIndex = descriptor.path.split("/")[3]?.replace(/[h']/g, "") ?? "?";
     const typeLabel = colors.dim(`(${descriptor.type})`);
-    const accountNum = `#${rawIndex}`;
-    const label = `${colors.bold(colors.cyan(networkStr))} account ${colors.bold(accountNum)} ${typeLabel}  ${freshAddress}`;
+    const label = `${colors.bold(colors.cyan(networkStr))} account ${colors.bold(`#${rawIndex}`)} ${typeLabel}  ${freshAddress}`;
     return `${label}\n  ${colors.dim(v1str)}`;
   }
 
@@ -77,13 +74,12 @@ export class HumanFormatter {
     const fee = formatCurrencyUnit(feeUnit, new BigNumber(op.fee), { showCode: true });
     const date = colors.dim(formatDate(new Date(op.date)));
     const block =
-      op.blockHeight == null ? colors.yellow("pending") : colors.dim(`#${op.blockHeight}`);
+      op.blockHeight != null ? colors.dim(`#${op.blockHeight}`) : colors.yellow("pending");
     const from = op.senders[0] ?? "—";
     const to = op.recipients[0] ?? "—";
     const colorType = TYPE_COLORS[op.type] ?? colors.white;
     const type = colorType(op.type.padEnd(6));
-    const feeLabel = colors.dim(`fee ${fee}`);
-    return `${date}  ${type}  ${colors.bold(value)}   ${from} → ${to}   ${feeLabel}   ${block}   ${colors.dim(op.hash)}`;
+    return `${date}  ${type}  ${colors.bold(value)}   ${from} → ${to}   ${colors.dim(`fee ${fee}`)}   ${block}   ${colors.dim(op.hash)}`;
   }
 }
 

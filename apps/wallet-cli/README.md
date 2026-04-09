@@ -10,6 +10,8 @@ wallet-cli is **not production-ready**. Behavior and flags may change without no
 
 **Supported currencies** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). This is not full Ledger Live coverage and not multi-chain parity with the desktop or mobile apps.
 
+**Not in scope for v0:** send, receive, and other broad wallet flows. More commands may be added later.
+
 ### Commands
 
 | Command | Role |

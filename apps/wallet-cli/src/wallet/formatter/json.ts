@@ -47,7 +47,7 @@ export class JsonFormatter {
         blockHeight: op.blockHeight,
         date: op.date,
         hash: op.hash,
-        ...(op.parentId === undefined ? {} : { parentId: op.parentId }),
+        ...(op.parentId !== undefined ? { parentId: op.parentId } : {}),
       })),
     );
   }

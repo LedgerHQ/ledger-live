@@ -1,7 +1,7 @@
 // Bridge adapter: connects the legacy live-common Account stack to the clean CLI models.
 
 import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
-import type { Subscriber, Subscription } from "rxjs";
+import type { Subscription } from "rxjs";
 import { filter, map, reduce } from "rxjs/operators";
 import { getCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
@@ -128,62 +128,69 @@ export class BridgeAdapter {
     dryRun = false,
   ): Observable<SendEvent> {
     return new Observable(subscriber => {
-      this.executeSend(descriptor, intent, deviceId, dryRun, subscriber).catch(err =>
-        subscriber.error(err),
-      );
+      (async () => {
+        const account = await this.sync(descriptor);
+        const { recipient, amount, fees, bridge, tx } = await this.buildValidatedTx(
+          account,
+          intent,
+        );
+
+        subscriber.next({ type: "prepared", recipient, amount, fees });
+
+        let signedOperation: SignedOperation | undefined;
+        await new Promise<void>((resolve, reject) => {
+          bridge.signOperation({ account, transaction: tx, deviceId }).subscribe({
+            next: event => {
+              if (event.type === "device-streaming") {
+                subscriber.next({
+                  type: "device-streaming",
+                  progress: event.progress,
+                  index: event.index,
+                  total: event.total,
+                });
+              } else if (event.type === "device-signature-requested") {
+                subscriber.next({ type: "device-signature-requested" });
+              } else if (event.type === "device-signature-granted") {
+                subscriber.next({ type: "device-signature-granted" });
+              } else if (event.type === "signed") {
+                signedOperation = event.signedOperation;
+              }
+            },
+            error: reject,
+            complete: resolve,
+          });
+        });
+
+        if (!signedOperation) throw new Error("signOperation completed without a signed event");
+
+        if (dryRun) {
+          subscriber.next({ type: "dry-run" });
+        } else {
+          const op = await bridge.broadcast({ account, signedOperation });
+          subscriber.next({ type: "broadcasted", txHash: op.hash });
+        }
+
+        subscriber.complete();
+      })().catch(err => subscriber.error(err));
     });
   }
 
-  private async executeSend(
-    descriptor: AccountDescriptor,
-    intent: TransactionIntent,
-    deviceId: string,
-    dryRun: boolean,
-    subscriber: Subscriber<SendEvent>,
-  ): Promise<void> {
-    const account = await this.sync(descriptor);
-    const { recipient, amount, fees, bridge, tx } = await this.buildValidatedTx(account, intent);
+  private async buildValidatedTx(account: Account, intent: TransactionIntent) {
+    const bridge = getAccountBridge(account);
+    const nativeUnit = account.currency.units[0];
+    const parsed = parseAmountWithTicker(intent.amount, account);
+    const tokenAccount =
+      parsed.assetId !== account.currency.id
+        ? (account.subAccounts ?? []).find(
+            (s): s is TokenAccount => s.type === "TokenAccount" && s.token.id === parsed.assetId,
+          )
+        : undefined;
+    const amountUnit = tokenAccount ? tokenAccount.token.units[0] : nativeUnit;
 
-    subscriber.next({ type: "prepared", recipient, amount, fees });
-
-    let signedOperation: SignedOperation | undefined;
-    await new Promise<void>((resolve, reject) => {
-      bridge.signOperation({ account, transaction: tx, deviceId }).subscribe({
-        next: event => {
-          if (event.type === "device-streaming") {
-            subscriber.next({
-              type: "device-streaming",
-              progress: event.progress,
-              index: event.index,
-              total: event.total,
-            });
-          } else if (event.type === "device-signature-requested") {
-            subscriber.next({ type: "device-signature-requested" });
-          } else if (event.type === "device-signature-granted") {
-            subscriber.next({ type: "device-signature-granted" });
-          } else if (event.type === "signed") {
-            signedOperation = event.signedOperation;
-          }
-        },
-        error: reject,
-        complete: resolve,
-      });
-    });
-
-    if (signedOperation === undefined) throw new Error("signOperation completed without a signed event");
-
-    if (dryRun) {
-      subscriber.next({ type: "dry-run" });
-    } else {
-      const op = await bridge.broadcast({ account, signedOperation });
-      subscriber.next({ type: "broadcasted", txHash: op.hash });
-    }
-
-    subscriber.complete();
-  }
-
-  private buildTxExtras(intent: TransactionIntent, tokenAccount: TokenAccount | undefined) {
-    return {
+    let tx = bridge.createTransaction(account);
+    tx = bridge.updateTransaction(tx, {
+      recipient: intent.recipient,
+      amount: parsed.amount,
       ...(tokenAccount ? { subAccountId: tokenAccount.id } : {}),
       ...("feePerByte" in intent && intent.feePerByte
         ? { feePerByte: new BigNumber(intent.feePerByte) }
@@ -195,26 +202,6 @@ export class BridgeAdapter {
         ? { stakeAccountId: intent.stakeAccount }
         : {}),
       ...("memo" in intent && intent.memo ? { memo: intent.memo } : {}),
-    };
-  }
-
-  private async buildValidatedTx(account: Account, intent: TransactionIntent) {
-    const bridge = getAccountBridge(account);
-    const nativeUnit = account.currency.units[0];
-    const parsed = parseAmountWithTicker(intent.amount, account);
-    const tokenAccount =
-      parsed.assetId === account.currency.id
-        ? undefined
-        : (account.subAccounts ?? []).find(
-            (s): s is TokenAccount => s.type === "TokenAccount" && s.token.id === parsed.assetId,
-          );
-    const amountUnit = tokenAccount ? tokenAccount.token.units[0] : nativeUnit;
-
-    let tx = bridge.createTransaction(account);
-    tx = bridge.updateTransaction(tx, {
-      recipient: intent.recipient,
-      amount: parsed.amount,
-      ...this.buildTxExtras(intent, tokenAccount),
     });
     tx = await bridge.prepareTransaction(account, tx);
     const status = await bridge.getTransactionStatus(account, tx);
@@ -280,7 +267,7 @@ export class BridgeAdapter {
       accountId: op.accountId,
       assetId,
       date: DateTimeIsoSchema.parse(op.date.toISOString()),
-      ...(parentId === undefined ? {} : { parentId }),
+      ...(parentId !== undefined ? { parentId } : {}),
     };
   }
 }
