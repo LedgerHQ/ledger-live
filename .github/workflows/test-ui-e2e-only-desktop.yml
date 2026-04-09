@@ -68,6 +68,11 @@ on:
         description: "Enable Wallet 4.0 feature"
         type: boolean
         default: false
+      feature_flags_json:
+        description: "JSON to override feature flags"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -111,6 +116,11 @@ on:
         description: "Enable Wallet 4.0 feature"
         type: boolean
         default: false
+      feature_flags_json:
+        description: "JSON to override feature flags"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   id-token: write
@@ -163,6 +173,7 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
+      E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
     outputs:
       test_passed: ${{ steps.run-playwright.outputs.passed }}
       test_failed: ${{ steps.run-playwright.outputs.failed }}
@@ -259,9 +270,13 @@ jobs:
           BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
           TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
           BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+          EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
           if [ -z "$FILTER_PATTERN" ]; then
             FILTER_PATTERN="(none)"
+          fi
+          if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
+            EXTRA_FEATURE_FLAGS="(none)"
           fi
           {
             echo "## Workflow Context"
@@ -274,7 +289,25 @@ jobs:
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
+
+      - name: Validate feature flags JSON input
+        shell: bash
+        run: |
+          raw="$E2E_FEATURE_FLAGS_JSON"
+          if [ -z "$raw" ]; then
+            exit 0
+          fi
+          node -e '
+            try {
+              JSON.parse(process.argv[1]);
+            } catch (error) {
+              const message = error instanceof Error ? error.message : String(error);
+              console.error(`Invalid E2E_FEATURE_FLAGS_JSON: ${message}`);
+              process.exit(1);
+            }
+          ' "$raw"
 
       - name: Run Playwright E2E tests
         id: run-playwright
