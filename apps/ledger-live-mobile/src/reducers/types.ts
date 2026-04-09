@@ -231,6 +231,7 @@ export type SettingsState = {
   orderAccounts: string;
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
+  onboardingCompletionDate: string | null;
   isOnboardingFlow: boolean;
   isOnboardingFlowReceiveSuccess: boolean;
   isPostOnboardingFlow: boolean;

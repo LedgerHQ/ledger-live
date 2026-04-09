@@ -116,6 +116,7 @@ export const clearLastSeenCustomImage = () =>
 export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload>(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
 );
+export const addCompletionDate = createAction(SettingsActionTypes.SETTINGS_ADD_COMPLETION_DATE);
 export const setIsOnboardingFlow = createAction<SettingsIsOnboardingFlowPayload>(
   SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW,
 );
