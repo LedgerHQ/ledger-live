@@ -8,11 +8,13 @@ import Account from '../src/commands/account/index.js'
 import Balances from '../src/commands/balances.js'
 import Discover from '../src/commands/account/discover.js'
 import Operations from '../src/commands/operations.js'
+import Quote from '../src/commands/swap/quote.js'
 import Receive from '../src/commands/receive.js'
 import Send from '../src/commands/send.js'
+import Swap from '../src/commands/swap/index.js'
 
 // Narrow list of command names to avoid typeof-cycles in types
-const names = ['account', 'balances', 'discover', 'operations', 'receive', 'send'] as const
+const names = ['account', 'balances', 'discover', 'operations', 'quote', 'receive', 'send', 'swap'] as const
 type GeneratedNames = typeof names[number]
 
 const modules: Record<GeneratedNames, Command<any>> = {
@@ -20,8 +22,10 @@ const modules: Record<GeneratedNames, Command<any>> = {
   'balances': Balances,
   'discover': Discover,
   'operations': Operations,
+  'quote': Quote,
   'receive': Receive,
-  'send': Send
+  'send': Send,
+  'swap': Swap
 } as const
 
 const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
@@ -70,6 +74,17 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       },
       path: './src/commands/operations'
     },
+  'quote': {
+      name: 'quote',
+      description: 'Fetch swap quotes',
+      options: {
+        'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1102,"end":1103,"loc":{"start":{"line":36,"column":32,"index":1102},"end":{"line":36,"column":33,"index":1103}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
+        'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1236,"end":1237,"loc":{"start":{"line":40,"column":30,"index":1236},"end":{"line":40,"column":31,"index":1237}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
+        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1384,"end":1385,"loc":{"start":{"line":44,"column":34,"index":1384},"end":{"line":44,"column":35,"index":1385}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' },
+        'format': { type: 'z.enum.default', required: true, hasDefault: true, default: "json", description: 'Output format', enumValues: ["human","json"], schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"json"}]}, validator: '(val) => true' }
+      },
+      path: './src/commands/swap/quote'
+    },
   'receive': {
       name: 'receive',
       description: 'Get receive address for an account (optionally verify on device)',
@@ -97,6 +112,24 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
       },
       path: './src/commands/send'
+    },
+  'swap': {
+      name: 'swap',
+      description: 'Swap-related commands',
+      commands: [
+        {
+          name: 'quote',
+          description: 'Fetch swap quotes',
+          options: {
+            'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1102,"end":1103,"loc":{"start":{"line":36,"column":32,"index":1102},"end":{"line":36,"column":33,"index":1103}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
+            'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1236,"end":1237,"loc":{"start":{"line":40,"column":30,"index":1236},"end":{"line":40,"column":31,"index":1237}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
+            'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1384,"end":1385,"loc":{"start":{"line":44,"column":34,"index":1384},"end":{"line":44,"column":35,"index":1385}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' },
+            'format': { type: 'z.enum.default', required: true, hasDefault: true, default: "json", description: 'Output format', enumValues: ["human","json"], schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"json"}]}, validator: '(val) => true' }
+          },
+          path: './src/commands/swap/quote'
+        }
+      ],
+      path: './src/commands/swap/index'
     }
 } as const
 

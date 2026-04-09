@@ -4,7 +4,7 @@
     "noEmit": true,
     "rootDir": ".",
     "types": ["node", "bun-types"],
-    "customConditions": ["import", "types", "default"],
+    "customConditions": ["@ledgerhq/source", "import", "types", "default"],
     "moduleResolution": "Bundler",
     "module": "ESNext"
   },
