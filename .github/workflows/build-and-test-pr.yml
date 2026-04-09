@@ -125,6 +125,20 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
     secrets: inherit
 
+  test-mobile-e2e-lint:
+    name: "Mobile E2E Lint & Typecheck"
+    needs: determine-affected
+    if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    secrets: inherit
+
+  test-desktop-e2e-lint:
+    name: "Desktop E2E Lint & Typecheck"
+    needs: determine-affected
+    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    secrets: inherit
+
   notify-e2e-required:
     name: "Notify E2E Required"
     needs: determine-affected
@@ -165,6 +179,8 @@ jobs:
       - build-web-tools
       - test-cli
       - test-additional
+      - test-mobile-e2e-lint
+      - test-desktop-e2e-lint
       - determine-affected
     runs-on: ubuntu-22.04
     if: always() && !cancelled() && needs.determine-affected.result == 'success'
