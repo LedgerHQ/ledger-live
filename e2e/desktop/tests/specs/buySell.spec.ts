@@ -13,7 +13,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }> = [
   {

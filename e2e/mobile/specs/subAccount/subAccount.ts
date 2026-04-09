@@ -3,11 +3,9 @@ import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
-import { getAccountAddress } from "@ledgerhq/live-common/e2e";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
   await app.init({

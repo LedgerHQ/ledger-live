@@ -3,7 +3,6 @@ import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { beforeAllFunctionSwap } from "./swap.setup";
-import { liveDataWithParentAddressCommand } from "@ledgerhq/live-common/e2e";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -14,11 +13,11 @@ const beforeAllFunction = async (swap: SwapType) => {
     cliCommandsOnApp: [
       {
         app: swap.accountToDebit.currency.speculosApp,
-        cmd: liveDataWithParentAddressCommand(swap.accountToDebit, swap.accountToCredit),
+        cmd: liveDataWithAddressCommand(swap.accountToDebit),
       },
       {
         app: swap.accountToCredit.currency.speculosApp,
-        cmd: liveDataWithParentAddressCommand(swap.accountToCredit, swap.accountToDebit),
+        cmd: liveDataWithAddressCommand(swap.accountToCredit),
       },
     ],
   });

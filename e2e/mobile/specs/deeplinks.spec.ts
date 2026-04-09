@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { swapSetup } from "../bridge/server";
 import { isWallet40 } from "../helpers/commonHelpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 

@@ -10,7 +10,7 @@ import {
   getAccountAddress,
   liveDataWithRecipientAddressCommand,
   liveDataCommand,
-} from "@ledgerhq/live-common/e2e";
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 

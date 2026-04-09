@@ -94,7 +94,3 @@ export const sanitizeError = (error: unknown): Error => {
 
   return sanitized;
 };
-
-export * from "./tokenAllowanceCommands";
-export * from "./runCli";
-export * from "./cliCommandsUtils";

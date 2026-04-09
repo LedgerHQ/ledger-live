@@ -5,11 +5,6 @@ import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import {
-  getAccountAddress,
-  liveDataWithAddressCommand,
-  liveDataCommand,
-} from "@ledgerhq/live-common/e2e";
 
 const beforeAllFunction = async (transaction: TransactionType) => {
   await app.init({

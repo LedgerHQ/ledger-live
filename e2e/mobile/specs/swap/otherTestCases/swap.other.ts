@@ -6,7 +6,6 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { isWallet40 } from "../../../helpers/commonHelpers";
-import { liveDataCommand, liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

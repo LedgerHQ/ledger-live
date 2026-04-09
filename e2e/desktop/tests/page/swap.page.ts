@@ -12,7 +12,10 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import BigNumber from "bignumber.js";
-import { approveTokenCommand, isTokenAllowanceSufficientCommand } from "@ledgerhq/live-common/e2e";
+import {
+  approveTokenCommand,
+  isTokenAllowanceSufficientCommand,
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import * as allure from "allure-js-commons";
@@ -565,9 +568,9 @@ export class SwapPage extends WebViewAppPage {
 
     const currentAllowance = await isTokenAllowanceSufficientCommand(
       fromAccount,
-      provider.contractAddress!,
+      provider.contractAddress,
       minAmount,
-    )();
+    );
     console.log("CLI result: Current Allowance: ", currentAllowance);
     if (currentAllowance) return;
 
@@ -578,7 +581,7 @@ export class SwapPage extends WebViewAppPage {
         fromAccount,
         provider.contractAddress,
         new BigNumber(minAmount).times(12).div(10).toFixed(),
-      )();
+      );
       await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
     } finally {
       await cleanSpeculos(speculos, previousSpeculosPort);

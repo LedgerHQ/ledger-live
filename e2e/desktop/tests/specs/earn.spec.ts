@@ -6,7 +6,10 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand, liveDataCommand } from "@ledgerhq/live-common/e2e";
+import {
+  liveDataWithAddressCommand,
+  liveDataCommand,
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { EARN_V1_DESKTOP_FLAGS } from "tests/utils/featureFlagUtils";
 
 function setupEnv(disableBroadcast?: boolean) {

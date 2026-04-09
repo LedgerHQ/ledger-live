@@ -4,7 +4,6 @@ import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isWallet40 } from "../../helpers/commonHelpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

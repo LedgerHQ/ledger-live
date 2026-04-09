@@ -1,5 +1,4 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 describe("Verify Address warnings", () => {
   const account = Account.TRX_3;

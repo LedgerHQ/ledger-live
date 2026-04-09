@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
-import { beforeAllFunctionSwap, liveDataWithAddressCommand } from "../swap.setup";
+import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);

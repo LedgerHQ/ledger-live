@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ApplicationOptions } from "page";
 import { isWallet40 } from "../../helpers/commonHelpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 async function initApp(options: ApplicationOptions) {
   await app.init({

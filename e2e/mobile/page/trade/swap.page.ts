@@ -7,7 +7,6 @@ import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { approveTokenCommand, isTokenAllowanceSufficientCommand } from "@ledgerhq/live-common/e2e";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
@@ -218,9 +217,9 @@ export default class SwapPage extends CommonPage {
 
     const currentAllowance = await isTokenAllowanceSufficientCommand(
       fromAccount,
-      provider.contractAddress!,
+      provider.contractAddress,
       minAmount,
-    )();
+    );
     log.warn("CLI result: Current Allowance: ", currentAllowance);
     if (currentAllowance) return;
 
@@ -232,7 +231,7 @@ export default class SwapPage extends CommonPage {
         fromAccount,
         provider.contractAddress,
         new BigNumber(minAmount).times(12).div(10).toFixed(),
-      )();
+      );
       await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
     } finally {
       await deleteSpeculos(speculos.id);

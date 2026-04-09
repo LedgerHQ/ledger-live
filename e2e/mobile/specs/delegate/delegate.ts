@@ -3,7 +3,6 @@ import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({

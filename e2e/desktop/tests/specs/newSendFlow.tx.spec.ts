@@ -6,7 +6,7 @@ import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-common/e2e";
+import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 function getRequiredFamily(currencyId: string): string {

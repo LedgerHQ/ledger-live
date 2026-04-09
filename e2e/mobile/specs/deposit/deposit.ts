@@ -3,7 +3,6 @@ import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFunds
 import { setEnv } from "@ledgerhq/live-env";
 import { isWallet40 } from "../../helpers/commonHelpers";
 import { ApplicationOptions } from "page";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

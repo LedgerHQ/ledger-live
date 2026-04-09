@@ -17,7 +17,7 @@ import {
   liveDataWithParentAddressCommand,
   liveDataCommand,
   getAccountAddress,
-} from "@ledgerhq/live-common/e2e";
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";

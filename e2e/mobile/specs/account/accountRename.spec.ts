@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { launchApp } from "../../helpers/commonHelpers";
 import { loadConfig } from "../../bridge/server";
 import { device } from "detox";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 $TmsLink("B2CQA-2996");
 

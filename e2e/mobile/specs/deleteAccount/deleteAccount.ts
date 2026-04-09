@@ -1,5 +1,4 @@
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], tags: string[]) {
   describe("Delete account", () => {

@@ -1,6 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { liveDataCommand, liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { ApplicationOptions } from "page";
