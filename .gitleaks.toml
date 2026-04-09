@@ -1,0 +1,39 @@
+title = "Gitleaks Config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "seed-24"
+description = "Detected a seed."
+regex = '''(?i)\b(?:(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*)(?:[:=\s]\s*)(?:[\x60'"]\s*)?((?:\w+\s+){23}\w+)(?:\s*[\x60'"])?(?:\s*[,;])?(?:\s*(\n|\r|$))'''
+keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
+
+[[rules]]
+id = "seed-12"
+description = "Detected a seed."
+regex = '''(?i)\b(?:(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*)(?:[:=\s]\s*)(?:[\x60'"]\s*)?((?:\w+\s+){11}\w+)(?:\s*[\x60'"])?(?:\s*[,;])?(?:\s*(\n|\r|$))'''
+keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
+
+[[rules]]
+id = "generic-api-key"
+
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore tokens in specs."
+    regexTarget = "match"
+    regexes = ['''tokenId\":''']
+    paths = [
+        '''e2e/.+/userdata/.+\.json''',
+        '''libs/.+/.+\.test\.ts\.snap''',
+    ]
+
+[[rules]]
+id = "jwt"
+
+    [[rules.allowlists]]
+    description = "Ignore fake JWTs in mock files."
+    paths = [
+        '''libs/.+/mocks/.+/.+\.json''',
+        '''apps/.+/__mocks__/.+/.+\.json''',
+    ]
