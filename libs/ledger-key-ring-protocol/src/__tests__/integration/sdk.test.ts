@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* oxlint-disable typescript/no-require-imports -- dynamic scenario requires */
 import path from "path";
 import fs from "fs";
 import { replayTrustchainSdkTests } from "../../../tests/test-helpers/replayTrustchainSdkTests";

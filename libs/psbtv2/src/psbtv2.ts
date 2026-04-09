@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* oxlint-disable typescript/no-non-null-assertion */
+/* oxlint-disable typescript/explicit-module-boundary-types */
 import { Psbt, Transaction } from "bitcoinjs-lib";
 import { BufferReader, BufferWriter, unsafeFrom64bitLE, unsafeTo64bitLE } from "./buffertools";
 

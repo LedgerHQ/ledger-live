@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable typescript/no-explicit-any */
 import { EventEmitter } from "events";
 import { v4 as uuid } from "uuid";
 
@@ -413,7 +413,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
         }
       }
     } catch (error) {
-      console.log("Error parsing message from wallet: ", error);
+      console.warn("Error parsing message from wallet: ", error);
     }
   };
 
