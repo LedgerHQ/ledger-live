@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
+import { TextInput } from "@ledgerhq/lumen-ui-react";
 import { Actionable } from "./Actionable";
-import { Input } from "./Input";
 import {
   listSupportedCurrencies,
   setSupportedCurrencies,
@@ -8,7 +8,7 @@ import {
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 function asCryptoCurrencyId(id: string): CryptoCurrencyId {
-  return id as CryptoCurrencyId; // FIXME it's a missing feature in cryptoassets
+  return id as CryptoCurrencyId;
 }
 
 export function AppSetSupportedCurrencies() {
@@ -29,7 +29,7 @@ export function AppSetSupportedCurrencies() {
 
   return (
     <Actionable buttonTitle="Set Supported Currencies" inputs={[value]} action={action}>
-      <Input value={value} onChange={e => setValue(e.target.value)} />
+      <TextInput value={value} onChange={e => setValue(e.target.value)} className="flex-1" />
     </Actionable>
   );
 }

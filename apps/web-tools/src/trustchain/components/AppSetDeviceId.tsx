@@ -28,11 +28,7 @@ export function AppSetDeviceId({
       valueDisplay={v => v}
     >
       <select
-        style={{
-          width: "50%",
-          padding: 6,
-          fontSize: 16,
-        }}
+        className="flex-1 bg-base border border-base rounded-md px-8 py-6 body-2 text-base"
         value={localDeviceId}
         onChange={e => setLocalDeviceId(e.target.value)}
       >

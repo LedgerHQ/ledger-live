@@ -1,28 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { TrustchainSDKContext } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { TrustchainStore, getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-
-const IdentityLabel = styled.label`
-  display: block;
-  margin: 5px;
-`;
-
-const IdentityColor = styled.span<{
-  pubkey: string;
-}>`
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 1px solid black;
-  background-color: ${({ pubkey }) => {
-    const hash = pubkey.slice(2, 8);
-    const r = parseInt(hash.slice(0, 2), 16);
-    const g = parseInt(hash.slice(2, 4), 16);
-    const b = parseInt(hash.slice(4, 6), 16);
-    return `rgb(${r}, ${g}, ${b})`;
-  }};
-`;
 
 export function memberNameForPubKey(pubkey: string): string {
   return "debug-" + pubkey.slice(2, 8);
@@ -31,6 +10,19 @@ export function memberNameForPubKey(pubkey: string): string {
 type Identities = { [_: string]: TrustchainStore };
 
 const initialObject: Identities = {};
+
+function IdentityColor({ pubkey }: { pubkey: string }) {
+  const hash = pubkey.slice(2, 8);
+  const r = parseInt(hash.slice(0, 2), 16);
+  const g = parseInt(hash.slice(2, 4), 16);
+  const b = parseInt(hash.slice(4, 6), 16);
+  return (
+    <span
+      className="inline-block size-10 rounded-full border border-base"
+      style={{ backgroundColor: `rgb(${r}, ${g}, ${b})` }}
+    />
+  );
+}
 
 export function DisplayName({
   pubkey,
@@ -41,9 +33,10 @@ export function DisplayName({
 }) {
   if (!pubkey) return null;
   return (
-    <>
-      <code>{overridesName || memberNameForPubKey(pubkey)}</code> <IdentityColor pubkey={pubkey} />
-    </>
+    <span className="inline-flex items-center gap-4">
+      <code className="body-3">{overridesName || memberNameForPubKey(pubkey)}</code>{" "}
+      <IdentityColor pubkey={pubkey} />
+    </span>
   );
 }
 
@@ -58,16 +51,12 @@ export function IdentityManager({
   defaultContext: TrustchainSDKContext;
   setContext: (context: TrustchainSDKContext) => void;
 }) {
-  // any new state.memberCredentials?.pubkey will be considered a new identity to save
-  // this is the way we identify what is the current member in this list
-  // we save/update it by this key on the localStorage
   const [identities, setIdentities] = useState(initialObject);
   useEffect(() => {
     if (typeof localStorage === "undefined") return;
     const jsonIdentities = localStorage.getItem("identities");
     const identities = jsonIdentities ? JSON.parse(jsonIdentities) : {};
     setIdentities(identities);
-    // check from the url if we find an id
     const url = new URL(window.location.href);
     const id = url.searchParams.get("id");
     if (id && identities[id]) {
@@ -75,7 +64,6 @@ export function IdentityManager({
     }
   }, [setState]);
 
-  // listen to "storage" event that could notify us another tab has changed the localStorage, merge the identities together
   useEffect(() => {
     const listener = (e: StorageEvent) => {
       if (e.key === "identities" && e.storageArea === localStorage) {
@@ -90,7 +78,6 @@ export function IdentityManager({
 
   const currentIdentityKey = state.memberCredentials?.pubkey;
 
-  // sync the current key to the uri query param with id=
   useEffect(() => {
     const url = new URL(window.location.href);
     if (currentIdentityKey) {
@@ -101,21 +88,18 @@ export function IdentityManager({
     window.history.replaceState(null, "", url.toString());
   }, [currentIdentityKey]);
 
-  // save state to localStorage when it changes, except on initial load
   useEffect(() => {
     if (identities !== initialObject) {
       localStorage.setItem("identities", JSON.stringify(identities));
     }
   }, [identities]);
 
-  // update identifies when the state change
   useEffect(() => {
     if (currentIdentityKey) {
       setIdentities(ids => ({ ...ids, [currentIdentityKey]: state }));
     }
   }, [currentIdentityKey, state]);
 
-  // always make the context reflects the selected identity
   useEffect(() => {
     if (currentIdentityKey) {
       setContext({
@@ -150,23 +134,34 @@ export function IdentityManager({
   );
 
   return (
-    <div>
-      <div>
-        {Object.entries(identities).map(([pubkey, state]) => (
-          <IdentityLabel key={pubkey}>
-            <span style={{ display: "inline-block", minWidth: 200 }}>
-              <input
-                type="radio"
-                name="identity"
-                checked={pubkey === currentIdentityKey}
-                onChange={() => onSelectIdentity(pubkey)}
-              />{" "}
-              <DisplayName pubkey={pubkey} />{" "}
-            </span>
-            <button onClick={() => onRemoveIdentity(pubkey)}>Remove</button>
-          </IdentityLabel>
-        ))}
-      </div>
+    <div className="flex flex-col gap-4">
+      {Object.entries(identities).map(([pubkey]) => (
+        <label
+          key={pubkey}
+          className="flex items-center gap-8 px-8 py-6 rounded-md cursor-pointer hover:bg-muted-transparent-hover"
+        >
+          <input
+            type="radio"
+            name="identity"
+            className="accent-interactive"
+            checked={pubkey === currentIdentityKey}
+            onChange={() => onSelectIdentity(pubkey)}
+          />
+          <span className="flex-1">
+            <DisplayName pubkey={pubkey} />
+          </span>
+          <Button
+            size="sm"
+            appearance="transparent"
+            onClick={(e: React.MouseEvent) => {
+              e.preventDefault();
+              onRemoveIdentity(pubkey);
+            }}
+          >
+            Remove
+          </Button>
+        </label>
+      ))}
     </div>
   );
 }
