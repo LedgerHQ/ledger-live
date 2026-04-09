@@ -7,7 +7,10 @@ import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyCon
 import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
-import { needsConsentRenewalTestImpl } from "../__tests__/needsConsentRenewalTestImpl";
+
+const { needsConsentRenewal: realNeedsConsentRenewal } = jest.requireActual<
+  typeof import("@ledgerhq/live-common/analyticsConsentUtils")
+>("@ledgerhq/live-common/analyticsConsentUtils");
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 
@@ -202,7 +205,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
     beforeEach(() => {
       needsConsentRenewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockImplementation(
         (consentDateIso, now = Date.now(), interval) =>
-          needsConsentRenewalTestImpl(
+          realNeedsConsentRenewal(
             consentDateIso,
             now,
             interval !== undefined ? interval : YEAR_MS,

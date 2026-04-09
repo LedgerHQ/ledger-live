@@ -9,7 +9,10 @@ import {
   useAnalyticsConsentDrawerViewModel,
 } from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerOpeningFresh, withConsentDrawerState } from "./helpers";
-import { needsConsentRenewalTestImpl } from "./needsConsentRenewalTestImpl";
+
+const { needsConsentRenewal: realNeedsConsentRenewal } = jest.requireActual<
+  typeof import("@ledgerhq/live-common/analyticsConsentUtils")
+>("@ledgerhq/live-common/analyticsConsentUtils");
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -27,19 +30,28 @@ jest.mock("@react-navigation/native", () => ({
   useIsFocused: () => mockUseIsFocused(),
 }));
 
-/** Forces default renewal interval (matches production `null` vs yearly `YEAR_MS`) without `requireActual` recursion. */
-function stubNeedsConsentRenewalDefaultInterval(renewalIntervalMsWhenOmitted: number | null) {
-  jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockImplementation(
-    (consentDateIso, now = Date.now(), interval) =>
-      needsConsentRenewalTestImpl(
+describe("useAnalyticsConsentDrawerViewModel", () => {
+  let needsConsentRenewalSpy: jest.SpiedFunction<typeof analyticsConsentUtils.needsConsentRenewal>;
+
+  /** When the third arg is omitted, use this value instead of production `CONSENT_RENEWAL_INTERVAL_MS`. */
+  function stubNeedsConsentRenewalDefaultInterval(renewalIntervalMsWhenOmitted: number | null) {
+    needsConsentRenewalSpy.mockImplementation((consentDateIso, now = Date.now(), interval) =>
+      realNeedsConsentRenewal(
         consentDateIso,
         now,
         interval !== undefined ? interval : renewalIntervalMsWhenOmitted,
       ),
-  );
-}
+    );
+  }
 
-describe("useAnalyticsConsentDrawerViewModel", () => {
+  beforeAll(() => {
+    needsConsentRenewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal");
+  });
+
+  afterAll(() => {
+    needsConsentRenewalSpy.mockRestore();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseIsFocused.mockReturnValue(true);
