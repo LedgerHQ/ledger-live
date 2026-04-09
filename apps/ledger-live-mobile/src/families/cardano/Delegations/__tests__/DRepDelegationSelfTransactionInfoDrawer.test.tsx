@@ -30,11 +30,12 @@ jest.mock("~/components/wrappedUi/Button", () => {
 });
 jest.mock("~/images/illustration/Illustration", () => "Illustration");
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockAccount = {
   id: "test-account-id",
   freshAddress: "addr1test...",
   currency: { id: "cardano" },
-} as unknown as CardanoAccount;
+} as CardanoAccount;
 
 const mockBridge = {
   createTransaction: jest.fn(() => ({})),
@@ -43,7 +44,11 @@ const mockBridge = {
 
 describe("DRepDelegationSelfTransactionInfoDrawer", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockNavigate.mockClear();
+    (getAccountBridge as jest.Mock).mockClear();
+    mockBridge.createTransaction.mockClear();
+    mockBridge.updateTransaction.mockClear();
+
     (getAccountBridge as jest.Mock).mockReturnValue(mockBridge);
   });
 
@@ -56,7 +61,7 @@ describe("DRepDelegationSelfTransactionInfoDrawer", () => {
       />,
     );
 
-    expect(screen.getByText("DRep Delegation Self Transaction")).toBeTruthy();
+    expect(screen.getByText("Prepare Undelegation")).toBeTruthy();
     expect(screen.getByTestId("continue-button")).toBeTruthy();
   });
 
