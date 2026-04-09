@@ -16,6 +16,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+import { useIsCombinedSyncPending } from "./hooks/useIsCombinedSyncPending";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -30,50 +31,46 @@ const ActionButton = ({
   onStart,
   onStop,
   onSyncAgain,
-  isExternalSyncRunning,
+  disabled,
 }: {
   syncState: AleoSyncState;
   onStart: () => void;
   onStop: () => void;
   onSyncAgain: () => void;
-  isExternalSyncRunning: boolean;
+  disabled?: boolean;
 }) => {
   const { t } = useTranslation();
 
   switch (syncState) {
     case "ready":
       return (
-        <ToolTip
-          content={isExternalSyncRunning ? t("aleo.account.syncButton.alreadyRunning") : undefined}
+        <SyncActionButton
+          onClick={onStart}
+          disabled={disabled}
+          buttonTestId="start-private-sync-button"
         >
-          <SyncActionButton
-            onClick={onStart}
-            disabled={isExternalSyncRunning}
-            buttonTestId="start-private-sync-button"
-          >
-            <Text>{t("aleo.account.syncButton.startSync")}</Text>
-          </SyncActionButton>
-        </ToolTip>
+          <Text>{t("aleo.account.syncButton.startSync")}</Text>
+        </SyncActionButton>
       );
     case "running":
       return (
-        <SyncActionButton onClick={onStop} buttonTestId="stop-private-sync-button">
+        <SyncActionButton
+          onClick={onStop}
+          disabled={disabled}
+          buttonTestId="stop-private-sync-button"
+        >
           <Text>{t("aleo.account.syncButton.stopSync")}</Text>
         </SyncActionButton>
       );
     case "complete":
       return (
-        <ToolTip
-          content={isExternalSyncRunning ? t("aleo.account.syncButton.alreadyRunning") : undefined}
+        <SyncActionButton
+          onClick={onSyncAgain}
+          disabled={disabled}
+          buttonTestId="sync-again-button"
         >
-          <SyncActionButton
-            onClick={onSyncAgain}
-            disabled={isExternalSyncRunning}
-            buttonTestId="sync-again-button"
-          >
-            <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
-          </SyncActionButton>
-        </ToolTip>
+          <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
+        </SyncActionButton>
       );
   }
 };
@@ -134,9 +131,6 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
 
-  const isExternalSyncRunning =
-    account.type === "Account" ? account.aleoResources?.isPrivateSyncRunning ?? false : false;
-
   const {
     isSyncing,
     progress: hookProgress,
@@ -144,8 +138,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     stop: handleStop,
   } = useAleoPrivateSync({ account });
 
-  // External sync is running only if it isn't *this* hook that started it
-  const isOtherSyncRunning = isExternalSyncRunning && !isSyncing;
+  const isCombinedSyncPending = useIsCombinedSyncPending();
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -242,7 +235,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             onStart={handleStart}
             onStop={handleStop}
             onSyncAgain={handleStart}
-            isExternalSyncRunning={isOtherSyncRunning}
+            disabled={isCombinedSyncPending}
           />
           <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
         </div>
