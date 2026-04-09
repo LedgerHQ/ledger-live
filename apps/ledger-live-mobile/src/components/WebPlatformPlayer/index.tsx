@@ -36,7 +36,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
-  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
+  const [
+    currentAccountHistDb,
+    setCurrentAccountHistDb,
+    currentAccountHistDbLoaded,
+  ]: CurrentAccountHistDB = useCurrentAccountHistDB();
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -102,13 +106,15 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         ref={webviewAPIRef}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
+        currentAccountHistDbLoaded={currentAccountHistDbLoaded}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
       />
       <BottomBar
         manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
       />

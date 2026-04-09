@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 import type { Dispatch } from "redux";
+import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 
 import { openDialog, closeDialog as closeDialogAction } from "~/renderer/reducers/modularDialog";
@@ -81,10 +82,16 @@ function openAssetAndAccountDialogPromise(
 export const useOpenAssetAndAccount = () => {
   const dispatch = useDispatch();
 
-  return {
-    openAssetAndAccount: (params: DrawerParams) =>
-      openAssetAndAccountDialog({ ...params }, dispatch),
-    openAssetAndAccountPromise: (params: Omit<DrawerParams, "onSuccess" | "onCancel">) =>
+  const openAssetAndAccount = useCallback(
+    (params: DrawerParams) => openAssetAndAccountDialog({ ...params }, dispatch),
+    [dispatch],
+  );
+
+  const openAssetAndAccountPromise = useCallback(
+    (params: Omit<DrawerParams, "onSuccess" | "onCancel">) =>
       openAssetAndAccountDialogPromise({ ...params }, dispatch),
-  };
+    [dispatch],
+  );
+
+  return { openAssetAndAccount, openAssetAndAccountPromise };
 };

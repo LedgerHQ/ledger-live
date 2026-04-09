@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { ipcRenderer } from "electron";
 import { getEnv } from "@ledgerhq/live-env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
@@ -182,6 +183,10 @@ export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
 
+function identitySelector<V>(state: V): V {
+  return state;
+}
+
 export function useDB<
   Selected,
   K extends keyof DatabaseValues,
@@ -192,13 +197,13 @@ export function useDB<
   keyPath: K,
   initialState: DV,
   // @ts-expect-error State !== Selected
-  selector: (state: V) => Selected = state => state,
+  selector: (state: V) => Selected = identitySelector,
 ) {
   return useDBRaw<V, Selected>({
     initialState,
-    getter: () => getKey(ns, keyPath, initialState),
+    getter: useCallback(() => getKey(ns, keyPath, initialState), [ns, keyPath, initialState]),
     // @ts-expect-error Todo: state doesn't fit
-    setter: state => setKey(ns, keyPath, state),
+    setter: useCallback(state => setKey(ns, keyPath, state), [ns, keyPath]),
     selector,
   });
 }
