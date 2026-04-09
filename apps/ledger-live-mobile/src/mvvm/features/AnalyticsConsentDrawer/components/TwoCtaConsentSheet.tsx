@@ -35,10 +35,22 @@ export function TwoCtaConsentSheet({
           </Box>
         </Box>
         <Box lx={{ width: "full", gap: "s16" }}>
-          <Button appearance="base" size="lg" lx={{ width: "full" }} onPress={onPrimary}>
+          <Button
+            appearance="base"
+            size="lg"
+            lx={{ width: "full" }}
+            accessibilityLabel={primaryLabel}
+            onPress={onPrimary}
+          >
             {primaryLabel}
           </Button>
-          <Button appearance="gray" size="lg" lx={{ width: "full" }} onPress={onSecondary}>
+          <Button
+            appearance="gray"
+            size="lg"
+            lx={{ width: "full" }}
+            accessibilityLabel={secondaryLabel}
+            onPress={onSecondary}
+          >
             {secondaryLabel}
           </Button>
         </Box>

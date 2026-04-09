@@ -23,7 +23,13 @@ export function PrivacyUpdateSheet({ privacyPolicyUrl, onGotIt }: PrivacyUpdateS
             <PrivacyDescription privacyPolicyUrl={privacyPolicyUrl} />
           </Box>
         </Box>
-        <Button appearance="base" size="lg" lx={{ width: "full" }} onPress={onGotIt}>
+        <Button
+          appearance="base"
+          size="lg"
+          lx={{ width: "full" }}
+          accessibilityLabel={t("analyticsConsentDrawer.privacy.ctaGotIt")}
+          onPress={onGotIt}
+        >
           {t("analyticsConsentDrawer.privacy.ctaGotIt")}
         </Button>
       </Box>

@@ -12,7 +12,13 @@ export function DescriptionWithPreferencesLink({ text, onSetPreferences }: Descr
   return (
     <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
       {text}{" "}
-      <Text accessibilityRole="link" onPress={onSetPreferences} typography="body2" lx={{ color: "interactive" }}>
+      <Text
+        accessibilityRole="link"
+        accessibilityLabel={t("analyticsConsentDrawer.setPreferences")}
+        onPress={onSetPreferences}
+        typography="body2"
+        lx={{ color: "interactive" }}
+      >
         {t("analyticsConsentDrawer.setPreferences")}
       </Text>
     </Text>

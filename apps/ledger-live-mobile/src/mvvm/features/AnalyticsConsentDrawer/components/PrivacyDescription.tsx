@@ -16,6 +16,7 @@ export function PrivacyDescription({ privacyPolicyUrl }: PrivacyDescriptionProps
       {t("analyticsConsentDrawer.privacy.descriptionLead")}
       <Text
         accessibilityRole="link"
+        accessibilityLabel={t("analyticsConsentDrawer.privacy.descriptionLinkLabel")}
         typography="body2"
         lx={{ textDecorationLine: "underline" }}
         onPress={onOpenPrivacyPolicy}

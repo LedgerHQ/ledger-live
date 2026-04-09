@@ -15,7 +15,13 @@ export function ConsentFooter({ privacyPolicyUrl }: ConsentFooterProps) {
     <Box lx={{ width: "full", alignItems: "center" }}>
       <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
         {t("analyticsConsentDrawer.footer.lead")}{" "}
-        <Text accessibilityRole="link" onPress={onOpenPrivacyPolicy} typography="body4" lx={{ textDecorationLine: "underline" }}>
+        <Text
+          accessibilityRole="link"
+          accessibilityLabel={t("analyticsConsentDrawer.footer.privacyLink")}
+          onPress={onOpenPrivacyPolicy}
+          typography="body4"
+          lx={{ textDecorationLine: "underline" }}
+        >
           {t("analyticsConsentDrawer.footer.privacyLink")}
         </Text>
       </Text>
