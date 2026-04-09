@@ -136,6 +136,7 @@ describe("PortfolioView", () => {
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
     shouldDisplayOperationsList: true,
+    shouldDisplayLoansSection: false,
     shouldDisplayBrazePlacement: false,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
