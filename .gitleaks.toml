@@ -28,6 +28,13 @@ id = "generic-api-key"
         '''libs/.+/.+\.test\.ts\.snap''',
     ]
 
+    [[rules.allowlists]]
+    description = "Ignore public blockchain contract/token addresses by network prefix in tokenId."
+    regexTarget = "match"
+    regexes = [
+        '''(?i)\"?tokenId\"?\s*[=:]\s*[\"']?(?:aleo|algorand|aptos|assethub_polkadot|base|bitcoin|bsc|cardano|celo|cosmos|dogecoin|elrond|ethereum|hedera|injective|internet_computer|kaspa|litecoin|near|optimism|osmo|polygon|ripple|solana|stellar|sui|tezos|ton|tron|vechain|zcash)''',
+    ]
+
 [[rules]]
 id = "jwt"
 
