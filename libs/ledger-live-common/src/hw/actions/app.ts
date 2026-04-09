@@ -425,12 +425,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
   if (account) {
     derivationMode = account.derivationMode;
     derivationPath = account.freshAddressPath;
-    let m;
-    try {
-      m = loadAccountModuleForFamily(account.currency.family);
-    } catch {
-      m = null;
-    }
+    const m = loadAccountModuleForFamily(account.currency.family);
 
     if (m && m.injectGetAddressParams) {
       extra = m.injectGetAddressParams(account);

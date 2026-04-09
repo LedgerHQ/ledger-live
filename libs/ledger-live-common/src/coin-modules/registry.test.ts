@@ -4,7 +4,7 @@ import {
   getRegisteredFamilies,
   loadSetupForFamily,
   loadTransactionForFamily,
-  hasDeviceTxConfigForFamily,
+  loadDeviceTxConfigForFamily,
   loadMockBridgeForFamily,
   loadMockAccountForFamily,
 } from "./registry";
@@ -51,19 +51,20 @@ describe("loadTransactionForFamily", () => {
   });
 });
 
-describe("hasDeviceTxConfigForFamily", () => {
-  it("returns true when loader has loadDeviceTxConfig", () => {
-    registerCoinModules([makeLoader("bitcoin", { loadDeviceTxConfig: () => jest.fn() as any })]);
-    expect(hasDeviceTxConfigForFamily("bitcoin")).toBe(true);
+describe("loadDeviceTxConfigForFamily", () => {
+  it("returns the fn when loader has loadDeviceTxConfig", () => {
+    const fn = jest.fn() as any;
+    registerCoinModules([makeLoader("bitcoin", { loadDeviceTxConfig: () => fn })]);
+    expect(loadDeviceTxConfigForFamily("bitcoin")).toBe(fn);
   });
 
-  it("returns false when loader has no loadDeviceTxConfig", () => {
+  it("returns undefined when loader has no loadDeviceTxConfig", () => {
     registerCoinModules([makeLoader("evm")]);
-    expect(hasDeviceTxConfigForFamily("evm")).toBe(false);
+    expect(loadDeviceTxConfigForFamily("evm")).toBeUndefined();
   });
 
-  it("returns false for unknown family", () => {
-    expect(hasDeviceTxConfigForFamily("unknown_family")).toBe(false);
+  it("returns undefined for unknown family", () => {
+    expect(loadDeviceTxConfigForFamily("unknown_family")).toBeUndefined();
   });
 });
 

@@ -1,4 +1,4 @@
-import type { TransactionStatus } from "@ledgerhq/live-common/coin-modules/transaction-types";
+import type { TransactionStatus } from "../../../../coin-modules/transaction-types";
 
 export function getStatusError(
   errors: TransactionStatus["errors"] | undefined,

@@ -95,12 +95,7 @@ export const getPlatformTransactionSignFlowInfos = (
 } => {
   const liveFamily = FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family;
 
-  let familyModule;
-  try {
-    familyModule = loadPlatformAdapterForFamily(liveFamily);
-  } catch {
-    familyModule = null;
-  }
+  const familyModule = loadPlatformAdapterForFamily(liveFamily);
 
   if (familyModule) {
     return familyModule.getPlatformTransactionSignFlowInfos(platformTx);

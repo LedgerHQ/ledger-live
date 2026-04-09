@@ -15,7 +15,7 @@ jest.mock("../coin-modules/registry", () => ({
       case "bitcoin":
         return { getWalletAPITransactionSignFlowInfos: () => bitcoinBridge() };
       default:
-        throw new Error(`No walletApiAdapter for family "${family}"`);
+        return undefined;
     }
   },
 }));

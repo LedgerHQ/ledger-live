@@ -33,31 +33,23 @@ export const loadSetupForFamily = (family: string): FamilySetup =>
 export const loadTransactionForFamily = (family: string): TransactionModule =>
   getLoader(family).loadTransaction();
 
-export const hasDeviceTxConfigForFamily = (family: string): boolean =>
-  !!loaders.get(family)?.loadDeviceTxConfig;
-
 export const loadDeviceTxConfigForFamily = (
   family: string,
-): DeviceTransactionConfigFn => getLoader(family).loadDeviceTxConfig!();
+): DeviceTransactionConfigFn | undefined => loaders.get(family)?.loadDeviceTxConfig?.();
 
 export const loadWalletApiAdapterForFamily = (
   family: string,
-): WalletApiAdapterModule => getLoader(family).loadWalletApiAdapter!();
+): WalletApiAdapterModule | undefined => loaders.get(family)?.loadWalletApiAdapter?.();
 
 export const loadPlatformAdapterForFamily = (
   family: string,
-): PlatformAdapterModule => getLoader(family).loadPlatformAdapter!();
+): PlatformAdapterModule | undefined => loaders.get(family)?.loadPlatformAdapter?.();
 
-export const loadAccountModuleForFamily = (family: string): AccountModule =>
-  getLoader(family).loadAccount!();
+export const loadAccountModuleForFamily = (family: string): AccountModule | undefined =>
+  loaders.get(family)?.loadAccount?.();
 
-export const loadMockBridgeForFamily = (family: string): MockBridgeModule | undefined => {
-  const loader = loaders.get(family);
-  return loader?.loadMockBridge?.();
-};
+export const loadMockBridgeForFamily = (family: string): MockBridgeModule | undefined =>
+  loaders.get(family)?.loadMockBridge?.();
 
-export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined => {
-  const loader = loaders.get(family);
-  return loader?.loadMockAccount?.();
-};
-
+export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined =>
+  loaders.get(family)?.loadMockAccount?.();

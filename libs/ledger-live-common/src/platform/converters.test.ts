@@ -16,7 +16,7 @@ jest.mock("../coin-modules/registry", () => ({
       case "bitcoin":
         return { getPlatformTransactionSignFlowInfos: () => bitcoinBridge() };
       default:
-        throw new Error(`No platformAdapter for family "${family}"`);
+        return undefined;
     }
   },
 }));

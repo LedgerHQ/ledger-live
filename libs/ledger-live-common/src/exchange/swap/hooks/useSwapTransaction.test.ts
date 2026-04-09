@@ -6,10 +6,10 @@ import { renderHook } from "@testing-library/react";
 import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
 
 import { useFromAmountStatusMessage } from "./useSwapTransaction";
-import { Result } from "../../../bridge/useBridgeTransaction";
-import { Transaction } from "../../../coin-modules/transaction-types";
+import type { Result } from "../../../bridge/useBridgeTransaction";
+import type { Transaction } from "../../../coin-modules/transaction-types";
 import BigNumber from "bignumber.js";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index"),
