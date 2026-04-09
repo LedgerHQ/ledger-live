@@ -101,6 +101,24 @@
       "require": "./lib/bridge/descriptor/send/memo.js",
       "default": "./lib-es/bridge/descriptor/send/memo.js"
     },
+    "./bridge/wallet-cli": {
+      "@ledgerhq/source": "./src/bridge/wallet-cli.ts",
+      "types": "./lib/bridge/wallet-cli.d.ts",
+      "require": "./lib/bridge/wallet-cli.js",
+      "default": "./lib-es/bridge/wallet-cli.js"
+    },
+    "./bridge/cache-wallet-cli": {
+      "@ledgerhq/source": "./src/bridge/cache-wallet-cli.ts",
+      "types": "./lib/bridge/cache-wallet-cli.d.ts",
+      "require": "./lib/bridge/cache-wallet-cli.js",
+      "default": "./lib-es/bridge/cache-wallet-cli.js"
+    },
+    "./config/sharedConfigWalletCli": {
+      "@ledgerhq/source": "./src/config/sharedConfigWalletCli.ts",
+      "types": "./lib/config/sharedConfigWalletCli.d.ts",
+      "require": "./lib/config/sharedConfigWalletCli.js",
+      "default": "./lib-es/config/sharedConfigWalletCli.js"
+    },
     "./test-helpers/cryptoAssetsStore": {
       "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
