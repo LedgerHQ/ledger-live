@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.1.0-next.5
+
+### Minor Changes
+
+- [#16192](https://github.com/LedgerHQ/ledger-live/pull/16192) [`1023311`](https://github.com/LedgerHQ/ledger-live/commit/10233117f1399edf1394cb11e6936120f52303c3) Thanks [@deepyjr](https://github.com/deepyjr)! - fix(mobile): fix transfer drawer reopening when tapped while animating
+
 ## 4.1.0-next.4
 
 ### Minor Changes
