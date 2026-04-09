@@ -38,7 +38,7 @@ const baseTransaction = {
   useAllAmount: false,
 } as unknown as Transaction;
 
-const maxAvailable = new BigNumber(90_000_000);
+const availableBalance = new BigNumber(90_000_000);
 
 describe("useQuickActions", () => {
   const onSetAmountFromRatio = jest.fn();
@@ -48,7 +48,7 @@ describe("useQuickActions", () => {
     account: mockAccount,
     parentAccount: null,
     transaction: baseTransaction,
-    maxAvailable,
+    availableBalance,
     onSetAmountFromRatio,
     onSelectMax,
   };
@@ -160,8 +160,8 @@ describe("useQuickActions", () => {
       expect(ratioActions.every(a => !a.active)).toBe(true);
     });
 
-    it("quarter is active when transaction amount matches 25% of maxAvailable", () => {
-      const quarterAmount = maxAvailable.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
+    it("quarter is active when transaction amount matches 25% of availableBalance", () => {
+      const quarterAmount = availableBalance.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
 
       const { result } = renderHook(() =>
         useQuickActions({
@@ -174,8 +174,8 @@ describe("useQuickActions", () => {
       expect(quarterAction?.active).toBe(true);
     });
 
-    it("half is active when transaction amount matches 50% of maxAvailable", () => {
-      const halfAmount = maxAvailable.multipliedBy(0.5).integerValue(BigNumber.ROUND_DOWN);
+    it("half is active when transaction amount matches 50% of availableBalance", () => {
+      const halfAmount = availableBalance.multipliedBy(0.5).integerValue(BigNumber.ROUND_DOWN);
 
       const { result } = renderHook(() =>
         useQuickActions({
@@ -204,36 +204,36 @@ describe("useQuickActions", () => {
   });
 
   describe("onPress callbacks", () => {
-    it("calls onSetAmountFromRatio with 25% of maxAvailable when quarter pressed", () => {
+    it("calls onSetAmountFromRatio with 25% of availableBalance when quarter pressed", () => {
       const { result } = renderHook(() => useQuickActions(defaultParams));
 
       act(() => {
         result.current.find(a => a.id === "quarter")?.onPress();
       });
 
-      const expected = maxAvailable.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
+      const expected = availableBalance.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
       expect(onSetAmountFromRatio).toHaveBeenCalledWith(expected);
     });
 
-    it("calls onSetAmountFromRatio with 50% of maxAvailable when half pressed", () => {
+    it("calls onSetAmountFromRatio with 50% of availableBalance when half pressed", () => {
       const { result } = renderHook(() => useQuickActions(defaultParams));
 
       act(() => {
         result.current.find(a => a.id === "half")?.onPress();
       });
 
-      const expected = maxAvailable.multipliedBy(0.5).integerValue(BigNumber.ROUND_DOWN);
+      const expected = availableBalance.multipliedBy(0.5).integerValue(BigNumber.ROUND_DOWN);
       expect(onSetAmountFromRatio).toHaveBeenCalledWith(expected);
     });
 
-    it("calls onSetAmountFromRatio with 75% of maxAvailable when threeQuarters pressed", () => {
+    it("calls onSetAmountFromRatio with 75% of availableBalance when threeQuarters pressed", () => {
       const { result } = renderHook(() => useQuickActions(defaultParams));
 
       act(() => {
         result.current.find(a => a.id === "threeQuarters")?.onPress();
       });
 
-      const expected = maxAvailable.multipliedBy(0.75).integerValue(BigNumber.ROUND_DOWN);
+      const expected = availableBalance.multipliedBy(0.75).integerValue(BigNumber.ROUND_DOWN);
       expect(onSetAmountFromRatio).toHaveBeenCalledWith(expected);
     });
 
@@ -263,7 +263,7 @@ describe("useQuickActions", () => {
     });
 
     it("does not call onSetAmountFromRatio when ratio is already active", () => {
-      const quarterAmount = maxAvailable.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
+      const quarterAmount = availableBalance.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
 
       const { result } = renderHook(() =>
         useQuickActions({

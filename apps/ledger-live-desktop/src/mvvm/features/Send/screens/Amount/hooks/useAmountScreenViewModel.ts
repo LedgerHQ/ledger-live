@@ -114,7 +114,7 @@ export function useAmountScreenViewModel({
     account,
     parentAccount,
     transaction,
-    maxAvailable,
+    availableBalance: quickActionsAvailableBalance,
     onSetAmountFromRatio: setAmountFromRatio,
     onSelectMax: handleSelectMax,
   });
