@@ -34,10 +34,7 @@ import {
   ZcashPrivateInfo,
 } from "@ledgerhq/zcash-shielded/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import {
-  DEFAULT_ZCASH_PRIVATE_INFO,
-  ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
-} from "@ledgerhq/zcash-shielded/constants";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/zcash-shielded/constants";
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
