@@ -13,6 +13,7 @@ import OperationsSectionHeader from "./components/OperationsSectionHeader";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
 import { OperationsListFooter } from "./components/OperationsListFooter";
 import { BottomFadeGradient } from "./components/BottomFadeGradient";
+import { SectionSeparator } from "./components/SectionSeparator";
 import { useOperationsListViewModel } from "./useOperationsListViewModel";
 import { GRADIENT_HEIGHT } from "LLM/features/OperationsHistory/const";
 
@@ -20,10 +21,6 @@ type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenNam
 
 function keyExtractor(item: Operation) {
   return `${item.accountId}_${item.id}`;
-}
-
-function SectionSeparator() {
-  return <Box lx={sectionSeparatorStyle} />;
 }
 
 export default function OperationsList(_: Props) {
@@ -101,10 +98,6 @@ export default function OperationsList(_: Props) {
 
 const rootStyle: LumenViewStyle = {
   flex: 1,
-};
-
-const sectionSeparatorStyle: LumenViewStyle = {
-  height: "s24",
 };
 
 const listStyle = { flex: 1 } as const;
