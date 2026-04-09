@@ -18,6 +18,10 @@ export function buildCliCmd(account: Account): string {
   return parts.join("+");
 }
 
+function toStr(val: unknown, fallback = ""): string {
+  return typeof val === "string" || typeof val === "number" ? String(val) : fallback;
+}
+
 export function parseCliOutput(
   output: string,
   tokenId?: string,
@@ -32,12 +36,18 @@ export function parseCliOutput(
         const subAccounts = parsed.subAccounts as Array<Record<string, unknown>> | undefined;
         const sub = subAccounts?.find(sa => sa.tokenId === tokenId);
         if (sub?.balance !== undefined) {
-          return { balance: String(sub.balance), freshAddress: String(parsed.freshAddress ?? "") };
+          return {
+            balance: toStr(sub.balance, "0"),
+            freshAddress: toStr(parsed.freshAddress),
+          };
         }
         continue;
       }
 
-      return { balance: String(parsed.balance), freshAddress: String(parsed.freshAddress ?? "") };
+      return {
+        balance: toStr(parsed.balance, "0"),
+        freshAddress: toStr(parsed.freshAddress),
+      };
     } catch {
       // not valid JSON — keep scanning
     }

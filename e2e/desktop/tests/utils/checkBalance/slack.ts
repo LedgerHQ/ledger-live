@@ -4,11 +4,10 @@ function formatAmount(raw: string, decimals: number, ticker: string): string {
   const value = BigInt(raw);
   const divisor = BigInt(10 ** decimals);
   const whole = value / divisor;
-  const fraction = (value % divisor)
-    .toString()
-    .padStart(decimals, "0")
-    .replace(/0+$/, "")
-    .slice(0, 6);
+  const fractionFull = (value % divisor).toString().padStart(decimals, "0");
+  let end = Math.min(fractionFull.length, 6);
+  while (end > 0 && fractionFull[end - 1] === "0") end--;
+  const fraction = fractionFull.slice(0, end);
   return fraction ? `${whole}.${fraction} ${ticker}` : `${whole} ${ticker}`;
 }
 
