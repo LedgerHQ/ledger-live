@@ -3,10 +3,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  formatVotes,
-  useTronSuperRepresentatives,
-} from "@ledgerhq/live-common/families/tron/react";
+import { formatVotes } from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
 import { DataRow, HeaderRow, ValidatorField } from "~/components/ValidateOnDeviceDataRow";
 import LText from "~/components/LText";
@@ -74,16 +71,15 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
   const { t } = useTranslation();
   const { locale } = useSettings();
   const { votes } = transaction;
-  const sp = useTronSuperRepresentatives();
-  const formattedVotes = votes && votes.length > 0 ? formatVotes(votes, sp) : null;
+  const formattedVotes = votes && votes.length > 0 ? formatVotes(votes) : null;
   return formattedVotes ? (
     <>
       <HeaderRow label={t("ValidateOnDevice.name")} value={t("ValidateOnDevice.votes")} />
 
-      {formattedVotes.map(({ address, voteCount, validator }, i) => (
+      {formattedVotes.map(({ address, voteCount, name }, i) => (
         <ValidatorField
           address={address}
-          name={validator?.name ?? address}
+          name={name ?? address}
           amount={voteCount.toLocaleString(locale)}
           key={`${address}-${i}`}
         />

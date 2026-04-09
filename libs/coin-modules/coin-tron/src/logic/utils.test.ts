@@ -127,7 +127,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 0,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -142,7 +141,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 10,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -159,7 +157,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 11,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -178,7 +175,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 0,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -198,7 +194,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 12,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -218,7 +213,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 0,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -237,7 +231,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 14,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -252,7 +245,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 0,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -278,7 +270,6 @@ describe("getTronResources", () => {
         },
         tronPower: 15,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -304,7 +295,6 @@ describe("getTronResources", () => {
         },
         tronPower: 16,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
     {
@@ -342,32 +332,6 @@ describe("getTronResources", () => {
             },
           ],
         },
-        votes: [],
-      },
-    },
-    {
-      name: "Votes",
-      account: {
-        votes: [
-          {
-            vote_address: "VOTE ADDRESS",
-            vote_count: 23,
-          },
-        ],
-      },
-      expected: {
-        delegatedFrozen: { bandwidth: undefined, energy: undefined },
-        frozen: { bandwidth: undefined, energy: undefined },
-        lastWithdrawnRewardDate: undefined,
-        legacyFrozen: { bandwidth: undefined, energy: undefined },
-        tronPower: 0,
-        unFrozen: { bandwidth: [], energy: [] },
-        votes: [
-          {
-            address: "VOTE ADDRESS",
-            voteCount: 23,
-          },
-        ],
       },
     },
     {
@@ -382,7 +346,6 @@ describe("getTronResources", () => {
         legacyFrozen: { bandwidth: undefined, energy: undefined },
         tronPower: 0,
         unFrozen: { bandwidth: [], energy: [] },
-        votes: [],
       },
     },
   ];

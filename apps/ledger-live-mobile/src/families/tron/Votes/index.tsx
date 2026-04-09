@@ -5,7 +5,6 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import {
-  useTronSuperRepresentatives,
   formatVotes,
   getLastVotedDate,
   MIN_TRANSACTION_AMOUNT,
@@ -41,7 +40,6 @@ const Delegation = ({ account }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
   const lastDate = lastVotedDate ? <DateFromNow date={lastVotedDate.valueOf()} /> : null;
@@ -58,7 +56,7 @@ const Delegation = ({ account }: Props) => {
 
   const formattedUnwidthDrawnReward = BigNumber(unwithdrawnReward || 0);
 
-  const formattedVotes = formatVotes(votes, superRepresentatives);
+  const formattedVotes = formatVotes(votes);
 
   const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
@@ -122,10 +120,10 @@ const Delegation = ({ account }: Props) => {
             <Header count={formattedVotes.length} onPress={onManageVotesPress} />
             <View style={[styles.container, styles.noPadding]}>
               <Box mb={5}>
-                {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (
+                {formattedVotes.map(({ name, address, voteCount, isSR }, index) => (
                   <Row
                     key={index}
-                    validator={validator}
+                    name={name}
                     address={address}
                     amount={voteCount}
                     duration={lastDate}

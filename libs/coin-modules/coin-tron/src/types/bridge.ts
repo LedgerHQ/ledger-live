@@ -245,6 +245,7 @@ export type TronResourcesRaw = {
   cacheTransactionInfoById: Record<string, TronTransactionInfoRaw> | undefined;
 };
 export type Vote = {
+  name: string | null | undefined;
   address: string;
   voteCount: number;
 };

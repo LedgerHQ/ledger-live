@@ -15,10 +15,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
-import {
-  useTronSuperRepresentatives,
-  formatVotes,
-} from "@ledgerhq/live-common/families/tron/react";
+import { formatVotes } from "@ledgerhq/live-common/families/tron/react";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -51,8 +48,7 @@ export const OperationDetailsVotes = ({
   account,
   isTransactionField,
 }: OperationsDetailsVotesProps) => {
-  const sp = useTronSuperRepresentatives();
-  const formattedVotes = formatVotes(votes, sp);
+  const formattedVotes = formatVotes(votes);
   const redirectAddress = useCallback(
     (address: string) => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
@@ -74,10 +70,9 @@ export const OperationDetailsVotes = ({
         </OpDetailsTitle>
       )}
       <Box>
-        {sp.length > 0 &&
-          formattedVotes &&
+        {formattedVotes &&
           formattedVotes.length > 0 &&
-          formattedVotes.map(({ voteCount, address, validator }, i) => (
+          formattedVotes.map(({ voteCount, address, name }, i) => (
             <OpDetailsData key={address + i} justifyContent="flex-start">
               <OpDetailsVoteData>
                 <Box>
@@ -86,7 +81,7 @@ export const OperationDetailsVotes = ({
                       i18nKey="operationDetails.extra.votesAddress"
                       values={{
                         votes: !discreet ? voteCount : "***",
-                        name: validator && validator.name,
+                        name,
                       }}
                     >
                       <Text ff="Inter|SemiBold">{""}</Text>

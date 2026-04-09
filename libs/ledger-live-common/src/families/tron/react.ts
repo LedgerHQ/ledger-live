@@ -1,9 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { ONE_TRX } from "@ledgerhq/coin-tron/logic/constants";
-import { getTronSuperRepresentatives } from "@ledgerhq/coin-tron/network";
-import type { SuperRepresentative, TronAccount, Vote } from "@ledgerhq/coin-tron/types/index";
-import { useEffect, useMemo, useRef, useState } from "react";
+import type { TronAccount, Vote } from "@ledgerhq/coin-tron/types/index";
+import { useEffect, useRef, useState } from "react";
 import { useBridgeSync } from "../../bridge/react";
 
 export type Action = {
@@ -29,25 +28,6 @@ export type State = {
 export const MIN_TRANSACTION_AMOUNT = ONE_TRX;
 export const SR_THRESHOLD = 27;
 export const SR_MAX_VOTES = 5;
-
-let __lastSeenSR: SuperRepresentative[] = [];
-
-/** Fetch the list of super representatives */
-export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
-  const [sr, setSr] = useState(__lastSeenSR);
-  useEffect(() => {
-    let unsub = false;
-    getTronSuperRepresentatives().then((sr: SuperRepresentative[]) => {
-      __lastSeenSR = sr;
-      if (unsub) return;
-      setSr(sr);
-    });
-    return () => {
-      unsub = true;
-    };
-  }, []);
-  return sr;
-};
 
 /** Get last time voted */
 export const getLastVotedDate = (account: TronAccount): Date | null | undefined => {
@@ -75,21 +55,16 @@ export const getNextRewardDate = (account: TronAccount): number | null | undefin
 /** format votes with superrepresentatives data */
 export const formatVotes = (
   votes: Array<Vote> | null | undefined,
-  superRepresentatives: Array<SuperRepresentative> | null | undefined,
 ): Array<
   Vote & {
-    validator?: SuperRepresentative | null;
     isSR: boolean;
-    rank: number;
   }
 > => {
-  return votes && superRepresentatives
-    ? votes.map(({ address, voteCount }) => {
-        const srIndex = superRepresentatives.findIndex(sp => sp.address === address);
+  return votes
+    ? votes.map(({ name, address, voteCount }, index) => {
         return {
-          validator: superRepresentatives[srIndex],
-          rank: srIndex + 1,
-          isSR: srIndex < SR_THRESHOLD,
+          isSR: index < SR_THRESHOLD,
+          name,
           address,
           voteCount,
         };
@@ -126,53 +101,6 @@ export function useTronPowerLoading(account: TronAccount): boolean {
   }, [initialAccount, sync, isLoading]);
 
   return isLoading;
-}
-
-/** Search filters for SR list */
-const searchFilter =
-  (query?: string) =>
-  ({ name, address }: { name: string | null | undefined; address: string }) => {
-    if (!query) return true;
-    const terms = `${name || ""} ${address}`;
-    return terms.toLowerCase().includes(query.toLowerCase().trim());
-  };
-
-/** Hook to search and sort SR list according to initial votes and query */
-export function useSortedSr(
-  search: string,
-  superRepresentatives: SuperRepresentative[],
-  votes: Vote[],
-): {
-  sr: SuperRepresentative;
-  name: string | null | undefined;
-  address: string;
-  rank: number;
-  isSR: boolean;
-}[] {
-  const { current: initialVotes } = useRef(votes.map(({ address }) => address));
-  const SR = useMemo(
-    () =>
-      superRepresentatives.map((sr, rank) => ({
-        sr,
-        name: sr.name,
-        address: sr.address,
-        rank: rank + 1,
-        isSR: rank < SR_THRESHOLD,
-      })),
-    [superRepresentatives],
-  );
-  const sortedVotes = useMemo(
-    () =>
-      SR.filter(({ address }) => initialVotes.includes(address)).concat(
-        SR.filter(({ address }) => !initialVotes.includes(address)),
-      ),
-    [SR, initialVotes],
-  );
-  const sr = useMemo(
-    () => (search ? SR.filter(searchFilter(search)) : sortedVotes),
-    [search, SR, sortedVotes],
-  );
-  return sr;
 }
 
 /** format account to retrieve unfreeze data */

@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { TokenAccount } from "@ledgerhq/types-live";
 import {
-  useTronSuperRepresentatives,
   getLastVotedDate,
   formatVotes,
   getNextRewardDate,
@@ -47,7 +46,6 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   const navigate = useNavigate();
 
   const locale = useSelector(localeSelector);
-  const superRepresentatives = useTronSuperRepresentatives();
   const stakingUrl = useLocalizedUrl(urls.stakingTron);
   const lastVoteDate = getLastVotedDate(account);
   const duration = useMemo(() => {
@@ -68,7 +66,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
     discreet,
     locale,
   });
-  const formattedVotes = formatVotes(votes, superRepresentatives);
+  const formattedVotes = formatVotes(votes);
   const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
   const hasVotes = formattedVotes.length > 0;
   const hasRewards = unwithdrawnReward.gt(0);
@@ -186,10 +184,10 @@ const Delegation = ({ account }: { account: TronAccount }) => {
       {tronPower > 0 && formattedVotes.length > 0 ? (
         <>
           <Header />
-          {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (
+          {formattedVotes.map(({ name, address, voteCount, isSR }, index) => (
             <Row
               key={index}
-              validator={validator}
+              name={name}
               address={address}
               amount={voteCount}
               isSR={isSR}

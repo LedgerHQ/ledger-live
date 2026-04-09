@@ -58,9 +58,10 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
   }
 };
 
-export const formatTrongridTxResponse = (
+export const formatTrongridTxResponse = async (
   tx: TransactionTronAPI & { detail?: TronTransactionInfo },
-): TrongridTxInfo | null | undefined => {
+  getValidatorName: (address: string) => Promise<string | null | undefined>,
+): Promise<TrongridTxInfo | null | undefined> => {
   try {
     const { txID, block_timestamp, detail, blockNumber, unfreeze_amount, withdraw_amount } = tx;
     const date = new Date(block_timestamp);
@@ -124,14 +125,19 @@ export const formatTrongridTxResponse = (
       feesPayer: from,
     };
 
-    const getExtra = (): TrongridExtraTxInfo | null | undefined => {
+    const getExtra = async (): Promise<TrongridExtraTxInfo | null | undefined> => {
       switch (type) {
         case "VoteWitnessContract":
           return {
-            votes: votes?.map(v => ({
-              address: encode58Check(v.vote_address as string),
-              voteCount: v.vote_count,
-            })),
+            votes:
+              votes &&
+              (await Promise.all(
+                votes.map(async v => ({
+                  name: await getValidatorName(encode58Check(v.vote_address)),
+                  address: encode58Check(v.vote_address),
+                  voteCount: v.vote_count,
+                })),
+              )),
           };
 
         case "FreezeBalanceContract":
@@ -161,7 +167,7 @@ export const formatTrongridTxResponse = (
       }
     };
 
-    const extra = getExtra();
+    const extra = await getExtra();
 
     if (extra) {
       txInfo.extra = extra;

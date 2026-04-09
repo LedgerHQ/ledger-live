@@ -4,10 +4,7 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import {
-  formatVotes,
-  useTronSuperRepresentatives,
-} from "@ledgerhq/live-common/families/tron/react";
+import { formatVotes } from "@ledgerhq/live-common/families/tron/react";
 import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -109,9 +106,8 @@ type OperationsDetailsVotesProps = {
 
 function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) {
   const { t } = useTranslation();
-  const sp = useTronSuperRepresentatives();
   const { locale } = useSettings();
-  const formattedVotes = formatVotes(votes, sp);
+  const formattedVotes = formatVotes(votes);
   const redirectAddressCreator = useCallback(
     (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
@@ -126,11 +122,11 @@ function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) 
       })}
     >
       {formattedVotes &&
-        formattedVotes.map(({ address, voteCount, validator }, i) => (
+        formattedVotes.map(({ address, voteCount, name }, i) => (
           <DelegationInfo
             key={address + i}
             address={address}
-            name={validator?.name ?? address}
+            name={name ?? address}
             formattedAmount={voteCount.toLocaleString(locale)}
             onPress={redirectAddressCreator(address)}
           />

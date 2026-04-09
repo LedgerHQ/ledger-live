@@ -37,6 +37,12 @@ const options = [
     desc: "reward ENERGY or BANDWIDTH",
   },
   {
+    name: "tronVoteName",
+    type: String,
+    multiple: true,
+    desc: "name of the super representative voting",
+  },
+  {
     name: "tronVoteAddress",
     type: String,
     multiple: true,
@@ -111,12 +117,14 @@ function inferTransactions(
     invariant(["BANDWIDTH", "ENERGY"].includes(resource), `Unexpected resource: ${resource}`);
   }
 
+  const voteNames: string[] = opts["tronVoteName"] || [];
   const voteAddresses: string[] = opts["tronVoteAddress"] || [];
   const voteCounts: number[] = (opts["tronVoteCount"] || []).map((value: string) => {
     invariant(Number.isInteger(Number(value)), `Invalid integer: ${value}`);
     return parseInt(value);
   });
-  const votes: Vote[] = zipWith(voteAddresses, voteCounts, (a, c) => ({
+  const votes: Vote[] = zipWith(voteNames, voteAddresses, voteCounts, (n, a, c) => ({
+    name: n,
     address: a,
     voteCount: c,
   }));
