@@ -7,6 +7,7 @@ import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
   shareAnalyticsSelector,
+  sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import {
   setAnalyticsConsentInfo,
@@ -24,6 +25,7 @@ import {
   resolveAnalyticsConsentPhase,
 } from "@ledgerhq/live-common/analyticsConsentUtils";
 import type { AnalyticsConsentDialogPhase } from "../types";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 export const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
 
@@ -46,6 +48,7 @@ export function useAnalyticsConsentDialogViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const sharePersonalizedRecommendations = useSelector(sharePersonalizedRecommendationsSelector);
 
   const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
   const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
@@ -60,8 +63,8 @@ export function useAnalyticsConsentDialogViewModel() {
   >("consentFresh");
 
   /** Preferences-step form only; Redux settings update on Confirm via `applyPreferences`. */
-  const [draftShareAnalytics, setDraftShareAnalytics] = useState(true);
-  const [draftSharePersonalized, setDraftSharePersonalized] = useState(true);
+  const [draftShareAnalytics, setDraftShareAnalytics] = useState(false);
+  const [draftSharePersonalized, setDraftSharePersonalized] = useState(false);
 
   let descriptionLead: string | null;
   if (phase === "consentReconfirm") {
@@ -117,10 +120,15 @@ export function useAnalyticsConsentDialogViewModel() {
   };
 
   const applyOptIn = async () => {
-    track("button_clicked", {
-      button: "analytics_consent_opt_in",
-      page: ANALYTICS_CONSENT_DIALOG_PAGE,
-    });
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_opt_in",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+      true,
+    );
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
     await persistAnalyticsConsentAck();
@@ -128,10 +136,17 @@ export function useAnalyticsConsentDialogViewModel() {
   };
 
   const applyOptOut = async () => {
-    track("button_clicked", {
-      button: "analytics_consent_opt_out",
-      page: ANALYTICS_CONSENT_DIALOG_PAGE,
-    });
+    const isPreviouslyOptedOutCompletely = !shareAnalytics && !sharePersonalizedRecommendations;
+    const trackMandatory = !isPreviouslyOptedOutCompletely;
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_opt_out",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+      trackMandatory,
+    );
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
     await persistAnalyticsConsentAck();
@@ -142,6 +157,7 @@ export function useAnalyticsConsentDialogViewModel() {
     track("button_clicked", {
       button: "analytics_consent_privacy_got_it",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
+      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
     });
     await persistAnalyticsConsentAck();
     handleCloseDialog();
@@ -152,9 +168,9 @@ export function useAnalyticsConsentDialogViewModel() {
       button: "analytics_consent_set_preferences",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
     });
-    // Default opt-in: preferences screen opens with both toggles on; user can turn them off before confirming.
-    setDraftShareAnalytics(true);
-    setDraftSharePersonalized(true);
+    // Default opt-out: preferences screen opens with both toggles off; user opts in per toggle before confirming.
+    setDraftShareAnalytics(false);
+    setDraftSharePersonalized(false);
     setPhase(current => {
       if (current === "consentFresh" || current === "consentReconfirm") {
         setConsentPhaseBeforePreferences(current);
@@ -166,10 +182,16 @@ export function useAnalyticsConsentDialogViewModel() {
   const onBackFromPreferences = () => setPhase(consentPhaseBeforePreferences);
 
   const applyPreferences = async () => {
-    track("button_clicked", {
-      button: "analytics_consent_preferences_confirm",
-      page: ANALYTICS_CONSENT_DIALOG_PAGE,
-    });
+    const trackMandatory = draftShareAnalytics || draftSharePersonalized;
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_preferences_confirm",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+      trackMandatory,
+    );
     dispatch(setShareAnalytics(draftShareAnalytics));
     dispatch(setSharePersonalizedRecommendations(draftSharePersonalized));
     await persistAnalyticsConsentAck();
