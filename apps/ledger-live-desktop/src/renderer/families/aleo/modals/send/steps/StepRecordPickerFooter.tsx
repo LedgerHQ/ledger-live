@@ -23,6 +23,7 @@ const StepRecordPickerFooter = ({
     transaction?.family === "aleo" &&
     isPrivateTransaction(transaction) &&
     !transaction.properties?.amountRecordCommitment;
+  const hasRecordError = !!status.errors.amountRecord || !!status.errors.feeRecord;
 
   return (
     <>
@@ -31,7 +32,7 @@ const StepRecordPickerFooter = ({
         id="aleo-record-picker-continue-button"
         isLoading={bridgePending}
         primary
-        disabled={!!isTerminated || isPrivateWithoutRecord}
+        disabled={!!isTerminated || isPrivateWithoutRecord || hasRecordError}
         onClick={() => transitionTo("amount")}
       >
         <Trans i18nKey="common.continue" />
