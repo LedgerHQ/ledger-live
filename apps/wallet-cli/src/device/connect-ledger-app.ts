@@ -30,6 +30,15 @@ const CONNECT_APP_UNLOCK_TIMEOUT_MS = 60_000;
  */
 const CONNECT_APP_SILENCE_TIMEOUT_MS = CONNECT_APP_UNLOCK_TIMEOUT_MS + 60_000;
 
+/**
+ * When the device is locked inside an app (e.g. Ethereum), the DMK's `waitForDeviceUnlock` polling
+ * may receive an unparseable APDU response (`ReceiverApduError`) instead of error code 5515.
+ * The polling misidentifies this as "unlocked" and the action fails immediately.
+ * We retry the whole device action so the user has time to unlock.
+ */
+const MAX_TRANSPORT_ERROR_RETRIES = 5;
+const TRANSPORT_ERROR_RETRY_DELAY_MS = 3_000;
+
 function summarizeConnectAppError(error: ConnectAppDAError): Record<string, unknown> {
   if (error instanceof Error) {
     return { kind: "Error", name: error.name, message: error.message };
@@ -60,6 +69,17 @@ function toError(error: ConnectAppDAError): Error {
   return new Error(`${tag}${code}`);
 }
 
+const RETRIABLE_TRANSPORT_TAGS = new Set(["ReceiverApduError", "UnknownDeviceExchangeError"]);
+
+function isTransportFramingError(error: ConnectAppDAError): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "_tag" in error &&
+    RETRIABLE_TRANSPORT_TAGS.has((error as { _tag: string })._tag)
+  );
+}
+
 /**
  * Open the Ledger Manager app by name on an existing DMK USB session (same device action as Live LDk connectApp).
  */
@@ -68,6 +88,33 @@ export async function connectLedgerApp(
   sessionId: string,
   managerAppName: string,
 ): Promise<void> {
+  for (let attempt = 0; ; attempt++) {
+    const result = await connectLedgerAppOnce(dmk, sessionId, managerAppName);
+    if (!result) return;
+
+    if (isTransportFramingError(result) && attempt < MAX_TRANSPORT_ERROR_RETRIES) {
+      walletCliDebug(
+        "Transport framing error, retrying ConnectApp (%d/%d)…",
+        attempt + 1,
+        MAX_TRANSPORT_ERROR_RETRIES,
+      );
+      await new Promise(r => globalThis.setTimeout(r, TRANSPORT_ERROR_RETRY_DELAY_MS));
+      continue;
+    }
+
+    throw toError(result);
+  }
+}
+
+/**
+ * Single attempt at running ConnectAppDeviceAction.
+ * Returns `undefined` on success, or the DA error to let the caller decide whether to retry.
+ */
+async function connectLedgerAppOnce(
+  dmk: DeviceManagementKit,
+  sessionId: string,
+  managerAppName: string,
+): Promise<ConnectAppDAError | undefined> {
   const deviceAction = new ConnectAppDeviceAction({
     input: {
       application: { name: managerAppName },
@@ -137,10 +184,12 @@ export async function connectLedgerApp(
   }
 
   walletCliDebug("ConnectApp finalState: status=%s app=%s", finalState.status, managerAppName);
+
   if (finalState.status === DeviceActionStatus.Error) {
     walletCliDebug("ConnectApp error detail: %o", summarizeConnectAppError(finalState.error));
-    throw toError(finalState.error);
+    return finalState.error;
   }
+
   if (finalState.status === DeviceActionStatus.Completed && finalState.output) {
     const out = finalState.output;
     walletCliDebug(
@@ -152,4 +201,5 @@ export async function connectLedgerApp(
   if (finalState.status !== DeviceActionStatus.Completed) {
     throw new Error(`Connect app ended with status: ${finalState.status}`);
   }
+  return undefined;
 }
