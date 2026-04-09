@@ -1,6 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
@@ -162,6 +163,7 @@ export async function accessProvableApi({
   let uuid = provableApi?.uuid;
   let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
   let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
+  let status;
 
   if (!apiKey || !consumerId) {
     const username = generateUniqueUsername(address);
@@ -204,7 +206,15 @@ export async function accessProvableApi({
     uuid = accountUuid;
   }
 
-  const status = await apiClient.getRecordScannerStatus(currency, jwt.token, uuid);
+  try {
+    status = await apiClient.getRecordScannerStatus(currency, jwt.token, uuid);
+  } catch (error) {
+    if (error instanceof LedgerAPI4xx && error.status === 422) {
+      return null;
+    }
+    throw error;
+  }
+
   if (status) {
     synced = status.synced;
     percentage = status.percentage;
