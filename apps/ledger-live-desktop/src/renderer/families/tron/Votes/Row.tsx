@@ -8,7 +8,6 @@ import { TableLine } from "./Header";
 import Trophy from "~/renderer/icons/Trophy";
 import Medal from "~/renderer/icons/Medal";
 import Discreet from "~/renderer/components/Discreet";
-import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -28,7 +27,7 @@ const Column = styled(TableLine).attrs<{
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
 `;
 type Props = {
-  validator: SuperRepresentative | null | undefined;
+  name: string | null | undefined;
   address: string;
   isSR: boolean;
   amount: React.ReactNode;
@@ -48,7 +47,7 @@ const IconContainer = styled.div<{ isSR: boolean }>`
     p.isSR ? p.theme.colors.opacityDefault.c10 : p.theme.colors.neutral.c40};
   color: ${p => (p.isSR ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
 `;
-const Row = ({ validator, address, amount, isSR, duration, percentTP, explorerView }: Props) => {
+const Row = ({ name, address, amount, isSR, duration, percentTP, explorerView }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
   const openSR = useCallback(() => {
     if (srURL) openURL(srURL);
@@ -59,7 +58,7 @@ const Row = ({ validator, address, amount, isSR, duration, percentTP, explorerVi
         <IconContainer isSR={isSR}>
           {isSR ? <Trophy size={16} /> : <Medal size={16} />}
         </IconContainer>
-        <Ellipsis>{validator ? validator.name : address}</Ellipsis>
+        <Ellipsis>{name ?? address}</Ellipsis>
       </Column>
       <Column>
         <Discreet>{amount}</Discreet>
