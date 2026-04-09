@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import test from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -131,9 +132,6 @@ for (const swap of tooLowAmountForQuoteSwaps) {
 
 const swapNetworkFeesAboveAccountBalanceTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, ""),
-  errorMessage: new RegExp(
-    `Your account .+ doesn't have enough balance to cover the network fees\\.`,
-  ),
   xrayTicket: "B2CQA-2363",
   tags: [
     "@NanoSP",
@@ -149,7 +147,7 @@ const swapNetworkFeesAboveAccountBalanceTestConfig = {
   ],
 };
 
-test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
+test.describe(`Swap - Network fees above account balance — legacy error absent, reaches approval (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
   setupEnv(true);
 
   const accPair: string[] = [
@@ -219,10 +217,27 @@ test.describe(`Swap - Error message when network fees are above account balance 
       );
       await app.swap.checkQuotes(electronApp);
       await app.swap.selectExchange(electronApp);
-      await app.swap.checkFeeErrorMessage(
-        electronApp,
-        swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
-      );
+
+      // Previously (when the product showed a blocking fee error here), the test expected:
+      // await app.swap.checkFeeErrorMessage(
+      //   electronApp,
+      //   new RegExp(`Your account .+ doesn't have enough balance to cover the network fees\\.`),
+      // );
+      // Mobile E2E used: /\d+(\.\d{1,10})? ETH needed for network fees\.[\s\S]*Learn More/
+
+      const [, webview] = electronApp.windows();
+      const insufficientFundsWarning = webview.getByTestId("insufficient-funds-warning");
+      await expect(
+        insufficientFundsWarning.getByText(
+          /Your account .+ doesn't have enough balance to cover the network fees\./,
+        ),
+      ).toHaveCount(0);
+      await expect(
+        insufficientFundsWarning.getByText(/\d+(\.\d{1,10})? ETH needed for network fees/),
+      ).toHaveCount(0);
+
+      await app.swap.clickExchangeButton(electronApp);
+      await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
     },
   );
 });

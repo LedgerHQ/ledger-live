@@ -491,11 +491,10 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
 
 export function runSwapNetworkFeesAboveAccountBalanceTest(
   swap: SwapType,
-  errorMessage: string | RegExp,
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Swap - Error message when network fees are above account balance (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
+  describe(`Swap - Network fees above account balance — legacy error absent, reaches approval (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -531,8 +530,30 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
         actualAmount,
       );
       await app.swapLiveApp.checkQuotes();
-      await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+      const provider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+
+      // Previously: await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(
+      //   /\d+(\.\d{1,10})? ETH needed for network fees\.[\s\S]*Learn More/,
+      // );
+
+      await waitWebElementByTestId(app.swapLiveApp.executeSwapButton);
+      let fromAccountErrorText = "";
+      try {
+        fromAccountErrorText = await getWebElementByTestId(
+          app.swapLiveApp.fromAccountErrorId,
+        ).runScript((node: HTMLElement) => (node.innerText || node.textContent || "").trim());
+      } catch {
+        fromAccountErrorText = "";
+      }
+      jestExpect(fromAccountErrorText).not.toMatch(/\d+(\.\d{1,10})? ETH needed for network fees/);
+      jestExpect(fromAccountErrorText).not.toMatch(
+        /Your account .+ doesn't have enough balance to cover the network fees/,
+      );
+
+      await app.swapLiveApp.tapExecuteSwap();
+      await waitWebElementByTestId(app.swapLiveApp.executeSwapButtonStepApproval);
+      await waitForWebElementToBeEnabled(app.swapLiveApp.executeSwapButtonStepApproval);
     });
   });
 }
