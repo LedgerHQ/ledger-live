@@ -10,6 +10,7 @@ import ContextMenu from "../../Delegation/ContextMenu";
 import ModalsLayer from "~/renderer/ModalsLayer";
 import { CardanoAccount, Transaction } from "@ledgerhq/live-common/families/cardano/types";
 import { getCardanoAccountFixture } from "@ledgerhq/coin-cardano/fixtures/accounts";
+import { getProtocolParamsFixture } from "@ledgerhq/coin-cardano/fixtures/protocolParams";
 import { http, HttpResponse } from "msw";
 
 setSupportedCurrencies(["cardano"]);
@@ -34,6 +35,7 @@ const mockTransaction: Transaction = {
 const getMockAccountData = (
   overrides: { rewards?: BigNumber; dRepHex?: string } = {},
 ): CardanoAccount => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const account = getCardanoAccountFixture({
     delegation: undefined,
   });
@@ -43,6 +45,7 @@ const getMockAccountData = (
   const rewards = overrides.rewards ?? new BigNumber("5000000");
   const dRepHex = overrides.dRepHex;
 
+  account.cardanoResources.protocolParams = getProtocolParamsFixture();
   account.cardanoResources.delegation = {
     rewards,
     status: true,
@@ -297,8 +300,9 @@ describe("Cardano Undelegate Flow Integration", () => {
       jest.spyOn(useBridgeTransaction, "default").mockReturnValue({
         transaction: mockTransaction,
         setTransaction: jest.fn(),
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         updateTransaction: jest.fn(),
-        account: getMockAccountData(),
+        account: getMockAccountData({ dRepHex: "dRepHex1" }) as CardanoAccount,
         parentAccount: null,
         setAccount: jest.fn(),
         status: {
