@@ -158,7 +158,6 @@
               "poolId": "pool1abc1234567890abcdef1234567890",
               "ticker": "LITHER",
               "name": "Lither Pool",
-              "dRepHex": null,
               "rewards": "5000000"
             },
             "protocolParams": {

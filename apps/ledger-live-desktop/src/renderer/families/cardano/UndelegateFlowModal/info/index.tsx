@@ -27,7 +27,7 @@ export default function CardanoUndelegateSelfTxInfoModal({
       openModal("MODAL_SEND", {
         account,
         recipient: account.freshAddress,
-        amount: BigNumber(DEFAULT_TX_AMOUNT),
+        amount: new BigNumber(DEFAULT_TX_AMOUNT),
       }),
     );
   }, [account, dispatch]);
@@ -44,31 +44,50 @@ export default function CardanoUndelegateSelfTxInfoModal({
             <Box mx={4} data-testid="modal-cardano-undelegate-self-tx-info">
               <Box flow={1} alignItems="center">
                 <Box mb={4}>
-                  <Text
-                    ff="Inter|SemiBold"
-                    fontSize={13}
-                    textAlign="left"
-                    color="palette.text.shade80"
-                    style={{
-                      lineHeight: 1.57,
-                    }}
-                  >
-                    <p>
+                  <Box mb={3}>
+                    <Text
+                      ff="Inter|SemiBold"
+                      fontSize={13}
+                      textAlign="left"
+                      color="palette.text.shade80"
+                      style={{ lineHeight: 1.57 }}
+                    >
                       <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.0" />
-                    </p>
-                    <br />
-                    <p>
+                    </Text>
+                  </Box>
+                  <Box mb={3}>
+                    <Text
+                      ff="Inter|SemiBold"
+                      fontSize={13}
+                      textAlign="left"
+                      color="palette.text.shade80"
+                      style={{ lineHeight: 1.57 }}
+                    >
                       <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.1" />
-                    </p>
-                    <br />
-                    <p>
+                    </Text>
+                  </Box>
+                  <Box mb={3}>
+                    <Text
+                      ff="Inter|SemiBold"
+                      fontSize={13}
+                      textAlign="left"
+                      color="palette.text.shade80"
+                      style={{ lineHeight: 1.57 }}
+                    >
                       <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.2" />
-                    </p>
-                    <br />
-                    <p>
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text
+                      ff="Inter|SemiBold"
+                      fontSize={13}
+                      textAlign="left"
+                      color="palette.text.shade80"
+                      style={{ lineHeight: 1.57 }}
+                    >
                       <Trans i18nKey="cardano.unDelegation.selfTransactionFlow.steps.starter.description.3" />
-                    </p>
-                  </Text>
+                    </Text>
+                  </Box>
                 </Box>
               </Box>
             </Box>
