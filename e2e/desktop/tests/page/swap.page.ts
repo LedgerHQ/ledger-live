@@ -12,10 +12,7 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import BigNumber from "bignumber.js";
-import {
-  approveTokenCommand,
-  isTokenAllowanceSufficientCommand,
-} from "tests/utils/cliCommandsUtils";
+import { approveTokenCommand, isTokenAllowanceSufficientCommand } from "@ledgerhq/live-common/e2e";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import * as allure from "allure-js-commons";

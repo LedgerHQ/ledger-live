@@ -15,7 +15,7 @@ import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUt
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 

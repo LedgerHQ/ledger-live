@@ -7,7 +7,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
-import { liveDataCommand, liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataCommand, liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
 

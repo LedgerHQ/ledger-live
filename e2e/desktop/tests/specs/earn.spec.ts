@@ -1,13 +1,12 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "tests/utils/cliUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataWithAddressCommand, liveDataCommand } from "@ledgerhq/live-common/e2e";
 import { EARN_V1_DESKTOP_FLAGS } from "tests/utils/featureFlagUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -205,16 +204,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       featureFlags: EARN_V1_DESKTOP_FLAGS,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account)],
     });
 
     const family = getFamilyByCurrencyId(account.currency.id);

@@ -1,15 +1,21 @@
 import invariant from "invariant";
-import { CLI, GetTokenAllowanceOpts, TokenApprovalOpts } from "tests/utils/cliUtils";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Account, TokenAccount } from "./enum/Account";
+import { Currency } from "./enum/Currency";
+import { Transaction } from "./models/Transaction";
 import {
   createApproveTokenCommand,
   createIsTokenAllowanceSufficientCommand,
-} from "@ledgerhq/live-common/e2e";
+} from "./tokenAllowanceCommands";
+import {
+  runCliGetAddress,
+  runCliGetTokenAllowance,
+  runCliLiveData,
+  runCliTokenApproval,
+} from "./runCli";
 
-type LiveDataCommandOptions = {
+export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
+  readonly currency?: string;
 };
 
 export const getAccountAddress = async (account: Account | TokenAccount): Promise<string> => {
@@ -18,31 +24,32 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
     return account.address;
   }
 
-  const { address } = await CLI.getAddress({
+  const { address } = await runCliGetAddress({
     currency: account.currency.speculosApp.name,
     path: account.accountPath,
     derivationMode: account.derivationMode,
   });
 
+  account.address = address;
   return address;
 };
 
 export const liveDataCommand =
   (account: Account | TokenAccount, options?: LiveDataCommandOptions) =>
-  async (appjsonPath: string) => {
-    await CLI.liveData({
-      currency: account.currency.speculosApp.name,
+  async (userdataPath?: string) => {
+    await runCliLiveData({
+      currency: options?.currency ?? account.currency.speculosApp.name,
       index: account.index,
       ...(options?.useScheme && account.derivationMode ? { scheme: account.derivationMode } : {}),
       add: true,
-      appjson: appjsonPath,
+      appjson: userdataPath,
     });
   };
 
 export const liveDataWithAddressCommand =
   (account: Account | TokenAccount, options?: LiveDataCommandOptions) =>
-  async (appjsonPath: string) => {
-    await liveDataCommand(account, options)(appjsonPath);
+  async (userdataPath?: string) => {
+    await liveDataCommand(account, options)(userdataPath);
 
     const address = await getAccountAddress(account);
 
@@ -56,12 +63,12 @@ export const liveDataWithAddressCommand =
 
 export const liveDataWithParentAddressCommand =
   (liveDataAccount: Account | TokenAccount, accountToAssign: TokenAccount) =>
-  async (appjsonPath: string) => {
-    await CLI.liveData({
+  async (userdataPath?: string) => {
+    await runCliLiveData({
       currency: liveDataAccount.currency.speculosApp.name,
       index: liveDataAccount.index,
       add: true,
-      appjson: appjsonPath,
+      appjson: userdataPath,
     });
 
     if (!accountToAssign.parentAccount) {
@@ -78,15 +85,15 @@ export const liveDataWithRecipientAddressCommand = (
   tx: Transaction,
   options?: LiveDataCommandOptions,
 ) => {
-  return async (appjsonPath: string) => {
-    await CLI.liveData({
+  return async (userdataPath?: string) => {
+    await runCliLiveData({
       currency: tx.accountToDebit.currency.speculosApp.name,
       index: tx.accountToDebit.index,
       ...(options?.useScheme && tx.accountToDebit.derivationMode
         ? { scheme: tx.accountToDebit.derivationMode }
         : {}),
       add: true,
-      appjson: appjsonPath,
+      appjson: userdataPath,
     });
 
     const address = await getAccountAddress(tx.accountToCredit);
@@ -97,10 +104,8 @@ export const liveDataWithRecipientAddressCommand = (
     return address;
   };
 };
-export const approveTokenCommand = createApproveTokenCommand((opts: TokenApprovalOpts) =>
-  CLI.tokenApproval(opts),
-);
 
-export const isTokenAllowanceSufficientCommand = createIsTokenAllowanceSufficientCommand(
-  (opts: GetTokenAllowanceOpts) => CLI.getTokenAllowance(opts),
-);
+export const approveTokenCommand = createApproveTokenCommand(runCliTokenApproval);
+
+export const isTokenAllowanceSufficientCommand =
+  createIsTokenAllowanceSufficientCommand(runCliGetTokenAllowance);

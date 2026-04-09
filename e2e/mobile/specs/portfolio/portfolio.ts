@@ -1,6 +1,7 @@
 import { ApplicationOptions } from "page";
 import { isWallet40 } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -21,16 +22,7 @@ export function runPortfolioTransactionsHistoryTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [
-          async (userdataPath?: string) => {
-            await CLI.liveData({
-              currency: account.currency.id,
-              index: account.index,
-              appjson: userdataPath,
-              add: true,
-            });
-          },
-        ],
+        cliCommands: [liveDataCommand(account)],
       });
     });
 

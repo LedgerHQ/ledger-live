@@ -1,6 +1,7 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { swapSetup } from "../bridge/server";
 import { isWallet40 } from "../helpers/commonHelpers";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
@@ -16,16 +17,7 @@ describe("DeepLinks Tests", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account)],
       featureFlags: {
         ptxSwapLiveAppMobile: {
           enabled: true,

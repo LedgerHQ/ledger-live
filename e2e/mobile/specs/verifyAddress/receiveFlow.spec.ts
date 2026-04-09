@@ -2,6 +2,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 import { isWallet40 } from "../../helpers/commonHelpers";
+import { getAccountAddress } from "@ledgerhq/live-common/e2e";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
@@ -73,7 +74,7 @@ describe("Receive Flow", () => {
     await app.receive.doNotVerifyAddress();
 
     await app.receive.expectReceivePageIsDisplayed("ETH", Account.BASE_1.accountName);
-    const address = await CLI.getAddressForAccount(Account.BASE_1);
+    const address = await getAccountAddress(Account.BASE_1);
     await app.receive.verifyAddress(address);
     await app.common.closePage();
 
@@ -129,7 +130,7 @@ describe("Receive Flow", () => {
       Account.ETH_1.currency.ticker,
       Account.ETH_1.accountName,
     );
-    const address = await CLI.getAddressForAccount(Account.ETH_1);
+    const address = await getAccountAddress(Account.ETH_1);
     await app.receive.verifyAddress(address);
   });
 });

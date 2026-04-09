@@ -2,6 +2,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { launchApp } from "../../helpers/commonHelpers";
 import { loadConfig } from "../../bridge/server";
 import { device } from "detox";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 $TmsLink("B2CQA-2996");
 
@@ -23,16 +24,7 @@ describe("Account name change", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account)],
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

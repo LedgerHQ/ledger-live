@@ -3,6 +3,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { beforeAllFunctionSwap } from "./swap.setup";
+import { liveDataWithParentAddressCommand } from "@ledgerhq/live-common/e2e";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -13,50 +14,11 @@ const beforeAllFunction = async (swap: SwapType) => {
     cliCommandsOnApp: [
       {
         app: swap.accountToDebit.currency.speculosApp,
-        cmd: async (userdataPath?: string) => {
-          await CLI.liveData({
-            currency: swap.accountToDebit.currency.speculosApp.name,
-            index: swap.accountToDebit.index,
-            add: true,
-            appjson: userdataPath,
-          });
-
-          const { address } = await CLI.getAddress({
-            currency: swap.accountToDebit.currency.speculosApp.name,
-            path: swap.accountToDebit.accountPath,
-            derivationMode: swap.accountToDebit.derivationMode,
-          });
-
-          swap.accountToDebit.address = address;
-          if (swap.accountToDebit.parentAccount) {
-            swap.accountToDebit.parentAccount.address = address;
-          }
-
-          return address;
-        },
+        cmd: liveDataWithParentAddressCommand(swap.accountToDebit, swap.accountToCredit),
       },
       {
         app: swap.accountToCredit.currency.speculosApp,
-        cmd: async (userdataPath?: string) => {
-          await CLI.liveData({
-            currency: swap.accountToCredit.currency.speculosApp.name,
-            index: swap.accountToCredit.index,
-            add: true,
-            appjson: userdataPath,
-          });
-
-          const { address } = await CLI.getAddress({
-            currency: swap.accountToCredit.currency.speculosApp.name,
-            path: swap.accountToCredit.accountPath,
-            derivationMode: swap.accountToCredit.derivationMode,
-          });
-
-          swap.accountToCredit.address = address;
-          if (swap.accountToCredit.parentAccount) {
-            swap.accountToCredit.parentAccount.address = address;
-          }
-          return address;
-        },
+        cmd: liveDataWithParentAddressCommand(swap.accountToCredit, swap.accountToDebit),
       },
     ],
   });

@@ -35,7 +35,7 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   return (
     <Touchable
-      touchableTestID={`NavigationHeaderCloseButton${testIDSuffix ? `${testIDSuffix}` : ""}`}
+      touchableTestID={`NavigationHeaderCloseButton${testIDSuffix ?? ""}`}
       event="HeaderRightClose"
       onPress={() => (onPress ? onPress() : navigation.popToTop())}
     >

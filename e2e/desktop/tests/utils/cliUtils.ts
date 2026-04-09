@@ -23,7 +23,13 @@ import {
   type TokenApprovalOpts,
 } from "@ledgerhq/live-common/e2e";
 
-export type { LiveDataOpts, GetAddressOpts, TokenApprovalOpts, GetTokenAllowanceOpts };
+export type {
+  LiveDataOpts,
+  GetAddressOpts,
+  TokenApprovalOpts,
+  GetTokenAllowanceOpts,
+  LiveDataCommandOptions,
+} from "@ledgerhq/live-common/e2e";
 
 export const CLI = {
   ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {

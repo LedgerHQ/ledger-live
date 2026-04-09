@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
@@ -26,8 +25,6 @@ import {
   type LiveDataOpts,
   type TokenApprovalOpts,
 } from "@ledgerhq/live-common/e2e";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export type { LiveDataOpts, GetAddressOpts, TokenApprovalOpts, GetTokenAllowanceOpts };
 
@@ -176,20 +173,6 @@ export const CLI = {
     });
   },
   getAddress: (opts: GetAddressOpts) => runCliGetAddress(opts),
-  getAddressForAccount: async (account: Account) => {
-    if (account.currency.id === Currency.HBAR.id) {
-      invariant(account.address, "hedera: account address must be pre-set");
-      return account.address;
-    }
-
-    const addressInfo = await CLI.getAddress({
-      currency: account.currency.speculosApp.name,
-      path: account.accountPath,
-      derivationMode: account.derivationMode,
-    });
-    account.address = addressInfo.address;
-    return addressInfo.address;
-  },
   tokenApproval: function (opts: TokenApprovalOpts) {
     return runCliTokenApproval(opts);
   },

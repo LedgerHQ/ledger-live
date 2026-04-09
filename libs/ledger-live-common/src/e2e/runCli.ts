@@ -120,7 +120,7 @@ function isRetryableError(message: string): boolean {
 }
 
 export function runCliCommand(command: string): Promise<string> {
-  console.log(`[CLI] Executing: ledger-live ${command.replace(/\+/g, " ")}`);
+  console.warn(`[CLI] Executing: ledger-live ${command.replace(/\+/g, " ")}`);
 
   return new Promise((resolve, reject) => {
     const args = command.split("+");
@@ -149,7 +149,8 @@ export function runCliCommand(command: string): Promise<string> {
         const indexText = index && index !== "undefined" ? index : "N/A";
 
         const errorDetails = [
-          `❌ Failed to execute CLI command.`,
+          `❌ Failed to execute CLI command`,
+          `🔍 Command: ${command}`,
           `💱 Currency: ${currency}`,
           `🔢 Index: ${indexText}`,
           `🔢 Exit Code: ${code}`,

@@ -4,7 +4,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
-import { liveDataCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 test.describe("Settings", () => {

@@ -5,6 +5,11 @@ import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  getAccountAddress,
+  liveDataWithAddressCommand,
+  liveDataCommand,
+} from "@ledgerhq/live-common/e2e";
 
 const beforeAllFunction = async (transaction: TransactionType) => {
   await app.init({
@@ -14,19 +19,8 @@ const beforeAllFunction = async (transaction: TransactionType) => {
     },
     cliCommands: [
       async (userdataPath?: string) => {
-        await CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          add: true,
-          appjson: userdataPath,
-        });
-        transaction.accountToDebit.address = await CLI.getAddressForAccount(
-          transaction.accountToDebit,
-        );
-
-        transaction.accountToCredit.address = await CLI.getAddressForAccount(
-          transaction.accountToCredit,
-        );
+        await liveDataWithAddressCommand(transaction.accountToDebit)(userdataPath);
+        transaction.accountToCredit.address = await getAccountAddress(transaction.accountToCredit);
         transaction.recipientAddress = transaction.accountToCredit.address;
       },
     ],
@@ -46,18 +40,13 @@ const beforeAllInvalidAddressFunction = async (
     },
     cliCommands: [
       async (userdataPath?: string) => {
-        await CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          add: true,
-          appjson: userdataPath,
-        });
+        await liveDataCommand(transaction.accountToDebit)(userdataPath);
 
         if (
           transaction.accountToCredit.accountName !== Account.EMPTY.accountName &&
           transaction.accountToCredit.accountName !== Account.BTC_NATIVE_SEGWIT_1.accountName
         ) {
-          transaction.accountToCredit.address = await CLI.getAddressForAccount(
+          transaction.accountToCredit.address = await getAccountAddress(
             transaction.accountToCredit,
           );
         }

@@ -4,8 +4,9 @@ import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
-import { beforeAllFunctionSwap, liveDataCommand, liveDataWithAddressCommand } from "../swap.setup";
+import { beforeAllFunctionSwap } from "../swap.setup";
 import { isWallet40 } from "../../../helpers/commonHelpers";
+import { liveDataCommand, liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -56,7 +57,7 @@ export function runSwapWithoutAccountTest(
             ? [
                 {
                   app: asset1.currency.speculosApp,
-                  cmd: liveDataCommand(asset1.currency.speculosApp, asset1.index),
+                  cmd: liveDataCommand(asset1),
                 },
               ]
             : [],
@@ -359,11 +360,11 @@ export function runSwapWithSendMaxTest(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataCommand(toAccount),
           },
         ],
       });

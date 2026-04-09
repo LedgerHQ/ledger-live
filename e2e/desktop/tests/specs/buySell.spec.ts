@@ -7,13 +7,13 @@ import {
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "tests/utils/cliUtils";
 import { setupEnv } from "tests/utils/swapUtils";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }> = [
   {
@@ -60,16 +60,7 @@ for (const asset of assets) {
       teamOwner: Team.BUY_AND_SELL,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: crypto.currency.speculosApp.name,
-            index: crypto.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(crypto)],
     });
 
     const family = getFamilyByCurrencyId(crypto.currency.id);
@@ -254,16 +245,7 @@ test.describe("Sell flow - ", () => {
     teamOwner: Team.BUY_AND_SELL,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: crypto.currency.speculosApp.name,
-          index: crypto.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(crypto)],
   });
 
   const family = getFamilyByCurrencyId(crypto.currency.id);

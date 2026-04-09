@@ -3,6 +3,7 @@ import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({
@@ -10,26 +11,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
     featureFlags: {
       llmAccountListUI: { enabled: true },
     },
-    cliCommands: [
-      async (userdataPath?: string) => {
-        await CLI.liveData({
-          currency: delegation.account.currency.speculosApp.name,
-          index: delegation.account.index,
-          add: true,
-          appjson: userdataPath,
-        });
-
-        const { address } = await CLI.getAddress({
-          currency: delegation.account.currency.speculosApp.name,
-          path: delegation.account.accountPath,
-          derivationMode: delegation.account.derivationMode,
-        });
-
-        delegation.account.address = address;
-
-        return address;
-      },
-    ],
+    cliCommands: [liveDataWithAddressCommand(delegation.account)],
   });
 
   await app.portfolio.waitForPortfolioPageToLoad();

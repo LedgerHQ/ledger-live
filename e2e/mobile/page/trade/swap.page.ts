@@ -7,12 +7,7 @@ import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import {
-  createApproveTokenCommand,
-  createIsTokenAllowanceSufficientCommand,
-  GetTokenAllowanceOpts,
-  TokenApprovalOpts,
-} from "@ledgerhq/live-common/e2e";
+import { approveTokenCommand, isTokenAllowanceSufficientCommand } from "@ledgerhq/live-common/e2e";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
@@ -247,11 +242,3 @@ export default class SwapPage extends CommonPage {
     }
   }
 }
-
-const approveTokenCommand = createApproveTokenCommand((opts: TokenApprovalOpts) =>
-  CLI.tokenApproval(opts),
-);
-
-export const isTokenAllowanceSufficientCommand = createIsTokenAllowanceSufficientCommand(
-  (opts: GetTokenAllowanceOpts) => CLI.getTokenAllowance(opts),
-);

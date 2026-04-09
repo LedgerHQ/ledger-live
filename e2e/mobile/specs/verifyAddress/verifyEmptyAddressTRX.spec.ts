@@ -1,20 +1,13 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e";
+
 describe("Verify Address warnings", () => {
   const account = Account.TRX_3;
 
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account)],
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

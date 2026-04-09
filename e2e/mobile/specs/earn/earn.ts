@@ -1,5 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { liveDataCommand, liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { ApplicationOptions } from "page";
@@ -29,14 +30,6 @@ const stakeProgramOverride = {
     },
   },
 };
-
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init(options);
@@ -112,18 +105,7 @@ export async function runStartETHStakingFromEarnDashboardTest(
           ptxEarnUi: { enabled: false, params: { value: "v1" } },
           ...stakeProgramOverride,
         },
-        cliCommands: [
-          async (userdataPath?: string) => {
-            await CLI.liveData({
-              currency: account.currency.speculosApp.name,
-              index: account.index,
-              add: true,
-              appjson: userdataPath,
-            });
-            account.address = await CLI.getAddressForAccount(account);
-            return account.address;
-          },
-        ],
+        cliCommands: [liveDataWithAddressCommand(account)],
       });
     });
 
@@ -154,7 +136,7 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        cliCommands: [liveDataCommand(account)],
       });
     });
 
