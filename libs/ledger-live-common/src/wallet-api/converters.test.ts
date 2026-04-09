@@ -1,26 +1,24 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
-import type { Transaction } from "../generated/types";
+import type { Transaction } from "../coin-modules/transaction-types";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import type { WalletAPITransaction } from "./types";
 
 const evmBridge = jest.fn();
 const bitcoinBridge = jest.fn();
-jest.mock("../generated/walletApiAdapter", () => {
-  return {
-    evm: {
-      getWalletAPITransactionSignFlowInfos: function () {
-        return evmBridge();
-      },
-    },
-    bitcoin: {
-      getWalletAPITransactionSignFlowInfos: function () {
-        return bitcoinBridge();
-      },
-    },
-  };
-});
+jest.mock("../coin-modules/registry", () => ({
+  loadWalletApiAdapterForFamily: (family: string) => {
+    switch (family) {
+      case "evm":
+        return { getWalletAPITransactionSignFlowInfos: () => evmBridge() };
+      case "bitcoin":
+        return { getWalletAPITransactionSignFlowInfos: () => bitcoinBridge() };
+      default:
+        return undefined;
+    }
+  },
+}));
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {

@@ -169,7 +169,7 @@ function App() {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk, providerNumber]);
 
   useEffect(() => registerTransports(), []);

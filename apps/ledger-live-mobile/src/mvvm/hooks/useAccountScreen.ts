@@ -25,7 +25,7 @@ export function useAccountScreen(route?: {
 } {
   const selector = useMemo(
     () => accountScreenSelector(route),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [route?.params?.account, route?.params?.accountId, route?.params?.parentId],
   );
 

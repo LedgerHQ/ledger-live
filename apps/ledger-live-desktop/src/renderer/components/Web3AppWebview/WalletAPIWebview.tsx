@@ -355,7 +355,7 @@ function useWebView(
         }
       },
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const walletState = useSelector(walletSelector);
@@ -374,7 +374,7 @@ function useWebView(
   useEffect(() => {
     serverRef.current = server;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
   const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({

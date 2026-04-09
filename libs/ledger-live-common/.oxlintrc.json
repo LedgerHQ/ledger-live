@@ -32,7 +32,6 @@
   "ignorePatterns": [
     "*.min.js",
     "src/families/*/types.js",
-    "src/generated/**",
     "src/load/tokens/**"
   ],
   "rules": {

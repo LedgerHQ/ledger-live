@@ -49,7 +49,7 @@ import type {
   SignOperationEvent,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import type { TransactionStatus } from "../generated/types";
+import type { TransactionStatus } from "../coin-modules/transaction-types";
 import { botTest } from "@ledgerhq/ledger-wallet-framework/bot/bot-test-context";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 

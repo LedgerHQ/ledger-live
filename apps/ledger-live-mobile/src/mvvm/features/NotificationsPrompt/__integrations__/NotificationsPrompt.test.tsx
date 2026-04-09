@@ -116,7 +116,7 @@ describe("NotificationsPrompt Integration", () => {
           .then(() => setIsReady(true));
 
         // No dependency because we only want to run it once.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
       }, [reloadCount]);
 
       if (!isReady) {

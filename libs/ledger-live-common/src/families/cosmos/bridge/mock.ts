@@ -36,7 +36,19 @@ import {
   sync,
 } from "../../../bridge/mockHelpers";
 import { getCurrencyConfiguration } from "../../../config";
+import coinConfig, { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
 import { validateAddress } from "../../../bridge/validateAddress";
+
+let isConfigLoaded = false;
+const loadCoinConfig = () => {
+  if (!isConfigLoaded) {
+    isConfigLoaded = true;
+    coinConfig.setCoinConfig(currencyId => {
+      if (!currencyId) throw new Error("No currency provided");
+      return getCurrencyConfiguration<CosmosCoinConfig>(currencyId);
+    });
+  }
+};
 
 const receive = makeAccountBridgeReceive();
 
@@ -161,4 +173,5 @@ const currencyBridge: CurrencyBridge = {
 export default {
   currencyBridge,
   accountBridge,
+  loadCoinConfig,
 };

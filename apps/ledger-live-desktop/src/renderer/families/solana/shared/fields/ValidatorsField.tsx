@@ -45,7 +45,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
         ...validators.slice(0, 2).filter(v => v !== selectedVoteAccAddr),
       ]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [chosenVoteAccAddr]);
 
   const renderItem = (validator: ValidatorsAppValidator) => {

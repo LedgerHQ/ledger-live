@@ -220,7 +220,7 @@ const useListenTransportDisconnect = (
   const ref = useRef({ cb });
   useEffect(() => {
     ref.current = { cb };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return useCallback(
     t => {
@@ -331,7 +331,7 @@ const App = () => {
   useEffect(() => {
     const sub = eventObservable.subscribe(addLog);
     return () => sub.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // TODO this is the basic minimum.. we should display the dependencies when you open a command.
@@ -349,7 +349,7 @@ const App = () => {
         addLogError(error);
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [transport],
   );
 
@@ -373,7 +373,7 @@ const App = () => {
         return false;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [transport],
   );
 
@@ -392,7 +392,7 @@ const App = () => {
     if (!transport) return;
     setTransport(null);
     setLeftTransports(leftTransports.concat([transport]));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [transport]);
 
   const onClose = useCallback(async () => {
@@ -414,7 +414,7 @@ const App = () => {
         addLogError(error);
       },
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [transportMode, listenTransportDisconnect]);
 
   const onCommandCancel = useCallback(() => {
@@ -463,7 +463,7 @@ const App = () => {
         },
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [commandValue, transport, selectedCommand, dependencies]);
 
   const logsViewRef = useRef<null | HTMLDivElement>(null);
@@ -516,7 +516,7 @@ const App = () => {
 
       files.forEach(file => reader.readAsBinaryString(file));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [transport],
   );
 

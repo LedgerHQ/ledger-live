@@ -119,7 +119,8 @@ export function useFeePresetFiatValues({
   const useAllAmount = Boolean(transaction.useAllAmount);
 
   const presetIds = useMemo(
-    () => (feePresetOptions.length > 0 ? feePresetOptions.map(o => o.id) : fallbackPresetIds ?? []),
+    () =>
+      feePresetOptions.length > 0 ? feePresetOptions.map(o => o.id) : (fallbackPresetIds ?? []),
     [fallbackPresetIds, feePresetOptions],
   );
 

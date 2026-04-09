@@ -37,7 +37,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
     // FIXME: IT LOOKS LIKE A COMPONENT DID MOUNT BUT NOT SURE AT ALL IF
     // IT NEEDS TO BE RERUN WHEN DEPS CHANGE
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();

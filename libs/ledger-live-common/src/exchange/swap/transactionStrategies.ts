@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 
-import { Transaction } from "../../generated/types";
+import { Transaction } from "../../coin-modules/transaction-types";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
 import { getFeature } from "../../featureFlags";

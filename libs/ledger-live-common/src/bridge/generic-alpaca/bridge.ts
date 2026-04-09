@@ -3,6 +3,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import evmBridge from "./families/evm/bridge";
 import stellarBridge from "./families/stellar/bridge";
 import solanaBridge from "./families/solana/bridge";
+import tezosBridge from "./families/tezos/bridge";
 
 export function getBridgeApi(currency: CryptoCurrency, network: string): BridgeApi {
   switch (network) {
@@ -12,6 +13,8 @@ export function getBridgeApi(currency: CryptoCurrency, network: string): BridgeA
       return solanaBridge(currency);
     case "stellar":
       return stellarBridge;
+    case "tezos":
+      return tezosBridge;
     default:
       return {};
   }

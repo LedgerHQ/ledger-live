@@ -92,7 +92,7 @@ export function useRecipientScreenView({
       });
     // refreshKey is used to force recalculation when addresses are removed from the store
     // even though it's not directly used in the computation
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currency, refreshCounter, mainAccount.freshAddress, userAccountsForCurrency]);
 
   const hasSearchValue = recipientSearch.value.length > 0;

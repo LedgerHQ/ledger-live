@@ -199,7 +199,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
           />
         </SafeAreaView>
       ) : null, // prevent rerendering caused by optimistic update (i.e. exclude account related deps)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [status, transaction, tokenCurrency, route.params.device],
   );
 }

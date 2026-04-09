@@ -35,7 +35,7 @@ import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
 import { ExchangeSwap, FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
-import { Transaction } from "../../generated/types";
+import { Transaction } from "../../coin-modules/transaction-types";
 import {
   getAccountIdFromWalletAccountId,
   getWalletAPITransactionSignFlowInfos,

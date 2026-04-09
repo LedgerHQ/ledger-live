@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { firstValueFrom, from, Observable } from "rxjs";
 import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
-import perFamily from "../../generated/hw-signMessage";
+import { loadSetupForFamily } from "../../coin-modules/registry";
 import type { AppRequest, AppState } from "../actions/app";
 import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
@@ -17,16 +17,14 @@ import { decodeAccountId } from "../../account";
 
 export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
   const utf8Message = Buffer.from(message, "hex").toString();
+  const setup = loadSetupForFamily(account.currency.family);
 
-  if (!perFamily[account.currency.family]) {
+  if (!setup.messageSigner) {
     throw new Error("Crypto does not support signMessage");
   }
 
-  if ("prepareMessageToSign" in perFamily[account.currency.family]) {
-    return perFamily[account.currency.family].prepareMessageToSign({
-      account,
-      message: utf8Message,
-    });
+  if (setup.messageSigner.prepareMessageToSign) {
+    return setup.messageSigner.prepareMessageToSign({ account, message: utf8Message });
   }
 
   // Default implementation
@@ -35,7 +33,8 @@ export const prepareMessageToSign = (account: Account, message: string): AnyMess
 
 const signMessage: SignMessage = (transport, account, opts) => {
   const { currency } = account;
-  let signMessage = perFamily[currency.family].signMessage;
+  const setup = loadSetupForFamily(currency.family);
+  let signMessage = setup.messageSigner?.signMessage;
   if ("type" in opts) {
     switch (opts.type) {
       case AcreMessageType.Withdraw:

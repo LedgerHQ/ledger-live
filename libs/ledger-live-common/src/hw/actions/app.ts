@@ -19,7 +19,7 @@ import { useReplaySubject } from "../../observable";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
-import perFamilyAccount from "../../generated/account";
+import { loadAccountModuleForFamily } from "../../coin-modules/registry";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -425,7 +425,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
   if (account) {
     derivationMode = account.derivationMode;
     derivationPath = account.freshAddressPath;
-    const m = perFamilyAccount[account.currency.family];
+    const m = loadAccountModuleForFamily(account.currency.family);
 
     if (m && m.injectGetAddressParams) {
       extra = m.injectGetAddressParams(account);
@@ -472,7 +472,7 @@ export const createAction = (
 
     const request = useMemo(
       () => inferCommandParams(appRequest), // for now i don't have better
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       [
         appRequest.appName,
         appRequest.account?.id,

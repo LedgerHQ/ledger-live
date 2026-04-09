@@ -284,7 +284,7 @@ export function useDappLogic({
         params: [[currentAddress]],
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAddress]);
 
   useEffect(() => {
@@ -299,7 +299,7 @@ export function useDappLogic({
         params: [`0x${currentNetwork.chainID.toString(16)}`],
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNetwork?.chainID]);
 
   useEffect(() => {

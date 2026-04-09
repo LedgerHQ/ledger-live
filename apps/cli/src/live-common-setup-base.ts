@@ -3,6 +3,7 @@ import winston from "winston";
 import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
@@ -10,6 +11,7 @@ import BigNumber from "bignumber.js";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 
+registerAllCoins();
 setSupportedCurrencies([
   "aptos",
   "aptos_testnet",

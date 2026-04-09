@@ -70,7 +70,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
     if (defaultSelected && rest.onSelectAll) {
       rest.onSelectAll(rest.accounts);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <AccountsList {...rest} />;
 };

@@ -270,14 +270,14 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
       const modal = await screen.findByTestId("analytics-consent-dialog");
       await screen.findByRole("heading", { name: "Set preferences" });
 
-      // Set preferences opens with both switches ON (`onSetPreferences` seeds drafts to true).
+      // Set preferences opens with both switches OFF (`onSetPreferences` seeds drafts to false).
       const switches = within(modal).getAllByRole("switch");
       expect(switches).toHaveLength(2);
       const [appPerformanceSwitch, personalizedSwitch] = switches;
-      if (!expectShareAnalytics) {
+      if (expectShareAnalytics) {
         await user.click(appPerformanceSwitch);
       }
-      if (!expectSharePersonalized) {
+      if (expectSharePersonalized) {
         await user.click(personalizedSwitch);
       }
 
