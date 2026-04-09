@@ -1,6 +1,5 @@
 // Playwright config for the fund monitor.
 // Runs ONLY checkBalance.spec.ts — no global setup, no LLD needed.
-// Used by .github/workflows/test-ui-e2e-fund-monitor.yml
 
 import { PlaywrightTestConfig } from "@playwright/test";
 

@@ -4,9 +4,9 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 export interface MonitorEntry {
   account: Account;
   threshold: string;
-  tokenId?: string; // If set, extract balance from this token subAccount instead of the parent account balance
-  name?: string; // Display name — defaults to account.accountName, required for token entries
-  decimals: number; // Decimal magnitude for display (e.g. 8 for BTC, 18 for ETH, 6 for USDT)
+  tokenId?: string;
+  name?: string;
+  decimals: number;
   ticker: string;
 }
 
