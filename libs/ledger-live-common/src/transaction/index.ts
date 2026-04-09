@@ -54,6 +54,5 @@ export const formatTransactionStatus = (
   mainAccount: Account,
 ): string => {
   const TM = loadTransactionForFamily(t.family);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return TM.formatTransactionStatus ? TM.formatTransactionStatus(t as any, ts as any, mainAccount as any) : "";
+  return TM.formatTransactionStatus ? TM.formatTransactionStatus(t, ts, mainAccount) : "";
 };

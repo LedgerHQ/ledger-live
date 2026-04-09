@@ -12,6 +12,7 @@ import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-c
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
+import { Transaction, TransactionRaw } from "./transaction-types";
 
 export type MessageSignerModule = {
   signMessage: SignMessage;
@@ -22,12 +23,12 @@ export type MessageSignerModule = {
 // Parameters are `any` because each family uses its own transaction/raw types at the loader boundary.
 // Method syntax enables bivariant param checking so family-specific implementations are assignable.
 export type TransactionModule = {
-  fromTransactionRaw(raw: any): TransactionCommon;
-  toTransactionRaw(tx: any): Record<string, unknown>;
-  formatTransaction(tx: any, account: Account): string;
-  fromTransactionStatusRaw?(raw: any): TransactionStatusCommon;
+  fromTransactionRaw(raw: TransactionRaw): TransactionCommon;
+  toTransactionRaw(tx: Transaction): Record<string, unknown>;
+  formatTransaction(tx: Transaction, account: Account): string;
+  fromTransactionStatusRaw?(raw: TransactionRaw): TransactionStatusCommon;
   toTransactionStatusRaw?(status: any): Record<string, unknown>;
-  formatTransactionStatus?(tx: any, status: any, mainAccount?: Account): string;
+  formatTransactionStatus?(tx: Transaction, status: any, mainAccount?: Account): string;
 };
 
 export type DeviceTransactionConfigFn = (arg: {
@@ -38,7 +39,10 @@ export type DeviceTransactionConfigFn = (arg: {
 }) => Promise<CommonDeviceTransactionField[]>;
 
 export type WalletApiAdapterModule = {
-  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<WalletAPITransaction, any>;
+  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
+    WalletAPITransaction,
+    any
+  >;
 };
 
 export type PlatformAdapterModule = {
