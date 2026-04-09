@@ -7277,10 +7277,20 @@
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
     },
     "AleoAmountRecordRequired": {
-      "title": "Select a valid private record for the amount."
+      "title": "Select a valid private record for the amount.",
+      "description": "Choose one of your available private records to fund the transfer amount."
     },
     "AleoFeeRecordRequired": {
-      "title": "Select a valid private record for the fee."
+      "title": "Select a valid private record for the fee.",
+      "description": "Top up your balance if needed. One private record is used for the transfer amount and another one must be able to cover the network fee."
+    },
+    "AleoTwoRecordsRequired": {
+      "title": "Private send requires at least two records.",
+      "description": "You need one record for the transfer amount and another one to cover the network fee."
+    },
+    "AleoFeeRecordInsufficientBalance": {
+      "title": "No private record can cover the network fee.",
+      "description": "Select a different record for the transfer amount or top up your balance with additional funds."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"

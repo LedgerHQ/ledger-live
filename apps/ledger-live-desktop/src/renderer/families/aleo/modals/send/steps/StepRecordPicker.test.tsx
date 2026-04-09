@@ -3,6 +3,12 @@ import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
+import {
+  AleoAmountRecordRequired,
+  AleoFeeRecordInsufficientBalance,
+  AleoFeeRecordRequired,
+  AleoTwoRecordsRequired,
+} from "@ledgerhq/live-common/families/aleo/errors";
 import type {
   AleoAccount,
   AleoUnspentRecord,
@@ -281,6 +287,7 @@ describe("StepRecordPicker", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
     expect(result.properties?.amountRecordCommitment).toBe(record2.commitment);
+    expect(result.properties?.feeRecordCommitment).toBeNull();
   });
 
   it("should call updateTransaction with the lower-value record when the second button is clicked", async () => {
@@ -302,6 +309,7 @@ describe("StepRecordPicker", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
     expect(result.properties?.amountRecordCommitment).toBe(record1.commitment);
+    expect(result.properties?.feeRecordCommitment).toBeNull();
   });
 
   it("should render records sorted in descending order by value", () => {
@@ -330,7 +338,7 @@ describe("StepRecordPicker", () => {
     expect(screen.getByTestId("aleo-pick-records-alert")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "The maximum spendable amount depends on the maximum value of your selected record. Fees are sponsored by Provable for Ledger users.",
+        /The maximum spendable amount depends on the maximum value of your selected record/,
       ),
     ).toBeInTheDocument();
   });
@@ -416,6 +424,132 @@ describe("StepRecordPicker", () => {
     expect(screen.getByText(/Available records:.*15/)).toBeInTheDocument();
   });
 
+  it("should render the translated two-records error from status", () => {
+    const statusWithError: TransactionStatus = {
+      ...mockStatus,
+      errors: {
+        feeRecord: new AleoTwoRecordsRequired(),
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        status={statusWithError}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByTestId("aleo-record-picker-error")).toBeInTheDocument();
+    expect(screen.getByText("Private send requires at least two records.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /You need one record for the transfer amount and another one to cover the network fee/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("should render the translated insufficient-fees error from status", () => {
+    const statusWithError: TransactionStatus = {
+      ...mockStatus,
+      errors: {
+        feeRecord: new AleoFeeRecordInsufficientBalance(),
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        status={statusWithError}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByTestId("aleo-record-picker-error")).toBeInTheDocument();
+    expect(screen.getByText("No private record can cover the network fee.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Select a different record for the transfer amount or top up your balance with additional funds/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("should render the translated fee-record error from status", () => {
+    const statusWithError: TransactionStatus = {
+      ...mockStatus,
+      errors: {
+        feeRecord: new AleoFeeRecordRequired(),
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        status={statusWithError}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByTestId("aleo-record-picker-error")).toBeInTheDocument();
+    expect(screen.getByText("Select a valid private record for the fee.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /One private record is used for the transfer amount and another one must be able to cover the network fee/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("should prioritize the amount-record error when both amount and fee errors are present", () => {
+    const statusWithError: TransactionStatus = {
+      ...mockStatus,
+      errors: {
+        amountRecord: new AleoAmountRecordRequired(),
+        feeRecord: new AleoFeeRecordRequired(),
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        status={statusWithError}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByTestId("aleo-record-picker-error")).toBeInTheDocument();
+    expect(screen.getByText("Select a valid private record for the amount.")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Select a valid private record for the fee."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("should fall back to the amount-record error when no fee-record error is present", () => {
+    const statusWithError: TransactionStatus = {
+      ...mockStatus,
+      errors: {
+        amountRecord: new AleoAmountRecordRequired(),
+      },
+    };
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        status={statusWithError}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getByTestId("aleo-record-picker-error")).toBeInTheDocument();
+    expect(screen.getByText("Select a valid private record for the amount.")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Choose one of your available private records to fund the transfer amount/i),
+    ).toBeInTheDocument();
+  });
   it("should exclude zero-value records from the displayed list", () => {
     const zeroRecord = makeUnspentRecord("commitment-zero", "0", mockDecryptedData1);
     const accountWithZeroRecord: AleoAccount = {

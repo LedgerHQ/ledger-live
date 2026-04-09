@@ -121,4 +121,29 @@ describe("StepRecordPickerFooter", () => {
 
     expect(screen.getByRole("button", { name: /continue/i })).not.toBeDisabled();
   });
+
+  it("should disable continue button when status.errors.amountRecord is set", () => {
+    render(
+      <StepRecordPickerFooter
+        {...defaultProps}
+        status={{
+          ...mockStatus,
+          errors: { ...mockStatus.errors, amountRecord: new Error("boom") },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
+  });
+
+  it("should disable continue button when status.errors.feeRecord is set", () => {
+    render(
+      <StepRecordPickerFooter
+        {...defaultProps}
+        status={{ ...mockStatus, errors: { ...mockStatus.errors, feeRecord: new Error("boom") } }}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
+  });
 });
