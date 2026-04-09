@@ -786,6 +786,10 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const steps = useMemo(() => {
     const stepList = [
       {
+        name: "pairNano",
+        screens: [ScreenId.pairMyNano, ScreenId.genuineCheck],
+      },
+      {
         name: "getStarted",
         screens: [
           ScreenId.howToGetStarted,
@@ -812,10 +816,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       {
         name: "hideRecoveryPhrase",
         screens: [ScreenId.hideRecoveryPhrase, ScreenId.quizSuccess, ScreenId.quizFailure],
-      },
-      {
-        name: "pairNano",
-        screens: [ScreenId.pairMyNano, ScreenId.genuineCheck],
       },
     ];
 

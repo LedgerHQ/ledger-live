@@ -186,9 +186,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               onClick={() => {
                 track("Onboarding - Restore");
                 setUseCase(OnboardingUseCase.recoveryPhrase);
-                navigate(
-                  `/onboarding/${OnboardingUseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
-                );
+                navigate(`/onboarding/${OnboardingUseCase.recoveryPhrase}/${ScreenId.pairMyNano}`);
               }}
             />
             {isRecoverDisplayed(servicesConfig, deviceModelId) && (
