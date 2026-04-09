@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
   openTransferDrawer,
@@ -14,17 +14,35 @@ export const useTransferDrawerController = () => {
   const dispatch = useDispatch();
 
   const { isOpen, sourceScreenName } = useSelector(transferDrawerStateSelector);
+  const pendingOpenRef = useRef<OpenDrawerParams | null>(null);
 
   const openDrawer = useCallback(
     (params: OpenDrawerParams) => {
+      if (isOpen) {
+        pendingOpenRef.current = params;
+        dispatch(closeTransferDrawer());
+      } else {
+        dispatch(
+          openTransferDrawer({
+            sourceScreenName: params.sourceScreenName,
+          }),
+        );
+      }
+    },
+    [dispatch, isOpen],
+  );
+
+  useEffect(() => {
+    if (!isOpen && pendingOpenRef.current) {
+      const pending = pendingOpenRef.current;
+      pendingOpenRef.current = null;
       dispatch(
         openTransferDrawer({
-          sourceScreenName: params.sourceScreenName,
+          sourceScreenName: pending.sourceScreenName,
         }),
       );
-    },
-    [dispatch],
-  );
+    }
+  }, [isOpen, dispatch]);
 
   const closeDrawer = useCallback(() => {
     dispatch(closeTransferDrawer());
