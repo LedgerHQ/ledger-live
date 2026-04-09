@@ -219,6 +219,216 @@ export async function accessProvableApi({
   };
 }
 
+type EnrichedRecordData = Pick<EnrichedPrivateRecord, "sender" | "recipient" | "value">;
+type RecordTransition = NonNullable<
+  EnrichedPrivateRecord["details"]["execution"]
+>["transitions"][number];
+type RecordTransitionInputWithValue = RecordTransition["inputs"][number] & { value: string };
+
+function shouldSkipPublicToPrivateRecord(rawRecord: AleoPrivateRecord, address: string): boolean {
+  return (
+    rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE &&
+    rawRecord.sender === address
+  );
+}
+
+function getRecordTransition(
+  details: EnrichedPrivateRecord["details"],
+  rawRecord: AleoPrivateRecord,
+  transactionId: string,
+): RecordTransition | null {
+  const recordTransition = details.execution?.transitions[rawRecord.transition_index];
+
+  if (!recordTransition) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: transition at index ${rawRecord.transition_index} not found for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  return recordTransition;
+}
+
+function hasValueField(
+  input: RecordTransition["inputs"][number] | null,
+): input is RecordTransitionInputWithValue {
+  return Boolean(input && "value" in input);
+}
+
+function getTransferArguments(
+  recordTransition: RecordTransition,
+  transactionId: string,
+): {
+  recipientArgument: RecordTransitionInputWithValue;
+  amountArgument: RecordTransitionInputWithValue;
+} | null {
+  if (recordTransition.inputs.length <= AMOUNT_ARG_INDEX) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${AMOUNT_ARG_INDEX + 1} for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
+  // Other input (missing `value` field) would indicate unexpected API data.
+  // In that case we skip processing rather than crash.
+  const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
+  const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
+
+  if (!hasValueField(recipientInput) || !hasValueField(amountInput)) {
+    log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
+    return null;
+  }
+
+  return {
+    recipientArgument: recipientInput,
+    amountArgument: amountInput,
+  };
+}
+
+function enrichPrivateToPublicTransfer({
+  recipientArgument,
+  amountArgument,
+  address,
+}: {
+  recipientArgument: RecordTransitionInputWithValue;
+  amountArgument: RecordTransitionInputWithValue;
+  address: string;
+}): EnrichedRecordData | null {
+  if (recipientArgument.value === address) {
+    return null;
+  }
+
+  return {
+    sender: address,
+    recipient: recipientArgument.value,
+    value: new BigNumber(parseMicrocredits(amountArgument.value)),
+  };
+}
+
+async function enrichOutgoingPrivateTransfer({
+  currency,
+  rawRecord,
+  recordTransition,
+  recipientArgument,
+  amountArgument,
+  viewKey,
+  address,
+}: {
+  currency: CryptoCurrency;
+  rawRecord: AleoPrivateRecord;
+  recordTransition: RecordTransition;
+  recipientArgument: RecordTransitionInputWithValue;
+  amountArgument: RecordTransitionInputWithValue;
+  viewKey: string;
+  address: string;
+}): Promise<EnrichedRecordData> {
+  const [recipientData, amountData] = await Promise.all([
+    sdkClient.decryptCiphertext({
+      currency,
+      ciphertext: recipientArgument.value,
+      tpk: recordTransition.tpk,
+      viewKey,
+      programId: rawRecord.program_name,
+      functionName: rawRecord.function_name,
+      outputIndex: RECIPIENT_ARG_INDEX,
+    }),
+    sdkClient.decryptCiphertext({
+      currency,
+      ciphertext: amountArgument.value,
+      tpk: recordTransition.tpk,
+      viewKey,
+      programId: rawRecord.program_name,
+      functionName: rawRecord.function_name,
+      outputIndex: AMOUNT_ARG_INDEX,
+    }),
+  ]);
+
+  return {
+    sender: address,
+    recipient: recipientData.plaintext,
+    value: new BigNumber(parseMicrocredits(amountData.plaintext)),
+  };
+}
+
+async function enrichOutgoingRecord({
+  currency,
+  rawRecord,
+  recordTransition,
+  transactionId,
+  viewKey,
+  address,
+}: {
+  currency: CryptoCurrency;
+  rawRecord: AleoPrivateRecord;
+  recordTransition: RecordTransition;
+  transactionId: string;
+  viewKey: string;
+  address: string;
+}): Promise<EnrichedRecordData | null> {
+  const transferArguments = getTransferArguments(recordTransition, transactionId);
+  if (!transferArguments) {
+    return null;
+  }
+
+  const { recipientArgument, amountArgument } = transferArguments;
+
+  if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
+    return enrichPrivateToPublicTransfer({
+      recipientArgument,
+      amountArgument,
+      address,
+    });
+  }
+
+  return enrichOutgoingPrivateTransfer({
+    currency,
+    rawRecord,
+    recordTransition,
+    recipientArgument,
+    amountArgument,
+    viewKey,
+    address,
+  });
+}
+
+async function enrichIncomingRecord({
+  currency,
+  rawRecord,
+  transactionId,
+  viewKey,
+  address,
+}: {
+  currency: CryptoCurrency;
+  rawRecord: AleoPrivateRecord;
+  transactionId: string;
+  viewKey: string;
+  address: string;
+}): Promise<EnrichedRecordData | null> {
+  const outputRecord = await sdkClient.decryptRecord({
+    currency,
+    ciphertext: rawRecord.record_ciphertext,
+    viewKey,
+  });
+  const microcredits = outputRecord.data?.microcredits;
+
+  if (!microcredits) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: microcredits missing in decrypted record for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  return {
+    sender: rawRecord.sender,
+    recipient: address,
+    value: new BigNumber(parseMicrocredits(microcredits)),
+  };
+}
+
 export async function enrichPrivateRecord({
   currency,
   rawRecord,
@@ -234,98 +444,38 @@ export async function enrichPrivateRecord({
   const details = await apiClient.getTransactionById(currency, transactionId);
 
   // PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op
-  if (
-    rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE &&
-    rawRecord.sender === address
-  ) {
+  if (shouldSkipPublicToPrivateRecord(rawRecord, address)) {
     return null;
   }
 
-  const recordTransition = details.execution?.transitions[rawRecord.transition_index];
+  const recordTransition = getRecordTransition(details, rawRecord, transactionId);
   if (!recordTransition) {
-    log(
-      "aleo/sync",
-      `enrichPrivateRecord: transition at index ${rawRecord.transition_index} not found for tx ${transactionId}`,
-    );
     return null;
   }
 
-  let recipient = "";
-  let sender = "";
-  let value: BigNumber;
-
-  if (rawRecord.sender === address) {
-    if (recordTransition.inputs.length <= AMOUNT_ARG_INDEX) {
-      log(
-        "aleo/sync",
-        `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${AMOUNT_ARG_INDEX + 1} for tx ${transactionId}`,
-      );
-      return null;
-    }
-
-    // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
-    // Other input (missing `value` field) would indicate unexpected API data.
-    // In that case we skip processing rather than crash.
-    const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
-    const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
-    const recipientArgument = recipientInput && "value" in recipientInput ? recipientInput : null;
-    const amountArgument = amountInput && "value" in amountInput ? amountInput : null;
-
-    if (!recipientArgument || !amountArgument) {
-      log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
-      return null;
-    }
-
-    if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-      if (recipientArgument.value === address) return null;
-      sender = address;
-      recipient = recipientArgument.value;
-      value = new BigNumber(parseMicrocredits(amountArgument.value));
-    } else {
-      const [recipientData, amountData] = await Promise.all([
-        sdkClient.decryptCiphertext({
+  const enrichedRecordData =
+    rawRecord.sender === address
+      ? await enrichOutgoingRecord({
           currency,
-          ciphertext: recipientArgument.value,
-          tpk: recordTransition.tpk,
+          rawRecord,
+          recordTransition,
+          transactionId,
           viewKey,
-          programId: rawRecord.program_name,
-          functionName: rawRecord.function_name,
-          outputIndex: RECIPIENT_ARG_INDEX,
-        }),
-        sdkClient.decryptCiphertext({
+          address,
+        })
+      : await enrichIncomingRecord({
           currency,
-          ciphertext: amountArgument.value,
-          tpk: recordTransition.tpk,
+          rawRecord,
+          transactionId,
           viewKey,
-          programId: rawRecord.program_name,
-          functionName: rawRecord.function_name,
-          outputIndex: AMOUNT_ARG_INDEX,
-        }),
-      ]);
-      sender = address;
-      recipient = recipientData.plaintext;
-      value = new BigNumber(parseMicrocredits(amountData.plaintext));
-    }
-  } else {
-    const outputRecord = await sdkClient.decryptRecord({
-      currency,
-      ciphertext: rawRecord.record_ciphertext,
-      viewKey,
-    });
-    const microcredits = outputRecord.data?.microcredits;
-    if (!microcredits) {
-      log(
-        "aleo/sync",
-        `enrichPrivateRecord: microcredits missing in decrypted record for tx ${transactionId}`,
-      );
-      return null;
-    }
-    sender = rawRecord.sender;
-    recipient = address;
-    value = new BigNumber(parseMicrocredits(microcredits));
+          address,
+        });
+
+  if (!enrichedRecordData) {
+    return null;
   }
 
-  return { rawRecord, details, sender, recipient, value };
+  return { rawRecord, details, ...enrichedRecordData };
 }
 
 function splitPublicAndSemiPublicOperations(
