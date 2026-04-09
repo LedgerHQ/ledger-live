@@ -44,6 +44,16 @@ export async function addTeamOwner(team: Team) {
   await allure.feature(teamString);
 }
 
+export async function attachMergedFeatureFlags(
+  testInfo: TestInfo,
+  mergedFeatureFlags: unknown,
+): Promise<void> {
+  await testInfo.attach("Merged Feature Flags", {
+    body: Buffer.from(JSON.stringify(mergedFeatureFlags, null, 2)),
+    contentType: "application/json",
+  });
+}
+
 async function attachSpeculosScreenshots(testInfo: TestInfo): Promise<void> {
   const speculosPort = getEnv("SPECULOS_API_PORT");
   const navigatedScreenshots = drainSpeculosScreenshots(speculosPort);
