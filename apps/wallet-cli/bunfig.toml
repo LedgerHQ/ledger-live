@@ -1,0 +1,4 @@
+# Bun runtime configuration for wallet-cli.
+# Preload runs before any module is evaluated — required to patch tronweb's missing
+# proto/goog globals before Bun eagerly initialises the ESM-bundled CJS require()s.
+preload = ["./src/bun-preload.ts"]

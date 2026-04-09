@@ -1,0 +1,69 @@
+{
+  "name": "@ledgerhq/wallet-cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ledger Wallet CLI using Device Management Kit (USB)",
+  "bin": {
+    "wallet-cli": "./src/cli.ts"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "bun run ./src/cli.ts",
+    "dev": "bunli dev",
+    "build": "bunli build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "bun test src/",
+    "lint": "oxlint src bunli.config.ts",
+    "lint:ci": "oxlint src bunli.config.ts --quiet",
+    "lint:fix": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts && oxlint src bunli.config.ts --fix --quiet",
+    "format": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts",
+    "format:check": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts --check"
+  },
+  "dependencies": {
+    "@bunli/core": "0.9.1",
+    "@bunli/utils": "0.6.0",
+    "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
+    "@ledgerhq/coin-solana": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@shared/schema-primitives": "workspace:^",
+    "bignumber.js": "catalog:",
+    "bunli": "0.9.1",
+    "debug": "4.4.3",
+    "purify-ts": "2.1.0",
+    "react": "catalog:",
+    "rxjs": "catalog:",
+    "usb": "2.9.0",
+    "yocto-spinner": "0.2.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0",
+    "@types/debug": "4.1.12",
+    "@types/node": "catalog:",
+    "bun-types": "1.3.0",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react-devtools-core": "7.0.1",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "bun": ">=1.1.0"
+  }
+}

@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index ea456c2fb65a6e891fb0dff5fbb254fc267fdc22..0c7afeb9f33e25da33c004d932c1e720c86bde99 100644
+--- a/package.json
++++ b/package.json
+@@ -2,7 +2,7 @@
+   "name": "bigint-buffer",
+   "version": "1.1.5",
+   "description": "bigint to buffer conversion with native support",
+-  "main": "dist/node.js",
++  "main": "dist/browser.js",
+   "browser": {
+     "./dist/node.js": "./dist/browser.js"
+   },

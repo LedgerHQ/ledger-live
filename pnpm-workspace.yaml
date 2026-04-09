@@ -196,3 +196,6 @@ minimumReleaseAgeExclude:
   # TypeScript / Node types: new releases are often younger than minimumReleaseAge
   - typescript
   - "@types/node"
+  # bunli CLI framework (wallet-cli)
+  - bunli
+  - "@bunli/*"
