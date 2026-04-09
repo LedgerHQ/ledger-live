@@ -20,3 +20,4 @@ export const TronNoUnfrozenResource = createCustomErrorClass("TronNoUnfrozenReso
 export const TronInvalidUnDelegateResourceAmount = createCustomErrorClass(
   "TronInvalidUnDelegateResourceAmount",
 );
+export const TronEmptyPage = createCustomErrorClass("TronEmptyPage");
