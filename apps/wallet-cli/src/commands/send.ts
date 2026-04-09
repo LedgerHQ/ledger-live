@@ -7,49 +7,8 @@ import { parseAccountDescriptor, resolveAccountArg, OutputFormatSchema } from ".
 import { TransactionIntentSchema, type TransactionIntent } from "../wallet/intents";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { withCurrencyDeviceSession } from "../session/bridge-device-session";
-import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { spinner, colors, writeStdout } from "../shared/ui";
 import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
-
-type SendFlags = {
-  account?: string;
-  to: string;
-  amount: string;
-  "fee-per-byte"?: string;
-  rbf?: boolean;
-  mode?: string;
-  validator?: string;
-  "stake-account"?: string;
-  memo?: string;
-  "dry-run": boolean;
-  output: "human" | "json";
-};
-
-type IntentBuilder = (flags: SendFlags) => unknown;
-
-const INTENT_BUILDERS: Record<string, IntentBuilder> = {
-  bitcoin: flags => ({
-    family: "bitcoin",
-    recipient: flags.to,
-    amount: flags.amount,
-    feePerByte: flags["fee-per-byte"],
-    rbf: flags.rbf,
-  }),
-  evm: flags => ({
-    family: "evm",
-    recipient: flags.to,
-    amount: flags.amount,
-  }),
-  solana: flags => ({
-    family: "solana",
-    recipient: flags.to,
-    amount: flags.amount,
-    mode: flags.mode,
-    validator: flags.validator,
-    stakeAccount: flags["stake-account"],
-    memo: flags.memo,
-  }),
-};
 
 export default defineCommand({
   name: "send",
@@ -98,20 +57,36 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
     const wallet = new WalletAdapter();
     const isHuman = flags.output === "human";
     const dryRun = flags["dry-run"];
 
     // Build the TransactionIntent based on the currency family
     const { family } = getCryptoCurrencyById(descriptor.currencyId);
-    const builder = INTENT_BUILDERS[family];
-    if (!builder) {
-      throw new Error(
-        `Unsupported family: ${family}. Supported: ${Object.keys(INTENT_BUILDERS).join(", ")}`,
-      );
+    let intentData: unknown;
+    if (family === "bitcoin") {
+      intentData = {
+        family: "bitcoin",
+        recipient: flags.to,
+        amount: flags.amount,
+        feePerByte: flags["fee-per-byte"],
+        rbf: flags.rbf,
+      };
+    } else if (family === "evm") {
+      intentData = { family: "evm", recipient: flags.to, amount: flags.amount };
+    } else if (family === "solana") {
+      intentData = {
+        family: "solana",
+        recipient: flags.to,
+        amount: flags.amount,
+        mode: flags.mode,
+        validator: flags.validator,
+        stakeAccount: flags["stake-account"],
+        memo: flags.memo,
+      };
+    } else {
+      throw new Error(`Unsupported family: ${family}. Supported: bitcoin, evm, solana`);
     }
-    const intentData = builder(flags as SendFlags);
 
     let intent: TransactionIntent;
     try {
@@ -120,7 +95,7 @@ export default defineCommand({
       if (!isHuman) {
         writeStdout(
           JSON.stringify(
-            makeErrorEnvelope("send", HumanFormatter.formatError(e), network),
+            makeErrorEnvelope("send", HumanFormatter.formatError(e), descriptor.currencyId),
             null,
             2,
           ),
@@ -146,7 +121,7 @@ export default defineCommand({
             JSON.stringify(
               makeEnvelope(
                 "send",
-                network,
+                descriptor.currencyId,
                 {
                   dry_run: true,
                   recipient: prepared.recipient,
@@ -238,7 +213,7 @@ export default defineCommand({
       if (!isHuman) {
         writeStdout(
           JSON.stringify(
-            makeErrorEnvelope("send", HumanFormatter.formatError(e), network),
+            makeErrorEnvelope("send", HumanFormatter.formatError(e), descriptor.currencyId),
             null,
             2,
           ),

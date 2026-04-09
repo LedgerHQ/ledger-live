@@ -25,7 +25,7 @@ export class AlpacaAdapter {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
     const api = getAlpacaApi(currency.id, "local");
-    // Pending better bridge API — evmBridge used as interim token resolver
+    // TODO: replace with the better bridge API
     const bridgeApi = evmBridge(currency);
 
     const balanceRes: AlpacaAssetEntry[] = await api.getBalance(address);

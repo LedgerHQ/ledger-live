@@ -13,7 +13,6 @@
     "build": "bunli build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
-    "coverage": "bun test src/ --coverage",
     "lint": "oxlint src bunli.config.ts",
     "lint:ci": "oxlint src bunli.config.ts --quiet",
     "lint:fix": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts && oxlint src bunli.config.ts --fix --quiet",
@@ -47,16 +46,9 @@
     "purify-ts": "2.1.0",
     "react": "catalog:",
     "rxjs": "catalog:",
-    "usb": "2.17.0",
+    "usb": "2.9.0",
     "yocto-spinner": "0.2.0",
     "zod": "catalog:"
-  },
-  "optionalDependencies": {
-    "@opentui/core-darwin-arm64": "0.1.97",
-    "@opentui/core-darwin-x64": "0.1.97",
-    "@opentui/core-linux-arm64": "0.1.97",
-    "@opentui/core-linux-x64": "0.1.97",
-    "@opentui/core-win32-x64": "0.1.97"
   },
   "devDependencies": {
     "@oxlint/binding-darwin-arm64": "1.51.0",
@@ -65,7 +57,7 @@
     "@oxlint/binding-win32-x64-msvc": "1.51.0",
     "@types/debug": "4.1.12",
     "@types/node": "catalog:",
-    "bun-types": "1.3.12",
+    "bun-types": "1.3.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react-devtools-core": "7.0.1",

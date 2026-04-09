@@ -252,13 +252,7 @@ export class NodeWebUsbTransport implements Transport {
     );
   }
 
-  /**
-   * No-op: startDiscovering performs a one-shot USB scan that completes
-   * on its own, so there is no ongoing discovery to cancel.
-   */
-  stopDiscovering(): void {
-    this._logger.debug("stopDiscovering (WebUSB)");
-  }
+  stopDiscovering(): void {}
 
   private startListeningToConnectionEvents(): void {
     this._logger.debug("startListeningToConnectionEvents (WebUSB)");
@@ -379,10 +373,12 @@ export class NodeWebUsbTransport implements Transport {
       this._logger.error("No matching device connection found", {
         data: { connectedDevice: params.connectedDevice },
       });
-      return Left(new UnknownDeviceError(`Unknown device ${params.connectedDevice.id}`));
+      return Promise.resolve(
+        Left(new UnknownDeviceError(`Unknown device ${params.connectedDevice.id}`)),
+      );
     }
-    sm.closeConnection();
-    return Right(undefined);
+    void sm.closeConnection();
+    return Promise.resolve(Right(undefined));
   }
 
   async handleDeviceDisconnection(native: NativeUsbDevice): Promise<void> {
@@ -428,7 +424,7 @@ export class NodeWebUsbTransport implements Transport {
       machine.eventDeviceConnected();
     } catch (e) {
       this._logger.error("Error while reconnecting to device", { data: { error: e } });
-      machine.closeConnection();
+      void machine.closeConnection();
     }
   }
 
@@ -470,7 +466,9 @@ export class NodeWebUsbTransport implements Transport {
 
   destroy(): void {
     this.stopListeningToConnectionEvents();
-    this._deviceConnectionsByWebUsbDevice.forEach(sm => sm.closeConnection());
+    this._deviceConnectionsByWebUsbDevice.forEach(sm => {
+      void sm.closeConnection();
+    });
     this._deviceConnectionsPendingReconnection.clear();
   }
 }

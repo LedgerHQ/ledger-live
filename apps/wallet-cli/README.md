@@ -1,6 +1,6 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Experimental command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **0.1.0** (see `bunli.config.ts`).
+Experimental command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://github.com/). Version **0.1.0** (see `bunli.config.ts`).
 
 > This software is experimental. It is provided “as is,” without obligation to develop, support, or repair features. Ledger shall not be liable for damages arising from its use.
 
@@ -9,6 +9,8 @@ Experimental command-line tool for Ledger Wallet flows over **USB**, built on th
 wallet-cli is **not production-ready**. Behavior and flags may change without notice.
 
 **Supported currencies** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). This is not full Ledger Live coverage and not multi-chain parity with the desktop or mobile apps.
+
+**Not in scope for v0:** send, receive, and other broad wallet flows. More commands may be added later.
 
 ### Commands
 

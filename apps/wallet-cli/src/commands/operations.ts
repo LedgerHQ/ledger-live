@@ -4,7 +4,7 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { WalletAdapter } from "../wallet";
 import { HumanFormatter, JsonFormatter } from "../wallet/formatter";
 import { parseAccountDescriptor, resolveAccountArg, OutputFormatSchema } from "../wallet/models";
-import { toV1, serializeV1, networkStringFromCurrencyId } from "../shared/accountDescriptor";
+import { toV1, serializeV1 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
 import { withSpinner, colors, writeStdout } from "../shared/ui";
 import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
@@ -31,7 +31,6 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
     const descriptorV1Str = serializeV1(toV1(descriptor));
     walletCliDebug(
       `operations: account=${descriptor.id}, limit=${flags.limit ?? "default"}, output=${flags.output}`,
@@ -41,53 +40,56 @@ export default defineCommand({
 
     try {
       const page = await withSpinner(
-        `Fetching operations for ${network}…`,
+        `Fetching operations for ${descriptor.currencyId}…`,
         "Operations fetched",
         () => wallet.getAccountOperations(descriptor, { limit: flags.limit, cursor: flags.cursor }),
         isHuman,
       );
 
       const fmt = new HumanFormatter(setupCalClientStore());
-      if (isHuman) {
-        for (const op of page.operations) {
-          const line = await fmt.formatOperation(op, descriptor.currencyId);
-          writeStdout(op.parentId ? `  ${line}` : line);
-        }
-        if (page.nextCursor) {
-          const cursorLabel = colors.dim(`nextCursor: ${page.nextCursor}`);
-          process.stderr.write(`\n${cursorLabel}\n`);
-        }
-      } else {
+      if (!isHuman) {
         // accountId remapped to V1 descriptor — internal live-common id is intentionally dropped
         const jsonFmt = new JsonFormatter(fmt);
-        const jsonOperations = await jsonFmt.operations(
-          page.operations,
-          descriptor.currencyId,
-          descriptorV1Str,
-        );
         writeStdout(
           JSON.stringify(
             makeEnvelope(
               "operations",
-              network,
-              { operations: jsonOperations, nextCursor: page.nextCursor },
+              descriptor.currencyId,
+              {
+                operations: await jsonFmt.operations(
+                  page.operations,
+                  descriptor.currencyId,
+                  descriptorV1Str,
+                ),
+                nextCursor: page.nextCursor,
+              },
               descriptor.id,
             ),
             null,
             2,
           ),
         );
+      } else {
+        for (const op of page.operations) {
+          const line = await fmt.formatOperation(op, descriptor.currencyId);
+          writeStdout(op.parentId ? `  ${line}` : line);
+        }
+        if (page.nextCursor) {
+          process.stderr.write(`\n${colors.dim(`nextCursor: ${page.nextCursor}`)}\n`);
+        }
       }
     } catch (e) {
-      if (isHuman) throw e;
-      writeStdout(
-        JSON.stringify(
-          makeErrorEnvelope("operations", HumanFormatter.formatError(e), network),
-          null,
-          2,
-        ),
-      );
-      process.exit(1);
+      if (!isHuman) {
+        writeStdout(
+          JSON.stringify(
+            makeErrorEnvelope("operations", HumanFormatter.formatError(e), descriptor.currencyId),
+            null,
+            2,
+          ),
+        );
+        process.exit(1);
+      }
+      throw e;
     }
   },
 });

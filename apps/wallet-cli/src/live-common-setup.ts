@@ -11,13 +11,6 @@ import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 
 /**
- * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
- */
-if (!process.env.USER_ID) {
-  process.env.USER_ID = "wallet-cli";
-}
-
-/**
  * Wallet-cli-specific coin-module loaders (bitcoin, evm, solana only).
  *
  * We define these inline instead of importing the shared coinModuleLoaders from live-common
@@ -53,12 +46,24 @@ const walletCliLoaders: CoinModuleLoader[] = [
   },
 ];
 
-setWalletAPIVersion(WALLET_API_VERSION);
-registerCoinModules(walletCliLoaders);
-setSupportedCurrencies(["bitcoin", "ethereum", "solana"]);
-LiveConfig.setConfig(liveConfig);
-setupCalClientStore();
-setSolanaLdmkEnabled(true);
-registerWalletCliDmkTransport();
+let initialized = false;
 
-setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");
+/**
+ * One-time live-common + DMK transport registration for wallet-cli (bitcoin, ethereum, solana only).
+ */
+export function initWalletCliLiveCommon(): void {
+  if (initialized) {
+    return;
+  }
+  initialized = true;
+
+  setWalletAPIVersion(WALLET_API_VERSION);
+  registerCoinModules(walletCliLoaders);
+  setSupportedCurrencies(["bitcoin", "ethereum", "solana"]);
+  LiveConfig.setConfig(liveConfig);
+  setupCalClientStore();
+  setSolanaLdmkEnabled(true);
+  registerWalletCliDmkTransport();
+
+  setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");
+}

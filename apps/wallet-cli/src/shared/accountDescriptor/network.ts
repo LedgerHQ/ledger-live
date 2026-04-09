@@ -61,15 +61,6 @@ export function serializeNetwork(network: Network): string {
   return `${network.name}:${network.env}`;
 }
 
-/**
- * Shorthand for serializeNetwork(networkFromCurrencyId(currencyId)).
- * Converts a live-common currencyId directly to a canonical network string.
- * e.g. "bitcoin_testnet" → "bitcoin:testnet", "ethereum" → "ethereum:main"
- */
-export function networkStringFromCurrencyId(currencyId: string): string {
-  return serializeNetwork(networkFromCurrencyId(currencyId));
-}
-
 // ---------------------------------------------------------------------------
 // Network ↔ live-common currencyId mapping
 // ---------------------------------------------------------------------------

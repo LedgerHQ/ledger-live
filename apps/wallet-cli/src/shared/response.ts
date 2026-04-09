@@ -8,7 +8,7 @@ export function makeEnvelope(
     status: "success",
     command,
     network,
-    ...(account == null ? {} : { account }),
+    ...(account != null ? { account } : {}),
     ...data,
     timestamp: new Date().toISOString(),
   };
@@ -22,7 +22,7 @@ export function makeErrorEnvelope(
   return {
     status: "error",
     command,
-    ...(network == null ? {} : { network }),
+    ...(network != null ? { network } : {}),
     message,
     timestamp: new Date().toISOString(),
   };

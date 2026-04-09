@@ -1,6 +1,7 @@
 import {
   formatApduReceivedLog,
   formatApduSentLog,
+  FramerUtils,
   OpeningConnectionError,
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
@@ -46,9 +47,9 @@ function bufferFromInTransfer(data: DataView): Uint8Array {
 export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSenderDependencies> {
   private dependencies: NodeWebUsbApduSenderDependencies;
   private readonly apduSenderFactory: ApduSenderServiceFactory;
-  private readonly apduSender: ReturnType<ApduSenderServiceFactory>;
+  private apduSender: ReturnType<ApduSenderServiceFactory>;
   private readonly apduReceiverFactory: ApduReceiverServiceFactory;
-  private readonly apduReceiver: ReturnType<ApduReceiverServiceFactory>;
+  private apduReceiver: ReturnType<ApduReceiverServiceFactory>;
   private readonly logger: LoggerPublisherService;
   private sendApduPromiseResolver: Maybe<(result: SendApduResult) => void> = Nothing;
   private abortTimeout: Maybe<ReturnType<typeof setTimeout>> = Nothing;
@@ -60,7 +61,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     apduReceiverFactory,
     loggerFactory,
   }: NodeWebUsbApduSenderConstructorArgs) {
-    const channel = Maybe.of(crypto.getRandomValues(new Uint8Array(2)));
+    const channel = Maybe.of(FramerUtils.numberToByteArray(Math.floor(Math.random() * 0xffff), 2));
     this.dependencies = dependencies;
     this.apduSenderFactory = apduSenderFactory;
     this.apduSender = this.apduSenderFactory({
@@ -162,7 +163,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     const { device } = this.dependencies;
 
     if (!device.opened) {
-      return Left(new OpeningConnectionError("Device not connected"));
+      return Promise.resolve(Left(new OpeningConnectionError("Device not connected")));
     }
 
     const completion = new Promise<SendApduResult>(resolve => {

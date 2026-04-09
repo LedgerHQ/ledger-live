@@ -16,7 +16,6 @@ export {
   parseNetworkArg,
   serializeNetwork,
   networkFromCurrencyId,
-  networkStringFromCurrencyId,
   currencyIdFromNetwork,
   UnknownNetworkError,
 } from "./network";

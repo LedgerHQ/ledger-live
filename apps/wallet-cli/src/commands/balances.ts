@@ -4,7 +4,6 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { WalletAdapter } from "../wallet";
 import { HumanFormatter, JsonFormatter } from "../wallet/formatter";
 import { parseAccountDescriptor, resolveAccountArg, OutputFormatSchema } from "../wallet/models";
-import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
 import { withSpinner, writeStdout } from "../shared/ui";
 import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
@@ -24,46 +23,50 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
     walletCliDebug(`balances: account=${descriptor.id}, output=${flags.output}`);
     const wallet = new WalletAdapter();
     const isHuman = flags.output === "human";
 
     try {
       const balances = await withSpinner(
-        `Fetching balances for ${network}…`,
+        `Fetching balances for ${descriptor.currencyId}…`,
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
         isHuman,
       );
 
       const fmt = new HumanFormatter(setupCalClientStore());
-      if (isHuman) {
-        for (const b of balances) {
-          const line = await fmt.formatBalance(b);
-          writeStdout(line);
-        }
-      } else {
+      if (!isHuman) {
         const jsonFmt = new JsonFormatter(fmt);
-        const jsonBalances = await jsonFmt.balances(balances);
         writeStdout(
           JSON.stringify(
-            makeEnvelope("balances", network, { balances: jsonBalances }, descriptor.id),
+            makeEnvelope(
+              "balances",
+              descriptor.currencyId,
+              { balances: await jsonFmt.balances(balances) },
+              descriptor.id,
+            ),
             null,
             2,
           ),
         );
+      } else {
+        for (const b of balances) {
+          writeStdout(await fmt.formatBalance(b));
+        }
       }
     } catch (e) {
-      if (isHuman) throw e;
-      writeStdout(
-        JSON.stringify(
-          makeErrorEnvelope("balances", HumanFormatter.formatError(e), network),
-          null,
-          2,
-        ),
-      );
-      process.exit(1);
+      if (!isHuman) {
+        writeStdout(
+          JSON.stringify(
+            makeErrorEnvelope("balances", HumanFormatter.formatError(e), descriptor.currencyId),
+            null,
+            2,
+          ),
+        );
+        process.exit(1);
+      }
+      throw e;
     }
   },
 });

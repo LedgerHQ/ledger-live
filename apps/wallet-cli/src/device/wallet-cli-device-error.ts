@@ -11,17 +11,6 @@ function isSendApduTimeoutTagged(error: unknown): error is { _tag: "SendApduTime
   );
 }
 
-const TRANSPORT_FRAMING_TAGS = new Set(["ReceiverApduError", "UnknownDeviceExchangeError"]);
-
-function isTransportFramingError(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "_tag" in error &&
-    TRANSPORT_FRAMING_TAGS.has((error as { _tag: string })._tag)
-  );
-}
-
 /**
  * Maps device / transport errors to concise wallet-cli messages. Passes through unrelated errors.
  */
@@ -66,13 +55,6 @@ export function toWalletCliDeviceError(error: unknown): Error {
   if (error instanceof SendApduTimeoutError || isSendApduTimeoutTagged(error)) {
     return new Error(
       "[wallet-cli] Timed out talking to the Ledger over USB. The device may be waiting for your PIN, locked, or busy. Retry the command, check the cable, and make sure no other app is using the device.",
-      { cause: error },
-    );
-  }
-
-  if (isTransportFramingError(error)) {
-    return new Error(
-      "[wallet-cli] Could not communicate with the device (garbled APDU). The device may be locked or busy. Unlock it and try again.",
       { cause: error },
     );
   }

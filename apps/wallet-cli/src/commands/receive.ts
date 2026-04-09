@@ -1,13 +1,10 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { HumanFormatter } from "../wallet/formatter";
 import { parseAccountDescriptor, resolveAccountArg, OutputFormatSchema } from "../wallet/models";
-import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { spinner, colors, writeStdout } from "../shared/ui";
-import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
 
 export default defineCommand({
   name: "receive",
@@ -29,46 +26,28 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
     const wallet = new WalletAdapter();
     const isHuman = flags.output === "human";
 
     const outputAddress = (address: string) =>
-      writeStdout(
-        isHuman
-          ? address
-          : JSON.stringify(
-              makeEnvelope("receive", network, { address }, descriptor.id),
-              null,
-              2,
-            ),
-      );
+      writeStdout(isHuman ? address : JSON.stringify({ address }));
 
-    try {
-      if (flags.verify) {
-        const spin = isHuman
-          ? spinner(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`)
-          : null;
+    if (!flags.verify) {
+      outputAddress(await wallet.getFreshAddress(descriptor));
+    } else {
+      const spin = isHuman
+        ? spinner(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`)
+        : null;
 
-        let address = "";
-        await withCurrencyDeviceSession(descriptor.currencyId, async () => {
-          spin?.success("Device session established");
-          const verifySpin = isHuman ? spinner("Confirm address on your Ledger device…") : null;
-          address = await wallet.verifyAddress(descriptor, WALLET_CLI_DMK_DEVICE_ID);
-          verifySpin?.success("Address confirmed on device");
-        });
+      let address = "";
+      await withCurrencyDeviceSession(descriptor.currencyId, async () => {
+        spin?.success("Device session established");
+        const verifySpin = isHuman ? spinner("Confirm address on your Ledger device…") : null;
+        address = await wallet.verifyAddress(descriptor, WALLET_CLI_DMK_DEVICE_ID);
+        verifySpin?.success("Address confirmed on device");
+      });
 
-        outputAddress(address);
-      } else {
-        const address = await wallet.getFreshAddress(descriptor);
-        outputAddress(address);
-      }
-    } catch (e) {
-      if (isHuman) throw e;
-      writeStdout(
-        JSON.stringify(makeErrorEnvelope("receive", HumanFormatter.formatError(e), network), null, 2),
-      );
-      process.exit(1);
+      outputAddress(address);
     }
   },
 });
