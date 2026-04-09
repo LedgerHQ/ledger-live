@@ -1,14 +1,17 @@
 import React from "react";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
 import { PrivacyUpdateSheet } from "../components/PrivacyUpdateSheet";
+import { AnalyticsConsentSheetBackgroundGradient } from "../components/AnalyticsConsentSheetBackgroundGradient";
 import { TwoCtaConsentSheet } from "../components/TwoCtaConsentSheet";
 
 export type AnalyticsConsentDrawerViewProps = Readonly<{
@@ -34,6 +37,16 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
   const { t } = useTranslation();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.en);
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const styles = useStyleSheet(
+    theme => ({
+      sheetSurface: {
+        position: "relative",
+        width: "100%",
+        backgroundColor: theme.colors.bg.canvasSheet,
+      },
+    }),
+    [],
+  );
 
   if (!isDrawerOpen) return null;
 
@@ -93,7 +106,8 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
       testID="analytics-consent-drawer"
     >
       <BottomSheetView style={{ paddingHorizontal: 0, paddingBottom }}>
-        <>
+        <View style={styles.sheetSurface}>
+          <AnalyticsConsentSheetBackgroundGradient />
           <TrackScreen
             key={phase}
             category="AnalyticsConsentDrawer"
@@ -103,7 +117,7 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
             refreshSource={false}
           />
           {sheetChrome}
-        </>
+        </View>
       </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
