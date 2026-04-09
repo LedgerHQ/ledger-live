@@ -82,6 +82,7 @@ jest.mock("@ledgerhq/live-common/explorers", () => ({
   getStakePoolExplorer: jest.fn(),
 }));
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockAccountBase: CardanoAccount = {
   type: "Account",
   id: "test-account-id",
@@ -98,11 +99,12 @@ const mockAccountBase: CardanoAccount = {
 
 describe("CardanoDelegations", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockNavigate.mockClear();
   });
 
   it("renders null if not a Cardano account", () => {
     const { toJSON } = render(
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       <CardanoDelegations account={{ type: "TokenAccount" } as unknown as CardanoAccount} />,
     );
     expect(toJSON()).toBeNull();
