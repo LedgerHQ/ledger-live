@@ -97,7 +97,6 @@ export async function estimateFees({
       };
     }
     let estimate: Estimate;
-    console.log("transaction.mode", transaction.mode);
     switch (transaction.mode) {
       case "send":
         estimate = await tezosToolkit.estimate.transfer({

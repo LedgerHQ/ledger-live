@@ -1,4 +1,8 @@
-import { normalizePublicKeyForAddress, parseTezosTokenAsset, resolveTezosOperationMode } from "./utils";
+import {
+  normalizePublicKeyForAddress,
+  parseTezosTokenAsset,
+  resolveTezosOperationMode,
+} from "./utils";
 
 describe("parseTezosTokenAsset", () => {
   it("returns null for native asset", () => {
@@ -10,7 +14,12 @@ describe("parseTezosTokenAsset", () => {
   });
 
   it("parses KT1-only reference as token id 0", () => {
-    expect(parseTezosTokenAsset({ type: "token", assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU" })).toEqual({
+    expect(
+      parseTezosTokenAsset({
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
+      }),
+    ).toEqual({
       contractAddress: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
       tokenId: 0,
     });
@@ -18,7 +27,10 @@ describe("parseTezosTokenAsset", () => {
 
   it("parses contract:tokenId reference", () => {
     expect(
-      parseTezosTokenAsset({ type: "token", assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:42" }),
+      parseTezosTokenAsset({
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:42",
+      }),
     ).toEqual({
       contractAddress: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
       tokenId: 42,
@@ -27,7 +39,10 @@ describe("parseTezosTokenAsset", () => {
 
   it("returns null for invalid token id suffix", () => {
     expect(
-      parseTezosTokenAsset({ type: "token", assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:abc" }),
+      parseTezosTokenAsset({
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:abc",
+      }),
     ).toBeNull();
   });
 

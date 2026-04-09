@@ -98,7 +98,6 @@ export async function craftTransaction(
   }
 
   let type: TransactionType;
-  console.log("transaction.type", transaction.type);
   switch (transaction.type) {
     case "send": {
       type = "OUT";
