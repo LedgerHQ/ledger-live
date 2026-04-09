@@ -83,6 +83,22 @@ describe("History integration", () => {
     });
   }
 
+  it("marks operations as seen when leaving the History page", () => {
+    const { unmount, store } = render(<History />, {
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        history: { lastSeenOperationDate: null },
+      },
+    });
+
+    expect(store.getState().history.lastSeenOperationDate).toBeNull();
+
+    unmount();
+
+    expect(store.getState().history.lastSeenOperationDate).not.toBeNull();
+  });
+
   it("should render the table header columns", async () => {
     renderHistory();
 
