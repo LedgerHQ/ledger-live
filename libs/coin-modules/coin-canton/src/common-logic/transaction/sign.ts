@@ -12,31 +12,30 @@ export async function signTransaction(
   derivationPath: string,
   transactionData: PrepareTransferResponse | PrepareTransactionResponse | OnboardingPrepareResponse,
 ): Promise<CantonSignature> {
-  let signature: CantonSignature;
+  let signPayload;
 
-  // Check if it's an OnboardingPrepareResponse (has transactions property)
+  // OnboardingPrepareResponse — sign topology transactions as untyped versioned messages
   if ("transactions" in transactionData && transactionData.transactions) {
     const challenge = getTransactionChallenge(transactionData);
+    const { transactions } = transactionData;
 
-    const transactions = [
-      transactionData.transactions.namespace_transaction.serialized,
-      transactionData.transactions.party_to_key_transaction.serialized,
-      transactionData.transactions.party_to_participant_transaction.serialized,
-    ];
-
-    signature = await signer.signTransaction(derivationPath, {
-      transactions,
-      ...(challenge ? { challenge } : {}),
-    });
-  } else if ("json" in transactionData) {
-    // It's a PrepareTransferResponse or PrepareTransactionResponse with json property
-    const components = splitTransaction(transactionData.json);
-    signature = await signer.signTransaction(derivationPath, components);
+    signPayload = {
+      transactions: [
+        transactions.namespace_transaction.serialized,
+        transactions.party_to_key_transaction.serialized,
+        transactions.party_to_participant_transaction.serialized,
+      ],
+      ...(challenge && { challenge }),
+    };
   } else {
-    // It's a JSON transaction object (from craftTransaction)
-    const components = splitTransaction(transactionData as any);
-    signature = await signer.signTransaction(derivationPath, components);
+    // PrepareTransferResponse / PrepareTransactionResponse (.json) or raw JSON from craftTransaction
+    const rawTransactionData =
+      "json" in transactionData ? transactionData.json : transactionData;
+
+    signPayload = splitTransaction(rawTransactionData);
   }
+
+  const signature = await signer.signTransaction(derivationPath, signPayload);
 
   if (!signature?.signature) {
     throw new Error("Device returned empty signature");
