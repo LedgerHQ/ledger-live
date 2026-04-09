@@ -129,7 +129,7 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-      expect(await screen.findByTestId("crypto-addresses-button")).toBeVisible();
+      expect(await screen.findByTestId("add-account-cta")).toBeVisible();
     });
 
     it("should not display the cryptos list nor the crypto accounts button when assetSection is disabled", async () => {
@@ -140,7 +140,7 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
+      expect(screen.queryByTestId("add-account-cta")).toBeNull();
     });
 
     it("should display the fallback read-only cryptos list when user has no accounts and assetSection is disabled", async () => {
@@ -152,7 +152,7 @@ describe("Portfolio Screen", () => {
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
       expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
+      expect(screen.queryByTestId("add-account-cta")).toBeNull();
     });
 
     it("should display the cryptos list with DADA API assets when no accounts and assetSection is enabled", async () => {
@@ -176,7 +176,7 @@ describe("Portfolio Screen", () => {
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
       expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
+      expect(screen.queryByTestId("add-account-cta")).toBeNull();
     });
   });
 

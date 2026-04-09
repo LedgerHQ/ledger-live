@@ -31,7 +31,7 @@ export const CryptoAddressesButton: React.FC = () => {
 
   return (
     <>
-      <Card onPress={onPress} testID="crypto-addresses-button">
+      <Card onPress={onPress} testID="add-account-cta">
         <CardHeader>
           <CardLeading>
             <Spot appearance="icon" icon={Wallet} />
