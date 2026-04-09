@@ -1,11 +1,9 @@
 import { useCallback } from "react";
+import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
-import {
-  openModularDrawer,
-  closeModularDrawer,
-  modularDrawerStateSelector,
-} from "~/reducers/modularDrawer";
+import { openModularDrawer, closeModularDrawer } from "~/reducers/modularDrawer";
+import type { State } from "~/reducers/types";
 import { DrawerParams, DrawerRemoteParams } from "../types";
 import { useCallbackRegistry } from "./useCallbackRegistry";
 import { generateCallbackId } from "../utils/callbackIdGenerator";
@@ -37,18 +35,28 @@ export const useModularDrawerController = () => {
     useCase,
     uiUseCase,
     areCurrenciesFiltered,
-  } = useSelector(modularDrawerStateSelector);
+  } = useSelector(
+    (state: State) => ({
+      isOpen: state.modularDrawer.isOpen,
+      preselectedCurrencies: state.modularDrawer.preselectedCurrencies,
+      callbackId: state.modularDrawer.callbackId,
+      enableAccountSelection: state.modularDrawer.enableAccountSelection,
+      assetsConfiguration: state.modularDrawer.assetsConfiguration,
+      networksConfiguration: state.modularDrawer.networksConfiguration,
+      useCase: state.modularDrawer.useCase,
+      uiUseCase: state.modularDrawer.uiUseCase,
+      areCurrenciesFiltered: state.modularDrawer.areCurrenciesFiltered,
+    }),
+    shallowEqual,
+  );
 
-  const { registerCallback, executeCallback, unregisterCallback, resetAll } = useCallbackRegistry();
+  const { registerCallback, executeCallback, resetAll } = useCallbackRegistry();
 
   const openDrawer = useCallback(
     (params?: DrawerParams) => {
       const { onAccountSelected, ...otherParams } = params || {};
 
       resetAll();
-      if (callbackId) {
-        unregisterCallback(callbackId);
-      }
 
       let callbackIdToUse: string | undefined;
       if (onAccountSelected) {
@@ -69,7 +77,7 @@ export const useModularDrawerController = () => {
 
       dispatch(openModularDrawer(paramsWithIds));
     },
-    [resetAll, callbackId, dispatch, unregisterCallback, registerCallback],
+    [resetAll, dispatch, registerCallback],
   );
 
   const closeDrawer = useCallback(() => {
