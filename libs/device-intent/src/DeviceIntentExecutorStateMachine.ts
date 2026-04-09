@@ -350,9 +350,11 @@ export type StateMachineConstructor<JobState, Input, ExtraProps> = new (params: 
 
 // ---- Default implementation ----
 
-export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>
-  implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>
-{
+export class DefaultDeviceIntentExecutorStateMachine<
+  JobState,
+  Input,
+  ExtraProps,
+> implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
   private readonly actor;
 
   constructor(params: {

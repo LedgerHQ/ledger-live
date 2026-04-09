@@ -19,7 +19,7 @@ export function makeToken(id: string, ticker: string, name: string, magnitude = 
 }
 
 export function mockAccounts(...ids: string[]): AccountLike[] {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  // oxlint-disable-next-line typescript/consistent-type-assertions
   return ids.map(id => ({ id }) as AccountLike);
 }
 
