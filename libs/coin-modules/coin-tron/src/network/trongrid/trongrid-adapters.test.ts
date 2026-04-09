@@ -119,6 +119,19 @@ describe("fromTrongridTxInfoToOperation", () => {
     expect(result.type).toBe("UNKNOWN");
   });
 
+  it("should use feesPayer over from when set (transferFrom case)", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      from: mockUserAddress, // TRC20 "from" — our address
+      feesPayer: "actualInitiator", // Tron owner_address — someone else called transferFrom
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
+
+    expect(result.tx.feesPayer).toBe("actualInitiator");
+    expect(result.type).toBe("OUT"); // direction still uses `from`
+  });
+
   it("should handle missing fee or value gracefully", () => {
     const txInfo = {
       ...mockTrongridTxInfo,

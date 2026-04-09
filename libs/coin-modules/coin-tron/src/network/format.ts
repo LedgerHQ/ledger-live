@@ -35,6 +35,8 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     const date = new Date(block_timestamp);
 
     const blockHeight = detail ? detail.blockNumber : undefined;
+    const ownerAddressHex = detail.raw_data?.contract?.[0]?.parameter?.value?.owner_address;
+    const feesPayer = ownerAddressHex ? encode58Check(ownerAddressHex) : from;
     return {
       txID,
       date,
@@ -48,6 +50,7 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
       value: formattedValue,
       fee: bnFee,
       hasFailed: false, // trc20 txs are succeeded if returned by trongrid,
+      feesPayer,
     };
   } catch (e) {
     log("tron-error", `could not parse transaction ${tx}`);
@@ -118,6 +121,7 @@ export const formatTrongridTxResponse = (
       fee: new BigNumber(fee || 0),
       blockHeight,
       hasFailed,
+      feesPayer: from,
     };
 
     const getExtra = (): TrongridExtraTxInfo | null | undefined => {
