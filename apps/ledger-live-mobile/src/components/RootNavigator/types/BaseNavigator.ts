@@ -88,6 +88,7 @@ import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLive
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
+import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -367,6 +368,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
   [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;
   [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
+  [NavigatorName.MyWallet]?: NavigatorScreenParams<MyWalletNavigatorStackParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };
 
