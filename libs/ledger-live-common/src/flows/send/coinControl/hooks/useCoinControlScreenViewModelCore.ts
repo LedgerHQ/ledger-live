@@ -3,7 +3,7 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { SendFlowTransactionActions, SendFlowUiConfig } from "../../types";
-import type { Transaction, TransactionStatus } from "../../../../generated/types";
+import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { sendFeatures } from "../../../../bridge/descriptor/send/features";

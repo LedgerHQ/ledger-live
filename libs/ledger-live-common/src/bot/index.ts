@@ -8,7 +8,7 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "@ledgerhq/live-env";
-import allSpecs from "../generated/specs";
+import allSpecs from "./allSpecs";
 import type {
   AppSpec,
   MutationReport,
@@ -30,7 +30,7 @@ import {
 import { getPortfolio } from "@ledgerhq/live-countervalues/portfolio";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "@ledgerhq/ledger-wallet-framework/bot/bot-test-context";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import { sha256 } from "../crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
@@ -135,7 +135,7 @@ export function getSpecs({ disabled, filter }) {
       continue;
     }
 
-    const familySpecs = allSpecs[family];
+    const familySpecs = allSpecs[family as keyof typeof allSpecs];
 
     for (const key in familySpecs) {
       let spec: AppSpec<any> = familySpecs[key];

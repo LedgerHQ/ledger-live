@@ -14,8 +14,6 @@ if (!process.env.CI) {
   await rimraf(["lib"]);
 }
 
-await $`zx ./scripts/sync-families-dispatch.mjs`;
-
 const prefix = $.prefix;
 
 await within(async () => {

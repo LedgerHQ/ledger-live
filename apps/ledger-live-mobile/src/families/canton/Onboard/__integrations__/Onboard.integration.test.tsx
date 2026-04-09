@@ -9,17 +9,11 @@ import {
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { screen, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
-import coinConfig from "@ledgerhq/coin-canton/config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import OnboardScreen from "../OnboardScreen";
-import {
-  CANTON_DEVNET_GATEWAY,
-  CANTON_DEVNET_NODE_ID,
-  cantonOnboardingPrepareUrl,
-  mockOnboardingPrepareResponse,
-} from "@tests/handlers/canton";
+import { cantonOnboardingPrepareUrl, mockOnboardingPrepareResponse } from "@tests/handlers/canton";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
@@ -128,15 +122,6 @@ describe("Canton onboarding integration", () => {
     currency = getCryptoCurrencyById("canton_network_devnet");
     creatableAccount = { ...genAccount("canton-devnet-integ", { currency }), used: false };
     importableAccount = { ...genAccount("canton-devnet-import", { currency }), used: true };
-
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      networkType: "devnet",
-      gatewayUrl: CANTON_DEVNET_GATEWAY,
-      nodeId: CANTON_DEVNET_NODE_ID,
-      useGateway: true,
-      nativeInstrumentId: "Amulet",
-    }));
   });
 
   afterAll(() => {

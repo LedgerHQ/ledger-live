@@ -10,8 +10,6 @@ if (os.platform() === "win32") {
 try {
   cd(path.join(__dirname, ".."));
 
-  await $`zx ./scripts/sync-families-dispatch.mjs`;
-
   await $`pnpm tsc --project src/tsconfig.build.json --watch`;
 } catch (error) {
   console.log(chalk.red(error));

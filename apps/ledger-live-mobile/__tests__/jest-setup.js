@@ -1,3 +1,8 @@
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+registerAllCoins();
+LiveConfig.setConfig(liveConfig);
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";

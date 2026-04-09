@@ -1,8 +1,8 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { v5 as uuidv5 } from "uuid";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import byFamily from "../generated/walletApiAdapter";
-import type { Transaction } from "../generated/types";
+import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
+import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import {
   WalletAPIAccount,
@@ -107,7 +107,7 @@ export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFl
   const liveFamily =
     FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
 
-  const familyModule = byFamily[liveFamily];
+  const familyModule = loadWalletApiAdapterForFamily(liveFamily);
 
   if (familyModule) {
     return familyModule.getWalletAPITransactionSignFlowInfos({ walletApiTransaction, account });

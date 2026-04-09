@@ -10,7 +10,7 @@ import type {
   PostSwapAccepted,
   PostSwapCancelled,
 } from "./types";
-import type { Transaction } from "../../generated/types";
+import type { Transaction } from "../../coin-modules/transaction-types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const mockGetExchangeRates = async (

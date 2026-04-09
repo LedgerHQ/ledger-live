@@ -22,7 +22,7 @@ import {
   RegisterYieldBearingEthereumAddressParams,
   RegisterYieldBearingEthereumAddressResult,
 } from "@ledgerhq/wallet-api-acre-module";
-import { Transaction } from "../../generated/types";
+import { Transaction } from "../../coin-modules/transaction-types";
 import { AppManifest } from "../types";
 import { TrackingAPI } from "./tracking";
 import {

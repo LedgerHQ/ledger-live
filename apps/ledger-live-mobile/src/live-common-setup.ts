@@ -1,4 +1,5 @@
 import Config from "react-native-config";
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { listen } from "@ledgerhq/logs";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
@@ -13,6 +14,8 @@ import { setResolutionConfig } from "@shared/feature-flags";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
 import BigNumber from "bignumber.js";
+
+registerAllCoins();
 
 const consoleLogger = ConsoleLogger.getLogger();
 listen(log => {

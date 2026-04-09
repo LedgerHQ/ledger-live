@@ -56,7 +56,7 @@ import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import {
   DISCOVER_INITIAL_CATEGORY,
   INITIAL_PLATFORM_STATE,

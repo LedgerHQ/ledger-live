@@ -10,7 +10,7 @@ import type {
   CoinControlDisplayData,
 } from "../../../../../bridge/descriptor/types";
 import { useCoinControlScreenViewModelCore } from "../useCoinControlScreenViewModelCore";
-import type { Transaction, TransactionStatus } from "../../../../../generated/types";
+import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getCryptoCurrencyById } from "../../../../../currencies";
