@@ -9,10 +9,22 @@ import {
   DeviceStatus,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { activeDeviceSessionSubject, initDmk, resetDmk } from "@ledgerhq/live-dmk-shared";
 import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 
 describe("DeviceManagementKitBLETransport", () => {
+  beforeAll(() => {
+    initDmk({ transports: [jest.fn() as never] });
+    const dmk = getDeviceManagementKit();
+    jest.spyOn(dmk, "stopDiscovering").mockImplementation(async () => {});
+    jest.spyOn(dmk, "close").mockResolvedValue(undefined as never);
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+    resetDmk();
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });

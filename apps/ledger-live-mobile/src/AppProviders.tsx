@@ -1,3 +1,4 @@
+import { initialiseDmk } from "./initDmk";
 import {
   BottomSheetModalProvider,
   GlobalSelectBottomSheet,
@@ -22,6 +23,8 @@ type AppProvidersProps = {
 };
 
 const queryClient = new QueryClient();
+
+initialiseDmk();
 
 function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
   logStartupEvent("AppProviders render");

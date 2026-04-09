@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DeviceManagementKitTransport } from "./DeviceManagementKitTransport";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { initDmk, resetDmk } from "@ledgerhq/live-dmk-shared";
 
 let obs: Subject<DeviceSessionState> = new Subject<DeviceSessionState>();
 let transport: DeviceManagementKitTransport;
@@ -34,7 +35,12 @@ describe("DeviceManagementKitTransport", () => {
     sessionId: "session1",
   } as unknown as ConnectedDevice;
 
+  afterAll(() => {
+    resetDmk();
+  });
+
   beforeAll(async () => {
+    initDmk({ transports: [] });
     deviceManagementKit = getDeviceManagementKit();
     jest.spyOn(deviceManagementKit, "listenToAvailableDevices").mockImplementation(() => {
       return of<DiscoveredDevice[]>([

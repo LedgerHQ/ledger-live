@@ -16,6 +16,7 @@ import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import IPCTransport from "./IPCTransport";
+import { initialiseDmk } from "./initDmk";
 
 enum RendererTransportModule {
   DeviceManagementKit,
@@ -37,6 +38,9 @@ enum RendererTransportModule {
 export function registerTransportModules(store: Store<State>) {
   const userId = userIdSelector(store.getState());
   setEnvOnAllThreads("USER_ID", userId.exportUserIdForAnalytics());
+
+  initialiseDmk();
+
   const vaultTransportPrefixID = "vault-transport:";
 
   listenLogs(({ id, date, ...log }) => {

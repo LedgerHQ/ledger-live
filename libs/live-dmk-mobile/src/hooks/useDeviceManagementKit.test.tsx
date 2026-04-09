@@ -1,62 +1,71 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { initDmk, resetDmk } from "@ledgerhq/live-dmk-shared";
 import {
   getDeviceManagementKit,
   useDeviceManagementKit,
   DeviceManagementKitProvider,
 } from "./useDeviceManagementKit";
 
-const TestComponent: React.FC = () => {
-  const dmk = useDeviceManagementKit();
-  return <span data-testid="dmk-test-component">{JSON.stringify(dmk)}</span>;
+const mockDmk = { id: "mock-dmk" } as unknown as DeviceManagementKit;
+
+const mockBuilder = {
+  addTransport: jest.fn().mockReturnThis(),
+  addLogger: jest.fn().mockReturnThis(),
+  addConfig: jest.fn().mockReturnThis(),
+  build: jest.fn().mockReturnValue(mockDmk),
 };
 
-describe("getDeviceManagementKit method", () => {
-  it("returns singleton instance", () => {
-    // given
-    const baseInstance = getDeviceManagementKit();
-    // when
-    const newInstance = getDeviceManagementKit();
-    // then
-    expect(newInstance).toBe(baseInstance);
+jest.mock("@ledgerhq/device-management-kit", () => ({
+  ...jest.requireActual("@ledgerhq/device-management-kit"),
+  DeviceManagementKitBuilder: jest.fn(() => mockBuilder),
+}));
+
+const TestComponent: React.FC = () => {
+  const dmk = useDeviceManagementKit();
+  return <span data-testid="dmk-test-component">{dmk ? "has-dmk" : "no-dmk"}</span>;
+};
+
+describe("getDeviceManagementKit (re-exported from shared)", () => {
+  beforeEach(() => {
+    initDmk({ transports: [jest.fn()] });
   });
-  it("instance is of type DeviceManagementKit", () => {
-    // when
-    const dmkInstance = getDeviceManagementKit();
-    // then
-    expect(dmkInstance).toBeInstanceOf(DeviceManagementKit);
+
+  afterEach(() => {
+    resetDmk();
+    jest.clearAllMocks();
+  });
+
+  it("returns the initialized singleton", () => {
+    const instance = getDeviceManagementKit();
+    expect(instance).toBe(mockDmk);
+  });
+
+  it("returns the same instance on repeated calls", () => {
+    const first = getDeviceManagementKit();
+    const second = getDeviceManagementKit();
+    expect(first).toBe(second);
   });
 });
 
-describe("useDeviceManagementKit hook", () => {
-  it("returns dmk instance when used inside provider with feature enabled", () => {
-    // when
+describe("DeviceManagementKitProvider (mobile)", () => {
+  beforeEach(() => {
+    initDmk({ transports: [jest.fn()] });
+  });
+
+  afterEach(() => {
+    resetDmk();
+    jest.clearAllMocks();
+  });
+
+  it("provides DMK instance to children", () => {
     const { getByTestId } = render(
       <DeviceManagementKitProvider>
         <TestComponent />
       </DeviceManagementKitProvider>,
     );
 
-    // then
-    expect(getByTestId("dmk-test-component").textContent).toBe(
-      JSON.stringify(getDeviceManagementKit()),
-    );
-  });
-});
-
-describe("<DeviceManagementKitProvider /> provider", () => {
-  it("provides a dmk instance to child element if feature flag enabled", () => {
-    // when
-    const { getByTestId } = render(
-      <DeviceManagementKitProvider>
-        <TestComponent />
-      </DeviceManagementKitProvider>,
-    );
-
-    // then
-    expect(getByTestId("dmk-test-component").textContent).toBe(
-      JSON.stringify(getDeviceManagementKit()),
-    );
+    expect(getByTestId("dmk-test-component")).toHaveTextContent("has-dmk");
   });
 });
