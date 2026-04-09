@@ -18,6 +18,7 @@ import {
   performPrivateSync,
   createPrivateSyncObservable,
   createPublicSyncObservable,
+  isCombinedSyncPending$,
 } from "./sync";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
 
@@ -1216,6 +1217,102 @@ describe("sync.ts", () => {
       // The public emission arrived before the private failure
       expect(emissions).toHaveLength(1);
       expect(emissions[0].blockHeight).toBe(100);
+    });
+  });
+
+  describe("isCombinedSyncPending$", () => {
+    const baseInfo = {
+      index: mockAccount.index,
+      derivationPath: mockAccount.freshAddressPath,
+      address: mockAccount.freshAddress,
+      currency: mockCurrency,
+      derivationMode: mockDerivationMode,
+      initialAccount: mockInitialAccount,
+    };
+
+    beforeEach(() => {
+      // Reset the subject to false before each test
+      isCombinedSyncPending$.next(false);
+    });
+
+    it("should start as false", () => {
+      expect(isCombinedSyncPending$.getValue()).toBe(false);
+    });
+
+    it("should become true when combined sync is subscribed to and false when it completes", async () => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
+
+      const { syncs } = buildSyncObservables(baseInfo, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
+
+      const pendingValues: boolean[] = [];
+      const sub = isCombinedSyncPending$.subscribe(v => pendingValues.push(v));
+
+      await collectAll(syncs[0]);
+      sub.unsubscribe();
+
+      // false (initial) → true (subscription started) → false (finalize after complete)
+      expect(pendingValues).toEqual([false, true, false]);
+    });
+
+    it("should reset to false when combined sync errors", async () => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      mockGetAccountOwnedRecords.mockRejectedValue(new Error("scanner down"));
+
+      const { syncs } = buildSyncObservables(baseInfo, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
+
+      await expect(
+        new Promise<void>((resolve, reject) =>
+          syncs[0].subscribe({ next: () => {}, complete: resolve, error: reject }),
+        ),
+      ).rejects.toThrow("scanner down");
+
+      expect(isCombinedSyncPending$.getValue()).toBe(false);
+    });
+
+    it("should NOT change isCombinedSyncPending$ for public-only sync", async () => {
+      const values: boolean[] = [];
+      const sub = isCombinedSyncPending$.subscribe(v => values.push(v));
+
+      const { syncs } = buildSyncObservables(baseInfo, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT,
+      });
+      await collectAll(syncs[0]);
+      sub.unsubscribe();
+
+      // Only the initial false — public-only sync never touches the subject
+      expect(values).toEqual([false]);
+    });
+
+    it("should NOT change isCombinedSyncPending$ for private-only sync", async () => {
+      mockAccessProvableApi.mockResolvedValue(null);
+
+      const values: boolean[] = [];
+      const sub = isCombinedSyncPending$.subscribe(v => values.push(v));
+
+      const { syncs } = buildSyncObservables(baseInfo, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
+      await collectAll(syncs[0]);
+      sub.unsubscribe();
+
+      expect(values).toEqual([false]);
     });
   });
 });

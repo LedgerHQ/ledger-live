@@ -7,8 +7,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { log } from "@ledgerhq/logs";
-import { concat, merge, Observable, of } from "rxjs";
-import { concatMap } from "rxjs/operators";
+import { BehaviorSubject, concat, defer, merge, Observable, of } from "rxjs";
+import { concatMap, finalize } from "rxjs/operators";
 import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { getBalance, lastBlock, listOperations } from "../logic";
@@ -337,6 +337,14 @@ export function createPrivateSyncObservable(
 }
 
 /**
+ * Emits `true` while both the public and private syncs are running concurrently
+ * (i.e. the combined sync branch is active). Resets to `false` once the sync
+ * completes or errors. Use this to block UI elements that should not be
+ * interactive during a full combined sync.
+ */
+export const isCombinedSyncPending$ = new BehaviorSubject<boolean>(false);
+
+/**
  * Builds the list of sync observables to run based on syncConfig.syncType.
  *
  * When both public and private syncs are requested the two are chained
@@ -363,22 +371,27 @@ export function buildSyncObservables(
 
   if (isPublicSync && isPrivateSync) {
     syncs.push(
-      createPublicSyncObservable(info, syncConfig).pipe(
-        concatMap(publicResult =>
-          concat(
-            of(publicResult),
-            createPrivateSyncObservable(
-              info,
-              syncConfig,
-              // Pass only pure public ops - publicResult.operations also contains preserved
-              // private ops from the previous cycle; feeding those into patchPublicOperations
-              // would cause them to be re-processed and duplicated in the final result.
-              splitPrivateAndPublicOperations(publicResult.operations ?? [])[1] as AleoOperation[],
-              publicResult.aleoResources?.transparentBalance,
+      defer(() => {
+        isCombinedSyncPending$.next(true);
+        return createPublicSyncObservable(info, syncConfig).pipe(
+          concatMap(publicResult =>
+            concat(
+              of(publicResult),
+              createPrivateSyncObservable(
+                info,
+                syncConfig,
+                // Pass only pure public ops - publicResult.operations also contains preserved
+                // private ops from the previous cycle; feeding those into patchPublicOperations
+                // would cause them to be re-processed and duplicated in the final result.
+                splitPrivateAndPublicOperations(
+                  publicResult.operations ?? [],
+                )[1] as AleoOperation[],
+                publicResult.aleoResources?.transparentBalance,
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }).pipe(finalize(() => isCombinedSyncPending$.next(false))),
     );
   } else if (isPublicSync) {
     syncs.push(createPublicSyncObservable(info, syncConfig));

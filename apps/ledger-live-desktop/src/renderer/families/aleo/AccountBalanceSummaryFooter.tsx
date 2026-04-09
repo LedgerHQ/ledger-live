@@ -16,6 +16,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+import { useIsCombinedSyncPending } from "./hooks/useIsCombinedSyncPending";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -30,30 +31,44 @@ const ActionButton = ({
   onStart,
   onStop,
   onSyncAgain,
+  disabled,
 }: {
   syncState: AleoSyncState;
   onStart: () => void;
   onStop: () => void;
   onSyncAgain: () => void;
+  disabled?: boolean;
 }) => {
   const { t } = useTranslation();
 
   switch (syncState) {
     case "ready":
       return (
-        <SyncActionButton onClick={onStart} buttonTestId="start-private-sync-button">
+        <SyncActionButton
+          onClick={onStart}
+          disabled={disabled}
+          buttonTestId="start-private-sync-button"
+        >
           <Text>{t("aleo.account.syncButton.startSync")}</Text>
         </SyncActionButton>
       );
     case "running":
       return (
-        <SyncActionButton onClick={onStop} buttonTestId="stop-private-sync-button">
+        <SyncActionButton
+          onClick={onStop}
+          disabled={disabled}
+          buttonTestId="stop-private-sync-button"
+        >
           <Text>{t("aleo.account.syncButton.stopSync")}</Text>
         </SyncActionButton>
       );
     case "complete":
       return (
-        <SyncActionButton onClick={onSyncAgain} buttonTestId="sync-again-button">
+        <SyncActionButton
+          onClick={onSyncAgain}
+          disabled={disabled}
+          buttonTestId="sync-again-button"
+        >
           <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
         </SyncActionButton>
       );
@@ -122,6 +137,8 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     start: handleStart,
     stop: handleStop,
   } = useAleoPrivateSync({ account });
+
+  const isCombinedSyncPending = useIsCombinedSyncPending();
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -218,6 +235,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             onStart={handleStart}
             onStop={handleStop}
             onSyncAgain={handleStart}
+            disabled={isCombinedSyncPending}
           />
           <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
         </div>

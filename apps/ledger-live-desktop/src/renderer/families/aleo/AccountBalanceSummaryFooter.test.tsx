@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { act, fireEvent, render, screen } from "tests/testSetup";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { isCombinedSyncPending$ } from "@ledgerhq/live-common/families/aleo/sync";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
@@ -45,6 +46,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    isCombinedSyncPending$.next(false);
 
     mockUseAccountUnit.mockReturnValue({
       code: "ALEO",
@@ -228,6 +230,77 @@ describe("AccountBalanceSummaryFooter", () => {
       });
 
       expect(screen.getByRole("button", { name: "Sync again" })).toBeInTheDocument();
+    });
+  });
+
+  describe("combined sync pending — button disabled state", () => {
+    afterEach(() => {
+      isCombinedSyncPending$.next(false);
+    });
+
+    it("should disable the sync button when isCombinedSyncPending$ is true", () => {
+      act(() => {
+        isCombinedSyncPending$.next(true);
+      });
+
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+      expect(screen.getByRole("button", { name: "Start sync" })).toBeDisabled();
+    });
+
+    it("should enable the sync button when isCombinedSyncPending$ is false", () => {
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+      expect(screen.getByRole("button", { name: "Start sync" })).not.toBeDisabled();
+    });
+
+    it("should disable the button mid-render when isCombinedSyncPending$ changes to true", () => {
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+      expect(screen.getByRole("button", { name: "Start sync" })).not.toBeDisabled();
+
+      act(() => {
+        isCombinedSyncPending$.next(true);
+      });
+
+      expect(screen.getByRole("button", { name: "Start sync" })).toBeDisabled();
+    });
+
+    it("should re-enable the button when isCombinedSyncPending$ goes back to false", () => {
+      act(() => {
+        isCombinedSyncPending$.next(true);
+      });
+
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+      expect(screen.getByRole("button", { name: "Start sync" })).toBeDisabled();
+
+      act(() => {
+        isCombinedSyncPending$.next(false);
+      });
+
+      expect(screen.getByRole("button", { name: "Start sync" })).not.toBeDisabled();
+    });
+
+    it("should disable 'Sync again' button when account is synced and combined sync is pending", () => {
+      const syncedAccount: AleoAccount = {
+        ...mockAccount,
+        aleoResources: {
+          transparentBalance: mockTransparentBalance,
+          privateBalance: null,
+          unspentPrivateRecords: [],
+          lastPrivateSyncDate: new Date(),
+          provableApi: { scannerStatus: { synced: true, percentage: 100 } },
+        },
+      };
+
+      act(() => {
+        isCombinedSyncPending$.next(true);
+      });
+
+      render(<AccountBalanceSummaryFooter account={syncedAccount} />);
+
+      expect(screen.getByRole("button", { name: "Sync again" })).toBeDisabled();
     });
   });
 });
