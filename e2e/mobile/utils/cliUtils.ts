@@ -5,7 +5,6 @@ import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommand, runCliCommandWithRetry } from "./runCli";
 import {
   registerTransportModule,
   unregisterAllTransportModules,
@@ -16,11 +15,10 @@ import {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import {
-  buildGetAddressCliCommand,
-  buildGetTokenAllowanceCliCommand,
-  buildLiveDataCliCommand,
-  buildTokenApprovalCliCommand,
-  parseGetAddressCliOutput,
+  runCliGetAddress,
+  runCliGetTokenAllowance,
+  runCliLiveData,
+  runCliTokenApproval,
   type GetAddressOpts,
   type GetTokenAllowanceOpts,
   type LedgerKeyRingProtocolOpts,
@@ -28,7 +26,6 @@ import {
   type LiveDataOpts,
   type TokenApprovalOpts,
 } from "@ledgerhq/live-common/e2e";
-import { isSpeculosRemote } from "../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -163,11 +160,7 @@ export const CLI = {
     }
   },
   liveData: function (opts: LiveDataOpts) {
-    return runCliCommandWithRetry(
-      buildLiveDataCliCommand(opts),
-      5,
-      isSpeculosRemote() ? 5_000 : 2_000,
-    );
+    return runCliLiveData(opts);
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();
@@ -182,10 +175,7 @@ export const CLI = {
       disconnect: () => Promise.resolve(),
     });
   },
-  getAddress: async (opts: GetAddressOpts) => {
-    const output = await runCliCommand(buildGetAddressCliCommand(opts));
-    return parseGetAddressCliOutput(output) as { address: string };
-  },
+  getAddress: (opts: GetAddressOpts) => runCliGetAddress(opts),
   getAddressForAccount: async (account: Account) => {
     if (account.currency.id === Currency.HBAR.id) {
       invariant(account.address, "hedera: account address must be pre-set");
@@ -201,9 +191,9 @@ export const CLI = {
     return addressInfo.address;
   },
   tokenApproval: function (opts: TokenApprovalOpts) {
-    return runCliCommandWithRetry(buildTokenApprovalCliCommand(opts));
+    return runCliTokenApproval(opts);
   },
   getTokenAllowance: function (opts: GetTokenAllowanceOpts) {
-    return runCliCommandWithRetry(buildGetTokenAllowanceCliCommand(opts));
+    return runCliGetTokenAllowance(opts);
   },
 };

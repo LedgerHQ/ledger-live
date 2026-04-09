@@ -4,7 +4,6 @@ import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommandWithRetry } from "./runCli";
 import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
@@ -12,11 +11,10 @@ import {
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import {
-  buildGetAddressCliCommand,
-  buildGetTokenAllowanceCliCommand,
-  buildLiveDataCliCommand,
-  buildTokenApprovalCliCommand,
-  parseGetAddressCliOutput,
+  runCliGetAddress,
+  runCliGetTokenAllowance,
+  runCliLiveData,
+  runCliTokenApproval,
   type GetAddressOpts,
   type GetTokenAllowanceOpts,
   type LedgerKeyRingProtocolOpts,
@@ -154,7 +152,7 @@ export const CLI = {
     }
   },
   liveData: function (opts: LiveDataOpts) {
-    return runCliCommandWithRetry(buildLiveDataCliCommand(opts));
+    return runCliLiveData(opts);
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     const req: SpeculosHttpTransportOpts = {
@@ -168,14 +166,11 @@ export const CLI = {
       disconnect: () => Promise.resolve(),
     });
   },
-  getAddress: async (opts: GetAddressOpts) => {
-    const output = await runCliCommandWithRetry(buildGetAddressCliCommand(opts));
-    return parseGetAddressCliOutput(output) as { address: string };
-  },
+  getAddress: (opts: GetAddressOpts) => runCliGetAddress(opts),
   tokenApproval: function (opts: TokenApprovalOpts) {
-    return runCliCommandWithRetry(buildTokenApprovalCliCommand(opts));
+    return runCliTokenApproval(opts);
   },
   getTokenAllowance: function (opts: GetTokenAllowanceOpts) {
-    return runCliCommandWithRetry(buildGetTokenAllowanceCliCommand(opts));
+    return runCliGetTokenAllowance(opts);
   },
 };

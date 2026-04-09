@@ -3,6 +3,10 @@ import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getFeature, DEFAULT_FEATURES } from "../featureFlags";
 import axios, { AxiosError } from "axios";
 
+export function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const getAllFeatureFlags = (
   appLanguage?: string,
   localOverrides?: { [key in FeatureId]?: Feature | undefined },
@@ -91,5 +95,5 @@ export const sanitizeError = (error: unknown): Error => {
   return sanitized;
 };
 
-export * from "./cliCommandBuilders";
 export * from "./tokenAllowanceCommands";
+export * from "./runCli";

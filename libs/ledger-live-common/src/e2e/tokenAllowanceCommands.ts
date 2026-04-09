@@ -1,5 +1,5 @@
 import { parseCurrencyUnit } from "../currencies/index";
-import type { GetTokenAllowanceOpts, TokenApprovalOpts } from "./cliCommandBuilders";
+import type { GetTokenAllowanceOpts, TokenApprovalOpts } from "./runCli";
 import type { TokenAccount } from "./enum/Account";
 import { approveToken } from "./families/evm";
 

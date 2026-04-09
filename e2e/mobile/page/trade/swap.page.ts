@@ -1,6 +1,6 @@
 import CommonPage from "../common.page";
 import { allure, Step } from "jest-allure2-reporter/api";
-import { openDeeplink, normalizeText, isIos, delay } from "../../helpers/commonHelpers";
+import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
