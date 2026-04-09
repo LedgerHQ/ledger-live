@@ -100,7 +100,7 @@ const Description = styled(Text).attrs<{
       : ""}
 `;
 
-type Props = {
+export type Props = {
   account: PolkadotAccount;
   source: string;
 };

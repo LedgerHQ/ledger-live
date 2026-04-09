@@ -58,12 +58,12 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     setUfvkExportError(null);
   };
 
-  const handleUfvkChanged = (ufvk: string, error?: Error | undefined | null) => {
+  const handleUfvkChanged = (newUfvk: string, error?: Error | undefined | null) => {
     if (error instanceof UserRefusedOnDevice) {
       logger.critical(error);
     }
     setUfvkExportError(error);
-    setUfvk(ufvk);
+    setUfvk(newUfvk);
   };
 
   const handleEnableShieldedBalance = (nextSyncState: ZcashSyncState) => {

@@ -4,7 +4,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { closeModal, openModal } from "~/renderer/actions/modals";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import EditOperationPanel from "../EditOperationPanel";
 
 jest.mock("@ledgerhq/live-common/account/index", () => ({
@@ -19,7 +19,7 @@ jest.mock("~/renderer/actions/modals", () => ({
 }));
 
 jest.mock("~/renderer/families", () => ({
-  getLLDCoinFamily: jest.fn(() => ({})),
+  useLLDCoinFamily: jest.fn(() => ({})),
 }));
 
 const account = genAccount("edit-operation-panel-account") as Account;
@@ -49,7 +49,7 @@ describe("EditOperationPanel", () => {
       type: "openModal",
       payload: { modal, data },
     }));
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({});
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({});
   });
 
   it("should not render panel when no edit flow is supported", () => {
@@ -68,7 +68,7 @@ describe("EditOperationPanel", () => {
       ...account,
       currency: { ...account.currency, family: "evm", id: "ethereum" },
     });
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({
       handlesEditTransaction: () => ({
         modalName: "MODAL_EVM_EDIT_TRANSACTION",
         params: familyParams,
@@ -104,7 +104,7 @@ describe("EditOperationPanel", () => {
       freshAddress: "bc1qfreshaddress",
       currency: { ...account.currency, family: "bitcoin", id: "bitcoin", ticker: "BTC" },
     });
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({
       handlesEditTransaction: () => ({
         modalName: "MODAL_BITCOIN_EDIT_TRANSACTION",
         params: familyParams,

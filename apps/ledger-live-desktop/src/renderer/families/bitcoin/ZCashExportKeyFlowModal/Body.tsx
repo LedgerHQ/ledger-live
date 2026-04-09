@@ -92,7 +92,7 @@ const Body = ({
   params,
   device,
   stepId,
-  closeModal,
+  closeModal: closeModalAction,
   ufvk,
   ufvkExportError,
   onStepIdChanged,
@@ -113,8 +113,8 @@ const Body = ({
   );
 
   const handleCloseModal = useCallback(() => {
-    closeModal("MODAL_ZCASH_EXPORT_KEY");
-  }, [closeModal]);
+    closeModalAction("MODAL_ZCASH_EXPORT_KEY");
+  }, [closeModalAction]);
 
   const error = ufvkExportError;
   const errorSteps = [];

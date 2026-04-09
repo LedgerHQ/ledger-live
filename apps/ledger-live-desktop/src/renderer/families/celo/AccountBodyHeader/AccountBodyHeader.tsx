@@ -21,7 +21,7 @@ import {
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./AccountBodyHeader.styles";
 import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
-import { ModalActions } from "../modals";
+type ModalActions = "MODAL_CELO_ACTIVATE" | "MODAL_CELO_REVOKE";
 import { CeloFamily } from "../types";
 type Props = {
   account: CeloAccount;

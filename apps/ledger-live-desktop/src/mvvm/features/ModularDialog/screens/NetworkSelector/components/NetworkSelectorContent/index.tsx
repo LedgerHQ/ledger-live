@@ -42,10 +42,10 @@ export const NetworkSelectorContent = ({
   }
 
   const onClick = (networkId: string) => {
-    const network = formattedNetworks.find(network =>
-      network.type === "CryptoCurrency"
-        ? network.id === networkId
-        : network.parentCurrency.id === networkId,
+    const network = formattedNetworks.find(n =>
+      n.type === "CryptoCurrency"
+        ? n.id === networkId
+        : n.parentCurrency.id === networkId,
     );
 
     if (!network) return;

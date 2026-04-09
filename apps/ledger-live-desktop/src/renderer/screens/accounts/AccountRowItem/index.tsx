@@ -17,7 +17,7 @@ import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useSelector } from "LLD/hooks/redux";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
@@ -158,6 +158,9 @@ const AccountRowItem = (props: Props) => {
 
   const onClickHandler = () => onClick(account, parentAccount);
   const unit = useAccountUnit(account);
+  const resolvedMainAccount: Account | null | undefined =
+    account.type !== "Account" ? parentAccount : account;
+  const specific = useLLDCoinFamily(resolvedMainAccount?.currency.family).tokenList;
   let currency;
   let mainAccount: Account | null | undefined;
   let tokens;
@@ -179,7 +182,6 @@ const AccountRowItem = (props: Props) => {
     if (tokens) tokens = tokens.filter(t => accountMatchesSearch(walletState, search, t));
   }
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
-  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
   const translationMap = isToken
     ? {

@@ -12,7 +12,7 @@ import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { openModal } from "~/renderer/actions/modals";
-import { DelegateModalName } from "../modals";
+type DelegateModalName = "MODAL_SUI_DELEGATE" | "MODAL_SUI_UNSTAKE";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { canStake } from "@ledgerhq/live-common/families/sui/logic";
 import { useSuiMappedStakingPositions } from "@ledgerhq/live-common/families/sui/react";

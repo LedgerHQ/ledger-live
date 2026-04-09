@@ -18,7 +18,7 @@ import Text from "~/renderer/components/Text";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { localeSelector } from "~/renderer/reducers/settings";
-import type { DelegateModalName } from "../modals";
+type DelegateModalName = "MODAL_HEDERA_DELEGATION" | "MODAL_HEDERA_UNDELEGATION" | "MODAL_HEDERA_REDELEGATION" | "MODAL_HEDERA_CLAIM_REWARDS";
 import ValidatorIcon from "../shared/staking/ValidatorIcon";
 import { TableLine } from "./Header";
 

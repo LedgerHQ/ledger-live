@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { closeModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -27,7 +27,7 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, sou
   const walletState = useSelector(walletSelector);
 
   const currencyFamily = getMainAccount(account, parentAccount).currency.family;
-  const manage = getLLDCoinFamily(currencyFamily).accountHeaderManageActions;
+  const manage = useLLDCoinFamily(currencyFamily).accountHeaderManageActions;
   const dispatch = useDispatch();
   let manageList: Action[] = [];
   if (manage) {

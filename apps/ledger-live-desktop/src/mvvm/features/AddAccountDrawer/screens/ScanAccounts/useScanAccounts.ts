@@ -10,7 +10,7 @@ import { prepareCurrency } from "~/renderer/bridge/cache";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import * as RX from "rxjs/operators";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import {
@@ -55,6 +55,7 @@ export function useScanAccounts({
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const familyImpl = useLLDCoinFamily(currency.family);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
@@ -248,10 +249,7 @@ export function useScanAccounts({
   }, [importableAccounts, trackAddAccountEvent]);
 
   useEffect(() => {
-    const CustomNoAssociatedAccounts =
-      currency.type === "CryptoCurrency"
-        ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
-        : null;
+    const CustomNoAssociatedAccounts = familyImpl.NoAssociatedAccounts ?? null;
 
     // TODO: by moving this logic to handleConfirm, we can remove the trigger state and calculate it via memoization to avoid this useEffect
     if (!scanning && !hasImportedAccounts) {
@@ -269,6 +267,7 @@ export function useScanAccounts({
     alreadyEmptyAccount,
     creatableAccounts.length,
     currency,
+    familyImpl,
     hasImportedAccounts,
     importableAccounts.length,
     navigateToWarningScreen,

@@ -172,8 +172,8 @@ async function setEncryptionKey(encryptionKey: string): Promise<void> {
 
       // handle the case when we just migrated from the previous storage
       // which stored the data in binary with a `data` key
-      for (const path of encryptedDataPaths) {
-        if (ns === path[0] && keyPath === path[1] && decrypted.data) {
+      for (const encryptedPath of encryptedDataPaths) {
+        if (ns === encryptedPath[0] && keyPath === encryptedPath[1] && decrypted.data) {
           decrypted = decrypted.data;
           break;
         }

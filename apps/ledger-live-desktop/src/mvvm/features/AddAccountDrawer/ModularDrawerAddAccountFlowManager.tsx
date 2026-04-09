@@ -21,7 +21,7 @@ import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue } from "~/renderer/reducers/modularDialog";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 
 export const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
@@ -90,7 +90,7 @@ const ModularDrawerAddAccountFlowManager = ({
 
   const dispatch = useDispatch();
 
-  const specific = getLLDCoinFamily(cryptoCurrency.family);
+  const specific = useLLDCoinFamily(cryptoCurrency.family);
   const CustomModularDrawerAddAccountFlowManager = specific?.ModularDrawerAddAccountFlowManager;
 
   if (CustomModularDrawerAddAccountFlowManager) {

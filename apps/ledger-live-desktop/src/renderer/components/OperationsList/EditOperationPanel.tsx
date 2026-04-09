@@ -7,7 +7,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 
 type Props = {
   operation: Operation;
@@ -22,10 +22,10 @@ const EditOperationPanel = (props: Props) => {
   const { enabled: isEditBitcoinTxEnabled, params: bitcoinParams } =
     useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
+  const family = useLLDCoinFamily(mainAccount.currency.family);
 
   // Determine if transaction editing is supported and which modal to use
   const editConfig = useMemo(() => {
-    const family = getLLDCoinFamily(mainAccount.currency.family);
     const familyEditConfig = family.handlesEditTransaction?.({
       account,
       parentAccount,
@@ -55,6 +55,7 @@ const EditOperationPanel = (props: Props) => {
     parentAccount,
     operation,
     mainAccount,
+    family,
     isEditEvmTxEnabled,
     params,
     isEditBitcoinTxEnabled,

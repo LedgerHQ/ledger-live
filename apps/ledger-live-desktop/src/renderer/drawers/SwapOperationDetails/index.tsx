@@ -35,7 +35,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -145,7 +145,7 @@ const SwapOperationDetails = ({
   const mainCurrency =
     fromCurrency.type === "CryptoCurrency" ? fromCurrency : fromCurrency.parentCurrency;
 
-  const specific = mainCurrency ? getLLDCoinFamily(mainCurrency.family) : null;
+  const specific = useLLDCoinFamily(mainCurrency?.family);
   const getTransactionExplorer = specific?.getTransactionExplorer;
 
   let url: string | null | undefined;

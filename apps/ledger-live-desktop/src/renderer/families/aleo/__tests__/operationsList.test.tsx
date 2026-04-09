@@ -4,8 +4,13 @@ import { render, screen } from "tests/testSetup";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { OperationsList } from "~/renderer/components/OperationsList";
 import type { AleoOperation } from "@ledgerhq/live-common/families/aleo/types";
+import { importLLDCoinFamily } from "~/renderer/families";
 
 const mockT = jest.fn() as unknown as TFunction;
+
+beforeEach(async () => {
+  await importLLDCoinFamily("aleo");
+});
 
 describe("OperationsList", () => {
   it("should render custom metadata cell with transaction type", () => {

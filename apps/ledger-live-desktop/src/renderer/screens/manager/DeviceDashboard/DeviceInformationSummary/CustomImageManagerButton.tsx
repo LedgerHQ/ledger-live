@@ -35,7 +35,7 @@ const CustomImageManagerButton = (props: Props) => {
         onClick={disabled ? undefined : onAdd}
         Icon={
           disabled
-            ? props => (
+            ? iconProps => (
                 <ToolTip
                   content={
                     <Text color="neutral.c00" variant="small">
@@ -44,7 +44,7 @@ const CustomImageManagerButton = (props: Props) => {
                   }
                   placement="top"
                 >
-                  <IconsLegacy.InfoAltFillMedium {...props} />
+                  <IconsLegacy.InfoAltFillMedium {...iconProps} />
                 </ToolTip>
               )
             : IconsLegacy.ChevronRightMedium

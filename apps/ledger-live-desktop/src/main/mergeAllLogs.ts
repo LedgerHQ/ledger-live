@@ -100,7 +100,7 @@ export function mergeAllLogs(
   ]
     .sort(compareLogs)
     .map((log, index) => {
-      const { originalIndex, ...rest } = log;
+      const { originalIndex: _originalIndex, ...rest } = log;
       return { ...rest, logIndex: index };
     })
     .slice(-maxLogCount);

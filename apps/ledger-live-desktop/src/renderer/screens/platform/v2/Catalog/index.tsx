@@ -39,11 +39,11 @@ export function Catalog() {
       <TrackPage category="Platform" name="Catalog" />
 
       {shouldDisplayWallet40MainNav ? (
-        <div className="pb-24">
+        <div className="pb-24" data-testid="discover-title">
           <PageHeader title={t("platform.catalog.title")} />
         </div>
       ) : (
-        <Text variant="h3" style={{ fontSize: 28 }}>
+        <Text variant="h3" style={{ fontSize: 28 }} data-testid="discover-title">
           {t("platform.catalog.title")}
         </Text>
       )}

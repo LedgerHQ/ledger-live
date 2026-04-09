@@ -16,7 +16,7 @@ import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
-type Props = Readonly<{
+export type Props = Readonly<{
   account: Account;
 }>;
 
