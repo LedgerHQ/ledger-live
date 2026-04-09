@@ -69,7 +69,7 @@ describe("useBorrowLiveAppViewModel", () => {
     setNetInfoState({ isConnected: true });
     setManifests({ remote: mockManifest });
     setRemoteLoadingState(false);
-    jest.mocked(useBorrowLiveConfig).mockReturnValue(undefined);
+    jest.mocked(useBorrowLiveConfig).mockReturnValue(null);
     jest.mocked(getCountryLocale).mockReturnValue("US");
   });
 
