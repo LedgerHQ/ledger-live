@@ -5980,6 +5980,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -6059,6 +6065,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
@@ -6129,6 +6141,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -6208,6 +6226,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
@@ -6284,6 +6308,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       rimraf:
         specifier: ^5
         version: 5.0.10

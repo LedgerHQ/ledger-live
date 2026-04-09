@@ -1,0 +1,19 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "plugins": ["eslint", "typescript", "jest"],
+  "rules": {
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.test.{ts,tsx}", "src/**/__tests__/**"],
+      "env": { "jest": true },
+      "plugins": ["jest"]
+    }
+  ]
+}
