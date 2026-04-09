@@ -47,7 +47,7 @@ export const PortfolioLoansSection = () => {
           <SubheaderTitle>{t("portfolio.loansEntry.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <Box mt={2}>
+      <Box lx={{ marginTop: "s8" }}>
         <Card onPress={handlePress} testID="portfolio-loans-entry-point">
           <CardHeader>
             <CardLeading>
