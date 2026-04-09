@@ -8,6 +8,7 @@ import { WalletContentCard } from "~/dynamicContent/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import ForceTheme from "../theme/ForceTheme";
 
+import { renderWalletCarouselMediaTitleChildren } from "./renderWalletCarouselMediaTitleChildren";
 import { useCarouselCardModel } from "./useCarouselCardModel";
 
 type CarouselCardProps = {
@@ -52,7 +53,11 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
           onClose={handleHide}
         >
           {header}
-          {cardProps.title ? <MediaCardTitle>{cardProps.title}</MediaCardTitle> : null}
+          {cardProps.title ? (
+            <MediaCardTitle>
+              {renderWalletCarouselMediaTitleChildren(cardProps.title)}
+            </MediaCardTitle>
+          ) : null}
         </MediaCard>
       </Flex>
     );
