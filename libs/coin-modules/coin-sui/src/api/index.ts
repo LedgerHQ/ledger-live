@@ -6,21 +6,22 @@ import {
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
 import coinConfig, { type SuiConfig } from "../config";
 import {
-  estimateFees,
-  combine,
   broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
   getBalance,
-  listOperations as logicListOperations,
-  lastBlock,
   getBlock,
   getBlockInfo,
-  craftTransaction,
-  getStakes,
   getRewards,
+  getStakes,
+  lastBlock,
   getValidators as logicGetValidators,
+  listOperations as logicListOperations,
 } from "../logic";
 
 export function createApi(config: SuiConfig): AlpacaApi {
@@ -58,6 +59,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

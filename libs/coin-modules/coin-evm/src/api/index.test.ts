@@ -23,6 +23,7 @@ describe.each([
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       validateTransaction: expect.any(Function),
+      craftTransactionData: expect.any(Function),
     },
   ],
   [
@@ -47,6 +48,7 @@ describe.each([
       validateIntent: expect.any(Function),
       validateTransaction: expect.any(Function),
       refreshOperations: expect.any(Function),
+      craftTransactionData: expect.any(Function),
     },
   ],
 ])("Alpaca methods %s", (_s, config, methods) => {

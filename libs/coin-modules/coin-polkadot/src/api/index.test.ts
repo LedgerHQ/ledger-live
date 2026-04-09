@@ -54,6 +54,7 @@ describe("index", () => {
         validateIntent: expect.any(Function),
         validateAddress: expect.any(Function),
         getNextSequence: expect.any(Function),
+        craftTransactionData: expect.any(Function),
       });
     });
   });

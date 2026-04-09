@@ -1,21 +1,22 @@
 import type {
   AlpacaApi,
-  BroadcastConfig,
+  Balance,
   Block,
   BlockInfo,
+  BroadcastConfig,
+  CraftedTransaction,
   Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
   FeeEstimation,
+  ListOperationsOptions,
   Operation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
-  Balance,
   TransactionValidation,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -77,6 +78,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

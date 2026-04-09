@@ -20,6 +20,7 @@ describe("createApi", () => {
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       getNextSequence: expect.any(Function),
+      craftTransactionData: expect.any(Function),
     });
   });
 });

@@ -1,22 +1,23 @@
 import {
-  Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
-  IncorrectTypeError,
-  type Operation,
-  Reward,
   CraftedTransaction,
+  Cursor,
+  IncorrectTypeError,
+  ListOperationsOptions,
+  type Operation,
+  Page,
+  Reward,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   AlpacaApi,
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getRevealFee } from "@taquito/taquito";
-import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
+import { getPkhfromPk, validatePublicKey, ValidationResult } from "@taquito/utils";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -26,11 +27,11 @@ import {
   getBalance,
   getBlock,
   getBlockInfo,
+  getStakes,
   lastBlock,
   listOperations,
   rawEncode,
   validateIntent,
-  getStakes,
 } from "../logic";
 import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import { getTezosToolkit } from "../logic/tezosToolkit";
@@ -78,6 +79,7 @@ export function createApi(config: TezosConfig): AlpacaApi {
       throw new Error("getValidators is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

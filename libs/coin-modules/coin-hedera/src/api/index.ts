@@ -4,6 +4,7 @@ import type {
   Operation,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
@@ -17,27 +18,27 @@ import {
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import {
-  broadcast as logicBroadcast,
   combine,
   craftTransaction,
-  estimateFees as logicEstimateFees,
   getBalance,
   getBlock,
-  getBlockV2,
   getBlockInfo,
-  listOperations as logicListOperations,
-  listOperationsV2 as logicListOperationsV2,
+  getBlockV2,
+  getRewards,
+  getStakes,
+  getValidators,
   lastBlock,
   lastBlockV2,
-  getValidators,
-  getStakes,
-  getRewards,
+  broadcast as logicBroadcast,
+  estimateFees as logicEstimateFees,
+  listOperations as logicListOperations,
+  listOperationsV2 as logicListOperationsV2,
 } from "../logic";
 import {
   extractInitiator,
-  mapIntentToSDKOperation,
-  getOperationValue,
   getBlockHash,
+  getOperationValue,
+  mapIntentToSDKOperation,
   toEVMAddress,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
@@ -244,5 +245,6 @@ export function createApi(
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

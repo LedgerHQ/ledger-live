@@ -1,18 +1,19 @@
 import {
   AlpacaApi,
+  Balance,
   Block,
   BlockInfo,
+  CraftedTransaction,
   Cursor,
-  Page,
-  Validator,
   FeeEstimation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
-  Balance,
   TransactionValidation,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
@@ -73,6 +74,7 @@ export function createApi(config: BoilerplateConfig): AlpacaApi {
     validateAddress: async (_address: string) => {
       throw new Error("validateAddress is not supported");
     },
+    craftTransactionData,
   };
 }
 

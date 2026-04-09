@@ -15,6 +15,7 @@ import {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
 import coinConfig, { type CantonCoinConfig } from "../config";
@@ -76,5 +77,6 @@ export function createApi(config: CantonCoinConfig): AlpacaApi {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

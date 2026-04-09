@@ -1,24 +1,25 @@
 import type {
+  AlpacaApi,
+  Balance,
   Block,
   BlockInfo,
-  Cursor,
-  Page,
-  Stake,
-  Reward,
-  Validator,
   CraftedTransaction,
-  Balance,
+  Cursor,
   FeeEstimation,
+  MemoNotSupported,
+  Page,
+  Reward,
+  Stake,
   TransactionIntent,
   TransactionValidation,
-  MemoNotSupported,
-  AlpacaApi,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
 import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
-import type { AleoTransactionIntentData, AleoCoinConfig, AleoConfig } from "../types";
+import type { AleoCoinConfig, AleoConfig, AleoTransactionIntentData } from "../types";
 
 export function createApi(
   config: AleoConfig,
@@ -95,5 +96,6 @@ export function createApi(
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

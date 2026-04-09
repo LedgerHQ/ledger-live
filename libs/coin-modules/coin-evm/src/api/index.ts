@@ -1,24 +1,23 @@
 import type {
-  BroadcastConfig,
+  AlpacaApi,
   Balance,
   Block,
   BlockInfo,
+  BroadcastConfig,
+  BufferTxData,
+  CraftedTransaction,
+  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   MemoNotSupported,
   Operation,
-  TransactionIntent,
-  Cursor,
   Page,
-  Validator,
-  Stake,
   Reward,
+  Stake,
+  TransactionIntent,
   TransactionValidation,
-  CraftedTransaction,
-  BufferTxData,
-  AlpacaApi,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { STAKING_CONTRACTS } from "../staking";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";
@@ -28,17 +27,18 @@ import {
   combine,
   craftTransaction,
   estimateFees,
-  lastBlock,
-  listOperations,
   getBalance,
-  getNextSequence,
-  validateIntent,
-  refreshOperations,
   getBlock,
   getBlockInfo,
+  getNextSequence,
+  lastBlock,
+  listOperations,
+  refreshOperations,
+  validateIntent,
   validateTransaction,
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
+import { STAKING_CONTRACTS } from "../staking";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
@@ -48,10 +48,7 @@ const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): AlpacaApi<MemoNotSupported, BufferTxData> &
-  BridgeApi & {
-    validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
-  } {
+): AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi {
   configs[currencyId] = config;
   setCoinConfig(id => {
     const evmConfig = configs[id];
@@ -120,5 +117,8 @@ export function createApi(
     validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
       validateTransaction(currency, { signature }),
     ...(STAKING_CONTRACTS[currencyId] ? { stakingSupported: true } : {}),
+    craftTransactionData: _intent => {
+      throw new Error("Unsupported method");
+    },
   };
 }

@@ -1,21 +1,22 @@
 import type {
+  AlpacaApi,
+  AssetInfo,
   Balance,
   Block,
   BlockInfo,
+  CraftedTransaction,
+  Cursor,
+  FeeEstimation,
   ListOperationsOptions,
   Operation,
-  FeeEstimation,
+  Page,
+  Reward,
+  Stake,
   TransactionIntent,
   TransactionValidation,
-  AssetInfo,
-  Page,
-  Stake,
-  Reward,
-  Cursor,
-  CraftedTransaction,
   Validator,
-  AlpacaApi,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import network from "@ledgerhq/live-network";
 
@@ -214,4 +215,5 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateAddress(_address: string): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
+    craftTransactionData,
   }) satisfies AlpacaApi<any> & BridgeApi;

@@ -1,16 +1,17 @@
 import type {
-  AlpacaApi,
   AddressValidationCurrencyParameters,
+  AlpacaApi,
   Balance,
   BroadcastConfig,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
   MemoNotSupported,
+  StakingTransactionIntent,
   StringMemo,
   TransactionIntent,
-  StakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
@@ -101,5 +102,6 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaA
     ) => {
       return validateAddress(address, parameters);
     },
+    craftTransactionData,
   };
 }
