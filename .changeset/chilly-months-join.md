@@ -3,4 +3,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-feat: debug screen lwm new analytics opt-in
+Add LWM Settings → Debug analytics consent QA screen and navigation; align analytics consent drawer tracking, phases, and settings reducer with tests; update live-common analytics consent utils and tests
