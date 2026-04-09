@@ -1,5 +1,5 @@
-import { mkdirSync, writeFileSync } from "fs";
-import { resolve } from "path";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { test } from "tests/fixtures/common";
 import { runCliCommandWithRetry } from "tests/utils/runCli";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -155,8 +155,8 @@ for (const [appName, entries] of groupByApp(monitored)) {
         mkdirSync(artifactsDir, { recursive: true });
         const safeAppName = appName
           .toLowerCase()
-          .replace(/\s+/g, "-")
-          .replace(/[^a-z0-9-]/g, "");
+          .replaceAll(/\s+/g, "-")
+          .replaceAll(/[^a-z0-9-]/g, "");
         writeFileSync(
           resolve(artifactsDir, `fund-monitor-partial-${safeAppName}.json`),
           JSON.stringify(results, null, 2),
