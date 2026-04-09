@@ -1,5 +1,6 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -52,6 +53,7 @@ export function usePendingTransferProposalsViewModel(
   const device = useSelector(getCurrentDevice);
   const unit = useAccountUnit(account);
   const sync = useBridgeSync();
+  const lldModularDrawer = useFeature("lldModularDrawer");
   const [modal, setModal] = useState<Modal>({ isOpen: false, action: "accept", contractId: "" });
 
   const accountXpub = parentAccount.xpub ?? "";
@@ -109,6 +111,7 @@ export function usePendingTransferProposalsViewModel(
               currency: parentAccount.currency,
               device,
               mainAccount: parentAccount,
+              useModularDrawer: !!lldModularDrawer?.enabled,
               navigationSnapshot: {
                 type: "transfer-proposal",
                 handler: onOpenModal,

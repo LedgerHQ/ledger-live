@@ -66,13 +66,6 @@ function cantonDevnetCurrency(): CryptoCurrency {
   return currency;
 }
 
-const cantonIntegSettings = {
-  ...SETTINGS_INITIAL_STATE,
-  overriddenFeatureFlags: {
-    cantonSkipPreapprovalStep: { enabled: true },
-  },
-};
-
 function mergeCantonIntegInitialState(
   device: ReturnType<typeof createMockDevice>,
   extra: Record<string, unknown> & { settings?: typeof SETTINGS_INITIAL_STATE } = {},
@@ -82,13 +75,8 @@ function mergeCantonIntegInitialState(
     ...generateOnboardModalState(device),
     ...rest,
     settings: {
-      ...cantonIntegSettings,
+      ...SETTINGS_INITIAL_STATE,
       ...extraSettings,
-      overriddenFeatureFlags: {
-        ...cantonIntegSettings.overriddenFeatureFlags,
-        ...(extraSettings?.overriddenFeatureFlags ?? {}),
-        cantonSkipPreapprovalStep: { enabled: true },
-      },
     },
   };
 }

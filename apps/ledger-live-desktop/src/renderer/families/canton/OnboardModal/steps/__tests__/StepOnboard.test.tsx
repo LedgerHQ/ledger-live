@@ -124,7 +124,7 @@ describe("StepOnboard", () => {
     expect(onRetry).toHaveBeenCalled();
   });
 
-  it("should call transitionTo with AUTHORIZE when continue is clicked in SUCCESS state", async () => {
+  it("should call transitionTo with FINISH when continue is clicked in SUCCESS state", async () => {
     const transitionTo = jest.fn();
     const { user } = render(
       <StepOnboardFooter
@@ -135,7 +135,7 @@ describe("StepOnboard", () => {
     );
 
     await user.click(screen.getByRole("button", { name: /continue/i }));
-    expect(transitionTo).toHaveBeenCalledWith(StepId.AUTHORIZE);
+    expect(transitionTo).toHaveBeenCalledWith(StepId.FINISH);
   });
 
   it("should render currency badge in footer", () => {

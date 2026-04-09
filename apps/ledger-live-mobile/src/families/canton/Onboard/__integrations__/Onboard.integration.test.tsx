@@ -79,21 +79,6 @@ function overrideInitialStateWithDevice(state: State): State {
   };
 }
 
-/** Skip preapproval → navigates to AddAccounts success after onboard (matches desktop integ). */
-function overrideInitialStateSkipPreapproval(state: State): State {
-  const withDevice = overrideInitialStateWithDevice(state);
-  return {
-    ...withDevice,
-    settings: {
-      ...withDevice.settings,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        cantonSkipPreapprovalStep: { enabled: true },
-      },
-    },
-  };
-}
-
 function createScreenProps(): React.ComponentProps<typeof OnboardScreen> {
   const navigation = {
     goBack: jest.fn(),
@@ -147,9 +132,9 @@ describe("Canton onboarding integration", () => {
     jest.clearAllMocks();
   });
 
-  it("should complete onboarding and navigate to AddAccounts success when preapproval is skipped", async () => {
+  it("should complete onboarding and navigate to AddAccounts success", async () => {
     render(<OnboardScreen {...createScreenProps()} />, {
-      overrideInitialState: overrideInitialStateSkipPreapproval,
+      overrideInitialState: overrideInitialStateWithDevice,
     });
 
     await waitFor(

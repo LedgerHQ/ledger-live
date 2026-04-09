@@ -306,7 +306,6 @@ export type Features = CurrencyFeatures & {
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
-  cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;

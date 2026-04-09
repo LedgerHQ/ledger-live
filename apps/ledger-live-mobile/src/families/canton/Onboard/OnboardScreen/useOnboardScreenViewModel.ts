@@ -1,8 +1,7 @@
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -30,7 +29,6 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   const device = useSelector(lastConnectedDeviceSelector);
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
-  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
 
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
   const bridge = useMemo(() => {
@@ -44,15 +42,12 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
 
   const {
     onboardingStatus,
-    authorizeStatus,
     onboardResult,
     error,
     accountsProcessed,
     setOnboardingStatus,
-    setAuthorizeStatus,
     setOnboardResult,
     setOnboardingError,
-    setAuthorizationError,
     markAccountsProcessed,
     resetError,
   } = useOnboardingState();
@@ -76,19 +71,16 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
     existingAccounts,
   });
 
-  const { startOnboarding, authorizePreapproval, unsubscribe } = useCantonBridge({
+  const { startOnboarding, unsubscribe } = useCantonBridge({
     bridge,
     cryptoCurrency,
     device,
     accountToOnboard,
     setOnboardingStatus,
-    setAuthorizeStatus,
     setResult: setOnboardResult,
     setOnboardingError,
-    setAuthorizationError,
     resetError,
     finishOnboarding,
-    skipPreapprovalStep: skipCantonPreapprovalStep?.enabled ?? false,
   });
 
   const retryOnboarding = useCallback(() => {
@@ -97,20 +89,11 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   }, [resetError, startOnboarding]);
 
   const handleConfirm = useCallback(() => {
-    if (!onboardResult) {
-      if (!device || !accountToOnboard) {
-        return;
-      }
-      retryOnboarding();
+    if (!device || !accountToOnboard) {
       return;
     }
-
-    if (!device) {
-      return;
-    }
-
-    authorizePreapproval(onboardResult);
-  }, [onboardResult, device, accountToOnboard, retryOnboarding, authorizePreapproval]);
+    retryOnboarding();
+  }, [device, accountToOnboard, retryOnboarding]);
 
   const deviceAction = useAppDeviceAction();
 
@@ -165,15 +148,12 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
     markAccountsProcessed,
   ]);
 
-  const isProcessing = isStatusProcessing(onboardingStatus) || isStatusProcessing(authorizeStatus);
+  const isProcessing = isStatusProcessing(onboardingStatus);
 
   const showDeviceModal =
-    (onboardingStatus === OnboardStatus.SIGN || authorizeStatus === AuthorizeStatus.SIGN) &&
-    !!device &&
-    !!cryptoCurrency;
+    onboardingStatus === OnboardStatus.SIGN && !!device && !!cryptoCurrency;
 
-  const isNetworkProcessing =
-    onboardingStatus === OnboardStatus.SUBMIT || authorizeStatus === AuthorizeStatus.SUBMIT;
+  const isNetworkProcessing = onboardingStatus === OnboardStatus.SUBMIT;
 
   const confirmDisabled =
     isProcessing ||
@@ -185,7 +165,6 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   const contentSectionViewModel = useContentSectionViewModel({
     status: {
       onboarding: onboardingStatus,
-      authorize: authorizeStatus,
       hasResult: !!onboardResult,
     },
     isReonboarding,
@@ -195,7 +174,6 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   return {
     // State
     onboardingStatus,
-    authorizeStatus,
     onboardResult,
     error,
     accountsToDisplay,
@@ -227,11 +205,8 @@ const PROCESSING_STATUSES = new Set([
   OnboardStatus.PREPARE,
   OnboardStatus.SIGN,
   OnboardStatus.SUBMIT,
-  AuthorizeStatus.PREPARE,
-  AuthorizeStatus.SIGN,
-  AuthorizeStatus.SUBMIT,
 ]);
 
-export function isStatusProcessing(status: OnboardStatus | AuthorizeStatus): boolean {
+export function isStatusProcessing(status: OnboardStatus): boolean {
   return PROCESSING_STATUSES.has(status);
 }

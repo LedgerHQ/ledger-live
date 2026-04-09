@@ -398,6 +398,10 @@ export const StepImportFooter = ({
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
 
+  // TODO: Remove Canton onboarding branch when `lldModularDrawer` feature flag
+  // is permanently enabled and the legacy Add Accounts modal is removed.
+  // Canton onboarding is now handled inline by the MAD via
+  // ModularDrawerAddAccountFlowManager in families/canton/.
   const hasCantonCreatableAccounts = scannedAccounts.some(
     a =>
       checkedAccountsIds.includes(a.id) &&
