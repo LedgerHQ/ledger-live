@@ -81,7 +81,7 @@ export function Transition({
     return () => {
       clearTimeout(timeoutRef);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [inValue, timeout]);
 
   const result = useMemo(() => {

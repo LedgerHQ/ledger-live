@@ -38,7 +38,7 @@ export default function useCameraPermissions() {
   useEffect(() => {
     requestPermission().then(() => setFirstAutomaticRequestCompleted(true));
     // only run this once on mount
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const appState = useRef(AppState.currentState);
   const shouldCheckPermissionOnNextResume = useRef(false);

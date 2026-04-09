@@ -115,7 +115,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     if (params.stepId && stepId !== params.stepId) {
       onChangeStepId(params.stepId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();

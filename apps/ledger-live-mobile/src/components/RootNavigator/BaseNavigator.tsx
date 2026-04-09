@@ -189,7 +189,7 @@ export default function BaseNavigator() {
     initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
 
     // No dependency because we only want to run it once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

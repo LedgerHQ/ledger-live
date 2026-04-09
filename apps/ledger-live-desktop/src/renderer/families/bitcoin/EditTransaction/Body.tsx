@@ -343,7 +343,7 @@ const Body = ({
       return;
     }
     // We only want to update the account and parentAccount when the editType changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [editType]);
 
   const statusParams: GetEditTransactionStatusParams = {

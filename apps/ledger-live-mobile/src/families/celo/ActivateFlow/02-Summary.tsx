@@ -77,7 +77,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
         recipient: chosenValidator?.address ?? "",
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [updateTransaction, bridge, setTransaction, chosenValidator]);
 
   const onChangeDelegator = useCallback(() => {

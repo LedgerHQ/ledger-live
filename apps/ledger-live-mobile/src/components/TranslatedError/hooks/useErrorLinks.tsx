@@ -31,6 +31,6 @@ export function useErrorLinks(error?: Error | DmkError | null) {
     }
 
     return {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 }

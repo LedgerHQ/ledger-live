@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* oxlint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 
 const ANIMATION_DURATION = 1200;

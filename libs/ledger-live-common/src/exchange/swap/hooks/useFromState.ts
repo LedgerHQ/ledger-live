@@ -62,7 +62,7 @@ export const useFromState = ({
         };
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [accounts, bridgeTransaction.updateTransaction],
   );
 
@@ -75,7 +75,7 @@ export const useFromState = ({
         }));
         setFromState(previousState => ({ ...previousState, amount: amount }));
       }, 400),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [bridgeTransaction.updateTransaction],
   );
 

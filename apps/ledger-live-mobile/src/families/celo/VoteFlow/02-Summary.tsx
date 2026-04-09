@@ -85,7 +85,7 @@ export default function VoteSummary({ navigation, route }: Props) {
         recipient: chosenValidator.address,
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params.amount, updateTransaction, bridge, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));

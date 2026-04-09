@@ -41,6 +41,6 @@ export function useErrorLinks(error?: Error | null): Record<string, ReactElement
     }
 
     return {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [safeStringLinks]);
 }

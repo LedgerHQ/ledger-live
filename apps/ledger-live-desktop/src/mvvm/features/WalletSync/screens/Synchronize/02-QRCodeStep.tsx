@@ -37,7 +37,7 @@ export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: Analy
       x: ["10vw", "0vw"],
       ...animation,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { onClickTrack } = useLedgerSyncAnalytics();

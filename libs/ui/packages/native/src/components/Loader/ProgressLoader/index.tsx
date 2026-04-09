@@ -74,7 +74,7 @@ const ProgressLoader = ({
       -1, // Infinite
     );
     return () => cancelAnimation(rotation);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (infinite) {

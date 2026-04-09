@@ -54,7 +54,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       onChangeValidator(poolDetails.pools[0]);
       setUserAndLedgerPoolsLoading(false);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       }
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPoolId]);
 
   const onSearch = useCallback(

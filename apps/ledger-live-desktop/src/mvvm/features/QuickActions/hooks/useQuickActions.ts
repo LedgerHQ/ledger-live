@@ -171,7 +171,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
         buttonAppearance: "transparent",
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [hasOnboardedDevice, hasFunds, hasAccount]);
 
   return { actionsList };
