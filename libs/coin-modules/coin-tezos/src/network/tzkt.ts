@@ -220,14 +220,24 @@ const api = {
 
   /**
    * Fetches FA token balances for a given account.
+   * When `tokenFilter` is omitted, only FA2 tokenId 0 balances are returned (legacy behaviour).
+   * Pass `tokenFilter` to query a specific FA2 contract + token id (e.g. send-max for FA2).
    * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
    */
-  async getTokensBalances(address: string): Promise<APITokenBalance[]> {
+  async getTokensBalances(
+    address: string,
+    tokenFilter?: { contractAddress: string; tokenId: number },
+  ): Promise<APITokenBalance[]> {
     const params: Record<string, unknown> = {
       account: address,
       "token.standard": "fa2",
-      "token.tokenId": "0",
     };
+    if (tokenFilter) {
+      params["token.contract"] = tokenFilter.contractAddress;
+      params["token.tokenId"] = String(tokenFilter.tokenId);
+    } else {
+      params["token.tokenId"] = "0";
+    }
     const { data } = await network<APITokenBalance[]>({
       url: `${getExplorerUrl()}/v1/tokens/balances`,
       params,

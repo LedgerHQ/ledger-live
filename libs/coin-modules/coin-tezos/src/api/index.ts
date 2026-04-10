@@ -46,6 +46,7 @@ import {
   resolveTezosOperationMode,
 } from "../utils";
 import type { TezosFeeEstimation } from "./types";
+import type { TezosOperationMode } from "../types/model";
 
 export function createApi(config: TezosConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -108,7 +109,7 @@ async function craft(
   };
 
   const tezosMode = resolveTezosOperationMode(transactionIntent.type, transactionIntent.asset);
-  const mappedType: "send" | "delegate" | "undelegate" | "send_token" =
+  const mappedType: TezosOperationMode =
     tezosMode === "send_token" ? "send_token" : mapIntentTypeToTezosMode(transactionIntent.type);
   const tokenCraftInfo =
     tezosMode === "send_token" ? parseTezosTokenAsset(transactionIntent.asset)! : undefined;
@@ -285,7 +286,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       estimation.taquitoError &&
       !estimation.taquitoError.includes("delegate.unchanged") &&
       !estimation.taquitoError.includes("subtraction_underflow") &&
-      !estimation.taquitoError.includes("balance_too_low")
+      !estimation.taquitoError.includes("balance_too_low") &&
+      !estimation.taquitoError.includes("script_rejected")
     ) {
       throw new Error(`Fees estimation failed: ${estimation.taquitoError}`);
     }

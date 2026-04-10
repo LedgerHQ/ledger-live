@@ -360,6 +360,29 @@ describe("tzkt network API", () => {
         }),
       );
     });
+
+    it("requests a specific FA2 contract and token id when a filter is passed", async () => {
+      const balances = [{ id: 2 } as APITokenBalance];
+      mockedNetwork.mockReturnValue(networkResponse(balances) as ReturnType<typeof network>);
+
+      const result = await api.getTokensBalances("tz1bal", {
+        contractAddress: "KT1abc",
+        tokenId: 7,
+      });
+
+      expect(result).toEqual(balances);
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("/v1/tokens/balances"),
+          params: {
+            account: "tz1bal",
+            "token.standard": "fa2",
+            "token.contract": "KT1abc",
+            "token.tokenId": "7",
+          },
+        }),
+      );
+    });
   });
 
   // -------------------------------------------------------------------------
