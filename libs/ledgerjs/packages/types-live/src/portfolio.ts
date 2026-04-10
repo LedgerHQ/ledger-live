@@ -122,4 +122,5 @@ export type AssetsDistribution = {
   showFirst: number;
   // sum of all countervalues
   sum: number;
+  bySlug?: Record<string, DistributionItem>;
 };
