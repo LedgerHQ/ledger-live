@@ -337,12 +337,12 @@ export function createPrivateSyncObservable(
 }
 
 /**
- * Emits `true` while both the public and private syncs are running concurrently
- * (i.e. the combined sync branch is active). Resets to `false` once the sync
- * completes or errors. Use this to block UI elements that should not be
- * interactive during a full combined sync.
+ * Emits `true` while any background (automatic) private sync is running —
+ * either the combined public+private branch or a standalone private-only branch.
+ * Resets to `false` once the sync completes or errors. Use this to block UI
+ * elements that should not be interactive during a background sync.
  */
-export const isCombinedSyncPending$ = new BehaviorSubject<boolean>(false);
+export const isBackgroundSyncPending$ = new BehaviorSubject<boolean>(false);
 
 /**
  * Builds the list of sync observables to run based on syncConfig.syncType.
@@ -372,7 +372,7 @@ export function buildSyncObservables(
   if (isPublicSync && isPrivateSync) {
     syncs.push(
       defer(() => {
-        isCombinedSyncPending$.next(true);
+        isBackgroundSyncPending$.next(true);
         return createPublicSyncObservable(info, syncConfig).pipe(
           concatMap(publicResult =>
             concat(
@@ -391,7 +391,7 @@ export function buildSyncObservables(
             ),
           ),
         );
-      }).pipe(finalize(() => isCombinedSyncPending$.next(false))),
+      }).pipe(finalize(() => isBackgroundSyncPending$.next(false))),
     );
   } else if (isPublicSync) {
     syncs.push(createPublicSyncObservable(info, syncConfig));

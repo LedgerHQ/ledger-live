@@ -1,1 +1,1 @@
-export { isCombinedSyncPending$ } from "@ledgerhq/coin-aleo/bridge/sync";
+export { isBackgroundSyncPending$ } from "@ledgerhq/coin-aleo/bridge/sync";
