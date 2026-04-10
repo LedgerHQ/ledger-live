@@ -7,8 +7,10 @@
   "private": true,
   "scripts": {
     "build": "rslib build",
-    "lint": "eslint ./ --cache",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
   },
   "devDependencies": {
     "@actions/cache": "3.2.4",
