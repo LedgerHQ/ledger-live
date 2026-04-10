@@ -3012,6 +3012,7 @@
     "noOperations": "No Operations",
     "emptyTitle": "No transactions yet",
     "emptySubtitle": "Come back later to see your transactions.",
+    "emptyReceiveCta": "Receive",
     "noMoreTransactions": "No other transactions"
   },
   "selectableAccountsList": {

@@ -8,4 +8,9 @@ describe("OperationsEmptyState", () => {
     expect(getByText(/no transactions yet/i)).toBeVisible();
     expect(getByText(/come back later to see your transactions/i)).toBeVisible();
   });
+
+  it("renders the receive CTA button", () => {
+    const { getByText } = render(<OperationsEmptyState />);
+    expect(getByText(/receive/i)).toBeVisible();
+  });
 });

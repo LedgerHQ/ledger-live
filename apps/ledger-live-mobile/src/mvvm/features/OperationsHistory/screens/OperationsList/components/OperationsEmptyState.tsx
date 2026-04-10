@@ -1,10 +1,18 @@
-import React from "react";
-import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
+import React, { useCallback } from "react";
+import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle, LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export function OperationsEmptyState() {
   const { t } = useTranslation();
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "OperationsList",
+  });
+
+  const onReceivePress = useCallback(() => {
+    handleOpenReceiveDrawer();
+  }, [handleOpenReceiveDrawer]);
 
   return (
     <Box lx={containerStyle} testID="operations-empty-state">
@@ -17,6 +25,9 @@ export function OperationsEmptyState() {
           {t("operationList.emptySubtitle")}
         </Text>
       </Box>
+      <Button appearance="base" size="lg" onPress={onReceivePress} lx={buttonStyle}>
+        {t("operationList.emptyReceiveCta")}
+      </Button>
     </Box>
   );
 }
@@ -44,5 +55,9 @@ const titleStyle: LumenTextStyle = {
 const subtitleStyle: LumenTextStyle = {
   color: "muted",
   textAlign: "center",
+  width: "full",
+};
+
+const buttonStyle: LumenViewStyle = {
   width: "full",
 };
