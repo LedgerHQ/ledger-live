@@ -378,6 +378,8 @@
     "src/dada-client/types/trend.ts",
     "src/dada-client/utils/currencySelection.ts",
     "src/dada-client/utils/errorUtils.ts",
+    "src/dada-client/utils/deepMergeCryptoAssets.ts",
+    "src/dada-client/utils/chunkCurrencyIds.ts",
     "src/device",
     "src/device-action/utils.ts",
     "src/device/hooks/useLatestFirmware.ts",
