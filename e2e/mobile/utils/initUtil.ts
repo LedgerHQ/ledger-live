@@ -336,6 +336,20 @@ export class InitializationManager {
           myWallet: isWallet40,
         },
       },
+      llmModularDrawer: {
+        enabled: true,
+        params: {
+          add_account: true,
+          live_app: true,
+          live_apps_allowlist: [],
+          live_apps_blocklist: ["revoke-cash"],
+          receive_flow: true,
+          send_flow: false,
+          enableModularization: true,
+          searchDebounceTime: 300,
+          backendEnvironment: "PROD",
+        },
+      },
     };
     await setFeatureFlags({
       ...defaultFlags,
