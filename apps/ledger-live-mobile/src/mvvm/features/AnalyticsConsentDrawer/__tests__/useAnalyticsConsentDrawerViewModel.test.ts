@@ -137,10 +137,15 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
       expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
       expect(result.current.phase).toBe("closed");
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "analytics_consent_opt_in",
-        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-      });
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_opt_in",
+          page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        true,
+      );
       expect(updateIdentify).toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
@@ -162,10 +167,15 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(s.personalizedRecommendationsEnabled).toBe(false);
       expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
       expect(result.current.phase).toBe("closed");
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "analytics_consent_opt_out",
-        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-      });
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_opt_out",
+          page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        false,
+      );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
 
@@ -247,6 +257,15 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(s.personalizedRecommendationsEnabled).toBe(true);
       expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
       expect(result.current.phase).toBe("closed");
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_opt_in",
+          page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        true,
+      );
       expect(updateIdentify).toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
@@ -272,6 +291,15 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
       expect(result.current.phase).toBe("closed");
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_opt_out",
+          page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        },
+        true,
+      );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
   });
@@ -314,6 +342,11 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         CURRENT_PRIVACY_POLICY_VERSION,
       );
       expect(updateIdentify).toHaveBeenCalled();
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "analytics_consent_privacy_got_it",
+        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      });
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
   });

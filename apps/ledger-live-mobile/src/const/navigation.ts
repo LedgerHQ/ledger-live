@@ -29,6 +29,7 @@ export enum ScreenName {
   CurrencySettings = "CurrencySettings",
   EditCurrencyUnits = "EditCurrencyUnits",
   CustomCALRefInput = "CustomCALRefInput",
+  DebugAnalyticsConsentQA = "DebugAnalyticsConsentQA",
   DebugBLEDevicePairing = "DebugBLEDevicePairing",
   DebugConfiguration = "DebugConfiguration",
   DebugCommandSender = "DebugCommandSender",
