@@ -7,6 +7,7 @@ import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,
   hasCompletedOnboardingSelector,
+  personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import {
   setAnalytics,
@@ -42,6 +43,9 @@ export function useAnalyticsConsentDrawerViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const personalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
 
   const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
   const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
@@ -67,14 +71,16 @@ export function useAnalyticsConsentDrawerViewModel() {
       return;
     }
     setPhase(current =>
-      resolveAnalyticsConsentPhase(
-        current,
-        needsRenewal,
-        needsUpdatePrivacy,
-        analyticsEnabled,
-      ),
+      resolveAnalyticsConsentPhase(current, needsRenewal, needsUpdatePrivacy, analyticsEnabled),
     );
-  }, [isFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, analyticsEnabled, handleCloseDrawer]);
+  }, [
+    isFocused,
+    shouldOffer,
+    needsRenewal,
+    needsUpdatePrivacy,
+    analyticsEnabled,
+    handleCloseDrawer,
+  ]);
 
   const persistConsentCompletion = useCallback(async () => {
     dispatch(
@@ -88,7 +94,15 @@ export function useAnalyticsConsentDrawerViewModel() {
   }, [dispatch]);
 
   const applyOptIn = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_opt_in", page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE });
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_opt_in",
+        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+      true,
+    );
     dispatch(setAnalytics(true));
     dispatch(setPersonalizedRecommendations(true));
     await persistConsentCompletion();
@@ -96,15 +110,35 @@ export function useAnalyticsConsentDrawerViewModel() {
   }, [dispatch, persistConsentCompletion, handleCloseDrawer]);
 
   const applyOptOut = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_opt_out", page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE });
+    const isPreviouslyOptedOutCompletely = !analyticsEnabled && !personalizedRecommendationsEnabled;
+    const trackMandatory = !isPreviouslyOptedOutCompletely;
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_opt_out",
+        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      },
+      trackMandatory,
+    );
     dispatch(setAnalytics(false));
     dispatch(setPersonalizedRecommendations(false));
     await persistConsentCompletion();
     handleCloseDrawer();
-  }, [dispatch, persistConsentCompletion, handleCloseDrawer]);
+  }, [
+    analyticsEnabled,
+    dispatch,
+    handleCloseDrawer,
+    personalizedRecommendationsEnabled,
+    persistConsentCompletion,
+  ]);
 
   const onPrivacyGotIt = useCallback(async () => {
-    track("button_clicked", { button: "analytics_consent_privacy_got_it", page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_privacy_got_it",
+      page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+    });
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
@@ -117,7 +151,10 @@ export function useAnalyticsConsentDrawerViewModel() {
   }, [dispatch, handleCloseDrawer]);
 
   const onSetPreferences = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_set_preferences", page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE });
+    track("button_clicked", {
+      button: "analytics_consent_set_preferences",
+      page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+    });
     handleCloseDrawer();
     navigation.navigate(NavigatorName.Settings, {
       screen: ScreenName.GeneralSettings,
