@@ -1,4 +1,4 @@
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -50,15 +50,11 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     isProcessing: false,
     onboardingResult: undefined,
     onboardingStatus: OnboardStatus.INIT,
-    authorizeStatus: AuthorizeStatus.INIT,
     error: null,
     onAddAccounts: jest.fn(),
     onAddMore: jest.fn(),
-    onAuthorizePreapproval: jest.fn(),
     onOnboardAccount: jest.fn(),
     onRetryOnboardAccount: jest.fn(),
-    onRetryPreapproval: jest.fn(),
-    skipPreapprovalStep: false,
     transitionTo: jest.fn(),
     ...overrides,
   };

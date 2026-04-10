@@ -24,7 +24,6 @@ import {
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
-import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
@@ -161,12 +160,6 @@ export function useScanAccounts({
     selectedIds,
   ]);
 
-  const { hasCantonCreatableAccounts, selectedCantonCreatableAccounts } =
-    useCantonCreatableAccounts({
-      scannedAccounts,
-      selectedIds: filteredSelectedIds,
-    });
-
   const { hasConcordiumCreatableAccounts, selectedConcordiumAccounts } =
     useConcordiumCreatableAccounts({
       scannedAccounts,
@@ -179,20 +172,6 @@ export function useScanAccounts({
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-
-    if (hasCantonCreatableAccounts) {
-      setDrawer();
-
-      dispatch(
-        openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
-          currency,
-          selectedAccounts: selectedCantonCreatableAccounts,
-          editedNames: {},
-        }),
-      );
-
-      return;
-    }
 
     if (hasConcordiumCreatableAccounts) {
       setDrawer();
@@ -231,8 +210,6 @@ export function useScanAccounts({
     existingAccounts,
     onComplete,
     currency,
-    hasCantonCreatableAccounts,
-    selectedCantonCreatableAccounts,
     hasConcordiumCreatableAccounts,
     selectedConcordiumAccounts,
     filteredSelectedIds,

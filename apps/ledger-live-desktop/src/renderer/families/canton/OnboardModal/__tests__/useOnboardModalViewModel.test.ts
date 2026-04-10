@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { act, renderHook } from "tests/testSetup";
 import { isStatusProcessing, useOnboardModalViewModel } from "../hooks/useOnboardModalViewModel";
 import { StepId } from "../types";
@@ -16,12 +16,10 @@ const mockObservable = () => ({
 });
 
 const mockOnboardAccount = jest.fn(mockObservable);
-const mockAuthorizePreapproval = jest.fn(mockObservable);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: jest.fn(() => ({
     onboardAccount: mockOnboardAccount,
-    authorizePreapproval: mockAuthorizePreapproval,
   })),
 }));
 jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
@@ -105,8 +103,6 @@ describe("useOnboardModalViewModel", () => {
 
     expect(typeof result.current.onOnboardAccount).toBe("function");
     expect(typeof result.current.onRetryOnboardAccount).toBe("function");
-    expect(typeof result.current.onRetryPreapproval).toBe("function");
-    expect(typeof result.current.onAuthorizePreapproval).toBe("function");
     expect(typeof result.current.onAddAccounts).toBe("function");
     expect(typeof result.current.onAddMore).toBe("function");
     expect(typeof result.current.transitionTo).toBe("function");
@@ -128,10 +124,10 @@ describe("useOnboardModalViewModel", () => {
     expect(result.current.stepId).toBe(StepId.ONBOARD);
 
     act(() => {
-      result.current.transitionTo(StepId.AUTHORIZE);
+      result.current.transitionTo(StepId.FINISH);
     });
 
-    expect(result.current.stepId).toBe(StepId.AUTHORIZE);
+    expect(result.current.stepId).toBe(StepId.FINISH);
   });
 
   it("should call bridge.onboardAccount when onOnboardAccount is called", () => {
@@ -158,26 +154,6 @@ describe("useOnboardModalViewModel", () => {
     expect(result.current.onboardingStatus).toBe(OnboardStatus.INIT);
     expect(result.current.error).toBeNull();
   });
-
-  it("should not call authorizePreapproval when onboardingResult is undefined", () => {
-    const { result } = renderHook(() => useOnboardModalViewModel(defaultParams), {
-      initialState,
-    });
-
-    act(() => {
-      result.current.onAuthorizePreapproval();
-    });
-
-    expect(mockAuthorizePreapproval).not.toHaveBeenCalled();
-  });
-
-  it("should expose skipPreapprovalStep as false by default", () => {
-    const { result } = renderHook(() => useOnboardModalViewModel(defaultParams), {
-      initialState,
-    });
-
-    expect(result.current.skipPreapprovalStep).toBe(false);
-  });
 });
 
 describe("isStatusProcessing", () => {
@@ -185,17 +161,11 @@ describe("isStatusProcessing", () => {
     expect(isStatusProcessing(OnboardStatus.PREPARE)).toBe(true);
     expect(isStatusProcessing(OnboardStatus.SIGN)).toBe(true);
     expect(isStatusProcessing(OnboardStatus.SUBMIT)).toBe(true);
-    expect(isStatusProcessing(AuthorizeStatus.PREPARE)).toBe(true);
-    expect(isStatusProcessing(AuthorizeStatus.SIGN)).toBe(true);
-    expect(isStatusProcessing(AuthorizeStatus.SUBMIT)).toBe(true);
   });
 
   it("should return false for non-processing statuses", () => {
     expect(isStatusProcessing(OnboardStatus.INIT)).toBe(false);
     expect(isStatusProcessing(OnboardStatus.SUCCESS)).toBe(false);
     expect(isStatusProcessing(OnboardStatus.ERROR)).toBe(false);
-    expect(isStatusProcessing(AuthorizeStatus.INIT)).toBe(false);
-    expect(isStatusProcessing(AuthorizeStatus.SUCCESS)).toBe(false);
-    expect(isStatusProcessing(AuthorizeStatus.ERROR)).toBe(false);
   });
 });

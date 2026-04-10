@@ -254,7 +254,6 @@ export const StepOnboardFooter = ({
   onboardingStatus,
   onOnboardAccount,
   onRetryOnboardAccount,
-  skipPreapprovalStep,
   transitionTo,
 }: StepProps) => {
   if (onboardingStatus === OnboardStatus.SIGN) {
@@ -268,7 +267,7 @@ export const StepOnboardFooter = ({
           <Button
             primary
             disabled={isProcessing}
-            onClick={() => transitionTo(skipPreapprovalStep ? StepId.FINISH : StepId.AUTHORIZE)}
+            onClick={() => transitionTo(StepId.FINISH)}
           >
             <Trans i18nKey="common.continue" />
           </Button>
