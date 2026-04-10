@@ -105,8 +105,14 @@ afterEach(() => {
   jest.clearAllMocks();
   listenSubject = new Subject<DiscoveredDevice[]>();
   fakeDmk.listenToAvailableDevices.mockImplementation(() => listenSubject.asObservable());
+  fakeDmk.sendApdu = jest.fn();
   // Clear the static cache between tests
   DeviceManagementKitTransportSpeculos["byBase"].clear();
+  (
+    DeviceManagementKitTransportSpeculos as unknown as {
+      exchangeTailByBase: Map<string, Promise<unknown>>;
+    }
+  ).exchangeTailByBase.clear();
 });
 
 describe("DeviceManagementKitTransportSpeculos", () => {
@@ -161,11 +167,12 @@ describe("DeviceManagementKitTransportSpeculos", () => {
   });
 
   it("exchange() sends an APDU and returns the full response buffer", async () => {
-    // given
-    fakeDmk.sendApdu.mockResolvedValue({
+    // given — capture impl before open() wraps dmk.sendApdu with the per-base queue
+    const sendImpl = jest.fn().mockResolvedValue({
       data: Uint8Array.from([0x90]),
       statusCode: new Uint8Array([0x00]),
     });
+    fakeDmk.sendApdu = sendImpl;
 
     const transport = await openTransport();
     const apdu = Buffer.from([0x00, 0x01]);
@@ -174,7 +181,7 @@ describe("DeviceManagementKitTransportSpeculos", () => {
     const resp = await transport.exchange(apdu);
 
     // then
-    expect(fakeDmk.sendApdu).toHaveBeenCalledWith({
+    expect(sendImpl).toHaveBeenCalledWith({
       sessionId: "session-1",
       apdu: new Uint8Array(apdu.buffer, apdu.byteOffset, apdu.byteLength),
     });
@@ -183,8 +190,9 @@ describe("DeviceManagementKitTransportSpeculos", () => {
 
   it("propagates errors from exchange() when sendApdu fails after retry", async () => {
     // given
+    const sendImpl = jest.fn().mockRejectedValue(new Error("apdu-failed"));
+    fakeDmk.sendApdu = sendImpl;
     const transport = await openTransport();
-    fakeDmk.sendApdu.mockRejectedValue(new Error("apdu-failed"));
 
     // when - exchange fails, triggers session reset and retry
     const exchangePromise = transport.exchange(Buffer.from([0x00]));

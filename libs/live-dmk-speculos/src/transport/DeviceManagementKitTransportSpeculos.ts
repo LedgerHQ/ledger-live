@@ -30,6 +30,7 @@ type DmkEntry = {
   sessionId?: string;
   connectPromise?: Promise<void>;
   timeout: number;
+  unqueuedSendApdu?: DeviceManagementKit["sendApdu"];
 };
 
 type ControllerButton = "left" | "right" | "both";
@@ -103,6 +104,33 @@ export default class SpeculosHttpTransport extends Transport {
     return resolvedBaseUrl;
   }
 
+  private static wrapDmkSendApduWithPerBaseQueue(dmk: DeviceManagementKit, baseUrl: string) {
+    const rawSendApdu = dmk.sendApdu.bind(dmk);
+    dmk.sendApdu = async params =>
+      SpeculosHttpTransport.enqueueByBase(baseUrl, () => rawSendApdu(params));
+    return rawSendApdu;
+  }
+
+  private static enqueueByBase<T>(baseUrl: string, run: () => Promise<T>): Promise<T> {
+    const previous = SpeculosHttpTransport.exchangeTailByBase.get(baseUrl) ?? Promise.resolve();
+    const current = previous.then(run);
+    SpeculosHttpTransport.exchangeTailByBase.set(
+      baseUrl,
+      current.then(
+        () => undefined,
+        () => undefined,
+      ),
+    );
+    return current;
+  }
+
+  private static async awaitExchangeTail(baseUrl: string): Promise<void> {
+    const tail = SpeculosHttpTransport.exchangeTailByBase.get(baseUrl);
+    if (tail) {
+      await tail.catch(() => {});
+    }
+  }
+
   private static ensureEntry(baseUrl: string, connectionTimeoutMs: number): DmkEntry {
     let deviceManagementEntry = this.byBase.get(baseUrl);
     if (!deviceManagementEntry) {
@@ -111,9 +139,15 @@ export default class SpeculosHttpTransport extends Transport {
         .addLogger(new LedgerLiveLogger(LogLevel.Debug))
         .build();
 
+      const unqueuedSendApdu = SpeculosHttpTransport.wrapDmkSendApduWithPerBaseQueue(
+        deviceManagementKit,
+        baseUrl,
+      );
+
       deviceManagementEntry = {
         dmk: deviceManagementKit,
         timeout: connectionTimeoutMs,
+        unqueuedSendApdu,
       };
 
       this.byBase.set(baseUrl, deviceManagementEntry);
@@ -149,7 +183,11 @@ export default class SpeculosHttpTransport extends Transport {
   }
 
   static async disconnectAll(): Promise<void> {
-    for (const [, entry] of this.byBase) {
+    for (const [baseUrl, entry] of this.byBase) {
+      await SpeculosHttpTransport.awaitExchangeTail(baseUrl);
+      if (entry.unqueuedSendApdu) {
+        entry.dmk.sendApdu = entry.unqueuedSendApdu;
+      }
       if (entry.sessionId) {
         await entry.dmk.disconnect({ sessionId: entry.sessionId }).catch(() => {});
       }
@@ -165,6 +203,9 @@ export default class SpeculosHttpTransport extends Transport {
   static async open(options: SpeculosHttpTransportOpts = {}): Promise<SpeculosHttpTransport> {
     const baseUrl = this.resolveBaseFromEnv(options);
     const connectTimeoutMs = options.timeout ?? 10_000;
+
+    await SpeculosHttpTransport.awaitExchangeTail(baseUrl);
+
     const entry = this.ensureEntry(baseUrl, connectTimeoutMs);
 
     await this.ensureSession(entry);
@@ -195,20 +236,6 @@ export default class SpeculosHttpTransport extends Transport {
     return await this.getButtonClient().press(resolved);
   }
 
-  private enqueueSerializedExchange<T>(run: () => Promise<T>): Promise<T> {
-    const key = this.baseUrl;
-    const previous = SpeculosHttpTransport.exchangeTailByBase.get(key) ?? Promise.resolve();
-    const current = previous.then(run);
-    SpeculosHttpTransport.exchangeTailByBase.set(
-      key,
-      current.then(
-        () => undefined,
-        () => undefined,
-      ),
-    );
-    return current;
-  }
-
   private async exchangeOnce(apduCommand: Buffer): Promise<Buffer> {
     try {
       const { data, statusCode } = await this.dmk.sendApdu({
@@ -237,10 +264,11 @@ export default class SpeculosHttpTransport extends Transport {
   }
 
   async exchange(apduCommand: Buffer): Promise<Buffer> {
-    return this.enqueueSerializedExchange(() => this.exchangeOnce(apduCommand));
+    return this.exchangeOnce(apduCommand);
   }
 
   async close() {
+    await SpeculosHttpTransport.awaitExchangeTail(this.baseUrl);
     try {
       const s = this.eventStream;
       if (!s) return;
