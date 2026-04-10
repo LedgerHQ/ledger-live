@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
@@ -43,14 +42,14 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
         position: "relative",
         width: "100%",
         backgroundColor: theme.colors.bg.canvasSheet,
+        paddingHorizontal: 0,
+        paddingBottom: bottomInset + theme.spacings.s24,
       },
     }),
     [],
   );
 
   if (!isDrawerOpen) return null;
-
-  const paddingBottom = bottomInset + 24;
 
   let sheetBody: React.ReactNode = null;
   if (phase === "consentReconfirm") {
@@ -105,19 +104,16 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
       noCloseButton
       testID="analytics-consent-drawer"
     >
-      <BottomSheetView style={{ paddingHorizontal: 0, paddingBottom }}>
-        <View style={styles.sheetSurface}>
-          <AnalyticsConsentSheetBackgroundGradient />
-          <TrackScreen
-            key={phase}
-            category="AnalyticsConsentDrawer"
-            name="Analytics consent"
-            type="drawer"
-            phase={phase}
-            refreshSource={false}
-          />
-          {sheetChrome}
-        </View>
+      <BottomSheetView style={styles.sheetSurface}>
+        <TrackScreen
+          key={phase}
+          category="AnalyticsConsentDrawer"
+          name="Analytics consent"
+          type="drawer"
+          phase={phase}
+          refreshSource={false}
+        />
+        {sheetChrome}
       </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
