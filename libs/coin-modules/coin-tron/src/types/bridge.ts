@@ -96,7 +96,7 @@ export type TronOperationRaw = OperationRaw<TrongridExtraTxInfoRaw>;
 export type TrongridExtraTxInfo = OperationExtra & {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
-  votes?: Vote[];
+  votes?: Array<Omit<Vote, "rank">>;
   unDelegatedAmount?: BigNumber;
   receiverAddress?: string;
 };
@@ -110,7 +110,7 @@ export function isTrongridExtraTxInfo(op: OperationExtra): op is TrongridExtraTx
 export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
   frozenAmount?: string;
   unfreezeAmount?: string;
-  votes?: Vote[];
+  votes?: Array<Omit<Vote, "rank">>;
   unDelegatedAmount?: string;
   receiverAddress?: string;
 };
@@ -182,10 +182,8 @@ export type SuperRepresentativeData = {
 };
 export type SuperRepresentative = {
   address: string;
-  name: string | null | undefined;
   url: string | null | undefined;
   isJobs: boolean;
-  brokerage: number;
   voteCount: number;
   totalProduced: number | null | undefined;
   totalMissed: number | null | undefined;
@@ -247,6 +245,7 @@ export type TronResourcesRaw = {
 export type Vote = {
   name: string | null | undefined;
   address: string;
+  rank: number;
   voteCount: number;
 };
 

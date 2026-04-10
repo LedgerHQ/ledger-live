@@ -3,7 +3,12 @@ import get from "lodash/get";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { type AccountInfo, getTronResources as getTronResourcesLogic } from "../logic/utils";
-import { accountNamesCache, getTronAccountNetwork, getUnwithdrawnReward } from "../network";
+import {
+  accountNamesCache,
+  getTronAccountNetwork,
+  getUnwithdrawnReward,
+  superRepresentativesCache,
+} from "../network";
 import { encode58Check } from "../network/format";
 import type {
   BandwidthInfo,
@@ -252,11 +257,15 @@ export async function getTronResources(
   };
   const lastVotedDate = txs ? getLastVotedDate(txs) : undefined;
 
+  // Fetch super representatives addresses only (1 HTTP call) before caching them
+  // to get the rankings
+  const superRepresentatives = await superRepresentativesCache();
   const rawVotes = get(acc, "votes", []).sort((a, b) => b.vote_count - a.vote_count);
   const votes = await Promise.all(
     rawVotes.map(async v => ({
       name: await accountNamesCache(v.vote_address),
       address: v.vote_address,
+      rank: superRepresentatives.findIndex(sp => sp.address === v.vote_address),
       voteCount: v.vote_count,
     })),
   );

@@ -61,11 +61,12 @@ export const formatVotes = (
   }
 > => {
   return votes
-    ? votes.map(({ name, address, voteCount }, index) => {
+    ? votes.map(({ name, address, rank, voteCount }) => {
         return {
-          isSR: index < SR_THRESHOLD,
+          isSR: rank < SR_THRESHOLD,
           name,
           address,
+          rank,
           voteCount,
         };
       })

@@ -150,11 +150,13 @@ const tron: CurrenciesData<Transaction> = {
               {
                 name: "Node 1",
                 address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+                rank: 1,
                 voteCount: 1,
               },
               {
                 name: "Node 2",
                 address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+                rank: 2,
                 voteCount: 1,
               },
             ],
@@ -647,6 +649,7 @@ const tron: CurrenciesData<Transaction> = {
               {
                 name: "Node 1",
                 address: "abcde",
+                rank: 1,
                 voteCount: 1,
               },
             ],
@@ -675,6 +678,7 @@ const tron: CurrenciesData<Transaction> = {
               {
                 name: "Node 1",
                 address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+                rank: 1,
                 voteCount: 0,
               },
             ],
@@ -703,11 +707,13 @@ const tron: CurrenciesData<Transaction> = {
               {
                 name: "Node 1",
                 address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+                rank: 1,
                 voteCount: 5,
               },
               {
                 name: "Node 2",
                 address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+                rank: 2,
                 voteCount: 5,
               },
             ],
@@ -870,9 +876,24 @@ const tron: CurrenciesData<Transaction> = {
             energy: { amount: "26000000", expiredAt: "2020-02-01T16:04:51.000Z" },
           },
           votes: [
-            { name: "Node 1", address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 15 },
-            { name: "Node 2", address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 1 },
-            { name: "Node 3", address: "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB", voteCount: 2 },
+            {
+              name: "Node 1",
+              address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+              rank: 1,
+              voteCount: 15,
+            },
+            {
+              name: "Node 2",
+              address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+              rank: 2,
+              voteCount: 1,
+            },
+            {
+              name: "Node 3",
+              address: "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB",
+              rank: 3,
+              voteCount: 2,
+            },
           ],
           tronPower: 26,
           energy: "326",

@@ -784,13 +784,6 @@ export const accountNamesCache = makeLRUCache(
   hours(3, 300),
 );
 
-// cache for super representative brokerages (brokerage is unchanged over time)
-const srBrokeragesCache = makeLRUCache(
-  async (addr: string): Promise<number> => getBrokerage(addr),
-  (addr: string) => addr,
-  hours(3, 300),
-);
-
 export const getAccountName = async (addr: string): Promise<string | null | undefined> => {
   const tronAcc = await fetchTronAccount(addr);
   const acc = tronAcc[0];
@@ -801,14 +794,7 @@ export const getAccountName = async (addr: string): Promise<string | null | unde
   return accountName;
 };
 
-export const getBrokerage = async (addr: string): Promise<number> => {
-  const { brokerage } = await fetch(`/wallet/getBrokerage?address=${encodeURIComponent(addr)}`);
-  srBrokeragesCache.hydrate(addr, brokerage); // put it in cache
-
-  return brokerage;
-};
-
-const superRepresentativesCache = makeLRUCache(
+export const superRepresentativesCache = makeLRUCache(
   async (): Promise<SuperRepresentative[]> => {
     const superRepresentatives = await fetchSuperRepresentatives();
     log(
@@ -831,21 +817,14 @@ export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
 };
 
 const fetchSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
-  const result = await fetch(`/wallet/listwitnesses`);
-  const sorted = result.witnesses.sort((a: any, b: any) => b.voteCount - a.voteCount);
-  const superRepresentatives = await promiseAllBatched(3, sorted, async (w: any) => {
-    const encodedAddress = encode58Check(w.address);
-    const accountName = await accountNamesCache(encodedAddress);
-    const brokerage = await srBrokeragesCache(encodedAddress);
-    return {
-      ...w,
-      address: encodedAddress,
-      name: accountName,
-      brokerage,
-      voteCount: w.voteCount || 0,
-      isJobs: w.isJobs || false,
-    };
-  });
+  const result = await fetch<{ witnesses: SuperRepresentative[] }>(`/wallet/listwitnesses`);
+  const sorted = result.witnesses.sort((a, b) => b.voteCount - a.voteCount);
+  const superRepresentatives = sorted.map(w => ({
+    ...w,
+    address: encode58Check(w.address),
+    voteCount: w.voteCount || 0,
+    isJobs: w.isJobs || false,
+  }));
   hydrateSuperRepresentatives(superRepresentatives); // put it in cache
 
   return superRepresentatives;
