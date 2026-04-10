@@ -32,7 +32,7 @@ describe("toWalletCliDeviceError", () => {
 
   it("maps CONDITIONS_OF_USE_NOT_SATISFIED (0x6985)", () => {
     const out = toWalletCliDeviceError(new TransportStatusError(0x6985));
-    expect(out.message).toContain("[wallet-cli]");
+    expect(out.message).toMatch(/rejected|cancelled/i);
     expect(out.cause).toBeInstanceOf(TransportStatusError);
   });
 
@@ -51,6 +51,18 @@ describe("toWalletCliDeviceError", () => {
 
     const tagged = toWalletCliDeviceError({ _tag: "SendApduTimeoutError" as const });
     expect(tagged.message).toContain("Timed out");
+  });
+
+  it("maps transport framing errors (ReceiverApduError, UnknownDeviceExchangeError) to a user-friendly message", () => {
+    const receiver = toWalletCliDeviceError({ _tag: "ReceiverApduError" as const });
+    expect(receiver.message).toContain("[wallet-cli]");
+    expect(receiver.message).toMatch(/communicate|locked/i);
+    expect(receiver.cause).toEqual({ _tag: "ReceiverApduError" });
+
+    const exchange = toWalletCliDeviceError({ _tag: "UnknownDeviceExchangeError" as const });
+    expect(exchange.message).toContain("[wallet-cli]");
+    expect(exchange.message).toMatch(/communicate|locked/i);
+    expect(exchange.cause).toEqual({ _tag: "UnknownDeviceExchangeError" });
   });
 
   it("passes through unrelated Error instances", () => {

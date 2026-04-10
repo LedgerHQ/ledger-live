@@ -64,6 +64,9 @@ function toError(error: ConnectAppDAError): Error {
   if ("_tag" in error && error._tag === "SendApduTimeoutError") {
     return toWalletCliDeviceError(error);
   }
+  if (isTransportFramingError(error)) {
+    return toWalletCliDeviceError(error);
+  }
   const tag = "_tag" in error ? error._tag : "UnknownError";
   const code = "errorCode" in error ? ` (${error.errorCode})` : "";
   return new Error(`${tag}${code}`);
