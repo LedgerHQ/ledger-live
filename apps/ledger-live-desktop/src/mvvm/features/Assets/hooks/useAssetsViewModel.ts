@@ -23,14 +23,16 @@ import {
 } from "../constants";
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { track } from "~/renderer/analytics/segment";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,
 } from "../../CryptoAddresses/constants";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 export function useAssetsViewModel(): AssetsViewProps {
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
   const isEmptyState = !hasOnboardedDevice || !hasAccount;
@@ -73,13 +75,14 @@ export function useAssetsViewModel(): AssetsViewProps {
   const onItemClick = useCallback(
     (item: AssetTableItem) => {
       setTrackingSource("asset allocation");
+      const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/market/${encodeURIComponent(dadaIdToMarketId(item.marketId ?? item.currency.id))}`
+          ? `/market/${encodeURIComponent(shouldDisplayAggregatedAssets ? rawId : dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );
     },
-    [navigate],
+    [navigate, shouldDisplayAggregatedAssets],
   );
 
   const resolvedDefaults = useMemo(

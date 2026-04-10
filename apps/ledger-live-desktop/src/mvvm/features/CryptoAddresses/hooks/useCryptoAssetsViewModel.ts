@@ -14,7 +14,9 @@ import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemand
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
-import { padItems, dadaIdToMarketId } from "LLD/features/Assets/utils/assetTableHelpers";
+import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -27,6 +29,7 @@ import { track } from "~/renderer/analytics/segment";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 
 export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -119,13 +122,14 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
         asset: item.currency.name,
         page: ASSETS_TRACKING_PAGE_NAME,
       });
+      const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/market/${encodeURIComponent(dadaIdToMarketId(item.marketId ?? item.currency.id))}`
+          ? `/market/${encodeURIComponent(shouldDisplayAggregatedAssets ? rawId : dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );
     },
-    [navigate],
+    [navigate, shouldDisplayAggregatedAssets],
   );
 
   return {

@@ -65,7 +65,7 @@ export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistr
   });
 
   const distribution = useMemo<AssetsDistribution>(() => {
-    if (!isChunkedSuccess || !assetsData) {
+    if (skip || !isChunkedSuccess || !assetsData) {
       return emptyDistribution;
     }
 
@@ -74,6 +74,7 @@ export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistr
       hideEmptyTokenAccount: !!displayOpts.hideEmptyTokenAccount,
     });
   }, [
+    skip,
     isChunkedSuccess,
     assetsData,
     accounts,
