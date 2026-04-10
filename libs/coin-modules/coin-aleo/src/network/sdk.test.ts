@@ -462,7 +462,6 @@ describe("sdkClient", () => {
   });
 
   describe("encryptProvingRequest", () => {
-    const mockJwt = "Bearer mock_jwt_token";
     const mockPublicKey = "aleo1publickey";
     const mockAuthorization = { program_id: "credits.aleo", function_name: "transfer_public" };
     const mockEncryptedResponse = { encrypted: "mock_encrypted_proving_request" };
@@ -472,7 +471,6 @@ describe("sdkClient", () => {
 
       const result = await sdkClient.encryptProvingRequest({
         currency: mockCurrency,
-        jwt: mockJwt,
         publicKey: mockPublicKey,
         authorization: mockAuthorization,
         broadcast: true,
@@ -485,9 +483,6 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledWith({
         method: "POST",
         url: `${mockNetworkConfig.sdkUrl}/encrypt_proving_request`,
-        headers: {
-          Authorization: mockJwt,
-        },
         data: {
           public_key: mockPublicKey,
           proving_request: {
@@ -505,7 +500,6 @@ describe("sdkClient", () => {
 
       await sdkClient.encryptProvingRequest({
         currency: mockCurrency,
-        jwt: mockJwt,
         publicKey: mockPublicKey,
         authorization: mockAuthorization,
         broadcast: true,
@@ -525,7 +519,6 @@ describe("sdkClient", () => {
       await expect(
         sdkClient.encryptProvingRequest({
           currency: mockCurrency,
-          jwt: mockJwt,
           publicKey: mockPublicKey,
           authorization: mockAuthorization,
           broadcast: true,

@@ -17,12 +17,6 @@ const defaultMockAccountId =
 export const mockAleoResources: AleoResources = {
   transparentBalance: new BigNumber(1000),
   provableApi: {
-    apiKey: "abc",
-    consumerId: "consumer123",
-    jwt: {
-      token: "jwt_token",
-      exp: Math.floor(Date.now() / 1000) + 3600,
-    },
     uuid: "uuid-1234",
     scannerStatus: {
       percentage: 50,

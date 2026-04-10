@@ -168,7 +168,6 @@ export async function performPrivateSync(
   const provableApi = await accessProvableApi({
     currency,
     viewKey,
-    address,
     provableApi: initialAccount.aleoResources?.provableApi ?? null,
   }).catch(err => {
     // private sync logic will be probably handled separately with https://ledgerhq.atlassian.net/browse/LIVE-26440
@@ -214,16 +213,12 @@ export async function performPrivateSync(
   const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
     apiClient.getAccountOwnedRecords({
       currency,
-      jwtToken: provableApi.jwt.token,
       uuid: provableApi.uuid,
-      apiKey: provableApi.apiKey,
       start: lastPrivateBlockHeight,
     }),
     apiClient.getAccountOwnedRecords({
       currency,
-      jwtToken: provableApi.jwt.token,
       uuid: provableApi.uuid,
-      apiKey: provableApi.apiKey,
       unspent: true,
     }),
   ]);
