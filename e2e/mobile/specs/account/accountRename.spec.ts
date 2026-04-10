@@ -23,16 +23,7 @@ describe("Account name change", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account)],
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

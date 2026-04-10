@@ -99,4 +99,14 @@ declare global {
   var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
   var waitWebElement: typeof WebElementHelpers.waitWebElement;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
+
+  var getAccountAddress: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getAccountAddress;
+  var liveDataCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataCommand;
+  var liveDataWithAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithAddressCommand;
+  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithParentAddressCommand;
+  var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithRecipientAddressCommand;
+  var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").parseTokenAllowanceCliOutput;
+  var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").isTokenAllowanceSufficientCommand;
+  var approveTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").approveTokenCommand;
+  var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").setDisableTransactionBroadcastEnv;
 }

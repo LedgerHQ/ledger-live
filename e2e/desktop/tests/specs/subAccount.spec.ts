@@ -2,7 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import {
   Account,
   TokenAccount,
@@ -14,7 +13,11 @@ import invariant from "invariant";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithParentAddressCommand, liveDataCommand } from "tests/utils/cliCommandsUtils";
+import {
+  liveDataWithParentAddressCommand,
+  liveDataCommand,
+  getAccountAddress,
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
@@ -317,16 +320,13 @@ for (const transaction of transactionsAddressInvalid) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
-        async (appjsonPath: string) => {
+        async (userdataPath?: string) => {
           await liveDataCommand(transaction.transaction.accountToDebit, { useScheme: false })(
-            appjsonPath,
+            userdataPath,
           );
           if (transaction.recipient === undefined) {
-            const receiveAddress = await CLI.getAddress({
-              currency: transaction.transaction.accountToCredit.currency.id,
-              path: transaction.transaction.accountToCredit.accountPath,
-            });
-            transaction.recipient = receiveAddress.address;
+            const receiveAddress = await getAccountAddress(transaction.transaction.accountToCredit);
+            transaction.recipient = receiveAddress;
           }
           return transaction.recipient;
         },
@@ -392,16 +392,7 @@ for (const transaction of transactionsAddressValid) {
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.id,
-            index: transaction.transaction.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(transaction.transaction.accountToDebit)],
     });
 
     test(

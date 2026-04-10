@@ -23,7 +23,7 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { parseExtraFeatureFlags } from "../utils/featureFlagsJsonUtils";
 
-type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
+type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 export type SpeculosFixtureHandle = {

@@ -92,6 +92,7 @@ async function executeCliCommandsOnApp(
   commandsByApp: Array<{ app: SpeculosAppType; cmds: CliCommand[] }>,
   entryMap: Record<string, Entry>,
   userdataPath: string,
+  mainApp?: SpeculosAppType,
 ): Promise<void> {
   for (const { app, cmds } of commandsByApp) {
     const entry = entryMap[app.name];
@@ -152,7 +153,9 @@ async function executeCliCommandsOnApp(
       );
     }
 
-    await deleteSpeculos(entry.deviceId);
+    if (mainApp?.name !== app.name) {
+      await deleteSpeculos(entry.deviceId);
+    }
   }
 }
 
@@ -288,11 +291,18 @@ export class InitializationManager {
     const commandsByApp = Array.from(commandsByAppMap.values());
 
     // Setup all required Speculos devices in parallel
-    const appsToLaunch = commandsByApp.map(x => x.app).concat(speculosApp ? [speculosApp] : []);
+    const appsToLaunch = [
+      ...new Map(
+        commandsByApp
+          .map(x => x.app)
+          .concat(speculosApp ? [speculosApp] : [])
+          .map(app => [app.name, app]),
+      ).values(),
+    ];
     const speculosDevices = await launchSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(commandsByApp, speculosDevices, userdataPath);
+    await executeCliCommandsOnApp(commandsByApp, speculosDevices, userdataPath, speculosApp);
 
     // Setup main Speculos app if specified
     if (speculosApp) {

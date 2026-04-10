@@ -16,16 +16,7 @@ describe("DeepLinks Tests", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account)],
       featureFlags: {
         ptxSwapLiveAppMobile: {
           enabled: true,

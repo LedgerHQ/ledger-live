@@ -5,12 +5,12 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import {
   getAccountAddress,
   liveDataWithRecipientAddressCommand,
-} from "tests/utils/cliCommandsUtils";
+  liveDataCommand,
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -485,13 +485,8 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          async (appjsonPath: string) => {
-            await CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
+          async (userdataPath?: string) => {
+            await liveDataCommand(transaction.transaction.accountToDebit)(userdataPath);
 
             if (
               transaction.transaction.accountToCredit !== Account.EMPTY &&

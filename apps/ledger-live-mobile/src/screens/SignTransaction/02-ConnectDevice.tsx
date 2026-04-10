@@ -21,6 +21,7 @@ import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { isSwapDisableAppsInstall } from "@ledgerhq/live-common/exchange/swap/utils/isIntegrationTestEnv";
 
 export type SignTransactionConnectDeviceProps = StackNavigatorProps<
   SignTransactionNavigatorParamList,
@@ -76,11 +77,11 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
       transaction: transaction!,
       status,
       tokenCurrency,
-      dependencies: [
+      dependencies: isSwapDisableAppsInstall() ? [] : [
         { currency: mainAccount.currency },
         ...dependenciesToAppRequests(dependencies),
       ],
-      requireLatestFirmware: true,
+      requireLatestFirmware: !isSwapDisableAppsInstall(),
       isACRE: route.params.isACRE,
     }),
     [

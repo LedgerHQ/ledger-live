@@ -3,9 +3,9 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { waitForAccountRenamed } from "tests/utils/userdata";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 
@@ -14,16 +14,7 @@ for (const account of accounts) {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.account.currency.id,
-            index: account.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account.account)],
       speculosApp: account.account.currency.speculosApp,
     });
 

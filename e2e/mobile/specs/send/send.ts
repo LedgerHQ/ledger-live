@@ -14,19 +14,8 @@ const beforeAllFunction = async (transaction: TransactionType) => {
     },
     cliCommands: [
       async (userdataPath?: string) => {
-        await CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          add: true,
-          appjson: userdataPath,
-        });
-        transaction.accountToDebit.address = await CLI.getAddressForAccount(
-          transaction.accountToDebit,
-        );
-
-        transaction.accountToCredit.address = await CLI.getAddressForAccount(
-          transaction.accountToCredit,
-        );
+        await liveDataWithAddressCommand(transaction.accountToDebit)(userdataPath);
+        transaction.accountToCredit.address = await getAccountAddress(transaction.accountToCredit);
         transaction.recipientAddress = transaction.accountToCredit.address;
       },
     ],
@@ -46,18 +35,13 @@ const beforeAllInvalidAddressFunction = async (
     },
     cliCommands: [
       async (userdataPath?: string) => {
-        await CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          add: true,
-          appjson: userdataPath,
-        });
+        await liveDataCommand(transaction.accountToDebit)(userdataPath);
 
         if (
           transaction.accountToCredit.accountName !== Account.EMPTY.accountName &&
           transaction.accountToCredit.accountName !== Account.BTC_NATIVE_SEGWIT_1.accountName
         ) {
-          transaction.accountToCredit.address = await CLI.getAddressForAccount(
+          transaction.accountToCredit.address = await getAccountAddress(
             transaction.accountToCredit,
           );
         }

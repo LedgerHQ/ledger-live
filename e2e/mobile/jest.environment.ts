@@ -21,6 +21,7 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { CLI } from "./utils/cliUtils";
+import * as cliCommandsUtils from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "./page/index";
@@ -128,10 +129,12 @@ export default class TestEnvironment extends DetoxEnvironment {
     Object.assign(this.global, enums);
     Object.assign(this.global, nativeHelpers);
     Object.assign(this.global, webHelpers);
+    Object.assign(this.global, cliCommandsUtils);
 
     Object.assign(globalThis, enums);
     Object.assign(globalThis, nativeHelpers);
     Object.assign(globalThis, webHelpers);
+    Object.assign(globalThis, cliCommandsUtils);
   }
 
   private setupDeviceForSecondaryWorker(workerId: number) {

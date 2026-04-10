@@ -1,9 +1,9 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const accounts = [
@@ -16,16 +16,7 @@ for (const account of accounts) {
       teamOwner: Team.BST,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.account.currency.id,
-            index: account.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account.account)],
       featureFlags: {
         zcashShielded: {
           enabled: true,
