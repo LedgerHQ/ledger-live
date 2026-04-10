@@ -33,9 +33,13 @@ describe("analyticsConsentUtils", () => {
       expect(needsConsentRenewal(null, 1_000_000_000_000)).toBe(true);
     });
 
-    it("returns false for any past consent date when renewal interval is disabled (default)", () => {
-      const iso = new Date(NOW_MS - YEAR_MS * 10).toISOString();
-      expect(needsConsentRenewal(iso, NOW_MS)).toBe(false);
+    it("uses null default interval when third arg omitted — no time-based renewal", () => {
+      expect(needsConsentRenewal(new Date(NOW_MS - YEAR_MS - 1000).toISOString(), NOW_MS)).toBe(
+        false,
+      );
+      expect(needsConsentRenewal(new Date(NOW_MS - YEAR_MS + 1000).toISOString(), NOW_MS)).toBe(
+        false,
+      );
     });
 
     it("returns false within one year when interval is one year in ms", () => {

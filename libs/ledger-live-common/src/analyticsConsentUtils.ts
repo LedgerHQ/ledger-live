@@ -1,6 +1,6 @@
 import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
 
-/** Ms after `consentDate` to re-prompt; `null`/`Infinity` = never by time. E.g. yearly: `CONSENT_RENEWAL_INTERVAL_MS = 365 * 24 * 60 * 60 * 1000`. */
+/** Ms after `consentDate` to re-prompt; `null`/`Infinity` = never by time. */
 export const CONSENT_RENEWAL_INTERVAL_MS: number | null = null;
 
 export type AnalyticsConsentPhase = "closed" | "privacy" | "consentFresh" | "consentReconfirm";

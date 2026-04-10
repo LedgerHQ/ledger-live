@@ -82,7 +82,7 @@ import {
 } from "../actions/types";
 import { ScreenName } from "~/const";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { CONSENT_RENEWAL_INTERVAL_MS } from "@ledgerhq/live-common/analyticsConsentUtils";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -738,13 +738,9 @@ export const trackingEnabledSelector = (state: State) => {
   const settings = state.settings;
   const analyticsOptInEnabled = state.featureFlags?.resolved?.analyticsOptIn?.enabled ?? false;
   if (analyticsOptInEnabled) {
-    const { consentDate, privacyPolicyVersion } = settings.analyticsConsentInfo;
+    const { consentDate } = settings.analyticsConsentInfo;
 
-    if (consentDate === null || privacyPolicyVersion === null) {
-      return false;
-    }
-
-    if (privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
+    if (consentDate == null) {
       return false;
     }
 
@@ -752,10 +748,11 @@ export const trackingEnabledSelector = (state: State) => {
     if (Number.isNaN(consentTime)) {
       return false;
     }
-    const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
-    const cutoff = Date.now() - ONE_YEAR_MS;
-    if (consentTime < cutoff) {
-      return false;
+    if (CONSENT_RENEWAL_INTERVAL_MS != null) {
+      const cutoff = Date.now() - CONSENT_RENEWAL_INTERVAL_MS;
+      if (consentTime < cutoff) {
+        return false;
+      }
     }
   }
   return settings.analyticsEnabled || settings.personalizedRecommendationsEnabled;

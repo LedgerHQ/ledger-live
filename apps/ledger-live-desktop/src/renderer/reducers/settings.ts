@@ -39,7 +39,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { needsConsentRenewal } from "@ledgerhq/live-common/analyticsConsentUtils";
 
 /* Initial state */
 
@@ -770,33 +770,19 @@ export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo
     privacyPolicyVersion: null,
   };
 
-// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
+/**
+ * Whether Segment/anonymous analytics may run. When `analyticsOptIn` is on, consent must not be
+ * stale per `needsConsentRenewal` (policy version does not affect this selector). UI may still show
+ * privacy-policy or re-consent flows for compliance; that is separate from this "can emit" gate.
+ */
+// Plain selector (not createSelector): wall-clock "now" is not in Redux, so staleness must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
 
-  if (state.featureFlags?.resolved?.analyticsOptIn?.enabled) {
-    if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
-      return false;
-    }
-
-    const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
-    if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
-      return false;
-    }
-
-    const now = new Date();
-    // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
-    const oneYearAgo = new Date(now.getTime());
-
-    oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
-
-    if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
-      return false;
-    }
-
-    if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
-      return false;
-    }
+  const analyticsOptInEnabled = state.featureFlags?.resolved?.analyticsOptIn?.enabled ?? false;
+  const needsRenewal = needsConsentRenewal(s.lastAnalyticsConsentDate);
+  if (analyticsOptInEnabled && needsRenewal) {
+    return false;
   }
 
   return s.shareAnalytics || s.sharePersonalizedRecommandations;
@@ -836,8 +822,7 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
-export const featureFlagsButtonVisibleSelector = (state: State) =>
-  state.featureFlags.bannerVisible;
+export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;

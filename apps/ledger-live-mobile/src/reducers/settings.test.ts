@@ -30,8 +30,9 @@ const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
 });
 
 /**
- * `trackingEnabledSelector` runs consent / policy / rolling-window checks only when the
- * `analyticsOptIn` feature is resolved as enabled; otherwise it only uses the toggles.
+ * `trackingEnabledSelector` runs consent checks when the `analyticsOptIn` feature is resolved as
+ * enabled; a rolling renewal window applies only when `CONSENT_RENEWAL_INTERVAL_MS` in live-common is
+ * non-null. Otherwise it only uses the toggles (legacy).
  */
 const withAnalyticsOptInResolved = (base: State): State =>
   ({
@@ -43,10 +44,17 @@ const withAnalyticsOptInResolved = (base: State): State =>
     },
   }) as State;
 
-/** Matches `ONE_YEAR_MS` in `trackingEnabledSelector` (365 × 24h). */
+/** Used when asserting a “very old” consent date (e.g. if `CONSENT_RENEWAL_INTERVAL_MS` is restored). */
 const THREE_SIXTY_FIVE_DAYS_MS = 365 * 24 * 60 * 60 * 1000;
 
 describe("trackingEnabledSelector", () => {
+  /** Fixed clock so consent-relative dates in tests do not depend on real time. */
+  const FIXED_NOW = new Date("2026-03-01T12:00:00.000Z");
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(FIXED_NOW);
+  });
+
   afterEach(() => {
     jest.useRealTimers();
   });
@@ -69,17 +77,17 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(true);
   });
 
-  it("returns false when privacyPolicyVersion is null and analytics opt-in feature is on", () => {
+  it("returns true when privacyPolicyVersion is null (legacy) but consent date is valid and analytics opt-in feature is on", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
-          consentDate: "2025-06-01T00:00:00.000Z",
+          consentDate: FIXED_NOW.toISOString(),
           privacyPolicyVersion: null,
         },
         analyticsEnabled: true,
       }),
     );
-    expect(trackingEnabledSelector(state)).toBe(false);
+    expect(trackingEnabledSelector(state)).toBe(true);
   });
 
   it("returns false when consentDate parses to NaN and analytics opt-in feature is on", () => {
@@ -95,7 +103,7 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(false);
   });
 
-  it("returns false when privacy policy version is below current and analytics opt-in feature is on", () => {
+  it("returns true when privacy policy version is below current but consent is within one year and analytics opt-in feature is on", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
@@ -106,15 +114,13 @@ describe("trackingEnabledSelector", () => {
         personalizedRecommendationsEnabled: true,
       }),
     );
-    expect(trackingEnabledSelector(state)).toBe(false);
+    expect(trackingEnabledSelector(state)).toBe(true);
   });
 
-  it("returns false when consent is older than a 365-day rolling window and analytics opt-in feature is on", () => {
-    jest.useFakeTimers();
-    const now = new Date("2026-06-15T12:00:00.000Z").getTime();
-    jest.setSystemTime(now);
-
-    const expiredConsent = new Date(now - THREE_SIXTY_FIVE_DAYS_MS - 24 * 60 * 60 * 1000).toISOString();
+  it("returns true when consent is older than 365 days but rolling renewal is disabled (CONSENT_RENEWAL_INTERVAL_MS null)", () => {
+    const expiredConsent = new Date(
+      FIXED_NOW.getTime() - THREE_SIXTY_FIVE_DAYS_MS - 24 * 60 * 60 * 1000,
+    ).toISOString();
 
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
@@ -125,11 +131,10 @@ describe("trackingEnabledSelector", () => {
         analyticsEnabled: true,
       }),
     );
-    expect(trackingEnabledSelector(state)).toBe(false);
+    expect(trackingEnabledSelector(state)).toBe(true);
   });
 
   it("returns true when consent is exactly on the 365-day cutoff and analytics opt-in feature is on", () => {
-    jest.useFakeTimers();
     const now = new Date("2026-01-10T00:00:00.000Z").getTime();
     jest.setSystemTime(now);
 
@@ -149,9 +154,6 @@ describe("trackingEnabledSelector", () => {
   });
 
   it("returns false when consent is valid but analytics and personalized recommendations are off and analytics opt-in feature is on", () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
-
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
@@ -166,9 +168,6 @@ describe("trackingEnabledSelector", () => {
   });
 
   it("returns false when analytics opt-in feature is off and both toggles are off despite valid consent", () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
-
     const state = stateWithSettings({
       analyticsConsentInfo: {
         consentDate: "2026-02-01T00:00:00.000Z",
@@ -181,9 +180,6 @@ describe("trackingEnabledSelector", () => {
   });
 
   it("returns true when consent is valid, analytics opt-in feature is on, and analytics is enabled", () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
-
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
@@ -198,9 +194,6 @@ describe("trackingEnabledSelector", () => {
   });
 
   it("returns true when consent is valid, analytics opt-in feature is on, and personalized recommendations are enabled", () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date("2026-03-01T12:00:00.000Z"));
-
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
