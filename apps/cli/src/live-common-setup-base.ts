@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import winston from "winston";
 import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import simple from "@ledgerhq/live-common/logs/simple";
@@ -220,7 +219,7 @@ listen(log => {
     level = "error";
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
   logger.log(level, log);
 });

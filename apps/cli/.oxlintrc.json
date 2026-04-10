@@ -1,0 +1,35 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "plugins": ["eslint", "import", "oxc", "unicorn", "typescript"],
+  "ignorePatterns": ["node_modules", "dist"],
+  "rules": {
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-empty-pattern": "warn",
+    "eslint/no-console": "off",
+    "import/no-duplicates": "error",
+    "import/no-named-as-default": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-empty-function": "warn",
+    "typescript/no-deprecated": "error",
+    "typescript/consistent-type-assertions": [
+      "warn",
+      {
+        "assertionStyle": "never"
+      }
+    ],
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off"
+  }
+}

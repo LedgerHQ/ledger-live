@@ -61,7 +61,7 @@ export default {
   ],
   job: (opts: SendJobOpts) => {
     const l =
-      opts.format !== "json" && opts.format !== "silent" // eslint-disable-next-line no-console
+      opts.format !== "json" && opts.format !== "silent"
         ? (l: any) => console.log(l)
         : (_l: any) => {};
     return scan(opts).pipe(

@@ -1,6 +1,3 @@
-/* eslint-env node */
-/* eslint-disable @typescript-eslint/no-require-imports */
-
 const path = require("path");
 const rspack = require("@rspack/core");
 

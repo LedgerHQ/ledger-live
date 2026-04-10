@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { generateMnemonic } from "bip39";
 import { from } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";

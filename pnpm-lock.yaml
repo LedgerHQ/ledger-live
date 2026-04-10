@@ -830,12 +830,31 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@24.12.0)(typescript@6.0.2)
       yaml:
         specifier: 2.8.1
         version: 2.8.1
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
     publishDirectory: dist
 
   apps/ledger-live-desktop:
@@ -11741,24 +11760,28 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.13
         version: 18.3.7(@types/react@18.3.27)
-      '@typescript-eslint/eslint-plugin':
+      oxfmt:
         specifier: 'catalog:'
-        version: 8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2)
-      '@typescript-eslint/parser':
+        version: 0.36.0
+      oxlint:
         specifier: 'catalog:'
-        version: 8.48.1(eslint@8.57.0)(typescript@6.0.2)
-      eslint:
-        specifier: ^8.55.0
-        version: 8.57.0
-      eslint-plugin-react-hooks:
-        specifier: ^4.6.0
-        version: 4.6.0(eslint@8.57.0)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.5
-        version: 0.4.6(eslint@8.57.0)
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
 
   tools/actions:
     devDependencies:
@@ -25944,11 +25967,6 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
-
-  eslint-plugin-react-refresh@0.4.6:
-    resolution: {integrity: sha512-NjGXdm7zgcKRkKMua34qVO9doI7VOxZ6ancSvBELJSSoX97jyndXcSoa8XBh69JoB31dNz3EEzlMcizZl7LaMA==}
-    peerDependencies:
-      eslint: '>=7'
 
   eslint-plugin-react@7.33.2:
     resolution: {integrity: sha512-73QQMKALArI8/7xGLNI/3LylrEYrlKZSb5C9+q3OtOewTnMQi5cT+aE9E41sLCmli3I9PGGmD1yiZydyo4FEPw==}
@@ -57424,10 +57442,6 @@ snapshots:
       eslint-config-prettier: 9.1.0(eslint@8.57.0)
 
   eslint-plugin-react-hooks@4.6.0(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
-
-  eslint-plugin-react-refresh@0.4.6(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
 

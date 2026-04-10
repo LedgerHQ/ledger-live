@@ -67,7 +67,7 @@ if (DEVICE_PROXY_URL) {
   registerTransportModule({
     id: "http",
     open: () =>
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // oxlint-disable-next-line typescript/ban-ts-comment
       // @ts-ignore
       retry(() => Tr.create(3000, 5000), {
         context: "open-http-proxy",
@@ -106,7 +106,7 @@ const cacheBle = {};
 async function init() {
   const {
     default: TransportNodeHid,
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // oxlint-disable-next-line typescript/no-require-imports
   } = require("@ledgerhq/hw-transport-node-hid");
 
   registerTransportModule({
