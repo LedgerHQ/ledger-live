@@ -234,6 +234,7 @@ jobs:
           install_playwright: true
 
       - name: Start mitmproxy
+        continue-on-error: true
         run: |
           mise run mitmproxy:decrypt \
             --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}" \
@@ -248,12 +249,14 @@ jobs:
 
       - name: Stop mitmproxy
         id: stop-mitmproxy
+        continue-on-error: true
         if: ${{ !cancelled() }}
         run: |
           mise run mitmproxy:stop --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}"
           rm -f "apps/ledger-live-desktop/tests/mocks/local/firebase_feature_flags.json"
 
       - name: Upload mitmproxy logs
+        continue-on-error: true
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
         uses: actions/upload-artifact@v4
         with:
