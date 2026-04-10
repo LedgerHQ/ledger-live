@@ -146,32 +146,32 @@ describe("useSendHeaderModel", () => {
     });
   });
 
-  describe("handleBack — backTarget (floating steps)", () => {
-    it("calls goToStep(backTarget) when current step has backTarget and does not call goToPreviousStep or close", () => {
+  describe("handleBack — floating steps (history-based)", () => {
+    it("calls goToPreviousStep when on CUSTOM_FEES step and canGoBack()", () => {
       const { goToStep, goToPreviousStep } = mockNavigation();
       const { close } = mockActions();
       const resetViewState = jest.fn();
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.CUSTOM_FEES,
-        currentStepConfig: { backTarget: SEND_FLOW_STEP.AMOUNT },
+        currentStepConfig: {},
         navigation: { goToStep, goToPreviousStep, canGoBack: () => true },
       });
 
       renderHook("", resetViewState);
       latestVM?.handleBack();
 
-      expect(goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.AMOUNT);
-      expect(goToPreviousStep).not.toHaveBeenCalled();
+      expect(goToPreviousStep).toHaveBeenCalled();
+      expect(goToStep).not.toHaveBeenCalled();
       expect(close).not.toHaveBeenCalled();
     });
 
-    it("runs COIN_CONTROL cleanup then navigates via backTarget when on COIN_CONTROL step", () => {
-      const { goToStep } = mockNavigation();
+    it("runs COIN_CONTROL cleanup then calls goToPreviousStep on COIN_CONTROL step", () => {
+      const { goToPreviousStep } = mockNavigation();
       const { updateTransaction } = mockActions();
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.COIN_CONTROL,
-        currentStepConfig: { backTarget: SEND_FLOW_STEP.AMOUNT },
-        navigation: { goToStep, goToPreviousStep: jest.fn(), canGoBack: () => true },
+        currentStepConfig: {},
+        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => true },
       });
 
       renderHook();
@@ -187,7 +187,7 @@ describe("useSendHeaderModel", () => {
         ...txWithUtxo,
         utxoStrategy: { strategy: 0, excludeUTXOs: [] },
       });
-      expect(goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.AMOUNT);
+      expect(goToPreviousStep).toHaveBeenCalled();
     });
   });
 
@@ -312,12 +312,12 @@ describe("useSendHeaderModel", () => {
     });
 
     it("leaves transaction unchanged when COIN_CONTROL step but tx has no utxoStrategy", () => {
-      const { goToStep } = mockNavigation();
+      const { goToPreviousStep } = mockNavigation();
       const { updateTransaction } = mockActions();
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.COIN_CONTROL,
-        currentStepConfig: { backTarget: SEND_FLOW_STEP.AMOUNT },
-        navigation: { goToStep, goToPreviousStep: jest.fn(), canGoBack: () => true },
+        currentStepConfig: {},
+        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => true },
       });
 
       renderHook();

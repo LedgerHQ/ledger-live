@@ -21,6 +21,7 @@ export function CoinControlScreen() {
       transactionActions={viewModel.transactionActions}
       onReview={viewModel.onReview}
       onGetFunds={viewModel.onGetFunds}
+      onSelectCustomFees={viewModel.onSelectCustomFees}
     />
   );
 }

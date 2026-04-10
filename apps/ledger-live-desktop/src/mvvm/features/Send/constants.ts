@@ -24,7 +24,6 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     floating: true,
     showTitle: false,
     showAvailable: false,
-    backTarget: SEND_FLOW_STEP.RECIPIENT,
     height: "fit",
   },
   [SEND_FLOW_STEP.AMOUNT]: {
@@ -38,7 +37,6 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: true,
     floating: true,
     titleKey: "newSendFlow.customFees.title",
-    backTarget: SEND_FLOW_STEP.AMOUNT,
     showAvailable: false,
   },
   [SEND_FLOW_STEP.COIN_CONTROL]: {
@@ -46,7 +44,6 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: true,
     floating: true,
     titleKey: "newSendFlow.coinControl.title",
-    backTarget: SEND_FLOW_STEP.AMOUNT,
   },
   [SEND_FLOW_STEP.SIGNATURE]: {
     id: SEND_FLOW_STEP.SIGNATURE,

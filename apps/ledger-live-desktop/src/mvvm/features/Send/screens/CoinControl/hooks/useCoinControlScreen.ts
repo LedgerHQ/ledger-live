@@ -25,6 +25,7 @@ export type CoinControlScreenViewModel =
       transactionActions: SendFlowTransactionActions;
       onReview: () => void;
       onGetFunds: () => void;
+      onSelectCustomFees: () => void;
     };
 
 export function useCoinControlScreen(): CoinControlScreenViewModel {
@@ -38,6 +39,10 @@ export function useCoinControlScreen(): CoinControlScreenViewModel {
 
   const onReview = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
+  }, [navigation]);
+
+  const onSelectCustomFees = useCallback(() => {
+    navigation.goToStep(SEND_FLOW_STEP.CUSTOM_FEES);
   }, [navigation]);
 
   const onGetFunds = useCallback(() => {
@@ -71,5 +76,6 @@ export function useCoinControlScreen(): CoinControlScreenViewModel {
     transactionActions,
     onReview,
     onGetFunds,
+    onSelectCustomFees,
   };
 }
