@@ -6,6 +6,7 @@ import {
   SelectContent,
   SelectItem,
   SelectItemText,
+  SelectList,
   SelectTrigger,
 } from "@ledgerhq/lumen-ui-react";
 interface VerticalLabeledSelectProps<T = SelectOption> {
@@ -23,6 +24,8 @@ export const VerticalLabeledSelect = <T extends SelectOption>({
   onChange,
   width = "250px",
 }: VerticalLabeledSelectProps<T>) => {
+  const items = options.map(option => ({ value: option.value, label: option.label }));
+
   return (
     <Flex flexDirection="column" justifyContent="center" width={width}>
       <Text variant="body" fontSize="14px" mb="2">
@@ -30,18 +33,22 @@ export const VerticalLabeledSelect = <T extends SelectOption>({
       </Text>
       <Select
         value={value.value}
+        items={items}
         onValueChange={option => {
-          const found = option && options.find(o => o.value === option);
+          if (option == null) return;
+          const found = options.find(o => o.value === option);
           if (found) onChange(found);
         }}
       >
         <SelectTrigger label={label} />
         <SelectContent>
-          {options.map(option => (
-            <SelectItem key={option.value} value={option.value}>
-              <SelectItemText>{option.label}</SelectItemText>
-            </SelectItem>
-          ))}
+          <SelectList
+            renderItem={item => (
+              <SelectItem key={item.value} value={item.value}>
+                <SelectItemText>{item.label}</SelectItemText>
+              </SelectItem>
+            )}
+          />
         </SelectContent>
       </Select>
     </Flex>
