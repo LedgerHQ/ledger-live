@@ -58,7 +58,7 @@ export function init(port = 8099, onConnection?: () => void) {
 
   webSocket.wss.on("connection", ws => {
     log(`Client connected`);
-    onConnection && onConnection();
+    if (onConnection) onConnection();
     webSocket.ws?.close();
     webSocket.ws = ws;
     ws.on("message", onMessage);
