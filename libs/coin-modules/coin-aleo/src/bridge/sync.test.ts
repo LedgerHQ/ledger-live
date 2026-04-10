@@ -18,7 +18,7 @@ import {
   performPrivateSync,
   createPrivateSyncObservable,
   createPublicSyncObservable,
-  isPrivateSyncPending$,
+  isCombinedSyncPending$,
 } from "./sync";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
 
@@ -1220,7 +1220,7 @@ describe("sync.ts", () => {
     });
   });
 
-  describe("isPrivateSyncPending$", () => {
+  describe("isCombinedSyncPending$", () => {
     const baseInfo = {
       index: mockAccount.index,
       derivationPath: mockAccount.freshAddressPath,
@@ -1232,11 +1232,11 @@ describe("sync.ts", () => {
 
     beforeEach(() => {
       // Reset the subject to false before each test
-      isPrivateSyncPending$.next(false);
+      isCombinedSyncPending$.next(false);
     });
 
     it("should start as false", () => {
-      expect(isPrivateSyncPending$.getValue()).toBe(false);
+      expect(isCombinedSyncPending$.getValue()).toBe(false);
     });
 
     it("should become true when combined sync is subscribed to and false when it completes", async () => {
@@ -1253,7 +1253,7 @@ describe("sync.ts", () => {
       });
 
       const pendingValues: boolean[] = [];
-      const sub = isPrivateSyncPending$.subscribe(v => pendingValues.push(v));
+      const sub = isCombinedSyncPending$.subscribe(v => pendingValues.push(v));
 
       await collectAll(syncs[0]);
       sub.unsubscribe();
@@ -1281,12 +1281,12 @@ describe("sync.ts", () => {
         ),
       ).rejects.toThrow("scanner down");
 
-      expect(isPrivateSyncPending$.getValue()).toBe(false);
+      expect(isCombinedSyncPending$.getValue()).toBe(false);
     });
 
-    it("should NOT change isPrivateSyncPending$ for public-only sync", async () => {
+    it("should NOT change isCombinedSyncPending$ for public-only sync", async () => {
       const values: boolean[] = [];
-      const sub = isPrivateSyncPending$.subscribe(v => values.push(v));
+      const sub = isCombinedSyncPending$.subscribe(v => values.push(v));
 
       const { syncs } = buildSyncObservables(baseInfo, {
         paginationConfig: {},
@@ -1299,11 +1299,11 @@ describe("sync.ts", () => {
       expect(values).toEqual([false]);
     });
 
-    it("should become true when private-only sync is subscribed to and false when it completes", async () => {
+    it("should NOT change isCombinedSyncPending$ for private-only sync", async () => {
       mockAccessProvableApi.mockResolvedValue(null);
 
       const values: boolean[] = [];
-      const sub = isPrivateSyncPending$.subscribe(v => values.push(v));
+      const sub = isCombinedSyncPending$.subscribe(v => values.push(v));
 
       const { syncs } = buildSyncObservables(baseInfo, {
         paginationConfig: {},
@@ -1312,8 +1312,7 @@ describe("sync.ts", () => {
       await collectAll(syncs[0]);
       sub.unsubscribe();
 
-      // false (initial) → true (subscription started) → false (finalize after complete)
-      expect(values).toEqual([false, true, false]);
+      expect(values).toEqual([false]);
     });
   });
 });

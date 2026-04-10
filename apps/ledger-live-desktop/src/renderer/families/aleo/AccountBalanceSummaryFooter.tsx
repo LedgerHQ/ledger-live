@@ -16,7 +16,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
-import { useIsPrivateSyncPending } from "./hooks/useIsPrivateSyncPending";
+import { useIsCombinedSyncPending } from "./hooks/useIsCombinedSyncPending";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -138,15 +138,17 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     stop: handleStop,
   } = useAleoPrivateSync({ account });
 
-  const isPrivateSyncPending = useIsPrivateSyncPending();
+  const isCombinedSyncPending = useIsCombinedSyncPending();
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hookProgressRef = useRef(hookProgress);
+  hookProgressRef.current = hookProgress;
 
   useEffect(() => {
     if (isSyncing) {
       setDisplaySyncing(true);
-    } else if (hookProgress >= 100) {
+    } else if (hookProgressRef.current >= 100) {
       finishDelayRef.current = setTimeout(() => setDisplaySyncing(false), 200);
     } else {
       setDisplaySyncing(false);
@@ -154,7 +156,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     return () => {
       if (finishDelayRef.current) clearTimeout(finishDelayRef.current);
     };
-  }, [isSyncing, hookProgress]);
+  }, [isSyncing]);
 
   if (account.type !== "Account" || !account.aleoResources) {
     return null;
@@ -233,7 +235,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             onStart={handleStart}
             onStop={handleStop}
             onSyncAgain={handleStart}
-            disabled={isPrivateSyncPending && !isSyncing}
+            disabled={isCombinedSyncPending}
           />
           <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
         </div>
