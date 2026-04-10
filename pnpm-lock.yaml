@@ -270,6 +270,9 @@ catalogs:
     eslint-plugin-better-tailwindcss:
       specifier: 4.0.0-beta.3
       version: 4.0.0-beta.3
+    eslint-plugin-jest:
+      specifier: 27.9.0
+      version: 27.9.0
     expect:
       specifier: 30.2.0
       version: 30.2.0
@@ -577,6 +580,9 @@ importers:
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)
+      eslint-plugin-jest:
+        specifier: 'catalog:'
+        version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2)
       eslint-plugin-json:
         specifier: 3.1.0
         version: 3.1.0
@@ -21910,6 +21916,12 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4 <6.0.0'
 
+  '@typescript-eslint/utils@5.62.0':
+    resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+
   '@typescript-eslint/utils@8.30.1':
     resolution: {integrity: sha512-T/8q4R9En2tcEsWPQgB5BQ0XJVOtfARcUvOa8yJP3fh9M/mXraLxZrkCfGb6ChrO/V3W+Xbd04RacUEqk1CFEQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -25888,6 +25900,19 @@ packages:
       eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9
     peerDependenciesMeta:
       '@typescript-eslint/parser':
+        optional: true
+
+  eslint-plugin-jest@27.9.0:
+    resolution: {integrity: sha512-QIT7FH7fNmd9n4se7FFKHbsLKGQiw885Ds6Y/sxKgCZ6natwCsXdgPOADnYVxN2QrRweF0FZWbJ6S7Rsn7llug==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': ^5.0.0 || ^6.0.0 || ^7.0.0
+      eslint: ^7.0.0 || ^8.0.0
+      jest: '*'
+    peerDependenciesMeta:
+      '@typescript-eslint/eslint-plugin':
+        optional: true
+      jest:
         optional: true
 
   eslint-plugin-json@3.1.0:
@@ -51924,6 +51949,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/typescript-estree@5.62.0(typescript@6.0.2)':
+    dependencies:
+      '@typescript-eslint/types': 5.62.0
+      '@typescript-eslint/visitor-keys': 5.62.0
+      debug: 4.3.4
+      globby: 11.1.0
+      is-glob: 4.0.3
+      semver: 7.7.3
+      tsutils: 3.21.0(typescript@6.0.2)
+    optionalDependencies:
+      typescript: 6.0.2
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/typescript-estree@8.30.1(typescript@6.0.2)':
     dependencies:
       '@typescript-eslint/types': 8.30.1
@@ -51952,6 +51991,21 @@ snapshots:
       typescript: 6.0.2
     transitivePeerDependencies:
       - supports-color
+
+  '@typescript-eslint/utils@5.62.0(eslint@8.57.0)(typescript@6.0.2)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.0(eslint@8.57.0)
+      '@types/json-schema': 7.0.15
+      '@types/semver': 7.7.1
+      '@typescript-eslint/scope-manager': 5.62.0
+      '@typescript-eslint/types': 5.62.0
+      '@typescript-eslint/typescript-estree': 5.62.0(typescript@6.0.2)
+      eslint: 8.57.0
+      eslint-scope: 5.1.1
+      semver: 7.7.3
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   '@typescript-eslint/utils@8.30.1(eslint@8.57.0)(typescript@6.0.2)':
     dependencies:
@@ -57324,6 +57378,16 @@ snapshots:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
       - supports-color
+
+  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2):
+    dependencies:
+      '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@6.0.2)
+      eslint: 8.57.0
+    optionalDependencies:
+      '@typescript-eslint/eslint-plugin': 8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   eslint-plugin-json@3.1.0:
     dependencies:
@@ -69345,6 +69409,11 @@ snapshots:
     dependencies:
       tslib: 2.6.2
       typescript: 4.9.5
+
+  tsutils@3.21.0(typescript@6.0.2):
+    dependencies:
+      tslib: 2.6.2
+      typescript: 6.0.2
 
   tsx@4.10.3:
     dependencies:
