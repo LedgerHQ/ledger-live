@@ -116,7 +116,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
       await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
       await app.earnV2Dashboard.verifyManageDrawerOptions(["Manage", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Manage");
-      await app.account.waitForAccountScreenLoaded(account.accountName);
+      await app.account.verifyAccountName(account.accountName);
     });
   });
 }

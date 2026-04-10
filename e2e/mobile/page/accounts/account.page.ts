@@ -36,10 +36,9 @@ export default class AccountPage {
     `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
-  @Step("Wait for account detail screen and verify account name: $0")
-  async waitForAccountScreenLoaded(accountName: string) {
-    await waitForElementById(this.accountScreenScrollView);
-    await detoxExpect(getElementByText(accountName, 0)).toExist();
+  @Step("Verify account name is visible: $0")
+  async verifyAccountName(accountName: string) {
+    await detoxExpect(getElementByText(accountName, 0)).toBeVisible();
   }
 
   @Step("Open accounts list via deeplink")

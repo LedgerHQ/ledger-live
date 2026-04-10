@@ -27,7 +27,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify ice cold start page")
   async verifyIceColdStartPage() {
-    await waitWebElementByTestId(this.footerDisclaimer);
+    await detoxExpect(getWebElementByTestId(this.footerDisclaimer)).toExist();
     await expectWebElementNotVisible(this.maxPotentialRewards);
     await expectWebElementNotVisible(this.walletHeaderAmount);
   }
@@ -41,13 +41,13 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify cold start page")
   async verifyColdStartPage() {
-    await waitWebElementByTestId(this.maxPotentialRewards);
-    await waitWebElementByTestId(this.tokensToEarnBanner);
+    await detoxExpect(getWebElementByTestId(this.maxPotentialRewards)).toExist();
+    await detoxExpect(getWebElementByTestId(this.tokensToEarnBanner)).toExist();
   }
 
   @Step("Verify asset ready to earn")
   async verifyAssetReadyToEarn(ticker: string) {
-    await waitWebElementByTestId(this.assetItemTicker(ticker));
+    await detoxExpect(getWebElementByTestId(this.assetItemTicker(ticker))).toExist();
   }
 
   @Step("Click asset earn CTA")
@@ -59,17 +59,17 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify hot start page")
   async verifyHotStartPage() {
-    await waitWebElementByTestId(this.walletHeaderAmount);
+    await detoxExpect(getWebElementByTestId(this.walletHeaderAmount)).toExist();
   }
 
   @Step("Verify rewards summary boxes")
   async verifyRewardsSummaryBoxes() {
-    await waitWebElementByTestId(this.rewardsSummary);
+    await detoxExpect(getWebElementByTestId(this.rewardsSummary)).toExist();
   }
 
   @Step("Verify position row present for $0")
   async verifyPositionRowPresent(identifier: string) {
-    await waitWebElement(getWebElementByXpath(this.depositRowXPath(identifier)));
+    await detoxExpect(getWebElementByXpath(this.depositRowXPath(identifier))).toExist();
   }
 
   @Step("Click position row for $0")
@@ -82,12 +82,14 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify earn webview redirected to deposit flow")
   async verifyDepositFlowVisible() {
-    await waitForCurrentWebviewUrlToContain("/deposit");
+    const url = await waitForCurrentWebviewUrlToContain("/deposit");
+    jestExpect(url.toLowerCase()).toContain("/deposit");
   }
 
   @Step("Verify earn webview redirected to withdraw flow")
   async verifyWithdrawalFlowVisible() {
-    await waitForCurrentWebviewUrlToContain("/redeem");
+    const url = await waitForCurrentWebviewUrlToContain("/redeem");
+    jestExpect(url.toLowerCase()).toContain("/redeem");
   }
 
   // --- Staking Flow Verification (native) ---
@@ -98,7 +100,7 @@ export default class EarnV2DashboardPage {
     if (!testId) {
       throw new Error(`No staking flow testID mapped for ticker "${ticker}"`);
     }
-    await waitForElementById(testId);
+    await detoxExpect(getElementById(testId)).toBeVisible();
   }
 
   @Step("Tap staking provider in EvmStakingDrawer: $0")
@@ -108,7 +110,8 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify partner dapp loaded (webview URL contains $0)")
   async verifyPartnerDappLoaded(urlSubstring: string) {
-    await waitForCurrentWebviewUrlToContain(urlSubstring);
+    const url = await waitForCurrentWebviewUrlToContain(urlSubstring);
+    jestExpect(url.toLowerCase()).toContain(urlSubstring.toLowerCase());
   }
 
   // --- Modular Selector (native) ---
@@ -123,9 +126,7 @@ export default class EarnV2DashboardPage {
   @Step("Verify manage drawer options present: $0")
   async verifyManageDrawerOptions(options: string[]) {
     for (const option of options) {
-      await waitForElementById(this.earnMenuOption(option), undefined, {
-        checkVisibility: false,
-      });
+      await detoxExpect(getElementById(this.earnMenuOption(option))).toExist();
     }
   }
 
