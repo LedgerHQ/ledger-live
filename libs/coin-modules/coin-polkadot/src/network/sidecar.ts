@@ -1,8 +1,6 @@
 import network from "@ledgerhq/live-network";
-import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { QueryableConsts } from "@polkadot/api/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
@@ -15,6 +13,7 @@ import type {
 } from "../types";
 import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
+import { tryLoadFromDisk, persistToDisk } from "./registryCache";
 import type {
   SidecarAccountBalanceInfo,
   SidecarPalletStorageItem,
@@ -63,6 +62,18 @@ const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
 const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
+
+// Polkadot runtime constants — only change on runtime upgrades (rare).
+// Using static values avoids initializing ApiPromise (which parses full metadata)
+// just to read constants, eliminating a ~300-600ms freeze on Hermes.
+// Verify on @polkadot/types upgrades.
+const CHAIN_CONSTANTS = {
+  expectedBlockTime: 6000, // ms
+  epochDuration: 2400, // blocks
+  sessionsPerEra: 6,
+  maxNominatorRewardedPerValidator: 512,
+  bondingDuration: 28, // eras
+};
 
 // blocks = 2 minutes 30
 
@@ -153,16 +164,6 @@ const fetchStakingInfo = async (
   return node.fetchStakingInfo(addr, currency);
 };
 
-/**
- * Returns the blockchain's runtime constants.
- *
- * @async
- *
- * @returns {Promise<QueryableConsts<"promise">>}
- */
-const fetchConstants = async (currency?: CryptoCurrency): Promise<QueryableConsts<"promise">> => {
-  return node.fetchConstants(currency);
-};
 
 /**
  * Returns the activeEra info
@@ -391,17 +392,16 @@ export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => 
     };
   }
 
-  const [stakingInfo, activeEra, consts] = await Promise.all([
+  const [stakingInfo, activeEra] = await Promise.all([
     fetchStakingInfo(addr, currency),
     fetchActiveEra(currency),
-    getConstants(currency),
   ]);
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
   const activeEraStart = Number(activeEra.value?.start || 0);
-  const blockTime = new BigNumber(consts?.babe?.expectedBlockTime?.toNumber() || 6000); // 6000 ms
-  const epochDuration = new BigNumber(consts?.babe?.epochDuration?.toNumber() || 2400); // 2400 blocks
-  const sessionsPerEra = new BigNumber(consts?.staking?.sessionsPerEra?.toNumber() || 6); // 6 sessions
+  const blockTime = new BigNumber(CHAIN_CONSTANTS.expectedBlockTime);
+  const epochDuration = new BigNumber(CHAIN_CONSTANTS.epochDuration);
+  const sessionsPerEra = new BigNumber(CHAIN_CONSTANTS.sessionsPerEra);
 
   const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
   const unlockings = stakingInfo?.staking.unlocking
@@ -579,10 +579,7 @@ export const getStakingProgress = async (
     };
   }
 
-  const [progress, consts] = await Promise.all([
-    fetchStakingProgress(currency),
-    getConstants(currency),
-  ]);
+  const progress = await fetchStakingProgress(currency);
 
   const activeEra = Number(progress.activeEra);
   const currentBlock = Number(progress.at.height);
@@ -602,14 +599,14 @@ export const getStakingProgress = async (
   return {
     activeEra,
     electionClosed: optimisticElectionClosed,
-    maxNominatorRewardedPerValidator:
-      Number(consts?.staking?.maxNominatorRewardedPerValidator?.toString()) || 128,
-    bondingDuration: consts?.staking?.bondingDuration?.toNumber() || 28,
+    maxNominatorRewardedPerValidator: CHAIN_CONSTANTS.maxNominatorRewardedPerValidator,
+    bondingDuration: CHAIN_CONSTANTS.bondingDuration,
   };
 };
 
 /**
- * Create a new Registry for creating Polkadot.JS types (or any Substrate)
+ * Create a new Registry for creating Polkadot.JS types (or any Substrate).
+ * Uses disk cache keyed by specVersion to avoid re-fetching metadata on cold starts.
  *
  * @async
  *
@@ -621,10 +618,26 @@ export const getRegistry = async (
   registry: TypeRegistry;
   extrinsics: Extrinsics;
 }> => {
+  const currencyId = currency?.id || "polkadot";
+  const lightMaterial = await fetchTransactionMaterial(currency, false);
+  const currentSpecVersion = lightMaterial.specVersion;
+
+  const cached = await tryLoadFromDisk(currencyId, currentSpecVersion);
+  if (cached) {
+    log("polkadot/registryCache", `disk cache hit for specVersion=${currentSpecVersion}`);
+    return createRegistryAndExtrinsics(cached.material, cached.spec);
+  }
+
+  // On cache miss, fetch the full metadata (~500KB) and chain spec in parallel.
+  // The lightweight specVersion call above avoids fetching metadata on cache hit.
   const [material, spec] = await Promise.all([
-    getTransactionMaterialWithMetadata(currency),
+    fetchTransactionMaterial(currency, true),
     fetchChainSpec(currency),
   ]);
+  persistToDisk(currencyId, material, spec).catch(e =>
+    log("polkadot/registryCache", `background persist error: ${e}`),
+  );
+
   return createRegistryAndExtrinsics(material, spec);
 };
 
@@ -663,32 +676,3 @@ export const getLastBlock = async (
  * NOTE: we don't use the cache from family's `cache.js` to avoid cyclic imports.
  */
 
-/**
- * Cache the fetchConstants to avoid too many calls
- *
- * @async
- *
- * @returns {Promise<QueryableConsts<"promise">>} consts
- */
-const getConstants = makeLRUCache(
-  async (currency: CryptoCurrency | undefined): Promise<QueryableConsts<"promise">> => {
-    return fetchConstants(currency);
-  },
-  currency => currency?.id || "polkadot",
-  // Store only one constants object since we only have polkadot.
-  hours(1, 1),
-);
-
-/**
- * Cache the fetchTransactionMaterial(true) to avoid too many calls
- *
- * @async
- *
- * @returns {Promise<Object>} consts
- */
-export const getTransactionMaterialWithMetadata = makeLRUCache(
-  async (currency?: CryptoCurrency): Promise<SidecarTransactionMaterial> =>
-    fetchTransactionMaterial(currency, true),
-  currency => (currency ? currency.id : "polkadot"),
-  hours(1),
-);

@@ -25,21 +25,24 @@ jest.mock("../network", () => {
 });
 
 describe("preload", () => {
-  //TODO make a more complete test
   it("should correctly preload data", async () => {
     getMinimumBondBalanceMock.mockResolvedValue(0n);
+    getValidatorsMock.mockResolvedValue([]);
 
     const currency = getCryptoCurrencyById(account.currency.id);
     await preload(currency);
 
-    expect(getRegistryMock).toHaveBeenCalledTimes(1);
+    // getRegistry is no longer called in preload (deferred to first transaction)
+    expect(getRegistryMock).toHaveBeenCalledTimes(0);
     expect(getMinimumBondBalanceMock).toHaveBeenCalledTimes(1);
     expect(getStakingProgressMock).toHaveBeenCalledTimes(1);
+    // On cold start (no cached validators), validators are awaited
     expect(getValidatorsMock).toHaveBeenCalledTimes(1);
   });
 
   it("should return fallback stakingProgress if getStakingProgress throws", async () => {
     getStakingProgressMock.mockRejectedValue(new Error("issou"));
+    getValidatorsMock.mockResolvedValue([]);
     const currency = getCryptoCurrencyById(account.currency.id);
     const result = await preload(currency);
     expect(result.staking).toEqual({

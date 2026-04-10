@@ -1,8 +1,13 @@
 import storage from "LLM/storage";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
+import { setPolkadotRegistryStorage } from "@ledgerhq/live-common/families/polkadot/registryStorage";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
+setPolkadotRegistryStorage({
+  get: key => storage.getString(key),
+  set: (key, value) => storage.saveString(key, value),
+});
 export async function clearBridgeCache() {
   const keys = await storage.keys();
   await storage.delete(keys.filter(k => k.startsWith("bridgeproxypreload")));

@@ -2,7 +2,6 @@
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
 import polkadotAPI from "../network";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
 import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
@@ -79,8 +78,6 @@ const shouldRefreshValidators = (
 };
 
 export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
-  await loadPolkadotCrypto();
-  await polkadotAPI.getRegistry(currency); // ensure registry is already in cache.
   let minimumBondBalance;
   let currentStakingProgress;
   try {
@@ -104,20 +101,25 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
   const { validators: previousValidators, staking: previousStakingProgress } =
     getCurrentPolkadotPreloadData();
   let validators = previousValidators;
-
-  if (
+  const needsRefresh =
     !validators ||
     !validators.length ||
-    shouldRefreshValidators(previousStakingProgress, currentStakingProgress)
-  ) {
-    log("polkadot/preload", "refreshing polkadot validators...");
+    shouldRefreshValidators(previousStakingProgress, currentStakingProgress);
 
-    try {
-      validators = await polkadotAPI.getValidators("all", currency);
-    } catch (error) {
-      log("polkadot/preload", "failed to fetch validators", {
-        error,
-      });
+  if (needsRefresh) {
+    const hasCachedValidators = validators && validators.length > 0;
+    if (hasCachedValidators) {
+      refreshValidatorsInBackground(
+        currency,
+        currentStakingProgress,
+        minimumBondBalance.toString(),
+      );
+    } else {
+      try {
+        validators = await polkadotAPI.getValidators("all", currency);
+      } catch (error) {
+        log("polkadot/preload", "failed to fetch validators", { error });
+      }
     }
   }
 
@@ -127,6 +129,22 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
     minimumBondBalance: minimumBondBalance.toString(),
   };
 };
+
+function refreshValidatorsInBackground(
+  currency: CryptoCurrency,
+  staking: PolkadotStakingProgress,
+  minimumBondBalance: string,
+) {
+  polkadotAPI
+    .getValidators("all", currency)
+    .then(validators => {
+      log("polkadot/preload", `background refresh done: ${validators.length} validators`);
+      setPolkadotPreloadData({ validators, staking, minimumBondBalance });
+    })
+    .catch(error => {
+      log("polkadot/preload", "background validators refresh failed", { error });
+    });
+}
 
 export const hydrate = (data: unknown) => {
   const hydrated = fromHydratePreloadData(data);

@@ -3,6 +3,21 @@ import buildCoinConfig, {
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 
+export type RegistryStorage = {
+  get: (key: string) => Promise<string | null>;
+  set: (key: string, value: string) => Promise<void>;
+};
+
+let _registryStorage: RegistryStorage | undefined;
+
+export function setRegistryStorage(storage: RegistryStorage): void {
+  _registryStorage = storage;
+}
+
+export function getRegistryStorage(): RegistryStorage | undefined {
+  return _registryStorage;
+}
+
 export type PolkadotConfig = {
   node: {
     url: string;
