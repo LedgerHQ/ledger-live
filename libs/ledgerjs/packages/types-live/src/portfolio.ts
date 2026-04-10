@@ -91,12 +91,23 @@ export type PortfolioRangeConfig = {
  */
 export type PortfolioRange = "all" | "year" | "month" | "week" | "day";
 
+export type NetworkDistributionDetail = {
+  currency: CryptoCurrency | TokenCurrency;
+  accounts: AccountLike[];
+  amount: number;
+  countervalue?: number;
+};
+
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
   distribution: number; // % of the total (normalized in 0-1)
   accounts: AccountLike[];
   amount: number;
   countervalue?: number; // countervalue of the amount that was calculated based of the rate provided
+  metaCurrencyId?: string;
+  networks?: NetworkDistributionDetail[];
+  marketId?: string;
+  slug?: string;
 };
 
 /**
