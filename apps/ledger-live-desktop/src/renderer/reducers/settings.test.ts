@@ -330,8 +330,9 @@ describe("SAVE_SETTINGS action", () => {
 });
 
 describe("trackingEnabledSelector", () => {
-  /** Frozen clock; consent offsets use UTC setters to match `trackingEnabledSelector` (UTC year cutoff). */
+  /** Frozen clock; staleness uses `needsConsentRenewal` with `CONSENT_RENEWAL_INTERVAL_MS` from live-common. */
   const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
+  const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -355,18 +356,21 @@ describe("trackingEnabledSelector", () => {
     ).toBe(false);
   });
 
-  it("should not track if privacyPolicyVersion is not set", () => {
+  it("should track when privacyPolicyVersion is not set if consent is within validity and toggles allow", () => {
     expect(
       trackingEnabledSelector(
         mockStateWithSettings({
+          lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
           privacyPolicyVersion: null,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
         }),
       ),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   describe("opt-in analytics", () => {
-    it("should track if lastAnalyticsConsentDate is set and privacyPolicyVersion is set and is the current version", () => {
+    it("should track if lastAnalyticsConsentDate is set and toggles allow sharing", () => {
       expect(
         trackingEnabledSelector(
           mockStateWithSettings({
@@ -379,55 +383,8 @@ describe("trackingEnabledSelector", () => {
       ).toBe(true);
     });
 
-    it("should not track if lastAnalyticsConsentDate is more than one year ago", () => {
-      const consentDate = new Date(FIXED_NOW);
-      consentDate.setUTCFullYear(consentDate.getUTCFullYear() - 1);
-      consentDate.setUTCMonth(consentDate.getUTCMonth() - 1);
-      expect(
-        trackingEnabledSelector(
-          mockStateWithSettings({
-            shareAnalytics: true,
-            sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate: consentDate.toISOString(),
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          }),
-        ),
-      ).toBe(false);
-    });
-
-    it("should track if lastAnalyticsConsentDate is exactly one year ago", () => {
-      const consentDate = new Date(FIXED_NOW);
-      consentDate.setUTCFullYear(consentDate.getUTCFullYear() - 1);
-      expect(
-        trackingEnabledSelector(
-          mockStateWithSettings({
-            shareAnalytics: true,
-            sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate: consentDate.toISOString(),
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          }),
-        ),
-      ).toBe(true);
-    });
-
-    it("should track if lastAnalyticsConsentDate is less than one year ago", () => {
-      const consentDate = new Date(FIXED_NOW);
-      consentDate.setUTCMonth(consentDate.getUTCMonth() - 11);
-      expect(
-        trackingEnabledSelector(
-          mockStateWithSettings({
-            shareAnalytics: true,
-            sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate: consentDate.toISOString(),
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          }),
-        ),
-      ).toBe(true);
-    });
-
-    it("should not track if lastAnalyticsConsentDate less than a year ago but privacyPolicyVersion is older than the current version", () => {
-      const consentDate = new Date(FIXED_NOW);
-      consentDate.setUTCMonth(consentDate.getUTCMonth() - 11);
+    it("should track if privacyPolicyVersion is behind current when consent is still within validity", () => {
+      const consentDate = new Date(FIXED_NOW.getTime() - 11 * 30 * 24 * 60 * 60 * 1000);
       expect(
         trackingEnabledSelector(
           mockStateWithSettings({
@@ -437,7 +394,50 @@ describe("trackingEnabledSelector", () => {
             privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION - 1,
           }),
         ),
+      ).toBe(true);
+    });
+
+    it("should not track if lastAnalyticsConsentDate is more than 365 days ago", () => {
+      const consentDate = new Date(FIXED_NOW.getTime() - YEAR_MS - 1000);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          }),
+        ),
       ).toBe(false);
+    });
+
+    it("should track if lastAnalyticsConsentDate is exactly 365 days before now", () => {
+      const consentDate = new Date(FIXED_NOW.getTime() - YEAR_MS);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should track if lastAnalyticsConsentDate is less than 365 days ago", () => {
+      const consentDate = new Date(FIXED_NOW);
+      consentDate.setUTCMonth(consentDate.getUTCMonth() - 11);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          }),
+        ),
+      ).toBe(true);
     });
   });
 

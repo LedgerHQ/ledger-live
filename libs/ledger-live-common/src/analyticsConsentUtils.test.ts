@@ -33,9 +33,9 @@ describe("analyticsConsentUtils", () => {
       expect(needsConsentRenewal(null, 1_000_000_000_000)).toBe(true);
     });
 
-    it("returns false for any past consent date when renewal interval is disabled (default)", () => {
+    it("returns true when consent is older than default renewal interval", () => {
       const iso = new Date(NOW_MS - YEAR_MS * 10).toISOString();
-      expect(needsConsentRenewal(iso, NOW_MS)).toBe(false);
+      expect(needsConsentRenewal(iso, NOW_MS)).toBe(true);
     });
 
     it("returns false within one year when interval is one year in ms", () => {
