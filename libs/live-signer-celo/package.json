@@ -28,7 +28,8 @@
   "dependencies": {
     "@ledgerhq/coin-celo": "workspace:^",
     "@ledgerhq/hw-app-celo": "workspace:^",
-    "@ledgerhq/hw-app-eth": "workspace:^"
+    "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -36,7 +37,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage"

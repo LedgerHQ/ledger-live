@@ -5,6 +5,12 @@ import { additionalErc20SignaturesBlob } from "./data";
 
 type LedgerEthTransactionService = typeof ledgerService;
 
+// CIP64 feeCurrency is optional; RLP decodes empty bytes as the sentinel "0x",
+// which is neither a valid address nor an absent value. Treat only well-formed
+// 20-byte, 0x-prefixed addresses as present.
+const isValidFeeCurrency = (value: unknown): value is string =>
+  typeof value === "string" && /^0x[0-9a-fA-F]{40}$/.test(value);
+
 const parseTransactionCelo: typeof ledgerService.parseTransaction = rawTxHex => {
   const payload = arrayify(rawTxHex);
 
@@ -38,7 +44,7 @@ const parseTransactionCelo: typeof ledgerService.parseTransaction = rawTxHex => 
       ...parsed,
       type: 0x7b,
       hash: correctHash, // Use correct hash from original CIP64
-      ...(feeCurrency && feeCurrency.length > 0 ? { feeCurrency } : {}),
+      ...(isValidFeeCurrency(feeCurrency) ? { feeCurrency } : {}),
     };
   }
 
@@ -63,8 +69,7 @@ const resolveTransactionCelo: LedgerEthTransactionService["resolveTransaction"] 
 
   if (
     "feeCurrency" in parsedTransaction &&
-    typeof parsedTransaction.feeCurrency === "string" &&
-    parsedTransaction.feeCurrency.length > 0
+    isValidFeeCurrency(parsedTransaction.feeCurrency)
   ) {
     additionalErc20SignaturesConfig = {
       contractAddressToResolve: parsedTransaction.feeCurrency,

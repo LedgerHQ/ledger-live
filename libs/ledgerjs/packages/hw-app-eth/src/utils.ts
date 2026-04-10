@@ -66,7 +66,7 @@ export const intAsHexBytes = (int: number, bytes: number): string =>
   int.toString(16).padStart(2 * bytes, "0");
 
 export const tokenSelectors = Object.values(ERC20_CLEAR_SIGNED_SELECTORS);
-export const nftSelectors = [
+export const nftSelectors: string[] = [
   ...Object.values(ERC721_CLEAR_SIGNED_SELECTORS),
   ...Object.values(ERC1155_CLEAR_SIGNED_SELECTORS),
 ];

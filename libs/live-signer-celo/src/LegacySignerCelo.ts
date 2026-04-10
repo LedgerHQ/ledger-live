@@ -1,4 +1,5 @@
 import Celo from "@ledgerhq/hw-app-celo";
+import type Transport from "@ledgerhq/hw-transport";
 import { CeloSigner } from "@ledgerhq/coin-celo/signer";
 import type { CeloTx, RLPEncodedTx, LegacyEncodedTx } from "@ledgerhq/coin-celo/types";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
@@ -7,7 +8,7 @@ import { EIP712Message } from "@ledgerhq/types-live";
 export class LegacySignerCelo implements CeloSigner {
   private readonly signer: Celo;
 
-  constructor(transport: any) {
+  constructor(transport: Transport) {
     this.signer = new Celo(transport);
   }
 

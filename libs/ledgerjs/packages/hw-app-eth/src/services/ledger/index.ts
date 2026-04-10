@@ -225,7 +225,7 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
     const shouldResolve: PotentialResolutions = {
       token:
         resolutionConfig.erc20 && tokenSelectors.includes(selector as ERC20_CLEAR_SIGNED_SELECTORS),
-      nft: resolutionConfig.nft && nftSelectors.some(s => s === selector),
+      nft: resolutionConfig.nft && nftSelectors.includes(selector),
       externalPlugins: resolutionConfig.externalPlugins,
       uniswapV3: resolutionConfig.uniswapV3,
     };

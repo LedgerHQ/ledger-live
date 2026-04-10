@@ -39,4 +39,6 @@ Heavily inspiried by celo-web-wallet
 
 #### Parameters
 
-*   `transport` **Transport**&#x20;
+*   `transport` **any**&#x20;
+*   `scrambleKey` **any?**&#x20;
+*   `loadConfig` **any?**&#x20;

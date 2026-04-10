@@ -86,6 +86,36 @@ describe("Celo ledger service (index.ts)", () => {
     });
   });
 
+  it.each([
+    ["empty-bytes sentinel", "0x"],
+    ["empty string", ""],
+    ["short/invalid hex", "0xdead"],
+  ])("parseTransaction drops feeCurrency when value is %s", (_label, feeCurrency) => {
+    const payload = Uint8Array.from([0x7b, 0xaa]);
+    const fields = [
+      "0xa4ec",
+      "0x",
+      "0x09",
+      "0x64",
+      "0x5208",
+      "0x71c7656ec7ab88b098defb751b7401b5f6d8976f",
+      "0x",
+      "0x",
+      [],
+      feeCurrency,
+    ];
+
+    mockedArrayify.mockReturnValue(payload);
+    mockedRlp.decode.mockReturnValue(fields as never);
+    mockedRlp.encode.mockReturnValue("0xdeadbeef" as never);
+    mockedLedgerService.parseTransaction.mockReturnValue({ type: 2, to: "0x1234" } as never);
+    mockedKeccak256.mockReturnValue("0xcorrecthash");
+
+    const result = ledgerServiceCelo.parseTransaction("0xraw");
+
+    expect(result).not.toHaveProperty("feeCurrency");
+  });
+
   it("parseTransaction delegates non-CIP64 transactions directly", () => {
     const payload = Uint8Array.from([0x02, 0xaa]);
     const parsed = { type: 2, to: "0xabcd" };
@@ -131,30 +161,47 @@ describe("Celo ledger service (index.ts)", () => {
     expect(result).toBe(resolution);
   });
 
-  it("resolveTransaction omits additional ERC20 config when feeCurrency is empty", async () => {
-    const rawTxHex = "7bbb";
-    const payload = Uint8Array.from([0x7b, 0xbb]);
-    const fields = ["0xa4ec", "0x", "0x09", "0x64", "0x5208", "0x1", "0x", "0x", [], ""];
-    const loadConfig = {};
-    const resolutionConfig = { nft: false, erc20: false, externalPlugins: false };
+  it.each([
+    ["empty string", ""],
+    ["empty-bytes sentinel", "0x"],
+  ])(
+    "resolveTransaction omits additional ERC20 config when feeCurrency is %s",
+    async (_label, feeCurrency) => {
+      const rawTxHex = "7bbb";
+      const payload = Uint8Array.from([0x7b, 0xbb]);
+      const fields = [
+        "0xa4ec",
+        "0x",
+        "0x09",
+        "0x64",
+        "0x5208",
+        "0x1",
+        "0x",
+        "0x",
+        [],
+        feeCurrency,
+      ];
+      const loadConfig = {};
+      const resolutionConfig = { nft: false, erc20: false, externalPlugins: false };
 
-    mockedArrayify.mockReturnValue(payload);
-    mockedRlp.decode.mockReturnValue(fields as never);
-    mockedRlp.encode.mockReturnValue("0xabc999" as never);
-    mockedLedgerService.parseTransaction.mockReturnValue({ type: 2 } as never);
-    mockedKeccak256.mockReturnValue("0xhash");
-    mockedLedgerService.resolveTransaction.mockResolvedValue({} as never);
+      mockedArrayify.mockReturnValue(payload);
+      mockedRlp.decode.mockReturnValue(fields as never);
+      mockedRlp.encode.mockReturnValue("0xabc999" as never);
+      mockedLedgerService.parseTransaction.mockReturnValue({ type: 2 } as never);
+      mockedKeccak256.mockReturnValue("0xhash");
+      mockedLedgerService.resolveTransaction.mockResolvedValue({} as never);
 
-    await ledgerServiceCelo.resolveTransaction(rawTxHex, loadConfig, resolutionConfig);
+      await ledgerServiceCelo.resolveTransaction(rawTxHex, loadConfig, resolutionConfig);
 
-    expect(mockedLedgerService.resolveTransaction).toHaveBeenCalledWith(
-      rawTxHex,
-      loadConfig,
-      resolutionConfig,
-      expect.any(Function),
-      undefined,
-    );
-  });
+      expect(mockedLedgerService.resolveTransaction).toHaveBeenCalledWith(
+        rawTxHex,
+        loadConfig,
+        resolutionConfig,
+        expect.any(Function),
+        undefined,
+      );
+    },
+  );
 
   it("exports signer helpers from base ledger service", () => {
     expect(ledgerServiceCelo.signAddressResolution).toBe(mockedLedgerService.signAddressResolution);
