@@ -1,8 +1,3 @@
----
-name: e2e
-description: Add E2E tests for new coins or update existing Playwright tests for ledger-live-desktop. Use when the user wants to add send/receive e2e tests for a new cryptocurrency, update test configurations, or work with Speculos device simulator.
----
-
 # E2E Desktop Testing Agent
 
 This agent guides you through adding or updating E2E tests for ledger-live-desktop using Playwright and Speculos.
@@ -46,7 +41,7 @@ When the user wants to add e2e tests for a new coin, follow these steps and **as
 
 ### Step 1: Add Network enum
 
-**File:** `libs/ledger-live-common/src/e2e/enum/Network.ts`
+[File](/libs/ledger-live-common/src/e2e/enum/Network.ts)
 
 ```typescript
 NEWCOIN = "NewCoin",
@@ -54,7 +49,7 @@ NEWCOIN = "NewCoin",
 
 ### Step 2: Add AppInfos
 
-**File:** `libs/ledger-live-common/src/e2e/enum/AppInfos.ts`
+[File](/libs/ledger-live-common/src/e2e/enum/AppInfos.ts)
 
 ```typescript
 static readonly NEWCOIN = new AppInfos("NewCoin");
@@ -62,7 +57,7 @@ static readonly NEWCOIN = new AppInfos("NewCoin");
 
 ### Step 3: Add Currency
 
-**File:** `libs/ledger-live-common/src/e2e/enum/Currency.ts`
+[File](/libs/ledger-live-common/src/e2e/enum/Currency.ts)
 
 **Ask user for:** name, ticker, currency_id
 
@@ -72,7 +67,7 @@ static readonly NEWCOIN = new Currency("NewCoin", "TICKER", "currency_id", AppIn
 
 ### Step 4: Add Accounts
 
-**File:** `libs/ledger-live-common/src/e2e/enum/Account.ts`
+[File](/libs/ledger-live-common/src/e2e/enum/Account.ts)
 
 **Ask user for:** account derivation path (BIP44)
 
@@ -83,7 +78,7 @@ static readonly NEWCOIN_2 = new Account(Currency.NEWCOIN, "NewCoin 2", 1, "44'/x
 
 ### Step 5: Add family file (if new family)
 
-**File:** `libs/ledger-live-common/src/e2e/families/newcoin.ts`
+[File](/libs/ledger-live-common/src/e2e/families/newcoin.ts)
 
 **Ask user:** "Does this coin belong to an existing family (evm, bitcoin, cosmos...)?"
 
@@ -98,7 +93,7 @@ import { getSendEvents, containsSubstringInEvent } from "../speculos";
 
 ### Step 6: Add to speculos.ts
 
-**File:** `libs/ledger-live-common/src/e2e/speculos.ts`
+[File](libs/ledger-live-common/src/e2e/speculos.ts)
 
 **6a. Add to `specs` object:**
 
@@ -123,7 +118,7 @@ case Currency.NEWCOIN.id:
 
 ### Step 7: Add test case to spec
 
-**File:** `e2e/desktop/tests/specs/send.tx.spec.ts`
+[File](e2e/desktop/tests/specs/send.tx.spec.ts)
 
 **Ask user for:** valid unique xray ticket number
 
