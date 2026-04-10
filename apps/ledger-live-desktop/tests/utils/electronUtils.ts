@@ -24,6 +24,10 @@ export async function launchApp({
       "--disable-dev-shm-usage",
       "--no-sandbox",
       "--enable-logging",
+      // When mitmproxy is active (HTTP_PROXY set), Chromium's renderer rejects
+      // the mitmproxy CA cert because it uses its own cert store on Linux,
+      // not the system store updated by update-ca-certificates.
+      ...(process.env.HTTP_PROXY ? ["--ignore-certificate-errors"] : []),
       ...(simulateCamera
         ? [
             "--use-fake-device-for-media-stream",
