@@ -5583,6 +5583,15 @@
               "title": "All good!",
               "desc": "Your Ledger {{deviceName}} is genuine and ready to use with Ledger Wallet"
             },
+            "connectDevice": "Connect and unlock your Ledger device",
+            "allowManager": "Allow Ledger Manager on your device",
+            "notGenuine": {
+              "title": "This device is not genuine",
+              "desc": "This device may not be safe to use. Please contact Ledger Support."
+            },
+            "error": {
+              "title": "Genuine check failed"
+            },
             "buttons": {
               "next": "Continue",
               "prev": "Previous step",

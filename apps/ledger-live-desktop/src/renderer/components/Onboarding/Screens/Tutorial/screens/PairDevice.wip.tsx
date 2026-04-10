@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { AsideFooter, Bullet, Column, IllustrationContainer, TrackTutorialProps } from "../shared";
 import connectNano from "../assets/connectNano.png";
+import DeviceAction from "~/renderer/components/DeviceAction";
 import { useSelector } from "LLD/hooks/redux";
+import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";
-import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Success = ({ device, ...trackProps }: { device: Device } & TrackTutorialProps) => {
@@ -41,76 +42,31 @@ export function GenuineCheck({
   setConnectedDevice,
   ...trackProps
 }: Props & TrackTutorialProps) {
-  const { t } = useTranslation();
+  const { deviceModelId } = useContext(OnboardingContext);
   const device = useSelector(getCurrentDevice);
+  const action = useConnectManagerAction();
 
   useEffect(() => {
     if (!device) return;
     setConnectedDevice(device);
   }, [device, setConnectedDevice]);
 
-  const { genuineState, devicePermissionState, error } = useGenuineCheck({
-    isHookEnabled: !!device,
-    deviceId: device?.deviceId ?? "",
-    deviceName: device?.deviceName ?? null,
-  });
+  const [passed, setPassed] = useState<unknown>(null);
+  const onResult = useCallback((result: unknown) => {
+    setPassed(result);
+  }, []);
 
-  if (genuineState === "genuine") {
-    return <Success device={connectedDevice} {...trackProps} />;
-  }
-
-  if (genuineState === "non-genuine") {
-    return (
-      <Column>
-        <Bullet
-          icon="Warning"
-          text={t("onboarding.screens.tutorial.screens.genuineCheck.notGenuine.title")}
-          subText={t("onboarding.screens.tutorial.screens.genuineCheck.notGenuine.desc")}
-        />
-      </Column>
-    );
-  }
-
-  if (error) {
-    return (
-      <Column>
-        <Bullet
-          icon="Warning"
-          text={t("onboarding.screens.tutorial.screens.genuineCheck.error.title")}
-          subText={error.message}
-        />
-      </Column>
-    );
-  }
-
-  if (devicePermissionState === "requested") {
-    return (
-      <Column>
-        <Bullet
-          icon="NanoFoldedMedium"
-          text={t("onboarding.screens.tutorial.screens.genuineCheck.allowManager")}
-        />
-      </Column>
-    );
-  }
-
-  if (device) {
-    return (
-      <Column>
-        <Flex justifyContent="center" alignItems="center" py={6}>
-          <InfiniteLoader />
-        </Flex>
-      </Column>
-    );
-  }
-
-  return (
-    <Column>
-      <Bullet
-        icon="USBMedium"
-        text={t("onboarding.screens.tutorial.screens.genuineCheck.connectDevice")}
+  return passed ? (
+    <Success device={connectedDevice} {...trackProps} />
+  ) : (
+    deviceModelId && (
+      <DeviceAction
+        overridesPreferredDeviceModel={deviceModelId}
+        action={action}
+        request={null}
+        onResult={onResult}
       />
-    </Column>
+    )
   );
 }
 
