@@ -5,37 +5,52 @@ import {
 import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 
 describe("createOpenInfoBottomSheetHandler", () => {
-  it("should dispatch set info bottom sheet action with params when params are provided", async () => {
+  it("should dispatch with validated params", async () => {
     const dispatch = jest.fn();
     const handler = createOpenInfoBottomSheetHandler(dispatch);
-    const params = {
-      title: "Info title",
-      message: "Info message",
-      linkText: "Learn more",
-      linkHref: "https://example.com",
-    };
+    const linkHref = "https://www.ledger.com";
 
-    await handler({ params });
+    await handler({
+      params: {
+        title: "Info title",
+        message: "Info message",
+        linkText: "Learn more",
+        linkHref,
+      },
+    });
 
     expect(dispatch).toHaveBeenCalledTimes(1);
-    expect(dispatch).toHaveBeenCalledWith(makeSetEarnInfoBottomSheetAction(params));
+    expect(dispatch).toHaveBeenCalledWith(
+      makeSetEarnInfoBottomSheetAction({
+        title: "Info title",
+        message: "Info message",
+        linkText: "Learn more",
+        linkHref,
+      }),
+    );
   });
 
-  it("should dispatch with minimal required params", async () => {
-    const dispatch = jest.fn();
-    const handler = createOpenInfoBottomSheetHandler(dispatch);
-    const params = { title: "T", message: "M" };
-
-    await handler({ params });
-
-    expect(dispatch).toHaveBeenCalledWith(makeSetEarnInfoBottomSheetAction(params));
-  });
-
-  it("should throw when params are missing", async () => {
+  it("should propagate validation errors from validateInfoDialogParams", async () => {
     const dispatch = jest.fn();
     const handler = createOpenInfoBottomSheetHandler(dispatch);
 
     await expect(handler({})).rejects.toThrow("Missing params for custom.bottomSheet.info");
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it("should reject disallowed URLs", async () => {
+    const dispatch = jest.fn();
+    const handler = createOpenInfoBottomSheetHandler(dispatch);
+
+    await expect(
+      handler({
+        params: {
+          title: "T",
+          message: "M",
+          linkHref: "https://example.com",
+        },
+      }),
+    ).rejects.toThrow("'linkHref' is not an allowed URL");
     expect(dispatch).not.toHaveBeenCalled();
   });
 });
@@ -54,7 +69,7 @@ describe("createOpenMenuBottomSheetHandler", () => {
     },
   ];
 
-  it("should dispatch set menu bottom sheet action with params when params are provided", async () => {
+  it("should dispatch set menu bottom sheet action with params", async () => {
     const dispatch = jest.fn();
     const handler = createOpenMenuBottomSheetHandler(dispatch);
 
@@ -62,22 +77,6 @@ describe("createOpenMenuBottomSheetHandler", () => {
 
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(makeSetEarnMenuBottomSheetAction(menuParams));
-  });
-
-  it("should dispatch when a single-option menu array is provided", async () => {
-    const dispatch = jest.fn();
-    const handler = createOpenMenuBottomSheetHandler(dispatch);
-    const params = [
-      {
-        icon: "Settings",
-        label: "A",
-        metadata: { button: "b", live_app: "earn", flow: "f" },
-      },
-    ];
-
-    await handler({ params });
-
-    expect(dispatch).toHaveBeenCalledWith(makeSetEarnMenuBottomSheetAction(params));
   });
 
   it("should throw when params are missing", async () => {

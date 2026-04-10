@@ -323,7 +323,9 @@
     "src/test-helpers/cryptoAssetsStore.ts",
     "src/bridge/generic-alpaca/registerValidateAddress.ts",
     "src/cmc-client/index.ts",
-    "src/cmc-client/__mocks__/fearAndGreed.mock.ts"
+    "src/cmc-client/__mocks__/fearAndGreed.mock.ts",
+    "src/wallet-api/validation/validateUrl.ts",
+    "src/wallet-api/validation/validateInfoDialogParams.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [

@@ -7,6 +7,7 @@
 
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
 import { isDatadogEnabled } from "../../datadog";
 import type { OptionMetadata } from "../../reducers/types";
 
@@ -14,17 +15,6 @@ import type { OptionMetadata } from "../../reducers/types";
 const MAX_MESSAGE_LENGTH = 700;
 const MAX_TITLE_LENGTH = 100;
 const MAX_LABEL_LENGTH = 50;
-
-// Allowed domains for external links
-const ALLOWED_DOMAINS = [
-  // Ledger official domains (includes all subdomains like www.ledger.com, support.ledger.com, help.ledger.com)
-  "ledger.com",
-];
-
-// Allowed protocols for external links
-// Note: OptionMetadata.link only receives ledgerlive:// URLs from earn app
-//       learnMoreLink only receives https://www.ledger.com URLs from earn app
-const ALLOWED_PROTOCOLS = ["https:", "ledgerwallet:", "ledgerlive:"];
 
 // Valid action types for earn deeplinks
 export enum EarnDeeplinkAction {
@@ -74,58 +64,6 @@ function sanitizeString(input: string, maxLength: number): string {
     .trim();
 
   return sanitized.slice(0, maxLength);
-}
-
-/**
- * Validates and sanitizes a URL to ensure it points to a trusted domain
- */
-function validateUrl(urlString: string): string {
-  if (!urlString || typeof urlString !== "string") {
-    return "";
-  }
-
-  try {
-    const url = new URL(urlString);
-
-    // Check protocol
-    if (!ALLOWED_PROTOCOLS.includes(url.protocol)) {
-      logSecurityEvent("malicious_url", {
-        reason: "invalid_protocol",
-        protocol: url.protocol,
-        url: urlString,
-      });
-      return "";
-    }
-
-    // Handle internal ledgerlive:// scheme - allow all ledgerlive URLs
-    if (url.protocol === "ledgerlive:" || url.protocol === "ledgerwallet:") {
-      return urlString;
-    }
-
-    // Check domain for external HTTPS URLs
-    const hostname = url.hostname.toLowerCase();
-    const isAllowedDomain = ALLOWED_DOMAINS.some(
-      domain => hostname === domain || hostname.endsWith("." + domain),
-    );
-
-    if (!isAllowedDomain) {
-      logSecurityEvent("malicious_url", {
-        reason: "untrusted_domain",
-        hostname: hostname,
-        url: urlString,
-      });
-      return "";
-    }
-
-    return urlString;
-  } catch (error) {
-    logSecurityEvent("malicious_url", {
-      reason: "invalid_url_format",
-      url: urlString,
-      error: String(error),
-    });
-    return "";
-  }
 }
 
 /**

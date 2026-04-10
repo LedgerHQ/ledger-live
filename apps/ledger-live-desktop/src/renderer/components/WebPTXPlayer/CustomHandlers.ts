@@ -8,6 +8,7 @@ import {
   AccountIdFormatsResponse,
 } from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Dispatch } from "redux";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
@@ -20,6 +21,7 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { openModal } from "~/renderer/actions/modals";
 import {
   getParentAccount,
+  isAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -38,6 +40,9 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -102,12 +107,12 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
 
         const parentAccount = accounts.find(
-          acc => acc.type === "Account" && acc.id === parentAccountId,
-        ) as Account | undefined;
+          acc => isAccount(acc) && acc.id === parentAccountId,
+        );
 
         const { token } = await decodeTokenAccountId(accountId);
 
-        if (parentAccount && token) {
+        if (parentAccount && token && isAccount(parentAccount)) {
           return makeEmptyTokenAccount(parentAccount, token);
         }
       }
@@ -378,6 +383,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         return Promise.resolve();
       },
+      "custom.dialog.info": createDialogInfoHandler(dispatch),
     };
   }, [
     accounts,
@@ -392,4 +398,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     getAccount,
     syncAccountsById,
   ]);
+}
+
+export function createDialogInfoHandler(dispatch: Dispatch) {
+  return async (request: { params?: InfoDialogParams }) => {
+    const validated = validateInfoDialogParams(request.params, "custom.dialog.info");
+    dispatch(setPtxInfoDialog(validated));
+  };
 }
