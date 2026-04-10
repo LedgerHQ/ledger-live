@@ -57,7 +57,7 @@ postinstall = """
 """
 
 [task_config]
-includes = [".mise/tasks/nx.toml"]
+includes = [".mise/tasks/nx.toml", ".mise/tasks"]
 
 [tasks.info]
 description = "Display installed tools, versions, and project name"
