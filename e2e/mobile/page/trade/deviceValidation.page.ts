@@ -34,24 +34,4 @@ export default class DeviceValidationPage extends CommonPage {
   async expectFees(fees: string) {
     await detoxExpect(this.validationFees()).toHaveText(fees);
   }
-
-  @Step("Wait for swap device validation and retry")
-  async waitDeviceValidationAndRetry() {
-    const WAIT_TIMEOUT = 30000;
-    const CHECK_INTERVAL = 1000;
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < WAIT_TIMEOUT) {
-      if (await IsIdVisible(this.validationAmountId, 100)) {
-        return;
-      }
-      if (await IsIdVisible(this.proceedButtonId, 100)) {
-        await tapById(this.proceedButtonId);
-        return;
-      }
-      await delay(CHECK_INTERVAL);
-    }
-
-    throw new Error(`Device validation timed out after ${WAIT_TIMEOUT / 1000} seconds.`);
-  }
 }

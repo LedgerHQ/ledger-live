@@ -6,10 +6,12 @@ import {
   DeviceManagementKitBuilder,
   DeviceManagementKit,
   type DiscoveredDevice,
+  LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { speculosTransportFactory } from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
+import { LedgerLiveLogger } from "./LedgerLiveLogger";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -105,6 +107,7 @@ export default class SpeculosHttpTransport extends Transport {
     if (!deviceManagementEntry) {
       const deviceManagementKit = new DeviceManagementKitBuilder()
         .addTransport(speculosTransportFactory(baseUrl, true))
+        .addLogger(new LedgerLiveLogger(LogLevel.Debug))
         .build();
 
       deviceManagementEntry = {
