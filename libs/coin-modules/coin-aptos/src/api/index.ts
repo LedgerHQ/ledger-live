@@ -2,12 +2,12 @@ import {
   AlpacaApi,
   Block,
   BlockInfo,
-  Cursor,
-  Stake,
-  Reward,
-  Page,
-  Validator,
   CraftedTransaction,
+  Cursor,
+  Page,
+  Reward,
+  Stake,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   Balance,
@@ -15,6 +15,7 @@ import type {
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import coinConfig from "../config";
 import { combine } from "../logic/combine";
@@ -71,5 +72,6 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

@@ -13,17 +13,20 @@ import type {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
-import BigNumber from "bignumber.js";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import {
   serializeTransfer,
   serializeTransferWithMemo,
   TransactionType,
 } from "@ledgerhq/concordium-core";
+import BigNumber from "bignumber.js";
+import { validateAddress } from "../bridge/validateAddress";
+import coinConfig from "../config";
 import {
   broadcast,
   combine,
-  craftTransaction as craftTransactionLogic,
   craftRawTransaction,
+  craftTransaction as craftTransactionLogic,
   estimateFees as estimateFeesLogic,
   getBalance,
   getBlockInfo,
@@ -31,9 +34,7 @@ import {
   lastBlock,
   listOperations as listOperationsLogic,
 } from "../logic";
-import coinConfig from "../config";
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
-import { validateAddress } from "../bridge/validateAddress";
 import { mapRawOperationToApiOperation } from "./utils";
 
 export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
@@ -75,6 +76,7 @@ export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaA
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

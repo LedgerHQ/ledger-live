@@ -71,6 +71,7 @@ describe("createApi", () => {
     expect(api.getBlockInfo).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
+    expect(api.craftTransactionData).toBeInstanceOf(Function);
   });
 
   describe("broadcast", () => {

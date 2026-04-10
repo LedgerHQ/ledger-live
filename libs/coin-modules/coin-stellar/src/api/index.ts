@@ -1,18 +1,19 @@
 import {
+  AlpacaApi,
   Block,
   BlockInfo,
-  Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
-  FeeEstimation,
-  Operation,
-  Stake,
-  Reward,
-  TransactionIntent,
   CraftedTransaction,
-  AlpacaApi,
+  Cursor,
+  FeeEstimation,
+  ListOperationsOptions,
+  Operation,
+  Page,
+  Reward,
+  Stake,
+  TransactionIntent,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
@@ -23,9 +24,9 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  validateIntent,
   lastBlock,
   listOperations,
+  validateIntent,
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
@@ -71,6 +72,7 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
       throw new Error("getValidators is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

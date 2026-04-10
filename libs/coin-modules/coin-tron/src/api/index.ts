@@ -1,18 +1,19 @@
 import {
   AlpacaApi,
+  Balance,
+  CraftedTransaction,
   Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
   FeeEstimation,
+  ListOperationsOptions,
   Operation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
   TransactionValidation,
-  Balance,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,
@@ -22,8 +23,8 @@ import {
   getBalance,
   getBlock,
   getBlockInfo,
-  listOperations as listOperationsLogic,
   lastBlock,
+  listOperations as listOperationsLogic,
   validateAddress,
 } from "../logic";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
@@ -72,6 +73,7 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

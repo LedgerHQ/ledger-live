@@ -8,5 +8,5 @@ export function createLocalEvmApi(currencyId: string): AlpacaApi<any> & BridgeAp
   return createEvmApi(
     getCurrencyConfiguration<EvmConfigInfo>(currencyId),
     currencyId,
-  ) as AlpacaApi<any> & BridgeApi;
+  ) as unknown as AlpacaApi<any> & BridgeApi;
 }

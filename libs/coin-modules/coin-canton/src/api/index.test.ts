@@ -20,6 +20,7 @@ describe("createApi", () => {
       craftRawTransaction: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
+      craftTransactionData: expect.any(Function),
     });
   });
 });
