@@ -406,7 +406,9 @@ export const WebElementHelpers = {
       if (throwOnTimeout) {
         throw e;
       }
-      log.warn(`Web element not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`);
+      log.warn(
+        `Web element not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
   },
 

@@ -2638,9 +2638,28 @@ importers:
       electron:
         specifier: 'catalog:'
         version: 40.6.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       playwright:
         specifier: 'catalog:'
         version: 1.53.0
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
 
   e2e/mobile:
     dependencies:
@@ -2732,12 +2751,6 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
-      '@typescript-eslint/eslint-plugin':
-        specifier: 'catalog:'
-        version: 8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2)
-      '@typescript-eslint/parser':
-        specifier: 'catalog:'
-        version: 8.48.1(eslint@8.57.0)(typescript@6.0.2)
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
@@ -2762,18 +2775,6 @@ importers:
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
         version: 1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.48.0(patch_hash=34b785b8c2204d529726116ecf5af6b956af35d48a838ca799c7f39032d3a0c9)(@jest/types@30.2.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(@jest/types@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))))
-      eslint:
-        specifier: 8.57.0
-        version: 8.57.0
-      eslint-config-prettier:
-        specifier: 9.1.0
-        version: 9.1.0(eslint@8.57.0)
-      eslint-plugin-json:
-        specifier: 3.1.0
-        version: 3.1.0
-      eslint-plugin-prettier:
-        specifier: 5.1.3
-        version: 5.1.3(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.2.5)
       expect:
         specifier: 'catalog:'
         version: 30.2.0
@@ -2801,6 +2802,12 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
@@ -2810,6 +2817,19 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
 
   features/market-banner:
     dependencies:

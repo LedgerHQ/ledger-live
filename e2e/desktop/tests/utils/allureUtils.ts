@@ -1,5 +1,4 @@
-import { Page, TestInfo } from "@playwright/test";
-import { ElectronApplication } from "@playwright/test";
+import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-common/e2e/speculos";

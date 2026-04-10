@@ -68,9 +68,11 @@ export default class BuySellPage {
   async chooseAssetIfNotSelected(account: AccountType) {
     await tapWebElementByTestId(this.cryptoCurrencySelector);
     if (await app.modularDrawer.isFlowEnabled("live_app")) {
-      isIos()
-        ? await app.modularDrawer.selectAssetBuySellIosWorkaround(account)
-        : await app.modularDrawer.selectAsset(account);
+      if (isIos()) {
+        await app.modularDrawer.selectAssetBuySellIosWorkaround(account);
+      } else {
+        await app.modularDrawer.selectAsset(account);
+      }
     } else {
       await this.selectCurrency(account.currency.id);
       await app.common.selectAccount(account);

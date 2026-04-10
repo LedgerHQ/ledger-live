@@ -1,9 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { compilerOptions } = require("./tsconfig.json");
 const {
   getDeviceFirmwareVersion,
   getSpeculosModel,
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
 } = require("@ledgerhq/live-common/e2e/speculosAppVersion");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
