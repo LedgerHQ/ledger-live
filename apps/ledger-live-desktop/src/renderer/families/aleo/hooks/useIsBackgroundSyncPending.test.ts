@@ -59,4 +59,4 @@ describe("useIsBackgroundSyncPending", () => {
 
     expect(result.current).toBe(true);
   });
-};
+});
