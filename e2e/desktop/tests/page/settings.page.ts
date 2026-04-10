@@ -26,15 +26,12 @@ export class SettingsPage extends AppPage {
   readonly languageSelector = this.page.locator(
     "[data-testid='setting-language-dropDown'] .select__value-container",
   );
-  private languageOptions = this.page.locator(".select__option");
-  private generalTab = this.page.getByTestId("settings-display-tab");
-  private languageRow = this.page.getByTestId("setting-language-dropDown");
-  private counterValueRow = this.page.getByTestId("setting-countervalue-dropDown");
-  private themeRow = this.page.getByTestId("setting-theme-dropDown");
-  readonly themeSelector = this.page.locator(
-    "[data-testid='setting-theme-dropDown'] .select__value-container",
-  );
-  private hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
+  readonly languageOptions = this.page.locator("div.select__option");
+  readonly generalTab = this.page.getByTestId("settings-display-tab");
+  readonly languageRow = this.page.getByTestId("setting-language-dropDown");
+  readonly counterValueRow = this.page.getByTestId("setting-countervalue-dropDown");
+  readonly themeRow = this.page.getByTestId("setting-theme-dropDown");
+  readonly hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
 
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
@@ -74,11 +71,6 @@ export class SettingsPage extends AppPage {
     await expect(this.generalTab).toContainText(text);
   }
 
-  @step("Expect language row title to contain $0")
-  async expectLanguageRowTitle(title: string) {
-    await expect(this.languageRow).toContainText(title);
-  }
-
   @step("Expect language row title to be $0")
   async expectLanguageRowTranslation(text: string) {
     await expect(this.languageRow).toContainText(text);
@@ -96,8 +88,7 @@ export class SettingsPage extends AppPage {
 
   @step("Expect counter value row to contain characters matching $0")
   async expectCounterValueRowCharacterSet(regex: RegExp) {
-    const text = await this.counterValueRow.innerText();
-    expect(text).toMatch(regex);
+    await expect(this.counterValueRow).toContainText(regex);
   }
 
   @step("Click 'Hide Empty Token Accounts' toggle")
