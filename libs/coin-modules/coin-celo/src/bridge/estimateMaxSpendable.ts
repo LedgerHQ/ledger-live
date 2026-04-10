@@ -1,8 +1,4 @@
-import {
-  findSubAccountById,
-  getMainAccount,
-  isTokenAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CeloAccount, Transaction } from "../types";
@@ -16,9 +12,6 @@ export const estimateMaxSpendable: AccountBridge<
 >["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const tokenAccount = findSubAccountById(mainAccount, transaction?.subAccountId ?? "");
-  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
-
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(account),
     ...transaction,
@@ -26,13 +19,10 @@ export const estimateMaxSpendable: AccountBridge<
   });
 
   const { amount } = await getTransactionStatus(mainAccount, t);
-  const fees = t.fees ?? BigNumber(0);
 
-  return fromTokenAccount
-    ? tokenAccount.spendableBalance
-    : account.spendableBalance.gt(fees)
-      ? amount.minus(fees)
-      : new BigNumber(0);
+  // getTransactionStatus already handles fee subtraction when useAllAmount is true
+  // and returns the correct amount for both token and native CELO transfers
+  return BigNumber.max(0, amount);
 };
 
 export default estimateMaxSpendable;
