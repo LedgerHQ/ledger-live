@@ -53,7 +53,7 @@ const getSwapOperationMap =
 
         if (account.type === "TokenAccount") {
           fromParentAccount = accounts.find(a => a.id === account.parentId);
-          if (!fromParentAccount || fromParentAccount.type !== "Account") return null;
+          if (fromParentAccount?.type !== "Account") return null;
         }
 
         if (toAccount.type === "TokenAccount" && !toParentAccount) {
@@ -61,7 +61,7 @@ const getSwapOperationMap =
           const foundParent = accounts.find(
             a => a.type === "Account" && a.id === toAccountParentId,
           );
-          if (!foundParent || foundParent.type !== "Account") return null;
+          if (foundParent?.type !== "Account") return null;
           toParentAccount = foundParent;
         }
 

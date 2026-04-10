@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account, Operation, SwapOperation, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, SwapOperation, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../../currencies";
 import { setupMockCryptoAssetsStore } from "../../test-helpers/cryptoAssetsStore";
 import { genAccount } from "../../mock/account";
