@@ -4,6 +4,7 @@ import {
   SelectContent,
   SelectItem,
   SelectItemText,
+  SelectList,
   SelectTrigger,
   Subheader,
   SubheaderRow,
@@ -30,6 +31,11 @@ export const StrategySelect = ({
   learnMoreLabel,
   onLearnMoreClick,
 }: StrategySelectProps) => {
+  const items = options.map(option => ({
+    value: String(option.value),
+    label: option.label,
+  }));
+
   return (
     <div className="flex flex-col gap-12">
       <Subheader>
@@ -42,14 +48,22 @@ export const StrategySelect = ({
           </Link>
         </div>
       </Subheader>
-      <Select value={value} onValueChange={onValueChange}>
+      <Select
+        value={value}
+        onValueChange={v => {
+          if (v != null) onValueChange(v);
+        }}
+        items={items}
+      >
         <SelectTrigger />
         <SelectContent>
-          {options.map(option => (
-            <SelectItem key={option.value} value={String(option.value)}>
-              <SelectItemText>{option.label}</SelectItemText>
-            </SelectItem>
-          ))}
+          <SelectList
+            renderItem={item => (
+              <SelectItem key={item.value} value={item.value}>
+                <SelectItemText>{item.label}</SelectItemText>
+              </SelectItem>
+            )}
+          />
         </SelectContent>
       </Select>
     </div>
