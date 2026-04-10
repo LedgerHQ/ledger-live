@@ -26,6 +26,11 @@ export class SettingsPage extends AppPage {
   readonly languageSelector = this.page.locator(
     "[data-testid='setting-language-dropDown'] .select__value-container",
   );
+  private languageOptions = this.page.locator(".select__option");
+  private generalTab = this.page.getByTestId("settings-display-tab");
+  private languageRow = this.page.getByTestId("setting-language-dropDown");
+  private counterValueRow = this.page.getByTestId("setting-countervalue-dropDown");
+  private themeRow = this.page.getByTestId("setting-theme-dropDown");
   readonly themeSelector = this.page.locator(
     "[data-testid='setting-theme-dropDown'] .select__value-container",
   );
@@ -51,6 +56,48 @@ export class SettingsPage extends AppPage {
   @step("Expect counter value to be $0")
   async expectCounterValue(currency: string) {
     await expect(this.counterValueSelector).toHaveText(currency);
+  }
+
+  @step("Change language to $0")
+  async changeLanguage(languageLabel: string) {
+    await this.languageSelector.click();
+    await this.languageOptions.filter({ hasText: languageLabel }).click();
+  }
+
+  @step("Expect language to be selected: $0")
+  async expectLanguageSelected(languageLabel: string) {
+    await expect(this.languageSelector).toHaveText(languageLabel);
+  }
+
+  @step("Expect General settings tab to show $0")
+  async expectGeneralTabLabel(text: string) {
+    await expect(this.generalTab).toContainText(text);
+  }
+
+  @step("Expect language row title to contain $0")
+  async expectLanguageRowTitle(title: string) {
+    await expect(this.languageRow).toContainText(title);
+  }
+
+  @step("Expect language row title to be $0")
+  async expectLanguageRowTranslation(text: string) {
+    await expect(this.languageRow).toContainText(text);
+  }
+
+  @step("Expect counter value row title to be $0")
+  async expectCounterValueRowTranslation(text: string) {
+    await expect(this.counterValueRow).toContainText(text);
+  }
+
+  @step("Expect theme row title to be $0")
+  async expectThemeRowTranslation(text: string) {
+    await expect(this.themeRow).toContainText(text);
+  }
+
+  @step("Expect counter value row to contain characters matching $0")
+  async expectCounterValueRowCharacterSet(regex: RegExp) {
+    const text = await this.counterValueRow.innerText();
+    expect(text).toMatch(regex);
   }
 
   @step("Click 'Hide Empty Token Accounts' toggle")
