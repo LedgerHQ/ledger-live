@@ -223,6 +223,45 @@ describe("useCryptoAddressesButtonViewModel", () => {
     });
   });
 
+  describe("moreAccountsCount", () => {
+    it("should be total accounts minus displayed icon slots when above three accounts", () => {
+      mockPortfolio([makeCategorizedItem(bitcoin, 100)]);
+      const fiveAccounts = [
+        genAccount("a1", { currency: bitcoin }),
+        genAccount("a2", { currency: bitcoin }),
+        genAccount("a3", { currency: bitcoin }),
+        genAccount("a4", { currency: bitcoin }),
+        genAccount("a5", { currency: bitcoin }),
+      ];
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts(fiveAccounts),
+      });
+
+      expect(result.current.moreAccountsCount).toBe(2);
+    });
+
+    it("should be non-positive when at most three accounts", () => {
+      mockPortfolio([makeCategorizedItem(bitcoin, 100)]);
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([btcAccount, ethAccount]),
+      });
+
+      expect(result.current.moreAccountsCount).toBeLessThanOrEqual(0);
+    });
+
+    it("should not exceed 99", () => {
+      mockPortfolio([makeCategorizedItem(bitcoin, 100)]);
+      const manyAccounts = Array.from({ length: 105 }, (_, i) =>
+        genAccount(`many${i}`, { currency: bitcoin }),
+      );
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts(manyAccounts),
+      });
+
+      expect(result.current.moreAccountsCount).toBe(99);
+    });
+  });
+
   describe("hasAccounts", () => {
     it("should be true when accounts exist", () => {
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
