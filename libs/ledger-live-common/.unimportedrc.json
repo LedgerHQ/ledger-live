@@ -275,6 +275,8 @@
     "src/platform/serializers.ts",
     "src/platform/tracking.ts",
     "src/platform/types.ts",
+    "src/portfolio/index.ts",
+    "src/portfolio/useAssetDistribution.ts",
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
