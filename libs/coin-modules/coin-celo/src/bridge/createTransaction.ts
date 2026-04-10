@@ -8,6 +8,9 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   recipient: "",
   useAllAmount: false,
   fees: null,
+  feeCurrency: null,
+  feeCurrencyUnwrapped: null,
+  feeCurrencyAccountId: null,
   mode: "send",
   index: null,
 });

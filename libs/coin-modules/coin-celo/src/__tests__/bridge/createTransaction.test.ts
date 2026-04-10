@@ -12,6 +12,16 @@ describe("createTransaction", () => {
       fees: null,
       mode: "send",
       index: null,
+      feeCurrency: null,
+      feeCurrencyUnwrapped: null,
+      feeCurrencyAccountId: null,
     });
+  });
+
+  it("initializes fee currency fields as null", () => {
+    const transaction = createTransaction(accountFixture);
+    expect(transaction.feeCurrency).toBeNull();
+    expect(transaction.feeCurrencyUnwrapped).toBeNull();
+    expect(transaction.feeCurrencyAccountId).toBeNull();
   });
 });
