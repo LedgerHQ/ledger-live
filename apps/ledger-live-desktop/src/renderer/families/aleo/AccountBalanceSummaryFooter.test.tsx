@@ -245,7 +245,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
       render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
-      expect(screen.getByRole("button", { name: "Start sync" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Sync pending..." })).toBeDisabled();
     });
 
     it("should enable the sync button when isBackgroundSyncPending$ is false", () => {
@@ -263,7 +263,7 @@ describe("AccountBalanceSummaryFooter", () => {
         isBackgroundSyncPending$.next(true);
       });
 
-      expect(screen.getByRole("button", { name: "Start sync" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Sync pending..." })).toBeDisabled();
     });
 
     it("should re-enable the button when isBackgroundSyncPending$ goes back to false", () => {
@@ -273,7 +273,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
       render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
-      expect(screen.getByRole("button", { name: "Start sync" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Sync pending..." })).toBeDisabled();
 
       act(() => {
         isBackgroundSyncPending$.next(false);
@@ -300,7 +300,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
       render(<AccountBalanceSummaryFooter account={syncedAccount} />);
 
-      expect(screen.getByRole("button", { name: "Sync again" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Sync pending..." })).toBeDisabled();
     });
   });
 });

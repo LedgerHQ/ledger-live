@@ -32,12 +32,14 @@ const ActionButton = ({
   onStop,
   onSyncAgain,
   disabled,
+  isBackgroundPending,
 }: {
   syncState: AleoSyncState;
   onStart: () => void;
   onStop: () => void;
   onSyncAgain: () => void;
   disabled?: boolean;
+  isBackgroundPending?: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -49,7 +51,11 @@ const ActionButton = ({
           disabled={disabled}
           buttonTestId="start-private-sync-button"
         >
-          <Text>{t("aleo.account.syncButton.startSync")}</Text>
+          <Text>
+            {isBackgroundPending
+              ? t("aleo.account.syncButton.syncPending")
+              : t("aleo.account.syncButton.startSync")}
+          </Text>
         </SyncActionButton>
       );
     case "running":
@@ -69,7 +75,11 @@ const ActionButton = ({
           disabled={disabled}
           buttonTestId="sync-again-button"
         >
-          <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
+          <Text>
+            {isBackgroundPending
+              ? t("aleo.account.syncButton.syncPending")
+              : t("aleo.account.syncButton.syncAgain")}
+          </Text>
         </SyncActionButton>
       );
   }
@@ -230,13 +240,22 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             flexDirection: syncState === "running" ? "row" : "column",
           }}
         >
-          <ActionButton
-            syncState={syncState}
-            onStart={handleStart}
-            onStop={handleStop}
-            onSyncAgain={handleStart}
-            disabled={isBackgroundSyncPending}
-          />
+          <ToolTip
+            content={
+              isBackgroundSyncPending && !isSyncing ? (
+                <Trans i18nKey="aleo.account.syncButton.disabledTooltip" />
+              ) : null
+            }
+          >
+            <ActionButton
+              syncState={syncState}
+              onStart={handleStart}
+              onStop={handleStop}
+              onSyncAgain={handleStart}
+              disabled={isBackgroundSyncPending}
+              isBackgroundPending={isBackgroundSyncPending && !isSyncing}
+            />
+          </ToolTip>
           <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
         </div>
       </BalanceDetail>

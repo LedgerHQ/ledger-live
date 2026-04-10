@@ -8433,7 +8433,9 @@
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "syncAgain": "Sync again",
-        "lastSync": "Last synced: {{date}}"
+        "syncPending": "Sync pending...",
+        "lastSync": "Last synced: {{date}}",
+        "disabledTooltip": "A background sync is already in progress"
       }
     },
     "operations": {
