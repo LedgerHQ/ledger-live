@@ -54,6 +54,7 @@ import {
   DeviceDeprecationScreens,
 } from "./Screen/DeviceDeprecationScreen";
 
+import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
@@ -86,6 +87,7 @@ import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
@@ -790,6 +792,41 @@ const FirmwareNotRecognizedErrorComponent: React.FC<{
   );
 };
 
+const CounterfeitDeviceErrorComponent: React.FC<{
+  productName?: string;
+}> = ({ productName }) => {
+  const { t } = useTranslation();
+  const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
+
+  const onContactSupport = () => {
+    track("button_clicked", {
+      button: "Contacting support about non genuine device",
+    });
+    openURL(contactSupportUrl);
+  };
+
+  return (
+    <Wrapper id="error-counterfeit-device">
+      <ErrorBody
+        Icon={IconsLegacy.WarningSolidMedium}
+        iconColor="warning.c70"
+        title={t("errors.CounterfeitDevice.title", { productName })}
+        description={t("errors.CounterfeitDevice.description")}
+        buttons={
+          <ButtonV3
+            size="large"
+            variant="main"
+            onClick={onContactSupport}
+            Icon={IconsLegacy.ExternalLinkMedium}
+          >
+            {t("errors.CounterfeitDevice.contactSupportCTA")}
+          </ButtonV3>
+        }
+      />
+    </Wrapper>
+  );
+};
+
 export const renderError = ({
   error,
   t,
@@ -842,6 +879,12 @@ export const renderError = ({
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (tmpError instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
+  } else if (isCounterfeitError(tmpError)) {
+    return (
+      <CounterfeitDeviceErrorComponent
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+      />
+    );
   } else if (
     tmpError instanceof FirmwareNotRecognized ||
     isInvalidGetFirmwareMetadataResponseError(tmpError)

@@ -1256,8 +1256,8 @@
             "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Wallet “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError": {
-            "title": "This {{productName}} is not genuine",
-            "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+            "title": "This {{productName}} failed the Genuine Check",
+            "description": "It is not safe to use this Ledger device.\nPlease contact Ledger Support."
           }
         },
         "whyPerformChecksLink": "Learn more about Ledger Genuine Check",
@@ -6365,6 +6365,11 @@
     "DeviceSocketFail": {
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again. ({{message}})"
+    },
+    "CounterfeitDevice": {
+      "title": "This {{productName}} failed the Genuine Check",
+      "description": "It is not safe to use this Ledger device. Please contact Ledger Support.",
+      "contactSupportCTA": "Contact Ledger support"
     },
     "DeviceSocketNoBulkStatus": {
       "title": "The connection failed",
