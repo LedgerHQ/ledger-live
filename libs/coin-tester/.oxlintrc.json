@@ -13,7 +13,11 @@
     {
       "files": ["src/**/*.test.{ts,tsx}", "src/**/__tests__/**"],
       "env": { "jest": true },
-      "plugins": ["jest"]
+      "plugins": ["jest"],
+      "rules": {
+        "eslint/no-console": "off",
+        "typescript/explicit-function-return-type": "off"
+      }
     }
   ]
 }
