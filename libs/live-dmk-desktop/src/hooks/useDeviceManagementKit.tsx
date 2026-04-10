@@ -12,24 +12,26 @@ import { LocalTracer } from "@ledgerhq/logs";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
-let instance: DeviceManagementKit | null = null;
+declare global {
+  var __ledgerDmkDesktopInstance: DeviceManagementKit | undefined;
+}
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
-  if (!instance) {
+  if (!globalThis.__ledgerDmkDesktopInstance) {
     const userId = getEnv("USER_ID");
     const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
     });
 
-    instance = new DeviceManagementKitBuilder()
+    globalThis.__ledgerDmkDesktopInstance = new DeviceManagementKitBuilder()
       .addTransport(webHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig({ firmwareDistributionSalt })
       .build();
   }
 
-  return instance;
+  return globalThis.__ledgerDmkDesktopInstance;
 };
 
 export const DeviceManagementKitContext = createContext<DeviceManagementKit | null>(null);

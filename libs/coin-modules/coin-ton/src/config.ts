@@ -8,16 +8,18 @@ export type TonCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: TonCoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_ton: TonCoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: TonCoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_ton = config;
 };
 
 export const getCoinConfig = (): ReturnType<TonCoinConfig> => {
-  if (!coinConfig?.()) {
+  if (!globalThis.__ledgerCoinConfig_ton?.()) {
     throw new Error("Ton module config not set");
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_ton();
 };

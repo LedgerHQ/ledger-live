@@ -11,16 +11,18 @@ export type MultiversXCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: MultiversXCoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_multiversx: MultiversXCoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: MultiversXCoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_multiversx = config;
 };
 
 export const getCoinConfig = (): ReturnType<MultiversXCoinConfig> => {
-  if (!coinConfig?.()) {
+  if (!globalThis.__ledgerCoinConfig_multiversx?.()) {
     throw new Error("MultiversX module config not set");
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_multiversx();
 };

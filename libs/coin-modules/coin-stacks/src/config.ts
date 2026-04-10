@@ -11,16 +11,18 @@ export type StacksCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: StacksCoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_stacks: StacksCoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: StacksCoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_stacks = config;
 };
 
 export const getCoinConfig = (): ReturnType<StacksCoinConfig> => {
-  if (!coinConfig?.()) {
+  if (!globalThis.__ledgerCoinConfig_stacks?.()) {
     throw new Error("Stacks module config not set");
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_stacks();
 };

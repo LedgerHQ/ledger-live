@@ -57,16 +57,18 @@ export type EvmCoinConfig = {
 
 export type CoinConfig = (currencyId: string) => EvmCoinConfig;
 
-let coinConfig: CoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_evm: CoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: CoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_evm = config;
 };
 
 export const getCoinConfig = (currencyId: string): EvmCoinConfig => {
-  if (!coinConfig) {
+  if (!globalThis.__ledgerCoinConfig_evm) {
     throw new Error("EVM module config not set");
   }
 
-  return coinConfig(currencyId);
+  return globalThis.__ledgerCoinConfig_evm(currencyId);
 };

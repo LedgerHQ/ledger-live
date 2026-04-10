@@ -10,16 +10,18 @@ export type NearCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: NearCoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_near: NearCoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: NearCoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_near = config;
 };
 
 export const getCoinConfig = (): ReturnType<NearCoinConfig> => {
-  if (!coinConfig?.()) {
+  if (!globalThis.__ledgerCoinConfig_near?.()) {
     throw new Error("Near module config not set");
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_near();
 };

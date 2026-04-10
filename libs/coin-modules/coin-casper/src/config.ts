@@ -7,16 +7,18 @@ export type CasperCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: CasperCoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_casper: CasperCoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: CasperCoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_casper = config;
 };
 
 export const getCoinConfig = (): ReturnType<CasperCoinConfig> => {
-  if (!coinConfig?.()) {
+  if (!globalThis.__ledgerCoinConfig_casper?.()) {
     throw new Error("Casper module config not set");
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_casper();
 };

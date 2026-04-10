@@ -9,20 +9,22 @@ type BitcoinCoinConfig = {
 
 export type CoinConfig = (currencyId: string) => BitcoinCoinConfig;
 
-let coinConfig: CoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_bitcoin: CoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: CoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_bitcoin = config;
 };
 
 export const getCoinConfig = (
   currencyId: string,
 ): BitcoinCoinConfig & { family: FamilyConfig | undefined } => {
-  if (!coinConfig) {
+  if (!globalThis.__ledgerCoinConfig_bitcoin) {
     throw new Error("Bitcoin module config not set");
   }
 
-  const coin = coinConfig(currencyId);
+  const coin = globalThis.__ledgerCoinConfig_bitcoin(currencyId);
   const family = findFamilyConfigById(currencyId);
 
   return {

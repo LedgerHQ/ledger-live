@@ -14,16 +14,18 @@ export type IconConfig = {
 
 export type IconCoinConfig = CurrencyConfig & IconConfig;
 
-let coinConfig: CoinConfig<IconCoinConfig> | undefined;
+declare global {
+  var __ledgerCoinConfig_icon: CoinConfig<IconCoinConfig> | undefined;
+}
 
 export const setCoinConfig = (config: CoinConfig<IconCoinConfig>): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_icon = config;
 };
 
 export const getCoinConfig = (): IconCoinConfig => {
-  if (!coinConfig) {
+  if (!globalThis.__ledgerCoinConfig_icon) {
     throw new MissingCoinConfig();
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_icon();
 };

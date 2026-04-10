@@ -392,8 +392,9 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   const bridgeError = errorAccount || errorStatus;
 
   useEffect(() => {
-    if (bridgeError && globalOnBridgeError) {
-      globalOnBridgeError(bridgeError);
+    const onBridgeError = getGlobalOnBridgeError();
+    if (bridgeError && onBridgeError) {
+      onBridgeError(bridgeError);
     }
   }, [bridgeError]);
 
@@ -413,14 +414,16 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
 
 type GlobalBridgeErrorFn = null | ((error: any) => void);
 
-let globalOnBridgeError: GlobalBridgeErrorFn = null;
+declare global {
+  var __ledgerGlobalOnBridgeError: GlobalBridgeErrorFn | undefined;
+}
 
 // allows to globally set a bridge error catch function in order to log it / report to sentry / ...
 export function setGlobalOnBridgeError(f: GlobalBridgeErrorFn): void {
-  globalOnBridgeError = f;
+  globalThis.__ledgerGlobalOnBridgeError = f;
 }
 export function getGlobalOnBridgeError(): GlobalBridgeErrorFn {
-  return globalOnBridgeError;
+  return globalThis.__ledgerGlobalOnBridgeError ?? null;
 }
 
 export default useBridgeTransaction;

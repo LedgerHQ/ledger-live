@@ -6,16 +6,18 @@ export type MinaCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: MinaCoinConfig | undefined;
+declare global {
+  var __ledgerCoinConfig_mina: MinaCoinConfig | undefined;
+}
 
 export const setCoinConfig = (config: MinaCoinConfig): void => {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_mina = config;
 };
 
 export const getCoinConfig = (): ReturnType<MinaCoinConfig> => {
-  if (!coinConfig?.()) {
+  if (!globalThis.__ledgerCoinConfig_mina?.()) {
     throw new Error("Mina module config not set");
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_mina();
 };

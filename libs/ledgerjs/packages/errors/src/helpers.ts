@@ -3,15 +3,26 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-prototype-builtins */
 
-const errorClasses = {};
-const deserializers = {};
+declare global {
+  var __ledgerErrorClasses: Record<string, ErrorConstructor> | undefined;
+  var __ledgerErrorDeserializers: Record<string, (obj: any) => any> | undefined;
+}
+
+function getErrorClasses(): Record<string, ErrorConstructor> {
+  return (globalThis.__ledgerErrorClasses ??= {});
+}
+
+function getDeserializers(): Record<string, (obj: any) => any> {
+  return (globalThis.__ledgerErrorDeserializers ??= {});
+}
 
 export const addCustomErrorDeserializer = (name: string, deserializer: (obj: any) => any): void => {
-  deserializers[name] = deserializer;
+  getDeserializers()[name] = deserializer;
 };
 
-export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
-  extends ErrorConstructor {
+export interface LedgerErrorConstructor<
+  F extends { [key: string]: unknown },
+> extends ErrorConstructor {
   new (message?: string, fields?: F, options?: any): Error & F;
   (message?: string, fields?: F, options?: any): Error & F;
   readonly prototype: Error & F;
@@ -52,7 +63,7 @@ export const createCustomErrorClass = <
     }
   }
 
-  errorClasses[name] = CustomErrorClass;
+  getErrorClasses()[name] = CustomErrorClass as unknown as ErrorConstructor;
 
   return CustomErrorClass as unknown as T;
 };
@@ -78,11 +89,11 @@ export const deserializeError = (object: any): Error | undefined => {
     let error;
     if (typeof object.name === "string") {
       const { name } = object;
-      const des = deserializers[name];
+      const des = getDeserializers()[name];
       if (des) {
         error = des(object);
       } else {
-        let constructor = name === "Error" ? Error : errorClasses[name];
+        let constructor = name === "Error" ? Error : getErrorClasses()[name];
 
         if (!constructor) {
           console.warn("deserializing an unknown class '" + name + "'");

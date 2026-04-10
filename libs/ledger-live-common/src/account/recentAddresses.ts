@@ -12,22 +12,27 @@ export interface RecentAddressesStore {
   getAddresses(currency: string): RecentAddress[];
 }
 
-let recentAddressesStore: RecentAddressesStore | null = null;
+declare global {
+  var __ledgerRecentAddressesStore: RecentAddressesStore | undefined;
+}
 
 export function getRecentAddressesStore(): RecentAddressesStore {
-  if (recentAddressesStore === null) {
+  if (!globalThis.__ledgerRecentAddressesStore) {
     throw new Error(
       "Recent addresses store instance is null, please call function setupRecentAddressesStore in application initialization",
     );
   }
-  return recentAddressesStore;
+  return globalThis.__ledgerRecentAddressesStore;
 }
 
 export function setupRecentAddressesStore(
   addressesByCurrency: RecentAddressesCache,
   onAddAddressComplete: (addressesByCurrency: RecentAddressesCache) => void,
 ): void {
-  recentAddressesStore = new RecentAddressesStoreImpl(addressesByCurrency, onAddAddressComplete);
+  globalThis.__ledgerRecentAddressesStore = new RecentAddressesStoreImpl(
+    addressesByCurrency,
+    onAddAddressComplete,
+  );
 }
 
 class RecentAddressesStoreImpl implements RecentAddressesStore {

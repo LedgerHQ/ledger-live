@@ -3,11 +3,15 @@
 // it's like we do for enabling coins.
 // beware this must be set in the first import of the end project.
 import invariant from "invariant";
-let version = "";
+
+declare global {
+  var __ledgerWalletAPIVersion: string | undefined;
+}
+
 export function getWalletAPIVersion(): string {
-  invariant(version, "setWalletAPIVersion must be called before anything else.");
-  return version;
+  invariant(globalThis.__ledgerWalletAPIVersion, "setWalletAPIVersion must be called before anything else.");
+  return globalThis.__ledgerWalletAPIVersion;
 }
 export function setWalletAPIVersion(v: string): void {
-  version = v;
+  globalThis.__ledgerWalletAPIVersion = v;
 }

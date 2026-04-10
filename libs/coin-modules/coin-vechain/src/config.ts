@@ -3,16 +3,18 @@ import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 
 export type VechainCoinConfig = () => CurrencyConfig;
 
-let coinConfig: CoinConfig<CurrencyConfig> | undefined;
+declare global {
+  var __ledgerCoinConfig_vechain: CoinConfig<CurrencyConfig> | undefined;
+}
 
 export function setCoinConfig(config: CoinConfig<CurrencyConfig>): void {
-  coinConfig = config;
+  globalThis.__ledgerCoinConfig_vechain = config;
 }
 
 export function getCoinConfig(): CurrencyConfig {
-  if (!coinConfig) {
+  if (!globalThis.__ledgerCoinConfig_vechain) {
     throw new MissingCoinConfig();
   }
 
-  return coinConfig();
+  return globalThis.__ledgerCoinConfig_vechain();
 }

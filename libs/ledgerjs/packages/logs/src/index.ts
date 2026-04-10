@@ -32,8 +32,19 @@ export interface Log {
 export type Unsubscribe = () => void;
 export type Subscriber = (arg0: Log) => void;
 
-let id = 0;
-const subscribers: Subscriber[] = [];
+declare global {
+  var __ledgerLogsId: number | undefined;
+  var __ledgerLogsSubscribers: Subscriber[] | undefined;
+}
+
+function nextLogId(): string {
+  globalThis.__ledgerLogsId = (globalThis.__ledgerLogsId ?? 0) + 1;
+  return String(globalThis.__ledgerLogsId);
+}
+
+function getSubscribers(): Subscriber[] {
+  return (globalThis.__ledgerLogsSubscribers ??= []);
+}
 
 /**
  * Logs something
@@ -44,7 +55,7 @@ const subscribers: Subscriber[] = [];
 export const log = (type: LogType, message?: string, data?: LogData) => {
   const obj: Log = {
     type,
-    id: String(++id),
+    id: nextLogId(),
     date: new Date(),
   };
   if (message) obj.message = message;
@@ -73,7 +84,7 @@ export const trace = ({
 }) => {
   const obj: Log = {
     type,
-    id: String(++id),
+    id: nextLogId(),
     date: new Date(),
   };
 
@@ -169,22 +180,24 @@ export class LocalTracer {
  * @return a function that can be called to unsubscribe the listener
  */
 export const listen = (cb: Subscriber): Unsubscribe => {
-  subscribers.push(cb);
+  getSubscribers().push(cb);
   return () => {
-    const i = subscribers.indexOf(cb);
+    const subs = getSubscribers();
+    const i = subs.indexOf(cb);
 
     if (i !== -1) {
-      // equivalent of subscribers.splice(i, 1) // https://twitter.com/Rich_Harris/status/1125850391155965952
-      subscribers[i] = subscribers[subscribers.length - 1];
-      subscribers.pop();
+      // equivalent of subs.splice(i, 1) // https://twitter.com/Rich_Harris/status/1125850391155965952
+      subs[i] = subs[subs.length - 1];
+      subs.pop();
     }
   };
 };
 
 function dispatch(log: Log) {
-  for (let i = 0; i < subscribers.length; i++) {
+  const subs = getSubscribers();
+  for (let i = 0; i < subs.length; i++) {
     try {
-      subscribers[i](log);
+      subs[i](log);
     } catch (e) {
       console.error(e);
     }
