@@ -45,6 +45,7 @@ type ButtonsController = {
 
 export default class SpeculosHttpTransport extends Transport {
   static readonly byBase = new Map<string, DmkEntry>();
+  private static readonly exchangeTailByBase = new Map<string, Promise<unknown>>();
   private readonly options: SpeculosHttpTransportOpts;
   private readonly baseUrl: string;
   private readonly buttonEnumToControllerInput: Record<SpeculosButton, ControllerButton> = {
@@ -154,6 +155,7 @@ export default class SpeculosHttpTransport extends Transport {
       }
     }
     this.byBase.clear();
+    this.exchangeTailByBase.clear();
   }
 
   static isSupported = async () => true;
@@ -193,14 +195,27 @@ export default class SpeculosHttpTransport extends Transport {
     return await this.getButtonClient().press(resolved);
   }
 
-  async exchange(apduCommand: Buffer): Promise<Buffer> {
+  private enqueueSerializedExchange<T>(run: () => Promise<T>): Promise<T> {
+    const key = this.baseUrl;
+    const previous = SpeculosHttpTransport.exchangeTailByBase.get(key) ?? Promise.resolve();
+    const current = previous.then(run);
+    SpeculosHttpTransport.exchangeTailByBase.set(
+      key,
+      current.then(
+        () => undefined,
+        () => undefined,
+      ),
+    );
+    return current;
+  }
+
+  private async exchangeOnce(apduCommand: Buffer): Promise<Buffer> {
     try {
       const { data, statusCode } = await this.dmk.sendApdu({
         sessionId: this.sessionId,
         apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
       });
-      const responseBuffer = Buffer.from([...data, ...statusCode]);
-      return responseBuffer;
+      return Buffer.from([...data, ...statusCode]);
     } catch {
       const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
         this.baseUrl,
@@ -217,9 +232,12 @@ export default class SpeculosHttpTransport extends Transport {
         sessionId: this.sessionId,
         apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
       });
-      const responseBuffer = Buffer.from([...data, ...statusCode]);
-      return responseBuffer;
+      return Buffer.from([...data, ...statusCode]);
     }
+  }
+
+  async exchange(apduCommand: Buffer): Promise<Buffer> {
+    return this.enqueueSerializedExchange(() => this.exchangeOnce(apduCommand));
   }
 
   async close() {
