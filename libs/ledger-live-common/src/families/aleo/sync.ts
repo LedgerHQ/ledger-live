@@ -1,1 +1,1 @@
-export { isCombinedSyncPending$ } from "@ledgerhq/coin-aleo/bridge/sync";
+export { isPrivateSyncPending$ } from "@ledgerhq/coin-aleo/bridge/sync";

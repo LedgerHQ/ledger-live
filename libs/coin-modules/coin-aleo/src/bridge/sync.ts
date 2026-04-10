@@ -62,12 +62,12 @@ export async function performPublicSync(
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
   const shouldSyncFromScratch = !initialAccount;
-  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
+  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
-  const lastBlockHeight = shouldSyncFromScratch ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
 
   const latestAccountPublicOperations = await listOperations({
     currency,
@@ -337,12 +337,12 @@ export function createPrivateSyncObservable(
 }
 
 /**
- * Emits `true` while both the public and private syncs are running concurrently
- * (i.e. the combined sync branch is active). Resets to `false` once the sync
- * completes or errors. Use this to block UI elements that should not be
- * interactive during a full combined sync.
+ * Emits `true` while a private sync is running (either the combined public+private
+ * branch or the private-only branch). Resets to `false` once the sync completes or
+ * errors. Use this to block UI elements that should not be interactive during any
+ * private sync.
  */
-export const isCombinedSyncPending$ = new BehaviorSubject<boolean>(false);
+export const isPrivateSyncPending$ = new BehaviorSubject<boolean>(false);
 
 /**
  * Builds the list of sync observables to run based on syncConfig.syncType.
@@ -372,7 +372,7 @@ export function buildSyncObservables(
   if (isPublicSync && isPrivateSync) {
     syncs.push(
       defer(() => {
-        isCombinedSyncPending$.next(true);
+        isPrivateSyncPending$.next(true);
         return createPublicSyncObservable(info, syncConfig).pipe(
           concatMap(publicResult =>
             concat(
@@ -391,20 +391,23 @@ export function buildSyncObservables(
             ),
           ),
         );
-      }).pipe(finalize(() => isCombinedSyncPending$.next(false))),
+      }).pipe(finalize(() => isPrivateSyncPending$.next(false))),
     );
   } else if (isPublicSync) {
     syncs.push(createPublicSyncObservable(info, syncConfig));
   } else if (isPrivateSync) {
     const [, initialPublicOps] = splitPrivateAndPublicOperations(initialAccount?.operations ?? []);
     syncs.push(
-      createPrivateSyncObservable(
-        info,
-        syncConfig,
-        initialPublicOps as AleoOperation[],
-        undefined,
-        true,
-      ),
+      defer(() => {
+        isPrivateSyncPending$.next(true);
+        return createPrivateSyncObservable(
+          info,
+          syncConfig,
+          initialPublicOps as AleoOperation[],
+          undefined,
+          true,
+        );
+      }).pipe(finalize(() => isPrivateSyncPending$.next(false))),
     );
   }
 
