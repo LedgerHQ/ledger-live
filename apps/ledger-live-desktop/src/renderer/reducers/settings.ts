@@ -775,7 +775,7 @@ export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
 
   if (state.featureFlags?.resolved?.analyticsOptIn?.enabled) {
-    if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
+    if (!s.lastAnalyticsConsentDate) {
       return false;
     }
 
@@ -791,10 +791,6 @@ export const trackingEnabledSelector = (state: State) => {
     oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
 
     if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
-      return false;
-    }
-
-    if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
       return false;
     }
   }
@@ -836,8 +832,7 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
-export const featureFlagsButtonVisibleSelector = (state: State) =>
-  state.featureFlags.bannerVisible;
+export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
