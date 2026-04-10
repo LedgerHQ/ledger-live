@@ -26,7 +26,7 @@ const IS_FEE_SPONSORED = true;
  * This is the target solution that should be enabled once fix on API side is done.
  * @see https://ledgerhq.atlassian.net/browse/LIVE-27542
  */
-const USE_ENCRYPTED_PROVE = false;
+const USE_ENCRYPTED_PROVE = true;
 
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
