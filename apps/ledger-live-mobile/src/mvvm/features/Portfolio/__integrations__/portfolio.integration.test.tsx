@@ -118,6 +118,17 @@ describe("Portfolio Screen", () => {
 
       expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
     });
+
+    it("should not render perps section wrapper when feature flag is disabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithPerpsEntryPoint(false),
+      });
+
+      await screen.findByTestId("PortfolioAccountsList");
+
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+      expect(screen.queryByTestId("portfolio-perps-subheader-row")).toBeNull();
+    });
   });
 
   describe("Asset Section Feature", () => {

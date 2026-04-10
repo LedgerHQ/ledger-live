@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -70,6 +71,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
+  const ptxPerpsLiveAppMobile = useFeature("ptxPerpsLiveAppMobile");
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
 
   const { handleFlatListRef } = useScrollToTop();
@@ -131,12 +133,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(
-      <Box key="perps" px={6}>
-        <PortfolioPerpsEntryPoint key="perpsEntryPoint" />
-      </Box>,
-    );
-
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
@@ -149,6 +145,14 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           onHeightChange={handleHeightChange}
           shouldAddBottomPadding={shouldAddBottomPaddingForLegacyAssets}
         />,
+      );
+    }
+
+    if (ptxPerpsLiveAppMobile?.enabled) {
+      sections.push(
+        <Box key="perps" px={6}>
+          <PortfolioPerpsEntryPoint />
+        </Box>,
       );
     }
 
@@ -188,6 +192,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    ptxPerpsLiveAppMobile?.enabled,
   ]);
 
   return (
@@ -199,7 +204,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           onFlatListRef={handleFlatListRef}
           data={data}
           renderItem={renderItem<React.JSX.Element>}
-          keyExtractor={(_: unknown, index: number) => String(index)}
+          keyExtractor={(item: React.JSX.Element, index: number) => String(item.key ?? index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
           useSafeArea={!shouldDisplayWallet40MainNav}

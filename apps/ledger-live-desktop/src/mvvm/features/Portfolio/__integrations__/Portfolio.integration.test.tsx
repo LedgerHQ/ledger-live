@@ -485,6 +485,34 @@ describe("PortfolioView", () => {
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
     });
 
+    it("should render perps entry point after asset section", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={true} />, {
+        initialState: {
+          settings: {
+            ...AFTER_ONBOARDING_STATE,
+          },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
+        },
+      });
+
+      const container = screen.getByTestId("portfolio-container");
+      const perps = screen.getByTestId("portfolio-perps-entry-point");
+      const allElements = Array.from(container.querySelectorAll("[data-testid]"));
+      const assetIndex = allElements.findIndex(
+        el =>
+          el.getAttribute("data-testid") === "categorized-assets" ||
+          el.getAttribute("data-testid") === "asset-distribution",
+      );
+      const perpsIndex = allElements.indexOf(perps);
+
+      expect(assetIndex).toBeGreaterThanOrEqual(0);
+      expect(perpsIndex).toBeGreaterThan(assetIndex);
+    });
+
     it("should track and navigate when clicking perps entry point", async () => {
       const { user } = render(<PortfolioView {...defaultProps} />, {
         initialState: {

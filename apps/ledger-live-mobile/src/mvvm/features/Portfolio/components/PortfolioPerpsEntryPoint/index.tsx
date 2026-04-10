@@ -40,7 +40,7 @@ export const PortfolioPerpsEntryPoint = () => {
           <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <Flex mb={6} mt={2}>
+      <Flex mb={6} mt={3}>
         <ListItem onPress={handlePress} testID="portfolio-perps-entry-point">
           <ListItemLeading>
             <Spot appearance="icon" icon={Infinite} />
