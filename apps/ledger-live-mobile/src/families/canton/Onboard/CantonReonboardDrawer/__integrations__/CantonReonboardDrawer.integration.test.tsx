@@ -7,13 +7,18 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { screen, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { screen, render, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
+import coinConfig from "@ledgerhq/coin-canton/config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
-import OnboardScreen from "../OnboardScreen";
-import { cantonOnboardingPrepareUrl, mockOnboardingPrepareResponse } from "@tests/handlers/canton";
+import CantonReonboardDrawer from "../index";
+import {
+  CANTON_DEVNET_GATEWAY,
+  CANTON_DEVNET_NODE_ID,
+  cantonOnboardingPrepareUrl,
+  mockOnboardingPrepareResponse,
+} from "@tests/handlers/canton";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
@@ -51,14 +56,10 @@ jest.mock("~/components/DeviceActionModal", () => ({
   default: () => null,
 }));
 
-const mockParentNavigate = jest.fn();
-
 let previousCurrencyIds: string[] = [];
 let currency: CryptoCurrency;
-let creatableAccount: Account;
-let importableAccount: Account;
+let accountToReonboard: Account;
 
-/** Redux overrides only — currency fixtures are created in `beforeAll` to avoid mutating global LLC state at import time. */
 function overrideInitialStateWithDevice(state: State): State {
   return {
     ...state,
@@ -73,31 +74,7 @@ function overrideInitialStateWithDevice(state: State): State {
   };
 }
 
-function createScreenProps(): React.ComponentProps<typeof OnboardScreen> {
-  const navigation = {
-    goBack: jest.fn(),
-    getParent: jest.fn(() => ({
-      goBack: jest.fn(),
-      navigate: mockParentNavigate,
-    })),
-  };
-
-  const route = {
-    key: "canton-onboard-test",
-    name: ScreenName.CantonOnboardAccount,
-    params: {
-      currency,
-      accountsToAdd: [creatableAccount, importableAccount],
-      isReonboarding: false,
-    },
-  };
-
-  // Stack injects full navigation/route; we only stub members OnboardScreen reads.
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- test doubles
-  return { navigation, route } as unknown as React.ComponentProps<typeof OnboardScreen>;
-}
-
-describe("Canton onboarding integration", () => {
+describe("CantonReonboardDrawer integration", () => {
   beforeAll(() => {
     previousCurrencyIds = listSupportedCurrencies().map(c => c.id);
     if (!previousCurrencyIds.includes("canton_network_devnet")) {
@@ -105,8 +82,16 @@ describe("Canton onboarding integration", () => {
     }
 
     currency = getCryptoCurrencyById("canton_network_devnet");
-    creatableAccount = { ...genAccount("canton-devnet-integ", { currency }), used: false };
-    importableAccount = { ...genAccount("canton-devnet-import", { currency }), used: true };
+    accountToReonboard = { ...genAccount("canton-devnet-reonboard", { currency }), used: true };
+
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      networkType: "devnet",
+      gatewayUrl: CANTON_DEVNET_GATEWAY,
+      nodeId: CANTON_DEVNET_NODE_ID,
+      useGateway: true,
+      nativeInstrumentId: "Amulet",
+    }));
   });
 
   afterAll(() => {
@@ -117,28 +102,30 @@ describe("Canton onboarding integration", () => {
     jest.clearAllMocks();
   });
 
-  it("should complete onboarding and navigate to AddAccounts success", async () => {
-    render(<OnboardScreen {...createScreenProps()} />, {
-      overrideInitialState: overrideInitialStateWithDevice,
-    });
+  it("should complete reonboarding and call onClose", async () => {
+    const onClose = jest.fn();
+
+    const { user } = render(
+      <CantonReonboardDrawer
+        isOpen
+        currency={currency}
+        accountToReonboard={accountToReonboard}
+        onClose={onClose}
+      />,
+      { overrideInitialState: overrideInitialStateWithDevice },
+    );
+
+    await user.press(screen.getByText("Confirm"));
 
     await waitFor(
       () => {
-        expect(mockParentNavigate).toHaveBeenCalledWith(
-          NavigatorName.AddAccounts,
-          expect.objectContaining({
-            screen: ScreenName.AddAccountsSuccess,
-            params: expect.objectContaining({
-              currency: expect.objectContaining({ id: currency.id }),
-            }),
-          }),
-        );
+        expect(onClose).toHaveBeenCalled();
       },
       { timeout: 20_000 },
     );
   }, 25_000);
 
-  it("should show retry when onboarding prepare fails, then recover when prepare succeeds on retry", async () => {
+  it("should show retry when prepare fails, then recover on retry", async () => {
     let prepareCallCount = 0;
     server.use(
       http.post(cantonOnboardingPrepareUrl, () => {
@@ -150,27 +137,36 @@ describe("Canton onboarding integration", () => {
       }),
     );
 
-    const { user } = render(<OnboardScreen {...createScreenProps()} />, {
-      overrideInitialState: overrideInitialStateWithDevice,
-    });
+    const onClose = jest.fn();
+
+    const { user } = render(
+      <CantonReonboardDrawer
+        isOpen
+        currency={currency}
+        accountToReonboard={accountToReonboard}
+        onClose={onClose}
+      />,
+      { overrideInitialState: overrideInitialStateWithDevice },
+    );
+
+    await user.press(screen.getByText("Confirm"));
 
     await waitFor(
       () => {
-        expect(screen.getByText("Retry")).toBeOnTheScreen();
+        expect(screen.getByText("Try again")).toBeOnTheScreen();
       },
       { timeout: 15_000 },
     );
 
-    await user.press(screen.getByText("Retry"));
+    await user.press(screen.getByText("Try again"));
 
     await waitFor(
       () => {
-        expect(screen.queryByText("Retry")).not.toBeOnTheScreen();
+        expect(onClose).toHaveBeenCalled();
       },
-      { timeout: 15_000 },
+      { timeout: 20_000 },
     );
 
-    // Strict mode / effect timing can issue more than one initial prepare; we only require a new attempt after Retry.
     expect(prepareCallCount).toBeGreaterThanOrEqual(2);
-  }, 20_000);
+  }, 30_000);
 });

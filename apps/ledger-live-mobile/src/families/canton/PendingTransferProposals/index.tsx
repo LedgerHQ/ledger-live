@@ -5,7 +5,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { ScreenRoute } from "../utils/navigationSnapshot";
+import CantonReonboardDrawer from "../Onboard/CantonReonboardDrawer";
 import DeviceAppModal from "./DeviceAppModal";
 import PendingTransferProposalsDetails from "./PendingTransferProposalsDetails";
 import ProposalsSection from "./components/ProposalsSection";
@@ -30,6 +33,8 @@ export function View({
   unit,
   appName,
   account,
+  reonboardDrawer,
+  onReonboardDrawerClose,
   onRowClick,
   onOpenModal,
   onDeviceConfirm,
@@ -40,8 +45,19 @@ export function View({
     return null;
   }
 
+  const currency = isCryptoCurrency(account.currency) ? account.currency : undefined;
+
   return (
     <>
+      {currency && (
+        <CantonReonboardDrawer
+          isOpen={reonboardDrawer.isOpen}
+          currency={currency as CryptoCurrency}
+          accountToReonboard={account}
+          restoreState={reonboardDrawer.restoreState}
+          onClose={onReonboardDrawerClose}
+        />
+      )}
       <DeviceAppModal
         isOpen={modal.isOpen}
         onConfirm={onDeviceConfirm}

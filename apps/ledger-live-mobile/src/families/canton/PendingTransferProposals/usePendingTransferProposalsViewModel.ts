@@ -1,6 +1,7 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type {
   TransferInstructionParams,
   TransferInstructionType,
@@ -33,6 +34,11 @@ import {
   processTransferProposals,
 } from "./utils/transferProposals";
 
+export type ReonboardDrawerState = {
+  isOpen: boolean;
+  restoreState?: NavigationSnapshot;
+};
+
 export type PendingTransferProposalsViewModel = {
   groupedIncoming: GroupedProposals;
   groupedOutgoing: GroupedProposals;
@@ -44,6 +50,8 @@ export type PendingTransferProposalsViewModel = {
   unit: Unit;
   appName: string;
   account: Account;
+  reonboardDrawer: ReonboardDrawerState;
+  onReonboardDrawerClose: () => void;
   onRowClick: (contractId: string) => void;
   onOpenModal: (contractId: string, action: TransferProposalAction) => void;
   onDeviceConfirm: (deviceId: string) => Promise<void>;
@@ -88,10 +96,12 @@ export function usePendingTransferProposalsViewModel({
   sync,
 }: Input): PendingTransferProposalsViewModel {
   const unit = useAccountUnit(account);
+  const llmModularDrawer = useFeature("llmModularDrawer");
 
   const [modal, setModal] = useState<Modal>({ isOpen: false, action: "accept", contractId: "" });
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
+  const [reonboardDrawer, setReonboardDrawer] = useState<ReonboardDrawerState>({ isOpen: false });
   const restoreRef = useRef<RestoreModalState | null>(null);
 
   const accountXpub = parentAccount.xpub ?? "";
@@ -123,6 +133,10 @@ export function usePendingTransferProposalsViewModel({
     [allProposals, selectedContractId],
   );
 
+  const onReonboardDrawerClose = useCallback(() => {
+    setReonboardDrawer({ isOpen: false });
+  }, []);
+
   const redirectToReonboarding = useCallback(
     (action?: TransferProposalAction, contractId?: string) => {
       const restoreState: NavigationSnapshot =
@@ -137,18 +151,22 @@ export function usePendingTransferProposalsViewModel({
             }
           : createNavigationSnapshot(route);
 
-      navigation.navigate(NavigatorName.CantonOnboard, {
-        screen: ScreenName.CantonOnboardAccount,
-        params: {
-          accountsToAdd: [],
-          currency: account.currency,
-          isReonboarding: true,
-          accountToReonboard: account,
-          restoreState,
-        },
-      });
+      if (llmModularDrawer?.enabled) {
+        setReonboardDrawer({ isOpen: true, restoreState });
+      } else {
+        navigation.navigate(NavigatorName.CantonOnboard, {
+          screen: ScreenName.CantonOnboardAccount,
+          params: {
+            accountsToAdd: [],
+            currency: account.currency,
+            isReonboarding: true,
+            accountToReonboard: account,
+            restoreState,
+          },
+        });
+      }
     },
-    [account, navigation, route],
+    [route, llmModularDrawer, account, navigation],
   );
 
   const handleModalConfirm = useCallback(
@@ -233,6 +251,8 @@ export function usePendingTransferProposalsViewModel({
     unit,
     appName,
     account,
+    reonboardDrawer,
+    onReonboardDrawerClose,
     onRowClick,
     onOpenModal,
     onDeviceConfirm,

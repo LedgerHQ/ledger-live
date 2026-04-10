@@ -39,6 +39,8 @@ const buildViewModel = (
   unit,
   appName: "Canton",
   account: mockAccount,
+  reonboardDrawer: { isOpen: false },
+  onReonboardDrawerClose: jest.fn(),
   onRowClick: jest.fn(),
   onOpenModal: jest.fn(),
   onDeviceConfirm: jest.fn(),

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { render, screen } from "@tests/test-renderer";
 import React from "react";
@@ -24,25 +24,18 @@ type MockViewModel = ReturnType<typeof UseOnboardScreenViewModel.useOnboardScree
 
 const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel => {
   const onboardingStatus = overrides?.onboardingStatus ?? OnboardStatus.INIT;
-  const authorizeStatus = overrides?.authorizeStatus ?? AuthorizeStatus.INIT;
   const onboardResult = overrides?.onboardResult ?? null;
   const error = overrides?.error ?? null;
   const isReonboarding = overrides?.isReonboarding ?? false;
 
-  const hasResult = !!onboardResult;
-  const isAuthorizationPhase = hasResult && onboardingStatus !== OnboardStatus.ERROR;
-  const displayStatus = isAuthorizationPhase ? authorizeStatus : onboardingStatus;
-  const showError = Boolean(
-    error &&
-    (onboardingStatus === OnboardStatus.ERROR || authorizeStatus === AuthorizeStatus.ERROR),
-  );
+  const displayStatus = onboardingStatus;
+  const showError = Boolean(error && onboardingStatus === OnboardStatus.ERROR);
   const successKey = isReonboarding ? "canton.onboard.reonboard.success" : "canton.onboard.success";
 
-  const statusTranslationKey = getStatusTranslationKey(displayStatus, isAuthorizationPhase);
+  const statusTranslationKey = getStatusTranslationKey(displayStatus);
 
   return {
     onboardingStatus,
-    authorizeStatus,
     onboardResult,
     error,
     accountsToDisplay: [createMockAccount()],
@@ -61,7 +54,6 @@ const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel 
       useHook: jest.fn(() => ({})),
       mapResult: jest.fn(),
     } as unknown as MockViewModel["action"],
-    isAuthorizationPhase,
     displayStatus,
     showError,
     successKey,
