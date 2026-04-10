@@ -571,14 +571,8 @@ jobs:
 
       - name: Start mitmproxy
         run: |
-          mise run mitmproxy:decrypt \
-            --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}" \
-            --file="apps/ledger-live-mobile/tests/mocks/firebase_feature_flags.tar.gz.enc" \
-            --output-dir="apps/ledger-live-mobile/tests/mocks/local"
-
           mise run mitmproxy:start \
             --port=9999 \
-            --mock-responses-file="apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags.json" \
             --setup-android-simulator="true" \
             --android-simulator-name="Android_Emulator,Android_Emulator_2"
 
@@ -599,7 +593,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           mise run mitmproxy:stop --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}"
-          rm -f "apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags.json"
 
       - name: Upload mitmproxy logs
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
