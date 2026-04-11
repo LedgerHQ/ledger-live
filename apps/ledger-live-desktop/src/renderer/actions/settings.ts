@@ -89,12 +89,13 @@ export const DANGEROUSLY_setAnalyticsConsentInfoForQa = (patch: Partial<Analytic
 
 /**
  * @deprecated QA / developer tools only. Do not use in production flows.
- * Clears consent metadata and turns off analytics sharing flags to simulate a pre-consent state.
+ * Clears consent metadata, resets legacy opt-in prompt seen state, and turns off analytics sharing flags to simulate a pre-consent state.
  */
 export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () =>
   saveSettings({
     shareAnalytics: false,
     sharePersonalizedRecommandations: false,
+    hasSeenAnalyticsOptInPrompt: false,
     analyticsConsentInfo: {
       consentDate: null,
       privacyPolicyVersion: null,

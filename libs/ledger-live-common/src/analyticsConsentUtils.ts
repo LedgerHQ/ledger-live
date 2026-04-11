@@ -9,11 +9,14 @@ export function resolveAnalyticsConsentPhase(
   currentPhase: AnalyticsConsentPhase,
   needsRenewal: boolean,
   needsUpdatePrivacy: boolean,
-  analyticsSharingEnabled: boolean,
+  hasSeenAnalyticsOptInPrompt: boolean,
 ): AnalyticsConsentPhase {
   if (currentPhase !== "closed") return currentPhase;
-  if (needsRenewal) return analyticsSharingEnabled ? "consentReconfirm" : "consentFresh";
+
+  if (!hasSeenAnalyticsOptInPrompt) return "consentFresh";
+  if (needsRenewal) return "consentReconfirm";
   if (needsUpdatePrivacy) return "privacy";
+
   return "consentFresh";
 }
 

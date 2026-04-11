@@ -47,6 +47,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     settings: {
       ...INITIAL_STATE,
       hasCompletedOnboarding: true,
+      hasSeenAnalyticsOptInPrompt: true,
       shareAnalytics: true,
       sharePersonalizedRecommandations: true,
       analyticsConsentInfo: {
@@ -77,7 +78,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     expect(result.current.isDialogOpen).toBe(false);
   });
 
-  it("opens consentReconfirm when renewal is needed, policy is current, and share analytics is on", async () => {
+  it("opens consentReconfirm when renewal is needed, policy is current, and user already saw legacy opt-in", async () => {
     const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
       initialState: consentReconfirmState,
     });
@@ -102,6 +103,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
           settings: {
             ...INITIAL_STATE,
             hasCompletedOnboarding: true,
+            hasSeenAnalyticsOptInPrompt: true,
             shareAnalytics: false,
             sharePersonalizedRecommandations: false,
             analyticsConsentInfo: {

@@ -6,6 +6,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   shareAnalyticsSelector,
   sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
@@ -49,12 +50,15 @@ export function useAnalyticsConsentDialogViewModel() {
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const sharePersonalizedRecommendations = useSelector(sharePersonalizedRecommendationsSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
 
   const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
   const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
 
   const shouldOffer = Boolean(
-    feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
+    feature?.enabled &&
+      hasCompletedOnboarding &&
+      (!hasSeenAnalyticsOptInPrompt || needsUpdatePrivacy || needsRenewal),
   );
 
   const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
@@ -98,16 +102,23 @@ export function useAnalyticsConsentDialogViewModel() {
       });
       return;
     }
+
     setPhase(current => {
       if (current === "preferences") return current;
       return resolveAnalyticsConsentPhase(
         current,
         needsRenewal,
         needsUpdatePrivacy,
-        shareAnalytics,
+        hasSeenAnalyticsOptInPrompt,
       );
     });
-  }, [isPortfolioRouteFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, shareAnalytics]);
+  }, [
+    isPortfolioRouteFocused,
+    shouldOffer,
+    needsRenewal,
+    needsUpdatePrivacy,
+    hasSeenAnalyticsOptInPrompt,
+  ]);
 
   const persistAnalyticsConsentAck = async () => {
     dispatch(setAnalyticsConsentInfo());

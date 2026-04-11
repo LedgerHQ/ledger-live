@@ -70,12 +70,13 @@ const overridePortfolioWithAnalyticsConsentDrawer = composePortfolioOverrides({
   privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
 });
 
-/** Reconfirm: renewal first, analytics on → consentReconfirm. */
+/** Reconfirm: renewal first, user already saw opt-in → consentReconfirm. */
 const overridePortfolioWithAnalyticsConsentReconfirm = composePortfolioOverrides({
   hasCompletedOnboarding: true,
   analyticsOptInEnabled: true,
   analyticsEnabled: true,
   personalizedRecommendationsEnabled: true,
+  hasSeenAnalyticsOptInPrompt: true,
   consentDate: null,
   privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
 });
@@ -217,13 +218,14 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       needsConsentRenewalSpy.mockRestore();
     });
 
-    it("should show reconfirm when consent is older than one year and analytics are on", async () => {
+    it("should show reconfirm when consent is older than one year and user already saw opt-in", async () => {
       renderWithReactQuery(<IntegrationNavigator />, {
         overrideInitialState: composePortfolioOverrides({
           hasCompletedOnboarding: true,
           analyticsOptInEnabled: true,
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
+          hasSeenAnalyticsOptInPrompt: true,
           consentDate: consentIsoOlderThanOneYear(),
           privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
         }),

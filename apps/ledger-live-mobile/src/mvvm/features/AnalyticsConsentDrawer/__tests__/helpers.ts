@@ -9,11 +9,12 @@ export type ConsentDrawerTestOptions = {
   privacyPolicyVersion?: number | null;
   analyticsEnabled?: boolean;
   personalizedRecommendationsEnabled?: boolean;
+  hasSeenAnalyticsOptInPrompt?: boolean;
 };
 
 /**
- * Drawer opens on **consentFresh**: consent renewal needed first, analytics off (`needsRenewal`
- * before privacy in the hook). Use for tests that tap fresh CTAs without extra boilerplate.
+ * Drawer opens on **consentFresh**: renewal needed and user has not seen the opt-in yet.
+ * Use for tests that tap fresh CTAs without extra boilerplate.
  */
 export function withConsentDrawerOpeningFresh(options: ConsentDrawerTestOptions = {}) {
   return withConsentDrawerState({
@@ -37,6 +38,7 @@ export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
     privacyPolicyVersion = CURRENT_PRIVACY_POLICY_VERSION,
     analyticsEnabled = true,
     personalizedRecommendationsEnabled = true,
+    hasSeenAnalyticsOptInPrompt = false,
   } = options;
 
   return (state: State): State =>
@@ -45,6 +47,7 @@ export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
       settings: {
         ...state.settings,
         hasCompletedOnboarding,
+        hasSeenAnalyticsOptInPrompt,
         analyticsEnabled,
         personalizedRecommendationsEnabled,
         analyticsConsentInfo: {

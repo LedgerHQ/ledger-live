@@ -12,6 +12,7 @@ import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,
   hasCompletedOnboardingSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import {
@@ -35,6 +36,7 @@ export default function DebugAnalyticsConsentQA() {
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const personalizedEnabled = useSelector(personalizedRecommendationsEnabledSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
 
   const storedVersionOk = !needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
   const consentDateOk = !needsConsentRenewal(consentInfo.consentDate);
@@ -56,7 +58,7 @@ export default function DebugAnalyticsConsentQA() {
       "closed",
       needsRenewal,
       needsUpdatePrivacy,
-      analyticsEnabled,
+      hasSeenAnalyticsOptInPrompt,
     );
     if (phase === "closed") {
       return { shouldOffer: false as const, phase: null, reason: "nothingToRenew" as const };
@@ -66,6 +68,7 @@ export default function DebugAnalyticsConsentQA() {
     analyticsEnabled,
     feature?.enabled,
     hasCompletedOnboarding,
+    hasSeenAnalyticsOptInPrompt,
     consentInfo.consentDate,
     consentInfo.privacyPolicyVersion,
   ]);

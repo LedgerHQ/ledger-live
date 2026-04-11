@@ -220,11 +220,12 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
   });
 
   describe("needs reconfirmation", () => {
-    it("should open consentReconfirm when renewal is needed, policy is current, and analytics is on", async () => {
+    it("should open consentReconfirm when renewal is needed, policy is current, and user already saw opt-in", async () => {
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
+          hasSeenAnalyticsOptInPrompt: true,
           privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
           consentDate: null,
         }),
@@ -240,6 +241,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
+          hasSeenAnalyticsOptInPrompt: true,
           privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
           consentDate: null,
         }),
@@ -275,6 +277,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
+          hasSeenAnalyticsOptInPrompt: true,
           privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
           consentDate: null,
         }),
@@ -371,12 +374,13 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       });
     });
 
-    it("should open consentReconfirm when consent is stale by time even if both toggles are on (renewal first)", async () => {
+    it("should open consentReconfirm when consent is stale by time and user already saw opt-in (renewal first)", async () => {
       const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
+          hasSeenAnalyticsOptInPrompt: true,
           privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
           consentDate: oldIso,
         }),

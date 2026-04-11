@@ -7,6 +7,7 @@ import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,
   hasCompletedOnboardingSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import {
@@ -43,6 +44,7 @@ export function useAnalyticsConsentDrawerViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const personalizedRecommendationsEnabled = useSelector(
     personalizedRecommendationsEnabledSelector,
   );
@@ -71,14 +73,19 @@ export function useAnalyticsConsentDrawerViewModel() {
       return;
     }
     setPhase(current =>
-      resolveAnalyticsConsentPhase(current, needsRenewal, needsUpdatePrivacy, analyticsEnabled),
+      resolveAnalyticsConsentPhase(
+        current,
+        needsRenewal,
+        needsUpdatePrivacy,
+        hasSeenAnalyticsOptInPrompt,
+      ),
     );
   }, [
     isFocused,
     shouldOffer,
     needsRenewal,
     needsUpdatePrivacy,
-    analyticsEnabled,
+    hasSeenAnalyticsOptInPrompt,
     handleCloseDrawer,
   ]);
 

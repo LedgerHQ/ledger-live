@@ -72,7 +72,7 @@ describe("analyticsConsentUtils", () => {
       expect(resolveAnalyticsConsentPhase("privacy", false, true, false)).toBe("privacy");
     });
 
-    it("when closed and renewal: reconfirm if sharing on, else fresh", () => {
+    it("when closed and renewal: reconfirm if user already saw opt-in, else fresh", () => {
       expect(resolveAnalyticsConsentPhase("closed", true, false, true)).toBe("consentReconfirm");
       expect(resolveAnalyticsConsentPhase("closed", true, false, false)).toBe("consentFresh");
     });

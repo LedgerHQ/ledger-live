@@ -9,11 +9,11 @@ import Box from "~/renderer/components/Box";
 import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
-  shareAnalyticsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
 } from "~/renderer/reducers/settings";
 import {
-  DANGEROUSLY_resetAnalyticsOptInStateForQa,
   DANGEROUSLY_setAnalyticsConsentInfoForQa,
+  setHasSeenAnalyticsOptInPrompt,
 } from "~/renderer/actions/settings";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
@@ -34,21 +34,23 @@ export function AnalyticsConsentOptInDevScreen() {
   const dispatch = useDispatch();
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const analyticsOptInFeature = useFeature("analyticsOptIn");
 
   const needsPrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
   const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
 
   const shouldOfferModal = Boolean(
-    analyticsOptInFeature?.enabled && hasCompletedOnboarding && (needsPrivacy || needsRenewal),
+    analyticsOptInFeature?.enabled &&
+      hasCompletedOnboarding &&
+      (!hasSeenAnalyticsOptInPrompt || needsPrivacy || needsRenewal),
   );
 
   const modalPhaseIfOffered = resolveAnalyticsConsentPhase(
     "closed",
     needsRenewal,
     needsPrivacy,
-    shareAnalytics,
+    hasSeenAnalyticsOptInPrompt,
   );
 
   const modalPreview = (() => {
@@ -101,8 +103,8 @@ export function AnalyticsConsentOptInDevScreen() {
     dispatch(DANGEROUSLY_setAnalyticsConsentInfoForQa({ consentDate: null }));
   };
 
-  const onResetForConsentFresh = () => {
-    dispatch(DANGEROUSLY_resetAnalyticsOptInStateForQa());
+  const onResetSeenAnalyticsOptInPrompt = () => {
+    dispatch(setHasSeenAnalyticsOptInPrompt(false));
   };
 
   return (
@@ -125,11 +127,28 @@ export function AnalyticsConsentOptInDevScreen() {
             {t("settings.developer.analyticsConsentOptInQa.readSection")}
           </h2>
           <div className="flex flex-col gap-8">
-            <p className="body-2 leading-relaxed text-muted">
-              {t("settings.developer.analyticsConsentOptInQa.currentPrivacyVersion", {
-                version: String(CURRENT_PRIVACY_POLICY_VERSION),
-              })}
-            </p>
+            <div className="flex flex-row flex-wrap items-center justify-between gap-10">
+              <span
+                className={`min-w-0 flex-1 body-2 font-medium leading-relaxed ${
+                  hasSeenAnalyticsOptInPrompt ? "text-success" : "text-error"
+                }`}
+              >
+                {t("settings.developer.analyticsConsentOptInQa.seenAnalyticsOptInPrompt", {
+                  value: String(hasSeenAnalyticsOptInPrompt),
+                })}
+              </span>
+              <Button
+                className="shrink-0 self-center"
+                size="sm"
+                appearance="accent"
+                disabled={!hasSeenAnalyticsOptInPrompt}
+                onClick={onResetSeenAnalyticsOptInPrompt}
+              >
+                {t(
+                  "settings.developer.analyticsConsentOptInQa.inlineResetSeenAnalyticsOptInPrompt",
+                )}
+              </Button>
+            </div>
             <div className="flex flex-row flex-wrap items-center justify-between gap-10">
               <span
                 className={`min-w-0 flex-1 body-2 font-medium leading-relaxed ${
@@ -183,15 +202,6 @@ export function AnalyticsConsentOptInDevScreen() {
           </p>
           <p className="body-3 leading-relaxed text-muted">
             {t("settings.developer.analyticsConsentOptInQa.modalPreviewGoToHome")}
-          </p>
-        </section>
-
-        <section className="mt-32 flex flex-col gap-8">
-          <Button size="sm" appearance="red" onClick={onResetForConsentFresh}>
-            {t("settings.developer.analyticsConsentOptInQa.actionResetForConsentFresh")}
-          </Button>
-          <p className="max-w-xl leading-relaxed body-3 text-muted">
-            {t("settings.developer.analyticsConsentOptInQa.note")}
           </p>
         </section>
       </Box>
