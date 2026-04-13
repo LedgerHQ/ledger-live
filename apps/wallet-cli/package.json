@@ -13,6 +13,7 @@
     "build": "bunli build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
+    "coverage": "bun test src/ --coverage",
     "lint": "oxlint src bunli.config.ts",
     "lint:ci": "oxlint src bunli.config.ts --quiet",
     "lint:fix": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts && oxlint src bunli.config.ts --fix --quiet",
