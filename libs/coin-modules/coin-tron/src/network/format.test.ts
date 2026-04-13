@@ -65,6 +65,40 @@ describe("formatTrongridTrc20TxResponse", () => {
     });
   });
 
+  it("should fall back to contract_address when token_info.address is missing (unindexed LP contract)", () => {
+    const tx = {
+      from: "from",
+      to: "to",
+      block_timestamp: 1,
+      detail: {
+        ret: [{ fee: 0 }],
+        raw_data: {
+          contract: [
+            {
+              parameter: {
+                value: {
+                  owner_address: "41f1fe9d73ffb3b6ab532858b266c02f63410fbd70",
+                  // hex for TU1wcXoAq5EXhZp7ga6E1Vb1Sqw1ciQP4s (unindexed LP contract)
+                  contract_address: "41c5f6aa996edd0696a0295b07fd7b20b0dd84c557",
+                },
+              },
+            },
+          ],
+        },
+      },
+      value: "20000000000",
+      transaction_id: "txId",
+      token_info: {},
+      type: "Transfer",
+    };
+    const result = formatTrongridTrc20TxResponse(tx as unknown as Trc20API);
+    expect(result).toMatchObject({
+      type: "TriggerSmartContract",
+      tokenId: "TU1wcXoAq5EXhZp7ga6E1Vb1Sqw1ciQP4s",
+      tokenAddress: "TU1wcXoAq5EXhZp7ga6E1Vb1Sqw1ciQP4s",
+    });
+  });
+
   it("should set feesPayer from owner_address when it differs from from (transferFrom case)", () => {
     // owner_address is the Tron tx initiator (hex); `from` is the TRC20 token source (base58)
     const tx = {
