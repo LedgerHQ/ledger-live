@@ -1598,7 +1598,7 @@
     "desc" : "Ledger Walletの機能を最大限にご活用いただくには、Ledgerデバイスを接続してください。",
     "0" : {
       "title" : "完全な所有権",
-      "desc" : "秘密鍵がデバイスの外に出ることはありません。"
+      "desc" : "秘密鍵は、自分自身で管理することが可能です。"
     },
     "1" : {
       "title" : "安全な取引",
@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "すべての暗号資産を表示",
     "cryptoAddresses" : {
-      "title" : "暗号資産アカウント",
+      "title" : "アカウント",
       "count_one" : "{{count}}アカウント",
       "count_other" : "{{count}}アカウント",
-      "noAccountsYet" : "まだアカウントがありません"
+      "noAccountsYet" : "まだアカウントがありません",
+      "add" : "追加"
     },
     "seeAllAccounts" : "すべてのアカウントを表示",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "購入",
       "connect" : "接続",
       "buyLedger" : "Ledgerを購入する",
+      "receive" : "受け取る",
+      "send" : "送付",
       "transferDrawer" : {
         "title" : "送金",
         "receiveCrypto" : "暗号資産アドレス経由で受け取る",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "更新中...",
       "upToDate" : "ポートフォリオは最新です",
-      "syncError" : "一部のアカウントデータを読み込めませんでした"
+      "syncError" : "一部のアカウントデータを読み込めませんでした",
+      "offline" : "オフラインです。接続を確認してください。"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,18 @@
   "assets" : {
     "title" : "資産"
   },
+  "cryptoAddresses" : {
+    "title" : "アカウント",
+    "addAccount" : "アカウントを追加",
+    "emptyState" : "まだアカウントがありません",
+    "errorState" : "アカウントの読み込み中にエラーが発生しました。"
+  },
+  "crypto" : {
+    "title" : "暗号資産",
+    "stablecoinTitle" : "ステーブルコイン",
+    "errorState" : "資産の読み込み中にエラーが発生しました",
+    "emptyState" : "表示する資産がありません"
+  },
   "accounts" : {
     "title" : "アカウント",
     "cryptoAccountsTitle" : "{{currencyTicker}}アカウント",
@@ -3317,13 +3333,13 @@
       "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信する。",
       "developerMode" : "デベロッパーモード",
       "developerModeDesc" : "My Ledgerに開発者用アプリを表示し、テストネットアプリを有効化してください。",
-      "analytics" : "アナリティクス",
-      "analyticsDesc" : "Ledgerがアプリの使用状況データを収集できるようにし、Ledger Walletのパフォーマンスを測定し、アプリと体験の両方を向上させます。",
+      "analytics" : "アプリのパフォーマンス",
+      "analyticsDesc" : "Ledgerがアプリの使用状況を収集できるようにして、ユーザー体験を向上させる",
       "mevProtection" : "MEV保護",
       "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
       "mevProtectionLearnMore" : "プライバシーに関する通知",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
-      "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを収集して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
+      "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況を収集して、パーソナライズされたコンテンツを提供できるようにします。",
       "analyticsModal" : {
         "title" : "アナリティクスの共有",
         "desc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する",
@@ -3432,6 +3448,14 @@
       "transactionsAlerts" : {
         "title" : "トランザクション通知（ベータ）",
         "desc" : "Ethereum、Polygon、BNB Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
+      },
+      "totalMarketCap" : {
+        "title" : "マーケットキャップ総額",
+        "desc" : "暗号資産のマーケットキャップが大きく変動したときに通知を受け取る"
+      },
+      "topGainersLosers" : {
+        "title" : "上昇率上位と下落率上位",
+        "desc" : "市場で最も上昇または下落しているトークンの毎週のまとめを受け取りましょう"
       },
       "price" : {
         "title" : "価格アラート",
@@ -3576,9 +3600,13 @@
         "addSampleBanner" : "サンプルバナーを追加",
         "addSampleBannerDesc" : "ポートフォリオにサンプルのヒーローバナーを追加します。",
         "addSampleActionCarouselIcon" : "アクションカルーセル（アイコン）を追加",
-        "addSampleActionCarouselIconDesc" : "ContentBanner with Spot icons — 購入・スワップ・ステーキング。Braze配置フラグが必要です。",
+        "addSampleActionCarouselIconDesc" : "タップごとに1枚のContentBannerカードが追加されます。画像バージョンと同じ列 — アイコンと画像カードを1つのカルーセルに組み合わせます。サイクル購入 → スワップ → ステーキング。Braze配置フラグが必要です。",
         "addSampleActionCarouselImageBackground" : "アクションカルーセル（画像）を追加",
-        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner with image_background — 購入・スワップ・ステーキング。Braze配置フラグが必要です。",
+        "addSampleActionCarouselImageBackgroundDesc" : "タップごとに1枚のMediaBannerカードが追加されます。アイコンのバリエーションと同じ行 — 1つのカルーセルで両方をミックス。サイクル購入 → スワップ → ステーキング。Braze配置フラグが必要です。",
+        "addSampleWalletCarouselPicto" : "下部にウォレットカルーセルを追加（ピクト）",
+        "addSampleWalletCarouselPictoDesc" : "暗号資産アイコン(picto)、タイトル、画像、リンクが記載されたモックカード1枚。Brazeなし。",
+        "addSampleWalletCarouselTag" : "下部にウォレットカルーセルを追加（タグ）",
+        "addSampleWalletCarouselTagDesc" : "タグ、タイトル、画像、リンク付きのモックカード1枚。Brazeなし。",
         "dismissAll" : "すべてのローカルカードを削除",
         "dismissAllDesc" : "ローカルで生成されたすべてのコンテンツカードを削除します。"
       }
@@ -3651,7 +3679,8 @@
         },
         "fiat" : {
           "title" : "銀行送金経由",
-          "description" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
+          "description" : "キャッシュの送金でステーブルコインを受け取る",
+          "description_legacy" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
         }
       },
       "memoTag" : {
@@ -4324,13 +4353,15 @@
         "coinToSend" : "送付するコイン",
         "changeToReturn" : "戻される差額",
         "enterAmount" : "数量を入力",
+        "selectSufficientCoins" : "十分なコインを選択してください",
         "amountToSendInCurrency" : "送金金額 ({{ticker}})",
         "amountInputLabel" : "送付額",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "先入れ先出し方式(FIFO)",
             "OPTIMIZE_SIZE" : "手数料の最小化(サイズの最適化)",
-            "MERGE_OUTPUTS" : "今後の手数料を最小限に抑える(コインを統合)"
+            "MERGE_OUTPUTS" : "今後の手数料を最小限に抑える(コインを統合)",
+            "CUSTOM" : "コインセレクションをカスタマイズ"
           }
         }
       }
@@ -8056,6 +8087,32 @@
       }
     }
   },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "Ledgerの改善にご協力ください",
+      "description" : "お客様の同意のもと、当社は機能を向上させ、お客様の体験をパーソナライズするために使用状況データを収集します。",
+      "ctaAcceptAll" : "すべて受け入れる",
+      "ctaRefuseAll" : "すべて拒否する"
+    },
+    "reconfirm" : {
+      "title" : "Ledgerの改善を続けますか？",
+      "description" : "Ledgerの改善に役立てるために、引き続き使用状況データの共有を希望されますか？このデータは、機能を向上させ、エクスペリエンスをパーソナライズするために使用されます。",
+      "ctaContinue" : "はい、続行します",
+      "ctaStop" : "いいえ、やめます"
+    },
+    "privacy" : {
+      "title" : "プライバシーポリシーを更新しています",
+      "descriptionLead" : "当社の内容をご確認ください。 ",
+      "descriptionLinkLabel" : "プライバシーポリシー",
+      "descriptionTrail" : " 変更点を確認してください。設定はいつでも更新できます。",
+      "ctaGotIt" : "了解"
+    },
+    "setPreferences" : "設定を選択してください",
+    "footer" : {
+      "lead" : "同意は設定からいつでも取り消すことができます。",
+      "privacyLink" : "プライバシーポリシー"
+    }
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "banner" : {
@@ -8503,6 +8560,10 @@
       "title" : "レート期限切れ",
       "description" : "取引レートの有効期限が切れました。更新してもう一度お試しください。"
     },
+    "details" : {
+      "code" : "エラーコード",
+      "correlationId" : "参照ID"
+    },
     "default" : {
       "title" : "問題が発生しました。",
       "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
@@ -8734,6 +8795,7 @@
     "bottomSheet" : {
       "title" : "一部のアカウントデータを読み込めませんでした",
       "description" : "資産は安全です。これは一時的な同期の問題です。\n影響を受けるアカウント： {{accounts}}",
+      "tryToRefresh" : "ページ更新をお試しください",
       "close" : "閉じる"
     }
   },
