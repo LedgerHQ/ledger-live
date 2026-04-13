@@ -166,10 +166,6 @@ async function connectLedgerAppOnce(
             process.stderr.write(
               `[i] Opening ${managerAppName} app on your Ledger... ACTION REQUIRED: Confirm on device screen.\n`,
             );
-          } else if (key === UserInteractionRequired.SignTransaction) {
-            process.stderr.write(
-              `[~] Action Required: Review the transaction on your Ledger screen and confirm or reject on device.\n`,
-            );
           }
         }),
       ),
