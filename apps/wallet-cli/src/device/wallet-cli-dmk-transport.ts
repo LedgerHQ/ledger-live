@@ -35,8 +35,4 @@ export class WalletCliDmkTransport extends TransportClass {
   close(): Promise<void> {
     return Promise.resolve();
   }
-
-  disconnect(): void {
-    void this.dmk.disconnect({ sessionId: this.sessionId }).catch(() => {});
-  }
 }

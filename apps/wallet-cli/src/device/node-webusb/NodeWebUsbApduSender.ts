@@ -47,9 +47,9 @@ function bufferFromInTransfer(data: DataView): Uint8Array {
 export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSenderDependencies> {
   private dependencies: NodeWebUsbApduSenderDependencies;
   private readonly apduSenderFactory: ApduSenderServiceFactory;
-  private apduSender: ReturnType<ApduSenderServiceFactory>;
+  private readonly apduSender: ReturnType<ApduSenderServiceFactory>;
   private readonly apduReceiverFactory: ApduReceiverServiceFactory;
-  private apduReceiver: ReturnType<ApduReceiverServiceFactory>;
+  private readonly apduReceiver: ReturnType<ApduReceiverServiceFactory>;
   private readonly logger: LoggerPublisherService;
   private sendApduPromiseResolver: Maybe<(result: SendApduResult) => void> = Nothing;
   private abortTimeout: Maybe<ReturnType<typeof setTimeout>> = Nothing;
@@ -163,7 +163,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     const { device } = this.dependencies;
 
     if (!device.opened) {
-      return Promise.resolve(Left(new OpeningConnectionError("Device not connected")));
+      return Left(new OpeningConnectionError("Device not connected"));
     }
 
     const completion = new Promise<SendApduResult>(resolve => {
