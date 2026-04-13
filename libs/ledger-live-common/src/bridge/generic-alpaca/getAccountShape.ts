@@ -8,7 +8,7 @@ import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Balance, BalanceOptions, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
+import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
@@ -16,7 +16,6 @@ import type {
   StakingResources,
   StakingUnbonding,
 } from "@ledgerhq/coin-evm/types/staking";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -320,8 +319,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const blockInfo = await alpacaApi.lastBlock();
 
-    const balanceOptions: BalanceOptions | undefined = bridgeApi.balanceOptions;
-    const balanceRes = await alpacaApi.getBalance(address, balanceOptions);
+    const balanceRes = await alpacaApi.getBalance(address, bridgeApi.balanceOptions);
 
     const nativeAsset = extractBalance(balanceRes, "native");
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");

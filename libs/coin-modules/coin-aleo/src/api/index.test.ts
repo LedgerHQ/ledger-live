@@ -143,9 +143,9 @@ describe("createApi", () => {
 
     it("should throw an exception when options is provided", async () => {
       const api = createApi(mockConfig, "aleo");
-      await expect(
-        api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      await expect(api.getBalance("", {} as unknown as BalanceOptions)).rejects.toThrow(
+        InvalidParameterError,
+      );
     });
   });
 

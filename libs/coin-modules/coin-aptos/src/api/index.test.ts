@@ -3,7 +3,7 @@ import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import type { AptosConfig as AptosConfigApi } from "../config";
 
-export const getMockedConfig = (): AptosConfigApi => {
+const getMockedConfig = (): AptosConfigApi => {
   return {
     aptosSettings: {},
   };

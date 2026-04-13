@@ -56,12 +56,12 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
 function getBalanceOptions(currency: CryptoCurrency): BalanceOptions {
   return {
     includeAssets: async (assetInfo: AssetInfo) => {
-      if (assetInfo.type !== "native") {
-        const tokenCurrency = await getTokenFromAsset(currency, assetInfo);
-        return tokenCurrency !== undefined;
+      if (assetInfo.type === "native") {
+        return true;
       }
 
-      return true;
+      const tokenCurrency = await getTokenFromAsset(currency, assetInfo);
+      return tokenCurrency !== undefined;
     },
   };
 }
