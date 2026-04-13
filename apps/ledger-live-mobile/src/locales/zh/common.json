@@ -1598,7 +1598,7 @@
     "desc" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
     "0" : {
       "title" : "完全所有权",
-      "desc" : "您的私钥永远不会离开设备。"
+      "desc" : "您的私钥由您掌控。"
     },
     "1" : {
       "title" : "安全交易",
@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "查看所有资产",
     "cryptoAddresses" : {
-      "title" : "加密货币账户",
+      "title" : "账户",
       "count_one" : "{{count}} 个账户",
       "count_other" : "{{count}} 个账户",
-      "noAccountsYet" : "尚无账户"
+      "noAccountsYet" : "尚无账户",
+      "add" : "添加"
     },
     "seeAllAccounts" : "查看所有账户",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "买入",
       "connect" : "连接",
       "buyLedger" : "购买 Ledger 设备",
+      "receive" : "接收",
+      "send" : "发送",
       "transferDrawer" : {
         "title" : "转移",
         "receiveCrypto" : "通过加密货币地址接收",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "刷新中...",
       "upToDate" : "资产组合已更新",
-      "syncError" : "无法加载某些账户数据"
+      "syncError" : "无法加载某些账户数据",
+      "offline" : "您已离线。请检查您的连接"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,18 @@
   "assets" : {
     "title" : "多种资产"
   },
+  "cryptoAddresses" : {
+    "title" : "账户",
+    "addAccount" : "添加账户",
+    "emptyState" : "尚无账户",
+    "errorState" : "加载您的账户时出错"
+  },
+  "crypto" : {
+    "title" : "加密货币",
+    "stablecoinTitle" : "稳定币",
+    "errorState" : "加载您的资产时出错",
+    "emptyState" : "没有可显示的资产"
+  },
   "accounts" : {
     "title" : "账户",
     "cryptoAccountsTitle" : "{{currencyTicker}} 账户",
@@ -3317,13 +3333,13 @@
       "reportErrorsDesc" : "自动发送报告来帮助 Ledger 改进其产品。",
       "developerMode" : "开发者模式",
       "developerModeDesc" : "在“我的 Ledger”中显示开发者应用程序并启用测试网应用程序。",
-      "analytics" : "数据分析",
-      "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Wallet 的性能，优化应用程序并提升您的体验。",
+      "analytics" : "应用性能",
+      "analyticsDesc" : "允许 Ledger 收集应用程序使用数据以优化用户体验",
       "mevProtection" : "MEV 保护",
       "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
       "mevProtectionLearnMore" : "隐私声明",
       "personalizedRecommendations" : "个性化体验",
-      "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
+      "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用情况，以便提供个性化内容",
       "analyticsModal" : {
         "title" : "分享数据分析",
         "desc" : "允许数据分析以帮助 Ledger 改善用户体验",
@@ -3432,6 +3448,14 @@
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
         "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
+      },
+      "totalMarketCap" : {
+        "title" : "总市值",
+        "desc" : "当加密货币总市值发生显著变化时，您将收到通知"
+      },
+      "topGainersLosers" : {
+        "title" : "涨幅和跌幅",
+        "desc" : "每周回顾市场上涨幅和跌幅最大的代币"
       },
       "price" : {
         "title" : "价格提醒",
@@ -3576,9 +3600,13 @@
         "addSampleBanner" : "添加示例横幅",
         "addSampleBannerDesc" : "在“资产组合”页面添加一个示例主页横幅。",
         "addSampleActionCarouselIcon" : "添加操作轮播（图标）",
-        "addSampleActionCarouselIconDesc" : "带有 Spot 图标的 ContentBanner——买入、互换、质押。需要 Braze 放置标志。",
+        "addSampleActionCarouselIconDesc" : "每次点按即可添加一张 ContentBanner 卡。与图片变体同一行——在一个轮播中混合使用图标卡和图片卡。循环买入→互换→质押。需要 Braze 位标记。",
         "addSampleActionCarouselImageBackground" : "添加操作轮播（图片）",
-        "addSampleActionCarouselImageBackgroundDesc" : "带有 image_background 的 MediaBanner——买入、互换、质押。需要 Braze 放置标志。",
+        "addSampleActionCarouselImageBackgroundDesc" : "每次点按即可添加一张 MediaBanner 卡。与图标变体在同一行——在一个轮播中混合使用两者。循环买入→互换→质押。需要 Braze 位标记。",
+        "addSampleWalletCarouselPicto" : "添加底部钱包轮播（图标）",
+        "addSampleWalletCarouselPictoDesc" : "一个示例卡片组件，包含加密图标、标题、图片及链接不接入 Braze。",
+        "addSampleWalletCarouselTag" : "添加底部钱包轮播（标签）",
+        "addSampleWalletCarouselTagDesc" : "一个示例卡片组件，包含标签、标题、图片及链接不接入 Braze。",
         "dismissAll" : "关闭所有本地卡",
         "dismissAllDesc" : "移除所有本地生成的内容卡。"
       }
@@ -3651,7 +3679,8 @@
         },
         "fiat" : {
           "title" : "通过银行转账",
-          "description" : "通过现金转稳定币账户接收稳定币需要注册"
+          "description" : "只需发送现金即可接收稳定币。",
+          "description_legacy" : "通过现金转稳定币账户接收稳定币需要注册"
         }
       },
       "memoTag" : {
@@ -4324,13 +4353,15 @@
         "coinToSend" : "发送币种",
         "changeToReturn" : "要返还的零钱",
         "enterAmount" : "输入数额",
+        "selectSufficientCoins" : "选择足够的加密货币",
         "amountToSendInCurrency" : "发送数额为 ({{ticker}})",
         "amountInputLabel" : "发送数额",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "旧币优先（先入先出）",
             "OPTIMIZE_SIZE" : "令费用最小化（优化大小）",
-            "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）"
+            "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）",
+            "CUSTOM" : "自定义币种选择"
           }
         }
       }
@@ -8056,6 +8087,32 @@
       }
     }
   },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "帮助我们改进 Ledger",
+      "description" : "征得您的同意后，我们将收集使用数据，以改进功能并提供个性化体验。",
+      "ctaAcceptAll" : "全部接受",
+      "ctaRefuseAll" : "全部拒绝"
+    },
+    "reconfirm" : {
+      "title" : "继续改进 Ledger？",
+      "description" : "您想继续分享使用数据以帮助我们改进 Ledger 吗？这些数据用于改进功能并个性化您的体验。",
+      "ctaContinue" : "可以，继续",
+      "ctaStop" : "不想，停止"
+    },
+    "privacy" : {
+      "title" : "我们正在更新我们的隐私政策",
+      "descriptionLead" : "请查看我们的 ",
+      "descriptionLinkLabel" : "隐私政策",
+      "descriptionTrail" : " 了解发生了什么变化。您可以随时在设置中更新您的偏好。",
+      "ctaGotIt" : "知道了"
+    },
+    "setPreferences" : "设置偏好",
+    "footer" : {
+      "lead" : "您可以随时在设置中撤回您的同意。",
+      "privacyLink" : "隐私政策"
+    }
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "banner" : {
@@ -8503,6 +8560,10 @@
       "title" : "费率已过期",
       "description" : "汇率已过期。请刷新并重试。"
     },
+    "details" : {
+      "code" : "错误代码",
+      "correlationId" : "参考 ID "
+    },
     "default" : {
       "title" : "出错了",
       "description" : "请重试，如有疑问，请联系 Ledger 客服。"
@@ -8734,6 +8795,7 @@
     "bottomSheet" : {
       "title" : "无法加载某些账户数据",
       "description" : "您的资产安全无虞。出现临时同步问题。\n受影响的账户： {{accounts}}",
+      "tryToRefresh" : "尝试刷新",
       "close" : "关闭"
     }
   },
