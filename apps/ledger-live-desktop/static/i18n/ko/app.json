@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "죄송하지만 다시 시도하세요.",
       "description" : "서버가 요청을 처리할 수 없습니다. 나중에 다시 시도하거나 Ledger 지원 부서에 연락하세요.",
-      "code" : "코드: {{errorCode}}"
+      "code" : "코드",
+      "correlationId" : "참조 ID"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "보낼 코인",
       "changeToReturn" : "변경하여 돌아가기",
       "enterAmount" : "금액 입력",
+      "selectSufficientCoins" : "충분한 코인을 선택하세요",
       "amountToSendInCurrency" : "보낼 수량({{ticker}})",
       "amountInputLabel" : "전송 금액"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",
       "OPTIMIZE_SIZE" : "수수료 최소화 (사이즈 최적화)",
-      "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)"
+      "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)",
+      "CUSTOM" : "코인 직접 선택"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
             "tag" : "태그",
+            "picto" : "Picto (ledger id)",
             "url" : "URL",
             "path" : "경로"
           }
@@ -4645,6 +4649,10 @@
           "title" : "비어 있는 계정 생성",
           "desc" : "빈 계정 생성하기"
         },
+        "stablecoinGenerate" : {
+          "title" : "스테이블코인 프리셋",
+          "desc" : "주요 스테이블코인이 포함된 Ethereum, Arbitrum, Optimism, Base, Solana, Tron, Algorand 계정을 생성합니다. (네트워크당 최대 5개)"
+        },
         "currencySelector" : {
           "placeholder" : "통화 선택",
           "searchPlaceholder" : "검색",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "계좌 {{count}}개 생성",
           "generateAccounts_other" : "계좌 {{count}}개 생성",
           "generateAccountsQuick" : "계좌 {{count}}개 생성",
-          "generateEmptyAccount" : "빈 계정 생성하기"
+          "generateEmptyAccount" : "빈 계정 생성하기",
+          "generateStablecoinAccounts" : "스테이블코인 계정 {{count}}개 생성",
+          "generateStablecoinAccounts_other" : "스테이블코인 계정 {{count}}개 생성"
         },
         "alerts" : {
           "selectCurrency" : "통화를 1개 이상 선택하세요.",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "맞춤화된 경험",
-      "analytics" : "애널리틱스",
-      "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
-      "analyticsDesc" : "Ledger의 앱 사용 데이터를 수집을 허용하면 Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
+      "analytics" : "앱 성능",
+      "personalizedExpDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
+      "analyticsDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "자세히 알아보기"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Ledger Nano S™ 업그레이드 찬스",
+      "description" : "단독 기회! 최신 Ledger 사이너를 20% 할인된 가격에 만나보세요."
+    },
+    "opted_out" : {
+      "title" : "Ledger Nano S™ 업그레이드 찬스",
+      "description" : "Ledger Nano S의 메모리 용량 한계로 최신 기능, 블록체인 변경 사항 및 보안 업데이트 이용 및 액세스가 제한됩니다."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "추가하려는 계정을 선택하세요",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "암호화폐 계정",
+    "title" : "계정",
     "tableActions" : {
-      "searchAddress" : "주소 검색",
+      "searchAddress" : "이름 또는 주소로 검색",
       "addAddress" : "주소 추가"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "{{asset}} 트레이딩",
         "savings" : "{{asset}} 세이빙"
       },
-      "cta" : "확인"
+      "cta" : "확인",
+      "syncingTooltip" : "동기화 진행 중. 잠시만 기다려 주세요"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "동기화 시작",
         "stopSync" : "동기화 중지",
         "lastProcessedBlock" : "최근 처리된 블록: {{block}}, 누락된 블록: {{missing}}",
-        "lastSync" : "마지막 동기화: {{date}}"
+        "lastSync" : "마지막 동기화: {{date}}",
+        "estimatedTimeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "시작 높이",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Provable 후원",
       "balanceSelector" : {
         "private" : "비공개 수량",
         "public" : "공개 수량",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "공개 수량",
       "transparentBalanceTooltip" : "누구나 볼 수 있는 수량",
       "privateBalance" : "비공개 수량",
-      "privateBalanceTooltip" : "타인에게 공개되지 않은 수량"
+      "privateBalanceTooltip" : "타인에게 공개되지 않은 수량",
+      "syncButton" : {
+        "startSync" : "동기화 시작",
+        "stopSync" : "동기화 중지",
+        "syncAgain" : "다시 동기화하기",
+        "lastSync" : "마지막 동기화: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "보내는 계정"
       },
       "summary" : {
-        "coveredByProvable" : "Provable 후원",
         "proofGenerationWarning" : "Aleo 트랜잭션에는 증명 생성이 필요합니다. 이 작업은 시간이 다소 소요될 수 있습니다."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "비공개 수량 동기화 중({{percentage}}%)",
+        "desc" : "잠시만 기다려 주세요",
+        "error" : "비공개 수량 동기화에 실패했습니다. 나중에 다시 시도하세요."
       }
     }
   },
