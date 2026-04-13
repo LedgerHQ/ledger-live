@@ -20,6 +20,11 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     const bnFee = new BigNumber(fee || 0);
     let formattedValue;
 
+    // token_info.address is missing for unindexed contracts (e.g. LP/DEX pool tokens not in TronGrid registry)
+    // fall back to the contract_address from the raw transaction, which is always present
+    const contractAddressHex = detail.raw_data?.contract?.[0]?.parameter?.value?.contract_address;
+    const tokenAddress = token_info.address ?? (contractAddressHex ? encode58Check(contractAddressHex) : undefined);
+
     switch (type) {
       case "Approval":
         txType = "ContractApproval";
@@ -27,7 +32,7 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
         break;
       default:
         txType = "TriggerSmartContract";
-        tokenId = token_info.address ?? undefined;
+        tokenId = tokenAddress;
         formattedValue = value ? new BigNumber(value) : new BigNumber(0);
         break;
     }
@@ -42,7 +47,7 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
       date,
       type: txType,
       tokenId: tokenId,
-      tokenAddress: token_info.address,
+      tokenAddress,
       tokenType: "trc20",
       from,
       to,

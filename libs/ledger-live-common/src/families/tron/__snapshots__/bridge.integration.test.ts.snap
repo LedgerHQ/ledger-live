@@ -3,17 +3,17 @@
 exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
 [
   {
-    "balance": "27781772",
+    "balance": "1281772",
     "currencyId": "tron",
     "derivationMode": "",
     "freshAddress": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
     "freshAddressPath": "44'/195'/0'/0/0",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
     "index": 0,
-    "operationsCount": 197,
+    "operationsCount": 198,
     "pendingOperations": [],
     "seedIdentifier": "049fc19cbc6d0f525b1c6947b4a36aec74b48e15f2531c5e7e58d272c9e926786da290eb3505d8fab9c83818c1174d9bc96fd18e0527365cba6b9534d43ad5052b",
-    "spendableBalance": "27781772",
+    "spendableBalance": "1281772",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -1341,6 +1341,24 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       ],
       "type": "IN",
       "value": "6948",
+    },
+    {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
+      "blockHeight": 81693538,
+      "extra": {},
+      "fee": "1100000",
+      "hasFailed": false,
+      "hash": "33ab9666c62e1a9b52819629be9dae4c24dcea0eae414fc43b6383cf67a68f30",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-33ab9666c62e1a9b52819629be9dae4c24dcea0eae414fc43b6383cf67a68f30-OUT",
+      "recipients": [
+        "TJDH3sxRuVn3y3bv3dJH22jNdvFm5Qtke8",
+      ],
+      "senders": [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "type": "OUT",
+      "value": "26500000",
     },
     {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
