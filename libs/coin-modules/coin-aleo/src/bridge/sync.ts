@@ -61,12 +61,12 @@ export async function performPublicSync(
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
   const shouldSyncFromScratch = !initialAccount;
-  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
-  const lastBlockHeight = shouldSyncFromScratch ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
 
   const latestAccountPublicOperations = await listOperations({
     currency,
@@ -432,7 +432,7 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
  * Confirmed operations lack this field, making the comparison always false and leaving pending operations stuck.
  *
  * Instead pending operations are removed here by matching on operation id:
- * once a confirmed operation with the same id (accountId + hash + type) appears in the confirmed list,
+ * once a confirmed operation with the same id appears in the confirmed list,
  * the corresponding pending operation is no longer needed.
  */
 export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccount {
