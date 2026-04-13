@@ -2338,6 +2338,22 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
+    optionalDependencies:
+      '@opentui/core-darwin-arm64':
+        specifier: 0.1.97
+        version: 0.1.97
+      '@opentui/core-darwin-x64':
+        specifier: 0.1.97
+        version: 0.1.97
+      '@opentui/core-linux-arm64':
+        specifier: 0.1.97
+        version: 0.1.97
+      '@opentui/core-linux-x64':
+        specifier: 0.1.97
+        version: 0.1.97
+      '@opentui/core-win32-x64':
+        specifier: 0.1.97
+        version: 0.1.97
 
   apps/web-tools:
     dependencies:

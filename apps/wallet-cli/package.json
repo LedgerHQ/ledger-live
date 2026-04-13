@@ -51,6 +51,13 @@
     "yocto-spinner": "0.2.0",
     "zod": "catalog:"
   },
+  "optionalDependencies": {
+    "@opentui/core-darwin-arm64": "0.1.97",
+    "@opentui/core-darwin-x64": "0.1.97",
+    "@opentui/core-linux-arm64": "0.1.97",
+    "@opentui/core-linux-x64": "0.1.97",
+    "@opentui/core-win32-x64": "0.1.97"
+  },
   "devDependencies": {
     "@oxlint/binding-darwin-arm64": "1.51.0",
     "@oxlint/binding-darwin-x64": "1.51.0",
