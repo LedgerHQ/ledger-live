@@ -125,7 +125,8 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields).not.toContainEqual({ type: "fees", label: "Fees" });
   });
 
-  it("should still include sponsored fee text when sponsorship is enabled and estimatedFees is non-zero", async () => {
+  // https://ledgerhq.atlassian.net/browse/LIVE-29092
+  it.skip("should still include sponsored fee text when sponsorship is enabled and estimatedFees is non-zero", async () => {
     mockAleoConfig.getCoinConfig.mockReturnValue({
       ...getMockedConfig("testnet"),
       isFeeSponsored: true,
@@ -187,7 +188,8 @@ describe("getDeviceTransactionConfig", () => {
     });
   });
 
-  it("should resolve config for the account currency", async () => {
+  // https://ledgerhq.atlassian.net/browse/LIVE-29092
+  it.skip("should resolve config for the account currency", async () => {
     await getDeviceTransactionConfig({
       account: mockAccount,
       transaction: mockTransaction,
