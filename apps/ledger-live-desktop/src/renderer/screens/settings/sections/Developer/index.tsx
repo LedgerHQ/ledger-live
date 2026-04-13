@@ -33,6 +33,7 @@ import EnvVariableOverride from "./EnvVariableOverride";
 import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
+import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
 import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
@@ -142,6 +143,7 @@ const Default = () => {
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
+      <AppJsonImporter />
     </Body>
   );
 };
