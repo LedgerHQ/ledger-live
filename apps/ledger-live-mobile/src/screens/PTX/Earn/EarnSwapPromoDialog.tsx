@@ -11,14 +11,25 @@ const SPOT_APPEARANCE = {
   success: "check",
 } as const;
 
-export function EarnActionDialog() {
+export function EarnSwapPromoDialog() {
   const dialog = useSelector(earnActionDialogSelector);
 
   const resolvedRef = useRef(false);
   const isRequestingToBeOpened = !!dialog;
 
   React.useEffect(() => {
-    if (dialog) resolvedRef.current = false;
+    if (!dialog) {
+      return;
+    }
+
+    resolvedRef.current = false;
+
+    return () => {
+      if (!resolvedRef.current) {
+        resolvedRef.current = true;
+        resolveActionDialog(false);
+      }
+    };
   }, [dialog]);
 
   const handleClose = useCallback(() => {
@@ -59,7 +70,7 @@ export function EarnActionDialog() {
       enableDynamicSizing
     >
       <BottomSheetView>
-        <BottomSheetHeader onClose={handleClose} />
+        <BottomSheetHeader />
         <Box lx={{ alignItems: "center", padding: "s16", paddingBottom: "s24", gap: "s24" }}>
           <Spot appearance={spotAppearance} size={72} />
           <Box lx={{ alignItems: "center", gap: "s8" }}>

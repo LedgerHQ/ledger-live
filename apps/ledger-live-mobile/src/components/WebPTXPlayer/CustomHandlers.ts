@@ -522,15 +522,20 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
 type ActionDialogResolver = (result: { confirmed: boolean }) => void;
 
 let pendingActionDialogResolver: ActionDialogResolver | null = null;
+let actionDialogDispatch: Dispatch | null = null;
 
 export function resolveActionDialog(confirmed: boolean) {
   const resolver = pendingActionDialogResolver;
   pendingActionDialogResolver = null;
+  if (actionDialogDispatch) {
+    actionDialogDispatch(makeSetEarnActionDialogAction(undefined));
+    actionDialogDispatch = null;
+  }
   if (resolver) resolver({ confirmed });
 }
 
 export function createOpenActionDialogHandler(dispatch: Dispatch) {
-  return async (request: {
+  return (request: {
     params?: {
       title: string;
       description: string;
@@ -550,13 +555,11 @@ export function createOpenActionDialogHandler(dispatch: Dispatch) {
       pendingActionDialogResolver = null;
     }
 
-    const result = await new Promise<{ confirmed: boolean }>(resolve => {
+    return new Promise<{ confirmed: boolean }>(resolve => {
       pendingActionDialogResolver = resolve;
+      actionDialogDispatch = dispatch;
       dispatch(makeSetEarnActionDialogAction(params));
     });
-
-    dispatch(makeSetEarnActionDialogAction(undefined));
-    return result;
   };
 }
 

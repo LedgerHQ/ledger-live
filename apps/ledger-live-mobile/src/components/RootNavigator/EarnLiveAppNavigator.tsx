@@ -17,7 +17,7 @@ import { EarnMenuBottomSheet } from "~/screens/PTX/Earn/EarnMenuBottomSheet";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
 import { EarnInfoBottomSheet } from "~/screens/PTX/Earn/EarnInfoBottomSheet";
-import { EarnActionDialog } from "~/screens/PTX/Earn/EarnSwapPromoDialog";
+import { EarnSwapPromoDialog } from "~/screens/PTX/Earn/EarnSwapPromoDialog";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
@@ -179,7 +179,7 @@ const Earn = (props: NavigationProps) => {
       <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
       <EarnInfoBottomSheet />
-      <EarnActionDialog />
+      <EarnSwapPromoDialog />
       <EarnMenuDrawer navigation={navigation} />
       <EarnMenuBottomSheet navigation={navigation} />
     </>
