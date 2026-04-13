@@ -67,6 +67,7 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
       transaction: mockTransaction,
       setTransaction: jest.fn(),
       updateTransaction: jest.fn(),
+      updateAccount: jest.fn(),
       account,
       parentAccount: null,
       setAccount: jest.fn(),
@@ -302,6 +303,7 @@ describe("Cardano Undelegate Flow Integration", () => {
         setTransaction: jest.fn(),
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         updateTransaction: jest.fn(),
+        updateAccount: jest.fn(),
         account: getMockAccountData({ dRepHex: "dRepHex1" }) as CardanoAccount,
         parentAccount: null,
         setAccount: jest.fn(),
