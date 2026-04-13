@@ -1,5 +1,4 @@
 import CommonPage from "../common.page";
-import { delay } from "../../helpers/commonHelpers";
 import { Step } from "jest-allure2-reporter/api";
 
 export default class DeviceValidationPage extends CommonPage {
@@ -33,25 +32,5 @@ export default class DeviceValidationPage extends CommonPage {
   @Step("Expect fees in device validation screen")
   async expectFees(fees: string) {
     await detoxExpect(this.validationFees()).toHaveText(fees);
-  }
-
-  @Step("Wait for swap device validation and retry")
-  async waitDeviceValidationAndRetry() {
-    const WAIT_TIMEOUT = 30000;
-    const CHECK_INTERVAL = 1000;
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < WAIT_TIMEOUT) {
-      if (await IsIdVisible(this.validationAmountId, 100)) {
-        return;
-      }
-      if (await IsIdVisible(this.proceedButtonId, 100)) {
-        await tapById(this.proceedButtonId);
-        return;
-      }
-      await delay(CHECK_INTERVAL);
-    }
-
-    throw new Error(`Device validation timed out after ${WAIT_TIMEOUT / 1000} seconds.`);
   }
 }

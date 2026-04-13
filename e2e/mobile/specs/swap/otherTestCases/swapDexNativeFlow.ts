@@ -55,7 +55,6 @@ export function runSwapDexNativeFlow(
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       await app.send.summaryContinue();
 
-      await app.deviceValidation.waitDeviceValidationAndRetry();
       await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
       await app.swap.waitForSwapHeaderCompleted();
     });
