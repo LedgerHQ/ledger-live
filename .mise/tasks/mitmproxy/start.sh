@@ -131,13 +131,12 @@ function provision_emulator_cert() {
 	log_success "AVD directory found"
 
 	log_info "Emulator binary: ${EMULATOR_BIN}"
-	log_info "Launching AVD '${AVD_NAME}' on port ${PORT} with http-proxy 127.0.0.1:${usage_port}"
+	log_info "Launching AVD '${AVD_NAME}' on port ${PORT} (proxy configured post-boot via adb reverse)"
 	"${EMULATOR_BIN}" \
 		-avd "${AVD_NAME}" \
 		-port "${PORT}" \
 		-no-window -gpu swiftshader_indirect -noaudio -no-boot-anim \
 		-camera-back none \
-		-http-proxy "http://127.0.0.1:${usage_port}" \
 		&>/dev/null &
 	log_info "Emulator process launched (PID: $!)"
 
@@ -217,6 +216,33 @@ function provision_emulator_cert() {
 		done
 		echo 'Zygote namespace bind-mounts complete'
 	"
+	# Route the emulator's HTTP/HTTPS through mitmproxy using the Proxyman-style
+	# approach: adb reverse creates a reliable TCP tunnel from the emulator's own
+	# loopback (127.0.0.1:PORT) to the host's mitmproxy port, completely bypassing
+	# the QEMU virtual network. The Android system proxy is then pointed at that
+	# loopback address.
+	#
+	# Why this is better than -http-proxy:
+	#   -http-proxy intercepts ALL TCP at the QEMU level — including connections the
+	#   app makes to its own 127.0.0.1 (e.g. Detox server, ADB-reversed ports). Those
+	#   get misrouted to the runner host which has no such service, causing Errno 111
+	#   timeouts that disrupt the test run.
+	#
+	# With adb reverse + system proxy:
+	#   - App HTTP/HTTPS → 127.0.0.1:PORT (emulator loopback)
+	#                    → ADB reverse tunnel → host mitmproxy  ✓
+	#   - Direct socket connections to 127.0.0.1 (non-HTTP, e.g. Detox WebSocket)
+	#     bypass the HTTP proxy entirely — they are raw TCP, not CONNECT  ✓
+	#   - Connections to 10.0.2.2 (host alias) also bypass the system proxy  ✓
+	log_info "Setting up adb reverse tunnel: emulator 127.0.0.1:${usage_port} → host mitmproxy"
+	adb -s "${SERIAL}" reverse tcp:"${usage_port}" tcp:"${usage_port}"
+	log_success "adb reverse tunnel established"
+
+	log_info "Configuring Android system proxy to 127.0.0.1:${usage_port}"
+	adb -s "${SERIAL}" shell settings put global http_proxy "127.0.0.1:${usage_port}"
+	adb -s "${SERIAL}" shell settings put global global_http_proxy_exclusion_list "localhost,127.0.0.1,10.0.2.2,::1"
+	log_success "Android system proxy configured"
+
 	log_success "Certificate and proxy provisioned to AVD '${AVD_NAME}' (${SERIAL}) — emulator left running for Detox"
 }
 
