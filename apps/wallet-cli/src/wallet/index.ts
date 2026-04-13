@@ -47,7 +47,7 @@ export class WalletAdapter {
    * reliability) that need investigation before re-enabling. `cursor` is not supported
    * in bridge mode (bridge always returns the full history); `limit` slices the result.
    *
-   * TODO: re-enable Alpaca once validated:
+   * Re-enable Alpaca once validated:
    *   const { family } = getCryptoCurrencyById(descriptor.currencyId);
    *   if (WalletAdapter.alpacaFamilies.has(family))
    *     return this.alpaca.getOperations(descriptor, options);
@@ -57,7 +57,7 @@ export class WalletAdapter {
     options?: { cursor?: string; limit?: number },
   ): Promise<OperationsPage> {
     const ops = await this.bridge.getOperations(descriptor);
-    const limited = options?.limit != null ? ops.slice(0, options.limit) : ops;
+    const limited = options?.limit == null ? ops : ops.slice(0, options.limit);
     return { operations: limited, nextCursor: undefined };
   }
 

@@ -116,8 +116,8 @@ export function parseV1(input: string): AccountDescriptorV1 {
   }
 
   // The path is the last segment (starts with "m/"); everything before it is the xpub/address.
-  const path = rest[rest.length - 1];
-  const xpubOrAddress = rest.slice(0, rest.length - 1).join(SEP);
+  const path = rest.at(-1)!;
+  const xpubOrAddress = rest.slice(0, -1).join(SEP);
 
   const network: Network = { name: networkName, env: networkEnv };
 
