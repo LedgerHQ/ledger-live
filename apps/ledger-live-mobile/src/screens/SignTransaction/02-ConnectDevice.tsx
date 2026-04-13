@@ -66,6 +66,15 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
     [onSuccess, navigation, route.params],
   );
 
+  const swapSpeculosBypass = isSwapDisableAppsInstall();
+  const connectAppDependencies = useMemo(
+    () =>
+      swapSpeculosBypass
+        ? []
+        : [{ currency: mainAccount.currency }, ...dependenciesToAppRequests(dependencies)],
+    [swapSpeculosBypass, mainAccount.currency, dependencies],
+  );
+
   const request = useMemo(
     () => ({
       account,
@@ -77,21 +86,18 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
       transaction: transaction!,
       status,
       tokenCurrency,
-      dependencies: isSwapDisableAppsInstall() ? [] : [
-        { currency: mainAccount.currency },
-        ...dependenciesToAppRequests(dependencies),
-      ],
-      requireLatestFirmware: !isSwapDisableAppsInstall(),
+      dependencies: connectAppDependencies,
+      requireLatestFirmware: !swapSpeculosBypass,
       isACRE: route.params.isACRE,
     }),
     [
       account,
       appName,
-      dependencies,
-      mainAccount.currency,
+      connectAppDependencies,
       parentAccount,
       route.params.isACRE,
       status,
+      swapSpeculosBypass,
       tokenCurrency,
       transaction,
     ],
