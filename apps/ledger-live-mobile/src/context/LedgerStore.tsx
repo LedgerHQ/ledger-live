@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactNode, useCallback, useRef } from "react";
+import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -9,7 +9,6 @@ import {
   listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
-import type { WaitForAppReadyProps } from "LLM/contexts/WaitForAppReady";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
@@ -41,23 +40,20 @@ import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/s
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import type { SettingsState } from "~/reducers/types";
-import type { AccountRaw } from "@ledgerhq/types-live";
 import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
-  type PersistedCAL,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
 
 interface Props {
   onInitFinished: () => void;
-  children: (
-    props: {
-      ready: boolean;
-      initialCountervalues?: CounterValuesStateRaw;
-    } & WaitForAppReadyProps,
-  ) => ReactNode;
+  children: (props: {
+    ready: boolean;
+    initialCountervalues?: CounterValuesStateRaw;
+    currencyInitialized: boolean;
+  }) => ReactNode;
   store: Store;
 }
 
@@ -78,9 +74,6 @@ async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): P
 }
 
 const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store }) => {
-  // Defer the accounts import until WaitForAppReady as it blocks the js thread too early during the app startup
-  const importAccounts = useRef(async () => {});
-
   const [ready, setReady] = useState(false);
   const [initialCountervalues, setInitialCountervalues] = useState<
     CounterValuesStateRaw | undefined
@@ -130,11 +123,30 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       store.dispatch(importSettings(settingsData));
 
-      importAccounts.current = getImportAccounts(
-        store,
-        hydrateCryptoAssets(store, cryptoAssetsCache),
-        accountsData,
-      );
+      // Hydrate persisted crypto assets tokens BEFORE importing accounts
+      // This ensures tokens are available when decoding accounts (which now uses findTokenById)
+      // Cross-caching is automatic: tokens are cached under both ID and address lookups
+      if (cryptoAssetsCache?.tokens) {
+        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
+          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
+          );
+        }
+      }
+
+      // Handle account import with error recovery for async issues
+      try {
+        store.dispatch(await importAccountsRaw(accountsData));
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to import accounts during initialization:", error);
+        // Continue with app initialization even if account import fails
+        // This prevents blocking deeplink navigation
+      }
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
@@ -224,12 +236,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
   return (
     <Provider store={store}>
       <InitialQueriesProvider>
-        {children({
-          ready,
-          initialCountervalues,
-          currencyInitialized,
-          importAccounts: importAccounts.current,
-        })}
+        {children({ ready, initialCountervalues, currencyInitialized })}
       </InitialQueriesProvider>
     </Provider>
   );
@@ -296,40 +303,4 @@ async function updateSupportedCountervalues(store: Store, settingsData: Partial<
     settingsData.counterValue = settingsState.counterValue;
     store.dispatch(importSettings(settingsData));
   }
-}
-
-// Hydrate persisted crypto assets tokens BEFORE importing accounts
-// This ensures tokens are available when decoding accounts (which now uses findTokenById)
-// Cross-caching is automatic: tokens are cached under both ID and address lookups
-async function hydrateCryptoAssets(store: Store, cryptoAssetsCache: PersistedCAL | null) {
-  if (cryptoAssetsCache?.tokens) {
-    if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
-      const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-      await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL); // TODO check if it can be made non-blocking
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
-      );
-    }
-  }
-}
-
-// Handle account import with error recovery for async issues
-function getImportAccounts(
-  store: Store,
-  cryptoAssetHydration: Promise<void>,
-  accountsData: { active: Array<{ data: AccountRaw }> },
-) {
-  return async () => {
-    try {
-      await cryptoAssetHydration; // Ensure crypto assets are hydrated before importing accounts
-      store.dispatch(await importAccountsRaw(accountsData));
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to import accounts during initialization:", error);
-      // Continue with app initialization even if account import fails
-      // This prevents blocking deeplink navigation
-    }
-  };
 }
