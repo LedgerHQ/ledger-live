@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/coin-multiversx/preload";
 import { randomizeProviders } from "@ledgerhq/coin-multiversx/helpers/randomizeProviders";
 import type { MultiversXProvider } from "./types";
-import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS, MIN_DELEGATION_AMOUNT } from "./constants";
+import { MIN_DELEGATION_AMOUNT } from "./constants";
 
 export function useMultiversXPreloadData() {
   const [state, setState] = useState(getCurrentMultiversXPreloadData);
@@ -51,10 +51,12 @@ export function useSearchValidators(validators: MultiversXProvider[], search: st
       });
     };
 
-    // Sort the providers such that Figment by Ledger will always be first.
-    const sort = (validator: MultiversXProvider) =>
-      validator.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS ? -1 : 1;
-    const items = validators.sort(sort).map(disable);
+    // Sort by total active stake (highest first).
+    const items = [...validators]
+      .sort((a, b) =>
+        new BigNumber(b.totalActiveStake).comparedTo(new BigNumber(a.totalActiveStake)),
+      )
+      .map(disable);
 
     return search ? items.filter(filter) : items;
   }, [validators, search]);

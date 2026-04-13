@@ -54,7 +54,7 @@ const e2eDelegationAccountsWithoutBroadcast = [
     xrayTicket: "B2CQA-3023",
   },
   {
-    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
+    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
     xrayTicket: "B2CQA-3020",
   },
 ];
@@ -77,7 +77,7 @@ const validators = [
     xrayTicket: "B2CQA-2766",
   },
   {
-    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "Ledger by Figment"),
+    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "1"),
     xrayTicket: "B2CQA-2767",
   },
   {
@@ -218,7 +218,11 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
           await app.delegate.openSearchProviderModal();
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
-        } else if (account.delegate.account.currency.name == Currency.APT.name) {
+        } else if (
+          [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
+            account.delegate.account.currency.name,
+          )
+        ) {
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
         } else {
@@ -396,12 +400,19 @@ for (const validator of validators) {
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
-        await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-        if (validator.delegate.account.currency.name == Currency.SOL.name) {
+        if (validator.delegate.account.currency.name == Currency.MULTIVERS_X.name) {
           await app.delegate.verifyContinueDisabled();
-          await app.delegate.selectProviderByName(validator.delegate.provider);
-          await app.delegate.verifyProviderTC(validator.delegate.provider);
-        } else await app.delegate.verifyContinueEnabled();
+          await app.delegate.checkValidatorListIsVisible();
+          await app.delegate.selectProviderOnRow(Number.parseInt(validator.delegate.provider, 10));
+          await app.delegate.closeProviderList(Number.parseInt(validator.delegate.provider, 10));
+        } else {
+          await app.delegate.verifyFirstProviderName(validator.delegate.provider);
+          if (validator.delegate.account.currency.name == Currency.SOL.name) {
+            await app.delegate.verifyContinueDisabled();
+            await app.delegate.selectProviderByName(validator.delegate.provider);
+            await app.delegate.verifyProviderTC(validator.delegate.provider);
+          } else await app.delegate.verifyContinueEnabled();
+        }
         await app.delegate.verifyProvider(1);
         await app.delegate.openSearchProviderModal();
         await app.delegate.checkValidatorListIsVisible();

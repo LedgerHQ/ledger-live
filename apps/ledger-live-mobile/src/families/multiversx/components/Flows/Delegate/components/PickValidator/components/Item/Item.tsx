@@ -40,7 +40,11 @@ const Item = (props: ItemPropsType) => {
    */
 
   return (
-    <Touchable event="DelegationFlowChosevalidator" onPress={() => onSelect(item)}>
+    <Touchable
+      event="DelegationFlowChosevalidator"
+      onPress={() => onSelect(item)}
+      testID={`provider-row-${name}`}
+    >
       <View style={styles.validator}>
         <Circle crop={true} size={32}>
           {MULTIVERSX_LEDGER_VALIDATOR_ADDRESS === item.contract ? (
