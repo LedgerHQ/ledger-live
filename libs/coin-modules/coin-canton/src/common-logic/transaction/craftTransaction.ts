@@ -20,7 +20,7 @@ export async function craftTransaction(
     instrumentAdmin?: string;
   },
 ): Promise<{
-  nativeTransaction: PrepareTransferResponse;
+  nativeTransaction: PrepareTransferResponse["json"];
   serializedTransaction: string;
   hash: string;
 }> {

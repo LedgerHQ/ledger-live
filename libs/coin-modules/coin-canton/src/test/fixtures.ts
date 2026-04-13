@@ -5,6 +5,7 @@ import {
   encodeAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -27,7 +28,6 @@ import {
   createMockSigner as createCantonMockSigner,
   generateMockKeyPair,
 } from "./cantonTestUtils";
-import prepareTransferMock from "./prepare-transfer.json";
 
 const DEFAULT_VALUES = {
   INSTRUMENT: {
@@ -200,9 +200,7 @@ export const createMockTransaction = createFactory<Transaction>({
 
 export const createMockPrepareTransferResponse = createFactory<PrepareTransferResponse>({
   hash: "test-hash",
-  // TODO: This import will be available after PR #2 is merged
-  // json: prepareTransferMock.json,
-  json: prepareTransferMock,
+  json: prepareTransferMock.json,
   serialized: "serialized-transaction",
   step: { type: "single-step" },
 });

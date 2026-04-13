@@ -8,15 +8,14 @@
  * The mock signer implements canonical hash algorithm used by the Canton app.
  */
 
-// TODO: This import will be available after PR #2 is merged
-// import * as transactionProto from "@ledgerhq/hw-app-canton/lib/types/transaction-proto.json";
 import crypto from "crypto";
-import * as protobuf from "protobufjs";
+import {
+  decodeDeviceDamlTransaction,
+  decodeDeviceMetadata,
+  decodeNode,
+  decodeInputContract,
+} from "@ledgerhq/hw-app-canton";
 import { CantonPreparedTransaction, CantonUntypedVersionedMessage } from "../types/signer";
-// Temporary fallback - will be removed after PR #2
-import * as transactionProto from "../types/transaction-proto.json";
-
-const root: { [key: string]: any } = protobuf.Root.fromJSON(transactionProto) || {};
 
 // Constants from app-canton
 const PREPARED_TRANSACTION_HASH_PURPOSE = Buffer.from([0x00, 0x00, 0x00, 0x30]);
@@ -255,10 +254,7 @@ function computeCantonHash(purpose: number, data: Buffer): Buffer {
  */
 function computeCanonicalHash(data: CantonPreparedTransaction): Buffer {
   // Step 1: Parse DAML transaction
-  const DeviceDamlTransaction = root.lookupType(
-    "com.daml.ledger.api.v2.interactive.DeviceDamlTransaction",
-  );
-  const damlTx = DeviceDamlTransaction.decode(data.damlTransaction);
+  const damlTx = decodeDeviceDamlTransaction(data.damlTransaction);
 
   // Step 2: Hash transaction (hash_transaction)
   const txHash = hashTransaction(damlTx);
@@ -273,8 +269,7 @@ function computeCanonicalHash(data: CantonPreparedTransaction): Buffer {
   const finalTxHash = combinedTxHash.digest();
 
   // Step 5: Hash metadata (hash_metadata)
-  const DeviceMetadata = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceMetadata");
-  const metadata = DeviceMetadata.decode(data.metadata);
+  const metadata = decodeDeviceMetadata(data.metadata);
   const metadataHash = hashMetadata(metadata, data.inputContracts);
 
   // Step 6: Finalize hash (finalize_hash)
@@ -309,8 +304,7 @@ function hashNodes(damlTx: any, nodes: Uint8Array[]): Buffer {
 
   // Process each node
   for (const nodeBytes of nodes) {
-    const Node = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node");
-    const node = Node.decode(nodeBytes);
+    const node = decodeNode(nodeBytes);
 
     // Check if this is a root node
     const isRootNode = damlTx.roots?.includes(node.nodeId);
@@ -632,10 +626,7 @@ function hashMetadata(metadata: any, inputContracts: Uint8Array[]): Buffer {
  * Implements hash_input_contract from canonical_hash.c
  */
 function hashInputContract(contract: Uint8Array): Buffer {
-  const InputContract = root.lookupType(
-    "com.daml.ledger.api.v2.interactive.DeviceMetadata.InputContract",
-  );
-  const contractData = InputContract.decode(contract);
+  const contractData = decodeInputContract(contract);
 
   const hash = crypto.createHash("sha256");
 
