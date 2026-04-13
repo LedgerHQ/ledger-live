@@ -59,11 +59,11 @@ describe("listOperations", () => {
 
     const result = await listOperations(mockAddress, defaultOptions);
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
-      mockAddress,
-      {},
-      { limit: 200, minTimestamp: 0, order: "asc" },
-    );
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+      limit: 200,
+      minTimestamp: 0,
+      order: "asc",
+    });
     expect(result.items).toHaveLength(2);
     expect(result.next).toBeUndefined();
   });
@@ -411,16 +411,12 @@ describe("listOperations", () => {
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
-      mockAddress,
-      {},
-      {
-        limit: 200,
-        minTimestamp,
-        maxTimestamp: cursorTimestamp,
-        order: "desc",
-      },
-    );
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+      limit: 200,
+      minTimestamp,
+      maxTimestamp: cursorTimestamp,
+      order: "desc",
+    });
   });
 
   it("should not pass maxTimestamp for desc order without cursor", async () => {
@@ -437,16 +433,12 @@ describe("listOperations", () => {
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
-      mockAddress,
-      {},
-      {
-        limit: 200,
-        minTimestamp,
-        maxTimestamp: undefined,
-        order: "desc",
-      },
-    );
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+      limit: 200,
+      minTimestamp,
+      maxTimestamp: undefined,
+      order: "desc",
+    });
   });
 
   it("should pass cursor timestamp as minTimestamp for asc order pagination", async () => {
@@ -479,15 +471,11 @@ describe("listOperations", () => {
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
-      mockAddress,
-      {},
-      {
-        limit: 200,
-        minTimestamp: cursorTimestamp,
-        maxTimestamp: undefined,
-        order: "asc",
-      },
-    );
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+      limit: 200,
+      minTimestamp: cursorTimestamp,
+      maxTimestamp: undefined,
+      order: "asc",
+    });
   });
 });

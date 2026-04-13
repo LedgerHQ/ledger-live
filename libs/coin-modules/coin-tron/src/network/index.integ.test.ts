@@ -1,13 +1,11 @@
 import BigNumber from "bignumber.js";
 import expect from "expect";
 import coinConfig from "../config";
-import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
 import {
   craftStandardTransaction,
   defaultFetchParams,
   fetchTronAccount,
   fetchTronAccountTxs,
-  fetchTronTxDetail,
   getTronAccountNetwork,
 } from ".";
 
@@ -36,7 +34,6 @@ describe("TronGrid", () => {
         const results = await fetchTronAccountTxs(
           address,
           txs => txs.length < 100,
-          {},
           defaultFetchParams,
         );
 
@@ -87,22 +84,6 @@ describe("TronGrid", () => {
       ]) {
         expect(result).toHaveProperty(p);
       }
-    });
-  });
-
-  describe("fetchTronTxDetail", () => {
-    it("retrieves details for a transaction", async () => {
-      const elts =
-        await fetchTronTxs.TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre[
-          "428XjpfuumKvTadJgnfch1qNene43UrokeHgYu1CauQWzY8x1JTvnfoGTGYrt8M2giksdRcDPRBCQbYPdQHDqfzKJkoYpHJNZtZgNi4UW2RVF4YQ2Dk52RKuFD4utVXCUQjLE425frExMYWyDNNvb4tU3QP9i57WaAManuaFucAZGhq16q5oSXi7CX1NnrToboCQqpgWhUS8KXNi96DmrG9i99tNgxpHKML"
-        ].data;
-      const txInfo = {};
-      for (const { txID } of elts) {
-        const result = await fetchTronTxDetail(txID);
-        Object.assign(txInfo, { [txID]: result });
-      }
-
-      expect(Object.keys(txInfo).length).toEqual(5);
     });
   });
 });
