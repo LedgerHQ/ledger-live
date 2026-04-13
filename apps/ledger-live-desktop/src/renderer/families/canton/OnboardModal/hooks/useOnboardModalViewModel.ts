@@ -1,8 +1,6 @@
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -26,9 +24,8 @@ export function useOnboardModalViewModel({
   accountToReonboard,
   navigationSnapshot,
 }: UserProps) {
-  const device = useSelector(getCurrentDevice) as Device | null;
+  const device = useSelector(getCurrentDevice);
   const existingAccounts = useSelector(accountsSelector);
-  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
 
   const [stepId, setStepId] = useState<StepId>(StepId.ONBOARD);
 
@@ -40,17 +37,13 @@ export function useOnboardModalViewModel({
 
   const {
     onboardingStatus,
-    authorizeStatus,
     onboardingResult,
     error,
     setOnboardingStatus,
-    setAuthorizeStatus,
     setOnboardingResult,
     setOnboardingError,
-    setAuthorizationError,
     resetError,
     resetOnboarding,
-    resetAuthorization,
   } = useOnboardingState();
 
   const creatableAccount = useMemo(
@@ -81,19 +74,16 @@ export function useOnboardModalViewModel({
     transitionTo(StepId.FINISH);
   }, [transitionTo]);
 
-  const { startOnboarding, authorizePreapproval, unsubscribe } = useCantonBridge({
+  const { startOnboarding, unsubscribe } = useCantonBridge({
     bridge,
     currency,
     device,
     accountToOnboard: creatableAccount,
     setOnboardingStatus,
-    setAuthorizeStatus,
     setOnboardingResult,
     setOnboardingError,
-    setAuthorizationError,
     resetError,
     onOnboardingComplete,
-    skipPreapprovalStep: skipCantonPreapprovalStep?.enabled ?? false,
   });
 
   const { handleAddAccounts, handleAddMore } = useOnboardingNavigation({
@@ -116,23 +106,13 @@ export function useOnboardModalViewModel({
     resetOnboarding();
   }, [unsubscribe, resetOnboarding]);
 
-  const handleRetryPreapproval = useCallback(() => {
-    unsubscribe();
-    resetAuthorization();
-  }, [unsubscribe, resetAuthorization]);
-
-  const handleAuthorizePreapproval = useCallback(() => {
-    if (!onboardingResult) return;
-    authorizePreapproval(onboardingResult);
-  }, [onboardingResult, authorizePreapproval]);
-
   useEffect(() => {
     return () => {
       unsubscribe();
     };
   }, [unsubscribe]);
 
-  const isProcessing = isStatusProcessing(onboardingStatus) || isStatusProcessing(authorizeStatus);
+  const isProcessing = isStatusProcessing(onboardingStatus);
 
   return {
     device,
@@ -144,31 +124,24 @@ export function useOnboardModalViewModel({
     importableAccounts,
     isProcessing,
     onboardingStatus,
-    authorizeStatus,
     onboardingResult,
     error,
     isReonboarding: isReonboarding ?? false,
-    skipPreapprovalStep: skipCantonPreapprovalStep?.enabled ?? false,
 
     transitionTo,
     onAddAccounts: handleAddAccounts,
     onAddMore: handleAddMore,
     onOnboardAccount: handleOnboardAccount,
     onRetryOnboardAccount: handleRetryOnboardAccount,
-    onRetryPreapproval: handleRetryPreapproval,
-    onAuthorizePreapproval: handleAuthorizePreapproval,
   };
 }
 
-const PROCESSING_STATUSES = new Set<OnboardStatus | AuthorizeStatus>([
+const PROCESSING_STATUSES = new Set<OnboardStatus>([
   OnboardStatus.PREPARE,
   OnboardStatus.SIGN,
   OnboardStatus.SUBMIT,
-  AuthorizeStatus.PREPARE,
-  AuthorizeStatus.SIGN,
-  AuthorizeStatus.SUBMIT,
 ]);
 
-export function isStatusProcessing(status: OnboardStatus | AuthorizeStatus): boolean {
+export function isStatusProcessing(status: OnboardStatus): boolean {
   return PROCESSING_STATUSES.has(status);
 }

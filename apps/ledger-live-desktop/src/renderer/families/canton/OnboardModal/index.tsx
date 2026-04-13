@@ -4,7 +4,6 @@ import invariant from "invariant";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { type Step } from "~/renderer/components/Stepper";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
-import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import { useOnboardModalViewModel } from "./hooks/useOnboardModalViewModel";
 import type { UserProps, StepProps, StepId } from "./types";
@@ -23,17 +22,13 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
     isProcessing,
     onboardingResult,
     onboardingStatus,
-    authorizeStatus,
     error,
     isReonboarding,
-    skipPreapprovalStep,
     transitionTo,
     onAddAccounts,
     onAddMore,
     onOnboardAccount,
     onRetryOnboardAccount,
-    onRetryPreapproval,
-    onAuthorizePreapproval,
   } = viewModel;
 
   invariant(device, "device is required");
@@ -47,12 +42,6 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
         label: <Trans i18nKey="families.canton.addAccount.onboard.title" />,
         component: StepOnboard,
         footer: StepOnboardFooter,
-      },
-      {
-        id: StepIdEnum.AUTHORIZE,
-        label: <Trans i18nKey="families.canton.addAccount.auth.title" />,
-        component: StepAuthorize,
-        footer: StepAuthorizeFooter,
       },
       {
         id: StepIdEnum.FINISH,
@@ -81,16 +70,12 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
     isProcessing,
     onboardingResult,
     onboardingStatus,
-    authorizeStatus,
     error,
     isReonboarding,
-    skipPreapprovalStep,
     onAddAccounts,
     onAddMore,
     onOnboardAccount,
     onRetryOnboardAccount,
-    onRetryPreapproval,
-    onAuthorizePreapproval,
   };
 
   return (

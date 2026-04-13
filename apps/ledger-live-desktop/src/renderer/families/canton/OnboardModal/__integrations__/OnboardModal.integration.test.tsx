@@ -24,8 +24,8 @@ import {
 } from "../__tests__/testUtils";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
-  withDevice: jest.fn(() => (job: (transport: unknown) => unknown) =>
-    job({ decorateAppAPIMethods: jest.fn() }),
+  withDevice: jest.fn(
+    () => (job: (transport: unknown) => unknown) => job({ decorateAppAPIMethods: jest.fn() }),
   ),
 }));
 
@@ -86,10 +86,6 @@ function cantonDevnetCurrency(): CryptoCurrency {
   return currency;
 }
 
-const cantonIntegSettings = {
-  ...SETTINGS_INITIAL_STATE,
-};
-
 function mergeCantonIntegInitialState(
   device: ReturnType<typeof createMockDevice>,
   extra: Record<string, unknown> & { settings?: typeof SETTINGS_INITIAL_STATE } = {},
@@ -97,10 +93,10 @@ function mergeCantonIntegInitialState(
   const { settings: extraSettings, ...rest } = extra;
   return {
     ...generateOnboardModalState(device),
-    ...withFlagOverrides({ cantonSkipPreapprovalStep: { enabled: true } }),
+    ...withFlagOverrides({ llmModularDrawer: { enabled: false } }),
     ...rest,
     settings: {
-      ...cantonIntegSettings,
+      ...SETTINGS_INITIAL_STATE,
       ...extraSettings,
     },
   };

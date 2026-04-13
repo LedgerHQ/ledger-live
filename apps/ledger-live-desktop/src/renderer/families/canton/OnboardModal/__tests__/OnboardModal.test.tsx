@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { cleanup, render, screen, waitFor } from "tests/testSetup";
 import { of, throwError } from "rxjs";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import OnboardModal from "../index";
@@ -93,25 +93,7 @@ describe("OnboardModal", () => {
     });
   });
 
-  it("should show finish step when onboarding succeeds with skip preapproval", async () => {
-    const completedAccount = createMockAccount({ freshAddress: "completed-addr" });
-    mockOnboardAccount.mockReturnValue(of({ partyId: "test-party", account: completedAccount }));
-
-    const { user } = render(<OnboardModal {...defaultProps} />, {
-      initialState: {
-        ...initialState,
-        ...withFlagOverrides({ cantonSkipPreapprovalStep: { enabled: true } }),
-      },
-    });
-
-    await user.click(screen.getByRole("button", { name: /continue/i }));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("add-accounts-finish-close-button")).toBeInTheDocument();
-    });
-  });
-
-  it("should transition to authorize step after onboarding success", async () => {
+  it("should show finish step when onboarding succeeds", async () => {
     const completedAccount = createMockAccount({ freshAddress: "completed-addr" });
     mockOnboardAccount.mockReturnValue(of({ partyId: "test-party", account: completedAccount }));
 
@@ -119,11 +101,8 @@ describe("OnboardModal", () => {
 
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
-    const continueButton = await screen.findByRole("button", { name: /continue/i });
-    await user.click(continueButton);
-
     await waitFor(() => {
-      expect(screen.getByText("Ledger Validator")).toBeInTheDocument();
+      expect(screen.getByTestId("add-accounts-finish-close-button")).toBeInTheDocument();
     });
   });
 });
