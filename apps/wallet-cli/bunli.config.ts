@@ -11,7 +11,7 @@ export default defineConfig({
   build: {
     entry: "./src/cli.ts",
     outdir: "./dist",
-    targets: ["native"],
+    targets: ["darwin-arm64", "linux-x64", "windows-x64"],
     // Bundle the `usb` native addon into the executable. Marking it external breaks the standalone
     // binary: runtime resolution runs from bunfs (`/$bunfs/root/cli`) where node_modules is absent.
   },
