@@ -8,7 +8,7 @@ import {
 } from "~/types/recoverSubscriptionState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-const checkCanShow = async ( protectId : string) => {
+const checkCanShow = async (protectId: string) => {
   const recoverSubscriptionState: LedgerRecoverSubscriptionStateEnum | undefined =
     await getStoreValue("SUBSCRIPTION_STATE", protectId);
 
@@ -17,7 +17,7 @@ const checkCanShow = async ( protectId : string) => {
     (recoverSubscriptionState in LedgerRecoverSubscriptionStateInProgressEnum ||
       recoverSubscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)
   );
-},
+};
 
 /**
  * Returns a callback to open the post onboarding screen
@@ -29,11 +29,11 @@ export function useOpenPostOnboardingCallback() {
 
   return useCallback(
     async (deviceModelId: DeviceModelId) => {
-      const canShowRecover = await checkCanShow(protectId)
+      const canShowRecover = await checkCanShow(protectId);
       startPostOnboarding({
         deviceModelId: deviceModelId,
         resetNavigationStack: false,
-        canShowRecover
+        canShowRecover,
       });
     },
     [startPostOnboarding, protectId],

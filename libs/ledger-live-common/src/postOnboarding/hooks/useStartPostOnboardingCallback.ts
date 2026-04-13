@@ -35,7 +35,8 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
       const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
       const actions = getPostOnboardingActionsForDevice(deviceModelId, mock).filter(
         actionWithState =>
-          (!actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled) && (actionWithState.id !== PostOnboardingActionId.recover || options.canShowRecover),
+          (!actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled) &&
+          (actionWithState.id !== PostOnboardingActionId.recover || options.canShowRecover),
       );
       dispatch(
         initPostOnboarding({

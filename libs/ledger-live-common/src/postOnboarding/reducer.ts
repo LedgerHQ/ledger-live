@@ -20,6 +20,9 @@ type InitPayload = {
   deviceModelId: DeviceModelId;
   actionsIds: PostOnboardingActionId[];
 };
+type AddPayload = {
+  actionId: PostOnboardingActionId;
+};
 type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
@@ -47,6 +50,16 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
       postOnboardingInProgress: true,
+    };
+  },
+  POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {
+    const { actionId } = payload as AddPayload;
+    const actionsToComplete = state.actionsToComplete.includes(actionId)
+      ? state.actionsToComplete
+      : [...state.actionsToComplete, actionId];
+    return {
+      ...state,
+      actionsToComplete,
     };
   },
   POST_ONBOARDING_SET_ACTION_COMPLETED: (state, { payload }) => {
