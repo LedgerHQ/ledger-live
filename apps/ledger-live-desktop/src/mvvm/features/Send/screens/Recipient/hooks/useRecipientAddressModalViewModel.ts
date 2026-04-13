@@ -62,7 +62,7 @@ export function useRecipientAddressModalViewModel({
     (address: string, ensName?: string) => {
       track("button_clicked", {
         button: "address matched",
-        page: `step recipient`,
+        page: "step recipient",
         flow: "send",
       });
       onAddressSelected(address, ensName, true);

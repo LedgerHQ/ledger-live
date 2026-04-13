@@ -7,7 +7,7 @@ import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 
 function getConfirmationStatus(
   operation: SendFlowOperationResult,
@@ -54,7 +54,7 @@ export function useConfirmationViewModel() {
     if (account && concernedOperation) {
       track("send_modal", {
         button: "view details",
-        page: `step confirmation`,
+        page: "step confirmation",
         flow: "send",
       });
       setDrawer(OperationDetails, {
@@ -72,9 +72,7 @@ export function useConfirmationViewModel() {
   }, [navigation, operation, statusActions]);
 
   const onClose = useCallback(() => {
-    track("send_modal", {
-      button: "close",
-      page: `step confirmation`,
+    trackPage("send_modal", "step confirmation", {
       flow: "send",
     });
     close();

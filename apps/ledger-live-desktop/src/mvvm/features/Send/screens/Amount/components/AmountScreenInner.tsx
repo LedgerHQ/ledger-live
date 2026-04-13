@@ -38,12 +38,12 @@ export function AmountScreenInner({
   onSelectCoinControl,
 }: AmountScreenInnerProps) {
   const handleReview = useCallback(() => {
-    onReview();
     track("button_clicked", {
       button: "review",
-      page: `step amount`,
+      page: "step amount",
       flow: "send",
     });
+    onReview();
   }, [onReview]);
 
   const viewModel = useAmountScreenViewModel({
