@@ -18,6 +18,7 @@ import {
   performPrivateSync,
   createPrivateSyncObservable,
   createPublicSyncObservable,
+  postSync,
 } from "./sync";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
 
@@ -1211,6 +1212,42 @@ describe("sync.ts", () => {
       // The public emission arrived before the private failure
       expect(emissions).toHaveLength(1);
       expect(emissions[0].blockHeight).toBe(100);
+    });
+  });
+
+  describe("postSync", () => {
+    it("should return synced account unchanged when there are no pending operations", () => {
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [getMockedOperation({ hash: "confirmed-hash" })],
+        pendingOperations: [],
+      };
+
+      expect(postSync(synced, synced)).toBe(synced);
+    });
+
+    it("should remove only confirmed pending operations and keep unconfirmed ones", () => {
+      const confirmedOp = getMockedOperation({ id: "confirmed", hash: "tx-confirmed" });
+      const pendingConfirmedOp = getMockedOperation({
+        id: "pending-confirmed",
+        hash: "tx-confirmed",
+      });
+      const pendingUnconfirmedOp = getMockedOperation({
+        id: "pending-unconfirmed",
+        hash: "tx-pending",
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedOp],
+        pendingOperations: [pendingConfirmedOp, pendingUnconfirmedOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([
+        expect.objectContaining({ hash: pendingUnconfirmedOp.hash }),
+      ]);
     });
   });
 });
