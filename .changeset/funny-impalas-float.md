@@ -3,4 +3,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-move build calldata to compute EIP-7623 gas limit
+Move calldata building into `craftTransactionData` so EIP-7623 gas limit can use intent-provided calldata

@@ -342,11 +342,8 @@ export function transactionToIntent(
     res.memo = { type: "NO_MEMO" };
   }
 
-  if (craftTransactionData) {
-    res.data = craftTransactionData(res);
-  } else {
-    res.data = defaultCraftTransactionData(res);
-  }
+  const resolvedCraftTransactionData = craftTransactionData ?? defaultCraftTransactionData;
+  res.data = resolvedCraftTransactionData(res);
 
   return res;
 }
