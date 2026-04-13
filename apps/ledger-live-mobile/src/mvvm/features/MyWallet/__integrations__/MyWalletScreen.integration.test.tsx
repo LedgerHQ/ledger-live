@@ -54,4 +54,13 @@ describe("MyWalletScreen", () => {
     expect(screen.getByTestId("my-wallet-avatar")).toBeVisible();
     expect(screen.getByTestId("my-wallet-profile-title")).toBeVisible();
   });
+
+  it("should render the quick actions row with all action buttons", () => {
+    renderScreen();
+
+    expect(screen.getByTestId("my-wallet-quick-actions-row")).toBeVisible();
+    expect(screen.getByLabelText("[L] Recover")).toBeVisible();
+    expect(screen.getByLabelText("Help")).toBeVisible();
+    expect(screen.getByLabelText("Referral")).toBeVisible();
+  });
 });

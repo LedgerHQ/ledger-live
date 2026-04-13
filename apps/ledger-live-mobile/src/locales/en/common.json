@@ -8843,5 +8843,12 @@
       "title": "Failed to install {{appName}}",
       "description": "Something went wrong during installation. Please try again."
     }
+  },
+  "myWallet": {
+    "quickActions": {
+      "recover": "[L] Recover",
+      "help": "Help",
+      "referral": "Referral"
+    }
   }
 }
