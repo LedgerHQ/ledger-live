@@ -214,7 +214,6 @@ export type TronResources = {
   unwithdrawnReward: BigNumber;
   lastWithdrawnRewardDate: Date | null | undefined;
   lastVotedDate: Date | null | undefined;
-  cacheTransactionInfoById: Record<string, TronTransactionInfo> | undefined;
 };
 export type TronResourcesRaw = {
   frozen: {
@@ -240,7 +239,6 @@ export type TronResourcesRaw = {
   unwithdrawnReward: string;
   lastWithdrawnRewardDate: string | null | undefined;
   lastVotedDate: string | null | undefined;
-  cacheTransactionInfoById: Record<string, TronTransactionInfoRaw> | undefined;
 };
 export type Vote = {
   name: string | null | undefined;
@@ -295,13 +293,6 @@ export type BandwidthInfoRaw = {
   gainedUsed: string;
   gainedLimit: string;
 };
-export type TronTransactionInfo = {
-  fee: number;
-  blockNumber: number;
-  withdraw_amount?: number;
-  unfreeze_amount?: number;
-};
-export type TronTransactionInfoRaw = [number, number, number?, number?];
 export function isTronAccount(account: Account): account is TronAccount {
   return "tronResources" in account;
 }

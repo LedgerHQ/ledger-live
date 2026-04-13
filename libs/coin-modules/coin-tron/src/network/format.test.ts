@@ -6,7 +6,6 @@ import {
   formatTrongridTxResponse,
 } from "./format";
 import { Trc20API, TransactionTronAPI } from "./types";
-import type { TronTransactionInfo } from "../types";
 
 const ownerHex = "41fd49eda0f23ff7ec1d03b52c3a45991c24cd440e";
 const toHex = "4198927ffb9f554dc4a453c64b2e553a02d6df514b";
@@ -14,8 +13,8 @@ const trc20ContractHex = "4142a1e39aefa49290f2b3f9ed688d7cecf86cd6e0";
 
 function baseTransactionTronApi(
   contract: TransactionTronAPI["raw_data"]["contract"][0],
-  overrides: Partial<TransactionTronAPI & { detail?: TronTransactionInfo }> = {},
-): TransactionTronAPI & { detail?: TronTransactionInfo } {
+  overrides: Partial<TransactionTronAPI> = {},
+): TransactionTronAPI {
   return {
     ret: [{ contractRet: "SUCCESS", fee: 1000 }],
     signature: [],
