@@ -139,7 +139,7 @@ type LooseFlagOverrides = {
  * @example
  * renderHook(hook, { overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { mainNavigation: true } } }) })
  */
-export function withFlagOverrides(
+function withFlagOverrides(
   flags: LooseFlagOverrides,
   baseTransform?: (state: State) => State,
 ): (state: State) => State {
@@ -154,7 +154,7 @@ export function withFlagOverrides(
         ...(override?.enabled !== undefined && { enabled: override.enabled }),
         ...(override?.params !== undefined && {
           params: {
-            ...(def as Record<string, unknown>)["params"] as Record<string, unknown> | undefined,
+            ...((def as Record<string, unknown>)["params"] as Record<string, unknown> | undefined),
             ...override.params,
           },
         }),
@@ -246,22 +246,22 @@ function Providers({
       content
     ) : (
       // For default rendering, add new providers here
-      <StyleProvider selectedPalette="dark">
-        <I18nextProvider i18n={i18n}>
-          <BottomSheetModalProvider>
-            <QueuedDrawersContextProvider>
-              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-            </QueuedDrawersContextProvider>
-          </BottomSheetModalProvider>
-        </I18nextProvider>
-      </StyleProvider>
+      <I18nextProvider i18n={i18n}>
+        <BottomSheetModalProvider>
+          <QueuedDrawersContextProvider>
+            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+          </QueuedDrawersContextProvider>
+        </BottomSheetModalProvider>
+      </I18nextProvider>
     );
 
   // General Providers needed for all render types
   let providers = (
     <Provider store={store}>
       <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-        <CountervaluesProviders store={store}>{extraProviders}</CountervaluesProviders>
+        <CountervaluesProviders store={store}>
+          <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
+        </CountervaluesProviders>
       </FirebaseFeatureFlagsProvider>
     </Provider>
   );

@@ -8,8 +8,9 @@ import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
-import DistributionCard, { DistributionItem } from "./components/DistributionCard";
-import RingChart from "./components/RingChart";
+import DistributionCard from "./components/DistributionCard";
+import type { DistributionItem } from "../../types/distribution";
+import RingChart from "../../components/RingChart";
 
 const size = normalize(200);
 
