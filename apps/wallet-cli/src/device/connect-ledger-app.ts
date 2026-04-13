@@ -5,6 +5,7 @@ import {
   type ConnectAppDAError,
   type ConnectAppDAIntermediateValue,
   type ConnectAppDAOutput,
+  type ConnectAppDARequiredInteraction,
 } from "@ledgerhq/live-dmk-shared";
 import { EmptyError, lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -134,7 +135,7 @@ async function connectLedgerAppOnce(
     cancel();
   }, CONNECT_APP_SILENCE_TIMEOUT_MS);
 
-  let lastRequiredInteraction: string | undefined;
+  let lastRequiredInteraction: ConnectAppDARequiredInteraction | undefined;
   try {
     finalState = await lastValueFrom(
       observable.pipe(
@@ -143,17 +144,13 @@ async function connectLedgerAppOnce(
             return;
           }
           const r = state.intermediateValue?.requiredUserInteraction;
-          if (r == null || r === UserInteractionRequired.None) {
+          if (r == null || r === UserInteractionRequired.None || r === lastRequiredInteraction) {
             return;
           }
-          const key = String(r);
-          if (key === lastRequiredInteraction) {
-            return;
-          }
-          lastRequiredInteraction = key;
+          lastRequiredInteraction = r;
           walletCliDebug(
             "ConnectApp pending: requiredUserInteraction=%s app=%s",
-            key,
+            r,
             managerAppName,
           );
 
