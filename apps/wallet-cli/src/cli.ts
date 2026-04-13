@@ -18,3 +18,5 @@ await cli.run();
 // Error paths already call process.exit(1) inside bunli, so this only runs on success.
 await disposeWalletCliDmkTransportFully();
 process.exit(0);
+
+
