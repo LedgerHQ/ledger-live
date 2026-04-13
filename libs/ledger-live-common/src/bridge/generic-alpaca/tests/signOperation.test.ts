@@ -59,6 +59,7 @@ describe("genericSignOperation", () => {
 
   const account = {
     freshAddressPath: "44'/144'/0'/0/0",
+    freshAddress: "rTestAddress",
     address: "rTestAddress",
     currency: { id: "testnet" },
   } as any;
@@ -83,6 +84,7 @@ describe("genericSignOperation", () => {
     expect(mockSigner.signTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "unsignedTx", {
       domain: "recipient.gen",
       address: "recipient-address",
+      derivationMode: undefined,
     });
     expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
   });
