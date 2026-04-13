@@ -136,14 +136,14 @@ jobs:
     name: "Mobile E2E Lint & Typecheck"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@feat/wallet-cli
     secrets: inherit
 
   test-desktop-e2e-lint:
     name: "Desktop E2E Lint & Typecheck"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@feat/wallet-cli
     secrets: inherit
 
   notify-e2e-required:
@@ -163,7 +163,7 @@ jobs:
       - test-libraries
       - test-features
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@feat/wallet-cli
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
