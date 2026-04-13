@@ -113,7 +113,7 @@ jobs:
 
       - name: Generate Unit test coverage for wallet-cli
         run: |
-          pnpm i --filter="@ledgerhq/wallet-cli" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="@ledgerhq/wallet-cli..." --no-frozen-lockfile --unsafe-perm
           mkdir -p apps/wallet-cli/coverage
           touch apps/wallet-cli/coverage/lcov.info
           touch apps/wallet-cli/coverage/sonar-executionTests-report.xml
