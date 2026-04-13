@@ -13,6 +13,7 @@ import {
 } from "./test-utils";
 
 jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
   useFeature: jest.fn(),
 }));
 
