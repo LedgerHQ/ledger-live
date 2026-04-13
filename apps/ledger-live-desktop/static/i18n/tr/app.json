@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Üzgünüz, tekrar deneyin.",
       "description" : "Sunucu, talebinizi işleme koyamadı. Lütfen daha sonra tekrar deneyin veya Ledger Destek ile iletişime geçin.",
-      "code" : "Kod: {{errorCode}}"
+      "code" : "Kod",
+      "correlationId" : "Referans Kimliği"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Gönderilecek coin",
       "changeToReturn" : "Dönecek para üstü",
       "enterAmount" : "Tutar girin",
+      "selectSufficientCoins" : "Yeterli miktarda coin seçin",
       "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
       "amountInputLabel" : "Gönderilecek tutar"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Önce en eski coin'ler (FIFO)",
       "OPTIMIZE_SIZE" : "Ücretleri en aza indirin (boyutu optimize edin)",
-      "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)"
+      "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)",
+      "CUSTOM" : "Özel coin seçimi"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "İkincil Eylem Çağrısı",
             "cta" : "Eylem Çağrısı",
             "tag" : "Etiket",
+            "picto" : "Picto (Ledger kimliği)",
             "url" : "URL",
             "path" : "Yol"
           }
@@ -4645,6 +4649,10 @@
           "title" : "Test hesabı oluşturma",
           "desc" : "Boş bir test hesabı oluşturun"
         },
+        "stablecoinGenerate" : {
+          "title" : "Stabil coin ön ayarı",
+          "desc" : "En popüler stabil coin'lere sahip Ethereum, Arbitrum, Optimism, Base, Solana, Tron ve Algorand hesapları oluşturun (ağ başına en fazla 5)"
+        },
         "currencySelector" : {
           "placeholder" : "Para birimleri seçin...",
           "searchPlaceholder" : "Ara",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "{{count}} Hesap Oluştur",
           "generateAccounts_other" : "{{count}} Hesap Oluştur",
           "generateAccountsQuick" : "{{count}} Hesap Oluştur",
-          "generateEmptyAccount" : "Test hesabı oluştur"
+          "generateEmptyAccount" : "Test hesabı oluştur",
+          "generateStablecoinAccounts" : "{{count}} stabil coin hesap oluştur",
+          "generateStablecoinAccounts_other" : "{{count}} stabil coin hesap oluştur"
         },
         "alerts" : {
           "selectCurrency" : "Lütfen en az bir para birimi seçin",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "Kişiselleştirilmiş deneyim",
-      "analytics" : "Analiz",
-      "personalizedExpDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
-      "analyticsDesc" : "Ledger Wallet'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin."
+      "analytics" : "Uygulama performansı",
+      "personalizedExpDesc" : "Kişiselleştirilmiş içerikler sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin",
+      "analyticsDesc" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin"
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "Daha fazla bilgi"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "En yeni Ledger imzalayıcılarda %20 özel indirimden faydalanın."
+    },
+    "opted_out" : {
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Eklemek istediğiniz hesapları seçin",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Kripto hesapları",
+    "title" : "Hesaplar",
     "tableActions" : {
-      "searchAddress" : "Adres ara",
+      "searchAddress" : "İsim veya adrese göre ara",
       "addAddress" : "Adres ekle"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "{{asset}} alım satımı",
         "savings" : "{{asset}} birikimi"
       },
-      "cta" : "Onayla"
+      "cta" : "Onayla",
+      "syncingTooltip" : "Senkronizasyon devam ediyor, lütfen bekleyin"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "Senkronizasyonu başlat",
         "stopSync" : "Senkronizasyonu durdur",
         "lastProcessedBlock" : "Son işlenen blok: {{block}}. {{missing}} blok eksik.",
-        "lastSync" : "Son senkronizasyon: {{date}}"
+        "lastSync" : "Son senkronizasyon: {{date}}",
+        "estimatedTimeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "Doğum günü yüksekliği",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Provable sponsorluğunda",
       "balanceSelector" : {
         "private" : "Gizli bakiye",
         "public" : "Genel bakiye",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "Şeffaf bakiye",
       "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
       "privateBalance" : "Gizli bakiye",
-      "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
+      "privateBalanceTooltip" : "Herkese açık olmayan bakiye",
+      "syncButton" : {
+        "startSync" : "Senkronizasyonu başlat",
+        "stopSync" : "Senkronizasyonu durdur",
+        "syncAgain" : "Tekrar senkronize et",
+        "lastSync" : "Son senkronizasyon: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "Gönderen:"
       },
       "summary" : {
-        "coveredByProvable" : "Provable sponsorluğunda",
         "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Özel bakiyeniz senkronize ediliyor (%{{percentage}}).",
+        "desc" : "Lütfen bekleyin",
+        "error" : "Özel bakiye senkronizasyonu başarısız oldu. Lütfen daha sonra tekrar deneyin."
       }
     }
   },
