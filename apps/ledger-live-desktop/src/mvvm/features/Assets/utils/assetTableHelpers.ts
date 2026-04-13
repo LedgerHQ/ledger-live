@@ -1,5 +1,4 @@
 import type { AssetTableItem } from "../types";
-export { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 export function padItems(
   realItems: AssetTableItem[],
