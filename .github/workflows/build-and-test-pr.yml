@@ -73,7 +73,7 @@ jobs:
     name: "Build & Test Mobile"
     needs: determine-affected
     if: ${{ !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@ci/mitmproxy-ios-mocks
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@ci/mitmproxy-android-proxy
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
