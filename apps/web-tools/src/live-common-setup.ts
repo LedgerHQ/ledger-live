@@ -1,4 +1,5 @@
 import "./live-common-setup-network";
+import { setResolutionConfig } from "@shared/feature-flags";
 import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
@@ -10,6 +11,8 @@ LiveConfig.setConfig(liveConfig);
 LiveConfig.setAppinfo({
   platform: "web",
 });
+
+setResolutionConfig({});
 
 setWalletAPIVersion(WALLET_API_VERSION);
 
