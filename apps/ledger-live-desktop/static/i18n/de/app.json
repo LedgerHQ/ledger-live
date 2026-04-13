@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Entschuldigung, versuche es noch einmal.",
       "description" : "Der Server konnte deine Anfrage nicht bearbeiten. Bitte versuche es später noch einmal oder wende dich an den Ledger-Kundenservice.",
-      "code" : "Code: {{errorCode}}"
+      "code" : "Code",
+      "correlationId" : "Referenz-ID"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Zu sendender Coin",
       "changeToReturn" : "Wechseln zu Rückgabe",
       "enterAmount" : "Betrag eingeben",
+      "selectSufficientCoins" : "Wähle genügend Coins aus",
       "amountToSendInCurrency" : "Zu sendender Betrag in {{ticker}}",
       "amountInputLabel" : "Zu sendender Betrag"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
       "OPTIMIZE_SIZE" : "Gebühren minimieren (Größe optimieren)",
-      "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)"
+      "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)",
+      "CUSTOM" : "Eigene Coinauswahl"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "Sekundärer CTA",
             "cta" : "CTA",
             "tag" : "Tag",
+            "picto" : "Picto (Ledger-ID)",
             "url" : "URL",
             "path" : "Pfad"
           }
@@ -4645,6 +4649,10 @@
           "title" : "Leerkonto",
           "desc" : "Generiert ein leeres Konto"
         },
+        "stablecoinGenerate" : {
+          "title" : "Stablecoin-Voreinstellung",
+          "desc" : "Ethereum-, Arbitrum-, Optimism-, Base-, Solana-, Tron- und Algorand-Konten mit Top-Stablecoins erstellen (maximal 5 pro Netzwerk)."
+        },
         "currencySelector" : {
           "placeholder" : "Währungen auswählen…",
           "searchPlaceholder" : "Suche",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "{{count}} Konto generieren",
           "generateAccounts_other" : "{{count}} Konten generieren",
           "generateAccountsQuick" : "{{count}} Konten generieren",
-          "generateEmptyAccount" : "Leeres Konto generieren"
+          "generateEmptyAccount" : "Leeres Konto generieren",
+          "generateStablecoinAccounts" : "{{count}} Stablecoin-Konto generieren",
+          "generateStablecoinAccounts_other" : "{{count}} Stablecoin-Konten generieren"
         },
         "alerts" : {
           "selectCurrency" : "Bitte mindestens eine Währung auswählen",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "Personalisierte Nutzung",
-      "analytics" : "Analysen",
-      "personalizedExpDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
-      "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Wallet zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren."
+      "analytics" : "App-Performance",
+      "personalizedExpDesc" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um personalisierte Inhalte bereitzustellen.",
+      "analyticsDesc" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um das Nutzungserlebnis zu optimieren."
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "Weitere Informationen"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Erhalte exklusiv 20 % Rabatt auf die aktuellen Ledger-Signer."
+    },
+    "opted_out" : {
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Wähle die Konten aus, die du hinzufügen möchtest",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Krypto-Konten",
+    "title" : "Konten",
     "tableActions" : {
-      "searchAddress" : "Adresse suchen",
+      "searchAddress" : "Nach Name oder Adresse suchen",
       "addAddress" : "Adresse hinzufügen"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "{{asset}} Handel",
         "savings" : "{{asset}} Sparguthaben"
       },
-      "cta" : "Bestätigen"
+      "cta" : "Bestätigen",
+      "syncingTooltip" : "Synchronisierung läuft, bitte warten"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "Synchronisierung starten",
         "stopSync" : "Synchronisierung anhalten",
         "lastProcessedBlock" : "Zuletzt verarbeiteter Block: {{block}}. {{missing}} Blöcke fehlen.",
-        "lastSync" : "Letzte Synchronisierung: {{date}}"
+        "lastSync" : "Letzte Synchronisierung: {{date}}",
+        "estimatedTimeRemaining" : "Geschätzte verbleibende Zeit: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "Wiederherstellungshöhe",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Gesponsert von Provable",
       "balanceSelector" : {
         "private" : "Privater Saldo",
         "public" : "Öffentlicher Saldo",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "Transparenter Saldo",
       "transparentBalanceTooltip" : "Guthaben, das öffentlich einsehbar ist",
       "privateBalance" : "Privater Saldo",
-      "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist"
+      "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist",
+      "syncButton" : {
+        "startSync" : "Synchronisierung starten",
+        "stopSync" : "Synchronisierung anhalten",
+        "syncAgain" : "Erneut synchronisieren",
+        "lastSync" : "Letzte Synchronisierung: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "Senden von"
       },
       "summary" : {
-        "coveredByProvable" : "Gesponsert von Provable",
         "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Synchronisierung deines privaten Guthabens ({{percentage}}%)",
+        "desc" : "Bitte warten",
+        "error" : "Private Synchronisierung fehlgeschlagen. Versuche es bitte später noch einmal."
       }
     }
   },

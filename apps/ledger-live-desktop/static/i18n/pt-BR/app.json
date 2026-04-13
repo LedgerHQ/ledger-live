@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Tente novamente.",
       "description" : "O servidor não conseguiu processar sua solicitação. Tente novamente mais tarde ou contate o Suporte Ledger.",
-      "code" : "Código: {{errorCode}}"
+      "code" : "Código",
+      "correlationId" : "ID de referência"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Moeda a enviar",
       "changeToReturn" : "Alterar para retorno",
       "enterAmount" : "Insira a quantidade",
+      "selectSufficientCoins" : "Selecione moedas suficientes",
       "amountToSendInCurrency" : "Quantia a enviar em ({{ticker}})",
       "amountInputLabel" : "Quantia a enviar"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Moedas mais antigas primeiro (FIFO)",
       "OPTIMIZE_SIZE" : "Minimizar taxas (otimizar o tamanho)",
-      "MERGE_OUTPUTS" : "Minimizar taxas futuras (mesclar moedas)"
+      "MERGE_OUTPUTS" : "Minimizar taxas futuras (mesclar moedas)",
+      "CUSTOM" : "Seleção de moeda personalizada"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "CTA secundário",
             "cta" : "CTA",
             "tag" : "Etiqueta",
+            "picto" : "Picto (id Ledger)",
             "url" : "URL",
             "path" : "Path"
           }
@@ -4645,6 +4649,10 @@
           "title" : "Geração vazia",
           "desc" : "Criar uma conta vazia"
         },
+        "stablecoinGenerate" : {
+          "title" : "Predefinição Stablecoin",
+          "desc" : "Gere contas Ethereum, Arbitrum, Optimism, Base, Solana, Tron e Algorand com as principais stablecoins (máximo de 5 por rede)."
+        },
         "currencySelector" : {
           "placeholder" : "Escolher moedas…",
           "searchPlaceholder" : "Buscar",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "Gerar {{count}} conta",
           "generateAccounts_other" : "Gerar {{count}} contas",
           "generateAccountsQuick" : "Gerar {{count}} contas",
-          "generateEmptyAccount" : "Criar conta vazia"
+          "generateEmptyAccount" : "Criar conta vazia",
+          "generateStablecoinAccounts" : "Gerar {{count}} conta stablecoin",
+          "generateStablecoinAccounts_other" : "Gerar {{count}} contas stablecoin"
         },
         "alerts" : {
           "selectCurrency" : "Selecione pelo menos uma moeda",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "Experiência personalizada",
-      "analytics" : "Métricas",
-      "personalizedExpDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
-      "analyticsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para ajudar a medir o desempenho da Ledger Wallet e aprimorar o aplicativo e a sua experiência."
+      "analytics" : "Desempenho do aplicativo",
+      "personalizedExpDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer conteúdos personalizados",
+      "analyticsDesc" : "Permitir que a Ledger colete o uso do aplicativo para aprimorar a experiência"
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "Saiba mais"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Faça upgrade da sua Ledger Nano S™",
+      "description" : "Ganhe um desconto exclusivo de 20% nos autenticadores Ledger mais recentes."
+    },
+    "opted_out" : {
+      "title" : "Faça upgrade da sua Ledger Nano S™",
+      "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Selecione as contas que deseja adicionar",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Contas cripto",
+    "title" : "Contas",
     "tableActions" : {
-      "searchAddress" : "Pesquisar endereço",
+      "searchAddress" : "Pesquisar por nome e endereço",
       "addAddress" : "Adicionar endereço"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "Negociação de {{asset}}",
         "savings" : "Poupança de {{asset}}"
       },
-      "cta" : "Confirmar"
+      "cta" : "Confirmar",
+      "syncingTooltip" : "Sincronização em andamento, aguarde"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "Iniciar sincronização",
         "stopSync" : "Parar sincronização",
         "lastProcessedBlock" : "Bloco mais recente processado: {{block}}. {{missing}} blocos ainda não processados.",
-        "lastSync" : "Última sincronização: {{date}}"
+        "lastSync" : "Última sincronização: {{date}}",
+        "estimatedTimeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "Altura de nascimento",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Patrocinado por Provable",
       "balanceSelector" : {
         "private" : "Saldo privado",
         "public" : "Saldo público",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "Saldo transparente",
       "transparentBalanceTooltip" : "Saldo visível ao público",
       "privateBalance" : "Saldo privado",
-      "privateBalanceTooltip" : "Saldo oculto ao público"
+      "privateBalanceTooltip" : "Saldo oculto ao público",
+      "syncButton" : {
+        "startSync" : "Iniciar sincronização",
+        "stopSync" : "Parar sincronização",
+        "syncAgain" : "Sincronizar novamente",
+        "lastSync" : "Última sincronização: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "Enviar de"
       },
       "summary" : {
-        "coveredByProvable" : "Patrocinado por Provable",
         "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Sincronizando seu saldo privado ({{percentage}}%)",
+        "desc" : "Aguarde",
+        "error" : "Falha na sincronização privada. Tente novamente mais tarde."
       }
     }
   },
