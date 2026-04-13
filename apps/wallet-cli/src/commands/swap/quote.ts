@@ -14,6 +14,8 @@ import type {
 import { spinner, colors, writeStdout } from "../../shared/ui";
 import { makeEnvelope, makeErrorEnvelope } from "../../shared/response";
 import { HumanFormatter } from "../../wallet/formatter";
+import { getEnv } from "@ledgerhq/live-env";
+import { OutputFormatSchema } from "../../wallet/models";
 
 const DEFAULT_PROVIDERS = ["changelly_v2", "oneinch", "paraswap", "exodus", "swapsxyz"];
 
@@ -41,10 +43,16 @@ export default defineCommand({
       description: "Destination currency ID",
       short: "t",
     }),
+    "from-account": option(z.string().min(1), {
+      description: "Source account ID is required",
+    }),
+    "to-account": option(z.string().min(1), {
+      description: "Destination account ID is required",
+    }),
     amount: option(z.string().min(1, "Amount is required"), {
       description: "Amount to swap in source currency",
     }),
-    format: option(z.enum(["human", "json"]).default("json"), {
+    format: option(OutputFormatSchema.default("human"), {
       description: "Output format",
     }),
   },
@@ -55,7 +63,7 @@ export default defineCommand({
     const spin = isHuman ? spinner("Fetching swap quotes…") : null;
 
     try {
-      const baseURL = "https://swap-stg.ledger-test.com/v5";
+      const SWAP_API_BASE = getEnv("SWAP_API_BASE");
       const result = await fetchQuotes(
         {
           providers: DEFAULT_PROVIDERS,
@@ -65,14 +73,22 @@ export default defineCommand({
             uniswapOrderType: "classic",
             sendCurrencyId: fromId,
             receiveCurrencyId: toId,
+            sendAddress: flags["from-account"],
+            receiveAddress: flags["to-account"],
           },
         },
-        baseURL,
+        SWAP_API_BASE,
       );
 
       if (result.quotes.length === 0 && result.errors.length > 0) {
-        spin!.error("No quotes available");
-        return;
+        if (isHuman) {
+          spin!.error("No quotes available");
+        } else {
+          writeStdout(
+            JSON.stringify(makeErrorEnvelope("swap quote", "No quotes available"), null, 2),
+          );
+        }
+        process.exit(1);
       }
 
       const mapped = result.quotes.map(q => mapQuoteOutput(q, fromId, toId, flags.amount));
