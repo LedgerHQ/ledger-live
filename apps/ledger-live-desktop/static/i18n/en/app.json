@@ -4679,6 +4679,20 @@
           }
         }
       },
+      "appJsonImporter": {
+        "title": "Load app.json",
+        "desc": "Drag & drop an app.json file to import accounts and settings",
+        "dropOrBrowse": "Drop app.json here or click to browse",
+        "importing": "Importing...",
+        "success": "Imported {{count}} account successfully.",
+        "success_other": "Imported {{count}} accounts successfully.",
+        "lastDeviceSeen": "Last device seen: {{device}}",
+        "invalidFileType": "Invalid file type. Expected a .json file.",
+        "missingDataField": "Invalid app.json: missing top-level data field.",
+        "encryptedAccounts": "Encrypted accounts detected. Decrypt the file first.",
+        "importFailed": "Import failed: {{message}}",
+        "unknownError": "Unknown error during import."
+      },
       "mockAccounts": {
         "title": "Generate mock accounts",
         "description": "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
