@@ -1,0 +1,20 @@
+module.exports = {
+  testEnvironment: "node",
+  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  transform: {
+    "^.+\\.(ts|tsx)?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
+  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!tests/**/*.test.ts"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
+  reporters: [
+    "default",
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+  ],
+};
