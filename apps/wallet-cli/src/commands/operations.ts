@@ -47,7 +47,16 @@ export default defineCommand({
       );
 
       const fmt = new HumanFormatter(setupCalClientStore());
-      if (!isHuman) {
+      if (isHuman) {
+        for (const op of page.operations) {
+          const line = await fmt.formatOperation(op, descriptor.currencyId);
+          writeStdout(op.parentId ? `  ${line}` : line);
+        }
+        if (page.nextCursor) {
+          const cursorLabel = colors.dim(`nextCursor: ${page.nextCursor}`);
+          process.stderr.write(`\n${cursorLabel}\n`);
+        }
+      } else {
         // accountId remapped to V1 descriptor — internal live-common id is intentionally dropped
         const jsonFmt = new JsonFormatter(fmt);
         writeStdout(
@@ -69,27 +78,17 @@ export default defineCommand({
             2,
           ),
         );
-      } else {
-        for (const op of page.operations) {
-          const line = await fmt.formatOperation(op, descriptor.currencyId);
-          writeStdout(op.parentId ? `  ${line}` : line);
-        }
-        if (page.nextCursor) {
-          process.stderr.write(`\n${colors.dim(`nextCursor: ${page.nextCursor}`)}\n`);
-        }
       }
     } catch (e) {
-      if (!isHuman) {
-        writeStdout(
-          JSON.stringify(
-            makeErrorEnvelope("operations", HumanFormatter.formatError(e), descriptor.currencyId),
-            null,
-            2,
-          ),
-        );
-        process.exit(1);
-      }
-      throw e;
+      if (isHuman) throw e;
+      writeStdout(
+        JSON.stringify(
+          makeErrorEnvelope("operations", HumanFormatter.formatError(e), descriptor.currencyId),
+          null,
+          2,
+        ),
+      );
+      process.exit(1);
     }
   },
 });

@@ -51,20 +51,7 @@ export default defineCommand({
 
         const wallet = new WalletAdapter();
 
-        if (!isHuman) {
-          const accounts = await firstValueFrom(
-            wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID).pipe(toArray()),
-          );
-          writeStdout(
-            JSON.stringify(
-              makeEnvelope("account discover", `${network.name}:${network.env}`, {
-                accounts: JsonFormatter.discoveredAccounts(accounts),
-              }),
-              null,
-              2,
-            ),
-          );
-        } else {
+        if (isHuman) {
           const fmt = new HumanFormatter(setupCalClientStore());
           const scanSpin = spinner(`Scanning for ${colors.bold(network.name)} accounts…`);
           let count = 0;
@@ -81,29 +68,40 @@ export default defineCommand({
                 reject(err);
               },
               complete: () => {
-                scanSpin.success(`Found ${count} account${count !== 1 ? "s" : ""}`);
+                scanSpin.success(`Found ${count} account${count === 1 ? "" : "s"}`);
                 resolve();
               },
             });
           });
+        } else {
+          const accounts = await firstValueFrom(
+            wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID).pipe(toArray()),
+          );
+          writeStdout(
+            JSON.stringify(
+              makeEnvelope("account discover", `${network.name}:${network.env}`, {
+                accounts: JsonFormatter.discoveredAccounts(accounts),
+              }),
+              null,
+              2,
+            ),
+          );
         }
       });
     } catch (e) {
-      if (!isHuman) {
-        writeStdout(
-          JSON.stringify(
-            makeErrorEnvelope(
-              "account discover",
-              HumanFormatter.formatError(e),
-              `${network.name}:${network.env}`,
-            ),
-            null,
-            2,
+      if (isHuman) throw e;
+      writeStdout(
+        JSON.stringify(
+          makeErrorEnvelope(
+            "account discover",
+            HumanFormatter.formatError(e),
+            `${network.name}:${network.env}`,
           ),
-        );
-        process.exit(1);
-      }
-      throw e;
+          null,
+          2,
+        ),
+      );
+      process.exit(1);
     }
   },
 });

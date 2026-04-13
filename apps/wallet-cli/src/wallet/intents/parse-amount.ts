@@ -15,8 +15,8 @@ export function parseAmountWithTicker(input: string, account: Account): ParsedAm
   const trimmed = input.trim();
   // Try "NUMBER TICKER" or "TICKER NUMBER" (with optional space)
   const match =
-    trimmed.match(/^(\d+(?:\.\d+)?)\s*([A-Za-z]+)$/) ||
-    trimmed.match(/^([A-Za-z]+)\s*(\d+(?:\.\d+)?)$/);
+    /^(\d+(?:\.\d+)?)\s*([A-Za-z]+)$/.exec(trimmed) ||
+    /^([A-Za-z]+)\s*(\d+(?:\.\d+)?)$/.exec(trimmed);
 
   if (!match) {
     throw new Error(`Amount must include a ticker, e.g. '0.5 ETH' or '0.001 BTC'. Got: "${input}"`);

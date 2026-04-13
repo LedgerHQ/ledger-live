@@ -37,9 +37,9 @@ export function parseShortAccountDescriptor(short: string): AccountDescriptor {
   if (lastColon < 0) {
     throw new Error(`Invalid short account descriptor: "${short}"`);
   }
-  const index = parseInt(short.slice(lastColon + 1), 10);
-  if (isNaN(index)) {
-    throw new Error(`Invalid short account descriptor: "${short}"`);
+  const index = Number.parseInt(short.slice(lastColon + 1), 10);
+  if (Number.isNaN(index)) {
+    throw new TypeError(`Invalid short account descriptor: "${short}"`);
   }
   const id = short.slice(0, lastColon);
   const { currencyId, xpubOrAddress: seedIdentifier, derivationMode } = decodeAccountId(id);
@@ -76,7 +76,7 @@ export type CurrencyId = z.infer<typeof CurrencyIdSchema>;
 
 export const OutputFormatSchema = z.enum(["human", "json"]);
 
-export const AccountIdSchema = z.string(); // TODO shall have its branded type
+export const AccountIdSchema = z.string(); // AccountId: branded type pending
 
 export const BalanceSchema = z.object({
   assetId: z.string(),

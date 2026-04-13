@@ -47,7 +47,7 @@ function isXpub(seedIdentifier: string): boolean {
  * prepend "m/" and replace apostrophe hardened markers with "h" (shell-safe).
  */
 function toV1Path(schemePath: string): string {
-  return "m/" + schemePath.replace(/'/g, "h");
+  return "m/" + schemePath.replaceAll("'", "h");
 }
 
 /**
@@ -55,7 +55,36 @@ function toV1Path(schemePath: string): string {
  * strip the "m/" prefix and replace "h" hardened markers with "'".
  */
 function fromV1Path(v1Path: string): string {
-  return v1Path.replace(/^m\//, "").replace(/h/g, "'");
+  return v1Path.replace(/^m\//, "").replaceAll("h", "'");
+}
+
+type SegmentMatch = { matched: false } | { matched: true; accountIndex?: number };
+
+/** Match one scheme segment against one path segment. Returns the match result. */
+function matchOneSegment(s: string, p: string, coinType: number): SegmentMatch {
+  const sHard = s.endsWith("'");
+  const pHard = p.endsWith("'");
+  const sBase = sHard ? s.slice(0, -1) : s;
+  const pBase = pHard ? p.slice(0, -1) : p;
+
+  if (sBase === "<coin_type>") {
+    if (sHard !== pHard || Number.parseInt(pBase, 10) !== coinType) return { matched: false };
+    return { matched: true };
+  }
+  if (sBase === "<account>") {
+    if (sHard !== pHard) return { matched: false };
+    const n = Number.parseInt(pBase, 10);
+    if (Number.isNaN(n)) return { matched: false };
+    return { matched: true, accountIndex: n };
+  }
+  if (sBase === "<node>" || sBase === "<address>") {
+    // non-hardened placeholder — verify it is non-hardened in path too
+    if (pHard) return { matched: false };
+    return { matched: true };
+  }
+  // literal segment — must match exactly
+  if (s !== p) return { matched: false };
+  return { matched: true };
 }
 
 /**
@@ -81,29 +110,9 @@ function matchSchemeToPath(
   let pi = 0;
 
   while (si < sSegs.length && pi < pSegs.length) {
-    const s = sSegs[si];
-    const p = pSegs[pi];
-    const sHard = s.endsWith("'");
-    const pHard = p.endsWith("'");
-    const sBase = sHard ? s.slice(0, -1) : s;
-    const pBase = pHard ? p.slice(0, -1) : p;
-
-    if (sBase === "<coin_type>") {
-      if (sHard !== pHard) return null;
-      if (parseInt(pBase, 10) !== coinType) return null;
-    } else if (sBase === "<account>") {
-      if (sHard !== pHard) return null;
-      const n = parseInt(pBase, 10);
-      if (isNaN(n)) return null;
-      accountIndex = n;
-    } else if (sBase === "<node>" || sBase === "<address>") {
-      // non-hardened placeholder — just verify it is non-hardened in path too
-      if (pHard) return null;
-    } else {
-      // literal segment — must match exactly
-      if (s !== p) return null;
-    }
-
+    const result = matchOneSegment(sSegs[si], pSegs[pi], coinType);
+    if (!result.matched) return null;
+    if (result.accountIndex !== undefined) accountIndex = result.accountIndex;
     si++;
     pi++;
   }
@@ -196,8 +205,8 @@ export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
     };
   }
 
+  const tried = modes.map(m => `"${m}"`).join(", ");
   throw new UnsupportedFamilyError(
-    `No derivation mode for ${currencyId} matches path "${v1.path}". ` +
-      `Tried: ${modes.map(m => `"${m}"`).join(", ")}`,
+    `No derivation mode for ${currencyId} matches path "${v1.path}". Tried: ${tried}`,
   );
 }
