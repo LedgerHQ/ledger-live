@@ -333,6 +333,12 @@ export type EarnState = {
   };
   menuBottomSheet?: { icon: string; label: string; metadata: OptionMetadata }[];
   protocolInfoModal?: true;
+  actionDialog?: {
+    title: string;
+    description: string;
+    ctaLabel: string;
+    icon?: "info" | "warning" | "success";
+  };
 };
 
 // === PROTECT STATE ===

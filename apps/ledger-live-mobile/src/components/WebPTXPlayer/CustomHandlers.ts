@@ -40,9 +40,13 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import {
+  makeSetEarnInfoBottomSheetAction,
+  makeSetEarnMenuBottomSheetAction,
+  makeSetEarnActionDialogAction,
+} from "~/actions/earn";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -292,6 +296,7 @@ export function useCustomExchangeHandlers({
       },
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
+      "custom.actionDialog": createOpenActionDialogHandler(dispatch),
     };
 
     return {
@@ -511,6 +516,47 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
   return async (request: { params?: InfoDialogParams }) => {
     const validated = validateInfoDialogParams(request.params, "custom.bottomSheet.info");
     dispatch(makeSetEarnInfoBottomSheetAction(validated));
+  };
+}
+
+type ActionDialogResolver = (result: { confirmed: boolean }) => void;
+
+let pendingActionDialogResolver: ActionDialogResolver | null = null;
+
+export function resolveActionDialog(confirmed: boolean) {
+  const resolver = pendingActionDialogResolver;
+  pendingActionDialogResolver = null;
+  if (resolver) resolver({ confirmed });
+}
+
+export function createOpenActionDialogHandler(dispatch: Dispatch) {
+  return async (request: {
+    params?: {
+      title: string;
+      description: string;
+      ctaLabel: string;
+      icon?: "info" | "warning" | "success";
+    };
+  }): Promise<{ confirmed: boolean }> => {
+    const { params } = request;
+
+    if (!params) {
+      throw new Error("Missing params for custom.actionDialog");
+    }
+
+    // If a previous dialog is still pending, resolve it as dismissed before opening the new one.
+    if (pendingActionDialogResolver) {
+      pendingActionDialogResolver({ confirmed: false });
+      pendingActionDialogResolver = null;
+    }
+
+    const result = await new Promise<{ confirmed: boolean }>(resolve => {
+      pendingActionDialogResolver = resolve;
+      dispatch(makeSetEarnActionDialogAction(params));
+    });
+
+    dispatch(makeSetEarnActionDialogAction(undefined));
+    return result;
   };
 }
 

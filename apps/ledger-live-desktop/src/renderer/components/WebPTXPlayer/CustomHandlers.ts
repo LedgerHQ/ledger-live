@@ -44,6 +44,42 @@ import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/valid
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 
+// --- Action Dialog module-level store ---
+
+export type ActionDialogData = {
+  title: string;
+  description: string;
+  ctaLabel: string;
+  icon?: "info" | "warning" | "success";
+};
+
+type ActionDialogResolver = (result: { confirmed: boolean }) => void;
+
+let actionDialogState: ActionDialogData | null = null;
+let pendingActionDialogResolver: ActionDialogResolver | null = null;
+const actionDialogListeners = new Set<() => void>();
+
+function notifyActionDialogListeners() {
+  actionDialogListeners.forEach(l => l());
+}
+
+export function getActionDialogSnapshot(): ActionDialogData | null {
+  return actionDialogState;
+}
+
+export function subscribeActionDialog(listener: () => void): () => void {
+  actionDialogListeners.add(listener);
+  return () => actionDialogListeners.delete(listener);
+}
+
+export function resolveActionDialog(confirmed: boolean) {
+  const resolver = pendingActionDialogResolver;
+  pendingActionDialogResolver = null;
+  actionDialogState = null;
+  notifyActionDialogListeners();
+  if (resolver) resolver({ confirmed });
+}
+
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
@@ -363,6 +399,30 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           logger.error("Error in custom.getAccountIdFormats handler", error);
           throw error;
         }
+      },
+      "custom.actionDialog": async (request: {
+        params?: {
+          title: string;
+          description: string;
+          ctaLabel: string;
+          icon?: "info" | "warning" | "success";
+        };
+      }): Promise<{ confirmed: boolean }> => {
+        const { params } = request;
+        if (!params) {
+          throw new Error("Missing params for custom.actionDialog");
+        }
+
+        if (pendingActionDialogResolver) {
+          pendingActionDialogResolver({ confirmed: false });
+          pendingActionDialogResolver = null;
+        }
+
+        return new Promise<{ confirmed: boolean }>(resolve => {
+          pendingActionDialogResolver = resolve;
+          actionDialogState = params;
+          notifyActionDialogListeners();
+        });
       },
       "custom.syncAccount": async request => {
         const { fromAccountId, toAccountId } = request.params || {};
