@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import "./init-cwd";
+import "./embed-usb-native";
 import { createCLI } from "@bunli/core";
 import "./live-common-setup";
 // createCLI() also tries to import .bunli/commands.gen.ts from process.cwd(); that can hang or no-op
