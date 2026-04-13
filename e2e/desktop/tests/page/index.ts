@@ -1,6 +1,7 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
 import { AnalyticsPage } from "./analytics.page";
+import { AssetsPage } from "./assets.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetPage } from "./asset.page";
@@ -77,4 +78,5 @@ export class Application extends PageHolder {
   public marketBanner = new MarketBannerPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
+  public assets = new AssetsPage(this.page);
 }
