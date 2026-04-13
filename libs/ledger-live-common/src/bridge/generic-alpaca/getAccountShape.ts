@@ -336,7 +336,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const nativeAvailable = nativeAsset?.value ?? 0n;
     const nativeLocked = nativeAsset?.locked ?? 0n;
-    const nativeBalance = nativeAvailable + delegatedBalance + unbondingBalance;
+    const noStaking = !hasActiveStake(nativeAsset) && !hasDeactivatingStake(nativeAsset);
+
+    // Some account-level staking models attach stake metadata to the native balance itself.
+    // Avoid adding that same native balance twice while preserving staking resources metadata.
+    const nativeBalance = delegatedBalance + unbondingBalance + (noStaking ? nativeAvailable : 0n);
     const spendableBalance = nativeAvailable - nativeLocked;
 
     const delegations: StakingDelegation[] = activeStakes
