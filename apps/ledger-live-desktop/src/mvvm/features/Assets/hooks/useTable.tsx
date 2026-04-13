@@ -45,6 +45,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         enableSorting: false,
         cell: ({ row }) => (
           <TableCellContent
+            className="[&>*:first-child]:shrink-0"
             leadingContent={
               row.original.isPlaceholder ? (
                 <CryptoIcon

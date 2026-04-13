@@ -13,6 +13,7 @@ export function AccountNameCell({ account, displayName }: AccountNameCellProps) 
   const currency = getAccountCurrency(account);
   return (
     <TableCellContent
+      className="[&>*:first-child]:shrink-0"
       leadingContent={<CryptoCurrencyIcon currency={currency} size={32} />}
       title={displayName}
       description={currency.ticker}
