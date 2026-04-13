@@ -3,8 +3,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppWalletSync } from "../AppCloudSync";
 
+const uuidMock = "123e4567-e89b-12d3-a456-426614174000";
+
 jest.mock("uuid", () => ({
-  v4: jest.fn(() => "mock-uuid-cloud-sync"),
+  v4: jest.fn(() => uuidMock),
 }));
 
 const mockGenAccount = jest.fn(() => ({
@@ -15,7 +17,7 @@ const mockGenAccount = jest.fn(() => ({
   derivationMode: "",
   freshAddress: "0x",
 }));
-jest.mock("@ledgerhq/coin-module-framework/mocks/account", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/mocks/account", () => ({
   genAccount: (...args: unknown[]) => Reflect.apply(mockGenAccount, null, args),
 }));
 
@@ -78,9 +80,7 @@ describe("AppWalletSync (AppCloudSync)", () => {
     await user.click(diceButton);
 
     expect(mockGenAccount).toHaveBeenCalled();
-    expect(
-      mockGenAccount.mock.calls.every((call: unknown[]) => call[0] === "mock-uuid-cloud-sync"),
-    ).toBe(true);
+    expect(mockGenAccount.mock.calls.every((call: unknown[]) => call[0] === uuidMock)).toBe(true);
     expect(mockSetData).toHaveBeenCalled();
     mathRandomSpy.mockRestore();
   });
