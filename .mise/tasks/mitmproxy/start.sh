@@ -283,6 +283,18 @@ function setup_linux() {
 		log_error "Unsupported Linux distribution: cannot install CA certificate"
 	fi
 
+	# Add the Android emulator gateway IP as a loopback alias on the host.
+	# When the Android system proxy is active, the app routes all traffic (including
+	# the Detox e2e bridge WebSocket) through mitmproxy. The bridge client connects
+	# to ws://10.0.2.2:PORT. Mitmproxy receives a CONNECT 10.0.2.2:PORT and tries
+	# to forward it — but 10.0.2.2 only exists inside the emulator, not on the host.
+	# By aliasing 10.0.2.2 to the host loopback, mitmproxy's forwarded CONNECT reaches
+	# the actual service (Detox server, etc.) at 127.0.0.1:PORT.
+	if command -v ip &>/dev/null; then
+		sudo ip addr add 10.0.2.2/32 dev lo 2>/dev/null || true
+		log_info "Aliased 10.0.2.2 → loopback on host"
+	fi
+
 	log_info "Setting webproxy on host OS"
 	if command -v gsettings &>/dev/null && gsettings list-schemas 2>/dev/null | grep -q "^org.gnome.system.proxy$"; then
 		gsettings set org.gnome.system.proxy mode 'manual'
