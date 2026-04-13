@@ -36,8 +36,9 @@ export default class AccountPage {
     `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
-  @Step("Verify account name is visible: $0")
-  async verifyAccountName(accountName: string) {
+  @Step("Wait for account screen and verify account name: $0")
+  async waitAndVerifyAccountName(accountName: string) {
+    await waitForElementById(this.accountScreenScrollView);
     await detoxExpect(getElementByText(accountName, 0)).toBeVisible();
   }
 

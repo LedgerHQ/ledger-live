@@ -25,9 +25,13 @@ export default class EarnV2DashboardPage {
 
   // --- Ice Cold Start ---
 
+  @Step("Wait for ice cold start page to load")
+  async waitForIceColdStartPage() {
+    await waitWebElementByTestId(this.footerDisclaimer);
+  }
+
   @Step("Verify ice cold start page")
   async verifyIceColdStartPage() {
-    await detoxExpect(getWebElementByTestId(this.footerDisclaimer)).toExist();
     await expectWebElementNotVisible(this.maxPotentialRewards);
     await expectWebElementNotVisible(this.walletHeaderAmount);
   }
@@ -39,9 +43,13 @@ export default class EarnV2DashboardPage {
 
   // --- Cold Start ---
 
+  @Step("Wait for cold start page to load")
+  async waitForColdStartPage() {
+    await waitWebElementByTestId(this.maxPotentialRewards);
+  }
+
   @Step("Verify cold start page")
   async verifyColdStartPage() {
-    await detoxExpect(getWebElementByTestId(this.maxPotentialRewards)).toExist();
     await detoxExpect(getWebElementByTestId(this.tokensToEarnBanner)).toExist();
   }
 
@@ -57,9 +65,9 @@ export default class EarnV2DashboardPage {
 
   // --- Hot Start ---
 
-  @Step("Verify hot start page")
-  async verifyHotStartPage() {
-    await detoxExpect(getWebElementByTestId(this.walletHeaderAmount)).toExist();
+  @Step("Wait for hot start page to load")
+  async waitForHotStartPage() {
+    await waitWebElementByTestId(this.walletHeaderAmount);
   }
 
   @Step("Verify rewards summary boxes")
@@ -123,8 +131,9 @@ export default class EarnV2DashboardPage {
 
   // --- EarnMenuDrawer (native bottom sheet) ---
 
-  @Step("Verify manage drawer options present: $0")
-  async verifyManageDrawerOptions(options: string[]) {
+  @Step("Wait for manage drawer and verify options present: $0")
+  async waitForManageDrawerAndVerifyOptions(options: string[]) {
+    await waitForElementById(this.earnMenuOption(options[0]));
     for (const option of options) {
       await detoxExpect(getElementById(this.earnMenuOption(option))).toExist();
     }

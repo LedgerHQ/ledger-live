@@ -13,29 +13,6 @@ const EARN_V2_FLAGS = {
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 };
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
-
-const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
-  await CLI.liveData({
-    currency: account.currency.speculosApp.name,
-    index: account.index,
-    add: true,
-    appjson: userdataPath,
-  });
-  const address = await CLI.getAddressForAccount(account);
-  account.address = address;
-  if (account.parentAccount) {
-    account.parentAccount.address = address;
-  }
-  return address;
-};
-
 async function navigateToEarn() {
   // EARN_V2_FLAGS always enables lwmWallet40 with mainNavigation: true,
   // so the app always renders the Wallet 4.0 navigator for earnV2 tests.
@@ -65,6 +42,7 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
     tags.forEach(tag => $Tag(tag));
     it("displays ice cold start page and CTA opens modular asset drawer", async () => {
       await navigateToEarn();
+      await app.earnV2Dashboard.waitForIceColdStartPage();
       await app.earnV2Dashboard.verifyIceColdStartPage();
       await app.earnV2Dashboard.clickIceColdStartEarnCTA();
       await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
@@ -79,7 +57,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        cliCommands: [liveDataCommand(account)],
       });
     });
 
@@ -87,6 +65,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
     tags.forEach(tag => $Tag(tag));
     it(`shows ${account.currency.ticker} ready to earn and clicking CTA initiates staking`, async () => {
       await navigateToEarn();
+      await app.earnV2Dashboard.waitForColdStartPage();
       await app.earnV2Dashboard.verifyColdStartPage();
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
@@ -102,7 +81,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        cliCommands: [liveDataCommand(account)],
       });
     });
 
@@ -110,13 +89,13 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} hot start: rewards summary, position row -> manage -> account page`, async () => {
       await navigateToEarn();
-      await app.earnV2Dashboard.verifyHotStartPage();
+      await app.earnV2Dashboard.waitForHotStartPage();
       await app.earnV2Dashboard.verifyRewardsSummaryBoxes();
       await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
       await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
-      await app.earnV2Dashboard.verifyManageDrawerOptions(["Manage", "Earn more"]);
+      await app.earnV2Dashboard.waitForManageDrawerAndVerifyOptions(["Manage", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Manage");
-      await app.account.verifyAccountName(account.accountName);
+      await app.account.waitAndVerifyAccountName(account.accountName);
     });
   });
 }
@@ -216,10 +195,10 @@ export function runPartnerDappPositionTest(
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} position row -> manage -> dapp`, async () => {
       await navigateToEarn();
-      await app.earnV2Dashboard.verifyHotStartPage();
+      await app.earnV2Dashboard.waitForHotStartPage();
       await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
       await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
-      await app.earnV2Dashboard.verifyManageDrawerOptions(["Manage", "Earn more"]);
+      await app.earnV2Dashboard.waitForManageDrawerAndVerifyOptions(["Manage", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Manage");
       await app.earnV2Dashboard.verifyPartnerDappLoaded(dappUrlSubstring);
     });
@@ -243,11 +222,11 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} position row -> withdraw all -> webview /redeem`, async () => {
       await navigateToEarn();
-      await app.earnV2Dashboard.verifyHotStartPage();
+      await app.earnV2Dashboard.waitForHotStartPage();
       await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
       await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
       // USDT (KilnDefi) shows Withdraw all + Earn more, not Manage.
-      await app.earnV2Dashboard.verifyManageDrawerOptions(["Withdraw all", "Earn more"]);
+      await app.earnV2Dashboard.waitForManageDrawerAndVerifyOptions(["Withdraw all", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Withdraw all");
       await app.earnV2Dashboard.verifyWithdrawalFlowVisible();
     });
