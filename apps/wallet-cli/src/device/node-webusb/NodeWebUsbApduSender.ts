@@ -1,7 +1,6 @@
 import {
   formatApduReceivedLog,
   formatApduSentLog,
-  FramerUtils,
   OpeningConnectionError,
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
@@ -61,7 +60,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     apduReceiverFactory,
     loggerFactory,
   }: NodeWebUsbApduSenderConstructorArgs) {
-    const channel = Maybe.of(FramerUtils.numberToByteArray(Math.floor(Math.random() * 0xffff), 2));
+    const channel = Maybe.of(crypto.getRandomValues(new Uint8Array(2)));
     this.dependencies = dependencies;
     this.apduSenderFactory = apduSenderFactory;
     this.apduSender = this.apduSenderFactory({
