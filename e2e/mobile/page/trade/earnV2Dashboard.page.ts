@@ -25,13 +25,9 @@ export default class EarnV2DashboardPage {
 
   // --- Ice Cold Start ---
 
-  @Step("Wait for ice cold start page to load")
-  async waitForIceColdStartPage() {
-    await waitWebElementByTestId(this.footerDisclaimer);
-  }
-
-  @Step("Verify ice cold start page")
+  @Step("Wait for and verify ice cold start page")
   async verifyIceColdStartPage() {
+    await waitWebElementByTestId(this.footerDisclaimer);
     await expectWebElementNotVisible(this.maxPotentialRewards);
     await expectWebElementNotVisible(this.walletHeaderAmount);
   }

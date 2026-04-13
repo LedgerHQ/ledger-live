@@ -42,7 +42,6 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
     tags.forEach(tag => $Tag(tag));
     it("displays ice cold start page and CTA opens modular asset drawer", async () => {
       await navigateToEarn();
-      await app.earnV2Dashboard.waitForIceColdStartPage();
       await app.earnV2Dashboard.verifyIceColdStartPage();
       await app.earnV2Dashboard.clickIceColdStartEarnCTA();
       await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
