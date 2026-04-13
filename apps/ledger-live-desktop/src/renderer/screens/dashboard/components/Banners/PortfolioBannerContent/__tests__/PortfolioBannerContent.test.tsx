@@ -1,5 +1,11 @@
 import React from "react";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
+import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { render, screen } from "tests/testSetup";
+import dbMiddleware from "~/renderer/middlewares/db";
+import type { State } from "~/renderer/reducers";
+import createStore from "~/state-manager/configureStore";
 import { useBannersVisibility } from "../../hooks/useBannersVisibility";
 import { PortfolioBannerContent } from "..";
 
@@ -32,6 +38,23 @@ function setVisibility(overrides: Partial<BannersVisibility>) {
   mockUseBannersVisibility.mockReturnValue({ ...DEFAULT_VISIBILITY, ...overrides });
 }
 
+function postOnboardingInProgressState(): PostOnboardingState {
+  return {
+    ...postOnboardingInitialState,
+    deviceModelId: DeviceModelId.nanoX,
+    walletEntryPointDismissed: false,
+    entryPointFirstDisplayedDate: new Date("2024-06-01"),
+    walletEntryPointEligibleForPortfolio: true,
+    actionsToComplete: [PostOnboardingActionId.claimMock, PostOnboardingActionId.personalizeMock],
+    actionsCompleted: {
+      [PostOnboardingActionId.claimMock]: true,
+      [PostOnboardingActionId.personalizeMock]: false,
+    },
+    lastActionCompleted: PostOnboardingActionId.claimMock,
+    postOnboardingInProgress: true,
+  };
+}
+
 describe("PortfolioBannerContent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -58,5 +81,18 @@ describe("PortfolioBannerContent", () => {
     });
     const { container } = render(<PortfolioBannerContent />);
     expect(container.firstChild).toBeNull();
+  });
+
+  it("renders FinishOnboardingWidget branch when post-onboarding is visible and finish widget is visible", () => {
+    setVisibility({
+      isPostOnboardingBannerVisible: true,
+      isFinishOnboardingWidgetVisible: true,
+    });
+    const store = createStore({
+      state: { postOnboarding: postOnboardingInProgressState() } as State,
+      dbMiddleware,
+    });
+    render(<PortfolioBannerContent />, { store });
+    expect(screen.getByTestId("finish-onboarding-widget")).toBeInTheDocument();
   });
 });

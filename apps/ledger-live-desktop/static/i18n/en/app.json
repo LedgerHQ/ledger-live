@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding": {
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",

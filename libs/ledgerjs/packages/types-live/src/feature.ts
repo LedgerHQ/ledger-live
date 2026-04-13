@@ -382,8 +382,8 @@ export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
 
 export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
   ? {
-      yieldId: string;
-    }
+    yieldId: string;
+  }
   : unknown;
 
 export type Redirect<M extends PlatformManifestId> = {
@@ -850,6 +850,7 @@ type Feature_Wallet40_Params = {
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;
+  finishOnboardingWidget?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;
