@@ -92,7 +92,6 @@ const test_android = async () => {
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries 2 \\
       --cleanup \\
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
