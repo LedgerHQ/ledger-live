@@ -14,23 +14,26 @@ const SPOT_APPEARANCE = {
 export function EarnSwapPromoDialog() {
   const dialog = useSelector(earnActionDialogSelector);
 
+  const activeDialogRef = useRef(dialog);
   const resolvedRef = useRef(false);
   const isRequestingToBeOpened = !!dialog;
 
   React.useEffect(() => {
-    if (!dialog) {
-      return;
+    activeDialogRef.current = dialog;
+
+    if (dialog) {
+      resolvedRef.current = false;
     }
+  }, [dialog]);
 
-    resolvedRef.current = false;
-
+  React.useEffect(() => {
     return () => {
-      if (!resolvedRef.current) {
+      if (activeDialogRef.current && !resolvedRef.current) {
         resolvedRef.current = true;
         resolveActionDialog(false);
       }
     };
-  }, [dialog]);
+  }, []);
 
   const handleClose = useCallback(() => {
     if (!resolvedRef.current) {

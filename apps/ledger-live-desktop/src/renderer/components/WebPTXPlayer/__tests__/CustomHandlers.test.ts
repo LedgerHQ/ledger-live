@@ -1,4 +1,9 @@
-import { createDialogInfoHandler } from "../CustomHandlers";
+import {
+  createDialogInfoHandler,
+  getActionDialogSnapshot,
+  subscribeActionDialog,
+  resolveActionDialog,
+} from "../CustomHandlers";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 
 describe("createDialogInfoHandler", () => {
@@ -50,5 +55,56 @@ describe("createDialogInfoHandler", () => {
       }),
     ).rejects.toThrow("'linkHref' is not an allowed URL");
     expect(dispatch).not.toHaveBeenCalled();
+  });
+});
+
+describe("action dialog store", () => {
+  afterEach(() => {
+    // Clean up any pending state between tests
+    resolveActionDialog(false);
+  });
+
+  it("should start with null snapshot", () => {
+    expect(getActionDialogSnapshot()).toBeNull();
+  });
+
+  it("should notify subscribers when resolveActionDialog is called", () => {
+    const listener = jest.fn();
+    const unsubscribe = subscribeActionDialog(listener);
+
+    resolveActionDialog(false);
+
+    expect(listener).toHaveBeenCalled();
+    unsubscribe();
+  });
+
+  it("should unsubscribe correctly", () => {
+    const listener = jest.fn();
+    const unsubscribe = subscribeActionDialog(listener);
+    unsubscribe();
+
+    resolveActionDialog(false);
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it("should reset snapshot to null after resolveActionDialog", () => {
+    resolveActionDialog(true);
+
+    expect(getActionDialogSnapshot()).toBeNull();
+  });
+
+  it("should notify multiple subscribers", () => {
+    const listener1 = jest.fn();
+    const listener2 = jest.fn();
+    const unsub1 = subscribeActionDialog(listener1);
+    const unsub2 = subscribeActionDialog(listener2);
+
+    resolveActionDialog(false);
+
+    expect(listener1).toHaveBeenCalled();
+    expect(listener2).toHaveBeenCalled();
+    unsub1();
+    unsub2();
   });
 });
