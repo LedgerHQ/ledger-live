@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
@@ -16,6 +15,7 @@ import {
   Subheader,
   SubheaderRow,
   SubheaderTitle,
+  Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { track } from "~/analytics";
@@ -35,13 +35,17 @@ export const PortfolioPerpsEntryPoint = () => {
 
   return (
     <FeatureToggle featureId="ptxPerpsLiveAppMobile">
-      <Subheader>
-        <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
-          <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>
-        </SubheaderRow>
-      </Subheader>
-      <Flex mb={6} mt={2}>
-        <ListItem onPress={handlePress} testID="portfolio-perps-entry-point">
+      <Box lx={{ marginTop: "s16", paddingHorizontal: "s16" }}>
+        <Subheader>
+          <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
+            <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>
+          </SubheaderRow>
+        </Subheader>
+        <ListItem
+          onPress={handlePress}
+          testID="portfolio-perps-entry-point"
+          lx={{ marginHorizontal: "-s8", marginTop: "s4" }}
+        >
           <ListItemLeading>
             <Spot appearance="icon" icon={Infinite} />
             <ListItemContent>
@@ -52,7 +56,7 @@ export const PortfolioPerpsEntryPoint = () => {
             <ChevronRight size={24} />
           </ListItemTrailing>
         </ListItem>
-      </Flex>
+      </Box>
     </FeatureToggle>
   );
 };
