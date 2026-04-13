@@ -18,7 +18,7 @@ import {
   isRecordScannerReady,
   splitPrivateAndPublicOperations,
 } from "../logic/utils";
-import { accessProvableApi, patchPublicOperations } from "../network/utils";
+import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
 import type {
   AleoAccount,
   AleoOperation,
@@ -27,7 +27,6 @@ import type {
 } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
-import { apiClient } from "../network/api";
 
 /**
  * Performs the public (transparent) portion of the Aleo account sync.
@@ -211,12 +210,12 @@ export async function performPrivateSync(
   const lastPrivateBlockHeight = oldPrivateOps[0]?.blockHeight ?? 0;
 
   const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
-    apiClient.getAccountOwnedRecords({
+    fetchAllOwnedRecords({
       currency,
       uuid: provableApi.uuid,
       start: lastPrivateBlockHeight,
     }),
-    apiClient.getAccountOwnedRecords({
+    fetchAllOwnedRecords({
       currency,
       uuid: provableApi.uuid,
       unspent: true,
