@@ -825,6 +825,7 @@ export const DEFAULT_FEATURES: Features = {
       balanceRefreshRework: true,
       assetSection: true,
       onboardingWidget: true,
+      finishOnboardingWidget: true,
       brazePlacement: true,
       operationsList: true,
       aggregatedAssets: true,
