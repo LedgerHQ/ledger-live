@@ -55,8 +55,7 @@ export function AppQRCodeHost({
       });
   }, [trustchain, memberCredentials, sdk]);
   return (
-    <div>
-      {" "}
+    <div className="flex flex-col gap-8">
       <RenderActionable
         enabled={!!trustchain && !!memberCredentials}
         error={error}
@@ -64,15 +63,10 @@ export function AppQRCodeHost({
         onClick={onStart}
         display={url}
         buttonTitle="Create QR Code Host"
-        buttonProps={{
-          "data-tooltip-id": "tooltip",
-          "data-tooltip-content":
-            "creates a QR code flow for a candidate who wants to be added as new member of the trustchain",
-        }}
       />
-      <div>
+      <div className="flex justify-center">
         {digits ? (
-          <strong style={{ fontSize: "3em" }}>
+          <strong className="heading-3">
             <code>Digits: {digits}</code>
           </strong>
         ) : url ? (

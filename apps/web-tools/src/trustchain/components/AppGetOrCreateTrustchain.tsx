@@ -41,11 +41,6 @@ export function AppGetOrCreateTrustchain({
       valueDisplay={valueDisplay}
       value={trustchain}
       setValue={setTrustchain}
-      buttonProps={{
-        "data-tooltip-id": "tooltip",
-        "data-tooltip-content":
-          "creates a new Trustchain or fetches an existing one. (device required)",
-      }}
     />
   );
 }

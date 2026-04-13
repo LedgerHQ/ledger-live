@@ -1,5 +1,6 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, find, from, ignoreElements, mergeMap, tap } from "rxjs";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
@@ -71,7 +72,6 @@ export default function AppAccountsSync({
 }) {
   const trustchainSdk = useTrustchainSDK();
 
-  // our state stays local here but is still managed as one single state for atomic update management
   const stateRef = useRef(state);
   useEffect(() => {
     stateRef.current = state;
@@ -83,7 +83,6 @@ export default function AppAccountsSync({
     [],
   );
 
-  // in memory implementation of bridgeCache
   const bridgeCache = useMemo(() => {
     const localCache: Record<string, unknown> = {};
     const cache = makeBridgeCacheSystem({
@@ -98,7 +97,6 @@ export default function AppAccountsSync({
     return cache;
   }, []);
 
-  // saveNewUpdate implements the state update logic
   const ctx = useMemo(
     () => ({ getAccountBridge, bridgeCache, blacklistedTokenIds: [] }),
     [bridgeCache],
@@ -107,7 +105,6 @@ export default function AppAccountsSync({
   const saveUpdate = useCallback(
     async (data: DistantState | null, version: number, newLocalState: LocalState | null) => {
       setState(s => {
-        // we now need to "reverse" the localStateSelector back into our own internal state
         let walletState = s.walletState;
         if (newLocalState) {
           walletState = walletHandlers.BULK_SET_ACCOUNT_NAMES(
@@ -121,7 +118,7 @@ export default function AppAccountsSync({
         );
         if (newLocalState) {
           return {
-            accounts: newLocalState.accounts.list, // save new accounts
+            accounts: newLocalState.accounts.list,
             nonImportedAccounts: newLocalState.accounts.nonImportedAccountInfos,
             walletState,
           };
@@ -182,7 +179,6 @@ export default function AppAccountsSync({
 
   const [watchConfig, setWatchConfig] = useState({ notificationsEnabled: false });
 
-  // pull and push wallet sync loop
   useEffect(() => {
     const localIncrementUpdate = makeLocalIncrementalUpdate({
       ctx,
@@ -242,17 +238,15 @@ export default function AppAccountsSync({
   );
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       {error ? (
-        <div style={{ padding: 10, color: "red" }}>{error.message}</div>
+        <div className="p-10 text-error body-2">{error.message}</div>
       ) : timestamp ? (
-        <div
-          style={{
-            textAlign: "center",
-          }}
-        >
+        <div className="text-center body-2 text-muted">
           Synced <Tick timestamp={timestamp} />.{" "}
-          <button onClick={() => onUserRefresh()}>Refresh</button>
+          <Button size="sm" appearance="transparent" onClick={() => onUserRefresh()}>
+            Refresh
+          </Button>
         </div>
       ) : null}
       <HeadlessShowAccounts
@@ -263,8 +257,8 @@ export default function AppAccountsSync({
         loading={visualPending}
       />
       {state.nonImportedAccounts.length > 0 ? (
-        <div style={{ padding: 10, textAlign: "center", color: "#fa0" }}>
-          ⚠️ {state.nonImportedAccounts.length} non-imported accounts
+        <div className="p-10 text-center text-warning body-2">
+          {state.nonImportedAccounts.length} non-imported accounts
         </div>
       ) : null}
       <HeadlessAddAccounts
@@ -287,10 +281,6 @@ export default function AppAccountsSync({
   );
 }
 
-// This is the part that handles adding accounts with a device
-// at the moment, when user client "Add accounts" we directly assume the device is connected and already on the correct app
-// in future, we can explore automation on automatically detecting the device, app and triggering the appropriate open app action to do so
-// this is what the component <DeviceAction> offers in ledger-live-desktop , but we went minimalistic here. In future, device-sdk should have this in scope.
 function HeadlessAddAccounts({
   deviceId,
   bridgeCache,
@@ -300,7 +290,6 @@ function HeadlessAddAccounts({
   bridgeCache: BridgeCacheSystem;
   setAccounts: (_: (_: Account[]) => Account[]) => void;
 }) {
-  // merge accounts with the existing ones
   const addAccounts = useCallback(
     (accounts: Account[]) => {
       setAccounts(state => {
@@ -321,7 +310,6 @@ function HeadlessAddAccounts({
       const currencyId = data.get("currency");
       if (!currencyId) return;
       setDisabled(true);
-      // This is how we scan for accounts with the bridge today
       const currency = getCryptoCurrencyById(String(currencyId));
       const currencyBridge = getCurrencyBridge(currency);
       const sub = appForCurrency(deviceId, currency, () =>
@@ -350,7 +338,6 @@ function HeadlessAddAccounts({
           setDisabled(false);
         },
       });
-      // TODO we could also offer an interruptability by doing sub.unsubscribe() when the user wants to cancel
       return () => {
         sub.unsubscribe();
       };
@@ -358,22 +345,26 @@ function HeadlessAddAccounts({
     [deviceId, addAccounts, bridgeCache],
   );
   return (
-    <div style={{ padding: 10, textAlign: "center" }}>
-      <form onSubmit={onSubmit}>
-        <label htmlFor="currency">
-          <span>Add accounts for</span>
-          <select style={{ margin: 10 }} name="currency" id="currency">
-            <option value="">Select a currency</option>
-            {listSupportedCurrencies().map(c => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+    <div className="p-10 text-center">
+      <form onSubmit={onSubmit} className="flex items-center justify-center gap-8 flex-wrap">
+        <label htmlFor="currency" className="body-2 text-base">
+          Add accounts for
         </label>
-        <button type="submit" disabled={disabled}>
+        <select
+          name="currency"
+          id="currency"
+          className="bg-base border border-base rounded-md px-8 py-6 body-2 text-base"
+        >
+          <option value="">Select a currency</option>
+          {listSupportedCurrencies().map(c => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+        <Button size="sm" type="submit" disabled={disabled}>
           Search with device
-        </button>
+        </Button>
       </form>
     </div>
   );
@@ -398,56 +389,34 @@ function AccountRow({
   const validSize = getValidCryptoIconSize(20);
 
   return (
-    <li
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: "5px 20px",
-        borderBottom: "1px solid #f0f0f0",
-      }}
-    >
-      <span style={{ marginRight: 10, display: "flex", alignItems: "center" }}>
+    <li className="flex items-center px-16 py-6 border-b border-base">
+      <span className="mr-10 flex items-center">
         {currency.type === "TokenCurrency" ? (
           <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} network={network} />
         ) : (
           <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} />
         )}
       </span>
-      <span style={{ flex: 1, minWidth: "50%" }}>
+      <span className="flex-1 min-w-[50%]">
         <EditableAccountNameField
           name={accountNameWithDefaultSelector(walletState, account)}
           setName={name => setAccountName(account.id, name)}
-          style={{
-            width: "100%",
-            display: "inline-block",
-            fontWeight: 600,
-            fontSize: 16,
-            padding: 0,
-            border: "none",
-            outline: "none",
-          }}
         />
       </span>
-      <span style={{ color: getCurrencyColor(account.currency), fontWeight: 600 }}>
+      <span className="body-2-semi-bold" style={{ color: getCurrencyColor(account.currency) }}>
         {formatCurrencyUnit(account.currency.units[0], account.balance, { showCode: true })}
       </span>
-      <span style={{ flex: 1 }} />
-      <code style={{ color: "#bbb", fontSize: 10, paddingRight: 10, fontWeight: 400 }}>
-        {account.freshAddressPath}
-      </code>
+      <span className="flex-1" />
+      <code className="body-4 pr-10 text-muted">{account.freshAddressPath}</code>
       <span>
-        <button type="button" onClick={() => removeAccount(account.id)}>
-          🗑️
-        </button>
+        <Button size="sm" appearance="transparent" type="button" onClick={() => removeAccount(account.id)}>
+          Remove
+        </Button>
       </span>
     </li>
   );
 }
 
-// This is the part that just show the accounts as they are.
-// there is just an action to delete on each action, convenient as i've made the previous add accounts to directly append into the list
-// we may totally change this state management paradigm if we want
 function HeadlessShowAccounts({
   walletState,
   accounts,
@@ -472,11 +441,11 @@ function HeadlessShowAccounts({
     return loading ? (
       <Loading />
     ) : (
-      <div style={{ textAlign: "center", fontSize: 18 }}>No accounts.</div>
+      <div className="text-center body-1 text-muted">No accounts.</div>
     );
   }
   return (
-    <ul style={{ padding: 0, margin: "10px 20px" }}>
+    <ul className="p-0 mx-16 my-10 list-none">
       {accounts.map(account => (
         <AccountRow
           key={account.id}
@@ -493,11 +462,9 @@ function HeadlessShowAccounts({
 function EditableAccountNameField({
   name,
   setName,
-  style,
 }: {
   name: string;
   setName: (_: string) => void;
-  style?: React.CSSProperties;
 }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(name);
@@ -524,16 +491,21 @@ function EditableAccountNameField({
   );
   return editing ? (
     <form onSubmit={onSubmit}>
-      <input style={style} value={value} onChange={onChange} onBlur={onBlur} autoFocus />
+      <input
+        className="w-full body-2-semi-bold border-none outline-none bg-transparent p-0"
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        autoFocus
+      />
     </form>
   ) : (
-    <span style={style} onClick={onEdit}>
+    <span className="w-full inline-block body-2-semi-bold cursor-pointer" onClick={onEdit}>
       {value}
     </span>
   );
 }
 
-// thin headless wrapper to first do the logic that will drive all the calls to access the app (NB: we may want to hook UI to it in future)
 function appForCurrency<T>(
   deviceId: string,
   currency: CryptoCurrency,

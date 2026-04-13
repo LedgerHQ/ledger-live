@@ -27,11 +27,6 @@ export function AppRestoreTrustchain({
       setValue={setTrustchain}
       value={trustchain}
       valueDisplay={value => value?.applicationPath}
-      buttonProps={{
-        "data-tooltip-id": "tooltip",
-        "data-tooltip-content":
-          "refresh the trustchain state after a possible derivation change (rotation)",
-      }}
     />
   );
 }

@@ -1,0 +1,11 @@
+@import "tailwindcss/theme.css";
+@import "tailwindcss/preflight.css";
+@import "tailwindcss/utilities.css";
+
+@config "../../tailwind.config.ts";
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;900&display=swap");
+
+body {
+  font-family: Inter, sans-serif;
+}

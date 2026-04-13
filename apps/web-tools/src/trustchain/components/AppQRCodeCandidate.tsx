@@ -4,10 +4,10 @@ import {
   InvalidDigitsError,
   NoTrustchainInitialized,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { TextInput } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { memberNameForPubKey } from "./IdentityManager";
-import { Input } from "./Input";
 import { useTrustchainSDK } from "../context";
 
 export function AppQRCodeCandidate({
@@ -56,7 +56,6 @@ export function AppQRCodeCandidate({
           return true;
         })
         .catch(e => {
-          // there can be various errors, InvalidDigitsError is one of them that can be handled
           if (e instanceof InvalidDigitsError) {
             alert("Invalid digits");
             return;
@@ -64,7 +63,6 @@ export function AppQRCodeCandidate({
           throw e;
         })
         .finally(() => {
-          // at this stage, everything is done, we can reset the state
           setScannedUrl(null);
           setInput(null);
           setDigits(null);
@@ -80,22 +78,17 @@ export function AppQRCodeCandidate({
   );
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       <Actionable
         buttonTitle="Set QR Code Host URL"
         inputs={scannedUrl && memberCredentials ? [scannedUrl, memberCredentials] : null}
         action={handleStart}
-        buttonProps={{
-          "data-tooltip-id": "tooltip",
-          "data-tooltip-content":
-            "starts the flow to join a trustchain by scanning a QR code from a host",
-        }}
       >
-        <Input
+        <TextInput
           placeholder="QR Code value (url)"
-          type="text"
           value={scannedUrl || ""}
           onChange={e => setScannedUrl(e.target.value)}
+          className="flex-1"
         />
       </Actionable>
 
@@ -104,16 +97,12 @@ export function AppQRCodeCandidate({
           buttonTitle="Send Digits"
           inputs={inputCallback && input && digits === input.length ? [inputCallback, input] : null}
           action={handleSendDigits}
-          buttonProps={{
-            "data-tooltip-id": "tooltip",
-            "data-tooltip-content": "send the digits to the host to complete the QR Code flow",
-          }}
         >
-          <Input
-            type="text"
+          <TextInput
             maxLength={digits}
             value={input || ""}
             onChange={e => setInput(e.target.value)}
+            className="flex-1"
           />
         </Actionable>
       ) : null}
