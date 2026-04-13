@@ -162,9 +162,9 @@ function provision_emulator_cert() {
 	log_info "Gaining root on ${SERIAL} (retrying up to 45s)..."
 	local ROOT_OK=false
 	for i in $(seq 1 15); do
+		local ROOT_EXIT=0
 		local ROOT_OUT
-		ROOT_OUT=$(adb -s "${SERIAL}" root 2>&1)
-		local ROOT_EXIT=$?
+		ROOT_OUT=$(adb -s "${SERIAL}" root 2>&1) || ROOT_EXIT=$?
 		log_info "  [${i}/15] adb root exit=${ROOT_EXIT} output='${ROOT_OUT}'"
 		if [ ${ROOT_EXIT} -eq 0 ]; then
 			ROOT_OK=true
