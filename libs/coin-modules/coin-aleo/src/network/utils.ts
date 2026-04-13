@@ -117,8 +117,7 @@ export async function fetchAccountTransactionsFromHeight({
 }
 
 /**
- * Fetches all pages of owned records from the scanner, iterating until the API
- * returns an empty page (no more results).
+ * Fetches all pages of owned records from the scanner
  *
  * @param params.currency - The cryptocurrency being accessed
  * @param params.uuid - The scanner UUID for the account

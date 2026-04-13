@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
-import { EXPLORER_TRANSFER_TYPES } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, DEFAULT_RECORDS_PAGE_SIZE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
 import type { ProvableApi } from "../types";
@@ -1471,7 +1471,7 @@ describe("network/utils", () => {
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
         uuid: mockUUID,
-        resultsPerPage: 1000,
+        resultsPerPage: DEFAULT_RECORDS_PAGE_SIZE,
         page: 0,
       });
       expect(result).toEqual(records);

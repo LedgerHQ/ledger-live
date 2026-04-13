@@ -9,8 +9,7 @@ import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/accou
 import { AleoAccount } from "../types";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
-import { accessProvableApi, patchPublicOperations } from "../network/utils";
-import { apiClient } from "../network/api";
+import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -31,7 +30,7 @@ const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
-const mockGetAccountOwnedRecords = jest.mocked(apiClient.getAccountOwnedRecords);
+const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
 const mockListPrivateOperations = jest.mocked(listPrivateOperations);
 const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
@@ -75,7 +74,7 @@ describe("sync.ts", () => {
       nextCursor: null,
     });
     mockAccessProvableApi.mockResolvedValue(null);
-    mockGetAccountOwnedRecords.mockResolvedValue([]);
+    mockFetchAllOwnedRecords.mockResolvedValue([]);
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
     mockPatchPublicOperations.mockResolvedValue([]);
@@ -509,7 +508,7 @@ describe("sync.ts", () => {
         ),
       ).rejects.toThrow();
 
-      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
     });
@@ -530,7 +529,7 @@ describe("sync.ts", () => {
       );
 
       expect(result).toBeNull();
-      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
       expect(mockPatchPublicOperations).not.toHaveBeenCalled();
@@ -557,7 +556,7 @@ describe("sync.ts", () => {
       );
 
       expect(result).toBeNull();
-      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
       expect(mockPatchPublicOperations).not.toHaveBeenCalled();
@@ -580,7 +579,7 @@ describe("sync.ts", () => {
         },
       ];
 
-      mockGetAccountOwnedRecords
+      mockFetchAllOwnedRecords
         .mockResolvedValueOnce(mockPrivateRecords)
         .mockResolvedValueOnce(mockUnspentRecords);
       mockListPrivateOperations.mockResolvedValueOnce({
@@ -605,13 +604,13 @@ describe("sync.ts", () => {
         [],
       );
 
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
         uuid: configuredProvableApi.uuid,
         start: 0,
       });
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
         uuid: configuredProvableApi.uuid,
         unspent: true,
@@ -656,7 +655,7 @@ describe("sync.ts", () => {
         [],
       );
 
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(
         expect.objectContaining({ start: 9999 }),
       );
     });
@@ -681,9 +680,7 @@ describe("sync.ts", () => {
         [],
       );
 
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
-        expect.objectContaining({ start: 0 }),
-      );
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(expect.objectContaining({ start: 0 }));
     });
 
     it("should use public operation blockHeight for listOperations cursor, not the private op height", async () => {
@@ -888,7 +885,7 @@ describe("sync.ts", () => {
         operations: [newPublicOp as any],
         nextCursor: null,
       });
-      mockGetAccountOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
+      mockFetchAllOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
 
       await performPrivateSync(
         {
@@ -943,7 +940,7 @@ describe("sync.ts", () => {
       const spentRecord = getMockedRecord({ tag: consumedTag, record_ciphertext: "spent" });
       const unspentRecord = getMockedRecord({ tag: "unspent-tag", record_ciphertext: "unspent" });
 
-      mockGetAccountOwnedRecords
+      mockFetchAllOwnedRecords
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([spentRecord, unspentRecord]); // unspent from scanner (with stale data)
       mockListPrivateOperations.mockResolvedValueOnce({
@@ -1013,7 +1010,7 @@ describe("sync.ts", () => {
         scannerStatus: { percentage: 100, synced: true },
       };
       mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
-      mockGetAccountOwnedRecords.mockRejectedValue(new Error("scanner down"));
+      mockFetchAllOwnedRecords.mockRejectedValue(new Error("scanner down"));
 
       const shape$ = createPrivateSyncObservable(baseInfo, mockSyncConfig, []);
       await expect(firstValueFrom(shape$)).rejects.toThrow("scanner down");
@@ -1194,7 +1191,7 @@ describe("sync.ts", () => {
       };
       mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
       // Make one of the private sub-calls throw
-      mockGetAccountOwnedRecords.mockRejectedValue(new Error("Scanner unavailable"));
+      mockFetchAllOwnedRecords.mockRejectedValue(new Error("Scanner unavailable"));
 
       const shape$ = makeGetAccountShape()(
         { ...baseInfo },

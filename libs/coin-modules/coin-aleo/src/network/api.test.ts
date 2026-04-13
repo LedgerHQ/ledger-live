@@ -797,7 +797,7 @@ describe("apiClient", () => {
       );
     });
 
-    it("should omit `filter` from the request body when page is 0 and resultsPerPage is not provided", async () => {
+    it("should include `filter.page` in the request body when page is 0", async () => {
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
