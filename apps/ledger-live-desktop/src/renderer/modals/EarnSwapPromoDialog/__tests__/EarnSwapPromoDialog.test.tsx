@@ -6,9 +6,9 @@ import {
   getActionDialogSnapshot,
   subscribeActionDialog,
   resolveActionDialog,
-} from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+} from "~/renderer/components/WebPTXPlayer/actionDialogStore";
 
-jest.mock("~/renderer/components/WebPTXPlayer/CustomHandlers", () => ({
+jest.mock("~/renderer/components/WebPTXPlayer/actionDialogStore", () => ({
   getActionDialogSnapshot: jest.fn(),
   subscribeActionDialog: jest.fn(),
   resolveActionDialog: jest.fn(),

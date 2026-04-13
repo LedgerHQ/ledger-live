@@ -10,7 +10,7 @@ import {
   getActionDialogSnapshot,
   subscribeActionDialog,
   resolveActionDialog,
-} from "../../components/WebPTXPlayer/CustomHandlers";
+} from "../../components/WebPTXPlayer/actionDialogStore";
 
 const SPOT_APPEARANCE = {
   info: "info",

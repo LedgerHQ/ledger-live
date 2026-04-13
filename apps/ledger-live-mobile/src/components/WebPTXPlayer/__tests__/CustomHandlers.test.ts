@@ -102,6 +102,10 @@ describe("createOpenActionDialogHandler", () => {
     icon: "warning" as const,
   };
 
+  afterEach(() => {
+    resolveActionDialog(false);
+  });
+
   it("should dispatch action dialog and return a promise", () => {
     const dispatch = jest.fn();
     const handler = createOpenActionDialogHandler(dispatch);

@@ -43,42 +43,10 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
+import { showActionDialog } from "./actionDialogStore";
 
-// --- Action Dialog module-level store ---
-
-export type ActionDialogData = {
-  title: string;
-  description: string;
-  ctaLabel: string;
-  icon?: "info" | "warning" | "success";
-};
-
-type ActionDialogResolver = (result: { confirmed: boolean }) => void;
-
-let actionDialogState: ActionDialogData | null = null;
-let pendingActionDialogResolver: ActionDialogResolver | null = null;
-const actionDialogListeners = new Set<() => void>();
-
-function notifyActionDialogListeners() {
-  actionDialogListeners.forEach(l => l());
-}
-
-export function getActionDialogSnapshot(): ActionDialogData | null {
-  return actionDialogState;
-}
-
-export function subscribeActionDialog(listener: () => void): () => void {
-  actionDialogListeners.add(listener);
-  return () => actionDialogListeners.delete(listener);
-}
-
-export function resolveActionDialog(confirmed: boolean) {
-  const resolver = pendingActionDialogResolver;
-  pendingActionDialogResolver = null;
-  actionDialogState = null;
-  notifyActionDialogListeners();
-  if (resolver) resolver({ confirmed });
-}
+export type { ActionDialogData } from "./actionDialogStore";
+export { getActionDialogSnapshot, subscribeActionDialog, resolveActionDialog } from "./actionDialogStore";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -413,16 +381,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           throw new Error("Missing params for custom.actionDialog");
         }
 
-        if (pendingActionDialogResolver) {
-          pendingActionDialogResolver({ confirmed: false });
-          pendingActionDialogResolver = null;
-        }
-
-        return new Promise<{ confirmed: boolean }>(resolve => {
-          pendingActionDialogResolver = resolve;
-          actionDialogState = params;
-          notifyActionDialogListeners();
-        });
+        return showActionDialog(params);
       },
       "custom.syncAccount": async request => {
         const { fromAccountId, toAccountId } = request.params || {};
