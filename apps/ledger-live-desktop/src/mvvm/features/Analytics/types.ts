@@ -20,4 +20,5 @@ export type AnalyticsViewModel = {
   selectedTimeRange: PortfolioRange;
   shouldDisplayGraphRework?: boolean;
   shouldDisplayAssetSection?: boolean;
+  totalBalanceOverride?: number;
 };
