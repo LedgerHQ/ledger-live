@@ -131,7 +131,7 @@ export async function estimateFees({
                 {
                   to_: transaction.recipient,
                   token_id: transaction.tokenId,
-                  amount: Number(amount),
+                  amount: amount,
                 },
               ],
             },

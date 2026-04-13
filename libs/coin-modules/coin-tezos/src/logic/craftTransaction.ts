@@ -125,7 +125,7 @@ export async function craftTransaction(
               {
                 to_: transaction.recipient,
                 token_id: transaction.tokenId,
-                amount: Number(transaction.amount),
+                amount: transaction.amount,
               },
             ],
           },

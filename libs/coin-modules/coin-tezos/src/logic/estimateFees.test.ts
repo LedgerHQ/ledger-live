@@ -357,7 +357,7 @@ describe("estimateFees", () => {
     expect(transfer).toHaveBeenCalledWith([
       {
         from_: revealedAccount.address,
-        txs: [{ to_: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr", token_id: 0, amount: 100 }],
+        txs: [{ to_: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr", token_id: 0, amount: 100n }],
       },
     ]);
     expect(result.fees).toBe(600n);

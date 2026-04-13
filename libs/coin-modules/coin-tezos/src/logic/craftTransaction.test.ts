@@ -305,7 +305,7 @@ describe("craftTransaction", () => {
     expect(transfer).toHaveBeenCalledWith([
       {
         from_: account.address,
-        txs: [{ to_: transaction.recipient, token_id: 0, amount: 5 }],
+        txs: [{ to_: transaction.recipient, token_id: 0, amount: 5n }],
       },
     ]);
     expect(result.contents).toEqual([
