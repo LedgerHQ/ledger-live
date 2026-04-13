@@ -131,13 +131,12 @@ function provision_emulator_cert() {
 	log_success "AVD directory found"
 
 	log_info "Emulator binary: ${EMULATOR_BIN}"
-	log_info "Launching AVD '${AVD_NAME}' on port ${PORT} with http-proxy 127.0.0.1:${usage_port}"
+	log_info "Launching AVD '${AVD_NAME}' on port ${PORT} (system proxy will be configured post-boot via adb)"
 	"${EMULATOR_BIN}" \
 		-avd "${AVD_NAME}" \
 		-port "${PORT}" \
 		-no-window -gpu swiftshader_indirect -noaudio -no-boot-anim \
 		-camera-back none \
-		-http-proxy "http://127.0.0.1:${usage_port}" \
 		&>/dev/null &
 	log_info "Emulator process launched (PID: $!)"
 
@@ -217,6 +216,18 @@ function provision_emulator_cert() {
 		done
 		echo 'Zygote namespace bind-mounts complete'
 	"
+	# Configure the Android system proxy with an exclusion list so that:
+	#   - HTTP/HTTPS to external hosts (e.g. firebaseremoteconfig.googleapis.com) is
+	#     routed through mitmproxy running on the host at 10.0.2.2:PORT
+	#   - Connections to 127.0.0.1/localhost/10.0.2.2 bypass the proxy entirely,
+	#     preventing Detox and ADB-reverse-forwarded ports from being misrouted.
+	# NOTE: 10.0.2.2 is the Android emulator's alias for the host machine (runner).
+	log_info "Configuring Android system proxy on ${SERIAL} (proxy=10.0.2.2:${usage_port})"
+	adb -s "${SERIAL}" shell settings put global global_http_proxy_host "10.0.2.2"
+	adb -s "${SERIAL}" shell settings put global global_http_proxy_port "${usage_port}"
+	adb -s "${SERIAL}" shell settings put global global_http_proxy_exclusion_list "127.0.0.1,localhost,10.0.2.2,::1"
+	log_success "Android system proxy configured (exclusions: 127.0.0.1, localhost, 10.0.2.2, ::1)"
+
 	log_success "Certificate and proxy provisioned to AVD '${AVD_NAME}' (${SERIAL}) — emulator left running for Detox"
 }
 
