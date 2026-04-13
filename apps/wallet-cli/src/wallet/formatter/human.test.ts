@@ -2,8 +2,7 @@ import { describe, expect, it } from "bun:test";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { HumanFormatter } from "./human";
 import { JsonFormatter } from "./json";
-import type { DiscoveredAccount, AccountDescriptor } from "../models";
-import { BalanceSchema, OperationSchema } from "../models";
+import type { DiscoveredAccount, AccountDescriptor, Balance, Operation } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
 
 const stubStore = {} as CryptoAssetsStore;
@@ -120,7 +119,7 @@ const mockHuman = {
 describe("JsonFormatter.balances", () => {
   it("maps balances to asset + formatted amount", async () => {
     const json = new JsonFormatter(mockHuman);
-    const balances = [BalanceSchema.parse({ assetId: "bitcoin", balance: "100000000" })];
+    const balances: Balance[] = [{ assetId: "bitcoin", balance: "100000000" }];
     const result = await json.balances(balances);
     expect(result).toEqual([{ asset: "bitcoin", amount: "100000000 formatted" }]);
   });
@@ -162,12 +161,12 @@ describe("HumanFormatter.formatBalance", () => {
   const formatter = new HumanFormatter(stubStore);
 
   it("formats a non-zero balance", async () => {
-    const result = await formatter.formatBalance(BalanceSchema.parse({ assetId: "ethereum", balance: "1000000000000000000" }));
+    const result = await formatter.formatBalance({ assetId: "ethereum", balance: "1000000000000000000" });
     expect(result).toContain("ETH");
   });
 
   it("formats a zero balance", async () => {
-    const result = await formatter.formatBalance(BalanceSchema.parse({ assetId: "ethereum", balance: "0" }));
+    const result = await formatter.formatBalance({ assetId: "ethereum", balance: "0" });
     expect(result).toContain("ETH");
   });
 });
@@ -175,7 +174,7 @@ describe("HumanFormatter.formatBalance", () => {
 describe("HumanFormatter.formatOperation", () => {
   const formatter = new HumanFormatter(stubStore);
 
-  const op = OperationSchema.parse({
+  const op: Operation = {
     id: "op1",
     hash: "0xdeadbeef",
     type: "OUT",
@@ -187,7 +186,7 @@ describe("HumanFormatter.formatOperation", () => {
     accountId: "acc1",
     assetId: "ethereum",
     date: "2024-06-01T12:00:00.000Z",
-  });
+  };
 
   it("contains the hash", async () => {
     const result = await formatter.formatOperation(op, "ethereum");
@@ -215,7 +214,7 @@ describe("JsonFormatter.operations", () => {
   const json = new JsonFormatter(mockHuman);
 
   it("maps operations to the expected shape", async () => {
-    const op = OperationSchema.parse({
+    const op: Operation = {
       id: "op1",
       hash: "0xabc",
       type: "OUT",
@@ -227,7 +226,7 @@ describe("JsonFormatter.operations", () => {
       accountId: "acc1",
       assetId: "ethereum",
       date: "2024-01-01T00:00:00.000Z",
-    });
+    };
     const result = await json.operations([op], "ethereum", "account:1:...");
     expect(result).toHaveLength(1);
     expect(result[0].hash).toBe("0xabc");
@@ -239,12 +238,12 @@ describe("JsonFormatter.operations", () => {
   });
 
   it("includes parentId when present", async () => {
-    const op = OperationSchema.parse({
+    const op: Operation = {
       id: "op2", hash: "0xdef", type: "IN", value: "500", fee: "50",
       senders: [], recipients: [], blockHeight: null,
       accountId: "acc1", assetId: "ethereum", date: "2024-01-01T00:00:00.000Z",
       parentId: "parent1",
-    });
+    };
     const result = await json.operations([op], "ethereum", "acct");
     expect(result[0].parentId).toBe("parent1");
   });

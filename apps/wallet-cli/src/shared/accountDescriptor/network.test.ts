@@ -3,7 +3,6 @@ import {
   parseNetworkArg,
   serializeNetwork,
   networkFromCurrencyId,
-  networkStringFromCurrencyId,
   currencyIdFromNetwork,
   UnknownNetworkError,
 } from "./network";
@@ -82,24 +81,6 @@ describe("networkFromCurrencyId", () => {
 
   it("throws UnknownNetworkError for unknown currency", () => {
     expect(() => networkFromCurrencyId("not_a_currency")).toThrow(UnknownNetworkError);
-  });
-});
-
-describe("networkStringFromCurrencyId", () => {
-  it("maps mainnet currencyId to canonical string", () => {
-    expect(networkStringFromCurrencyId("bitcoin")).toBe("bitcoin:main");
-  });
-
-  it("maps testnet currencyId to canonical string", () => {
-    expect(networkStringFromCurrencyId("bitcoin_testnet")).toBe("bitcoin:testnet");
-  });
-
-  it("maps devnet currencyId to canonical string", () => {
-    expect(networkStringFromCurrencyId("solana_devnet")).toBe("solana:devnet");
-  });
-
-  it("throws UnknownNetworkError for unknown currencyId", () => {
-    expect(() => networkStringFromCurrencyId("not_a_currency")).toThrow(UnknownNetworkError);
   });
 });
 
