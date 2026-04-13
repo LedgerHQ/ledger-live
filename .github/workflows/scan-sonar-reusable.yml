@@ -79,6 +79,13 @@ jobs:
           name: coverage-features
           path: coverage-features
 
+      - name: Generate Unit test coverage for wallet-cli
+        run: |
+          pnpm i --filter="wallet-cli" --no-frozen-lockfile --unsafe-perm
+          mkdir -p apps/wallet-cli/coverage
+          touch apps/wallet-cli/coverage/sonar-executionTests-report.xml
+          pnpm --filter="@ledgerhq/wallet-cli" coverage
+
       - name: Merge coverage files
         run: |
           if [ -d ./coverage-desktop ]; then
@@ -100,6 +107,11 @@ jobs:
             echo "Merging features coverage files"
             cat ./coverage-features/lcov.info >> ./lcov.info
             cat ./coverage-features/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./apps/wallet-cli/coverage ]; then
+            echo "Merging wallet-cli coverage files"
+            cat ./apps/wallet-cli/coverage/lcov.info >> ./lcov.info
+            cat ./apps/wallet-cli/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
           if [ ! -f ./sonar-executionTests-report.xml ]; then
             echo "No report found, creating empty report to avoid sonar scan failing!"
