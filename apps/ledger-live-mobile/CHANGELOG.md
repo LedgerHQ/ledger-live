@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.1.0-next.6
+
+### Minor Changes
+
+- [#16196](https://github.com/LedgerHQ/ledger-live/pull/16196) [`4f6ff59`](https://github.com/LedgerHQ/ledger-live/commit/4f6ff597f5fe63710809cc53f58e90fd54dbf5b0) Thanks [@thesan](https://github.com/thesan)! - Revert accounts import deferring
+
 ## 4.1.0-next.5
 
 ### Minor Changes
