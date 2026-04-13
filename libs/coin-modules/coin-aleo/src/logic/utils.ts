@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
@@ -155,16 +156,21 @@ export const toBridgeOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
 ): AleoOperation => {
+  const value = new BigNumber(rawTx.amount);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,
   );
 
+  if (value.isNaN() || value.lte(0)) {
+    log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
+  }
+
   return {
     id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
     recipients: [rawTx.recipient_address],
     senders: [rawTx.sender_address],
-    value: new BigNumber(rawTx.amount),
+    value,
     type,
     hasFailed,
     hash: rawTx.transaction_id,
