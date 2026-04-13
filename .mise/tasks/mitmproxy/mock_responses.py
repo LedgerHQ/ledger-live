@@ -89,27 +89,6 @@ def _find_entry(url: str):
     return None, None
 
 
-_LOOPBACK_HOSTS = frozenset(("127.0.0.1", "localhost", "::1"))
-
-
-def http_connect(flow: http.HTTPFlow) -> None:
-    """Drop CONNECT tunnel requests to loopback addresses immediately.
-
-    When the Android emulator uses -http-proxy, ALL HTTP(S) traffic is routed
-    through mitmproxy — including connections the app makes to 127.0.0.1 (the
-    emulator's own loopback, e.g. ADB-reverse-forwarded ports). mitmproxy then
-    tries to connect to 127.0.0.1:PORT on the *runner host*, which has no such
-    service, producing [Errno 111] Connection refused errors and slow timeouts.
-
-    Killing these flows here prevents the upstream connection attempt entirely.
-    From the app's perspective the result is the same (connection refused), but
-    it fails fast rather than waiting for a TCP timeout.
-    """
-    host = flow.server_conn.address[0]
-    if host in _LOOPBACK_HOSTS:
-        flow.kill()
-
-
 def request(flow: http.HTTPFlow) -> None:
     url = _url_without_query(flow.request.pretty_url)
     key, entry = _find_entry(url)
