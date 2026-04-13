@@ -1,16 +1,20 @@
-import { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import coinConfig from "../config";
-import { TronConfig } from "../config";
+import {
+  AlpacaApi,
+  BalanceOptions,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
+import { createApi } from ".";
+import coinConfig, { TronConfig } from "../config";
 import {
   broadcast,
   combine,
   craftTransaction,
   estimateFees,
   getBalance,
-  listOperations,
   lastBlock,
+  listOperations,
 } from "../logic";
-import { createApi } from ".";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -112,5 +116,14 @@ describe("createApi", () => {
       "address",
       expect.objectContaining({ limit: 200, minTimestamp: 0 }),
     );
+  });
+
+  describe("getBalance", () => {
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(mockTronConfig);
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
+    });
   });
 });

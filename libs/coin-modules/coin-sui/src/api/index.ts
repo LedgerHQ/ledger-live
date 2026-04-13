@@ -1,6 +1,8 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
   Balance,
+  BalanceOptions,
   CraftedTransaction,
   FeeEstimation,
   TransactionIntent,
@@ -40,7 +42,8 @@ export function createApi(config: SuiConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance: address => getBalance(address),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     getBlock,
     getBlockInfo,

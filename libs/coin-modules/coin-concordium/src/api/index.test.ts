@@ -1,3 +1,5 @@
+import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { TESTNET_COIN_CONFIG, VALID_ADDRESS } from "../test/fixtures";
 import { createApi } from ".";
 
@@ -71,6 +73,13 @@ describe("api/index", () => {
 
       expect(getBalanceMock).toHaveBeenCalledWith(VALID_ADDRESS, "concordium_testnet");
       expect(result).toEqual(mockBalances);
+    });
+
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
     });
   });
 

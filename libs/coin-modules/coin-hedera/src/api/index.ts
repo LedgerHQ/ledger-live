@@ -1,5 +1,7 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
   AlpacaApi,
+  BalanceOptions,
   CraftedTransaction,
   Operation,
   TransactionValidation,
@@ -91,7 +93,8 @@ export function createApi(
         value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
-    getBalance: address => getBalance(currency, address),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(currency, address), options),
     getBlock: height => {
       if (config.useHgraphForErc20) {
         return getBlockV2(height);

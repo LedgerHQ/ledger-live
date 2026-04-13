@@ -1,4 +1,5 @@
-import { Page, Stake, Reward } from "@ledgerhq/coin-module-framework/api/types";
+import { BalanceOptions, Page, Reward, Stake } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import type { SuiCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";
@@ -164,5 +165,13 @@ describe("api/index", () => {
   it("should throw if estimateFees throws", async () => {
     jest.spyOn(logic, "estimateFees").mockRejectedValue(new Error("fail"));
     await expect(api.estimateFees({} as any)).rejects.toThrow("fail");
+  });
+
+  describe("getBalance", () => {
+    it("should throw an exception when options is provided", async () => {
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
+    });
   });
 });

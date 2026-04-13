@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type {
-  TransactionIntent,
+  BalanceOptions,
   MemoNotSupported,
+  TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { AleoTransactionIntentData } from "../types";
-import coinConfig from "../config";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAlpacaOperation } from "../__tests__/fixtures/operation.fixture";
+import coinConfig from "../config";
 import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
+import type { AleoTransactionIntentData } from "../types";
 import { createApi } from "./index";
 
 jest.mock("../logic");
@@ -136,6 +139,13 @@ describe("createApi", () => {
       expect(mockedGetBalance).toHaveBeenCalledTimes(1);
       expect(mockedGetBalance).toHaveBeenCalledWith(expect.any(Object), "aleo1test");
       expect(result).toEqual([{ value: BigInt(10), asset: { type: "native" } }]);
+    });
+
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(mockConfig, "aleo");
+      await expect(api.getBalance("", {} as unknown as BalanceOptions)).rejects.toThrow(
+        InvalidParameterError,
+      );
     });
   });
 

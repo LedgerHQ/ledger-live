@@ -1,5 +1,6 @@
-import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import type { BalanceOptions, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import type { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";
@@ -752,5 +753,13 @@ describe("estimateFees", () => {
     expect(result.parameters?.gasLimit).toBe(2500n);
 
     logicEstimateFees.mockReset();
+  });
+});
+
+describe("getBalance", () => {
+  it("should throw an exception when options is provided", async () => {
+    await expect(api.getBalance("random address", {} as unknown as BalanceOptions)).rejects.toThrow(
+      InvalidParameterError,
+    );
   });
 });

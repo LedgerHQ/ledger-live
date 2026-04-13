@@ -1,7 +1,9 @@
-import type {
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import {
   AddressValidationCurrencyParameters,
   AlpacaApi,
   Balance,
+  BalanceOptions,
   BroadcastConfig,
   Cursor,
   FeeEstimation,
@@ -60,11 +62,14 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaA
     ) => {
       return estimateFees(api, intent, customFeesParameters);
     },
-    getBalance: (address: string) => {
-      return getBalance(api, address, {
-        token2022Enabled: config.token2022Enabled,
-      });
-    },
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(
+        () =>
+          getBalance(api, address, {
+            token2022Enabled: config.token2022Enabled,
+          }),
+        options,
+      ),
     lastBlock: () => {
       return lastBlock(api);
     },

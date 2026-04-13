@@ -318,7 +318,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
 
     const blockInfo = await alpacaApi.lastBlock();
-    const balanceRes = await alpacaApi.getBalance(address);
+
+    const balanceRes = await alpacaApi.getBalance(address, bridgeApi.balanceOptions);
+
     const nativeAsset = extractBalance(balanceRes, "native");
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 

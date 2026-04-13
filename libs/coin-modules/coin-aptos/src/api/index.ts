@@ -1,3 +1,4 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
   Block,
@@ -11,6 +12,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   Balance,
+  BalanceOptions,
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
@@ -43,7 +45,8 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: (transactionIntent: TransactionIntent) => client.estimateFees(transactionIntent),
-    getBalance: (address): Promise<Balance[]> => getBalances(client, address),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalances(client, address), options),
     lastBlock: () => client.getLastBlock(),
     listOperations: (address: string, { minHeight }) => client.listOperations(address, minHeight),
     getBlock(_height): Promise<Block> {

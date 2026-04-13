@@ -13,8 +13,10 @@ import type {
   TransactionIntent,
   TransactionValidation,
   Validator,
+  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
 import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
@@ -54,8 +56,8 @@ export function createApi(
       const transactionType = getTransactionType(intent);
       return estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
     },
-    getBalance: (address: string): Promise<Balance[]> => {
-      return getBalance(currency, address);
+    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> => {
+      return rejectBalanceOptions(() => getBalance(currency, address), options);
     },
     lastBlock: async (): Promise<BlockInfo> => {
       return lastBlock(currency);
