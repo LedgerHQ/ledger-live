@@ -6,6 +6,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
+import { track } from "~/renderer/analytics/segment";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -59,6 +60,11 @@ export function useRecipientAddressModalViewModel({
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      track("button_clicked", {
+        button: "address matched",
+        page: `step recipient`,
+        flow: "send",
+      });
       onAddressSelected(address, ensName, true);
     },
     [onAddressSelected],

@@ -53,6 +53,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       button: "send",
       buttonLocation: "quick_action",
       page: trackingPageName,
+      flow: "send",
     });
     maybeRedirectToAccounts();
     openSendFlow();
