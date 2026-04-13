@@ -1,6 +1,7 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { AssetsDistribution, DistributionItem } from "@ledgerhq/types-live";
+import type { DistributionResult } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
+import type { DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { track } from "~/analytics";
 import { useDistribution } from "~/actions/general";
@@ -32,12 +33,13 @@ function distributionRow(
   };
 }
 
-function mockAssetsDistribution(list: DistributionItem[]): AssetsDistribution {
+function mockAssetsDistribution(list: DistributionItem[]): DistributionResult {
   return {
     isAvailable: true,
     showFirst: list.length,
     sum: list.reduce((acc, row) => acc + (row.countervalue ?? row.amount), 0),
     list,
+    isLoading: false,
   };
 }
 
