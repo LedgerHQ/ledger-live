@@ -12,7 +12,6 @@ import { useFormatAccount } from "LLD/features/AddAccountDrawer/screens/ScanAcco
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useOnboardingState } from "./useOnboardingState";
 import { useCantonBridge } from "./useCantonBridge";
 import {
@@ -40,7 +39,7 @@ export function useCantonOnboardViewModel({
 }: CantonOnboardProps) {
   const { colors } = useTheme();
   const currentTheme = useSelector(userThemeSelector);
-  const device = useSelector(getCurrentDevice) as Device | null;
+  const device = useSelector(getCurrentDevice);
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
 

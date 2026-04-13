@@ -4,10 +4,7 @@ import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import type {
-  NavigationSnapshot,
-  TransferProposalSnapshot,
-} from "../hooks/topologyChangeError";
+import type { NavigationSnapshot } from "../hooks/topologyChangeError";
 import CantonOnboard from "./CantonOnboard";
 
 interface CantonReonboardDrawerProps {
@@ -20,7 +17,7 @@ export default function CantonReonboardDrawer({
   currency,
   accountToReonboard,
   navigationSnapshot,
-}: CantonReonboardDrawerProps) {
+}: Readonly<CantonReonboardDrawerProps>) {
   const dispatch = useDispatch();
 
   const handleComplete = useCallback(() => {
@@ -29,7 +26,7 @@ export default function CantonReonboardDrawer({
     if (navigationSnapshot?.type === "modal") {
       dispatch(openModal(navigationSnapshot.modalName, navigationSnapshot.modalData));
     } else if (navigationSnapshot?.type === "transfer-proposal") {
-      const { handler, props } = navigationSnapshot as TransferProposalSnapshot;
+      const { handler, props } = navigationSnapshot;
       handler(props.contractId, props.action);
     }
   }, [dispatch, navigationSnapshot]);

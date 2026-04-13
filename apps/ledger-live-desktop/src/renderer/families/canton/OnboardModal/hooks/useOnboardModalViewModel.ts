@@ -1,7 +1,6 @@
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -25,7 +24,7 @@ export function useOnboardModalViewModel({
   accountToReonboard,
   navigationSnapshot,
 }: UserProps) {
-  const device = useSelector(getCurrentDevice) as Device | null;
+  const device = useSelector(getCurrentDevice);
   const existingAccounts = useSelector(accountsSelector);
 
   const [stepId, setStepId] = useState<StepId>(StepId.ONBOARD);

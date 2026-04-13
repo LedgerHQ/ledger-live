@@ -34,7 +34,7 @@ function CantonOnboardView({
   startOnboarding,
   handleRetry,
   handleAddAccounts,
-}: CantonOnboardViewProps) {
+}: Readonly<CantonOnboardViewProps>) {
   const renderAccountItem = useCallback(
     (account: Account) => {
       const formatted = formatAccount(account);
