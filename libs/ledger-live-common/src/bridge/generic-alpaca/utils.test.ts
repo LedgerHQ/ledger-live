@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   adaptCoreOperationToLiveOperation,
   applyMemoToIntent,
@@ -10,11 +11,29 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import {
+  Operation as CoreOperation,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
+import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+
+jest.mock("@ledgerhq/coin-module-framework/logic/craftTransactionData", () => {
+  const originalModule = jest.requireActual(
+    "@ledgerhq/coin-module-framework/logic/craftTransactionData",
+  );
+  return {
+    ...originalModule,
+    craftTransactionData: jest.fn().mockReturnValue({ type: "none" }),
+  };
+});
 
 describe("Alpaca utils", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("applyMemoToIntent", () => {
     it("does not apply any memo", () => {
       const intent = applyMemoToIntent(
@@ -395,6 +414,52 @@ describe("Alpaca utils", () => {
         ).toMatchObject({
           type: "send-eip1559",
         });
+      });
+    });
+
+    describe("craftTransactionData", () => {
+      it("should use provided craftTransactionData", () => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+        const craftTransactionDataMock = jest.fn();
+
+        transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          {} as unknown as GenericTransaction,
+          undefined,
+          craftTransactionDataMock,
+        );
+
+        expect(craftTransactionDataMock).toHaveBeenCalledTimes(1);
+        expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
+      });
+
+      it("should use default craftTransactionData when not provided", () => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+
+        transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          {} as unknown as GenericTransaction,
+          undefined,
+          undefined,
+        );
+
+        expect(defaultCraftTransactionDataSpy).toHaveBeenCalledTimes(1);
       });
     });
   });
