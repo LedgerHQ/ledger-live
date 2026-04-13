@@ -390,6 +390,26 @@ describe("estimateFees", () => {
     ).rejects.toThrow("Fees estimation failed: test");
   });
 
+  it("should not throw for FA2 script_rejected errors (returns estimation)", async () => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      taquitoError: "proto.024-PtTALLiN.michelson_v1.script_rejected",
+    });
+    const result = await api.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz1recipient",
+      amount: 1000n,
+      asset: { type: "token", assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:0" },
+    } as TransactionIntent);
+    expect(result.value).toBe(DEFAULT_ESTIMATED_FEES);
+    expect(result.parameters?.gasLimit).toBe(DEFAULT_GAS_LIMIT);
+    expect(result.parameters?.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+  });
+
   it("should not throw for delegate.unchanged errors", async () => {
     logicEstimateFees.mockResolvedValue({
       estimatedFees: DEFAULT_ESTIMATED_FEES,

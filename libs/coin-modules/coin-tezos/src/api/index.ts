@@ -44,8 +44,11 @@ import {
   hasEmptyBalance,
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
+  parseTezosTokenAsset,
+  resolveTezosOperationMode,
 } from "../utils";
 import type { TezosFeeEstimation } from "./types";
+import type { TezosOperationMode } from "../types/model";
 
 export function createApi(config: TezosConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -108,12 +111,15 @@ async function craft(
     storageLimit: estimation.parameters?.storageLimit?.toString(),
   };
 
-  // Map generic staking intents to tezos modes
-  const mappedType = mapIntentTypeToTezosMode(transactionIntent.type);
+  const tezosMode = resolveTezosOperationMode(transactionIntent.type, transactionIntent.asset);
+  const mappedType: TezosOperationMode =
+    tezosMode === "send_token" ? "send_token" : mapIntentTypeToTezosMode(transactionIntent.type);
+  const tokenCraftInfo =
+    tezosMode === "send_token" ? parseTezosTokenAsset(transactionIntent.asset)! : undefined;
 
-  // Guard: send max is incompatible with delegated accounts
+  // Guard: send max is incompatible with delegated accounts (native XTZ only)
   let amountToUse = transactionIntent.amount;
-  if (mappedType === "send" && transactionIntent.useAllAmount) {
+  if (tezosMode === "send" && transactionIntent.useAllAmount) {
     const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
     if (senderInfo.type === "user" && senderInfo.delegate?.address) {
       throw new RecommendUndelegation();
@@ -161,6 +167,10 @@ async function craft(
     recipient: transactionIntent.recipient,
     amount: amountToUse,
     fee: { ...fee, fees: txFee.toString() },
+    ...(tokenCraftInfo && {
+      contractAddress: tokenCraftInfo.contractAddress,
+      tokenId: tokenCraftInfo.tokenId,
+    }),
   };
   const publicKeyForCraft =
     needsReveal && transactionIntent.senderPublicKey
@@ -197,8 +207,12 @@ async function craft(
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
   // avoid taquito error when estimating a 0-amount transfer during input
   const config = coinConfig.getCoinConfig();
+  const tezosModeForEstimate = resolveTezosOperationMode(
+    transactionIntent.type,
+    transactionIntent.asset,
+  );
   if (
-    transactionIntent.type === "send" &&
+    (tezosModeForEstimate === "send" || tezosModeForEstimate === "send_token") &&
     transactionIntent.amount === 0n &&
     !transactionIntent.useAllAmount
   ) {
@@ -232,11 +246,20 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
     balance: BigInt(senderAccountInfo.balance),
   };
 
+  const tokenEstimationInfo =
+    tezosModeForEstimate === "send_token"
+      ? parseTezosTokenAsset(transactionIntent.asset)!
+      : undefined;
+
   const transaction: CoreTransactionInfo = {
-    mode: mapIntentTypeToTezosMode(transactionIntent.type),
+    mode: tezosModeForEstimate,
     recipient: transactionIntent.recipient,
     amount: transactionIntent.amount,
     useAllAmount: !!transactionIntent.useAllAmount,
+    ...(tokenEstimationInfo && {
+      contractAddress: tokenEstimationInfo.contractAddress,
+      tokenId: tokenEstimationInfo.tokenId,
+    }),
   };
 
   async function logicEstimate(xpub?: string): Promise<EstimatedFees> {
@@ -266,7 +289,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       estimation.taquitoError &&
       !estimation.taquitoError.includes("delegate.unchanged") &&
       !estimation.taquitoError.includes("subtraction_underflow") &&
-      !estimation.taquitoError.includes("balance_too_low")
+      !estimation.taquitoError.includes("balance_too_low") &&
+      !estimation.taquitoError.includes("script_rejected")
     ) {
       throw new Error(`Fees estimation failed: ${estimation.taquitoError}`);
     }

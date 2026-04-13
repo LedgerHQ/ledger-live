@@ -19,10 +19,12 @@ export async function craftTransaction(
     counter?: number;
   },
   transaction: {
-    type: "send" | "delegate" | "undelegate";
+    type: "send" | "delegate" | "undelegate" | "send_token";
     recipient: string;
     amount: bigint;
     fee: TransactionFee;
+    contractAddress?: string;
+    tokenId?: number;
   },
   publicKey?: {
     publicKey: string;
@@ -105,6 +107,37 @@ export async function craftTransaction(
         destination: transaction.recipient,
         source: address,
         counter: (counter + 1 + contents.length).toString(),
+        ...transactionFees,
+      });
+      break;
+    }
+    case "send_token": {
+      if (!transaction.contractAddress || transaction.tokenId === undefined) {
+        throw new Error("FA2 transfer requires contractAddress and tokenId");
+      }
+      type = "OUT";
+      const tokenContract = await tezosToolkit.contract.at(transaction.contractAddress);
+      const transferParams = tokenContract.methods
+        .transfer([
+          {
+            from_: address,
+            txs: [
+              {
+                to_: transaction.recipient,
+                token_id: transaction.tokenId,
+                amount: transaction.amount,
+              },
+            ],
+          },
+        ])
+        .toTransferParams({ mutez: true });
+      contents.push({
+        kind: OpKind.TRANSACTION,
+        source: address,
+        destination: transaction.contractAddress,
+        amount: "0",
+        counter: (counter + 1 + contents.length).toString(),
+        parameters: transferParams.parameter,
         ...transactionFees,
       });
       break;
