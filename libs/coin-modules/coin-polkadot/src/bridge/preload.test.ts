@@ -25,16 +25,17 @@ jest.mock("../network", () => {
 });
 
 describe("preload", () => {
-  //TODO make a more complete test
   it("should correctly preload data", async () => {
     getMinimumBondBalanceMock.mockResolvedValue(0n);
 
     const currency = getCryptoCurrencyById(account.currency.id);
     await preload(currency);
 
-    expect(getRegistryMock).toHaveBeenCalledTimes(1);
+    // getRegistry is no longer called in preload (deferred to first transaction)
+    expect(getRegistryMock).toHaveBeenCalledTimes(0);
     expect(getMinimumBondBalanceMock).toHaveBeenCalledTimes(1);
     expect(getStakingProgressMock).toHaveBeenCalledTimes(1);
+    // On cold start (no cached validators), validators are awaited
     expect(getValidatorsMock).toHaveBeenCalledTimes(1);
   });
 
