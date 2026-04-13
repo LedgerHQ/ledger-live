@@ -420,7 +420,37 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
     });
 }
 
+/**
+ * Aleo doesn't have a per-account transaction nonce, so there is no natural value
+ * to assign to `transactionSequenceNumber` on confirmed operations.
+ *
+ * The framework's `shouldRetainPendingOperation` drops a pending operation when the most recent
+ * confirmed operation from the same sender has an equal or higher `transactionSequenceNumber`.
+ *
+ * Optimistic pending operations are created with increasing sequence numbers via `getNextSequenceNumber`,
+ * because without this only one pending operation could be rendered in LW.
+ * Confirmed operations lack this field, making the comparison always false and leaving pending operations stuck.
+ *
+ * Instead pending operations are removed here by matching on transaction hash:
+ * once a hash appears in the confirmed operations list, the corresponding pending operation is no longer needed.
+ */
+export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccount {
+  const pendingOperations = synced.pendingOperations ?? [];
+
+  if (pendingOperations.length === 0) {
+    return synced;
+  }
+
+  const confirmedHashes = new Set(synced.operations.map(o => o.hash));
+
+  return {
+    ...synced,
+    pendingOperations: pendingOperations.filter(po => !confirmedHashes.has(po.hash)),
+  };
+}
+
 export const sync = makeSync<AleoTransaction, AleoAccount>({
   getAccountShape: makeGetAccountShape(),
   shouldMergeOps: false,
+  postSync,
 });
