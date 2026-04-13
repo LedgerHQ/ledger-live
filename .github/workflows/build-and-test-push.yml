@@ -65,6 +65,11 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  build-wallet-cli:
+    name: "Build Wallet CLI"
+    uses: ./.github/workflows/build-wallet-cli-reusable.yml
+    secrets: inherit
+
   # Final Check required
   ok:
     name: "OK"
@@ -78,6 +83,7 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - build-wallet-cli
     runs-on: ubuntu-22.04
     if: always() && !cancelled()
     steps:
