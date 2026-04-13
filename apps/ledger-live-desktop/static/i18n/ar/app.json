@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "عذراً، حاول مرة أخرى.",
       "description" : "لم يتمكن الخادم من معالجة طلبك. يرجى إعادة المحاولة مرة أخرى لاحقاً أو التواصل مع دعم Ledger.",
-      "code" : "الكود: {{errorCode}}"
+      "code" : "الكود",
+      "correlationId" : "المُعرّف المرجعي"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "العملة المراد إرسالها",
       "changeToReturn" : "المتبقي المراد إرجاعه",
       "enterAmount" : "أدخل المبلغ",
+      "selectSufficientCoins" : "اختر ما يكفي من العملات",
       "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
       "amountInputLabel" : "المبلغ المطلوب إرساله"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (الأول دخولاً هو الأوّل خروجاً)",
       "OPTIMIZE_SIZE" : "تقليل الرسوم (تحقيق الحجم الأمثل)",
-      "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
+      "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)",
+      "CUSTOM" : "اختيار عملات مخصص"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "CTA الثانوي",
             "cta" : "CTA",
             "tag" : "علامة",
+            "picto" : "بيكتو (دفتر الأستاذ الموزع id)",
             "url" : "عنوان URL",
             "path" : "المسار"
           }
@@ -4645,6 +4649,10 @@
           "title" : "إنشاء فارغ",
           "desc" : "إنشاء حساب فارغ"
         },
+        "stablecoinGenerate" : {
+          "title" : "إعداد مسبق للعملات المستقرة",
+          "desc" : "إنشاء حسابات إيثريوم و Arbitrum و Optimism و Base وسولانا (Solana) و ترون (Tron) و ألجوراند (Algorand) عن طريق أهم العملات المستقرة (بحد أقصى 5 عملات لكل شبكة)"
+        },
         "currencySelector" : {
           "placeholder" : "اختيار العملات...",
           "searchPlaceholder" : "بحث",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "إنشاء {{count}} حساب",
           "generateAccounts_other" : "إنشاء {{count}} حساب",
           "generateAccountsQuick" : "إنشاء {{count}} حساب",
-          "generateEmptyAccount" : "إنشاء حساب فارغ"
+          "generateEmptyAccount" : "إنشاء حساب فارغ",
+          "generateStablecoinAccounts" : "إنشاء {{count}} حساب عملة مستقرة",
+          "generateStablecoinAccounts_other" : "إنشاء {{count}} حساب عملة مستقرة"
         },
         "alerts" : {
           "selectCurrency" : "يُرجى اختيار عملة واحدة على الأقل",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "تجربة مخصصة",
-      "analytics" : "التحليلات",
-      "personalizedExpDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
-      "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق للمساعدة في قياس أداء Ledger Wallet وتحسين كلٍ من التطبيق وتجربتك."
+      "analytics" : "أداء التطبيق",
+      "personalizedExpDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتوفير محتويات مخصصة",
+      "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتحسين تجربة المستخدم"
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "تعرّف على المزيد"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "قم بترقية جهازك ™Ledger Nano S",
+      "description" : "احصل على خصم %20 حصري على أحدث أجهزة توقيع Ledger."
+    },
+    "opted_out" : {
+      "title" : "قم بترقية جهازك ™Ledger Nano S",
+      "description" : "الذاكرة المحدودة في Ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل (بلوكتشين)، وتحسينات الأمان."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "اختر الحسابات التي ترغب في إضافتها",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "حسابات الأصول المشفرة",
+    "title" : "الحسابات",
     "tableActions" : {
-      "searchAddress" : "ابحث عن العنوان",
+      "searchAddress" : "ابحث عن طريق الاسم، العنوان",
       "addAddress" : "إضافة عنوان"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "تداول {{asset}}",
         "savings" : "مدخرات {{asset}}"
       },
-      "cta" : "تأكيد"
+      "cta" : "تأكيد",
+      "syncingTooltip" : "جارٍ المزامنة، يُرجى الانتظار"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "بدء المزامنة",
         "stopSync" : "إيقاف المزامنة",
         "lastProcessedBlock" : "آخر كتلة تمت معالجتها: {{block}}. {{missing}} كتلة مفقودة.",
-        "lastSync" : "آخر مزامنة: {{date}}"
+        "lastSync" : "آخر مزامنة: {{date}}",
+        "estimatedTimeRemaining" : "الوقت المقدر المتبقي: {{minutes}}:{{hours}}"
       },
       "datepicker" : {
         "label" : "طول يوم الميلاد",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "برعاية Provable",
       "balanceSelector" : {
         "private" : "الرصيد الخاص",
         "public" : "الرصيد العام",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "الرصيد الشفاف",
       "transparentBalanceTooltip" : "الرصيد المرئي للعامة",
       "privateBalance" : "الرصيد الخاص",
-      "privateBalanceTooltip" : "الرصيد المخفي عن العامة"
+      "privateBalanceTooltip" : "الرصيد المخفي عن العامة",
+      "syncButton" : {
+        "startSync" : "بدء المزامنة",
+        "stopSync" : "إيقاف المزامنة",
+        "syncAgain" : "المزامنة مرة أخرى",
+        "lastSync" : "آخر مزامنة: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "الإرسال من"
       },
       "summary" : {
-        "coveredByProvable" : "برعاية Provable",
         "proofGenerationWarning" : "معاملة Aleo تتطلب إنشاء إثبات. هذا قد يستغرق بعض الوقت."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "مزامنة رصيدك الخاص (%{{percentage}})",
+        "desc" : "يُرجى الانتظار",
+        "error" : "فشلت المزامنة الخاصة. يُرجى إعادة المحاولة لاحقاً."
       }
     }
   },
