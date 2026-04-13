@@ -23,17 +23,8 @@ permissions:
 
 jobs:
   build-wallet-cli:
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          [
-            { name: "Linux", os: "ubuntu-22.04", binary: "cli", artifact: "wallet-cli-linux-x64" },
-            { name: "Windows", os: "windows-2022", binary: "cli.exe", artifact: "wallet-cli-windows-x64" },
-            { name: "macOS", os: "macos-14", binary: "cli", artifact: "wallet-cli-darwin-arm64" },
-          ]
-    name: "${{ matrix.config.name }} Build"
-    runs-on: ${{ matrix.config.os }}
+    name: "Build (all platforms)"
+    runs-on: ubuntu-22.04
     timeout-minutes: 30
 
     steps:
@@ -68,8 +59,20 @@ jobs:
           TURBO_TEAM: "foo"
         run: pnpm turbo build --filter "@ledgerhq/wallet-cli"
 
-      - name: Upload ${{ matrix.config.name }} binary
+      - name: Upload darwin-arm64 binary
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: ${{ matrix.config.artifact }}
-          path: ${{ github.workspace }}/apps/wallet-cli/dist/${{ matrix.config.binary }}
+          name: wallet-cli-darwin-arm64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/darwin-arm64/cli
+
+      - name: Upload linux-x64 binary
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: wallet-cli-linux-x64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/linux-x64/cli
+
+      - name: Upload windows-x64 binary
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: wallet-cli-windows-x64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/windows-x64/cli.exe
