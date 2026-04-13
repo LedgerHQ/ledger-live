@@ -5,6 +5,7 @@ import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
+  DEFAULT_RECORDS_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
   RECIPIENT_ARG_INDEX,
@@ -113,6 +114,51 @@ export async function fetchAccountTransactionsFromHeight({
 
   // should not be reached, just a type guard
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
+}
+
+/**
+ * Fetches all pages of owned records from the scanner
+ *
+ * @param params.currency - The cryptocurrency being accessed
+ * @param params.uuid - The scanner UUID for the account
+ * @param params.unspent - When true, fetch only unspent records
+ * @param params.start - Optional block height to start scanning from
+ * @param params.resultsPerPage - Number of records to fetch per page (default: 1000)
+ * @returns A flat array of all matching records across all pages
+ */
+export async function fetchAllOwnedRecords({
+  currency,
+  uuid,
+  unspent,
+  start,
+  resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
+}: {
+  currency: CryptoCurrency;
+  uuid: string;
+  unspent?: boolean;
+  start?: number;
+  resultsPerPage?: number;
+}): Promise<AleoPrivateRecord[]> {
+  const allRecords: AleoPrivateRecord[] = [];
+  let page = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const records = await apiClient.getAccountOwnedRecords({
+      currency,
+      uuid,
+      ...(typeof unspent === "boolean" && { unspent }),
+      ...(typeof start === "number" && { start }),
+      resultsPerPage,
+      page,
+    });
+
+    allRecords.push(...records);
+    hasMore = records.length === resultsPerPage;
+    page += 1;
+  }
+
+  return allRecords;
 }
 
 /**

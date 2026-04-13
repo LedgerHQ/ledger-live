@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
-import { EXPLORER_TRANSFER_TYPES } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, DEFAULT_RECORDS_PAGE_SIZE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
 import type { ProvableApi } from "../types";
@@ -14,6 +14,7 @@ import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
+  fetchAllOwnedRecords,
   enrichPrivateRecord,
   patchPublicOperations,
 } from "./utils";
@@ -1446,6 +1447,166 @@ describe("network/utils", () => {
       expect(result).toEqual(
         expect.arrayContaining([expect.objectContaining({ id: "fully_pub" })]),
       );
+    });
+  });
+
+  describe("fetchAllOwnedRecords", () => {
+    const mockUUID = "uuid-abc-def";
+    const mockGetAccountOwnedRecords = jest.mocked(apiClient.getAccountOwnedRecords);
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return all records when they fit in a single page", async () => {
+      const records = [getMockedRecord({ tag: "tag1" }), getMockedRecord({ tag: "tag2" })];
+      mockGetAccountOwnedRecords.mockResolvedValueOnce(records);
+
+      const result = await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: DEFAULT_RECORDS_PAGE_SIZE,
+        page: 0,
+      });
+      expect(result).toEqual(records);
+    });
+
+    it("should iterate multiple pages until a page with fewer records than resultsPerPage is returned", async () => {
+      const pageSize = 2;
+      const page0 = [getMockedRecord({ tag: "t0a" }), getMockedRecord({ tag: "t0b" })];
+      const page1 = [getMockedRecord({ tag: "t1a" })]; // fewer than pageSize → last page
+      mockGetAccountOwnedRecords.mockResolvedValueOnce(page0).mockResolvedValueOnce(page1);
+
+      const result = await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: pageSize,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
+      expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(1, {
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: pageSize,
+        page: 0,
+      });
+      expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(2, {
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: pageSize,
+        page: 1,
+      });
+      expect(result).toEqual([...page0, ...page1]);
+    });
+
+    it("should stop immediately when the first page is empty", async () => {
+      mockGetAccountOwnedRecords.mockResolvedValueOnce([]);
+
+      const result = await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
+      expect(result).toEqual([]);
+    });
+
+    it("should pass `unspent` flag to each page request when provided", async () => {
+      const records = [getMockedRecord({ tag: "u1" })];
+      mockGetAccountOwnedRecords.mockResolvedValueOnce(records);
+
+      await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        unspent: true,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
+        expect.objectContaining({ unspent: true }),
+      );
+    });
+
+    it("should pass `start` to each page request when provided", async () => {
+      const records = [getMockedRecord({ tag: "s1" })];
+      mockGetAccountOwnedRecords.mockResolvedValueOnce(records);
+
+      await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        start: 5000,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
+        expect.objectContaining({ start: 5000 }),
+      );
+    });
+
+    it("should not pass `unspent` when it is not provided", async () => {
+      mockGetAccountOwnedRecords.mockResolvedValueOnce([]);
+
+      await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
+        expect.not.objectContaining({ unspent: expect.anything() }),
+      );
+    });
+
+    it("should not pass `start` when it is not provided", async () => {
+      mockGetAccountOwnedRecords.mockResolvedValueOnce([]);
+
+      await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
+        expect.not.objectContaining({ start: expect.anything() }),
+      );
+    });
+
+    it("should accumulate records across three full pages and stop after a partial page", async () => {
+      const pageSize = 2;
+      const page0 = [getMockedRecord({ tag: "a" }), getMockedRecord({ tag: "b" })];
+      const page1 = [getMockedRecord({ tag: "c" }), getMockedRecord({ tag: "d" })];
+      const page2 = [getMockedRecord({ tag: "e" })]; // partial → done
+      mockGetAccountOwnedRecords
+        .mockResolvedValueOnce(page0)
+        .mockResolvedValueOnce(page1)
+        .mockResolvedValueOnce(page2);
+
+      const result = await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: pageSize,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(3);
+      expect(result).toHaveLength(5);
+      expect(result).toEqual([...page0, ...page1, ...page2]);
+    });
+
+    it("should propagate errors thrown by the underlying API call", async () => {
+      mockGetAccountOwnedRecords.mockRejectedValueOnce(new Error("Scanner unavailable"));
+
+      await expect(
+        fetchAllOwnedRecords({
+          currency: mockCurrency,
+          uuid: mockUUID,
+        }),
+      ).rejects.toThrow("Scanner unavailable");
     });
   });
 });

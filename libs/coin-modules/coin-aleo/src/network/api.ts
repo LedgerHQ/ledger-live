@@ -145,20 +145,30 @@ async function getAccountOwnedRecords({
   uuid,
   unspent,
   start,
+  resultsPerPage,
+  page,
 }: {
   currency: CryptoCurrency;
   uuid: string;
   unspent?: boolean;
   start?: number;
+  resultsPerPage?: number;
+  page?: number;
 }): Promise<AleoPrivateRecord[]> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const filter = {
+    ...(typeof start === "number" && { start }),
+    ...(typeof resultsPerPage === "number" && { results_per_page: resultsPerPage }),
+    ...(typeof page === "number" && { page }),
+  };
 
   const res = await network<AleoPrivateRecord[]>({
     method: "POST",
     url: `${nodeUrl}/scanner/${networkType}/records/owned`,
     data: {
       ...(typeof unspent === "boolean" && { unspent }),
-      ...(typeof start === "number" && { filter: { start } }),
+      ...(Object.keys(filter).length > 0 && { filter }),
       uuid,
     },
   });

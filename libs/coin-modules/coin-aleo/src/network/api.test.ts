@@ -716,6 +716,103 @@ describe("apiClient", () => {
         }),
       );
     });
+
+    it("should include `filter.results_per_page` when resultsPerPage is provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        resultsPerPage: 100,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { results_per_page: 100 }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should include `filter.page` when page is provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        page: 2,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { page: 2 }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should include all filter fields when start, resultsPerPage and page are all provided", async () => {
+      const mockStart = 14192648;
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        start: mockStart,
+        resultsPerPage: 500,
+        page: 3,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            filter: { start: mockStart, results_per_page: 500, page: 3 },
+            uuid: mockUuid,
+          },
+        }),
+      );
+    });
+
+    it("should combine unspent flag with pagination filter fields", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        unspent: true,
+        resultsPerPage: 200,
+        page: 1,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            unspent: true,
+            filter: { results_per_page: 200, page: 1 },
+            uuid: mockUuid,
+          },
+        }),
+      );
+    });
+
+    it("should include `filter.page` in the request body when page is 0", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        page: 0,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { page: 0 }, uuid: mockUuid },
+        }),
+      );
+    });
   });
 
   describe("getProvePublicKey", () => {
