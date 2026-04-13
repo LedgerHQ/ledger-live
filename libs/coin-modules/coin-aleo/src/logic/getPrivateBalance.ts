@@ -10,19 +10,31 @@ export async function getPrivateBalance({
   currency,
   viewKey,
   privateRecords,
+  oldUnspentRecords,
 }: {
   currency: CryptoCurrency;
   viewKey: string;
   privateRecords: AleoPrivateRecord[];
+  oldUnspentRecords: AleoUnspentRecord[];
 }): Promise<{
   balance: BigNumber;
   unspentRecords: AleoUnspentRecord[];
 }> {
+  const recordByCiphertext = new Map(oldUnspentRecords.map(r => [r.record_ciphertext, r]));
   const unspentCreditsRecords = privateRecords.filter(
     record => record.program_name === PROGRAM_ID.CREDITS && !record.spent,
   );
 
   const decryptedResults = await promiseAllBatched(2, unspentCreditsRecords, async record => {
+    const cachedRecord = recordByCiphertext.get(record.record_ciphertext);
+
+    if (cachedRecord) {
+      return {
+        microcredits: cachedRecord.microcredits,
+        unspentRecord: cachedRecord,
+      };
+    }
+
     const decryptedRecord = await sdkClient.decryptRecord({
       currency,
       viewKey,

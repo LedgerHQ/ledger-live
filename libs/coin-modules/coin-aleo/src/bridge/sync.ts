@@ -252,6 +252,7 @@ export async function performPrivateSync(
     currency,
     viewKey,
     privateRecords: filteredUnspentRecords,
+    oldUnspentRecords: initialAccount.aleoResources?.unspentPrivateRecords ?? [],
   });
   const privateBalance = privateBalanceResult.balance;
   const unspentPrivateRecords: AleoUnspentRecord[] = privateBalanceResult.unspentRecords;

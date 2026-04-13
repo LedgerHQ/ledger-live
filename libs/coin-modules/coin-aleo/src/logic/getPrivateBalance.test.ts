@@ -3,6 +3,7 @@ import { sdkClient } from "../network/sdk";
 import { PROGRAM_ID } from "../constants";
 import { testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import type { AleoUnspentRecord } from "../types";
 import { getPrivateBalance } from "./getPrivateBalance";
 
 jest.mock("../network/sdk");
@@ -28,6 +29,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [],
+      oldUnspentRecords: [],
     });
 
     expect(balance).toEqual(new BigNumber(0));
@@ -42,6 +44,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [record],
+      oldUnspentRecords: [],
     });
 
     expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
@@ -78,6 +81,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [record1, record2],
+      oldUnspentRecords: [],
     });
 
     expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(2);
@@ -92,6 +96,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [spentRecord],
+      oldUnspentRecords: [],
     });
 
     expect(sdkClient.decryptRecord).not.toHaveBeenCalled();
@@ -106,6 +111,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [nonCreditsRecord],
+      oldUnspentRecords: [],
     });
 
     expect(sdkClient.decryptRecord).not.toHaveBeenCalled();
@@ -125,6 +131,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [creditsRecord, otherRecord],
+      oldUnspentRecords: [],
     });
 
     expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
@@ -140,6 +147,7 @@ describe("getPrivateBalance", () => {
       currency: mockCurrency,
       viewKey: mockViewKey,
       privateRecords: [spentRecord, unspentRecord],
+      oldUnspentRecords: [],
     });
 
     expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
@@ -156,7 +164,80 @@ describe("getPrivateBalance", () => {
         currency: mockCurrency,
         viewKey: mockViewKey,
         privateRecords: [testnetPrivateRecord],
+        oldUnspentRecords: [],
       }),
     ).rejects.toThrow("Decryption failed");
+  });
+
+  it("should use cached record from oldUnspentRecords and skip decryptRecord", async () => {
+    const record = { ...testnetPrivateRecord, spent: false };
+    const cachedUnspentRecord: AleoUnspentRecord = {
+      ...record,
+      microcredits: "500000",
+      decryptedData: mockDecryptedRecord,
+    };
+
+    const { balance, unspentRecords } = await getPrivateBalance({
+      currency: mockCurrency,
+      viewKey: mockViewKey,
+      privateRecords: [record],
+      oldUnspentRecords: [cachedUnspentRecord],
+    });
+
+    expect(sdkClient.decryptRecord).not.toHaveBeenCalled();
+    expect(balance).toEqual(new BigNumber(500000));
+    expect(unspentRecords).toEqual([cachedUnspentRecord]);
+  });
+
+  it("should decrypt only records not present in oldUnspentRecords", async () => {
+    const cachedRecord = { ...testnetPrivateRecord, commitment: "cached-commitment" };
+    const newRecord = {
+      ...testnetPrivateRecord,
+      commitment: "new-commitment",
+      record_ciphertext: "new-ciphertext",
+    };
+    const cachedUnspentRecord: AleoUnspentRecord = {
+      ...cachedRecord,
+      microcredits: "300000",
+      decryptedData: mockDecryptedRecord,
+    };
+
+    jest.mocked(sdkClient.decryptRecord).mockResolvedValueOnce({
+      ...mockDecryptedRecord,
+      data: { microcredits: "200000u64.private" },
+    });
+
+    const { balance, unspentRecords } = await getPrivateBalance({
+      currency: mockCurrency,
+      viewKey: mockViewKey,
+      privateRecords: [cachedRecord, newRecord],
+      oldUnspentRecords: [cachedUnspentRecord],
+    });
+
+    expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
+    expect(sdkClient.decryptRecord).toHaveBeenCalledWith(
+      expect.objectContaining({ ciphertext: newRecord.record_ciphertext }),
+    );
+    expect(balance).toEqual(new BigNumber(500000));
+    expect(unspentRecords).toHaveLength(2);
+  });
+
+  it("should not include a cached record in output when it no longer appears in privateRecords (spent, removed by API)", async () => {
+    const spentCachedRecord: AleoUnspentRecord = {
+      ...testnetPrivateRecord,
+      microcredits: "500000",
+      decryptedData: mockDecryptedRecord,
+    };
+
+    const { balance, unspentRecords } = await getPrivateBalance({
+      currency: mockCurrency,
+      viewKey: mockViewKey,
+      privateRecords: [],
+      oldUnspentRecords: [spentCachedRecord],
+    });
+
+    expect(sdkClient.decryptRecord).not.toHaveBeenCalled();
+    expect(balance).toEqual(new BigNumber(0));
+    expect(unspentRecords).toEqual([]);
   });
 });
