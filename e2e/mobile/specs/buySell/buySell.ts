@@ -1,7 +1,7 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { ApplicationOptions } from "page";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isWallet40 } from "../../helpers/commonHelpers";
 
@@ -139,7 +139,7 @@ export async function runNavigateToBuyFromAssetPageTest(
 
 export async function runSellFlowTest(
   buySell: BuySell,
-  provider: Provider,
+  provider: BuySellProvider,
   paymentMethod: string,
   tmsLinks: string[],
   tags: string[],

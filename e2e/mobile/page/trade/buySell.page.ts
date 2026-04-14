@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
@@ -161,20 +161,23 @@ export default class BuySellPage {
 
   @Step("Select random provider")
   async selectRandomProvider(): Promise<string> {
-    const providers = await this.getAvailableProviders();
-    if (providers.length === 0) {
-      throw new Error("No providers available");
+    const uiNamesFromQuotes = await this.getAvailableProviders();
+    const testedProviders = uiNamesFromQuotes
+      .map(uiName => BuySellProvider.getByUiName(uiName))
+      .filter(p => p?.isTested);
+
+    if (testedProviders.length === 0) {
+      throw new Error(
+        `No known tested providers in quotes. UI listed: ${uiNamesFromQuotes.join(", ") || "(none)"}`,
+      );
     }
-    const randomIndex = Math.floor(Math.random() * providers.length);
-    const selected = providers[randomIndex];
-    const testIdName = Provider.getNameByUiName(selected);
-    if (!testIdName) {
-      throw new Error(`Unknown provider UI name: "${selected}"`);
-    }
+
+    const selected = testedProviders[Math.floor(Math.random() * testedProviders.length)];
+    const testIdName = selected.name;
 
     await scrollToWebElement(getWebElementByTestId(this.provider(testIdName)));
     await tapWebElementByTestId(this.provider(testIdName));
-    return selected;
+    return selected.uiName;
   }
 
   @Step("Select provider")
@@ -214,7 +217,7 @@ export default class BuySellPage {
   }
 
   @Step("Handle sell flow")
-  async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: Provider) {
+  async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: BuySellProvider) {
     await this.expectSellScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
     await this.tapSellPercentageButton("50%");
