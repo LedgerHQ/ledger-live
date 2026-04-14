@@ -68,9 +68,11 @@ export function extractBalances(
 ): Balance[] {
   const balances: Balance[] = [
     {
-      value: BigInt(account.balance.toFixed()),
+      // Send flows expect spendable balances here. Using the account total balance
+      // makes `useAllAmount` include staked/locked funds for staking-enabled EVM accounts.
+      value: BigInt(account.spendableBalance.toFixed()),
       asset: { type: "native" },
-      locked: BigInt(account.balance.minus(account.spendableBalance).toFixed()),
+      locked: 0n,
     },
   ];
 
@@ -81,9 +83,9 @@ export function extractBalances(
   for (const subAccount of account.subAccounts) {
     const asset = getAssetFromToken(subAccount.token, account.freshAddress);
     balances.push({
-      value: BigInt(subAccount.balance.toFixed()),
+      value: BigInt(subAccount.spendableBalance.toFixed()),
       asset,
-      locked: BigInt(subAccount.balance.minus(subAccount.spendableBalance).toFixed()),
+      locked: 0n,
     });
   }
 
@@ -202,10 +204,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   }
 
   if (op.details?.stake && typeof op.details.stake === "object") {
-    const s = op.details.stake as { address?: string; amount?: bigint | number | string };
+    const s = op.details.stake as { address?: string; amount?: bigint };
     extra.stake = {
       address: s.address ?? "",
-      amount: new BigNumber(s.amount?.toString() ?? "0"),
+      amount: new BigNumber(s.amount !== undefined ? String(s.amount) : "0"),
     };
   }
 
@@ -483,6 +485,8 @@ export const buildOptimisticOperation = (
   const { subAccounts } = account;
   const parentType = subAccountId ? "FEES" : type;
   const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
+  const normalizedSequenceNumber = String(sequenceNumber ?? 0);
+  const nonce = sequenceNumber === undefined ? undefined : new BigNumber(normalizedSequenceNumber);
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", parentType),
@@ -494,12 +498,12 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     senders: [account.freshAddress.toString()],
     recipients: [transaction.recipient],
-    transactionSequenceNumber: new BigNumber(sequenceNumber?.toString() ?? 0),
+    transactionSequenceNumber: new BigNumber(normalizedSequenceNumber),
     accountId: account.id,
     date: new Date(),
     transactionRaw: toGenericTransactionRaw({
       ...transaction,
-      nonce: sequenceNumber !== undefined ? new BigNumber(sequenceNumber.toString()) : undefined,
+      nonce,
       ...(tokenAccount
         ? { recipient: tokenAccount.token.contractAddress, amount: new BigNumber(0) }
         : {}),
@@ -523,13 +527,12 @@ export const buildOptimisticOperation = (
         blockHeight: null,
         senders: [account.freshAddress],
         recipients: [transaction.recipient],
-        transactionSequenceNumber: new BigNumber(sequenceNumber?.toString() ?? 0),
+        transactionSequenceNumber: new BigNumber(normalizedSequenceNumber),
         accountId: subAccountId,
         date: new Date(),
         transactionRaw: toGenericTransactionRaw({
           ...transaction,
-          nonce:
-            sequenceNumber !== undefined ? new BigNumber(sequenceNumber.toString()) : undefined,
+          nonce,
         }),
         extra: {
           ledgerOpType: type,
