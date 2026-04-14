@@ -36,14 +36,14 @@ catalog:
   "@ledgerhq/lumen-ui-react": 0.1.22
   "@ledgerhq/lumen-ui-rnative": 0.1.23
   # React Native
-  react-native: 0.79.7
-  "@react-native/assets-registry": 0.79.7
-  "@react-native/babel-plugin-codegen": 0.79.7
-  "@react-native/babel-preset": 0.79.7
-  "@react-native/codegen": 0.79.7
-  "@react-native/dev-middleware": 0.79.7
-  "@react-native/gradle-plugin": 0.79.7
-  "@react-native/metro-config": 0.79.7
+  react-native: 0.81.6
+  "@react-native/assets-registry": 0.81.6
+  "@react-native/babel-plugin-codegen": 0.81.6
+  "@react-native/babel-preset": 0.81.6
+  "@react-native/codegen": 0.81.6
+  "@react-native/dev-middleware": 0.81.6
+  "@react-native/gradle-plugin": 0.81.6
+  "@react-native/metro-config": 0.81.6
   # React Native Community
   "@react-native-community/cli": 18.0.1
   "@react-native-community/cli-platform-android": 18.0.1
@@ -145,8 +145,8 @@ catalog:
   jest-environment-node: 30.2.0
   jest-file-snapshot: 0.7.0
   jest-util: 30.2.0
-  react: 19.0.0
-  react-dom: 19.0.0
+  react: 19.1.4
+  react-dom: 19.1.4
   react-i18next: 16.5.0
   react-native-config: 1.5.3
   react-native-reanimated: 4.1.6
@@ -155,9 +155,9 @@ catalog:
   react-native-svg: 15.15.1
   react-redux: ^9.2.0
   redux: ^5.0.1
-  react-test-renderer: 19.0.0
-  "@types/react": 19.0.14
-  "@types/react-dom": 19.0.0
+  react-test-renderer: 19.1.4
+  "@types/react": 19.1.9
+  "@types/react-dom": 19.1.9
   reselect: 5.1.1
   rxjs: 7.8.2
   xstate: 5.19.2

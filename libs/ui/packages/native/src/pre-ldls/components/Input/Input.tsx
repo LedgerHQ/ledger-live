@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, View } from "react-native";
+import { TextInput, TextInputProps, View } from "react-native";
 import styled, { DefaultTheme, ThemeContext } from "styled-components/native";
 import { Tokens, useTokens } from "../../libs";
 import type { JSX } from "react";
@@ -57,12 +57,12 @@ export const Input = React.forwardRef<TextInput, Props>(
 
     const tokens = useTokens(themeType, [...TOKEN_KEYS]);
 
-    const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const handleFocus: NonNullable<TextInputProps["onFocus"]> = e => {
       setIsFocused(true);
       onFocus?.(e);
     };
 
-    const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const handleBlur: NonNullable<TextInputProps["onBlur"]> = e => {
       setIsFocused(false);
       onBlur?.(e);
     };
