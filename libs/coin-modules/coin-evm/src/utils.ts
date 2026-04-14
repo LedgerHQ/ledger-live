@@ -79,6 +79,64 @@ export function isEthAddress(address: string): boolean {
   return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
 }
 
+/** Discriminant for smart contract call vs contract creation (deployment). */
+export type ContractInteractionKind = "SmartContractInteraction" | "SmartContractDeployment";
+
+/**
+ * True when `input` carries non-trivial calldata or init code (not empty / whitespace-only /
+ * bare hex prefix). Leading and trailing whitespace are ignored; `0x` / `0X` with no payload
+ * after trim are treated as empty.
+ */
+export function isSmartContractInput(input: string | null | undefined): input is string {
+  if (input === null || input === undefined) {
+    return false;
+  }
+  const trimmed = input.trim();
+  if (trimmed === "") {
+    return false;
+  }
+  if (trimmed.length === 2 && trimmed.toLowerCase() === "0x") {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Builds flat `details` fields for Alpaca when a tx has smart contract input.
+ *
+ * `contractAddress` (when present) identifies the relevant contract: for
+ * `SmartContractInteraction` it is the called address (`to`); for
+ * `SmartContractDeployment` it is the created contract when
+ * `deployedContractAddress` is known (e.g. from a receipt), otherwise omitted.
+ */
+export function buildSmartContractDetails(
+  to: string | undefined,
+  input: string | undefined,
+  deployedContractAddress?: string | undefined,
+): Record<string, unknown> | undefined {
+  if (!isSmartContractInput(input)) {
+    return undefined;
+  }
+  const trimmedInput = input.trim();
+  const encodedTo = to ? safeEncodeEIP55(to) : "";
+  const contractInteraction: ContractInteractionKind = encodedTo
+    ? "SmartContractInteraction"
+    : "SmartContractDeployment";
+  const contractPayload = /^0x/i.test(trimmedInput)
+    ? `0x${trimmedInput.slice(2)}`
+    : `0x${trimmedInput}`;
+  const encodedDeployed =
+    deployedContractAddress
+      ? safeEncodeEIP55(deployedContractAddress)
+      : "";
+  const contractAddress = encodedDeployed || encodedTo;
+  return {
+    contractInteraction,
+    ...(contractAddress ? { contractAddress } : {}),
+    contractPayload,
+  };
+}
+
 /**
  * Normalizes an Ethereum address to lowercase to avoid checksum validation issues.
  *
