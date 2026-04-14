@@ -1848,7 +1848,7 @@ describe("listOperations", () => {
         tx: { fees: 1n, feesPayer: "address1" },
       });
       // The surviving op is a coin op, not an internal op.
-      expect(result.items[0].details.internal).toBeUndefined();
+      expect(result.items[0]!.details?.internal).toBeUndefined();
     });
 
     it("Case: root trace dedup is sender-based, filters even when internal value differs", async () => {
@@ -1893,7 +1893,7 @@ describe("listOperations", () => {
         value: 6n,
         asset: { type: "native" },
       });
-      expect(result.items[0].details.internal).toBeUndefined();
+      expect(result.items[0]!.details?.internal).toBeUndefined();
     });
 
     it("Case: legitimate internal tx is NOT filtered when parent sender differs (smart contract wallet)", async () => {
@@ -1931,7 +1931,7 @@ describe("listOperations", () => {
       });
 
       // Both ops should be present — the internal OUT is legitimate (smart contract wallet sub-call).
-      const internalOp = result.items.find(op => op.details.internal === true);
+      const internalOp = result.items.find(op => op.details?.internal === true);
       expect(internalOp).toMatchObject({
         type: "OUT",
         senders: ["address1"],
