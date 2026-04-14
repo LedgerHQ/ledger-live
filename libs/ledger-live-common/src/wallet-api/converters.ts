@@ -9,7 +9,6 @@ import {
   WalletAPICurrency,
   WalletAPITransaction,
   WalletAPISupportedCurrency,
-  GetWalletAPITransactionSignFlowInfos,
 } from "./types";
 import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
 
@@ -100,10 +99,17 @@ export function currencyToWalletAPICurrency(
   };
 }
 
-export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
-  WalletAPITransaction,
-  Transaction
-> = ({ walletApiTransaction, account }) => {
+export const getWalletAPITransactionSignFlowInfos = async ({
+  walletApiTransaction,
+  account,
+}: {
+  walletApiTransaction: WalletAPITransaction;
+  account: AccountLike;
+}): Promise<{
+  canEditFees: boolean;
+  hasFeesProvided: boolean;
+  liveTx: Partial<Transaction>;
+}> => {
   const liveFamily =
     FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
 

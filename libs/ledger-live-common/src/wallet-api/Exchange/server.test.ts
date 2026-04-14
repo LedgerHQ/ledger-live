@@ -1,5 +1,6 @@
 import { RpcRequest } from "@ledgerhq/wallet-api-core";
 import {
+  ExchangeCompleteParams,
   ExchangeStartParams,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
@@ -64,8 +65,34 @@ const mockUiHooks = {
 jest.mock("../converters", () => {
   return {
     getAccountIdFromWalletAccountId: (val: string) => val,
+    getWalletAPITransactionSignFlowInfos: jest.fn(),
   };
 });
+
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index"),
+  getParentAccount: jest.fn((account: unknown) => account),
+  getMainAccount: jest.fn((account: unknown) => account),
+  makeEmptyTokenAccount: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/wallet-api-core", () => ({
+  ...jest.requireActual("@ledgerhq/wallet-api-core"),
+  createAccountNotFound: jest.fn((id: string) => ({ message: `Account not found: ${id}` })),
+  createCurrencyNotFound: jest.fn((id: string) => ({ message: `Currency not found: ${id}` })),
+  createUnknownError: jest.fn((d: { message: string }) => ({ message: d.message })),
+  deserializeTransaction: jest.fn(),
+  ServerError: class extends Error {
+    constructor(details: { message: string }) {
+      super(details.message);
+      this.name = "ServerError";
+    }
+  },
+}));
+
+jest.mock("../../bridge", () => ({
+  getAccountBridge: jest.fn(),
+}));
 
 describe("handlers", () => {
   describe("custom.exchange.start", () => {
@@ -176,6 +203,94 @@ describe("handlers", () => {
       expect(receivedParams.exchangeType).toBe("FUND");
       expect(receivedParams.provider).toBe("TestFundProvider");
       expect(mockUiCompleteExchange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("custom.exchange.complete", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("returns empty hash when no params", async () => {
+      const accounts = [genAccount("accountId1")];
+      const handler = handlers({
+        accounts,
+        tracking: mockTracking,
+        manifest: testAppManifest,
+        uiHooks: mockUiHooks,
+      });
+
+      const request = {
+        jsonrpc: "2.0",
+        method: "custom.exchange.complete",
+        params: null,
+        id: "test",
+      } as unknown as RpcRequest<string, ExchangeCompleteParams>;
+      const context = { config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" } };
+
+      const result = await handler["custom.exchange.complete"](request, context, {});
+      expect(result).toEqual({ transactionHash: "" });
+      expect(mockTracking.completeExchangeNoParams).toHaveBeenCalledWith(testAppManifest);
+    });
+
+    it("calls getWalletAPITransactionSignFlowInfos on SELL exchange", async () => {
+      const accounts = [genAccount("accountId1")];
+      const account = accounts[0];
+
+      const { getMainAccount } = jest.requireMock("@ledgerhq/ledger-wallet-framework/account/index");
+      getMainAccount.mockReturnValue({ ...account, currency: { ...account.currency, family: "bitcoin" } });
+
+      const { deserializeTransaction } = jest.requireMock("@ledgerhq/wallet-api-core");
+      deserializeTransaction.mockReturnValue({ family: "bitcoin", recipient: "bc1test" });
+
+      const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("../converters");
+      getWalletAPITransactionSignFlowInfos.mockResolvedValue({
+        canEditFees: true,
+        hasFeesProvided: false,
+        liveTx: { family: "bitcoin", recipient: "bc1test" },
+      });
+
+      const { getAccountBridge } = jest.requireMock("../../bridge");
+      getAccountBridge.mockReturnValue({
+        createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
+        updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({ ...tx, ...upd })),
+      });
+
+      mockUiCompleteExchange.mockImplementation(({ onSuccess }: { onSuccess: (hash: string) => void }) => {
+        onSuccess("0xhash123");
+      });
+
+      const handler = handlers({
+        accounts,
+        tracking: mockTracking,
+        manifest: testAppManifest,
+        uiHooks: mockUiHooks,
+      });
+
+      const params = {
+        provider: "TestProvider",
+        exchangeType: "SELL",
+        fromAccountId: account.id,
+        rawTransaction: { family: "bitcoin" } as never,
+        hexBinaryPayload: "deadbeef",
+        hexSignature: "abcdef",
+        feeStrategy: "medium",
+      } as ExchangeCompleteParams;
+      const request = {
+        jsonrpc: "2.0",
+        method: "custom.exchange.complete",
+        params,
+        id: "test",
+      } as RpcRequest<string, ExchangeCompleteParams>;
+      const context = { config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" } };
+
+      const result = await handler["custom.exchange.complete"](request, context, {});
+      expect(result).toEqual({ transactionHash: "0xhash123" });
+      expect(getWalletAPITransactionSignFlowInfos).toHaveBeenCalledWith({
+        walletApiTransaction: { family: "bitcoin", recipient: "bc1test" },
+        account,
+      });
+      expect(mockTracking.completeExchangeSuccess).toHaveBeenCalled();
     });
   });
 });

@@ -27,6 +27,15 @@ export function getRegisteredFamilies(): string[] {
   return [...loaders.keys()];
 }
 
+/**
+ * Loads the family setup (message signer, etc.) for the given coin family.
+ *
+ * @remarks
+ * This function is currently synchronous but will become `async` in a future
+ * migration step (part of the async loader series — LIVE-28411).
+ * Callers should already `await` this call so that no further changes are
+ * needed once the function signature is updated.
+ */
 export const loadSetupForFamily = (family: string): FamilySetup =>
   getLoader(family).loadSetup();
 
@@ -37,10 +46,28 @@ export const loadDeviceTxConfigForFamily = (
   family: string,
 ): DeviceTransactionConfigFn | undefined => loaders.get(family)?.loadDeviceTxConfig?.();
 
+/**
+ * Loads the Wallet API adapter module for the given coin family.
+ *
+ * @remarks
+ * This function is currently synchronous but will become `async` in a future
+ * migration step (part of the async loader series — LIVE-28411).
+ * Callers should already `await` this call so that no further changes are
+ * needed once the function signature is updated.
+ */
 export const loadWalletApiAdapterForFamily = (
   family: string,
 ): WalletApiAdapterModule | undefined => loaders.get(family)?.loadWalletApiAdapter?.();
 
+/**
+ * Loads the platform adapter module for the given coin family.
+ *
+ * @remarks
+ * This function is currently synchronous but will become `async` in a future
+ * migration step (part of the async loader series — LIVE-28411).
+ * Callers should already `await` this call so that no further changes are
+ * needed once the function signature is updated.
+ */
 export const loadPlatformAdapterForFamily = (
   family: string,
 ): PlatformAdapterModule | undefined => loaders.get(family)?.loadPlatformAdapter?.();

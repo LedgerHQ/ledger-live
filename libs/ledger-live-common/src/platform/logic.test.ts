@@ -497,7 +497,7 @@ describe("signMessageLogic", () => {
       // Given
       const expectedResult = "Function called";
       const formattedMessage = createMessageData();
-      mockedPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
+      mockedPrepareMessageToSign.mockResolvedValueOnce(formattedMessage);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
