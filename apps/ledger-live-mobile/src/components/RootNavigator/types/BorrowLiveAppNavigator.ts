@@ -1,5 +1,7 @@
 import { ScreenName } from "~/const";
 
 export type BorrowLiveAppNavigatorParamList = {
-  [ScreenName.Borrow]: undefined;
+  [ScreenName.Borrow]: {
+    intent?: "dashboard" | "deposit" | "withdraw";
+  };
 };

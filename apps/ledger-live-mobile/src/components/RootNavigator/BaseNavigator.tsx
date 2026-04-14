@@ -609,7 +609,18 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Borrow}
           component={BorrowLiveAppNavigator}
-          options={{ headerShown: false }}
+          options={props => {
+            const intent = props.route?.params?.params?.intent;
+
+            return intent !== "dashboard"
+              ? {
+                  headerShown: true,
+                  closable: false,
+                  headerTitle: t("borrow.title"),
+                  headerRight: () => null,
+                }
+              : { headerShown: false };
+          }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
