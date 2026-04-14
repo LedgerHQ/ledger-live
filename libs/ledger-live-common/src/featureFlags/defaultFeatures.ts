@@ -520,7 +520,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapLiveAppMobile: {
-    enabled: false,
+    enabled: true,
     params: {
       manifest_id: "swap-live-app-demo-3",
     },

@@ -67,6 +67,7 @@ import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
+import TgBotConnect from "~/screens/TgBotConnect";
 import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import {
@@ -314,6 +315,11 @@ export default function BaseNavigator() {
           name={ScreenName.PlatformApp}
           component={LiveApp}
           options={{ headerStyle: styles.headerNoShadow }}
+        />
+        <Stack.Screen
+          name={ScreenName.TgBotConnect}
+          component={TgBotConnect}
+          options={{ title: "Telegram Bot" }}
         />
         <Stack.Screen
           name={ScreenName.Recover}

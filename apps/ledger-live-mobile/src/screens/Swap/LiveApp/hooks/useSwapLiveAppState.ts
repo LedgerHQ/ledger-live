@@ -30,6 +30,9 @@ const SWAP_PARAM_KEYS: string[] = [
   "toCurrencyId",
   "amountFrom",
   "toAccountId",
+  "provider",
+  "tgBotSession",
+  "tgBotCallback",
 ];
 
 const isRecord = (data: unknown): data is Record<string, unknown> =>

@@ -59,6 +59,10 @@ export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams
   toCurrencyId?: string;
   fromCurrencyId?: string;
   toAccountId?: string;
+  fromAccountId?: string;
+  provider?: string;
+  tgBotSession?: string;
+  tgBotCallback?: string;
 }
 
 export type SwapLiveAppNavigationParams = {

@@ -176,6 +176,8 @@ const linkingOptions = () => ({
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
+          [ScreenName.TgBotConnect]: "TgBotConnect",
+
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
@@ -789,6 +791,26 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
+          if (hostname === "tg-bot-connect") {
+            const token = searchParams.get("token");
+            if (token) {
+              return {
+                routes: [
+                  {
+                    name: NavigatorName.Base,
+                    state: {
+                      routes: [
+                        {
+                          name: ScreenName.TgBotConnect,
+                          params: { token },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              };
+            }
+          }
           if (hostname === "swap") {
             const swapParams = new URLSearchParams();
             const fromPath = searchParams.get("fromPath");
@@ -807,6 +829,14 @@ export const DeeplinksProvider = ({
             if (amountFrom) swapParams.set("amountFrom", amountFrom);
             if (affiliate) swapParams.set("affiliate", affiliate);
             if (toAccountId) swapParams.set("toAccountId", toAccountId);
+            const fromAccountId = searchParams.get("fromAccountId");
+            if (fromAccountId) swapParams.set("fromAccountId", fromAccountId);
+            const provider = searchParams.get("provider");
+            const tgBotSession = searchParams.get("tgBotSession");
+            const tgBotCallback = searchParams.get("tgBotCallback");
+            if (provider) swapParams.set("provider", provider);
+            if (tgBotSession) swapParams.set("tgBotSession", tgBotSession);
+            if (tgBotCallback) swapParams.set("tgBotCallback", tgBotCallback);
             const swapSearch = swapParams.toString();
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);

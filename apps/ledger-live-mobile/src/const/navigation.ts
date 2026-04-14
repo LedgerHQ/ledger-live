@@ -160,6 +160,7 @@ export enum ScreenName {
   SwapSelectFees = "SelectFees",
   SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
+  TgBotConnect = "TgBotConnect",
   PerpsTab = "PerpsTab",
   Earn = "Earn",
   Transfer = "Transfer",

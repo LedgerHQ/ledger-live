@@ -183,6 +183,9 @@ export type BaseNavigatorStackParamList = {
     transaction?: Transaction;
     justScanned?: boolean;
   };
+  [ScreenName.TgBotConnect]: {
+    token: string;
+  };
   [ScreenName.BleDevicePairingFlow]: undefined;
   [ScreenName.AnalyticsAllocation]: undefined;
   [ScreenName.AnalyticsOperations]: {

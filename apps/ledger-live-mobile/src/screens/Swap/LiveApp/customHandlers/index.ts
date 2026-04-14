@@ -14,6 +14,7 @@ import { sendSwapLiveAppReady } from "../../../../../e2e/bridge/client";
 import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
+import { tgBotCallback } from "./tgBotCallback";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -115,6 +116,7 @@ export function useSwapCustomHandlers(
     "custom.getTransactionByHash": getTransactionByHash(accounts),
     "custom.saveSwapToHistory": saveSwapToHistory(accounts, dispatch),
     "custom.swapRedirectToHistory": navigateToSwapHistory,
+    "custom.tgBotCallback": tgBotCallback(),
   };
 
   return {

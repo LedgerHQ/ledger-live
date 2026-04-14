@@ -11,6 +11,7 @@ import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
   toAccountId?: string;
+  fromAccountId?: string;
   toTokenId?: string;
   fromTokenId?: string;
   amountFrom?: string;
@@ -18,6 +19,9 @@ type SwapLiveUrlParams = {
   toCurrencyId?: string;
   fromCurrencyId?: string;
   fromPath?: string;
+  provider?: string;
+  tgBotSession?: string;
+  tgBotCallback?: string;
 };
 
 const isTokenAccount = (account: AccountLike | TokenAccount): account is TokenAccount =>
@@ -46,6 +50,10 @@ export const useTranslateToSwapAccount = (
     if (params.amountFrom) newParams.amountFrom = params.amountFrom;
     if (params.toCurrencyId) newParams.toCurrencyId = params.toCurrencyId;
     if (params.fromCurrencyId) newParams.fromCurrencyId = params.fromCurrencyId;
+    if (params.fromAccountId) newParams.fromAccountId = params.fromAccountId;
+    if (params.provider) newParams.provider = params.provider;
+    if (params.tgBotSession) newParams.tgBotSession = params.tgBotSession;
+    if (params.tgBotCallback) newParams.tgBotCallback = params.tgBotCallback;
 
     if (defaultAccount) {
       newParams.toAccountId = walletApi.accountToWalletAPIAccount(
