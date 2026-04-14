@@ -942,7 +942,7 @@ jobs:
         env:
           ARTIFACTS: ios-test-artifacts
           OUT: ios-ai
-        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+        run: node repo/e2e/mobile/scripts/build-ai-artifact.mjs
       - name: Upload iOS AI artifact
         if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -1014,7 +1014,7 @@ jobs:
         env:
           ARTIFACTS: android-test-artifacts
           OUT: android-ai
-        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+        run: node repo/e2e/mobile/scripts/build-ai-artifact.mjs
       - name: Upload Android AI artifact
         if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
