@@ -286,6 +286,50 @@ describe("genericGetAccountShape", () => {
       });
     });
 
+    test("does not double count native balance when staking metadata is attached to it", async () => {
+      const nativeBalance = {
+        asset: { type: "native" },
+        value: 1000n,
+        locked: 300n,
+        stake: {
+          state: "active",
+          delegate: "validator-1",
+          amountRewarded: 25n,
+        },
+      };
+
+      getBalanceMock.mockResolvedValue([nativeBalance]);
+      extractBalanceMock.mockReturnValue(nativeBalance);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr_native_stake`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} },
+      );
+
+      expect(result.balance).toEqual(new BigNumber("1000"));
+      expect(result.spendableBalance).toEqual(new BigNumber("700"));
+      expect((result as any).stakingResources).toMatchObject({
+        delegatedBalance: new BigNumber("1000"),
+        pendingRewardsBalance: new BigNumber("25"),
+        delegations: [
+          {
+            validatorAddress: "validator-1",
+            amount: new BigNumber("1000"),
+            pendingRewards: new BigNumber("25"),
+            status: "bonded",
+          },
+        ],
+      });
+    });
+
     test("existing operations object refs are preserved", async () => {
       const oldOps = [
         {
