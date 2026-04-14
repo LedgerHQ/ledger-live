@@ -95,7 +95,6 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Wallet
 .github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/wallet-ci
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/wallet-ci
 .github/workflow-templates/bot-coin**                               @ledgerhq/coin-integration
-**/live-common-set*.ts                                              @ledgerhq/coin-integration
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
@@ -403,3 +402,4 @@ libs/ledgerjs/packages/errors/src/index.ts
 libs/ledger-live-common/src/config/sharedConfig.ts
 libs/ledger-live-common/package.json
 **/generated/
+**/live-common-set*.ts
