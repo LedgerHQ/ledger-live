@@ -335,6 +335,13 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     });
   };
 
+  // Check on mount if there is a subscription for this account, if not update the sync state to "stopped"
+  useEffect(() => {
+    if (syncState === "running" && !shieldedSubscriptions.find(s => s.accountId === account.id)) {
+      stopShieldedSync();
+    }
+  });
+
   return (
     <Wrapper>
       <BalanceDetail>
