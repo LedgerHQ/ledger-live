@@ -2385,6 +2385,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.13
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../../devtools/core
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
@@ -2502,9 +2505,6 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
-      devtools:
-        specifier: workspace:*
-        version: link:../../devTools
       encoding:
         specifier: ^0.1.13
         version: 0.1.13
@@ -2657,7 +2657,7 @@ importers:
         specifier: 'catalog:'
         version: 4.1.18
 
-  devTools:
+  devtools/core:
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
