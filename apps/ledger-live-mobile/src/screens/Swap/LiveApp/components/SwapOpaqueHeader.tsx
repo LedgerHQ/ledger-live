@@ -14,6 +14,7 @@ import {
 type SwapOpaqueHeaderProps = {
   onBackPress: () => void;
   onClosePress?: () => void;
+  closeButtonTestID?: string;
   showBackButton?: boolean;
   titleKey: string | null;
 };
@@ -23,6 +24,7 @@ const ICON_PLACEHOLDER_SIZE = 40;
 export function SwapOpaqueHeader({
   onBackPress,
   onClosePress,
+  closeButtonTestID,
   showBackButton = true,
   titleKey,
 }: Readonly<SwapOpaqueHeaderProps>) {
@@ -65,7 +67,7 @@ export function SwapOpaqueHeader({
             appearance="no-background"
             size="md"
             icon={Close}
-            testID="swap-topbar-close"
+            testID={closeButtonTestID ?? "swap-topbar-close"}
             accessibilityLabel={t("common.close")}
             onPress={onClosePress}
           />
