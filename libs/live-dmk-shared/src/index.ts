@@ -11,6 +11,7 @@ export type {
   ConnectAppDAInput,
   ConnectAppDAError,
   ConnectAppDAIntermediateValue,
+  ConnectAppDARequiredInteraction,
 } from "./device-action/ConnectApp/types";
 export { PrepareConnectManagerDeviceAction } from "./device-action/PrepareConnectManager/PrepareConnectManagerDeviceAction";
 export type {
