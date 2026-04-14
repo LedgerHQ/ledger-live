@@ -1932,7 +1932,6 @@ describe("listOperations", () => {
 
       // Both ops should be present — the internal OUT is legitimate (smart contract wallet sub-call).
       const internalOp = result.items.find(op => op.details.internal === true);
-      expect(internalOp).toBeDefined();
       expect(internalOp).toMatchObject({
         type: "OUT",
         senders: ["address1"],
