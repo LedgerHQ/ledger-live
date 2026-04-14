@@ -589,10 +589,12 @@ export async function fetchTronAccountTxsPage(
     ),
   ]);
 
-  const nativeTxsFormatted = nativeResult.results
-    .filter(isTransactionTronAPI)
-    .filter(isValidNativeTx)
-    .map(tx => formatTrongridTxResponse(tx));
+  const nativeTxsFormatted = await Promise.all(
+    nativeResult.results
+      .filter(isTransactionTronAPI)
+      .filter(isValidNativeTx)
+      .map(tx => formatTrongridTxResponse(tx, accountNamesCache)),
+  );
 
   const trc20TxsFormatted = compact(trc20Result.results.map(formatTrongridTrc20TxResponse));
   const trc20TxIds = new Set(trc20TxsFormatted.map(t => t.txID));
@@ -616,18 +618,20 @@ export async function fetchTronAccountTxs(
     ? Math.min(params.limitPerCall, params.hintGlobalLimit)
     : params.limitPerCall;
   const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
-  const nativeTxs = (
-    await getAllTransactions<
-      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
-    >(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
-      shouldFetchMoreTxs,
-      getTransactions(cacheTransactionInfoById),
+  const nativeTxs = await Promise.all(
+    (
+      await getAllTransactions<
+        (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
+      >(
+        `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
+        shouldFetchMoreTxs,
+        getTransactions(cacheTransactionInfoById),
+      )
     )
-  )
-    .filter(isTransactionTronAPI)
-    .filter(isValidNativeTx)
-    .map(tx => formatTrongridTxResponse(tx));
+      .filter(isTransactionTronAPI)
+      .filter(isValidNativeTx)
+      .map(tx => formatTrongridTxResponse(tx, accountNamesCache)),
+  );
 
   // we need to fetch and filter trc20 transactions from another endpoint
   // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
@@ -774,15 +778,8 @@ export const validateAddress = async (address: string): Promise<boolean> => {
 };
 
 // cache for account names (name is unchanged over time)
-const accountNamesCache = makeLRUCache(
+export const accountNamesCache = makeLRUCache(
   async (addr: string): Promise<string | null | undefined> => getAccountName(addr),
-  (addr: string) => addr,
-  hours(3, 300),
-);
-
-// cache for super representative brokerages (brokerage is unchanged over time)
-const srBrokeragesCache = makeLRUCache(
-  async (addr: string): Promise<number> => getBrokerage(addr),
   (addr: string) => addr,
   hours(3, 300),
 );
@@ -795,13 +792,6 @@ export const getAccountName = async (addr: string): Promise<string | null | unde
   accountNamesCache.hydrate(addr, accountName); // put it in cache
 
   return accountName;
-};
-
-export const getBrokerage = async (addr: string): Promise<number> => {
-  const { brokerage } = await fetch(`/wallet/getBrokerage?address=${encodeURIComponent(addr)}`);
-  srBrokeragesCache.hydrate(addr, brokerage); // put it in cache
-
-  return brokerage;
 };
 
 const superRepresentativesCache = makeLRUCache(
@@ -827,21 +817,14 @@ export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
 };
 
 const fetchSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
-  const result = await fetch(`/wallet/listwitnesses`);
-  const sorted = result.witnesses.sort((a: any, b: any) => b.voteCount - a.voteCount);
-  const superRepresentatives = await promiseAllBatched(3, sorted, async (w: any) => {
-    const encodedAddress = encode58Check(w.address);
-    const accountName = await accountNamesCache(encodedAddress);
-    const brokerage = await srBrokeragesCache(encodedAddress);
-    return {
-      ...w,
-      address: encodedAddress,
-      name: accountName,
-      brokerage,
-      voteCount: w.voteCount || 0,
-      isJobs: w.isJobs || false,
-    };
-  });
+  const result = await fetch<{ witnesses: SuperRepresentative[] }>(`/wallet/listwitnesses`);
+  const sorted = result.witnesses.sort((a, b) => b.voteCount - a.voteCount);
+  const superRepresentatives = sorted.map(w => ({
+    ...w,
+    address: encode58Check(w.address),
+    voteCount: w.voteCount || 0,
+    isJobs: w.isJobs || false,
+  }));
   hydrateSuperRepresentatives(superRepresentatives); // put it in cache
 
   return superRepresentatives;

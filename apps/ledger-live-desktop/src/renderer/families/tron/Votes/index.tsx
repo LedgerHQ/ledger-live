@@ -186,10 +186,10 @@ const Delegation = ({ account }: { account: TronAccount }) => {
       {tronPower > 0 && formattedVotes.length > 0 ? (
         <>
           <Header />
-          {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (
+          {formattedVotes.map(({ name, address, voteCount, isSR }, index) => (
             <Row
               key={index}
-              validator={validator}
+              name={name}
               address={address}
               amount={voteCount}
               isSR={isSR}

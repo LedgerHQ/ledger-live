@@ -728,6 +728,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TTcYhypP8m4phDhN6oRexz2174zAerjEWP",
+            "name": "CryptoGuyInZA",
             "voteCount": 12,
           },
         ],
@@ -1291,6 +1292,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
+            "name": "CryptoChain",
             "voteCount": 3,
           },
         ],
@@ -1386,6 +1388,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
+            "name": "CryptoChain",
             "voteCount": 46,
           },
         ],
@@ -1463,6 +1466,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
+            "name": "CryptoChain",
             "voteCount": 10,
           },
         ],
@@ -1702,6 +1706,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
+            "name": "CryptoChain",
             "voteCount": 51,
           },
         ],
@@ -2551,6 +2556,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
+            "name": "CryptoChain",
             "voteCount": 31,
           },
         ],
@@ -2682,14 +2688,17 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+            "name": "Binance Staking",
             "voteCount": 15,
           },
           {
             "address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+            "name": "Skypeople",
             "voteCount": 1,
           },
           {
             "address": "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB",
+            "name": "Crypto Labs",
             "voteCount": 2,
           },
         ],
@@ -2767,10 +2776,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+            "name": "Binance Staking",
             "voteCount": 6,
           },
           {
             "address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+            "name": "Skypeople",
             "voteCount": 3,
           },
         ],
@@ -2794,6 +2805,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
+            "name": "CryptoChain",
             "voteCount": 3,
           },
         ],
@@ -3031,10 +3043,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
         "votes": [
           {
             "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+            "name": "Binance Staking",
             "voteCount": 15,
           },
           {
             "address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+            "name": "Skypeople",
             "voteCount": 1,
           },
         ],

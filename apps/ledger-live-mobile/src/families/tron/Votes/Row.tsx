@@ -1,18 +1,14 @@
 import React, { useCallback } from "react";
 import { Linking, TouchableOpacity } from "react-native";
-
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
-
 import { ExplorerView } from "@ledgerhq/types-cryptoassets";
-
 import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { MedalMedium, TrophyMedium } from "@ledgerhq/native-ui/assets/icons";
-import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
 import Clock from "~/icons/Clock";
 
 type Props = {
-  validator?: SuperRepresentative | null;
+  name: string | null | undefined;
   address: string;
   amount: number;
   duration?: React.ReactNode;
@@ -21,7 +17,7 @@ type Props = {
   isLast?: boolean;
 };
 
-const Row = ({ validator, address, amount, duration, explorerView, isSR }: Props) => {
+const Row = ({ name, address, amount, duration, explorerView, isSR }: Props) => {
   const { colors } = useTheme();
   const srURL = explorerView && getAddressExplorer(explorerView, address);
 
@@ -43,7 +39,7 @@ const Row = ({ validator, address, amount, duration, explorerView, isSR }: Props
         >
           <TouchableOpacity onPress={openSR}>
             <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1} pb={2}>
-              {validator ? validator.name : address}
+              {name ?? address}
             </Text>
           </TouchableOpacity>
           <Flex flexDirection={"row"} alignItems={"center"}>

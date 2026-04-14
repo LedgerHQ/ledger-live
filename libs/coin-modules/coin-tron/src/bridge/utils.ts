@@ -1,8 +1,9 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import get from "lodash/get";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { type AccountInfo, getTronResources as getTronResourcesLogic } from "../logic/utils";
-import { getTronAccountNetwork, getUnwithdrawnReward } from "../network";
+import { accountNamesCache, getTronAccountNetwork, getUnwithdrawnReward } from "../network";
 import { encode58Check } from "../network/format";
 import type {
   BandwidthInfo,
@@ -251,8 +252,18 @@ export async function getTronResources(
   };
   const lastVotedDate = txs ? getLastVotedDate(txs) : undefined;
 
+  const rawVotes = get(acc, "votes", []).sort((a, b) => b.vote_count - a.vote_count);
+  const votes = await Promise.all(
+    rawVotes.map(async v => ({
+      name: await accountNamesCache(v.vote_address),
+      address: v.vote_address,
+      voteCount: v.vote_count,
+    })),
+  );
+
   return {
     ...getTronResourcesLogic(acc),
+    votes,
     energy,
     bandwidth,
     unwithdrawnReward,
