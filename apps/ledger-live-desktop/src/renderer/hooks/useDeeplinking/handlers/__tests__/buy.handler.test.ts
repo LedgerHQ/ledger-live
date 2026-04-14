@@ -1,20 +1,5 @@
 import { buyHandler } from "../buy.handler";
-import { DeeplinkHandlerContext } from "../../types";
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  ...overrides,
-});
+import { createMockContext } from "./test-utils";
 
 describe("buy.handler", () => {
   beforeEach(() => {

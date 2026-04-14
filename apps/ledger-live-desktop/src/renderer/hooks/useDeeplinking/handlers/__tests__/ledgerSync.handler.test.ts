@@ -1,27 +1,12 @@
 import { setDrawerVisibility } from "~/renderer/actions/walletSync";
 import { ledgerSyncHandler } from "../ledgerSync.handler";
-import { DeeplinkHandlerContext } from "../../types";
+import { createMockContext } from "./test-utils";
 
 jest.mock("~/renderer/actions/walletSync", () => ({
   setDrawerVisibility: jest.fn(() => ({ type: "SET_DRAWER_VISIBILITY" })),
 }));
 
 const mockSetDrawerVisibility = jest.mocked(setDrawerVisibility);
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  ...overrides,
-});
 
 describe("ledgerSync.handler", () => {
   beforeEach(() => {
