@@ -28,7 +28,7 @@
     "@ledgerhq/coin-concordium": "workspace:^",
     "@ledgerhq/concordium-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-signer-kit-concordium": "0.0.0-develop-20260407153739",
+    "@ledgerhq/device-signer-kit-concordium": "0.2.0",
     "@ledgerhq/errors": "workspace:^",
     "rxjs": "catalog:"
   },
