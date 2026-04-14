@@ -3,7 +3,6 @@ import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
-import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -56,11 +55,20 @@ const walletCliLoaders: CoinModuleLoader[] = [
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 setSupportedCurrencies(["bitcoin", "ethereum", "solana"]);
+// Set config on the ESM singleton (used by alpacaized families like EVM whose
+// bridge code is reached through ESM imports).
 LiveConfig.setConfig(liveConfig);
+// Also set on the CJS singleton — Bun's bundler resolves ESM imports to lib-es/
+// and require() to lib/, creating separate LiveConfig.instance singletons.
+// Non-alpacaized families (solana, bitcoin) load their bridge via require() in
+// the lazy loaders above, so they read from the CJS instance.
+(require("@ledgerhq/live-config/LiveConfig") as typeof import("@ledgerhq/live-config/LiveConfig")).LiveConfig.setConfig(liveConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
 setupCalClientStore();
-setSolanaLdmkEnabled(true);
+// Also require() — the ESM import would set the flag on a different module instance
+// than the CJS setup.ts loaded by the lazy loaders above.
+(require("@ledgerhq/live-common/families/solana/setup") as typeof import("@ledgerhq/live-common/families/solana/setup")).setSolanaLdmkEnabled(true);
 registerWalletCliDmkTransport();
 
 setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");
