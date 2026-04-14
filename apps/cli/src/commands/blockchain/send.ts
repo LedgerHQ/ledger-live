@@ -77,8 +77,10 @@ export default {
                   acc,
                   from(
                     defer(() => {
-                      l(`✔️ transaction ${formatTransaction(t, account)}`);
-                      l(`STATUS ${formatTransactionStatus(t, status, account)}`);
+                      formatTransaction(t, account).then(str => l(`✔️ transaction ${str}`));
+                      formatTransactionStatus(t, status, account).then(str =>
+                        l(`STATUS ${str}`),
+                      );
                       const bridge = getAccountBridge(account);
                       return bridge
                         .signOperation({

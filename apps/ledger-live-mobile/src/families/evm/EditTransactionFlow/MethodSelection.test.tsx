@@ -36,7 +36,7 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/transaction/index", () => ({
-  fromTransactionRaw: jest.fn().mockReturnValue({
+  fromTransactionRaw: jest.fn().mockResolvedValue({
     family: "evm",
     nonce: 1,
   }),

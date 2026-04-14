@@ -529,7 +529,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               const account = await getAccount();
               const bridge = await getBridge();
               const t = bridge.createTransaction(account);
-              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+              expect(await fromTransactionRaw(await toTransactionRaw(t))).toEqual(t);
             });
             makeTest("transaction with amount and recipient correctly serialize", async () => {
               const account = await getSynced();
@@ -539,7 +539,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 amount: new BigNumber(1000),
                 recipient: account.freshAddress,
               };
-              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+              expect(await fromTransactionRaw(await toTransactionRaw(t))).toEqual(t);
             });
           });
 
@@ -718,7 +718,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                     errors && expect(s.errors).toMatchObject(errors);
                     warnings && expect(s.warnings).toMatchObject(warnings);
                     // now we match rest of fields but using the raw version for better readability
-                    const restRaw: Record<string, any> = toTransactionStatusRaw(
+                    const restRaw: Record<string, any> = await toTransactionStatusRaw(
                       {
                         ...s,
                         ...es,
@@ -735,7 +735,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                     }
 
                     expect(
-                      toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
+                      await toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
                     ).toMatchObject(restRaw);
                   }
 
