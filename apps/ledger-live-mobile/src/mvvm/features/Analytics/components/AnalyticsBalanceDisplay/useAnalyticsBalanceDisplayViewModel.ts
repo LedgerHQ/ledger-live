@@ -26,8 +26,7 @@ export function useAnalyticsBalanceDisplayViewModel({
   hoveredValue,
 }: Params): AnalyticsBalanceDisplayViewModel {
   const { locale } = useLocale();
-  const { displayedBalance, isLoading, isBalanceAvailable, unit } =
-    usePortfolioBalanceForDisplay();
+  const { displayedBalance, isLoading, isBalanceAvailable, unit } = usePortfolioBalanceForDisplay();
   const discreet = useSelector(discreetModeSelector);
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
