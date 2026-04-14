@@ -7,13 +7,18 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
+import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 const mockedUseAccountUnit = jest.mocked(useAccountUnit);
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(),
 }));
+jest.mock("../ZCashExportKeyFlowModal/sync", () => ({
+  syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
+}));
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
+const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
 // Patch Date.prototype.toLocaleString with explicit typing to avoid "this" implicit any error.
 const origDate = global.Date.prototype.toLocaleString;
@@ -207,6 +212,39 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     await waitFor(() => {
       expect(screen.getByTestId("stop-sync-button")).toBeInTheDocument();
       expect(screen.queryByText("Estimated time remaining: 00:00")).not.toBeInTheDocument();
+    });
+  });
+
+  it("should stop shielded sync when sync state is running with no subscription for account", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            syncState: "running",
+          },
+        }}
+      />,
+      {
+        initialState: {
+          ...withFlagOverrides({ zcashShielded: { enabled: true } }),
+          shieldedSyncSubscriptions: [],
+        },
+      },
+    );
+
+    await waitFor(() => {
+      expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
+        expect.objectContaining({ id: account.id }),
+        expect.objectContaining({ syncState: "stopped", progress: 0 }),
+      );
     });
   });
 
