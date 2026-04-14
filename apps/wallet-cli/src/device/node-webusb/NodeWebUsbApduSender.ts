@@ -12,6 +12,7 @@ import type {
   SendApduResult,
 } from "@ledgerhq/device-management-kit";
 import { Just, Left, Maybe, Nothing, Right } from "purify-ts";
+import { WebUSBDevice } from "usb";
 import {
   FRAME_SIZE,
   LEDGER_WEBUSB_CONFIGURATION_VALUE,
@@ -19,7 +20,7 @@ import {
 } from "./node-webusb-constants";
 
 export type NodeWebUsbApduSenderDependencies = {
-  device: USBDevice;
+  device: WebUSBDevice;
   interfaceNumber: number;
 };
 
@@ -30,7 +31,7 @@ export type NodeWebUsbApduSenderConstructorArgs = {
   loggerFactory: (tag: string) => LoggerPublisherService;
 };
 
-async function gracefullyResetDevice(device: USBDevice): Promise<void> {
+async function gracefullyResetDevice(device: WebUSBDevice): Promise<void> {
   try {
     await device.reset();
   } catch {
@@ -174,7 +175,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
         const raw = frame.getRawData();
         const out = new Uint8Array(raw.byteLength);
         out.set(raw);
-        const result = await device.transferOut(LEDGER_WEBUSB_ENDPOINT_NUMBER, out);
+        const result = await device.transferOut(LEDGER_WEBUSB_ENDPOINT_NUMBER, out.buffer);
         if (result.status !== "ok") {
           this.resolvePendingApdu(
             Left(new OpeningConnectionError(`WebUSB transferOut status: ${result.status}`)),
@@ -211,7 +212,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
    * so that the abort timeout can resolve the caller's promise even when
    * `transferIn` is blocked.
    */
-  private async receiveResponseFrames(device: USBDevice, generation: number): Promise<void> {
+  private async receiveResponseFrames(device: WebUSBDevice, generation: number): Promise<void> {
     try {
       while (this.sendApduPromiseResolver.isJust() && this.readLoopGeneration === generation) {
         const r = await device.transferIn(LEDGER_WEBUSB_ENDPOINT_NUMBER, FRAME_SIZE);

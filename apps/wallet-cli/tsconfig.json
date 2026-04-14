@@ -3,7 +3,7 @@
   "compilerOptions": {
     "noEmit": true,
     "rootDir": ".",
-    "types": ["node", "bun-types"],
+    "types": ["node", "bun-types", "w3c-web-usb"],
     "customConditions": ["import", "types", "default"],
     "moduleResolution": "Bundler",
     "module": "ESNext"
