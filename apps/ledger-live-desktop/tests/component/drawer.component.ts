@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 
@@ -55,5 +56,9 @@ export class Drawer extends Component {
 
   back() {
     return this.backButton.click();
+  }
+
+  async waitForAccountTitleToDisappear() {
+    await expect(this.selectAccountTitle).not.toBeVisible();
   }
 }

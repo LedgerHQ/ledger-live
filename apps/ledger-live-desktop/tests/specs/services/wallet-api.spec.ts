@@ -136,6 +136,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
       "Ethereum 3 (USDT)71.8174 USDT",
     );
     await drawer.back();
+    await drawer.waitForAccountTitleToDisappear();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("bitcoin");

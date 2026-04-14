@@ -83,7 +83,14 @@ export const test = base.extend<TestFixtures>({
       ...settings,
     };
 
-    const userData = merge(fileUserData, { data: { settings: settingsWithConsentDefaults } });
+    const userData = merge(fileUserData, {
+      data: {
+        settings: settingsWithConsentDefaults,
+        ...(featureFlags
+          ? { featureFlags: { overrides: featureFlags, bannerVisible: false } }
+          : {}),
+      },
+    });
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
     // default environment variables
