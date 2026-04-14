@@ -3,7 +3,9 @@ import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -67,14 +69,15 @@ const ReceiveWithAssociationModal = () => {
 
   const hasAccounts = !!accounts.length;
 
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "receive",
+  );
+
   const openAddAccounts = useCallback(() => {
+    openAssetFlow();
     dispatch(closeModal("MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION"));
-    dispatch(
-      openModal("MODAL_ADD_ACCOUNTS", {
-        currency: null,
-      }),
-    );
-  }, [dispatch]);
+  }, [dispatch, openAssetFlow]);
 
   useEffect(() => {
     if (!hasAccounts) {
