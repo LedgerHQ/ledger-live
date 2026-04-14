@@ -9,7 +9,12 @@ import {
 } from "./utils/loggingUtils";
 import { getLogs } from "./bridge/server";
 import { Circus } from "@jest/types";
-import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
+import {
+  logMemoryUsage,
+  takeAppScreenshot,
+  captureNativeViewHierarchy,
+  setupEnvironment,
+} from "./helpers/commonHelpers";
 import { config as detoxConfig } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
@@ -202,6 +207,8 @@ export default class TestEnvironment extends DetoxEnvironment {
         await attachSpeculosStartupErrorToAllure();
         const logsPayload = await getLogs();
         await attachFailureLogsToAllure(logsPayload);
+        await captureNativeViewHierarchy();
+        console.info("Failure logs attached to Allure report");
       } catch (err) {
         console.warn("Failed to attach failure logs to Allure:", err);
       }

@@ -76,6 +76,11 @@ on:
         required: false
         type: boolean
         default: false
+      generate_ai_artifacts:
+        description: "Generate AI analysis artifacts"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -113,6 +118,11 @@ on:
         default: false
       enable_wallet40:
         description: "Enable wallet 4.0 feature flag for tests"
+        required: false
+        type: boolean
+        default: false
+      generate_ai_artifacts:
+        description: "Generate AI analysis artifacts"
         required: false
         type: boolean
         default: false
@@ -594,6 +604,7 @@ jobs:
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
+          retention-days: 7
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -601,6 +612,7 @@ jobs:
         with:
           path: e2e/mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
           name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+          retention-days: 7
 
       - name: Set job output based on detox result
         id: set-output
@@ -851,6 +863,7 @@ jobs:
         with:
           name: android-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
+          retention-days: 7
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
@@ -858,6 +871,7 @@ jobs:
         with:
           path: e2e/mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
           name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
+          retention-days: 7
 
       - name: Set job output based on detox result
         id: set-output
@@ -915,6 +929,27 @@ jobs:
           status_10: ${{ needs.detox-tests-ios.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          sparse-checkout: e2e/mobile/scripts
+          path: repo
+      - name: Build iOS AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        env:
+          ARTIFACTS: ios-test-artifacts
+          OUT: ios-ai
+        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+      - name: Upload iOS AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ios-ai-analysis
+          path: ios-ai
+          retention-days: 7
 
   allure-report-android:
     name: Allure Report Android
@@ -966,6 +1001,27 @@ jobs:
           status_10: ${{ needs.detox-tests-android.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          sparse-checkout: e2e/mobile/scripts
+          path: repo
+      - name: Build Android AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        env:
+          ARTIFACTS: android-test-artifacts
+          OUT: android-ai
+        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+      - name: Upload Android AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-ai-analysis
+          path: android-ai
+          retention-days: 7
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
@@ -1232,3 +1288,4 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+
