@@ -15,8 +15,14 @@ export type AppJson = {
   data: AppJsonData;
 };
 
+export type FailedAccountEntry = {
+  currencyId: string;
+  accountName: string | undefined;
+  reason: string;
+};
+
 export type ImportStatus =
   | { kind: "idle" }
   | { kind: "loading" }
-  | { kind: "success"; accountCount: number; lastDeviceLabel: string | null }
+  | { kind: "success"; fileName: string; accountCount: number; failedEntries: FailedAccountEntry[] }
   | { kind: "error"; message: string };

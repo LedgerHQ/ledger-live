@@ -67,6 +67,7 @@ const Settings = () => {
   const devMode = useSelector(developerModeSelector);
   const items = useMemo(() => getItems(t, devMode), [t, devMode]);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const safeTabIndex = Math.min(activeTabIndex, Math.max(0, items.length - 1));
   const processedItems = useMemo(
     () => items.filter(item => item.key !== "currencies" || accountsCount > 0),
     [items, accountsCount],
@@ -76,6 +77,7 @@ const Settings = () => {
   const handleChangeTab = useCallback(
     (index: number) => {
       const item = items[index];
+      if (!item) return;
       const url = `/settings/${item.key}`;
       if (location.pathname !== url) {
         setTrackingSource("settings tab");
@@ -86,7 +88,16 @@ const Settings = () => {
     [navigate, location, items],
   );
   useEffect(() => {
-    const url = `/settings/${items[activeTabIndex].key}`;
+    if (activeTabIndex !== safeTabIndex) {
+      setActiveTabIndex(safeTabIndex);
+      return;
+    }
+
+    const currentItem = items[safeTabIndex];
+    if (!currentItem) {
+      return;
+    }
+    const url = `/settings/${currentItem.key}`;
     if (location.pathname === "/settings") {
       setActiveTabIndex(0);
       return;
@@ -100,7 +111,7 @@ const Settings = () => {
       });
       setActiveTabIndex(idx > -1 && idx !== activeTabIndex ? idx : 0);
     }
-  }, [navigate, location, items, activeTabIndex]);
+  }, [location, items, activeTabIndex, safeTabIndex]);
 
   return (
     <Box pb={4} selectable>
@@ -120,8 +131,8 @@ const Settings = () => {
       <Section>
         <TabBar
           onIndexChange={handleChangeTab}
-          defaultIndex={activeTabIndex}
-          index={activeTabIndex}
+          defaultIndex={safeTabIndex}
+          index={safeTabIndex}
           tabs={items.map(i => i.label)}
           ids={items.map(i => `settings-${i.key}`)}
           separator

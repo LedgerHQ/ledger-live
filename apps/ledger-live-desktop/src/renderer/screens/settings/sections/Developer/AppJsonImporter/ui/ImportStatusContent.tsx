@@ -17,39 +17,69 @@ export const ImportStatusContent = ({ status }: Props) => {
       return (
         <>
           <Spinner size={24} />
-          <p className={statusTextStyles({})}>
+          <p className={statusTextStyles({ className: "text-center" })}>
             {t("settings.developer.appJsonImporter.importing")}
           </p>
         </>
       );
     case "success":
       return (
-        <>
-          <Check size={24} />
-          <p className={statusTextStyles({ variant: "success" })}>
-            {t("settings.developer.appJsonImporter.success", { count: status.accountCount })}
-          </p>
-          {status.lastDeviceLabel ? (
-            <p className={statusTextStyles({ variant: "success" })}>
-              {t("settings.developer.appJsonImporter.lastDeviceSeen", {
-                device: status.lastDeviceLabel,
-              })}
-            </p>
-          ) : null}
-        </>
+        <div className="w-full text-left">
+          <div className="flex items-center justify-center gap-2 mb-3 text-success">
+            <Check size={16} />
+            <span className="body-3 font-medium">
+              {t("settings.developer.appJsonImporter.successLabel")}
+            </span>
+          </div>
+          <dl className="grid body-3 gap-y-1" style={{ gridTemplateColumns: "auto 1fr" }}>
+            <dt className={statusTextStyles({ className: "pr-6 whitespace-nowrap" })}>
+              {t("settings.developer.appJsonImporter.appJsonFile")}
+            </dt>
+            <dd className={statusTextStyles()}>{status.fileName}</dd>
+
+            <dt className={statusTextStyles({ className: "pr-6 whitespace-nowrap" })}>
+              {t("settings.developer.appJsonImporter.accountsImported")}
+            </dt>
+            <dd className={statusTextStyles()}>{status.accountCount}</dd>
+
+            {status.failedEntries.length > 0 ? (
+              <>
+                <dt
+                  className={statusTextStyles({
+                    variant: "warning",
+                    className: "pr-6 whitespace-nowrap self-start",
+                  })}
+                >
+                  {t("settings.developer.appJsonImporter.accountsFailed")}
+                </dt>
+                <dd className={statusTextStyles({ variant: "warning" })}>
+                  <ul>
+                    {status.failedEntries.map(entry => (
+                      <li key={`${entry.currencyId}-${entry.accountName ?? ""}-${entry.reason}`}>
+                        {entry.accountName ?? entry.currencyId}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </>
+            ) : null}
+          </dl>
+        </div>
       );
     case "error":
       return (
         <>
           <Warning size={24} />
-          <p className={statusTextStyles({ variant: "error" })}>{status.message}</p>
+          <p className={statusTextStyles({ variant: "error", className: "text-center" })}>
+            {status.message}
+          </p>
         </>
       );
     default:
       return (
         <>
           <CloudUpload size={24} />
-          <p className={statusTextStyles({})}>
+          <p className={statusTextStyles({ className: "text-center" })}>
             {t("settings.developer.appJsonImporter.dropOrBrowse")}
           </p>
         </>

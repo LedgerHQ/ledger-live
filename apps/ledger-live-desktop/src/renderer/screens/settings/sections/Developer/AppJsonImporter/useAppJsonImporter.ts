@@ -5,8 +5,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings } from "~/renderer/actions/settings";
 import { decodeAccountRawEntries } from "./decodeAccountEntries";
-import type { AppJson, ImportStatus } from "./types";
-import { formatImportedLastSeenDevice } from "./utils";
+import type { AppJson, FailedAccountEntry, ImportStatus } from "./types";
 
 export function useAppJsonImporter() {
   const { t } = useTranslation();
@@ -49,20 +48,20 @@ export function useAppJsonImporter() {
         }
 
         let accountCount = 0;
+        let failedEntries: FailedAccountEntry[] = [];
 
         if (Array.isArray(rawAccounts) && rawAccounts.length > 0) {
-          const decoded = await decodeAccountRawEntries(rawAccounts);
+          const { decoded, failed } = await decodeAccountRawEntries(rawAccounts);
           dispatch(initAccounts(decoded));
           accountCount = decoded.length;
+          failedEntries = failed;
         }
-
-        const lastDeviceLabel = formatImportedLastSeenDevice(settings);
 
         if (settings) {
           dispatch(fetchSettings(settings));
         }
 
-        setStatus({ kind: "success", accountCount, lastDeviceLabel });
+        setStatus({ kind: "success", fileName: file.name, accountCount, failedEntries });
       } catch (e: unknown) {
         const message =
           e instanceof Error ? e.message : t("settings.developer.appJsonImporter.unknownError");

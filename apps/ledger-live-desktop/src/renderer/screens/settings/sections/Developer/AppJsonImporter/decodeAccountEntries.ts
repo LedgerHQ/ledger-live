@@ -1,17 +1,28 @@
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
 import accountModel from "~/helpers/accountModel";
-import type { AccountRawEntry } from "./types";
+import type { AccountRawEntry, FailedAccountEntry } from "./types";
+
+export type DecodeResult = {
+  decoded: [Account, AccountUserData][];
+  failed: FailedAccountEntry[];
+};
 
 export async function decodeAccountRawEntries(
   rawAccounts: AccountRawEntry[],
-): Promise<[Account, AccountUserData][]> {
+): Promise<DecodeResult> {
   const decoded: [Account, AccountUserData][] = [];
+  const failed: FailedAccountEntry[] = [];
+
   for (const raw of rawAccounts) {
     try {
       decoded.push(await accountModel.decode(raw));
-    } catch (_e) {
-      // skip unsupported/unknown currencies (e.g. testnets)
+    } catch (e) {
+      const currencyId = raw.data?.currencyId ?? "unknown";
+      const accountName = raw.data?.name;
+      const reason = e instanceof Error ? e.message : "Unknown error";
+      failed.push({ currencyId, accountName, reason });
     }
   }
-  return decoded;
+
+  return { decoded, failed };
 }
