@@ -392,7 +392,7 @@ describe("broadcastTransactionLogic", () => {
       // Given
       const expectedResult = "Function called";
       const signedOperation = createSignedOperation();
-      mockedDeserializePlatformSignedTransaction.mockReturnValueOnce(signedOperation);
+      mockedDeserializePlatformSignedTransaction.mockResolvedValueOnce(signedOperation);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
@@ -427,7 +427,7 @@ describe("broadcastTransactionLogic", () => {
       // Given
       const expectedResult = "Function called";
       const signedOperation = createSignedOperation();
-      mockedDeserializePlatformSignedTransaction.mockReturnValueOnce(signedOperation);
+      mockedDeserializePlatformSignedTransaction.mockResolvedValueOnce(signedOperation);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When

@@ -60,10 +60,10 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
               })
               .pipe(reduce((a, f) => f(a), a)),
           );
-          const m: Record<string, any> = toAccountRaw(a);
+          const m: Record<string, any> = await toAccountRaw(a);
           delete m.lastSyncDate;
           delete m.blockHeight;
-          expect(toAccountRaw(synced)).toMatchObject(m);
+          expect(await toAccountRaw(synced)).toMatchObject(m);
           return synced;
         }),
       );

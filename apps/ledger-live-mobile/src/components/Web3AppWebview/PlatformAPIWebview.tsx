@@ -244,11 +244,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   accountId,
                   parentId: parentAccount?.id,
                   appName: params?.useApp,
-                  onSuccess: signedOperation => {
+                  onSuccess: async signedOperation => {
                     if (done) return;
                     done = true;
                     tracking.platformSignTransactionSuccess(manifest);
-                    resolve(serializePlatformSignedTransaction(signedOperation));
+                    resolve(await serializePlatformSignedTransaction(signedOperation));
                   },
                   onError,
                 },

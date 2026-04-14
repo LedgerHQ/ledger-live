@@ -36,7 +36,7 @@ describe("serialization", () => {
     tokenAcc.state = "initialized";
     acc.subAccounts = [tokenAcc];
 
-    const accRaw: any = toAccountRaw(acc);
+    const accRaw: any = await toAccountRaw(acc);
     expect(accRaw.subAccounts?.[0]?.state).toBe("initialized");
 
     const deserializedAcc: any = await fromAccountRaw(accRaw);

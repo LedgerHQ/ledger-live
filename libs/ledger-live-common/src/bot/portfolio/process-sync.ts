@@ -117,7 +117,7 @@ async function main(): Promise<Report> {
 
     audit.end();
 
-    const accountsRaw = JSON.stringify(accounts.map(a => toAccountRaw(a)));
+    const accountsRaw = JSON.stringify(await Promise.all(accounts.map(a => toAccountRaw(a))));
     const preloadJSON = JSON.stringify(localCache);
     audit.setAccountsJSONSize(accountsRaw.length);
     audit.setPreloadJSONSize(preloadJSON.length);

@@ -133,14 +133,15 @@ class OnboardModal extends PureComponent<Props, State> {
       walletConnectUri: null,
     };
 
-    if (props.currency) {
-      this.concordiumBridge = getConcordiumBridge(props.currency);
-    }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.mounted = true;
     this.concordiumWalletConnect = setWalletConnect();
+    if (this.props.currency) {
+      this.concordiumBridge = await getConcordiumBridge(this.props.currency);
+      if (!this.mounted) return;
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
