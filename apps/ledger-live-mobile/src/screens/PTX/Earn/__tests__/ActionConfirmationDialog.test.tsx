@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { EarnSwapPromoDialog } from "../EarnSwapPromoDialog";
+import { ActionConfirmationDialog } from "../ActionConfirmationDialog";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/CustomHandlers";
 import { State } from "~/reducers/types";
 
@@ -49,7 +49,7 @@ jest.mock("~/components/WebPTXPlayer/CustomHandlers", () => ({
 const mockedResolveActionDialog = jest.mocked(resolveActionDialog);
 
 const renderDialog = (actionDialog: State["earn"]["actionDialog"]) =>
-  render(<EarnSwapPromoDialog />, {
+  render(<ActionConfirmationDialog />, {
     overrideInitialState: (state: State) => ({
       ...state,
       earn: {
@@ -59,7 +59,7 @@ const renderDialog = (actionDialog: State["earn"]["actionDialog"]) =>
     }),
   });
 
-describe("EarnSwapPromoDialog", () => {
+describe("ActionConfirmationDialog", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

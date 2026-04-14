@@ -44,6 +44,7 @@ import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/valid
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { showActionDialog } from "./actionDialogStore";
+import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 
 export type { ActionDialogData } from "./actionDialogStore";
 export { getActionDialogSnapshot, subscribeActionDialog, resolveActionDialog } from "./actionDialogStore";
@@ -368,21 +369,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           throw error;
         }
       },
-      "custom.actionDialog": async (request: {
-        params?: {
-          title: string;
-          description: string;
-          ctaLabel: string;
-          icon?: "info" | "warning" | "success";
-        };
-      }): Promise<{ confirmed: boolean }> => {
-        const { params } = request;
-        if (!params) {
-          throw new Error("Missing params for custom.actionDialog");
-        }
-
-        return showActionDialog(params);
-      },
+      "custom.dialog.confirmation": createActionDialogHandler(),
       "custom.syncAccount": async request => {
         const { fromAccountId, toAccountId } = request.params || {};
         if (!fromAccountId || !toAccountId) {
@@ -423,5 +410,16 @@ export function createDialogInfoHandler(dispatch: Dispatch) {
   return async (request: { params?: InfoDialogParams }) => {
     const validated = validateInfoDialogParams(request.params, "custom.dialog.info");
     dispatch(setPtxInfoDialog(validated));
+  };
+}
+
+export function createActionDialogHandler() {
+  return async (request: { params?: ActionDialogParams }): Promise<{ confirmed: boolean }> => {
+    const { params } = request;
+    if (!params) {
+      throw new Error("Missing params for custom.dialog.confirmation");
+    }
+
+    return showActionDialog(params);
   };
 }

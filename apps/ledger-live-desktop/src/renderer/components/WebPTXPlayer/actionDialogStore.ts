@@ -1,13 +1,10 @@
 // Lightweight module-level store for the action dialog.
-// Extracted from CustomHandlers so that consumers (e.g. EarnSwapPromoDialog)
+// Extracted from CustomHandlers so that consumers (e.g. ActionConfirmationDialog)
 // can subscribe without pulling in the heavy PTX dependency graph.
 
-export type ActionDialogData = {
-  title: string;
-  description: string;
-  ctaLabel: string;
-  icon?: "info" | "warning" | "success";
-};
+import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
+
+export type ActionDialogData = ActionDialogParams;
 
 type ActionDialogResolver = (result: { confirmed: boolean }) => void;
 

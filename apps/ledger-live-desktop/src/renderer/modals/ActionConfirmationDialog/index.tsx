@@ -18,7 +18,7 @@ const SPOT_APPEARANCE = {
   success: "check",
 } as const;
 
-export function EarnSwapPromoDialog() {
+export function ActionConfirmationDialog() {
   const data = useSyncExternalStore(subscribeActionDialog, getActionDialogSnapshot);
 
   const isOpen = data != null;

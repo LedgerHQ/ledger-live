@@ -11,7 +11,7 @@ const SPOT_APPEARANCE = {
   success: "check",
 } as const;
 
-export function EarnSwapPromoDialog() {
+export function ActionConfirmationDialog() {
   const dialog = useSelector(earnActionDialogSelector);
 
   const activeDialogRef = useRef(dialog);

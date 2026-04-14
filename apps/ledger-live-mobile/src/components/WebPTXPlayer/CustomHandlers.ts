@@ -47,6 +47,7 @@ import {
   makeSetEarnMenuBottomSheetAction,
   makeSetEarnActionDialogAction,
 } from "~/actions/earn";
+import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -296,7 +297,7 @@ export function useCustomExchangeHandlers({
       },
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
-      "custom.actionDialog": createOpenActionDialogHandler(dispatch),
+      "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
     };
 
     return {
@@ -536,17 +537,12 @@ export function resolveActionDialog(confirmed: boolean) {
 
 export function createOpenActionDialogHandler(dispatch: Dispatch) {
   return (request: {
-    params?: {
-      title: string;
-      description: string;
-      ctaLabel: string;
-      icon?: "info" | "warning" | "success";
-    };
+    params?: ActionDialogParams;
   }): Promise<{ confirmed: boolean }> => {
     const { params } = request;
 
     if (!params) {
-      throw new Error("Missing params for custom.actionDialog");
+      throw new Error("Missing params for custom.dialog.confirmation");
     }
 
     // If a previous dialog is still pending, resolve it as dismissed before opening the new one.

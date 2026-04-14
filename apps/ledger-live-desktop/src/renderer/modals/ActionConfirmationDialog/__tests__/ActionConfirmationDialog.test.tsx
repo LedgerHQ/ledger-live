@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "tests/testSetup";
 import { screen } from "@testing-library/react";
-import { EarnSwapPromoDialog } from "../index";
+import { ActionConfirmationDialog } from "../index";
 import {
   getActionDialogSnapshot,
   subscribeActionDialog,
@@ -69,7 +69,7 @@ function setupSubscribeMock() {
   });
 }
 
-describe("EarnSwapPromoDialog", () => {
+describe("ActionConfirmationDialog", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setupSubscribeMock();
@@ -78,7 +78,7 @@ describe("EarnSwapPromoDialog", () => {
   it("returns null when there is no dialog data", () => {
     mockedGetSnapshot.mockReturnValue(null);
 
-    const { container } = render(<EarnSwapPromoDialog />, { skipRouter: true });
+    const { container } = render(<ActionConfirmationDialog />, { skipRouter: true });
 
     expect(container.querySelector("[data-testid='dialog']")).toBeNull();
   });
@@ -90,7 +90,7 @@ describe("EarnSwapPromoDialog", () => {
       ctaLabel: "Go to Swap",
     });
 
-    render(<EarnSwapPromoDialog />, { skipRouter: true });
+    render(<ActionConfirmationDialog />, { skipRouter: true });
 
     expect(screen.getByText("Swap required")).toBeInTheDocument();
     expect(screen.getByText("You need to swap first")).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe("EarnSwapPromoDialog", () => {
       ctaLabel: "OK",
     });
 
-    render(<EarnSwapPromoDialog />, { skipRouter: true });
+    render(<ActionConfirmationDialog />, { skipRouter: true });
 
     expect(screen.getByTestId("spot-info")).toBeInTheDocument();
   });
@@ -117,7 +117,7 @@ describe("EarnSwapPromoDialog", () => {
       icon: "warning",
     });
 
-    render(<EarnSwapPromoDialog />, { skipRouter: true });
+    render(<ActionConfirmationDialog />, { skipRouter: true });
 
     expect(screen.getByTestId("spot-warning")).toBeInTheDocument();
   });
@@ -130,7 +130,7 @@ describe("EarnSwapPromoDialog", () => {
       icon: "success",
     });
 
-    render(<EarnSwapPromoDialog />, { skipRouter: true });
+    render(<ActionConfirmationDialog />, { skipRouter: true });
 
     expect(screen.getByTestId("spot-check")).toBeInTheDocument();
   });
@@ -142,7 +142,7 @@ describe("EarnSwapPromoDialog", () => {
       ctaLabel: "Confirm",
     });
 
-    const { user } = render(<EarnSwapPromoDialog />, { skipRouter: true });
+    const { user } = render(<ActionConfirmationDialog />, { skipRouter: true });
 
     await user.click(screen.getByTestId("confirm-button"));
 
@@ -156,7 +156,7 @@ describe("EarnSwapPromoDialog", () => {
       ctaLabel: "OK",
     });
 
-    const { user } = render(<EarnSwapPromoDialog />, { skipRouter: true });
+    const { user } = render(<ActionConfirmationDialog />, { skipRouter: true });
 
     await user.click(screen.getByTestId("dialog-header-close"));
 
@@ -170,7 +170,7 @@ describe("EarnSwapPromoDialog", () => {
       ctaLabel: "OK",
     });
 
-    const { user } = render(<EarnSwapPromoDialog />, { skipRouter: true });
+    const { user } = render(<ActionConfirmationDialog />, { skipRouter: true });
 
     await user.click(screen.getByTestId("dialog-backdrop"));
 

@@ -122,7 +122,7 @@ describe("createOpenActionDialogHandler", () => {
     const handler = createOpenActionDialogHandler(dispatch);
 
     expect(() => handler({ params: undefined })).toThrow(
-      "Missing params for custom.actionDialog",
+      "Missing params for custom.dialog.confirmation",
     );
     expect(dispatch).not.toHaveBeenCalled();
   });
