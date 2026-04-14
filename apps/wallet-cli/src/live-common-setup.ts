@@ -1,6 +1,6 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
@@ -57,12 +57,12 @@ registerCoinModules(walletCliLoaders);
 setSupportedCurrencies(["bitcoin", "ethereum", "solana"]);
 // Set config on the ESM singleton (used by alpacaized families like EVM whose
 // bridge code is reached through ESM imports).
-LiveConfig.setConfig(liveConfig);
+LiveConfig.setConfig(walletCliConfig);
 // Also set on the CJS singleton — Bun's bundler resolves ESM imports to lib-es/
 // and require() to lib/, creating separate LiveConfig.instance singletons.
 // Non-alpacaized families (solana, bitcoin) load their bridge via require() in
 // the lazy loaders above, so they read from the CJS instance.
-(require("@ledgerhq/live-config/LiveConfig") as typeof import("@ledgerhq/live-config/LiveConfig")).LiveConfig.setConfig(liveConfig);
+(require("@ledgerhq/live-config/LiveConfig") as typeof import("@ledgerhq/live-config/LiveConfig")).LiveConfig.setConfig(walletCliConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
 setupCalClientStore();
