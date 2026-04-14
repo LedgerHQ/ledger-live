@@ -38,11 +38,11 @@ import { RECONNECT_DEVICE_TIMEOUT_MS } from "./node-webusb-constants";
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
 
 type WebUsbDiscoveredInternal = TransportDiscoveredDevice & {
-  webUsbDevice: USBDevice;
+  webUsbDevice: WebUSBDevice;
   interfaceNumber: number;
 };
 
-function getVendorInterfaceNumber(device: USBDevice): number | null {
+function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
   const cfg = device.configurations[0];
   if (!cfg) {
     return null;
@@ -55,10 +55,10 @@ function getVendorInterfaceNumber(device: USBDevice): number | null {
   return null;
 }
 
-type ScannedWebUsbDevice = { device: USBDevice; interfaceNumber: number };
+type ScannedWebUsbDevice = { device: WebUSBDevice; interfaceNumber: number };
 
 /** Uses serialNumber when available so two same-model devices are distinguishable. */
-function deviceIdentityKey(device: USBDevice): string {
+function deviceIdentityKey(device: WebUSBDevice): string {
   const serial = device.serialNumber;
   return serial
     ? `${device.vendorId}:${device.productId}:${serial}`
@@ -88,7 +88,7 @@ export class NodeWebUsbTransport implements Transport {
     [],
   );
   private readonly _deviceConnectionsByWebUsbDevice = new Map<
-    USBDevice,
+    WebUSBDevice,
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
   >();
   private readonly _deviceConnectionsPendingReconnection = new Set<
@@ -132,7 +132,7 @@ export class NodeWebUsbTransport implements Transport {
     return true;
   }
 
-  private getDeviceModel(device: USBDevice): Maybe<TransportDeviceModel> {
+  private getDeviceModel(device: WebUSBDevice): Maybe<TransportDeviceModel> {
     const { productId } = device;
     const model = this._deviceModelDataSource
       .getAllDeviceModels()
@@ -140,7 +140,7 @@ export class NodeWebUsbTransport implements Transport {
     return model ? Maybe.of(model) : Maybe.zero();
   }
 
-  private getUsbProductIdForMatch(device: USBDevice): number {
+  private getUsbProductIdForMatch(device: WebUSBDevice): number {
     return this.getDeviceModel(device).caseOf({
       Just: m => m.usbProductId,
       Nothing: () => device.productId >> 8,
@@ -163,7 +163,10 @@ export class NodeWebUsbTransport implements Transport {
     return dedupeLedgerWebUsbDevices(collected);
   }
 
-  private mapWebUsbToDiscovered(web: USBDevice, interfaceNumber: number): WebUsbDiscoveredInternal {
+  private mapWebUsbToDiscovered(
+    web: WebUSBDevice,
+    interfaceNumber: number,
+  ): WebUsbDiscoveredInternal {
     const key = deviceIdentityKey(web);
     const existing = this._transportDiscoveredDevices
       .getValue()
@@ -417,7 +420,7 @@ export class NodeWebUsbTransport implements Transport {
 
   async handleDeviceReconnection(
     machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
-    web: USBDevice,
+    web: WebUSBDevice,
     interfaceNumber: number,
   ): Promise<void> {
     try {
