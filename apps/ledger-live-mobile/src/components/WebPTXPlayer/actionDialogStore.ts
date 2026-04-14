@@ -3,6 +3,7 @@
 // can import without pulling in the heavy PTX dependency graph.
 
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
+import { validateActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import { makeSetEarnActionDialogAction } from "~/actions/earn";
 import type { Dispatch } from "redux";
 
@@ -22,14 +23,10 @@ export function resolveActionDialog(confirmed: boolean) {
 }
 
 export function createOpenActionDialogHandler(dispatch: Dispatch) {
-  return (request: {
+  return async (request: {
     params?: ActionDialogParams;
   }): Promise<{ confirmed: boolean }> => {
-    const { params } = request;
-
-    if (!params) {
-      throw new Error("Missing params for custom.dialog.confirmation");
-    }
+    const validated = validateActionDialogParams(request.params, "custom.dialog.confirmation");
 
     // If a previous dialog is still pending, resolve it as dismissed before opening the new one.
     if (pendingActionDialogResolver) {
@@ -40,7 +37,7 @@ export function createOpenActionDialogHandler(dispatch: Dispatch) {
     return new Promise<{ confirmed: boolean }>(resolve => {
       pendingActionDialogResolver = resolve;
       actionDialogDispatch = dispatch;
-      dispatch(makeSetEarnActionDialogAction(params));
+      dispatch(makeSetEarnActionDialogAction(validated));
     });
   };
 }

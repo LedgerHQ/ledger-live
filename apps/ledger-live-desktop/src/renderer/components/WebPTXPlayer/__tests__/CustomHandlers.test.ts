@@ -4,6 +4,7 @@ import {
   subscribeActionDialog,
   resolveActionDialog,
 } from "../CustomHandlers";
+import { showActionDialog } from "../actionDialogStore";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 
 describe("createDialogInfoHandler", () => {
@@ -89,6 +90,14 @@ describe("action dialog store", () => {
   });
 
   it("should reset snapshot to null after resolveActionDialog", () => {
+    showActionDialog({
+      title: "Test",
+      description: "Test description",
+      ctaLabel: "Confirm",
+    });
+
+    expect(getActionDialogSnapshot()).not.toBeNull();
+
     resolveActionDialog(true);
 
     expect(getActionDialogSnapshot()).toBeNull();

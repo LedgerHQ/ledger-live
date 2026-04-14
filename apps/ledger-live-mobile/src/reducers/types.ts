@@ -1,6 +1,7 @@
 import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
@@ -333,12 +334,7 @@ export type EarnState = {
   };
   menuBottomSheet?: { icon: string; label: string; metadata: OptionMetadata }[];
   protocolInfoModal?: true;
-  actionDialog?: {
-    title: string;
-    description: string;
-    ctaLabel: string;
-    icon?: "info" | "warning" | "success";
-  };
+  actionDialog?: ActionDialogParams;
 };
 
 // === PROTECT STATE ===

@@ -69,31 +69,6 @@ describe("earn reducer", () => {
       expect(state.menuBottomSheet).toBeUndefined();
     });
   });
-});
-
-describe("earnInfoBottomSheetSelector", () => {
-  it("should return infoBottomSheet from earn state", () => {
-    const infoBottomSheet = { message: "Test", title: "Test Title" };
-    const state: State = {
-      ...({} as State),
-      earn: {
-        ...INITIAL_STATE,
-        infoBottomSheet,
-      },
-    };
-
-    expect(earnInfoBottomSheetSelector(state)).toEqual(infoBottomSheet);
-  });
-
-  it("should return undefined when infoBottomSheet is initial", () => {
-    const state: State = {
-      ...({} as State),
-      earn: INITIAL_STATE,
-    };
-
-    expect(earnInfoBottomSheetSelector(state)).toBeUndefined();
-  });
-});
 
   describe("EARN_ACTION_DIALOG", () => {
     it("should set actionDialog from payload", () => {
@@ -141,6 +116,31 @@ describe("earnInfoBottomSheetSelector", () => {
       expect(state.infoModal).toEqual({ messageTitle: "Modal" });
     });
   });
+});
+
+describe("earnInfoBottomSheetSelector", () => {
+  it("should return infoBottomSheet from earn state", () => {
+    const infoBottomSheet = { message: "Test", title: "Test Title" };
+    const state: State = {
+      ...({} as State),
+      earn: {
+        ...INITIAL_STATE,
+        infoBottomSheet,
+      },
+    };
+
+    expect(earnInfoBottomSheetSelector(state)).toEqual(infoBottomSheet);
+  });
+
+  it("should return undefined when infoBottomSheet is initial", () => {
+    const state: State = {
+      ...({} as State),
+      earn: INITIAL_STATE,
+    };
+
+    expect(earnInfoBottomSheetSelector(state)).toBeUndefined();
+  });
+});
 
 describe("earnMenuBottomSheetSelector", () => {
   it("should return menuBottomSheet from earn state", () => {

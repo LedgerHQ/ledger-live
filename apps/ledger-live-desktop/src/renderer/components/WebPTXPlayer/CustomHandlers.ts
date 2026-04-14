@@ -44,6 +44,7 @@ import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/valid
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { showActionDialog } from "./actionDialogStore";
+import { validateActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 
 export type { ActionDialogData } from "./actionDialogStore";
@@ -415,11 +416,7 @@ export function createDialogInfoHandler(dispatch: Dispatch) {
 
 export function createActionDialogHandler() {
   return async (request: { params?: ActionDialogParams }): Promise<{ confirmed: boolean }> => {
-    const { params } = request;
-    if (!params) {
-      throw new Error("Missing params for custom.dialog.confirmation");
-    }
-
-    return showActionDialog(params);
+    const validated = validateActionDialogParams(request.params, "custom.dialog.confirmation");
+    return showActionDialog(validated);
   };
 }

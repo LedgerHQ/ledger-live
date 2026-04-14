@@ -1,9 +1,8 @@
 import {
   createOpenInfoBottomSheetHandler,
   createOpenMenuBottomSheetHandler,
-  createOpenActionDialogHandler,
-  resolveActionDialog,
 } from "../CustomHandlers";
+import { createOpenActionDialogHandler, resolveActionDialog } from "../actionDialogStore";
 import {
   makeSetEarnInfoBottomSheetAction,
   makeSetEarnMenuBottomSheetAction,
