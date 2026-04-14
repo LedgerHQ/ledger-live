@@ -7,7 +7,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";
-import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
+import { useGenuineCheckAction } from "~/renderer/hooks/useConnectAppAction";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Success = ({ device, ...trackProps }: { device: Device } & TrackTutorialProps) => {
@@ -35,16 +35,18 @@ const Success = ({ device, ...trackProps }: { device: Device } & TrackTutorialPr
 type Props = {
   connectedDevice: Device;
   setConnectedDevice: (device: Device | null) => void;
+  onGenuineCheckPassed: () => void;
 };
 
 export function GenuineCheck({
   connectedDevice,
   setConnectedDevice,
+  onGenuineCheckPassed,
   ...trackProps
 }: Props & TrackTutorialProps) {
   const { deviceModelId } = useContext(OnboardingContext);
   const device = useSelector(getCurrentDevice);
-  const action = useConnectManagerAction();
+  const action = useGenuineCheckAction();
 
   useEffect(() => {
     if (!device) return;
@@ -52,9 +54,13 @@ export function GenuineCheck({
   }, [device, setConnectedDevice]);
 
   const [passed, setPassed] = useState<unknown>(null);
-  const onResult = useCallback((result: unknown) => {
-    setPassed(result);
-  }, []);
+  const onResult = useCallback(
+    (result: unknown) => {
+      setPassed(result);
+      onGenuineCheckPassed();
+    },
+    [onGenuineCheckPassed],
+  );
 
   return passed ? (
     <Success device={connectedDevice} {...trackProps} />
