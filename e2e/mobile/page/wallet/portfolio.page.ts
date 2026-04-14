@@ -9,6 +9,7 @@ export default class PortfolioPage {
   baseAssetItem = "assetItem-";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
+  analyticsBalanceAmountId = "analytics-balance-amount";
   graphCardChart = "graphCard-chart";
   assetBalanceId = "asset-balance";
   readOnlyItemsId = "PortfolioReadOnlyItems";
@@ -108,9 +109,9 @@ export default class PortfolioPage {
     jestExpect(text).toContain(counterValue);
   }
 
-  @Step("Expect chart to be visible")
+  @Step("Expect balance to be visible")
   async expectBalanceToBeVisible() {
-    await detoxExpect(getElementById(this.graphCardBalanceId)).toBeVisible();
+    await detoxExpect(getElementById(this.analyticsBalanceAmountId)).toBeVisible();
   }
 
   @Step("Expect total balance value")
