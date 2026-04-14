@@ -72,22 +72,6 @@ export class Provider {
     AppInfos.ETHEREUM,
   );
 
-  // Buy And Sell providers
-  static readonly REVOLUT = new Provider("revolut", "Revolut", true, true, true);
-  static readonly MERCURYO = new Provider("mercuryo", "Mercuryo", true, true, true);
-  static readonly TRANSAK = new Provider("transak", "Transak", true, true, true);
-  static readonly TOPPER = new Provider("topper", "Topper", true, true, true);
-  static readonly COINBASE = new Provider("coinbase", "Coinbase", true, true, true);
-  static readonly COINIFY = new Provider("coinify-buy", "Coinify", true, true, true);
-  static readonly RAMP_NETWORK = new Provider("ramp", "Ramp Network", true, true, true);
-  static readonly BTC_DIRECT = new Provider("btc_direct", "BTC Direct", true, true, true);
-  static readonly SARDINE = new Provider("sardine", "Sardine", true, true, true);
-  static readonly SIMPLEX = new Provider("simplex", "Simplex", true, true, true);
-  static readonly BANXA = new Provider("banxa", "Banxa", true, true, true);
-  static readonly YOU_HODLER = new Provider("youhodler", "YouHodler", true, true, true);
-  static readonly ALCHEMY_PAY = new Provider("alchemypay", "Alchemy Pay", true, true, true);
-  static readonly CRYPTO_COM = new Provider("cryptocom", "Crypto.com", true, true, true);
-
   // Earn providers
   static readonly KILN = new Provider("kiln_pooling", "Kiln staking Pool", true, true, true);
   static readonly STADER_LABS = new Provider("stader-eth", "Stader Labs", true, true, true);
@@ -95,7 +79,39 @@ export class Provider {
 
   static getNameByUiName(uiName: string): string {
     const provider = Object.values(Provider).find(p => p.uiName === uiName);
-    return provider ? provider.name : "";
+    return provider?.name ?? "";
+  }
+}
+
+export class BuySellProvider {
+  constructor(
+    public readonly name: string,
+    public readonly uiName: string,
+    public readonly isTested: boolean,
+  ) {}
+  static readonly MOONPAY = new BuySellProvider("moonpay", "MoonPay", true);
+  static readonly REVOLUT = new BuySellProvider("revolut", "Revolut", true);
+  static readonly MERCURYO = new BuySellProvider("mercuryo", "Mercuryo", true);
+  static readonly TRANSAK = new BuySellProvider("transak", "Transak", true);
+  static readonly TOPPER = new BuySellProvider("topper", "Topper", true);
+  static readonly COINBASE = new BuySellProvider("coinbase", "Coinbase", true);
+  static readonly COINIFY = new BuySellProvider("coinify-buy", "Coinify", true);
+  static readonly RAMP_NETWORK = new BuySellProvider("ramp", "Ramp Network", true);
+  static readonly BTC_DIRECT = new BuySellProvider("btc_direct", "BTC Direct", true);
+  static readonly SARDINE = new BuySellProvider("sardine", "Sardine", true);
+  static readonly SIMPLEX = new BuySellProvider("simplex", "Simplex", true);
+  static readonly BANXA = new BuySellProvider("banxa", "Banxa", true);
+  static readonly YOU_HODLER = new BuySellProvider("youhodler", "YouHodler", true);
+  static readonly ALCHEMY_PAY = new BuySellProvider("alchemypay", "Alchemy Pay", true);
+  static readonly CRYPTO_COM = new BuySellProvider("cryptocom", "Crypto.com", true);
+  static readonly PAYPAL = new BuySellProvider("paypal", "PayPal", false);
+
+  static getByUiName(uiName: string): BuySellProvider {
+    return Object.values(BuySellProvider).find(p => p.uiName === uiName);
+  }
+
+  static getNameByUiName(uiName: string): string {
+    return BuySellProvider.getByUiName(uiName).name;
   }
 }
 
