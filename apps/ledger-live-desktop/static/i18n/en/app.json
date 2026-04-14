@@ -4690,8 +4690,14 @@
         "invalidFileType": "Invalid file type. Expected a .json file.",
         "missingDataField": "Invalid app.json: missing top-level data field.",
         "encryptedAccounts": "Encrypted accounts detected. Decrypt the file first.",
+        "successLabel": "Success",
+        "appJsonFile": "App.json file",
+        "accountsImported": "Accounts imported",
+        "accountsFailed": "Accounts failed",
         "importFailed": "Import failed: {{message}}",
-        "unknownError": "Unknown error during import."
+        "unknownError": "Unknown error during import.",
+        "failedCount": "{{count}} account could not be loaded.",
+        "failedCount_other": "{{count}} accounts could not be loaded."
       },
       "mockAccounts": {
         "title": "Generate mock accounts",
