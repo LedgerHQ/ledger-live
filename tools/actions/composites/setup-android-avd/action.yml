@@ -61,7 +61,7 @@ runs:
           tools/actions
 
     - name: Setup Android Environment
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@support/qaa_swap_fix_-navigateToBuyFromPortfolioPage_BTC
 
     - name: Create .android directory
       shell: bash
