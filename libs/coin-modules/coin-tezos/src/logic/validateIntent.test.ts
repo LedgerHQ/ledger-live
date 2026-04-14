@@ -179,7 +179,7 @@ describe("validateIntent", () => {
   });
 
   describe("transaction constraints", () => {
-    it("should return RecommendUndelegation when send-max native XTZ on a delegated account", async () => {
+    it("should return RecommendUndelegation when send-max native XTZ on a delegated account, and still compute max amount", async () => {
       mockGetAccountByAddress.mockResolvedValue({
         type: "user",
         address: senderAddress,
@@ -205,7 +205,11 @@ describe("validateIntent", () => {
       });
 
       expect(result.errors.amount).toBeInstanceOf(RecommendUndelegation);
-      expect(mockEstimateFees).not.toHaveBeenCalled();
+      // estimateFees is called so that estimateMaxSpendable gets a meaningful value
+      expect(mockEstimateFees).toHaveBeenCalled();
+      expect(result.estimatedFees).toBe(1000n);
+      expect(result.amount).toBe(4999000n);
+      expect(result.totalSpent).toBe(5000000n);
     });
 
     it("should return NotEnoughBalanceToDelegate when stake intent and balance is zero", async () => {

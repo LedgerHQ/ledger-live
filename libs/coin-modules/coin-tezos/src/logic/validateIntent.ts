@@ -253,7 +253,14 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     Object.assign(errors, constraintErrors);
 
     if (Object.keys(errors).length > 0) {
-      return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+      // RecommendUndelegation is a soft UX guidance error; crafting is already independently
+      // blocked in api/index.ts. Continue to calculate a meaningful max amount so
+      // estimateMaxSpendable returns the correct value even for delegated accounts.
+      const hasOnlyRecommendUndelegationError =
+        Object.keys(errors).length === 1 && errors.amount instanceof RecommendUndelegation;
+      if (!hasOnlyRecommendUndelegationError) {
+        return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+      }
     }
 
     const feeResult = await estimateFeesForIntent(intent, senderInfo);
