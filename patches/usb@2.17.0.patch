@@ -1,29 +1,32 @@
 diff --git a/dist/usb/bindings.js b/dist/usb/bindings.js
+index 9c15197e9563980b9b726967d1db6467e2cdaa39..fc0ba1cdf6394c1a24e114dffe42cc5bdc6505ce 100644
 --- a/dist/usb/bindings.js
 +++ b/dist/usb/bindings.js
-@@ -6,5 +6,7 @@
- var path_1 = require("path");
+@@ -5,6 +5,8 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const path_1 = require("path");
  /* eslint-disable @typescript-eslint/no-var-requires */
--var usb = require('node-gyp-build')(path_1.join(__dirname, '..', '..'));
+-const usb = require('node-gyp-build')(process.env.NODE_USB_PATH || (0, path_1.join)(__dirname, '..', '..'));
 +// globalThis.__usbNativeAddon is set by wallet-cli's embed-usb-native.ts to bypass node-gyp-build
 +// in Bun standalone binaries where the prebuilds directory is not on disk.
-+var usb = globalThis.__usbNativeAddon || require('node-gyp-build')(path_1.join(__dirname, '..', '..'));
++const usb = globalThis.__usbNativeAddon || require('node-gyp-build')(process.env.NODE_USB_PATH || (0, path_1.join)(__dirname, '..', '..'));
  module.exports = usb;
  //# sourceMappingURL=bindings.js.map
+\ No newline at end of file
 diff --git a/dist/usb/index.js b/dist/usb/index.js
-index 036c8ff942d29ef5703d4c47839f6d9ef2a288c4..cca233f361b1f2a0b8d1ecc10e9202aef535367d 100644
+index 9f1d1a89560f74936542f5e955bf47e77d595a45..761fe453da24cc7586efbd50c56d77f1f31fe385 100644
 --- a/dist/usb/index.js
 +++ b/dist/usb/index.js
-@@ -86,6 +86,8 @@ var pollHotplug = function (start) {
-     setTimeout(function () { return pollHotplug(); }, usb.pollHotplugDelay);
+@@ -56,6 +56,8 @@ const pollHotplug = (start = false) => {
+     setTimeout(() => pollHotplug(), usb.pollHotplugDelay);
  };
  // Devices changed event handler
 +// Rolling back changes made in https://github.com/node-usb/node-usb/pull/577
-+// as it is creating an delay on Windows when opening/closing a nano app and device detection
- var devicesChanged = function () { return setTimeout(function () { return emitHotplugEvents(); }, usb.pollHotplugDelay); };
++// as it is creating a delay on Windows when opening/closing a nano app and device detection
+ const devicesChanged = () => setTimeout(() => emitHotplugEvents(), usb.pollHotplugDelay);
  // Hotplug control
- var hotplugSupported = 0;
-@@ -100,8 +102,8 @@ var startHotplug = function () {
+ let hotplugSupported = 0;
+@@ -70,8 +72,8 @@ const startHotplug = () => {
          usb._enableHotplugEvents();
          if (hotplugSupported === 2) {
              // Use hotplug ID events to trigger a change check
@@ -34,7 +37,7 @@ index 036c8ff942d29ef5703d4c47839f6d9ef2a288c4..cca233f361b1f2a0b8d1ecc10e9202ae
          }
      }
      else {
-@@ -115,8 +117,8 @@ var stopHotplug = function () {
+@@ -85,8 +87,8 @@ const stopHotplug = () => {
          usb._disableHotplugEvents();
          if (hotplugSupported === 2) {
              // Remove hotplug ID event listeners

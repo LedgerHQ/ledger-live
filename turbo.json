@@ -314,6 +314,31 @@
     "live-mobile#ios:local:ipa": {
       "dependsOn": ["^build"],
       "outputs": ["ios/build/**"]
+    },
+    "@ledgerhq/wallet-cli#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "cache": false
+    },
+    "@ledgerhq/wallet-cli#typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#lint": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#lint:ci": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#lint:fix": {
+      "env": ["CI_OS"],
+      "outputs": []
     }
   }
 }
