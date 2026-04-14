@@ -6,10 +6,7 @@ import {
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStoreValue } from "~/store";
-import {
-  LedgerRecoverSubscriptionStateEnum,
-  LedgerRecoverSubscriptionStateInProgressEnum,
-} from "~/types/recoverSubscriptionState";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
