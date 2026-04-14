@@ -1,17 +1,8 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import AssetListItem from "../index";
-import {
-  useAssetListItemViewModel,
-  type AssetListItemViewModelResult,
-} from "../useAssetListItemViewModel";
+import type { AssetListItemViewModelResult } from "../usePrecomputedAssetListData";
 import { createCryptoAsset, bitcoin } from "./shared";
-
-jest.mock("../useAssetListItemViewModel", () => ({
-  useAssetListItemViewModel: jest.fn(),
-}));
-
-const mockedViewModel = jest.mocked(useAssetListItemViewModel);
 
 const mockAsset = createCryptoAsset(bitcoin, 100000);
 
@@ -22,16 +13,16 @@ const baseViewModelResult: AssetListItemViewModelResult = {
   deltaColor: "success",
 };
 
-const renderView = (vmOverrides: Partial<AssetListItemViewModelResult> = {}) => {
-  mockedViewModel.mockReturnValue({ ...baseViewModelResult, ...vmOverrides });
-  return render(<AssetListItem asset={mockAsset} onPress={jest.fn()} />);
-};
+const renderView = (vmOverrides: Partial<AssetListItemViewModelResult> = {}) =>
+  render(
+    <AssetListItem
+      asset={mockAsset}
+      onPress={jest.fn()}
+      precomputed={{ ...baseViewModelResult, ...vmOverrides }}
+    />,
+  );
 
 describe("AssetListItem", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("leading content", () => {
     beforeEach(() => {
       renderView();
