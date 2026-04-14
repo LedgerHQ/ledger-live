@@ -17,7 +17,6 @@ const contentAreaStyle: LumenViewStyle = {
 };
 
 const ctasStyle: LumenViewStyle = {
-  paddingHorizontal: "s16",
   paddingBottom: "s8",
 };
 
@@ -27,7 +26,7 @@ export const ScreenHeroSectionView = ({
   testID,
   minContentHeight,
 }: ScreenHeroSectionViewProps) => (
-  <Box lx={{ gap: "s12" }} testID={testID}>
+  <Box lx={{ gap: "s12", paddingHorizontal: "s16" }} testID={testID}>
     <Box lx={contentAreaStyle} style={{ minHeight: minContentHeight ?? CONTENT_AREA_HEIGHT }}>
       {children}
     </Box>

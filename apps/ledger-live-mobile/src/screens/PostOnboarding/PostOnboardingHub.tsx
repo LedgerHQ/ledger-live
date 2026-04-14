@@ -7,7 +7,7 @@ import {
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useDispatch } from "~/context/hooks";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";
@@ -18,8 +18,7 @@ import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/Activat
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { accountsSelector } from "~/reducers/accounts";
+import { usePostOnboardingHubCompletionContext } from "~/logic/postOnboarding/usePostOnboardingHubCompletionContext";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 const PostOnboardingHub = () => {
@@ -27,8 +26,7 @@ const PostOnboardingHub = () => {
   const { t } = useTranslation();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const closePostOnboarding = useCompletePostOnboarding();
-  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
-  const accounts = useSelector(accountsSelector);
+  const { isLedgerSyncActive, accounts } = usePostOnboardingHubCompletionContext();
 
   const { isActivationDrawerVisible, closeActivationDrawer, openActivationDrawer } =
     useLedgerSyncEntryPointViewModel({
