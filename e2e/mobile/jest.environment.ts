@@ -7,6 +7,7 @@ import {
   installConsoleCapture,
   uninstallConsoleCapture,
 } from "./utils/loggingUtils";
+import { attachAdbLogcatSnapshotToAllure } from "./helpers/androidLogcatAllure";
 import { getLogs } from "./bridge/server";
 import { Circus } from "@jest/types";
 import {
@@ -209,6 +210,7 @@ export default class TestEnvironment extends DetoxEnvironment {
         await attachFailureLogsToAllure(logsPayload);
         await captureNativeViewHierarchy();
         console.info("Failure logs attached to Allure report");
+        await attachAdbLogcatSnapshotToAllure();
       } catch (err) {
         console.warn("Failed to attach failure logs to Allure:", err);
       }
