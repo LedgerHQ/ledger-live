@@ -160,7 +160,10 @@ describe("LedgerSyncEntryPoint", () => {
         initialState: {
           ...INITIAL_STATE,
           ...withFlagOverrides({
-            lldWalletSync: { enabled: true, params: { environment: "STAGING" as const, watchConfig: {} } },
+            lldWalletSync: {
+              enabled: true,
+              params: { environment: "STAGING" as const, watchConfig: {} },
+            },
             lldLedgerSyncEntryPoints: { enabled: true, params: { postOnboarding: false } },
           }),
         },
@@ -194,10 +197,19 @@ describe("LedgerSyncEntryPoint", () => {
     const OPTIMISATION_ENABLED_STATE = {
       ...INITIAL_STATE,
       ...withFlagOverrides({
-        lldWalletSync: { enabled: true, params: { environment: "STAGING" as const, watchConfig: {} } },
+        lldWalletSync: {
+          enabled: true,
+          params: { environment: "STAGING" as const, watchConfig: {} },
+        },
         lldLedgerSyncEntryPoints: {
           enabled: true,
-          params: { onboarding: true, manager: true, accounts: true, settings: true, postOnboarding: true },
+          params: {
+            onboarding: true,
+            manager: true,
+            accounts: true,
+            settings: true,
+            postOnboarding: true,
+          },
         },
         lwdLedgerSyncOptimisation: { enabled: true },
       }),

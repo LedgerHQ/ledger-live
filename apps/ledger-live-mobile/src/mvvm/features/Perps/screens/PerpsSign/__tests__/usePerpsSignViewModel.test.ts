@@ -113,7 +113,9 @@ describe("usePerpsSignViewModel", () => {
 
     unmount();
 
-    expect((props as { route: { params: { onCancel: jest.Mock } } }).route.params.onCancel).toHaveBeenCalled();
+    expect(
+      (props as { route: { params: { onCancel: jest.Mock } } }).route.params.onCancel,
+    ).toHaveBeenCalled();
   });
 
   it("should not call onCancel after successful signing + unmount", async () => {

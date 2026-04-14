@@ -6,7 +6,10 @@ import type {
   Event as AppActionEvent,
 } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
-import type { ConnectAppEvent, Input as ConnectAppInput } from "@ledgerhq/live-common/hw/connectApp";
+import type {
+  ConnectAppEvent,
+  Input as ConnectAppInput,
+} from "@ledgerhq/live-common/hw/connectApp";
 import { ReplaySubject, type Observable } from "rxjs";
 import { act } from "tests/testSetup";
 
@@ -19,10 +22,7 @@ type DevicePermissionRequestedEvent = Extract<
   AppActionEvent,
   { type: "device-permission-requested" }
 >;
-type DevicePermissionGrantedEvent = Extract<
-  AppActionEvent,
-  { type: "device-permission-granted" }
->;
+type DevicePermissionGrantedEvent = Extract<AppActionEvent, { type: "device-permission-granted" }>;
 type ErrorEvent = Extract<AppActionEvent, { type: "error" }>;
 
 type ConnectAppMockEvent =

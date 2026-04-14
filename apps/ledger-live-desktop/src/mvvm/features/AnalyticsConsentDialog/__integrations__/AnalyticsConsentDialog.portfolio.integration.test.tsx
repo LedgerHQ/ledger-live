@@ -221,7 +221,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
     // make sure the link is a11y compliant and does not navigate to a new page
     expect(setPreferencesLink).toHaveAttribute("href", "#");
-    
+
     await user.click(setPreferencesLink);
 
     await waitFor(() => {

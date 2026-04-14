@@ -43,8 +43,7 @@ export default function DebugContentCards() {
       let session = actionCarouselSessionRef.current;
       const sessionCategoryId = session?.categoryId;
       const categoryStillExists =
-        sessionCategoryId != null &&
-        localCategories.some(c => c.categoryId === sessionCategoryId);
+        sessionCategoryId != null && localCategories.some(c => c.categoryId === sessionCategoryId);
 
       if (!categoryStillExists) {
         actionCarouselSessionRef.current = null;

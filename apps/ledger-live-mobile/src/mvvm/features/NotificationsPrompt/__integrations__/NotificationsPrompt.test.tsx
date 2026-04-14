@@ -176,34 +176,40 @@ describe("NotificationsPrompt Integration", () => {
                     timer: 0,
                   },
                 },
-                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({ months: 0, hours: 0, minutes: 0, seconds: 0, days: "days" in s ? s.days : 0 })),
+                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({
+                  months: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                  days: "days" in s ? s.days : 0,
+                })),
 
-                  notificationsCategories: [
-                    {
-                      displayed: true,
-                      category: "announcementsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "recommendationsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "largeMoverCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "transactionsAlertsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "totalMarketCap",
-                    },
-                    {
-                      displayed: true,
-                      category: "topGainersLosers",
-                    },
-                  ],
+                notificationsCategories: [
+                  {
+                    displayed: true,
+                    category: "announcementsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "recommendationsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "largeMoverCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "transactionsAlertsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "totalMarketCap",
+                  },
+                  {
+                    displayed: true,
+                    category: "topGainersLosers",
+                  },
+                ],
 
                 inactivity_enabled: true,
                 inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },

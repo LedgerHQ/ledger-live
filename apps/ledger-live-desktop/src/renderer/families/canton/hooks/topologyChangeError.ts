@@ -68,10 +68,7 @@ function openReonboardingModal(dispatch: Dispatch, config: ReonboardingConfig): 
   );
 }
 
-export function handleTopologyChangeError(
-  dispatch: Dispatch,
-  config: ReonboardingConfig,
-): boolean {
+export function handleTopologyChangeError(dispatch: Dispatch, config: ReonboardingConfig): boolean {
   if (!config.device || !isCantonCurrency(config.currency)) {
     return false;
   }

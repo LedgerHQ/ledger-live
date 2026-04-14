@@ -4,11 +4,7 @@ import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
-import {
-  PortfolioRange,
-  DeviceModelInfo,
-  DeviceInfo,
-} from "@ledgerhq/types-live";
+import { PortfolioRange, DeviceModelInfo, DeviceInfo } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
   AnalyticsConsentInfo,

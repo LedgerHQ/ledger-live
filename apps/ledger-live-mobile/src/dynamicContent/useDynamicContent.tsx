@@ -86,7 +86,14 @@ const useDynamicContent = () => {
       }
       logDismissCard(cardId);
     },
-    [dispatch, hiddenCards, localMobileCards, localWalletCards, mobileCardsFromBraze, logDismissCard],
+    [
+      dispatch,
+      hiddenCards,
+      localMobileCards,
+      localWalletCards,
+      mobileCardsFromBraze,
+      logDismissCard,
+    ],
   );
 
   const trackContentCardEvent = useCallback(

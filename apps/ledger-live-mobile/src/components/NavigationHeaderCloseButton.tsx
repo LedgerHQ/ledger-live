@@ -31,20 +31,22 @@ type Props = {
  * For more advanced configuration (for ex: a confirmation modal) and legacy usage,
  * use `NavigationHeaderCloseButtonAdvanced` defined below.
  */
-export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPress, color, testIDSuffix }) => {
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  return (
-    <Touchable
-      touchableTestID={`NavigationHeaderCloseButton${testIDSuffix ?? ""}`}
-      event="HeaderRightClose"
-      onPress={() => (onPress ? onPress() : navigation.popToTop())}
-    >
-      <Flex p={6}>
-        <Icons.Close color={color || "neutral.c100"} />
-      </Flex>
-    </Touchable>
-  );
-});
+export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(
+  ({ onPress, color, testIDSuffix }) => {
+    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+    return (
+      <Touchable
+        touchableTestID={`NavigationHeaderCloseButton${testIDSuffix ?? ""}`}
+        event="HeaderRightClose"
+        onPress={() => (onPress ? onPress() : navigation.popToTop())}
+      >
+        <Flex p={6}>
+          <Icons.Close color={color || "neutral.c100"} />
+        </Flex>
+      </Touchable>
+    );
+  },
+);
 
 export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({ onPress }) => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();

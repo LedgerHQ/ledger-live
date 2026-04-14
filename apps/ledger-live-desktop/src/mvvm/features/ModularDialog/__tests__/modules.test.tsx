@@ -11,7 +11,12 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import BigNumber from "bignumber.js";
 import React from "react";
-import { renderWithMockedCounterValuesProvider, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import {
+  renderWithMockedCounterValuesProvider,
+  screen,
+  waitFor,
+  withFlagOverrides,
+} from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   arbitrumCurrency,

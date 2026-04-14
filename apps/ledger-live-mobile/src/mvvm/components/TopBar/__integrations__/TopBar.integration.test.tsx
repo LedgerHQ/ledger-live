@@ -1,5 +1,9 @@
 import React from "react";
-import { renderWithReactQuery, withReadOnlyDisabled, withFlagOverrides } from "@tests/test-renderer";
+import {
+  renderWithReactQuery,
+  withReadOnlyDisabled,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
 import { track } from "~/analytics";
@@ -100,7 +104,9 @@ describe("TopBar navigation", () => {
 
   it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
     const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
-      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { operationsList: true } } }),
+      overrideInitialState: withFlagOverrides({
+        lwmWallet40: { enabled: true, params: { operationsList: true } },
+      }),
     });
 
     await user.press(getByTestId("topbar-transaction-history"));

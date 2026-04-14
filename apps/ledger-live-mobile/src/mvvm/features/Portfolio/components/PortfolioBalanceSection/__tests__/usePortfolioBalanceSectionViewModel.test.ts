@@ -54,7 +54,9 @@ function makeReturn(
 const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
 const withFreezeFlag = {
-  overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } } }),
+  overrideInitialState: withFlagOverrides({
+    lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
+  }),
 };
 
 describe("usePortfolioBalanceSectionViewModel", () => {

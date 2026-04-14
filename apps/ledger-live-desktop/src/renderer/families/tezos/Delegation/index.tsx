@@ -48,8 +48,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
   }
 
   // derive last stake op
-  const ops =
-    (account as TezosAccount).operations ?? [];
+  const ops = (account as TezosAccount).operations ?? [];
   const lastStake = ops.find(o => o?.type === "STAKE");
 
   return (

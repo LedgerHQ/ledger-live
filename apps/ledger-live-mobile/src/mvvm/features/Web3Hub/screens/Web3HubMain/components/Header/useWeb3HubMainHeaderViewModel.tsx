@@ -5,7 +5,10 @@ import type { MainProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
 import { NavigatorName, ScreenName } from "~/const";
 
-type SearchInputProps = Pick<ComponentProps<typeof TextInput>, "inputContainerStyle" | "renderLeft">;
+type SearchInputProps = Pick<
+  ComponentProps<typeof TextInput>,
+  "inputContainerStyle" | "renderLeft"
+>;
 
 const inputWithBackButtonStyle = {
   paddingLeft: 0,

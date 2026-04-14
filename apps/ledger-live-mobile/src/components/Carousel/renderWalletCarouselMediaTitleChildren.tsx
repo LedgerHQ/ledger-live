@@ -17,8 +17,7 @@ export function renderWalletCarouselMediaTitleChildren(title: string): React.Rea
           lx={{ color: "active" }}
         >
           {" "}
-          {text}
-          {" "}
+          {text}{" "}
         </Text>
       );
     }

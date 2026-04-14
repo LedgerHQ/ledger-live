@@ -126,23 +126,22 @@ describe("DetailedAllocation Integration Tests", () => {
   });
 
   describe("blacklisted tokens", () => {
-
     const mockStateWithBlacklistedToken = (state: State): State => {
-     const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+      const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
       return {
         ...state,
         accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
         settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
       };
-    }
+    };
     const mockStateWithNonBlacklistedToken = (state: State): State => {
-     const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+      const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
       return {
         ...state,
         accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
         settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
       };
-    }
+    };
 
     beforeEach(() => {
       jest.clearAllMocks();

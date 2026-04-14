@@ -124,7 +124,9 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
     if (isTwoStepApproval && isTransactionComplete) {
       navigation.setOptions({
         headerLeft: undefined,
-        headerRight: () => <NavigationHeaderCloseButton testIDSuffix="Completed" onPress={navigateToSwapForm} />,
+        headerRight: () => (
+          <NavigationHeaderCloseButton testIDSuffix="Completed" onPress={navigateToSwapForm} />
+        ),
         headerTitle: getScreenTitle({ t, webviewCurrentPage, isTransactionComplete }),
       });
     } else if (

@@ -98,14 +98,13 @@ jest.mock(
   }),
 );
 
-const withProtectServicesMobile =
-  (
-    enabled: boolean,
-    params: { protectId?: string } & Record<string, unknown> = {},
-  ): ((state: State) => State) =>
-    withFlagOverrides({
-      protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
-    });
+const withProtectServicesMobile = (
+  enabled: boolean,
+  params: { protectId?: string } & Record<string, unknown> = {},
+): ((state: State) => State) =>
+  withFlagOverrides({
+    protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
+  });
 
 describe("useFirstStepSyncOnboardingViewModel", () => {
   const device = {

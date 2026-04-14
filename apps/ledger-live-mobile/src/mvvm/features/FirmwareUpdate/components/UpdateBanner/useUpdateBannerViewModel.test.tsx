@@ -78,7 +78,9 @@ function withState(overrides: {
         },
       };
       if (overrides.withWallet40MainNav) {
-        return withFlagOverrides({ lwmWallet40: { enabled: true, params: { mainNavigation: true } } })(base);
+        return withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { mainNavigation: true } },
+        })(base);
       }
       return base;
     },

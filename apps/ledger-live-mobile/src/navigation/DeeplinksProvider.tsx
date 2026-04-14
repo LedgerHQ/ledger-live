@@ -556,9 +556,10 @@ export const DeeplinksProvider = ({
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayWallet40MainNav && shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          ...(shouldDisplayWallet40MainNav &&
+                            shouldDisplayAssetSection && {
+                              [ScreenName.CryptoAddresses]: "crypto-addresses",
+                            }),
                         },
                       },
                     },

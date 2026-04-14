@@ -16,8 +16,7 @@ import type { State } from "~/reducers/types";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
-const consentIsoOlderThanOneYear = () =>
-  new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
+const consentIsoOlderThanOneYear = () => new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
 
 const Stack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
@@ -200,17 +199,16 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
   });
 
   describe("when yearly time-based renewal applies", () => {
-    let needsConsentRenewalSpy: jest.SpiedFunction<typeof analyticsConsentUtils.needsConsentRenewal>;
+    let needsConsentRenewalSpy: jest.SpiedFunction<
+      typeof analyticsConsentUtils.needsConsentRenewal
+    >;
 
     beforeEach(() => {
-      needsConsentRenewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockImplementation(
-        (consentDateIso, now = Date.now(), interval) =>
-          realNeedsConsentRenewal(
-            consentDateIso,
-            now,
-            interval !== undefined ? interval : YEAR_MS,
-          ),
-      );
+      needsConsentRenewalSpy = jest
+        .spyOn(analyticsConsentUtils, "needsConsentRenewal")
+        .mockImplementation((consentDateIso, now = Date.now(), interval) =>
+          realNeedsConsentRenewal(consentDateIso, now, interval !== undefined ? interval : YEAR_MS),
+        );
     });
 
     afterEach(() => {

@@ -45,9 +45,8 @@ const entryPointsVisibleState = withFlagOverrides(
 describe("useEntryPoint", () => {
   it("shouldDisplayEntryPoint should be false when llmWalletSync ff is disabled", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
-      overrideInitialState: withFlagOverrides(
-        { llmWalletSync: { enabled: false } },
-        s => entryPointsVisibleState(s),
+      overrideInitialState: withFlagOverrides({ llmWalletSync: { enabled: false } }, s =>
+        entryPointsVisibleState(s),
       ),
     });
 
@@ -93,9 +92,8 @@ describe("useEntryPoint", () => {
 
   it("shouldDisplayEntryPoint should be false when the entry point has been individually disabled in the ff params", async () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.postOnboarding), {
-      overrideInitialState: withFlagOverrides(
-        { llmWalletSync: { enabled: false } },
-        s => entryPointsVisibleState(s),
+      overrideInitialState: withFlagOverrides({ llmWalletSync: { enabled: false } }, s =>
+        entryPointsVisibleState(s),
       ),
     });
 

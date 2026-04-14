@@ -1,9 +1,5 @@
 import React, { type ReactNode } from "react";
-import {
-  MediaBanner,
-  MediaBannerDescription,
-  MediaBannerTitle,
-} from "@ledgerhq/lumen-ui-react";
+import { MediaBanner, MediaBannerDescription, MediaBannerTitle } from "@ledgerhq/lumen-ui-react";
 
 export type LNSUpsellMediaBannerProps = Readonly<{
   title: string;

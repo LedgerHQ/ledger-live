@@ -111,7 +111,9 @@ describe("EditOperationPanel", () => {
       }),
     });
     const { user } = renderComponent(
-      withFlagOverrides({ editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } } }),
+      withFlagOverrides({
+        editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } },
+      }),
     );
 
     await user.click(screen.getByText("Speed up or Cancel"));

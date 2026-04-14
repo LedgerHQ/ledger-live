@@ -111,7 +111,9 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
     it("should navigate to Crypto screen on onPressShowAll when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection: true } } }),
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { assetSection: true } },
+        }),
       });
 
       act(() => result.current.onPressShowAll());

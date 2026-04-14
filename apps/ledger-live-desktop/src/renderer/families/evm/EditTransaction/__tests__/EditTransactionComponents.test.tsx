@@ -195,7 +195,9 @@ describe("EVM EditTransaction components", () => {
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {
-      initialState: withFlagOverrides({ editEvmTx: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } } }),
+      initialState: withFlagOverrides({
+        editEvmTx: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } },
+      }),
     });
 
     expect(screen.getByTestId("shared-stuck-header")).toHaveTextContent("true-true-true");

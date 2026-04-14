@@ -95,10 +95,9 @@ const removeLocalCardAction = createAction<DynamicContentRemoveLocalCardPayload>
 
 export const removeLocalCard = (cardId: string) => removeLocalCardAction(cardId);
 
-const addLocalWalletCarouselCardsAction =
-  createAction<DynamicContentAddLocalWalletCarouselPayload>(
-    DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS,
-  );
+const addLocalWalletCarouselCardsAction = createAction<DynamicContentAddLocalWalletCarouselPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS,
+);
 
 export const addLocalWalletCarouselCards = (cards: DynamicContentAddLocalWalletCarouselPayload) =>
   addLocalWalletCarouselCardsAction(cards);

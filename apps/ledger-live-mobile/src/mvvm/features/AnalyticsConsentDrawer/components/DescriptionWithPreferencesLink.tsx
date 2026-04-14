@@ -7,12 +7,20 @@ type DescriptionWithPreferencesLinkProps = Readonly<{
   onSetPreferences: () => void;
 }>;
 
-export function DescriptionWithPreferencesLink({ text, onSetPreferences }: DescriptionWithPreferencesLinkProps) {
+export function DescriptionWithPreferencesLink({
+  text,
+  onSetPreferences,
+}: DescriptionWithPreferencesLinkProps) {
   const { t } = useTranslation();
   return (
     <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
       {text}{" "}
-      <Text accessibilityRole="link" onPress={onSetPreferences} typography="body2" lx={{ color: "interactive" }}>
+      <Text
+        accessibilityRole="link"
+        onPress={onSetPreferences}
+        typography="body2"
+        lx={{ color: "interactive" }}
+      >
         {t("analyticsConsentDrawer.setPreferences")}
       </Text>
     </Text>

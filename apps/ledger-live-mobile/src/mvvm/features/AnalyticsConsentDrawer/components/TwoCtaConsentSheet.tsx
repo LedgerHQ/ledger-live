@@ -28,7 +28,10 @@ export function TwoCtaConsentSheet({
         <Box lx={{ width: "full", gap: "s24", alignItems: "center" }}>
           <Spot appearance="icon" icon={LedgerLogo} size={72} />
           <Box lx={{ width: "full", gap: "s8", alignItems: "center" }}>
-            <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center", width: "full" }}>
+            <Text
+              typography="heading4SemiBold"
+              lx={{ color: "base", textAlign: "center", width: "full" }}
+            >
               {title}
             </Text>
             {description}

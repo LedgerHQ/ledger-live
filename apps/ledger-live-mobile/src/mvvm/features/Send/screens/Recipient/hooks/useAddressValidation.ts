@@ -98,8 +98,8 @@ export function useAddressValidation({
     parentAccount: parentAccount ?? null,
     enabled: Boolean(
       addressForBridgeValidation &&
-        account &&
-        (!recipientSupportsDomain || ensResolution || !domainIsLoading),
+      account &&
+      (!recipientSupportsDomain || ensResolution || !domainIsLoading),
     ),
   });
 

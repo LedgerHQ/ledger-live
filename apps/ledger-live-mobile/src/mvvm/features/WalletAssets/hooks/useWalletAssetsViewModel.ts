@@ -21,11 +21,8 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false, "all");
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
   const { walletCardsDisplayed } = useDynamicContent();
-  const {
-    shouldDisplayOperationsList,
-    shouldDisplayAssetSection,
-    shouldDisplayGraphRework,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayOperationsList, shouldDisplayAssetSection, shouldDisplayGraphRework } =
+    useWalletFeaturesConfig("mobile");
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -46,9 +43,7 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     hasMore,
     onPressShowAll,
     shouldAddBottomPadding:
-      shouldDisplayOperationsList &&
-      walletCardsDisplayed.length === 0 &&
-      shouldDisplayGraphRework,
+      shouldDisplayOperationsList && walletCardsDisplayed.length === 0 && shouldDisplayGraphRework,
     shouldDisplayAssetSection,
   };
 }

@@ -122,12 +122,22 @@ export const overrideStateReadOnly = (state: State): State => {
 };
 
 export const overrideStateWithFundsVariant = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { quickActionCtas: true, quickActionsCtasVariant: true } } },
+  {
+    lwmWallet40: {
+      enabled: true,
+      params: { quickActionCtas: true, quickActionsCtasVariant: true },
+    },
+  },
   overrideStateWithFunds,
 );
 
 export const overrideStateWithoutFundsVariant = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { quickActionCtas: true, quickActionsCtasVariant: true } } },
+  {
+    lwmWallet40: {
+      enabled: true,
+      params: { quickActionCtas: true, quickActionsCtasVariant: true },
+    },
+  },
   overrideStateWithoutFunds,
 );
 

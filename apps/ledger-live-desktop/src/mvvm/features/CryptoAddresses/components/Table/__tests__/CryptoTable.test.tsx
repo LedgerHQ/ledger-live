@@ -52,7 +52,9 @@ describe("CryptoTable", () => {
     expect(screen.getByText("Ethereum main")).toBeVisible();
     expect(screen.getByText("ETH")).toBeVisible();
     const table = screen.getByRole("table");
-    const tbody = within(table).getAllByRole("rowgroup").find(el => el.tagName === "TBODY");
+    const tbody = within(table)
+      .getAllByRole("rowgroup")
+      .find(el => el.tagName === "TBODY");
     expect(tbody).toBeDefined();
     const dataCells = tbody ? within(tbody as HTMLElement).getAllByRole("cell") : [];
     expect(dataCells).toHaveLength(4);

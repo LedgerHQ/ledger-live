@@ -55,7 +55,9 @@ describe("shieldedSyncSubscriptions reducer", () => {
 
     const state = reducer(initialState, removeShieldedSubscription("js:2:zcash:addr-1"));
 
-    expect(state).toEqual([{ accountId: "js:2:zcash:addr-2", subscription: remainingSubscription }]);
+    expect(state).toEqual([
+      { accountId: "js:2:zcash:addr-2", subscription: remainingSubscription },
+    ]);
   });
 
   it("should keep state unchanged when removing an unknown accountId", () => {

@@ -133,7 +133,9 @@ describe("Bitcoin EditTransaction components", () => {
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {
-      initialState: withFlagOverrides({ editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } } }),
+      initialState: withFlagOverrides({
+        editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } },
+      }),
     });
 
     expect(screen.getByTestId("edit-operation-panel")).toBeInTheDocument();

@@ -13,8 +13,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   const { "%": discount, link: ctaLink, img } = state.params ?? {};
   const analyticsPage = AnalyticsPageMap[location];
 
-  const imageUrl =
-    typeof img === "string" && img.length > 0 ? img : lnsUpsellFallbackImageUrl;
+  const imageUrl = typeof img === "string" && img.length > 0 ? img : lnsUpsellFallbackImageUrl;
 
   const handleCTAClick = () => {
     track("button_clicked", {

@@ -32,8 +32,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
   const useMediaCardLayout = shouldDisplayBrazePlacement || mediaHeader != null;
 
-  const backgroundImageUrl =
-    cardProps.image_background?.trim() || cardProps.image?.trim() || "";
+  const backgroundImageUrl = cardProps.image_background?.trim() || cardProps.image?.trim() || "";
 
   if (useMediaCardLayout) {
     let header: React.ReactNode = null;

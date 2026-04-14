@@ -125,7 +125,15 @@ export function usePendingTransferProposalsViewModel(
         throw error;
       }
     },
-    [performTransferInstruction, sync, parentAccount, dispatch, device, onOpenModal, useModularDrawer],
+    [
+      performTransferInstruction,
+      sync,
+      parentAccount,
+      dispatch,
+      device,
+      onOpenModal,
+      useModularDrawer,
+    ],
   );
 
   const onDeviceConfirm = useCallback(

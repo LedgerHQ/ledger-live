@@ -114,28 +114,26 @@ describe("AssetShortListView", () => {
   });
 
   describe("blacklisted tokens", () => {
-     const mockStateWithBlacklistedToken = (state: State): State => {
-         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
-          return {
-            ...state,
-            accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
-            settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
-          };
-        }
-        const mockStateWithNonBlacklistedToken = (state: State): State => {
-         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
-          return {
-            ...state,
-            accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
-            settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
-          };
-        }
-    
+    const mockStateWithBlacklistedToken = (state: State): State => {
+      const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+        settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
+      };
+    };
+    const mockStateWithNonBlacklistedToken = (state: State): State => {
+      const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+        settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
+      };
+    };
 
     beforeEach(() => {
       jest.clearAllMocks();
     });
-
 
     it("should display a token that is not blacklisted", () => {
       renderComponent({}, mockStateWithNonBlacklistedToken);
