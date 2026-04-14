@@ -70,6 +70,8 @@ runs:
     - name: Create AVD and generate snapshot
       uses: reactivecircus/android-emulator-runner@v2
       id: create-avd
+      env:
+        AVD_NAME: ${{ inputs.avd_name }}
       with:
         api-level: ${{ inputs.avd_api }}
         arch: ${{ inputs.avd_arch }}
@@ -82,6 +84,7 @@ runs:
         disable-linux-hw-accel: false
         emulator-options: ${{ inputs.avd_options }}
         heap-size: ${{ inputs.avd_heap_size }}
+        pre-emulator-launch-script: tools/scripts/patch-avd-lcd-config.sh
         script: ${{ inputs.wait_script_path }}
 
     - name: Cache android emulator
