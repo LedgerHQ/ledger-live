@@ -134,11 +134,16 @@ export type TransactionInfo = {
   status: number | null;
   from: string;
   to: string | undefined;
+  /** Calldata / init code (hex), when available from the node */
+  input?: string;
   /** ERC20 Transfer events extracted from receipt logs */
   erc20Transfers: ERC20Transfer[];
 };
 
-export type PrefetchedBlockTransaction = Pick<TransactionInfo, "hash" | "value" | "from" | "to">;
+export type PrefetchedBlockTransaction = Pick<
+  TransactionInfo,
+  "hash" | "value" | "from" | "to" | "input"
+>;
 
 export type BlockReceiptInfo = Pick<
   TransactionInfo,

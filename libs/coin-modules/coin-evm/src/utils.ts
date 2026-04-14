@@ -79,6 +79,39 @@ export function isEthAddress(address: string): boolean {
   return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
 }
 
+/** Discriminant for smart contract call vs contract creation (deployment). */
+export type ContractInteractionKind = "SmartContractInteraction" | "SmartContractDeployment";
+
+/**
+ * True when `input` carries non-trivial calldata or init code (not empty / bare `0x`).
+ */
+export function isSmartContractInput(input: string | null | undefined): input is string {
+  return input != null && input !== "" && input !== "0x";
+}
+
+/**
+ * Builds flat `details` fields for Alpaca when a tx has smart contract input.
+ * Omits `contractAddress` for contract deployments (`to` absent).
+ */
+export function buildSmartContractDetails(
+  to: string | undefined,
+  input: string | undefined,
+): Record<string, unknown> | undefined {
+  if (!isSmartContractInput(input)) {
+    return undefined;
+  }
+  const contractInteraction: ContractInteractionKind = to
+    ? "SmartContractInteraction"
+    : "SmartContractDeployment";
+  const contractPayload = input.startsWith("0x") ? input : `0x${input}`;
+  const encodedTo = to ? safeEncodeEIP55(to) : "";
+  return {
+    contractInteraction,
+    ...(encodedTo ? { contractAddress: encodedTo } : {}),
+    contractPayload,
+  };
+}
+
 /**
  * Normalizes an Ethereum address to lowercase to avoid checksum validation issues.
  *

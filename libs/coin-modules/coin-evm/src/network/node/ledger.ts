@@ -71,6 +71,7 @@ async function getTransaction(
     status: ledgerTransaction.status,
     from: ledgerTransaction.from,
     to: ledgerTransaction.to,
+    ...(ledgerTransaction.input != null ? { input: ledgerTransaction.input } : {}),
     erc20Transfers: ledgerTransaction.transfer_events.map(event => ({
       asset: {
         type: "erc20" as const,

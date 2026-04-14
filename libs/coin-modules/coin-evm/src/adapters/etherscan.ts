@@ -27,7 +27,7 @@ import {
   EtherscanERC1155Event,
   EtherscanInternalTransaction,
 } from "../types";
-import { safeEncodeEIP55 } from "../utils";
+import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
 
 /**
  * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.
@@ -89,6 +89,11 @@ export const etherscanOperationToOperations = (
     types.push("NONE");
   }
 
+  const contractExtra = buildSmartContractDetails(
+    etherscanOp.to?.trim() ? etherscanOp.to : undefined,
+    etherscanOp.input,
+  );
+
   // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
   return types.map(
     type =>
@@ -109,7 +114,7 @@ export const etherscanOperationToOperations = (
         nftOperations: [],
         internalOperations: [],
         hasFailed,
-        extra: {},
+        extra: contractExtra ? { ...contractExtra } : {},
       }) as Operation,
   );
 };

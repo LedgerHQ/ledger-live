@@ -10,6 +10,20 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
 
+/** Smart-contract fields copied from explorer `extra` into framework `details`. */
+function contractDetailsFromLiveExtra(
+  extra: LiveOperation["extra"],
+): Record<string, unknown> | undefined {
+  if (!extra || typeof extra !== "object") return undefined;
+  const e = extra as Record<string, unknown>;
+  if (e.contractInteraction === undefined) return undefined;
+  return {
+    contractInteraction: e.contractInteraction,
+    ...(e.contractAddress !== undefined ? { contractAddress: e.contractAddress } : {}),
+    contractPayload: e.contractPayload,
+  };
+}
+
 type AssetConfig =
   | { type: "native"; internal?: boolean; parent?: LiveOperation }
   | { type: "token"; owner: string; parent?: LiveOperation };
@@ -129,6 +143,12 @@ function toOperation(
 
   const txFee = computeTxFee(asset, op);
 
+  const contractDetail =
+    contractDetailsFromLiveExtra(op.extra) ??
+    (asset.type === "token" && asset.parent
+      ? contractDetailsFromLiveExtra(asset.parent.extra)
+      : undefined);
+
   return {
     id: op.id,
     type,
@@ -152,6 +172,7 @@ function toOperation(
       sequence: op.transactionSequenceNumber,
       ...internalOpDetail,
       ...tokenOpDetail,
+      ...(contractDetail ?? {}),
     },
   };
 }
@@ -231,31 +252,32 @@ export async function listOperations(
       op,
     ),
   );
-  // Some explorers (e.g. Blockscout on Somnia) report the top-level call trace as an
-  // internal transaction, duplicating the native transfer already present in txlist.
-  // When an internal tx and its parent coin tx both have the queried address as sender,
-  // the native value is already accounted for in the coin operation — drop the internal one.
-  // Analogous to the traceAddress.length === 0 check in getBlock's traceBlockItemsToOperationsByHash,
-  // but using sender matching since txlistinternal does not expose traceAddress.
-  const isRootTrace = (op: LiveOperation): boolean => {
-    const parent = parents[op.hash];
-    if (!parent) return false;
-    const internalSenderMatch = op.senders.some(s => s.toLowerCase() === addressLower);
-    const parentSenderMatch = parent.senders.some(s => s.toLowerCase() === addressLower);
-    return internalSenderMatch && parentSenderMatch;
-  };
+  /**
+   * Blockscout may index the top-level call as an internal tx with the same primary sender as the coin op,
+   * which double-counts native transfers. Skip those when the sender matches the parent coin op (see spec tests).
+   */
+  const filteredInternalOperations = lastInternalOperations.filter(internalOp => {
+    const coin = parents[internalOp.hash];
+    if (!coin) return true;
+    const coinSender = coin.senders[0]?.toLowerCase();
+    const internalSender = internalOp.senders[0]?.toLowerCase();
+    return !(coinSender && internalSender && coinSender === internalSender);
+  });
 
-  const internalOperations = lastInternalOperations
-    .filter(op => !isRootTrace(op))
-    .map<Operation<MemoNotSupported>>(op => {
-      const parent = parents[op.hash];
-      return toOperation(
-        currency.id,
-        address,
-        { type: "native", internal: true, parent },
-        parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
-      );
-    });
+  const internalOperations = filteredInternalOperations.map<Operation<MemoNotSupported>>(op => {
+    // Explorers don't provide block hash and fees for internal operations.
+    // When a matching parent transaction exists, we take these values from it.
+    // Otherwise, we use the internal operation's defaults.
+    const parent = parents[op.hash];
+    return toOperation(
+      currency.id,
+      address,
+      { type: "native", internal: true, parent },
+      // Explorers don't provide block hash and fees for internal operations.
+      // When a parent exists, we take these values from the parent; otherwise keep the internal op values.
+      parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
+    );
+  });
 
   const hasValidType = (operation: Operation): boolean =>
     [

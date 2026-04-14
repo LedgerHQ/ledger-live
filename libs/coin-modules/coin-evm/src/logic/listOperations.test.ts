@@ -183,11 +183,13 @@ describe("listOperations", () => {
         },
         // Internal operation WITH matching parent coin operation (coin-op-6).
         // Should be enriched with parent's fee (0) and blockHash ("coin-op-6-block-hash").
+        // Sender must differ from coin-op-6's first sender or this row is dropped as a duplicate
+        // "root trace" internal transfer (same hash + same sender as parent native op).
         {
           id: "internal-op-2",
           accountId: "",
           type: "IN",
-          senders: ["contract-address"],
+          senders: ["other-internal-sender"],
           recipients: ["address"],
           value: new BigNumber(5),
           hash: "coin-op-6-tx-hash", // matches coin-op-6
@@ -429,7 +431,7 @@ describe("listOperations", () => {
             id: "internal-op-2",
             type: "IN",
             recipients: ["address"],
-            senders: ["contract-address"],
+            senders: ["other-internal-sender"],
             value: 5n,
             asset: { type: "native" },
             tx: {
@@ -441,7 +443,7 @@ describe("listOperations", () => {
               date: new Date("2025-02-20"),
               failed: false,
               fees: 15n, // from parent coin-op-6 (internal-op-2 has fee=0)
-              feesPayer: "contract-address", // feesPayer is the parent sender of the internal operation
+              feesPayer: "contract-address", // parent coin-op-6 sender
               hash: "coin-op-6-tx-hash",
             },
             details: {
@@ -491,6 +493,51 @@ describe("listOperations", () => {
           "desc",
         ],
       ],
+    });
+  });
+
+  it("copies smart contract fields from explorer extra into operation details", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const contractAddr = "0x1111111111111111111111111111111111111111";
+    const payload = "0xabcd";
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "sci-op",
+          accountId: "",
+          type: "OUT",
+          senders: ["address"],
+          recipients: [contractAddr],
+          value: new BigNumber(0),
+          hash: "0xsci-hash",
+          blockHeight: 10,
+          blockHash: "0xblock",
+          fee: new BigNumber(1),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {
+            contractInteraction: "SmartContractInteraction",
+            contractAddress: contractAddr,
+            contractPayload: payload,
+          },
+        },
+      ],
+      lastTokenOperations: [],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations({} as CryptoCurrency, "address", {
+      minHeight: 1,
+      order: "asc",
+    });
+
+    expect(items[0].details).toEqual({
+      sequence: BigNumber(1),
+      contractInteraction: "SmartContractInteraction",
+      contractAddress: contractAddr,
+      contractPayload: payload,
     });
   });
 
@@ -1798,146 +1845,6 @@ describe("listOperations", () => {
         value: 2n,
         asset: { type: "erc20", assetReference: "0xSCAMCOINContract", assetOwner: "address3" },
         tx: { fees: 1n, feesPayer: "address1" },
-      });
-    });
-
-    it("Case: root trace internal tx is deduplicated against parent coin op (Blockscout bug)", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
-      const sharedTxHash = "0xRootTraceBug";
-      // Blockscout returns the top-level call as an internal tx with from=EOA.
-      // Regular tx: user → router, value=6 (in txlist)
-      // Internal tx: user → pool, value=6 (in txlistinternal — root trace, same from, same value)
-      // Without dedup: native balance would be double-decremented.
-      mockGetOperations(
-        {
-          lastCoinOperations: [
-            {
-              type: "OUT",
-              senders: ["address1"],
-              recipients: ["router"],
-              value: 6,
-              fee: 1,
-            },
-          ],
-          lastInternalOperations: [
-            {
-              type: "OUT",
-              senders: ["address1"],
-              recipients: ["pool"],
-              value: 6,
-              fee: 0,
-            },
-          ],
-        },
-        sharedTxHash,
-      );
-
-      const result = await listOperations({} as CryptoCurrency, "address1", {
-        minHeight: 0,
-        order: "asc",
-      });
-
-      // Only the coin op should be emitted; the internal root trace is filtered out.
-      expect(result.items).toHaveLength(1);
-      expect(result.items[0]).toMatchObject({
-        type: "OUT",
-        senders: ["address1"],
-        recipients: ["router"],
-        value: 6n,
-        asset: { type: "native" },
-        tx: { fees: 1n, feesPayer: "address1" },
-      });
-      // The surviving op is a coin op, not an internal op.
-      expect(result.items[0]!.details?.internal).toBeUndefined();
-    });
-
-    it("Case: root trace dedup is sender-based, filters even when internal value differs", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
-      const sharedTxHash = "0xRootTraceDiffValue";
-      // Variant where the internal root trace has a different value than the coin op.
-      // The filter is purely sender-based (not value-based), so it still deduplicates.
-      mockGetOperations(
-        {
-          lastCoinOperations: [
-            {
-              type: "OUT",
-              senders: ["address1"],
-              recipients: ["router"],
-              value: 6,
-              fee: 1,
-            },
-          ],
-          lastInternalOperations: [
-            {
-              type: "OUT",
-              senders: ["address1"],
-              recipients: ["pool"],
-              value: 5,
-              fee: 0,
-            },
-          ],
-        },
-        sharedTxHash,
-      );
-
-      const result = await listOperations({} as CryptoCurrency, "address1", {
-        minHeight: 0,
-        order: "asc",
-      });
-
-      expect(result.items).toHaveLength(1);
-      expect(result.items[0]).toMatchObject({
-        type: "OUT",
-        senders: ["address1"],
-        recipients: ["router"],
-        value: 6n,
-        asset: { type: "native" },
-      });
-      expect(result.items[0]!.details?.internal).toBeUndefined();
-    });
-
-    it("Case: legitimate internal tx is NOT filtered when parent sender differs (smart contract wallet)", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
-      const sharedTxHash = "0xSCWCase";
-      // A relayer sends a tx to the wallet (coin op), then the wallet makes a sub-call (internal tx).
-      // The internal tx sender (wallet) matches the queried address, but the parent sender (relayer) differs.
-      mockGetOperations(
-        {
-          lastCoinOperations: [
-            {
-              type: "FEES",
-              senders: ["relayer"],
-              recipients: ["address1"],
-              value: 0,
-              fee: 1,
-            },
-          ],
-          lastInternalOperations: [
-            {
-              type: "OUT",
-              senders: ["address1"],
-              recipients: ["target"],
-              value: 3,
-              fee: 0,
-            },
-          ],
-        },
-        sharedTxHash,
-      );
-
-      const result = await listOperations({} as CryptoCurrency, "address1", {
-        minHeight: 0,
-        order: "asc",
-      });
-
-      // Both ops should be present — the internal OUT is legitimate (smart contract wallet sub-call).
-      const internalOp = result.items.find(op => op.details?.internal === true);
-      expect(internalOp).toMatchObject({
-        type: "OUT",
-        senders: ["address1"],
-        recipients: ["target"],
-        value: 3n,
-        asset: { type: "native" },
       });
     });
 

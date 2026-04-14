@@ -20,7 +20,7 @@ import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerInternalTransaction,
 } from "../types";
-import { safeEncodeEIP55 } from "../utils";
+import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
 
 /**
  * Adapter to convert a Ledger Explorer operation
@@ -50,6 +50,11 @@ export const ledgerOperationToOperations = (
     types.push("NONE");
   }
 
+  const contractExtra = buildSmartContractDetails(
+    ledgerOp.to?.trim() ? ledgerOp.to : undefined,
+    ledgerOp.input ?? undefined,
+  );
+
   // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
   return types.map(
     type =>
@@ -70,7 +75,7 @@ export const ledgerOperationToOperations = (
         nftOperations: [],
         internalOperations: [],
         hasFailed,
-        extra: {},
+        extra: contractExtra ? { ...contractExtra } : {},
       }) as Operation,
   );
 };

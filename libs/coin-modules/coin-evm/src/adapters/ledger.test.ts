@@ -111,7 +111,11 @@ describe("EVM Family", () => {
             subOperations: [],
             internalOperations: [],
             type: "NONE",
-            extra: {},
+            extra: {
+              contractInteraction: "SmartContractDeployment",
+              contractPayload:
+                "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            },
           };
 
           expect(ledgerOperationToOperations(accountId, ledgerExplorerOp)).toEqual([
