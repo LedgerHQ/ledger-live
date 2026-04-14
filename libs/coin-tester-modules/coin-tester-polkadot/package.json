@@ -48,8 +48,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
@@ -80,6 +82,8 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "ts-node": "^10.9.2",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }
