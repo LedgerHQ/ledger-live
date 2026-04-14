@@ -1,4 +1,4 @@
-/* eslint-disable global-require, @typescript-eslint/no-var-requires */
+/* oxlint-disable typescript/no-require-imports */
 import { of, concat, Observable } from "rxjs";
 
 export default {

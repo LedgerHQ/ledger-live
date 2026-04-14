@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { from, of, Observable, Subscription } from "rxjs";
 import { mergeMap, ignoreElements, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

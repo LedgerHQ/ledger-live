@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { execFileSync } from "node:child_process";
 import { accessSync, constants, existsSync } from "fs";
 import { of } from "rxjs";

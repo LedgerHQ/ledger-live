@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";

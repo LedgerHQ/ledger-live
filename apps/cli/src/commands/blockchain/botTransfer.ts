@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { firstValueFrom, from, of, throwError } from "rxjs";
 import { catchError, filter, first, map, timeout, tap } from "rxjs/operators";
 import {
