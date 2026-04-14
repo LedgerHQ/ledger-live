@@ -91,15 +91,15 @@ describe("getAlpacaApi", () => {
   ];
 
   testCases.forEach(({ network, module, label, params }) => {
-    it(`should return ${label} API for network "${network}" and kind "local"`, () => {
-      const result = getAlpacaApi(network, "local");
+    it(`should return ${label} API for network "${network}" and kind "local"`, async () => {
+      const result = await getAlpacaApi(network, "local");
       expect(result).toEqual(mockApiInstance);
       expect(module.createApi).toHaveBeenCalledWith(...params);
     });
   });
 
-  it("should return network API for kind !== 'local'", () => {
-    const result = getAlpacaApi("xrp", "remote");
+  it("should return network API for kind !== 'local'", async () => {
+    const result = await getAlpacaApi("xrp", "remote");
     expect(networkApi.getNetworkAlpacaApi).toHaveBeenCalledWith("xrp");
     expect(result).toEqual(mockApiInstance);
   });
