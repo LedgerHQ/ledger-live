@@ -3,7 +3,6 @@ import { IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
-import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 
 type HeaderBackButtonProps = {
   testID?: string;
@@ -27,7 +26,6 @@ const HeaderBackButton = ({ testID, overrideOnPress, track }: Readonly<HeaderBac
   return (
     <IconButton
       appearance="no-background"
-      lx={buttonStyle}
       size="md"
       icon={ArrowLeft}
       testID={testID}
@@ -35,10 +33,6 @@ const HeaderBackButton = ({ testID, overrideOnPress, track }: Readonly<HeaderBac
       onPress={handlePress}
     />
   );
-};
-
-const buttonStyle: LumenViewStyle = {
-  marginLeft: "-s4",
 };
 
 export default HeaderBackButton;

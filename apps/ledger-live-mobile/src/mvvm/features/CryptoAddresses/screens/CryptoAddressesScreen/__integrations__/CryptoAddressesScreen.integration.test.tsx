@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
@@ -43,9 +43,7 @@ const baseViewModel: ReturnType<typeof useCryptoAddressesViewModel> = {
   onAccountPress: jest.fn(),
   onAddAccountPress: jest.fn(),
   onCloseAddAccount: jest.fn(),
-  onNavigateBack: jest.fn(),
   isAddAccountOpen: false,
-  title: "Accounts",
   addAccountLabel: "Add account",
   emptyStateLabel: "No accounts yet",
   trackingPage: ScreenName.Accounts,
@@ -68,20 +66,6 @@ function renderScreen(vmOverrides: Partial<ReturnType<typeof useCryptoAddressesV
 describe("CryptoAddressesScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe("navbar", () => {
-    it("should render the title in the NavBar", () => {
-      renderScreen();
-      expect(screen.getByText("Accounts")).toBeVisible();
-    });
-
-    it("should call onNavigateBack when back button is pressed", () => {
-      const onNavigateBack = jest.fn();
-      renderScreen({ onNavigateBack });
-      fireEvent.press(screen.getByLabelText("Go back"));
-      expect(onNavigateBack).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe("footer", () => {

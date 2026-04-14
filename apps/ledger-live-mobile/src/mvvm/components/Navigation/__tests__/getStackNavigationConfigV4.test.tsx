@@ -14,7 +14,7 @@ describe("defaultNavigationOptions", () => {
     expect(defaultNavigationOptions.headerShadowVisible).toBe(false);
     expect(defaultNavigationOptions.headerBackVisible).toBe(false);
     expect(typeof defaultNavigationOptions.headerTitle).toBe("function");
-    expect(typeof defaultNavigationOptions.headerLeft).toBe("function");
+    expect(defaultNavigationOptions.headerLeft).toBeUndefined();
     expect(typeof defaultNavigationOptions.header).toBe("function");
   });
 });
@@ -24,10 +24,8 @@ describe("getStackNavigationConfigV4", () => {
     const config = getStackNavigationConfigV4(theme);
 
     expect(config.contentStyle).toEqual({ backgroundColor: theme.colors.bg.canvas });
-    expect(config.cardStyle).toEqual({ backgroundColor: theme.colors.bg.canvas });
     expect(config.headerStyle).toEqual({
       backgroundColor: theme.colors.bg.canvas,
-      borderBottomColor: theme.colors.border.mutedSubtle,
     });
     expect(config.headerTitleStyle).toEqual({ color: theme.colors.text.base });
     expect(config.headerTitleAlign).toBe("center");
@@ -39,29 +37,33 @@ describe("getStackNavigationConfigV4", () => {
 
   describe("closable", () => {
     it("omits close control when not closable", () => {
-      expect(getStackNavigationConfigV4(theme).headerRight).toBeUndefined();
-      expect(getStackNavigationConfigV4(theme, false, undefined, true).headerLeft).toBeUndefined();
+      expect(getStackNavigationConfigV4(theme).lumenNavBar).toBeUndefined();
+      expect(
+        getStackNavigationConfigV4(theme, undefined, false, undefined, true).lumenNavBar,
+      ).toBeUndefined();
     });
 
-    it("puts close on headerRight outside onboarding", () => {
-      const config = getStackNavigationConfigV4(theme, true);
-      expect(typeof config.headerRight).toBe("function");
+    it("puts close on lumenNavBar.renderTrailing outside onboarding", () => {
+      const config = getStackNavigationConfigV4(theme, undefined, true);
+      expect(typeof config.lumenNavBar?.renderTrailing).toBe("function");
     });
 
-    it("puts close on headerLeft during onboarding", () => {
-      const config = getStackNavigationConfigV4(theme, true, undefined, true);
-      expect(typeof config.headerLeft).toBe("function");
-      expect(config.headerRight).toBeUndefined();
+    it("puts close on lumenNavBar.renderLeading during onboarding", () => {
+      const config = getStackNavigationConfigV4(theme, undefined, true, undefined, true);
+      expect(typeof config.lumenNavBar?.renderLeading).toBe("function");
+      expect(config.lumenNavBar?.renderTrailing).toBeUndefined();
     });
   });
 
   it("passes onClose to NavigationHeaderCloseButton (right or left)", () => {
     const onClose = jest.fn();
 
-    const right = getStackNavigationConfigV4(theme, true, onClose).headerRight!({});
+    const right = getStackNavigationConfigV4(theme, undefined, true, onClose).lumenNavBar!
+      .renderTrailing!({});
     expect((right as ReactElement<{ onClose: () => void }>).props.onClose).toBe(onClose);
 
-    const left = getStackNavigationConfigV4(theme, true, onClose, true).headerLeft!({});
+    const left = getStackNavigationConfigV4(theme, undefined, true, onClose, true).lumenNavBar!
+      .renderLeading!({});
     expect((left as ReactElement<{ onClose: () => void }>).props.onClose).toBe(onClose);
   });
 });

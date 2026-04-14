@@ -1,18 +1,36 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { ScreenName } from "~/const";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import {
+  createLumenNativeStackNavigator,
+  getStackNavigationConfigV4,
+} from "LLM/components/Navigation";
+import NavigationHeaderCloseButton from "LLM/components/Navigation/HeaderCloseButton";
 import AnalyticsMain from "./screens/AnalyticsMain";
 import DetailedAllocation from "./screens/DetailedAllocation";
 import { AnalyticsNavigatorParamsList } from "./types";
-import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
-import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+
+const Stack = createLumenNativeStackNavigator<AnalyticsNavigatorParamsList>();
+
+type DetailedAllocationNavigation = StackNavigatorNavigation<
+  AnalyticsNavigatorParamsList,
+  ScreenName.DetailedAllocation
+>;
+
+const renderHeaderRight = (navigation: DetailedAllocationNavigation) => {
+  const handleClose = () => {
+    navigation.goBack();
+  };
+  return <NavigationHeaderCloseButton onClose={handleClose} />;
+};
 
 export default function Navigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme, true), [theme]);
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
 
   return (
     <Stack.Navigator
@@ -26,20 +44,23 @@ export default function Navigator() {
         component={AnalyticsMain}
         options={() => ({
           title: t("analyticsAllocation.header.main"),
-          headerRight: () => null,
+          lumenNavBar: {
+            renderTrailing: () => null,
+          },
         })}
       />
       <Stack.Screen
         name={ScreenName.DetailedAllocation}
         component={DetailedAllocation}
-        options={() => ({
+        options={({ navigation }) => ({
           title: t("analyticsAllocation.allocation.title"),
-          headerLeft: () => null,
+          lumenNavBar: {
+            renderLeading: () => null,
+            renderTrailing: () => renderHeaderRight(navigation),
+          },
           animation: "slide_from_bottom",
         })}
       />
     </Stack.Navigator>
   );
 }
-
-const Stack = createNativeStackNavigator<AnalyticsNavigatorParamsList>();

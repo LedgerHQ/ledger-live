@@ -8,12 +8,13 @@ type Props = {
 
 export function OperationsListFooter({ completed }: Readonly<Props>) {
   if (!completed)
-    return <Spinner size={24} lx={spinnerStyle} testID="operations-list-footer-spinner" />;
+    return (
+      <Spinner size={24} color="base" lx={spinnerStyle} testID="operations-list-footer-spinner" />
+    );
   return null;
 }
 
 const spinnerStyle: LumenViewStyle = {
-  // Workaround to remove once we have bumped Lumen
-  alignSelf: "center",
   marginVertical: "s24",
+  alignSelf: "center",
 };
