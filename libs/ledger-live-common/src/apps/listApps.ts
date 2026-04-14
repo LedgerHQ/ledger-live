@@ -1,11 +1,10 @@
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
-import { StatusCodes, TransportStatusError, UnexpectedBootloader } from "@ledgerhq/errors";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
-import hwListApps from "../hw/listApps";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { listCryptoCurrencies, currenciesByMarketcap, findCryptoCurrencyById } from "../currencies";
 import ManagerAPI from "../manager/api";
@@ -72,12 +71,6 @@ export const listApps = ({
        *  -> then fetch matching app metadata using apps' hashes
        */
 
-      let listAppsResponsePromise: Promise<ListAppResponse>;
-
-      function listAppsWithSingleCommand(): Promise<ListAppResponse> {
-        return hwListApps(transport);
-      }
-
       function listAppsWithManagerApi(): Promise<ListAppResponse> {
         return new Promise<ListAppResponse>((resolve, reject) => {
           // TODO: migrate this ManagerAPI call to ManagerApiRepository
@@ -111,34 +104,8 @@ export const listApps = ({
         });
       }
 
-      if (deviceInfo.managerAllowed) {
-        // If the user has already allowed a secure channel during this session we can directly
-        // ask the device for the installed applications instead of going through a scriptrunner,
-        // this is a performance optimization, part of a larger rework with Manager API v2.
-        tracer.trace("Using direct apdu listapps");
-        listAppsResponsePromise = listAppsWithSingleCommand().catch(e => {
-          // For some old versions of the firmware, the listapps command is not supported.
-          // In this case, we fallback to the scriptrunner listapps.
-          if (
-            e instanceof TransportStatusError &&
-            [
-              StatusCodes.CLA_NOT_SUPPORTED,
-              StatusCodes.INS_NOT_SUPPORTED,
-              StatusCodes.UNKNOWN_APDU,
-              0x6e01, // No StatusCodes definition
-              0x6d01, // No StatusCodes definition
-            ].includes(e.statusCode)
-          ) {
-            tracer.trace("Fallback to scriptrunner listapps");
-            return listAppsWithManagerApi();
-          }
-          throw e;
-        });
-      } else {
-        // Fallback to original web-socket list apps
-        tracer.trace("Using scriptrunner listapps");
-        listAppsResponsePromise = listAppsWithManagerApi();
-      }
+      tracer.trace("Using scriptrunner listapps");
+      const listAppsResponsePromise = listAppsWithManagerApi();
 
       const filteredListAppsPromise = listAppsResponsePromise.then(result => {
         // Empty HashData can come from apps that are not real apps (such as language packs)

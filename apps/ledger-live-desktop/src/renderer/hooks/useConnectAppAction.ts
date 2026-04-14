@@ -1,4 +1,7 @@
 import { useMemo } from "react";
+import { catchError, throwError } from "rxjs";
+import { GenuineCheckFailed } from "@ledgerhq/errors";
+import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
@@ -89,4 +92,26 @@ export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, 
     [isLdmkConnectAppEnabled],
   );
   return action;
+}
+
+/**
+ * Variant of useConnectManagerAction for the onboarding genuine check.
+ * Wraps all unhandled connectManager errors as GenuineCheckFailed so that
+ * arbitrary device/proxy errors are presented uniformly to the user.
+ */
+export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(() => {
+    if (getEnv("MOCK")) {
+      return createManagerAction(mockedEventEmitter);
+    }
+    const task: Parameters<typeof createManagerAction>[0] = input =>
+      connectManager({ isLdmkConnectAppEnabled })(input).pipe(
+        catchError(error => {
+          if (isCounterfeitError(error)) return throwError(() => error);
+          return throwError(() => new GenuineCheckFailed("", undefined, { cause: error }));
+        }),
+      );
+    return createManagerAction(task);
+  }, [isLdmkConnectAppEnabled]);
 }
