@@ -1,12 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 import { usePersistedPortfolioBalance } from "./usePersistedPortfolioBalance";
-import { setPortfolioBalanceDisplay } from "~/reducers/portfolioBalanceDisplay";
 import {
   PortfolioBalanceState,
   PortfolioBalanceSectionProps,
@@ -17,7 +16,6 @@ export const usePortfolioBalanceSectionViewModel = ({
   showAssets,
   isReadOnlyMode,
 }: PortfolioBalanceSectionProps): UsePortfolioBalanceSectionViewModelResult => {
-  const dispatch = useDispatch();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
@@ -47,16 +45,6 @@ export const usePortfolioBalanceSectionViewModel = ({
   });
 
   const effectiveIsLoading = syncPhase === "syncing";
-
-  useEffect(() => {
-    dispatch(
-      setPortfolioBalanceDisplay({
-        displayedBalance,
-        isLoading: effectiveIsLoading,
-        isBalanceAvailable: balanceAvailable,
-      }),
-    );
-  }, [displayedBalance, effectiveIsLoading, balanceAvailable, dispatch]);
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {

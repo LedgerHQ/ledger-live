@@ -16,14 +16,19 @@ type Props = {
  * value is shown instead of the portfolio balance, and the loading indicator is
  * suppressed because a historical value is already resolved.
  */
-export function AnalyticsBalanceDisplay({ hoveredValue }: Props) {
-  const { value, formatter, discreet, isHovering, isLoading, isBalanceAvailable, shouldDisplayBalanceRefreshRework } =
-    useAnalyticsBalanceDisplayViewModel({ hoveredValue });
+export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
+  const {
+    value,
+    formatter,
+    discreet,
+    isHovering,
+    isLoading,
+    isBalanceAvailable,
+    shouldDisplayBalanceRefreshRework,
+  } = useAnalyticsBalanceDisplayViewModel({ hoveredValue });
 
   if (!isBalanceAvailable) {
-    return (
-      <Skeleton testID="analytics-balance-skeleton" lx={{ height: "s48", width: "s256" }} />
-    );
+    return <Skeleton testID="analytics-balance-skeleton" lx={{ height: "s48", width: "s256" }} />;
   }
 
   return (
