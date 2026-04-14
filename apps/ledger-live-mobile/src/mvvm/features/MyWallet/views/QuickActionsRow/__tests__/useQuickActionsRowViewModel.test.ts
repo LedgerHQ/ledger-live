@@ -3,7 +3,7 @@ import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { State } from "~/reducers/types";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { useQuickActionsRowViewModel } from "../useQuickActionsRowViewModel";
@@ -36,6 +36,23 @@ describe("useQuickActionsRowViewModel", () => {
     const { result } = renderHook(() => useQuickActionsRowViewModel());
     expect(result.current.actions).toHaveLength(3);
     expect(result.current.actions.map(a => a.id)).toEqual(["recover", "help", "referral"]);
+  });
+
+  describe("help action", () => {
+    it("should navigate to MyWalletHelp screen and track event on press", () => {
+      const { result } = renderHook(() => useQuickActionsRowViewModel());
+      const helpAction = result.current.actions.find(a => a.id === "help")!;
+
+      act(() => helpAction.onPress());
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.MyWallet, {
+        screen: ScreenName.MyWalletHelp,
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Help",
+        page: ScreenName.MyWallet,
+      });
+    });
   });
 
   describe("referral action", () => {

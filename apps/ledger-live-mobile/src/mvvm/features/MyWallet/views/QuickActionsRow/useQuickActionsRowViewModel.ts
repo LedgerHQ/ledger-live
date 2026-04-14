@@ -7,10 +7,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { ScreenName } from "~/const";
-import { track } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { track } from "~/analytics";
 
 export interface QuickActionRowItem {
   readonly id: string;
@@ -47,8 +47,9 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   }, [navigation, protectId, lastConnectedDevice]);
 
   const handleHelpPress = useCallback(() => {
-    // TODO: implement help navigation
-  }, []);
+    track("button_clicked", { button: "Help", page: ScreenName.MyWallet });
+    navigation.navigate(NavigatorName.MyWallet, { screen: ScreenName.MyWalletHelp });
+  }, [navigation]);
 
   const handleReferralPress = useCallback(() => {
     track("button_clicked", { button: "Referral", page: ScreenName.MyWallet });
