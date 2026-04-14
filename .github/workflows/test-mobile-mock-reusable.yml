@@ -285,7 +285,7 @@ jobs:
     runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@support/qaa_1153_clean_test_update_emulator
         with:
           ref: ${{ inputs.ref || github.sha }}
           avd_api: ${{ env.AVD_API }}
