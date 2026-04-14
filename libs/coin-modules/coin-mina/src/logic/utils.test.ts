@@ -7,7 +7,7 @@ import {
   getMaxAmount,
   getTotalSpent,
   reEncodeRawSignature,
-} from ".";
+} from "./utils";
 
 // Create a minimal mock implementation for the tests
 type MockMinaAccount = Pick<MinaAccount, "spendableBalance" | "pendingOperations">;
@@ -45,6 +45,11 @@ describe("getAccountNumFromPath", () => {
   it("should return the account number", () => {
     const account = getAccountNumFromPath("44'/12586'/4'/0/0");
     expect(account).toBe(4);
+  });
+
+  it("should return undefined for negative account number", () => {
+    const account = getAccountNumFromPath("44'/12586'/-1'/0/0");
+    expect(account).toBe(undefined);
   });
 });
 

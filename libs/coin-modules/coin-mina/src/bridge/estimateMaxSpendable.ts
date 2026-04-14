@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getMaxAmount } from "../common-logic";
+import { getMaxAmount } from "../logic/utils";
 import type { Transaction, MinaAccount } from "../types/common";
 import { createTransaction } from "./createTransaction";
 import getEstimatedFees from "./getEstimatedFees";
@@ -19,13 +19,7 @@ const estimateMaxSpendable: AccountBridge<
 
   const { fee } = await getEstimatedFees(t, a.freshAddress);
 
-  const maxSpendable = getMaxAmount(a, t, fee);
-
-  if (maxSpendable.lt(0)) {
-    return new BigNumber(0);
-  }
-
-  return maxSpendable;
+  return getMaxAmount(a, t, fee);
 };
 
 export default estimateMaxSpendable;

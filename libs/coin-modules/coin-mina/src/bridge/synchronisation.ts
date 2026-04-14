@@ -1,13 +1,19 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import {
+  type GetAccountShape,
+  makeSync,
+  mergeOps,
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getAccount, getBlockInfo, getTransactions } from "../api";
-import { RosettaTransaction } from "../api/rosetta/types";
-import { MinaAccount, MinaOperation } from "../types/common";
+import { getAccount } from "../logic/account/getAccount";
+import { getDelegateAddress } from "../logic/account/getDelegateAddress";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
+import { getTransactions } from "../logic/history/getTransactions";
+import { fetchValidators, getEpochInfo, RosettaTransaction } from "../network";
+import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,
@@ -76,6 +82,7 @@ export const mapRosettaTxnToOperation = async (
     invariant(fromAccount, "mina: missing fromAccount");
     invariant(toAccount, "mina: missing toAccount");
 
+    const nonce = txn.transaction.metadata?.nonce;
     const op: MinaOperation = {
       id: "",
       type: "NONE",
@@ -89,6 +96,7 @@ export const mapRosettaTxnToOperation = async (
       senders: [fromAccount],
       recipients: [toAccount],
       date,
+      transactionSequenceNumber: nonce === undefined ? undefined : new BigNumber(nonce),
       extra: {
         memo,
         accountCreationFee: accountCreationFee.toString(),
@@ -105,8 +113,8 @@ export const mapRosettaTxnToOperation = async (
         id: encodeOperationId(accountId, hash, type),
       });
     } else if (redelegateTransaction) {
-      // delegate change
-      const type = "REDELEGATE";
+      // delegate change — if sender delegates to themselves, it's an undelegate
+      const type = fromAccount === toAccount ? "UNDELEGATE" : "REDELEGATE";
       ops.push({
         ...op,
         value: new BigNumber(0),
@@ -147,12 +155,31 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
 
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
-  const rosettaTxns = await getTransactions(address, initialAccount?.operations.length);
+  const rosettaTxns = await getTransactions(address);
   const newOperations = await Promise.all(
     rosettaTxns.flatMap(t => mapRosettaTxnToOperation(accountId, address, t)),
   );
 
   const operations = mergeOps(oldOperations, newOperations.flat());
+
+  const [delegateKey, epochInfo, validators] = await Promise.all([
+    getDelegateAddress(address),
+    getEpochInfo(),
+    fetchValidators(),
+  ]);
+
+  // GraphQL may lag behind Rosetta. Fall back to the most recent delegation-related op
+  // to determine the current delegate state without waiting for the GraphQL to catch up.
+  const graphqlDelegateAddress = delegateKey || address;
+  const lastDelegationOp = operations.find(
+    op => op.type === "REDELEGATE" || op.type === "DELEGATE" || op.type === "UNDELEGATE",
+  );
+  const getDelegateAddressFn = () => {
+    if (graphqlDelegateAddress !== address) return graphqlDelegateAddress;
+    if (lastDelegationOp?.type === "UNDELEGATE") return address;
+    return lastDelegationOp?.recipients[0] ?? address;
+  };
+  const delegateAddress = getDelegateAddressFn();
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
@@ -160,9 +187,28 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
+    resources: {
+      blockProducers: validators,
+      delegateInfo: validators.find(v => v.address === delegateAddress) ?? undefined,
+      stakingActive: address !== delegateAddress,
+      epochInfo: epochInfo.data.daemonStatus.consensusTimeNow,
+    },
   };
 
   return { ...shape, operations };
 };
+
+export function assignToAccountRaw(account: MinaAccount, accountRaw: MinaAccountRaw): void {
+  if (account.resources) {
+    accountRaw.resources = account.resources;
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: MinaAccountRaw, account: MinaAccount): void {
+  const resourcesRaw = accountRaw.resources;
+  if (resourcesRaw) {
+    account.resources = resourcesRaw;
+  }
+}
 
 export const sync = makeSync({ getAccountShape });

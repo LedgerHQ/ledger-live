@@ -1,7 +1,9 @@
+import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
-import { reEncodeRawSignature } from "../common-logic";
+import { MINA_CANCEL_RETURN_CODE } from "../consts";
+import { reEncodeRawSignature } from "../logic/utils";
 import {
   createMockAccount,
   createMockTransaction,
@@ -15,7 +17,7 @@ import { buildSignOperation, buildOptimisticOperation } from "./signOperation";
 // Mock dependencies
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("./buildTransaction");
-jest.mock("../common-logic");
+jest.mock("../logic/utils");
 
 describe("signOperation", () => {
   // Mock reset before each test
@@ -49,6 +51,7 @@ describe("signOperation", () => {
         recipients: [mockTransaction.recipient],
         accountId: mockAccount.id,
         date: expect.any(Date),
+        transactionSequenceNumber: new BigNumber(1),
         extra: {
           memo: "test memo",
           accountCreationFee: "0",
@@ -71,6 +74,24 @@ describe("signOperation", () => {
       // Value should be amount + fee - accountCreationFee = 1000 + 10 - 5 = 1005
       expect(result.value).toEqual(new BigNumber(1005));
       expect(result.extra.accountCreationFee).toBe("5");
+    });
+
+    it("should build DELEGATE operation when txType is stake", () => {
+      const stakeTx = createMockTransaction({ txType: "stake" });
+
+      const result = buildOptimisticOperation(mockAccount, stakeTx, new BigNumber(10));
+
+      expect(result.type).toBe("DELEGATE");
+      expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "DELEGATE");
+    });
+
+    it("should build UNDELEGATE operation when txType is unstake", () => {
+      const unstakeTx = createMockTransaction({ txType: "unstake" });
+
+      const result = buildOptimisticOperation(mockAccount, unstakeTx, new BigNumber(10));
+
+      expect(result.type).toBe("UNDELEGATE");
+      expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "UNDELEGATE");
     });
   });
 
@@ -153,6 +174,69 @@ describe("signOperation", () => {
       await firstValueFrom(observable.pipe());
 
       expect(mockSignerContextSpy).toHaveBeenCalledWith(mockDeviceId, expect.any(Function));
+    });
+
+    it("should throw FeeNotLoaded when fees are missing", done => {
+      const txWithoutFees = createMockTransaction();
+      // @ts-expect-error — testing runtime guard when fees are undefined
+      txWithoutFees.fees = undefined;
+
+      const signOperation = buildSignOperation(mockSignerContext);
+
+      signOperation({
+        account: mockAccount,
+        transaction: txWithoutFees,
+        deviceId: mockDeviceId,
+      }).subscribe({
+        error: error => {
+          expect(error).toBeInstanceOf(FeeNotLoaded);
+          done();
+        },
+        complete: () => done(new Error("Expected error")),
+      });
+    });
+
+    it("should throw UserRefusedOnDevice when user cancels on device", done => {
+      const cancelContext = createMockSignerContext({
+        returnCode: MINA_CANCEL_RETURN_CODE,
+        signature: "",
+      });
+
+      const signOperation = buildSignOperation(cancelContext);
+
+      signOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: mockDeviceId,
+      }).subscribe({
+        error: error => {
+          expect(error).toBeInstanceOf(UserRefusedOnDevice);
+          done();
+        },
+        complete: () => done(new Error("Expected error")),
+      });
+    });
+
+    it("should throw when signature is missing and return code is unexpected", done => {
+      const errorContext = createMockSignerContext({
+        returnCode: "0xFFFF",
+        signature: "",
+      });
+
+      const signOperation = buildSignOperation(errorContext);
+
+      signOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: mockDeviceId,
+      }).subscribe({
+        error: error => {
+          expect(error).not.toBeUndefined();
+          expect(String(error)).toContain("0xFFFF");
+          done();
+        },
+        complete: () => done(new Error("Expected error")),
+      });
     });
   });
 });

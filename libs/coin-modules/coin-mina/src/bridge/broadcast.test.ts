@@ -1,10 +1,11 @@
+import { DeepPartial } from "@ledgerhq/coin-module-framework/test/utils";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { Account, BroadcastArg } from "@ledgerhq/types-live";
-import { broadcastTransaction as broadcastLogic } from "../api";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { broadcastTransaction as broadcastLogic } from "../logic/transaction/broadcast";
 import broadcast from "./broadcast";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
-jest.mock("../api");
+jest.mock("../logic/transaction/broadcast");
 
 describe("broadcast", () => {
   let patchOperationSpy: jest.SpyInstance;
@@ -15,22 +16,22 @@ describe("broadcast", () => {
     broadcastSpy.mockResolvedValue("hash");
   });
 
-  const signedOperation = {
+  const signedOperation: DeepPartial<SignedOperation> = {
     signature: JSON.stringify({}),
-    operation: undefined,
+    operation: {} as Operation,
   };
 
   it("should broadcast", () => {
     broadcast({
       signedOperation,
-    } as unknown as BroadcastArg<Account>);
+    } as { signedOperation: SignedOperation });
     expect(broadcastLogic).toHaveBeenCalledTimes(1);
   });
 
   it("should patch operation with hash", () => {
     broadcast({
       signedOperation,
-    } as unknown as BroadcastArg<Account>);
-    expect(patchOperationSpy).toHaveBeenCalledWith(undefined, "hash");
+    } as { signedOperation: SignedOperation });
+    expect(patchOperationSpy).toHaveBeenCalledWith({}, "hash");
   });
 });

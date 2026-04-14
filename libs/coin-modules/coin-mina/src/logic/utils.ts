@@ -32,7 +32,7 @@ export const getAccountNumFromPath = (path: string): number | undefined => {
   }
 
   try {
-    const acc = parseInt(parts[2], 10);
+    const acc = Number.parseInt(parts[2], 10);
     if (acc >= 0) {
       return acc;
     }
@@ -73,19 +73,18 @@ export const getTotalSpent = (a: MinaAccount, t: Transaction, fees: BigNumber): 
   return new BigNumber(t.amount).plus(fees);
 };
 
+function shuffleBytes(hex: string) {
+  const bytes = hex.match(/.{2}/g);
+  if (!bytes) {
+    throw new Error("Invalid hex input");
+  }
+  bytes.reverse();
+  return bytes.join("");
+}
 // reEncodeRawSignature takes a raw signature in the form of a 128-character hex string and returns a re-encoded version of it.
 export function reEncodeRawSignature(rawSignature: string) {
-  function shuffleBytes(hex: string) {
-    const bytes = hex.match(/.{2}/g);
-    if (!bytes) {
-      throw "Invalid hex input";
-    }
-    bytes.reverse();
-    return bytes.join("");
-  }
-
   if (rawSignature.length !== 128) {
-    throw "Invalid raw signature input";
+    throw new Error("Invalid raw signature input");
   }
   const field = rawSignature.substring(0, 64);
   const scalar = rawSignature.substring(64);

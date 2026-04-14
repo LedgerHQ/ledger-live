@@ -12,7 +12,7 @@ import { BigNumber } from "bignumber.js";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
 import { Transaction } from "../types/common";
-import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "./errors";
+import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "../types/errors";
 import getEstimatedFees from "./getEstimatedFees";
 import getTransactionStatus from "./getTransactionStatus";
 
@@ -99,6 +99,18 @@ describe("getTransactionStatus", () => {
     const result = await getTransactionStatus(mockAccount, txWithSelfTransfer);
 
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+  });
+
+  it("should allow self-delegation for unstake txType", async () => {
+    const txUnstake = {
+      ...mockTransaction,
+      recipient: mockAccount.freshAddress,
+      txType: "unstake" as const,
+    };
+
+    const result = await getTransactionStatus(mockAccount, txUnstake);
+
+    expect(result.errors.recipient).toBeUndefined();
   });
 
   it("should handle invalid memo with InvalidMemoMina error", async () => {

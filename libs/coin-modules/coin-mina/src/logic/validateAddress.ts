@@ -1,5 +1,5 @@
 import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
-import { isValidAddress } from "../common-logic";
+import { isValidAddress } from "./utils";
 
 export async function validateAddress(
   address: string,
