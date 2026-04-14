@@ -2,7 +2,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { accountsHandler, accountHandler } from "../accounts.handler";
-import { DeeplinkHandlerContext } from "../../types";
+import { createMockContext } from "./test-utils";
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   findCryptoCurrencyByKeyword: jest.fn(),
@@ -16,21 +16,6 @@ import { getAccountsOrSubAccountsByCurrency } from "../../utils";
 
 const mockFindCryptoCurrencyByKeyword = jest.mocked(findCryptoCurrencyByKeyword);
 const mockGetAccountsOrSubAccountsByCurrency = jest.mocked(getAccountsOrSubAccountsByCurrency);
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  ...overrides,
-});
 
 const createMockAccount = (currencyId: string, address: string = "address123"): Account => {
   const currency = getCryptoCurrencyById(currencyId);
@@ -55,7 +40,7 @@ describe("accounts.handler", () => {
 
       accountsHandler({ type: "accounts" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/accounts");
+      expect(context.navigate).toHaveBeenCalledWith(context.accountsPath);
     });
 
     it("navigates to specific account when valid address is found", () => {
@@ -73,7 +58,24 @@ describe("accounts.handler", () => {
 
       accountsHandler({ type: "accounts", address: "nonexistent" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/accounts");
+      expect(context.navigate).toHaveBeenCalledWith(context.accountsPath);
+    });
+
+    it("navigates to /cryptos when feature flag sets accountsPath to /cryptos", () => {
+      const context = createMockContext({ accountsPath: "/cryptos" });
+
+      accountsHandler({ type: "accounts" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/cryptos");
+    });
+
+    it("navigates to /cryptos when address not found and accountsPath is /cryptos", () => {
+      const mockAccount = createMockAccount("bitcoin", "bc1qtest123");
+      const context = createMockContext({ accounts: [mockAccount], accountsPath: "/cryptos" });
+
+      accountsHandler({ type: "accounts", address: "nonexistent" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/cryptos");
     });
   });
 
