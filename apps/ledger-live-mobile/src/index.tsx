@@ -355,7 +355,7 @@ export default class Root extends Component {
     logStartupEvent("Root render");
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-        {({ ready, initialCountervalues, currencyInitialized, importAccounts }) =>
+        {({ ready, initialCountervalues, currencyInitialized }) =>
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
@@ -376,10 +376,7 @@ export default class Root extends Component {
                             <NavBarColorHandler />
                             <AuthPass>
                               <GestureHandlerRootView style={styles.root}>
-                                <WaitForAppReady
-                                  currencyInitialized={currencyInitialized}
-                                  importAccounts={importAccounts}
-                                >
+                                <WaitForAppReady currencyInitialized={currencyInitialized}>
                                   <AppProviders initialCountervalues={initialCountervalues}>
                                     <AppGeoBlocker>
                                       <AppVersionBlocker>
