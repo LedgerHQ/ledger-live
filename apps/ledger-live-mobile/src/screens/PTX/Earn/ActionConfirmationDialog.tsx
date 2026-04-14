@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { BottomSheetView, BottomSheetHeader, Box, Button, Text, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
-import { resolveActionDialog } from "~/components/WebPTXPlayer/CustomHandlers";
+import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 
 const SPOT_APPEARANCE = {

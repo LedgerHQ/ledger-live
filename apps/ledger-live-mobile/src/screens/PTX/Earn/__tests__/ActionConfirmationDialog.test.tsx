@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { ActionConfirmationDialog } from "../ActionConfirmationDialog";
-import { resolveActionDialog } from "~/components/WebPTXPlayer/CustomHandlers";
+import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
 import { State } from "~/reducers/types";
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => {
@@ -42,7 +42,7 @@ jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => {
   };
 });
 
-jest.mock("~/components/WebPTXPlayer/CustomHandlers", () => ({
+jest.mock("~/components/WebPTXPlayer/actionDialogStore", () => ({
   resolveActionDialog: jest.fn(),
 }));
 

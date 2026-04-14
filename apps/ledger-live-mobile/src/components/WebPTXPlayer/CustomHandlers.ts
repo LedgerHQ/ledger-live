@@ -45,9 +45,8 @@ import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validati
 import {
   makeSetEarnInfoBottomSheetAction,
   makeSetEarnMenuBottomSheetAction,
-  makeSetEarnActionDialogAction,
 } from "~/actions/earn";
-import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
+import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -520,44 +519,7 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
   };
 }
 
-type ActionDialogResolver = (result: { confirmed: boolean }) => void;
-
-let pendingActionDialogResolver: ActionDialogResolver | null = null;
-let actionDialogDispatch: Dispatch | null = null;
-
-export function resolveActionDialog(confirmed: boolean) {
-  const resolver = pendingActionDialogResolver;
-  pendingActionDialogResolver = null;
-  if (actionDialogDispatch) {
-    actionDialogDispatch(makeSetEarnActionDialogAction(undefined));
-    actionDialogDispatch = null;
-  }
-  if (resolver) resolver({ confirmed });
-}
-
-export function createOpenActionDialogHandler(dispatch: Dispatch) {
-  return (request: {
-    params?: ActionDialogParams;
-  }): Promise<{ confirmed: boolean }> => {
-    const { params } = request;
-
-    if (!params) {
-      throw new Error("Missing params for custom.dialog.confirmation");
-    }
-
-    // If a previous dialog is still pending, resolve it as dismissed before opening the new one.
-    if (pendingActionDialogResolver) {
-      pendingActionDialogResolver({ confirmed: false });
-      pendingActionDialogResolver = null;
-    }
-
-    return new Promise<{ confirmed: boolean }>(resolve => {
-      pendingActionDialogResolver = resolve;
-      actionDialogDispatch = dispatch;
-      dispatch(makeSetEarnActionDialogAction(params));
-    });
-  };
-}
+export { resolveActionDialog, createOpenActionDialogHandler } from "./actionDialogStore";
 
 export function createOpenMenuBottomSheetHandler(dispatch: Dispatch) {
   return async (request: {
