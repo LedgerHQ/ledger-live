@@ -22,6 +22,7 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayAssetSection: boolean;
   readonly shouldDisplayOperationsList: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
+  readonly perpsPortfolioEntryPointPosition: "top" | "bottom";
   readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
@@ -31,6 +32,7 @@ export interface PortfolioViewModelResult {
 
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const accounts = useSelector(accountsSelector);
+  const ptxPerpsLiveApp = useFeature("ptxPerpsLiveApp");
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const {
     shouldDisplayMarketBanner,
@@ -74,6 +76,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const hasExchangeBannerCTA = !!portfolioExchangeBanner?.enabled;
   const isClearCacheBannerVisible = useSelector(showClearCacheBannerSelector);
 
+  const perpsPortfolioEntryPointPosition =
+    ptxPerpsLiveApp?.params?.portfolio_entry_point_position ?? "bottom";
+
   return {
     totalAccounts,
     totalOperations,
@@ -85,6 +90,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
+    perpsPortfolioEntryPointPosition,
     isWallet40Enabled,
     filterOperations,
     accounts,

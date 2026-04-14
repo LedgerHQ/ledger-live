@@ -29,6 +29,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayAssetSection,
   shouldDisplayOperationsList,
   shouldDisplayBrazePlacement,
+  perpsPortfolioEntryPointPosition,
   isWallet40Enabled,
   accounts,
   filterOperations,
@@ -66,8 +67,9 @@ export const PortfolioView = memo(function PortfolioView({
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
 
+          {perpsPortfolioEntryPointPosition === "top" ? <PerpsEntryPoint /> : null}
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
-          <PerpsEntryPoint />
+          {perpsPortfolioEntryPointPosition === "bottom" ? <PerpsEntryPoint /> : null}
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
           {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}

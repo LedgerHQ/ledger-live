@@ -137,6 +137,7 @@ describe("PortfolioView", () => {
     shouldDisplayAssetSection: true,
     shouldDisplayOperationsList: true,
     shouldDisplayBrazePlacement: false,
+    perpsPortfolioEntryPointPosition: "bottom" as const,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],
@@ -507,6 +508,38 @@ describe("PortfolioView", () => {
         page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
       expect(mockNavigate).toHaveBeenCalledWith("/perps");
+    });
+
+    it("should render perps entry point above assets when perpsPortfolioEntryPointPosition is top", async () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          perpsPortfolioEntryPointPosition="top"
+          shouldDisplayAssetSection={true}
+        />,
+        {
+          initialState: {
+            settings: {
+              ...AFTER_ONBOARDING_STATE,
+            },
+            ...withFlagOverrides({
+              ptxPerpsLiveApp: {
+                enabled: true,
+              },
+            }),
+          },
+        },
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Bitcoin")).toBeVisible();
+      });
+
+      const perps = screen.getByTestId("portfolio-perps-entry-point");
+      const bitcoinRow = screen.getByText("Bitcoin");
+      expect(perps.compareDocumentPosition(bitcoinRow) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
     });
   });
 

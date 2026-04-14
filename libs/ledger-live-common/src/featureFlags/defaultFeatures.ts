@@ -490,6 +490,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       manifest_id: "perps-live-app",
+      portfolio_entry_point_position: "bottom",
     },
   },
 
@@ -497,6 +498,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       manifest_id: "perps-live-app",
+      portfolio_entry_point_position: "bottom",
     },
   },
 

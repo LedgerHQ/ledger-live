@@ -651,6 +651,7 @@ export type Feature_PtxSwapLiveApp = Feature<{
 
 export type Feature_PtxPerpsLiveApp = Feature<{
   manifest_id: string;
+  portfolio_entry_point_position: "top" | "bottom";
 }>;
 
 export type Feature_PtxEarnLiveApp = Feature<{

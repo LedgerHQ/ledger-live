@@ -68,6 +68,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayWallet40MainNav,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    perpsPortfolioEntryPointPosition,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
@@ -131,6 +132,10 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
+    if (perpsPortfolioEntryPointPosition === "top") {
+      sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
+    }
+
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
@@ -146,7 +151,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
+    if (perpsPortfolioEntryPointPosition === "bottom") {
+      sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
+    }
 
     if (isAWalletCardDisplayed) {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
@@ -184,6 +191,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    perpsPortfolioEntryPointPosition,
   ]);
 
   return (

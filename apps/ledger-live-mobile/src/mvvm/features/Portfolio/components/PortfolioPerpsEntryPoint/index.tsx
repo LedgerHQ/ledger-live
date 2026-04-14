@@ -5,6 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
+import { usePerpsLiveConfig } from "LLM/features/Perps/hooks/usePerpsLiveConfig";
 import {
   ListItem,
   ListItemLeading,
@@ -23,6 +24,8 @@ import { track } from "~/analytics";
 export const PortfolioPerpsEntryPoint = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const perpsConfig = usePerpsLiveConfig();
+  const isTopPosition = perpsConfig?.params?.portfolio_entry_point_position === "top";
 
   const handlePress = useCallback(() => {
     track("button_clicked", {
@@ -35,7 +38,13 @@ export const PortfolioPerpsEntryPoint = () => {
 
   return (
     <FeatureToggle featureId="ptxPerpsLiveAppMobile">
-      <Box lx={{ marginTop: "s16", paddingHorizontal: "s16" }}>
+      <Box
+        lx={{
+          marginTop: "s16",
+          paddingHorizontal: "s16",
+          ...(isTopPosition && { marginBottom: "s16" }),
+        }}
+      >
         <Subheader>
           <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
             <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>

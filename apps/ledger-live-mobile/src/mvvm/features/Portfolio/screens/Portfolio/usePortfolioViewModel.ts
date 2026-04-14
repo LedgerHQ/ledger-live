@@ -37,6 +37,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayAssetSection: boolean;
   shouldDisplayMarketBanner: boolean;
   shouldDisplayOperationsList: boolean;
+  perpsPortfolioEntryPointPosition: "top" | "bottom";
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -68,6 +69,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayOperationsList,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
+  const ptxPerpsLiveAppMobile = useFeature("ptxPerpsLiveAppMobile");
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
@@ -150,6 +152,9 @@ const usePortfolioViewModel = (navigation: {
   const shouldAddBottomPaddingForLegacyAssets =
     !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
 
+  const perpsPortfolioEntryPointPosition =
+    ptxPerpsLiveAppMobile?.params?.portfolio_entry_point_position ?? "bottom";
+
   return {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
@@ -159,6 +164,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetSection,
     shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
+    perpsPortfolioEntryPointPosition,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
