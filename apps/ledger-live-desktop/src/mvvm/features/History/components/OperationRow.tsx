@@ -5,8 +5,8 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
-import { isIncomingType } from "../utils/isIncomingType";
-import { truncateAddress } from "../utils/truncateAddress";
+import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
+import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {
@@ -17,13 +17,15 @@ type OperationRowProps = {
 function OperationRow({ row, onRowClick }: OperationRowProps) {
   const { t } = useTranslation();
   const handleClick = useCallback(() => onRowClick(row), [onRowClick, row]);
-  const { operation, currency, amount, address, type } = row.original;
+  const item = row.original;
+  const { operation, currency, amount, address, type } = item;
 
   const typeLabel = operation.hasFailed
     ? t("operationDetails.failed")
     : t(`operation.type.${operation.type}`);
 
-  const addressPrefix = isIncomingType(type) ? t("history.address.from") : t("history.address.to");
+  const direction = getAddressDirection(type);
+  const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
 
   const unit = currency.units[0];
 
@@ -40,7 +42,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
           align="end"
           title={
             <div className="inline-flex items-center gap-4">
-              {`${addressPrefix} ${truncateAddress(address)}`}
+              <OperationCounterpartyLabel item={item} prefix={addressPrefix} />
               {currency.type !== "FiatCurrency" && (
                 <SquaredCryptoIcon
                   ledgerId={currency.id}
