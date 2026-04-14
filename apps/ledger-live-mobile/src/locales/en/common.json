@@ -8850,6 +8850,7 @@
   "myWallet": {
     "quickActions": {
       "recover": "[L] Recover",
+      "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
     }
