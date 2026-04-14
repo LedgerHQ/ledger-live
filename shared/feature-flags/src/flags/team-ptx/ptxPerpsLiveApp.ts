@@ -4,7 +4,7 @@ import { flagWith } from "../../define";
 export const ptxPerpsLiveApp = flagWith(
   {
     manifest_id: z.string(),
-    portfolio_entry_point_position: z.enum(["top", "bottom"]),
+    portfolio_entry_point_position: z.enum(["top", "bottom"]).default("bottom"),
   },
   {
     enabled: false,
