@@ -6,8 +6,10 @@
   "private": true,
   "scripts": {
     "build": "rslib build",
-    "lint": "eslint ./ --cache",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
   },
   "dependencies": {
     "@datadog/datadog-ci": "3.11.0",
