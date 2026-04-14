@@ -1,10 +1,10 @@
+import { createDialogInfoHandler } from "../CustomHandlers";
 import {
-  createDialogInfoHandler,
   getActionDialogSnapshot,
   subscribeActionDialog,
   resolveActionDialog,
-} from "../CustomHandlers";
-import { showActionDialog } from "../actionDialogStore";
+  showActionDialog,
+} from "../actionDialogStore";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 
 describe("createDialogInfoHandler", () => {

@@ -3,7 +3,7 @@
 // can import without pulling in the heavy PTX dependency graph.
 
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
-import { validateActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
+import { sanitizeActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import { makeSetEarnActionDialogAction } from "~/actions/earn";
 import type { Dispatch } from "redux";
 
@@ -26,7 +26,7 @@ export function createOpenActionDialogHandler(dispatch: Dispatch) {
   return async (request: {
     params?: ActionDialogParams;
   }): Promise<{ confirmed: boolean }> => {
-    const validated = validateActionDialogParams(request.params, "custom.dialog.confirmation");
+    const validated = sanitizeActionDialogParams(request.params, "custom.dialog.confirmation");
 
     // If a previous dialog is still pending, resolve it as dismissed before opening the new one.
     if (pendingActionDialogResolver) {

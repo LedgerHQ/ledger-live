@@ -9,19 +9,23 @@ export interface ActionDialogParams {
   icon?: ActionDialogIcon;
 }
 
-export function validateActionDialogParams(
+export function sanitizeActionDialogParams(
   params: ActionDialogParams | undefined,
   handlerName: string,
 ): ActionDialogParams {
-  if (!params) {
-    throw new Error(`Missing params for ${handlerName}`);
+  if (!params || typeof params !== "object") {
+    throw new Error(`Invalid params for ${handlerName}: params are required.`);
   }
 
-  const { title, description, ctaLabel, icon } = params;
+  const { title, description, ctaLabel, icon } = params as Partial<ActionDialogParams>;
 
-  if (typeof title !== "string" || typeof description !== "string" || typeof ctaLabel !== "string") {
+  if (
+    typeof title !== "string" ||
+    typeof description !== "string" ||
+    typeof ctaLabel !== "string"
+  ) {
     throw new TypeError(
-      `Invalid params for ${handlerName}: expected string 'title', 'description' and 'ctaLabel'.`,
+      `Invalid params for ${handlerName}: 'title', 'description' and 'ctaLabel' must be strings.`,
     );
   }
 
