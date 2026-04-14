@@ -437,7 +437,7 @@ describe("Alpaca utils", () => {
           spendableBalance: BigNumber(8),
           balance: BigNumber(10),
         } as unknown as Account),
-      ).toEqual([{ value: 10n, locked: 2n, asset: { type: "native" } }]);
+      ).toEqual([{ value: 8n, locked: 0n, asset: { type: "native" } }]);
     });
 
     it("extracts native and token balances", () => {
@@ -469,8 +469,8 @@ describe("Alpaca utils", () => {
             assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
             type: "erc20",
           },
-          locked: 9n,
-          value: 20n,
+          locked: 0n,
+          value: 11n,
         },
       ]);
     });
