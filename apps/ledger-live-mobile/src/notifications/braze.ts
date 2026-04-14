@@ -1,12 +1,9 @@
 import Braze from "@braze/react-native-sdk";
-import { userIdSelector, isDummyUserId } from "@ledgerhq/client-ids/store";
-import { store } from "../state-manager/configureStore";
+import { type UserId, isDummyUserId } from "@ledgerhq/client-ids/store";
 import { NotificationsSettings } from "../reducers/types";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
-export const start = (isTrackedUser: boolean) => {
-  const state = store.getState();
-  const userId = userIdSelector(state);
+export const start = (isTrackedUser: boolean, userId: UserId) => {
   if (!isDummyUserId(userId)) {
     Braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : generateAnonymousId());
   }

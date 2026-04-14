@@ -1,5 +1,7 @@
 import { DeviceId, UserId, DatadogId } from "../ids";
 
+export type { UserId } from "../ids";
+
 /**
  * Sync state for push devices operation
  * "synced" = data is synchronized with backend

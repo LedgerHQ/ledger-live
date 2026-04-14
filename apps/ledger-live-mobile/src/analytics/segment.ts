@@ -443,7 +443,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     // This allows us to not retrieve users ip addresses for privacy reasons
     segmentClient.add({ plugin: new AnonymousIpPlugin() });
     // This allows us to make sure we are adding the userId to the event
-    segmentClient.add({ plugin: new UserIdPlugin() });
+    segmentClient.add({ plugin: new UserIdPlugin(store) });
     // This allows us to debounce identify events for Braze and save data points
     segmentClient.add({ plugin: new BrazePlugin() });
 
