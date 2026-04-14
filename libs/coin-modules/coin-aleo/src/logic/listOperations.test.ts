@@ -38,7 +38,7 @@ describe("listOperations", () => {
       mockToBridgeOperation.mockReturnValueOnce(mockOp1).mockReturnValueOnce(mockOp2);
 
       const result = await listOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
@@ -47,7 +47,7 @@ describe("listOperations", () => {
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         fetchAllPages: true,
         minBlockHeight: 0,
@@ -70,7 +70,7 @@ describe("listOperations", () => {
       mockToBridgeOperation.mockReturnValue(mockOp);
 
       await listOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
@@ -88,7 +88,7 @@ describe("listOperations", () => {
       });
 
       const result = await listOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
@@ -112,7 +112,7 @@ describe("listOperations", () => {
       mockToAlpacaOperation.mockReturnValue(mockAlpacaOp);
 
       const result = await listOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         mode: "alpaca",
         options: { minHeight: 0, order: "asc" },
@@ -120,7 +120,7 @@ describe("listOperations", () => {
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         fetchAllPages: false,
         minBlockHeight: 0,
@@ -140,7 +140,7 @@ describe("listOperations", () => {
       });
 
       const result = await listOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         mode: "alpaca",
         options: { minHeight: 0 },
@@ -159,7 +159,7 @@ describe("listOperations", () => {
       });
 
       await listOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         mode: "alpaca",
         options: {
@@ -172,7 +172,7 @@ describe("listOperations", () => {
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         fetchAllPages: false,
         minBlockHeight: 1000,

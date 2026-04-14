@@ -49,7 +49,7 @@ describe("getPrivateBalance", () => {
 
     expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
     expect(sdkClient.decryptRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       viewKey: mockViewKey,
       ciphertext: record.record_ciphertext,
     });

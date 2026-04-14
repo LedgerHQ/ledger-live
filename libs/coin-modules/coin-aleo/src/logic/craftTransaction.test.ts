@@ -53,7 +53,7 @@ describe("craftTransaction", () => {
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockTxIntentTransferPublic);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       intent: mockSdkIntent,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
@@ -71,7 +71,7 @@ describe("craftTransaction", () => {
 
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       intent: mockSdkIntent,
       feeConfiguration: null,
     });

@@ -1,4 +1,3 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
@@ -17,6 +16,7 @@ import type {
   EnrichedPrivateRecord,
   AleoPrivateRecord,
   AleoOperation,
+  AleoCoinConfig,
 } from "../types";
 import { parseMicrocredits } from "../logic/utils";
 import { apiClient } from "./api";
@@ -40,7 +40,7 @@ function hasReachedMinHeight(
 }
 
 export async function fetchAccountTransactionsFromHeight({
-  currency,
+  configOrCurrencyId,
   address,
   fetchAllPages,
   minBlockHeight,
@@ -48,7 +48,7 @@ export async function fetchAccountTransactionsFromHeight({
   limit = 50,
   order = "asc",
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   address: string;
   fetchAllPages: boolean;
   minBlockHeight: number;
@@ -65,7 +65,7 @@ export async function fetchAccountTransactionsFromHeight({
 
   while (hasMorePages) {
     const page = await apiClient.getAccountPublicTransactions({
-      currency,
+      configOrCurrencyId,
       address,
       limit,
       order,
@@ -119,7 +119,7 @@ export async function fetchAccountTransactionsFromHeight({
 /**
  * Fetches all pages of owned records from the scanner
  *
- * @param params.currency - The cryptocurrency being accessed
+ * @param params.configOrCurrencyId - The Aleo coin config or currency ID being accessed
  * @param params.uuid - The scanner UUID for the account
  * @param params.unspent - When true, fetch only unspent records
  * @param params.start - Optional block height to start scanning from
@@ -127,13 +127,13 @@ export async function fetchAccountTransactionsFromHeight({
  * @returns A flat array of all matching records across all pages
  */
 export async function fetchAllOwnedRecords({
-  currency,
+  configOrCurrencyId,
   uuid,
   unspent,
   start,
   resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   uuid: string;
   unspent?: boolean;
   start?: number;
@@ -145,7 +145,7 @@ export async function fetchAllOwnedRecords({
 
   while (hasMore) {
     const records = await apiClient.getAccountOwnedRecords({
-      currency,
+      configOrCurrencyId,
       uuid,
       ...(typeof unspent === "boolean" && { unspent }),
       ...(typeof start === "number" && { start }),
@@ -169,7 +169,7 @@ export async function fetchAllOwnedRecords({
  * - Account registration for scanning records if UUID is not set
  * - Retrieval of current scanner status
  *
- * @param currency - The cryptocurrency being accessed
+ * @param configOrCurrencyId - The Aleo coin config or currency identifier being used to access the API
  * @param viewKey - The view key for the account
  * @param provableApi - Existing Provable API credentials and state, or null for initial setup
  *
@@ -183,11 +183,11 @@ export async function fetchAllOwnedRecords({
  */
 
 export async function accessProvableApi({
-  currency,
+  configOrCurrencyId,
   viewKey,
   provableApi,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   viewKey: string;
   provableApi: ProvableApi | null;
 }): Promise<ProvableApi | null> {
@@ -197,17 +197,17 @@ export async function accessProvableApi({
   let status;
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getScannerPublicKey(currency);
+    const { public_key, key_id } = await apiClient.getScannerPublicKey(configOrCurrencyId);
 
     const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
-      currency,
+      configOrCurrencyId,
       publicKey: public_key,
       viewKey,
       start: 0,
     });
 
     const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecordsEncrypted({
-      currency,
+      configOrCurrencyId,
       encryptedData,
       keyId: key_id,
     });
@@ -216,7 +216,7 @@ export async function accessProvableApi({
   }
 
   try {
-    status = await apiClient.getRecordScannerStatus(currency, uuid);
+    status = await apiClient.getRecordScannerStatus(configOrCurrencyId, uuid);
   } catch (error) {
     if (error instanceof LedgerAPI4xx && error.status === 422) {
       return null;
@@ -236,18 +236,18 @@ export async function accessProvableApi({
 }
 
 export async function enrichPrivateRecord({
-  currency,
+  configOrCurrencyId,
   rawRecord,
   address,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   rawRecord: AleoPrivateRecord;
   address: string;
   viewKey: string;
 }): Promise<EnrichedPrivateRecord | null> {
   const transactionId = rawRecord.transaction_id.trim();
-  const details = await apiClient.getTransactionById(currency, transactionId);
+  const details = await apiClient.getTransactionById(configOrCurrencyId, transactionId);
 
   // PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op
   if (
@@ -300,7 +300,7 @@ export async function enrichPrivateRecord({
     } else {
       const [recipientData, amountData] = await Promise.all([
         sdkClient.decryptCiphertext({
-          currency,
+          configOrCurrencyId,
           ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
@@ -309,7 +309,7 @@ export async function enrichPrivateRecord({
           outputIndex: RECIPIENT_ARG_INDEX,
         }),
         sdkClient.decryptCiphertext({
-          currency,
+          configOrCurrencyId,
           ciphertext: amountArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
@@ -324,7 +324,7 @@ export async function enrichPrivateRecord({
     }
   } else {
     const outputRecord = await sdkClient.decryptRecord({
-      currency,
+      configOrCurrencyId,
       ciphertext: rawRecord.record_ciphertext,
       viewKey,
     });
@@ -373,14 +373,14 @@ function splitPublicAndSemiPublicOperations(
  * @returns Array of patched operations including additional operations for semi transparent transfers
  */
 export const patchPublicOperations = async ({
-  currency,
+  configOrCurrencyId,
   publicOperations,
   privateRecords,
   address,
   ledgerAccountId,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   publicOperations: AleoOperation[];
   privateRecords: AleoPrivateRecord[];
   address: string;
@@ -454,7 +454,7 @@ export const patchPublicOperations = async ({
     // - semi-transparent transfer from another account to another account
     // - semi-transparent transfer from our own account to another account
     else {
-      const txDetails = await apiClient.getTransactionById(currency, operation.hash);
+      const txDetails = await apiClient.getTransactionById(configOrCurrencyId, operation.hash);
       const recordTransition = txDetails.execution.transitions[0] ?? null;
       const recipientInput = recordTransition?.inputs[0] ?? {};
       const recipientArgument = "value" in recipientInput ? recipientInput : null;
@@ -467,7 +467,7 @@ export const patchPublicOperations = async ({
       ) {
         const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
         const recipientData = await sdkClient.decryptCiphertext({
-          currency,
+          configOrCurrencyId,
           ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,

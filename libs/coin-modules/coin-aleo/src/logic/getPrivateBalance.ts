@@ -36,7 +36,7 @@ export async function getPrivateBalance({
     }
 
     const decryptedRecord = await sdkClient.decryptRecord({
-      currency,
+      configOrCurrencyId: currency.id,
       viewKey,
       ciphertext: record.record_ciphertext,
     });

@@ -27,10 +27,10 @@ describe("lastBlock", () => {
 
     mockGetLatestBlock.mockResolvedValue(mockBlockResponse);
 
-    const result = await lastBlock(mockCurrency);
+    const result = await lastBlock(mockCurrency.id);
 
     expect(mockGetLatestBlock).toHaveBeenCalledTimes(1);
-    expect(mockGetLatestBlock).toHaveBeenCalledWith(mockCurrency);
+    expect(mockGetLatestBlock).toHaveBeenCalledWith(mockCurrency.id);
     expect(result).toEqual({
       height: 1234567,
       hash: "ab1234567890",

@@ -45,7 +45,7 @@ async function buildRootAuthorization(
   );
 
   return sdkClient.createAuthorization({
-    currency: account.currency,
+    configOrCurrencyId: account.currency.id,
     request,
     signatures: signature,
     viewKey,
@@ -79,7 +79,7 @@ async function buildFeeAuthorization(
   const { signature } = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
 
   const result = await sdkClient.createAuthorization({
-    currency: account.currency,
+    configOrCurrencyId: account.currency.id,
     request: feeRequest,
     signatures: signature,
     viewKey,

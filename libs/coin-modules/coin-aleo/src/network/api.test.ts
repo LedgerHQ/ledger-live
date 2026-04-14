@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
-import { getNetworkConfig } from "../logic/utils";
+import { resolveConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   testnetPrivateRecord,
   getMockedTransactionDetails,
@@ -18,20 +19,15 @@ jest.mock("../logic/utils");
 
 describe("apiClient", () => {
   const mockCurrency = getMockedCurrency();
-  const mockNetworkConfig: ReturnType<typeof getNetworkConfig> = {
-    nodeUrl: "https://api.aleo.network",
-    sdkUrl: "https://sdk.aleo.network",
-    networkType: "mainnet",
-  };
-  const testnetConfig: ReturnType<typeof getNetworkConfig> = {
-    nodeUrl: "https://api.testnet.aleo.network",
-    sdkUrl: "https://sdk.testnet.aleo.network",
-    networkType: "testnet",
+  const mockResolvedConfig = getMockedConfig("testnet");
+  const customNodeConfig = {
+    ...getMockedConfig("testnet"),
+    apiUrls: { ...getMockedConfig("testnet").apiUrls, node: "https://custom-node.example.com" },
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(getNetworkConfig).mockReturnValue(mockNetworkConfig);
+    jest.mocked(resolveConfig).mockReturnValue(mockResolvedConfig);
   });
 
   describe("getLatestBlock", () => {
@@ -49,14 +45,12 @@ describe("apiClient", () => {
 
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getLatestBlock(mockCurrency);
+      const result = await apiClient.getLatestBlock(mockCurrency.id);
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/blocks/latest`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/blocks/latest`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -64,11 +58,11 @@ describe("apiClient", () => {
     it("should throw an error when network request fails", async () => {
       jest.mocked(network).mockRejectedValue(new Error("Network error"));
 
-      await expect(apiClient.getLatestBlock(mockCurrency)).rejects.toThrow("Network error");
+      await expect(apiClient.getLatestBlock(mockCurrency.id)).rejects.toThrow("Network error");
     });
 
     it("should use correct network configuration", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
 
       const mockResponse: AleoLatestBlockResponse = {
         block_hash: "test123",
@@ -83,13 +77,11 @@ describe("apiClient", () => {
 
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      await apiClient.getLatestBlock(mockCurrency);
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      await apiClient.getLatestBlock(mockCurrency.id);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/blocks/latest`,
+        url: `${customNodeConfig.apiUrls.node}/v2/testnet/blocks/latest`,
       });
     });
   });
@@ -101,14 +93,12 @@ describe("apiClient", () => {
 
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getTransactionById(mockCurrency, mockTransactionId);
+      const result = await apiClient.getTransactionById(mockCurrency.id, mockTransactionId);
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/${mockTransactionId}`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/${mockTransactionId}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -116,13 +106,13 @@ describe("apiClient", () => {
     it("should throw an error when transaction is not found", async () => {
       jest.mocked(network).mockRejectedValue(new Error("Transaction not found"));
 
-      await expect(apiClient.getTransactionById(mockCurrency, "at1nonexistent")).rejects.toThrow(
+      await expect(apiClient.getTransactionById(mockCurrency.id, "at1nonexistent")).rejects.toThrow(
         "Transaction not found",
       );
     });
 
     it("should use correct network configuration for testnet", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
 
       const mockTransactionId = "at1testnet123";
       const mockResponse = getMockedSimpleTransactionDetails(mockTransactionId, {
@@ -132,13 +122,11 @@ describe("apiClient", () => {
 
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      await apiClient.getTransactionById(mockCurrency, mockTransactionId);
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      await apiClient.getTransactionById(mockCurrency.id, mockTransactionId);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/transactions/${mockTransactionId}`,
+        url: `${customNodeConfig.apiUrls.node}/v2/testnet/transactions/${mockTransactionId}`,
       });
     });
   });
@@ -152,16 +140,14 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
       });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
       });
       expect(result).toEqual(mockResponse);
       expect(result.transactions).toHaveLength(2);
@@ -176,16 +162,14 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         limit: customLimit,
       });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=10&sort=asc&direction=next`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=10&sort=asc&direction=next`,
       });
     });
 
@@ -197,16 +181,14 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         order: "desc",
       });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=desc&direction=next`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=desc&direction=next`,
       });
     });
 
@@ -227,16 +209,14 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         cursor,
       });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
       });
     });
 
@@ -248,16 +228,14 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         direction: "prev",
       });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=prev`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=prev`,
       });
     });
 
@@ -285,19 +263,17 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         cursor,
         limit: 20,
         order: "desc",
         direction: "prev",
       });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -307,7 +283,7 @@ describe("apiClient", () => {
 
       await expect(
         apiClient.getAccountPublicTransactions({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
         }),
       ).rejects.toThrow("Network error");
@@ -321,7 +297,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
       });
 
@@ -329,7 +305,7 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
 
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
@@ -338,15 +314,13 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
       });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
+        url: `${customNodeConfig.apiUrls.node}/v2/testnet/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
       });
     });
   });
@@ -358,14 +332,12 @@ describe("apiClient", () => {
       const mockBalance = "1000000u64";
       jest.mocked(network).mockResolvedValue({ data: mockBalance, status: 200 });
 
-      const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      const result = await apiClient.getAccountBalance(mockCurrency.id, mockAddress);
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
+        url: `${mockResolvedConfig.apiUrls.node}/v2/${mockResolvedConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
       });
       expect(result).toEqual(mockBalance);
     });
@@ -373,7 +345,7 @@ describe("apiClient", () => {
     it("should return null when account has no balance", async () => {
       jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
 
-      const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      const result = await apiClient.getAccountBalance(mockCurrency.id, mockAddress);
 
       expect(result).toBeNull();
     });
@@ -382,21 +354,21 @@ describe("apiClient", () => {
       const mockError = new Error("Network error");
       jest.mocked(network).mockRejectedValue(mockError);
 
-      await expect(apiClient.getAccountBalance(mockCurrency, mockAddress)).rejects.toThrow(
+      await expect(apiClient.getAccountBalance(mockCurrency.id, mockAddress)).rejects.toThrow(
         "Network error",
       );
     });
 
     it("should use correct network configuration for testnet", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest.mocked(network).mockResolvedValue({ data: "500000u64", status: 200 });
 
-      await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      await apiClient.getAccountBalance(mockCurrency.id, mockAddress);
 
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
+        url: `${customNodeConfig.apiUrls.node}/v2/testnet/program/credits.aleo/mapping/account/${mockAddress}`,
       });
     });
   });
@@ -409,29 +381,27 @@ describe("apiClient", () => {
       };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getScannerPublicKey(mockCurrency);
+      const result = await apiClient.getScannerPublicKey(mockCurrency.id);
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/pubkey`,
+        url: `${mockResolvedConfig.apiUrls.node}/scanner/${mockResolvedConfig.networkType}/pubkey`,
       });
       expect(result).toEqual(mockResponse);
     });
 
     it("should use the correct network type in the URL", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest
         .mocked(network)
         .mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" }, status: 200 });
 
-      await apiClient.getScannerPublicKey(mockCurrency);
+      await apiClient.getScannerPublicKey(mockCurrency.id);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/scanner/testnet/pubkey`,
+        url: `${customNodeConfig.apiUrls.node}/scanner/testnet/pubkey`,
       });
     });
 
@@ -439,7 +409,7 @@ describe("apiClient", () => {
       const mockError = new Error("Forbidden");
       jest.mocked(network).mockRejectedValue(mockError);
 
-      await expect(apiClient.getScannerPublicKey(mockCurrency)).rejects.toThrow("Forbidden");
+      await expect(apiClient.getScannerPublicKey(mockCurrency.id)).rejects.toThrow("Forbidden");
     });
   });
 
@@ -452,28 +422,26 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.registerForScanningAccountRecordsEncrypted({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         encryptedData: mockEncryptedData,
         keyId: mockKeyId,
       });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/register/encrypted`,
+        url: `${mockResolvedConfig.apiUrls.node}/scanner/${mockResolvedConfig.networkType}/register/encrypted`,
         data: { key_id: mockKeyId, ciphertext: mockEncryptedData },
       });
       expect(result).toEqual(mockResponse);
     });
 
     it("should use the correct network type in the URL", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest.mocked(network).mockResolvedValue({ data: { uuid: "scan-uuid-testnet" }, status: 200 });
 
       await apiClient.registerForScanningAccountRecordsEncrypted({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         encryptedData: mockEncryptedData,
         keyId: mockKeyId,
       });
@@ -481,7 +449,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${testnetConfig.nodeUrl}/scanner/${testnetConfig.networkType}/register/encrypted`,
+        url: `${customNodeConfig.apiUrls.node}/scanner/testnet/register/encrypted`,
         data: { key_id: mockKeyId, ciphertext: mockEncryptedData },
       });
     });
@@ -492,7 +460,7 @@ describe("apiClient", () => {
 
       await expect(
         apiClient.registerForScanningAccountRecordsEncrypted({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           encryptedData: mockEncryptedData,
           keyId: mockKeyId,
         }),
@@ -507,14 +475,12 @@ describe("apiClient", () => {
       const mockResponse = { synced: true, percentage: 100 };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getRecordScannerStatus(mockCurrency, mockUuid);
+      const result = await apiClient.getRecordScannerStatus(mockCurrency.id, mockUuid);
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/status`,
+        url: `${mockResolvedConfig.apiUrls.node}/scanner/${mockResolvedConfig.networkType}/status`,
         headers: { "Content-Type": "application/json" },
         data: `"${mockUuid}"`,
       });
@@ -525,24 +491,24 @@ describe("apiClient", () => {
       const mockResponse = { synced: false, percentage: 42 };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getRecordScannerStatus(mockCurrency, mockUuid);
+      const result = await apiClient.getRecordScannerStatus(mockCurrency.id, mockUuid);
 
       expect(result.synced).toBe(false);
       expect(result.percentage).toBe(42);
     });
 
     it("should use the correct network type in the URL", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest
         .mocked(network)
         .mockResolvedValue({ data: { synced: true, percentage: 100 }, status: 200 });
 
-      await apiClient.getRecordScannerStatus(mockCurrency, mockUuid);
+      await apiClient.getRecordScannerStatus(mockCurrency.id, mockUuid);
 
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${testnetConfig.nodeUrl}/scanner/${testnetConfig.networkType}/status`,
+        url: `${customNodeConfig.apiUrls.node}/scanner/testnet/status`,
         headers: { "Content-Type": "application/json" },
         data: `"${mockUuid}"`,
       });
@@ -552,7 +518,7 @@ describe("apiClient", () => {
       const mockError = new Error("Status fetch failed");
       jest.mocked(network).mockRejectedValue(mockError);
 
-      await expect(apiClient.getRecordScannerStatus(mockCurrency, mockUuid)).rejects.toThrow(
+      await expect(apiClient.getRecordScannerStatus(mockCurrency.id, mockUuid)).rejects.toThrow(
         "Status fetch failed",
       );
     });
@@ -566,16 +532,14 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
       });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/records/owned`,
+        url: `${mockResolvedConfig.apiUrls.node}/scanner/${mockResolvedConfig.networkType}/records/owned`,
         data: { uuid: mockUuid },
       });
       expect(result).toEqual(mockResponse);
@@ -585,7 +549,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         unspent: true,
       });
@@ -602,7 +566,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         unspent: false,
       });
@@ -619,7 +583,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
       });
 
@@ -632,7 +596,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         start: mockStart,
       });
@@ -649,7 +613,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
       });
 
@@ -662,7 +626,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         unspent: true,
         start: mockStart,
@@ -680,7 +644,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       const result = await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
       });
 
@@ -693,18 +657,18 @@ describe("apiClient", () => {
 
       await expect(
         apiClient.getAccountOwnedRecords({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           uuid: mockUuid,
         }),
       ).rejects.toThrow("Unauthorized");
     });
 
     it("should use the correct network type in the URL for testnet", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
       });
 
@@ -712,7 +676,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "POST",
-          url: `${testnetConfig.nodeUrl}/scanner/${testnetConfig.networkType}/records/owned`,
+          url: `${customNodeConfig.apiUrls.node}/scanner/testnet/records/owned`,
         }),
       );
     });
@@ -721,7 +685,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         resultsPerPage: 100,
       });
@@ -738,7 +702,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         page: 2,
       });
@@ -756,7 +720,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         start: mockStart,
         resultsPerPage: 500,
@@ -778,7 +742,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         unspent: true,
         resultsPerPage: 200,
@@ -801,7 +765,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUuid,
         page: 0,
       });
@@ -823,29 +787,27 @@ describe("apiClient", () => {
       };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getProvePublicKey({ currency: mockCurrency });
+      const result = await apiClient.getProvePublicKey({ configOrCurrencyId: mockCurrency.id });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/pubkey`,
+        url: `${mockResolvedConfig.apiUrls.node}/prove/${mockResolvedConfig.networkType}/pubkey`,
       });
       expect(result).toEqual(mockResponse);
     });
 
     it("should use the correct network type in the URL", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest
         .mocked(network)
         .mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" }, status: 200 });
 
-      await apiClient.getProvePublicKey({ currency: mockCurrency });
+      await apiClient.getProvePublicKey({ configOrCurrencyId: mockCurrency.id });
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/pubkey`,
+        url: `${customNodeConfig.apiUrls.node}/prove/testnet/pubkey`,
       });
     });
 
@@ -853,9 +815,9 @@ describe("apiClient", () => {
       const mockError = new Error("Forbidden");
       jest.mocked(network).mockRejectedValue(mockError);
 
-      await expect(apiClient.getProvePublicKey({ currency: mockCurrency })).rejects.toThrow(
-        "Forbidden",
-      );
+      await expect(
+        apiClient.getProvePublicKey({ configOrCurrencyId: mockCurrency.id }),
+      ).rejects.toThrow("Forbidden");
     });
   });
 
@@ -868,18 +830,16 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       const result = await apiClient.submitDelegatedProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
         broadcast: true,
       });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/prove`,
+        url: `${mockResolvedConfig.apiUrls.node}/prove/${mockResolvedConfig.networkType}/prove`,
         data: {
           authorization: mockAuthorization,
           fee_authorization: mockFeeAuthorization,
@@ -890,11 +850,11 @@ describe("apiClient", () => {
     });
 
     it("should use correct network URL for testnet", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
         broadcast: true,
@@ -903,7 +863,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/prove`,
+          url: `${customNodeConfig.apiUrls.node}/prove/testnet/prove`,
         }),
       );
     });
@@ -914,7 +874,7 @@ describe("apiClient", () => {
 
       await expect(
         apiClient.submitDelegatedProvingRequest({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           authorization: mockAuthorization,
           feeAuthorization: mockFeeAuthorization,
           broadcast: true,
@@ -926,7 +886,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
         broadcast: false,
@@ -946,7 +906,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         authorization: mockAuthorization,
         broadcast: true,
       });
@@ -972,17 +932,15 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       const result = await apiClient.submitEncryptedDelegatedProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         keyId: mockKeyId,
         encryptedData: mockEncryptedData,
       });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/prove/encrypted`,
+        url: `${mockResolvedConfig.apiUrls.node}/prove/${mockResolvedConfig.networkType}/prove/encrypted`,
         data: {
           key_id: mockKeyId,
           ciphertext: mockEncryptedData,
@@ -992,11 +950,11 @@ describe("apiClient", () => {
     });
 
     it("should use correct network URL for testnet", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customNodeConfig);
       jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitEncryptedDelegatedProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         keyId: mockKeyId,
         encryptedData: mockEncryptedData,
       });
@@ -1004,7 +962,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/prove/encrypted`,
+          url: `${customNodeConfig.apiUrls.node}/prove/testnet/prove/encrypted`,
         }),
       );
     });
@@ -1015,7 +973,7 @@ describe("apiClient", () => {
 
       await expect(
         apiClient.submitEncryptedDelegatedProvingRequest({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           keyId: mockKeyId,
           encryptedData: mockEncryptedData,
         }),

@@ -47,7 +47,7 @@ export async function listPrivateOperations({
   const consumedRecordTags = new Set<string>();
   const nativePrivateRecords = privateRecords.filter(onlyNativeCoinOperations);
   const enrichedRecords = await promiseAllBatched(2, nativePrivateRecords, rawRecord =>
-    enrichPrivateRecord({ currency, rawRecord, address, viewKey }),
+    enrichPrivateRecord({ configOrCurrencyId: currency.id, rawRecord, address, viewKey }),
   );
 
   // Build the set of record tags consumed as inputs in outgoing transactions.

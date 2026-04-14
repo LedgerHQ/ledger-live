@@ -22,7 +22,7 @@ export async function broadcast({
 
   if (!config.useEncryptedProve) {
     const res = await apiClient.submitDelegatedProvingRequest({
-      currency: account.currency,
+      configOrCurrencyId,
       authorization,
       ...(feeAuthorization && { feeAuthorization }),
       broadcast: true,
@@ -32,19 +32,19 @@ export async function broadcast({
   }
 
   const publicKeyResponse = await apiClient.getProvePublicKey({
-    currency: account.currency,
+    configOrCurrencyId,
   });
 
   const encryptedData = await sdkClient.encryptProvingRequest({
     publicKey: publicKeyResponse.public_key,
-    currency: account.currency,
+    configOrCurrencyId,
     authorization,
     ...(feeAuthorization && { feeAuthorization }),
     broadcast: true,
   });
 
   const res = await apiClient.submitEncryptedDelegatedProvingRequest({
-    currency: account.currency,
+    configOrCurrencyId,
     keyId: publicKeyResponse.key_id,
     encryptedData,
   });

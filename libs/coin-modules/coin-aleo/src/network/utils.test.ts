@@ -70,7 +70,7 @@ describe("network/utils", () => {
           });
 
         const result = await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: true,
           minBlockHeight,
@@ -78,13 +78,13 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(2);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenNthCalledWith(1, {
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: 50,
           order: "asc",
         });
         expect(apiClient.getAccountPublicTransactions).toHaveBeenNthCalledWith(2, {
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: 50,
           order: "asc",
@@ -109,7 +109,7 @@ describe("network/utils", () => {
         });
 
         const result = await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: true,
           minBlockHeight,
@@ -117,7 +117,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: 50,
           order: "asc",
@@ -143,7 +143,7 @@ describe("network/utils", () => {
         });
 
         const result = await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: true,
           minBlockHeight,
@@ -152,7 +152,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: 50,
           order: "desc",
@@ -179,7 +179,7 @@ describe("network/utils", () => {
         });
 
         const result = await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: false,
           minBlockHeight,
@@ -188,7 +188,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit,
           order: "asc",
@@ -211,7 +211,7 @@ describe("network/utils", () => {
         });
 
         const result = await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: false,
           minBlockHeight,
@@ -220,7 +220,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit,
           order: "asc",
@@ -240,7 +240,7 @@ describe("network/utils", () => {
         });
 
         await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: false,
           minBlockHeight,
@@ -249,7 +249,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: 50,
           order: "asc",
@@ -268,7 +268,7 @@ describe("network/utils", () => {
         });
 
         const result = await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: true,
           minBlockHeight,
@@ -289,7 +289,7 @@ describe("network/utils", () => {
         });
 
         await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: true,
           minBlockHeight,
@@ -298,7 +298,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: customLimit,
           order: "asc",
@@ -315,7 +315,7 @@ describe("network/utils", () => {
         });
 
         await fetchAccountTransactionsFromHeight({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           fetchAllPages: true,
           minBlockHeight,
@@ -324,7 +324,7 @@ describe("network/utils", () => {
 
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
         expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           limit: 50,
           order: "desc",
@@ -356,23 +356,23 @@ describe("network/utils", () => {
         mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 5 });
 
         const result = await accessProvableApi({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           viewKey: mockViewKey,
           provableApi: existingProvableApi,
         });
 
         expect(mockGetScannerPublicKey).toHaveBeenCalledTimes(1);
-        expect(mockGetScannerPublicKey).toHaveBeenCalledWith(mockCurrency);
+        expect(mockGetScannerPublicKey).toHaveBeenCalledWith(mockCurrency.id);
         expect(mockEncryptRegistrationPayload).toHaveBeenCalledTimes(1);
         expect(mockEncryptRegistrationPayload).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           publicKey: mockPublicKey,
           viewKey: mockViewKey,
           start: 0,
         });
         expect(mockRegisterForScanningAccountRecords).toHaveBeenCalledTimes(1);
         expect(mockRegisterForScanningAccountRecords).toHaveBeenCalledWith({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           encryptedData: mockEncryptedData,
           keyId: mockKeyId,
         });
@@ -388,7 +388,7 @@ describe("network/utils", () => {
         mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 60 });
 
         const result = await accessProvableApi({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           viewKey: mockViewKey,
           provableApi: existingProvableApi,
         });
@@ -408,7 +408,7 @@ describe("network/utils", () => {
         mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
 
         const result = await accessProvableApi({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           viewKey: mockViewKey,
           provableApi: existingProvableApi,
         });
@@ -430,7 +430,7 @@ describe("network/utils", () => {
         mockGetRecordScannerStatus.mockRejectedValue(error422);
 
         const result = await accessProvableApi({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           viewKey: mockViewKey,
           provableApi: existingProvableApi,
         });
@@ -450,7 +450,7 @@ describe("network/utils", () => {
 
         await expect(
           accessProvableApi({
-            currency: mockCurrency,
+            configOrCurrencyId: mockCurrency.id,
             viewKey: mockViewKey,
             provableApi: existingProvableApi,
           }),
@@ -466,7 +466,7 @@ describe("network/utils", () => {
         mockGetRecordScannerStatus.mockResolvedValue(null as any);
 
         const result = await accessProvableApi({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           viewKey: mockViewKey,
           provableApi: existingProvableApi,
         });
@@ -479,7 +479,7 @@ describe("network/utils", () => {
         mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 0 });
 
         const result = await accessProvableApi({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           viewKey: mockViewKey,
           provableApi: null,
         });
@@ -520,7 +520,7 @@ describe("network/utils", () => {
       );
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -528,7 +528,7 @@ describe("network/utils", () => {
 
       expect(result).toBeNull();
       expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
-      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx_pub_to_priv");
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency.id, "tx_pub_to_priv");
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
       expect(mockDecryptRecord).not.toHaveBeenCalled();
     });
@@ -545,7 +545,7 @@ describe("network/utils", () => {
       );
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -583,7 +583,7 @@ describe("network/utils", () => {
       );
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -625,7 +625,7 @@ describe("network/utils", () => {
       );
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -667,7 +667,7 @@ describe("network/utils", () => {
       );
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -709,7 +709,7 @@ describe("network/utils", () => {
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -760,7 +760,7 @@ describe("network/utils", () => {
         .mockResolvedValueOnce({ plaintext: "750000u64" });
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -774,7 +774,7 @@ describe("network/utils", () => {
       expect(mockDecryptCiphertext).toHaveBeenCalledTimes(2);
       expect(mockDecryptRecord).not.toHaveBeenCalled();
       expect(mockDecryptCiphertext).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         ciphertext: "ciphertext_recipient",
         tpk: "tpk_private",
         viewKey: mockViewKey,
@@ -783,7 +783,7 @@ describe("network/utils", () => {
         outputIndex: 1, // RECIPIENT_ARG_INDEX
       });
       expect(mockDecryptCiphertext).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         ciphertext: "ciphertext_amount",
         tpk: "tpk_private",
         viewKey: mockViewKey,
@@ -827,7 +827,7 @@ describe("network/utils", () => {
       });
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -872,7 +872,7 @@ describe("network/utils", () => {
       });
 
       const result = await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
@@ -885,7 +885,7 @@ describe("network/utils", () => {
       expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
       expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
       expect(mockDecryptRecord).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         ciphertext: "ciphertext_output_record",
         viewKey: mockViewKey,
       });
@@ -923,14 +923,14 @@ describe("network/utils", () => {
       });
 
       await enrichPrivateRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         rawRecord,
         address: mockEnrichAddress,
         viewKey: mockViewKey,
       });
 
       expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
-      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx_with_spaces");
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency.id, "tx_with_spaces");
       expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
@@ -949,7 +949,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [],
         address: patchAddress,
@@ -980,7 +980,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [matchingRecord],
         address: patchAddress,
@@ -1026,7 +1026,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [matchingRecord],
         address: patchAddress,
@@ -1068,7 +1068,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [matchingRecord],
         address: patchAddress,
@@ -1114,7 +1114,7 @@ describe("network/utils", () => {
       mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1decrypted_recipient" });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [feeRecord],
         address: patchAddress,
@@ -1161,7 +1161,7 @@ describe("network/utils", () => {
 
       // no private records -> latestScannedBlockHeight = 0, which is less than tx block 100
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [],
         address: patchAddress,
@@ -1176,7 +1176,7 @@ describe("network/utils", () => {
         }),
       ]);
       expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
-      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, txHash);
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency.id, txHash);
       expect(mockDecryptCiphertext).toHaveBeenCalledTimes(1);
       expect(mockDecryptCiphertext).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -1225,7 +1225,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [scannerWatermarkRecord],
         address: patchAddress,
@@ -1254,7 +1254,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [patchedOp],
         privateRecords: [],
         address: patchAddress,
@@ -1295,7 +1295,7 @@ describe("network/utils", () => {
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [],
         address: patchAddress,
@@ -1337,7 +1337,7 @@ describe("network/utils", () => {
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [],
         address: patchAddress,
@@ -1377,7 +1377,7 @@ describe("network/utils", () => {
 
       await expect(
         patchPublicOperations({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           publicOperations: [publicOp],
           privateRecords: [],
           address: patchAddress,
@@ -1401,7 +1401,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [publicOp],
         privateRecords: [recordWithSpaces],
         address: patchAddress,
@@ -1434,7 +1434,7 @@ describe("network/utils", () => {
       });
 
       const result = await patchPublicOperations({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicOperations: [fullyPublicOp, semiPublicOp],
         privateRecords: [matchingRecord],
         address: patchAddress,
@@ -1463,13 +1463,13 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce(records);
 
       const result = await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
       });
 
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(1);
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         resultsPerPage: DEFAULT_RECORDS_PAGE_SIZE,
         page: 0,
@@ -1484,20 +1484,20 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce(page0).mockResolvedValueOnce(page1);
 
       const result = await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         resultsPerPage: pageSize,
       });
 
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(1, {
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         resultsPerPage: pageSize,
         page: 0,
       });
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(2, {
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         resultsPerPage: pageSize,
         page: 1,
@@ -1509,7 +1509,7 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce([]);
 
       const result = await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
       });
 
@@ -1522,7 +1522,7 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce(records);
 
       await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         unspent: true,
       });
@@ -1538,7 +1538,7 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce(records);
 
       await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         start: 5000,
       });
@@ -1553,7 +1553,7 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce([]);
 
       await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
       });
 
@@ -1567,7 +1567,7 @@ describe("network/utils", () => {
       mockGetAccountOwnedRecords.mockResolvedValueOnce([]);
 
       await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
       });
 
@@ -1588,7 +1588,7 @@ describe("network/utils", () => {
         .mockResolvedValueOnce(page2);
 
       const result = await fetchAllOwnedRecords({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         uuid: mockUUID,
         resultsPerPage: pageSize,
       });
@@ -1603,7 +1603,7 @@ describe("network/utils", () => {
 
       await expect(
         fetchAllOwnedRecords({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           uuid: mockUUID,
         }),
       ).rejects.toThrow("Scanner unavailable");

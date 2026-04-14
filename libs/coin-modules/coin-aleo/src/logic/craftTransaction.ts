@@ -21,7 +21,7 @@ export async function craftTransaction({
 }): Promise<CraftedTransaction> {
   const intent = mapTransactionIntentToSdkIntent(txIntent);
   const response = await sdkClient.createRequestFromIntent({
-    currency,
+    configOrCurrencyId: currency.id,
     intent,
     feeConfiguration,
     ...(viewKey !== undefined && { viewKey }),

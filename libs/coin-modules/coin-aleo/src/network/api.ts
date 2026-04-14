@@ -1,6 +1,8 @@
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import { PROGRAM_ID } from "../constants";
+import { resolveConfig } from "../logic/utils";
+import type { AleoCoinConfig } from "../types";
 import type {
   AleoLatestBlockResponse,
   AleoPublicTransactionDetailsResponse,
@@ -12,64 +14,64 @@ import type {
   AleoPrivateRecord,
   DelegatedProvingResponse,
 } from "../types/api";
-import { getNetworkConfig } from "../logic/utils";
-import { PROGRAM_ID } from "../constants";
 
-async function getLatestBlock(currency: CryptoCurrency): Promise<AleoLatestBlockResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+async function getLatestBlock(
+  configOrCurrencyId: AleoCoinConfig | string,
+): Promise<AleoLatestBlockResponse> {
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoLatestBlockResponse>({
     method: "GET",
-    url: `${nodeUrl}/v2/${networkType}/blocks/latest`,
+    url: `${apiUrls.node}/v2/${networkType}/blocks/latest`,
   });
 
   return res.data;
 }
 
 async function getAccountBalance(
-  currency: CryptoCurrency,
+  configOrCurrencyId: AleoCoinConfig | string,
   address: string,
 ): Promise<string | null> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<string | null>({
     method: "GET",
-    url: `${nodeUrl}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
   });
 
   return res.data;
 }
 
 async function getTransactionById(
-  currency: CryptoCurrency,
+  configOrCurrencyId: AleoCoinConfig | string,
   transactionId: string,
 ): Promise<AleoPublicTransactionDetailsResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoPublicTransactionDetailsResponse>({
     method: "GET",
-    url: `${nodeUrl}/v2/${networkType}/transactions/${transactionId}`,
+    url: `${apiUrls.node}/v2/${networkType}/transactions/${transactionId}`,
   });
 
   return res.data;
 }
 
 async function getAccountPublicTransactions({
-  currency,
+  configOrCurrencyId,
   address,
   cursor,
   limit = 50,
   order = "asc",
   direction = "next",
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   address: string;
   cursor?: string;
   limit?: number;
   order?: "asc" | "desc";
   direction?: "prev" | "next";
 }): Promise<AleoPublicTransactionsResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
   const params = new URLSearchParams({
     metadata: "true",
     limit: limit.toString(),
@@ -80,39 +82,39 @@ async function getAccountPublicTransactions({
 
   const res: LiveNetworkResponse<AleoPublicTransactionsResponse> = await network({
     method: "GET",
-    url: `${nodeUrl}/v2/${networkType}/transactions/address/${address}?${params.toString()}`,
+    url: `${apiUrls.node}/v2/${networkType}/transactions/address/${address}?${params.toString()}`,
   });
 
   return res.data;
 }
 
 async function getScannerPublicKey(
-  currency: CryptoCurrency,
+  configOrCurrencyId: AleoCoinConfig | string,
 ): Promise<AleoGetScannerPublicKeyResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoGetScannerPublicKeyResponse>({
     method: "GET",
-    url: `${nodeUrl}/scanner/${networkType}/pubkey`,
+    url: `${apiUrls.node}/scanner/${networkType}/pubkey`,
   });
 
   return res.data;
 }
 
 async function registerForScanningAccountRecordsEncrypted({
-  currency,
+  configOrCurrencyId,
   encryptedData,
   keyId,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   encryptedData: string;
   keyId: string;
 }): Promise<AleoRegisterForRecordsResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoRegisterForRecordsResponse>({
     method: "POST",
-    url: `${nodeUrl}/scanner/${networkType}/register/encrypted`,
+    url: `${apiUrls.node}/scanner/${networkType}/register/encrypted`,
     data: {
       key_id: keyId,
       ciphertext: encryptedData,
@@ -123,14 +125,14 @@ async function registerForScanningAccountRecordsEncrypted({
 }
 
 const getRecordScannerStatus = async (
-  currency: CryptoCurrency,
+  configOrCurrencyId: AleoCoinConfig | string,
   uuid: string,
 ): Promise<AleoRecordScannerStatusResponse> => {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoRecordScannerStatusResponse>({
     method: "POST",
-    url: `${nodeUrl}/scanner/${networkType}/status`,
+    url: `${apiUrls.node}/scanner/${networkType}/status`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -141,21 +143,21 @@ const getRecordScannerStatus = async (
 };
 
 async function getAccountOwnedRecords({
-  currency,
+  configOrCurrencyId,
   uuid,
   unspent,
   start,
   resultsPerPage,
   page,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   uuid: string;
   unspent?: boolean;
   start?: number;
   resultsPerPage?: number;
   page?: number;
 }): Promise<AleoPrivateRecord[]> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const filter = {
     ...(typeof start === "number" && { start }),
@@ -165,7 +167,7 @@ async function getAccountOwnedRecords({
 
   const res = await network<AleoPrivateRecord[]>({
     method: "POST",
-    url: `${nodeUrl}/scanner/${networkType}/records/owned`,
+    url: `${apiUrls.node}/scanner/${networkType}/records/owned`,
     data: {
       ...(typeof unspent === "boolean" && { unspent }),
       ...(Object.keys(filter).length > 0 && { filter }),
@@ -177,20 +179,20 @@ async function getAccountOwnedRecords({
 }
 
 async function submitDelegatedProvingRequest({
-  currency,
+  configOrCurrencyId,
   authorization,
   feeAuthorization,
   broadcast,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   authorization: Record<string, unknown>;
   feeAuthorization?: Record<string, unknown>;
   broadcast: boolean;
 }): Promise<DelegatedProvingResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
   const res = await network<DelegatedProvingResponse>({
     method: "POST",
-    url: `${nodeUrl}/prove/${networkType}/prove`,
+    url: `${apiUrls.node}/prove/${networkType}/prove`,
     data: {
       authorization,
       ...(feeAuthorization ? { fee_authorization: feeAuthorization } : {}),
@@ -202,33 +204,33 @@ async function submitDelegatedProvingRequest({
 }
 
 async function getProvePublicKey({
-  currency,
+  configOrCurrencyId,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
 }): Promise<AleoGetProvePublicKeyResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoGetProvePublicKeyResponse>({
     method: "GET",
-    url: `${nodeUrl}/prove/${networkType}/pubkey`,
+    url: `${apiUrls.node}/prove/${networkType}/pubkey`,
   });
 
   return res.data;
 }
 
 async function submitEncryptedDelegatedProvingRequest({
-  currency,
+  configOrCurrencyId,
   keyId,
   encryptedData,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   keyId: string;
   encryptedData: string;
 }): Promise<DelegatedProvingResponse> {
-  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const { apiUrls, networkType } = resolveConfig(configOrCurrencyId);
   const res = await network<DelegatedProvingResponse>({
     method: "POST",
-    url: `${nodeUrl}/prove/${networkType}/prove/encrypted`,
+    url: `${apiUrls.node}/prove/${networkType}/prove/encrypted`,
     data: {
       key_id: keyId,
       ciphertext: encryptedData,

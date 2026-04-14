@@ -95,7 +95,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,
@@ -123,7 +123,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,
@@ -151,7 +151,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,

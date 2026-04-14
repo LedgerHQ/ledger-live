@@ -1,7 +1,6 @@
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNetworkConfig } from "../logic/utils";
-import type { AleoDecryptedCiphertextResponse } from "../types";
+import { resolveConfig } from "../logic/utils";
+import type { AleoCoinConfig, AleoDecryptedCiphertextResponse } from "../types";
 import type {
   AleoDecryptedRecordResponse,
   AleoEncryptedRegistrationResponse,
@@ -13,21 +12,21 @@ import type {
 } from "../types/sdk";
 
 async function encryptRegistrationPayload({
-  currency,
+  configOrCurrencyId,
   publicKey,
   viewKey,
   start,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   publicKey: string;
   viewKey: string;
   start: number;
 }): Promise<AleoEncryptedRegistrationResponse> {
-  const { sdkUrl } = getNetworkConfig(currency);
+  const { apiUrls } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoEncryptedRegistrationResponse>({
     method: "POST",
-    url: `${sdkUrl}/encrypt_registration`,
+    url: `${apiUrls.sdk}/encrypt_registration`,
     data: {
       public_key: publicKey,
       view_key: viewKey,
@@ -39,19 +38,19 @@ async function encryptRegistrationPayload({
 }
 
 async function decryptRecord({
-  currency,
+  configOrCurrencyId,
   ciphertext,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   ciphertext: string;
   viewKey: string;
 }): Promise<AleoDecryptedRecordResponse> {
-  const { sdkUrl } = getNetworkConfig(currency);
+  const { apiUrls } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoDecryptedRecordResponse>({
     method: "POST",
-    url: `${sdkUrl}/decrypt`,
+    url: `${apiUrls.sdk}/decrypt`,
     data: {
       ciphertext,
       view_key: viewKey,
@@ -62,7 +61,7 @@ async function decryptRecord({
 }
 
 async function decryptCiphertext({
-  currency,
+  configOrCurrencyId,
   ciphertext,
   tpk,
   viewKey,
@@ -70,7 +69,7 @@ async function decryptCiphertext({
   functionName,
   outputIndex,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   ciphertext: string;
   tpk: string;
   viewKey: string;
@@ -78,11 +77,11 @@ async function decryptCiphertext({
   functionName: string;
   outputIndex: number;
 }): Promise<AleoDecryptedCiphertextResponse> {
-  const { sdkUrl } = getNetworkConfig(currency);
+  const { apiUrls } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AleoDecryptedCiphertextResponse>({
     method: "POST",
-    url: `${sdkUrl}/symmetric_decrypt`,
+    url: `${apiUrls.sdk}/symmetric_decrypt`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -100,21 +99,21 @@ async function decryptCiphertext({
 }
 
 async function createRequestFromIntent({
-  currency,
+  configOrCurrencyId,
   intent,
   feeConfiguration,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   intent: Intent;
   feeConfiguration: FeeConfiguration | null;
   viewKey?: string;
 }): Promise<PreparedRequestResponse> {
-  const { sdkUrl } = getNetworkConfig(currency);
+  const { apiUrls } = resolveConfig(configOrCurrencyId);
 
   const res = await network<PreparedRequestResponse>({
     method: "POST",
-    url: `${sdkUrl}/transactions/request`,
+    url: `${apiUrls.sdk}/transactions/request`,
     data: {
       intent,
       fee: feeConfiguration,
@@ -126,21 +125,21 @@ async function createRequestFromIntent({
 }
 
 async function createAuthorization({
-  currency,
+  configOrCurrencyId,
   request,
   signatures,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   request: PreparedRequestResponse;
   signatures: string;
   viewKey: string;
 }) {
-  const { sdkUrl } = getNetworkConfig(currency);
+  const { apiUrls } = resolveConfig(configOrCurrencyId);
 
   const res = await network<AuthorizationResponse>({
     method: "POST",
-    url: `${sdkUrl}/transactions/authorization`,
+    url: `${apiUrls.sdk}/transactions/authorization`,
     data: {
       request,
       signatures,
@@ -152,23 +151,23 @@ async function createAuthorization({
 }
 
 async function encryptProvingRequest({
-  currency,
+  configOrCurrencyId,
   publicKey,
   authorization,
   feeAuthorization,
   broadcast,
 }: {
+  configOrCurrencyId: AleoCoinConfig | string;
   publicKey: string;
-  currency: CryptoCurrency;
   authorization: Record<string, unknown>;
   feeAuthorization?: Record<string, unknown>;
   broadcast: boolean;
 }): Promise<string> {
-  const { sdkUrl } = getNetworkConfig(currency);
+  const { apiUrls } = resolveConfig(configOrCurrencyId);
 
   const res = await network<EncryptProvingRequestResponse>({
     method: "POST",
-    url: `${sdkUrl}/encrypt_proving_request`,
+    url: `${apiUrls.sdk}/encrypt_proving_request`,
     data: {
       public_key: publicKey,
       proving_request: {

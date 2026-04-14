@@ -47,7 +47,7 @@ describe("broadcast", () => {
     expect(mockFromHex).toHaveBeenCalledWith(mockSignedTx);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledTimes(1);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledWith({
-      currency: mockAccount.currency,
+      configOrCurrencyId: mockConfig,
       authorization: mockAuthorization,
       feeAuthorization: mockFeeAuthorization,
       broadcast: true,
@@ -68,7 +68,7 @@ describe("broadcast", () => {
 
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledTimes(1);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledWith({
-      currency: mockAccount.currency,
+      configOrCurrencyId: mockConfig,
       authorization: mockAuthorization,
       broadcast: true,
     });
@@ -104,19 +104,19 @@ describe("broadcast", () => {
 
       expect(apiClient.getProvePublicKey).toHaveBeenCalledTimes(1);
       expect(apiClient.getProvePublicKey).toHaveBeenCalledWith({
-        currency: mockAccount.currency,
+        configOrCurrencyId: encryptedConfig,
       });
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledTimes(1);
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
         publicKey: mockPublicKeyResponse.public_key,
-        currency: mockAccount.currency,
+        configOrCurrencyId: encryptedConfig,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
         broadcast: true,
       });
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledTimes(1);
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledWith({
-        currency: mockAccount.currency,
+        configOrCurrencyId: encryptedConfig,
         keyId: mockPublicKeyResponse.key_id,
         encryptedData: mockEncryptedData,
       });
@@ -136,7 +136,7 @@ describe("broadcast", () => {
 
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
         publicKey: mockPublicKeyResponse.public_key,
-        currency: mockAccount.currency,
+        configOrCurrencyId: encryptedConfig,
         authorization: mockAuthorization,
         broadcast: true,
       });

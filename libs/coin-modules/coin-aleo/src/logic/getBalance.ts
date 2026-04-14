@@ -1,10 +1,13 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AleoCoinConfig } from "../types";
 import { apiClient } from "../network/api";
 import { parseMicrocredits } from "./utils";
 
-export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
-  const microcreditsU64 = await apiClient.getAccountBalance(currency, address);
+export async function getBalance(
+  configOrCurrencyId: AleoCoinConfig | string,
+  address: string,
+): Promise<Balance[]> {
+  const microcreditsU64 = await apiClient.getAccountBalance(configOrCurrencyId, address);
 
   if (!microcreditsU64) {
     return [];

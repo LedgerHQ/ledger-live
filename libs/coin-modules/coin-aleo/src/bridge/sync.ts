@@ -52,8 +52,8 @@ export async function performPublicSync(
   });
 
   const [balances, latestBlock] = await Promise.all([
-    getBalance(currency, address),
-    lastBlock(currency),
+    getBalance(currency.id, address),
+    lastBlock(currency.id),
   ]);
 
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
@@ -61,15 +61,15 @@ export async function performPublicSync(
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
   const shouldSyncFromScratch = !initialAccount;
-  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
+  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
-  const lastBlockHeight = shouldSyncFromScratch ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
 
   const latestAccountPublicOperations = await listOperations({
-    currency,
+    configOrCurrencyId: currency.id,
     address,
     ledgerAccountId,
     mode: "bridge",
@@ -165,7 +165,7 @@ export async function performPrivateSync(
   const viewKey = extractViewKey(initialAccount);
 
   const provableApi = await accessProvableApi({
-    currency,
+    configOrCurrencyId: currency.id,
     viewKey,
     provableApi: initialAccount.aleoResources?.provableApi ?? null,
   }).catch(err => {
@@ -202,7 +202,7 @@ export async function performPrivateSync(
     customData: viewKey,
   });
 
-  const latestBlock = await lastBlock(currency);
+  const latestBlock = await lastBlock(currency.id);
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
 
   const allOldOperations = initialAccount.operations ?? [];
@@ -211,12 +211,12 @@ export async function performPrivateSync(
 
   const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
     fetchAllOwnedRecords({
-      currency,
+      configOrCurrencyId: currency.id,
       uuid: provableApi.uuid,
       start: lastPrivateBlockHeight,
     }),
     fetchAllOwnedRecords({
-      currency,
+      configOrCurrencyId: currency.id,
       uuid: provableApi.uuid,
       unspent: true,
     }),
@@ -231,7 +231,7 @@ export async function performPrivateSync(
       privateRecords: rawNewPrivateRecords,
     }),
     patchPublicOperations({
-      currency,
+      configOrCurrencyId: currency.id,
       publicOperations: currentPublicOps,
       privateRecords: rawNewPrivateRecords,
       address,

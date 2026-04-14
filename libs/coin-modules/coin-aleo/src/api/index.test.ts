@@ -218,7 +218,7 @@ describe("createApi", () => {
 
       expect(mockedListOperations).toHaveBeenCalledTimes(1);
       expect(mockedListOperations).toHaveBeenCalledWith({
-        currency: expect.any(Object),
+        configOrCurrencyId: expect.objectContaining({ status: { type: "active" } }),
         address: "aleo1test",
         options,
         mode: "alpaca",

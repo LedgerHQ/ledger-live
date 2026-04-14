@@ -1,11 +1,11 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
-import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import type { AleoCoinConfig } from "../types";
+import type { AleoOperation } from "../types/bridge";
 import { toAlpacaOperation, toBridgeOperation } from "./utils";
 
 interface Params {
-  currency: CryptoCurrency;
+  configOrCurrencyId: AleoCoinConfig | string;
   address: string;
   options: ListOperationsOptions;
 }
@@ -29,12 +29,12 @@ export async function listOperations(params: AlpacaParams): Promise<Result<Opera
 export async function listOperations(
   params: BridgeParams | AlpacaParams,
 ): Promise<Result<AleoOperation | Operation>> {
-  const { mode, currency, address, options } = params;
+  const { mode, configOrCurrencyId, address, options } = params;
   const operations: Array<AleoOperation | Operation> = [];
   const fetchAllPages = mode === "bridge";
 
   const result = await fetchAccountTransactionsFromHeight({
-    currency,
+    configOrCurrencyId,
     address,
     fetchAllPages,
     minBlockHeight: options.minHeight,

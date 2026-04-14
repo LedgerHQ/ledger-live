@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
-import { getNetworkConfig } from "../logic/utils";
+import { resolveConfig } from "../logic/utils";
 import type { AleoEncryptedRegistrationResponse, FeeConfiguration, Intent } from "../types/sdk";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import { sdkClient } from "./sdk";
@@ -10,20 +11,15 @@ jest.mock("../logic/utils");
 
 describe("sdkClient", () => {
   const mockCurrency = getMockedCurrency();
-  const mockNetworkConfig: ReturnType<typeof getNetworkConfig> = {
-    nodeUrl: "https://node.aleo.network",
-    sdkUrl: "https://sdk.aleo.network",
-    networkType: "mainnet",
-  };
-  const testnetConfig: ReturnType<typeof getNetworkConfig> = {
-    nodeUrl: "https://node.testnet.aleo.network",
-    sdkUrl: "https://sdk.testnet.aleo.network",
-    networkType: "testnet",
+  const mockResolvedConfig = getMockedConfig("testnet");
+  const customSdkConfig = {
+    ...getMockedConfig("testnet"),
+    apiUrls: { ...getMockedConfig("testnet").apiUrls, sdk: "https://custom-sdk.example.com" },
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(getNetworkConfig).mockReturnValue(mockNetworkConfig);
+    jest.mocked(resolveConfig).mockReturnValue(mockResolvedConfig);
   });
 
   describe("encryptRegistrationPayload", () => {
@@ -31,25 +27,11 @@ describe("sdkClient", () => {
       encrypted: "mock_encrypted_data",
     };
 
-    it("should call getNetworkConfig with the provided currency", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
-
-      await sdkClient.encryptRegistrationPayload({
-        currency: mockCurrency,
-        publicKey: "aleo1publickey",
-        viewKey: "AViewKey1viewkey",
-        start: 0,
-      });
-
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
-    });
-
     it("should call network with correct method, url and data", async () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await sdkClient.encryptRegistrationPayload({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicKey: "aleo1publickey",
         viewKey: "AViewKey1viewkey",
         start: 0,
@@ -58,7 +40,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/encrypt_registration`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/encrypt_registration`,
         data: {
           public_key: "aleo1publickey",
           view_key: "AViewKey1viewkey",
@@ -71,7 +53,7 @@ describe("sdkClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await sdkClient.encryptRegistrationPayload({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicKey: "aleo1publickey",
         viewKey: "AViewKey1viewkey",
         start: 0,
@@ -80,12 +62,12 @@ describe("sdkClient", () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it("should construct the URL using sdkUrl from getNetworkConfig", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+    it("should construct the URL using sdkUrl from network config", async () => {
+      jest.mocked(resolveConfig).mockReturnValue(customSdkConfig);
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await sdkClient.encryptRegistrationPayload({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicKey: "aleo1publickey",
         viewKey: "AViewKey1viewkey",
         start: 0,
@@ -94,7 +76,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${testnetConfig.sdkUrl}/encrypt_registration`,
+          url: `${customSdkConfig.apiUrls.sdk}/encrypt_registration`,
         }),
       );
     });
@@ -105,7 +87,7 @@ describe("sdkClient", () => {
 
       await expect(
         sdkClient.encryptRegistrationPayload({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           publicKey: "aleo1publickey",
           viewKey: "AViewKey1viewkey",
           start: 0,
@@ -128,7 +110,7 @@ describe("sdkClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockDecryptedData, status: 200 });
 
       const result = await sdkClient.decryptRecord({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         ciphertext: mockCiphertext,
         viewKey: mockViewKey,
       });
@@ -136,7 +118,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/decrypt`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/decrypt`,
         data: {
           ciphertext: mockCiphertext,
           view_key: mockViewKey,
@@ -151,7 +133,7 @@ describe("sdkClient", () => {
 
       await expect(
         sdkClient.decryptRecord({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           ciphertext: mockCiphertext,
           viewKey: mockViewKey,
         }),
@@ -161,7 +143,7 @@ describe("sdkClient", () => {
 
   describe("decryptCiphertext", () => {
     const mockParams = {
-      currency: mockCurrency,
+      configOrCurrencyId: mockCurrency.id,
       ciphertext: "ct1mock_ciphertext_data",
       tpk: "tpk1mock_transition_public_key",
       viewKey: "AViewKey1mock_view_key_data",
@@ -181,7 +163,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/symmetric_decrypt`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/symmetric_decrypt`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -234,18 +216,16 @@ describe("sdkClient", () => {
 
     it("should create a transaction request from intent", async () => {
       const result = await sdkClient.createRequestFromIntent({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         intent: mockIntent,
         feeConfiguration: null,
         viewKey: mockViewKey,
       });
 
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/transactions/request`,
         data: {
           intent: mockIntent,
           fee: null,
@@ -256,10 +236,10 @@ describe("sdkClient", () => {
     });
 
     it("should use correct SDK URL from network config", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customSdkConfig);
 
       await sdkClient.createRequestFromIntent({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         intent: mockIntent,
         feeConfiguration: null,
         viewKey: mockViewKey,
@@ -267,7 +247,7 @@ describe("sdkClient", () => {
 
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${testnetConfig.sdkUrl}/transactions/request`,
+          url: `${customSdkConfig.apiUrls.sdk}/transactions/request`,
         }),
       );
       expect(network).toHaveBeenCalledTimes(1);
@@ -281,7 +261,7 @@ describe("sdkClient", () => {
       };
 
       await sdkClient.createRequestFromIntent({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         intent: largeAmountIntent,
         feeConfiguration: null,
         viewKey: mockViewKey,
@@ -289,7 +269,7 @@ describe("sdkClient", () => {
 
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/transactions/request`,
         data: {
           intent: largeAmountIntent,
           fee: null,
@@ -305,7 +285,7 @@ describe("sdkClient", () => {
 
       await expect(
         sdkClient.createRequestFromIntent({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           intent: mockIntent,
           feeConfiguration: null,
           viewKey: mockViewKey,
@@ -319,7 +299,7 @@ describe("sdkClient", () => {
 
       await expect(
         sdkClient.createRequestFromIntent({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           intent: mockIntent,
           feeConfiguration: null,
           viewKey: mockViewKey,
@@ -334,7 +314,7 @@ describe("sdkClient", () => {
       jest.mocked(network).mockResolvedValue({ data: responseWithMetadata, status: 200 });
 
       const result = await sdkClient.createRequestFromIntent({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         intent: mockIntent,
         feeConfiguration: null,
         viewKey: mockViewKey,
@@ -351,7 +331,7 @@ describe("sdkClient", () => {
       };
 
       await sdkClient.createRequestFromIntent({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         intent: mockIntent,
         feeConfiguration,
         viewKey: mockViewKey,
@@ -360,7 +340,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/transactions/request`,
         data: {
           intent: mockIntent,
           fee: feeConfiguration,
@@ -377,7 +357,7 @@ describe("sdkClient", () => {
       };
 
       await sdkClient.createRequestFromIntent({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         intent: mockIntent,
         feeConfiguration,
       });
@@ -385,7 +365,7 @@ describe("sdkClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/transactions/request`,
         data: {
           intent: mockIntent,
           fee: feeConfiguration,
@@ -407,19 +387,18 @@ describe("sdkClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockAuthorizationResponse, status: 200 });
 
       const result = await sdkClient.createAuthorization({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         request: mockRequest,
         signatures: mockSignatures,
         viewKey: mockViewKey,
       });
 
       expect(result).toEqual(mockAuthorizationResponse);
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/transactions/authorization`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/transactions/authorization`,
         data: {
           request: mockRequest,
           signatures: mockSignatures,
@@ -429,11 +408,11 @@ describe("sdkClient", () => {
     });
 
     it("should use correct SDK URL from network config", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customSdkConfig);
       jest.mocked(network).mockResolvedValue({ data: mockAuthorizationResponse, status: 200 });
 
       await sdkClient.createAuthorization({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         request: mockRequest,
         signatures: mockSignatures,
         viewKey: mockViewKey,
@@ -441,7 +420,7 @@ describe("sdkClient", () => {
 
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${testnetConfig.sdkUrl}/transactions/authorization`,
+          url: `${customSdkConfig.apiUrls.sdk}/transactions/authorization`,
         }),
       );
     });
@@ -452,7 +431,7 @@ describe("sdkClient", () => {
 
       await expect(
         sdkClient.createAuthorization({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           request: mockRequest,
           signatures: mockSignatures,
           viewKey: mockViewKey,
@@ -470,19 +449,18 @@ describe("sdkClient", () => {
       jest.mocked(network).mockResolvedValue({ data: mockEncryptedResponse, status: 200 });
 
       const result = await sdkClient.encryptProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicKey: mockPublicKey,
         authorization: mockAuthorization,
         broadcast: true,
       });
 
       expect(result).toBe(mockEncryptedResponse.encrypted);
-      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
-      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/encrypt_proving_request`,
+        url: `${mockResolvedConfig.apiUrls.sdk}/encrypt_proving_request`,
         data: {
           public_key: mockPublicKey,
           proving_request: {
@@ -495,11 +473,11 @@ describe("sdkClient", () => {
     });
 
     it("should use correct SDK URL from network config", async () => {
-      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(resolveConfig).mockReturnValue(customSdkConfig);
       jest.mocked(network).mockResolvedValue({ data: mockEncryptedResponse, status: 200 });
 
       await sdkClient.encryptProvingRequest({
-        currency: mockCurrency,
+        configOrCurrencyId: mockCurrency.id,
         publicKey: mockPublicKey,
         authorization: mockAuthorization,
         broadcast: true,
@@ -507,7 +485,7 @@ describe("sdkClient", () => {
 
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${testnetConfig.sdkUrl}/encrypt_proving_request`,
+          url: `${customSdkConfig.apiUrls.sdk}/encrypt_proving_request`,
         }),
       );
     });
@@ -518,7 +496,7 @@ describe("sdkClient", () => {
 
       await expect(
         sdkClient.encryptProvingRequest({
-          currency: mockCurrency,
+          configOrCurrencyId: mockCurrency.id,
           publicKey: mockPublicKey,
           authorization: mockAuthorization,
           broadcast: true,
