@@ -1,5 +1,8 @@
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
@@ -11,6 +14,18 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
+
+const mockDevice: Device = {
+  modelId: DeviceModelId.nanoX,
+  deviceId: "test-device-id",
+  deviceName: "Nano X",
+  wired: false,
+};
+
+const withDevice = (state: State): State => ({
+  ...state,
+  settings: { ...state.settings, lastConnectedDevice: mockDevice },
+});
 
 describe("useQuickActionsRowViewModel", () => {
   beforeEach(() => {
@@ -35,6 +50,40 @@ describe("useQuickActionsRowViewModel", () => {
         button: "Referral",
         page: ScreenName.MyWallet,
       });
+    });
+  });
+
+  describe("recover action", () => {
+    it("should navigate to Recover screen and track event on press", () => {
+      const { result } = renderHook(() => useQuickActionsRowViewModel());
+      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+
+      act(() => recoverAction.onPress());
+
+      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Recover, {
+        platform: "protect-simu",
+        device: undefined,
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Recover",
+        page: ScreenName.MyWallet,
+      });
+    });
+
+    it('should display "Backup" label when no device is connected', () => {
+      const { result } = renderHook(() => useQuickActionsRowViewModel());
+      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+
+      expect(recoverAction.label).toBe("Backup");
+    });
+
+    it('should display "[L] Recover" label when a device is connected', () => {
+      const { result } = renderHook(() => useQuickActionsRowViewModel(), {
+        overrideInitialState: withDevice,
+      });
+      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+
+      expect(recoverAction.label).toBe("[L] Recover");
     });
   });
 });
