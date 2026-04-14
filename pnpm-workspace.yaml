@@ -15,6 +15,7 @@ packages:
   - "domain/entity/*"
   - "domain/api/*"
   - "shared/*"
+  - "devTools"
 
 catalog:
   "@jest/globals": 30.2.0

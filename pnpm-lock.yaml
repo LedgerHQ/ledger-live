@@ -2502,6 +2502,9 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      devtools:
+        specifier: workspace:*
+        version: link:../../devTools
       encoding:
         specifier: ^0.1.13
         version: 0.1.13
@@ -2653,6 +2656,18 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.18
+
+  devTools:
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
 
   domain/entity/currency:
     dependencies:
@@ -21096,7 +21111,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

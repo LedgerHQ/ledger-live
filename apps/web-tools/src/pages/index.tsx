@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { DevTools } from "devtools";
 
 export default function Home() {
   return (
@@ -35,6 +36,7 @@ export default function Home() {
           <Link to="/crypto-icons">Crypto Icons</Link>
         </li>
       </ul>
+      <DevTools />
     </main>
   );
 }
