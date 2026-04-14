@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from "react";
+import { Linking } from "react-native";
 import { TileButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldCheckNotification, LifeRing, Gift } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import { urls } from "~/utils/urls";
 
 export interface QuickActionRowItem {
   readonly id: string;
@@ -27,7 +31,8 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   }, []);
 
   const handleReferralPress = useCallback(() => {
-    // TODO: implement referral navigation
+    track("button_clicked", { button: "Referral", page: ScreenName.MyWallet });
+    Linking.openURL(urls.referralProgram);
   }, []);
 
   const actions: readonly QuickActionRowItem[] = useMemo(
