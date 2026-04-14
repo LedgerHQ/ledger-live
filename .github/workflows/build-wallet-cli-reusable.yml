@@ -1,0 +1,84 @@
+name: "[Wallet CLI] - Build - Called"
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-wallet-cli:
+    name: "Build (all platforms)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Install dependencies
+        run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
+
+      - name: Build wallet-cli
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo build --filter "@ledgerhq/wallet-cli"
+
+      - name: Upload darwin-arm64 binary
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: wallet-cli-darwin-arm64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/darwin-arm64/cli
+
+      - name: Upload linux-x64 binary
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: wallet-cli-linux-x64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/linux-x64/cli
+
+      - name: Upload linux-arm64 binary
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: wallet-cli-linux-arm64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/linux-arm64/cli
+
+      - name: Upload windows-x64 binary
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: wallet-cli-windows-x64
+          path: ${{ github.workspace }}/apps/wallet-cli/dist/windows-x64/cli.exe

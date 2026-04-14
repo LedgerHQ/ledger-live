@@ -119,6 +119,13 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  build-wallet-cli:
+    name: "Build Wallet CLI"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
+    uses: ./.github/workflows/build-wallet-cli-reusable.yml
+    secrets: inherit
+
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
@@ -178,6 +185,7 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - build-wallet-cli
       - test-additional
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
