@@ -629,6 +629,7 @@ describe("sync.ts", () => {
         currency: mockCurrency,
         viewKey: "AViewKey123",
         privateRecords: mockUnspentRecords,
+        oldUnspentRecords: [],
       });
       expect(result?.aleoResources?.privateBalance).toEqual(new BigNumber(50000));
       expect(result?.aleoResources?.unspentPrivateRecords).toEqual(mockUnspentResult);
@@ -967,6 +968,7 @@ describe("sync.ts", () => {
         currency: mockCurrency,
         viewKey: "AViewKey123",
         privateRecords: [unspentRecord],
+        oldUnspentRecords: [],
       });
     });
   });
@@ -1224,14 +1226,20 @@ describe("sync.ts", () => {
     });
 
     it("should remove only confirmed pending operations and keep unconfirmed ones", () => {
-      const confirmedOp = getMockedOperation({ id: "confirmed", hash: "tx-confirmed" });
-      const pendingConfirmedOp = getMockedOperation({
-        id: "pending-confirmed",
+      const confirmedOp = getMockedOperation({
+        id: "account-tx-confirmed-OUT",
         hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingConfirmedOp = getMockedOperation({
+        id: "account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
       });
       const pendingUnconfirmedOp = getMockedOperation({
-        id: "pending-unconfirmed",
+        id: "account-tx-pending-OUT",
         hash: "tx-pending",
+        type: "OUT",
       });
 
       const synced: AleoAccount = {
@@ -1243,8 +1251,62 @@ describe("sync.ts", () => {
       const result = postSync(synced, synced);
 
       expect(result.pendingOperations).toEqual([
-        expect.objectContaining({ hash: pendingUnconfirmedOp.hash }),
+        expect.objectContaining({ id: pendingUnconfirmedOp.id }),
       ]);
+    });
+
+    it("should keep a pending OUT op when only the IN side of a private -> public self-transfer is confirmed", () => {
+      const confirmedPublicInOp = getMockedOperation({
+        id: "account-tx-self-transfer-IN",
+        hash: "tx-self-transfer",
+        type: "IN",
+      });
+      const pendingPrivateOutOp = getMockedOperation({
+        id: "account-tx-self-transfer-OUT",
+        hash: "tx-self-transfer",
+        type: "OUT",
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedPublicInOp],
+        pendingOperations: [pendingPrivateOutOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      // The pending OUT should still be present - the confirmed set only has the "IN" id.
+      expect(result.pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingPrivateOutOp.id }),
+      ]);
+    });
+
+    it("should remove a pending OUT op once the private OUT side of a self-transfer is confirmed", () => {
+      const confirmedPublicInOp = getMockedOperation({
+        id: "account-tx-self-transfer-IN",
+        hash: "tx-self-transfer",
+        type: "IN",
+      });
+      const confirmedPrivateOutOp = getMockedOperation({
+        id: "account-tx-self-transfer-OUT",
+        hash: "tx-self-transfer",
+        type: "OUT",
+      });
+      const pendingPrivateOutOp = getMockedOperation({
+        id: "account-tx-self-transfer-OUT",
+        hash: "tx-self-transfer",
+        type: "OUT",
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedPublicInOp, confirmedPrivateOutOp],
+        pendingOperations: [pendingPrivateOutOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
     });
   });
 });

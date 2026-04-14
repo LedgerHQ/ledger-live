@@ -37,6 +37,7 @@ describe("getPrivateBalance", () => {
       currency,
       viewKey: testnetViewKey,
       privateRecords: [testnetPrivateRecord, testnetPrivateRecord],
+      oldUnspentRecords: [],
     });
 
     expect(balance).toEqual(new BigNumber(800000 + 800000));
@@ -47,6 +48,7 @@ describe("getPrivateBalance", () => {
       currency,
       viewKey: testnetViewKey,
       privateRecords: [testnetPrivateRecord],
+      oldUnspentRecords: [],
     });
 
     expect(unspentRecords).toEqual([
@@ -66,6 +68,7 @@ describe("getPrivateBalance", () => {
       currency,
       viewKey: testnetViewKey,
       privateRecords: [],
+      oldUnspentRecords: [],
     });
 
     expect(balance).toEqual(new BigNumber(0));
@@ -77,6 +80,7 @@ describe("getPrivateBalance", () => {
       currency,
       viewKey: testnetViewKey,
       privateRecords: [{ ...testnetPrivateRecord, spent: true }],
+      oldUnspentRecords: [],
     });
 
     expect(balance).toEqual(new BigNumber(0));
@@ -93,6 +97,7 @@ describe("getPrivateBalance", () => {
       currency,
       viewKey: testnetViewKey,
       privateRecords: mixedRecords,
+      oldUnspentRecords: [],
     });
 
     expect(unspentRecords).toEqual([
