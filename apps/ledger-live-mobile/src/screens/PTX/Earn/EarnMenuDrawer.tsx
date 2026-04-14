@@ -55,6 +55,7 @@ export function EarnMenuDrawer({ navigation }: { navigation: NavigationProp<Para
           {modal?.options.map(({ label, metadata: { link, live_app, ...tracked } }) =>
             link ? (
               <OptionButton
+                testID={`earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`}
                 key={label}
                 onPress={async () => {
                   await track(BUTTON_CLICKED_TRACK_EVENT, { live_app, ...tracked });

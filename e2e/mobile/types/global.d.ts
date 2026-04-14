@@ -80,6 +80,7 @@ declare global {
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
 
+  var expectWebElementNotVisible: typeof WebElementHelpers.expectWebElementNotVisible;
   var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
   var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
   var getWebElementByCssSelector: typeof WebElementHelpers.getWebElementByCssSelector;
@@ -87,6 +88,7 @@ declare global {
   var getWebElementByTag: typeof WebElementHelpers.getWebElementByTag;
   var getWebElementByTestId: typeof WebElementHelpers.getWebElementByTestId;
   var getWebElementsByCssSelector: typeof WebElementHelpers.getWebElementsByCssSelector;
+  var getWebElementByXpath: typeof WebElementHelpers.getWebElementByXpath;
   var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
   var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
   var getWebElementText: typeof WebElementHelpers.getWebElementText;
