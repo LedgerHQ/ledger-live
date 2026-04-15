@@ -40,7 +40,7 @@ jobs:
       - name: install dependencies and build
         run: |
           pnpm i --filter="!./apps/**"
-          pnpm turbo build --filter=./libs/ledger-live-common
+          pnpm exec nx run @ledgerhq/live-common:build
 
       - name: Generate target output filename
         id: target-output-file
@@ -67,7 +67,7 @@ jobs:
       - name: install dependencies and build
         run: |
           pnpm i --filter="!./apps/**"
-          pnpm turbo build --filter=./libs/ledger-live-common
+          pnpm exec nx run @ledgerhq/live-common:build
 
       - name: run synchronisation on current branch
         run: |

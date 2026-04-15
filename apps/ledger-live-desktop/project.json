@@ -15,6 +15,12 @@
         "^build"
       ]
     },
+    "build-lib-deps": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "lint": {
       "inputs": [
         "default",

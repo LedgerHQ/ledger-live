@@ -17,6 +17,8 @@
     "node-abi": "^4.9.0"
   },
   "scripts": {
+    "prepare": "node tools/nx/write-nx-cache-config.mjs",
+    "nx:write-cache-config": "node tools/nx/write-nx-cache-config.mjs",
     "bump": "changeset version",
     "clean": "git clean -fdX",
     "changelog": "changeset add",
@@ -234,7 +236,6 @@
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
-    "@nx/s3-cache": "5.0.2",
     "@react-native-community/cli": "15.1.0",
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
@@ -255,6 +256,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "jest-sonar": "0.2.16",
     "knip": "5.34.1",
+    "@nx/s3-cache": "5.0.2",
     "nx": "22.5.1",
     "nyc": "15.1.0",
     "oxfmt": "catalog:",

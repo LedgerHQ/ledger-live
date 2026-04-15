@@ -36,18 +36,7 @@ runs:
       run: pnpm e2e:desktop test:playwright:setup
       shell: bash
     - name: Build dependencies
-      if: inputs.turborepo-server-port != ''
-      env:
-        TURBO_API: "http://127.0.0.1:${{ inputs.turborepo-server-port }}"
-        TURBO_TOKEN: ${{ inputs.turbo-server-token }}
-        TURBO_TEAM: "foo"
-      run: |
-        pnpm turbo build --filter="ledger-live-desktop^..."
-      shell: bash
-    - name: Build dependencies
-      if: inputs.turborepo-server-port == ''
-      run: |
-        pnpm turbo build --filter="ledger-live-desktop^..."
+      run: pnpm exec nx run ledger-live-desktop:build-lib-deps
       shell: bash
     - name: Build LLD app for testing
       env:
@@ -59,5 +48,5 @@ runs:
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm turbo build --filter="@ledgerhq/dummy-*-app"
+        pnpm exec nx run-many -t build --projects=@ledgerhq/dummy-live-app,@ledgerhq/dummy-wallet-app,@ledgerhq/dummy-ptx-app
       shell: bash

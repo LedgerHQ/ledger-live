@@ -1,6 +1,6 @@
 {
   "public": true,
   "installCommand": "pnpm i -F \"../../\" -F \"@ledgerhq/native-ui...\" -F \"ledger-live\"",
-  "buildCommand": "pnpm turbo run build:storybook -F \"@ledgerhq/native-ui\"",
+  "buildCommand": "cd ../../../.. && pnpm exec nx run @ledgerhq/native-ui:build:storybook",
   "outputDirectory": "storybook-static"
 }

@@ -36,6 +36,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"

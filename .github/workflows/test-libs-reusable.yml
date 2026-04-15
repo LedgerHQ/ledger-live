@@ -44,41 +44,35 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
         run: pnpm i --filter="./libs/**"
 
       - name: Run coverage on appropriate libraries
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
         run: |
 
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm turbo run coverage --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=4 -- --runInBand=1
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
         run: |
 
           echo "::group::Processing coverage files"
 
-          testCommand=(pnpm turbo test --concurrency=4)
+          nx_test_args=()
 
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
@@ -90,10 +84,13 @@ jobs:
                 cat "$lib/coverage/sonar-executionTests-report.xml" >> ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
               fi
             elif [ -f "$package_json" ] && ! jq -e '.scripts.coverage' "$package_json" && jq -e '.scripts.test' "$package_json"; then
-              echo "Coverage script not defined for $lib, adding to testflow."
-              
-              name=$(jq -r '.name' "$package_json")
-              testCommand+=(--filter "$name")
+              if [[ "$lib" == *"/libs/ui/"* ]]; then
+                echo "Skipping UI path for non-coverage test slice: $lib"
+              else
+                echo "Coverage script not defined for $lib, adding to testflow."
+                name=$(jq -r '.name' "$package_json")
+                nx_test_args+=(-p "$name")
+              fi
 
             else
               echo "No coverage or test script found for $lib, skipping."
@@ -101,11 +98,15 @@ jobs:
 
           done
 
-          testCommand+=(--filter="!./libs/ui/**")
-
           echo "::endgroup::"
-          echo "Running tests for libs without coverage with command: ${testCommand[@]}"
-          "${testCommand[@]}"
+
+          if [ ${#nx_test_args[@]} -eq 0 ]; then
+            echo "Running tests for libs without coverage (all non-ui libs)"
+            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=4
+          else
+            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=4 ${nx_test_args[*]}"
+            pnpm exec nx run-many -t test --parallel=4 "${nx_test_args[@]}"
+          fi
         shell: bash
 
       - name: (On Failure) Upload live-common snapshots and source
@@ -155,34 +156,24 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**"
+        run: pnpm i
       - name: Lint affected libraries
         id: lint-libs
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" -- --quiet
+        run: pnpm exec nx run-many -t lint --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false -- --quiet
       - name: Typecheck affected libraries
         id: typecheck-libs
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]"
+        run: pnpm exec nx run-many -t typecheck --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false
       - name: Test unimported files
         id: unimported
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]"
+        run: pnpm exec nx run-many -t unimported --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false
         shell: bash
       - uses: actions/github-script@v6
         if: ${{ !cancelled() }}
@@ -214,19 +205,17 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo doc --filter="./libs/ledgerjs/**"
+        run: pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs
       - name: get diff
         id: diff
         run: |
