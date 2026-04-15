@@ -43,6 +43,45 @@ function mrzDateToBacDate(yymmdd: string): string {
   return `${century + yy}-${mm}-${dd}`;
 }
 
+function normalizePassportReaderError(error: unknown): Error {
+  const rawMessage =
+    error instanceof Error ? error.message : typeof error === "string" ? error : "Failed to read passport";
+  const message = rawMessage.trim();
+  const lowerCaseMessage = message.toLowerCase();
+
+  if (lowerCaseMessage.includes("usercanceled") || lowerCaseMessage.includes("user canceled")) {
+    return new Error("Passport NFC reading was cancelled.");
+  }
+
+  if (lowerCaseMessage.includes("nfcnotsupported") || lowerCaseMessage.includes("nfc not supported")) {
+    return new Error("This iPhone does not support NFC passport scanning.");
+  }
+
+  if (lowerCaseMessage.includes("invalidmrzkey") || lowerCaseMessage.includes("invalid mrz")) {
+    return new Error(
+      "The passport chip rejected the MRZ details. Check the passport number, birth date, and expiry date.",
+    );
+  }
+
+  if (lowerCaseMessage.includes("morethanonetagfound") || lowerCaseMessage.includes("more than one tag")) {
+    return new Error("More than one NFC document was detected. Keep only the passport near the iPhone.");
+  }
+
+  if (lowerCaseMessage.includes("entitlement")) {
+    return new Error(
+      "This iOS build is missing the NFC Tag Reading capability required to scan passports. Reinstall a build signed with NFC passport entitlements.",
+    );
+  }
+
+  if (message === "Error reading passport" || message === "Failed to read passport") {
+    return new Error(
+      "Unable to read the passport chip. Keep the top of the iPhone against the passport and make sure this iOS build has NFC Tag Reading enabled.",
+    );
+  }
+
+  return new Error(message);
+}
+
 /**
  * Read passport chip data via NFC with BAC authentication.
  *
@@ -50,25 +89,29 @@ function mrzDateToBacDate(yymmdd: string): string {
  * Basic Access Control handshake with the chip, then reads DG1.
  */
 export async function readPassportNfc(mrzData: MrzData): Promise<PassportData> {
-  const result = await NfcPassportReader.startReading({
-    bacKey: {
-      documentNo: mrzData.documentNumber,
-      birthDate: mrzDateToBacDate(mrzData.dateOfBirth),
-      expiryDate: mrzDateToBacDate(mrzData.expiryDate),
-    },
-    includeImages: false,
-  });
+  try {
+    const result = await NfcPassportReader.startReading({
+      bacKey: {
+        documentNo: mrzData.documentNumber,
+        birthDate: mrzDateToBacDate(mrzData.dateOfBirth),
+        expiryDate: mrzDateToBacDate(mrzData.expiryDate),
+      },
+      includeImages: false,
+    });
 
-  return {
-    dateOfBirth: result.birthDate,
-    documentNumber: result.documentNo,
-    nationality: result.nationality,
-    expiryDate: result.expiryDate,
-    firstName: result.firstName,
-    lastName: result.lastName,
-    gender: result.gender,
-    mrz: result.mrz,
-  };
+    return {
+      dateOfBirth: result.birthDate,
+      documentNumber: result.documentNo,
+      nationality: result.nationality,
+      expiryDate: result.expiryDate,
+      firstName: result.firstName,
+      lastName: result.lastName,
+      gender: result.gender,
+      mrz: result.mrz,
+    };
+  } catch (error) {
+    throw normalizePassportReaderError(error);
+  }
 }
 
 export async function cancelNfcScan(): Promise<void> {

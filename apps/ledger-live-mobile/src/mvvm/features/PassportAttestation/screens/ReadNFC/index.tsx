@@ -19,10 +19,17 @@ type Props = BaseComposite<
 export default function ReadNFCScreen({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { mrzData } = route.params;
-  const { readPassport, isLoading, error } = usePassportAttestation();
+  const { readPassport, isLoading, error, checkNfcSupport } = usePassportAttestation();
 
   const startNfcRead = useCallback(async () => {
     try {
+      const supported = await checkNfcSupport();
+
+      if (!supported) {
+        Alert.alert("NFC Unsupported", "This iPhone does not support NFC passport scanning.");
+        return;
+      }
+
       const passportData = await readPassport(mrzData);
       navigation.navigate(ScreenName.PassportAttestationGenerateProof, {
         mrzData,
@@ -32,14 +39,14 @@ export default function ReadNFCScreen({ navigation, route }: Props) {
       const message = e instanceof Error ? e.message : "NFC read failed";
       Alert.alert("NFC Error", message);
     }
-  }, [readPassport, mrzData, navigation]);
+  }, [checkNfcSupport, readPassport, mrzData, navigation]);
 
   useEffect(() => {
-    startNfcRead();
+    void startNfcRead();
     return () => {
-      cancelNfcScan();
+      void cancelNfcScan();
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [startNfcRead]);
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>

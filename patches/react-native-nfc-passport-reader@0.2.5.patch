@@ -1,0 +1,47 @@
+diff --git a/ios/NfcPassportReader.swift b/ios/NfcPassportReader.swift
+index e5d2579..086233f 100644
+--- a/ios/NfcPassportReader.swift
++++ b/ios/NfcPassportReader.swift
+@@ -18,7 +18,7 @@ class NfcPassportReader: NSObject {
+     _ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock
+   ) {
+     if #available(iOS 13.0, *) {
+-      resolve(NFCNDEFReaderSession.readingAvailable)
++      resolve(NFCTagReaderSession.readingAvailable)
+     } else {
+       resolve(false)
+     }
+@@ -106,7 +106,15 @@ class NfcPassportReader: NSObject {
+ 
+           resolve(result)
+         } catch {
+-          reject("ERROR_READ_PASSPORT", "Error reading passport", nil)
++          let message: String
++
++          if let localizedError = error as? LocalizedError, let errorDescription = localizedError.errorDescription {
++            message = errorDescription
++          } else {
++            message = error.localizedDescription
++          }
++
++          reject("ERROR_READ_PASSPORT", message, error)
+         }
+       }
+     } else {
+diff --git a/ios/NFCPassportReader/PassportReader.swift b/ios/NFCPassportReader/PassportReader.swift
+index b115e0d..4e79e42 100644
+--- a/ios/NFCPassportReader/PassportReader.swift
++++ b/ios/NFCPassportReader/PassportReader.swift
+@@ -135,10 +135,11 @@ extension PassportReader : NFCTagReaderSessionDelegate {
+                     userError = NFCPassportReaderError.UserCanceled
+                 default:
+                     //Logger.passportReader.error( "     - some other error - \(readerError.localizedDescription)" )
+-                    userError = NFCPassportReaderError.UnexpectedError
++                    userError = NFCPassportReaderError.Unknown(readerError)
+                 }
+             } else {
+                 //Logger.passportReader.error( "tagReaderSession:didInvalidateWithError - Received error - \(error.localizedDescription)" )
++                userError = NFCPassportReaderError.Unknown(error)
+             }
+             nfcContinuation?.resume(throwing: userError)
+             nfcContinuation = nil
