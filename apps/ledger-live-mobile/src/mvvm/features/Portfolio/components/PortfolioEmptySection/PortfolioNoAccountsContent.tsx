@@ -9,6 +9,7 @@ import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import TrackScreen from "~/analytics/TrackScreen";
 import { useTranslation } from "~/context/Locale";
 import { PortfolioEmptyAssetSections } from "./PortfolioEmptyAssetSections";
+import { PortfolioPassportEntryPoint } from "../PortfolioPassportEntryPoint";
 
 type PortfolioNoAccountsContentProps = {
   readonly isLNSUpsellBannerShown: boolean;
@@ -34,6 +35,7 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
+      <PortfolioPassportEntryPoint />
       <PortfolioEmptyAssetSections shouldDisplayAssetSection={shouldDisplayAssetSection} />
       {shouldDisplayAssetSection ? (
         <Box lx={{ marginTop: "s24", marginBottom: "s48" }}>

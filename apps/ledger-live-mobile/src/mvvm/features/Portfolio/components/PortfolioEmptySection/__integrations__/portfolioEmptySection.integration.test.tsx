@@ -72,6 +72,14 @@ describe("PortfolioEmptySection", () => {
       expect(screen.getByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container)).toBeVisible();
     });
 
+    it("should render the identity section", () => {
+      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+        overrideInitialState: emptyAccountState,
+      });
+
+      expect(screen.getByTestId("portfolio-passport-entry-point")).toBeVisible();
+    });
+
     it("should open the add account drawer when pressing the add button", async () => {
       const { user } = renderWithReactQuery(
         <PortfolioEmptySection isLNSUpsellBannerShown={false} />,
