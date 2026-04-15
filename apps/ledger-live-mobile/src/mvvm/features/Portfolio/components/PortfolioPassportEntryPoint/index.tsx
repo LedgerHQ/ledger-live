@@ -9,12 +9,11 @@ import { isAgeVerifiedSelector } from "~/reducers/ageAttestation";
 import {
   ListItem,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemContent,
   ListItemTitle,
   ListItemDescription,
   ListItemTrailing,
-  ListItemIcon,
   Subheader,
   SubheaderRow,
   SubheaderTitle,
@@ -41,7 +40,7 @@ export const PortfolioPassportEntryPoint = () => {
       <Flex mb={6} mt={2}>
         <ListItem onPress={handlePress} testID="portfolio-passport-entry-point">
           <ListItemLeading>
-            <ListItemSpot appearance="icon" icon={ShieldLock} />
+            <Spot appearance="icon" icon={ShieldLock} />
             <ListItemContent>
               <ListItemTitle>
                 {isVerified ? "Age Verified" : "Verify Your Age"}
@@ -54,7 +53,7 @@ export const PortfolioPassportEntryPoint = () => {
             </ListItemContent>
           </ListItemLeading>
           <ListItemTrailing>
-            <ListItemIcon icon={ChevronRight} />
+            <ChevronRight size={24} />
           </ListItemTrailing>
         </ListItem>
       </Flex>

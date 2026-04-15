@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
+    "generate:zk-html": "node scripts/generateZkHtml.js",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "start": "WITH_ROZENITE=true react-native start",
     "start:ios": "WITH_ROZENITE=true react-native start --platform ios",

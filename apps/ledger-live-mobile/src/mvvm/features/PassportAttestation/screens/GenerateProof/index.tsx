@@ -7,6 +7,8 @@ import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { PassportAttestationNavigatorStackParamList } from "~/components/RootNavigator/types/PassportAttestationNavigator";
 import { usePassportAttestation } from "../../hooks/usePassportAttestation";
+import { useZkProofWebView } from "../../hooks/useZkProofWebView";
+import { setZkBridge } from "../../utils/zkProof";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -20,6 +22,18 @@ export default function GenerateProofScreen({ navigation, route }: Props) {
   const { mrzData, passportData } = route.params;
   const { generateProof } = usePassportAttestation();
   const started = useRef(false);
+  const { webViewElement, isReady, generateProof: zkGenerate, verifyProof: zkVerify } =
+    useZkProofWebView();
+
+  // Wire the ZK bridge when the WebView is ready
+  useEffect(() => {
+    if (isReady) {
+      setZkBridge({ generateProof: zkGenerate, verifyProof: zkVerify });
+    }
+    return () => {
+      setZkBridge(null);
+    };
+  }, [isReady, zkGenerate, zkVerify]);
 
   const startProofGeneration = useCallback(async () => {
     if (started.current) return;
@@ -36,12 +50,16 @@ export default function GenerateProofScreen({ navigation, route }: Props) {
     }
   }, [generateProof, mrzData, passportData, navigation]);
 
+  // Trigger proof generation once WebView is ready
   useEffect(() => {
-    startProofGeneration();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (isReady) {
+      startProofGeneration();
+    }
+  }, [isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
+      {webViewElement}
       <Flex
         flex={1}
         flexDirection="column"
