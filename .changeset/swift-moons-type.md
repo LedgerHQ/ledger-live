@@ -1,7 +1,6 @@
 ---
 "@ledgerhq/types-live": minor
 "ledger-live-desktop": minor
-"@ledgerhq/ledger-wallet-framework": minor
 "@ledgerhq/coin-celo": patch
 ---
 

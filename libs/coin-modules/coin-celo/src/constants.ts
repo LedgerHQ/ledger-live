@@ -58,9 +58,11 @@ export const FEE_CURRENCY_OPTIONS: {
   },
 ];
 
-/** O(1) lookup of fee currency options by contract address. `null` key → native CELO.
+/** O(1) lookup of fee currency options by contract address.
  *  Keys are lowercased for case-insensitive matching against token contract addresses. */
-export const FEE_CURRENCY_BY_CONTRACT: Map<string | null, (typeof FEE_CURRENCY_OPTIONS)[number]> =
-  new Map(
-    FEE_CURRENCY_OPTIONS.map(option => [option.contractAddress?.toLowerCase() ?? null, option]),
-  );
+export const FEE_CURRENCY_BY_CONTRACT: Map<string, (typeof FEE_CURRENCY_OPTIONS)[number]> = new Map(
+  FEE_CURRENCY_OPTIONS.filter(option => option.contractAddress !== null).map(option => [
+    option.contractAddress!.toLowerCase(),
+    option,
+  ]),
+);
