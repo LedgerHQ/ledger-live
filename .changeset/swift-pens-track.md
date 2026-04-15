@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Replace RxJS BehaviorSubject with Redux slice for on-demand countervalues tracking

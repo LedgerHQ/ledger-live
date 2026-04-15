@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-modules-monitoring": patch
+"@ledgerhq/coin-modules-monitoring": minor
 ---
 
 chore(coin-modules-monitoring): register all coins at start
