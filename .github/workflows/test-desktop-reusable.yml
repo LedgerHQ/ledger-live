@@ -197,10 +197,10 @@ jobs:
       - name: Publish Allure report
         id: publish-allure
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/migrate-allure-docker-service
         with:
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          login: ${{ vars.ALLURE_USERNAME_TEMP }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD_TEMP }}
           platform: linux-speculos
           path: "e2e/desktop/allure-results"
           report_path_suffix: PR-checks

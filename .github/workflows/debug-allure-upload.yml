@@ -1,0 +1,70 @@
+# Throwaway workflow to validate the Allure project-ID fix end-to-end
+# without running the full e2e suite. DELETE BEFORE MERGE.
+name: "[DEBUG] Allure Upload Probe"
+
+on:
+  push:
+    branches:
+      - support/migrate-allure-docker-service
+    paths:
+      - ".github/workflows/debug-allure-upload.yml"
+      - "tools/actions/composites/upload-allure-report/**"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    name: "probe ${{ matrix.platform }} / ${{ matrix.suffix || 'none' }}"
+    runs-on: ledger-live-test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android-e2e
+            suffix: ""
+          - platform: android-e2e
+            suffix: "manual"
+          - platform: ios-e2e
+            suffix: "manual"
+          - platform: linux-speculos
+            suffix: "PR-checks"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create fake allure-results
+        id: fake
+        run: |
+          mkdir -p fake-results
+          uuid=$(cat /proc/sys/kernel/random/uuid)
+          now_ms=$(($(date +%s) * 1000))
+          stop_ms=$((now_ms + 1000))
+          cat > "fake-results/${uuid}-result.json" <<EOF
+          {
+            "uuid": "${uuid}",
+            "historyId": "${uuid}",
+            "name": "debug probe ${{ matrix.platform }} ${{ matrix.suffix }}",
+            "fullName": "debug.probe#${{ matrix.platform }}-${{ matrix.suffix }}",
+            "status": "passed",
+            "stage": "finished",
+            "start": ${now_ms},
+            "stop": ${stop_ms},
+            "labels": [
+              {"name": "suite", "value": "debug-allure-upload"},
+              {"name": "feature", "value": "project-id-fix"}
+            ]
+          }
+          EOF
+          ls -la fake-results
+
+      - name: Upload to Allure
+        id: upload
+        uses: ./tools/actions/composites/upload-allure-report
+        with:
+          platform: ${{ matrix.platform }}
+          login: ${{ vars.ALLURE_USERNAME_TEMP }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD_TEMP }}
+          path: fake-results
+          report_path_suffix: ${{ matrix.suffix }}
+
+      - name: Print result URL
+        run: |
+          echo "Report URL: ${{ steps.upload.outputs.report-url }}"

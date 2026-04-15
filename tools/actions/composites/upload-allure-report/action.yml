@@ -15,7 +15,7 @@ inputs:
     description: "Report Path"
   report_path_suffix:
     required: false
-    description: "Suffix for allure report path (defaults to platform)"
+    description: "Extra tag appended after the platform in the Allure project ID (e.g. manual, PR-checks)"
 outputs:
   report-url:
     description: "Allure report URL"
@@ -30,30 +30,27 @@ runs:
     - name: Set report path
       id: report-path
       shell: bash
-      run: |
-        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-        BRANCH="${{ steps.branch-name.outputs.current_branch }}"
-        SUFFIX="${{ inputs.report_path_suffix || inputs.platform }}"
-        if [ "${{ github.repository }}" != "LedgerHQ/ledger-live" ]; then
-          PATH_VALUE="${REPO_NAME}-${BRANCH}-${SUFFIX}"
-        else
-          PATH_VALUE="${BRANCH}-${SUFFIX}"
-        fi
-        echo "path=${PATH_VALUE}" >> "$GITHUB_OUTPUT"
+      env:
+        REPOSITORY: ${{ github.repository }}
+        BRANCH: ${{ steps.branch-name.outputs.current_branch }}
+        PLATFORM: ${{ inputs.platform }}
+        EXTRA_SUFFIX: ${{ inputs.report_path_suffix }}
+      run: ${{ github.action_path }}/set-report-path.sh
     - name: Compress PNG files
       shell: bash
       run: ${{ github.action_path }}/compress-pngs.sh "${{ inputs.path }}"
     - name: Publish report on Allure Server
       id: publish-report
-      uses: LedgerHQ/send-to-allure-server-action@2.1.2
-      with:
-        allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
-        build-name: ${{ github.workflow }}-${{ inputs.platform }}
-        build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        username: ${{ inputs.login }}
-        password: ${{ inputs.password }}
-        path: ${{ steps.report-path.outputs.path }}
-        allure-results: ${{ inputs.path }}
+      shell: bash
+      env:
+        ALLURE_SERVER_URL: "https://allure-ledger-live.aws.sbx.ldg-tech.com"
+        ALLURE_LOGIN: ${{ inputs.login }}
+        ALLURE_PASSWORD: ${{ inputs.password }}
+        PROJECT_ID: ${{ steps.report-path.outputs.path }}
+        RESULTS_DIR: ${{ inputs.path }}
+        BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        BUILD_NAME: ${{ github.workflow }}-${{ inputs.platform }}
+      run: ${{ github.action_path }}/upload-to-allure.sh
     - name: Write Allure report in summary
       shell: bash
       run: echo "::notice title=${{ inputs.platform }} Allure report URL::${{ steps.publish-report.outputs.report-url }}"

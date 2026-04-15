@@ -1,5 +1,5 @@
 name: "Get Allure Summary"
-description: "Generates a test summary from allure report"
+description: "Extracts test summary from allure result JSON files"
 inputs:
   platform:
     description: "Platform (android, iOS or linux)"
@@ -23,29 +23,24 @@ runs:
     - name: Get summary
       id: get-summary
       run: |
-        cd ${{ inputs.allure-results-path }}
-        allure generate .
-        cd allure-report/widgets
-        passedTests=$(jq '.statistic.passed' summary.json)
-        failedTests=$(jq '.statistic.failed' summary.json)
-        brokenTests=$(jq '.statistic.broken' summary.json)
-        skippedTests=$(jq '.statistic.skipped' summary.json)
-        totalTests=$(jq '.statistic.total' summary.json)
+        STATS=$(jq -s '
+          map(.status) | group_by(.) | map({(.[0]): length}) | add
+          // {passed:0, failed:0, broken:0, skipped:0}
+        ' "${{ inputs.allure-results-path }}"/*-result.json)
+
+        passedTests=$(echo "$STATS" | jq '.passed // 0')
+        failedTests=$(echo "$STATS" | jq '.failed // 0')
+        brokenTests=$(echo "$STATS" | jq '.broken // 0')
+        skippedTests=$(echo "$STATS" | jq '.skipped // 0')
+        totalTests=$((passedTests + failedTests + brokenTests + skippedTests))
+
         echo "test_result=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> "$GITHUB_OUTPUT"
 
         if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
-          echo "status_color=#FF333C" >> "$GITHUB_OUTPUT";
-          echo "status_emoji=❌" >> "$GITHUB_OUTPUT";
+          echo "status_color=#FF333C" >> "$GITHUB_OUTPUT"
+          echo "status_emoji=❌" >> "$GITHUB_OUTPUT"
         else
-          echo "status_color=#33FF39" >> "$GITHUB_OUTPUT";
-          echo "status_emoji=✅" >> "$GITHUB_OUTPUT";
+          echo "status_color=#33FF39" >> "$GITHUB_OUTPUT"
+          echo "status_emoji=✅" >> "$GITHUB_OUTPUT"
         fi
       shell: bash
-    - name: Generate single file Allure report
-      run: allure generate ${{ inputs.allure-results-path }} --single-file --clean
-      shell: bash
-    - name: Upload Allure single file report
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-report-${{ inputs.platform }}
-        path: allure-report/index.html

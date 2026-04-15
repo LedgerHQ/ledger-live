@@ -363,17 +363,17 @@ jobs:
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/migrate-allure-docker-service
         with:
           platform: ${{ github.event_name == 'schedule' && 'linux-speculos-nightly' || (inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos') }}
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          login: ${{ vars.ALLURE_USERNAME_TEMP }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD_TEMP }}
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/migrate-allure-docker-service
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
@@ -400,17 +400,17 @@ jobs:
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/migrate-allure-docker-service
         with:
           platform: linux-speculos-${{ needs.prepare-devices.outputs.device_2 }}
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          login: ${{ vars.ALLURE_USERNAME_TEMP }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD_TEMP }}
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule') }}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/migrate-allure-docker-service
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux-${{ needs.prepare-devices.outputs.device_2 }}

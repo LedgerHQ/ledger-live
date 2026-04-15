@@ -873,19 +873,19 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/migrate-allure-docker-service
         if: ${{ !cancelled() }}
         id: upload
         with:
           platform: ios-e2e
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          login: ${{ vars.ALLURE_USERNAME_TEMP }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD_TEMP }}
           path: ios-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/migrate-allure-docker-service
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
@@ -945,19 +945,19 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/migrate-allure-docker-service
         id: upload
         if: ${{ !cancelled() }}
         with:
           platform: android-e2e
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          login: ${{ vars.ALLURE_USERNAME_TEMP }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD_TEMP }}
           path: android-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/migrate-allure-docker-service
         with:
           allure-results-path: android-test-artifacts
           platform: android
