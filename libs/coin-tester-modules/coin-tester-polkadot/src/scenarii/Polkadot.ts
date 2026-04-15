@@ -159,6 +159,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
 
       switch (polkadotExtra.palletMethod) {
         case "balances.transfer":
+        case "balances.transferAll":
         case "balances.transferAllowDeath":
         case "balances.transferKeepAlive":
           amount = new BigNumber(polkadotExtra.transferAmount!);

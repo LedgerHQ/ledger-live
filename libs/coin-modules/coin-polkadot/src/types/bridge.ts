@@ -128,6 +128,7 @@ export type PolkadotOperationRaw = OperationRaw<PolkadotOperationExtraRaw>;
 
 export type PalletMethod =
   | "balances.transfer"
+  | "balances.transferAll"
   | "balances.transferKeepAlive"
   | "balances.transferAllowDeath"
   | "staking.bond"

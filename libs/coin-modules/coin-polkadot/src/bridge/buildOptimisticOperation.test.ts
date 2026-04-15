@@ -79,7 +79,30 @@ describe("buildOptimisticOperation", () => {
     const operation = buildOptimisticOperation(account, transaction, fee);
     expect(operation.extra).toEqual({
       index: 0,
-      palletMethod: "balances.transferAllowDeath",
+      palletMethod: "balances.transferAll",
+      transferAmount: transaction.amount,
+    });
+  });
+
+  it("should build correctly the extra on an OUT operation when using all amount", () => {
+    const account = {
+      pendingOperations: [
+        {
+          transactionSequenceNumber: new BigNumber(0),
+        },
+      ],
+    } as PolkadotAccount;
+    const transaction = {
+      mode: "send",
+      amount: BigNumber(1),
+      useAllAmount: true,
+    } as Transaction;
+
+    const fee = BigNumber(0);
+    const operation = buildOptimisticOperation(account, transaction, fee);
+    expect(operation.extra).toEqual({
+      index: 0,
+      palletMethod: "balances.transferAll",
       transferAmount: transaction.amount,
     });
   });
