@@ -33,6 +33,7 @@ describe("TopBarView", () => {
 
   const openSyncDrawer = jest.fn();
   const closeSyncDrawer = jest.fn();
+  const onTryRefresh = jest.fn();
 
   const defaultProps = {
     onMyLedgerPress,
@@ -49,6 +50,7 @@ describe("TopBarView", () => {
     isSyncDrawerOpen: false,
     openSyncDrawer,
     closeSyncDrawer,
+    onTryRefresh,
   };
 
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";

@@ -26,31 +26,6 @@ export async function beforeAllFunction(options: ApplicationOptions) {
   await app.portfolio.waitForPortfolioPageToLoad();
 }
 
-export async function handleBuyFlow(buySell: BuySell, paymentMethod: string) {
-  await app.buySell.expectBuyScreenToBeVisible();
-  await app.buySell.chooseAssetIfNotSelected(buySell.crypto);
-  await app.buySell.verifyQuickAmountButtonsFunctionality();
-  await app.buySell.setAmountToPay(buySell.amount);
-  await app.buySell.chooseCountryIfNotSelected(buySell.fiat);
-  await app.buySell.tapSeeQuotes();
-  await app.buySell.selectPaymentMethod(paymentMethod);
-  const selectedProvider = await app.buySell.selectRandomProvider();
-  await app.buySell.tapBuySellWithCta(selectedProvider, buySell.operation);
-  await app.buySell.verifyProviderPageLoadedWithCorrectUrl(selectedProvider);
-}
-
-export async function handleSellFlow(buySell: BuySell, paymentMethod: string, provider: Provider) {
-  await app.buySell.expectSellScreenToBeVisible();
-  await app.buySell.chooseAssetIfNotSelected(buySell.crypto);
-  await app.buySell.tapSellPercentageButton("50%");
-  await app.buySell.chooseCountryIfNotSelected(buySell.fiat);
-  await app.buySell.tapSeeQuotes();
-  await app.buySell.selectPaymentMethod(paymentMethod);
-  await app.buySell.selectProvider(provider.name);
-  await app.buySell.tapBuySellWithCta(provider.uiName, buySell.operation);
-  await app.buySell.verifyProviderPageLoadedWithCorrectUrl(provider.uiName);
-}
-
 export async function runNavigateToBuyFromPortfolioPageTest(
   buySell: BuySell,
   paymentMethod: string,
@@ -76,7 +51,7 @@ export async function runNavigateToBuyFromPortfolioPageTest(
         await app.transferMenuDrawer.navigateToBuy();
       }
 
-      await handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
 }
@@ -108,7 +83,7 @@ export async function runNavigateToBuyFromAccountPageTest(
         await app.account.navigateToTokenInAccount(buySell.crypto);
       }
       await app.account.tapBuy();
-      await handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
 }
@@ -140,7 +115,7 @@ export async function runNavigateToBuyFromMarketPageTest(
       await app.market.expectMarketRowTitle(buySell.crypto.currency.ticker);
       await app.market.openAssetPage(buySell.crypto.currency.ticker);
       await app.market.tapOnMarketQuickActionButton("buy");
-      await handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
 }
@@ -166,7 +141,7 @@ export async function runNavigateToBuyFromAssetPageTest(
       await app.portfolio.goToSpecificAsset(buySell.crypto.currency.name);
       await app.assetAccountsPage.waitForAccountPageToLoad(buySell.crypto.currency.name);
       await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
-      await handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
 }
@@ -191,7 +166,7 @@ export async function runSellFlowTest(
     tags.forEach(tag => $Tag(tag));
     test(`Sell [${buySell.crypto.currency.name}] flow via deeplink`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await handleSellFlow(buySell, paymentMethod, provider);
+      await app.buySell.handleSellFlow(buySell, paymentMethod, provider);
     });
   });
 }
@@ -215,7 +190,7 @@ export async function runQueryParametersTest(
     tags.forEach(tag => $Tag(tag));
     test(`Buy / Sell [${buySell.crypto.currency.name}] asset - query parameters`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
 }

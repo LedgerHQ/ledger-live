@@ -1,5 +1,5 @@
 import * as v8 from "v8";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import * as network from "../network";
 import type { AlgorandMemo } from "../types";
 import { craftTransaction, craftOptInTransaction, craftApiTransaction } from "./craftTransaction";

@@ -1,7 +1,7 @@
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import React from "react";
 import { useTranslation } from "react-i18next";

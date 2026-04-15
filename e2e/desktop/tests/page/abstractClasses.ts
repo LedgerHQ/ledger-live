@@ -17,7 +17,6 @@ export abstract class Component extends PageHolder {
   protected dropdownOptionsList = this.page.getByTestId("select-options-list");
   protected optionWithText = (text: string) =>
     this.page.locator(`//*[contains(text(),"${text}")]`).first();
-  protected dropdownSelectedValue = this.page.locator(".select__single-value span").first();
   protected optionWithTextAndFollowingText = (text: string, followingText: string) =>
     this.page
       .locator(
@@ -25,6 +24,8 @@ export abstract class Component extends PageHolder {
       )
       .first();
   protected loadingSpinner = this.page.getByTestId("loading-spinner");
+  protected toaster = this.page.getByTestId("toaster");
+  protected transactionSentText = "Transaction sent !";
 
   @step("Waiting for app to fully load")
   async waitForPageDomContentLoadedState() {
@@ -40,6 +41,12 @@ export abstract class Component extends PageHolder {
     for (const value of values) {
       expect(normalizedUrl).toContain(value.toLowerCase());
     }
+  }
+
+  @step("Check toaster is visible")
+  async expectTransactionSentToasterToBeVisible() {
+    await expect(this.toaster).toBeVisible();
+    await expect(this.toaster).toContainText(this.transactionSentText);
   }
 }
 

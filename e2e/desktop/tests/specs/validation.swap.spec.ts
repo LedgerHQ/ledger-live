@@ -1,4 +1,5 @@
 import test from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
@@ -67,6 +68,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     });
 
     test.use({
+      teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
@@ -120,7 +122,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
         }
         await app.swap.verifySwapAmountErrorMessageIsCorrect(electronApp, swap.errorMessage);
         if (swap.ctaBanner) {
-          await app.swap.checkCtaBanner(electronApp);
+          await app.swap.checkInsufficientFundsBannerVisible(electronApp);
         }
       },
     );
@@ -166,6 +168,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 

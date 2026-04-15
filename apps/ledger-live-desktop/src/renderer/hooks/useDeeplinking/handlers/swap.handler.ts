@@ -1,7 +1,17 @@
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { DeeplinkHandler } from "../types";
 
 export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
-  const { amountFrom, fromToken, toToken, affiliate, fromPath, fromCurrency, toCurrency } = route;
+  const {
+    amountFrom,
+    fromToken,
+    toToken,
+    affiliate,
+    fromPath,
+    fromCurrency,
+    toCurrency,
+    toAccountId,
+  } = route;
 
   const state: {
     defaultToken?: { fromTokenId?: string; toTokenId?: string };
@@ -9,8 +19,7 @@ export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
     defaultAmountFrom?: string;
     affiliate?: string;
     from?: string;
-    fromCurrency?: string;
-    toCurrency?: string;
+    defaultAccountId?: string;
   } = {};
 
   if (fromToken) {
@@ -39,6 +48,13 @@ export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
 
   if (fromPath) {
     state.from = fromPath;
+  }
+
+  if (toAccountId) {
+    const internalId = getAccountIdFromWalletAccountId(toAccountId);
+    if (internalId) {
+      state.defaultAccountId = internalId;
+    }
   }
 
   navigate("/swap", state);

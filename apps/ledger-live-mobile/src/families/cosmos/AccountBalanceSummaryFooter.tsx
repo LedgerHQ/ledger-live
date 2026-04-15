@@ -40,7 +40,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
   const [dydxUsdcRewards, setDydxUsdcRewards] = useState(new BigNumber(0));
 
-  const coinConfig = getCurrencyConfiguration(account.currency);
+  const coinConfig = getCurrencyConfiguration(account.currency.id);
   const disableDelegation =
     "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
 

@@ -141,7 +141,7 @@ export const getSyncHash = async (
   const syncHash = await baseGetSyncHash(currency.id, blacklistedTokenIds);
   const isNftSupported = isNFTActive(currency);
 
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { node = {}, explorer = {} } = config;
 
   const stringToHash = syncHash + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);

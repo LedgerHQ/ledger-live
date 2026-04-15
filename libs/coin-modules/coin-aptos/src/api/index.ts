@@ -8,13 +8,13 @@ import {
   Page,
   Validator,
   CraftedTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import type {
   Balance,
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import coinConfig from "../config";
 import { combine } from "../logic/combine";

@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .ts --cache",
@@ -26,6 +26,7 @@
     "allure-js-commons": "catalog:",
     "allure-playwright": "catalog:",
     "axios": "catalog:",
+    "bignumber.js": "9.1.2",
     "dotenv": "^16.4.7",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",

@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Veuillez réessayer.",
       "description" : "Le serveur n’a pas pu traiter votre demande. Veuillez réessayer ultérieurement ou contacter l’Assistance Ledger.",
-      "code" : "Code : {{errorCode}}"
+      "code" : "Code",
+      "correlationId" : "Référence (ID)"
     }
   },
   "swap" : {
@@ -1212,7 +1213,7 @@
         "description" : "Gardez votre portefeuille à jour, même en changeant d’ordinateur ou sur téléphone.",
         "skipButton" : "Plus tard",
         "skipTitle" : "Ne pas activer la synchronisation ?",
-        "skipDescription" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes crypto si vous changez de téléphone ou d’ordinateur. Vous pouvez toujours désactiver cette option dans les paramètres de Ledger Wallet.",
+        "skipDescription" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes crypto si vous changez de téléphone ou d’ordinateur. Vous pouvez toujours désactiver cette option dans les paramètres.",
         "skipConfirm" : "Ne pas activer",
         "skipNo" : "Activer"
       },
@@ -1506,13 +1507,13 @@
       "continue" : "Continuer malgré les risques"
     },
     "info" : {
-      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
-      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Wallet™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Wallet et de bénéficier d’une expérience optimale.",
       "reminder" : "Ne plus me le rappeler"
     },
     "error" : {
       "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
-      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Wallet."
     },
     "update" : "Découvrir la gamme",
     "learnMore" : "En savoir plus",
@@ -1575,7 +1576,7 @@
       "clearAll" : "Tout effacer"
     },
     "marketList" : {
-      "crypto" : "Crypto",
+      "crypto" : "Cryptos",
       "price" : "Cours",
       "change" : "Variation",
       "marketCap" : "Capitalisation",
@@ -2182,7 +2183,7 @@
     },
     "1" : {
       "title" : "Opérations sécurisées",
-      "desc" : "Vérifiez les détails de vos transactions sur un écran sécurisé."
+      "desc" : "Vérifiez vos transactions sur un écran sécurisé."
     },
     "2" : {
       "title" : "Wallet ultra-puissant",
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Crypto à envoyer",
       "changeToReturn" : "Crypto à rendre",
       "enterAmount" : "Entrer le montant",
+      "selectSufficientCoins" : "Sélectionnez un montant suffisant",
       "amountToSendInCurrency" : "Montant à envoyer en {{ticker}}",
       "amountInputLabel" : "Montant à envoyer"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Coins plus anciens en premier (FIFO)",
       "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
-      "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
+      "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)",
+      "CUSTOM" : "Sélection personnalisée"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "CTA secondaire",
             "cta" : "CTA",
             "tag" : "Tag",
+            "picto" : "Picto (identifiant Ledger)",
             "url" : "URL",
             "path" : "Chemin"
           }
@@ -4645,6 +4649,10 @@
           "title" : "Génération de compte vide",
           "desc" : "Générez un compte vide."
         },
+        "stablecoinGenerate" : {
+          "title" : "Préréglage Stablecoins",
+          "desc" : "Générez des comptes Ethereum, Arbitrum, Optimism, Base, Solana, Tron et Algorand avec les principaux stablecoins (maximum 5 par réseau)."
+        },
         "currencySelector" : {
           "placeholder" : "Choisir des monnaies...",
           "searchPlaceholder" : "Rechercher",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "Générer {{count}} compte",
           "generateAccounts_other" : "Générer {{count}} comptes",
           "generateAccountsQuick" : "Générer {{count}} comptes",
-          "generateEmptyAccount" : "Générer compte vide"
+          "generateEmptyAccount" : "Générer compte vide",
+          "generateStablecoinAccounts" : "Générer {{count}} compte de stablecoins",
+          "generateStablecoinAccounts_other" : "Générer {{count}} comptes de stablecoins"
         },
         "alerts" : {
           "selectCurrency" : "Veuillez sélectionner au moins une monnaie",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "Expérience personnalisée",
-      "analytics" : "Statistiques",
-      "personalizedExpDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
-      "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Wallet, à améliorer l’application et votre expérience."
+      "analytics" : "Performance de l’application",
+      "personalizedExpDesc" : "Autorisez Ledger à collecter des données relatives à l’utilisation de l’application, pour fournir des contenus personnalisés.",
+      "analyticsDesc" : "Autorisez Ledger à collecter des données relatives à l’utilisation de l’application, pour améliorer l’expérience."
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "En savoir plus"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Passer au niveau supérieur",
+      "description" : "Profitez d’une réduction exclusive de 20% sur les derniers signers Ledger."
+    },
+    "opted_out" : {
+      "title" : "Passez du Ledger Nano S™ à un modèle plus récent",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Sélectionnez le compte à ajouter",
@@ -8128,7 +8148,7 @@
     "buyALedger" : "Acheter un Ledger"
   },
   "assets" : {
-    "cryptos" : "Crypto",
+    "cryptos" : "Cryptos",
     "stablecoins" : "Stablecoins",
     "cryptoAccounts" : "Comptes crypto",
     "accountsCount_one" : "{{count}} compte",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Comptes crypto",
+    "title" : "Comptes",
     "tableActions" : {
-      "searchAddress" : "Rechercher une adresse",
+      "searchAddress" : "Rechercher par nom ou adresse",
       "addAddress" : "Ajouter une adresse"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "Trading {{asset}}",
         "savings" : "Épargne {{asset}}"
       },
-      "cta" : "Confirmer"
+      "cta" : "Confirmer",
+      "syncingTooltip" : "Synchronisation en cours, patientez"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "Synchroniser",
         "stopSync" : "Arrêter la synchro",
         "lastProcessedBlock" : "Dernier bloc traité : {{block}}. Il manque {{missing}} blocs.",
-        "lastSync" : "Dernière synchro : {{date}}"
+        "lastSync" : "Dernière synchro : {{date}}",
+        "estimatedTimeRemaining" : "Temps restant estimé : {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "Bloc de création",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Sponsorisé par Provable",
       "balanceSelector" : {
         "private" : "Solde privé",
         "public" : "Solde public",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "Solde transparent",
       "transparentBalanceTooltip" : "Le solde qui est visible publiquement.",
       "privateBalance" : "Solde privé",
-      "privateBalanceTooltip" : "Le solde qui est masqué."
+      "privateBalanceTooltip" : "Le solde qui est masqué.",
+      "syncButton" : {
+        "startSync" : "Synchroniser",
+        "stopSync" : "Arrêter la synchro",
+        "syncAgain" : "Resynchroniser",
+        "lastSync" : "Dernière synchro : {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "Envoyer depuis"
       },
       "summary" : {
-        "coveredByProvable" : "Sponsorisé par Provable",
         "proofGenerationWarning" : "Une transaction Aleo nécessite la génération d’une preuve. Vous devrez patienter un peu."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Synchronisation de votre solde privé ({{percentage}}%)",
+        "desc" : "Veuillez patienter",
+        "error" : "Échec de la synchronisation. Veuillez réessayer plus tard."
       }
     }
   },

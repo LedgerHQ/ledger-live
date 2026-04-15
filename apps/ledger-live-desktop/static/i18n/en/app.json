@@ -419,7 +419,8 @@
     "webviewErrorDrawer": {
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
-      "code": "Code: {{errorCode}}"
+      "code": "Code",
+      "correlationId": "Reference ID"
     }
   },
   "swap": {
@@ -2513,6 +2514,7 @@
       "coinToSend": "Coin to send",
       "changeToReturn": "Change to return",
       "enterAmount": "Enter amount",
+      "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
     }
@@ -2968,7 +2970,8 @@
     "pickingStrategyLabels": {
       "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
       "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
-      "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+      "MERGE_OUTPUTS": "Minimize future fees (merge coins)",
+      "CUSTOM": "Custom coin selection"
     }
   },
   "celo": {
@@ -4649,6 +4652,7 @@
             "secondaryCta": "Secondary CTA",
             "cta": "CTA",
             "tag": "Tag",
+            "picto": "Picto (ledger id)",
             "url": "URL",
             "path": "Path"
           }
@@ -4669,6 +4673,10 @@
           "title": "Empty generation",
           "desc": "Generate an empty account"
         },
+        "stablecoinGenerate": {
+          "title": "Stablecoin preset",
+          "desc": "Generate Ethereum, Arbitrum, Optimism, Base, Solana, Tron and Algorand accounts with top stablecoins (max 5 per network)"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -4685,7 +4693,9 @@
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
           "generateAccountsQuick": "Generate {{count}} accounts",
-          "generateEmptyAccount": "Generate empty account"
+          "generateEmptyAccount": "Generate empty account",
+          "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
+          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -7806,9 +7816,9 @@
     },
     "profileSettings": {
       "personalizedExp": "Personalized experience",
-      "analytics": "Analytics",
-      "personalizedExpDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
-      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience."
+      "analytics": "App performance",
+      "personalizedExpDesc": "Enable Ledger to collect app usage to provide personalized contents",
+      "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience"
     }
   },
   "analytics": {
@@ -8014,6 +8024,16 @@
       "cta": "Learn more"
     }
   },
+  "lnsUpsellMediaBanner": {
+    "opted_in": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers."
+    },
+    "opted_out": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
+    }
+  },
   "modularAssetDrawer": {
     "addAccounts": {
       "title": "Select the accounts you want to add",
@@ -8172,9 +8192,9 @@
     }
   },
   "cryptoAddresses": {
-    "title": "Crypto accounts",
+    "title": "Accounts",
     "tableActions": {
-      "searchAddress": "Search address",
+      "searchAddress": "Search by name, address",
       "addAddress": "Add address"
     },
     "table": {
@@ -8194,7 +8214,8 @@
         "trading": "{{asset}} trading",
         "savings": "{{asset}} savings"
       },
-      "cta": "Confirm"
+      "cta": "Confirm",
+      "syncingTooltip": "Sync in progress, please wait"
     }
   },
   "cryptoAssets": {
@@ -8255,7 +8276,8 @@
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
-        "lastSync": "Last sync: {{date}}"
+        "lastSync": "Last sync: {{date}}",
+        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
       },
       "datepicker": {
         "label": "Birthday height",
@@ -8354,6 +8376,7 @@
       }
     },
     "shared": {
+      "sponsoredByProvable": "Sponsored by Provable",
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
@@ -8375,7 +8398,13 @@
       "transparentBalance": "Transparent balance",
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
-      "privateBalanceTooltip": "Balance that is hidden from the public"
+      "privateBalanceTooltip": "Balance that is hidden from the public",
+      "syncButton": {
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "syncAgain": "Sync again",
+        "lastSync": "Last synced: {{date}}"
+      }
     },
     "operations": {
       "type": {
@@ -8388,8 +8417,12 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
+      },
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "error": "Private sync failed. Please try again later."
       }
     }
   },

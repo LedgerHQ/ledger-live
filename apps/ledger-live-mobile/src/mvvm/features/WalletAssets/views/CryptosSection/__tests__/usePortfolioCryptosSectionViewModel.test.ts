@@ -138,7 +138,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
   });
 
   describe("onPressShowAll", () => {
-    it("should navigate to AssetsList when assetSection is enabled", () => {
+    it("should navigate to Crypto screen when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -155,12 +155,11 @@ describe("usePortfolioCryptosSectionViewModel", () => {
         result.current.onPressShowAll();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Crypto,
         params: {
           sourceScreenName: ScreenName.Portfolio,
-          showHeader: true,
-          isSyncEnabled: true,
+          variant: "crypto",
         },
       });
     });
@@ -221,10 +220,10 @@ describe("usePortfolioCryptosSectionViewModel", () => {
     });
   });
 
-  describe("isEmptyState", () => {
+  describe("variant: emptyState", () => {
     it("should always return hasMore false", () => {
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isEmptyState: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "emptyState" }),
       );
 
       expect(result.current.hasMore).toBe(false);
@@ -259,7 +258,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(result.current.assetsCount).toBe(2);
@@ -274,7 +273,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(result.current.hasMore).toBe(true);
@@ -286,7 +285,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       act(() => {
@@ -304,7 +303,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(result.current.assetsToDisplay[0]).toMatchObject({
@@ -320,7 +319,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       act(() => {

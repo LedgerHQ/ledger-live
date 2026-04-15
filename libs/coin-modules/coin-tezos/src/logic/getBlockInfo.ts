@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { tzkt } from "../network";
 
 /**

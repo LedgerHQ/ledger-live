@@ -1,5 +1,23 @@
 # @ledgerhq/live-dmk
 
+## 0.22.1
+
+### Patch Changes
+
+- Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/hw-transport@6.35.0
+  - @ledgerhq/logs@6.17.0
+  - @ledgerhq/types-devices@6.31.0
+
+## 0.22.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/hw-transport@6.35.0-next.0
+  - @ledgerhq/logs@6.17.0-next.0
+  - @ledgerhq/types-devices@6.31.0-next.0
+
 ## 0.22.0
 
 ### Minor Changes

@@ -10,22 +10,20 @@ import {
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
 import { SectionListContent } from "../../components/SectionListContent";
-import usePortfolioStablecoinsSectionViewModel, {
-  EMPTY_STATE_MAX_STABLECOINS,
-} from "./usePortfolioStablecoinsSectionViewModel";
+import usePortfolioStablecoinsSectionViewModel from "./usePortfolioStablecoinsSectionViewModel";
+import { EMPTY_STATE_MAX_STABLECOINS } from "LLM/features/WalletAssets/constants";
+import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 interface PortfolioStablecoinsSectionProps {
-  isEmptyState?: boolean;
-  isReadOnly?: boolean;
+  variant?: WalletAssetsVariant;
 }
 
 const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSectionProps> = ({
-  isEmptyState,
-  isReadOnly,
+  variant,
 }) => {
   const { t } = useTranslation();
   const { assetsCount, hasMore, assetsToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
-    usePortfolioStablecoinsSectionViewModel({ isEmptyState, isReadOnly });
+    usePortfolioStablecoinsSectionViewModel({ variant });
 
   if (!isLoading && !isError && assetsCount === 0) return null;
 

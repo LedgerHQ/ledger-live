@@ -3,3 +3,5 @@ export const PRIVATE_BALANCE_PLACEHOLDER = "***";
 export enum AleoCustomModal {
   SELF_TRANSFER = "MODAL_ALEO_SELF_TRANSFER",
 }
+
+export const MANDATORY_SYNC_POLLING_DELAY = 3000;

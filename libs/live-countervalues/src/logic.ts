@@ -28,10 +28,9 @@ import {
   datapointLimits,
   datapointRetention,
 } from "./helpers";
-import type { Account, PortfolioRange } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
-import { portfolioRangeToDays } from "./helpers";
 
 /**
  * Heuristic to avoid calling exportCountervalues when the persisted export would be unchanged.
@@ -60,25 +59,13 @@ export function hasNewCountervaluesToExport(
 }
 
 // Raw state for db: history + status; no "latest" (so persistence only changes when history changes).
-// When data is cut by selectedTimeRange, status.oldestDateRequested must be aligned so it never
-// claims we have data older than what we actually persist (otherwise needOlderReload would be wrong).
 export function exportCountervalues(
   { data, status }: CounterValuesState,
   trackingPair: TrackingPair[],
-  selectedTimeRange?: PortfolioRange,
 ): CounterValuesStateRaw {
   const hourlyLimit = formatCounterValueDay(new Date(Date.now() - datapointRetention.hourly));
   const pairIds = new Set(trackingPairIds(trackingPair));
 
-  const dailyRetentionDays = selectedTimeRange
-    ? portfolioRangeToDays(selectedTimeRange)
-    : undefined;
-  const shouldFilterDaily = dailyRetentionDays !== undefined;
-  const dailyLimit = shouldFilterDaily
-    ? formatCounterValueDay(new Date(Date.now() - dailyRetentionDays * 24 * 60 * 60 * 1000))
-    : null;
-
-  const exportedPairIds: string[] = [];
   const out = { status: { ...status } } as CounterValuesStateRaw;
 
   for (const path in data) {
@@ -91,27 +78,12 @@ export function exportCountervalues(
     for (const [k, v] of data[path]) {
       if (k === "latest") continue; // Don't persist latest; export only changes when history changes
       if (k.length === 13 && k.slice(0, 10) < hourlyLimit) continue; // Skip old hourly data
-      if (shouldFilterDaily && k.length === 10 && dailyLimit && k < dailyLimit) continue; // Skip old daily data only if filtering is enabled
       size++;
       obj[k] = v;
     }
 
     if (size > 0) {
       out[path] = obj;
-      if (shouldFilterDaily) exportedPairIds.push(path);
-    }
-  }
-
-  // Correlate status with the cut: oldestDateRequested must not be older than the data we persist.
-  if (shouldFilterDaily && dailyLimit) {
-    for (const path of exportedPairIds) {
-      const s = out.status[path];
-      if (s?.oldestDateRequested && s.oldestDateRequested < dailyLimit) {
-        out.status[path] = {
-          ...s,
-          oldestDateRequested: dailyLimit,
-        };
-      }
     }
   }
 

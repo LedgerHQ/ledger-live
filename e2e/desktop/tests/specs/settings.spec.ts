@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -8,6 +9,7 @@ import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 test.describe("Settings", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "erc20-0-balance",
   });
 
@@ -45,6 +47,7 @@ test.describe("Settings", () => {
 test.describe("Password", () => {
   const account = Account.ETH_1;
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
@@ -83,6 +86,7 @@ test.describe("Password", () => {
 test.describe("counter value selection", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
@@ -129,6 +133,7 @@ test.describe("counter value selection", () => {
 
 test.describe("Ledger Support (web link)", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
   });
 
@@ -154,6 +159,7 @@ test.describe("Ledger Support (web link)", () => {
 
 test.describe("Reset app", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
   });
 
@@ -184,6 +190,7 @@ test.describe("Reset app", () => {
 
 test.describe("Settings - Help tab", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
   });
 

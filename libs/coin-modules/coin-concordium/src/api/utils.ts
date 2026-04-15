@@ -1,4 +1,4 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/index";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
 import type { RawOperation } from "../types";
 
 export function mapRawOperationToApiOperation(op: RawOperation): Operation {

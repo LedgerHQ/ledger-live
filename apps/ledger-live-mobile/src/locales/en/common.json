@@ -1598,7 +1598,7 @@
     "desc": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
     "0": {
       "title": "Full ownership",
-      "desc": "Your private keys never leave the device."
+      "desc": "You have control over your private keys."
     },
     "1": {
       "title": "Trade securely",
@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets": "See all assets",
     "cryptoAddresses": {
-      "title": "Crypto accounts",
+      "title": "Accounts",
       "count_one": "{{count}} account",
       "count_other": "{{count}} accounts",
-      "noAccountsYet": "No accounts yet"
+      "noAccountsYet": "No accounts yet",
+      "add": "Add"
     },
     "seeAllAccounts": "See all accounts",
     "assetSection": {
@@ -2785,6 +2786,8 @@
       "buy": "Buy",
       "connect": "Connect",
       "buyLedger": "Buy a Ledger",
+      "receive": "Receive",
+      "send": "Send",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive via crypto address",
@@ -2807,7 +2810,8 @@
     "refreshStatus": {
       "refreshing": "Refreshing...",
       "upToDate": "Portfolio up to date",
-      "syncError": "Some account data couldn’t load"
+      "syncError": "Some account data couldn’t load",
+      "offline": "You’re offline. Please check your connection"
     }
   },
   "addAccountsModal": {
@@ -3198,6 +3202,18 @@
   "assets": {
     "title": "Assets"
   },
+  "cryptoAddresses": {
+    "title": "Accounts",
+    "addAccount": "Add account",
+    "emptyState": "No accounts yet",
+    "errorState": "An error occurred while loading your accounts"
+  },
+  "crypto": {
+    "title": "Crypto",
+    "stablecoinTitle": "Stablecoin",
+    "errorState": "An error occurred while loading your assets",
+    "emptyState": "No assets to display"
+  },
   "accounts": {
     "title": "Accounts",
     "cryptoAccountsTitle": "{{currencyTicker}} accounts",
@@ -3318,13 +3334,13 @@
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
-      "analytics": "Analytics",
-      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience.",
+      "analytics": "App performance",
+      "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice",
       "personalizedRecommendations": "Personalized experience",
-      "personalizedRecommendationsDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
+      "personalizedRecommendationsDesc": "Enable Ledger to collect app usage to provide personalized contents",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -3433,6 +3449,14 @@
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
+      },
+      "totalMarketCap": {
+        "title": "Total Market Cap",
+        "desc": "Get notified when the total crypto market cap makes a significant move"
+      },
+      "topGainersLosers": {
+        "title": "Top Gainers and Losers",
+        "desc": "Get a weekly recap of the top gaining and losing tokens on the market"
       },
       "price": {
         "title": "Price Alerts",
@@ -3577,9 +3601,13 @@
         "addSampleBanner": "Add sample banner",
         "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
         "addSampleActionCarouselIcon": "Add action carousel (icon)",
-        "addSampleActionCarouselIconDesc": "ContentBanner with Spot icons — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselIconDesc": "Adds one ContentBanner card per tap. Same row as the image variant — mix icon and image cards in one carousel. Cycles Buy → Swap → Stake. Requires Braze placement flag.",
         "addSampleActionCarouselImageBackground": "Add action carousel (image)",
-        "addSampleActionCarouselImageBackgroundDesc": "MediaBanner with image_background — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselImageBackgroundDesc": "Adds one MediaBanner card per tap. Same row as the icon variant — mix both in one carousel. Cycles Buy → Swap → Stake. Requires Braze placement flag.",
+        "addSampleWalletCarouselPicto": "Add bottom wallet carousel (picto)",
+        "addSampleWalletCarouselPictoDesc": "One mock card with crypto icon (picto), title, image, link. No Braze.",
+        "addSampleWalletCarouselTag": "Add bottom wallet carousel (tag)",
+        "addSampleWalletCarouselTagDesc": "One mock card with tag, title, image, link. No Braze.",
         "dismissAll": "Dismiss all local cards",
         "dismissAllDesc": "Remove all locally generated content cards."
       }
@@ -3652,7 +3680,8 @@
         },
         "fiat": {
           "title": "Via bank transfer",
-          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "description": "Receive stablecoin by simply sending cash.",
+          "description_legacy": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         }
       },
       "memoTag": {
@@ -4325,13 +4354,15 @@
         "coinToSend": "Coin to send",
         "changeToReturn": "Change to return",
         "enterAmount": "Enter amount",
+        "selectSufficientCoins": "Select sufficient coins",
         "amountToSendInCurrency": "Amount to send in {{ticker}}",
         "amountInputLabel": "Amount to send",
         "bitcoin": {
           "pickingStrategyLabels": {
             "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
             "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
-            "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+            "MERGE_OUTPUTS": "Minimize future fees (merge coins)",
+            "CUSTOM": "Custom coin selection"
           }
         }
       }
@@ -7816,7 +7847,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "stablecoins": "Stablecoin",
+      "stablecoins": "Stablecoins",
       "market": "Market"
     },
     "referralProgram": "$20"
@@ -8061,6 +8092,32 @@
           "link": "Learn more about our Tracking Policy"
         }
       }
+    }
+  },
+  "analyticsConsentDrawer": {
+    "fresh": {
+      "title": "Help us improve Ledger",
+      "description": "With your consent, we'll collect usage data to improve features and personalize your experience.",
+      "ctaAcceptAll": "Accept all",
+      "ctaRefuseAll": "Refuse all"
+    },
+    "reconfirm": {
+      "title": "Continue improving Ledger?",
+      "description": "Would you like to continue sharing usage data to help us improve Ledger? This data is used to improve features and personalize your experience.",
+      "ctaContinue": "Yes, continue",
+      "ctaStop": "No, stop"
+    },
+    "privacy": {
+      "title": "We're updating our privacy policy",
+      "descriptionLead": "Please review our ",
+      "descriptionLinkLabel": "Privacy policy",
+      "descriptionTrail": " to learn what has changed. You can update your preferences at any time in Settings.",
+      "ctaGotIt": "Got it"
+    },
+    "setPreferences": "Set preferences",
+    "footer": {
+      "lead": "You can revoke your consent anytime in settings.",
+      "privacyLink": "Privacy policy"
     }
   },
   "walletSync": {
@@ -8510,6 +8567,10 @@
       "title": "Rate Expired",
       "description": "Exchange rate expired. Please refresh and try again."
     },
+    "details": {
+      "code": "Error code",
+      "correlationId": "Reference ID"
+    },
     "default": {
       "title": "Something went wrong",
       "description": "Please retry or contact Ledger Support if in doubt"
@@ -8741,6 +8802,7 @@
     "bottomSheet": {
       "title": "Some account data couldn’t load",
       "description": "Your assets are safe. This is a temporary sync issue.\nAffected accounts: {{accounts}}",
+      "tryToRefresh": "Try to refresh",
       "close": "Close"
     }
   },

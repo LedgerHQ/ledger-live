@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Operation as AlpacaOperation } from "@ledgerhq/coin-framework/api/index";
+import type { Operation as AlpacaOperation } from "@ledgerhq/coin-module-framework/api/index";
 import type { AleoOperation } from "../../types";
 
 export function getMockedAlpacaOperation(overrides?: Partial<AlpacaOperation>): AlpacaOperation {

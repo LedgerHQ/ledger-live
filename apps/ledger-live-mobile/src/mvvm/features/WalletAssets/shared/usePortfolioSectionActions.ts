@@ -5,30 +5,34 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { track } from "~/analytics";
+import { useAnalytics } from "~/analytics";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 interface PortfolioSectionActions {
   onPressShowAll: () => void;
   onItemPress: (asset: Asset) => void;
 }
 
-export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectionActions {
+export function usePortfolioSectionActions(
+  isReadOnly: boolean,
+  variant: "crypto" | "stablecoin" | "all",
+): PortfolioSectionActions {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const { track } = useAnalytics();
 
   const onPressShowAll = useCallback(() => {
     track("button_clicked", {
-      button: "account_cta",
-      type: "view",
+      button: "asset_list",
+      type: variant === "stablecoin" ? "stable" : "crypto",
       page: "Wallet",
     });
     if (!isReadOnly && shouldDisplayAssetSection) {
-      navigation.navigate(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Crypto,
         params: {
           sourceScreenName: ScreenName.Portfolio,
-          showHeader: true,
-          isSyncEnabled: true,
+          variant,
         },
       });
     } else {
@@ -36,7 +40,7 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
         screen: ScreenName.Assets,
       });
     }
-  }, [navigation, shouldDisplayAssetSection, isReadOnly]);
+  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant, track]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {
@@ -45,8 +49,9 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
         page: "Wallet",
       });
       if (asset.isPlaceholder) {
+        const currencyId = dadaIdToMarketId(asset.marketId ?? asset.currency.id);
         navigation.navigate(ScreenName.MarketDetail, {
-          currencyId: asset.marketId ?? asset.currency.id,
+          currencyId,
         });
       } else {
         navigation.navigate(NavigatorName.Accounts, {
@@ -57,7 +62,7 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
         });
       }
     },
-    [navigation],
+    [navigation, track],
   );
 
   return { onPressShowAll, onItemPress };

@@ -10,22 +10,18 @@ import {
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
 import { SectionListContent } from "../../components/SectionListContent";
-import usePortfolioCryptosSectionViewModel, {
-  EMPTY_STATE_MAX_ASSETS,
-} from "./usePortfolioCryptosSectionViewModel";
+import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionViewModel";
+import { EMPTY_STATE_MAX_ASSETS } from "LLM/features/WalletAssets/constants";
+import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 interface PortfolioCryptosSectionProps {
-  isEmptyState?: boolean;
-  isReadOnly?: boolean;
+  variant?: WalletAssetsVariant;
 }
 
-const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
-  isEmptyState,
-  isReadOnly,
-}) => {
+const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({ variant }) => {
   const { t } = useTranslation();
   const { assetsCount, hasMore, assetsToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
-    usePortfolioCryptosSectionViewModel({ isEmptyState, isReadOnly });
+    usePortfolioCryptosSectionViewModel({ variant });
 
   if (!isLoading && !isError && assetsCount === 0) return null;
 

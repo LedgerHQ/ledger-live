@@ -133,7 +133,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
         },
       },
     });
-    initMswHandlers(getCoinConfig(polygon).info);
+    initMswHandlers(getCoinConfig(polygon.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

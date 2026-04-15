@@ -68,6 +68,48 @@ describe("useCryptoAccountRows", () => {
     expect(result.current.rows.map(a => a.id)).toContain(account.id);
   });
 
+  it("should filter rows by search against account address", () => {
+    const account = genAccount("rows-search-addr", {
+      currency: BTC_ACCOUNT.currency,
+      operationsSize: 0,
+    });
+
+    const { result, rerender } = renderHook(({ search }) => useCryptoAccountRows(search), {
+      initialProps: { search: "" },
+      initialState: {
+        accounts: [account],
+        ...createWalletState(new Map([[account.id, "My BTC"]])),
+      },
+    });
+
+    const addressFragment = account.freshAddress.slice(0, 8);
+    rerender({ search: addressFragment });
+    expect(result.current.rows.map(a => a.id)).toContain(account.id);
+
+    rerender({ search: "0xNOTAREALADDRESS999" });
+    expect(result.current.rows).toHaveLength(0);
+  });
+
+  it("should match token accounts by parent address", () => {
+    const parent = ETH_ACCOUNT_WITH_USDC;
+    const token = parent.subAccounts![0];
+
+    const addressFragment = parent.freshAddress.slice(0, 8);
+    const { result } = renderHook(() => useCryptoAccountRows(addressFragment), {
+      initialState: {
+        accounts: [parent],
+        ...createWalletState(
+          new Map([
+            [parent.id, "Parent"],
+            [token.id, "USDC token"],
+          ]),
+        ),
+      },
+    });
+
+    expect(result.current.rows.some(r => r.id === token.id)).toBe(true);
+  });
+
   it("should include token sub-accounts in rows when they match search", () => {
     const parent = ETH_ACCOUNT_WITH_USDC;
     const token = parent.subAccounts![0];

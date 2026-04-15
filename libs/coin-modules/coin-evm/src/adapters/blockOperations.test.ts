@@ -1,4 +1,4 @@
-import type { BlockOperation } from "@ledgerhq/coin-framework/api/index";
+import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   TraceBlockCallAction,
   TraceBlockItem,

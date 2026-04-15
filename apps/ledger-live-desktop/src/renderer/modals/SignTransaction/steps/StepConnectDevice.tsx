@@ -4,6 +4,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
+import { isSwapDisableAppsInstall } from "@ledgerhq/live-common/exchange/swap/utils/isIntegrationTestEnv";
 
 export default function StepConnectDevice({
   account,
@@ -22,6 +23,10 @@ export default function StepConnectDevice({
 }: StepProps) {
   const connectDependencies = useMemo(() => {
     const appRequests = dependenciesToAppRequests(dependencies);
+
+    if (isSwapDisableAppsInstall()) {
+      return appRequests;
+    }
 
     if (account) {
       // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
@@ -46,7 +51,7 @@ export default function StepConnectDevice({
         manifestId={manifestId}
         manifestName={manifestName}
         isACRE={isACRE}
-        requireLatestFirmware
+        requireLatestFirmware={!isSwapDisableAppsInstall()}
         location={location}
       />
     </>

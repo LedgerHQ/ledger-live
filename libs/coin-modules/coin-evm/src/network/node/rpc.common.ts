@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ethers, JsonRpcProvider } from "ethers";
+import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
@@ -14,7 +14,12 @@ import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { withRetries } from "../withRetries";
-import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
+import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
+import {
+  hasErrorCode,
+  isUnsupportedRpcMethodErrorMsg,
+  isUnsupportedRpcMethodError,
+} from "./rpc.errors";
 import {
   NodeApi,
   ERC20Transfer,
@@ -22,10 +27,10 @@ import {
   LogWithAddress,
   TransactionReceipt,
   TraceBlockItem,
+  isTraceBlockItem,
   TransactionInfo,
   BlockByHeightResult,
   BlockReceiptInfo,
-  isTraceBlockCallAction,
 } from "./types";
 
 /**
@@ -37,6 +42,44 @@ import {
 export const ERC20_TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
+/** keccak256("Deposit(address,uint256)") — WETH-style wrap often emits only Deposit, not ERC20 Transfer. */
+export const WETH_DEPOSIT_TOPIC =
+  "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c";
+
+/** keccak256("Withdrawal(address,uint256)") — WETH-style unwrap often emits only Withdrawal, not ERC20 Transfer. */
+export const WETH_WITHDRAWAL_TOPIC =
+  "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65";
+
+const ZERO_ADDRESS_HEX = safeEncodeEIP55("0x0000000000000000000000000000000000000000");
+
+function topicToAddress(topic: string | undefined): string {
+  if (!topic || topic.length < 66) return ZERO_ADDRESS_HEX;
+  return safeEncodeEIP55("0x" + topic.slice(26));
+}
+
+function isTransfer(log: LogWithAddress): boolean {
+  return log.topics[0] === ERC20_TRANSFER_TOPIC && log.topics.length === 3 && log.data.length > 2;
+}
+
+function isWethDeposit(log: LogWithAddress): boolean {
+  return log.topics[0] === WETH_DEPOSIT_TOPIC && log.topics.length === 2 && log.data.length > 2;
+}
+
+function isWethWithdrawal(log: LogWithAddress): boolean {
+  return log.topics[0] === WETH_WITHDRAWAL_TOPIC && log.topics.length === 2 && log.data.length > 2;
+}
+
+function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20Transfer {
+  return {
+    asset: {
+      type: "erc20",
+      assetReference: safeEncodeEIP55(log.address),
+    },
+    from,
+    to,
+    value: BigInt(log.data).toString(),
+  };
+}
 /**
  * Parse ERC20 Transfer events from transaction receipt logs.
  *
@@ -47,8 +90,19 @@ export const ERC20_TRANSFER_TOPIC =
  * - data: value (uint256, 32 bytes)
  * - log.address: token contract address
  *
- * Distinction from other standards:
- * - ERC20:   3 topics (sig, from, to) + value in data
+ * WETH-style `Deposit(address,uint256)` (wrap / mint when `Transfer` is not emitted):
+ * - topic[0]: event signature hash (0xe1fffcc4…)
+ * - topic[1]: dst address (indexed, padded to 32 bytes)
+ * - data: wad (uint256, 32 bytes)
+ * - log.address: token contract address
+ *
+ * WETH-style `Withdrawal(address,uint256)` (unwrap / burn when `Transfer` is not emitted):
+ * - topic[0]: event signature hash (0x7fcf532c…)
+ * - topic[1]: src address (indexed, padded to 32 bytes)
+ * - data: wad (uint256, 32 bytes)
+ * - log.address: token contract address
+ * 
+ *  Other standards (not supported yet):
  * - ERC721:  4 topics (sig, from, to, tokenId) - filtered out by topics.length === 3
  * - ERC1155: different event signature - filtered out by topic[0] check
  *
@@ -57,19 +111,18 @@ export const ERC20_TRANSFER_TOPIC =
  */
 export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>): ERC20Transfer[] {
   return logs
-    .filter(
-      log =>
-        log.topics[0] === ERC20_TRANSFER_TOPIC && log.topics.length === 3 && log.data.length > 2, // must have data beyond "0x"
-    )
-    .map(log => ({
-      asset: {
-        type: "erc20" as const,
-        assetReference: safeEncodeEIP55(log.address),
-      },
-      from: safeEncodeEIP55("0x" + log.topics[1].slice(26)),
-      to: safeEncodeEIP55("0x" + log.topics[2].slice(26)),
-      value: BigInt(log.data).toString(),
-    }));
+    .flatMap(log => {
+      if (isTransfer(log)) {
+        return [makeErc20Transfer(log, topicToAddress(log.topics[1]), topicToAddress(log.topics[2]))];
+      }
+      if (isWethDeposit(log)) {
+        return [makeErc20Transfer(log, ZERO_ADDRESS_HEX, topicToAddress(log.topics[1]))];
+      }
+      if (isWethWithdrawal(log)) {
+        return [makeErc20Transfer(log, topicToAddress(log.topics[1]), ZERO_ADDRESS_HEX)];
+      }
+      return [];
+    });
 }
 
 export const RPC_TIMEOUT =
@@ -113,7 +166,10 @@ export async function withApi<T>(
       const key = providerCacheKey(currency.id, nodeConfig.uri);
       if (!PROVIDERS_BY_RPC[key]) {
         const chainId = currency.ethereumLikeInfo?.chainId;
-        PROVIDERS_BY_RPC[key] = new JsonRpcProvider(nodeConfig.uri, chainId);
+        const fetchReq = new FetchRequest(nodeConfig.uri);
+        // Disable ethers' built-in HTTP-level retries: withRetries handles all retry logic.
+        fetchReq.setThrottleParams({ maxAttempts: 1 });
+        PROVIDERS_BY_RPC[key] = new JsonRpcProvider(fetchReq, chainId);
       }
       const provider = PROVIDERS_BY_RPC[key];
       return await execute(provider);
@@ -170,6 +226,21 @@ async function getTokenBalance(
   const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
   const balance = await erc20.balanceOf(normalizeAddress(address));
   return new BigNumber(balance.toString());
+}
+
+async function getTokenAllowance(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  ownerAddress: string,
+  contractAddress: string,
+  spenderAddress: string,
+): Promise<BigNumber> {
+  const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
+  const allowance = await erc20.allowance(
+    normalizeAddress(ownerAddress),
+    normalizeAddress(spenderAddress),
+  );
+  return new BigNumber(allowance.toString());
 }
 
 async function getTransactionCount(
@@ -511,16 +582,36 @@ async function getBlockReceipts(
   });
 }
 
-async function traceBlock(
+async function traceBlockGeth(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  blockHeight: number,
+): Promise<TraceBlockItem[]> {
+  const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
+  const debugResults = await api
+    .send("debug_traceBlockByNumber", [rpcBlockTag, { tracer: "callTracer" }])
+    .catch(error => {
+      if (isUnsupportedRpcMethodError(error) || isUnsupportedRpcMethodErrorMsg(error)) {
+        throw new UnsupportedRpcMethodError(
+          "debug_traceBlockByNumber is not supported by this RPC provider",
+          {
+            method: "debug_traceBlockByNumber",
+            rawError: error,
+          },
+        );
+      }
+      throw error;
+    });
+  if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
+  const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
+  return items;
+}
+
+async function traceBlockErigon(
+  api: JsonRpcProvider,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  let traces: unknown;
-  try {
-    traces = await api.send("trace_block", [blockTag]);
-  } catch (error) {
+  return await api.send("trace_block", [blockTag]).catch(error => {
     if (isUnsupportedRpcMethodError(error)) {
       throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
         method: "trace_block",
@@ -528,8 +619,31 @@ async function traceBlock(
       });
     }
     throw error;
-  }
+  });
+}
 
+function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+async function callTraceBlock(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  return await traceBlockErigon(api, blockHeight).catch(error => {
+    if (isNumber(blockHeight)) {
+      return traceBlockGeth(api, blockHeight);
+    }
+    throw error;
+  });
+}
+
+async function traceBlock(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  const traces = await callTraceBlock(api, blockHeight);
   if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
 
   return traces.map((trace, index) => {
@@ -538,25 +652,6 @@ async function traceBlock(
     }
     return trace;
   });
-}
-
-function isTraceBlockItem(value: unknown): value is TraceBlockItem {
-  if (typeof value !== "object" || value === null) return false;
-  const o = value as Record<string, unknown>;
-  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
-  const action = o.action as Record<string, unknown>;
-  if (o.error !== undefined && typeof o.error !== "string") return false;
-
-  const result = o.result;
-  const resultOk =
-    result === undefined ||
-    result === null ||
-    (typeof result === "object" &&
-      ((result as Record<string, unknown>).error === undefined ||
-        typeof (result as Record<string, unknown>).error === "string"));
-  const validCall = typeof o.transactionHash === "string" && resultOk;
-
-  return !isTraceBlockCallAction(action) || validCall;
 }
 
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
@@ -687,6 +782,7 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
     getBlockByHeight: make(getBlockByHeight, config),
     getCoinBalance: make(getCoinBalance, config),
     getTokenBalance: make(getTokenBalance, config),
+    getTokenAllowance: make(getTokenAllowance, config),
     getTransactionCount: make(getTransactionCount, config),
     getTransaction: make(getTransaction, config),
     getBlockReceipts: make(getBlockReceipts, config),

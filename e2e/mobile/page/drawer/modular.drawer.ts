@@ -40,6 +40,10 @@ export default class ModularDrawer {
 
   private flags: Feature_ModularDrawer | null = null;
 
+  resetFlags(): void {
+    this.flags = null;
+  }
+
   private async loadFlags(): Promise<void> {
     this.flags ??= JSON.parse(await getFlags()).llmModularDrawer;
   }

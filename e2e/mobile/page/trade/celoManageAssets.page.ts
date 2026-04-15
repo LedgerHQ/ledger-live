@@ -8,6 +8,7 @@ export default class CeloManageAssetsPage {
   celoVoteButton = "celo-vote-button";
   celoActivateVoteButton = "celo-activate-vote-button";
   celoRevokeButton = "celo-revoke-button";
+  celoVoteStartButton = "celo-vote-start-button";
 
   title = () => getElementById(this.titleId);
 
@@ -21,6 +22,16 @@ export default class CeloManageAssetsPage {
     await tapById(this.celoLockButton);
   }
 
+  @Step("Click on Vote for CELO")
+  async clickVote() {
+    await tapById(this.celoVoteButton);
+  }
+
+  @Step("Click start on the CELO vote started screen")
+  async clickVoteStart() {
+    await tapById(this.celoVoteStartButton);
+  }
+
   @Step("Check manage assets page - CELO")
   async checkManagePage() {
     await this.waitForManageAssets();
@@ -28,7 +39,7 @@ export default class CeloManageAssetsPage {
     await detoxExpect(getElementById(this.celoUnlockButton)).toBeVisible();
     await detoxExpect(getElementById(this.celoWithdrawButton)).not.toBeVisible();
     await detoxExpect(getElementById(this.celoVoteButton)).toBeVisible();
-    await detoxExpect(getElementById(this.celoActivateVoteButton)).not.toBeVisible();
-    await detoxExpect(getElementById(this.celoRevokeButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoActivateVoteButton)).toBeVisible();
+    await detoxExpect(getElementById(this.celoRevokeButton)).toBeVisible();
   }
 }

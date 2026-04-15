@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as Repack from "@callstack/repack";
+import rspack from "@rspack/core";
 import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
 import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
 import { createRequire } from "node:module";
@@ -220,6 +221,9 @@ export default withRozeniteUrlFix(
             unstable_disableTransform: true,
           }),
           new ExpoModulesPlugin(),
+          new rspack.ProvidePlugin({
+            TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
+          }),
         ],
         stats: "errors-warnings",
         infrastructureLogging: { level: "warn" },

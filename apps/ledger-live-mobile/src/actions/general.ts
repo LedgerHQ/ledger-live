@@ -16,9 +16,9 @@ import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
 import {
+  blacklistedTokenIdsSelector,
   counterValueCurrencySelector,
   orderAccountsSelector,
-  selectedTimeRangeSelector,
 } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
@@ -107,7 +107,6 @@ export function useCleanCache() {
 
 export function useUserSettings() {
   const trackingPairs = useTrackingPairs();
-  const selectedTimeRange = useSelector(selectedTimeRangeSelector);
 
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
   const granularitiesRates = useMemo(
@@ -130,9 +129,8 @@ export function useUserSettings() {
         "config_countervalues_marketCapBatchingAfterRank",
       ),
       granularitiesRates,
-      selectedTimeRange,
     }),
-    [granularitiesRates, trackingPairs, selectedTimeRange],
+    [granularitiesRates, trackingPairs],
   );
 }
 

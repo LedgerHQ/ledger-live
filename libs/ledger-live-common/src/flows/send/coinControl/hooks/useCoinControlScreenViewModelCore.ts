@@ -1,14 +1,14 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { SendFlowTransactionActions, SendFlowUiConfig } from "../../types";
 import type { Transaction, TransactionStatus } from "../../../../generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
+import { sendFeatures } from "../../../../bridge/descriptor/send/features";
+import type { CoinControlDisplayData } from "../../../../bridge/descriptor/types";
 import { getChangeToReturn } from "../utils/changeToReturn";
-import {
-  useBitcoinUtxoDisplayData,
-  type BitcoinUtxoDisplayData,
-} from "../../../../families/bitcoin/react";
 import { useSendFlowAmountReviewCore } from "../../hooks/useSendFlowAmountReviewCore";
 import { useCoinControlAmountInput } from "./useCoinControlAmountInput";
 
@@ -20,9 +20,16 @@ export type CoinControlScreenViewModelLabels = Readonly<{
   coinToSendLabel: string;
   changeToReturnLabel: string;
   enterAmountPlaceholder: string;
+  selectSufficientCoinsPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   getStrategyOptionLabel: (labelKey: string) => string;
+}>;
+
+export type CoinControlChangeToReturnViewModel = Readonly<{
+  changeToReturnLabel: string;
+  value: string;
+  placeholder: string;
 }>;
 
 export type UseCoinControlScreenViewModelCoreParams<TNetworkFees = unknown> = Readonly<{
@@ -45,9 +52,9 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   amountValue: string | null;
   onAmountChange: (rawValue: string) => void;
   amountError: string | undefined;
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly { value: number; label: string }[];
-  changeToReturnFormatted: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   onSelectStrategy: (value: string) => void;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -57,11 +64,13 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   onLearnMoreClick: () => void;
   learnMoreLabel: string;
   coinToSendLabel: string;
-  changeToReturnLabel: string;
   enterAmountPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: TNetworkFees;
+  /** True when the active UTXO picking strategy is the coin’s “custom selection” mode. */
+  isCustomPickingStrategy: boolean;
+  onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
 export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
@@ -102,35 +111,99 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     accountUnit,
   });
 
-  const utxoDisplayData = useBitcoinUtxoDisplayData({
-    account,
-    transaction,
-    status,
-    locale,
-  });
+  const coinControlConfig = useMemo(
+    () => sendFeatures.getCoinControlConfig(getAccountCurrency(account)),
+    [account],
+  );
 
-  const changeToReturnFormatted = useMemo(() => {
-    const hasAmountForChange = transaction.useAllAmount || transaction.amount?.gt(0);
-    if (!hasAmountForChange) return "";
-    const changeAmount = getChangeToReturn(status);
-    return formatCurrencyUnit(accountUnit, changeAmount, {
-      showCode: true,
-      disableRounding: true,
+  const utxoDisplayData = useMemo(() => {
+    if (coinControlConfig == null) return null;
+    return coinControlConfig.getDisplayData({
+      account,
+      transaction,
+      status,
       locale,
     });
-  }, [accountUnit, locale, status, transaction.amount, transaction.useAllAmount]);
+  }, [account, coinControlConfig, locale, status, transaction]);
+
+  const customStrategyValue = coinControlConfig?.customStrategyValue;
+
+  const isCustomPickingStrategy = useMemo(
+    () =>
+      customStrategyValue !== undefined &&
+      "utxoStrategy" in transaction &&
+      transaction.utxoStrategy !== null &&
+      transaction.utxoStrategy.strategy === customStrategyValue,
+    [customStrategyValue, transaction],
+  );
+
+  const customInsufficientUtxoForChangeRow = useMemo(() => {
+    const isCustomStrategy =
+      customStrategyValue != null &&
+      "utxoStrategy" in transaction &&
+      transaction.utxoStrategy != null &&
+      transaction.utxoStrategy.strategy === customStrategyValue;
+    const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
+    if (!isCustomStrategy || !hasFilledAmount) return false;
+
+    const utxoData = utxoDisplayData;
+    const rows = utxoData?.utxoRows;
+    const hasNoSelectedUtxo =
+      utxoData != null &&
+      rows != null &&
+      rows.length > 0 &&
+      utxoData.totalExcludedUTXOS === rows.length;
+    const isInsufficientFundsBridgeError = status.errors?.amount instanceof NotEnoughBalance;
+
+    return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
+  }, [customStrategyValue, status, transaction, utxoDisplayData]);
+
+  const changeToReturn = useMemo((): CoinControlChangeToReturnViewModel => {
+    const placeholder = customInsufficientUtxoForChangeRow
+      ? labels.selectSufficientCoinsPlaceholder
+      : labels.enterAmountPlaceholder;
+    const hasAmountForChange = transaction.useAllAmount || transaction.amount?.gt(0);
+    let value = "";
+    if (hasAmountForChange && !customInsufficientUtxoForChangeRow) {
+      const changeAmount = getChangeToReturn(status);
+      value = formatCurrencyUnit(accountUnit, changeAmount, {
+        showCode: true,
+        disableRounding: true,
+        locale,
+      });
+    }
+    return {
+      changeToReturnLabel: labels.changeToReturnLabel,
+      value,
+      placeholder,
+    };
+  }, [
+    accountUnit,
+    customInsufficientUtxoForChangeRow,
+    labels.changeToReturnLabel,
+    labels.enterAmountPlaceholder,
+    labels.selectSufficientCoinsPlaceholder,
+    locale,
+    status,
+    transaction.amount,
+    transaction.useAllAmount,
+  ]);
 
   const onSelectStrategy = useCallback(
     (value: string) => {
       const strategy = Number.parseInt(value, 10);
-      if (Number.isNaN(strategy)) return;
-      if (!("utxoStrategy" in transaction) || transaction.utxoStrategy == null) return;
+      if (Number.isNaN(strategy) || coinControlConfig === null) return;
 
-      updateTransactionWithPatch({
-        utxoStrategy: { ...transaction.utxoStrategy, strategy, excludeUTXOs: [] },
+      const patch = coinControlConfig.buildStrategyChangePatch({
+        transaction,
+        strategy,
+        displayData: utxoDisplayData,
       });
+      if (patch != null) {
+        updateTransactionWithPatch(patch);
+      }
     },
-    [transaction, updateTransactionWithPatch],
+    [coinControlConfig, transaction, updateTransactionWithPatch, utxoDisplayData],
   );
 
   const strategyOptionsWithLabels = useMemo(() => {
@@ -141,13 +214,70 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     }));
   }, [utxoDisplayData?.pickingStrategyOptions, labels]);
 
+  const resolvedAmountError = useMemo(() => {
+    const isCustomStrategy =
+      customStrategyValue != null &&
+      "utxoStrategy" in transaction &&
+      transaction.utxoStrategy != null &&
+      transaction.utxoStrategy.strategy === customStrategyValue;
+    const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
+    if (isCustomStrategy && !hasFilledAmount) return undefined;
+
+    const isInsufficientFundsBridgeError = status.errors?.amount instanceof NotEnoughBalance;
+    // Transaction patches (e.g. toggling custom exclusions) apply before the next bridge sync;
+    // status can briefly still reflect the previous pick and show a stale NotEnoughBalance.
+    if (isCustomStrategy && hasFilledAmount && bridgePending && isInsufficientFundsBridgeError) {
+      return undefined;
+    }
+
+    const utxoData = utxoDisplayData;
+    const rows = utxoData?.utxoRows;
+    const hasNoSelectedUtxo =
+      utxoData != null &&
+      rows != null &&
+      rows.length > 0 &&
+      utxoData.totalExcludedUTXOS === rows.length;
+    if (
+      isCustomStrategy &&
+      hasFilledAmount &&
+      hasNoSelectedUtxo &&
+      isInsufficientFundsBridgeError
+    ) {
+      return undefined;
+    }
+
+    return amountError;
+  }, [amountError, bridgePending, customStrategyValue, status, transaction, utxoDisplayData]);
+
+  const onToggleUtxoExclusion = useCallback(
+    (rowKey: string) => {
+      if (!coinControlConfig || !isCustomPickingStrategy) return;
+
+      const patch = coinControlConfig.buildToggleRowExclusionPatch({
+        transaction,
+        rowKey,
+        displayData: utxoDisplayData,
+      });
+      if (patch) {
+        updateTransactionWithPatch(patch);
+      }
+    },
+    [
+      coinControlConfig,
+      isCustomPickingStrategy,
+      transaction,
+      updateTransactionWithPatch,
+      utxoDisplayData,
+    ],
+  );
+
   return {
     amountValue: amountInput.amountValue,
     onAmountChange: amountInput.onAmountChange,
-    amountError,
+    amountError: resolvedAmountError,
     utxoDisplayData,
     strategyOptionsWithLabels,
-    changeToReturnFormatted,
+    changeToReturn,
     onSelectStrategy,
     reviewLabel: amountReviewCore.reviewLabel,
     reviewShowIcon: amountReviewCore.reviewShowIcon,
@@ -157,10 +287,11 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     onLearnMoreClick,
     learnMoreLabel: labels.learnMoreLabel,
     coinToSendLabel: labels.coinToSendLabel,
-    changeToReturnLabel: labels.changeToReturnLabel,
     enterAmountPlaceholder: labels.enterAmountPlaceholder,
     amountToSendLabel: labels.amountToSendLabel,
     amountInputLabel: labels.amountInputLabel,
     networkFees,
+    isCustomPickingStrategy,
+    onToggleUtxoExclusion,
   };
 }

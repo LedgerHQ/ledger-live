@@ -1,5 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import type SignClient from "@walletconnect/sign-client";
+import SignClient from "@walletconnect/sign-client";
 import type { SessionTypes } from "@walletconnect/types";
 import { log } from "@ledgerhq/logs";
 import type {
@@ -27,8 +27,7 @@ export class ConcordiumWalletConnect {
     }
 
     try {
-      const { default: _SignClient } = await import("@walletconnect/sign-client");
-      this.client = await _SignClient.init(CLIENT_CONFIG);
+      this.client = await SignClient.init(CLIENT_CONFIG);
 
       return this.client;
     } catch (error) {

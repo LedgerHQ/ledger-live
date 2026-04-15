@@ -52,6 +52,21 @@ import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
+function isValidNativeTx(tx: TransactionTronAPI): boolean {
+  const hasInternalTxs = tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
+  const isDuplicated = tx.tx_id;
+
+  if (hasInternalTxs) {
+    log("tron-error", `unsupported transaction ${tx.txID}`);
+  }
+
+  return !isDuplicated && !hasInternalTxs;
+}
+
+function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
+  return tx.type === "TriggerSmartContract" && !tx.hasFailed;
+}
+
 export async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
   const { data } = await network<U, T>({
     method: "POST",
@@ -527,6 +542,70 @@ export const defaultFetchParams: FetchParams = {
   order: "desc",
 } as const;
 
+export type TxPageResult = {
+  txs: TrongridTxInfo[];
+  hasNextPage: boolean;
+};
+
+export type FetchTxsPageParams = {
+  limit: number;
+  minTimestamp: number;
+  maxTimestamp?: number;
+  order: "asc" | "desc";
+};
+
+export type FetchTxsPageResult = {
+  nativeTxs: TxPageResult;
+  trc20Txs: TxPageResult;
+};
+
+async function fetchSinglePage<T>(
+  url: string,
+  getTxs: (url: string) => Promise<{ results: Array<T>; nextUrl?: string }>,
+): Promise<{ results: Array<T>; hasNextPage: boolean }> {
+  const { results, nextUrl } = await getTxs(url);
+  return { results, hasNextPage: !!nextUrl };
+}
+
+export async function fetchTronAccountTxsPage(
+  addr: string,
+  cacheTransactionInfoById: Record<string, TronTransactionInfo>,
+  params: FetchTxsPageParams,
+): Promise<FetchTxsPageResult> {
+  const maxTimestampParam =
+    params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
+  const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
+
+  const [nativeResult, trc20Result] = await Promise.all([
+    fetchSinglePage<
+      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
+    >(
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
+      getTransactions(cacheTransactionInfoById),
+    ),
+    fetchSinglePage<Trc20API>(
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
+      getTrc20,
+    ),
+  ]);
+
+  const nativeTxsFormatted = nativeResult.results
+    .filter(isTransactionTronAPI)
+    .filter(isValidNativeTx)
+    .map(tx => formatTrongridTxResponse(tx));
+
+  const trc20TxsFormatted = compact(trc20Result.results.map(formatTrongridTrc20TxResponse));
+  const trc20TxIds = new Set(trc20TxsFormatted.map(t => t.txID));
+  const nativeDeduped = compact(nativeTxsFormatted)
+    .filter(tx => !trc20TxIds.has(tx.txID))
+    .filter(tx => !isSuccessfulTriggerSmartContract(tx));
+
+  return {
+    nativeTxs: { txs: nativeDeduped, hasNextPage: nativeResult.hasNextPage },
+    trc20Txs: { txs: trc20TxsFormatted, hasNextPage: trc20Result.hasNextPage },
+  };
+}
+
 export async function fetchTronAccountTxs(
   addr: string,
   shouldFetchMoreTxs: FetchTxsStopPredicate,
@@ -547,20 +626,7 @@ export async function fetchTronAccountTxs(
     )
   )
     .filter(isTransactionTronAPI)
-    .filter(tx => {
-      // custom smart contract tx has internal txs
-      const hasInternalTxs =
-        tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
-      // and also a duplicated malformed tx that we have to ignore
-      const isDuplicated = tx.tx_id;
-
-      if (hasInternalTxs) {
-        // log once
-        log("tron-error", `unsupported transaction ${tx.txID}`);
-      }
-
-      return !isDuplicated && !hasInternalTxs;
-    })
+    .filter(isValidNativeTx)
     .map(tx => formatTrongridTxResponse(tx));
 
   // we need to fetch and filter trc20 transactions from another endpoint
@@ -639,12 +705,8 @@ export async function fetchTronAccountTxs(
     (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse),
   );
   const trc20TxIds = new Set(trc20Txs.map(t => t.txID));
-  const isSuccessfulTriggerSmartContract = (tx: TrongridTxInfo) =>
-    tx.type === "TriggerSmartContract" && !tx.hasFailed;
   const nativeDeduped = compact(nativeTxs)
-    // remove any trc20 transaction from native
     .filter(tx => !trc20TxIds.has(tx.txID))
-    // remove any successful TriggerSmartContract from native; successful ones must come from TRC20
     .filter(tx => !isSuccessfulTriggerSmartContract(tx));
 
   const txInfos: TrongridTxInfo[] = nativeDeduped

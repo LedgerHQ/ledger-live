@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { FeatureFlags } from "./FeatureFlags";
 import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
@@ -15,9 +14,9 @@ import {
   setIsDebuggingDuplicates,
   setFlowValue,
   setSourceValue,
-} from "~/renderer/reducers/modularDrawer";
+} from "~/renderer/reducers/modularDialog";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
@@ -37,15 +36,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     drawerConfiguration,
   } = useDrawerConfiguration();
 
-  const { openAssetFlow } = useOpenAssetFlowDrawer(
-    location.value === ModularDrawerLocation.LIVE_APP
-      ? { location: location.value, liveAppId: liveApp.value }
-      : { location: location.value },
-    "receive",
-    openModal ? "MODAL_RECEIVE" : undefined,
-  );
-
-  const { openAssetFlowDialog } = useOpenAssetFlowDialog(
+  const { openAssetFlow } = useOpenAssetFlow(
     location.value === ModularDrawerLocation.LIVE_APP
       ? { location: location.value, liveAppId: liveApp.value }
       : { location: location.value },
@@ -55,29 +46,16 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
 
   const debugDuplicates = () => {
     dispatch(setIsDebuggingDuplicates(true));
-    openAssetFlowDialog({
+    openAssetFlow({
       assets: { leftElement: "undefined", rightElement: "undefined" },
       networks: { leftElement: "undefined", rightElement: "undefined" },
     });
   };
 
-  const openDrawerFunctions: Record<ModularDrawerLocation, () => void> = {
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
+  const openDialogFunctions: Record<ModularDrawerLocation, () => void> = {
     [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(drawerConfiguration),
-    [ModularDrawerLocation.LIVE_APP]: () => {
-      dispatch(setFlowValue("Dev Tool"));
-      dispatch(setSourceValue("Dev Tool"));
-      openAssetAndAccountDrawer({
-        drawerConfiguration,
-      });
-    },
-    [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
-    [ModularDrawerLocation.SEND_FLOW]: () => {},
-  };
-
-  const { openAssetAndAccount } = useOpenAssetAndAccount(true);
-
-  const openDrawerFunctionsDialog: Record<ModularDrawerLocation, () => void> = {
-    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration),
     [ModularDrawerLocation.LIVE_APP]: () => {
       dispatch(setFlowValue("Dev Tool"));
       dispatch(setSourceValue("Dev Tool"));
@@ -112,14 +90,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             setNetworksRightElement={setNetworksRightElement}
           />
           <Flex columnGap={"12px"}>
-            <Button
-              appearance="base"
-              size="sm"
-              onClick={() => openDrawerFunctions[location.value]()}
-            >
-              {t("settings.developer.modularDrawerDevTool.openDrawer")}
-            </Button>
-            <Button size="sm" onClick={() => openDrawerFunctionsDialog[location.value]()}>
+            <Button size="sm" onClick={() => openDialogFunctions[location.value]()}>
               {t("settings.developer.modularDrawerDevTool.debugDialog")}
             </Button>
             <Button appearance="accent" size="sm" onClick={debugDuplicates}>

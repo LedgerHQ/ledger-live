@@ -1,4 +1,4 @@
-import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
+import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";

@@ -9,9 +9,8 @@ import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
-import { getModularSelectorFromInstances } from "../utils/modularSelectorUtils";
+import { getModularSelectorFromInstance } from "../utils/modularSelectorUtils";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -44,7 +43,6 @@ export class BuyAndSellPage extends WebViewAppPage {
   private showMoreQuotes = "SHOW MORE QUOTES";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private modularDrawer = new ModularDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
 
   private standardSellParams: Record<string, (buySell: BuySell) => string | number> = {
@@ -110,6 +108,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     if (await this.isCorrectAssetAlreadySelected(account)) return;
+    await this.verifyElementTextNotContains(this.cryptoCurrencySelector, "loading");
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
   }
@@ -124,11 +123,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInDrawer(account: AccountType) {
-    const selector = await getModularSelectorFromInstances(
-      this.page,
-      this.modularDrawer,
-      this.modularDialog,
-    );
+    const selector = await getModularSelectorFromInstance(this.page, this.modularDialog);
     if (selector) {
       await this.selectAssetInModularSelector(account, selector);
     } else {
@@ -136,10 +131,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     }
   }
 
-  private async selectAssetInModularSelector(
-    account: AccountType,
-    selector: ModularDrawer | ModularDialog,
-  ) {
+  private async selectAssetInModularSelector(account: AccountType, selector: ModularDialog) {
     await selector.validateItems();
     await selector.selectAsset(account.currency);
     await selector.selectNetwork(account.currency);

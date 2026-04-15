@@ -4,9 +4,19 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/index";
-import { fetchBlockTokenTransfers, fetchBlockTransactions, tzkt } from "../network";
-import type { APIBlock, APITokenTransfer, APITransactionType } from "../network/types";
+} from "@ledgerhq/coin-module-framework/api/index";
+import {
+  fetchBlockDelegations,
+  fetchBlockTokenTransfers,
+  fetchBlockTransactions,
+  tzkt,
+} from "../network";
+import type {
+  APIBlock,
+  APIDelegationType,
+  APITokenTransfer,
+  APITransactionType,
+} from "../network/types";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "XTZ" };
 
@@ -102,6 +112,50 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
     }
   }
   return ops;
+}
+
+// ---------------------------------------------------------------------------
+// Delegation helpers
+// ---------------------------------------------------------------------------
+
+function computeDelegationFees(op: APIDelegationType): bigint {
+  return BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0);
+}
+
+function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
+  const senderAddr = op.sender?.address;
+  if (!senderAddr) return [];
+
+  const targetAddr = op.newDelegate?.address || op.prevDelegate?.address;
+  const isDelegate = !!op.newDelegate?.address;
+
+  return [
+    {
+      type: "other",
+      address: senderAddr,
+      asset: NATIVE_ASSET,
+      amount: 0n,
+      details: {
+        operationType: isDelegate ? "DELEGATE" : "UNDELEGATE",
+        stakedAmount: 0n,
+        ...(targetAddr && { delegate: targetAddr }),
+      },
+    },
+  ];
+}
+
+function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransaction | null {
+  if (!op.hash) return null;
+
+  const feesPayer = op.sender?.address;
+  const succeeded = !op.status || op.status === "applied";
+  return {
+    hash: op.hash,
+    failed: !succeeded,
+    fees: computeDelegationFees(op),
+    ...(feesPayer && { feesPayer }),
+    operations: succeeded ? buildDelegationOperations(op) : [],
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -240,6 +294,7 @@ function attachTokenTransfer(
 function groupAndMapTransactions(
   transactions: APITransactionType[],
   tokenTransfers: APITokenTransfer[],
+  delegations: APIDelegationType[],
 ): BlockTransaction[] {
   const groups = groupTransactionsByHash(transactions);
 
@@ -251,6 +306,25 @@ function groupAndMapTransactions(
   const blockTxByHash = new Map<string, BlockTransaction>();
   for (const [hash, group] of groups) {
     blockTxByHash.set(hash, buildBlockTransactionFromGroup(hash, group));
+  }
+
+  for (const delegation of delegations) {
+    const delegationTx = buildBlockTransactionFromDelegation(delegation);
+    if (!delegationTx) continue;
+
+    const existing = blockTxByHash.get(delegationTx.hash);
+    if (!existing) {
+      blockTxByHash.set(delegationTx.hash, delegationTx);
+      continue;
+    }
+
+    if (delegationTx.failed) {
+      existing.failed = true;
+      existing.operations = [];
+    } else if (!existing.failed && delegationTx.operations.length > 0) {
+      existing.operations.push(...delegationTx.operations);
+    }
+    existing.fees += delegationTx.fees;
   }
 
   const standaloneByKey = new Map<string, BlockTransaction>();
@@ -269,7 +343,7 @@ function groupAndMapTransactions(
  * Returns the full block at the given Tezos level: metadata + all transactions
  * with their XTZ and FA token balance changes.
  *
- * - Fetches block metadata, native transactions, and FA token transfers in parallel.
+ * - Fetches block metadata, native transactions, delegations, and FA token transfers in parallel.
  * - Also fetches the predecessor block in parallel to populate `BlockInfo.parent`.
  * - Groups operations by hash, aggregates fees, and determines the fee payer.
  * - Appends FA token transfer operations to the owning BlockTransaction when a
@@ -280,15 +354,16 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [block, parentBlock, transactions, tokenTransfers] = await Promise.all([
+  const [block, parentBlock, transactions, tokenTransfers, delegations] = await Promise.all([
     tzkt.getBlockByLevel(height),
     tzkt.getBlockByLevel(height - 1),
     fetchBlockTransactions(height),
     fetchBlockTokenTransfers(height),
+    fetchBlockDelegations(height),
   ]);
 
   return {
     info: mapBlockInfo(block, parentBlock),
-    transactions: groupAndMapTransactions(transactions, tokenTransfers),
+    transactions: groupAndMapTransactions(transactions, tokenTransfers, delegations),
   };
 }

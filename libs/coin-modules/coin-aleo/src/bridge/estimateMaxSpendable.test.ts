@@ -95,6 +95,7 @@ describe("estimateMaxSpendable", () => {
   it("should return zero for private tx when amountRecordCommitment is missing", async () => {
     mockPrepareTransaction.mockResolvedValue({
       ...mockPreparedTransaction,
+      amount: new BigNumber(0),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
         amountRecordCommitment: null,
@@ -105,7 +106,14 @@ describe("estimateMaxSpendable", () => {
     const result = await estimateMaxSpendable({
       account: mockAccount,
       parentAccount: undefined,
-      transaction: undefined,
+      transaction: {
+        ...mockPreparedTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        properties: {
+          amountRecordCommitment: null,
+          feeRecordCommitment: null,
+        },
+      },
     });
 
     expect(result).toEqual(new BigNumber(0));
@@ -130,6 +138,7 @@ describe("estimateMaxSpendable", () => {
 
     mockPrepareTransaction.mockResolvedValue({
       ...mockPreparedTransaction,
+      amount: new BigNumber(privateRecordAmount),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
         amountRecordCommitment: commitment,
@@ -140,7 +149,14 @@ describe("estimateMaxSpendable", () => {
     const result = await estimateMaxSpendable({
       account: accountWithPrivateRecord,
       parentAccount: undefined,
-      transaction: undefined,
+      transaction: {
+        ...mockPreparedTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        properties: {
+          amountRecordCommitment: commitment,
+          feeRecordCommitment: null,
+        },
+      },
     });
 
     expect(result).toEqual(new BigNumber(privateRecordAmount));
@@ -163,6 +179,7 @@ describe("estimateMaxSpendable", () => {
 
     mockPrepareTransaction.mockResolvedValue({
       ...mockPreparedTransaction,
+      amount: new BigNumber(0),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
         amountRecordCommitment: commitment,
@@ -174,7 +191,14 @@ describe("estimateMaxSpendable", () => {
       estimateMaxSpendable({
         account: accountWithoutMatchingRecord,
         parentAccount: undefined,
-        transaction: undefined,
+        transaction: {
+          ...mockPreparedTransaction,
+          mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+          properties: {
+            amountRecordCommitment: commitment,
+            feeRecordCommitment: null,
+          },
+        },
       }),
     ).resolves.toEqual(new BigNumber(0));
   });

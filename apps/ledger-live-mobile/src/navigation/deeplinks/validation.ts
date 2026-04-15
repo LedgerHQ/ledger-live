@@ -11,9 +11,9 @@ import { isDatadogEnabled } from "../../datadog";
 import type { OptionMetadata } from "../../reducers/types";
 
 // Maximum allowed lengths for string parameters
-export const MAX_MESSAGE_LENGTH = 700;
-export const MAX_TITLE_LENGTH = 100;
-export const MAX_LABEL_LENGTH = 50;
+const MAX_MESSAGE_LENGTH = 700;
+const MAX_TITLE_LENGTH = 100;
+const MAX_LABEL_LENGTH = 50;
 
 // Allowed domains for external links
 const ALLOWED_DOMAINS = [
@@ -59,7 +59,7 @@ export interface ValidatedEarnMenuModal {
 /**
  * Sanitizes a string by removing potentially dangerous characters
  */
-export function sanitizeString(input: string, maxLength: number): string {
+function sanitizeString(input: string, maxLength: number): string {
   if (!input || typeof input !== "string") {
     return "";
   }
@@ -79,7 +79,7 @@ export function sanitizeString(input: string, maxLength: number): string {
 /**
  * Validates and sanitizes a URL to ensure it points to a trusted domain
  */
-export function validateUrl(urlString: string): string {
+function validateUrl(urlString: string): string {
   if (!urlString || typeof urlString !== "string") {
     return "";
   }

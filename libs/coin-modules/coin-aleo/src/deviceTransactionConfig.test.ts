@@ -55,6 +55,34 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields).toContainEqual({ type: "text", label: "Method", value: "Unknown" });
   });
 
+  it("should include the From field with the account's address", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({
+      type: "address",
+      label: "From",
+      address: mockAccount.freshAddress,
+    });
+  });
+
+  it("should include the To field with the transaction recipient", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({
+      type: "address",
+      label: "To",
+      address: mockTransaction.recipient,
+    });
+  });
+
   it("should always include the Amount field", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
@@ -88,7 +116,12 @@ describe("getDeviceTransactionConfig", () => {
       status: mockStatus,
     });
 
-    expect(fields).toContainEqual({ type: "text", label: "Fees", value: "Sponsored by Provable" });
+    expect(fields).toContainEqual({
+      type: "text",
+      label: "Fees",
+      value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
+    });
     expect(fields).not.toContainEqual({ type: "fees", label: "Fees" });
   });
 
@@ -104,7 +137,12 @@ describe("getDeviceTransactionConfig", () => {
       status: { ...mockStatus, estimatedFees: new BigNumber(100) },
     });
 
-    expect(fields).toContainEqual({ type: "text", label: "Fees", value: "Sponsored by Provable" });
+    expect(fields).toContainEqual({
+      type: "text",
+      label: "Fees",
+      value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
+    });
     expect(fields).not.toContainEqual({ type: "fees", label: "Fees" });
   });
 
@@ -125,7 +163,7 @@ describe("getDeviceTransactionConfig", () => {
       status: { ...mockStatus, estimatedFees: new BigNumber(100) },
     });
 
-    expect(fields.map(f => f.type)).toEqual(["text", "amount", "fees"]);
+    expect(fields.map(f => f.type)).toEqual(["text", "address", "address", "amount", "fees"]);
   });
 
   it("should return fields in correct order for sponsored transactions", async () => {
@@ -140,11 +178,12 @@ describe("getDeviceTransactionConfig", () => {
       status: mockStatus,
     });
 
-    expect(fields.map(f => f.type)).toEqual(["text", "amount", "text"]);
-    expect(fields[2]).toEqual({
+    expect(fields.map(f => f.type)).toEqual(["text", "address", "address", "amount", "text"]);
+    expect(fields[4]).toEqual({
       type: "text",
       label: "Fees",
       value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
     });
   });
 
@@ -156,6 +195,6 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledTimes(1);
-    expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockAccount.currency);
+    expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockAccount.currency.id);
   });
 });

@@ -3,7 +3,7 @@ import {
   BufferTxData,
   MemoNotSupported,
   Operation,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
@@ -27,7 +27,8 @@ describe("EVM Optimism Network", () => {
     module = createApi(config as EvmConfig, "optimism");
   });
 
-  describe("getBlock", () => {
+  // this test is skipped until a RPC provider supporting trace_block is setup for optimism
+  describe.skip("getBlock", () => {
     it("returns block with more than 10 transactions for height 144931340", async () => {
       const result = await module.getBlock(144931340);
 

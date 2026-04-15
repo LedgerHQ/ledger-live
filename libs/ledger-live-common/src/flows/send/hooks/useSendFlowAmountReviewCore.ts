@@ -71,7 +71,10 @@ export function useSendFlowAmountReviewCore({
   const shouldPrepare = Boolean(transaction.recipient) && hasRawAmount;
   const amountComputationPending = bridgePending && shouldPrepare;
 
-  const estimatedFees = status.estimatedFees ?? new BigNumber(0);
+  const estimatedFees = useMemo(
+    () => status.estimatedFees ?? new BigNumber(0),
+    [status.estimatedFees],
+  );
   const maxAvailable = useMemo(
     () => getMaxAvailable(account, estimatedFees),
     [account, estimatedFees],

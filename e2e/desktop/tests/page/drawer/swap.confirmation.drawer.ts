@@ -8,6 +8,8 @@ export class SwapConfirmationDrawer extends Drawer {
   private swapCompletedMessage = this.page.getByTestId("swap-completed-message");
   private swapCompletedDescription = this.page.getByTestId("swap-completed-description");
   private deviceActionError = this.page.getByTestId("error-description-deviceAction");
+  private readonly kycWarningBanner = this.page.getByTestId("swap-drawer-footer-terms");
+  private readonly shareYourFeedbackLink = this.page.getByTestId("share-your-feedback-link");
 
   @step("Get fees")
   async getFees() {
@@ -34,5 +36,17 @@ export class SwapConfirmationDrawer extends Drawer {
   async checkErrorMessage(errorMessage: string) {
     const error = await this.deviceActionError.textContent();
     expect(error).toContain(errorMessage);
+  }
+
+  @step("Check KYC warning banner is visible")
+  async checkKycWarningBannerVisible() {
+    await expect(this.kycWarningBanner).toBeVisible();
+    await expect(this.kycWarningBanner).toContainText("AML/KYC");
+  }
+
+  @step("Check share your feedback link is visible")
+  async checkShareYourFeedbackLinkVisible() {
+    await expect(this.shareYourFeedbackLink).toBeVisible();
+    await expect(this.shareYourFeedbackLink).toHaveText(/tell us about your experience/i);
   }
 }

@@ -8,6 +8,7 @@ export * from "./lldOnboardingEnableSync";
 export * from "./lldRebornABtest";
 export * from "./lldSyncOnboardingIncr1";
 export * from "./llmAnalyticsOptInPrompt";
+export * from "./analyticsOptIn";
 export * from "./llmAnimatedSplashScreen";
 export * from "./llmHomescreen";
 export * from "./llmNanoOnboardingFundWallet";

@@ -6,12 +6,14 @@ import {
   formatOperation,
   formatAccount,
   fromOperationRaw,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import {
   toSignOperationEventRaw,
   formatTransaction,
   formatTransactionStatus,
 } from "@ledgerhq/live-common/transaction/index";
+import { waitForTransactionConfirmation } from "@ledgerhq/live-common/families/evm/waitForConfirmation";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type { InferTransactionsOpts } from "../../transaction";
@@ -21,6 +23,8 @@ export type SendJobOpts = ScanCommonOpts &
   InferTransactionsOpts & {
     "ignore-errors": boolean;
     "disable-broadcast": boolean;
+    "wait-confirmation": boolean;
+    "wait-confirmation-timeout": number;
     format: string;
   };
 
@@ -38,6 +42,16 @@ export default {
       name: "disable-broadcast",
       type: Boolean,
       desc: "do not broadcast the transaction",
+    },
+    {
+      name: "wait-confirmation",
+      type: Boolean,
+      desc: "after broadcast, wait until the transaction is confirmed on-chain (EVM only)",
+    },
+    {
+      name: "wait-confirmation-timeout",
+      type: Number,
+      desc: "max ms to wait for confirmation (default 120000)",
     },
     {
       name: "format",
@@ -87,7 +101,7 @@ export default {
                                           account,
                                           signedOperation: e.signedOperation,
                                         })
-                                        .then(op => {
+                                        .then(async op => {
                                           l(
                                             `✔️ broadcasted! optimistic operation: ${formatOperation(
                                               account,
@@ -96,6 +110,21 @@ export default {
                                               fromOperationRaw(op, account.id),
                                             )}`,
                                           );
+                                          if (
+                                            opts["wait-confirmation"] &&
+                                            op.hash &&
+                                            getMainAccount(account).currency.family === "evm"
+                                          ) {
+                                            const timeoutMs = opts["wait-confirmation-timeout"];
+                                            await waitForTransactionConfirmation(
+                                              getMainAccount(account),
+                                              op.hash,
+                                              timeoutMs ? { timeoutMs } : {},
+                                            );
+                                            l(
+                                              `✔️ transaction confirmed on-chain (hash: ${op.hash})`,
+                                            );
+                                          }
                                           return op;
                                         }),
                                     );

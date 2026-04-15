@@ -18,7 +18,7 @@ import {
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "~/reducers/accounts";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
+import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
@@ -43,6 +43,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayGraphRework: boolean;
   backgroundColor: string;
   isSyncError: boolean;
+  shouldAddBottomPaddingForLegacyAssets: boolean;
   openAddModal: () => void;
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
@@ -146,6 +147,9 @@ const usePortfolioViewModel = (navigation: {
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
 
+  const shouldAddBottomPaddingForLegacyAssets =
+    !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
+
   return {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
@@ -161,6 +165,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
+    shouldAddBottomPaddingForLegacyAssets,
     openAddModal,
     closeAddModal,
     handleHeightChange,

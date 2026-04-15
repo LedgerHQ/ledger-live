@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export const LAST_BLOCK_COUNT = 3697079;
 export const testAccount1 = {
   viewingKey:
@@ -199,7 +201,11 @@ export const transactions = [
 
 export const decryptedOrchardData = {
   orchard_outputs: [
-    { amount: 0.3, memo: "Thanks for using testnet.ZecFaucet.com", transfer_type: "incoming" },
+    {
+      amount: new BigNumber(30000000), // zatoshis
+      memo: "Thanks for using testnet.ZecFaucet.com",
+      transfer_type: "incoming",
+    },
   ],
   sapling_outputs: [],
 };
@@ -207,12 +213,12 @@ export const decryptedOrchardData = {
 export const decryptedSaplingData = {
   orchard_outputs: [
     {
-      amount: 0.1449,
+      amount: new BigNumber(14490000), // zatoshis
       memo: "",
       transfer_type: "internal",
     },
     {
-      amount: 0.1449,
+      amount: new BigNumber(14490000), // zatoshis
       memo: "",
       transfer_type: "internal",
     },

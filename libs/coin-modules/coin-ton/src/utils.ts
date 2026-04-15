@@ -35,7 +35,7 @@ export const isAddressValid = (recipient: string) => {
   try {
     return Boolean(
       (TonAddress.isRaw(recipient) || TonAddress.isFriendly(recipient)) &&
-        TonAddress.parse(recipient),
+      TonAddress.parse(recipient),
     );
   } catch {
     return false;

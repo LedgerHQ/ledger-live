@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { isAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import { AccountLike } from "@ledgerhq/types-live";

@@ -9,7 +9,7 @@ import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/Po
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 import { trackDeeplinkingEvent } from "./utils";

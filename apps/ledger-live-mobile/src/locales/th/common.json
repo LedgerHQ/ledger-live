@@ -1598,7 +1598,7 @@
     "desc" : "เชื่อมต่อกับอุปกรณ์ Ledger ของคุณ เพื่อใช้งานแอป Ledger Wallet ได้อย่างเต็มประสิทธิภาพ",
     "0" : {
       "title" : "การเป็นเจ้าของแบบเต็มรูปแบบ",
-      "desc" : "Private Key ของคุณจะไม่ถูกส่งออกไปจากอุปกรณ์"
+      "desc" : "โดยคุณสามารถควบคุม Private Key ของคุณเองได้"
     },
     "1" : {
       "title" : "เทรดอย่างปลอดภัย",
@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "ดูสินทรัพย์ทั้งหมด",
     "cryptoAddresses" : {
-      "title" : "บัญชีคริปโต",
+      "title" : "บัญชี",
       "count_one" : "{{count}} บัญชี",
       "count_other" : "{{count}} บัญชี",
-      "noAccountsYet" : "ยังไม่มีบัญชีในตอนนี้"
+      "noAccountsYet" : "ยังไม่มีบัญชีในตอนนี้",
+      "add" : "เพิ่ม"
     },
     "seeAllAccounts" : "ดูบัญชีทั้งหมด",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "ซื้อ",
       "connect" : "เชื่อมต่อ",
       "buyLedger" : "ซื้อ Ledger",
+      "receive" : "รับ",
+      "send" : "ส่ง",
       "transferDrawer" : {
         "title" : "การโอน",
         "receiveCrypto" : "รับผ่านที่อยู่ของคริปโต",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "กำลังรีเฟรช...",
       "upToDate" : "พอร์ตโฟลิโอเป็นปัจจุบันแล้ว",
-      "syncError" : "ไม่สามารถโหลดข้อมูลบัญชีบางส่วนได้"
+      "syncError" : "ไม่สามารถโหลดข้อมูลบัญชีบางส่วนได้",
+      "offline" : "คุณกำลังออฟไลน์ โปรดตรวจสอบการเชื่อมต่อของคุณ"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,18 @@
   "assets" : {
     "title" : "สินทรัพย์"
   },
+  "cryptoAddresses" : {
+    "title" : "บัญชี",
+    "addAccount" : "เพิ่มบัญชี",
+    "emptyState" : "ยังไม่มีบัญชีในตอนนี้",
+    "errorState" : "เกิดข้อผิดพลาดขณะโหลดบัญชีของคุณ"
+  },
+  "crypto" : {
+    "title" : "คริปโต",
+    "stablecoinTitle" : "สเตเบิลคอยน์",
+    "errorState" : "เกิดข้อผิดพลาดขณะโหลดสินทรัพย์ของคุณ",
+    "emptyState" : "ไม่มีสินทรัพย์ที่จะแสดง"
+  },
   "accounts" : {
     "title" : "บัญชี",
     "cryptoAccountsTitle" : "บัญชี {{currencyTicker}}",
@@ -3317,13 +3333,13 @@
       "reportErrorsDesc" : "ส่งรายงานบั๊กเพื่อช่วย Ledger ปรับปรุงผลิตภัณฑ์โดยอัตโนมัติ",
       "developerMode" : "โหมดนักพัฒนา",
       "developerModeDesc" : "แสดงแอปของนักพัฒนาใน My Ledger และเปิดใช้งานแอป Testnet",
-      "analytics" : "การวิเคราะห์",
-      "analyticsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อวัดประสิทธิภาพของแอป Ledger Wallet และปรับปรุงการใช้งานแอปและประสบการณ์ของคุณ",
+      "analytics" : "ประสิทธิภาพของแอป",
+      "analyticsDesc" : "เปิดให้แอป Ledger Wallet เก็บข้อมูลการใช้งานแอปเพื่อพัฒนาประสบการณ์การใช้งานให้ดียิ่งขึ้น",
       "mevProtection" : "MEV Protection",
       "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
       "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว",
       "personalizedRecommendations" : "ประสบการณ์ที่เป็นส่วนตัว",
-      "personalizedRecommendationsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อให้คำแนะนำและเนื้อหาที่ตรงกับความสนใจของคุณ และช่วยวัดประสิทธิภาพของแคมเปญการตลาดของเรา",
+      "personalizedRecommendationsDesc" : "เปิดให้แอป Ledger Wallet เก็บข้อมูลการใช้งานเพื่อนำเสนอเนื้อหาที่เหมาะสมกับคุณ",
       "analyticsModal" : {
         "title" : "แชร์การวิเคราะห์",
         "desc" : "เปิดใช้งานการวิเคราะห์เพื่อช่วย Ledger ปรับปรุงประสบการณ์สำหรับผู้ใช้",
@@ -3432,6 +3448,14 @@
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
         "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, BNB Chain, Avalanche และ Ethereum Classic"
+      },
+      "totalMarketCap" : {
+        "title" : "มูลค่าหลักทรัพย์ตามราคาตลาดรวม",
+        "desc" : "รับการแจ้งเตือนเมื่อมูลค่าหลักทรัพย์ตามราคาตลาดคริปโตมีการเคลื่อนไหวอย่างมีนัยสำคัญ"
+      },
+      "topGainersLosers" : {
+        "title" : "เหรียญที่ราคาสูงขึ้นและลดลงมากที่สุด",
+        "desc" : "สรุปอันดับโทเคนที่ราคาพุ่งแรงและร่วงหนักที่สุดประจำสัปดาห์"
       },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
@@ -3576,9 +3600,13 @@
         "addSampleBanner" : "เพิ่มแบนเนอร์ตัวอย่าง",
         "addSampleBannerDesc" : "เพิ่มฮีโร่แบนเนอร์ตัวอย่างบนพอร์ตการลงทุน",
         "addSampleActionCarouselIcon" : "เพิ่มแคโรเซล (ไอคอน)",
-        "addSampleActionCarouselIconDesc" : "ContentBanner พร้อมไอคอนจุดเด่น — ซื้อ, สวอป, สเตค ต้องมีการตั้งค่าสถานะสำหรับ Braze Placement",
+        "addSampleActionCarouselIconDesc" : "เพิ่มการ์ด ContentBanner หนึ่งใบต่อการแตะ โดยผสมไอคอนและการ์ดรูปภาพไว้ในแคโรเซลเดียวกัน การจะซื้อ → สวอป → สเตค จำเป็นต้องใช้ Braze Placement Flag",
         "addSampleActionCarouselImageBackground" : "เพิ่มแคโรเซล (ภาพ)",
-        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner with image_background — ซื้อ, สวอป, สเตค ต้องมีการตั้งค่าสถานะ Braze Position",
+        "addSampleActionCarouselImageBackgroundDesc" : "เพิ่มการ์ด MediaBanner หนึ่งใบต่อการแตะ แถวเดียวกับไอคอนเวอร์ชันอื่น ผสมทั้งสองแบบในแคโรเซลเดียวกัน การจะซื้อ → สวอป → สเตค จำเป็นต้องใช้ Braze Placement Flag",
+        "addSampleWalletCarouselPicto" : "เพิ่มแคโรเซลด้านล่างของวอลเล็ต (Picto)",
+        "addSampleWalletCarouselPictoDesc" : "มีการ์ดจำลอง 1 ใบที่ประกอบด้วยไอคอนคริปโต (Picto), หัวข้อ, รูปภาพ และลิงก์ โดยไม่มี Braze",
+        "addSampleWalletCarouselTag" : "เพิ่มแคโรเซลด้านล่างของวอลเล็ต (แท็ก)",
+        "addSampleWalletCarouselTagDesc" : "การ์ดจำลอง 1 ใบ พร้อมแท็ก หัวข้อ รูปภาพ และลิงก์ โดยไม่มี Braze",
         "dismissAll" : "ยกเลิกการ์ดเฉพาะที่ทั้งหมด",
         "dismissAllDesc" : "ลบการ์ดเนื้อหาที่สร้างเฉพาะที่ทั้งหมด"
       }
@@ -3651,7 +3679,8 @@
         },
         "fiat" : {
           "title" : "โดยการโอนเงินจากบัญชีธนาคาร",
-          "description" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
+          "description" : "รับสเตเบิลคอยน์ได้ง่าย ๆ ด้วยการจ่ายเงินสด",
+          "description_legacy" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
         }
       },
       "memoTag" : {
@@ -4324,13 +4353,15 @@
         "coinToSend" : "เหรียญที่จะส่ง",
         "changeToReturn" : "เปลี่ยนเพื่อกลับไป",
         "enterAmount" : "ป้อนจำนวน",
+        "selectSufficientCoins" : "โปรดเลือกเหรียญให้เพียงพอต่อการใช้งาน",
         "amountToSendInCurrency" : "จำนวนที่ต้องการส่งในรูปแบบ {{ticker}}",
         "amountInputLabel" : "จำนวนที่จะส่ง",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Oldest coins first (FIFO)",
             "OPTIMIZE_SIZE" : "ค่าธรรมเนียมต่ำสุด (ปรับขนาดให้เหมาะสม)",
-            "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)"
+            "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)",
+            "CUSTOM" : "การเลือกเหรียญเฉพาะที่กำหนดเอง"
           }
         }
       }
@@ -8056,6 +8087,32 @@
       }
     }
   },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "ช่วยเราปรับปรุง Ledger",
+      "description" : "ด้วยความยินยอมของคุณ เราจะเก็บรวบรวมข้อมูลการใช้งานเพื่อพัฒนาฟีเจอร์และปรับแต่งประสบการณ์ของคุณให้เหมาะสม",
+      "ctaAcceptAll" : "ยอมรับทั้งหมด",
+      "ctaRefuseAll" : "ปฏิเสธทั้งหมด"
+    },
+    "reconfirm" : {
+      "title" : "ต้องการช่วยพัฒนาแอป Ledger Wallet ต่อไปหรือไม่?",
+      "description" : "คุณต้องการแชร์ข้อมูลการใช้งานเพื่อช่วยเราพัฒนาแอป Ledger Wallet ต่อไปหรือไม่? ข้อมูลนี้ใช้เพื่อปรับปรุงฟีเจอร์และปรับแต่งประสบการณ์ของคุณ",
+      "ctaContinue" : "ใช่ ดำเนินการต่อ",
+      "ctaStop" : "ไม่ หยุดการแชร์ข้อมูล"
+    },
+    "privacy" : {
+      "title" : "เรากำลังอัปเดตนโยบายความเป็นส่วนตัว",
+      "descriptionLead" : "โปรดตรวจสอบ ",
+      "descriptionLinkLabel" : "นโยบายความเป็นส่วนตัว",
+      "descriptionTrail" : " เพื่อดูว่ามีอะไรเปลี่ยนแปลงบ้าง คุณสามารถอัปเดตการตั้งค่าของคุณได้ทุกเมื่อที่ 'การตั้งค่า'",
+      "ctaGotIt" : "เข้าใจแล้ว"
+    },
+    "setPreferences" : "ตั้งค่าความชอบส่วนตัว",
+    "footer" : {
+      "lead" : "คุณสามารถเพิกถอนการยินยอมของคุณได้ทุกเมื่อในการตั้งค่า",
+      "privacyLink" : "นโยบายความเป็นส่วนตัว"
+    }
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "banner" : {
@@ -8503,6 +8560,10 @@
       "title" : "อัตรานี้หมดอายุแล้ว",
       "description" : "อัตราแลกเปลี่ยนหมดอายุแล้ว โปรดรีเฟรชและลองอีกครั้ง"
     },
+    "details" : {
+      "code" : "รหัสข้อผิดพลาด",
+      "correlationId" : "รหัสอ้างอิง"
+    },
     "default" : {
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
@@ -8734,6 +8795,7 @@
     "bottomSheet" : {
       "title" : "ไม่สามารถโหลดข้อมูลบัญชีบางส่วนได้",
       "description" : "สินทรัพย์ของคุณยังปลอดภัย นี่เป็นปัญหาการซิงค์ชั่วคราว\nบัญชีที่ได้รับผลกระทบ: {{accounts}}",
+      "tryToRefresh" : "ลองรีเฟรชดูอีกครั้ง",
       "close" : "ปิด"
     }
   },

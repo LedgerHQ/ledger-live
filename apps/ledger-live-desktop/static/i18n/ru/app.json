@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Попробуйте ещё раз.",
       "description" : "Сервер не может обработать ваш запрос. Попробуйте позже или обратитесь в Поддержку Ledger.",
-      "code" : "Код: {{errorCode}}"
+      "code" : "Код",
+      "correlationId" : "ID обращения"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Монета для отправки",
       "changeToReturn" : "Сдача на возврат",
       "enterAmount" : "Ввод суммы",
+      "selectSufficientCoins" : "Укажите достаточное количество монет",
       "amountToSendInCurrency" : "Сумма к отправке в {{ticker}}",
       "amountInputLabel" : "Сумма к отправке"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Старые монеты – первыми (FIFO)",
       "OPTIMIZE_SIZE" : "Минимизация комиссии (оптимально)",
-      "MERGE_OUTPUTS" : "Минимизация будущих комиссий (консолидация монет)"
+      "MERGE_OUTPUTS" : "Минимизация будущих комиссий (консолидация монет)",
+      "CUSTOM" : "Ручной выбор монет"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "Вторичный CTA",
             "cta" : "CTA",
             "tag" : "Тег",
+            "picto" : "Picto (ID Ledger)",
             "url" : "URL",
             "path" : "Путь"
           }
@@ -4645,6 +4649,10 @@
           "title" : "Создание пустого счёта",
           "desc" : "Позволяет сгенерировать пустой счёт"
         },
+        "stablecoinGenerate" : {
+          "title" : "Набор стейблкойнов",
+          "desc" : "Генерируйте счета для Ethereum, Arbitrum, Optimism, Base, Solana, Tron и Algorand, а также ведущих стейблкойнов (макс. 5 на блокчейн)."
+        },
         "currencySelector" : {
           "placeholder" : "Выбор валют...",
           "searchPlaceholder" : "Поиск...",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "Сгенерировать {{count}} счёт",
           "generateAccounts_other" : "Сгенерировать счета ({{count}})",
           "generateAccountsQuick" : "Сгенерировать счета: ({{count}})",
-          "generateEmptyAccount" : "Сгенерировать"
+          "generateEmptyAccount" : "Сгенерировать",
+          "generateStablecoinAccounts" : "Сгенерировать {{count}} стейблкойн-счёт",
+          "generateStablecoinAccounts_other" : "Сгенерировать {{count}} стейблкойн-счета(ов)"
         },
         "alerts" : {
           "selectCurrency" : "Выберите хотя бы одну валюту",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "Персонализация",
-      "analytics" : "Аналитика",
-      "personalizedExpDesc" : "Позволяет Ledger собирать данные об использовании приложения, чтобы предоставлять актуальные советы и контент на основе ваших предпочтений, а также помогать в нашей оценке эффективности проведения различных маркетинговых кампаний.",
-      "analyticsDesc" : "Позволяет Ledger собирать данные об использовании приложения для оценки производительности Ledger Wallet, а также улучшения приложения и вашего опыта взаимодействия."
+      "analytics" : "Производительность приложения",
+      "personalizedExpDesc" : "Позволяет Ledger собирать данные об использовании приложения для предоставления персонализированного контента.",
+      "analyticsDesc" : "Позволяет Ledger собирать данные об использовании приложения для улучшения взаимодействия с приложением."
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "Подробнее..."
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Обновите устройство Ledger Nano S™",
+      "description" : "Получите эксклюзивную скидку 20% на новые устройства подписи Ledger."
+    },
+    "opted_out" : {
+      "title" : "Обновите устройство Ledger Nano S™",
+      "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам этого устройства использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Выберите счета для добавления",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Криптосчета",
+    "title" : "Счета",
     "tableActions" : {
-      "searchAddress" : "Найти адрес",
+      "searchAddress" : "Введите название или адрес...",
       "addAddress" : "Добавить адрес"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "{{asset}} для трейдинга",
         "savings" : "Копилка {{asset}}"
       },
-      "cta" : "Подтвердить"
+      "cta" : "Подтвердить",
+      "syncingTooltip" : "Синхронизируем... ещё немного..."
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "Начать синхронизацию",
         "stopSync" : "Остановить синхронизацию",
         "lastProcessedBlock" : "Последний обработанный блок: {{block}}. Осталось блоков: {{missing}}.",
-        "lastSync" : "Последняя синхронизация: {{date}}"
+        "lastSync" : "Последняя синхронизация: {{date}}",
+        "estimatedTimeRemaining" : "Оставшееся время: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "Высота рождения",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Спонсируется Provable",
       "balanceSelector" : {
         "private" : "Конфиденциальный баланс",
         "public" : "Публичный баланс",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "Прозрачный баланс",
       "transparentBalanceTooltip" : "Баланс, видимый для всех",
       "privateBalance" : "Конфиденциальный баланс",
-      "privateBalanceTooltip" : "Баланс, скрытый от всех"
+      "privateBalanceTooltip" : "Баланс, скрытый от всех",
+      "syncButton" : {
+        "startSync" : "Начать синхронизацию",
+        "stopSync" : "Остановить синхронизацию",
+        "syncAgain" : "Синхронизировать повторно",
+        "lastSync" : "Последняя синхронизация: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "Отправить с"
       },
       "summary" : {
-        "coveredByProvable" : "Спонсируется Provable",
         "proofGenerationWarning" : "Транзакция Aleo требует создания доказательства. Это может занять некоторое время."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Синхронизируем ваш приватный баланс ({{percentage}}%)",
+        "desc" : "Пожалуйста, подождите",
+        "error" : "Сбой приватной синхронизации. Повторите попытку позже."
       }
     }
   },

@@ -11,6 +11,7 @@ import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
   PROGRESS_VIEW_OFFSET_LEGACY_IOS,
@@ -66,6 +67,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     goToAnalyticsAllocations,
     shouldDisplayWallet40MainNav,
     shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
@@ -138,8 +140,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
-      const isAssetSectionLast =
-        !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
       sections.push(
         <PortfolioAssetsSection
           key="assets"
@@ -147,7 +147,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           hideEmptyTokenAccount={hideEmptyTokenAccount}
           openAddModal={openAddModal}
           onHeightChange={handleHeightChange}
-          shouldAddBottomPadding={isAssetSectionLast}
+          shouldAddBottomPadding={shouldAddBottomPaddingForLegacyAssets}
         />,
       );
     }
@@ -187,6 +187,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     backgroundColor,
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   ]);
 
   return (
@@ -218,6 +219,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         onSlideChange={onSlideChange}
         slides={slides}
       />
+      <AnalyticsConsentDrawer />
     </>
   );
 };

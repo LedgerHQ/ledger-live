@@ -31,10 +31,13 @@ apps/ledger-live-desktop/src/renderer/logger/            @ledgerhq/platform
 apps/ledger-live-desktop/tools/                          @ledgerhq/platform
 apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 # Platform — domain
+domain/entity/unit                                       @ledgerhq/platform
+domain/entity/crypto-currency                            @ledgerhq/platform
 domain/entity/crypto-asset                               @ledgerhq/platform
 domain/api/crypto-assets                                 @ledgerhq/platform
 # Platform — shared
 shared/feature-flags                                     @ledgerhq/platform
+shared/schema-primitives                                 @ledgerhq/platform
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
 apps/ledger-live-mobile/ios/                             @ledgerhq/platform
@@ -63,6 +66,7 @@ libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/icons/                        @ledgerhq/wallet-xp
 libs/ledger-live-common/src/market/                       @ledgerhq/wallet-xp
+libs/ledger-live-common/src/hideSmallValueTokenOperations/ @ledgerhq/coin-integration
 # Wallet — desktop (WXP has all mvvm; Platform overrides below)
 apps/ledger-live-desktop/src/mvvm/                       @ledgerhq/wallet-xp
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ @ledgerhq/wallet-xp
@@ -133,9 +137,6 @@ libs/live-network/                                       @ledgerhq/coin-integrat
 tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
 tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 tools/actions/composites/monitor/                        @ledgerhq/coin-integration
-
-# Cloud Wallet team
-libs/coin-framework/src/api/                             @ledgerhq/coin-integration @ledgerhq/cloud-wallet
 
 # Shared with partners
 ## Blockchain support
@@ -365,8 +366,8 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/knip.json                                          @ledgerhq/platform
 
 # CI — Turborepo & Nx
-/turbo.json                                           @ledgerhq/wallet-ci
-/nx.json                                              @ledgerhq/wallet-ci
+/turbo.json                                           @ledgerhq/platform @ledgerhq/wallet-ci
+/nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 .github/copilot-instructions.md

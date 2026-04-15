@@ -72,6 +72,7 @@ describe("getBlock", () => {
             tx_json: {
               TransactionType: "Payment",
               Account: "rSender123",
+              Destination: "rRecipient456",
               Fee: "12",
             },
             meta: {
@@ -123,6 +124,7 @@ describe("getBlock", () => {
     expect(tx.operations[0]).toEqual({
       type: "transfer",
       address: "rRecipient456",
+      peer: "rSender123",
       asset: {
         type: "native",
         name: "XRP",
@@ -133,6 +135,7 @@ describe("getBlock", () => {
     expect(tx.operations[1]).toEqual({
       type: "transfer",
       address: "rSender123",
+      peer: "rRecipient456",
       asset: {
         type: "native",
         name: "XRP",
@@ -357,6 +360,7 @@ describe("getBlock", () => {
             tx_json: {
               TransactionType: "Payment",
               Account: "rFunder",
+              Destination: "rNewAccount",
               Fee: "10",
             },
             meta: {
@@ -387,6 +391,7 @@ describe("getBlock", () => {
     expect(result.transactions[0].operations[0]).toEqual({
       type: "transfer",
       address: "rNewAccount",
+      peer: "rFunder",
       asset: {
         type: "native",
         name: "XRP",

@@ -1,4 +1,4 @@
-import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getBlock } from "../network";
 
 /**

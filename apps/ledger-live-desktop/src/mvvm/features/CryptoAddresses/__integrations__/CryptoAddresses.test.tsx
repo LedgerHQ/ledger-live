@@ -43,7 +43,7 @@ describe("CryptoAddresses (Crypto page)", () => {
     });
 
     // Land on the Crypto page — page title in the header
-    expect(screen.getByText("Crypto accounts")).toBeVisible();
+    expect(screen.getByText("Accounts")).toBeVisible();
 
     // Main content area with search / actions and the table
     const pageContent = screen.getByTestId("crypto-page-content");

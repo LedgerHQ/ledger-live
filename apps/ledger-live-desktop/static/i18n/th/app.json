@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "ขออภัย โปรดลองอีกครั้ง",
       "description" : "เซิร์ฟเวอร์จัดการกับคำขอของคุณไม่ได้ โปรดลองอีกครั้งในภายหลังหรือติดต่อ Ledger Support",
-      "code" : "รหัส: {{errorCode}}"
+      "code" : "รหัส",
+      "correlationId" : "รหัสอ้างอิง"
     }
   },
   "swap" : {
@@ -2178,7 +2179,7 @@
     "subtitle" : "เชื่อมต่อกับอุปกรณ์ Ledger ของคุณ เพื่อใช้งานแอป Ledger Wallet ได้อย่างเต็มประสิทธิภาพ",
     "0" : {
       "title" : "การเป็นเจ้าของแบบเต็มรูปแบบ",
-      "desc" : "You have control over your private keys."
+      "desc" : "โดยคุณสามารถควบคุม Private Key ของคุณเองได้"
     },
     "1" : {
       "title" : "เทรดอย่างปลอดภัย",
@@ -2513,6 +2514,7 @@
       "coinToSend" : "เหรียญที่จะส่ง",
       "changeToReturn" : "เปลี่ยนเพื่อกลับไป",
       "enterAmount" : "ป้อนจำนวน",
+      "selectSufficientCoins" : "โปรดเลือกเหรียญให้เพียงพอต่อการใช้งาน",
       "amountToSendInCurrency" : "จำนวนที่ต้องการส่งในรูปแบบ {{ticker}}",
       "amountInputLabel" : "จำนวนที่จะส่ง"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Oldest coins first (FIFO)",
       "OPTIMIZE_SIZE" : "ค่าธรรมเนียมต่ำสุด (ปรับขนาดให้เหมาะสม)",
-      "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)"
+      "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)",
+      "CUSTOM" : "การเลือกเหรียญเฉพาะที่กำหนดเอง"
     }
   },
   "celo" : {
@@ -4625,6 +4628,7 @@
             "secondaryCta" : "CTA รอง",
             "cta" : "CTA",
             "tag" : "แท็ก",
+            "picto" : "Picto (Ledger ID)",
             "url" : "URL",
             "path" : "เส้นทาง"
           }
@@ -4645,6 +4649,10 @@
           "title" : "การสร้างบัญชีทดสอบ",
           "desc" : "สร้างบัญชีทดสอบ"
         },
+        "stablecoinGenerate" : {
+          "title" : "ตั้งค่าสเตเบิลคอยน์ล่วงหน้า",
+          "desc" : "สร้างบัญชี Ethereum, Arbitrum, Optimism, Base, Solana, Tron และ Algorand ด้วยสเตเบิลคอยน์ยอดนิยม (สูงสุด 5 บัญชีต่อเครือข่าย)"
+        },
         "currencySelector" : {
           "placeholder" : "เลือกสกุลเงิน...",
           "searchPlaceholder" : "ค้นหา",
@@ -4661,7 +4669,9 @@
           "generateAccounts" : "สร้าง {{count}} บัญชี",
           "generateAccounts_other" : "สร้าง {{count}} บัญชี",
           "generateAccountsQuick" : "สร้าง {{count}} บัญชี",
-          "generateEmptyAccount" : "สร้างบัญชีทดสอบ"
+          "generateEmptyAccount" : "สร้างบัญชีทดสอบ",
+          "generateStablecoinAccounts" : "สร้าง {{count}} บัญชีสเตเบิลคอยน์",
+          "generateStablecoinAccounts_other" : "สร้าง {{count}} บัญชีสเตเบิลคอยน์"
         },
         "alerts" : {
           "selectCurrency" : "โปรดเลือกอย่างน้อยหนึ่งสกุลเงิน",
@@ -7779,9 +7789,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "ประสบการณ์ที่เป็นส่วนตัว",
-      "analytics" : "การวิเคราะห์",
-      "personalizedExpDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อให้คำแนะนำและเนื้อหาที่ตรงกับความสนใจของคุณ และช่วยวัดประสิทธิภาพของแคมเปญการตลาดของเรา",
-      "analyticsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อวัดประสิทธิภาพของแอป Ledger Wallet และปรับปรุงการใช้งานแอปและประสบการณ์ของคุณ"
+      "analytics" : "ประสิทธิภาพของแอป",
+      "personalizedExpDesc" : "เปิดให้แอป Ledger Wallet เก็บข้อมูลการใช้งานเพื่อนำเสนอเนื้อหาที่เหมาะสมกับคุณ",
+      "analyticsDesc" : "เปิดให้แอป Ledger Wallet เก็บข้อมูลการใช้งานแอปเพื่อพัฒนาประสบการณ์การใช้งานให้ดียิ่งขึ้น"
     }
   },
   "analytics" : {
@@ -7987,6 +7997,16 @@
       "cta" : "เรียนรู้เพิ่มเติม"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "อัปเกรด Ledger Nano S™ ของคุณ",
+      "description" : "รับส่วนลด 20% สำหรับอุปกรณ์ลงนาม Ledger รุ่นใหม่ล่าสุด"
+    },
+    "opted_out" : {
+      "title" : "อัปเกรด Ledger Nano S™ ของคุณ",
+      "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ"
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "เลือกบัญชีที่คุณต้องการเพิ่ม",
@@ -8145,9 +8165,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "บัญชีคริปโต",
+    "title" : "บัญชี",
     "tableActions" : {
-      "searchAddress" : "ค้นหาที่อยู่",
+      "searchAddress" : "ค้นหาด้วยชื่อหรือที่อยู่",
       "addAddress" : "เพิ่มที่อยู่"
     },
     "table" : {
@@ -8167,7 +8187,8 @@
         "trading" : "{{asset}} สำหรับซื้อขาย",
         "savings" : "{{asset}} สำหรับสะสม"
       },
-      "cta" : "ยืนยัน"
+      "cta" : "ยืนยัน",
+      "syncingTooltip" : "กำลังซิงค์ โปรดรอสักครู่"
     }
   },
   "cryptoAssets" : {
@@ -8228,7 +8249,8 @@
         "startSync" : "เริ่มซิงค์",
         "stopSync" : "หยุดการซิงค์",
         "lastProcessedBlock" : "บล็อกที่ประมวลผลล่าสุด: {{block}} ยังขาดอีก {{missing}} บล็อก",
-        "lastSync" : "ซิงค์ล่าสุด: {{date}}"
+        "lastSync" : "ซิงค์ล่าสุด: {{date}}",
+        "estimatedTimeRemaining" : "เวลาที่เหลือโดยประมาณ: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "ระดับบล็อก (Birthday Height)",
@@ -8321,6 +8343,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "สนับสนุนโดย Provable",
       "balanceSelector" : {
         "private" : "Private Balance",
         "public" : "ยอดคงเหลือสาธารณะ",
@@ -8342,7 +8365,13 @@
       "transparentBalance" : "Transparent Balance",
       "transparentBalanceTooltip" : "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
       "privateBalance" : "Private Balance",
-      "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+      "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ",
+      "syncButton" : {
+        "startSync" : "เริ่มซิงค์",
+        "stopSync" : "หยุดการซิงค์",
+        "syncAgain" : "ซิงค์อีกครั้ง",
+        "lastSync" : "ซิงค์ล่าสุด: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8384,12 @@
         "selectLabel" : "ส่งจาก"
       },
       "summary" : {
-        "coveredByProvable" : "สนับสนุนโดย Provable",
         "proofGenerationWarning" : "ธุรกรรม Aleo จำเป็นต้องมีการสร้างหลักฐาน ซึ่งอาจใช้เวลาสักครู่"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "กำลังซิงค์ยอดคงเหลือในบัญชีของคุณ ({{percentage}}%)",
+        "desc" : "โปรดรอสักครู่",
+        "error" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว โปรดลองอีกครั้งในภายหลัง"
       }
     }
   },

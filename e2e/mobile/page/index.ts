@@ -87,6 +87,7 @@ export class Application {
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
+    this.modularDrawer.resetFlags();
     const userdataSpeculos = `temp-userdata-${randomUUID()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);

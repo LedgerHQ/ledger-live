@@ -1,4 +1,4 @@
-import { type Page, type Validator } from "@ledgerhq/coin-framework/api/index";
+import { type Page, type Validator } from "@ledgerhq/coin-module-framework/api/index";
 import { getValidators as getValidatorsFromNetwork } from "../network";
 
 export async function getValidators(

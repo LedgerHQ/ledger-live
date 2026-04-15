@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-modules-monitoring",
-  "version": "2.15.1",
+  "version": "2.16.0",
   "description": "Push monitoring metrics to Datadog",
   "license": "Apache-2.0",
   "scripts": {
@@ -10,8 +10,8 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
-    "start": "node lib/src/cli.js",
-    "start:debug": "node --inspect-brk lib/src/cli.js"
+    "start": "node lib/cli.js",
+    "start:debug": "node --inspect-brk lib/cli.js"
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",
@@ -24,7 +24,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

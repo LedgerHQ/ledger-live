@@ -5,10 +5,6 @@ import { CryptoTable } from "../CryptoTable";
 import { ETH_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { createWalletState } from "../../../testUtils/createWalletState";
 
-jest.mock("LLD/features/Assets/components/Cells/CounterValueCell", () => ({
-  CounterValueCell: () => <span data-testid="counter-value-cell">$0.00</span>,
-}));
-
 function expectColumnHeaders(): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();
   expect(screen.getByRole("columnheader", { name: "Address" })).toBeVisible();
@@ -55,7 +51,11 @@ describe("CryptoTable", () => {
     expectColumnHeaders();
     expect(screen.getByText("Ethereum main")).toBeVisible();
     expect(screen.getByText("ETH")).toBeVisible();
-    expect(screen.getByTestId("counter-value-cell")).toBeVisible();
+    const table = screen.getByRole("table");
+    const tbody = within(table).getAllByRole("rowgroup").find(el => el.tagName === "TBODY");
+    expect(tbody).toBeDefined();
+    const dataCells = tbody ? within(tbody as HTMLElement).getAllByRole("cell") : [];
+    expect(dataCells).toHaveLength(4);
   });
 
   it("calls onRowClick with account when a data row is clicked", async () => {

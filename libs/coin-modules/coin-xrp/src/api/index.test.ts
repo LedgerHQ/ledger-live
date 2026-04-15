@@ -1,4 +1,4 @@
-import { Operation, SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Operation, SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
 import { NetworkInfo, XrpMapMemo } from "../types";

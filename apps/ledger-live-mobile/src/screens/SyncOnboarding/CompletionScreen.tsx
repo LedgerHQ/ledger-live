@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable } from "react-native";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
-import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
+import type { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { DeviceModelId } from "@ledgerhq/devices";
-import EuropaCompletionView from "./EuropaCompletionView";
+import EuropaOnboardingSuccessView from "./EuropaOnboardingSuccessView";
 import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
 import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -44,12 +44,10 @@ type Props = BaseComposite<
 >;
 
 const CompletionScreen = ({ route }: Props) => {
-  // const { dark } = useTheme();
-  // const { t } = useTranslation();
   const isFocused = useIsFocused();
   const navigation = useNavigation<RootNavigation>();
   const dispatch = useDispatch();
-  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
+  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled ?? false;
   const { isOpen: isModularDrawerOpen } = useModularDrawerController();
 
   const preventNavigation = useRef(true);
@@ -79,6 +77,14 @@ const CompletionScreen = ({ route }: Props) => {
     });
   }, [isFocused, navigation]);
 
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", e => {
+        if (isSyncIncr1Enabled && preventNavigation.current) e.preventDefault();
+      }),
+    [navigation, isSyncIncr1Enabled],
+  );
+
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       dispatch(setOnboardingHasDevice(true));
@@ -94,27 +100,6 @@ const CompletionScreen = ({ route }: Props) => {
     }
   }, [dispatch, isFocused]);
 
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", e => {
-        if (isSyncIncr1Enabled && preventNavigation.current) e.preventDefault();
-      }),
-    [navigation, isSyncIncr1Enabled],
-  );
-
-  const onboardingSuccessView = (loop: boolean, redirectToMainScreen?: () => void) => {
-    switch (device.modelId) {
-      case DeviceModelId.europa:
-        return <EuropaCompletionView onAnimationFinish={redirectToMainScreen} loop={loop} />;
-      case DeviceModelId.stax:
-        return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
-      case DeviceModelId.apex:
-        return <ApexOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
-      default:
-        return null;
-    }
-  };
-
   if (isSyncIncr1Enabled) {
     return (
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
@@ -124,33 +109,13 @@ const CompletionScreen = ({ route }: Props) => {
           seedConfiguration={seedConfiguration}
         />
         {/* If the modular drawer is enabled and open, we don't want to show the onboarding success view */}
-        {!isModularDrawerOpen && onboardingSuccessView(true)}
+        {!isModularDrawerOpen && (
+          <OnboardingSuccessView deviceModelId={device.modelId} loop={true} />
+        )}
         <CTAWrapper>
-          {/*  <Flex flex={1} alignItems="center" mb={57}>
-            <Svg height="30" width="225">
-              <Defs>
-                {dark ? (
-                  <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                    <Stop offset="0.3059" stopColor="#fff" stopOpacity="1" />
-                    <Stop offset="0.7223" stopColor="#a6a6a6" stopOpacity="1" />
-                  </LinearGradient>
-                ) : (
-                  <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                    <Stop offset="0.3059" stopColor="#000" stopOpacity="1" />
-                    <Stop offset="0.7223" stopColor="#636363" stopOpacity="1" />
-                  </LinearGradient>
-                )}
-              </Defs>
-              <Text fill="url(#grad)">
-                <TSpan fontSize="24" x="0" y="20">
-                  {t("onboarding.completionScreen.title")}
-                </TSpan>
-              </Text>
-            </Svg>
-              </Flex> */}
           <Button
             event="CompletionScreenContinue"
-            containerStyle={styles.confirmationButton}
+            containerStyle={{ flexGrow: 1 }}
             type={"secondary"}
             title={<Trans i18nKey="common.continue" />}
             testID="completion-screen-continue-button"
@@ -176,16 +141,35 @@ const CompletionScreen = ({ route }: Props) => {
           flow="onboarding"
           seedConfiguration={seedConfiguration}
         />
-        {onboardingSuccessView(false, redirectToMainScreen)}
+        <OnboardingSuccessView
+          deviceModelId={device.modelId}
+          loop={false}
+          redirectToMainScreen={redirectToMainScreen}
+        />
       </Flex>
     </Pressable>
   );
 };
 
-const styles = StyleSheet.create({
-  confirmationButton: {
-    flexGrow: 1,
-  },
-});
+const OnboardingSuccessView = ({
+  deviceModelId,
+  loop,
+  redirectToMainScreen,
+}: {
+  deviceModelId: DeviceModelId;
+  loop: boolean;
+  redirectToMainScreen?: () => void;
+}) => {
+  switch (deviceModelId) {
+    case DeviceModelId.europa:
+      return <EuropaOnboardingSuccessView onAnimationFinish={redirectToMainScreen} loop={loop} />;
+    case DeviceModelId.stax:
+      return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+    case DeviceModelId.apex:
+      return <ApexOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+    default:
+      return null;
+  }
+};
 
 export default CompletionScreen;

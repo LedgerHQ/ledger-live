@@ -2,7 +2,7 @@ import type {
   AssetInfo,
   BlockOperation,
   TransferBlockOperation,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionInfo, TraceBlockItem, isTraceBlockCallAction } from "../network/node/types";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";

@@ -44,7 +44,7 @@ describe("Cosmos Delegations Component", () => {
       },
     });
 
-    expect(getCurrencyConfiguration).toHaveBeenCalledWith(mockCosmosAccount.currency);
+    expect(getCurrencyConfiguration).toHaveBeenCalledWith(mockCosmosAccount.currency.id);
     expect(screen.getByText("You can earn ATOM rewards by delegating your assets.")).toBeVisible();
   });
 
@@ -60,7 +60,7 @@ describe("Cosmos Delegations Component", () => {
       },
     });
 
-    expect(getCurrencyConfiguration).toHaveBeenCalledWith(mockCosmosAccount.currency);
+    expect(getCurrencyConfiguration).toHaveBeenCalledWith(mockCosmosAccount.currency.id);
     expect(screen.getByText("You can earn ATOM rewards by delegating your assets.")).toBeVisible();
   });
 

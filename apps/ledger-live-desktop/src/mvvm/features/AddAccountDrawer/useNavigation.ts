@@ -1,5 +1,5 @@
-import { useGenericNavigation } from "../ModularDrawer/hooks/useModularDrawerNavigation";
-import { NAVIGATION_DIRECTION } from "../ModularDrawer/types";
+import { useGenericNavigation } from "./hooks/useGenericNavigation";
+import { NAVIGATION_DIRECTION } from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 
 export const ADD_ACCOUNT_STEP_ORDER: ModularDrawerAddAccountStep[] = [

@@ -97,9 +97,11 @@ type CategoryContentCard = ContentCardCommonProperties & {
 
 type WalletContentCard = ContentCardCommonProperties & {
   tag?: string;
+  picto?: string;
   title?: string;
   link?: string;
   image?: string;
+  image_background?: string;
   background?: Background;
 };
 

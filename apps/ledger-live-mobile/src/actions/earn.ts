@@ -4,6 +4,7 @@ import type {
   EarnSetInfoModalPayload,
   EarnSetInfoBottomSheetPayload,
   EarnSetMenuModalPayload,
+  EarnSetMenuBottomSheetPayload,
   EarnSetProtocolInfoModalPayload,
 } from "./types";
 
@@ -17,6 +18,10 @@ export const makeSetEarnInfoBottomSheetAction = createAction<EarnSetInfoBottomSh
 
 export const makeSetEarnMenuModalAction = createAction<EarnSetMenuModalPayload>(
   EarnActionTypes.EARN_MENU_MODAL,
+);
+
+export const makeSetEarnMenuBottomSheetAction = createAction<EarnSetMenuBottomSheetPayload>(
+  EarnActionTypes.EARN_MENU_BOTTOM_SHEET,
 );
 
 export const makeSetEarnProtocolInfoModalAction = createAction<EarnSetProtocolInfoModalPayload>(

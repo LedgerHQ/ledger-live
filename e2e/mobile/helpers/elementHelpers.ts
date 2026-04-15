@@ -216,6 +216,24 @@ export const NativeElementHelpers = {
     await elem.tap();
   },
 
+  async tapByIdAndExpectToDisappear(
+    id: string | RegExp,
+    opts: { index?: number; timeout?: number; disappearTimeout?: number } = {},
+  ) {
+    const { index = 0, timeout = 60000, disappearTimeout = 1000 } = opts;
+    let tapped = false;
+    await retryUntilTimeout(async () => {
+      if (tapped) {
+        const visible = await NativeElementHelpers.isIdVisible(id);
+        if (!visible) return;
+      }
+      await NativeElementHelpers.tapById(id, index);
+      tapped = true;
+      const stillVisible = await NativeElementHelpers.isIdVisible(id, disappearTimeout);
+      if (stillVisible) throw new Error(`Element "${id}" is still visible after tap`);
+    }, timeout);
+  },
+
   async typeTextById(
     id: string | RegExp,
     text: string,

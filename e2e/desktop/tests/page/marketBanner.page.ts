@@ -7,7 +7,6 @@ export class MarketBannerPage extends AppPage {
   private trendingAssetsList = this.page.getByTestId("trending-assets-list");
   private fearAndGreedCard = this.page.getByTestId("fear-and-greed-card");
   private viewAllTile = this.page.getByTestId("market-banner-view-all");
-  private assetTile = (assetId: string) => this.page.getByTestId(`market-banner-asset-${assetId}`);
 
   @step("Expect Market Banner to be visible")
   async expectMarketBannerToBeVisible() {
@@ -39,11 +38,6 @@ export class MarketBannerPage extends AppPage {
     await this.viewAllTile.scrollIntoViewIfNeeded();
     await expect(this.viewAllTile).toBeVisible();
     await this.viewAllTile.click();
-  }
-
-  @step("Click on asset tile $0")
-  async clickAssetTile(assetId: string) {
-    await this.assetTile(assetId).click();
   }
 
   @step("Get first asset tile")

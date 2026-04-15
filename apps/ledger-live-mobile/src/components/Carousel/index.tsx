@@ -2,6 +2,7 @@ import React, { memo, useMemo, useCallback, useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-native";
 import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { WalletContentCard } from "~/dynamicContent/types";
 import { width } from "~/helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
 
@@ -48,7 +49,7 @@ const Carousel = () => {
       snapToInterval={WIDTH + 16}
       decelerationRate={"fast"}
     >
-      {walletCardsDisplayed.map((cardProps, index) => (
+      {walletCardsDisplayed.map((cardProps: WalletContentCard, index: number) => (
         <LogContentCardWrapper
           key={cardProps.id + index}
           id={cardProps.id}

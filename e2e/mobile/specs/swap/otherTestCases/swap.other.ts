@@ -1,5 +1,4 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { waitSwapReady } from "../../../bridge/server";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -325,6 +324,26 @@ export function runExportSwapHistoryOperationsTest(
   });
 }
 
+export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
+  const swapHistoryFeedbackFormUrl =
+    "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile";
+  describe("Swap history", () => {
+    beforeAll(async () => {
+      await beforeAllFunctionSwap({
+        userdata: "swap-history",
+        speculosApp: AppInfos.EXCHANGE,
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it("Check feedback form URL from swap history", async () => {
+      await app.swap.goToSwapHistory();
+      await app.swap.checkSwapHistoryFeedbackFormUrl(swapHistoryFeedbackFormUrl);
+    });
+  });
+}
+
 export function runSwapWithSendMaxTest(
   fromAccount: Account,
   toAccount: Account,
@@ -449,28 +468,22 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     tags.forEach(tag => $Tag(tag));
     it("Access Swap from different entry points", async () => {
       await app.portfolio.openViaDeeplink();
-      let readyPromise = waitSwapReady();
       if (isWallet40) {
         await app.mainNavigation.tapWallet40Tab("swap");
       } else {
         await app.transferMenuDrawer.open();
         await app.transferMenuDrawer.navigateToSwap();
       }
-      await readyPromise;
       await validateSwapAssetsPage(account.currency.ticker, "");
 
       await app.account.openViaDeeplink();
-      readyPromise = waitSwapReady();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapSwap();
-      await readyPromise;
       await validateSwapAssetsPage("", account.currency.ticker);
 
       await app.portfolio.openViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
-      readyPromise = waitSwapReady();
       await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
-      await readyPromise;
       await validateSwapAssetsPage("", account.currency.ticker);
     });
   });

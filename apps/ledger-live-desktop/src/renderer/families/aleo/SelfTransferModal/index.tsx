@@ -7,36 +7,33 @@ import { useDispatch } from "LLD/hooks/redux";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import DefaultSendBody from "~/renderer/modals/Send/Body";
-import type { StepId } from "~/renderer/modals/Send/types";
 import { closeModal } from "~/renderer/actions/modals";
 import { AleoCustomModal } from "../constants";
-
-type Props = {
-  stepId?: StepId;
-  onClose?: () => void;
-};
+import type { ModalProps, StepId } from "../modals/send/types";
 
 const MODAL_LOCKED: Record<StepId, boolean> = {
   recipient: false,
+  "private-sync": true,
+  "record-picker": true,
   amount: true,
   summary: true,
   device: true,
   confirmation: true,
-  warning: false,
 };
 
-const SelfTransferModal = ({ stepId: initialStepId, onClose }: Props) => {
+const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
   const { t } = useTranslation();
   const [stepId, setStepId] = React.useState<StepId>(() => initialStepId || "recipient");
   const handleReset = useCallback(() => setStepId("recipient"), []);
   const handleStepChange = useCallback((stepId: StepId) => setStepId(stepId), []);
-  const isModalLocked = MODAL_LOCKED[stepId];
   const dispatch = useDispatch();
 
   const handleModalClose = useCallback(() => {
     dispatch(closeModal(AleoCustomModal.SELF_TRANSFER));
     onClose?.();
   }, [dispatch, onClose]);
+
+  const isModalLocked = MODAL_LOCKED[stepId];
 
   return (
     <DomainServiceProvider>
@@ -51,12 +48,17 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: Props) => {
             ? getMainAccount(data.account, data.parentAccount)
             : null;
 
+          const defaultRecipient = mainAccount?.freshAddress ?? "";
+          const defaultTransactionMode = TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+
           return (
             <DefaultSendBody
               title={t("aleo.selfTransfer.modal.title")}
               modalName={AleoCustomModal.SELF_TRANSFER}
-              stepId={stepId}
               onClose={onClose}
+              // @ts-expect-error - there is no easy way to add custom steps yet
+              stepId={stepId}
+              // @ts-expect-error - there is no easy way to add custom steps yet
               onChangeStepId={handleStepChange}
               params={{
                 account: data.account,
@@ -64,9 +66,9 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: Props) => {
                   family: "aleo",
                   amount: new BigNumber(0),
                   useAllAmount: false,
-                  recipient: mainAccount?.freshAddress ?? "",
+                  recipient: defaultRecipient,
                   fees: new BigNumber(0),
-                  mode: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+                  mode: defaultTransactionMode,
                 },
               }}
             />

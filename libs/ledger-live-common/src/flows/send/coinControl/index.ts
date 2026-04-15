@@ -1,12 +1,6 @@
 export { getChangeToReturn, hasTxOutputs } from "./utils/changeToReturn";
 export type { StatusWithTxOutputs } from "./utils/changeToReturn";
-export {
-  useBitcoinUtxoDisplayData,
-  type PickingStrategyOption,
-  type UtxoRowDisplayData,
-  type UseBitcoinUtxoDisplayDataParams,
-  type BitcoinUtxoDisplayData,
-} from "../../../families/bitcoin/react";
+export type { CoinControlDisplayData, CoinControlUtxoRow } from "../../../bridge/descriptor/types";
 export {
   useCoinControlAmountInput,
   type UseCoinControlAmountInputParams,
@@ -14,6 +8,7 @@ export {
 } from "./hooks/useCoinControlAmountInput";
 export {
   useCoinControlScreenViewModelCore,
+  type CoinControlChangeToReturnViewModel,
   type CoinControlScreenViewModelLabels,
   type UseCoinControlScreenViewModelCoreParams,
   type CoinControlScreenViewModelCoreResult,

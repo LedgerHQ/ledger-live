@@ -52,6 +52,7 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.modularDrawer.selectNetwork(CURRENCY.name);
     await app.addAccount.addAccountAtIndex(ACCOUNT.accountName, CURRENCY.id, ACCOUNT.index);
     await app.common.tapCloseWithConfirmationButton();
+    await app.mainNavigation.tapWallet40Tab("home");
   });
 
   it("check quick action buttons visibility and normal balance title", async () => {

@@ -18,10 +18,12 @@ import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useInViewContext } from "LLM/contexts/InViewContext";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
 
 type Props = {
+  showLumenPageIndicator?: boolean;
   styles?: {
     gap?: number;
     pagination?: boolean;
@@ -35,7 +37,8 @@ const defaultStyles = {
   widthFactor: WidthFactor.Full,
 };
 
-const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyles }) => {
+const Carousel = ContentLayoutBuilder<Props>(
+  ({ items, showLumenPageIndicator = false, styles: _styles = defaultStyles }) => {
   const styles = {
     gap: _styles.gap ?? defaultStyles.gap,
     pagination: _styles.pagination ?? defaultStyles.pagination,
@@ -48,7 +51,9 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
 
   const separatorWidth = useTheme().space[styles.gap];
 
-  const isPaginationEnabled = styles.pagination;
+  const isPaginationEnabled = styles.pagination && !showLumenPageIndicator;
+  const showDots =
+    showLumenPageIndicator && items.length > 1;
 
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -128,7 +133,15 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
         )}
       />
 
-      {isPaginationEnabled && <Pagination items={items} carouselIndex={carouselIndex} />}
+      {isPaginationEnabled ? <Pagination items={items} carouselIndex={carouselIndex} /> : null}
+      {showDots ? (
+        <Box lx={{ alignItems: "center", marginTop: "s8" }}>
+          <PageIndicator
+            currentPage={Math.min(carouselIndex + 1, items.length)}
+            totalPages={items.length}
+          />
+        </Box>
+      ) : null}
     </View>
   );
 });

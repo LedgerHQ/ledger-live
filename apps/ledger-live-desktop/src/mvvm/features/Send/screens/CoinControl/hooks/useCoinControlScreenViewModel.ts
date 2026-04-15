@@ -21,22 +21,6 @@ import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBri
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 
-type StatusWithTxOutputs = TransactionStatus & {
-  txOutputs?: ReadonlyArray<{ isChange: boolean; value: BigNumber }>;
-};
-
-function hasTxOutputs(status: TransactionStatus): status is StatusWithTxOutputs {
-  return "txOutputs" in status;
-}
-
-/** Bitcoin status includes txOutputs with change; generic status may not. */
-function getChangeToReturn(status: TransactionStatus): BigNumber {
-  const outputs = hasTxOutputs(status) ? (status.txOutputs ?? []) : [];
-  return outputs
-    .filter((o): o is { isChange: true; value: BigNumber } => o.isChange)
-    .reduce((sum, o) => sum.plus(o.value), new BigNumber(0));
-}
-
 type UseCoinControlScreenViewModelParams = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
@@ -109,6 +93,7 @@ export function useCoinControlScreenViewModel({
       coinToSendLabel: t("newSendFlow.coinControl.coinToSend"),
       changeToReturnLabel: t("newSendFlow.coinControl.changeToReturn"),
       enterAmountPlaceholder: t("newSendFlow.coinControl.enterAmount"),
+      selectSufficientCoinsPlaceholder: t("newSendFlow.coinControl.selectSufficientCoins"),
       amountToSendLabel: t("newSendFlow.coinControl.amountToSendInCurrency", {
         ticker: accountCurrency?.ticker ?? "CRYPTO",
       }),

@@ -1,4 +1,4 @@
-import { CraftedTransaction, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { CraftedTransaction, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, type TOKEN_TYPE } from "../constants";

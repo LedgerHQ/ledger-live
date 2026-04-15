@@ -10,7 +10,7 @@ import { Transaction } from "../types";
     we resort to this check instead
     we rely on seedIdentifier being the public key for Hedera accounts
     TODO: document where the seedIdentifier for hedera is set
-    looks like it's set to the publickey in makeScanAccount here: libs/coin-framework/src/bridge/jsHelpers.ts */
+    looks like it's set to the publickey in makeScanAccount here: libs/ledger-wallet-framework/src/bridge/jsHelpers.ts */
 
 export const receive =
   (getAddress: GetAddressFn): AccountBridge<Transaction>["receive"] =>

@@ -3,11 +3,11 @@
  * Run only locally: pnpm test-integ
  * Not run in CI (pnpm test ignores *.integ.test.ts).
  */
-import ZCash from "../src/ZCash";
+import { ZCash } from "../src/ZCash";
 import { JsonRpcClient } from "../src/jsonRpcClient";
-import { JSON_RPC_SERVER } from "../src/constants";
+import { ZCASH_JSON_RPC_SERVER_TESTNET } from "../src/constants";
 
-const nodeUrl = JSON_RPC_SERVER;
+const nodeUrl = ZCASH_JSON_RPC_SERVER_TESTNET;
 
 describe("ZCash integration (real RPC)", () => {
   describe("getBlockCount", () => {

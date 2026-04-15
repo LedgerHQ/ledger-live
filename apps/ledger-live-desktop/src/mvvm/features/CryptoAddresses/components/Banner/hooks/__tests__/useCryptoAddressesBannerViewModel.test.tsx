@@ -1,7 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { useCryptoAddressesBannerViewModel } from "../useCryptoAddressesBannerViewModel";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import {
   ARB_ACCOUNT,

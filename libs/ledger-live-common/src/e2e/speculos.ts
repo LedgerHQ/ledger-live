@@ -383,11 +383,26 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Velora: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Velora",
+    },
+    dependencies: [AppInfos.ETHEREUM],
+  },
+  One_Inch: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "1inch",
+    },
+    dependencies: [AppInfos.ETHEREUM],
+  },
 };
 
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
+  wantedApiPort?: number,
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
@@ -451,7 +466,7 @@ export async function startSpeculos(
   try {
     return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
-      : await createSpeculosDevice(deviceParams).then(device => {
+      : await createSpeculosDevice(deviceParams, 3, wantedApiPort).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return {
             id: device.id,
@@ -464,6 +479,7 @@ export async function startSpeculos(
   } catch (e: unknown) {
     console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
+    throw sanitizeError(e);
   }
 }
 
@@ -489,6 +505,14 @@ interface ResponseData {
 export function getSpeculosAddress(): string {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
   return speculosAddress || "http://127.0.0.1";
+}
+
+const _capturedSpeculosScreenshots = new Map<number, Buffer[]>();
+
+export function drainSpeculosScreenshots(port: number): Buffer[] {
+  const screenshots = _capturedSpeculosScreenshots.get(port) ?? [];
+  _capturedSpeculosScreenshots.delete(port);
+  return screenshots;
 }
 
 export async function retryAxiosRequest<T>(
@@ -550,6 +574,27 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
+export async function waitForReviewTransaction(): Promise<void> {
+  if (!isTouchDevice()) {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+    return;
+  }
+
+  const port = getEnv("SPECULOS_API_PORT");
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const texts = await fetchCurrentScreenTexts(port);
+    if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
+      return;
+    }
+    if (texts.includes(DeviceLabels.YES_ENABLE)) {
+      await pressAndRelease(DeviceLabels.YES_ENABLE);
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      return;
+    }
+    await waitForTimeOut(500);
+  }
+}
+
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
   const speculosAddress = getSpeculosAddress();
   const response = await retryAxiosRequest(() =>
@@ -595,16 +640,26 @@ export const pressUntilTextFound = withDeviceController(
       const maxAttempts = 18;
       const speculosApiPort = getEnv("SPECULOS_API_PORT");
       const buttons = getButtonsController();
+      const seenScreens = new Set<string>();
+      const portScreenshots = _capturedSpeculosScreenshots.get(speculosApiPort) ?? [];
+      _capturedSpeculosScreenshots.set(speculosApiPort, portScreenshots);
 
       for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const texts = await fetchCurrentScreenTexts(speculosApiPort);
-        if (
-          strictMatch
-            ? texts === targetText
-            : texts.toLowerCase().includes(targetText.toLowerCase())
-        ) {
+        const isMatch = strictMatch
+          ? texts === targetText
+          : texts.toLowerCase().includes(targetText.toLowerCase());
+
+        if (!seenScreens.has(texts)) {
+          seenScreens.add(texts);
+          const screenshot = await takeScreenshot(speculosApiPort);
+          if (screenshot) portScreenshots.push(screenshot);
+        }
+
+        if (isMatch) {
           return await fetchAllEvents(speculosApiPort);
         }
+
         if (isTouchDevice()) {
           await swipeRight();
         } else {
@@ -613,8 +668,9 @@ export const pressUntilTextFound = withDeviceController(
         await waitForTimeOut(200);
       }
 
+      const screensLog = [...seenScreens].map((s, i) => `[${i + 1}] "${s}"`).join(" → ");
       throw new Error(
-        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen. Screens observed during navigation (${seenScreens.size} unique): ${screensLog}`,
       );
     },
 );
@@ -841,7 +897,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.DOGE.id:
     case Currency.BCH.id:
     case Currency.ZEC.id:
-      await sendBTCBasedCoin(tx);
+      await sendBTCBasedCoin(tx, currencyId);
       break;
     case Currency.DOT.id:
       await sendPolkadot(tx);
@@ -948,7 +1004,7 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      await waitForReviewTransaction();
       const events =
         getSpeculosModel() === DeviceModelId.nanoS
           ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
@@ -976,7 +1032,7 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
           await buttons.both();
         }
       } else {
-        await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+        await waitForReviewTransaction();
       }
 
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -993,7 +1049,7 @@ export const verifyAmountsAndRejectSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      await waitForReviewTransaction();
       let events: string[] = [];
       if (isTouchDevice()) {
         events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
@@ -1016,7 +1072,15 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
   const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
 
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
-    expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+    if (swap.provider && swap.provider.app && swap.provider.app !== AppInfos.EXCHANGE) {
+      expectDeviceScreenContains(
+        swap.provider.uiName,
+        events,
+        "Provider not found on the device screen",
+      );
+    } else {
+      expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+    }
   }
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }

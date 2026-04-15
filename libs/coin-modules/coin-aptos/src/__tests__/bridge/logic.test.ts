@@ -20,7 +20,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 
 setupMockCryptoAssetsStore();
 
-describe("Aptos logic ", () => {
+describe("Aptos logic", () => {
   describe("getMaxSendBalance", () => {
     it("should return the correct max send balance when amount is greater than total gas", () => {
       const amount = new BigNumber(1000000);
@@ -159,7 +159,7 @@ describe("Aptos logic ", () => {
   });
 });
 
-describe("Aptos sync logic ", () => {
+describe("Aptos sync logic", () => {
   describe("txsToOps", () => {
     it("should convert Aptos transactions to operations correctly", async () => {
       const address = "0x11";

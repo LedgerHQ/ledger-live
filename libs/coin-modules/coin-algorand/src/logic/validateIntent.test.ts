@@ -1,4 +1,4 @@
-import { Balance, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import type { AlgorandMemo } from "../types";

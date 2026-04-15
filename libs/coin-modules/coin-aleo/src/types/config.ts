@@ -1,4 +1,4 @@
-import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { TransactionType } from "./logic";
 
 export type AleoConfig = {

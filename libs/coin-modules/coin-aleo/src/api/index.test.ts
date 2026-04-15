@@ -1,4 +1,7 @@
-import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import type {
+  TransactionIntent,
+  MemoNotSupported,
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoTransactionIntentData } from "../types";
 import coinConfig from "../config";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";

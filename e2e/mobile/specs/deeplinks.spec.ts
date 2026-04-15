@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { waitSwapReady } from "../bridge/server";
+import { swapSetup } from "../bridge/server";
 import { isWallet40 } from "../helpers/commonHelpers";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -8,19 +8,19 @@ $TmsLink("B2CQA-1837");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
-  const nanoApp = AppInfos.ETHEREUM;
+  const account = Account.ETH_2;
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
   const randomLiveApp = app.discover.getRandomLiveApp();
 
   beforeAll(async () => {
     await app.init({
-      speculosApp: nanoApp,
+      speculosApp: account.currency.speculosApp,
       cliCommands: [
         async (userdataPath?: string) => {
           return CLI.liveData({
-            currency: nanoApp.name,
-            index: 0,
+            currency: account.currency.id,
+            index: account.index,
             appjson: userdataPath,
             add: true,
           });
@@ -93,9 +93,9 @@ describe("DeepLinks Tests", () => {
   );
 
   (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
+    await swapSetup();
     await app.swap.openViaDeeplink();
-    await waitSwapReady();
-    await app.swap.expectSwapPage();
+    await app.swapLiveApp.expectSwapLiveApp();
   });
 
   (isSmokeTestRun ? it.skip : it)("should open Market Detail page for Bitcoin", async () => {
@@ -146,7 +146,7 @@ describe("DeepLinks Tests", () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.waitForPortfolioPageToLoad();
       await app.receive.receiveViaDeeplink(ethereumLong);
-      await app.modularDrawer.validateAccountsScreen([Account.ETH_1.accountName]);
+      await app.modularDrawer.validateAccountsScreen([account.accountName]);
     });
   });
 });

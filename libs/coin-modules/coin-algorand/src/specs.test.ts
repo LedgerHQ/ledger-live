@@ -23,7 +23,7 @@ jest.mock("@ledgerhq/cryptoassets/index", () => ({
   })),
 }));
 
-jest.mock("@ledgerhq/coin-framework/currencies", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies", () => ({
   parseCurrencyUnit: jest.fn(() => new BigNumber("100000")),
 }));
 

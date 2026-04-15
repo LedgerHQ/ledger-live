@@ -15,7 +15,7 @@ import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.moc
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 import { ModularDialogFlowManagerProps } from "./types";
-import modularDrawerReducer, { openDialog } from "~/renderer/reducers/modularDrawer";
+import modularDialogReducer, { openDialog } from "~/renderer/reducers/modularDialog";
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
@@ -63,7 +63,7 @@ const createMockState = () => ({
     ],
   },
   application: { debug: {} },
-  modularDrawer: {
+  modularDialog: {
     flow: "Modular Asset Flow",
     isOpen: false,
     isDebuggingDuplicates: false,
@@ -82,12 +82,12 @@ const store = configureStore({
     wallet: (state = initialMockState.wallet) => state,
     currency: (state = initialMockState.currency) => state,
     application: (state = initialMockState.application) => state,
-    modularDrawer: modularDrawerReducer,
+    modularDialog: modularDialogReducer,
     countervalues: (state = initialMockState.countervalues) => state,
     assetsDataApi: assetsDataApi.reducer,
   },
   preloadedState: {
-    modularDrawer: initialMockState.modularDrawer,
+    modularDialog: initialMockState.modularDialog,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

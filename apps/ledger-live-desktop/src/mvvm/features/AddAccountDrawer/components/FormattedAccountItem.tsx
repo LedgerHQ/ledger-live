@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { AccountItem, Account as UIAccount, RightElement } from "@ledgerhq/react-ui/pre-ldls/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
 import { FormattedAccount } from "../screens/AccountsAdded/types";
 

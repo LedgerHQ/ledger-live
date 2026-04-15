@@ -1,4 +1,4 @@
-import type { Cursor, Page, Stake } from "@ledgerhq/coin-framework/api/types";
+import type { Cursor, Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import api from "../network/tzkt";
 
 export async function getStakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {

@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";

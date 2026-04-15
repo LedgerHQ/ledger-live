@@ -1,4 +1,5 @@
 import test from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import {
   Account,
   TokenAccount,
@@ -30,6 +31,7 @@ test.describe("Swap flow from different entry point", () => {
   const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
@@ -47,36 +49,6 @@ test.describe("Swap flow from different entry point", () => {
       { scope: "test" },
     ],
   });
-
-  test(
-    "Entry Point - Portfolio page",
-    {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2985",
-      },
-    },
-    async ({ app, electronApp }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.mainNavigation.openTargetFromMainNavigation("home"),
-      );
-      await app.portfolio.checkEmbeddedSwapContainerVisibility();
-      await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/, electronApp);
-    },
-  );
 
   test(
     "Entry Point - Asset Allocation",
@@ -273,6 +245,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     });
 
     test.use({
+      teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
@@ -372,6 +345,7 @@ test.describe("Swap history", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "swap-history",
     speculosApp: app,
   });
@@ -459,6 +433,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 

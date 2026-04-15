@@ -5,6 +5,7 @@ export function mockNodeApi(overrides: Partial<jest.Mocked<NodeApi>> = {}): jest
     getTransaction: jest.fn(),
     getCoinBalance: jest.fn(),
     getTokenBalance: jest.fn(),
+    getTokenAllowance: jest.fn(),
     getTransactionCount: jest.fn(),
     getGasEstimation: jest.fn(),
     getFeeData: jest.fn(),

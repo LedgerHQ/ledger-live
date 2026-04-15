@@ -5,7 +5,7 @@ import {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { validateAddress } from "../bridge/validateAddress";
 import coinConfig, { type SuiConfig } from "../config";
 import {
@@ -39,7 +39,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: address => getBalance(address),
     lastBlock,
     getBlock,
     getBlockInfo,

@@ -51,6 +51,7 @@ describe("getBlock", () => {
       {
         type: "transfer" as const,
         address: "rPbS9E67Gn1srVFgvj9LV9LwV83kLFyA4q",
+        peer: "refV71jPdVAK3vQQb77SQrCJ2ibbov2H8",
         amount: -999000000n,
         asset: {
           type: "native",
@@ -60,6 +61,7 @@ describe("getBlock", () => {
       {
         type: "transfer" as const,
         address: "refV71jPdVAK3vQQb77SQrCJ2ibbov2H8",
+        peer: "rPbS9E67Gn1srVFgvj9LV9LwV83kLFyA4q",
         amount: 999000000n,
         asset: {
           type: "native",

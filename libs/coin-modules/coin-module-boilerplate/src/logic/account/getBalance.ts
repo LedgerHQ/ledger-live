@@ -1,4 +1,4 @@
-import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getAccountInfo } from "../../network/node";
 
 // Could be getAccountInfo so it is used in both bridge and api

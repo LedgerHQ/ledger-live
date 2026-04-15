@@ -5,7 +5,6 @@ import tronResolver from "@ledgerhq/coin-tron/signer";
 import type { CliTools } from "@ledgerhq/coin-tron/test/cli";
 import makeCliTools from "@ledgerhq/coin-tron/test/cli";
 import type { Transaction, TronAccount, TronSigner } from "@ledgerhq/coin-tron/types/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import Trx from "@ledgerhq/hw-app-trx";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -23,9 +22,8 @@ const createSigner: CreateSigner<TronSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = (): TronCoinConfig => {
-  return getCurrencyConfiguration(getCryptoCurrencyById("tron"));
-};
+const getCurrencyConfig = (): TronCoinConfig =>
+  getCurrencyConfiguration<TronCoinConfig>("tron");
 
 const bridge: Bridge<Transaction, TronAccount> = createBridges(
   executeWithSigner(createSigner),

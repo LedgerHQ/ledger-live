@@ -3,6 +3,10 @@ import invariant from "invariant";
 
 export default class StakePage {
   celoLockAmountInput = "celo-lock-amount-input";
+  celoVoteAmountId = "celo-vote-amount";
+  celoVoteAmountInputId = "celo-vote-amount-input";
+  celoVoteAmountContinueId = "celo-vote-amount-continue";
+  celoVoteSummaryContinueId = "celo-vote-summary-continue";
   searchPoolInput = "delegation-search-pool-input";
   selectAssetTitle = "select-asset-drawer-title";
 
@@ -103,6 +107,28 @@ export default class StakePage {
   @Step("Set Celo lock amount")
   async setCeloLockAmount(amount: string) {
     await typeTextById(this.celoLockAmountInput, amount);
+  }
+
+  @Step("Open CELO vote amount screen")
+  async openCeloVoteAmount() {
+    await tapById(this.celoVoteAmountId);
+  }
+
+  @Step("Set CELO vote amount")
+  async setCeloVoteAmount(amount: string) {
+    await waitForElementById(this.celoVoteAmountInputId);
+    await typeTextById(this.celoVoteAmountInputId, amount);
+  }
+
+  @Step("Validate CELO vote amount")
+  async validateCeloVoteAmount() {
+    await tapById(this.celoVoteAmountContinueId);
+  }
+
+  @Step("Continue from CELO vote summary")
+  async celoVoteSummaryContinue() {
+    await waitForElementById(this.celoVoteSummaryContinueId);
+    await tapById(this.celoVoteSummaryContinueId);
   }
 
   @Step("Verify choose asset page is visible")

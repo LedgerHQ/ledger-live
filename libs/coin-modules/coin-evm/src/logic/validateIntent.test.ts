@@ -2,7 +2,7 @@ import {
   BufferTxData,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -26,7 +26,13 @@ import ledgerExplorer from "../network/explorer/ledger";
 import ledgerGasTracker from "../network/gasTracker/ledger";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
+import * as computeGasLimitModule from "./computeGasLimit";
 import { validateIntent } from "./validateIntent";
+
+jest.mock("./computeGasLimit", () => ({
+  ...jest.requireActual("./computeGasLimit"),
+  computeEIP7623GasLimit: jest.fn().mockReturnValue(0n),
+}));
 
 jest.mock("../network/node", () => ({
   ...jest.requireActual("../network/node"),
@@ -117,8 +123,10 @@ describe("validateIntent", () => {
     });
     nodeApiMock.getTransactionCount.mockResolvedValue(30);
   });
+
   afterEach(() => {
     jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("fee ratio", () => {
@@ -134,7 +142,10 @@ describe("validateIntent", () => {
     ])("%s with too high fees on a %s asset", async (_s, assetType, expectedWarnings) => {
       const res = await validateIntent(
         {} as CryptoCurrency,
-        eip1559Intent({ amount: 1n, asset: { type: assetType } }),
+        eip1559Intent({
+          amount: 1n,
+          asset: { type: assetType },
+        }),
         [{ value: 50n, asset: { type: "native" } }],
         {
           value: 2n,
@@ -492,13 +503,18 @@ describe("validateIntent", () => {
         });
 
         it("detects gas limit being too low in a tx with an error", async () => {
+          const eip7623GasLimit = 21000n;
+          (computeGasLimitModule.computeEIP7623GasLimit as jest.Mock).mockReturnValue(
+            eip7623GasLimit,
+          );
+
           const res = await validateIntent(
             {} as CryptoCurrency,
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
               value: 0n,
-              parameters: { gasLimit: 20000n }, // min should be 21000
+              parameters: { gasLimit: eip7623GasLimit - 1n }, // min should be 21000
             },
           );
 
@@ -507,16 +523,23 @@ describe("validateIntent", () => {
               gasLimit: new GasLessThanEstimate(),
             }),
           );
+
+          expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledTimes(1);
         });
 
         it("detects custom gas limit being too low in a tx with an error", async () => {
+          const eip7623GasLimit = 21000n;
+          (computeGasLimitModule.computeEIP7623GasLimit as jest.Mock).mockReturnValue(
+            eip7623GasLimit,
+          );
+
           const res = await validateIntent(
             {} as CryptoCurrency,
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
               value: 0n,
-              parameters: { customGasLimit: 20000n }, // min should be 21000
+              parameters: { customGasLimit: eip7623GasLimit - 1n },
             },
           );
 
@@ -525,6 +548,8 @@ describe("validateIntent", () => {
               gasLimit: new GasLessThanEstimate(),
             }),
           );
+
+          expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledTimes(1);
         });
 
         it("detects customGasLimit being lower than gasLimit with a warning", async () => {

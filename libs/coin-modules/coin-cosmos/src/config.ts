@@ -1,4 +1,7 @@
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-module-framework/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
 type CosmosConfig = Record<string, ConfigInfo>;
@@ -200,5 +203,8 @@ export const cosmosConfig: CosmosConfig = {
 };
 
 export type CosmosCoinConfig = CurrencyConfig & CosmosConfig;
-const coinConfig = buildCoinConfig<CosmosCoinConfig>();
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<CosmosCoinConfig>) => void;
+  getCoinConfig: (currencyId?: string) => CosmosCoinConfig;
+} = buildCoinConfig<CosmosCoinConfig>();
 export default coinConfig;

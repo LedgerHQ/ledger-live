@@ -1,4 +1,4 @@
-import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getStakes, getAllBalancesCached } from "../network";
 import { toSuiAsset } from "../network/sdk";
 

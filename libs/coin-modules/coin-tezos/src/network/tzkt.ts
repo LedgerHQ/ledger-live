@@ -5,10 +5,12 @@ import coinConfig from "../config";
 import {
   APIAccount,
   APIBlock,
+  APIDelegationType,
   APIOperation,
   APITokenTransfer,
   APITransactionType,
   AccountsGetOperationsOptions,
+  APITokenBalance,
 } from "./types";
 
 /** TzKT hard-caps `limit` at 10 000; we use a safer page size to stay well under that. */
@@ -103,6 +105,39 @@ const api = {
     });
     return data;
   },
+
+  /**
+   * Fetches a single page of `delegation` operations at the given block level.
+   * Internal — used by `fetchBlockDelegations` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetDelegations
+   */
+  async getBlockDelegationsPage(level: number, cursor?: number): Promise<APIDelegationType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIDelegationType[]>({
+      url: `${getExplorerUrl()}/v1/operations/delegations`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches FA2 token balances (tokenId = 0 only) for a given account.
+   * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
+   */
+  async getTokensBalances(address: string): Promise<APITokenBalance[]> {
+    const params: Record<string, unknown> = {
+      account: address,
+      "token.standard": "fa2",
+      "token.tokenId": "0",
+    };
+    const { data } = await network<APITokenBalance[]>({
+      url: `${getExplorerUrl()}/v1/tokens/balances`,
+      params,
+    });
+    return data;
+  },
 };
 
 // TODO this has same purpose as api/listOperations
@@ -185,6 +220,30 @@ export const fetchBlockTokenTransfers = async (level: number): Promise<APITokenT
     );
   }
   return transfers;
+};
+
+/**
+ * Fetches ALL `delegation` operations for a given block level, paginating through
+ * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ */
+export const fetchBlockDelegations = async (level: number): Promise<APIDelegationType[]> => {
+  const delegations: APIDelegationType[] = [];
+  let cursor: number | undefined;
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
+  do {
+    const page = await api.getBlockDelegationsPage(level, cursor);
+    if (page.length === 0) break;
+    delegations.push(...page);
+    if (page.length < BLOCK_PAGE_SIZE) break;
+    cursor = page.at(-1)!.id;
+  } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockDelegations: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
+  return delegations;
 };
 
 export default api;

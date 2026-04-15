@@ -87,7 +87,7 @@ export const getOperations: ExplorerApi["getOperations"] = async (
   accountId,
   fromBlock,
 ) => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isLedgerExplorerConfig(explorer)) {
     throw new LedgerExplorerUsedIncorrectly(

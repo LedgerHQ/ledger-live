@@ -1,4 +1,8 @@
-import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import {
+  AlpacaApi,
+  BufferTxData,
+  MemoNotSupported,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
@@ -137,7 +141,8 @@ describe("getBlock ERC20 transfers", () => {
     });
   });
 
-  describe("External RPC Node (zkSync)", () => {
+  // this test is skipped until a RPC provider supporting trace_block is setup for zksync
+  describe.skip("External RPC Node (zkSync)", () => {
     let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
     beforeAll(() => {

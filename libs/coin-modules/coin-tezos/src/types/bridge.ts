@@ -1,4 +1,4 @@
-import type { Stake } from "@ledgerhq/coin-framework/api/index";
+import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   Account,
   AccountRaw,

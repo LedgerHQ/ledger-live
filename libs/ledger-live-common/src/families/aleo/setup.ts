@@ -2,7 +2,6 @@
 
 import invariant from "invariant";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { DmkSignerAleo } from "@ledgerhq/live-signer-aleo";
 import { createBridges } from "@ledgerhq/coin-aleo/bridge/index";
 import makeCliTools from "@ledgerhq/coin-aleo/test/cli";
@@ -31,9 +30,9 @@ const createSigner: CreateSigner<AleoSigner> = (transport: TransportWithDmk) => 
   return new DmkSignerAleo(transport.dmk, transport.sessionId);
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency) => {
-  invariant(currency, "aleo: currency is required in getCurrencyConfig");
-  return getCurrencyConfiguration<AleoCoinConfig>(currency);
+const getCurrencyConfig = (currencyId?: string) => {
+  invariant(currencyId, "aleo: currencyId is required in getCurrencyConfig");
+  return getCurrencyConfiguration<AleoCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<AleoTransaction> = createBridges(

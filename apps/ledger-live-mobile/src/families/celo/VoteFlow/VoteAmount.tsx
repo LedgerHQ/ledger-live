@@ -101,6 +101,7 @@ export default function VoteAmount({ navigation, route }: Props) {
             <View style={[styles.root, { backgroundColor: colors.background }]}>
               <View style={styles.wrapper}>
                 <CurrencyInput
+                  testID="celo-vote-amount-input"
                   editable={!useAllAmount}
                   isActive
                   onChange={onChange}
@@ -167,6 +168,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                 />
                 <View style={styles.continueWrapper}>
                   <Button
+                    testID="celo-vote-amount-continue"
                     event="CeloVoteAmountContinue"
                     type="primary"
                     title={

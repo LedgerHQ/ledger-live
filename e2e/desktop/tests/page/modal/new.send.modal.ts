@@ -12,7 +12,6 @@ export class NewSendModal extends Modal {
     .locator('[data-testid="send-matched-address-button"]')
     .filter({ visible: true })
     .first();
-  readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
@@ -69,11 +68,6 @@ export class NewSendModal extends Modal {
     if (confirm) {
       await this.skipMemoConfirmButton.click();
     }
-  }
-
-  @step("Type memo")
-  async typeMemo(memo: string) {
-    await this.memoInput.fill(memo);
   }
 
   @step("Fill crypto amount: $0 (switches to crypto mode first)")

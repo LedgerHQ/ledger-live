@@ -42,6 +42,7 @@ export type ServerData =
       payload: string;
     }
   | { type: "ACK"; id: string }
+  | { type: "swapSetupDone" }
   | { type: "swapLiveAppReady" }
   | { type: "earnLiveAppReady" };
 
@@ -74,7 +75,7 @@ export type MessageData =
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
   | { type: "overrideFeatureFlag"; id: string; payload: SettingsSetOverriddenFeatureFlagPlayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
-  | { type: "swapSetup"; id: string }
+  | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
   | { type: "ACK"; id: string };

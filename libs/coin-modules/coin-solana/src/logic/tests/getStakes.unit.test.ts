@@ -1,4 +1,4 @@
-import type { DeepPartial, DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
+import type { DeepPartial, DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import { PublicKey, type StakeActivationData } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import type { ChainAPI } from "../../network";

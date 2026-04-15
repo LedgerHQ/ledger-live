@@ -92,9 +92,11 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
   id: card.id,
   tag: card.extras.tag,
+  picto: card.extras.picto,
   title: card.extras.title,
   location: ContentCardLocation.Wallet,
   image: card.extras.image,
+  image_background: card.extras.image_background,
   link: card.extras.link,
   background: Background[card.extras.background as Background] || Background.purple,
   viewed: card.viewed,

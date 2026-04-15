@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSwapTest } from "./swap";
 
-const swap = new Swap(TokenAccount.ETH_USDC_1, Account.ETH_1, "65", Fee.MEDIUM);
+const swap = new Swap(TokenAccount.ETH_USDC_1, Account.ETH_1, "65", undefined, Fee.MEDIUM);
 runSwapTest(
   swap,
   ["B2CQA-2830"],

@@ -95,22 +95,22 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(result.current.hasMore).toBe(false);
     });
 
-    it("should always report hasMore false in isEmptyState or isReadOnly mode", () => {
+    it("should always report hasMore false in emptyState or readOnly variant", () => {
       const seven = Array.from({ length: 7 }, (_, i) => createAsset(bitcoin, 10000 * (7 - i)));
       mockPortfolioWithStablecoins(seven);
 
       const { result: emptyResult } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "emptyState" }),
       );
       const { result: readOnlyResult } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isReadOnly: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(emptyResult.current.hasMore).toBe(false);
       expect(readOnlyResult.current.hasMore).toBe(false);
     });
 
-    it("should navigate to AssetsList on onPressShowAll when assetSection is enabled", () => {
+    it("should navigate to Crypto screen on onPressShowAll when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -125,9 +125,9 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       act(() => result.current.onPressShowAll());
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
-        params: { sourceScreenName: ScreenName.Portfolio, showHeader: true, isSyncEnabled: true },
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Crypto,
+        params: { sourceScreenName: ScreenName.Portfolio, variant: "stablecoin" },
       });
     });
 
@@ -162,7 +162,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       mockAssetsData.mockReturnValue({ data: undefined, isLoading: true, isError: false });
 
       const { result } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "emptyState" }),
       );
 
       expect(result.current.isLoading).toBe(true);
@@ -173,7 +173,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       mockAssetsData.mockReturnValue({ data: undefined, isLoading: false, isError: true });
 
       const { result } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "emptyState" }),
       );
 
       expect(result.current.isError).toBe(true);

@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import type { CryptoAddressesViewModel } from "./types";
 import { CryptoTable } from "./components/Table/CryptoTable";
 import { CryptoTableEmptyState } from "./components/Table/CryptoTableEmptyState";
+import { CRYPTO_TRACKING_PAGE_NAME } from "./constants";
 
 export function CryptoAddressesView({
   viewModel,
@@ -31,13 +32,13 @@ export function CryptoAddressesView({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-32">
-      <TrackPage category="Crypto" />
+    <div className="flex min-h-0 flex-1 flex-col gap-24">
+      <TrackPage category={CRYPTO_TRACKING_PAGE_NAME} />
       <PageHeader title={t("cryptoAddresses.title")} />
-      <div data-testid="crypto-page-content" className="flex flex-col gap-12">
+      <div data-testid="crypto-page-content" className="flex min-h-0 flex-1 flex-col gap-16">
         <TableActionBar>
           <TableActionBarLeading>
-            <div className="max-w-[350px] flex-auto pt-4">
+            <div className="w-[400px] flex-auto pt-4">
               <SearchInput
                 value={searchValue}
                 placeholder={t("cryptoAddresses.tableActions.searchAddress")}
@@ -48,7 +49,7 @@ export function CryptoAddressesView({
           <TableActionBarTrailing>
             <Button
               appearance="base"
-              size="sm"
+              size="md"
               icon={Plus}
               onClick={onAddAddressClick}
               data-testid="crypto-add-address-button"

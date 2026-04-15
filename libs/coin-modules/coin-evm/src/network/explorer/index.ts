@@ -10,7 +10,7 @@ import { ExplorerApi } from "./types";
  * Switch to select one of the compatible explorer
  */
 export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
 
   switch (config?.explorer?.type) {
     case "etherscan":

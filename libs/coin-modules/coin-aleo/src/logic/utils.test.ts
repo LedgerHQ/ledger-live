@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
@@ -62,11 +61,9 @@ import {
   findBestRecordForFee,
 } from "./utils";
 
-jest.mock("@ledgerhq/cryptoassets/currencies");
 jest.mock("../config");
 
 const mockedAleoConfig = jest.mocked(aleoConfig);
-const mockedGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 
 const mockCurrency = getMockedCurrency();
 const mockConfig = getMockedConfig("mainnet");
@@ -94,7 +91,7 @@ describe("getNetworkConfig", () => {
     getNetworkConfig(mockCurrency);
 
     expect(aleoConfig.getCoinConfig).toHaveBeenCalledTimes(1);
-    expect(aleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency);
+    expect(aleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency.id);
   });
 });
 
@@ -414,32 +411,19 @@ describe("resolveConfig", () => {
     const result = resolveConfig(mockConfig);
 
     expect(result).toBe(mockConfig);
-    expect(mockedGetCryptoCurrencyById).not.toHaveBeenCalled();
     expect(mockedAleoConfig.getCoinConfig).not.toHaveBeenCalled();
   });
 
-  it("should resolve config by currency id string using getCryptoCurrencyById and getCoinConfig", () => {
-    mockedGetCryptoCurrencyById.mockReturnValue(mockCurrency);
+  it("should resolve config by currency id string using getCoinConfig", () => {
     mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
 
     const result = resolveConfig("aleo");
 
-    expect(mockedGetCryptoCurrencyById).toHaveBeenCalledWith("aleo");
-    expect(mockedAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency);
+    expect(mockedAleoConfig.getCoinConfig).toHaveBeenCalledWith("aleo");
     expect(result).toBe(mockConfig);
   });
 
-  it("should propagate error when getCryptoCurrencyById throws for unknown currency id", () => {
-    mockedGetCryptoCurrencyById.mockImplementation(() => {
-      throw new Error("Currency not found: unknown_currency");
-    });
-
-    expect(() => resolveConfig("unknown_currency")).toThrow("Currency not found: unknown_currency");
-    expect(mockedAleoConfig.getCoinConfig).not.toHaveBeenCalled();
-  });
-
   it("should propagate error when getCoinConfig throws for currency without config", () => {
-    mockedGetCryptoCurrencyById.mockReturnValue(mockCurrency);
     mockedAleoConfig.getCoinConfig.mockImplementation(() => {
       throw new Error("No config for currency: aleo");
     });
@@ -520,6 +504,67 @@ describe("calculateAmount", () => {
     const mockTransaction = getMockedTransaction({
       amount: new BigNumber(0),
       useAllAmount: true,
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(0),
+      totalSpent: estimatedFees,
+    });
+  });
+
+  it("should use the full amount record for private transactions with useAllAmount", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        privateBalance: new BigNumber(1400000),
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(mockUnspentRecord1.microcredits),
+      totalSpent: new BigNumber(mockUnspentRecord1.microcredits).plus(estimatedFees),
+    });
+  });
+
+  it("should return zero for private transactions with useAllAmount when the amount record is missing", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
     });
 
     const result = calculateAmount({

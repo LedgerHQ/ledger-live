@@ -1,5 +1,4 @@
 import {
-  type Balance,
   Cursor,
   ListOperationsOptions,
   Page,
@@ -7,14 +6,13 @@ import {
   IncorrectTypeError,
   type Operation,
   Reward,
-  Stake,
   CraftedTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import type {
   AlpacaApi,
   FeeEstimation,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getRevealFee } from "@taquito/taquito";
@@ -62,7 +60,7 @@ export function createApi(config: TezosConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance: balance,
+    getBalance: getBalance,
     lastBlock,
     listOperations: operations,
     getStakes,
@@ -87,33 +85,6 @@ function isTezosTransactionType(
   type: string,
 ): type is "send" | "delegate" | "undelegate" | "stake" | "unstake" {
   return ["send", "delegate", "undelegate", "stake", "unstake"].includes(type);
-}
-
-async function balance(address: string): Promise<Balance[]> {
-  const value = await getBalance(address);
-  const accountInfo = await api.getAccountByAddress(address);
-  // tzkt returns `type: "empty"` for untouched accounts; legacy logic returns -1 in that case
-  // the generic bridge expects non-negative balances
-  const normalized = value < 0n ? 0n : value;
-  // include stake information so ui can reflect delegation on account page
-  const stake: Stake | undefined =
-    accountInfo.type === "user" && accountInfo.delegate?.address
-      ? {
-          uid: address,
-          address,
-          delegate: accountInfo.delegate.address,
-          state: "active",
-          asset: { type: "native" },
-          amount: BigInt(accountInfo.balance ?? 0),
-        }
-      : undefined;
-  return [
-    {
-      value: normalized,
-      asset: { type: "native" },
-      stake,
-    },
-  ];
 }
 
 async function craft(

@@ -77,6 +77,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetAnalyticsConsentInfoPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -84,6 +85,7 @@ import {
 } from "../actions/types";
 import { ScreenName } from "~/const";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -145,6 +147,8 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
+    totalMarketCap: true,
+    topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
@@ -172,6 +176,10 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   deprecationDoNotRemind: [],
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  },
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -210,9 +218,19 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const isWallet40Enabled = wallet40FF?.enabled === true;
     const isWallet40GraphReworkEnabled =
       wallet40FF?.params?.graphRework === true && isWallet40Enabled;
+    const analyticsConsentInfo =
+      filteredPayload.analyticsConsentInfo === undefined
+        ? state.analyticsConsentInfo
+        : { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo };
+
     return {
       ...state,
       ...filteredPayload,
+      notifications: {
+        ...state.notifications,
+        ...filteredPayload.notifications,
+      },
+      analyticsConsentInfo,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
@@ -653,6 +671,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
+  [SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO]: (state: SettingsState, action) => {
+    return {
+      ...state,
+      analyticsConsentInfo: (action as Action<SettingsSetAnalyticsConsentInfoPayload>).payload,
+    };
+  },
+
   [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
     ...state,
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
@@ -739,10 +764,32 @@ export const personalizedRecommendationsEnabledSelector = createSelector(
   settingsStoreSelector,
   s => s.personalizedRecommendationsEnabled,
 );
-export const trackingEnabledSelector = createSelector(
-  settingsStoreSelector,
-  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
-);
+export const trackingEnabledSelector = (state: State) => {
+  const settings = state.settings;
+  const analyticsOptInEnabled = state.featureFlags?.resolved?.analyticsOptIn?.enabled ?? false;
+  if (analyticsOptInEnabled) {
+    const { consentDate, privacyPolicyVersion } = settings.analyticsConsentInfo;
+
+    if (consentDate === null || privacyPolicyVersion === null) {
+      return false;
+    }
+
+    if (privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
+      return false;
+    }
+
+    const consentTime = new Date(consentDate).getTime();
+    if (Number.isNaN(consentTime)) {
+      return false;
+    }
+    const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - ONE_YEAR_MS;
+    if (consentTime < cutoff) {
+      return false;
+    }
+  }
+  return settings.analyticsEnabled || settings.personalizedRecommendationsEnabled;
+};
 export const lastSeenCustomImageSelector = createSelector(
   settingsStoreSelector,
   s => s.lastSeenCustomImage,
@@ -888,3 +935,4 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;

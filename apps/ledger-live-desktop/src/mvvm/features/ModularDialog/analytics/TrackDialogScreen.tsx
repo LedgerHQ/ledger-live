@@ -5,9 +5,9 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "LLD/hooks/redux";
 import {
-  modularDrawerFlowSelector,
-  modularDrawerSourceSelector,
-} from "~/renderer/reducers/modularDrawer";
+  modularDialogFlowSelector,
+  modularDialogSourceSelector,
+} from "~/renderer/reducers/modularDialog";
 
 interface TrackDialogScreenProps<T extends ModularDialogEventName> {
   page: T;
@@ -24,8 +24,8 @@ const TrackDialogScreen = <T extends ModularDialogEventName>({
   assetsConfig,
   networksConfig,
 }: TrackDialogScreenProps<T>) => {
-  const source = useSelector(modularDrawerSourceSelector);
-  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDialogSourceSelector);
+  const flow = useSelector(modularDialogFlowSelector);
 
   const analyticsParams = useMemo(() => {
     return {

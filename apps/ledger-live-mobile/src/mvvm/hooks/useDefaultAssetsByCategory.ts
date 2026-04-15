@@ -54,7 +54,7 @@ export function useDefaultAssetsByCategory(
         accounts: [],
         amount: 0,
         isPlaceholder: true,
-        marketId: marketId ?? currency.id,
+        marketId: marketId ?? id,
       };
 
       if (stablecoinTickers.has(ticker)) {

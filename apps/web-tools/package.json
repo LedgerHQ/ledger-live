@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -18,7 +18,7 @@
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/domain-service": "workspace:^",

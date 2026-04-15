@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-transport-ble",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Package to expose the Swift BLE transport to JS",
   "keywords": [
     "Ledger",
@@ -37,7 +37,7 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",

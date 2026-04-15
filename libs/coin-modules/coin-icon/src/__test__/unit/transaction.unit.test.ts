@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -8,7 +8,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
   getAccountCurrency: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-framework/currencies", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies", () => ({
   formatCurrencyUnit: jest.fn(),
 }));
 

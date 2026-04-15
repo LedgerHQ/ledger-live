@@ -204,6 +204,7 @@ export type Features = CurrencyFeatures & {
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
   editEvmTx: Feature_EditEvmTx;
+  evmNativeStaking: Feature_EvmNativeStaking;
   editBitcoinTx: Feature_EditBitcoinTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
@@ -225,6 +226,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
+  analyticsOptIn: DefaultFeature;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
@@ -318,6 +320,7 @@ export type Features = CurrencyFeatures & {
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
+  lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
 };
 
 /**
@@ -568,6 +571,10 @@ export type Feature_EditEvmTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+export type Feature_EvmNativeStaking = Feature<{
+  supportedCurrencyIds: string[];
+}>;
+
 export type Feature_EditBitcoinTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
@@ -748,6 +755,11 @@ export type Feature_AddressPoisoningOperationsFilter = Feature<{
   families: string[];
 }>;
 
+export type Feature_LldHideSmallValueTokenOperations = Feature<{
+  /** USD threshold below which incoming token operations are hidden. Defaults to $0.5. */
+  thresholdUsd: number;
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -826,6 +838,7 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
+  quickActionsCtasVariant: boolean;
   mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;

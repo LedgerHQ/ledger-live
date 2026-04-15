@@ -4,7 +4,7 @@ import { render, screen } from "tests/testSetup";
 import NewSeedPanel from "../components/NewSeedPanel";
 import { track } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
-import * as UseOpenAssetFlow from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import * as UseOpenAssetFlow from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { analyticsFlowName } from "~/renderer/components/SyncOnboarding/Manual/shared";
 
 jest.mock("~/renderer/analytics/segment", () => ({
@@ -12,8 +12,8 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-jest.mock("LLD/features/ModularDrawer/hooks/useOpenAssetFlow", () => ({
-  ...jest.requireActual("LLD/features/ModularDrawer/hooks/useOpenAssetFlow"),
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
+  ...jest.requireActual("LLD/features/ModularDialog/hooks/useOpenAssetFlow"),
   useOpenAssetFlow: jest.fn(),
 }));
 

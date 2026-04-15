@@ -60,7 +60,7 @@ export function CoinControlScreenInner({
       <CoinControlScreenView
         utxoDisplayData={viewModel.utxoDisplayData}
         strategyOptionsWithLabels={viewModel.strategyOptionsWithLabels}
-        changeToReturnFormatted={viewModel.changeToReturnFormatted}
+        changeToReturn={viewModel.changeToReturn}
         onSelectStrategy={viewModel.onSelectStrategy}
         amountValue={viewModel.amountValue}
         onAmountChange={onAmountChange}
@@ -69,8 +69,6 @@ export function CoinControlScreenInner({
         learnMoreLabel={viewModel.learnMoreLabel}
         onLearnMoreClick={viewModel.onLearnMoreClick}
         coinToSendLabel={viewModel.coinToSendLabel}
-        changeToReturnLabel={viewModel.changeToReturnLabel}
-        enterAmountPlaceholder={viewModel.enterAmountPlaceholder}
         amountToSendLabel={viewModel.amountToSendLabel}
         amountInputLabel={viewModel.amountInputLabel}
         networkFees={viewModel.networkFees}
@@ -80,6 +78,8 @@ export function CoinControlScreenInner({
         reviewLoading={viewModel.reviewLoading}
         onReview={handleReview}
         onGetFunds={onGetFunds}
+        isCustomPickingStrategy={viewModel.isCustomPickingStrategy}
+        onToggleUtxoExclusion={viewModel.onToggleUtxoExclusion}
       />
     </>
   );

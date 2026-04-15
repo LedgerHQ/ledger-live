@@ -27,6 +27,8 @@ import { CLI as CLIType } from "../utils/cliUtils";
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<string, number>;
+  var speculosStartupErrorMessage: string | undefined;
+  var speculosFailureStderr: string | undefined;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;
@@ -69,6 +71,7 @@ declare global {
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var tapByElement: typeof NativeElementHelpers.tapByElement;
   var tapById: typeof NativeElementHelpers.tapById;
+  var tapByIdAndExpectToDisappear: typeof NativeElementHelpers.tapByIdAndExpectToDisappear;
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var typeTextById: typeof NativeElementHelpers.typeTextById;

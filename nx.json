@@ -487,5 +487,13 @@
     }
   },
   "defaultBase": "develop",
-  "useDaemonProcess": false
+  "useDaemonProcess": false,
+  "s3": {
+    "region": "eu-west-1",
+    "bucket": "ll-nx-cache",
+    "cacheKeyPrefix": "local",
+    "localMode": "no-cache",
+    "ciMode": "read-write",
+    "forcePathStyle": true
+  }
 }

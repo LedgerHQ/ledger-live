@@ -1,5 +1,5 @@
-import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
-import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
+import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-module-framework/config";
+import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 
 export type VechainCoinConfig = () => CurrencyConfig;
 

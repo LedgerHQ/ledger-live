@@ -13,38 +13,33 @@ Dev teams are responsible for **adding/updating tests** for new features.
 ### 1. Prerequisites
 
 - macOS (required for iOS development)
-- Node 22 (via Proto)
 - Android Studio (with AVD: Pixel 6 / API 35 recommended)
 - Xcode ≥ 16.2 (for iOS)
-- Docker Desktop (for Speculos)
-- Clone the repositories:
+- Read the e2e environment [guide](https://ledgerhq.atlassian.net/wiki/spaces/QA/pages/6945013939/Ledger+Wallet+E2E+Environment)❗
+- Docker Desktop installed and running (Speculos runs in Docker)
+- Pull the Speculos image:
 
 ```bash
-git clone https://github.com/LedgerHQ/ledger-live.git
-git clone https://github.com/LedgerHQ/coin-apps.git
-cd ledger-live
+docker pull ghcr.io/ledgerhq/speculos:latest
+```
+
+- Enable Proto for version management:
+
+```bash
 proto use
 ```
 
 ### 2. Environment Variables
 
-Set these before running tests:
+Set these environment variables before you run tests and change the values as per your testing needs:
 
 ```bash
-export COINAPPS="/path/to/coin-apps"
 export MOCK="0"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
 ```
 
-**SEED** must also be set but should **never** be printed, logged, or committed.
-Use [1Password CLI](https://developer.1password.com/docs/cli/) to inject it securely:
-
-```bash
-export SEED=$(op read "op://Vault/Item/field")
-```
-
-> ⚠️ Replace placeholders with your local paths. Add these exports to `~/.zshrc` so they persist.
+Consider adding these exports to your profile so they persist.
 
 ### 3. Build
 
@@ -120,5 +115,4 @@ myFeature.skip.spec.ts
 
 - Use Page Object Model (POM) for writing tests
 - Keep tests independent and deterministic
-- Store SEED securely; never commit it
 - Bookmark this README for quick reference

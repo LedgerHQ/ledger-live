@@ -203,6 +203,14 @@ describe("NotificationsPrompt Integration", () => {
                       displayed: true,
                       category: "transactionsAlertsCategory",
                     },
+                    {
+                      displayed: true,
+                      category: "totalMarketCap",
+                    },
+                    {
+                      displayed: true,
+                      category: "topGainersLosers",
+                    },
                   ],
 
                   inactivity_enabled: true,

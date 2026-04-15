@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { server } from "tests/server";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import Assets from "../index";
+import { MAX_ITEM_DISPLAYED } from "../constants";
 import {
   BTC_ACCOUNT,
   ETH_ACCOUNT,
@@ -20,6 +21,7 @@ const mockNavigate = jest.fn();
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
+  useSearchParams: jest.fn(() => [new URLSearchParams(), jest.fn()]),
 }));
 
 const mockedUseNavigate = jest.mocked(useNavigate);
@@ -45,6 +47,7 @@ const onboardedState = {
 describe("Assets", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseNavigate.mockReset();
     mockedUseNavigate.mockReturnValue(mockNavigate);
   });
 
@@ -81,9 +84,9 @@ describe("Assets", () => {
     expect(screen.getByText("Stablecoins")).toBeVisible();
   });
 
-  it("should not navigate when section header is clicked with few items", async () => {
+  it("should not navigate cryptos section header when section has at most MAX_ITEM_DISPLAYED items", async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
-      initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
+      initialState: { ...onboardedState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
     });
 
     await waitFor(() => {
@@ -91,10 +94,10 @@ describe("Assets", () => {
     });
 
     await user.click(screen.getByTestId("cryptos-section-header-button"));
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalledWith("/assets?category=cryptos");
   });
 
-  it("should navigate to /cryptos when section header is clicked with many items", async () => {
+  it(`should navigate to /assets with cryptos category when cryptos section has more than ${MAX_ITEM_DISPLAYED} items`, async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...onboardedState, accounts: MANY_CRYPTO_ACCOUNTS },
     });
@@ -104,12 +107,12 @@ describe("Assets", () => {
     });
 
     await user.click(screen.getByTestId("cryptos-section-header-button"));
-    expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+    expect(mockNavigate).toHaveBeenCalledWith("/assets?category=cryptos");
   });
 
-  it("should not navigate when stablecoins section header is clicked with few items", async () => {
+  it("should not navigate stablecoins section header when section has at most MAX_ITEM_DISPLAYED items", async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
-      initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
+      initialState: { ...onboardedState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
     });
 
     await waitFor(() => {
@@ -117,7 +120,7 @@ describe("Assets", () => {
     });
 
     await user.click(screen.getByTestId("stablecoins-section-header-button"));
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalledWith("/assets?category=stablecoins");
   });
 
   it("should show placeholder assets when user has no accounts", async () => {

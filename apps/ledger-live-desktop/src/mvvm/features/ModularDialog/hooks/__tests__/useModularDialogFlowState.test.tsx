@@ -28,7 +28,7 @@ describe("useModularDialogFlowState", () => {
   it("should handle asset selection", () => {
     const { result } = renderHook(() => useModularDialogFlowState(defaultProps), {
       initialState: {
-        modularDrawer: { isOpen: true, dialogParams: { onAssetSelected: mockOnAssetSelected } },
+        modularDialog: { isOpen: true, dialogParams: { onAssetSelected: mockOnAssetSelected } },
       },
     });
     act(() => {

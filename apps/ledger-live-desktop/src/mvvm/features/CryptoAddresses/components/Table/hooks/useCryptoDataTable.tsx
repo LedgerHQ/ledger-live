@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from "react";
-import { TableSortButton, useLumenDataTable } from "@ledgerhq/lumen-ui-react";
+import React, { useCallback, useMemo, useState } from "react";
+import { useLumenDataTable } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
@@ -8,14 +8,16 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import type { ColumnDef, Row } from "@tanstack/react-table";
+import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
+import { track } from "~/renderer/analytics/segment";
+import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import {
   AccountAddressCell,
   AccountNameCell,
   AccountRowActionCell,
   AccountValueCell,
 } from "../Cell";
-const SORT_HEADER_BUTTON_CLASS = "[&_svg]:!opacity-100";
+import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 
 type UseCryptoDataTableParams = {
   readonly rows: AccountLike[];
@@ -31,6 +33,8 @@ export function useCryptoDataTable({
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
+  const syncPhase = useSyncPhase();
+  const isSyncing = syncPhase === "syncing";
 
   /** One countervalue per row; avoids recalculations in sorting. */
   const balanceSortFiatByAccountId = useMemo(() => {
@@ -53,15 +57,7 @@ export function useCryptoDataTable({
             undefined,
             { sensitivity: "base" },
           ),
-        header: ({ column }) => (
-          <TableSortButton
-            className={SORT_HEADER_BUTTON_CLASS}
-            sortDirection={column.getIsSorted() || undefined}
-            onClick={column.getToggleSortingHandler()}
-          >
-            {t("cryptoAddresses.table.columns.name")}
-          </TableSortButton>
-        ),
+        header: t("cryptoAddresses.table.columns.name"),
         cell: ({ row }) => (
           <AccountNameCell
             account={row.original}
@@ -86,16 +82,7 @@ export function useCryptoDataTable({
           const fiatB = balanceSortFiatByAccountId.get(rowB.original.id) ?? new BigNumber(0);
           return fiatA.comparedTo(fiatB);
         },
-        header: ({ column }) => (
-          <TableSortButton
-            className={SORT_HEADER_BUTTON_CLASS}
-            align="end"
-            sortDirection={column.getIsSorted() || undefined}
-            onClick={column.getToggleSortingHandler()}
-          >
-            {t("cryptoAddresses.table.columns.value")}
-          </TableSortButton>
-        ),
+        header: t("cryptoAddresses.table.columns.value"),
         cell: ({ row }) => <AccountValueCell account={row.original} />,
         meta: { align: "end" },
       },
@@ -107,12 +94,30 @@ export function useCryptoDataTable({
           <AccountRowActionCell
             account={row.original}
             editNameAriaLabel={t("cryptoAddresses.table.editName")}
+            isSyncing={isSyncing}
           />
         ),
         meta: { align: "end" },
       },
     ],
-    [t, walletState, lookupParentAccount, balanceSortFiatByAccountId],
+    [t, walletState, lookupParentAccount, balanceSortFiatByAccountId, isSyncing],
+  );
+
+  const [sorting, setSorting] = useState<SortingState>([{ id: "balance", desc: true }]);
+
+  const handleSortingChange = useCallback(
+    (updater: Updater<SortingState>) => {
+      const next = typeof updater === "function" ? updater(sorting) : updater;
+      const sort = next[0];
+      if (sort) {
+        track("changeSort", {
+          [sort.id]: sort.desc ? "desc" : "asc",
+          page: CRYPTO_TRACKING_PAGE_NAME,
+        });
+      }
+      setSorting(next);
+    },
+    [sorting],
   );
 
   const table = useLumenDataTable({
@@ -120,9 +125,8 @@ export function useCryptoDataTable({
     columns,
     enableMultiSort: false,
     enableSortingRemoval: false,
-    initialState: {
-      sorting: [{ id: "balance", desc: true }],
-    },
+    state: { sorting },
+    onSortingChange: handleSortingChange,
   });
 
   const handleRowClick = useCallback(

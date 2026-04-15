@@ -346,5 +346,5 @@ export const mapTxToOperations = (
 };
 
 export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
-  return "privateInfo" in a;
+  return "privateInfo" in a && a.currency.id === "zcash";
 }
