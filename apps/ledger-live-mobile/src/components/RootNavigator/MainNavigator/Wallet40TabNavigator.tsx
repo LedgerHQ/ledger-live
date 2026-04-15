@@ -3,7 +3,7 @@ import { NavigatorName } from "~/const";
 import PortfolioNavigator from "../PortfolioNavigator";
 import SwapNavigator from "../SwapNavigator";
 import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
-import BaanxCardNavigator from "LLM/features/BaanxCard";
+import BaanxCardNavigator from "LLM/features/BaanxCard/Navigator";
 import { Tab } from "./tabNavigator";
 import type { Wallet40TabNavigatorProps } from "./types";
 import { SwapWallet40Header } from "~/screens/Swap/LiveApp/components/SwapWallet40Header";
@@ -27,12 +27,11 @@ export function Wallet40TabNavigator({
           header: Wallet40SwapTabHeader,
         }}
         listeners={() => ({
-          // Prevent stale opaque header state when re-entering the Swap tab.
           tabPress: resetSwapWallet40HeaderState,
         })}
       />
       <Tab.Screen name={NavigatorName.Earn} component={EarnLiveAppNavigator} />
-      <Tab.Screen name={NavigatorName.BaanxCard} component={BaanxCardNavigator} />
+      <Tab.Screen name={NavigatorName.BaanxCardTab} component={BaanxCardNavigator} />
     </Tab.Navigator>
   );
 }

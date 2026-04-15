@@ -30,14 +30,14 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Portfolio]: { icon: Home, activeIcon: HomeFill },
   [NavigatorName.Swap]: { icon: Exchange, activeIcon: ExchangeFill },
   [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
-  [NavigatorName.BaanxCard]: { icon: CreditCard, activeIcon: CreditCardFill },
+  [NavigatorName.BaanxCardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
 };
 
 const TAB_TEST_IDS: Partial<Record<string, string>> = {
   [NavigatorName.Portfolio]: "w40-tab-home",
   [NavigatorName.Swap]: "w40-tab-swap",
   [NavigatorName.Earn]: "w40-tab-earn",
-  [NavigatorName.BaanxCard]: "w40-tab-card",
+  [NavigatorName.BaanxCardTab]: "w40-tab-card",
 };
 
 function trackTabNavigation(targetName: string, sourceName: string, value: string) {

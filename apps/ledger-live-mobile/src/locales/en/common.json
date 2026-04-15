@@ -7430,7 +7430,8 @@
       "password": "Password",
       "passwordPlaceholder": "Enter your password",
       "submit": "Log in",
-      "loggingIn": "Logging in…"
+      "loggingIn": "Logging in…",
+      "bypassLogin": "Skip login (dev)"
     },
     "cardStatus": {
       "title": "My Card",
@@ -7450,6 +7451,45 @@
       "previous": "Previous",
       "next": "Next",
       "page": "Page {{page}}"
+    },
+    "dashboard": {
+      "fiatCurrencies": {
+        "title": "Currencies"
+      },
+      "card": {
+        "title": "My Card",
+        "showBalance": "Show balance",
+        "hideBalance": "Hide balance",
+        "balance": "Balance",
+        "cardNumber": "Card number",
+        "holderName": "Card holder",
+        "expiry": "Valid thru",
+        "cvv": "CVV",
+        "status": "Status",
+        "type": "Type",
+        "tapToFlip": "Tap card for details"
+      },
+      "balance": {
+        "totalBalance": "Total balance",
+        "cashback": "Cashback"
+      },
+      "payWith": {
+        "title": "Pay with",
+        "smartPay": "Smart Pay",
+        "smartPayDescription": "Automatically select the best payment method",
+        "smartPaySheet": {
+          "title": "Smart Pay",
+          "description": "Smart Pay automatically selects the best crypto in your wallet to complete each payment. It prioritises stablecoins (USDC, USDT) for minimal slippage and falls back to other supported assets when needed.",
+          "howItWorks": "How it works",
+          "step1": "When you tap to pay, Smart Pay checks your available balances.",
+          "step2": "It picks the asset with the lowest conversion cost at that moment.",
+          "step3": "The payment is settled instantly — no extra steps required."
+        }
+      },
+      "notAuthenticated": {
+        "title": "Welcome to Baanx",
+        "subtitle": "Please log in to access your card and payment options."
+      }
     }
   },
   "platform": {
@@ -8836,7 +8876,7 @@
     "swap": "Swap",
     "earn": "Earn",
     "yield": "Yield",
-    "card": "Card"
+    "card": "Pay"
   },
   "syncIndicator": {
     "accessibilityLabel": {

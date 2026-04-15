@@ -15,7 +15,6 @@ export enum ScreenName {
   AccountsList = "AccountsList",
   AssetsList = "AssetsList",
   CryptoAddresses = "CryptoAddresses",
-  BaanxCardLogin = "BaanxCardLogin",
   BaanxCardDashboard = "BaanxCardDashboard",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
@@ -688,6 +687,7 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   CardTab = "CardTab",
+  BaanxCardTab = "BaanxCardTab",
   WalletTab = "WalletTabNavigator",
   // Root
   RootNavigator = "RootNavigator",

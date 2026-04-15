@@ -1,219 +1,88 @@
-import React, { memo } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
-import { useTranslation } from "~/context/Locale";
-import { Text, Button, Box } from "@ledgerhq/lumen-ui-rnative";
-import SafeAreaView from "~/components/SafeAreaView";
+import React, { memo, useMemo } from "react";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TrackScreen } from "~/analytics";
-import type { BaanxCardStatus, BaanxTransaction } from "@ledgerhq/baanx";
-
-interface Props {
-  readonly card: BaanxCardStatus | undefined;
-  readonly cardLoading: boolean;
-  readonly cardError: string | null;
-  readonly transactions: BaanxTransaction[];
-  readonly txLoading: boolean;
-  readonly txError: string | null;
-  readonly onLogout: () => void;
-}
-
-function statusColor(status: string): string {
-  switch (status) {
-    case "ACTIVE":
-      return "#00C853";
-    case "FROZEN":
-      return "#FF9100";
-    case "BLOCKED":
-      return "#FF1744";
-    default:
-      return "#999";
-  }
-}
-
-function formatAmount(sign: string, amount: string, currency: string): string {
-  const prefix = sign === "DEBIT" ? "-" : "+";
-  return `${prefix}${amount} ${currency.toUpperCase()}`;
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import CardSection from "./components/CardSection";
+import BalanceTilesSection from "./components/BalanceTilesSection";
+import PayWithSection from "./components/PayWithSection";
+import TransactionsSection from "./components/TransactionsSection";
+import type { BaanxDashboardViewModel } from "./useBaanxDashboardViewModel";
 
 const BaanxDashboardScreenView = ({
+  selectedCurrency,
   card,
-  cardLoading,
-  cardError,
+  totalBalance,
+  cashback,
+  discreetMode,
+  onToggleDiscreet,
+  onTopUp,
+  selectedPaymentId,
+  stablecoins,
+  onSelectPayment,
+  isSmartPaySheetOpen,
+  onCloseSmartPaySheet,
   transactions,
-  txLoading,
-  txError,
-  onLogout,
-}: Props) => {
-  const { t } = useTranslation();
+}: Readonly<BaanxDashboardViewModel>) => {
+  const { theme } = useTheme();
+  const bgColor = theme.colors.bg.base;
+  const insets = useSafeAreaInsets();
+
+  const scrollContentStyle = useMemo(
+    () => [
+      styles.container,
+      {
+        paddingTop: insets.top + 72,
+        paddingBottom: insets.bottom + 56,
+      },
+    ],
+    [insets.top, insets.bottom],
+  );
 
   return (
-    <SafeAreaView isFlex>
+    <View style={[styles.root, { backgroundColor: bgColor }]}>
       <TrackScreen name="BaanxCardDashboard" />
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.headerRow}>
-          <Text typography="heading4SemiBold" lx={{ color: "base" }}>
-            {t("baanxCard.cardStatus.title")}
-          </Text>
-          <Button appearance="gray" size="sm" onPress={onLogout}>
-            {t("baanxCard.logout")}
-          </Button>
-        </View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={scrollContentStyle}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled={Platform.OS === "android"}
+        showsVerticalScrollIndicator={false}
+      >
+        <CardSection card={card} selectedCurrency={selectedCurrency} />
 
-        {cardLoading ? (
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {t("baanxCard.cardStatus.loading")}
-          </Text>
-        ) : cardError ? (
-          <Text typography="body2" lx={{ color: "error" }}>
-            {t("baanxCard.cardStatus.error")}
-          </Text>
-        ) : card ? (
-          <View style={styles.cardBox}>
-            <View style={styles.cardRow}>
-              <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-                {card.holderName}
-              </Text>
-              <View style={[styles.badge, { backgroundColor: statusColor(card.status) + "22" }]}>
-                <Text typography="body3SemiBold" style={{ color: statusColor(card.status) }}>
-                  {card.status}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.infoRow}>
-              <View style={styles.infoItem}>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {t("baanxCard.cardStatus.cardNumber")}
-                </Text>
-                <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {"•••• " + card.panLast4}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {t("baanxCard.cardStatus.expiry")}
-                </Text>
-                <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {card.expiryDate}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {t("baanxCard.cardStatus.type")}
-                </Text>
-                <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {card.type}
-                </Text>
-              </View>
-            </View>
-          </View>
-        ) : (
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {t("baanxCard.cardStatus.noCard")}
-          </Text>
-        )}
+        <BalanceTilesSection
+          totalBalance={totalBalance}
+          cashback={cashback}
+          discreetMode={discreetMode}
+          onToggleDiscreet={onToggleDiscreet}
+          onTopUp={onTopUp}
+        />
 
-        <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-          {t("baanxCard.transactions.title")}
-        </Text>
+        <PayWithSection
+          selectedPaymentId={selectedPaymentId}
+          stablecoins={stablecoins}
+          onSelectPayment={onSelectPayment}
+          isSmartPaySheetOpen={isSmartPaySheetOpen}
+          onCloseSmartPaySheet={onCloseSmartPaySheet}
+        />
 
-        {txLoading ? (
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {t("baanxCard.transactions.loading")}
-          </Text>
-        ) : txError ? (
-          <Text typography="body2" lx={{ color: "error" }}>
-            {t("baanxCard.transactions.error")}
-          </Text>
-        ) : transactions.length === 0 ? (
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {t("baanxCard.transactions.empty")}
-          </Text>
-        ) : (
-          transactions.map(tx => (
-            <View key={tx.id} style={styles.txRow}>
-              <View style={styles.txLeft}>
-                <Text typography="body2" lx={{ color: "base" }}>
-                  {tx.merchantNameLocation}
-                </Text>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {formatDate(tx.dateTime) + " · " + tx.mccCategory}
-                </Text>
-              </View>
-              <View style={styles.txRight}>
-                <Text
-                  typography="body2SemiBold"
-                  style={{ color: tx.sign === "DEBIT" ? undefined : "#00C853" }}
-                >
-                  {formatAmount(tx.sign, tx.amountInTransactionCurrency, tx.transactionCurrency)}
-                </Text>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {tx.status}
-                </Text>
-              </View>
-            </View>
-          ))
-        )}
+        <TransactionsSection transactions={transactions} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    gap: 16,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  cardBox: {
-    borderRadius: 12,
-    padding: 16,
-    backgroundColor: "rgba(0,0,0,0.03)",
-    gap: 16,
-  },
-  cardRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  badge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 99,
-  },
-  infoRow: {
-    flexDirection: "row",
-    gap: 24,
-  },
-  infoItem: {
-    gap: 2,
-  },
-  txRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#eee",
-  },
-  txLeft: {
+  root: {
     flex: 1,
-    gap: 2,
   },
-  txRight: {
-    alignItems: "flex-end",
-    gap: 2,
+  scroll: {
+    flex: 1,
+  },
+  container: {
+    paddingHorizontal: 16,
+    gap: 16,
   },
 });
 

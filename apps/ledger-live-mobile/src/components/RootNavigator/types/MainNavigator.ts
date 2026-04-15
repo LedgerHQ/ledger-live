@@ -16,5 +16,5 @@ export type MainNavigatorParamList = {
   [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList> | undefined;
   [NavigatorName.Web3HubTab]: NavigatorScreenParams<Web3HubTabStackParamList> | undefined;
   [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
-  [NavigatorName.BaanxCard]: NavigatorScreenParams<BaanxCardNavigatorParamList> | undefined;
+  [NavigatorName.BaanxCardTab]: NavigatorScreenParams<BaanxCardNavigatorParamList> | undefined;
 };
