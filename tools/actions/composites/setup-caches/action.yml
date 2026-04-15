@@ -131,7 +131,7 @@ runs:
 
     - name: Resolve Nx remote cache profile and apply S3 prefix
       id: nx-remote-cache
-      if: ${{ (inputs.cache-develop-role-arn != '' && inputs.cache-branch-role-arn != '') || (inputs.accountId != '' && inputs.roleName != '') }}
+      if: ${{ (inputs.cache-develop-role-arn != '' && inputs.cache-branch-role-arn != '') }}
       uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
       with:
         develop-role-arn: ${{ inputs.cache-develop-role-arn }}
