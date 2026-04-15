@@ -107,6 +107,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
           return link ? (
             <ListItem
               key={label}
+              testID={`earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`}
               onPress={() => handleMenuItemPress(link, live_app, tracked)}
               style={{ marginHorizontal: -8 }}
             >
