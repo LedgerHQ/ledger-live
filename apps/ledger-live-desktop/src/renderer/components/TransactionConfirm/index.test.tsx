@@ -7,7 +7,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getMainAccount, findSubAccountById } from "@ledgerhq/live-common/account/index";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/deviceTransactionConfig";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { BigNumber } from "bignumber.js";
 import { getDeviceAnimation } from "../DeviceAction/animations";
