@@ -3,5 +3,6 @@
   "bucket": "ll-nx-cache",
   "localMode": "no-cache",
   "ciMode": "read-write",
-  "forcePathStyle": true
+  "forcePathStyle": true,
+  "defaultBase": "develop"
 }
