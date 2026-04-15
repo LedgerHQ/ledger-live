@@ -126,6 +126,88 @@ export function runSendSPLAddressInvalid(
   });
 }
 
+export function runSendSubAccountToken(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Send sub-account token from 1 account to another", () => {
+    beforeAll(async () => {
+      const debitParent = transaction.accountToDebit.parentAccount;
+      invariant(debitParent, "Parent account to debit is required");
+      const creditParent = transaction.accountToCredit.parentAccount;
+      invariant(creditParent, "Parent account to credit is required");
+
+      await app.init({
+        userdata: "skip-onboarding",
+        speculosApp: transaction.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          liveDataWithParentAddressCommand(transaction.accountToDebit, transaction.accountToDebit),
+          liveDataWithParentAddressCommand(
+            transaction.accountToCredit,
+            transaction.accountToCredit,
+          ),
+        ],
+      });
+
+      await app.portfolio.waitForPortfolioPageToLoad();
+    });
+
+    it(`Send from ${transaction.accountToDebit.accountName} Account to ${transaction.accountToCredit.accountName} Account - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
+      const debitParent = transaction.accountToDebit.parentAccount;
+      invariant(debitParent, "Parent account to debit is required");
+
+      const addressToCredit = transaction.accountToCredit.address;
+
+      await app.account.openViaDeeplink();
+      await app.account.goToAccountByName(debitParent.accountName);
+      await app.account.navigateToTokenInAccount(transaction.accountToDebit);
+      await app.account.tapSend();
+
+      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setAmountAndContinue(transaction.amount);
+
+      const amountWithCode =
+        transaction.amount + "\u00A0" + transaction.accountToCredit.currency.ticker;
+      await app.send.expectSummaryAmount(amountWithCode);
+      await app.send.expectSummaryRecipient(addressToCredit);
+      await app.send.expectSummaryMemoTag(transaction.memoTag);
+      await app.send.chooseFeeStrategy(transaction.speed);
+      await app.send.summaryContinue();
+      await app.send.dismissHighFeeModal();
+
+      await verifyAppValidationSendInfo(transaction, amountWithCode);
+
+      await app.speculos.signSendTransaction(transaction);
+
+      await device.disableSynchronization();
+      await app.common.successViewDetails();
+
+      await app.operationDetails.waitForOperationDetails();
+      await app.operationDetails.checkAccount(transaction.accountToDebit.currency.ticker);
+      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
+      await app.operationDetails.checkTransactionType("OUT");
+
+      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        const creditParent = transaction.accountToCredit.parentAccount;
+        invariant(creditParent, "Parent account to credit is required");
+
+        await app.account.openViaDeeplink();
+        await app.account.goToAccountByName(creditParent.accountName);
+        await app.account.navigateToTokenInAccount(transaction.accountToCredit);
+        await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.operationDetails.waitForOperationDetails();
+        await app.operationDetails.checkAccount(transaction.accountToDebit.currency.ticker);
+        await app.operationDetails.checkRecipientAddress(
+          transaction.accountToCredit.parentAccount!,
+        );
+      }
+    });
+  });
+}
+
 export function runAddSubAccountTest(testConfig: {
   asset: AccountType;
   tmslinks: string[];
