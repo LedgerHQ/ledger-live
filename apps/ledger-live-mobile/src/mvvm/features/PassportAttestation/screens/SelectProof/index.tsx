@@ -6,6 +6,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { PassportAttestationNavigatorStackParamList } from "~/components/RootNavigator/types/PassportAttestationNavigator";
+import type { SelectedProof } from "./useLedgerProofEncryption";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -14,9 +15,7 @@ type Props = BaseComposite<
   >
 >;
 
-type ProofType = "age" | "ofac" | "legalName";
-
-const PROOF_OPTIONS: { id: ProofType; title: string; description: string }[] = [
+const PROOF_OPTIONS: { id: SelectedProof; title: string; description: string }[] = [
   {
     id: "age",
     title: "Age proof",
@@ -36,7 +35,7 @@ const PROOF_OPTIONS: { id: ProofType; title: string; description: string }[] = [
 
 export default function SelectProofScreen({ navigation, route }: Props) {
   const { mrzData, passportData } = route.params;
-  const [selected, setSelected] = useState<Set<ProofType>>(new Set());
+  const [selected, setSelected] = useState<Set<SelectedProof>>(new Set());
   const styles = useStyleSheet(
     theme => ({
       root: {
@@ -44,6 +43,7 @@ export default function SelectProofScreen({ navigation, route }: Props) {
         justifyContent: "space-between",
       },
       content: {
+        flex: 1,
         paddingHorizontal: theme.spacings.s16,
         paddingTop: theme.spacings.s8,
       },
@@ -79,7 +79,7 @@ export default function SelectProofScreen({ navigation, route }: Props) {
     [],
   );
 
-  const toggleProof = useCallback((id: ProofType) => {
+  const toggleProof = useCallback((id: SelectedProof) => {
     setSelected(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -88,7 +88,10 @@ export default function SelectProofScreen({ navigation, route }: Props) {
     });
   }, []);
 
-  const isGenerateDisabled = useMemo(() => selected.size === 0, [selected]);
+  const isGenerateDisabled = useMemo(
+    () => selected.size === 0,
+    [selected],
+  );
 
   const handleGenerate = useCallback(() => {
     if (selected.size === 0) {
@@ -106,8 +109,9 @@ export default function SelectProofScreen({ navigation, route }: Props) {
     navigation.navigate(ScreenName.PassportAttestationGenerateProof, {
       mrzData,
       passportData,
+      selectedProofs: Array.from(selected),
     });
-  }, [navigation, mrzData, passportData, selected]);
+  }, [mrzData, navigation, passportData, selected]);
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
@@ -131,7 +135,11 @@ export default function SelectProofScreen({ navigation, route }: Props) {
                   testID={`proof-option-${option.id}`}
                 >
                   <View style={[styles.card, isSelected && styles.cardSelected]}>
-                    <Text typography="body2SemiBold" lx={{ color: "base" }} style={styles.cardTitle}>
+                    <Text
+                      typography="body2SemiBold"
+                      lx={{ color: "base" }}
+                      style={styles.cardTitle}
+                    >
                       {option.title}
                     </Text>
                     <Text typography="body3" lx={{ color: "muted" }}>

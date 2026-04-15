@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setAgeAttestation, ageAttestationSelector } from "~/reducers/ageAttestation";
+import type { AgeAttestationLocalState } from "~/reducers/ageAttestation";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
 import type { MrzData } from "../utils/mrzParser";
 import { mrzDateToFullDate, computeMrzHash } from "../utils/mrzParser";
@@ -61,7 +62,7 @@ export function usePassportAttestation() {
     }
   }, []);
 
-  const generateProof = useCallback(
+  const createProof = useCallback(
     async (mrzData: MrzData, passportData: PassportData): Promise<AgeProof> => {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
       try {
@@ -80,19 +81,6 @@ export function usePassportAttestation() {
           throw new Error("Generated proof failed local verification");
         }
 
-        dispatch(
-          setAgeAttestation({
-            verified: true,
-            proof: proof.proof,
-            publicSignals: proof.publicSignals,
-            minimumAge: proof.minimumAge,
-            verifiedAt: proof.verifiedAt,
-            proofHash: proof.proofHash,
-          }),
-        );
-
-        onUserRefresh();
-
         setState(prev => ({ ...prev, isLoading: false }));
         return proof;
       } catch (e) {
@@ -100,6 +88,14 @@ export function usePassportAttestation() {
         setState(prev => ({ ...prev, isLoading: false, error: message }));
         throw e;
       }
+    },
+    [],
+  );
+
+  const saveAgeAttestation = useCallback(
+    async (ageAttestation: AgeAttestationLocalState) => {
+      dispatch(setAgeAttestation(ageAttestation));
+      onUserRefresh();
     },
     [dispatch, onUserRefresh],
   );
@@ -112,6 +108,7 @@ export function usePassportAttestation() {
     nfcSupported: state.nfcSupported,
     checkNfcSupport,
     readPassport,
-    generateProof,
+    createProof,
+    saveAgeAttestation,
   };
 }

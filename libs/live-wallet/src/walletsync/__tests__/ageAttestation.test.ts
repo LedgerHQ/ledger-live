@@ -12,7 +12,7 @@ const emptyLocal: AgeAttestationLocalState = {
 
 const verifiedLocal: AgeAttestationLocalState = {
   verified: true,
-  proof: '{"protocol":"groth16","curve":"bn128","pi_a":["abc","1"]}',
+  proof: "encrypted-proof-blob",
   publicSignals: ["20250401", "18", "abc123"],
   minimumAge: 18,
   verifiedAt: "2025-04-01T10:00:00Z",

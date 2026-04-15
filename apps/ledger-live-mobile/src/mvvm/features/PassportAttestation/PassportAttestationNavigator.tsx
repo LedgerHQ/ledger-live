@@ -67,7 +67,25 @@ export default function PassportAttestationNavigator() {
       <Stack.Screen
         name={ScreenName.PassportAttestationGenerateProof}
         component={GenerateProofScreen}
-        options={{ title: "Generating your proof", headerBackVisible: false }}
+        options={({ navigation }) => ({
+          title: "",
+          headerLeft: () => null,
+          headerTitle: () => null,
+          headerRight: () => (
+            <HeaderCloseButton
+              onClose={() => {
+                const parentNavigation = navigation.getParent();
+
+                if (parentNavigation?.canGoBack()) {
+                  parentNavigation.goBack();
+                  return;
+                }
+
+                navigation.popToTop();
+              }}
+            />
+          ),
+        })}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationSuccess}

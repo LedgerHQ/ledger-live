@@ -2,7 +2,7 @@
  * @module ageAttestation
  *
  * This module synchronizes a zero-knowledge age attestation across Live instances
- * via the WalletSync system. It stores a ZK proof that the user is above a certain
+ * via the WalletSync system. It stores an encrypted ZK proof that the user is above a certain
  * age (e.g. 18) without revealing the actual date of birth.
  *
  * The attestation is generated on mobile by scanning a passport via NFC, extracting

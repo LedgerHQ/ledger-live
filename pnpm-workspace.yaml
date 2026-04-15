@@ -20,7 +20,7 @@ catalog:
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 1.15.0
   "@ledgerhq/crypto-icons": "1.4.0"
-  "@ledgerhq/device-management-kit": 1.2.0
+  "@ledgerhq/device-management-kit": "0.0.0-identity-vault-20260415125822"
   "@ledgerhq/device-signer-kit-ethereum": 1.12.0
   "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
   "@ledgerhq/device-signer-kit-solana": 1.7.1

@@ -105,6 +105,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
+    "@ledgerhq/device-trusted-app-kit-ledger-keyring-protocol": "0.0.0-identity-vault-20260415125822",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
