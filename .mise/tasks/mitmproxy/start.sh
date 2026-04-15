@@ -106,9 +106,9 @@ function setup_ios_simulator() {
 	log_info "Available simulators:"
 	xcrun simctl list devices
 
-	IFS=',' read -ra SIMULATOR_NAMES <<< "${usage_ios_simulator_name}"
+	IFS=',' read -ra SIMULATOR_NAMES <<<"${usage_ios_simulator_name}"
 	for SIMULATOR_NAME in "${SIMULATOR_NAMES[@]}"; do
-		SIMULATOR_NAME="$(printf '%s\n' "${SIMULATOR_NAME}" | xargs)"  # trim whitespace
+		SIMULATOR_NAME="$(printf '%s\n' "${SIMULATOR_NAME}" | xargs)" # trim whitespace
 		provision_simulator_cert "${SIMULATOR_NAME}"
 	done
 }
@@ -254,10 +254,10 @@ function setup_android_simulator() {
 	log_info "Provisioning Android AVDs with mitmproxy certificate"
 	log_info "AVDs to provision: '${usage_android_simulator_name}'"
 
-	IFS=',' read -ra AVD_NAMES <<< "${usage_android_simulator_name}"
+	IFS=',' read -ra AVD_NAMES <<<"${usage_android_simulator_name}"
 	local PORT=5554
 	for AVD_NAME in "${AVD_NAMES[@]}"; do
-		AVD_NAME="$(printf '%s\n' "${AVD_NAME}" | xargs)"  # trim whitespace
+		AVD_NAME="$(printf '%s\n' "${AVD_NAME}" | xargs)" # trim whitespace
 		provision_emulator_cert "${AVD_NAME}" "${PORT}"
 		PORT=$((PORT + 2))
 	done
