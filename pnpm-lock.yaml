@@ -7278,9 +7278,6 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-btc
-      '@ledgerhq/hw-app-concordium':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-concordium
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
@@ -7380,6 +7377,9 @@ importers:
       '@ledgerhq/live-signer-celo':
         specifier: workspace:^
         version: link:../live-signer-celo
+      '@ledgerhq/live-signer-concordium':
+        specifier: workspace:^
+        version: link:../live-signer-concordium
       '@ledgerhq/live-signer-cosmos':
         specifier: workspace:^
         version: link:../live-signer-cosmos
@@ -10872,8 +10872,8 @@ importers:
         specifier: 'catalog:'
         version: 1.2.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
-        specifier: 0.0.0-develop-20260407153739
-        version: 0.0.0-develop-20260407153739(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        specifier: 0.2.0
+        version: 0.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -16769,10 +16769,10 @@ packages:
       '@ledgerhq/context-module': 1.15.0
       '@ledgerhq/device-management-kit': ^1.2.0
 
-  '@ledgerhq/device-signer-kit-concordium@0.0.0-develop-20260407153739':
-    resolution: {integrity: sha512-xyWcBBaX/I+CDRm5AmG5bkW+j893JK1GOPmmd91U11PnYv12/GOcE5HIwPMzm7OnkqrR1Hi2X+dK/eYWsEmlhg==}
+  '@ledgerhq/device-signer-kit-concordium@0.2.0':
+    resolution: {integrity: sha512-OVsczSo0iRPLyN5JyodOnBP1+XxndU+zAiO6Vs6s56/dqUK2D3T3VYdiqcHOQODIlAtbiJCWu49xDCPQD9d5Xg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-develop-20260407153739
+      '@ledgerhq/device-management-kit': ^1.2.0
 
   '@ledgerhq/device-signer-kit-cosmos@1.0.0':
     resolution: {integrity: sha512-z5r7TwUrROxzmKJLXPk4cjGWRY4vGrwdTIQuBVyM6p6/zaEIiOV5yq9CO6GUn1vMeUKtFmESXrWV8eyYyNHLEg==}
@@ -16932,13 +16932,13 @@ packages:
     peerDependencies:
       react: 19.0.0
 
-  '@ledgerhq/signer-utils@0.0.0-develop-20260407153739':
-    resolution: {integrity: sha512-fm3eg8Gkx3ldwt/mxUOlXtGOJGkSruIUQeBuREjrhFi4jbq175V5IYmn5hff8oMJkSy6+Nr9/HP+l/as67Fyzw==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-develop-20260407153739
-
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.2.0
+
+  '@ledgerhq/signer-utils@1.2.0':
+    resolution: {integrity: sha512-Ek4/NXGt6gfiZUmiAFE19534f8wnlQSHvZMsjmqCEktbJd/mYbzvTrvYeo0+PQPw2D/kTYD1fRC6ADKQRSBeGw==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
 
@@ -45086,10 +45086,10 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.0.0-develop-20260407153739(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 0.0.0-develop-20260407153739(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45379,12 +45379,12 @@ snapshots:
       react: 19.0.0
       tailwind-merge: 2.6.0
 
-  '@ledgerhq/signer-utils@0.0.0-develop-20260407153739(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
       semver: 7.7.2

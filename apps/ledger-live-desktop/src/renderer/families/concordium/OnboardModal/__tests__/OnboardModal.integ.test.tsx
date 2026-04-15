@@ -50,10 +50,10 @@ jest.mock("@ledgerhq/coin-concordium/signer", () => ({
 }));
 
 jest.mock(
-  "@ledgerhq/hw-app-concordium",
+  "@ledgerhq/live-signer-concordium",
   () => ({
     __esModule: true,
-    default: jest.fn(() => ({
+    DmkSignerConcordium: jest.fn(() => ({
       getPublicKey: jest.fn().mockResolvedValue("aa".repeat(32)),
       signCredentialDeployment: jest.fn(
         () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), T + 200)),
