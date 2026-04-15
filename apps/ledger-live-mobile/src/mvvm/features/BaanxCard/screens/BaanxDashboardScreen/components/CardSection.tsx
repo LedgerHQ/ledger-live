@@ -1,5 +1,14 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
-import { Pressable, View, StyleSheet, useWindowDimensions, Image } from "react-native";
+import {
+  Pressable,
+  View,
+  StyleSheet,
+  useWindowDimensions,
+  Image,
+  FlatList,
+  type ViewToken,
+  type ListRenderItemInfo,
+} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Svg, { Circle } from "react-native-svg";
 import Animated, {
@@ -11,17 +20,31 @@ import Animated, {
 } from "react-native-reanimated";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useTranslation } from "~/context/Locale";
-import { Text, Box } from "@ledgerhq/lumen-ui-rnative";
-import { Copy, Eye, EyeCross, LedgerLogo, Settings } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Text, Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Copy,
+  DeleteCircle,
+  Eye,
+  EyeCross,
+  LedgerLogo,
+  Settings,
+  Snow,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { getSelectedFiatSurface } from "../fiatCurrencySelection";
 import type { CardData } from "../mockData";
 import cardFrontBg from "./card-front-bg.png";
+import cardFrontBgLedger from "./card-front-bg-ledger.png";
+
+const CUSTOM_BACKGROUNDS: Record<string, typeof cardFrontBg> = {
+  ledger: cardFrontBgLedger,
+};
 
 const SCREEN_HORIZONTAL_PADDING = 28;
 const CREDIT_CARD_ASPECT = 1.586;
 const FLIP_DURATION = 500;
 const COPY_FEEDBACK_MS = 1500;
+const VIEWABILITY_CONFIG = { viewAreaCoveragePercentThreshold: 50 };
 
 function isLightForeground(hex: string): boolean {
   const n = hex.replace("#", "");
@@ -83,10 +106,24 @@ const MastercardLogo = memo(function MastercardLogo() {
   );
 });
 
-const CardFront = memo(function CardFront() {
+const CardFrontDefault = memo(function CardFrontDefault() {
   return (
     <View style={styles.face}>
       <Image source={cardFrontBg} style={styles.cardBgImage} resizeMode="cover" />
+      <MastercardLogo />
+    </View>
+  );
+});
+
+const CardFrontCustom = memo(function CardFrontCustom({
+  backgroundKey,
+}: {
+  readonly backgroundKey: string;
+}) {
+  const bgSource = CUSTOM_BACKGROUNDS[backgroundKey];
+  return (
+    <View style={styles.face}>
+      {bgSource && <Image source={bgSource} style={styles.cardBgImageCustom} resizeMode="cover" />}
       <MastercardLogo />
     </View>
   );
@@ -176,29 +213,51 @@ const CardBack = memo(function CardBack({ card, palette, onFlip }: BackProps) {
   );
 });
 
-interface Props {
+interface SingleCardProps {
   readonly card: CardData;
   readonly selectedCurrency: string;
+  readonly cardWidth: number;
+  readonly minHeight: number;
+  readonly onOpenSettings: () => void;
+  readonly isFrozen: boolean;
+  readonly isBlocked: boolean;
 }
 
-const CardSection = memo(function CardSection({ card, selectedCurrency }: Props) {
-  const { width: windowWidth } = useWindowDimensions();
+const SingleCard = memo(function SingleCard({
+  card,
+  selectedCurrency,
+  cardWidth,
+  minHeight,
+  onOpenSettings,
+  isFrozen,
+  isBlocked,
+}: SingleCardProps) {
+  const { t } = useTranslation();
   const palette = usePalette(selectedCurrency);
+  const isDisabled = isFrozen || isBlocked;
 
   const flipProgress = useSharedValue(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = useCallback(() => {
+    if (isDisabled) return;
     const next = isFlipped ? 0 : 1;
     flipProgress.value = withTiming(next, {
       duration: FLIP_DURATION,
       easing: Easing.inOut(Easing.ease),
     });
     setIsFlipped(!isFlipped);
-  }, [isFlipped, flipProgress]);
+  }, [isFlipped, flipProgress, isDisabled]);
 
-  const cardWidth = Math.max(0, windowWidth - SCREEN_HORIZONTAL_PADDING * 2);
-  const minHeight = cardWidth > 0 ? cardWidth / CREDIT_CARD_ASPECT : 200;
+  const cardShellStyle = useMemo(
+    () => [styles.card, { minHeight, borderColor: palette.border }],
+    [minHeight, palette.border],
+  );
+
+  const btnStyle = useMemo(
+    () => [styles.overlayBtn, { backgroundColor: palette.btnBg }],
+    [palette.btnBg],
+  );
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateY = interpolate(flipProgress.value, [0, 1], [0, 180]);
@@ -226,62 +285,170 @@ const CardSection = memo(function CardSection({ card, selectedCurrency }: Props)
     };
   });
 
-  const cardShellStyle = useMemo(
-    () => [styles.card, { minHeight, borderColor: palette.border }],
-    [minHeight, palette.border],
-  );
-
-  const btnStyle = useMemo(
-    () => [styles.overlayBtn, { backgroundColor: palette.btnBg }],
-    [palette.btnBg],
-  );
-
   return (
-    <View style={styles.sectionOnTop} pointerEvents="box-none">
-      <Box lx={{ gap: "s12", paddingVertical: "s8" }}>
-        <View style={{ minHeight }}>
-          <Pressable onPress={handleFlip} style={StyleSheet.absoluteFill}>
-            <Animated.View style={[cardShellStyle, styles.faceAbsolute, frontAnimatedStyle]}>
+    <View style={{ width: cardWidth }}>
+      <View style={{ minHeight }}>
+        <Pressable onPress={handleFlip} style={StyleSheet.absoluteFill}>
+          <Animated.View style={[cardShellStyle, styles.faceAbsolute, frontAnimatedStyle]}>
+            {card.customBackground ? (
+              <View style={styles.gradientFill}>
+                <CardFrontCustom backgroundKey={card.customBackground} />
+              </View>
+            ) : (
               <LinearGradient
                 colors={palette.gradientColors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientFill}
               >
-                <CardFront />
+                <CardFrontDefault />
               </LinearGradient>
-            </Animated.View>
+            )}
+          </Animated.View>
 
-            <Animated.View style={[cardShellStyle, styles.faceAbsolute, backAnimatedStyle]}>
-              <LinearGradient
-                colors={palette.gradientColors}
-                start={{ x: 1, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                style={styles.gradientFill}
-              >
-                <CardBack card={card} palette={palette} onFlip={handleFlip} />
-              </LinearGradient>
-            </Animated.View>
-          </Pressable>
+          <Animated.View style={[cardShellStyle, styles.faceAbsolute, backAnimatedStyle]}>
+            <LinearGradient
+              colors={palette.gradientColors}
+              start={{ x: 1, y: 1 }}
+              end={{ x: 0, y: 0 }}
+              style={styles.gradientFill}
+            >
+              <CardBack card={card} palette={palette} onFlip={handleFlip} />
+            </LinearGradient>
+          </Animated.View>
+        </Pressable>
 
-          <Animated.View
-            style={[styles.overlayContainer, overlayAnimatedStyle]}
-            pointerEvents="box-none"
-          >
-            <View style={styles.overlayColumn} pointerEvents="box-none">
-              <LedgerLogo size={24} color={palette.logoColor} />
+        <Animated.View
+          style={[styles.overlayContainer, overlayAnimatedStyle]}
+          pointerEvents="box-none"
+        >
+          <View style={styles.overlayColumn} pointerEvents="box-none">
+            <LedgerLogo size={24} color={palette.logoColor} />
 
-              <View style={styles.buttonsGroup}>
-                <Pressable onPress={() => {}} style={btnStyle} hitSlop={12}>
-                  <Settings size={20} color={palette.logoColor} />
-                </Pressable>
+            <View style={styles.buttonsGroup}>
+              <Pressable onPress={onOpenSettings} style={btnStyle} hitSlop={12}>
+                <Settings size={20} color={palette.logoColor} />
+              </Pressable>
+              {!isDisabled && (
                 <Pressable onPress={handleFlip} style={btnStyle} hitSlop={12}>
                   <Eye size={20} color={palette.logoColor} />
                 </Pressable>
-              </View>
+              )}
             </View>
-          </Animated.View>
-        </View>
+          </View>
+        </Animated.View>
+
+        {isFrozen && (
+          <View style={[styles.frozenOverlay, { borderRadius: 18 }]} pointerEvents="none">
+            <View style={styles.frozenContent}>
+              <Snow size={24} color="white" />
+              <Text typography="body2" style={styles.frozenLabel}>
+                {t("baanxCard.dashboard.card.frozen")}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {isBlocked && (
+          <View style={[styles.blockedOverlay, { borderRadius: 18 }]} pointerEvents="none">
+            <View style={styles.frozenContent}>
+              <DeleteCircle size={24} color="white" />
+              <Text typography="body2" style={styles.frozenLabel}>
+                {t("baanxCard.dashboard.card.blocked")}
+              </Text>
+            </View>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+});
+
+const CARD_GAP = 12;
+
+const CardSeparator = memo(function CardSeparator() {
+  return <View style={styles.separator} />;
+});
+
+interface Props {
+  readonly cards: readonly CardData[];
+  readonly activeCardIndex: number;
+  readonly onCardIndexChange: (index: number) => void;
+  readonly selectedCurrency: string;
+  readonly onOpenSettings: () => void;
+  readonly frozenCardIds: ReadonlySet<string>;
+  readonly blockedCardIds: ReadonlySet<string>;
+}
+
+const CardSection = memo(function CardSection({
+  cards,
+  activeCardIndex,
+  onCardIndexChange,
+  selectedCurrency,
+  onOpenSettings,
+  frozenCardIds,
+  blockedCardIds,
+}: Props) {
+  const { width: windowWidth } = useWindowDimensions();
+  const cardWidth = Math.max(0, windowWidth - SCREEN_HORIZONTAL_PADDING * 2);
+  const minHeight = cardWidth > 0 ? cardWidth / CREDIT_CARD_ASPECT : 200;
+
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    if (viewableItems.length > 0 && viewableItems[0].index != null) {
+      onCardIndexChange(viewableItems[0].index);
+    }
+  }).current;
+
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => ({
+      length: cardWidth,
+      offset: (cardWidth + CARD_GAP) * index,
+      index,
+    }),
+    [cardWidth],
+  );
+
+  const renderCard = useCallback(
+    ({ item }: ListRenderItemInfo<CardData>) => (
+      <SingleCard
+        card={item}
+        selectedCurrency={selectedCurrency}
+        cardWidth={cardWidth}
+        minHeight={minHeight}
+        onOpenSettings={onOpenSettings}
+        isFrozen={frozenCardIds.has(item.panLast4)}
+        isBlocked={blockedCardIds.has(item.panLast4)}
+      />
+    ),
+    [selectedCurrency, cardWidth, minHeight, onOpenSettings, frozenCardIds, blockedCardIds],
+  );
+
+  const keyExtractor = useCallback((item: CardData) => item.panLast4, []);
+
+  return (
+    <View style={styles.sectionOnTop} pointerEvents="box-none">
+      <Box lx={{ gap: "s12", paddingVertical: "s8" }}>
+        <FlatList
+          data={[...cards]}
+          renderItem={renderCard}
+          keyExtractor={keyExtractor}
+          horizontal
+          snapToInterval={cardWidth + CARD_GAP}
+          decelerationRate="fast"
+          showsHorizontalScrollIndicator={false}
+          bounces={cards.length > 1}
+          scrollEnabled={cards.length > 1}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={VIEWABILITY_CONFIG}
+          getItemLayout={getItemLayout}
+          ItemSeparatorComponent={CardSeparator}
+          style={styles.carousel}
+        />
+        {cards.length > 1 && (
+          <Box lx={{ alignItems: "center" }}>
+            <PageIndicator currentPage={activeCardIndex + 1} totalPages={cards.length} />
+          </Box>
+        )}
       </Box>
     </View>
   );
@@ -291,6 +458,12 @@ const styles = StyleSheet.create({
   sectionOnTop: {
     zIndex: 2,
     elevation: 4,
+  },
+  carousel: {
+    overflow: "visible",
+  },
+  separator: {
+    width: CARD_GAP,
   },
   card: {
     borderRadius: 18,
@@ -324,6 +497,13 @@ const styles = StyleSheet.create({
     width: "150%",
     height: "150%",
     opacity: 0.6,
+  },
+  cardBgImageCustom: {
+    position: "absolute",
+    top: "-5%",
+    left: "-15%",
+    width: "140%",
+    height: "140%",
   },
   overlayContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -374,6 +554,30 @@ const styles = StyleSheet.create({
   backBottomRow: {
     flexDirection: "row",
     gap: 22,
+  },
+  frozenOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 20,
+    elevation: 14,
+    backgroundColor: "rgba(140, 200, 255, 0.45)",
+  },
+  blockedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 20,
+    elevation: 14,
+    backgroundColor: "rgba(200, 50, 50, 0.55)",
+  },
+  frozenContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  frozenLabel: {
+    color: "white",
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 2,
   },
 });
 

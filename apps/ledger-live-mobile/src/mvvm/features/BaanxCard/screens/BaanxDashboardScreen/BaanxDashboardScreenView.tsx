@@ -7,11 +7,14 @@ import CardSection from "./components/CardSection";
 import BalanceTilesSection from "./components/BalanceTilesSection";
 import PayWithSection from "./components/PayWithSection";
 import TransactionsSection from "./components/TransactionsSection";
+import SettingsBottomSheet from "./components/SettingsBottomSheet";
 import type { BaanxDashboardViewModel } from "./useBaanxDashboardViewModel";
 
 const BaanxDashboardScreenView = ({
   selectedCurrency,
-  card,
+  cards,
+  activeCardIndex,
+  onCardIndexChange,
   totalBalance,
   isBalanceLoading,
   cashback,
@@ -25,6 +28,16 @@ const BaanxDashboardScreenView = ({
   onCloseSmartPaySheet,
   transactions,
   isTransactionsLoading,
+  frozenCardIds,
+  blockedCardIds,
+  isActiveCardFrozen,
+  isActiveCardBlocked,
+  isSettingsSheetOpen,
+  onOpenSettingsSheet,
+  onCloseSettingsSheet,
+  onFreezeCard,
+  onBlockCard,
+  onCustomizeCard,
 }: Readonly<BaanxDashboardViewModel>) => {
   const { theme } = useTheme();
   const bgColor = theme.colors.bg.base;
@@ -51,7 +64,15 @@ const BaanxDashboardScreenView = ({
         nestedScrollEnabled={Platform.OS === "android"}
         showsVerticalScrollIndicator={false}
       >
-        <CardSection card={card} selectedCurrency={selectedCurrency} />
+        <CardSection
+          cards={cards}
+          activeCardIndex={activeCardIndex}
+          onCardIndexChange={onCardIndexChange}
+          selectedCurrency={selectedCurrency}
+          onOpenSettings={onOpenSettingsSheet}
+          frozenCardIds={frozenCardIds}
+          blockedCardIds={blockedCardIds}
+        />
 
         <BalanceTilesSection
           totalBalance={totalBalance}
@@ -72,6 +93,16 @@ const BaanxDashboardScreenView = ({
 
         <TransactionsSection transactions={transactions} isLoading={isTransactionsLoading} />
       </ScrollView>
+
+      <SettingsBottomSheet
+        isOpen={isSettingsSheetOpen}
+        onClose={onCloseSettingsSheet}
+        isCardFrozen={isActiveCardFrozen}
+        isCardBlocked={isActiveCardBlocked}
+        onFreezeCard={onFreezeCard}
+        onBlockCard={onBlockCard}
+        onCustomizeCard={onCustomizeCard}
+      />
     </View>
   );
 };

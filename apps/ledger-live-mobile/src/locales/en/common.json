@@ -7467,7 +7467,9 @@
         "cvv": "CVV",
         "status": "Status",
         "type": "Type",
-        "tapToFlip": "Tap card for details"
+        "tapToFlip": "Tap card for details",
+        "frozen": "Frozen",
+        "blocked": "Blocked"
       },
       "balance": {
         "totalBalance": "Total balance",
@@ -7485,6 +7487,13 @@
           "step2": "It picks the asset with the lowest conversion cost at that moment.",
           "step3": "The payment is settled instantly — no extra steps required."
         }
+      },
+      "settings": {
+        "freezeCard": "Freeze card",
+        "unfreezeCard": "Unfreeze card",
+        "blockCard": "Block card",
+        "unblockCard": "Unblock card",
+        "customizeCard": "Customize card"
       },
       "notAuthenticated": {
         "title": "Welcome to Baanx",

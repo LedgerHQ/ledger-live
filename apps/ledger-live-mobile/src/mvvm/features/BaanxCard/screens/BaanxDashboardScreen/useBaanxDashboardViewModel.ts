@@ -8,7 +8,7 @@ import { useCategorizedAssetsFromPortfolio } from "~/mvvm/hooks/useCategorizedAs
 import { useDefaultAssetsByCategory } from "~/mvvm/hooks/useDefaultAssetsByCategory";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import type { CardData, TransactionItem } from "./mockData";
-import { MOCK_CARD } from "./mockData";
+import { MOCK_CARDS } from "./mockData";
 
 const MAX_STABLECOINS = 5;
 const SMART_PAY_ID = "smart-pay";
@@ -24,7 +24,9 @@ export interface BaanxDashboardViewModel {
   readonly selectedCurrency: string;
   readonly setSelectedCurrency: (code: string) => void;
 
-  readonly card: CardData;
+  readonly cards: readonly CardData[];
+  readonly activeCardIndex: number;
+  readonly onCardIndexChange: (index: number) => void;
   readonly totalBalance: string;
   readonly isBalanceLoading: boolean;
   readonly cashback: string;
@@ -41,6 +43,17 @@ export interface BaanxDashboardViewModel {
 
   readonly transactions: readonly TransactionItem[];
   readonly isTransactionsLoading: boolean;
+
+  readonly frozenCardIds: ReadonlySet<string>;
+  readonly blockedCardIds: ReadonlySet<string>;
+  readonly isActiveCardFrozen: boolean;
+  readonly isActiveCardBlocked: boolean;
+  readonly isSettingsSheetOpen: boolean;
+  readonly onOpenSettingsSheet: () => void;
+  readonly onCloseSettingsSheet: () => void;
+  readonly onFreezeCard: () => void;
+  readonly onBlockCard: () => void;
+  readonly onCustomizeCard: () => void;
 }
 
 function formatFiatAmount(value: number | null, currency: string): string {
@@ -56,7 +69,9 @@ function fmtDate(dateStr: string | null): string {
     const now = new Date();
     const isToday = d.toDateString() === now.toDateString();
     const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-    return isToday ? `Today ${time}` : `${d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} ${time}`;
+    return isToday
+      ? `Today ${time}`
+      : `${d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} ${time}`;
   } catch {
     return dateStr;
   }
@@ -85,9 +100,10 @@ export function useBaanxDashboardViewModel(accessToken?: string): BaanxDashboard
   const totalBalance = formatFiatAmount(balance.totalFiatValue, balance.fiatCurrency);
   const isBalanceLoading = balance.isLoading;
 
-  const cashback = cashbackData.fiatValue !== null
-    ? `$${cashbackData.fiatValue.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
-    : "—";
+  const cashback =
+    cashbackData.fiatValue !== null
+      ? `$${cashbackData.fiatValue.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+      : "—";
 
   const transactions: readonly TransactionItem[] = useMemo(
     () => cardTx.transactions.map(mapCardTxToItem),
@@ -95,6 +111,16 @@ export function useBaanxDashboardViewModel(accessToken?: string): BaanxDashboard
   );
   const isTransactionsLoading = cardTx.isLoading;
 
+  // --- Card selection ---
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  const onCardIndexChange = useCallback((index: number) => {
+    setActiveCardIndex(index);
+  }, []);
+
+  const activeCard = MOCK_CARDS[activeCardIndex];
+
+  // --- Balance / discreet mode ---
   const { discreetMode, toggleDiscreetMode } = useToggleDiscreetMode();
   const { openDrawer } = useModularDrawerController();
 
@@ -126,6 +152,60 @@ export function useBaanxDashboardViewModel(accessToken?: string): BaanxDashboard
 
   const onCloseSmartPaySheet = useCallback(() => {
     setIsSmartPaySheetOpen(false);
+  }, []);
+
+  // --- Settings sheet ---
+  const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
+  const [frozenCardIds, setFrozenCardIds] = useState<ReadonlySet<string>>(new Set());
+  const [blockedCardIds, setBlockedCardIds] = useState<ReadonlySet<string>>(new Set());
+
+  const activeCardId = activeCard.panLast4;
+  const isActiveCardFrozen = frozenCardIds.has(activeCardId);
+  const isActiveCardBlocked = blockedCardIds.has(activeCardId);
+
+  const onOpenSettingsSheet = useCallback(() => {
+    setIsSettingsSheetOpen(true);
+  }, []);
+
+  const onCloseSettingsSheet = useCallback(() => {
+    setIsSettingsSheetOpen(false);
+  }, []);
+
+  const onFreezeCard = useCallback(() => {
+    setFrozenCardIds(prev => {
+      const next = new Set(prev);
+      if (next.has(activeCardId)) next.delete(activeCardId);
+      else next.add(activeCardId);
+      return next;
+    });
+    setBlockedCardIds(prev => {
+      if (!prev.has(activeCardId)) return prev;
+      const next = new Set(prev);
+      next.delete(activeCardId);
+      return next;
+    });
+    setIsSettingsSheetOpen(false);
+  }, [activeCardId]);
+
+  const onBlockCard = useCallback(() => {
+    setBlockedCardIds(prev => {
+      const next = new Set(prev);
+      if (next.has(activeCardId)) next.delete(activeCardId);
+      else next.add(activeCardId);
+      return next;
+    });
+    setFrozenCardIds(prev => {
+      if (!prev.has(activeCardId)) return prev;
+      const next = new Set(prev);
+      next.delete(activeCardId);
+      return next;
+    });
+    setIsSettingsSheetOpen(false);
+  }, [activeCardId]);
+
+  const onCustomizeCard = useCallback(() => {
+    setIsSettingsSheetOpen(false);
+    // TODO: navigate to card customization flow
   }, []);
 
   const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
@@ -160,7 +240,9 @@ export function useBaanxDashboardViewModel(accessToken?: string): BaanxDashboard
   return {
     selectedCurrency,
     setSelectedCurrency,
-    card: MOCK_CARD,
+    cards: MOCK_CARDS,
+    activeCardIndex,
+    onCardIndexChange,
     totalBalance,
     isBalanceLoading,
     cashback,
@@ -175,5 +257,15 @@ export function useBaanxDashboardViewModel(accessToken?: string): BaanxDashboard
     onCloseSmartPaySheet,
     transactions,
     isTransactionsLoading,
+    frozenCardIds,
+    blockedCardIds,
+    isActiveCardFrozen,
+    isActiveCardBlocked,
+    isSettingsSheetOpen,
+    onOpenSettingsSheet,
+    onCloseSettingsSheet,
+    onFreezeCard,
+    onBlockCard,
+    onCustomizeCard,
   };
 }
