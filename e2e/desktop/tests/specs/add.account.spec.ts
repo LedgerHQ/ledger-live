@@ -10,7 +10,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 const currencies = [
   {
     currency: Currency.BTC,
-    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073",
+    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073, B2CQA-786",
   },
   { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
