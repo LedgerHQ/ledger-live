@@ -86,7 +86,7 @@ runs:
         script: ${{ inputs.wait_script_path }}
 
     - name: Cache android emulator
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/qaa_swap_fix_-navigateToBuyFromPortfolioPage_BTC
       with:
         path: |
           /home/runner/.android/
