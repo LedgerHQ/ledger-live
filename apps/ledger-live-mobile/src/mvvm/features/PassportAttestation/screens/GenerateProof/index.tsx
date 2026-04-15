@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Alert, ActivityIndicator } from "react-native";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import { Flex, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -25,7 +25,6 @@ export default function GenerateProofScreen({ navigation, route }: Props) {
   const { webViewElement, isReady, generateProof: zkGenerate, verifyProof: zkVerify } =
     useZkProofWebView();
 
-  // Wire the ZK bridge when the WebView is ready
   useEffect(() => {
     if (isReady) {
       setZkBridge({ generateProof: zkGenerate, verifyProof: zkVerify });
@@ -50,7 +49,6 @@ export default function GenerateProofScreen({ navigation, route }: Props) {
     }
   }, [generateProof, mrzData, passportData, navigation]);
 
-  // Trigger proof generation once WebView is ready
   useEffect(() => {
     if (isReady) {
       startProofGeneration();
@@ -66,36 +64,18 @@ export default function GenerateProofScreen({ navigation, route }: Props) {
         alignItems="center"
         justifyContent="center"
         px={6}
-        rowGap={24}
+        rowGap={16}
       >
-        <IconContainer borderRadius={50}>
-          <Icons.ShieldCheck size="L" color={colors.primary.c80} />
-        </IconContainer>
+        <ActivityIndicator size="large" color={colors.neutral.c100} />
 
         <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold">
-          Generating ZK Proof
+          Generating your proof
         </Text>
 
         <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-          Creating a zero-knowledge proof that you are over 18 without revealing your date of
-          birth...
-        </Text>
-
-        <ActivityIndicator size="large" color={colors.primary.c80} />
-
-        <Text variant="small" color="neutral.c50" textAlign="center">
-          This may take a few seconds
+          It will only take seconds
         </Text>
       </Flex>
     </SafeAreaView>
   );
 }
-
-const IconContainer = styled(Box)`
-  background-color: ${p => p.theme.colors.opacityDefault.c05};
-  height: 72px;
-  width: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;

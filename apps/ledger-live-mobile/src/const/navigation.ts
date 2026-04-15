@@ -556,6 +556,7 @@ export enum ScreenName {
   PassportAttestationScanMRZ = "PassportAttestationScanMRZ",
   PassportAttestationReadNFC = "PassportAttestationReadNFC",
   PassportAttestationConfirm = "PassportAttestationConfirm",
+  PassportAttestationSelectProof = "PassportAttestationSelectProof",
   PassportAttestationGenerateProof = "PassportAttestationGenerateProof",
   PassportAttestationSuccess = "PassportAttestationSuccess",
 

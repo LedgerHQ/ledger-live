@@ -1,7 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
-import { Box, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -14,11 +14,6 @@ type Props = BaseComposite<
   >
 >;
 
-function maskDocNumber(doc: string): string {
-  if (doc.length <= 3) return doc;
-  return doc.slice(0, 2) + "***" + doc.slice(-1);
-}
-
 function formatDob(yymmdd: string): string {
   if (yymmdd.length !== 6) return yymmdd;
   const yy = parseInt(yymmdd.substring(0, 2), 10);
@@ -29,106 +24,43 @@ function formatDob(yymmdd: string): string {
 }
 
 export default function ConfirmScreen({ navigation, route }: Props) {
-  const { colors } = useTheme();
   const { mrzData } = route.params;
 
-  const handleConfirm = useCallback(() => {
-    navigation.navigate(ScreenName.PassportAttestationReadNFC, { mrzData });
-  }, [navigation, mrzData]);
+  const fullName = `${mrzData.givenNames} ${mrzData.surname}`.trim() || "N/A";
+  const [name, setName] = useState(fullName);
+  const [docNumber, setDocNumber] = useState(mrzData.documentNumber);
+  const [dob, setDob] = useState(formatDob(mrzData.dateOfBirth));
+  const [expiry, setExpiry] = useState(formatDob(mrzData.expiryDate));
 
-  const handleEdit = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+  const handleConfirm = useCallback(() => {
+    navigation.navigate(ScreenName.PassportAttestationSelectProof, { mrzData });
+  }, [navigation, mrzData]);
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Flex flex={1} flexDirection="column" justifyContent="space-between" px={6} pt={6}>
-          <Flex flexDirection="column">
-            <Flex flexDirection="column" alignItems="center" rowGap={12} mb={24}>
-              <IconContainer borderRadius={50}>
-                <Icons.ShieldCheck size="L" color="primary.c80" />
-              </IconContainer>
-              <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold">
-                Confirm Age Verification
+        <Flex flex={1} flexDirection="column" justifyContent="space-between">
+          <Flex flexDirection="column" px={16} pt={0}>
+            <Flex flexDirection="column" rowGap={8} mb={24}>
+              <Text variant="h4" color="neutral.c100" fontWeight="semiBold">
+                Passport informations
               </Text>
-              <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-                Review the information below. Proceeding will create a zero-knowledge proof that you
-                are 18 or older.
+              <Text variant="bodyLineHeight" color="neutral.c70">
+                Review your information and edit them if needed
               </Text>
             </Flex>
 
-            <Flex
-              p={16}
-              borderRadius={12}
-              backgroundColor="opacityDefault.c05"
-              mb={16}
-            >
-              <Flex flexDirection="column" rowGap={12} width="100%">
-                <DetailRow>
-                  <Text variant="small" color="neutral.c70">
-                    Document Number
-                  </Text>
-                  <Text variant="small" color="neutral.c100" fontWeight="semiBold">
-                    {maskDocNumber(mrzData.documentNumber)}
-                  </Text>
-                </DetailRow>
-                <DetailRow>
-                  <Text variant="small" color="neutral.c70">
-                    Date of Birth
-                  </Text>
-                  <Text variant="small" color="neutral.c100" fontWeight="semiBold">
-                    {formatDob(mrzData.dateOfBirth)}
-                  </Text>
-                </DetailRow>
-                {mrzData.nationality && mrzData.nationality !== "N/A" && (
-                  <DetailRow>
-                    <Text variant="small" color="neutral.c70">
-                      Nationality
-                    </Text>
-                    <Text variant="small" color="neutral.c100" fontWeight="semiBold">
-                      {mrzData.nationality}
-                    </Text>
-                  </DetailRow>
-                )}
-              </Flex>
-            </Flex>
-
-            <Flex
-              p={16}
-              borderRadius={12}
-              borderWidth={1}
-              borderColor={colors.neutral.c40}
-              mb={24}
-              flexDirection="row"
-              columnGap={12}
-            >
-              <Icons.Information size="S" color={colors.primary.c80} />
-              <Flex flex={1}>
-                <Text variant="small" color="neutral.c70">
-                  A zero-knowledge proof will be generated to attest you are 18 or older. Your date
-                  of birth will not be stored or shared — only the cryptographic proof is saved and
-                  synced across your Ledger Live instances via the TrustChain.
-                </Text>
-              </Flex>
+            <Flex flexDirection="column" rowGap={16}>
+              <InputField label="Full name" value={name} onChangeText={setName} testID="passport-fullname" />
+              <InputField label="Document number" value={docNumber} onChangeText={setDocNumber} testID="passport-doc-number" />
+              <InputField label="Date of birth" value={dob} onChangeText={setDob} testID="passport-dob" />
+              <InputField label="Expiry date" value={expiry} onChangeText={setExpiry} testID="passport-expiry" />
             </Flex>
           </Flex>
 
-          <Flex flexDirection="column" rowGap={10} mb={8}>
-            <Button
-              type="main"
-              onPress={handleConfirm}
-              testID="passport-confirm-button"
-            >
-              Create Proof and Continue
-            </Button>
-            <Button
-              type="default"
-              outline
-              onPress={handleEdit}
-              testID="passport-edit-button"
-            >
-              Edit Details
+          <Flex px={16} pb={16}>
+            <Button type="main" size="large" onPress={handleConfirm} testID="passport-confirm-button">
+              I verified my information
             </Button>
           </Flex>
         </Flex>
@@ -137,17 +69,36 @@ export default function ConfirmScreen({ navigation, route }: Props) {
   );
 }
 
-const IconContainer = styled(Box)`
+function InputField({
+  label,
+  value,
+  onChangeText,
+  testID,
+}: {
+  label: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  testID: string;
+}) {
+  return (
+    <InputContainer>
+      <Text variant="small" color="neutral.c70">
+        {label}
+      </Text>
+      <StyledInput value={value} onChangeText={onChangeText} testID={testID} />
+    </InputContainer>
+  );
+}
+
+const InputContainer = styled(Flex)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
-  height: 72px;
-  width: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 8px;
+  padding: 8px 16px;
+  gap: 2px;
 `;
 
-const DetailRow = styled(Flex)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+const StyledInput = styled.TextInput`
+  font-size: 16px;
+  color: ${p => p.theme.colors.neutral.c100};
+  padding: 0;
 `;

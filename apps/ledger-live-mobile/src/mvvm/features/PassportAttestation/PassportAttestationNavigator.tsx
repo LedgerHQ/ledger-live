@@ -8,6 +8,7 @@ import LandingScreen from "./screens/Landing";
 import ScanMRZScreen from "./screens/ScanMRZ";
 import ReadNFCScreen from "./screens/ReadNFC";
 import ConfirmScreen from "./screens/Confirm";
+import SelectProofScreen from "./screens/SelectProof";
 import GenerateProofScreen from "./screens/GenerateProof";
 import SuccessScreen from "./screens/Success";
 
@@ -27,7 +28,7 @@ export default function PassportAttestationNavigator() {
       <Stack.Screen
         name={ScreenName.PassportAttestationScanMRZ}
         component={ScanMRZScreen}
-        options={{ title: "Passport Verification" }}
+        options={{ title: "Scan passport" }}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationReadNFC}
@@ -37,12 +38,17 @@ export default function PassportAttestationNavigator() {
       <Stack.Screen
         name={ScreenName.PassportAttestationConfirm}
         component={ConfirmScreen}
-        options={{ title: "Confirm Details" }}
+        options={{ title: "Passport informations" }}
+      />
+      <Stack.Screen
+        name={ScreenName.PassportAttestationSelectProof}
+        component={SelectProofScreen}
+        options={{ title: "Select proof" }}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationGenerateProof}
         component={GenerateProofScreen}
-        options={{ title: "Generating Proof", headerBackVisible: false }}
+        options={{ title: "Generating your proof", headerBackVisible: false }}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationSuccess}

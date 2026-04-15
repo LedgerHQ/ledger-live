@@ -93,10 +93,10 @@ export default function ScanMRZScreen({ navigation }: Props) {
               <Icons.IdCard size="L" color="primary.c80" />
             </IconContainer>
             <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold">
-              Passport Details
+              Take a picture of your passport
             </Text>
             <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-              Review the scanned details or enter them manually
+              Scan the bar code of your passport.
             </Text>
           </Flex>
 
