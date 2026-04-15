@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#16215](https://github.com/LedgerHQ/ledger-live/pull/16215) [`253bdcf`](https://github.com/LedgerHQ/ledger-live/commit/253bdcf3cc90cfd00a6d75da773cd5e53c96def9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: migrate to oxlint/oxfmt on coin-tester modules
+
 ## 0.19.0
 
 ### Minor Changes

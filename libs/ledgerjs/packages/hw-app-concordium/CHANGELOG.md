@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-concordium
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
+
+### Patch Changes
+
+- Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8), [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9)]:
+  - @ledgerhq/hw-transport@6.35.0-next.0
+  - @ledgerhq/concordium-core@0.4.0-next.0
+
 ## 0.6.1
 
 ### Patch Changes

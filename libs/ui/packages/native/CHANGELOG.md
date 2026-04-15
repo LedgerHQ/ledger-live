@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.61.0-next.0
+
+### Minor Changes
+
+- [#16050](https://github.com/LedgerHQ/ledger-live/pull/16050) [`748b03a`](https://github.com/LedgerHQ/ledger-live/commit/748b03a3508caa3c48a950b5df2a1a78ac524c90) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: replace eslint/prettier with oxlint/oxfmt in libs/ui
+
 ## 0.60.0
 
 ### Minor Changes

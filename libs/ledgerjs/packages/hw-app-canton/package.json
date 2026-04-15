@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-canton",
-  "version": "0.10.1",
+  "version": "0.11.0-next.0",
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
     "Ledger",
@@ -25,10 +25,20 @@
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
       "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
+      "default": "./lib/index.js"
     },
-    "./tests/fixtures/*": "./tests/fixtures/*",
+    "./tests/fixtures/prepare-transfer.json": "./tests/fixtures/prepare-transfer.json",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -66,23 +76,5 @@
     "test": "jest --config=jest.config.ts",
     "test-integ": "jest --config=jest.integ.config.ts",
     "unimported": "unimported"
-  },
-  "exports": {
-    ".": {
-      "@ledgerhq/source": "./src/index.ts",
-      "import": "./lib-es/index.js",
-      "require": "./lib/index.js",
-      "default": "./lib/index.js"
-    },
-    "./tests/fixtures/prepare-transfer.json": "./tests/fixtures/prepare-transfer.json",
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib/*": "./lib/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "import": "./lib-es/*.js",
-      "require": "./lib/*.js",
-      "default": "./lib/*.js"
-    },
-    "./package.json": "./package.json"
   }
 }
