@@ -39,6 +39,7 @@ export {
   useFiatRates,
   useEurRates,
   useCardTotalBalance,
+  useCashback,
   useCardTransactions,
   useCardTransactionFundingSources,
   useAggregatedWalletTransactions,
@@ -49,6 +50,7 @@ export {
 export type {
   WalletBalance,
   CardTotalBalance,
+  CashbackResult,
   CardTransaction,
   CardTransactionsResult,
   FundingSource,

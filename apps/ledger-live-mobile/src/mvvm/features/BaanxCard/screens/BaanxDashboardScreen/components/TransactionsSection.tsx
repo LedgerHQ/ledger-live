@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { ActivityIndicator, View, StyleSheet, Pressable, Image } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import {
   ListItem,
@@ -16,6 +16,7 @@ import type { TransactionItem } from "../mockData";
 
 interface Props {
   readonly transactions: readonly TransactionItem[];
+  readonly isLoading?: boolean;
 }
 
 function MerchantLogo({ tx }: { tx: TransactionItem }) {
@@ -33,8 +34,12 @@ function MerchantLogo({ tx }: { tx: TransactionItem }) {
   );
 }
 
-const TransactionsSection = memo(function TransactionsSection({ transactions }: Props) {
+const TransactionsSection = memo(function TransactionsSection({
+  transactions,
+  isLoading,
+}: Props) {
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   return (
     <View style={styles.section}>
@@ -45,28 +50,40 @@ const TransactionsSection = memo(function TransactionsSection({ transactions }: 
         <ChevronRight size={20} color="muted" />
       </Pressable>
 
-      <View style={styles.list}>
-        {transactions.map(tx => (
-          <ListItem key={tx.id} lx={listItemLx}>
-            <ListItemLeading>
-              <MerchantLogo tx={tx} />
-              <ListItemContent style={listItemContentStyle}>
-                <ListItemTitle typography="body2SemiBold" numberOfLines={1}>
-                  {tx.merchant}
-                </ListItemTitle>
-                <ListItemDescription typography="body3" numberOfLines={1}>
-                  {tx.date}
-                </ListItemDescription>
-              </ListItemContent>
-            </ListItemLeading>
-            <ListItemTrailing>
-              <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                {tx.amount} {tx.currency}
-              </Text>
-            </ListItemTrailing>
-          </ListItem>
-        ))}
-      </View>
+      {isLoading ? (
+        <View style={styles.emptyState}>
+          <ActivityIndicator size="small" color={theme.colors.text.muted} />
+        </View>
+      ) : transactions.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Text typography="body3" lx={{ color: "muted" }}>
+            {t("baanxCard.transactions.empty")}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.list}>
+          {transactions.map(tx => (
+            <ListItem key={tx.id} lx={listItemLx}>
+              <ListItemLeading>
+                <MerchantLogo tx={tx} />
+                <ListItemContent style={listItemContentStyle}>
+                  <ListItemTitle typography="body2SemiBold" numberOfLines={1}>
+                    {tx.merchant}
+                  </ListItemTitle>
+                  <ListItemDescription typography="body3" numberOfLines={1}>
+                    {tx.date}
+                  </ListItemDescription>
+                </ListItemContent>
+              </ListItemLeading>
+              <ListItemTrailing>
+                <Text typography="body2SemiBold" lx={{ color: "base" }}>
+                  {tx.amount} {tx.currency}
+                </Text>
+              </ListItemTrailing>
+            </ListItem>
+          ))}
+        </View>
+      )}
     </View>
   );
 });
@@ -85,7 +102,11 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   list: {
-    paddingHorizontal: 8,
+    marginHorizontal: -8,
+  },
+  emptyState: {
+    alignItems: "center",
+    paddingVertical: 24,
   },
   merchantLogo: {
     width: 48,

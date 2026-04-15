@@ -72,15 +72,18 @@ export function useFiatRates(
 
   const selfCoins = useMemo(() => FIAT_SELF_RATES[fiatLower] ?? [], [fiatLower]);
 
-  const [rates, setRates] = useState<Record<string, number>>({});
+  const buildSelfRates = useCallback(() => {
+    const r: Record<string, number> = {};
+    for (const c of selfCoins) r[c] = 1;
+    return r;
+  }, [selfCoins]);
+
+  const [rates, setRates] = useState<Record<string, number>>(buildSelfRates);
   const prevFiat = useRef(fiatLower);
 
-  // Reset rates when the target fiat currency changes
   if (prevFiat.current !== fiatLower) {
     prevFiat.current = fiatLower;
-    const fresh: Record<string, number> = {};
-    for (const c of selfCoins) fresh[c] = 1;
-    setRates(fresh);
+    setRates(buildSelfRates());
   }
 
   const ids = useMemo(() => {
@@ -210,6 +213,40 @@ export function useCardTotalBalance(
     : null;
 
   return { wallets, totalFiatValue, fiatCurrency, isLoading: wLoading };
+}
+
+// ---------------------------------------------------------------------------
+// useCashback — BXX reward balance converted to fiat
+// ---------------------------------------------------------------------------
+
+export interface CashbackResult {
+  bxxBalance: number;
+  fiatValue: number | null;
+  fiatCurrency: string;
+  isLoading: boolean;
+}
+
+/**
+ * Returns the user's BXX (cashback/reward) balance converted to the target fiat.
+ * Piggybacks on useCardTotalBalance to avoid duplicate API calls.
+ */
+export function useCashback(
+  accessToken: string | null,
+  fiatOverride?: string,
+): CashbackResult {
+  const { wallets, fiatCurrency, isLoading } = useCardTotalBalance(accessToken, fiatOverride);
+
+  const bxxWallet = useMemo(
+    () => wallets.find(w => w.coin.toLowerCase() === "bxx"),
+    [wallets],
+  );
+
+  return {
+    bxxBalance: bxxWallet?.balance ?? 0,
+    fiatValue: bxxWallet?.fiatValue ?? null,
+    fiatCurrency,
+    isLoading,
+  };
 }
 
 // ---------------------------------------------------------------------------

@@ -1,18 +1,54 @@
-import React from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
+import { BaanxLoginScreen } from "./screens/BaanxLoginScreen";
 import { BaanxDashboardScreen } from "./screens/BaanxDashboardScreen";
 import type { BaanxCardNavigatorParamList } from "./types";
+
+interface BaanxAuthContextValue {
+  accessToken: string | null;
+  setAccessToken: (token: string) => void;
+}
+
+const BaanxAuthContext = createContext<BaanxAuthContextValue>({
+  accessToken: null,
+  setAccessToken: () => {},
+});
+
+export function useBaanxAuth() {
+  return useContext(BaanxAuthContext);
+}
 
 const Stack = createNativeStackNavigator<BaanxCardNavigatorParamList>();
 
 export default function BaanxCardNavigator() {
+  const [accessToken, setAccessTokenRaw] = useState<string | null>(null);
+
+  const setAccessToken = useCallback((token: string) => {
+    setAccessTokenRaw(token);
+  }, []);
+
+  const authValue = useMemo(
+    () => ({ accessToken, setAccessToken }),
+    [accessToken, setAccessToken],
+  );
+
+  const isAuthenticated = accessToken !== null;
+
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName={ScreenName.BaanxCardDashboard}
-    >
-      <Stack.Screen name={ScreenName.BaanxCardDashboard} component={BaanxDashboardScreen} />
-    </Stack.Navigator>
+    <BaanxAuthContext.Provider value={authValue}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={
+          isAuthenticated ? ScreenName.BaanxCardDashboard : ScreenName.BaanxCardLogin
+        }
+      >
+        {isAuthenticated ? (
+          <Stack.Screen name={ScreenName.BaanxCardDashboard} component={BaanxDashboardScreen} />
+        ) : (
+          <Stack.Screen name={ScreenName.BaanxCardLogin} component={BaanxLoginScreen} />
+        )}
+      </Stack.Navigator>
+    </BaanxAuthContext.Provider>
   );
 }

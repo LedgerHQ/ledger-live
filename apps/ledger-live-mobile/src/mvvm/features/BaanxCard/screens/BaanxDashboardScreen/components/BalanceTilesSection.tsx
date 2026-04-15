@@ -7,8 +7,11 @@ import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 
 const DISCREET_PLACEHOLDER = "••••";
 
+const LOADING_PLACEHOLDER = "—";
+
 interface Props {
   readonly totalBalance: string;
+  readonly isBalanceLoading?: boolean;
   readonly cashback: string;
   readonly discreetMode: boolean;
   readonly onToggleDiscreet: () => void;
@@ -17,6 +20,7 @@ interface Props {
 
 const BalanceTilesSection = memo(function BalanceTilesSection({
   totalBalance,
+  isBalanceLoading,
   cashback,
   discreetMode,
   onToggleDiscreet,
@@ -26,6 +30,12 @@ const BalanceTilesSection = memo(function BalanceTilesSection({
   const { theme } = useTheme();
   const tileBg = theme.colors.bg.surface;
 
+  const displayBalance = isBalanceLoading
+    ? LOADING_PLACEHOLDER
+    : discreetMode
+      ? DISCREET_PLACEHOLDER
+      : totalBalance;
+
   return (
     <View style={styles.row}>
       <Pressable
@@ -33,8 +43,8 @@ const BalanceTilesSection = memo(function BalanceTilesSection({
         onPress={onToggleDiscreet}
       >
         <View style={styles.tileText}>
-          <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-            {discreetMode ? DISCREET_PLACEHOLDER : totalBalance}
+          <Text typography="heading5SemiBold" lx={{ color: isBalanceLoading ? "muted" : "base" }}>
+            {displayBalance}
           </Text>
           <Text typography="body3" lx={{ color: "muted" }}>
             {t("baanxCard.dashboard.balance.totalBalance")}

@@ -13,6 +13,7 @@ const BaanxDashboardScreenView = ({
   selectedCurrency,
   card,
   totalBalance,
+  isBalanceLoading,
   cashback,
   discreetMode,
   onToggleDiscreet,
@@ -23,6 +24,7 @@ const BaanxDashboardScreenView = ({
   isSmartPaySheetOpen,
   onCloseSmartPaySheet,
   transactions,
+  isTransactionsLoading,
 }: Readonly<BaanxDashboardViewModel>) => {
   const { theme } = useTheme();
   const bgColor = theme.colors.bg.base;
@@ -53,6 +55,7 @@ const BaanxDashboardScreenView = ({
 
         <BalanceTilesSection
           totalBalance={totalBalance}
+          isBalanceLoading={isBalanceLoading}
           cashback={cashback}
           discreetMode={discreetMode}
           onToggleDiscreet={onToggleDiscreet}
@@ -67,7 +70,7 @@ const BaanxDashboardScreenView = ({
           onCloseSmartPaySheet={onCloseSmartPaySheet}
         />
 
-        <TransactionsSection transactions={transactions} />
+        <TransactionsSection transactions={transactions} isLoading={isTransactionsLoading} />
       </ScrollView>
     </View>
   );
