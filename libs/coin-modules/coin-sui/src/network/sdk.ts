@@ -21,19 +21,19 @@ import {
   Checkpoint,
   DelegatedStake,
   ExecuteTransactionBlockParams,
+  JsonRpcHTTPTransport,
   PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
   StakeObject,
   SuiCallArg,
-  SuiClient,
-  SuiHTTPTransport,
+  SuiJsonRpcClient,
   SuiTransaction,
   SuiTransactionBlockKind,
   SuiTransactionBlockResponse,
   SuiTransactionBlockResponseOptions,
   TransactionBlockData,
   TransactionEffects,
-} from "@mysten/sui/client";
+} from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
@@ -50,8 +50,14 @@ import type {
 import { ensureAddressFormat } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
 
-const apiMap: Record<string, SuiClient> = {};
-type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
+type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
+
+function inferNetworkFromUrl(url: string): string {
+  if (url.includes("testnet")) return "testnet";
+  if (url.includes("devnet")) return "devnet";
+  if (url.includes("127.0.0.1") || url.includes("localhost")) return "localnet";
+  return "mainnet";
+}
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
@@ -88,30 +94,30 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
 };
 
 /**
- * Connects to Sui Api
+ * Connects to Sui Api.
+ * A fresh client is created each call — SuiJsonRpcClient is stateless (HTTP JSON-RPC)
  */
 export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
   const url = coinConfig.getCoinConfig(currencyId).node.url;
-  const transport = new SuiHTTPTransport({
+  const network = inferNetworkFromUrl(url);
+  const transport = new JsonRpcHTTPTransport({
     url,
     fetch: fetcher,
   });
 
-  apiMap[url] ??= new SuiClient({ transport });
-
-  const result = await execute(apiMap[url]);
-  return result;
+  const api = new SuiJsonRpcClient({ transport, network });
+  return execute(api);
 }
 
 /**
- * Wraps a SuiClient to batch multiGetObjects calls in chunks of 50,
+ * Wraps a SuiJsonRpcClient to batch multiGetObjects calls in chunks of 50,
  * working around the SUI RPC limit.
  */
-export function withBatchedMultiGetObjects(client: SuiClient): SuiClient {
+export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpcClient {
   return new Proxy(client, {
     get(target, prop, _receiver) {
       if (prop === "multiGetObjects") {
-        return async (params: Parameters<SuiClient["multiGetObjects"]>[0]) => {
+        return async (params: Parameters<SuiJsonRpcClient["multiGetObjects"]>[0]) => {
           const { ids } = params;
           if (ids.length <= MULTI_GET_OBJECTS_LIMIT) {
             return target.multiGetObjects(params);
@@ -1036,7 +1042,7 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
  * Returns the minimum coins needed to cover the required amount.
  */
 export const getCoinsForAmount = async (
-  api: SuiClient,
+  api: SuiJsonRpcClient,
   address: string,
   coinType: string,
   requiredAmount: number,
@@ -1146,7 +1152,8 @@ const createTransactionForDelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    // TODO: remove cast once @mysten/signers is bumped to v2-compat
+    const { bcsObjects } = await getInputObjects(tx as any, withBatchedMultiGetObjects(api) as any);
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1181,7 +1188,8 @@ const createTransactionForUndelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    // TODO: remove cast once @mysten/signers is bumped to v2-compat
+    const { bcsObjects } = await getInputObjects(tx as any, withBatchedMultiGetObjects(api) as any);
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1219,7 +1227,8 @@ const createTransactionForOthers = async (
     }
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    // TODO: remove cast once @mysten/signers is bumped to v2-compat
+    const { bcsObjects } = await getInputObjects(tx as any, withBatchedMultiGetObjects(api) as any);
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1272,7 +1281,7 @@ export const loadOperations = async ({
   order,
   ...params
 }: {
-  api: SuiClient;
+  api: SuiJsonRpcClient;
   addr: string;
   type: OperationType;
   operations: PaginatedTransactionResponse["data"];
@@ -1314,7 +1323,7 @@ export const loadOperations = async ({
  * Query transactions for given address from RPC
  */
 export const queryTransactions = async (params: {
-  api: SuiClient;
+  api: SuiJsonRpcClient;
   addr: string;
   type: OperationType;
   order: "ascending" | "descending";
@@ -1343,7 +1352,7 @@ export const queryTransactions = async (params: {
  * depending on the RPC settings).
  */
 export const queryTransactionsByDigest = async (params: {
-  api: SuiClient;
+  api: SuiJsonRpcClient;
   digests: string[];
   options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
 }): Promise<SuiTransactionBlockResponse[]> => {

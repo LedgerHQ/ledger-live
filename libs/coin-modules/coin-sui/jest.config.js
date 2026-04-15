@@ -1,3 +1,5 @@
+const esmPackages = ["@mysten", "@scure", "@noble"];
+
 module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
   coveragePathIgnorePatterns: ["test/cli.ts", ".*\\.integ\\.test\\.[tj]s"],
@@ -12,7 +14,16 @@ module.exports = {
         },
       },
     ],
+    [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };
