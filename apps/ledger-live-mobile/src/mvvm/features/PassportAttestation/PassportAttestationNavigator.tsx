@@ -4,6 +4,7 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import type { PassportAttestationNavigatorStackParamList } from "~/components/RootNavigator/types/PassportAttestationNavigator";
+import LandingScreen from "./screens/Landing";
 import ScanMRZScreen from "./screens/ScanMRZ";
 import ReadNFCScreen from "./screens/ReadNFC";
 import ConfirmScreen from "./screens/Confirm";
@@ -18,6 +19,11 @@ export default function PassportAttestationNavigator() {
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
+      <Stack.Screen
+        name={ScreenName.PassportAttestationLanding}
+        component={LandingScreen}
+        options={{ title: "Generate a ZK proof of your ID" }}
+      />
       <Stack.Screen
         name={ScreenName.PassportAttestationScanMRZ}
         component={ScanMRZScreen}

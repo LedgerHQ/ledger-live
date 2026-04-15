@@ -1,4 +1,4 @@
-import { Clock, Eye, Experiment, Refresh, Settings, Tools } from "@ledgerhq/lumen-ui-react/symbols";
+import { Clock, Eye, Experiment, Refresh, Tools } from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
 import { renderHook } from "tests/testSetup";
@@ -7,7 +7,6 @@ import { useActivityIndicator } from "../useActivityIndicator";
 import { useDiscreetMode } from "../useDiscreetMode";
 import { useExperimentalFeatures } from "../useExperimentalFeatures";
 import { useFeatureFlags } from "../useFeatureFlags";
-import { useSettings } from "../useSettings";
 import { useHistory } from "../useHistory";
 import type { TopBarSlot } from "../../types";
 
@@ -15,7 +14,6 @@ jest.mock("../useActivityIndicator");
 jest.mock("../useDiscreetMode");
 jest.mock("../useExperimentalFeatures");
 jest.mock("../useFeatureFlags");
-jest.mock("../useSettings");
 jest.mock("../useHistory");
 
 const defaults = {
@@ -29,7 +27,6 @@ const defaults = {
     icon: Refresh,
     onTooltipShow: undefined,
   },
-  settings: { handleSettings: jest.fn(), settingsIcon: Settings, tooltip: "Settings" },
   experimental: {
     isVisible: false,
     handleExperimental: jest.fn(),
@@ -68,7 +65,6 @@ const setup = ({
     hasAccounts,
     isRotating,
   });
-  jest.mocked(useSettings).mockReturnValue(defaults.settings);
   jest.mocked(useExperimentalFeatures).mockReturnValue({
     ...defaults.experimental,
     isVisible: experimentalVisible,
@@ -116,12 +112,12 @@ describe("useTopBarViewModel", () => {
       [
         "default (with accounts)",
         {},
-        ["synchronize", "notification", "discreet", "settings", "my ledger"],
+        ["synchronize", "notification", "discreet", "avatar"],
       ],
       [
         "without accounts",
         { hasAccounts: false },
-        ["notification", "discreet", "settings", "my ledger"],
+        ["notification", "discreet", "avatar"],
       ],
       [
         "all optional slots visible",
@@ -133,8 +129,7 @@ describe("useTopBarViewModel", () => {
           "notification",
           "discreet",
           "history",
-          "settings",
-          "my ledger",
+          "avatar",
         ],
       ],
     ])("%s", (_name, options, expectedLabels) => {

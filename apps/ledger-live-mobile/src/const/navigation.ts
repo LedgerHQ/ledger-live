@@ -552,6 +552,7 @@ export enum ScreenName {
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
 
   // Passport Attestation
+  PassportAttestationLanding = "PassportAttestationLanding",
   PassportAttestationScanMRZ = "PassportAttestationScanMRZ",
   PassportAttestationReadNFC = "PassportAttestationReadNFC",
   PassportAttestationConfirm = "PassportAttestationConfirm",

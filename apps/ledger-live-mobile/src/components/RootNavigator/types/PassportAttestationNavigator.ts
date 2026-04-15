@@ -4,6 +4,7 @@ import type { PassportData } from "LLM/features/PassportAttestation/utils/passpo
 import type { AgeProof } from "LLM/features/PassportAttestation/utils/zkProof";
 
 export type PassportAttestationNavigatorStackParamList = {
+  [ScreenName.PassportAttestationLanding]: undefined;
   [ScreenName.PassportAttestationScanMRZ]: undefined;
   [ScreenName.PassportAttestationReadNFC]: {
     mrzData: MrzData;

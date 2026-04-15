@@ -26,7 +26,7 @@ export const PortfolioPassportEntryPoint = () => {
 
   const handlePress = useCallback(() => {
     navigation.navigate(NavigatorName.PassportAttestation, {
-      screen: ScreenName.PassportAttestationScanMRZ,
+      screen: ScreenName.PassportAttestationLanding,
     });
   }, [navigation]);
 
@@ -42,13 +42,9 @@ export const PortfolioPassportEntryPoint = () => {
           <ListItemLeading>
             <Spot appearance="icon" icon={ShieldLock} />
             <ListItemContent>
-              <ListItemTitle>
-                {isVerified ? "Age Verified" : "Verify Your Age"}
-              </ListItemTitle>
+              <ListItemTitle>{isVerified ? "Age Verified" : "Verify Your Age! "}</ListItemTitle>
               <ListItemDescription>
-                {isVerified
-                  ? "ZK proof synced via TrustChain"
-                  : "Scan passport for ZK age proof"}
+                {isVerified ? "ZK proof synced via TrustChain" : "Scan passport for ZK age proof"}
               </ListItemDescription>
             </ListItemContent>
           </ListItemLeading>

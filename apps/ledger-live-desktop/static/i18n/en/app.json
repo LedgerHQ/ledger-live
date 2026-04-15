@@ -8236,6 +8236,17 @@
     },
     "myLedger": {
       "tooltip": "My Ledger"
+    },
+    "avatarPopover": {
+      "walletName": "My wallet",
+      "recover": "Recover",
+      "help": "Help",
+      "identity": "Identity",
+      "myLedger": "My Ledger",
+      "myLedgerDescription": "Manage your Ledger device",
+      "exploreDevices": "Explore all Ledger devices",
+      "settings": "Settings",
+      "notifications": "Notifications"
     }
   },
   "geoBlocking": {

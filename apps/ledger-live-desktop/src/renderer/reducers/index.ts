@@ -1,6 +1,8 @@
 import { combineReducers } from "redux";
 import featureFlags, { type FeatureFlagsState } from "@shared/feature-flags";
 import accounts, { AccountsState } from "./accounts";
+import ageAttestation from "./ageAttestation";
+import type { AgeAttestationLocalState } from "./ageAttestation";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
 import dynamicContent, { DynamicContentState } from "./dynamicContent";
@@ -28,6 +30,7 @@ import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
+  ageAttestation: AgeAttestationLocalState;
   application: ApplicationState;
   countervalues: CountervaluesState;
   devices: DevicesState;
@@ -51,6 +54,7 @@ export type State = LLDRTKApiState & {
 
 const appReducer = combineReducers({
   accounts,
+  ageAttestation,
   application,
   countervalues,
   devices,

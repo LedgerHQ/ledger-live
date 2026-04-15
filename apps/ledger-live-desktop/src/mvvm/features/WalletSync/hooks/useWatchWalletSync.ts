@@ -34,6 +34,7 @@ import {
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
 import { saveSettings } from "~/renderer/actions/settings";
+import { setAgeAttestation } from "~/renderer/reducers/ageAttestation";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
@@ -52,6 +53,7 @@ function localStateSelector(state: State): LocalState {
       nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
     },
     accountNames: state.wallet.accountNames,
+    ageAttestation: state.ageAttestation,
     recentAddresses: state.wallet.recentAddresses,
     settings: {
       language: state.settings.language ?? "",
@@ -79,6 +81,7 @@ async function save(
       }),
     );
     dispatch(replaceAccounts(newLocalState.accounts.list)); // triggers db middleware to persist accounts
+    dispatch(setAgeAttestation(newLocalState.ageAttestation));
   }
 }
 

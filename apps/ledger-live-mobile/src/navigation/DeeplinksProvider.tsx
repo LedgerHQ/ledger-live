@@ -229,6 +229,12 @@ const linkingOptions = () => ({
             },
           },
 
+          [NavigatorName.PassportAttestation]: {
+            screens: {
+              [ScreenName.PassportAttestationLanding]: "ledger-proof",
+            },
+          },
+
           [NavigatorName.Settings]: {
             initialRouteName: ScreenName.SettingsScreen,
             screens: {

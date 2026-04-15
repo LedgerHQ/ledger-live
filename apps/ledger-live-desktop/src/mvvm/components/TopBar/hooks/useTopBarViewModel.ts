@@ -5,8 +5,6 @@ import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
 import { useExperimentalFeatures } from "./useExperimentalFeatures";
 import { useFeatureFlags } from "./useFeatureFlags";
-import { useMyLedger } from "./useMyLedger";
-import { useSettings } from "./useSettings";
 import { useHistory } from "./useHistory";
 
 const useTopBarViewModel = () => {
@@ -20,8 +18,6 @@ const useTopBarViewModel = () => {
     tooltip: activityIndicatorTooltip,
     onTooltipShow: activityIndicatorOnTooltipShow,
   } = useActivityIndicator();
-  const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
-  const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
   const { handleHistory, historyIcon, tooltip: historyTooltip, cta: historyCta } = useHistory();
   const {
     isVisible: isExperimentalVisible,
@@ -112,26 +108,7 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    {
-      type: "action",
-      action: {
-        label: "settings",
-        tooltip: settingsTooltip,
-        icon: settingsIcon,
-        isInteractive: true,
-        onClick: handleSettings,
-      },
-    },
-    {
-      type: "action",
-      action: {
-        label: "my ledger",
-        tooltip: myLedgerTooltip,
-        icon: myLedgerIcon,
-        isInteractive: true,
-        onClick: handleMyLedger,
-      },
-    },
+    { type: "avatar" },
   ];
 
   return {
