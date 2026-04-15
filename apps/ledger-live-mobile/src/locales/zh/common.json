@@ -294,6 +294,11 @@
       "title" : "抱歉，连接失败",
       "description" : "请再次尝试。"
     },
+    "CounterfeitDevice" : {
+      "title" : "{{productName}} 未通过正品检查",
+      "description" : "使用这个 Ledger 设备并不安全。请联系 Ledger 客服。",
+      "contactSupportCTA" : "联系 Ledger 客服"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "连接失败",
       "description" : "请再次尝试。"
@@ -415,8 +420,8 @@
       "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "AlreadySendingApduError" : {
-      "title" : "通信错误",
-      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+      "title" : "请在您的 Ledger 设备上完成操作",
+      "description" : "在您的设备上完成此操作。"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "通信错误",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "您需要使用账户才能访问此应用程序。",
-      "add" : "添加账户"
+      "select" : "选择账户"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "账户",
     "transfer" : "转移",
     "manager" : "我的 Ledger",
+    "myWallet" : "My wallet",
     "settings" : "设置",
     "platform" : "Live 应用程序",
     "discover" : "探索",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "已更新的账户"
     }
   },
+  "operationsList" : {
+    "to" : "到",
+    "from" : "从"
+  },
   "operationDetails" : {
     "title" : "交易详情",
     "account" : "账户",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "不作操作",
+    "emptyTitle" : "暂无交易",
+    "emptySubtitle" : "请稍后再来查看您的交易。",
     "noMoreTransactions" : "无其他交易"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "安装 {{appName}} 失败",
       "description" : "安装过程中出错了。请重试。"
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "帮助",
+      "referral" : "Referral"
     }
   }
 }
