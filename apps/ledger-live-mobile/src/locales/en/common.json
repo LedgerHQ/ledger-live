@@ -7450,7 +7450,14 @@
       "search": "Search merchant…",
       "previous": "Previous",
       "next": "Next",
-      "page": "Page {{page}}"
+      "page": "Page {{page}}",
+      "detail": {
+        "card": "Card",
+        "status": "Status",
+        "amount": "Amount",
+        "crypto": "Crypto",
+        "cashback": "Cashback"
+      }
     },
     "dashboard": {
       "fiatCurrencies": {
@@ -7473,7 +7480,8 @@
       },
       "balance": {
         "totalBalance": "Total balance",
-        "cashback": "Cashback"
+        "cashback": "Cashback · {{rate}}%",
+        "spentThisMonth": "Spent this month"
       },
       "payWith": {
         "title": "Pay with",
@@ -7486,6 +7494,22 @@
           "step1": "When you tap to pay, Smart Pay checks your available balances.",
           "step2": "It picks the asset with the lowest conversion cost at that moment.",
           "step3": "The payment is settled instantly — no extra steps required."
+        },
+        "paymentMethodSheet": {
+          "title": "Select payment method",
+          "gotIt": "Got it",
+          "smartPay": {
+            "title": "Smart Pay",
+            "description": "Smart Pay watches your portfolio in real time and picks the asset that costs you the least to spend"
+          },
+          "assetByDefault": {
+            "title": "Asset by default",
+            "description": "If you don't have enough in the asset selected, will try another asset"
+          },
+          "assetOrder": {
+            "title": "Asset order via drag & drop",
+            "description": "If you select an asset by default and don't have enough funds, we'll follow the asset order."
+          }
         }
       },
       "settings": {

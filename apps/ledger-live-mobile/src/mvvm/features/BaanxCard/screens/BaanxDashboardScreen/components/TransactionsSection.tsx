@@ -12,11 +12,12 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { TransactionItem } from "../mockData";
+import type { TransactionItem } from "../mapCardTransaction";
 
 interface Props {
   readonly transactions: readonly TransactionItem[];
   readonly isLoading?: boolean;
+  readonly onSelectTransaction?: (tx: TransactionItem) => void;
 }
 
 function MerchantLogo({ tx }: { tx: TransactionItem }) {
@@ -37,6 +38,7 @@ function MerchantLogo({ tx }: { tx: TransactionItem }) {
 const TransactionsSection = memo(function TransactionsSection({
   transactions,
   isLoading,
+  onSelectTransaction,
 }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -63,7 +65,11 @@ const TransactionsSection = memo(function TransactionsSection({
       ) : (
         <View style={styles.list}>
           {transactions.map(tx => (
-            <ListItem key={tx.id} lx={listItemLx}>
+            <ListItem
+              key={tx.id}
+              lx={listItemLx}
+              onPress={onSelectTransaction ? () => onSelectTransaction(tx) : undefined}
+            >
               <ListItemLeading>
                 <MerchantLogo tx={tx} />
                 <ListItemContent style={listItemContentStyle}>
@@ -77,7 +83,7 @@ const TransactionsSection = memo(function TransactionsSection({
               </ListItemLeading>
               <ListItemTrailing>
                 <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {tx.amount} {tx.currency}
+                  {tx.amount}
                 </Text>
               </ListItemTrailing>
             </ListItem>

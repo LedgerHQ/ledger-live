@@ -10,11 +10,7 @@ export type {
   BaanxMccCategory,
 } from "./types";
 
-export {
-  BAANX_WEB_APP_URL,
-  BAANX_TOKEN_EXTRACTION_JS,
-  parseBaanxWebViewMessage,
-} from "./service";
+export { BAANX_WEB_APP_URL, BAANX_TOKEN_EXTRACTION_JS, parseBaanxWebViewMessage } from "./service";
 
 export type { BaanxWebViewTokenResult } from "./service";
 

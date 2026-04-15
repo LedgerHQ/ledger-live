@@ -8,6 +8,7 @@ import BalanceTilesSection from "./components/BalanceTilesSection";
 import PayWithSection from "./components/PayWithSection";
 import TransactionsSection from "./components/TransactionsSection";
 import SettingsBottomSheet from "./components/SettingsBottomSheet";
+import TransactionDetailBottomSheet from "./components/TransactionDetailBottomSheet";
 import type { BaanxDashboardViewModel } from "./useBaanxDashboardViewModel";
 
 const BaanxDashboardScreenView = ({
@@ -15,19 +16,30 @@ const BaanxDashboardScreenView = ({
   cards,
   activeCardIndex,
   onCardIndexChange,
-  totalBalance,
+  totalBalanceValue,
   isBalanceLoading,
-  cashback,
+  cashbackValue,
+  cashbackRate,
+  spentThisMonthValue,
+  spentTrend,
+  spentChartData,
+  fiatCurrencySymbol,
   discreetMode,
   onToggleDiscreet,
   onTopUp,
   selectedPaymentId,
   stablecoins,
   onSelectPayment,
+  onReorderStablecoins,
   isSmartPaySheetOpen,
+  onOpenSmartPaySheet,
   onCloseSmartPaySheet,
   transactions,
   isTransactionsLoading,
+  selectedTransaction,
+  isTransactionDetailOpen,
+  onSelectTransaction,
+  onCloseTransactionDetail,
   frozenCardIds,
   blockedCardIds,
   isActiveCardFrozen,
@@ -75,9 +87,14 @@ const BaanxDashboardScreenView = ({
         />
 
         <BalanceTilesSection
-          totalBalance={totalBalance}
+          totalBalanceValue={totalBalanceValue}
           isBalanceLoading={isBalanceLoading}
-          cashback={cashback}
+          cashbackValue={cashbackValue}
+          cashbackRate={cashbackRate}
+          spentThisMonthValue={spentThisMonthValue}
+          spentTrend={spentTrend}
+          spentChartData={spentChartData}
+          fiatCurrencySymbol={fiatCurrencySymbol}
           discreetMode={discreetMode}
           onToggleDiscreet={onToggleDiscreet}
           onTopUp={onTopUp}
@@ -87,11 +104,17 @@ const BaanxDashboardScreenView = ({
           selectedPaymentId={selectedPaymentId}
           stablecoins={stablecoins}
           onSelectPayment={onSelectPayment}
+          onReorderStablecoins={onReorderStablecoins}
           isSmartPaySheetOpen={isSmartPaySheetOpen}
+          onOpenSmartPaySheet={onOpenSmartPaySheet}
           onCloseSmartPaySheet={onCloseSmartPaySheet}
         />
 
-        <TransactionsSection transactions={transactions} isLoading={isTransactionsLoading} />
+        <TransactionsSection
+          transactions={transactions}
+          isLoading={isTransactionsLoading}
+          onSelectTransaction={onSelectTransaction}
+        />
       </ScrollView>
 
       <SettingsBottomSheet
@@ -102,6 +125,12 @@ const BaanxDashboardScreenView = ({
         onFreezeCard={onFreezeCard}
         onBlockCard={onBlockCard}
         onCustomizeCard={onCustomizeCard}
+      />
+
+      <TransactionDetailBottomSheet
+        transaction={selectedTransaction}
+        isOpen={isTransactionDetailOpen}
+        onClose={onCloseTransactionDetail}
       />
     </View>
   );

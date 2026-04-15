@@ -64,10 +64,7 @@ const FIAT_SELF_RATES: Record<string, string[]> = {
  * @param fiat - Target fiat currency, defaults to "eur". Supports any CoinGecko vs_currency.
  * @returns Record mapping coin ticker → rate in target fiat
  */
-export function useFiatRates(
-  coins: string[],
-  fiat: string = "eur",
-): Record<string, number> {
+export function useFiatRates(coins: string[], fiat: string = "eur"): Record<string, number> {
   const fiatLower = fiat.toLowerCase();
 
   const selfCoins = useMemo(() => FIAT_SELF_RATES[fiatLower] ?? [], [fiatLower]);
@@ -208,9 +205,7 @@ export function useCardTotalBalance(
   );
 
   const hasFiat = wallets.some(w => w.fiatValue !== null);
-  const totalFiatValue = hasFiat
-    ? wallets.reduce((sum, w) => sum + (w.fiatValue ?? 0), 0)
-    : null;
+  const totalFiatValue = hasFiat ? wallets.reduce((sum, w) => sum + (w.fiatValue ?? 0), 0) : null;
 
   return { wallets, totalFiatValue, fiatCurrency, isLoading: wLoading };
 }
@@ -230,16 +225,10 @@ export interface CashbackResult {
  * Returns the user's BXX (cashback/reward) balance converted to the target fiat.
  * Piggybacks on useCardTotalBalance to avoid duplicate API calls.
  */
-export function useCashback(
-  accessToken: string | null,
-  fiatOverride?: string,
-): CashbackResult {
+export function useCashback(accessToken: string | null, fiatOverride?: string): CashbackResult {
   const { wallets, fiatCurrency, isLoading } = useCardTotalBalance(accessToken, fiatOverride);
 
-  const bxxWallet = useMemo(
-    () => wallets.find(w => w.coin.toLowerCase() === "bxx"),
-    [wallets],
-  );
+  const bxxWallet = useMemo(() => wallets.find(w => w.coin.toLowerCase() === "bxx"), [wallets]);
 
   return {
     bxxBalance: bxxWallet?.balance ?? 0,
@@ -281,9 +270,10 @@ function parseCardTx(raw: Record<string, unknown>): CardTransaction {
     amount: Number(raw.amountTransactionCurrency ?? 0),
     currency: String(raw.originalTransactionCurrency ?? "EUR"),
     state: String(raw.transaction_state ?? raw.status ?? "—"),
-    date: raw.created_at ?? raw.dateTime ?? raw.date
-      ? String(raw.created_at ?? raw.dateTime ?? raw.date)
-      : null,
+    date:
+      raw.created_at ?? raw.dateTime ?? raw.date
+        ? String(raw.created_at ?? raw.dateTime ?? raw.date)
+        : null,
     reversalId: raw.reversalAuthorizationId ? String(raw.reversalAuthorizationId) : null,
     raw,
   };
@@ -431,21 +421,18 @@ export function useAggregatedWalletTransactions(
   const allTxsRef = useRef(allTxs);
   const loadingMapRef = useRef(loadingMap);
 
-  const onResult = useCallback(
-    (walletKey: string, txs: WalletTransaction[], loading: boolean) => {
-      if (allTxsRef.current[walletKey] !== txs) {
-        const next = { ...allTxsRef.current, [walletKey]: txs };
-        allTxsRef.current = next;
-        setAllTxs(next);
-      }
-      if (loadingMapRef.current[walletKey] !== loading) {
-        const next = { ...loadingMapRef.current, [walletKey]: loading };
-        loadingMapRef.current = next;
-        setLoadingMap(next);
-      }
-    },
-    [],
-  );
+  const onResult = useCallback((walletKey: string, txs: WalletTransaction[], loading: boolean) => {
+    if (allTxsRef.current[walletKey] !== txs) {
+      const next = { ...allTxsRef.current, [walletKey]: txs };
+      allTxsRef.current = next;
+      setAllTxs(next);
+    }
+    if (loadingMapRef.current[walletKey] !== loading) {
+      const next = { ...loadingMapRef.current, [walletKey]: loading };
+      loadingMapRef.current = next;
+      setLoadingMap(next);
+    }
+  }, []);
 
   const transactions = useMemo(
     () =>

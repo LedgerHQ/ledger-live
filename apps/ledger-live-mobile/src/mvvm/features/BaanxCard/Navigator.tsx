@@ -22,16 +22,14 @@ export function useBaanxAuth() {
 const Stack = createNativeStackNavigator<BaanxCardNavigatorParamList>();
 
 export default function BaanxCardNavigator() {
-  const [accessToken, setAccessTokenRaw] = useState<string | null>(null);
+  // TODO: remove – bypass login for dev
+  const [accessToken, setAccessTokenRaw] = useState<string | null>("__DEV_BYPASS__");
 
   const setAccessToken = useCallback((token: string) => {
     setAccessTokenRaw(token);
   }, []);
 
-  const authValue = useMemo(
-    () => ({ accessToken, setAccessToken }),
-    [accessToken, setAccessToken],
-  );
+  const authValue = useMemo(() => ({ accessToken, setAccessToken }), [accessToken, setAccessToken]);
 
   const isAuthenticated = accessToken !== null;
 

@@ -488,6 +488,17 @@ export const DeeplinksProvider = ({
                               [ScreenName.Earn]: "earn",
                             },
                           },
+                          /**
+                           * ie: "ledgerlive://card-pay" will open the Baanx Card Pay tab
+                           *
+                           * @params ?transactionId: string
+                           * ie: "ledgerlive://card-pay?transactionId=abc123" will open Pay tab and show transaction detail
+                           */
+                          [NavigatorName.BaanxCardTab]: {
+                            screens: {
+                              [ScreenName.BaanxCardDashboard]: "card-pay",
+                            },
+                          },
                           ...(!web3hubFlag?.enabled
                             ? {
                                 [NavigatorName.Discover]: {
@@ -556,9 +567,10 @@ export const DeeplinksProvider = ({
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayWallet40MainNav && shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          ...(shouldDisplayWallet40MainNav &&
+                            shouldDisplayAssetSection && {
+                              [ScreenName.CryptoAddresses]: "crypto-addresses",
+                            }),
                         },
                       },
                     },
