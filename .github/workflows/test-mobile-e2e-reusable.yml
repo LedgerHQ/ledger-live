@@ -145,7 +145,7 @@ env:
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
-  AVD_API: 35
+  AVD_API: 36
   AVD_ARCH: x86_64
   AVD_PROFILE: pixel_9_pro_xl
   AVD_TARGET: google_apis
