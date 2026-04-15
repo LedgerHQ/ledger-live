@@ -1,5 +1,32 @@
 # @ledgerhq/zcash-shielded
 
+## 0.8.0
+
+### Minor Changes
+
+- [#15853](https://github.com/LedgerHQ/ledger-live/pull/15853) [`892f50a`](https://github.com/LedgerHQ/ledger-live/commit/892f50a33033abbcb05f6cdfd7134c86cd4b45eb) Thanks [@alevito](https://github.com/alevito)! - DecryptedOutput::amount is expressed in Zatoshis
+
+- [#15019](https://github.com/LedgerHQ/ledger-live/pull/15019) [`03ef36f`](https://github.com/LedgerHQ/ledger-live/commit/03ef36fe77f9048541b46e166d8bd8674fe3d896) Thanks [@alevito](https://github.com/alevito)! - - Add support for ZCash shielded sync to coin-bitcoin module
+
+- [#15872](https://github.com/LedgerHQ/ledger-live/pull/15872) [`ca9136f`](https://github.com/LedgerHQ/ledger-live/commit/ca9136f9d17c7c82434a674faf2e111cac635a4b) Thanks [@alevito](https://github.com/alevito)! - ZCash.decryptTransaction(..) returns fee in zatoshis.
+
+- [#15745](https://github.com/LedgerHQ/ledger-live/pull/15745) [`b755e91`](https://github.com/LedgerHQ/ledger-live/commit/b755e916e4c1e7ebd9043dfc959eba2c5081ec5b) Thanks [@semeano](https://github.com/semeano)! - Save private info when enabling shielded transactions
+
+- [#15679](https://github.com/LedgerHQ/ledger-live/pull/15679) [`c353f29`](https://github.com/LedgerHQ/ledger-live/commit/c353f29b9174c20c708662c160f55c597020ee58) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(coin-modules): add oxfmt with shared config (Prettier parity)
+
+  - Add libs/coin-modules/.oxfmtrc.json aligned with root .prettierrc and desktop/mobile oxfmt
+  - Add format, format:check, and run oxfmt before oxlint in lint:fix; add oxfmt devDependency
+  - Remove coin-ton prettier script; turbo format/format:check tasks
+  - Initial oxfmt pass on src
+
+- [#15786](https://github.com/LedgerHQ/ledger-live/pull/15786) [`fe0dedb`](https://github.com/LedgerHQ/ledger-live/commit/fe0dedb3d2f67390102b1153b6ee6cb16c22a26a) Thanks [@semeano](https://github.com/semeano)! - Connect Zcash UI with module sync
+
+### Patch Changes
+
+- Updated dependencies [[`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8), [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f)]:
+  - @ledgerhq/logs@6.17.0
+  - @ledgerhq/live-network@2.5.0
+
 ## 0.8.0-next.0
 
 ### Minor Changes

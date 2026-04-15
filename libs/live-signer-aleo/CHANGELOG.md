@@ -1,5 +1,21 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.15.0
+
+### Minor Changes
+
+- [#15972](https://github.com/LedgerHQ/ledger-live/pull/15972) [`09d27a2`](https://github.com/LedgerHQ/ledger-live/commit/09d27a229961aa8cd87d7b5a6e14e467d2eb6f7a) Thanks [@0xMM-L](https://github.com/0xMM-L)! - bump dmk signer-aleo package and add test coverage
+
+- [#15881](https://github.com/LedgerHQ/ledger-live/pull/15881) [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Migrate `libs/live-*` packages from ESLint to Oxlint with shared config under `libs/oxc-live-libs`, add Oxfmt for `live-currency-format`, and align tooling with `ledger-live-common` / apps.
+
+  LIVE-28279
+
+### Patch Changes
+
+- Updated dependencies [[`5fefc2e`](https://github.com/LedgerHQ/ledger-live/commit/5fefc2e6a4c6e4fdcaae0139f2f8d6f9011b33c8), [`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`45a4b84`](https://github.com/LedgerHQ/ledger-live/commit/45a4b8472b2584f90b803e9de982ef4c1067c1df), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8), [`e9dab3e`](https://github.com/LedgerHQ/ledger-live/commit/e9dab3e5039f907453d0213022b7cdaa1bbd1b96), [`c353f29`](https://github.com/LedgerHQ/ledger-live/commit/c353f29b9174c20c708662c160f55c597020ee58), [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21)]:
+  - @ledgerhq/coin-aleo@1.9.0
+  - @ledgerhq/errors@6.33.0
+
 ## 0.15.0-next.0
 
 ### Minor Changes

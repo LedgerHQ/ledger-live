@@ -1,5 +1,13 @@
 # @ledgerhq/errors
 
+## 6.33.0
+
+### Minor Changes
+
+- [#15959](https://github.com/LedgerHQ/ledger-live/pull/15959) [`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add an invalid parameter error
+
+- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
+
 ## 6.33.0-next.0
 
 ### Minor Changes

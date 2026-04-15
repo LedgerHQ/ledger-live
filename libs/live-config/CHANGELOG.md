@@ -1,5 +1,13 @@
 # @ledgerhq/live-config
 
+## 3.7.0
+
+### Minor Changes
+
+- [#15881](https://github.com/LedgerHQ/ledger-live/pull/15881) [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Migrate `libs/live-*` packages from ESLint to Oxlint with shared config under `libs/oxc-live-libs`, add Oxfmt for `live-currency-format`, and align tooling with `ledger-live-common` / apps.
+
+  LIVE-28279
+
 ## 3.7.0-next.0
 
 ### Minor Changes

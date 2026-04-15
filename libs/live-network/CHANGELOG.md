@@ -1,5 +1,21 @@
 # @ledgerhq/live-network
 
+## 2.5.0
+
+### Minor Changes
+
+- [#15881](https://github.com/LedgerHQ/ledger-live/pull/15881) [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Migrate `libs/live-*` packages from ESLint to Oxlint with shared config under `libs/oxc-live-libs`, add Oxfmt for `live-currency-format`, and align tooling with `ledger-live-common` / apps.
+
+  LIVE-28279
+
+### Patch Changes
+
+- Updated dependencies [[`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71), [`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/live-env@2.32.0
+  - @ledgerhq/errors@6.33.0
+  - @ledgerhq/logs@6.17.0
+  - @ledgerhq/live-promise@0.2.3
+
 ## 2.5.0-next.0
 
 ### Minor Changes
