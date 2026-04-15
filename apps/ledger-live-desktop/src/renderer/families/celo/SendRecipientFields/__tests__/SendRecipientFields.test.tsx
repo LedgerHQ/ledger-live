@@ -18,7 +18,8 @@ jest.mock("~/renderer/components/SelectAccount", () => ({
   default: (props: {
     onChange: (a: AccountLike | null | undefined) => void;
     value: AccountLike | null | undefined;
-    filter?: (a: AccountLike) => boolean;
+    filter?: (a: CeloAccount) => boolean;
+    subAccountFilter?: (a: TokenAccount) => boolean;
     [key: string]: unknown;
   }) => {
     mockSelectAccount(props);
@@ -231,79 +232,71 @@ describe("SendRecipientFields", () => {
     });
   });
 
-  describe("accountFilter", () => {
-    let filter: (acc: AccountLike) => boolean;
+  describe("filters", () => {
+    let filter: (acc: CeloAccount) => boolean;
+    let subAccountFilter: (acc: TokenAccount) => boolean;
 
     beforeEach(() => {
       render(<SendRecipientFields.component {...defaultProps} />);
       filter = mockSelectAccount.mock.calls[0][0].filter;
+      subAccountFilter = mockSelectAccount.mock.calls[0][0].subAccountFilter;
     });
 
-    it("allows USDT token account (supported fee currency)", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("passes subAccountFilter to SelectAccount", () => {
+      expect(subAccountFilter).toEqual(expect.any(Function));
+    });
+
+    it("subAccountFilter allows USDT token account (supported fee currency)", () => {
       const usdtAccount = makeTokenAccount(USDT_CONTRACT);
-      isTokenAccount.mockReturnValue(true);
 
-      expect(filter(usdtAccount)).toBe(true);
+      expect(subAccountFilter(usdtAccount)).toBe(true);
     });
 
-    it("allows USDT token account with uppercase contract address", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("subAccountFilter allows USDT token account with uppercase contract address", () => {
       const usdtAccount = makeTokenAccount(USDT_CONTRACT.toUpperCase());
-      isTokenAccount.mockReturnValue(true);
 
-      expect(filter(usdtAccount)).toBe(true);
+      expect(subAccountFilter(usdtAccount)).toBe(true);
     });
 
-    it("allows USDC token account (supported fee currency)", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("subAccountFilter allows USDC token account (supported fee currency)", () => {
       const usdcAccount = makeTokenAccount(USDC_CONTRACT);
-      isTokenAccount.mockReturnValue(true);
 
-      expect(filter(usdcAccount)).toBe(true);
+      expect(subAccountFilter(usdcAccount)).toBe(true);
     });
 
-    it("rejects token account with unsupported contract address", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("subAccountFilter rejects token account with unsupported contract address", () => {
       const unknownTokenAccount = makeTokenAccount("0xdeadbeef00000000000000000000000000000000");
-      isTokenAccount.mockReturnValue(true);
 
-      expect(filter(unknownTokenAccount)).toBe(false);
+      expect(subAccountFilter(unknownTokenAccount)).toBe(false);
     });
 
-    it("allows the main CELO account with matching freshAddress", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("account filter allows the main CELO account with matching freshAddress", () => {
       const celoAccount = {
         ...mockAccount,
         currency: { ...mockCeloCurrency, family: "celo" },
         freshAddress: "0xCELO_ACCOUNT_ADDRESS",
       } as CeloAccount;
-      isTokenAccount.mockReturnValue(false);
 
       expect(filter(celoAccount)).toBe(true);
     });
 
-    it("rejects a CELO account with a different freshAddress", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("account filter rejects a CELO account with a different freshAddress", () => {
       const otherCeloAccount = {
         ...mockAccount,
         id: "other-celo-account",
         freshAddress: "0xDIFFERENT_ADDRESS",
         currency: { ...mockCeloCurrency, family: "celo" },
       } as CeloAccount;
-      isTokenAccount.mockReturnValue(false);
 
       expect(filter(otherCeloAccount)).toBe(false);
     });
 
-    it("rejects a non-CELO currency account", () => {
-      const { isTokenAccount } = getMockedAccountUtils();
+    it("account filter rejects a non-CELO currency account", () => {
       const ethAccount = {
         ...mockAccount,
         currency: { ...mockCeloCurrency, family: "ethereum" },
         freshAddress: "0xCELO_ACCOUNT_ADDRESS",
       } as CeloAccount;
-      isTokenAccount.mockReturnValue(false);
 
       expect(filter(ethAccount)).toBe(false);
     });
