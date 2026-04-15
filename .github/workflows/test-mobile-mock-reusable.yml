@@ -570,10 +570,17 @@ jobs:
           avd_api: ${{ env.AVD_API }}
 
       - name: Start mitmproxy
+        env:
+          MITMPROXY_LOGS_KEY: ${{ secrets.MITMPROXY_LOGS_KEY }}
         run: |
+          mise run mitmproxy:decrypt \
+            --file="apps/ledger-live-mobile/tests/mocks/firebase_feature_flags_android.tar.gz.enc" \
+            --output-dir="apps/ledger-live-mobile/tests/mocks/local"
+
           mise run mitmproxy:start \
             --port=9999 \
             --allow-hosts="firebaseremoteconfig\\.googleapis\\.com|firebaseinstallations\\.googleapis\\.com" \
+            --mock-responses-file="apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags_android.json" \
             --setup-android-simulator="true" \
             --android-simulator-name="Android_Emulator,Android_Emulator_2"
 
@@ -592,8 +599,11 @@ jobs:
       - name: Stop mitmproxy
         id: stop-mitmproxy
         if: ${{ !cancelled() }}
+        env:
+          MITMPROXY_LOGS_KEY: ${{ secrets.MITMPROXY_LOGS_KEY }}
         run: |
-          mise run mitmproxy:stop --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}"
+          mise run mitmproxy:stop
+          rm -f "apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags_android.json"
 
       - name: Upload mitmproxy logs
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
