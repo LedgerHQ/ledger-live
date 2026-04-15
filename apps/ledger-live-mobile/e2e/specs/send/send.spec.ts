@@ -22,6 +22,7 @@ describe("Send flow", () => {
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
+    await app.send.expectLearnMoreLink();
   });
 
   $TmsLink("B2CQA-3536");
@@ -36,9 +37,11 @@ describe("Send flow", () => {
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
+    await app.send.expectLearnMoreLink();
 
     await app.send.setRecipient(Addresses.SANCTIONED_ETHEREUM);
     await app.send.expectContinueButtonDisabled();
+    await app.send.expectLearnMoreLink();
   });
 
   $TmsLink("B2CQA-3692");
@@ -53,6 +56,7 @@ describe("Send flow", () => {
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
+    await app.send.expectLearnMoreLink();
 
     await app.send.setRecipient(Addresses.SANCTIONED_ETHEREUM);
     await app.send.expectSendRecipientTitleError("Keeping you safe");
@@ -61,5 +65,6 @@ describe("Send flow", () => {
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
+    await app.send.expectLearnMoreLink();
   });
 });

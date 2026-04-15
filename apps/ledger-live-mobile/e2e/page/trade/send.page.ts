@@ -101,11 +101,13 @@ export default class SendPage {
 
   @Step("Expect Continue button disabled")
   async expectContinueButtonDisabled() {
-    const button = getElementById(this.recipientContinueButtonId);
-    await expect(button).toBeVisible();
-    const attrs = await button.getAttributes();
-    const enabled = "elements" in attrs ? attrs.elements[0].enabled : attrs.enabled;
-    jestExpect(enabled).toBe(false);
+    await expect(getElementById(this.recipientContinueButtonId)).toBeVisible();
+    await tapById(this.recipientContinueButtonId);
+  }
+
+  @Step("Expect Continue button not visible")
+  async expectContinueButtonNotVisible() {
+    await expect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
   }
 
   @Step("Expect sender to have error title")
