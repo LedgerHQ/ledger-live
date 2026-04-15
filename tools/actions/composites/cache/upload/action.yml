@@ -78,8 +78,8 @@ runs:
       shell: bash
       run: |
         echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
-        aws configure set default.s3.max_concurrent_requests 240
-        aws configure set default.s3.multipart_chunksize 2MB
+        aws configure set default.s3.max_concurrent_requests 10
+        aws configure set default.s3.multipart_chunksize 8MB
         aws s3 cp --endpoint-url https://${{ inputs.endpoint || format('s3.{0}.amazonaws.com', inputs.region) }} --region ${{ inputs.region }} /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
