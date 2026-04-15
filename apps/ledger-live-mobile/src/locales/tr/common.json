@@ -294,6 +294,11 @@
       "title" : "Üzgünüz, bağlantı başarısız",
       "description" : "Lütfen tekrar deneyin."
     },
+    "CounterfeitDevice" : {
+      "title" : "Bu {{productName}} cihazının Orijinallik Denetimi başarısız oldu",
+      "description" : "Bu Ledger cihazını kullanmak güvenli değildir. Lütfen Ledger Destek ile iletişime geçin.",
+      "contactSupportCTA" : "Ledger Destek"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Bağlantı başarısız oldu",
       "description" : "Lütfen tekrar deneyin."
@@ -415,8 +420,8 @@
       "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "AlreadySendingApduError" : {
-      "title" : "İletişim hatası",
-      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "title" : "Ledger cihazınızda eylem gerekiyor",
+      "description" : "Cihazınızda eylemi tamamlayın."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "İletişim hatası",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Bu uygulamaya erişmek için bir hesabınızın olması gerekiyor.",
-      "add" : "Hesap ekle"
+      "select" : "Hesap seç"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Hesaplar",
     "transfer" : "Transfer",
     "manager" : "My Ledger",
+    "myWallet" : "Cüzdanım",
     "settings" : "Ayarlar",
     "platform" : "Live Apps",
     "discover" : "Keşfet",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
     }
   },
+  "operationsList" : {
+    "to" : "Alıcı",
+    "from" : "Gönderici"
+  },
   "operationDetails" : {
     "title" : "İşlem bilgileri",
     "account" : "Hesap",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "İşlem Yok",
+    "emptyTitle" : "Henüz işlem yok",
+    "emptySubtitle" : "İşlemlerinizi görmek için daha sonra geri dönün.",
     "noMoreTransactions" : "Başka işlem yok"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "{{appName}} yüklenemedi",
       "description" : "Kurulum sırasında bir hata oluştu. Lütfen tekrar deneyin."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Yardım",
+      "referral" : "Referans"
     }
   }
 }
