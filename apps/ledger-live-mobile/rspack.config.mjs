@@ -150,6 +150,8 @@ export default withRozeniteUrlFix(
           alias: {
             ...buildTsAlias(tsconfig.compilerOptions.paths),
             ...detoxAliases,
+            // Native Node addons are not supported in React Native bundles.
+            "@ledgerhq/zcash-utils": path.resolve(__dirname, "src/shims/zcash-utils.ts"),
             // Packages with malformed exports field (missing "." subpath) - resolve to browser entry
             "@aptos-labs/aptos-client": resolvePackageFile(
               "@aptos-labs/aptos-client",
