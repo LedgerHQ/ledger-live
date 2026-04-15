@@ -104,7 +104,7 @@ export default defineCommand({
       } else {
         writeStdout(JSON.stringify(makeErrorEnvelope("swap quote", msg, fromId), null, 2));
       }
-      throw err;
+      process.exit(1);
     }
   },
 });
