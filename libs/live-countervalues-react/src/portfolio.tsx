@@ -144,18 +144,28 @@ export function useCurrencyPortfolio({
   return getCurrencyPortfolio(accounts, range, state, to);
 }
 
+const emptyDistribution: AssetsDistribution = {
+  isAvailable: false,
+  list: [],
+  showFirst: 0,
+  sum: 0,
+};
+
 export function useDistribution({
   accounts,
   to,
+  skip,
   showEmptyAccounts,
   hideEmptyTokenAccount,
 }: {
   accounts: Account[];
   to: Currency;
+  skip?: boolean;
   showEmptyAccounts?: boolean;
   hideEmptyTokenAccount?: boolean;
 }): AssetsDistribution {
   const state = useCountervaluesState();
+  if (skip) return emptyDistribution;
   return getAssetsDistribution(accounts, state, to, {
     minShowFirst: 6,
     maxShowFirst: 6,

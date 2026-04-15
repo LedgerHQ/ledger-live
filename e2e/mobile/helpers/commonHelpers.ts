@@ -138,6 +138,19 @@ export async function takeAppScreenshot(screenshotName: string) {
   }
 }
 
+export async function captureNativeViewHierarchy(
+  label = "Native View Hierarchy at failure",
+): Promise<void> {
+  try {
+    const xml = await device.generateViewHierarchyXml();
+    if (xml) {
+      await allure.attachment(label, xml, "text/xml");
+    }
+  } catch (error) {
+    log.warn(`Could not capture native view hierarchy: ${sanitizeError(error)}`);
+  }
+}
+
 export const normalizeText = (text: string) =>
   text
     .replace(/\s+/g, " ")

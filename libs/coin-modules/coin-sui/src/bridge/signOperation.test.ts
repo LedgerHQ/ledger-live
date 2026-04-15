@@ -1,9 +1,9 @@
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { LedgerSigner } from "@mysten/signers/ledger";
-import { getFullnodeUrl } from "@mysten/sui/client";
 import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";
 import { toSerializedSignature as mockToSerializedSignature } from "@mysten/sui/cryptography";
+import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import { verifyTransactionSignature as mockVerifyTransactionSignature } from "@mysten/sui/verify";
 import { BigNumber } from "bignumber.js";
 import { take } from "rxjs/operators";
@@ -70,7 +70,7 @@ const mockLedgerSigner = {
 beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
-    node: { url: getFullnodeUrl("mainnet") },
+    node: { url: getJsonRpcFullnodeUrl("mainnet") },
   }));
 });
 

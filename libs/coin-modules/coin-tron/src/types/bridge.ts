@@ -87,6 +87,7 @@ export type TrongridTxInfo = {
   blockHeight?: number;
   extra?: TrongridExtraTxInfo;
   hasFailed: boolean;
+  feesPayer?: string;
 };
 
 export type TronOperation = Operation<TrongridExtraTxInfo>;
@@ -181,10 +182,8 @@ export type SuperRepresentativeData = {
 };
 export type SuperRepresentative = {
   address: string;
-  name: string | null | undefined;
   url: string | null | undefined;
   isJobs: boolean;
-  brokerage: number;
   voteCount: number;
   totalProduced: number | null | undefined;
   totalMissed: number | null | undefined;
@@ -244,6 +243,7 @@ export type TronResourcesRaw = {
   cacheTransactionInfoById: Record<string, TronTransactionInfoRaw> | undefined;
 };
 export type Vote = {
+  name: string | null | undefined;
   address: string;
   voteCount: number;
 };

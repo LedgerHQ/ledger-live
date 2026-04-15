@@ -11,7 +11,7 @@ export default {
 export const AccordionStory = (args: typeof AccordionStoryArgs) => {
   const [collapsed, setCollapsed] = useState(true);
 
-  const handleChange = () => setCollapsed((prev) => !prev);
+  const handleChange = () => setCollapsed(prev => !prev);
 
   return (
     <View style={{ display: "flex", flex: 1 }}>

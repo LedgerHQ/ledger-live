@@ -14,9 +14,7 @@ const baseViewModel: CryptoScreenViewData = {
   isLoading: false,
   error: null,
   sourceScreenName: ScreenName.Portfolio,
-  onNavigateBack: jest.fn(),
   variant: "all",
-  title: "Crypto",
   trackingType: undefined,
 };
 
@@ -33,18 +31,6 @@ function renderScreen(vmOverrides: Partial<CryptoScreenViewData> = {}) {
 describe("CryptoScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe("title", () => {
-    it("should render the Crypto title", () => {
-      renderScreen({ title: "Crypto" });
-      expect(screen.getByText("Crypto")).toBeVisible();
-    });
-
-    it("should render the Stablecoin title for stablecoin variant", () => {
-      renderScreen({ title: "Stablecoin", variant: "stablecoin" });
-      expect(screen.getByText("Stablecoin")).toBeVisible();
-    });
   });
 
   describe("loading state", () => {

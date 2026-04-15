@@ -49,7 +49,7 @@ function formatAssertionFailureSummary(err: unknown): string {
   const mr = err.matcherResult;
   if (!mr) return err.message;
 
-  const message = typeof mr.message === "function" ? mr.message() : mr.message ?? err.message;
+  const message = typeof mr.message === "function" ? mr.message() : (mr.message ?? err.message);
   const parts: string[] = [message];
   if (mr.expected !== undefined) parts.push(`Expected: ${formatValue(mr.expected)}`);
   if (mr.actual !== undefined) parts.push(`Received: ${formatValue(mr.actual)}`);

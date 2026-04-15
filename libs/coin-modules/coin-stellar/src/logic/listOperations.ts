@@ -7,7 +7,7 @@ export async function listOperations(
 ): Promise<Page<Operation>> {
   // Fake accountId
   const accountId = "";
-  const [operations, nextCursor] = await fetchOperations({
+  const { items: operations, next: nextCursor } = await fetchOperations({
     accountId,
     addr: address,
     minHeight,

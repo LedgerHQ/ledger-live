@@ -490,7 +490,8 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
       isError: receipt?.status === 1 ? "0" : "1",
       txreceipt_status: receipt?.status!.toString() || "0",
       input: tx?.data,
-      contractAddress: code === "0x" ? "" : tx?.to ?? "0x0000000000000000000000000000000000000000",
+      contractAddress:
+        code === "0x" ? "" : (tx?.to ?? "0x0000000000000000000000000000000000000000"),
       cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
       gasUsed: receipt?.gasUsed?.toString() || "0",
       confirmations: tx?.confirmations.toString() || "0",
@@ -740,6 +741,7 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "polygon":
         case "core":
         case "blast":
+        case "base":
         case "scroll":
         case "bsc":
           response.push({ id, type: "coin" });

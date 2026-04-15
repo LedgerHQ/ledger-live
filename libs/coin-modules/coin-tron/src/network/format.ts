@@ -20,6 +20,11 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     const bnFee = new BigNumber(fee || 0);
     let formattedValue;
 
+    // token_info.address is missing for unindexed contracts (e.g. LP/DEX pool tokens not in TronGrid registry)
+    // fall back to the contract_address from the raw transaction, which is always present
+    const contractAddressHex = detail.raw_data?.contract?.[0]?.parameter?.value?.contract_address;
+    const tokenAddress = token_info.address ?? (contractAddressHex ? encode58Check(contractAddressHex) : undefined);
+
     switch (type) {
       case "Approval":
         txType = "ContractApproval";
@@ -27,7 +32,7 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
         break;
       default:
         txType = "TriggerSmartContract";
-        tokenId = token_info.address ?? undefined;
+        tokenId = tokenAddress;
         formattedValue = value ? new BigNumber(value) : new BigNumber(0);
         break;
     }
@@ -35,12 +40,14 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     const date = new Date(block_timestamp);
 
     const blockHeight = detail ? detail.blockNumber : undefined;
+    const ownerAddressHex = detail.raw_data?.contract?.[0]?.parameter?.value?.owner_address;
+    const feesPayer = ownerAddressHex ? encode58Check(ownerAddressHex) : from;
     return {
       txID,
       date,
       type: txType,
       tokenId: tokenId,
-      tokenAddress: token_info.address,
+      tokenAddress,
       tokenType: "trc20",
       from,
       to,
@@ -48,6 +55,7 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
       value: formattedValue,
       fee: bnFee,
       hasFailed: false, // trc20 txs are succeeded if returned by trongrid,
+      feesPayer,
     };
   } catch (e) {
     log("tron-error", `could not parse transaction ${tx}`);
@@ -55,9 +63,10 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
   }
 };
 
-export const formatTrongridTxResponse = (
+export const formatTrongridTxResponse = async (
   tx: TransactionTronAPI & { detail?: TronTransactionInfo },
-): TrongridTxInfo | null | undefined => {
+  getValidatorName: (address: string) => Promise<string | null | undefined>,
+): Promise<TrongridTxInfo | null | undefined> => {
   try {
     const { txID, block_timestamp, detail, blockNumber, unfreeze_amount, withdraw_amount } = tx;
     const date = new Date(block_timestamp);
@@ -118,16 +127,22 @@ export const formatTrongridTxResponse = (
       fee: new BigNumber(fee || 0),
       blockHeight,
       hasFailed,
+      feesPayer: from,
     };
 
-    const getExtra = (): TrongridExtraTxInfo | null | undefined => {
+    const getExtra = async (): Promise<TrongridExtraTxInfo | null | undefined> => {
       switch (type) {
         case "VoteWitnessContract":
           return {
-            votes: votes?.map(v => ({
-              address: encode58Check(v.vote_address as string),
-              voteCount: v.vote_count,
-            })),
+            votes:
+              votes &&
+              (await Promise.all(
+                votes.map(async v => ({
+                  name: await getValidatorName(encode58Check(v.vote_address)),
+                  address: encode58Check(v.vote_address),
+                  voteCount: v.vote_count,
+                })),
+              )),
           };
 
         case "FreezeBalanceContract":
@@ -157,7 +172,7 @@ export const formatTrongridTxResponse = (
       }
     };
 
-    const extra = getExtra();
+    const extra = await getExtra();
 
     if (extra) {
       txInfo.extra = extra;

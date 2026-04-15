@@ -72,6 +72,12 @@ export function useAmountScreenViewModel({
     hasRawAmount,
   } = amountReviewCore;
 
+  const quickActionsAvailableBalance = useMemo(() => {
+    const spendable = "spendableBalance" in account ? account.spendableBalance : undefined;
+    const balance = "balance" in account ? account.balance : new BigNumber(0);
+    return spendable ?? balance ?? new BigNumber(0);
+  }, [account]);
+
   const networkFees = useNetworkFees({
     account,
     parentAccount,
@@ -116,7 +122,7 @@ export function useAmountScreenViewModel({
     account,
     parentAccount,
     transaction,
-    maxAvailable,
+    availableBalance: quickActionsAvailableBalance,
     onSetAmountFromRatio: setAmountFromRatio,
     onSelectMax: handleSelectMax,
   });

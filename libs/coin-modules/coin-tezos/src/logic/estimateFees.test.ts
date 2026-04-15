@@ -29,11 +29,24 @@ const revealedAccount = {
   revealed: true,
 };
 
+function setupFa2ContractMock() {
+  const toTransferParams = jest.fn().mockReturnValue({
+    parameter: { entrypoint: "transfer", value: [] },
+    amount: 0,
+    mutez: true,
+  });
+  const transfer = jest.fn().mockReturnValue({ toTransferParams });
+  return { transfer, toTransferParams };
+}
+
 describe("estimateFees", () => {
   const mockTezosToolkit = {
     estimate: {
       setDelegate: jest.fn(),
       transfer: jest.fn(),
+    },
+    contract: {
+      at: jest.fn(),
     },
     setProvider: jest.fn(),
   };
@@ -315,6 +328,156 @@ describe("estimateFees", () => {
     const expectedRevealFee = getRevealFee(unrevealedAccount.address);
     expect(result.fees).toBe(BigInt(minEstimatedFees));
     expect(result.estimatedFees).toBe(BigInt(minEstimatedFees + expectedRevealFee));
+  });
+
+  it("send_token (FA2) revealed applies estimation from contract transfer", async () => {
+    const { transfer } = setupFa2ContractMock();
+    mockTezosToolkit.contract.at.mockResolvedValue({ methods: { transfer } });
+    mockTezosToolkit.estimate.transfer.mockResolvedValue({
+      suggestedFeeMutez: 600,
+      gasLimit: 5000,
+      storageLimit: 10,
+      burnFeeMutez: 0,
+      opSize: 250,
+    });
+
+    const contractAddress = "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU";
+    const result = await estimateFees({
+      account: revealedAccount,
+      transaction: {
+        mode: "send_token",
+        recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+        amount: BigInt(100),
+        contractAddress,
+        tokenId: 0,
+      },
+    });
+
+    expect(mockTezosToolkit.contract.at).toHaveBeenCalledWith(contractAddress);
+    expect(transfer).toHaveBeenCalledWith([
+      {
+        from_: revealedAccount.address,
+        txs: [{ to_: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr", token_id: 0, amount: 100n }],
+      },
+    ]);
+    expect(result.fees).toBe(600n);
+    expect(result.gasLimit).toBe(5000n);
+    expect(result.storageLimit).toBe(10n);
+    expect(result.estimatedFees).toBe(600n);
+    expect(result.amount).toBe(100n);
+  });
+
+  it("send_token unrevealed adds reveal fee to estimatedFees", async () => {
+    const { transfer } = setupFa2ContractMock();
+    mockTezosToolkit.contract.at.mockResolvedValue({ methods: { transfer } });
+    mockTezosToolkit.estimate.transfer.mockResolvedValue({
+      suggestedFeeMutez: 400,
+      gasLimit: 4000,
+      storageLimit: 0,
+      burnFeeMutez: 0,
+      opSize: 200,
+    });
+
+    const contractAddress = "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU";
+    const result = await estimateFees({
+      account: unrevealedAccount,
+      transaction: {
+        mode: "send_token",
+        recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+        amount: BigInt(50),
+        contractAddress,
+        tokenId: 3,
+      },
+    });
+
+    const expectedRevealFee = getRevealFee(unrevealedAccount.address);
+    expect(result.fees).toBe(400n);
+    expect(result.estimatedFees).toBe(BigInt(400 + expectedRevealFee));
+  });
+
+  it("send_token uses fallback when Taquito throws Public key not found", async () => {
+    const minEstimatedFees = 400;
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: {
+        ...defaultFeesConfig,
+        minEstimatedFees,
+        minGasLimit: 600,
+        minStorageLimit: 0,
+      },
+    });
+    const { transfer } = setupFa2ContractMock();
+    mockTezosToolkit.contract.at.mockResolvedValue({ methods: { transfer } });
+    mockTezosToolkit.estimate.transfer.mockRejectedValue(
+      Object.assign(new Error("Fail"), { status: 404, message: "Public key not found" }),
+    );
+
+    const contractAddress = "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU";
+    const result = await estimateFees({
+      account: unrevealedAccount,
+      transaction: {
+        mode: "send_token",
+        recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+        amount: BigInt(10),
+        contractAddress,
+        tokenId: 0,
+      },
+    });
+
+    const expectedRevealFee = getRevealFee(unrevealedAccount.address);
+    expect(result.fees).toBe(BigInt(minEstimatedFees));
+    expect(result.estimatedFees).toBe(BigInt(minEstimatedFees + expectedRevealFee));
+    expect(result.amount).toBe(10n);
+  });
+
+  it("send_token with empty recipient returns fallback without calling the contract", async () => {
+    const { transfer } = setupFa2ContractMock();
+    mockTezosToolkit.contract.at.mockResolvedValue({ methods: { transfer } });
+
+    const result = await estimateFees({
+      account: revealedAccount,
+      transaction: {
+        mode: "send_token",
+        recipient: "",
+        amount: BigInt(100),
+        contractAddress: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
+        tokenId: 0,
+      },
+    });
+
+    expect(mockTezosToolkit.contract.at).not.toHaveBeenCalled();
+    expect(result.fees).toBe(BigInt(defaultFeesConfig.minEstimatedFees));
+    expect(transfer).not.toHaveBeenCalled();
+  });
+
+  it("send_token propagates error when contract.at fails", async () => {
+    mockTezosToolkit.contract.at.mockRejectedValue(new Error("Invalid contract"));
+
+    await expect(
+      estimateFees({
+        account: revealedAccount,
+        transaction: {
+          mode: "send_token",
+          recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+          amount: BigInt(1),
+          contractAddress: "KT1Bad",
+          tokenId: 0,
+        },
+      }),
+    ).rejects.toThrow("Invalid contract");
+  });
+
+  it("send_token throws when contractAddress or tokenId is missing", async () => {
+    await expect(
+      estimateFees({
+        account: revealedAccount,
+        transaction: {
+          mode: "send_token",
+          recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+          amount: BigInt(1),
+          tokenId: 0,
+        },
+      }),
+    ).rejects.toThrow("FA2 transfer requires contractAddress and tokenId");
   });
 
   it("useAllAmount send computes max amount and applies minFees to main op", async () => {

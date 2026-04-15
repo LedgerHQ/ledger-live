@@ -1,7 +1,7 @@
-import { OnboardingPrepareResponse, PrepareTransferResponse } from "../../network/gateway";
+import type { OnboardingPrepareResponse, PrepareTransferResponse } from "../../types/gateway";
 import { PrepareTransactionResponse } from "../../types/onboard";
-import { CantonSigner, CantonSignature } from "../../types/signer";
-import { splitTransaction } from "./split";
+import { CantonSignature, CantonSigner } from "../../types/signer";
+import { splitTransaction } from "@ledgerhq/hw-app-canton";
 
 /**
  * Sign a Canton transaction - handles both prepared transactions and untyped versioned messages
@@ -12,25 +12,30 @@ export async function signTransaction(
   derivationPath: string,
   transactionData: PrepareTransferResponse | PrepareTransactionResponse | OnboardingPrepareResponse,
 ): Promise<CantonSignature> {
-  let signature: CantonSignature;
+  let signPayload;
 
-  if ("json" in transactionData) {
-    const components = splitTransaction(transactionData.json);
-    signature = await signer.signTransaction(derivationPath, components);
-  } else {
+  // OnboardingPrepareResponse — sign topology transactions as untyped versioned messages
+  if ("transactions" in transactionData && transactionData.transactions) {
     const challenge = getTransactionChallenge(transactionData);
+    const { transactions } = transactionData;
 
-    const transactions = [
-      transactionData.transactions.namespace_transaction.serialized,
-      transactionData.transactions.party_to_key_transaction.serialized,
-      transactionData.transactions.party_to_participant_transaction.serialized,
-    ];
-
-    signature = await signer.signTransaction(derivationPath, {
-      transactions,
+    signPayload = {
+      transactions: [
+        transactions.namespace_transaction.serialized,
+        transactions.party_to_key_transaction.serialized,
+        transactions.party_to_participant_transaction.serialized,
+      ],
       ...(challenge && { challenge }),
-    });
+    };
+  } else {
+    // PrepareTransferResponse / PrepareTransactionResponse (.json) or raw JSON from craftTransaction
+    const rawTransactionData =
+      "json" in transactionData ? transactionData.json : transactionData;
+
+    signPayload = splitTransaction(rawTransactionData);
   }
+
+  const signature = await signer.signTransaction(derivationPath, signPayload);
 
   if (!signature?.signature) {
     throw new Error("Device returned empty signature");

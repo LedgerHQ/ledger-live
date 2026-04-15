@@ -42,7 +42,7 @@ const FeatureFlagEdit: React.FC<{
       setFeatureFlagValue(pureValue);
       setInputValueStringified(formatValue(pureValue));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [pureValue]);
 
   const handleInputChange = (value: string) => {

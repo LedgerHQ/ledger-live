@@ -1,6 +1,37 @@
 import chalk from "chalk";
 import * as compose from "docker-compose";
 
+async function waitForRpc(maxRetries = 30, intervalMs = 2000): Promise<void> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const res = await fetch("http://127.0.0.1:8899", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "getHealth" }),
+      });
+      if (res.ok) {
+        // Ensure the validator has produced blocks with a usable recent blockhash
+        const bh = await fetch("http://127.0.0.1:8899", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: 2,
+            method: "getLatestBlockhash",
+            params: [{ commitment: "confirmed" }],
+          }),
+        });
+        const data = (await bh.json()) as { result?: { value?: { blockhash?: string } } };
+        if (data?.result?.value?.blockhash) return;
+      }
+    } catch {
+      // not ready yet
+    }
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+  throw new Error("Agave RPC did not become healthy in time");
+}
+
 export async function spawnAgave() {
   console.log("Starting Agave...");
   await compose.upOne("agave", {
@@ -9,6 +40,7 @@ export async function spawnAgave() {
     env: process.env,
   });
 
+  await waitForRpc();
   console.log(chalk.bgBlueBright(" -  AGAVE READY ✅  - "));
 }
 

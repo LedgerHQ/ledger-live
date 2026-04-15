@@ -1,20 +1,11 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { ApplicationOptions } from "page";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isWallet40 } from "../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
-export const liveDataCommand =
-  (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-    CLI.liveData({
-      currency: currencyApp.name,
-      index,
-      add: true,
-      appjson: userdataPath,
-    });
 
 export async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -37,7 +28,7 @@ export async function runNavigateToBuyFromPortfolioPageTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        cliCommands: [liveDataCommand(buySell.crypto)],
       });
     });
 
@@ -67,7 +58,7 @@ export async function runNavigateToBuyFromAccountPageTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        cliCommands: [liveDataCommand(buySell.crypto)],
         featureFlags: {
           llmAccountListUI: { enabled: true },
         },
@@ -99,7 +90,7 @@ export async function runNavigateToBuyFromMarketPageTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        cliCommands: [liveDataCommand(buySell.crypto)],
       });
     });
 
@@ -131,7 +122,7 @@ export async function runNavigateToBuyFromAssetPageTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        cliCommands: [liveDataCommand(buySell.crypto)],
       });
     });
 
@@ -148,7 +139,7 @@ export async function runNavigateToBuyFromAssetPageTest(
 
 export async function runSellFlowTest(
   buySell: BuySell,
-  provider: Provider,
+  provider: BuySellProvider,
   paymentMethod: string,
   tmsLinks: string[],
   tags: string[],
@@ -158,7 +149,7 @@ export async function runSellFlowTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        cliCommands: [liveDataCommand(buySell.crypto)],
       });
     });
 
@@ -182,7 +173,7 @@ export async function runQueryParametersTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        cliCommands: [liveDataCommand(buySell.crypto)],
       });
     });
 

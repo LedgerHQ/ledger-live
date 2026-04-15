@@ -65,7 +65,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
     return () => {
       timeout && clearTimeout(timeout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOnPress = useCallback(() => {

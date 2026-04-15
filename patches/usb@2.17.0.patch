@@ -1,0 +1,50 @@
+diff --git a/dist/usb/bindings.js b/dist/usb/bindings.js
+index 9c15197e9563980b9b726967d1db6467e2cdaa39..fc0ba1cdf6394c1a24e114dffe42cc5bdc6505ce 100644
+--- a/dist/usb/bindings.js
++++ b/dist/usb/bindings.js
+@@ -5,6 +5,8 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const path_1 = require("path");
+ /* eslint-disable @typescript-eslint/no-var-requires */
+-const usb = require('node-gyp-build')(process.env.NODE_USB_PATH || (0, path_1.join)(__dirname, '..', '..'));
++// globalThis.__usbNativeAddon is set by wallet-cli's embed-usb-native.ts to bypass node-gyp-build
++// in Bun standalone binaries where the prebuilds directory is not on disk.
++const usb = globalThis.__usbNativeAddon || require('node-gyp-build')(process.env.NODE_USB_PATH || (0, path_1.join)(__dirname, '..', '..'));
+ module.exports = usb;
+ //# sourceMappingURL=bindings.js.map
+\ No newline at end of file
+diff --git a/dist/usb/index.js b/dist/usb/index.js
+index 9f1d1a89560f74936542f5e955bf47e77d595a45..761fe453da24cc7586efbd50c56d77f1f31fe385 100644
+--- a/dist/usb/index.js
++++ b/dist/usb/index.js
+@@ -56,6 +56,8 @@ const pollHotplug = (start = false) => {
+     setTimeout(() => pollHotplug(), usb.pollHotplugDelay);
+ };
+ // Devices changed event handler
++// Rolling back changes made in https://github.com/node-usb/node-usb/pull/577
++// as it is creating a delay on Windows when opening/closing a nano app and device detection
+ const devicesChanged = () => setTimeout(() => emitHotplugEvents(), usb.pollHotplugDelay);
+ // Hotplug control
+ let hotplugSupported = 0;
+@@ -70,8 +72,8 @@ const startHotplug = () => {
+         usb._enableHotplugEvents();
+         if (hotplugSupported === 2) {
+             // Use hotplug ID events to trigger a change check
+-            usb.on('attachIds', devicesChanged);
+-            usb.on('detachIds', devicesChanged);
++            usb.on('attachIds', emitHotplugEvents);
++            usb.on('detachIds', emitHotplugEvents);
+         }
+     }
+     else {
+@@ -85,8 +87,8 @@ const stopHotplug = () => {
+         usb._disableHotplugEvents();
+         if (hotplugSupported === 2) {
+             // Remove hotplug ID event listeners
+-            usb.off('attachIds', devicesChanged);
+-            usb.off('detachIds', devicesChanged);
++            usb.off('attachIds', emitHotplugEvents);
++            usb.off('detachIds', emitHotplugEvents);
+         }
+     }
+     else {

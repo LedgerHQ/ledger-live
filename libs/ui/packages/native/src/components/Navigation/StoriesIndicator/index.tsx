@@ -42,8 +42,8 @@ export interface StoriesIndicatorProps extends FlexBoxProps {
 }
 
 const ProgressBar = styled.View`
-  background-color: ${(p) => p.theme.colors.primary.c100};
-  border-radius: ${(p) => p.theme.radii[2]}px;
+  background-color: ${p => p.theme.colors.primary.c100};
+  border-radius: ${p => p.theme.radii[2]}px;
   height: 100%;
   width: 100%;
 `;
@@ -94,7 +94,7 @@ function StoryBar({ full = false, isActive, duration }: StoryBarProps) {
       borderRadius={2}
       flex={1}
       mx={1}
-      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+      onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}
     >
       {renderProgressBar()}
     </Flex>

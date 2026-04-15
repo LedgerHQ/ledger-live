@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";

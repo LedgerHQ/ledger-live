@@ -48,7 +48,7 @@ type Props = {
 };
 const ValidatorList = (props: Props) => {
   const { account, validators, onSelectValidator, transaction } = props;
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(!transaction.recipient);
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
   const providers = useSearchValidators(validators, search);

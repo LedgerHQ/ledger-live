@@ -104,6 +104,7 @@ const Box = styled.div<BoxProps>`
   ${fontWeight};
 
   display: flex;
+  min-width: 0;
   flex-shrink: ${p => (p.noShrink === true ? "0" : p.shrink === true ? "1" : "")};
   flex-grow: ${p => (p.grow === true ? "1" : p.grow || "")};
   flex-direction: ${p => (p.horizontal ? "row" : "column")};

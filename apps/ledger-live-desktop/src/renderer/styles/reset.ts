@@ -7,7 +7,6 @@ export default `* {
   color: inherit;
   user-select: inherit;
   cursor: inherit;
-  min-width: 0;
 }
 
 body {

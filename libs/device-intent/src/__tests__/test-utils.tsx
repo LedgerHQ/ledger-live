@@ -5,7 +5,6 @@ import type {
   Intent,
   RequiredDeviceContext,
 } from "../core";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 export const defaultRequiredContext: RequiredDeviceContext = {
   appName: "Ethereum",
@@ -37,7 +36,11 @@ export const makeIntent = (
 export const makeConnectionResult = (sessionId = "session-1"): DeviceConnectionResult => ({
   dmk: {} as DeviceConnectionResult["dmk"],
   sessionId,
-  compatDeviceId: new DeviceId("compat-1"),
+  connectedDevice: {} as DeviceConnectionResult["connectedDevice"],
+  compatDeviceId: "compat-1",
+  compatDeviceModelId: "nanoX" as DeviceConnectionResult["compatDeviceModelId"],
+  compatDeviceName: "Test device",
+  compatDeviceWired: true,
 });
 
 export function flushMicrotasks(): Promise<void> {

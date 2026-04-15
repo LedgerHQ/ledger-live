@@ -1,12 +1,14 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getNonce } from "../api";
+import { getNonce } from "../logic/transaction/getNonce";
 import { Transaction } from "../types";
+import estimateMaxSpendable from "./estimateMaxSpendable";
 import estimateFees from "./getEstimatedFees";
 import { prepareTransaction } from "./prepareTransaction";
 
-jest.mock("../api");
+jest.mock("../logic/transaction/getNonce");
 jest.mock("./getEstimatedFees");
+jest.mock("./estimateMaxSpendable");
 
 describe("prepareTransaction", () => {
   let estimateFeesSpy: jest.SpyInstance;
@@ -39,5 +41,18 @@ describe("prepareTransaction", () => {
     };
     const newTx = await prepareTransaction({} as Account, oldTx as Transaction);
     expect(newTx.nonce).toEqual(1);
+  });
+
+  it("should use estimateMaxSpendable when useAllAmount is true", async () => {
+    (estimateMaxSpendable as jest.Mock).mockResolvedValue(new BigNumber(890));
+    const oldTx = {
+      useAllAmount: true,
+      fees: { fee: new BigNumber(0), accountCreationFee: new BigNumber(0) },
+    };
+
+    const newTx = await prepareTransaction({} as Account, oldTx as Transaction);
+
+    expect(estimateMaxSpendable).toHaveBeenCalled();
+    expect(newTx.amount).toEqual(new BigNumber(890));
   });
 });

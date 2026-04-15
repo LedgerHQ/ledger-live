@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { UserRefusedAddress } from "@ledgerhq/errors";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { DerivationMode } from "@ledgerhq/types-live";
@@ -109,6 +110,22 @@ describe("Mina getAddress resolver", () => {
 
     const getAddress = resolver(mockSignerContext);
     await expect(getAddress("device1", options)).rejects.toThrow();
+  });
+
+  it("should throw UserRefusedAddress when user refuses on device (returnCode 27013)", async () => {
+    const options: GetAddressOptions = {
+      path: "44'/12586'/0'/0/0",
+      verify: false,
+      ...commonOptions,
+    };
+
+    (mockSigner.getAddress as jest.Mock).mockResolvedValue({
+      returnCode: "27013",
+      publicKey: undefined,
+    });
+
+    const getAddress = resolver(mockSignerContext);
+    await expect(getAddress("device1", options)).rejects.toThrow(UserRefusedAddress);
   });
 
   it("should throw an error when publicKey is undefined", async () => {

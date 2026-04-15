@@ -1,12 +1,11 @@
 import { FullConfig } from "@playwright/test";
 import { responseLogfilePath } from "./networkResponseLogger";
-import { mkdirSync, unlink, writeFileSync } from "fs";
+import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
 import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
 } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import path from "path";
-import { promises as fs } from "fs";
 import { NANO_APP_CATALOG_PATH } from "./fileUtils";
 
 const environmentFilePath = "allure-results/environment.properties";

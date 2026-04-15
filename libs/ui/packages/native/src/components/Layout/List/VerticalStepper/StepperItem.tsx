@@ -20,8 +20,8 @@ export type Props = {
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean; nested?: boolean }>`
   flex: 1;
-  border-bottom-width: ${(p) => (p.nested ? 0 : 1)}px;
-  border-bottom-color: ${(p) =>
+  border-bottom-width: ${p => (p.nested ? 0 : 1)}px;
+  border-bottom-color: ${p =>
     p.isLastItem && p.status !== "inactive" ? "transparent" : p.theme.colors.neutral.c40};
 `;
 
@@ -91,7 +91,7 @@ export default function StepperItem({
                   {...(nested ? { variant: "body" } : { variant: "large", fontWeight: "semiBold" })}
                   color={item.status === "active" || nested ? "neutral.c100" : "neutral.c80"}
                 >
-                  {item.status === "completed" ? item.doneTitle ?? item.title : item.title}
+                  {item.status === "completed" ? (item.doneTitle ?? item.title) : item.title}
                 </Text>
               </Flex>
               <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>

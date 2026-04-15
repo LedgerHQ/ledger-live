@@ -30,12 +30,12 @@ const bulletStyle = `
 
 const Bullet = styled.TouchableOpacity`
   ${bulletStyle}
-  background-color: ${(p) => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.neutral.c40};
 `;
 
 const ActiveBullet = styled.View.attrs({ pointerEvents: "none" })`
   ${bulletStyle}
-  background-color: ${(p) => p.theme.colors.neutral.c100};
+  background-color: ${p => p.theme.colors.neutral.c100};
   position: absolute;
   top: 0;
   left: 0;

@@ -306,7 +306,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       }
     },
     // Disabling exhaustive-deps because adding handleSellTransaction and handleSwapTransaction would make it change on every render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [
       swapId,
       toAccount,

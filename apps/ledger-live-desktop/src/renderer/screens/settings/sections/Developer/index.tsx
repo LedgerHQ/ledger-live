@@ -33,8 +33,11 @@ import EnvVariableOverride from "./EnvVariableOverride";
 import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
+import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
+import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
+import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -136,9 +139,11 @@ const Default = () => {
         </Row>
       )}
       <WalletFeaturesDevTool />
+      <AnalyticsConsentOptInDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
+      <AppJsonImporter />
     </Body>
   );
 };
@@ -147,6 +152,7 @@ const SectionDeveloper = () => (
     <TrackPage category="Settings" name="Developer" />
     <Routes>
       <Route path="custom-locksscreen-assets" element={<CustomLockScreenAssets />} />
+      <Route path="analytics-consent-opt-in-qa" element={<AnalyticsConsentOptInDevScreen />} />
       <Route path="*" element={<Default />} />
     </Routes>
   </>

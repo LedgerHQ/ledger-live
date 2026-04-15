@@ -6,16 +6,16 @@ import merge from "lodash/merge";
 
 import { NavigatorName } from "../../src/const";
 import { BleState, DeviceLike } from "../../src/reducers/types";
-import { Account, AccountRaw, FeatureId } from "@ledgerhq/types-live";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log as detoxLog } from "detox";
-import {
-  SettingsSetOverriddenFeatureFlagPlayload,
-  SettingsSetOverriddenFeatureFlagsPlayload,
-} from "~/actions/types";
+import type { PartialFeatures, FeatureId, Feature } from "@shared/feature-flags";
+import { FeatureIdSchema } from "@shared/feature-flags";
 import { v4 as uuid } from "uuid";
+
+type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
 
 let clientResponse: (data: string) => void;
 type PendingAck = {
@@ -54,11 +54,8 @@ function uniqueId(): string {
   return uuid();
 }
 
-function isFeatureId(
-  key: string,
-  flags: SettingsSetOverriddenFeatureFlagsPlayload,
-): key is FeatureId {
-  return key in flags;
+function isFeatureId(key: string): key is FeatureId {
+  return FeatureIdSchema.safeParse(key).success;
 }
 
 export function init(port = 8099, onConnection?: () => void) {
@@ -122,6 +119,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   if (data.accounts?.length) {
     await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
+  }
+
+  if (data.featureFlags?.overrides) {
+    await setFeatureFlags(data.featureFlags.overrides);
   }
 }
 
@@ -204,15 +205,15 @@ export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }
 
-export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
+export async function setFeatureFlags(flags: PartialFeatures) {
   for (const id in flags) {
-    if (isFeatureId(id, flags)) {
+    if (isFeatureId(id)) {
       await setFeatureFlag({ id, value: flags[id] });
     }
   }
 }
 
-export async function setFeatureFlag(flag: SettingsSetOverriddenFeatureFlagPlayload) {
+export async function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
   postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
 }
 

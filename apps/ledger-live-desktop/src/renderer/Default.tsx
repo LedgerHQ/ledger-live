@@ -63,6 +63,7 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
@@ -385,6 +386,7 @@ export default function Default() {
   const themeConsoleActive = useEnv("DEBUG_THEME");
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
+  const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
 
   const dmk = useDeviceManagementKit();
   const checkAccountsWithFunds = useCheckAccountWithFunds();
@@ -411,12 +413,18 @@ export default function Default() {
   }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
+    if (typeof ldmkCosmosSignerFeatureFlag?.enabled === "boolean") {
+      setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
+    }
+  }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
     // WebHID is now always enabled, set provider if specified
     if (providerNumber) {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk]);
 
   useEffect(() => {
@@ -429,7 +437,7 @@ export default function Default() {
       dispatch(setShareAnalytics(false));
       dispatch(setSharePersonalizedRecommendations(false));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isLocked]);
 
   useEffect(() => {

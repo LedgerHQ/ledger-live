@@ -1,20 +1,9 @@
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { fetchAccount } from "../network";
 import { getBalance } from "./getBalance";
 
 jest.mock("../network", () => ({
   fetchAccount: jest.fn(),
 }));
-
-beforeAll(() => {
-  // Setup mock store for unit tests
-  const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
-    findTokenById: async () => undefined,
-    findTokenByAddressInCurrency: async () => undefined,
-    getTokensSyncHash: async () => "",
-  };
-  setCryptoAssetsStore(mockStore);
-});
 
 describe("getBalance", () => {
   it("returns native balance when no assets are present", async () => {

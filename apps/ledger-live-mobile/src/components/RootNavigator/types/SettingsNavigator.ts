@@ -28,10 +28,12 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.ExchangeDeveloperMode]: undefined;
   [ScreenName.CustomCALRefInput]: undefined;
   [ScreenName.DebugSettings]: undefined;
+  [ScreenName.DebugAnalyticsConsentQA]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;
   [ScreenName.DebugPerformance]: undefined;
   [ScreenName.DebugDebugging]: undefined;
+  [ScreenName.DebugDeviceIntentExecutor]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
   [ScreenName.DebugFeatures]:
     | {
@@ -42,6 +44,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugContentCards]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;
+  [ScreenName.DebugMockGenerateAccountsByType]: undefined;
 
   [ScreenName.DebugNetwork]: undefined;
   [ScreenName.DebugCommandSender]: {

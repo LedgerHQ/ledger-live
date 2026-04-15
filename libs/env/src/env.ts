@@ -177,11 +177,6 @@ const envDefinitions = {
     def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
-  API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS: {
-    parser: intParser,
-    def: 1000,
-    desc: "Limit of operation that Horizon will fetch on initial sync",
-  },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
     parser: boolParser,
@@ -293,22 +288,22 @@ const envDefinitions = {
     desc: "Thorest API for VeChain",
   },
   ALEO_MAINNET_NODE_ENDPOINT: {
-    def: "https://api.provable.com",
+    def: "https://aleo.coin.ledger-test.com",
     parser: stringParser,
     desc: "Aleo mainnet node URL",
   },
   ALEO_MAINNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger-test.com/network/mainnet",
+    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
   },
   ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://api.provable.com",
+    def: "https://aleo.coin.ledger-test.com",
     parser: stringParser,
     desc: "Aleo testnet node URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger-test.com/network/testnet",
+    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
     parser: stringParser,
     desc: "Aleo testnet SDK URL",
   },

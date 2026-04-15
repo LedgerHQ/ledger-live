@@ -112,12 +112,12 @@ export function Slides({
   }, [currentIndex, goToSlide]);
 
   const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
+    onScroll: event => {
       if (width > 0) {
         scrollProgressSharedValue.value = event.contentOffset.x / width;
       }
     },
-    onMomentumEnd: (event) => {
+    onMomentumEnd: event => {
       if (width <= 0) return;
 
       const offsetX = event.contentOffset.x;
@@ -167,7 +167,7 @@ export function Slides({
         isViewable: boolean;
       }>;
     }) => {
-      const items = viewableItems.filter((item) => item.isViewable);
+      const items = viewableItems.filter(item => item.isViewable);
 
       // Since it's a horizontal scroll view, and we display one by one, we only want to trigger the onSlideChange event when one item is visible.
       if (items.length === 1) {
@@ -179,7 +179,7 @@ export function Slides({
   );
 
   const renderOrderedChildren = useCallback(() => {
-    return React.Children.map(children, (child) => {
+    return React.Children.map(children, child => {
       if (isElementOfType(child, Content)) {
         if (width <= 0) {
           return null;

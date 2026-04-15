@@ -74,8 +74,6 @@
         "acceptedProviders": [],
         "selectableCurrencies": []
       },
-      "overriddenFeatureFlags": {},
-      "featureFlagsButtonVisible": false,
       "vaultSigner": { "enabled": false, "host": "", "token": "", "workspace": "" },
       "supportedCounterValues": [],
       "dismissedContentCards": {},
@@ -3255,6 +3253,10 @@
       "actionsCompleted": { "assetsTransfer": true },
       "lastActionCompleted": "assetsTransfer",
       "postOnboardingInProgress": false
+    },
+    "featureFlags": {
+      "overrides": {},
+      "bannerVisible": false
     }
   }
 }

@@ -26,11 +26,6 @@ export function AppInitLiveCredentials({
       setValue={setMemberCredentials}
       value={memberCredentials}
       valueDisplay={valueDisplay}
-      buttonProps={{
-        "data-tooltip-id": "tooltip",
-        "data-tooltip-content":
-          "generates a new identity. priv/pub key are prerequisite to identify a member in Trustchain.",
-      }}
     />
   );
 }

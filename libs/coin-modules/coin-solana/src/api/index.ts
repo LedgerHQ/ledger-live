@@ -1,13 +1,19 @@
-import type {
-  AlpacaApi,
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import {
   AddressValidationCurrencyParameters,
+  AlpacaApi,
   Balance,
+  BalanceOptions,
   BroadcastConfig,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
+  MemoNotSupported,
+  StakingTransactionIntent,
+  StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
@@ -24,7 +30,9 @@ import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaApi {
+type SolanaAlpacaApi = AlpacaApi<StringMemo | MemoNotSupported>;
+
+export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaAlpacaApi {
   coinConfig.setCoinConfig(() => ({
     ...config,
     status: { type: "active" as const },
@@ -39,23 +47,29 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     combine: (tx: string, signature: string, _pubkey?: string) => {
       return combine(tx, signature);
     },
-    craftTransaction: (intent: TransactionIntent, customFees?: FeeEstimation) => {
+    craftTransaction: (
+      intent: TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent,
+      customFees?: FeeEstimation,
+    ) => {
       return craftTransaction(api, intent, customFees);
     },
     craftRawTransaction: (tx: string, sender: string, _publicKey: string, _sequence: bigint) => {
       return craftRawTransaction(tx, sender);
     },
     estimateFees: (
-      intent: TransactionIntent,
+      intent: TransactionIntent<StringMemo | MemoNotSupported>,
       customFeesParameters?: FeeEstimation["parameters"],
     ) => {
       return estimateFees(api, intent, customFeesParameters);
     },
-    getBalance: (address: string) => {
-      return getBalance(api, address, {
-        token2022Enabled: config.token2022Enabled,
-      });
-    },
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(
+        () =>
+          getBalance(api, address, {
+            token2022Enabled: config.token2022Enabled,
+          }),
+        options,
+      ),
     lastBlock: () => {
       return lastBlock(api);
     },
@@ -78,7 +92,7 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
       return getStakes(api, address, cursor);
     },
     validateIntent: (
-      intent: TransactionIntent,
+      intent: TransactionIntent<StringMemo | MemoNotSupported>,
       balances: Balance[],
       customFees?: FeeEstimation,
     ) => {
@@ -93,5 +107,6 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     ) => {
       return validateAddress(address, parameters);
     },
+    craftTransactionData,
   };
 }

@@ -80,12 +80,12 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     cliCommands: [
-      (appjsonPath: string) => {
+      (userdataPath?: string) => {
         return CLI.liveData({
           currency: currency.id,
           index: 0,
           add: true,
-          appjson: appjsonPath,
+          appjson: userdataPath,
         });
       },
     ],

@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
@@ -34,11 +34,9 @@ const createMockActionCard = (overrides: Partial<ActionContentCard> = {}): Actio
 });
 
 const defaultInitialState = {
+  ...withFlagOverrides({ lldActionCarousel: { enabled: false } }),
   settings: {
     showClearCacheBanner: false,
-    overriddenFeatureFlags: {
-      lldActionCarousel: { enabled: false },
-    },
   },
   dynamicContent: {
     portfolioCards: [],
@@ -79,11 +77,9 @@ describe("useBannersVisibility", () => {
     const { result } = renderHook(() => useBannersVisibility(), {
       initialState: {
         ...defaultInitialState,
+        ...withFlagOverrides({ lldActionCarousel: { enabled: false } }),
         settings: {
           showClearCacheBanner: true,
-          overriddenFeatureFlags: {
-            lldActionCarousel: { enabled: false },
-          },
         },
       },
     });
@@ -113,11 +109,9 @@ describe("useBannersVisibility", () => {
     const { result } = renderHook(() => useBannersVisibility(), {
       initialState: {
         ...defaultInitialState,
+        ...withFlagOverrides({ lldActionCarousel: { enabled: true } }),
         settings: {
           showClearCacheBanner: false,
-          overriddenFeatureFlags: {
-            lldActionCarousel: { enabled: true },
-          },
         },
       },
     });
@@ -184,11 +178,9 @@ describe("useBannersVisibility", () => {
     const { result } = renderHook(() => useBannersVisibility(), {
       initialState: {
         ...defaultInitialState,
+        ...withFlagOverrides({ lldActionCarousel: { enabled: false } }),
         settings: {
           showClearCacheBanner: true,
-          overriddenFeatureFlags: {
-            lldActionCarousel: { enabled: false },
-          },
         },
       },
     });

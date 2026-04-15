@@ -1,7 +1,6 @@
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import aleoCoinConfig from "./config";
 import { TRANSACTION_TYPE } from "./constants";
 import type { Transaction, TransactionType, TransactionStatus } from "./types";
 
@@ -26,7 +25,6 @@ async function getDeviceTransactionConfig({
   const fields: Array<DeviceTransactionField> = [];
   const method = mapTransactionModeToMethod[transaction.mode] ?? "Unknown";
   const mainAccount = getMainAccount(account, parentAccount);
-  const config = aleoCoinConfig.getCoinConfig(mainAccount.currency.id);
 
   fields.push(
     { type: "text", label: "Method", value: method },
@@ -35,14 +33,16 @@ async function getDeviceTransactionConfig({
     { type: "amount", label: "Amount" },
   );
 
-  if (config.isFeeSponsored) {
+  // TODO: restore config.isFeeSponsored check
+  // https://ledgerhq.atlassian.net/browse/LIVE-29092
+  if (status.estimatedFees.isZero()) {
     fields.push({
       type: "text",
       label: "Fees",
       value: "Sponsored by Provable",
       valueI18nKey: "aleo.shared.sponsoredByProvable",
     });
-  } else if (!status.estimatedFees.isZero()) {
+  } else {
     fields.push({
       type: "fees",
       label: "Fees",

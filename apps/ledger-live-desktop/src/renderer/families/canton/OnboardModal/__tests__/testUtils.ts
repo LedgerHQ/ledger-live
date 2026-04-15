@@ -1,6 +1,7 @@
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import i18n from "~/renderer/i18n/init";
 import { createMockAccount, createMockCantonCurrency } from "../../__tests__/testUtils";
@@ -49,15 +50,11 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     isProcessing: false,
     onboardingResult: undefined,
     onboardingStatus: OnboardStatus.INIT,
-    authorizeStatus: AuthorizeStatus.INIT,
     error: null,
     onAddAccounts: jest.fn(),
     onAddMore: jest.fn(),
-    onAuthorizePreapproval: jest.fn(),
     onOnboardAccount: jest.fn(),
     onRetryOnboardAccount: jest.fn(),
-    onRetryPreapproval: jest.fn(),
-    skipPreapprovalStep: false,
     transitionTo: jest.fn(),
     ...overrides,
   };
@@ -75,3 +72,31 @@ export const createMockUserProps = (overrides: Record<string, unknown> = {}) => 
     ...overrides,
   };
 };
+
+/** Builds `UserProps` for `OnboardModal` integration tests (real `CryptoCurrency`, e.g. devnet). */
+export function generateOnboardModalProps(currency: CryptoCurrency) {
+  const creatableAccount = createMockAccount({
+    currency,
+    used: false,
+    id: `js:2:${currency.id}:creatable:canton`,
+  });
+  const importableAccount = createMockImportableAccount({
+    currency,
+    id: `js:2:${currency.id}:imported:canton`,
+    freshAddress: "imported-address",
+  });
+
+  return {
+    currency,
+    editedNames: {},
+    selectedAccounts: [creatableAccount, importableAccount],
+  };
+}
+
+/** Redux slice shape to open `OnboardModal` with a connected device (integration tests). */
+export function generateOnboardModalState(device: Device) {
+  return {
+    devices: { currentDevice: device, devices: [device] },
+    modals: { MODAL_CANTON_ONBOARD_ACCOUNT: { isOpened: true } },
+  };
+}

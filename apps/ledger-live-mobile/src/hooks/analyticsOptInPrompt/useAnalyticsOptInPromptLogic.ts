@@ -23,7 +23,7 @@ import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromp
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   Onboarding: "consent onboarding",

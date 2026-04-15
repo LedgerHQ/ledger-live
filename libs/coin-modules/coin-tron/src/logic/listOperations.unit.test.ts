@@ -3,6 +3,7 @@ import { fetchTronAccountTxsPage, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { TrongridTxInfo } from "../types";
 import { listOperations, ListOperationsOptions } from "./listOperations";
+import { TronEmptyPage } from "../types/errors";
 
 jest.mock("../network", () => ({
   fetchTronAccountTxsPage: jest.fn(),
@@ -67,7 +68,7 @@ describe("listOperations", () => {
     expect(result.next).toBeUndefined();
   });
 
-  it("should handle empty transactions", async () => {
+  it("should handle empty transactions on first page (no cursor)", async () => {
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
       nativeTxs: { txs: [], hasNextPage: false },
       trc20Txs: { txs: [], hasNextPage: false },
@@ -77,6 +78,21 @@ describe("listOperations", () => {
 
     expect(result.items).toHaveLength(0);
     expect(result.next).toBeUndefined();
+  });
+
+  it("should throw TronEmptyPage when cursor is provided but TronGrid returns empty page", async () => {
+    // TronGrid occasionally returns 0 results for a valid cursor (transient failure).
+    // A cursor is only issued when hasNextPage=true, so this is never a legitimate end-of-stream.
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+
+    const cursor = `${new Date("2023-01-01T01:00:00Z").getTime()}:tx1`;
+
+    await expect(listOperations(mockAddress, { ...defaultOptions, cursor })).rejects.toThrow(
+      TronEmptyPage,
+    );
   });
 
   it("should return cursor when hasNextPage is true", async () => {
@@ -434,13 +450,26 @@ describe("listOperations", () => {
   });
 
   it("should pass cursor timestamp as minTimestamp for asc order pagination", async () => {
-    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
-      nativeTxs: { txs: [], hasNextPage: false },
-      trc20Txs: { txs: [], hasNextPage: false },
-    });
-
     const cursorTimestamp = new Date("2023-01-01T02:00:00Z").getTime();
     const cursor = `${cursorTimestamp}:tx2`;
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: {
+        txs: [
+          {
+            txID: "tx3",
+            value: new BigNumber(30),
+            date: new Date("2023-01-01T03:00:00Z"),
+            blockHeight: 300,
+          },
+        ],
+        hasNextPage: false,
+      },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
     const minTimestamp = 1000;
 
     await listOperations(mockAddress, {

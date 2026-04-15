@@ -173,7 +173,12 @@ export class AccountPage extends AppPage {
 
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
-    await expect(this.tokenRow(tokenAccount.currency.ticker)).toBeVisible();
+    const row = this.tokenRow(tokenAccount.currency.ticker);
+    await this.showAllTokensButton.or(row).first().waitFor({ state: "visible" });
+    if (await this.showAllTokensButton.isVisible()) {
+      await this.showAllTokensButton.click();
+    }
+    await expect(row).toBeVisible();
   }
 
   @step("Navigate to token in account")

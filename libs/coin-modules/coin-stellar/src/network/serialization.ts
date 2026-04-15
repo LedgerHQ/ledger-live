@@ -2,13 +2,10 @@
  * Serialization functions from Horizon to Ledger Live types
  */
 import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/parseCurrencyUnit";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Horizon } from "@stellar/stellar-sdk";
 import BigNumber from "bignumber.js";
 import type { BalanceAsset, RawOperation, StellarMemo } from "../types";
-
-const currency = getCryptoCurrencyById("stellar");
+import { parseAPIValue } from "../logic/common";
 
 // Constants
 const BASE_RESERVE_MIN_COUNT = 2;
@@ -189,7 +186,7 @@ function getValue(
 
   switch (operation.type) {
     case "create_account":
-      value = parseCurrencyUnit(currency.units[0], operation.starting_balance);
+      value = parseAPIValue(operation.starting_balance);
 
       if (type === "OUT") {
         value = value.plus(transaction.fee_charged);
@@ -200,7 +197,7 @@ function getValue(
     case "payment":
     case "path_payment_strict_send":
     case "path_payment_strict_receive":
-      return parseCurrencyUnit(currency.units[0], operation.amount);
+      return parseAPIValue(operation.amount);
 
     default:
       return type !== "IN" ? new BigNumber(transaction.fee_charged) : value;

@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
@@ -29,6 +30,7 @@ export type UseAssetTableOptions = {
 
 export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
   const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
@@ -46,7 +48,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         cell: ({ row }) => (
           <TableCellContent
             leadingContent={
-              row.original.isPlaceholder ? (
+              row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
                 <CryptoIcon
                   ledgerId={row.original.currency.id}
                   ticker={row.original.currency.ticker}
@@ -102,7 +104,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
           row.original.isPlaceholder ? (
             <TableCellContent align="end" title={<span className="text-muted">0.00%</span>} />
           ) : (
-            <TrendCell currency={row.original.currency} />
+            <TrendCell trend={row.original.trend} />
           ),
         meta: {
           align: "end",
@@ -121,12 +123,13 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         },
       },
     ],
-    [t, emptyFiatValue, showTrendColumnTooltip],
+    [t, emptyFiatValue, showTrendColumnTooltip, shouldDisplayAggregatedAssets],
   );
 
   const table = useLumenDataTable({
     data: assets,
     columns,
+    autoResetPageIndex: false,
   });
 
   return table;

@@ -21,16 +21,7 @@ export function runPortfolioTransactionsHistoryTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [
-          async (userdataPath?: string) => {
-            await CLI.liveData({
-              currency: account.currency.id,
-              index: account.index,
-              appjson: userdataPath,
-              add: true,
-            });
-          },
-        ],
+        cliCommands: [liveDataCommand(account)],
       });
     });
 

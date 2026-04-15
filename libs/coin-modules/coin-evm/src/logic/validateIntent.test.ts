@@ -17,6 +17,8 @@ import {
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
   RecipientRequired,
+  RedelegateDstValAddressRequired,
+  ValAddressRequired,
 } from "@ledgerhq/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
@@ -69,6 +71,29 @@ function eip1559Intent(
     data: { type: "buffer", value: Buffer.from([]) },
     ...intent,
   };
+}
+
+function stakingIntent(
+  intent: Partial<
+    TransactionIntent<MemoNotSupported, BufferTxData> & {
+      mode: "delegate" | "redelegate" | "undelegate";
+      valAddress?: string;
+      dstValAddress?: string;
+    }
+  >,
+): TransactionIntent<MemoNotSupported, BufferTxData> {
+  return {
+    type: "send-legacy",
+    intentType: "staking",
+    sender: "0xsender",
+    recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+    amount: 1n,
+    asset: { type: "native" },
+    mode: "delegate",
+    valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+    data: { type: "buffer", value: Buffer.from([]) },
+    ...intent,
+  } as TransactionIntent<MemoNotSupported, BufferTxData>;
 }
 
 describe("validateIntent", () => {
@@ -329,6 +354,142 @@ describe("validateIntent", () => {
       expect(res.errors).toEqual(
         expect.objectContaining({
           amount: new NotEnoughBalance(),
+        }),
+      );
+    });
+  });
+
+  describe("staking", () => {
+    const stakingCurrency = {
+      name: "Ethereum",
+      ticker: "ETH",
+      units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+    } as CryptoCurrency;
+
+    it("detects missing validator address for delegate with an error", async () => {
+      const intent = stakingIntent({ mode: "delegate" }) as Record<string, unknown>;
+      delete intent.valAddress;
+
+      const res = await validateIntent(
+        stakingCurrency,
+        intent as TransactionIntent<MemoNotSupported, BufferTxData>,
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 10n,
+          parameters: { gasLimit: 10n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          valAddress: new ValAddressRequired(),
+        }),
+      );
+    });
+
+    it("detects missing destination validator address for redelegate with an error", async () => {
+      const intent = stakingIntent({
+        mode: "redelegate",
+        valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+      }) as Record<string, unknown>;
+      delete intent.dstValAddress;
+
+      const res = await validateIntent(
+        stakingCurrency,
+        intent as TransactionIntent<MemoNotSupported, BufferTxData>,
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 10n,
+          parameters: { gasLimit: 10n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          dstValAddress: new RedelegateDstValAddressRequired(),
+        }),
+      );
+    });
+
+    it("detects delegate total spent greater than spendable balance with an error", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "delegate",
+          amount: 45n,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+        }),
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 10n,
+          parameters: { gasLimit: 10n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          amount: new NotEnoughBalance(),
+        }),
+      );
+    });
+
+    it("allows undelegate when amount exceeds spendable but fees fit in spendable balance", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "undelegate",
+          amount: 100n,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+        }),
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 10n,
+          parameters: { gasLimit: 10n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors.amount).toBeUndefined();
+      expect(res.errors.fees).toBeUndefined();
+    });
+
+    it("allows redelegate when amount exceeds spendable but fees fit in spendable balance", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "redelegate",
+          amount: 100n,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+          dstValAddress: "seivaloper1f4cqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        }),
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 10n,
+          parameters: { gasLimit: 10n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors.amount).toBeUndefined();
+      expect(res.errors.fees).toBeUndefined();
+    });
+
+    it("detects staking fees greater than native balance with an error", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "delegate",
+          amount: 1n,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+        }),
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 100n,
+          parameters: { gasLimit: 21000n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          fees: new NotEnoughBalance(),
         }),
       );
     });

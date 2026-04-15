@@ -15,7 +15,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 
 const app: AppInfos = AppInfos.EXCHANGE;

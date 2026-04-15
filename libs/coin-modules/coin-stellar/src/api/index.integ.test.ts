@@ -211,4 +211,37 @@ describe("Stellar Api", () => {
       expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoText(Buffer.from("test", "ascii")));
     });
   });
+
+  /**
+   * Signed transaction envelope from BACK-10960 / Jira (mainnet).
+   * Live Horizon may report `tx_failed` + XDR `txFailed` (operation-level failure) while static ticket JSON showed `tx_no_source_account`.
+   */
+  describe("broadcast", () => {
+    let broadcastModule: AlpacaApi<StellarMemo>;
+    const tx =
+      "AAAAAgAAAABRUCgFba+DTbei2ifpyYt5w2Hh0VyZ+X9fayjIDne7YAAAAGQCkDOGAAAABQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAACEIuPfWXgM8WhyqjrpFdIcGV1SUVhMzPUm4YspNHF60QAAAAAAAAAAALkd2QAAAAAAAAABDne7YAAAAEAASzsT/yDIfCfEDstkfnznXjiN7rNd7PkKQEn+rRIFm9EHoirGfHipWoBdYMrc6ixQD/0y0of1piSid8TLiFAB";
+    beforeAll(() => {
+      broadcastModule = createApi({
+        explorer: {
+          url: "https://horizon.stellar.org/",
+        },
+      });
+    });
+
+    it("maps Horizon transaction failure to StellarBroadcastFailedError with XDR context", async () => {
+      await expect(broadcastModule.broadcast(tx)).rejects.toMatchObject({
+        name: "StellarBroadcastFailedError",
+        documentationSummary: "One of the operations failed (none were applied).",
+        horizonTransactionCode: "tx_failed",
+        stellarDocUrl:
+          "https://developers.stellar.org/docs/data/apis/horizon/api-reference/errors/result-codes/transactions",
+        decodedResultXdr: {
+          feeChargedStroops: expect.stringMatching(/^\d+$/),
+          resultSwitch: "txFailed",
+        },
+        envelopeXdr: tx,
+        cause: expect.objectContaining({ name: "AxiosError" }),
+      });
+    });
+  });
 });

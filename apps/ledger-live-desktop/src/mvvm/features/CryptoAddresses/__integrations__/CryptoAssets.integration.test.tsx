@@ -18,6 +18,7 @@ const baseViewModel: CryptoAssetsViewModel = {
   items: [],
   isLoading: true,
   onAssetRowClick: jest.fn(),
+  trackingType: "crypto",
 };
 
 describe("CryptoAssets (Crypto assets page)", () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import i18next from "i18next";
@@ -24,7 +24,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-// Prevent loading ESM-only @braze/web-sdk (pulled in by BottomCarouselContentCards via usePortfolioCarouselCards)
+// Prevent loading ESM-only @braze/web-sdk (pulled in by dynamic content hooks if imported)
 jest.mock("@braze/web-sdk", () => ({
   getCachedContentCards: jest.fn(() => ({ cards: [] })),
   logCardDismissal: jest.fn(),
@@ -90,12 +90,16 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
   }),
 }));
 
-jest.mock("~/renderer/hooks/usePrice", () => ({
-  usePrice: () => ({
-    counterValue: null,
-    counterValueCurrency: { units: [{ name: "USD", code: "USD", magnitude: 2 }] },
-  }),
-}));
+jest.mock("~/renderer/hooks/usePrice", () => {
+  const { getFiatCurrencyByTicker } = jest.requireActual("@ledgerhq/live-common/currencies/index");
+  const usd = getFiatCurrencyByTicker("USD");
+  return {
+    usePrice: () => ({
+      counterValue: null,
+      counterValueCurrency: usd,
+    }),
+  };
+});
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
@@ -286,14 +290,13 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ...AFTER_ONBOARDING_STATE.overriddenFeatureFlags,
-              lwdWallet40: {
-                enabled: true,
-                params: { balanceRefreshRework: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { balanceRefreshRework: true },
+            },
+          }),
         },
       });
 
@@ -312,14 +315,13 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ...AFTER_ONBOARDING_STATE.overriddenFeatureFlags,
-              lwdWallet40: {
-                enabled: true,
-                params: { balanceRefreshRework: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { balanceRefreshRework: true },
+            },
+          }),
         },
       });
 
@@ -454,12 +456,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: true,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
         },
       });
 
@@ -471,12 +473,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: false,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: false,
+            },
+          }),
         },
       });
 
@@ -488,12 +490,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: true,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
         },
       });
 
@@ -597,12 +599,12 @@ describe("PortfolioView", () => {
   });
 });
 
-const walletV4TourFlags = {
+const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
     params: { tour: true, mainNavigation: true, marketBanner: true },
   },
-};
+});
 
 describe("Portfolio (Wallet V4 Tour)", () => {
   beforeEach(() => {
@@ -619,8 +621,8 @@ describe("Portfolio (Wallet V4 Tour)", () => {
         settings: {
           ...AFTER_ONBOARDING_STATE,
           hasSeenWalletV4Tour: false,
-          overriddenFeatureFlags: walletV4TourFlags,
         },
+        ...walletV4TourFlagOverrides,
       },
     });
 
@@ -639,8 +641,8 @@ describe("Portfolio (Wallet V4 Tour)", () => {
         settings: {
           ...AFTER_ONBOARDING_STATE,
           hasSeenWalletV4Tour: true,
-          overriddenFeatureFlags: walletV4TourFlags,
         },
+        ...walletV4TourFlagOverrides,
       },
     });
 

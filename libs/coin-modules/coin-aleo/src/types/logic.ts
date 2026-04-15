@@ -6,7 +6,6 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { TRANSACTION_TYPE } from "../constants";
 import type {
-  AleoJWT,
   AleoRecordScannerStatusResponse,
   AleoPublicTransactionDetailsResponse,
   AleoPrivateRecord,
@@ -27,9 +26,6 @@ export type EnrichedPrivateRecord = {
 };
 
 export interface ProvableApi {
-  apiKey?: string;
-  consumerId?: string;
-  jwt?: AleoJWT;
   uuid?: string;
   scannerStatus?: AleoRecordScannerStatusResponse;
 }

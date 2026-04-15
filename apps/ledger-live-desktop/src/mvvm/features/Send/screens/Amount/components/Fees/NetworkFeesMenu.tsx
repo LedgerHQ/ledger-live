@@ -21,6 +21,8 @@ import type { FeePresetOption } from "../../../../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../../../../hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "../../../../hooks/useFeePresetLegends";
 import { FeePresetMenuItems } from "./FeePresetMenuItems";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 
 type FeeOptionDisplay = Readonly<{
   id: string;
@@ -67,6 +69,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
   const { transaction } = state.transaction;
+  const { currentStep } = useFlowWizard();
 
   const mainAccount = useMemo(
     () => (account ? getMainAccount(account, parentAccount ?? undefined) : null),
@@ -116,6 +119,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   const hasCustom =
     sendFeatures.hasCustomFees(currency) && !!sendFeatures.getCustomFeeConfig(currency);
   const hasCoinControl = sendFeatures.hasCoinControl(currency);
+  const showCoinControlMenuItem = hasCoinControl && currentStep !== SEND_FLOW_STEP.COIN_CONTROL;
   const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
   const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";
 
@@ -174,7 +178,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
           <FeePresetMenuItems
             hasPresets={hasPresets}
             hasCustom={hasCustom}
-            hasCoinControl={hasCoinControl}
+            hasCoinControl={showCoinControlMenuItem}
             selectedStrategy={selectedStrategy}
             onSelectStrategy={onSelectStrategy}
             onSelectCustomFees={onSelectCustomFees}

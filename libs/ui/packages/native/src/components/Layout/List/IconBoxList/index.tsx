@@ -21,7 +21,7 @@ export default function IconBoxList({
 }: IconBoxListProps): React.ReactElement {
   const iconBoxItems = useMemo(
     () =>
-      items.map((item) => ({
+      items.map(item => ({
         ...item,
         bullet: (
           <BoxedIcon

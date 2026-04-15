@@ -5,7 +5,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as networkModule from "../network";
@@ -45,7 +45,7 @@ describe("getAccountShape", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
-      node: { url: getFullnodeUrl("mainnet") },
+      node: { url: getJsonRpcFullnodeUrl("mainnet") },
     }));
   });
 

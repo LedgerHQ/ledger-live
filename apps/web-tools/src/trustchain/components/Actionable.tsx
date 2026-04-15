@@ -1,37 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
-import { Spinner } from "./Spinner";
-
-const Label = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0px 0;
-  margin: 5px 0;
-  button {
-    margin: 2px 8px;
-  }
-`;
-
-const ValueDisplay = styled.code`
-  flex: 1;
-  padding: 10px;
-  background: #f0f0f0;
-  display: block;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  width: 100%;
-  overflow: hidden;
-`;
-
-const ErrorDisplay = styled.div`
-  padding: 10px;
-  margin: 5px 0;
-  color: red;
-`;
-
-const Button = styled.button`
-  padding: 10px;
-`;
+import { Button, Spinner } from "@ledgerhq/lumen-ui-react";
+import { useDeviceInteractionVisible } from "../deviceInteractionContext";
 
 export function Actionable<I extends Array<unknown>, A>({
   inputs,
@@ -45,13 +14,9 @@ export function Actionable<I extends Array<unknown>, A>({
   buttonProps,
 }: {
   buttonTitle: string;
-  // inputs or null if not enabled
   inputs: I | null;
-  // if action fails, the error is going to be used for display
   action: (...inputs: I) => Promise<A> | A;
-  // how to display the value
   valueDisplay?: (value: A) => React.ReactNode;
-  // in control style, we can provide a value and a setter
   value?: A | null;
   setValue?: (value: A | null) => void;
   children?: React.ReactNode;
@@ -62,7 +27,6 @@ export function Actionable<I extends Array<unknown>, A>({
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // if value is set, error should disappear
   useEffect(() => {
     if (value !== null && value !== undefined) {
       setError(null);
@@ -132,21 +96,30 @@ export function RenderActionable({
   reverseRow?: boolean;
   buttonProps?: { [key: string]: any };
 }) {
+  const deviceOverlayVisible = useDeviceInteractionVisible();
+  const showInlineSpinner = loading && !deviceOverlayVisible;
+
   return (
-    <Label
-      style={{
-        flexDirection: reverseRow ? "row-reverse" : "row",
-      }}
-    >
-      <span style={{ position: "relative" }}>
-        <Button disabled={!enabled || loading} onClick={onClick} {...buttonProps}>
+    <div className={`flex items-center gap-8 my-4 ${reverseRow ? "flex-row-reverse" : "flex-row"}`}>
+      <span className="relative inline-flex items-center gap-6">
+        <Button
+          size="sm"
+          appearance="transparent"
+          disabled={!enabled || loading}
+          onClick={onClick}
+          {...buttonProps}
+        >
           {buttonTitle}
         </Button>
-        {loading ? <Spinner /> : null}
+        {showInlineSpinner ? <Spinner size={12} className="text-muted" /> : null}
       </span>
-      {display ? <ValueDisplay>{display}</ValueDisplay> : null}
-      {error ? <ErrorDisplay>{error.message}</ErrorDisplay> : null}
+      {display ? (
+        <code className="flex-1 bg-muted rounded-md px-8 py-6 body-3 text-base truncate">
+          {display}
+        </code>
+      ) : null}
+      {error ? <span className="text-error body-3 px-8">{error.message}</span> : null}
       {children}
-    </Label>
+    </div>
   );
 }

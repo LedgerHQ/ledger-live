@@ -54,6 +54,7 @@ import {
   DeviceDeprecationScreens,
 } from "./Screen/DeviceDeprecationScreen";
 
+import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
@@ -86,6 +87,7 @@ import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
@@ -267,7 +269,7 @@ const Separator = styled.div`
 const DeviceSwapSummaryStyled = styled.section`
   margin: ${({ theme }) => theme.space[3]}px;
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: ${({ theme }) => theme.space[4]}px;
 `;
 
@@ -707,6 +709,34 @@ export const renderLockedDeviceError = ({
   );
 };
 
+export const renderAlreadySendingApduError = ({
+  t,
+  onRetry,
+  inlineRetry,
+}: {
+  t: TFunction;
+  onRetry?: (() => void) | null | undefined;
+  inlineRetry?: boolean;
+}) => {
+  return (
+    <Wrapper id="error-already-sending-apdu">
+      <ErrorBody
+        Icon={IconsLegacy.InfoAltFillMedium}
+        iconColor="primary.c80"
+        title={t("errors.AlreadySendingApduError.title")}
+        description={t("errors.AlreadySendingApduError.description")}
+        buttons={
+          onRetry && inlineRetry ? (
+            <ButtonV3 size="large" variant="main" onClick={onRetry}>
+              {t("common.retry")}
+            </ButtonV3>
+          ) : null
+        }
+      />
+    </Wrapper>
+  );
+};
+
 export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   ({ t, device }: { t: TFunction; device?: Device | null }) => {
     const productName = device ? getDeviceModel(device.modelId).productName : null;
@@ -790,6 +820,41 @@ const FirmwareNotRecognizedErrorComponent: React.FC<{
   );
 };
 
+const CounterfeitDeviceErrorComponent: React.FC<{
+  productName?: string;
+}> = ({ productName }) => {
+  const { t } = useTranslation();
+  const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
+
+  const onContactSupport = () => {
+    track("button_clicked", {
+      button: "Contacting support about non genuine device",
+    });
+    openURL(contactSupportUrl);
+  };
+
+  return (
+    <Wrapper id="error-counterfeit-device">
+      <ErrorBody
+        Icon={IconsLegacy.WarningSolidMedium}
+        iconColor="warning.c70"
+        title={t("errors.CounterfeitDevice.title", { productName })}
+        description={t("errors.CounterfeitDevice.description")}
+        buttons={
+          <ButtonV3
+            size="large"
+            variant="main"
+            onClick={onContactSupport}
+            Icon={IconsLegacy.ExternalLinkMedium}
+          >
+            {t("errors.CounterfeitDevice.contactSupportCTA")}
+          </ButtonV3>
+        }
+      />
+    </Wrapper>
+  );
+};
+
 export const renderError = ({
   error,
   t,
@@ -838,10 +903,21 @@ export const renderError = ({
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
-  if (tmpError instanceof LockedDeviceError) {
+  if (
+    (isDmkError(error) && error._tag === "AlreadySendingApduError") ||
+    ("name" in error && error.name === "AlreadySendingApduError")
+  ) {
+    return renderAlreadySendingApduError({ t, onRetry, inlineRetry });
+  } else if (tmpError instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (tmpError instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
+  } else if (isCounterfeitError(tmpError)) {
+    return (
+      <CounterfeitDeviceErrorComponent
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+      />
+    );
   } else if (
     tmpError instanceof FirmwareNotRecognized ||
     isInvalidGetFirmwareMetadataResponseError(tmpError)

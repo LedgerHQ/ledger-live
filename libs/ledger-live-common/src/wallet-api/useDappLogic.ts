@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
 import { atomFamily } from "jotai-family";
-import { AppManifest, DAppTrackingData, WalletAPITransaction } from "./types";
+import { AppManifest, DAppTrackingData, DiscoverDB, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
@@ -10,12 +10,13 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { CurrentAccountHistDB, UiHook } from "./react";
+import { UiHook, SetCurrentAccountHistDb } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
+import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
@@ -79,96 +80,79 @@ export const currentAccountAtomFamily = atomFamily((_manifestId: string) =>
 
 export function useDappCurrentAccount(
   manifestId: string,
-  currentAccountHistDb?: CurrentAccountHistDB,
+  setCurrentAccountHistDb?: SetCurrentAccountHistDb,
 ) {
   const atomToUse = currentAccountAtomFamily(manifestId);
   const [currentAccount, setCurrentAccount] = useAtom(atomToUse);
 
   // prefer using this setter when the user manually sets a current account
   const setCurrentAccountHist = useCallback(
-    (manifestId: string, account: AccountLike) => {
-      if (!currentAccountHistDb) return;
-
-      const [_, _setCurrentAccountHist] = currentAccountHistDb;
-      _setCurrentAccountHist(state => {
+    (id: string, account: AccountLike) => {
+      setCurrentAccountHistDb?.(state => {
         const newState = {
           ...state,
           currentAccountHist: {
             ...state.currentAccountHist,
-            [manifestId]: account.id,
+            [id]: account.id,
           },
         };
         return newState;
       });
     },
-    [currentAccountHistDb],
+    [setCurrentAccountHistDb],
   );
 
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
-const emptyArray: string[] = [];
-
 function useDappAccountLogic({
   manifest,
   accounts,
   currentAccountHistDb,
+  setCurrentAccountHistDb,
   initialAccountId,
 }: {
   manifest: AppManifest;
   accounts: AccountLike[];
-  currentAccountHistDb?: CurrentAccountHistDB;
+  currentAccountHistDb?: DiscoverDB["currentAccountHist"];
+  setCurrentAccountHistDb?: SetCurrentAccountHistDb;
   initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
-  // If the manifest has a wildcard currencyId, we use an empty array to avoid any issues
-  // For dApps, currencies need to be specified explicitly
-  const currencyIds = manifest.currencies === "*" ? emptyArray : manifest.currencies;
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } = useDappCurrentAccount(
     manifest.id,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   );
+
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
     }
   }, [currentAccount, accounts]);
 
-  const firstAccountAvailable = useMemo(() => {
-    const account = accounts.find(account => {
-      if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
-        return account;
-      }
-      if (account.type === "TokenAccount" && currencyIds.includes(account.token.id)) {
-        return getParentAccount(account, accounts);
-      }
-    });
-    // might not even need to set parent here
-    if (account) {
-      return getParentAccount(account, accounts);
-    }
-  }, [accounts, currencyIds]);
-
-  const storedCurrentAccountIsPermitted = useCallback(() => {
-    if (!currentAccount) return false;
-    return accounts.some(
-      account =>
-        account.type === "Account" &&
-        currencyIds.includes(account.currency.id) &&
-        account.id === currentAccount.id,
-    );
-  }, [currentAccount, accounts, currencyIds]);
-
   const currentAccountIdFromHist = useMemo(() => {
-    if (manifest && currentAccountHistDb) {
-      return currentAccountHistDb[0]?.[manifest.id];
-    }
-    return null;
+    return currentAccountHistDb?.[manifest.id];
   }, [manifest, currentAccountHistDb]);
 
   const currentAccountFromHist = useMemo(() => {
-    return accounts.find(account => account.id === currentAccountIdFromHist);
-  }, [accounts, currentAccountIdFromHist]);
+    if (!currentAccountIdFromHist) return undefined;
+    const account = accounts.find(a => a.id === currentAccountIdFromHist);
+    if (!account) return undefined;
+
+    const networks = manifest.dapp?.networks;
+    if (!networks) return undefined;
+
+    const accountCurrencyId =
+      account.type === "TokenAccount" ? account.token.id : account.currency.id;
+    const accountNetworkCurrency =
+      account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+
+    const isCompatible = networks.some(
+      n => n.currency === accountCurrencyId || n.currency === accountNetworkCurrency,
+    );
+
+    return isCompatible ? account : undefined;
+  }, [accounts, currentAccountIdFromHist, manifest.dapp?.networks]);
 
   const initialAccount = useMemo(() => {
     if (!initialAccountId) return;
@@ -191,25 +175,18 @@ function useDappAccountLogic({
       setCurrentAccount(currentAccountFromHist);
       return;
     }
-
-    if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-      /** if there is no current account OR if there is a current account but it is not in the manifest currencies then fall back to the first permitted account */
-      setCurrentAccount(firstAccountAvailable ?? null);
-    }
   }, [
-    currentAccount,
-    currentAccountFromHist,
-    firstAccountAvailable,
-    initialAccount,
     initialAccountSelected,
-    manifest.id,
+    initialAccount,
+    currentAccountFromHist,
     setCurrentAccount,
     setCurrentAccountHist,
-    storedCurrentAccountIsPermitted,
+    manifest.id,
   ]);
 
   return {
     currentAccount,
+    currentAccountFromHist,
     setCurrentAccount,
     currentParentAccount,
     setCurrentAccountHist,
@@ -235,7 +212,9 @@ export function useDappLogic({
   uiHook,
   tracking,
   currentAccountHistDb,
+  setCurrentAccountHistDb,
   initialAccountId,
+  referrer,
   mevProtected,
 }: {
   manifest: AppManifest;
@@ -243,20 +222,28 @@ export function useDappLogic({
   accounts: AccountLike[];
   uiHook: UiHook;
   tracking: TrackingAPI;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  currentAccountHistDb?: DiscoverDB["currentAccountHist"];
+  setCurrentAccountHistDb?: SetCurrentAccountHistDb;
   initialAccountId?: string;
+  referrer?: string;
   mevProtected?: boolean;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
   const ws = useRef<SmartWebsocket | undefined>(undefined);
-  const { currentAccount, currentParentAccount, setCurrentAccount, setCurrentAccountHist } =
-    useDappAccountLogic({
-      manifest,
-      accounts,
-      currentAccountHistDb,
-      initialAccountId,
-    });
+  const {
+    currentAccount,
+    currentAccountFromHist,
+    currentParentAccount,
+    setCurrentAccount,
+    setCurrentAccountHist,
+  } = useDappAccountLogic({
+    manifest,
+    accounts,
+    currentAccountHistDb,
+    setCurrentAccountHistDb,
+    initialAccountId,
+  });
 
   /** Current network is needed for recognising the current chain id.
    * If a token account is selected, this depends on the parent currency. */
@@ -265,7 +252,7 @@ export function useDappLogic({
       return undefined;
     }
     // If the current account is a token account, and the chain id is not specified for that specific token, we can also use the network of the parent currency to determine the correct chain id.
-    return manifest.dapp?.networks.find(network => {
+    return manifest.dapp?.networks.find(n => {
       const accountCurrencyId =
         currentAccount.type === "TokenAccount"
           ? currentAccount.token.id
@@ -275,7 +262,7 @@ export function useDappLogic({
           ? currentAccount.token.parentCurrency.id
           : currentAccount.currency.id;
 
-      return network.currency === accountCurrencyId || network.currency === accountNetworkCurrency;
+      return n.currency === accountCurrencyId || n.currency === accountNetworkCurrency;
     });
   }, [currentAccount, manifest.dapp?.networks]);
 
@@ -297,7 +284,7 @@ export function useDappLogic({
         params: [[currentAddress]],
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAddress]);
 
   useEffect(() => {
@@ -312,7 +299,7 @@ export function useDappLogic({
         params: [`0x${currentNetwork.chainID.toString(16)}`],
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNetwork?.chainID]);
 
   useEffect(() => {
@@ -438,9 +425,7 @@ export function useDappLogic({
           }
 
           // Check chain ID is known to the wallet
-          const requestedCurrency = manifest.dapp?.networks.find(
-            network => network.chainID === decimalChainId,
-          );
+          const requestedCurrency = manifest.dapp?.networks.find(n => n.chainID === decimalChainId);
 
           if (!requestedCurrency) {
             postMessage(
@@ -571,6 +556,16 @@ export function useDappLogic({
               );
 
               tracking.dappSendTransactionSuccess(manifest, trackingData);
+
+              if (isLedgerButtonReferrer(referrer)) {
+                reportLedgerButtonBroadcast({
+                  dappId: manifest.id,
+                  chainId: currentNetwork.chainID,
+                  networkName: trackingData.network,
+                  transactionHash: optimisticOperation.hash,
+                  referrer,
+                });
+              }
 
               postMessage(
                 JSON.stringify({
@@ -718,6 +713,7 @@ export function useDappLogic({
       mevProtected,
       nanoApp,
       postMessage,
+      referrer,
       setCurrentAccount,
       setCurrentAccountHist,
       tracking,
@@ -725,5 +721,7 @@ export function useDappLogic({
     ],
   );
 
-  return { onDappMessage, noAccounts: !currentAccount };
+  const isLoadingAccounts = !currentAccount && !!currentAccountFromHist;
+
+  return { onDappMessage, noAccounts: !currentAccount, isLoadingAccounts };
 }

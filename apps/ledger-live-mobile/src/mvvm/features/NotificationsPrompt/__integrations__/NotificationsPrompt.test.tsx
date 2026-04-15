@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { act, render, screen, waitFor } from "@tests/test-renderer";
+import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { useNotifications } from "../hooks/useNotifications";
 
 import storage from "LLM/storage";
@@ -116,7 +116,7 @@ describe("NotificationsPrompt Integration", () => {
           .then(() => setIsReady(true));
 
         // No dependency because we only want to run it once.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
       }, [reloadCount]);
 
       if (!isReady) {
@@ -139,52 +139,44 @@ describe("NotificationsPrompt Integration", () => {
         <SetupComponent />
       </>,
       {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            notifications: {
-              ...state.settings.notifications,
-              areNotificationsAllowed: appNotifications,
-            },
-            overriddenFeatureFlags: {
-              ...state.settings.overriddenFeatureFlags,
-              brazePushNotifications: {
-                enabled: true,
-                params: {
-                  action_events: {
-                    complete_onboarding: {
-                      enabled: true,
-                      timer: 0,
-                    },
-
-                    add_favorite_coin: {
-                      enabled: true,
-                      timer: 0,
-                    },
-
-                    send: {
-                      enabled: true,
-                      timer: 0,
-                    },
-                    receive: {
-                      enabled: true,
-                      timer: 0,
-                    },
-                    buy: {
-                      enabled: true,
-                      timer: 0,
-                    },
-                    swap: {
-                      enabled: true,
-                      timer: 0,
-                    },
-                    stake: {
-                      enabled: true,
-                      timer: 0,
-                    },
+        overrideInitialState: withFlagOverrides(
+          {
+            brazePushNotifications: {
+              enabled: true,
+              params: {
+                action_events: {
+                  complete_onboarding: {
+                    enabled: true,
+                    timer: 0,
                   },
-                  reprompt_schedule: REPROMPT_SCHEDULE,
+
+                  add_favorite_coin: {
+                    enabled: true,
+                    timer: 0,
+                  },
+
+                  send: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  receive: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  buy: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  swap: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                  stake: {
+                    enabled: true,
+                    timer: 0,
+                  },
+                },
+                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({ months: 0, hours: 0, minutes: 0, seconds: 0, days: "days" in s ? s.days : 0 })),
 
                   notificationsCategories: [
                     {
@@ -213,19 +205,28 @@ describe("NotificationsPrompt Integration", () => {
                     },
                   ],
 
-                  inactivity_enabled: true,
-                  inactivity_reprompt: INACTIVITY_REPROMPT,
-                },
+                inactivity_enabled: true,
+                inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },
               },
-              lwmNewWordingOptInNotificationsDrawer: {
-                enabled: true,
-                params: {
-                  variant,
-                },
+            },
+            lwmNewWordingOptInNotificationsDrawer: {
+              enabled: true,
+              params: {
+                variant,
               },
             },
           },
-        }),
+          state => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              notifications: {
+                ...state.settings.notifications,
+                areNotificationsAllowed: appNotifications,
+              },
+            },
+          }),
+        ),
       },
     );
 

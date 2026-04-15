@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import { TextInput } from "@ledgerhq/lumen-ui-react";
 import { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
-import { Input } from "./Input";
 import { useTrustchainSDK } from "../context";
 
 export function AppEncryptUserData({ trustchain }: { trustchain: Trustchain | null }) {
@@ -17,7 +17,7 @@ export function AppEncryptUserData({ trustchain }: { trustchain: Trustchain | nu
   );
 
   const valueDisplay = useCallback(
-    (output: Uint8Array) => <code>{crypto.to_hex(output)}</code>,
+    (output: Uint8Array) => <code className="body-3">{crypto.to_hex(output)}</code>,
     [],
   );
 
@@ -29,17 +29,12 @@ export function AppEncryptUserData({ trustchain }: { trustchain: Trustchain | nu
       valueDisplay={valueDisplay}
       value={output}
       setValue={setOutput}
-      buttonProps={{
-        "data-tooltip-id": "tooltip",
-        "data-tooltip-content":
-          "encrypts a message with the current private key secured by the trustchain",
-      }}
     >
-      <Input
+      <TextInput
         placeholder="message to encrypt"
-        type="text"
         value={input || ""}
         onChange={e => setInput(e.target.value)}
+        className="flex-1"
       />
     </Actionable>
   );

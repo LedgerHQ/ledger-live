@@ -9,7 +9,7 @@ import {
   ensureNoNegative,
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "../bridge";
-import perFamilyMock from "../generated/mock";
+import { loadMockAccountForFamily } from "../coin-modules/registry";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
@@ -36,9 +36,7 @@ export function genAddingOperationsInAccount(
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
-  const perFamilyOperation = perFamilyMock[account.currency.id];
-  const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
-  if (postSyncAccount) postSyncAccount(copy);
+  loadMockAccountForFamily(account.currency.family)?.postSyncAccount?.(copy);
   return copy;
 }
 
@@ -206,9 +204,9 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
       }
     },
     (account: Account, currency: CryptoCurrency, rng: Prando) => {
-      const perFamilyOperation = perFamilyMock[currency.id];
+      const perFamilyOperation = loadMockAccountForFamily(currency.family);
       const genAccountEnhanceOperations =
-        perFamilyOperation && perFamilyOperation.genAccountEnhanceOperations;
+        perFamilyOperation && (perFamilyOperation as any).genAccountEnhanceOperations;
       if (genAccountEnhanceOperations) {
         genAccountEnhanceOperations(account, rng);
       }

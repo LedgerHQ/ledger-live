@@ -1,17 +1,15 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
+import { useSelector } from "LLD/hooks/redux";
+import { discreetModeSelector } from "~/renderer/reducers/settings";
 
-export function useTrendCellViewModel(currency: CryptoCurrency | TokenCurrency) {
-  const { countervalueChange } = useCurrencyPortfolio({ currency, range: "day" });
-  const percentage = countervalueChange.percentage;
-
-  if (percentage == null) {
+export function useTrendCellViewModel(trend: number | null | undefined) {
+  const discreet = useSelector(discreetModeSelector);
+  if (trend == null) {
     return { formattedTrend: "-", colorClass: "text-muted" };
   }
 
-  const sign = percentage > 0 ? "+" : "";
-  const formattedTrend = `${sign}${(percentage * 100).toFixed(2)}%`;
-  const colorClass = percentage >= 0 ? "text-success" : "text-error";
+  const sign = trend > 0 ? "+" : "";
+  const formattedTrend = discreet ? "***" : `${sign}${(trend * 100).toFixed(2)}%`;
+  const colorClass = trend >= 0 ? "text-success" : "text-error";
 
   return { formattedTrend, colorClass };
 }

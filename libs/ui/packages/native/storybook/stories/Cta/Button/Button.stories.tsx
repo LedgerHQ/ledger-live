@@ -4,7 +4,7 @@ import Info from "../../../../src/icons/Info";
 import { Meta, StoryFn } from "@storybook/react";
 import { IconType } from "src/components/Icon/type";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default {
   title: "CTA/Button",

@@ -19,19 +19,19 @@ type CloseProps = {
 };
 
 export const Container = styled(TouchableOpacity)`
-  background: ${(p) => p.theme.colors.opacityDefault.c05};
+  background: ${p => p.theme.colors.opacityDefault.c05};
   flex-direction: row;
   backdrop-filter: blur(62px);
   border-radius: 12px;
   height: 72px;
-  padding: ${(p) => p.theme.space[6]}px;
+  padding: ${p => p.theme.space[6]}px;
   align-items: center;
   justify-content: space-between;
   z-index: 5;
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
-  background-color: ${(p) => p.theme.colors.opacityDefault.c05};
+  background-color: ${p => p.theme.colors.opacityDefault.c05};
   border-radius: 50px;
   height: 24px;
   width: 24px;

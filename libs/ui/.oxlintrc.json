@@ -1,0 +1,96 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "19.0.0"
+    }
+  },
+  "plugins": ["eslint", "import", "typescript", "react", "jsx-a11y"],
+  "ignorePatterns": [
+    "*.min.js",
+    "node_modules",
+    "lib",
+    "dist",
+    "coverage",
+    "scripts",
+    "react",
+    "native",
+    "reactLegacy",
+    "nativeLegacy",
+    "examples"
+  ],
+  "categories": {
+    "correctness": "off",
+    "suspicious": "off",
+    "pedantic": "off"
+  },
+  "rules": {
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": ["lodash"]
+      }
+    ],
+    "eslint/no-unused-vars": "off",
+
+    "typescript/consistent-type-assertions": ["warn", { "assertionStyle": "never" }],
+    "typescript/no-unsafe-function-type": "warn",
+
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "ignoreRestSiblings": true,
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "typescript/ban-ts-comment": "warn",
+    "typescript/no-empty-interface": "warn",
+    "typescript/no-empty-object-type": "warn",
+    "typescript/no-require-imports": "warn",
+
+    "import/no-duplicates": "warn",
+    "import/no-named-as-default": "off",
+
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "react/jsx-key": "warn",
+
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    "jsx-a11y/no-autofocus": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.stories.{ts,tsx,js,jsx}", "**/storybook/**"],
+      "rules": {
+        "react-hooks/rules-of-hooks": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.{ts,tsx}", "**/__tests__/**"],
+      "env": { "jest": true },
+      "plugins": ["jest"],
+      "rules": {
+        "typescript/no-explicit-any": "warn"
+      }
+    }
+  ]
+}

@@ -55,16 +55,21 @@ export const getFee = async (
       const expectedGas = gasPrice.multipliedBy(gasLimit);
 
       if (!completedTx.success) {
-        if (completedTx.vm_status.includes("MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS")) {
+        const vmStatusRaw = completedTx.vm_status;
+        const vmStatus = Array.isArray(vmStatusRaw) ? vmStatusRaw.join(", ") : String(vmStatusRaw);
+        if (
+          vmStatus.includes("MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS") ||
+          vmStatus.toLowerCase().includes("out of gas")
+        ) {
           res.errors.maxGasAmount = "GasInsufficientBalance";
         } else if (
-          !completedTx.vm_status.includes("INSUFFICIENT_BALANCE") &&
-          !completedTx.vm_status.includes("EDELEGATOR_ACTIVE_BALANCE_TOO_LOW") &&
-          !completedTx.vm_status.includes("EDELEGATOR_PENDING_INACTIVE_BALANCE_TOO_LOW") &&
-          !completedTx.vm_status.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
+          !vmStatus.includes("INSUFFICIENT_BALANCE") &&
+          !vmStatus.includes("EDELEGATOR_ACTIVE_BALANCE_TOO_LOW") &&
+          !vmStatus.includes("EDELEGATOR_PENDING_INACTIVE_BALANCE_TOO_LOW") &&
+          !vmStatus.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
         ) {
           // INSUFFICIENT_BALANCE and EDELEGATOR_ACTIVE_BALANCE_TOO_LOW will be processed by getTransactionStatus
-          throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+          throw new Error(`Simulation failed with following error: ${vmStatus}`);
         }
       }
 
@@ -76,9 +81,13 @@ export const getFee = async (
         maxGasAmount: gasLimit.toString(),
         gasUnitPrice: completedTx.gas_unit_price,
       };
-    } catch (error: any) {
-      log(error.message);
-      throw error;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.startsWith("Simulation failed with following error:")) {
+        throw error;
+      }
+      log("coin-aptos", `getFee simulation failed: ${message}`);
+      return res;
     }
   }
 

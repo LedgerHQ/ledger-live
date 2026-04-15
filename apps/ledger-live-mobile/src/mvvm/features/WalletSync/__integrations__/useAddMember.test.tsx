@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { useAddMember } from "../hooks/useAddMember";
 import { SceneKind } from "../hooks/useFollowInstructionDrawer";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -8,7 +8,6 @@ import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors"
 import { track } from "~/analytics";
 import { AnalyticsEvents } from "../Analytics/enums";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
-import { State } from "~/reducers/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -43,30 +42,32 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-const INITIAL_STATE = (state: State) => ({
-  ...state,
-  settings: {
-    ...state.settings,
-    readOnlyModeEnabled: false,
-    hasCompletedOnboarding: true,
-    overriddenFeatureFlags: {
-      llmWalletSync: {
-        enabled: true,
-        params: {
-          environment: "STAGING",
-          watchConfig: {},
-        },
+const INITIAL_STATE = withFlagOverrides(
+  {
+    llmWalletSync: {
+      enabled: true,
+      params: {
+        environment: "STAGING",
+        watchConfig: {},
       },
     },
   },
-  trustchain: {
-    ...state.trustchain,
-    memberCredentials: {
-      privatekey: "mock-private-key",
-      pubkey: "mock-public-key",
+  state => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      readOnlyModeEnabled: false,
+      hasCompletedOnboarding: true,
     },
-  },
-});
+    trustchain: {
+      ...state.trustchain,
+      memberCredentials: {
+        privatekey: "mock-private-key",
+        pubkey: "mock-public-key",
+      },
+    },
+  }),
+);
 
 const MOCK_BLE_DEVICE = {
   deviceId: "test-device-id",

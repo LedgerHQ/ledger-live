@@ -46,14 +46,18 @@ const Wrapper = styled.div`
     background: ${p => p.theme.colors.background.default};
   }
 `;
+
+const Icon = styled.div`
+  flex-shrink: 0;
+  margin-right: 10px;
+`;
 const Asset = styled.div`
   flex: 1;
   width: 20%;
-  > :first-child {
-    margin-right: 10px;
-  }
-  > :nth-child(2) {
-    margin-right: 8px;
+  min-width: 0;
+  overflow: hidden;
+  > * {
+    min-width: 0;
   }
 `;
 const PriceSection = styled.div`
@@ -141,7 +145,7 @@ const Row = ({
   return (
     <Wrapper onClick={onClick} data-testid={`asset-row-${currency.name.toLowerCase()}`}>
       <Asset>
-        {icon}
+        <Icon>{icon}</Icon>
         <Tooltip delay={1200} content={currency.name}>
           <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
             {currency.name}

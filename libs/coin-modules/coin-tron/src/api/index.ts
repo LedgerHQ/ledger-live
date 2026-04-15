@@ -1,18 +1,21 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
+  Balance,
+  CraftedTransaction,
   Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
   FeeEstimation,
+  ListOperationsOptions,
   Operation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
   TransactionValidation,
-  Balance,
+  Validator,
+  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,
@@ -22,12 +25,14 @@ import {
   getBalance,
   getBlock,
   getBlockInfo,
-  listOperations as listOperationsLogic,
   lastBlock,
+  listOperations as listOperationsLogic,
   validateAddress,
 } from "../logic";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo } from "../types";
+
+const MAX_TRONGRID_LIMIT = 200;
 
 export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -45,7 +50,8 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations,
     getBlock,
@@ -70,6 +76,7 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 
@@ -82,7 +89,10 @@ async function listOperations(
   address: string,
   { minHeight, order, cursor, limit }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const effectiveLimit = limit ?? 200;
+  if (limit !== undefined && limit > MAX_TRONGRID_LIMIT) {
+    throw new Error(`limit must be <= ${MAX_TRONGRID_LIMIT} for Tron (TronGrid API restriction)`);
+  }
+  const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
   const effectiveOrder = order ?? "asc";
 
   let minTimestamp = defaultFetchParams.minTimestamp;

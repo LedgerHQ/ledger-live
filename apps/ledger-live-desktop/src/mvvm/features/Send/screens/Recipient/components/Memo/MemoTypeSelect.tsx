@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectItemText,
+  SelectList,
   SelectTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
@@ -18,19 +19,36 @@ type MemoTypeSelectProps = Readonly<{
 function MemoTypeSelectComponent({ currencyId, options, value, onChange }: MemoTypeSelectProps) {
   const { t } = useTranslation();
 
+  const items = useMemo(
+    () =>
+      options.map(optionValue => ({
+        value: optionValue,
+        label: t(`families.${currencyId}.memoType.${optionValue}`),
+      })),
+    [currencyId, options, t],
+  );
+
   return (
-    <Select onValueChange={onChange} value={value}>
+    <Select
+      items={items}
+      onValueChange={v => {
+        if (v != null) onChange(v);
+      }}
+      value={value ?? null}
+    >
       <SelectTrigger data-testid="send-memo-options-select" />
       <SelectContent>
-        {options.map(optionValue => (
-          <SelectItem
-            key={optionValue}
-            value={optionValue}
-            data-testid={`send-memo-select-option-${optionValue}`}
-          >
-            <SelectItemText>{t(`families.${currencyId}.memoType.${optionValue}`)}</SelectItemText>
-          </SelectItem>
-        ))}
+        <SelectList
+          renderItem={item => (
+            <SelectItem
+              key={item.value}
+              value={item.value}
+              data-testid={`send-memo-select-option-${item.value}`}
+            >
+              <SelectItemText>{item.label}</SelectItemText>
+            </SelectItem>
+          )}
+        />
       </SelectContent>
     </Select>
   );

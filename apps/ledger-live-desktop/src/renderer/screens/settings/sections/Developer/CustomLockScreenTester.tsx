@@ -28,7 +28,7 @@ const CustomLockScreenTester = () => {
         title={t("settings.developer.customLockScreenTester")}
         desc={t("settings.developer.customLockScreenTesterDesc")}
       >
-        <Flex columnGap={2}>
+        <Flex columnGap={2} rowGap={2} flexWrap="wrap" justifyContent="flex-end">
           {supportedDeviceModelIds.map(deviceModelId => (
             <Button
               size="sm"

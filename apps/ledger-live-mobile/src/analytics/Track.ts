@@ -25,7 +25,7 @@ const Track = (props: Props): null => {
     return () => {
       if (onUnmount) trackEvent();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

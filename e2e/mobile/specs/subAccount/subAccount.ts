@@ -12,31 +12,19 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
     userdata: "skip-onboarding",
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     cliCommands: [
-      (userDataPath?: string) => {
-        return CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          appjson: userDataPath,
-          add: true,
-        });
-      },
+      liveDataCommand(transaction.accountToDebit),
       ...(setAccountToCredit
         ? [
             async (userDataPath?: string) => {
-              await CLI.liveData({
-                currency: transaction.accountToCredit.currency.speculosApp.name,
-                index: transaction.accountToCredit.index,
-                appjson: userDataPath,
-                add: true,
-              });
+              await liveDataCommand(transaction.accountToCredit)(userDataPath);
 
               const parentAccountToCredit = transaction.accountToCredit.parentAccount;
               invariant(parentAccountToCredit, "Parent account to credit is required");
               const parentAccountToDebit = transaction.accountToDebit.parentAccount;
               invariant(parentAccountToDebit, "Parent account to debit is required");
 
-              parentAccountToCredit.address = await CLI.getAddressForAccount(parentAccountToCredit);
-              parentAccountToDebit.address = await CLI.getAddressForAccount(parentAccountToDebit);
+              parentAccountToCredit.address = await getAccountAddress(parentAccountToCredit);
+              parentAccountToDebit.address = await getAccountAddress(parentAccountToDebit);
             },
           ]
         : []),

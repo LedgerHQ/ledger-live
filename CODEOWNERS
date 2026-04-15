@@ -56,6 +56,7 @@ libs/live-countervalues/                                 @ledgerhq/wallet-xp
 libs/live-currency-format/                               @ledgerhq/wallet-xp
 libs/live-hooks/                                         @ledgerhq/wallet-xp
 libs/ui/                                                 @ledgerhq/wallet-xp
+libs/asset-aggregation/                                  @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
@@ -94,7 +95,6 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Wallet
 .github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/wallet-ci
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/wallet-ci
 .github/workflow-templates/bot-coin**                               @ledgerhq/coin-integration
-**/live-common-set*.ts                                              @ledgerhq/coin-integration
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
@@ -199,6 +199,7 @@ apps/ledger-live-mobile/src/mvvm/features/Card/                                 
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -234,6 +235,7 @@ libs/ledger-live-common/src/customImage/                            @ledgerhq/li
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/components/device-intent-executor/     @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices
@@ -244,6 +246,7 @@ apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/liv
 apps/ledger-live-mobile/src/transport/                             @ledgerhq/live-devices
 apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
+apps/ledger-live-mobile/src/screens/Settings/Debug/Features/DeviceIntentExecutor/ @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
@@ -302,8 +305,12 @@ apps/ledger-live-desktop/src/reducers/dynamicContent.ts                         
 apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
+apps/ledger-live-desktop/tests/specs/onboarding/                                               @ledgerhq/engagement
+apps/ledger-live-desktop/tests/specs/postOnboarding/                                           @ledgerhq/engagement
+apps/ledger-live-desktop/tests/specs/syncOnboarding/                                           @ledgerhq/engagement
 
 # Mobile
 apps/ledger-live-mobile/src/notifications/                                                     @ledgerhq/engagement
@@ -311,6 +318,10 @@ apps/ledger-live-mobile/src/analytics/                                          
 apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts                                           @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/specs/onboardingReadOnly.spec.ts                                   @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/page/onboarding/                                                   @ledgerhq/engagement
+apps/ledger-live-mobile/e2e/page/postOnboarding/                                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Settings/Notifications                                     @ledgerhq/engagement
 apps/ledger-live-mobile/src/logic/postOnboarding/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/contentCards/                                                      @ledgerhq/engagement
@@ -320,6 +331,7 @@ apps/ledger-live-mobile/src/mvvm/features/Onboarding/                           
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/OnboardingWidget/               @ledgerhq/engagement
@@ -329,6 +341,9 @@ apps/ledger-live-mobile/src/reducers/dynamicContent.ts                          
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
 
 # Common
+libs/ledger-live-common/src/analyticsConsentUtils.ts                                           @ledgerhq/engagement
+libs/ledger-live-common/src/analyticsConsentUtils.test.ts                                      @ledgerhq/engagement
+libs/ledger-live-common/src/privacyConsent.ts                                                  @ledgerhq/engagement
 libs/ledger-live-common/src/analytics/                                                         @ledgerhq/engagement
 libs/ledger-live-common/src/onboarding/                                                        @ledgerhq/engagement
 libs/ledger-live-common/src/postOnboarding/                                                    @ledgerhq/engagement
@@ -387,3 +402,4 @@ libs/ledgerjs/packages/errors/src/index.ts
 libs/ledger-live-common/src/config/sharedConfig.ts
 libs/ledger-live-common/package.json
 **/generated/
+**/live-common-set*.ts

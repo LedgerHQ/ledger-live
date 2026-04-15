@@ -112,6 +112,12 @@ export class DelegateModal extends Modal {
     expect(await this.getSelectedProviderName()).toContain(selectedfProvider);
   }
 
+  @step("Close provider list and verify provider $0 is selected")
+  async closeProviderListByName(providerName: string) {
+    await this.searchCloseButton.click();
+    expect(await this.getSelectedProviderName()).toContain(providerName);
+  }
+
   @step("Click on chosen stake provider $0")
   async goToProviderLiveApp(stakeProvider: string) {
     await this.stakeProvider(stakeProvider).click();

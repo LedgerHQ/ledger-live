@@ -20,7 +20,7 @@ import {
   makeEmptyTokenAccount,
   getParentAccount,
 } from "../account/index";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";

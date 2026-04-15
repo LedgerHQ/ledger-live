@@ -19,6 +19,7 @@ type CoinControlScreenInnerProps = Readonly<{
   transactionActions: SendFlowTransactionActions;
   onReview: () => void;
   onGetFunds: () => void;
+  onSelectCustomFees: () => void;
 }>;
 
 export function CoinControlScreenInner({
@@ -32,6 +33,7 @@ export function CoinControlScreenInner({
   transactionActions,
   onReview,
   onGetFunds,
+  onSelectCustomFees,
 }: CoinControlScreenInnerProps) {
   const handleReview = useCallback(() => {
     onReview();
@@ -80,6 +82,7 @@ export function CoinControlScreenInner({
         onGetFunds={onGetFunds}
         isCustomPickingStrategy={viewModel.isCustomPickingStrategy}
         onToggleUtxoExclusion={viewModel.onToggleUtxoExclusion}
+        onSelectCustomFees={onSelectCustomFees}
       />
     </>
   );

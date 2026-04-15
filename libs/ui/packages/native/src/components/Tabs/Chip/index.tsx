@@ -8,12 +8,12 @@ const TabBox = styled(Pressable)<
   Pick<TabItemProps, "isActive" | "size" | "activeBg" | "inactiveBg" | "stretchItems">
 >`
   text-align: center;
-  flex-grow: ${(p) => (p.stretchItems ? "1" : "0")};
-  ${(p) => (p.stretchItems ? "margin: auto;" : "margin: auto 0;")}
-  padding: ${(p) => p.theme.space[p.size === "small" ? 3 : 5]}px;
+  flex-grow: ${p => (p.stretchItems ? "1" : "0")};
+  ${p => (p.stretchItems ? "margin: auto;" : "margin: auto 0;")}
+  padding: ${p => p.theme.space[p.size === "small" ? 3 : 5]}px;
   border-radius: 8px;
-  background-color: ${(p) =>
-    p.isActive ? p.activeBg ?? p.theme.colors.primary.c20 : p.inactiveBg ?? "transparent"};
+  background-color: ${p =>
+    p.isActive ? (p.activeBg ?? p.theme.colors.primary.c20) : (p.inactiveBg ?? "transparent")};
 `;
 
 export const ChipTab = ({
@@ -40,7 +40,7 @@ export const ChipTab = ({
     <Text
       variant="small"
       fontWeight="semiBold"
-      color={isActive ? activeColor ?? "neutral.c100" : inactiveColor ?? "neutral.c80"}
+      color={isActive ? (activeColor ?? "neutral.c100") : (inactiveColor ?? "neutral.c80")}
       textAlign="center"
     >
       {label}

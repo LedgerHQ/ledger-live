@@ -29,6 +29,12 @@ docker pull ghcr.io/ledgerhq/speculos:latest
 proto use
 ```
 
+- Install [mise](https://mise.jdx.dev/getting-started.html#installing-mise-cli) then run:
+
+```bash
+mise install
+```
+
 ### 2. Environment Variables
 
 Set these environment variables before you run tests and change the values as per your testing needs:

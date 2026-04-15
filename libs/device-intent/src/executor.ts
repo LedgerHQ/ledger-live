@@ -46,6 +46,15 @@ export type ErrorComponent = React.ComponentType<{
 }>;
 
 /**
+ * React component rendered when the executor enters the terminal
+ * `invalidOperation` state, signalling a caller-side orchestration bug.
+ */
+export type InvalidOperationComponent = React.ComponentType<{
+  error: unknown;
+  onClose: () => void;
+}>;
+
+/**
  * Platform-specific components injected into the base `DeviceIntentExecutor`.
  *
  * Platform wrappers (`LwmDeviceIntentExecutor`, `LwdDeviceIntentExecutor`)
@@ -57,6 +66,7 @@ export interface ExecutorPlatformConfiguration {
   ConnectionErrorComponent: ErrorComponent;
   InitializationErrorComponent: ErrorComponent;
   IntentErrorComponent: ErrorComponent;
+  InvalidOperationComponent: InvalidOperationComponent;
 }
 
 // ---- Executor state ----
@@ -72,6 +82,7 @@ export type ExecutorState =
   | { type: "initializingDeviceContextError"; error: unknown }
   | { type: "executingIntent" }
   | { type: "executingIntentError"; error: unknown }
+  | { type: "invalidOperation"; error: unknown }
   | { type: "idle" };
 
 // ---- Executor props ----
@@ -107,6 +118,8 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps> {
   enabled: boolean;
   /** Whether the UI allows the user to cancel the current execution (e.g. close a bottom sheet). */
   cancellableUI: boolean;
+  /** Called when the user cancels the current execution (e.g. closes a bottom sheet). */
+  onUserCancel: () => void;
   /** Set to a new value to request cancellation of the ongoing job. */
   cancelIntentRequestId: string | undefined;
 }

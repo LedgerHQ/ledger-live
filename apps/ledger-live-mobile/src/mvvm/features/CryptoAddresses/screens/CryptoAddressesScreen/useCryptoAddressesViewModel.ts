@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/core";
+import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { flattenAccountsSelector, isUpToDateSelector } from "~/reducers/accounts";
@@ -12,8 +12,6 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
@@ -30,9 +28,7 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const allAccounts = useSelector(flattenAccountsSelector, isEqual);
-  const walletState = useSelector(walletSelector, isEqual);
   const orderedAccounts = orderAccountsByFiatValue(allAccounts, countervalueState, toCurrency);
-  const route = useRoute();
 
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const accounts = useMemo(
@@ -59,21 +55,18 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
 
   const onAddAccountPress = useCallback(() => {
-    track("button_clicked", { button: "add a new account", page: route.name });
+    track("button_clicked", { button: "add_account", page: ScreenName.Accounts });
     setIsAddAccountOpen(true);
-  }, [route.name]);
+  }, []);
 
   const onCloseAddAccount = useCallback(() => setIsAddAccountOpen(false), []);
 
   const onAccountPress = useCallback(
     (account: Account | TokenAccount) => {
-      const defaultAccountName = accountNameWithDefaultSelector(walletState, account);
-
       if (account.type === "Account") {
         track("account_clicked", {
           currency: account.currency.name,
-          account: defaultAccountName,
-          page: route.name,
+          page: ScreenName.Accounts,
         });
         navigation.navigate(ScreenName.Account, {
           accountId: account.id,
@@ -81,8 +74,7 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
       } else if (account.type === "TokenAccount") {
         track("account_clicked", {
           currency: account.token.parentCurrency.name,
-          account: defaultAccountName,
-          page: route.name,
+          page: ScreenName.Accounts,
         });
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.Account,
@@ -94,7 +86,7 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
         });
       }
     },
-    [navigation, walletState, route.name],
+    [navigation],
   );
 
   return {
@@ -105,12 +97,10 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
     onAccountPress,
     onAddAccountPress,
     onCloseAddAccount,
-    onNavigateBack: navigation.goBack,
     isAddAccountOpen,
-    title: t("cryptoAddresses.title"),
     addAccountLabel: t("cryptoAddresses.addAccount"),
     emptyStateLabel: t("cryptoAddresses.emptyState"),
-    trackingPage: route.name,
+    trackingPage: ScreenName.Accounts,
     sourceScreenName,
   };
 }

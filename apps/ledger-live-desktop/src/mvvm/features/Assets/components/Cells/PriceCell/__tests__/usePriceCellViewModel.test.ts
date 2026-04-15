@@ -14,7 +14,6 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
 }));
 
 jest.mock("~/renderer/hooks/usePrice");
-jest.mock("~/renderer/actions/deprecated/ondemand-countervalues");
 
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
 const mockedUsePrice = jest.mocked(usePrice);

@@ -11,8 +11,13 @@ export const WALLET_FEATURES_PARAMS = [
   { key: "newReceiveDialog", label: "New Receive Dialog" },
   { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
-  { key: "brazePlacement", label: "Braze Placement (Lumen content banner)" },
+  {
+    key: "brazePlacement",
+    label: "Braze Placement",
+  },
   { key: "operationsList", label: "TX History" },
+  { key: "aggregatedAssets", label: "Aggregated Assets" },
+  { key: "myWallet", label: "My Wallet" },
 ] as const;
 
 export type WalletFeatureParamKey = (typeof WALLET_FEATURES_PARAMS)[number]["key"];

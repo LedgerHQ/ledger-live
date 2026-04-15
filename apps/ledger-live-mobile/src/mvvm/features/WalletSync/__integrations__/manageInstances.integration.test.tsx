@@ -41,7 +41,10 @@ describe("ManageInstances", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+        },
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: { llmWalletSync: { enabled: true } },
         },
         trustchain: {
           ...state.trustchain,
@@ -78,7 +81,10 @@ describe("ManageInstances", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+        },
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: { llmWalletSync: { enabled: true } },
         },
         trustchain: {
           ...state.trustchain,
@@ -127,7 +133,10 @@ describe("ManageInstances", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+        },
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: { llmWalletSync: { enabled: true } },
         },
         trustchain: {
           ...state.trustchain,

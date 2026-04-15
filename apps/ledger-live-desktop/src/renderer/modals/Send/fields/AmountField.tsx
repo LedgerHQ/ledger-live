@@ -45,7 +45,7 @@ const AmountField = <T extends TransactionCommon>({
       onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
       resetInitValue?.();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
     (amount: BigNumber) => {

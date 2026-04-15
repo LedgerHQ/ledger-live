@@ -3,40 +3,18 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account } from "@ledgerhq/types-live";
-import { renderHook } from "@testing-library/react-native";
+import { act, renderHook } from "@tests/test-renderer";
 import { BigNumber } from "bignumber.js";
 import { createMockAccount } from "../../../Recipient/hooks/__tests__/accounts";
 import { useCoinControlScreenViewModel } from "../useCoinControlScreenViewModel";
 import { createBitcoinTransaction, createTransactionStatus, isAccount } from "./helpers";
+import { Linking } from "react-native";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 
 const { getMainAccount, getAccountCurrency } = jest.requireMock(
   "@ledgerhq/ledger-wallet-framework/account/helpers",
 );
-
-// --- Context & Redux ---
-const mockT = (key: string) => key;
-
-jest.mock("~/context/Locale", () => ({
-  useTranslation: () => ({ t: mockT }),
-}));
-jest.mock("~/context/hooks", () => {
-  const actual = jest.requireActual<typeof import("~/context/hooks")>("~/context/hooks");
-  return {
-    ...actual,
-    useSelector: (selector: (state: unknown) => unknown) =>
-      selector({ settings: { locale: "en" } }) ?? "en",
-  };
-});
-
-jest.mock("~/reducers/settings", () => ({
-  INITIAL_STATE: {
-    counterValue: "USD",
-    locale: "en",
-  },
-  localeSelector: (state: { settings?: { locale?: string } }) => state.settings?.locale ?? "en",
-}));
 
 // --- Bridge & Send flow ---
 jest.mock("@ledgerhq/live-common/bridge/impl");
@@ -78,6 +56,7 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
     name: "Bitcoin",
   })),
 }));
+
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
   const { bitcoinCoinControlConfig } = jest.requireActual(
@@ -359,5 +338,18 @@ describe("useCoinControlScreenViewModel", () => {
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
     expect(result.current.amountError).toBeUndefined();
+  });
+
+  it("should open the localized coin control support URL when learn more is pressed", () => {
+    const params = buildBaseParams();
+    const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params));
+
+    act(() => {
+      result.current.onLearnMoreClick();
+    });
+
+    expect(openURLSpy).toHaveBeenCalledTimes(1);
   });
 });

@@ -57,6 +57,11 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps> =
       onRetry: () => void;
     }
   | {
+      phase: "invalidOperation";
+      error: unknown;
+      onClose: () => void;
+    }
+  | {
       phase: "idle";
       lastIntentSnapshot: IntentExecutionSnapshot<JobState, ExtraProps> | null;
     };
@@ -77,6 +82,7 @@ export type DeriveHookStateParams<JobState, ExtraProps> = {
   onContextInitialized: (ctx: DeviceExtractedContext) => void;
   onInitializationError: (error: unknown) => void;
   onRetry: () => void;
+  onUserCancel: () => void;
 };
 
 export function deriveHookState<JobState, Input, ExtraProps>(
@@ -123,6 +129,12 @@ export function deriveHookState<JobState, Input, ExtraProps>(
         phase: "intentError",
         error: executorState.error,
         onRetry: params.onRetry,
+      };
+    case "invalidOperation":
+      return {
+        phase: "invalidOperation",
+        error: executorState.error,
+        onClose: params.onUserCancel,
       };
     case "idle":
       return { phase: "idle", lastIntentSnapshot: params.lastIntentSnapshot };

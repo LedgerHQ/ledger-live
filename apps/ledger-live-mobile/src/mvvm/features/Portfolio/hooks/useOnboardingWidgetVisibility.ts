@@ -9,11 +9,19 @@ import {
   walletEntryPointEligibleForPortfolioSelector,
 } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { setPostOnboardingWalletEntryPointEligibility } from "@ledgerhq/live-common/postOnboarding/actions";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import {
+  hasCompletedOnboardingSelector,
+  onboardingCompletionDateSelector,
+} from "~/reducers/settings";
+import { addCompletionDate } from "~/actions/settings";
 
 export const useOnboardingWidgetVisibility = () => {
   const dispatch = useDispatch();
   const { shouldDisplayOnboardingWidget } = useWalletFeaturesConfig("mobile");
   const deviceModelId = useSelector(postOnboardingDeviceModelIdSelector);
+  const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isPostOnboardingEntryPointVisible = usePostOnboardingEntryPointVisibleOnWallet();
   const eligibility = useSelector(walletEntryPointEligibleForPortfolioSelector);
   const accounts = useSelector(flattenAccountsSelector);
@@ -22,6 +30,20 @@ export const useOnboardingWidgetVisibility = () => {
     () => accounts.some(account => account?.balance?.isGreaterThan(0)),
     [accounts],
   );
+
+  const isBeforeCutoffTime = useMemo(() => {
+    return onboardingCompletionDate === null
+      ? hasCompletedOnboarding
+      : differenceInCalendarDays(new Date(), new Date(onboardingCompletionDate)) <= 15;
+  }, [onboardingCompletionDate, hasCompletedOnboarding]);
+
+  useEffect(() => {
+    // Populate completion dates for all users that have already completed onboarding
+    // before completion date was introduced
+    if (hasCompletedOnboarding && onboardingCompletionDate === null) {
+      dispatch(addCompletionDate());
+    }
+  }, [hasCompletedOnboarding, onboardingCompletionDate, dispatch]);
 
   useEffect(() => {
     if (!deviceModelId || eligibility !== null) return;
@@ -35,6 +57,7 @@ export const useOnboardingWidgetVisibility = () => {
     shouldDisplayOnboardingWidget &&
     isPostOnboardingEntryPointVisible &&
     !isNanoS &&
-    isEligibleForPortfolio
+    isEligibleForPortfolio &&
+    isBeforeCutoffTime
   );
 };

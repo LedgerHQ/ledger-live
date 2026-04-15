@@ -1,5 +1,4 @@
-import { renderHook } from "tests/testSetup";
-import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 import {
   INSTANCES,
@@ -21,10 +20,7 @@ const INITIAL_STATE = {
       privatekey: "privatekey",
     },
   },
-  settings: {
-    ...INITIAL_STATE_SETTINGS,
-    overriddenFeatureFlags: lldWalletSyncFeatureFlag,
-  },
+  ...withFlagOverrides(lldWalletSyncFeatureFlag),
 };
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
@@ -39,7 +35,7 @@ describe("useWatchWalletSync", () => {
   it("should not run ledger sync watch loop when ff is disabled", async () => {
     const { result, store } = renderHook(() => useWatchWalletSync(), {});
 
-    expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync).not.toBeDefined();
+    expect(store.getState().featureFlags.overrides.lldWalletSync).not.toBeDefined();
     expect(result.current.visualPending).toBe(false);
     expect(result.current.walletSyncError).toBe(null);
     expect(result.current.onUserRefresh).toBeInstanceOf(Function);
@@ -51,7 +47,7 @@ describe("useWatchWalletSync", () => {
       initialState: INITIAL_STATE,
     });
 
-    expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync.enabled).toBe(true);
+    expect(store.getState().featureFlags.overrides.lldWalletSync?.enabled).toBe(true);
     expect(result.current.visualPending).toBe(true);
     expect(result.current.walletSyncError).toBe(null);
   });

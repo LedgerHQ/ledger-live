@@ -17,6 +17,7 @@
     "**/*.test.js",
     "**/*.test.jsx",
     "**/*.spec.js",
-    "**/*.spec.jsx"
+    "**/*.spec.jsx",
+    "src/test/fixtures.ts"
   ]
 }

@@ -16,7 +16,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     id: SEND_FLOW_STEP.RECIPIENT,
     canGoBack: true,
     addressInput: true,
-    height: "hug",
+    height: "fit",
   },
   [SEND_FLOW_STEP.RECENT_HISTORY]: {
     id: SEND_FLOW_STEP.RECENT_HISTORY,
@@ -24,21 +24,19 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     floating: true,
     showTitle: false,
     showAvailable: false,
-    backTarget: SEND_FLOW_STEP.RECIPIENT,
-    height: "hug",
+    height: "fit",
   },
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
     canGoBack: true,
     addressInput: true,
-    height: "hug",
+    height: "fit",
   },
   [SEND_FLOW_STEP.CUSTOM_FEES]: {
     id: SEND_FLOW_STEP.CUSTOM_FEES,
     canGoBack: true,
     floating: true,
     titleKey: "newSendFlow.customFees.title",
-    backTarget: SEND_FLOW_STEP.AMOUNT,
     showAvailable: false,
   },
   [SEND_FLOW_STEP.COIN_CONTROL]: {
@@ -46,19 +44,18 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: true,
     floating: true,
     titleKey: "newSendFlow.coinControl.title",
-    backTarget: SEND_FLOW_STEP.AMOUNT,
   },
   [SEND_FLOW_STEP.SIGNATURE]: {
     id: SEND_FLOW_STEP.SIGNATURE,
     canGoBack: false,
     showTitle: false,
-    height: "hug",
+    height: "fit",
   },
   [SEND_FLOW_STEP.CONFIRMATION]: {
     id: SEND_FLOW_STEP.CONFIRMATION,
     canGoBack: false,
     showTitle: false,
-    height: "hug",
+    height: "fit",
   },
 };
 

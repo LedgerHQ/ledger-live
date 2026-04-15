@@ -294,6 +294,11 @@
       "title": "Sorry, connection failed",
       "description": "Please try again."
     },
+    "CounterfeitDevice": {
+      "title": "This {{productName}} failed the Genuine Check",
+      "description": "It is not safe to use this Ledger device. Please contact Ledger Support.",
+      "contactSupportCTA": "Contact Ledger Support"
+    },
     "DeviceSocketNoBulkStatus": {
       "title": "The connection failed",
       "description": "Please try again."
@@ -415,8 +420,8 @@
       "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "AlreadySendingApduError": {
-      "title": "Communication error",
-      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title": "Action needed on your Ledger device",
+      "description": "Finish the action on your device."
     },
     "UnknownDeviceExchangeError": {
       "title": "Communication error",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts": {
       "title": "You need an account to access this app.",
-      "add": "Add Account"
+      "select": "Select Account"
     }
   },
   "location": {
@@ -2688,6 +2693,7 @@
     "accounts": "Accounts",
     "transfer": "Transfer",
     "manager": "My Ledger",
+    "myWallet": "My wallet",
     "settings": "Settings",
     "platform": "Live Apps",
     "discover": "Discover",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT": "Updated account"
     }
   },
+  "operationsList": {
+    "to": "To",
+    "from": "From"
+  },
   "operationDetails": {
     "title": "Transaction details",
     "account": "Account",
@@ -3001,6 +3011,8 @@
   },
   "operationList": {
     "noOperations": "No Operations",
+    "emptyTitle": "No transactions yet",
+    "emptySubtitle": "Come back later to see your transactions.",
     "noMoreTransactions": "No other transactions"
   },
   "selectableAccountsList": {
@@ -8830,6 +8842,13 @@
     "error": {
       "title": "Failed to install {{appName}}",
       "description": "Something went wrong during installation. Please try again."
+    }
+  },
+  "myWallet": {
+    "quickActions": {
+      "recover": "[L] Recover",
+      "help": "Help",
+      "referral": "Referral"
     }
   }
 }

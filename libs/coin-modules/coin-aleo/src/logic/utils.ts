@@ -1,6 +1,6 @@
-import { createHash } from "crypto";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
@@ -156,16 +156,21 @@ export const toBridgeOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
 ): AleoOperation => {
+  const value = new BigNumber(rawTx.amount);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,
   );
 
+  if (value.isNaN() || value.lte(0)) {
+    log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
+  }
+
   return {
     id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
     recipients: [rawTx.recipient_address],
     senders: [rawTx.sender_address],
-    value: new BigNumber(rawTx.amount),
+    value,
     type,
     hasFailed,
     hash: rawTx.transaction_id,
@@ -209,13 +214,6 @@ export const toPrivateBridgeOperation = (
       transactionType: "private",
     },
   };
-};
-
-export const generateUniqueUsername = (address: string): string => {
-  const timestamp = Date.now().toString();
-  const combined = `${timestamp}_${address}`;
-  const hash = createHash("sha256").update(combined).digest("hex");
-  return hash;
 };
 
 export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
@@ -281,8 +279,8 @@ export function calculateAmount({
 
 export const isProvableApiConfigured = (
   provableApi: ProvableApi | null,
-): provableApi is Required<Pick<ProvableApi, "jwt" | "uuid" | "apiKey">> => {
-  return !!provableApi?.uuid && !!provableApi?.apiKey && !!provableApi?.jwt?.token;
+): provableApi is Required<Pick<ProvableApi, "uuid">> => {
+  return !!provableApi?.uuid;
 };
 
 export const isRecordScannerReady = (provableApi: ProvableApi): boolean => {
@@ -530,12 +528,14 @@ export function createFeeTransactionIntent({
   executionId,
   baseFee,
   priorityFee,
+  isFeeSponsored,
 }: {
   account: AleoAccount;
   transaction: Transaction;
   executionId: string;
   baseFee: BigNumber;
   priorityFee: BigNumber;
+  isFeeSponsored: boolean;
 }): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
   const isPrivateTx = isPrivateTransaction(transaction);
   const commonFields = {
@@ -546,7 +546,7 @@ export function createFeeTransactionIntent({
     sender: account.freshAddress,
   } as const;
 
-  if (isPrivateTx) {
+  if (isPrivateTx && !isFeeSponsored) {
     const commitment = transaction.properties.feeRecordCommitment;
     invariant(commitment, "aleo: missing fee record commitment");
     const feeRecord = getRecordByCommitment({ account, commitment });

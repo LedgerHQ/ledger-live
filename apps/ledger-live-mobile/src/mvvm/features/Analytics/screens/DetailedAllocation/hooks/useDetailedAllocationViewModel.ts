@@ -1,5 +1,5 @@
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
-import type { DistributionItem } from "../components/DistributionCard";
+import type { DistributionItem } from "../../../types/distribution";
 
 export interface DetailedAllocationViewModelResult {
   readonly list: DistributionItem[];

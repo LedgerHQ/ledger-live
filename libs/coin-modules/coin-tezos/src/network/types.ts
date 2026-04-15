@@ -47,6 +47,7 @@ export type APITransactionType = CommonOperationType & {
   target: { address: string } | undefined | null;
   counter: number;
 };
+
 export function isAPITransactionType(op: APIOperation): op is APITransactionType {
   return op.type === "transaction";
 }
@@ -150,6 +151,13 @@ export type APIBlock = {
   lbEscapeEma: number;
   /** Hash of the previous block. Not included by default; request via TzKT `select` param if needed. */
   prevHash?: string;
+};
+
+export type TokenTransfersGetOptions = {
+  lastId?: number;
+  limit?: number;
+  sort?: "Descending" | "Ascending";
+  "level.ge"?: number;
 };
 
 /**

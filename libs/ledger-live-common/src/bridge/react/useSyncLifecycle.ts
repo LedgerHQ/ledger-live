@@ -83,7 +83,7 @@ export function useSyncLifecycle(
     }
 
     dispatch({ type: "SYNC_COMPLETE", hasError: hasAnySyncErrorRef.current });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isSyncSettled]);
 
   return phase;

@@ -4,7 +4,7 @@ import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enu
 import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
@@ -52,7 +52,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   };
 
   private providerConfigs: Record<string, ProviderConfig> = {
-    [Provider.MOONPAY.uiName]: {
+    [BuySellProvider.MOONPAY.uiName]: {
       buyParams: {
         baseCurrencyAmount: buySell => buySell.amount,
         currencyCode: buySell => buySell.crypto.currency.ticker,
@@ -61,7 +61,7 @@ export class BuyAndSellPage extends WebViewAppPage {
       sellParams: this.standardSellParams,
       addressParam: "walletaddress",
     },
-    [Provider.TRANSAK.uiName]: {
+    [BuySellProvider.TRANSAK.uiName]: {
       buyParams: {
         fiatAmount: buySell => buySell.amount,
         cryptoCurrencyCode: buySell => buySell.crypto.currency.ticker,
@@ -70,7 +70,7 @@ export class BuyAndSellPage extends WebViewAppPage {
       sellParams: this.standardSellParams,
       addressParam: "walletaddress",
     },
-    [Provider.COINBASE.uiName]: {
+    [BuySellProvider.COINBASE.uiName]: {
       buyParams: {
         presetFiatAmount: buySell => buySell.amount,
         defaultAsset: buySell => buySell.crypto.currency.ticker,

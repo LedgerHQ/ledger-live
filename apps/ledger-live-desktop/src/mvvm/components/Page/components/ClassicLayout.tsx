@@ -14,6 +14,7 @@ const PageScrollerContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 0;
 `;
 
 const PageScroller = styled.div`
@@ -23,6 +24,7 @@ const PageScroller = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 0;
 
   &::-webkit-scrollbar {
     width: ${p => p.theme.overflow.trackSize}px;
@@ -68,6 +70,7 @@ const PageContentContainer = styled.div`
   flex-direction: column;
   position: relative;
   flex: 1;
+  min-width: 0;
   height: 100%;
 `;
 

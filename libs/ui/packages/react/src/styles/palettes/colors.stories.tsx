@@ -10,7 +10,7 @@ const ColorArea = styled.div<{ type: keyof ColorPalette; shade: string }>`
   width: 200px;
   aspect-ratio: 1;
   background-color: ${p => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // oxlint-disable-next-line typescript/ban-ts-comment
     // @ts-ignore next-line
     return p.theme.colors[p.type][p.shade];
   }};
@@ -53,7 +53,7 @@ const CardColor = ({ shade, type, value }: CardColorProps): React.JSX.Element =>
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line typescript/no-unused-vars
 const { type: _, ...palette } = palettes.light;
 
 export const Colors = (): React.JSX.Element => (

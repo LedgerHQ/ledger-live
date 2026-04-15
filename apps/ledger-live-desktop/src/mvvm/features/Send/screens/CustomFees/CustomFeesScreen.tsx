@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { CustomFeesScreenInner } from "./components/CustomFeesScreenInner";
 
 export function CustomFeesScreen() {
@@ -13,7 +12,7 @@ export function CustomFeesScreen() {
   const { transaction, status } = state.transaction;
 
   const handleConfirm = useCallback(() => {
-    navigation.goToStep(SEND_FLOW_STEP.AMOUNT);
+    navigation.goToPreviousStep();
   }, [navigation]);
 
   if (!account || !transaction || !status) {

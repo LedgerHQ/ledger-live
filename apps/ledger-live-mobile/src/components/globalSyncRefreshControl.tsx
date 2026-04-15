@@ -72,7 +72,10 @@ function globalSyncRefreshControl<P>(
     function handleRefresh() {
       if (refreshingRef.current) return;
       if (shouldDisplayBalanceRefreshRework && hasNoAccounts) return;
-      if (shouldDisplayBalanceRefreshRework && (isConnected === false || isInternetReachable === false)) {
+      if (
+        shouldDisplayBalanceRefreshRework &&
+        (isConnected === false || isInternetReachable === false)
+      ) {
         dispatch(setOfflineRefreshAttempt(Date.now()));
         return;
       }

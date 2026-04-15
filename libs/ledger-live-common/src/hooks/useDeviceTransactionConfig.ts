@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "../generated/types";
+import { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
 import {
   getDeviceTransactionConfig,
   DeviceTransactionField,

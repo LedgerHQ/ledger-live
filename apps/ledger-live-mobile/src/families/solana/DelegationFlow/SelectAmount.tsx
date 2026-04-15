@@ -114,7 +114,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     setTransaction(bridge.updateTransaction(transaction, {}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [setTransaction, account, transaction]);
 
   const blur = useCallback(() => Keyboard.dismiss(), []);

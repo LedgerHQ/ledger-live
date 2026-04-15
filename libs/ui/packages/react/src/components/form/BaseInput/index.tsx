@@ -160,7 +160,7 @@ export const ClearableButtonUnstyled = styled(ButtonUnstyled)`
 `;
 
 // Yes, this is dirty. If you can figure out a better way please change the code :).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const IDENTITY = (_: any): any => _;
 
 function Input<T = ValueType>(

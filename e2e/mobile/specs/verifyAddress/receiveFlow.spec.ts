@@ -73,7 +73,7 @@ describe("Receive Flow", () => {
     await app.receive.doNotVerifyAddress();
 
     await app.receive.expectReceivePageIsDisplayed("ETH", Account.BASE_1.accountName);
-    const address = await CLI.getAddressForAccount(Account.BASE_1);
+    const address = await getAccountAddress(Account.BASE_1);
     await app.receive.verifyAddress(address);
     await app.common.closePage();
 
@@ -129,7 +129,7 @@ describe("Receive Flow", () => {
       Account.ETH_1.currency.ticker,
       Account.ETH_1.accountName,
     );
-    const address = await CLI.getAddressForAccount(Account.ETH_1);
+    const address = await getAccountAddress(Account.ETH_1);
     await app.receive.verifyAddress(address);
   });
 });

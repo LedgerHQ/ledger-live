@@ -1,6 +1,6 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "../../generated/types";
+import type { Transaction } from "../../coin-modules/transaction-types";
 
 /**
  * Memo field type configuration

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import {
   TestNavigatorWrapper,
   createMockAccount,
@@ -30,20 +30,16 @@ describe("AnalyticsMain Integration Tests", () => {
     const ethAccount = createMockAccount(mockEthereumCurrency, "eth-1");
     const adaAccount = createMockAccount(mockCardanoCurrency, "ada-1");
 
-    return {
+    return withFlagOverrides({
+      ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
+      lwmWallet40: { enabled: true, params: { mainNavigation: isWallet40MainNavigation } },
+    })({
       ...state,
       accounts: {
         ...state.accounts,
         active: [btcAccount, ethAccount, adaAccount],
       },
-      settings: {
-        ...state.settings,
-        overriddenFeatureFlags: {
-          ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
-          lwmWallet40: { enabled: true, params: { mainNavigation: isWallet40MainNavigation } },
-        },
-      },
-    };
+    });
   };
 
   beforeEach(() => {

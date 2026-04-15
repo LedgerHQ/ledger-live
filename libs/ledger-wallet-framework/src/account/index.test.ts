@@ -18,7 +18,7 @@ import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/te
 // Setup mock store for unit tests (automatically set as global store)
 setupMockCryptoAssetsStore();
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+// oxlint-disable-next-line typescript/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
 
 setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);

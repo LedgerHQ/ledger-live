@@ -35,14 +35,15 @@ Store the selection and use it throughout all subsequent phases to **skip irrele
 
 **Do NOT hardcode expected versions.** Read the source-of-truth config files to determine what's required:
 
-| Tool            | Source of truth                                | How to read                                                       |
-| --------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
-| Node            | `.prototools`                                  | `grep "^node" .prototools`                                        |
-| pnpm            | `.prototools`                                  | `grep "^pnpm" .prototools`                                        |
-| Java            | `apps/ledger-live-mobile/android/build.gradle` | Look for `JavaVersion.VERSION_XX` in `sourceCompatibility`        |
-| Android SDK API | `apps/ledger-live-mobile/android/build.gradle` | Look for `compileSdkVersion`                                      |
-| Ruby            | No pinned version in repo                      | Just check `ruby --version` returns >= 3.0 (needed for CocoaPods) |
-| Xcode           | No pinned version in repo                      | Just check `xcodebuild -version` returns a recent version         |
+| Tool            | Source of truth                                | How to read                                                              |
+| --------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
+| Node            | `.prototools`                                  | `grep "^node" .prototools`                                               |
+| pnpm            | `.prototools`                                  | `grep "^pnpm" .prototools`                                               |
+| Java            | `apps/ledger-live-mobile/android/build.gradle` | Look for `JavaVersion.VERSION_XX` in `sourceCompatibility`               |
+| Android SDK API | `apps/ledger-live-mobile/android/build.gradle` | Look for `compileSdkVersion`                                             |
+| Ruby            | No pinned version in repo                      | Just check `ruby --version` returns >= 3.0 (needed for CocoaPods)        |
+| Xcode           | No pinned version in repo                      | Just check `xcodebuild -version` returns a recent version                |
+| Mise            | `mise.toml`                                    | Just check `mise --version` returns a version compatible with the config |
 
 First, read the config files to determine expected versions. Then run these checks (skip those not relevant to the selected platform):
 
@@ -96,6 +97,7 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
 - Java: `brew install openjdk@<version>` (use the version from `build.gradle`)
 - Docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
 - Proto: `curl -fsSL https://moonrepo.dev/install/proto.sh | bash` then `proto use` from repo root
+- Mise: `curl https://mise.run | sh` then `mise install` from repo root
 - Android SDK / `ANDROID_HOME`: Add to `~/.zshrc`:
   ```
   export JAVA_HOME=$(/usr/libexec/java_home)

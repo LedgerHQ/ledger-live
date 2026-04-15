@@ -16,8 +16,8 @@ export const celoConfig: Record<string, ConfigInfo> = {
         uri: "https://celo.coin.ledger.com/archive",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://celo.blockscout.com/api",
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42220",
       },
     },
   },

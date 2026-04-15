@@ -1,10 +1,8 @@
 import Config from "react-native-config";
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { listen } from "@ledgerhq/logs";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
@@ -13,10 +11,11 @@ import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { setResolutionConfig } from "@shared/feature-flags";
-import { prepareCurrency } from "./bridge/cache";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
 import BigNumber from "bignumber.js";
+
+registerAllCoins();
 
 const consoleLogger = ConsoleLogger.getLogger();
 listen(log => {
@@ -184,7 +183,5 @@ process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
-
-prepareCurrency(getCryptoCurrencyById("ethereum"));
 
 BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });

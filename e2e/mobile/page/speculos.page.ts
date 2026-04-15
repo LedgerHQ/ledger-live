@@ -13,9 +13,8 @@ import {
 import { setExchangeDependencies } from "../utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { SwapType, Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 function isSwap(value: SwapType | Account): value is SwapType {
   return value instanceof Swap;

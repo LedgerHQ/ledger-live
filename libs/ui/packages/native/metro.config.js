@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-console */
+/* oxlint-disable typescript/no-require-imports */
+/* oxlint-disable eslint/no-console */
 
 const path = require("path");
 const projectRootDir = path.join(__dirname, "..", "..", "..", "..");

@@ -5,6 +5,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/canton/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account } from "@ledgerhq/types-live";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
@@ -31,6 +32,8 @@ const Root = (props: {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const modalsState = useSelector(modalsStateSelector);
+  const lldModularDrawer = useFeature("lldModularDrawer");
+  const useModularDrawer = !!lldModularDrawer?.enabled;
   const sendModalData = modalsState.MODAL_SEND?.isOpened ? modalsState.MODAL_SEND.data : undefined;
   const cantonAccount = account as CantonAccount;
   const mainAccount = getMainAccount(account, parentAccount);
@@ -58,6 +61,7 @@ const Root = (props: {
         currency: account.currency,
         device,
         mainAccount,
+        useModularDrawer,
         navigationSnapshot,
       });
     } else if (tooManyUtxosCritical) {
@@ -75,6 +79,7 @@ const Root = (props: {
     tooManyUtxosCritical,
     topologyChangeError,
     transaction,
+    useModularDrawer,
   ]);
 
   return (

@@ -145,7 +145,7 @@ describe("Portfolio Screen", () => {
 
     it("should display the fallback read-only cryptos list when user has no accounts and assetSection is disabled", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
+        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(false),
       });
 
       await screen.findByTestId("PortfolioEmptyList");

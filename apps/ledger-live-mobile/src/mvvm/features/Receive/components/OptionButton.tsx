@@ -5,7 +5,7 @@ import {
   ListItemContent,
   ListItemTitle,
   ListItemDescription,
-  ListItemSpot,
+  Spot,
   type IconProps,
 } from "@ledgerhq/lumen-ui-rnative";
 
@@ -20,7 +20,7 @@ type Props = {
 export const OptionButton = memo(({ onPress, title, Icon, subtitle, testID }: Props) => (
   <ListItem onPress={onPress} testID={testID} lx={{ marginHorizontal: "-s8" }}>
     <ListItemLeading>
-      <ListItemSpot appearance="icon" icon={Icon} />
+      <Spot appearance="icon" icon={Icon} />
       <ListItemContent>
         <ListItemTitle>{title}</ListItemTitle>
         {subtitle ? <ListItemDescription>{subtitle}</ListItemDescription> : null}

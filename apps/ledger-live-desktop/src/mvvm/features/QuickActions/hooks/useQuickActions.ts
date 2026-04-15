@@ -53,6 +53,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       button: "send",
       buttonLocation: "quick_action",
       page: trackingPageName,
+      flow: "send",
     });
     maybeRedirectToAccounts();
     openSendFlow();
@@ -171,7 +172,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
         buttonAppearance: "transparent",
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [hasOnboardedDevice, hasFunds, hasAccount]);
 
   return { actionsList };

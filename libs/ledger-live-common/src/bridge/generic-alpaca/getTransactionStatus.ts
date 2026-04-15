@@ -35,6 +35,8 @@ export function genericGetTransactionStatus(
       data: transaction.data,
       type: transaction.type,
       sponsored: transaction.sponsored,
+      valAddress: transaction.valAddress,
+      dstValAddress: transaction.dstValAddress,
     };
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
@@ -46,7 +48,7 @@ export function genericGetTransactionStatus(
       }
     }
 
-    let intent = transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType);
+    let intent = transactionToIntent(account, draftTransaction, bridgeApi.computeIntentType);
     intent = applyMemoToIntent(intent, transaction);
 
     const customFees = bigNumberToBigIntDeep({

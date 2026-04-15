@@ -1,18 +1,9 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { MarketListHeaderLeft, MarketListHeaderTitle } from "../index";
-import { State } from "~/reducers/types";
 
 const withMarketBanner = (enabled: boolean) => ({
-  overrideInitialState: (state: State) => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        lwmWallet40: { enabled: true, params: { marketBanner: enabled } },
-      },
-    },
-  }),
+  overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: enabled } } }),
 });
 
 const components = [

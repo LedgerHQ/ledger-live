@@ -3,25 +3,23 @@ import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 
 import { getPlatformTransactionSignFlowInfos } from "./converters";
-import type { Transaction } from "../generated/types";
+import type { Transaction } from "../coin-modules/transaction-types";
 import type { PlatformTransaction } from "./types";
 
 const evmBridge = jest.fn();
 const bitcoinBridge = jest.fn();
-jest.mock("../generated/platformAdapter", () => {
-  return {
-    evm: {
-      getPlatformTransactionSignFlowInfos: function () {
-        return evmBridge();
-      },
-    },
-    bitcoin: {
-      getPlatformTransactionSignFlowInfos: function () {
-        return bitcoinBridge();
-      },
-    },
-  };
-});
+jest.mock("../coin-modules/registry", () => ({
+  loadPlatformAdapterForFamily: (family: string) => {
+    switch (family) {
+      case "evm":
+        return { getPlatformTransactionSignFlowInfos: () => evmBridge() };
+      case "bitcoin":
+        return { getPlatformTransactionSignFlowInfos: () => bitcoinBridge() };
+      default:
+        return undefined;
+    }
+  },
+}));
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   beforeEach(() => {

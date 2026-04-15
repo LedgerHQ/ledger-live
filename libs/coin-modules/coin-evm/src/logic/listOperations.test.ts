@@ -1801,6 +1801,146 @@ describe("listOperations", () => {
       });
     });
 
+    it("Case: root trace internal tx is deduplicated against parent coin op (Blockscout bug)", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xRootTraceBug";
+      // Blockscout returns the top-level call as an internal tx with from=EOA.
+      // Regular tx: user → router, value=6 (in txlist)
+      // Internal tx: user → pool, value=6 (in txlistinternal — root trace, same from, same value)
+      // Without dedup: native balance would be double-decremented.
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["router"],
+              value: 6,
+              fee: 1,
+            },
+          ],
+          lastInternalOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["pool"],
+              value: 6,
+              fee: 0,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Only the coin op should be emitted; the internal root trace is filtered out.
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["router"],
+        value: 6n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+      // The surviving op is a coin op, not an internal op.
+      expect(result.items[0]!.details?.internal).toBeUndefined();
+    });
+
+    it("Case: root trace dedup is sender-based, filters even when internal value differs", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xRootTraceDiffValue";
+      // Variant where the internal root trace has a different value than the coin op.
+      // The filter is purely sender-based (not value-based), so it still deduplicates.
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["router"],
+              value: 6,
+              fee: 1,
+            },
+          ],
+          lastInternalOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["pool"],
+              value: 5,
+              fee: 0,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["router"],
+        value: 6n,
+        asset: { type: "native" },
+      });
+      expect(result.items[0]!.details?.internal).toBeUndefined();
+    });
+
+    it("Case: legitimate internal tx is NOT filtered when parent sender differs (smart contract wallet)", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xSCWCase";
+      // A relayer sends a tx to the wallet (coin op), then the wallet makes a sub-call (internal tx).
+      // The internal tx sender (wallet) matches the queried address, but the parent sender (relayer) differs.
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "FEES",
+              senders: ["relayer"],
+              recipients: ["address1"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastInternalOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["target"],
+              value: 3,
+              fee: 0,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Both ops should be present — the internal OUT is legitimate (smart contract wallet sub-call).
+      const internalOp = result.items.find(op => op.details?.internal === true);
+      expect(internalOp).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["target"],
+        value: 3n,
+        asset: { type: "native" },
+      });
+    });
+
     it("Case 12: Smart contract token minting", async () => {
       setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
       const sharedTxHash = "0xcase12";

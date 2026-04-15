@@ -5,6 +5,7 @@ import {
   createFixtureTransaction,
   createFixtureTransactionWithSubAccount,
 } from "../../bridge/bridge.fixture";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 import * as getFeesForTransaction from "../../bridge/getFeesForTransaction";
 import { AptosAPI } from "../../network";
 
@@ -113,7 +114,7 @@ describe("getFeesForTransaction Test", () => {
     });
 
     describe("with vm_status as DUMMY_STATE", () => {
-      it("should return a fee estimation object", () => {
+      it("should throw a simulation error", async () => {
         simulateTransaction = jest.fn(() => [
           {
             success: false,
@@ -133,9 +134,38 @@ describe("getFeesForTransaction Test", () => {
         account.xpub = "xpub";
         account.spendableBalance = new BigNumber(100000000);
 
-        expect(async () => {
-          await getFeesForTransaction.getFee(account, transaction, aptosClient);
-        }).rejects.toThrow("Simulation failed with following error: DUMMY_STATE");
+        await expect(
+          getFeesForTransaction.getFee(account, transaction, aptosClient),
+        ).rejects.toThrow("Simulation failed with following error: DUMMY_STATE");
+      });
+    });
+
+    describe("with vm_status as Out of gas", () => {
+      it("should return GasInsufficientBalance without throwing", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: false,
+            vm_status: "Move abort in 0x1::transaction_fee: EOUT_OF_GAS (Out of gas)",
+            expiration_timestamp_secs: 5,
+            gas_used: "100",
+            gas_unit_price: "100",
+          },
+        ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccount();
+        const transaction = createFixtureTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        expect(result.errors.maxGasAmount).toBe("GasInsufficientBalance");
+        // gas_used 100 * ESTIMATE_GAS_MUL (1.1) => 110 units @ gas_unit_price 100
+        expect(result.fees).toStrictEqual(new BigNumber(11000));
       });
     });
 
@@ -171,6 +201,64 @@ describe("getFeesForTransaction Test", () => {
           errors: {
             maxGasAmount: "GasInsufficientBalance",
           },
+        };
+
+        expect(result).toEqual(expected);
+      });
+    });
+
+    describe("when simulateTransaction throws a non-simulation error", () => {
+      it("should return default fee estimation when simulateTransaction throws an Error", async () => {
+        simulateTransaction = jest.fn(() => {
+          throw new Error("Network timeout");
+        });
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccount();
+        const transaction = createFixtureTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        const expected = {
+          fees: DEFAULT_GAS.multipliedBy(DEFAULT_GAS_PRICE),
+          estimate: {
+            maxGasAmount: DEFAULT_GAS.toString(),
+            gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
+          },
+          errors: { ...transaction.errors },
+        };
+
+        expect(result).toEqual(expected);
+      });
+
+      it("should return default fee estimation when simulateTransaction throws a non-Error value", async () => {
+        simulateTransaction = jest.fn(() => {
+          throw "unexpected string error";
+        });
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccount();
+        const transaction = createFixtureTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        const expected = {
+          fees: DEFAULT_GAS.multipliedBy(DEFAULT_GAS_PRICE),
+          estimate: {
+            maxGasAmount: DEFAULT_GAS.toString(),
+            gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
+          },
+          errors: { ...transaction.errors },
         };
 
         expect(result).toEqual(expected);

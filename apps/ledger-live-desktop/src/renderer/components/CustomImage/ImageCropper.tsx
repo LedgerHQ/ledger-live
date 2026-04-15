@@ -186,7 +186,7 @@ const ImageCropper: React.FC<Props> = props => {
      * a rerender of the cropping view (with that new rotation) which in turns
      * triggers a new completeCropPixel (debouncedCompleteCropPixel)
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedCompleteCropPixel, targetDimensions, onResult, setLoading]);
 
   const rotateCounterClockwise: () => void = useCallback(() => {

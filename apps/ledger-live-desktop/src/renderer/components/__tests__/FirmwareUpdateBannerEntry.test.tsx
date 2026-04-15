@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import FirmwareUpdateBannerEntry from "../FirmwareUpdateBanner";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
@@ -17,15 +17,13 @@ describe("FirmwareUpdateBannerEntry", () => {
       accounts: [],
       devices: { currentDevice: null, devices: [] },
       ...overrides,
+      ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { mainNavigation: true } } }),
       settings: {
         discreetMode: false,
         vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
         devicesModelList: [],
         anonymousUserNotifications: {},
         latestFirmware: null as FirmwareUpdateContext | null,
-        overriddenFeatureFlags: {
-          lwdWallet40: { enabled: true, params: { mainNavigation: true } },
-        },
         ...(overrides.settings as Record<string, unknown> | undefined),
       },
     });
@@ -158,15 +156,13 @@ describe("FirmwareUpdateBannerEntry", () => {
       accounts: [],
       devices: { currentDevice: null, devices: [] },
       ...overrides,
+      ...withFlagOverrides({ lwdWallet40: { enabled: false } }),
       settings: {
         discreetMode: false,
         vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
         devicesModelList: [],
         anonymousUserNotifications: {},
         latestFirmware: null as FirmwareUpdateContext | null,
-        overriddenFeatureFlags: {
-          lwdWallet40: { enabled: false },
-        },
         ...(overrides.settings as Record<string, unknown> | undefined),
       },
     });

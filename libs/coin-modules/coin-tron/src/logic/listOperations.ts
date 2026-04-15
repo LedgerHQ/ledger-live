@@ -10,6 +10,7 @@ import {
   dropTxsBeforeCursor,
   parseCursor,
 } from "./cursor";
+import { TronEmptyPage } from "../types/errors";
 
 // Pagination uses a SUI-style cursor approach to handle two separate endpoints
 // (native transactions and TRC20 transactions) while maintaining chronological order.
@@ -63,6 +64,15 @@ export async function listOperations(
       order,
     },
   );
+
+  // TronGrid occasionally returns an empty page for a valid cursor (transient API failure).
+  // A cursor is only issued when TronGrid indicated hasNextPage=true, so 0 results here
+  // is never a legitimate end-of-stream — throw so the client can retry with the same cursor.
+  if (parsedCursor && nativeTxs.txs.length === 0 && trc20Txs.txs.length === 0) {
+    throw new TronEmptyPage(
+      `TronGrid returned empty page for cursor ${cursor} — transient failure, retry required`,
+    );
+  }
 
   // Merge and dedupe: some transactions appear in both native and TRC20 results
   const mergedTxs = uniqBy([...nativeTxs.txs, ...trc20Txs.txs], tx => tx.txID);

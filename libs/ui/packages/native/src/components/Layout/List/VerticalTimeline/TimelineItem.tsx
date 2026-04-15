@@ -52,9 +52,9 @@ const getContainerBorder = (
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean; isNeutral?: boolean }>`
   flex: 1;
-  border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) => getContainerBackground(p.theme, p.status)};
-  border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem, p.isNeutral)};
+  border-radius: ${p => p.theme.radii[2]}px;
+  background: ${p => getContainerBackground(p.theme, p.status)};
+  border: 1px solid ${p => getContainerBorder(p.theme, p.status, p.isLastItem, p.isNeutral)};
   padding: 20px 16px;
   overflow: hidden;
 `;
@@ -138,7 +138,7 @@ export default function TimelineItem({
                     : "neutral.c70"
               }
             >
-              {item.status === "completed" ? item.doneTitle ?? item.title : item.title}
+              {item.status === "completed" ? (item.doneTitle ?? item.title) : item.title}
             </Text>
             {item?.estimatedTime && item.status === "active" && (
               <Tag>

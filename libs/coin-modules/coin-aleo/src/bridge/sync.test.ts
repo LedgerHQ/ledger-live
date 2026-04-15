@@ -9,8 +9,7 @@ import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/accou
 import { AleoAccount } from "../types";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
-import { accessProvableApi, patchPublicOperations } from "../network/utils";
-import { apiClient } from "../network/api";
+import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -18,6 +17,7 @@ import {
   performPrivateSync,
   createPrivateSyncObservable,
   createPublicSyncObservable,
+  postSync,
 } from "./sync";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
 
@@ -31,7 +31,7 @@ const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
-const mockGetAccountOwnedRecords = jest.mocked(apiClient.getAccountOwnedRecords);
+const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
 const mockListPrivateOperations = jest.mocked(listPrivateOperations);
 const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
@@ -75,7 +75,7 @@ describe("sync.ts", () => {
       nextCursor: null,
     });
     mockAccessProvableApi.mockResolvedValue(null);
-    mockGetAccountOwnedRecords.mockResolvedValue([]);
+    mockFetchAllOwnedRecords.mockResolvedValue([]);
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
     mockPatchPublicOperations.mockResolvedValue([]);
@@ -416,7 +416,6 @@ describe("sync.ts", () => {
       expect(mockAccessProvableApi).toHaveBeenCalledWith({
         currency: mockCurrency,
         viewKey: "AViewKey123",
-        address: mockAccount.freshAddress,
         provableApi: accountWithProvableApi.aleoResources?.provableApi,
       });
     });
@@ -510,7 +509,7 @@ describe("sync.ts", () => {
         ),
       ).rejects.toThrow();
 
-      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
     });
@@ -531,7 +530,7 @@ describe("sync.ts", () => {
       );
 
       expect(result).toBeNull();
-      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
       expect(mockPatchPublicOperations).not.toHaveBeenCalled();
@@ -558,7 +557,7 @@ describe("sync.ts", () => {
       );
 
       expect(result).toBeNull();
-      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+      expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
       expect(mockPatchPublicOperations).not.toHaveBeenCalled();
@@ -581,7 +580,7 @@ describe("sync.ts", () => {
         },
       ];
 
-      mockGetAccountOwnedRecords
+      mockFetchAllOwnedRecords
         .mockResolvedValueOnce(mockPrivateRecords)
         .mockResolvedValueOnce(mockUnspentRecords);
       mockListPrivateOperations.mockResolvedValueOnce({
@@ -606,19 +605,15 @@ describe("sync.ts", () => {
         [],
       );
 
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
-        jwtToken: configuredProvableApi.jwt!.token,
         uuid: configuredProvableApi.uuid,
-        apiKey: configuredProvableApi.apiKey,
         start: 0,
       });
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
-        jwtToken: configuredProvableApi.jwt!.token,
         uuid: configuredProvableApi.uuid,
-        apiKey: configuredProvableApi.apiKey,
         unspent: true,
       });
       expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
@@ -634,6 +629,7 @@ describe("sync.ts", () => {
         currency: mockCurrency,
         viewKey: "AViewKey123",
         privateRecords: mockUnspentRecords,
+        oldUnspentRecords: [],
       });
       expect(result?.aleoResources?.privateBalance).toEqual(new BigNumber(50000));
       expect(result?.aleoResources?.unspentPrivateRecords).toEqual(mockUnspentResult);
@@ -661,7 +657,7 @@ describe("sync.ts", () => {
         [],
       );
 
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(
         expect.objectContaining({ start: 9999 }),
       );
     });
@@ -686,9 +682,7 @@ describe("sync.ts", () => {
         [],
       );
 
-      expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith(
-        expect.objectContaining({ start: 0 }),
-      );
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(expect.objectContaining({ start: 0 }));
     });
 
     it("should use public operation blockHeight for listOperations cursor, not the private op height", async () => {
@@ -893,7 +887,7 @@ describe("sync.ts", () => {
         operations: [newPublicOp as any],
         nextCursor: null,
       });
-      mockGetAccountOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
+      mockFetchAllOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
 
       await performPrivateSync(
         {
@@ -948,7 +942,7 @@ describe("sync.ts", () => {
       const spentRecord = getMockedRecord({ tag: consumedTag, record_ciphertext: "spent" });
       const unspentRecord = getMockedRecord({ tag: "unspent-tag", record_ciphertext: "unspent" });
 
-      mockGetAccountOwnedRecords
+      mockFetchAllOwnedRecords
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([spentRecord, unspentRecord]); // unspent from scanner (with stale data)
       mockListPrivateOperations.mockResolvedValueOnce({
@@ -974,6 +968,7 @@ describe("sync.ts", () => {
         currency: mockCurrency,
         viewKey: "AViewKey123",
         privateRecords: [unspentRecord],
+        oldUnspentRecords: [],
       });
     });
   });
@@ -1018,7 +1013,7 @@ describe("sync.ts", () => {
         scannerStatus: { percentage: 100, synced: true },
       };
       mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
-      mockGetAccountOwnedRecords.mockRejectedValue(new Error("scanner down"));
+      mockFetchAllOwnedRecords.mockRejectedValue(new Error("scanner down"));
 
       const shape$ = createPrivateSyncObservable(baseInfo, mockSyncConfig, []);
       await expect(firstValueFrom(shape$)).rejects.toThrow("scanner down");
@@ -1199,7 +1194,7 @@ describe("sync.ts", () => {
       };
       mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
       // Make one of the private sub-calls throw
-      mockGetAccountOwnedRecords.mockRejectedValue(new Error("Scanner unavailable"));
+      mockFetchAllOwnedRecords.mockRejectedValue(new Error("Scanner unavailable"));
 
       const shape$ = makeGetAccountShape()(
         { ...baseInfo },
@@ -1216,6 +1211,102 @@ describe("sync.ts", () => {
       // The public emission arrived before the private failure
       expect(emissions).toHaveLength(1);
       expect(emissions[0].blockHeight).toBe(100);
+    });
+  });
+
+  describe("postSync", () => {
+    it("should return synced account unchanged when there are no pending operations", () => {
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [getMockedOperation({ hash: "confirmed-hash" })],
+        pendingOperations: [],
+      };
+
+      expect(postSync(synced, synced)).toBe(synced);
+    });
+
+    it("should remove only confirmed pending operations and keep unconfirmed ones", () => {
+      const confirmedOp = getMockedOperation({
+        id: "account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingConfirmedOp = getMockedOperation({
+        id: "account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingUnconfirmedOp = getMockedOperation({
+        id: "account-tx-pending-OUT",
+        hash: "tx-pending",
+        type: "OUT",
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedOp],
+        pendingOperations: [pendingConfirmedOp, pendingUnconfirmedOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingUnconfirmedOp.id }),
+      ]);
+    });
+
+    it("should keep a pending OUT op when only the IN side of a private -> public self-transfer is confirmed", () => {
+      const confirmedPublicInOp = getMockedOperation({
+        id: "account-tx-self-transfer-IN",
+        hash: "tx-self-transfer",
+        type: "IN",
+      });
+      const pendingPrivateOutOp = getMockedOperation({
+        id: "account-tx-self-transfer-OUT",
+        hash: "tx-self-transfer",
+        type: "OUT",
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedPublicInOp],
+        pendingOperations: [pendingPrivateOutOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      // The pending OUT should still be present - the confirmed set only has the "IN" id.
+      expect(result.pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingPrivateOutOp.id }),
+      ]);
+    });
+
+    it("should remove a pending OUT op once the private OUT side of a self-transfer is confirmed", () => {
+      const confirmedPublicInOp = getMockedOperation({
+        id: "account-tx-self-transfer-IN",
+        hash: "tx-self-transfer",
+        type: "IN",
+      });
+      const confirmedPrivateOutOp = getMockedOperation({
+        id: "account-tx-self-transfer-OUT",
+        hash: "tx-self-transfer",
+        type: "OUT",
+      });
+      const pendingPrivateOutOp = getMockedOperation({
+        id: "account-tx-self-transfer-OUT",
+        hash: "tx-self-transfer",
+        type: "OUT",
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedPublicInOp, confirmedPrivateOutOp],
+        pendingOperations: [pendingPrivateOutOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
     });
   });
 });

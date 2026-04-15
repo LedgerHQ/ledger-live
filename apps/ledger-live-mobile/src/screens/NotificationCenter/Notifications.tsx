@@ -80,7 +80,7 @@ export default function NotificationCenter() {
     // Need to refresh just one time when coming in the Page
     refreshNotifications();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ----- Utils Functions ----------

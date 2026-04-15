@@ -1256,8 +1256,8 @@
             "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Wallet “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError": {
-            "title": "This {{productName}} is not genuine",
-            "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+            "title": "This {{productName}} failed the Genuine Check",
+            "description": "It is not safe to use this Ledger device.\nPlease contact Ledger Support."
           }
         },
         "whyPerformChecksLink": "Learn more about Ledger Genuine Check",
@@ -4630,6 +4630,27 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
+      "analyticsConsentOptInQa": {
+        "rowTitle": "Analytics opt-in consent (QA)",
+        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal.",
+        "title": "Analytics opt-in consent — QA",
+        "readSection": "Current settings (read-only)",
+        "storedPrivacyVersion": "Stored privacy policy version: {{version}}",
+        "currentPrivacyVersion": "App current privacy policy version: {{version}}",
+        "consentDate": "Consent date (raw): {{value}}",
+        "inlineOutdatePrivacyVersion": "Outdate version",
+        "inlineRemoveConsentDate": "Remove date",
+        "actionResetForConsentFresh": "Reset for consent fresh (clear consent data, turn off analytics & personalization)",
+        "modalPreviewSection": "Expected modal on portfolio (home)",
+        "modalPreviewNoModalUserOk": "No modal. Privacy policy version and consent date are fine: nothing to renew or re-acknowledge.",
+        "modalPreviewNoModalFeatureOff": "No modal. The analytics opt-in feature flag is off.",
+        "modalPreviewNoModalOnboarding": "No modal. Onboarding is not complete yet.",
+        "modalPreviewFresh": "First-time consent modal (consent fresh). Consent renewal is required (missing or invalid consent date) and Share analytics is off — e.g. no stored privacy ack / no consent date with analytics disabled.",
+        "modalPreviewReconfirm": "Reconfirm consent modal. Consent renewal is required and Share analytics is on — user gets the reconfirm / continue-or-stop flow instead of first-time copy.",
+        "modalPreviewPrivacy": "Privacy update modal. Stored privacy policy version is outdated (lower than the app), and consent renewal is not blocking — user sees the privacy-policy update step first.",
+        "modalPreviewGoToHome": "Open the portfolio home page to see the modal when it should appear.",
+        "note": "Remove date sets consent to null. Outdate version lowers the stored privacy policy version below the app's current version. Reset clears consent metadata and turns off analytics and personalization to reproduce the consent fresh modal. Time-based renewal stays off while CONSENT_RENEWAL_INTERVAL_MS is null in live-common."
+      },
       "brazeTools": {
         "title": "Braze Tools",
         "description": "Generate local braze cards",
@@ -4657,6 +4678,26 @@
             "path": "Path"
           }
         }
+      },
+      "appJsonImporter": {
+        "title": "Load app.json",
+        "desc": "Drag & drop an app.json file to import accounts and settings",
+        "dropOrBrowse": "Drop app.json here or click to browse",
+        "importing": "Importing...",
+        "success": "Imported {{count}} account successfully.",
+        "success_other": "Imported {{count}} accounts successfully.",
+        "lastDeviceSeen": "Last device seen: {{device}}",
+        "invalidFileType": "Invalid file type. Expected a .json file.",
+        "missingDataField": "Invalid app.json: missing top-level data field.",
+        "encryptedAccounts": "Encrypted accounts detected. Decrypt the file first.",
+        "successLabel": "Success",
+        "appJsonFile": "App.json file",
+        "accountsImported": "Accounts imported",
+        "accountsFailed": "Accounts failed",
+        "importFailed": "Import failed: {{message}}",
+        "unknownError": "Unknown error during import.",
+        "failedCount": "{{count}} account could not be loaded.",
+        "failedCount_other": "{{count}} accounts could not be loaded."
       },
       "mockAccounts": {
         "title": "Generate mock accounts",
@@ -5895,6 +5936,10 @@
     },
     "recipientWording": {
       "send": "recipient",
+      "transfer_public": "public recipient",
+      "transfer_private": "private recipient",
+      "convert_public_to_private": "private recipient",
+      "convert_private_to_public": "public recipient",
       "delegate": "validator",
       "redelegate": "validator",
       "undelegate": "validator",
@@ -6340,6 +6385,11 @@
     "DeviceSocketFail": {
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again. ({{message}})"
+    },
+    "CounterfeitDevice": {
+      "title": "This {{productName}} failed the Genuine Check",
+      "description": "It is not safe to use this Ledger device. Please contact Ledger Support.",
+      "contactSupportCTA": "Contact Ledger support"
     },
     "DeviceSocketNoBulkStatus": {
       "title": "The connection failed",
@@ -7252,10 +7302,20 @@
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
     },
     "AleoAmountRecordRequired": {
-      "title": "Select a valid private record for the amount."
+      "title": "Select a valid private record for the amount.",
+      "description": "Choose one of your available private records to fund the transfer amount."
     },
     "AleoFeeRecordRequired": {
-      "title": "Select a valid private record for the fee."
+      "title": "Another private record is required to cover the network fee.",
+      "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
+    },
+    "AleoTwoRecordsRequired": {
+      "title": "Private send requires at least two records.",
+      "description": "You need one record for the transfer amount and another one to cover the network fee."
+    },
+    "AleoFeeRecordInsufficientBalance": {
+      "title": "No private record can cover the network fee.",
+      "description": "Select a different record for the transfer amount or top up your balance with additional funds."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"
@@ -7420,8 +7480,8 @@
       "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "AlreadySendingApduError": {
-      "title": "Communication error",
-      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title": "Action needed on your Ledger device",
+      "description": "Finish the action on your device, then select \"Retry\" below."
     },
     "UnknownDeviceExchangeError": {
       "title": "Communication error",
@@ -7756,11 +7816,48 @@
     },
     "noAccounts": {
       "title": "You need an account to access this app.",
-      "add": "Add Account"
+      "select": "Select Account"
     }
   },
   "recoverRestore": {
     "title": "Connect and unlock your Ledger"
+  },
+  "analyticsConsentModal": {
+    "fresh": {
+      "title": "Help us improve Ledger",
+      "description": "With your consent, we'll collect usage data to improve features and personalize your experience.",
+      "ctaAcceptAll": "Accept all",
+      "ctaRefuseAll": "Refuse all"
+    },
+    "reconfirm": {
+      "title": "Continue improving Ledger?",
+      "description": "Would you like to continue sharing usage data to help us improve Ledger? This data is used to improve features and personalize your experience.",
+      "ctaContinue": "Yes, continue",
+      "ctaStop": "No, stop"
+    },
+    "privacy": {
+      "title": "We're updating our privacy policy",
+      "descriptionLead": "Please review our ",
+      "descriptionLinkLabel": "Privacy policy",
+      "descriptionTrail": " to learn what has changed. You can update your preferences at any time in Settings.",
+      "ctaGotIt": "Got it"
+    },
+    "setPreferences": "Set preferences",
+    "preferences": {
+      "appPerformance": {
+        "title": "App performance",
+        "description": "Enable Ledger to collect app usage to enhance the experience"
+      },
+      "personalizedExperience": {
+        "title": "Personalized experience",
+        "description": "Enable Ledger to collect app usage to provide personalized contents"
+      },
+      "ctaConfirm": "Confirm"
+    },
+    "footer": {
+      "lead": "You can revoke your consent anytime in settings.",
+      "privacyLink": "Privacy policy"
+    }
   },
   "analyticsOptInPrompt": {
     "variantA": {
@@ -8275,7 +8372,7 @@
         "showBalance": "Show balance",
         "startSync": "Start sync",
         "stopSync": "Stop sync",
-        "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
+        "upToDate": "Up to date",
         "lastSync": "Last sync: {{date}}",
         "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
       },

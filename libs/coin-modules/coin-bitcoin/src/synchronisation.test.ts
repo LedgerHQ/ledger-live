@@ -22,7 +22,7 @@ import {
 } from "./synchronisation";
 import { BtcOperation, BitcoinAccount, ZcashAccount } from "./types";
 import BigNumber from "bignumber.js";
-import type { ShieldedTransaction, ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
+import type { ShieldedTransaction, ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
@@ -631,13 +631,11 @@ describe("reduceShieldedSyncResult", () => {
       processedOperations: [] as ShieldedTransaction[],
       accountUpdate: { balance: new BigNumber(890) } as Partial<ZcashAccount>,
     };
-    const result: ShieldedSyncResult = {
+    const result: Partial<ZcashPrivateInfo> = {
       progress: 0,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
       transactions: [],
-      lastBlockProcessed: 5000,
-      processedBlocks: 0,
-      remainingBlocks: 0,
+      lastProcessedBlock: 5000,
       syncState: "disabled",
     };
     const info = createMockInfo();
@@ -646,10 +644,7 @@ describe("reduceShieldedSyncResult", () => {
 
     expect(output).toMatchObject({
       processedOperations: [],
-      accountUpdate: {
-        blockHeight: 5000,
-        balance: new BigNumber(890),
-      },
+      accountUpdate: { balance: new BigNumber(890) },
     });
   });
 
@@ -675,13 +670,11 @@ describe("reduceShieldedSyncResult", () => {
         blockHeight: 99,
       } as Partial<ZcashAccount>,
     };
-    const result: ShieldedSyncResult = {
+    const result: Partial<ZcashPrivateInfo> = {
       progress: 25,
       estimatedTimeRemaining: { hours: 0, minutes: 3 },
       transactions: [incomingTx],
-      lastBlockProcessed: 100,
-      processedBlocks: 1,
-      remainingBlocks: 0,
+      lastProcessedBlock: 100,
       syncState: "running",
     };
     const info = createMockInfo({ balance: new BigNumber(initialBalance) });
@@ -725,11 +718,9 @@ describe("reduceShieldedSyncResult", () => {
         blockHeight: 99,
       } as Partial<ZcashAccount>,
     };
-    const result: ShieldedSyncResult = {
+    const result: Partial<ZcashPrivateInfo> = {
       transactions: [incomingTx],
-      lastBlockProcessed: 100,
-      processedBlocks: 1,
-      remainingBlocks: 0,
+      lastProcessedBlock: 100,
       syncState: "running",
       progress: 25,
       estimatedTimeRemaining: { hours: 0, minutes: 3 },
@@ -774,13 +765,11 @@ describe("reduceShieldedSyncResult", () => {
         blockHeight: 100,
       } as Partial<ZcashAccount>,
     };
-    const result: ShieldedSyncResult = {
+    const result: Partial<ZcashPrivateInfo> = {
       progress: 50,
       estimatedTimeRemaining: { hours: 0, minutes: 2 },
       transactions: [tx],
-      lastBlockProcessed: 100,
-      processedBlocks: 0,
-      remainingBlocks: 0,
+      lastProcessedBlock: 100,
       syncState: "running",
     };
     const info = createMockInfo();
@@ -919,21 +908,17 @@ describe("createShieldedSyncObservable", () => {
       },
     };
 
-    const shieldedSyncRaw = from<ShieldedSyncResult[]>([
+    const shieldedSyncRaw = from<Partial<ZcashPrivateInfo>[]>([
       {
         transactions: [tx1, tx2],
-        lastBlockProcessed: 100,
-        processedBlocks: 0,
-        remainingBlocks: 0,
+        lastProcessedBlock: 100,
         syncState: "running",
         progress: 50,
         estimatedTimeRemaining: { hours: 0, minutes: 2 },
       },
       {
         transactions: [tx3],
-        lastBlockProcessed: 101,
-        processedBlocks: 0,
-        remainingBlocks: 0,
+        lastProcessedBlock: 101,
         syncState: "running",
         progress: 50,
         estimatedTimeRemaining: { hours: 0, minutes: 2 },
@@ -1034,7 +1019,7 @@ describe("buildSyncObservables", () => {
           orchardBalance: new BigNumber(0),
           syncState: "ready",
           lastSyncTimestamp: null,
-          lastBlockProcessed: null,
+          lastProcessedBlock: null,
           transactions: [],
         },
       },
@@ -1081,7 +1066,7 @@ describe("buildSyncObservables", () => {
           orchardBalance: new BigNumber(0),
           syncState: "ready",
           lastSyncTimestamp: null,
-          lastBlockProcessed: null,
+          lastProcessedBlock: null,
           transactions: [],
         },
       },

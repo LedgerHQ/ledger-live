@@ -1,11 +1,11 @@
 import assert, { fail } from "assert";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import type {
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
   SuiObjectResponse,
-} from "@mysten/sui/client";
+} from "@mysten/sui/jsonRpc";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import * as sdkOriginal from "./sdk";
@@ -76,10 +76,10 @@ const sdk = new Proxy(sdkOriginal, {
 });
 
 // Mock SUI client for tests
-jest.mock("@mysten/sui/client", () => {
+jest.mock("@mysten/sui/jsonRpc", () => {
   return {
-    ...jest.requireActual("@mysten/sui/client"),
-    SuiClient: jest.fn().mockImplementation(() => ({
+    ...jest.requireActual("@mysten/sui/jsonRpc"),
+    SuiJsonRpcClient: jest.fn().mockImplementation(() => ({
       getAllBalances: jest.fn().mockResolvedValue([
         { coinType: "0x2::sui::SUI", totalBalance: "1000000000" },
         { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
@@ -127,8 +127,11 @@ jest.mock("@mysten/sui/client", () => {
         },
       }),
       multiGetObjects: jest.fn().mockResolvedValue([]),
+      core: {
+        getObjects: jest.fn().mockResolvedValue({ objects: [] }),
+      },
     })),
-    getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
+    getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
   };
 });
 
@@ -364,7 +367,10 @@ function mockUnstakingTx(address: string, amount: string) {
   } as unknown as SuiTransactionBlockResponse;
 }
 
-const mockApi = new SuiClient({ url: "mock" }) as jest.Mocked<SuiClient>;
+const mockApi = new SuiJsonRpcClient({
+  url: "mock",
+  network: "mainnet",
+}) as jest.Mocked<SuiJsonRpcClient>;
 
 // Add getTransactionBlock method to mockApi
 mockApi.getTransactionBlock = jest.fn();
@@ -396,7 +402,7 @@ beforeEach(() => {
 
 describe("SDK Functions", () => {
   test("getAccountBalances should return array of account balances", async () => {
-    // The SuiClient mock already has getAllBalances mocked, so getAllBalancesCached should use it
+    // The SuiJsonRpcClient mock already has getAllBalances mocked, so getAllBalancesCached should use it
     // We just need to ensure the mock returns the expected structure
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     const balances = await sdk.getAccountBalances(address);
@@ -1665,13 +1671,13 @@ describe("getOperations filtering logic", () => {
 
 describe("listOperations", () => {
   const ADDRESS = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
-  type QueryBlocksParams = Parameters<SuiClient["queryTransactionBlocks"]>[0];
-  type QueryBlocksResult = Awaited<ReturnType<SuiClient["queryTransactionBlocks"]>>;
+  type QueryBlocksParams = Parameters<SuiJsonRpcClient["queryTransactionBlocks"]>[0];
+  type QueryBlocksResult = Awaited<ReturnType<SuiJsonRpcClient["queryTransactionBlocks"]>>;
 
   const tx = (digest: string, checkpoint: string, timestampMs: string) =>
     ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
 
-  const apiCall = async <T>(execute: (api: SuiClient) => Promise<T>) => execute(mockApi);
+  const apiCall = async <T>(execute: (api: SuiJsonRpcClient) => Promise<T>) => execute(mockApi);
 
   const setupListOperationsMocks = (
     handler: (params: QueryBlocksParams) => Promise<QueryBlocksResult> | QueryBlocksResult,
@@ -1769,7 +1775,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1818,7 +1824,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1843,7 +1849,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1876,7 +1882,7 @@ describe("listOperations", () => {
       const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
       const tx = (digest: string, checkpoint: string, timestampMs: string) =>
         ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-      const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+      const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
       mockApi.queryTransactionBlocks.mockReset();
       mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1900,7 +1906,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1936,7 +1942,7 @@ describe("listOperations", () => {
     const boundaryDigest = "HdJAXgAA94Q8njwnmX1YT6RDu6s3HvUrdTgDRGNNFwm";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1987,7 +1993,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
       digest: `checkpoint-${id}`,
@@ -3179,7 +3185,7 @@ describe("withBatchedMultiGetObjects", () => {
         );
       },
     );
-    return { client: { multiGetObjects } as unknown as SuiClient, multiGetObjects };
+    return { client: { multiGetObjects } as unknown as SuiJsonRpcClient, multiGetObjects };
   };
 
   it("should pass through when <= 50 objects", async () => {

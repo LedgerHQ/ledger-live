@@ -1,26 +1,29 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
   Balance,
+  BalanceOptions,
   CraftedTransaction,
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
 import coinConfig, { type SuiConfig } from "../config";
 import {
-  estimateFees,
-  combine,
   broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
   getBalance,
-  listOperations as logicListOperations,
-  lastBlock,
   getBlock,
   getBlockInfo,
-  craftTransaction,
-  getStakes,
   getRewards,
+  getStakes,
+  lastBlock,
   getValidators as logicGetValidators,
+  listOperations as logicListOperations,
 } from "../logic";
 
 export function createApi(config: SuiConfig): AlpacaApi {
@@ -39,7 +42,8 @@ export function createApi(config: SuiConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance: address => getBalance(address),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     getBlock,
     getBlockInfo,
@@ -58,6 +62,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

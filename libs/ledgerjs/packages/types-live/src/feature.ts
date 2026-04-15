@@ -262,6 +262,7 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkCosmosSigner: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
@@ -845,7 +846,8 @@ type Feature_Wallet40_Params = {
   balanceRefreshRework: boolean;
   assetSection: boolean;
   operationsList: boolean;
-
+  aggregatedAssets: boolean;
+  myWallet: boolean;
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;

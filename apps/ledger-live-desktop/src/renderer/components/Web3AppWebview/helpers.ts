@@ -12,7 +12,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import {
-  CurrentAccountHistDB,
+  SetCurrentAccountHistDb,
   safeGetRefValue,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
@@ -67,7 +67,7 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const initialURL = useRef(getInitialURL(inputs, manifest)).current;
 
   // Mirror mobile's originWhitelist: if the feature flag is on, only load URLs that pass
   // the manifest.domains whitelist. Fall back to manifest.url if initialURL is rejected,
@@ -88,50 +88,54 @@ export function useWebviewState(
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
-  useImperativeHandle(webviewAPIRef, () => {
-    return {
-      reload: () => {
-        const webview = safeGetRefValue(webviewRef);
+  useImperativeHandle(
+    webviewAPIRef,
+    () => {
+      return {
+        reload: () => {
+          const webview = safeGetRefValue(webviewRef);
 
-        webview.reload();
-      },
-      goBack: () => {
-        const webview = safeGetRefValue(webviewRef);
+          webview.reload();
+        },
+        goBack: () => {
+          const webview = safeGetRefValue(webviewRef);
 
-        webview.goBack();
-      },
-      goForward: () => {
-        const webview = safeGetRefValue(webviewRef);
+          webview.goBack();
+        },
+        goForward: () => {
+          const webview = safeGetRefValue(webviewRef);
 
-        webview.goForward();
-      },
-      openDevTools: () => {
-        const webview = safeGetRefValue(webviewRef);
+          webview.goForward();
+        },
+        openDevTools: () => {
+          const webview = safeGetRefValue(webviewRef);
 
-        webview.openDevTools();
-      },
-      loadURL: (url: string): Promise<void> => {
-        if (
-          manifestDomainCheckEnabled &&
-          !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
-        ) {
-          return Promise.reject(new Error("URL not allowed by manifest domains"));
-        }
-        const webview = safeGetRefValue(webviewRef);
+          webview.openDevTools();
+        },
+        loadURL: (url: string): Promise<void> => {
+          if (
+            manifestDomainCheckEnabled &&
+            !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
+          ) {
+            return Promise.reject(new Error("URL not allowed by manifest domains"));
+          }
+          const webview = safeGetRefValue(webviewRef);
 
-        return webview.loadURL(url);
-      },
-      clearHistory: () => {
-        const webview = safeGetRefValue(webviewRef);
+          return webview.loadURL(url);
+        },
+        clearHistory: () => {
+          const webview = safeGetRefValue(webviewRef);
 
-        webview.clearHistory();
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      notify: (method: `event.${string}`, params: any) => {
-        serverRef?.current?.sendMessage(method, params);
-      },
-    };
-  }, [manifest.domains, manifestDomainCheckEnabled, serverRef]);
+          webview.clearHistory();
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        notify: (method: `event.${string}`, params: any) => {
+          serverRef?.current?.sendMessage(method, params);
+        },
+      };
+    },
+    [manifest.domains, manifestDomainCheckEnabled, serverRef],
+  );
 
   const [isMounted, setMounted] = useState<boolean>(false);
   useEffect(() => {
@@ -316,10 +320,10 @@ export function useWebviewState(
 
 export function useSelectAccount({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: {
   manifest: LiveAppManifest;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  setCurrentAccountHistDb?: SetCurrentAccountHistDb;
 }) {
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -333,7 +337,7 @@ export function useSelectAccount({
   const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
     manifest.id,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   );
 
   const onSuccess = useCallback(
@@ -349,11 +353,6 @@ export function useSelectAccount({
     setDrawer();
   }, []);
 
-  const source =
-    currentRouteNameRef.current === "Platform Catalog"
-      ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
-
   const flow = manifest.name;
 
   const dispatch = useDispatch();
@@ -361,6 +360,11 @@ export function useSelectAccount({
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const onSelectAccount = useCallback(() => {
+    const source =
+      currentRouteNameRef.current === "Platform Catalog"
+        ? "Discover"
+        : (currentRouteNameRef.current ?? "Unknown");
+
     if (modularDrawerVisible) {
       dispatch(setFlowValue(flow));
       dispatch(setSourceValue(source));
@@ -385,16 +389,7 @@ export function useSelectAccount({
         },
       );
     }
-  }, [
-    modularDrawerVisible,
-    dispatch,
-    flow,
-    source,
-    openAssetAndAccount,
-    currencyIds,
-    onSuccess,
-    onCancel,
-  ]);
+  }, [modularDrawerVisible, dispatch, flow, openAssetAndAccount, currencyIds, onSuccess, onCancel]);
 
   return { onSelectAccount, currentAccount };
 }

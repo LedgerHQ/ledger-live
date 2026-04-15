@@ -60,7 +60,7 @@ const IconGrid: React.FC<IconProps> = ({ size = "M", color = "" }) => {
     <FlatList
       data={iconNames}
       renderItem={renderItem}
-      keyExtractor={(iconName) => iconName.toString()}
+      keyExtractor={iconName => iconName.toString()}
       numColumns={4} // Display 4 icons per row
       /* @ts-expect-error FIXME weird stuff happening here, this prop is legit I promise */
       style={{ width: "100%", height: "100%" }}

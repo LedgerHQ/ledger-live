@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import Market from "../index";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
@@ -104,10 +104,9 @@ const createSettingsState = (starredMarketCoins: string[] = []) => ({
       },
     },
   ],
-  overriddenFeatureFlags: {
-    lldRefreshMarketData: { enabled: false },
-  },
 });
+
+const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
 
 describe("Market Integration", () => {
   beforeEach(() => {
@@ -127,6 +126,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -148,6 +148,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -170,6 +171,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -190,6 +192,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -212,6 +215,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -240,6 +244,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -266,6 +271,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(["bitcoin"]),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -289,6 +295,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
       },
     });
 
@@ -313,6 +320,7 @@ describe("Market Integration", () => {
       initialState: {
         market: createMarketState(),
         settings: createSettingsState(),
+        ...marketFeatureFlagsState,
         accounts: [],
       },
     });

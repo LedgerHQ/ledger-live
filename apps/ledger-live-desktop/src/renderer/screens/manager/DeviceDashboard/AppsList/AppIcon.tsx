@@ -18,6 +18,7 @@ const ManagerAppIconContainer = styled.div`
 `;
 const IconContainer = styled.div<{ size?: number | string; loading?: boolean }>`
   width: ${p => p.size}px;
+  min-width: ${p => p.size}px;
   height: ${p => p.size}px;
   position: relative;
   ${ManagerAppIconContainer} {
@@ -45,7 +46,11 @@ function AppIcon({ app }: Readonly<Props>) {
     const ticker = currency.ticker;
     const validSize = getValidCryptoIconSize(size);
 
-    return <SquaredCryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} />;
+    return (
+      <IconContainer size={size} loading={false}>
+        <SquaredCryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} />
+      </IconContainer>
+    );
   }
 
   // Fallback to manager icon for non-crypto apps

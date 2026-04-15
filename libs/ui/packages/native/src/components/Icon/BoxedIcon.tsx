@@ -15,7 +15,7 @@ function getClipRectangleSize(badgeSize: number): number {
   return (3 / 4) * badgeSize;
 }
 
-const Container = styled(Flex).attrs<{ size: number }>((p) => ({
+const Container = styled(Flex).attrs<{ size: number }>(p => ({
   height: p.size,
   width: p.size,
   alignItems: "center",
@@ -29,15 +29,15 @@ const IconBoxBackground = styled(Flex)<{
   variant?: Variant;
 }>`
   position: absolute;
-  height: ${(p) => p.size}px;
-  width: ${(p) => p.size}px;
-  border-radius: ${(p) => (p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS])}px;
+  height: ${p => p.size}px;
+  width: ${p => p.size}px;
+  border-radius: ${p => (p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS])}px;
 `;
 
 const BadgeContainer = styled.View<{ badgeSize: number }>`
   position: absolute;
   overflow: visible;
-  ${(p) => `
+  ${p => `
     top: -${p.badgeSize / 2 - 2}px;
     right: -${p.badgeSize / 2 - 2}px;
     height: ${p.badgeSize}px;

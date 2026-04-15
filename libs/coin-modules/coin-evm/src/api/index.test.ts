@@ -8,7 +8,6 @@ describe.each([
     {
       broadcast: expect.any(Function),
       combine: expect.any(Function),
-      computeIntentType: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
@@ -24,6 +23,7 @@ describe.each([
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       validateTransaction: expect.any(Function),
+      craftTransactionData: expect.any(Function),
     },
   ],
   [
@@ -32,7 +32,6 @@ describe.each([
     {
       broadcast: expect.any(Function),
       combine: expect.any(Function),
-      computeIntentType: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
@@ -49,10 +48,22 @@ describe.each([
       validateIntent: expect.any(Function),
       validateTransaction: expect.any(Function),
       refreshOperations: expect.any(Function),
+      craftTransactionData: expect.any(Function),
     },
   ],
 ])("Alpaca methods %s", (_s, config, methods) => {
   it("ensures methods are presents", () => {
     expect(createApi(config as EvmConfig, "ethereum")).toEqual(methods);
+  });
+});
+
+describe("staking support capability", () => {
+  it("only exposes stakingSupported for currencies with staking configured", () => {
+    expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "ethereum")).not.toHaveProperty(
+      "stakingSupported",
+    );
+    expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm")).toMatchObject({
+      stakingSupported: true,
+    });
   });
 });

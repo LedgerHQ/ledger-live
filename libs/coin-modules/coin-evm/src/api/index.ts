@@ -1,22 +1,23 @@
 import type {
-  BroadcastConfig,
+  AlpacaApi,
   Balance,
   Block,
   BlockInfo,
+  BroadcastConfig,
+  BufferTxData,
+  CraftedTransaction,
+  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   MemoNotSupported,
   Operation,
-  TransactionIntent,
-  Cursor,
   Page,
-  Validator,
-  Stake,
   Reward,
+  Stake,
+  TransactionIntent,
   TransactionValidation,
-  CraftedTransaction,
-  BufferTxData,
-  AlpacaApi,
+  Validator,
+  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
@@ -27,18 +28,18 @@ import {
   combine,
   craftTransaction,
   estimateFees,
-  lastBlock,
-  listOperations,
   getBalance,
-  getNextSequence,
-  validateIntent,
-  computeIntentType,
-  refreshOperations,
   getBlock,
   getBlockInfo,
+  getNextSequence,
+  lastBlock,
+  listOperations,
+  refreshOperations,
+  validateIntent,
   validateTransaction,
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
+import { STAKING_CONTRACTS } from "../staking";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
@@ -48,10 +49,7 @@ const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): AlpacaApi<MemoNotSupported, BufferTxData> &
-  BridgeApi & {
-    validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
-  } {
+): AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi {
   configs[currencyId] = config;
   setCoinConfig(id => {
     const evmConfig = configs[id];
@@ -81,7 +79,8 @@ export function createApi(
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFeesParameters?: FeeEstimation["parameters"],
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
-    getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
+    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> =>
+      getBalance(currency, address, options),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
@@ -105,7 +104,6 @@ export function createApi(
       balances: Balance[],
       customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
-    computeIntentType,
     /**
      * Only expose this method if the chain has no explorer (the only chain that passes a function
      * is Celo that works with an explorer)
@@ -120,5 +118,9 @@ export function createApi(
       : {}),
     validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
       validateTransaction(currency, { signature }),
+    ...(STAKING_CONTRACTS[currencyId] ? { stakingSupported: true } : {}),
+    craftTransactionData: _intent => {
+      throw new Error("Unsupported method");
+    },
   };
 }

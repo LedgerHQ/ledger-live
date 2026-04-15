@@ -89,6 +89,7 @@ import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import MyLedgerNavigator from "./MyLedgerNavigator";
+import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
@@ -188,7 +189,7 @@ export default function BaseNavigator() {
     initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
 
     // No dependency because we only want to run it once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -210,6 +211,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.MyLedger}
           component={MyLedgerNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.MyWallet}
+          component={MyWalletNavigator}
           options={{ headerShown: false }}
         />
 

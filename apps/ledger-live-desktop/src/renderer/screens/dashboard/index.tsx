@@ -157,5 +157,5 @@ const PortfolioGrid = styled(Grid).attrs(() => ({
   columnGap: 2,
   columns: 2,
 }))`
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(375px, 1fr);
 `;

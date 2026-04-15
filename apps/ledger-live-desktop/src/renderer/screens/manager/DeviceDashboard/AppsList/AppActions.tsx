@@ -17,8 +17,10 @@ import { colors } from "~/renderer/styles/theme";
 import AccountAdd from "~/renderer/icons/AccountAdd";
 import IconCheck from "~/renderer/icons/Check";
 import IconTrash from "~/renderer/icons/Trash";
-import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
+import { Button as LumenButton } from "@ledgerhq/lumen-ui-react";
+import { ArrowDown } from "@ledgerhq/lumen-ui-react/symbols";
+import { track } from "~/renderer/analytics/segment";
 
 const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
@@ -131,6 +133,13 @@ const AppActions = React.memo(
       () => installed && installQueue.length <= 0 && uninstallQueue.length <= 0,
       [installQueue.length, installed, uninstallQueue.length],
     );
+    const onInstallClick = useCallback(() => {
+      track("Manager Install Click", {
+        appName: name,
+        appVersion: app.version,
+      });
+      onInstall();
+    }, [name, app.version, onInstall]);
 
     const isCurrencyApp = type === AppType.app || type === AppType.currency;
     const showLearnMore = type === AppType.tool || (isCurrencyApp && !isLiveSupported);
@@ -266,29 +275,16 @@ const AppActions = React.memo(
                   ) : null
                 }
               >
-                <Button
-                  style={{
-                    display: "flex",
-                  }}
-                  lighterPrimary
+                <LumenButton
+                  appearance="transparent"
+                  size="sm"
                   disabled={!canInstall || notEnoughMemoryToInstall}
-                  onClick={onInstall}
-                  event="Manager Install Click"
-                  eventProperties={{
-                    appName: name,
-                    appVersion: app.version,
-                  }}
+                  onClick={onInstallClick}
+                  icon={ArrowDown}
                   data-testid={`manager-install-${name}-app-button`}
                 >
-                  <IconArrowDown size={14} />
-                  <Text
-                    style={{
-                      marginLeft: 8,
-                    }}
-                  >
-                    <Trans i18nKey="manager.applist.item.install" />
-                  </Text>
-                </Button>
+                  <Trans i18nKey="manager.applist.item.install" />
+                </LumenButton>
               </Tooltip>
             )}
             {(((installed || !installedAvailable) && !appStoreView && !onlyUpdate) ||

@@ -2,7 +2,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/signers/ledger";
-import type { SuiClient } from "@mysten/sui/client";
+import type { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { withApi } from "../network/sdk";
@@ -46,11 +46,12 @@ export const buildSignOperation = (
         );
 
         const signed = await signerContext(deviceId, async suiSigner =>
-          withApi(async (suiClient: SuiClient) => {
+          withApi(async (suiClient: SuiJsonRpcClient) => {
+            // TODO: remove cast once @mysten/signers is bumped to v2-compat
             const ledgerSigner = await LedgerSigner.fromDerivationPath(
               account.freshAddressPath,
               suiSigner,
-              suiClient,
+              suiClient as any,
             );
             return ledgerSigner.signTransaction(unsigned, objects, resolution);
           }, account.currency.id),

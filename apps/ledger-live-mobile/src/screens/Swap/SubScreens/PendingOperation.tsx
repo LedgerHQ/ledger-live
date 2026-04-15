@@ -50,7 +50,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   useEffect(() => {
     syncAccounts();
     tryTriggerPushNotificationDrawerAfterAction("swap");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onComplete = useCallback(() => {

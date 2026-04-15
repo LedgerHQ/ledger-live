@@ -4,12 +4,19 @@ import { useNavigate, useSearchParams } from "react-router";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { useSelector } from "LLD/hooks/redux";
-import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import {
+  hasOnboardedDeviceSelector,
+  counterValueCurrencySelector,
+} from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
+import { useAllCurrencyTrends } from "LLD/features/Assets/hooks/useAllCurrencyTrends";
+import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
-import { padItems, dadaIdToMarketId } from "LLD/features/Assets/utils/assetTableHelpers";
+import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -22,6 +29,7 @@ import { track } from "~/renderer/analytics/segment";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 
 export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -78,6 +86,19 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     resolvedDefaults.stablecoins,
   ]);
 
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const nonPlaceholderCurrencies = useMemo(
+    () => items.filter(i => !i.isPlaceholder).map(i => i.currency),
+    [items],
+  );
+  useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
+
+  const trends = useAllCurrencyTrends(items, "day");
+  const itemsWithTrend = useMemo(
+    () => items.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
+    [items, trends],
+  );
+
   const needsPaddingForCategory =
     category === ASSETS_PAGE_CATEGORY_CRYPTOS
       ? needsCryptoPlaceholders
@@ -101,20 +122,22 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
         asset: item.currency.name,
         page: ASSETS_TRACKING_PAGE_NAME,
       });
+      const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/market/${encodeURIComponent(dadaIdToMarketId(item.marketId ?? item.currency.id))}`
+          ? `/market/${encodeURIComponent(shouldDisplayAggregatedAssets ? rawId : dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );
     },
-    [navigate],
+    [navigate, shouldDisplayAggregatedAssets],
   );
 
   return {
     title,
     onBack,
-    items,
+    items: itemsWithTrend,
     isLoading,
     onAssetRowClick,
+    trackingType: category === ASSETS_PAGE_CATEGORY_CRYPTOS ? "crypto" : "stable",
   };
 }

@@ -4,7 +4,7 @@ import {
   ListItemContent,
   ListItemDescription,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemTitle,
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
@@ -53,7 +53,7 @@ export function AddressListItem({
     ? formatRelativeDate(date)
     : formatAddress(address, { prefixLength: 5, suffixLength: 5 });
 
-  const subtitle = disabled || hideDescription ? undefined : (description ?? fallbackDescription);
+  const subtitle = disabled || hideDescription ? undefined : description ?? fallbackDescription;
   const icon = isLedgerAccount ? LedgerLogo : Wallet;
 
   const trailingContent =
@@ -76,7 +76,7 @@ export function AddressListItem({
       })}
     >
       <ListItemLeading>
-        <ListItemSpot appearance="icon" icon={icon} />
+        <Spot appearance="icon" icon={icon} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>{subtitle}</ListItemDescription>

@@ -14,6 +14,8 @@ export const lwdWallet40 = flagWith(
     newReceiveDialog: z.boolean(),
     operationsList: z.boolean(),
     brazePlacement: z.boolean().optional(),
+    aggregatedAssets: z.boolean(),
+    myWallet: z.boolean(),
   },
   {
     enabled: false,
@@ -29,6 +31,8 @@ export const lwdWallet40 = flagWith(
       assetSection: true,
       operationsList: true,
       brazePlacement: true,
+      aggregatedAssets: true,
+      myWallet: true,
     },
   },
 );

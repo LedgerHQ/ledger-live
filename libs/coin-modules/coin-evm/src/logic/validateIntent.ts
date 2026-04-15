@@ -22,13 +22,15 @@ import {
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
   RecipientRequired,
+  RedelegateDstValAddressRequired,
+  ValAddressRequired,
 } from "@ledgerhq/errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
-import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
+import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
 import {
   getCallData,
   getTransactionType,
@@ -243,6 +245,40 @@ async function validateGas(
   return { errors, warnings };
 }
 
+function validateStaking(
+  intent: TransactionIntent,
+  balances: Balance[],
+  estimatedFees: FeeEstimation,
+): Pick<TransactionValidation, "errors" | "warnings"> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
+
+  if (!isStakingIntent(intent) || !["delegate", "redelegate", "undelegate"].includes(intent.mode)) {
+    return { errors: {}, warnings: {} };
+  }
+
+  if (!intent.valAddress) {
+    errors.valAddress = new ValAddressRequired();
+  }
+  if (intent.mode === "redelegate" && !intent.dstValAddress) {
+    errors.dstValAddress = new RedelegateDstValAddressRequired();
+  }
+  const nativeBalance = balances.find(b => b.asset.type === "native");
+  const spendable = (nativeBalance?.value ?? 0n) - (nativeBalance?.locked ?? 0n);
+  if (totalFees > spendable) {
+    errors.fees = new NotEnoughBalance();
+  }
+  if (intent.mode === "delegate" && intent.amount + totalFees > spendable) {
+    errors.amount = new NotEnoughBalance();
+  }
+  return { errors, warnings };
+}
+
 function computeAmount(
   intent: TransactionIntent,
   estimatedFees: FeeEstimation,
@@ -303,7 +339,12 @@ export async function validateIntent(
       ? estimatedFees.parameters.additionalFees
       : 0n;
   const totalFees = estimatedFees.value + additionalFees;
-  const totalSpent = isNative(intent.asset) && !intent.sponsored ? amount + totalFees : amount;
+  const amountSpentFromSpendableBalance =
+    isStakingIntent(intent) && intent.mode !== "delegate" ? 0n : amount;
+  const totalSpent =
+    isNative(intent.asset) && !intent.sponsored
+      ? amountSpentFromSpendableBalance + totalFees
+      : amountSpentFromSpendableBalance;
 
   const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
@@ -323,18 +364,25 @@ export async function validateIntent(
     amount,
     estimatedFees,
   );
+  const { errors: stakingErr, warnings: stakingWarn } = validateStaking(
+    intent,
+    balances,
+    estimatedFees,
+  );
 
   const errors = {
     ...recipientErr,
     ...amountErr,
     ...gasErr,
     ...feeRatioErr,
+    ...stakingErr,
   };
   const warnings = {
     ...recipientWarn,
     ...amountWarn,
     ...gasWarn,
     ...feeRatioWarn,
+    ...stakingWarn,
   };
 
   return {

@@ -1,7 +1,7 @@
 import { defer, from, mergeMap, Observable } from "rxjs";
 import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { ZCash } from "@ledgerhq/zcash-shielded/ZCash";
-import type { ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
+import type { ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
 import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import type { ZcashAccount } from "./types";
@@ -10,7 +10,7 @@ export type FamilyConfig = {
   sync?: (
     acc: AccountShapeInfo<ZcashAccount>,
     syncConfig: SyncConfig,
-  ) => Observable<ShieldedSyncResult>;
+  ) => Observable<Partial<ZcashPrivateInfo>>;
 };
 
 const ZCASH_MAX_BATCH_SIZE = 100;

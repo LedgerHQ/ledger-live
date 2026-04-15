@@ -11,15 +11,17 @@ import {
   useCountervaluesPolling,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { useDistribution as useDistributionCommon } from "@ledgerhq/live-countervalues-react/portfolio";
+import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
+import {
+  useAssetDistribution,
+  type DistributionOpts,
+  type DistributionResult,
+} from "@ledgerhq/live-common/portfolio/useAssetDistribution";
+import VersionNumber from "react-native-version-number";
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
-import {
-  blacklistedTokenIdsSelector,
-  counterValueCurrencySelector,
-  orderAccountsSelector,
-} from "../reducers/settings";
+import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -29,12 +31,27 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
 >([]);
-export function useDistribution(
-  opts: Omit<Parameters<typeof useDistributionCommon>[0], "accounts" | "to">,
-) {
+
+export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
-  return useDistributionCommon({ accounts, to, ...opts });
+  const { groupBy, ...displayOpts } = opts;
+  const isAssetMode = groupBy === "asset";
+
+  const legacy = useLegacyDistribution({ accounts, to, skip: isAssetMode, ...displayOpts });
+  const asset = useAssetDistribution({
+    accounts,
+    to,
+    product: "llm",
+    version: VersionNumber.appVersion ?? "",
+    skip: !isAssetMode,
+    ...displayOpts,
+  });
+
+  if (isAssetMode) {
+    return { ...asset.distribution, isLoading: asset.isLoading };
+  }
+  return { ...legacy, isLoading: false };
 }
 export function useCalculateCountervalueCallback() {
   const to = useSelector(counterValueCurrencySelector);

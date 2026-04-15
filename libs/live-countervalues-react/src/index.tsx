@@ -313,6 +313,6 @@ export function useTrackingPairForAccounts(
   }, [accounts, countervalue]);
   // we only want to return the pairs when the hash changes
   // to not recalculate pairs as fast as accounts resynchronizes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => c.pairs, [c.hash]);
 }

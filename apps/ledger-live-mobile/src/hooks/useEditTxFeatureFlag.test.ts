@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useEditTxFeatureFlag } from "./useEditTxFeatureFlag";
 
@@ -31,18 +31,8 @@ describe("useEditTxFeatureFlag", () => {
           parentAccount: parentAccount as never,
         }),
       {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              ...state.settings.overriddenFeatureFlags,
-              editBitcoinTx: {
-                enabled: false,
-                params: {},
-              },
-            },
-          },
+        overrideInitialState: withFlagOverrides({
+          editBitcoinTx: { enabled: false, params: { supportedCurrencyIds: [] } },
         }),
       },
     );
@@ -63,17 +53,10 @@ describe("useEditTxFeatureFlag", () => {
           parentAccount: parentAccount as never,
         }),
       {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              ...state.settings.overriddenFeatureFlags,
-              editBitcoinTx: {
-                enabled: true,
-                params: { supportedCurrencyIds: ["bitcoin", "ethereum"] },
-              },
-            },
+        overrideInitialState: withFlagOverrides({
+          editBitcoinTx: {
+            enabled: true,
+            params: { supportedCurrencyIds: ["bitcoin", "ethereum"] },
           },
         }),
       },
@@ -94,17 +77,10 @@ describe("useEditTxFeatureFlag", () => {
           parentAccount: parentAccount as never,
         }),
       {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              ...state.settings.overriddenFeatureFlags,
-              editEvmTx: {
-                enabled: true,
-                params: {},
-              },
-            },
+        overrideInitialState: withFlagOverrides({
+          editEvmTx: {
+            enabled: true,
+            params: {},
           },
         }),
       },

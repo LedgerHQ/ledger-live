@@ -1,4 +1,4 @@
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { act, renderHook } from "tests/testSetup";
 import { useOnboardingState } from "../hooks/useOnboardingState";
 
@@ -7,7 +7,6 @@ describe("useOnboardingState", () => {
     const { result } = renderHook(() => useOnboardingState());
 
     expect(result.current.onboardingStatus).toBe(OnboardStatus.INIT);
-    expect(result.current.authorizeStatus).toBe(AuthorizeStatus.INIT);
     expect(result.current.onboardingResult).toBeUndefined();
     expect(result.current.error).toBeNull();
   });
@@ -22,16 +21,6 @@ describe("useOnboardingState", () => {
     expect(result.current.onboardingStatus).toBe(OnboardStatus.PREPARE);
   });
 
-  it("should update authorize status", () => {
-    const { result } = renderHook(() => useOnboardingState());
-
-    act(() => {
-      result.current.setAuthorizeStatus(AuthorizeStatus.PREPARE);
-    });
-
-    expect(result.current.authorizeStatus).toBe(AuthorizeStatus.PREPARE);
-  });
-
   it("should set onboarding error and status to ERROR", () => {
     const { result } = renderHook(() => useOnboardingState());
     const error = new Error("onboard failed");
@@ -42,18 +31,6 @@ describe("useOnboardingState", () => {
 
     expect(result.current.error).toBe(error);
     expect(result.current.onboardingStatus).toBe(OnboardStatus.ERROR);
-  });
-
-  it("should set authorization error and status to ERROR", () => {
-    const { result } = renderHook(() => useOnboardingState());
-    const error = new Error("authorize failed");
-
-    act(() => {
-      result.current.setAuthorizationError(error);
-    });
-
-    expect(result.current.error).toBe(error);
-    expect(result.current.authorizeStatus).toBe(AuthorizeStatus.ERROR);
   });
 
   it("should not change status when setting null error", () => {
@@ -90,7 +67,6 @@ describe("useOnboardingState", () => {
 
     act(() => {
       result.current.setOnboardingStatus(OnboardStatus.SUCCESS);
-      result.current.setAuthorizeStatus(AuthorizeStatus.SUCCESS);
       result.current.setOnboardingError(new Error("err"));
     });
 
@@ -99,25 +75,7 @@ describe("useOnboardingState", () => {
     });
 
     expect(result.current.onboardingStatus).toBe(OnboardStatus.INIT);
-    expect(result.current.authorizeStatus).toBe(AuthorizeStatus.INIT);
     expect(result.current.onboardingResult).toBeUndefined();
-    expect(result.current.error).toBeNull();
-  });
-
-  it("should reset authorization state only", () => {
-    const { result } = renderHook(() => useOnboardingState());
-
-    act(() => {
-      result.current.setOnboardingStatus(OnboardStatus.SUCCESS);
-      result.current.setAuthorizationError(new Error("auth err"));
-    });
-
-    act(() => {
-      result.current.resetAuthorization();
-    });
-
-    expect(result.current.onboardingStatus).toBe(OnboardStatus.SUCCESS);
-    expect(result.current.authorizeStatus).toBe(AuthorizeStatus.INIT);
     expect(result.current.error).toBeNull();
   });
 });

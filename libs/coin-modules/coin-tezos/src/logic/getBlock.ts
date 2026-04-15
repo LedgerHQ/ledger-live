@@ -139,6 +139,10 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
         operationType: isDelegate ? "DELEGATE" : "UNDELEGATE",
         stakedAmount: 0n,
         ...(targetAddr && { delegate: targetAddr }),
+        counter: op.counter,
+        gasLimit: op.gasLimit,
+        storageLimit: op.storageLimit,
+        ledgerOpType: isDelegate ? "DELEGATE" : "UNDELEGATE",
       },
     },
   ];

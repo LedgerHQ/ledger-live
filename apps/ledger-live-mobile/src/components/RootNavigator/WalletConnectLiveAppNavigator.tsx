@@ -34,7 +34,7 @@ export default function WalletConnectLiveAppNavigator() {
     return () => {
       dispatch(setWallectConnectUri());
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -61,12 +61,12 @@ export const ContentBannerActionCard = (props: ContentBannerActionCardProps) => 
       <InteractiveIcon
         type="button"
         iconType="stroked"
+        icon={Icons.Close}
+        size={16}
         aria-label={closeAriaLabel}
         onClick={handleClose}
         className="absolute top-8 right-8"
-      >
-        <Icons.Close size={16} />
-      </InteractiveIcon>
+      />
     </div>
   );
 };

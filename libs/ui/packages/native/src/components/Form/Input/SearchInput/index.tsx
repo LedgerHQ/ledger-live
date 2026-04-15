@@ -6,11 +6,11 @@ import Search from "@ledgerhq/icons-ui/native/Search";
 import DeleteCircleFill from "@ledgerhq/icons-ui/native/DeleteCircleFill";
 import Button from "../../../cta/Button";
 
-const Icon = styled(Search).attrs((p) => ({
+const Icon = styled(Search).attrs(p => ({
   color: p.theme.colors.neutral.c70,
 }))``;
 
-const Delete = styled(DeleteCircleFill).attrs((p) => ({
+const Delete = styled(DeleteCircleFill).attrs(p => ({
   color: p.theme.colors.opacityDefault.c50,
 }))``;
 

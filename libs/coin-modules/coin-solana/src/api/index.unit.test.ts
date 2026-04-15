@@ -2,13 +2,16 @@
 import type {
   AlpacaApi,
   Balance,
+  BalanceOptions,
   CraftedTransaction,
   Operation,
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import coinConfig from "../config";
+import { InvalidParameterError } from "@ledgerhq/errors";
+import { createApi } from ".";
 import type { SolanaCoinConfig } from "../config";
+import coinConfig from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftRawTransaction } from "../logic/craftRawTransaction";
@@ -22,7 +25,6 @@ import { listOperations } from "../logic/listOperations";
 import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 import { ChainAPI } from "../network";
-import { createApi } from ".";
 
 const mockChainAPI = {} as unknown as ChainAPI;
 
@@ -303,5 +305,14 @@ describe("createApi", () => {
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
     expect(() => api.getValidators()).toThrow("getValidators is not supported");
+  });
+
+  describe("getBalance", () => {
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(mockConfig, "solana");
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
+    });
   });
 });

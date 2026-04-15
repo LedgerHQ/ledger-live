@@ -14,12 +14,14 @@ export function JsonEditor({
   const extensions = useMemo(() => [json()], []);
 
   return (
-    <CodeMirror
-      value={value}
-      onChange={onChange}
-      readOnly={readOnly}
-      height="300px"
-      extensions={extensions}
-    />
+    <div className="rounded-lg overflow-hidden">
+      <CodeMirror
+        value={value}
+        onChange={onChange}
+        readOnly={readOnly}
+        height="300px"
+        extensions={extensions}
+      />
+    </div>
   );
 }

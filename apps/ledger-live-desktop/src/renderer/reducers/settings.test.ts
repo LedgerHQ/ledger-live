@@ -16,7 +16,7 @@ import reducer, {
   filterValidSettings,
   trackingEnabledSelector,
 } from "./settings";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -355,18 +355,21 @@ describe("trackingEnabledSelector", () => {
     ).toBe(false);
   });
 
-  it("should not track if privacyPolicyVersion is not set", () => {
+  it("should track when privacyPolicyVersion is null if consent date is valid and share toggles are on", () => {
     expect(
       trackingEnabledSelector(
         mockStateWithSettings({
+          lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
           privacyPolicyVersion: null,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
         }),
       ),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   describe("opt-in analytics", () => {
-    it("should track if lastAnalyticsConsentDate is set and privacyPolicyVersion is set and is the current version", () => {
+    it("should track if lastAnalyticsConsentDate is set and share toggles are on", () => {
       expect(
         trackingEnabledSelector(
           mockStateWithSettings({
@@ -425,7 +428,7 @@ describe("trackingEnabledSelector", () => {
       ).toBe(true);
     });
 
-    it("should not track if lastAnalyticsConsentDate less than a year ago but privacyPolicyVersion is older than the current version", () => {
+    it("should track if lastAnalyticsConsentDate is less than a year ago even when privacyPolicyVersion is older than the current version", () => {
       const consentDate = new Date(FIXED_NOW);
       consentDate.setUTCMonth(consentDate.getUTCMonth() - 11);
       expect(
@@ -437,12 +440,12 @@ describe("trackingEnabledSelector", () => {
             privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION - 1,
           }),
         ),
-      ).toBe(false);
+      ).toBe(true);
     });
   });
 
   describe("opt-out analytics", () => {
-    it("should not track even if lastAnalyticsConsentDate is set and privacyPolicyVersion is set and is the current version", () => {
+    it("should not track even if lastAnalyticsConsentDate is set and consent metadata is complete", () => {
       expect(
         trackingEnabledSelector(
           mockStateWithSettings({

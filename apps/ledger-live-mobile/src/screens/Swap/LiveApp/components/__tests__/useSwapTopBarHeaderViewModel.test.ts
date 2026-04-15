@@ -28,6 +28,9 @@ describe("useSwapTopBarHeaderViewModel", () => {
     mockedUseNavigation.mockImplementation(() => ({ navigate: mockNavigate }));
     mockedUseTopBarViewModel.mockImplementation(() => ({
       onMyLedgerPress: mockOnMyLedgerPress,
+      onMyWalletPress: noop,
+      shouldDisplayMyWallet: false,
+      shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
       onNotificationsPress: noop,
       onSettingsPress: noop,

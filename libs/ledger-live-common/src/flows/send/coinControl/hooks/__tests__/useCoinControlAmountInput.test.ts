@@ -5,7 +5,7 @@
 import { BigNumber } from "bignumber.js";
 import { act, renderHook } from "@testing-library/react";
 import { useCoinControlAmountInput } from "../useCoinControlAmountInput";
-import type { Transaction, TransactionStatus } from "../../../../../generated/types";
+import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import { bitcoinPickingStrategy } from "../../../../../families/bitcoin/types";
 
 const formatAmountForInput = jest.fn();

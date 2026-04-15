@@ -8,7 +8,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
-import { captureArtifacts, addTeamOwner } from "tests/utils/allureUtils";
+import { captureArtifacts, addTeamOwner, attachMergedFeatureFlags } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
@@ -21,8 +21,9 @@ import { attachNetworkLogging } from "../utils/networkLogging";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { parseExtraFeatureFlags } from "../utils/featureFlagsJsonUtils";
 
-type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
+type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 export type SpeculosFixtureHandle = {
@@ -60,6 +61,10 @@ const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
+
+const EXTRA_FEATURE_FLAGS: OptionalFeatureMap = parseExtraFeatureFlags(
+  process.env.E2E_FEATURE_FLAGS_JSON,
+);
 
 const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
   lldModularDrawer: {
@@ -214,7 +219,8 @@ export const test = base.extend<TestFixtures>({
     use,
     testInfo,
   ) => {
-    const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, featureFlags);
+    const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, EXTRA_FEATURE_FLAGS, featureFlags);
+    await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
 
     // default environment variables
     env = Object.assign(

@@ -12,28 +12,28 @@ export async function getAccountAddressesFromAppJson(userDataDir: string): Promi
     throw new Error("userDataDir must be a non-empty string");
   }
 
-  const appJsonPath = join(userDataDir, "app.json");
+  const userdataPath = join(userDataDir, "app.json");
 
   try {
-    await access(appJsonPath);
+    await access(userdataPath);
   } catch {
-    throw new Error(`File not found: "${appJsonPath}"`);
+    throw new Error(`File not found: "${userdataPath}"`);
   }
 
-  const raw = await readFile(appJsonPath, "utf-8");
+  const raw = await readFile(userdataPath, "utf-8");
   let parsed: AppJson;
   try {
     parsed = JSON.parse(raw);
   } catch (e) {
-    throw new Error(`Failed to JSON.parse("${appJsonPath}"):\n${(e as Error).message}`);
+    throw new Error(`Failed to JSON.parse("${userdataPath}"):\n${(e as Error).message}`);
   }
 
   if (!parsed.data) {
-    throw new Error(`Invalid shape in "${appJsonPath}": missing "data" property`);
+    throw new Error(`Invalid shape in "${userdataPath}": missing "data" property`);
   }
   if (!Array.isArray(parsed.data.accounts)) {
     throw new Error(
-      `Invalid shape in "${appJsonPath}": expected “data.accounts” to be an array, got:\n${JSON.stringify(
+      `Invalid shape in "${userdataPath}": expected “data.accounts” to be an array, got:\n${JSON.stringify(
         parsed.data.accounts,
         null,
         2,
@@ -47,7 +47,7 @@ export async function getAccountAddressesFromAppJson(userDataDir: string): Promi
     .filter((a): a is string => typeof a === "string");
 
   if (addresses.length === 0) {
-    throw new Error(`No valid account addresses found in "${appJsonPath}"`);
+    throw new Error(`No valid account addresses found in "${userdataPath}"`);
   }
 
   return addresses;

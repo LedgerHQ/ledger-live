@@ -773,5 +773,67 @@ describe("Ledger Service", () => {
         expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
       });
     });
+
+    describe("ADDITIONAL ERC20 SIGNATURES CONFIG", () => {
+      it("should resolve an additional ERC20 token when additionalErc20SignaturesConfig is provided", async () => {
+        // @ts-expect-error not casted as jest mock
+        axios.get.mockImplementation(async () => null);
+
+        // Use a simple value transfer (no data) to avoid selector-based resolution
+        const txHash = getSerializedTransaction(transactionContracts.random, "0x");
+
+        const resolution = await ledgerService.resolveTransaction(
+          txHash,
+          loadConfig,
+          { nft: false, erc20: false, externalPlugins: false },
+          undefined,
+          {
+            additionalErc20SignaturesBlob: signatureCALEth,
+            contractAddressToResolve: transactionContracts.erc20Swap, // MATIC
+          },
+        );
+
+        expect(resolution).toEqual({
+          domains: [],
+          erc20Tokens: [
+            "054d415449437d1afa7b718fb893db30a3abc0cfc608aacfebb000000012000000013044022000d8fa7b6e409a0dc55723ba975179e7d1181d1fc78fccbece4e5a264814366a02203927d84a710c8892d02f7386ad20147c75fba4bdd486b0256ecd005770a7ca5b",
+          ],
+          nfts: [],
+          externalPlugin: [],
+          plugin: [],
+        });
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
+        expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
+        expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
+        expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
+      });
+
+      it("should return empty resolution when additionalErc20SignaturesConfig contract is not found in blob", async () => {
+        // @ts-expect-error not casted as jest mock
+        axios.get.mockImplementation(async () => null);
+
+        const txHash = getSerializedTransaction(transactionContracts.random, "0x");
+
+        const resolution = await ledgerService.resolveTransaction(
+          txHash,
+          loadConfig,
+          { nft: false, erc20: false, externalPlugins: false },
+          undefined,
+          {
+            additionalErc20SignaturesBlob: signatureCALEth,
+            contractAddressToResolve: transactionContracts.random, // not in blob
+          },
+        );
+
+        expect(resolution).toEqual({
+          domains: [],
+          erc20Tokens: [],
+          nfts: [],
+          externalPlugin: [],
+          plugin: [],
+        });
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 });

@@ -131,12 +131,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(
-      <Box key="perps" px={6}>
-        <PortfolioPerpsEntryPoint key="perpsEntryPoint" />
-      </Box>,
-    );
-
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
@@ -151,6 +145,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         />,
       );
     }
+
+    sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
     if (isAWalletCardDisplayed) {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);

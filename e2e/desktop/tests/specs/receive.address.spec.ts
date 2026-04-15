@@ -3,8 +3,8 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -26,16 +26,7 @@ for (const account of accounts) {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.account.currency.id,
-            index: account.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account.account)],
     });
 
     const family = getFamilyByCurrencyId(account.account.currency.id);
@@ -98,16 +89,7 @@ test.describe("Receive", () => {
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.currency.id,
-          index: account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account)],
   });
 
   const family = getFamilyByCurrencyId(account.currency.id);

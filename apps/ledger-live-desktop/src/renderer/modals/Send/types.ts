@@ -33,6 +33,7 @@ export type StepProps = {
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
+  updateAccount?: (account: AccountLike) => void;
   onConfirmationHandler: () => void;
   onFailHandler: () => void;
   currencyName: string | undefined | null;

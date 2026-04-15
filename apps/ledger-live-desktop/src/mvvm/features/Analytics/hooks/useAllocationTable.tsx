@@ -1,6 +1,9 @@
 import React, { useMemo } from "react";
 import { TableCellContent, useLumenDataTable } from "@ledgerhq/lumen-ui-react";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { useTranslation } from "react-i18next";
 import { ColumnDef } from "@tanstack/react-table";
 import { BalanceCell } from "../../Assets/components/Cells/BalanceCell";
@@ -10,6 +13,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import type { AllocationTableItem } from "../types";
 
 export const useAllocationTable = (items: AllocationTableItem[]) => {
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
@@ -21,7 +25,17 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
         enableSorting: false,
         cell: ({ row }) => (
           <TableCellContent
-            leadingContent={<CryptoCurrencyIcon currency={row.original.currency} size={32} />}
+            leadingContent={
+              shouldDisplayAggregatedAssets ? (
+                <CryptoIcon
+                  ledgerId={row.original.currency.id}
+                  ticker={row.original.currency.ticker}
+                  size={getValidCryptoIconSize(32)}
+                />
+              ) : (
+                <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+              )
+            }
             title={row.original.currency.name}
             description={row.original.currency.ticker}
           />
@@ -64,7 +78,7 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
         meta: { align: "end" },
       },
     ],
-    [t, locale],
+    [t, locale, shouldDisplayAggregatedAssets],
   );
 
   return useLumenDataTable({

@@ -93,7 +93,7 @@ function SelectableList<V>({ currentValue, onChange, children }: Props<V>) {
     <Flex accessible accessibilityRole="radiogroup">
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return null;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const casted = child as React.ReactElement<ElementProps<any>>;
         return React.cloneElement(casted, {
           first: index === 0,
