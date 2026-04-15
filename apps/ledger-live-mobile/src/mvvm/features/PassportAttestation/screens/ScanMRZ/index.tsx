@@ -22,10 +22,14 @@ export default function ScanMRZScreen({ navigation }: Props) {
   const [mrzDataDraft, setMrzDataDraft] = useState<MrzData>(emptyMrzData);
   const [showCamera, setShowCamera] = useState(true);
 
-  const handleMrzFromCamera = useCallback((data: MrzData) => {
-    setMrzDataDraft(data);
-    setShowCamera(false);
-  }, []);
+  const handleMrzFromCamera = useCallback(
+    (data: MrzData) => {
+      navigation.navigate(ScreenName.PassportAttestationConfirm, {
+        mrzData: sanitizeMrzDataForConfirmation(data),
+      });
+    },
+    [navigation],
+  );
 
   const updateMrzField = useCallback(
     (field: "documentNumber" | "dateOfBirth" | "expiryDate", value: string) => {
