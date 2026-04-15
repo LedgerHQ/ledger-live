@@ -147,13 +147,13 @@ env:
   # Android AVD configuration
   AVD_API: 35
   AVD_ARCH: x86_64
-  AVD_PROFILE: pixel_7_pro
+  AVD_PROFILE: pixel_9_pro_xl
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
   AVD_CORES: 4
   AVD_RAM_SIZE: 5120M
   AVD_HEAP_SIZE: 1023M
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none -camera-front none
 
 jobs:
   determine-builds:
@@ -770,9 +770,9 @@ jobs:
             ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
 
             log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU3" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} -no-snapshot-save 2>&1 | ts "EMU1" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} -no-snapshot-save 2>&1 | ts "EMU2" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} -no-snapshot-save 2>&1 | ts "EMU3" &
 
             log "⏳ Waiting for 3 emulators to connect..."
             while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done

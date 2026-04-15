@@ -24,10 +24,10 @@ runs:
         java-version: ${{ inputs.jdk_version }}
 
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3.2.2
+      uses: android-actions/setup-android@v4.0.1
       with:
         packages: ${{ inputs.android_packages }}
-        cmdline-tools-version: 13114758
+        cmdline-tools-version: 14742923
 
     - name: Enable Hardware Acceleration
       shell: bash
