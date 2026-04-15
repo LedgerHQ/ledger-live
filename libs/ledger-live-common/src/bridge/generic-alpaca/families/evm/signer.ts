@@ -12,7 +12,12 @@ import { CreateSigner, executeWithSigner } from "../../../setup";
 import type { AlpacaSigner } from "../../types";
 
 export type Signer = {
-  getAddress: (path: string) => Promise<EvmAddress>;
+  getAddress: (
+    path: string,
+    options?: boolean | { verify?: boolean; derivationMode?: string },
+    boolChaincode?: boolean,
+    chainId?: string,
+  ) => Promise<EvmAddress>;
   signTransaction: (path: string, tx: string, domain?: DomainServiceResolution) => Promise<string>;
 };
 
@@ -39,7 +44,17 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
   const signer = createLiveSigner(transport);
 
   return {
-    getAddress: signer.getAddress.bind(signer),
+    getAddress: async (
+      path: string,
+      options?: boolean | { verify?: boolean; derivationMode?: string },
+      boolChaincode?: boolean,
+      chainId?: string,
+    ) => {
+      const display = typeof options === "boolean" ? options : Boolean(options?.verify);
+      return boolChaincode === undefined && chainId === undefined
+        ? signer.getAddress(path, display)
+        : signer.getAddress(path, display, boolChaincode, chainId);
+    },
     signTransaction: async (path, tx, domain) => {
       // Configure type of resolutions necessary for the clear signing
       const resolutionConfig: ResolutionConfig = {
