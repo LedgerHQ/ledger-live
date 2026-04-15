@@ -37,14 +37,14 @@ for (const currency of currencies) {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
-      // TODO: this can be removed once Aleo is released on production
-      ...(currency.currency === Currency.ALEO && {
-        featureFlags: {
+      featureFlags: {
+        // TODO: this can be removed once Aleo is released on production
+        ...(currency.currency === Currency.ALEO && {
           currencyAleo: {
             enabled: true,
           },
-        },
-      }),
+        }),
+      },
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
@@ -70,6 +70,8 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
+        // Wait for portfolio empty state to load before clicking add account
+        await app.portfolio.checkNoBalanceTitleVisibility();
         await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");

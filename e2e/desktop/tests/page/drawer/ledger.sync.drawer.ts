@@ -4,6 +4,9 @@ import { Drawer } from "../../component/drawer.component";
 
 export class LedgerSyncDrawer extends Drawer {
   private continueButton = this.page.getByRole("button", { name: "continue" });
+  private readonly alreadyTurnedOnButton = this.page.getByRole("button", {
+    name: "I already turned it on",
+  });
   private walletSyncConnectDeviceButton = this.page.getByTestId(
     "walletSync-synchronize-connectDevice",
   );
@@ -22,8 +25,12 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Synchronize accounts")
   async syncAccounts() {
-    await expect(this.continueButton).toBeVisible();
-    await this.continueButton.click();
+    if (await this.continueButton.isVisible().catch(() => false)) {
+      await this.continueButton.click();
+    } else if (await this.alreadyTurnedOnButton.isVisible().catch(() => false)) {
+      await this.alreadyTurnedOnButton.click();
+    }
+
     await expect(this.walletSyncConnectDeviceButton).toBeVisible();
     await this.walletSyncConnectDeviceButton.click();
   }
@@ -58,7 +65,21 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if sync entry point exists")
   async expectSyncAccountsButtonExist() {
-    await expect(this.continueButton).toBeVisible();
+    await expect
+      .poll(
+        async () => {
+          const hasContinue = await this.continueButton.isVisible().catch(() => false);
+          const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton
+            .isVisible()
+            .catch(() => false);
+          const hasConnectDevice = await this.walletSyncConnectDeviceButton
+            .isVisible()
+            .catch(() => false);
+          return hasContinue || hasAlreadyTurnedOn || hasConnectDevice;
+        },
+        { timeout: 30000 },
+      )
+      .toBeTruthy();
   }
 
   @step("Check if synchronization was successful")

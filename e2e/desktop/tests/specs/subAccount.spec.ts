@@ -20,7 +20,20 @@ import {
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
+import type { Application } from "tests/page";
+
+async function navigateToSubAccountAfterAdd(app: Application, tokenAccount: Account) {
+  const parentAccountName = getParentAccountName(tokenAccount);
+
+  await app.mainNavigation.openTargetFromMainNavigation("accounts");
+  await app.accounts.navigateToAccountByName(parentAccountName);
+  await app.account.expectAccountVisibility(parentAccountName);
+  await app.account.navigateToTokenInAccount(tokenAccount);
+}
+
+async function openSendFlowFromPortfolio(app: Application) {
+  await app.portfolio.clickSendButton();
+}
 
 const subAccounts = [
   {
@@ -98,12 +111,8 @@ for (const token of subAccounts) {
           await app.addAccount.addAccounts();
           await app.addAccount.done();
         }
-        if (token.account === TokenAccount.SUI_USDC_1) {
-          await app.portfolio.navigateToAsset(token.account.currency.ticker);
-        } else {
-          await app.portfolio.navigateToAsset(token.account.currency.name);
-        }
-        await app.account.navigateToToken(token.account);
+
+        await navigateToSubAccountAfterAdd(app, token.account);
         await app.account.expectTokenAccount(token.account);
         await app.account.expectLastOperationsVisibility();
       },
@@ -356,11 +365,7 @@ for (const transaction of transactionsAddressInvalid) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        if (await isWallet40Enabled(app.getPage())) {
-          await app.portfolio.clickSendButton();
-        } else {
-          await app.layout.openSendModalFromSideBar();
-        }
+        await openSendFlowFromPortfolio(app);
 
         await app.send.selectDebitCurrency(transaction.transaction);
         invariant(transaction.recipient, "Recipient address is not defined");
@@ -417,11 +422,7 @@ for (const transaction of transactionsAddressValid) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        if (await isWallet40Enabled(app.getPage())) {
-          await app.portfolio.clickSendButton();
-        } else {
-          await app.layout.openSendModalFromSideBar();
-        }
+        await openSendFlowFromPortfolio(app);
 
         await app.send.selectDebitCurrency(transaction.transaction);
         //CLI doesn't allow us to get ATA address

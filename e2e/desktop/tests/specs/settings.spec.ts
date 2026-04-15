@@ -5,7 +5,6 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -121,9 +120,7 @@ test.describe("counter value selection", () => {
       await app.layout.waitForAccountsSyncToBeDone();
       await app.portfolio.expectTotalBalanceCounterValue("€");
 
-      // Wallet 4.0 only shows percentage change
-      const expectedCounterValue = (await isWallet40Enabled(app.getPage())) ? "%" : "€";
-      await app.portfolio.expectBalanceDiffCounterValue(expectedCounterValue);
+      await app.portfolio.expectBalanceDiffCounterValue("%");
 
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
       await app.portfolio.expectOperationCounterValue("€");

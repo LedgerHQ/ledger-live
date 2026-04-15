@@ -2,60 +2,106 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
 export class PortfolioPage extends AppPage {
-  private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
-  private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
-  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
-  private stakeEntryButton = this.page.getByTestId("stake-entry-button");
-  private chart = this.page.getByTestId("chart-container");
-  private operationList = this.page.locator("#operation-list");
-  private assetAllocationTitle = this.page.getByText("Asset allocation");
-  private assetRowElements = this.page.locator("[data-testid^='asset-row-']");
-  private showAllButton = this.page.getByText("Show all");
-  private showMoreButton = this.page.getByText("Show more");
-  private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
-  private assetRowValue = (asset: string) =>
+  private readonly buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
+  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
+  private readonly stakeEntryButton = this.page.getByTestId("stake-entry-button");
+  private readonly chart = this.page.getByTestId("chart-container");
+  private readonly operationList = this.page.locator("#operation-list");
+  private readonly assetAllocationTitle = this.page.getByText("Asset allocation");
+  private readonly assetRowElements = this.page.locator("[data-testid^='asset-row-']");
+  private readonly showAllButton = this.page.getByText("Show all");
+  private readonly showMoreButton = this.page.getByText("Show more");
+  private readonly assetRow = (asset: string) =>
+    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
+  private readonly sanitizeAssetNameForTestId = (asset: string) =>
+    asset
+      .toLowerCase()
+      .replaceAll(/\s+/g, "-")
+      .replaceAll(/[^a-z0-9-]/g, "");
+  private readonly w40AssetRow = (asset: string) =>
+    this.page.getByTestId(`w40-asset-row-${this.sanitizeAssetNameForTestId(asset)}`).first();
+  private readonly w40AssetRowValue = (asset: string) =>
+    this.page.getByTestId(`w40-asset-row-value-${this.sanitizeAssetNameForTestId(asset)}`).first();
+  private readonly assetRowValue = (asset: string) =>
     this.page.getByTestId(`asset-row-${asset.toLowerCase()}`).locator("//div[position()=5]");
-  private operationRows = this.page.locator("[data-testid^='operation-row-']");
-  private totalBalance = this.page.getByTestId("total-balance");
-  private balanceDiff = this.page.getByTestId("balance-diff");
+  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
 
   // Wallet 4.0 elements
-  private portfolioBalance = this.page.getByTestId("portfolio-balance");
-  private portfolioTotalBalance = this.page.getByTestId("portfolio-total-balance");
-  private portfolioTrend = this.page.getByTestId("portfolio-trend");
-  private noBalanceTitle = this.page.getByTestId("no-balance-title");
-  private quickActionButton = (action: QuickActionButton) =>
+  private readonly portfolioBalance = this.page.getByTestId("portfolio-balance");
+  private readonly portfolioTotalBalance = this.page.getByTestId("portfolio-total-balance");
+  private readonly portfolioTrend = this.page.getByTestId("portfolio-trend");
+  private readonly portfolioTrendPercentage = this.page.getByTestId("portfolio-trend-percentage");
+  private readonly noBalanceTitle = this.page.getByTestId("no-balance-title");
+  private readonly quickActionButton = (action: QuickActionButton) =>
     this.page.getByTestId(`quick-action-button-${action}`);
-  private connectQuickActionButton = this.page.getByTestId("quick-action-button-connect");
-  private buyALedgerQuickActionButton = this.page.getByTestId("quick-action-button-buy-a-ledger");
-  private portfolioAddAccountButton = this.page.getByTestId("portfolio-add-account-button");
-  private noDeviceTitle = this.page.getByTestId("no-device-title");
+  private readonly connectQuickActionButton = this.page.getByTestId("quick-action-button-connect");
+  private readonly buyALedgerQuickActionButton = this.page.getByTestId(
+    "quick-action-button-buy-a-ledger",
+  );
+  private readonly portfolioAddAccountButton = this.page.getByTestId(
+    "portfolio-add-account-button",
+  );
+  private readonly cryptoBannerAddAccountButton = this.page.getByTestId(
+    "crypto-addresses-banner-add-account-cta",
+  );
+  private readonly noDeviceTitle = this.page.getByTestId("no-device-title");
+
+  private async isVisible(locator: Locator): Promise<boolean> {
+    return locator.isVisible().catch(() => false);
+  }
+
+  private async resolveAssetRow(asset: string): Promise<{ row: Locator; isLegacy: boolean }> {
+    const legacyRow = this.assetRow(asset);
+    if (await this.isVisible(legacyRow)) {
+      return { row: legacyRow, isLegacy: true };
+    }
+
+    return { row: this.w40AssetRow(asset), isLegacy: false };
+  }
+
+  private async waitForBalanceDiffWidget(): Promise<Locator> {
+    await expect(this.portfolioTrendPercentage).toBeVisible({ timeout: 30000 });
+    return this.portfolioTrendPercentage;
+  }
+
+  private getExpectedCounterValuePattern(counterValue: string): RegExp {
+    const countervalueAliases: Record<string, RegExp> = {
+      "€": /€|EUR/,
+      $: /\$|USD/,
+    };
+
+    const escapedCounterValue = counterValue.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+    return countervalueAliases[counterValue] ?? new RegExp(escapedCounterValue);
+  }
 
   private async checkVisibility(locator: Locator) {
     await expect(locator).toBeVisible();
   }
 
+  private async getAddAccountButton(): Promise<Locator> {
+    // Check crypto banner button first (when asset section is enabled)
+    const cryptoBannerButtonCount = await this.cryptoBannerAddAccountButton.count();
+    if (cryptoBannerButtonCount > 0) {
+      return this.cryptoBannerAddAccountButton;
+    }
+
+    return this.portfolioAddAccountButton;
+  }
+
   @step("Check add account button visibility")
   async checkAddAccountButtonVisibility() {
-    const selector = (await isWallet40Enabled(this.page))
-      ? this.portfolioAddAccountButton
-      : this.addAccountButton;
-
-    await this.checkVisibility(selector);
+    const button = await this.getAddAccountButton();
+    await this.checkVisibility(button);
   }
 
   @step("Click add account button")
   async clickAddAccountButton() {
-    const selector = (await isWallet40Enabled(this.page))
-      ? this.portfolioAddAccountButton
-      : this.addAccountButton;
-
-    await selector.click();
+    const button = await this.getAddAccountButton();
+    await button.click();
   }
 
   @step("Check 'Buy/Sell' button visibility")
@@ -98,7 +144,9 @@ export class PortfolioPage extends AppPage {
 
   @step("Click on asset row $0")
   async clickOnSelectedAssetRow(asset: string) {
-    await this.assetRow(asset).click();
+    const { row } = await this.resolveAssetRow(asset);
+    await expect(row).toBeVisible();
+    await row.click();
   }
 
   @step("Click stake button")
@@ -109,15 +157,6 @@ export class PortfolioPage extends AppPage {
   @step("Expect choose asset to be visible")
   async expectChooseAssetToBeVisible() {
     await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
-  }
-
-  @step("Navigate to asset $0")
-  async navigateToAsset(asset: string) {
-    const assetRowLocator = this.assetRow(asset);
-    if (!(await assetRowLocator.isVisible())) {
-      await this.showAllButton.click();
-    }
-    await assetRowLocator.click();
   }
 
   @step("check operation history")
@@ -136,30 +175,45 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect total balance to display the correct counter value $0")
   async expectTotalBalanceCounterValue(counterValue: string) {
-    const selector = (await isWallet40Enabled(this.page))
-      ? this.portfolioTotalBalance
-      : this.totalBalance;
-
-    await expect(selector).toBeVisible();
-    await expect(selector).toContainText(counterValue);
+    await expect(this.portfolioTotalBalance).toBeVisible();
+    await expect(this.portfolioTotalBalance).toContainText(counterValue);
   }
 
   @step("Expect balance diff to display the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
-    const selector = (await isWallet40Enabled(this.page)) ? this.portfolioTrend : this.balanceDiff;
-    await expect(selector).toBeVisible();
-    await expect(selector).toContainText(counterValue);
+    const locator = await this.waitForBalanceDiffWidget();
+    await expect(locator).toBeVisible();
+
+    // W40 trend percentage can be hidden in discreet mode and displayed as "***".
+    if (counterValue === "%") {
+      await expect(locator).toContainText(/%|\*\*\*/);
+      return;
+    }
+
+    await expect(locator).toContainText(counterValue);
   }
 
   @step("Expect asset row $0 to be visible")
   async expectAssetRowToBeVisible(asset: string) {
-    await this.assetRow(asset).isVisible();
+    const { row } = await this.resolveAssetRow(asset);
+    await expect(row).toBeVisible();
   }
 
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    await this.expectAssetRowToBeVisible(asset);
-    await expect(this.assetRowValue(asset)).toContainText(counterValue);
+    const { row, isLegacy } = await this.resolveAssetRow(asset);
+
+    if (isLegacy) {
+      await expect(this.assetRowValue(asset)).toContainText(counterValue);
+      return;
+    }
+
+    await expect(row).toBeVisible();
+    const rowValue = this.w40AssetRowValue(asset);
+    await expect(rowValue).toBeVisible();
+
+    // W40 countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").
+    await expect(rowValue).toContainText(this.getExpectedCounterValuePattern(counterValue));
   }
 
   @step("Expect operation row to be visible")
@@ -177,11 +231,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Wait for balance to be visible")
   async expectBalanceVisibility() {
-    const selector = (await isWallet40Enabled(this.page))
-      ? this.portfolioTotalBalance
-      : this.totalBalance;
-
-    await selector.waitFor({ state: "visible" });
+    await this.portfolioTotalBalance.waitFor({ state: "visible" });
   }
 
   @step("Expect app.json to be persisted with at least $1 account(s) within $2ms")

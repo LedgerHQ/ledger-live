@@ -4,14 +4,11 @@ import { Drawer } from "tests/component/drawer.component";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
   readonly expectActive: boolean;
   readonly selector: Locator;
-  // TODO: delete me when 4.0 permanent
-  readonly legacySelector: Locator;
 };
 
 export type TargetName =
@@ -38,63 +35,54 @@ export class MainNavigationPage extends AppPage {
     });
   }
 
-  private get sidebarTargets(): Readonly<Record<TargetName, NavigationTarget>> {
+  private getSidebarTargets(): Readonly<Record<TargetName, NavigationTarget>> {
     return {
       home: {
         expectActive: true,
         selector: this.sideBarButton("home"),
-        legacySelector: this.layout.drawerPortfolioButton,
       },
       accounts: {
         expectActive: true,
-        expectedPath: /^\/accounts(?:\/|$|\?)/,
+        expectedPath: /^\/cryptos(?:\/|$|\?)/,
         selector: this.sideBarButton("accounts"),
-        legacySelector: this.layout.drawerAccountsButton,
       },
       swap: {
         expectActive: true,
         expectedPath: /^\/swap(?:\/|$|\?)/,
         selector: this.sideBarButton("swap"),
-        legacySelector: this.layout.drawerSwapButton,
       },
       earn: {
         expectActive: true,
         expectedPath: /^\/earn(?:\/|$|\?)/,
         selector: this.sideBarButton(/^(earn|stake|yield)$/i),
-        legacySelector: this.layout.drawerEarnButton,
       },
       discover: {
         expectActive: true,
         expectedPath: /^\/platform(?:\/|$|\?)/,
         selector: this.sideBarButton("discover"),
-        legacySelector: this.layout.drawerDiscoverButton,
       },
       "refer a friend": {
         expectActive: true,
         expectedPath: /^\/platform\/refer-a-friend(?:\/|$|\?)/,
         selector: this.sideBarButton("refer a friend"),
-        legacySelector: this.layout.drawerReferButton,
       },
       card: {
         expectActive: true,
         expectedPath: /^\/card-new-wallet(?:\/|$|\?)/,
         selector: this.sideBarButton("card"),
-        legacySelector: this.layout.drawerCardButton,
       },
     };
   }
   @step("Open $0 from main navigation")
   async openTargetFromMainNavigation(target: TargetName) {
-    const targetSelector = (await isWallet40Enabled(this.page))
-      ? this.sidebarTargets[target].selector
-      : this.sidebarTargets[target].legacySelector;
-
-    await targetSelector.click();
+    const sidebarTargets = this.getSidebarTargets();
+    await sidebarTargets[target].selector.click();
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")
   async validateTargetFromMainNavigation(target: TargetName) {
-    const targetConfig = this.sidebarTargets[target];
+    const sidebarTargets = this.getSidebarTargets();
+    const targetConfig = sidebarTargets[target];
     if (targetConfig.expectActive) {
       await expect(targetConfig.selector).toHaveAttribute("aria-current", "page");
     }

@@ -39,6 +39,22 @@ export class AccountPage extends AppPage {
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
 
+  private async isExpectedAccountHeaderVisible(expectedNames: string[]): Promise<boolean> {
+    if (!(await this.accountName.isVisible().catch(() => false))) {
+      return false;
+    }
+
+    const expectedSet = new Set(expectedNames.map(name => name.trim()));
+    const inputValue = await this.accountName.inputValue().catch(() => "");
+
+    if (inputValue && expectedSet.has(inputValue.trim())) {
+      return true;
+    }
+
+    const textValue = (await this.accountName.textContent())?.trim() ?? "";
+    return textValue !== "" && expectedSet.has(textValue);
+  }
+
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
     const tokenRow = this.tokenValue(account.currency.name).or(
@@ -127,7 +143,11 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await expect(this.accountName).toHaveValue(firstAccountName);
+    await expect
+      .poll(() => this.isExpectedAccountHeaderVisible([firstAccountName]), {
+        timeout: 30000,
+      })
+      .toBeTruthy();
     await this.settingsButton.waitFor({ state: "visible" });
   }
 
@@ -195,12 +215,20 @@ export class AccountPage extends AppPage {
   @step("Wait for account header name $0 to be visible")
   async waitForAccountHeaderName(headerName: string, fallbackName?: string) {
     const expectedNames = fallbackName ? [headerName, fallbackName] : [headerName];
-    await expect(this.accountName).toHaveValue(new RegExp(`^(${expectedNames.join("|")})$`));
+    await expect
+      .poll(() => this.isExpectedAccountHeaderVisible(expectedNames), {
+        timeout: 30000,
+      })
+      .toBeTruthy();
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountName).toHaveValue(headerName);
+    await expect
+      .poll(() => this.isExpectedAccountHeaderVisible([headerName]), {
+        timeout: 30000,
+      })
+      .toBeTruthy();
   }
 
   @step("Check account chart is visible")

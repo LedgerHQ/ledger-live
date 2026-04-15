@@ -2,45 +2,36 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
-  private accountsTitleLegacy = this.page.locator("#accounts-title");
-  private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
+  private firstAccount = this.page.locator(`[data-testid^="crypto-account-row-"]`).first();
 
-  private accountComponent = (accountName: string) =>
-    this.page.getByTestId(`account-component-${accountName}`);
-
-  private tokenRow = (parentName: string, childCurrency: Currency) =>
-    this.accountComponent(parentName)
-      .locator(`xpath=following::div`)
-      .getByTestId(`token-row-${childCurrency.ticker}`);
-
-  private tokenRowBalance = (parentName: string, childCurrency: Currency) =>
-    this.tokenRow(parentName, childCurrency).getByText(`${childCurrency.ticker}`);
-
-  private showTokensButton = (parentName: string) =>
-    this.accountComponent(parentName).locator("xpath=following-sibling::button").first();
+  private getSanitizedAccountName = (accountName: string) => accountName.replaceAll(/\s+/g, "-");
 
   // Accounts context menu
-  private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
+  private async getAccountListLocator() {
+    return this.page.locator(`[data-testid^="crypto-account-row-"]:visible`);
+  }
 
   private syncAccountButton = (accountName: string) =>
-    this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
+    this.page
+      .getByTestId(`crypto-account-row-${this.getSanitizedAccountName(accountName)}`)
+      .getByTestId("sync-button")
+      .locator("div")
+      .first();
 
   @step("Wait for Accounts title to be visible")
   async expectAccountsTitleVisibility() {
-    const selector = (await isWallet40Enabled(this.page))
-      ? this.accountsTitle
-      : this.accountsTitleLegacy;
-
-    await expect(selector).toBeVisible();
+    await expect(this.accountsTitle).toBeVisible();
   }
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    await this.accountComponent(accountName).first().click();
+    const accountRow = this.page.getByTestId(
+      `crypto-account-row-${this.getSanitizedAccountName(accountName)}`,
+    );
+    await accountRow.click();
   }
 
   @step("Click sync account button for: $0")
@@ -50,36 +41,30 @@ export class AccountsPage extends AppPage {
 
   @step("Click show Account $0 tokens button")
   async showParentAccountTokens(parentName: string) {
-    await this.accountComponent(parentName).scrollIntoViewIfNeeded();
-    await this.showTokensButton(parentName).click();
+    await this.navigateToAccountByName(parentName);
   }
 
   @step("Verify $0 children token accounts are not visible")
   async verifyChildrenTokensAreNotVisible(parentName: string, childCurrency: Currency) {
-    await this.accountComponent(parentName).scrollIntoViewIfNeeded();
-    if (await this.showTokensButton(parentName).isVisible()) {
-      await this.showParentAccountTokens(parentName);
-      await this.verifyTokenNotVisible(parentName, childCurrency);
-    } else {
-      await this.verifyTokenNotVisible(parentName, childCurrency);
-    }
+    await this.navigateToAccountByName(parentName);
+    await this.verifyTokenNotVisible(parentName, childCurrency);
   }
 
   @step("Verify token visibility having parent $0")
-  async verifyTokenVisibility(parentName: string, childCurrency: Currency) {
-    await expect(this.tokenRow(parentName, childCurrency)).toBeVisible();
+  async verifyTokenVisibility(_parentName: string, childCurrency: Currency) {
+    await expect(this.page.getByTestId(`token-row-${childCurrency.ticker}`)).toBeVisible();
   }
 
   @step("Verify token is not visible in parent account $0")
-  async verifyTokenNotVisible(parentName: string, childCurrency: Currency) {
-    await expect(this.tokenRow(parentName, childCurrency)).not.toBeVisible();
+  async verifyTokenNotVisible(_parentName: string, childCurrency: Currency) {
+    await expect(this.page.getByTestId(`token-row-${childCurrency.ticker}`)).not.toBeVisible();
   }
 
   @step("Expect token balance to be null")
-  async expectTokenBalanceToBeNull(parentName: string, childCurrency: Currency) {
-    await expect(this.tokenRowBalance(parentName, childCurrency)).toHaveText(
-      `0 ${childCurrency.ticker}`,
-    );
+  async expectTokenBalanceToBeNull(_parentName: string, childCurrency: Currency) {
+    await expect(
+      this.page.getByTestId(`token-row-${childCurrency.ticker}`).getByText(`0 ${childCurrency.ticker}`),
+    ).toBeVisible();
   }
 
   @step("Check $0 account was deleted ")
@@ -90,12 +75,14 @@ export class AccountsPage extends AppPage {
 
   @step("Get number of accounts in the list")
   async countAccounts(): Promise<number> {
-    return await this.accountListNumber.count();
+    const accountList = await this.getAccountListLocator();
+    return await accountList.count();
   }
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number) {
-    await expect(this.accountListNumber).toHaveCount(count);
+    const accountList = await this.getAccountListLocator();
+    await expect(accountList).toHaveCount(count, { timeout: 30000 });
   }
 
   @step("Expect number of accounts to be not null")
@@ -104,12 +91,13 @@ export class AccountsPage extends AppPage {
   }
 
   async getAccountsName() {
-    const accountElements = await this.accountListNumber.all();
+    const accountList = await this.getAccountListLocator();
+    const accountElements = await accountList.all();
     const accountNames = [];
     for (const element of accountElements) {
       let accountName = await element.getAttribute("data-testid");
       if (accountName) {
-        accountName = accountName.replace("account-component-", "");
+        accountName = accountName.replaceAll("crypto-account-row-", "").replaceAll("-", " ");
         accountNames.push(accountName);
       }
     }
