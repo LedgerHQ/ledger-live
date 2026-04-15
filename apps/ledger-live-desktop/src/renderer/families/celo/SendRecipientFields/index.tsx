@@ -4,7 +4,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import { CeloFamily } from "../types";
 import SelectAccount from "~/renderer/components/SelectAccount";
-import { AccountLike, type TokenAccount } from "@ledgerhq/types-live";
+import { type Account, AccountLike, type TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import { FEE_CURRENCY_BY_CONTRACT } from "@ledgerhq/live-common/families/celo/logic";
 
@@ -18,17 +18,15 @@ const SendRecipientFields: NonNullable<CeloFamily["sendRecipientFields"]>["compo
   );
 
   const accountFilter = useMemo(
-    () => (acc: AccountLike) => {
-      // Sub-accounts: only show tokens that are supported fee currencies
-      if (isTokenAccount(acc)) {
-        return FEE_CURRENCY_BY_CONTRACT.has(acc.token.contractAddress.toLowerCase());
-      }
-
-      return !(
-        acc.currency.family.toUpperCase() !== "CELO" || acc.freshAddress !== account.freshAddress
-      );
-    },
+    () => (acc: Account) =>
+      !(acc.currency.family.toUpperCase() !== "CELO" || acc.freshAddress !== account.freshAddress),
     [account],
+  );
+
+  const subAccountFilter = useMemo(
+    () => (subAccount: TokenAccount) =>
+      FEE_CURRENCY_BY_CONTRACT.has(subAccount.token.contractAddress.toLowerCase()),
+    [],
   );
 
   const onChangeAccount = useMemo(() => {
@@ -89,6 +87,7 @@ const SendRecipientFields: NonNullable<CeloFamily["sendRecipientFields"]>["compo
           onChange={onChangeAccount}
           value={feeAccount}
           filter={accountFilter}
+          subAccountFilter={subAccountFilter}
         />
       </Box>
     </Box>
