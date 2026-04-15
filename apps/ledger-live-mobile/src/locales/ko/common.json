@@ -294,6 +294,11 @@
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "다시 시도해 주세요."
     },
+    "CounterfeitDevice" : {
+      "title" : " {{productName}}의 정품 확인에 실패했습니다.",
+      "description" : "이 Ledger 장치 사용은 위험할 수 있습니다.\n Ledger 지원팀으로 문의해 주세요",
+      "contactSupportCTA" : "문의하기"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "연결이 실패했습니다",
       "description" : "다시 시도해 주세요."
@@ -415,8 +420,8 @@
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "AlreadySendingApduError" : {
-      "title" : "통신 오류",
-      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "title" : "Ledger 장치에서 확인이 필요합니다.",
+      "description" : "장치 화면에 표시된 작업을 완료하세요."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
-      "add" : "계정 추가"
+      "select" : "계정 선택"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "계정",
     "transfer" : "전송",
     "manager" : "내 Ledger",
+    "myWallet" : "내 지갑",
     "settings" : "설정",
     "platform" : "라이브 앱",
     "discover" : "탐색",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "업데이트된 계정"
     }
   },
+  "operationsList" : {
+    "to" : "입금 주소",
+    "from" : "출금 주소"
+  },
   "operationDetails" : {
     "title" : "트랜잭션 세부 사항",
     "account" : "계정",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "거래 없음",
+    "emptyTitle" : "아직 트랜잭션 내역이 없습니다",
+    "emptySubtitle" : "트랜잭션 내역을 확인하려면 나중에 다시 방문하세요.",
     "noMoreTransactions" : "다른 트랜잭션 없음"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "{{appName}} 설치에 실패했습니다",
       "description" : "설치 중 문제가 발생했습니다. 다시 시도해 주세요."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "도움말",
+      "referral" : "친구 추천"
     }
   }
 }
