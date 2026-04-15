@@ -31,7 +31,7 @@ export default function ReadNFCScreen({ navigation, route }: Props) {
       }
 
       const passportData = await readPassport(mrzData);
-      navigation.navigate(ScreenName.PassportAttestationGenerateProof, {
+      navigation.navigate(ScreenName.PassportAttestationSelectProof, {
         mrzData,
         passportData,
       });

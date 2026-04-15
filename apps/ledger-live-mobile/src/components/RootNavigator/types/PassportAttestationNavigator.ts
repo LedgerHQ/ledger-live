@@ -14,6 +14,7 @@ export type PassportAttestationNavigatorStackParamList = {
   };
   [ScreenName.PassportAttestationSelectProof]: {
     mrzData: MrzData;
+    passportData: PassportData;
   };
   [ScreenName.PassportAttestationGenerateProof]: {
     mrzData: MrzData;

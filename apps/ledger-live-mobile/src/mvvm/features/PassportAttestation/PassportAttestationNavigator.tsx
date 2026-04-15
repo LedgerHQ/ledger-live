@@ -44,7 +44,25 @@ export default function PassportAttestationNavigator() {
       <Stack.Screen
         name={ScreenName.PassportAttestationSelectProof}
         component={SelectProofScreen}
-        options={{ title: "Select proof" }}
+        options={({ navigation }) => ({
+          title: "",
+          headerLeft: () => null,
+          headerTitle: () => null,
+          headerRight: () => (
+            <HeaderCloseButton
+              onClose={() => {
+                const parentNavigation = navigation.getParent();
+
+                if (parentNavigation?.canGoBack()) {
+                  parentNavigation.goBack();
+                  return;
+                }
+
+                navigation.popToTop();
+              }}
+            />
+          ),
+        })}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationGenerateProof}

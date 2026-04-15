@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from "react";
-import { TouchableOpacity } from "react-native";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Alert, Pressable, View } from "react-native";
+import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -35,9 +35,49 @@ const PROOF_OPTIONS: { id: ProofType; title: string; description: string }[] = [
 ];
 
 export default function SelectProofScreen({ navigation, route }: Props) {
-  const { colors } = useTheme();
-  const { mrzData } = route.params;
+  const { mrzData, passportData } = route.params;
   const [selected, setSelected] = useState<Set<ProofType>>(new Set());
+  const styles = useStyleSheet(
+    theme => ({
+      root: {
+        flex: 1,
+        justifyContent: "space-between",
+      },
+      content: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingTop: theme.spacings.s8,
+      },
+      description: {
+        marginTop: theme.spacings.s8,
+      },
+      cards: {
+        marginTop: theme.spacings.s24,
+        gap: theme.spacings.s16,
+      },
+      card: {
+        minHeight: 80,
+        borderRadius: 16,
+        backgroundColor: theme.colors.bg.muted,
+        borderWidth: 1,
+        borderColor: "transparent",
+        paddingHorizontal: theme.spacings.s16,
+        paddingVertical: theme.spacings.s16,
+        justifyContent: "center",
+      },
+      cardSelected: {
+        borderColor: "#DFA8FF",
+      },
+      cardTitle: {
+        marginBottom: theme.spacings.s4,
+      },
+      footer: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingTop: theme.spacings.s12,
+        paddingBottom: theme.spacings.s16,
+      },
+    }),
+    [],
+  );
 
   const toggleProof = useCallback((id: ProofType) => {
     setSelected(prev => {
@@ -48,65 +88,74 @@ export default function SelectProofScreen({ navigation, route }: Props) {
     });
   }, []);
 
+  const isGenerateDisabled = useMemo(() => selected.size === 0, [selected]);
+
   const handleGenerate = useCallback(() => {
-    navigation.navigate(ScreenName.PassportAttestationReadNFC, { mrzData });
-  }, [navigation, mrzData]);
+    if (selected.size === 0) {
+      return;
+    }
+
+    if (!selected.has("age")) {
+      Alert.alert(
+        "Proof unavailable",
+        "Age proof is the only proof currently available in Ledger Live.",
+      );
+      return;
+    }
+
+    navigation.navigate(ScreenName.PassportAttestationGenerateProof, {
+      mrzData,
+      passportData,
+    });
+  }, [navigation, mrzData, passportData, selected]);
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
-      <Flex flex={1} flexDirection="column" justifyContent="space-between">
-        <Flex flexDirection="column" px={16} pt={0}>
-          <Flex flexDirection="column" rowGap={8} mb={24}>
-            <Text variant="h4" color="neutral.c100" fontWeight="semiBold">
-              Select the proof you want
-            </Text>
-            <Text variant="bodyLineHeight" color="neutral.c70">
-              You can generate multiple proofs at once
-            </Text>
-          </Flex>
+      <View style={styles.root}>
+        <View style={styles.content}>
+          <Text typography="heading3SemiBold" lx={{ color: "base" }}>
+            Select the proof you want
+          </Text>
+          <Text typography="body2" lx={{ color: "muted" }} style={styles.description}>
+            You can generate multiple proofs at once
+          </Text>
 
-          <Flex flexDirection="column" rowGap={16}>
-            {PROOF_OPTIONS.map(option => (
-              <TouchableOpacity
-                key={option.id}
-                onPress={() => toggleProof(option.id)}
-                activeOpacity={0.7}
-                testID={`proof-option-${option.id}`}
-              >
-                <ProofCard selected={selected.has(option.id)} borderColor={colors.primary.c80}>
-                  <Text variant="body" color="neutral.c100" fontWeight="semiBold">
-                    {option.title}
-                  </Text>
-                  <Text variant="small" color="neutral.c70">
-                    {option.description}
-                  </Text>
-                </ProofCard>
-              </TouchableOpacity>
-            ))}
-          </Flex>
-        </Flex>
+          <View style={styles.cards}>
+            {PROOF_OPTIONS.map(option => {
+              const isSelected = selected.has(option.id);
 
-        <Flex px={16} pb={16}>
+              return (
+                <Pressable
+                  key={option.id}
+                  onPress={() => toggleProof(option.id)}
+                  testID={`proof-option-${option.id}`}
+                >
+                  <View style={[styles.card, isSelected && styles.cardSelected]}>
+                    <Text typography="body2SemiBold" lx={{ color: "base" }} style={styles.cardTitle}>
+                      {option.title}
+                    </Text>
+                    <Text typography="body3" lx={{ color: "muted" }}>
+                      {option.description}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={styles.footer}>
           <Button
-            type="main"
-            size="large"
+            appearance="base"
+            size="lg"
             onPress={handleGenerate}
-            disabled={selected.size === 0}
+            disabled={isGenerateDisabled}
             testID="generate-proof-button"
           >
             Generate proof
           </Button>
-        </Flex>
-      </Flex>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
-
-const ProofCard = styled(Flex)<{ selected: boolean; borderColor: string }>`
-  background-color: ${p => p.theme.colors.opacityDefault.c05};
-  border-radius: 12px;
-  padding: 16px;
-  gap: 4px;
-  border-width: ${p => (p.selected ? "2px" : "1px")};
-  border-color: ${p => (p.selected ? p.borderColor : p.theme.colors.neutral.c40)};
-`;
