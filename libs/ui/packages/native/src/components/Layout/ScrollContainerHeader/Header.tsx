@@ -24,7 +24,7 @@ const PADDING_HORIZONTAL = 16;
 const Container = styled(Flex).attrs<{ paddingHorizontal: number }>({
   paddingHorizontal: PADDING_HORIZONTAL,
 })<{ paddingHorizontal?: number }>`
-  background-color: ${(p) => p.theme.colors.background.main};
+  background-color: ${p => p.theme.colors.background.main};
   width: 100%;
 `;
 

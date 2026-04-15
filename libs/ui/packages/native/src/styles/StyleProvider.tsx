@@ -10,7 +10,7 @@ type Props = {
 };
 
 declare module "styled-components/native" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // oxlint-disable-next-line typescript/no-empty-interface
   export interface DefaultTheme extends Theme {}
 }
 

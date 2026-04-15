@@ -35,7 +35,7 @@ export default function NewBannerCard({
   const { theme } = useTheme();
 
   return (
-    <Pressable onPress={onPress} style={(p) => [{ opacity: p.pressed ? 0.2 : 1.0 }]}>
+    <Pressable onPress={onPress} style={p => [{ opacity: p.pressed ? 0.2 : 1.0 }]}>
       <Flex
         flexDirection="row"
         alignItems="center"

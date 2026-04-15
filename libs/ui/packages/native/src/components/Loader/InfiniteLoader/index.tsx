@@ -117,7 +117,7 @@ export default function InfiniteLoader({
   );
 }
 
-const Loader = styled(Svg).attrs<SizeProps>((props) => ({
+const Loader = styled(Svg).attrs<SizeProps>(props => ({
   ...strokeSystem(props),
   width: props.size,
   height: props.size,
@@ -127,10 +127,10 @@ const Loader = styled(Svg).attrs<SizeProps>((props) => ({
   }
 >`
   ${size}
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${props => props.size}px;
+  height: ${props => props.size}px;
 `;
 
-const StyledPath = styled(Path).attrs((props) => ({
+const StyledPath = styled(Path).attrs(props => ({
   ...strokeSystem(props),
 }))``;

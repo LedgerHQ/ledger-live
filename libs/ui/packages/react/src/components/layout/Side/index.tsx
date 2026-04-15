@@ -12,7 +12,7 @@ export const SideWrapper = (props: SideProps): React.JSX.Element => {
   // Nb Note that it's not a real queue and we need to handle where we go from each _slide_
   const { state, setSide } = useSide();
   const [queue, setQueue] = useState<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     Array<{ Component: React.ComponentType | null | undefined; props?: any; key: number }>
   >([]);
   const [direction, setDirection] = useState("left");
@@ -32,7 +32,7 @@ export const SideWrapper = (props: SideProps): React.JSX.Element => {
 
     if (queue.length > 1) {
       const [, ...rest] = queue;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // oxlint-disable-next-line typescript/ban-ts-comment
       // @ts-ignore mismatch between nodejs and dom types
       timeout = setTimeout(() => {
         setQueue(rest);

@@ -43,7 +43,7 @@ export const BannerCardStory: Story = {
     typeOfRightIcon: "close",
     hadBackdropFilter: false,
   },
-  render: (args) => (
+  render: args => (
     <Flex backgroundColor="primary.c70" alignItems="center" justifyContent="center" p="70px">
       <Flex width={args.width}>
         {args.hadBackdropFilter && <Flex bg="red" width={200} height={100} position="absolute" />}

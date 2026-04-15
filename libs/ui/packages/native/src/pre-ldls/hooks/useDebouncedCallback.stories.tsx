@@ -34,7 +34,7 @@ function Template({ callback1, callback2, delay }: TemplateProps) {
       <input
         type="text"
         value={value}
-        onChange={(event) => {
+        onChange={event => {
           const value = event.target.value;
           setValue(value);
           debouncedCallback?.(value);

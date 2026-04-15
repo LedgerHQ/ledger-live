@@ -43,7 +43,7 @@ const badgesStyle: {
   },
 };
 
-const StyledBadgeText = styled(Text).attrs<BadgeProps>((p) => ({
+const StyledBadgeText = styled(Text).attrs<BadgeProps>(p => ({
   ...badgesStyle[p.badgeVariant || "main"][p.active ? "active" : "default"],
 }))<BadgeProps>`
   border-radius: 32px;

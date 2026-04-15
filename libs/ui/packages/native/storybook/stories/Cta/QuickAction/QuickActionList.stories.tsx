@@ -65,7 +65,7 @@ export const ListSmall = (): JSX.Element => {
   return (
     <Box width={"100%"} px={7}>
       <QuickActionList
-        data={DATA.map((element) => ({ ...element, variant: "small", textVariant: "small" }))}
+        data={DATA.map(element => ({ ...element, variant: "small", textVariant: "small" }))}
         id="test"
         numColumns={6}
       />
