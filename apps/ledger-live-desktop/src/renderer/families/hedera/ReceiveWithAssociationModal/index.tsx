@@ -11,6 +11,7 @@ import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import Body from "./Body";
+import { HederaCustomModal } from "../constants";
 import type { StepId } from "./types";
 
 type State = {
@@ -29,7 +30,6 @@ const ReceiveWithAssociationModal = () => {
   const [state, setState] = useState<State>(INITIAL_STATE);
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
-  // Making sure at least one account exists, if not, redirecting to the add account modal
   const accounts = useSelector(accountsSelector);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
@@ -72,11 +72,13 @@ const ReceiveWithAssociationModal = () => {
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "receive",
+    // @ts-expect-error - only GlobalModalData is allowed
+    HederaCustomModal.RECEIVE_WITH_ASSOCIATION,
   );
 
   const openAddAccounts = useCallback(() => {
     openAssetFlow();
-    dispatch(closeModal("MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION"));
+    dispatch(closeModal(HederaCustomModal.RECEIVE_WITH_ASSOCIATION));
   }, [dispatch, openAssetFlow]);
 
   useEffect(() => {
@@ -93,7 +95,7 @@ const ReceiveWithAssociationModal = () => {
 
   return (
     <Modal
-      name="MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION"
+      name={HederaCustomModal.RECEIVE_WITH_ASSOCIATION}
       centered
       onHide={handleReset}
       preventBackdropClick={isModalLocked}
