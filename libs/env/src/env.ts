@@ -107,6 +107,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node endpoint for celo",
   },
+  BAANX_API_URL: {
+    def: "https://ledger.baanxapi.com",
+    parser: stringParser,
+    desc: "Base URL for Baanx card API",
+  },
   BITCOIN_STUCK_TRANSACTION_TIMEOUT: {
     def: 20 * 60 * 1000,
     parser: intParser,

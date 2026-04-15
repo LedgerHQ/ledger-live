@@ -3,7 +3,7 @@ import { NavigatorName } from "~/const";
 import PortfolioNavigator from "../PortfolioNavigator";
 import SwapNavigator from "../SwapNavigator";
 import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
-import CardLandingNavigator from "LLM/features/Card";
+import BaanxCardNavigator from "LLM/features/BaanxCard";
 import { Tab } from "./tabNavigator";
 import type { Wallet40TabNavigatorProps } from "./types";
 import { SwapWallet40Header } from "~/screens/Swap/LiveApp/components/SwapWallet40Header";
@@ -32,7 +32,7 @@ export function Wallet40TabNavigator({
         })}
       />
       <Tab.Screen name={NavigatorName.Earn} component={EarnLiveAppNavigator} />
-      <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
+      <Tab.Screen name={NavigatorName.BaanxCard} component={BaanxCardNavigator} />
     </Tab.Navigator>
   );
 }

@@ -16,7 +16,7 @@ const TAB_ROUTE_NAMES = [
   NavigatorName.Portfolio,
   NavigatorName.Swap,
   NavigatorName.Earn,
-  NavigatorName.CardTab,
+  NavigatorName.BaanxCard,
 ];
 
 function createState(activeIndex: number) {

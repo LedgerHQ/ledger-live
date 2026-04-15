@@ -38,7 +38,7 @@ function TestNavigator() {
       <Tab.Screen name={NavigatorName.Portfolio} component={PortfolioScreen} />
       <Tab.Screen name={NavigatorName.Earn} component={EarnScreen} />
       <Tab.Screen name={NavigatorName.Swap} component={SwapScreen} />
-      <Tab.Screen name={NavigatorName.CardTab} component={CardScreen} />
+      <Tab.Screen name={NavigatorName.BaanxCard} component={CardScreen} />
     </Tab.Navigator>
   );
 }

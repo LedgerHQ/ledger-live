@@ -86,6 +86,12 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
               label={t("sidebar.card")}
               disabled={viewModel.isCardDisabled}
             />
+            <SideBarItem
+              value="baanxCard"
+              icon={Wallet}
+              activeIcon={Wallet}
+              label={t("sidebar.baanxCard")}
+            />
           </SideBarLeading>
           <SideBarTrailing>
             <FeatureToggle featureId="referralProgramDesktopSidebar">

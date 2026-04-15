@@ -83,6 +83,7 @@
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/baanx": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",

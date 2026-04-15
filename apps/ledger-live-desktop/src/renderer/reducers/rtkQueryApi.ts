@@ -7,9 +7,11 @@ import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager
 import { pushDevicesApi } from "@ledgerhq/client-ids/api";
 import { cmcApi } from "@ledgerhq/live-common/cmc-client/state-manager/api";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
+import { baanxApi } from "@ledgerhq/baanx";
 
 // Add new RTK Query API here:
 const APIs = {
+  [baanxApi.reducerPath]: baanxApi,
   [assetsDataApi.reducerPath]: assetsDataApi,
   [cmcApi.reducerPath]: cmcApi,
   [counterValuesApi.reducerPath]: counterValuesApi,

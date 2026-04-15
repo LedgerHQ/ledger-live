@@ -24,5 +24,6 @@ export function pathnameToActive(
   if (pathname === "/earn") return "earn";
   if (pathname.startsWith("/platform")) return "discover";
   if (pathname === "/card-new-wallet" || pathname.startsWith("/card")) return "card";
+  if (pathname === "/baanx-card") return "baanxCard";
   return "";
 }

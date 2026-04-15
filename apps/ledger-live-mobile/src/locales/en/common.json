@@ -7419,6 +7419,39 @@
       }
     }
   },
+  "baanxCard": {
+    "title": "Baanx Card",
+    "logout": "Log out",
+    "login": {
+      "title": "Connect to Baanx",
+      "subtitle": "Log in with your Baanx account to view your card and transactions.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Log in",
+      "loggingIn": "Logging in…"
+    },
+    "cardStatus": {
+      "title": "My Card",
+      "loading": "Loading card…",
+      "error": "Failed to load card information.",
+      "noCard": "No card found. Order one from Baanx.",
+      "cardNumber": "Card number",
+      "expiry": "Expiry",
+      "type": "Type"
+    },
+    "transactions": {
+      "title": "Transactions",
+      "loading": "Loading transactions…",
+      "error": "Failed to load transactions.",
+      "empty": "No transactions yet.",
+      "search": "Search merchant…",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{page}}"
+    }
+  },
   "platform": {
     "catalog": {
       "title": "Live Apps Catalog",

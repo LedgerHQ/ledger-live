@@ -24,6 +24,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
+import BaanxCardNavigator from "LLM/features/BaanxCard";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -415,6 +416,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Card}
           component={CardLiveAppNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.BaanxCard}
+          component={BaanxCardNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen

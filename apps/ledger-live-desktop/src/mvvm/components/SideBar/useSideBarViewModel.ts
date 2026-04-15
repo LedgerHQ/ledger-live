@@ -39,6 +39,7 @@ const SIDEBAR_NAV_REGISTRY = {
   handleClickEarn: { path: SIDEBAR_VALUE_TO_PATH.earn, trackEntry: "earn" },
   handleClickSwap: { path: SIDEBAR_VALUE_TO_PATH.swap, trackEntry: "swap" },
   handleClickCardWallet: { path: SIDEBAR_VALUE_TO_PATH.card, trackEntry: "card" },
+  handleClickBaanxCard: { path: SIDEBAR_VALUE_TO_PATH.baanxCard, trackEntry: "baanx-card" },
   // Legacy-only entries (not in Wallet 4.0 sidebar)
   handleClickMarket: { path: "/market", trackEntry: "market" },
   handleClickManager: { path: "/manager", trackEntry: "manager" },
@@ -102,6 +103,10 @@ function createNavHandlers(
     handleClickCardWallet: () => {
       push(registry.handleClickCardWallet.path);
       trackEntry(registry.handleClickCardWallet.trackEntry);
+    },
+    handleClickBaanxCard: () => {
+      push(registry.handleClickBaanxCard.path);
+      trackEntry(registry.handleClickBaanxCard.trackEntry);
     },
   };
 }

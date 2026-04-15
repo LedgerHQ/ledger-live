@@ -4,7 +4,7 @@ import { getEarnOrYieldSuffix } from "~/helpers/getStakeLabelLocaleBased";
 const LABELKEY_MAP: Partial<Record<string, string>> = {
   [NavigatorName.Portfolio]: "mainNavigation.home",
   [NavigatorName.Swap]: "mainNavigation.swap",
-  [NavigatorName.CardTab]: "mainNavigation.card",
+  [NavigatorName.BaanxCard]: "mainNavigation.card",
 };
 
 export const getLabelKey = (routeName: string): string =>
@@ -18,5 +18,5 @@ export const TRACKING_LABEL_MAP: Partial<Record<string, string>> = {
   [NavigatorName.Portfolio]: "Wallet",
   [NavigatorName.Swap]: "Swap",
   [NavigatorName.Earn]: "Earn",
-  [NavigatorName.CardTab]: "Card",
+  [NavigatorName.BaanxCard]: "Card",
 };

@@ -313,7 +313,8 @@
     "lend": "Lend",
     "catalog": "Discover",
     "market": "Market",
-    "recover": "[L] Recover"
+    "recover": "[L] Recover",
+    "baanxCard": "Baanx Card"
   },
   "stars": {
     "placeholder": "Star an account to display it here.",
@@ -829,6 +830,46 @@
     "iAlreadyHaveACard": "I have a card",
     "unlockLiquidity": "Spend crypto in real life",
     "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
+  },
+  "baanxCard": {
+    "title": "Baanx Card",
+    "logout": "Log out",
+    "tabs": {
+      "app": "Baanx App",
+      "rawData": "API Data"
+    },
+    "rawData": {
+      "notConnected": "Log in to the Baanx app first, then switch to this tab to see all available API data."
+    },
+    "login": {
+      "title": "Connect to Baanx",
+      "subtitle": "Log in with your Baanx account to view your card and transactions.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Log in",
+      "loggingIn": "Logging in…"
+    },
+    "cardStatus": {
+      "title": "My Card",
+      "loading": "Loading card…",
+      "error": "Failed to load card information.",
+      "noCard": "No card found. Order one from Baanx.",
+      "cardNumber": "Card number",
+      "expiry": "Expiry",
+      "type": "Type"
+    },
+    "transactions": {
+      "title": "Transactions",
+      "loading": "Loading transactions…",
+      "error": "Failed to load transactions.",
+      "empty": "No transactions yet.",
+      "search": "Search merchant…",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{page}}"
+    }
   },
   "lend": {
     "title": "Lend crypto",

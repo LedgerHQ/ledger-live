@@ -235,6 +235,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.Fees]: NavigatorScreenParams<FeesNavigatorParamsList>;
   [NavigatorName.Card]?: NavigatorScreenParams<PtxNavigatorParamList>;
+  [NavigatorName.BaanxCard]?: undefined;
   [NavigatorName.Exchange]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";

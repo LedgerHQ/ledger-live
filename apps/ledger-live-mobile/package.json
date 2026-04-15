@@ -259,6 +259,7 @@
     "@features/market-banner": "workspace:^",
     "@jest/reporters": "catalog:",
     "@ledgerhq/asset-aggregation": "workspace:^",
+    "@ledgerhq/baanx": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

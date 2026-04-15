@@ -9,6 +9,7 @@ export const SIDEBAR_VALUE_TO_PATH = {
   earn: "/earn",
   discover: "/platform",
   card: "/card-new-wallet",
+  baanxCard: "/baanx-card",
 } as const;
 
 /** Sidebar "Accounts" entry navigates to CryptoAddresses (Cryptos page) when asset section FF is on, else legacy accounts page. */
@@ -31,6 +32,7 @@ export const SIDEBAR_VALUE_TO_TRACK_ENTRY: Record<SideBarNavValue, string> = {
   earn: "earn",
   discover: "platform",
   card: "card",
+  baanxCard: "baanx-card",
 } as const;
 
 /**
