@@ -8,6 +8,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { PassportAttestationNavigatorStackParamList } from "~/components/RootNavigator/types/PassportAttestationNavigator";
 import type { MrzData } from "../../utils/mrzParser";
 import CameraScannerScreen from "./CameraScannerScreen";
+import { emptyMrzData, sanitizeMrzDataForConfirmation } from "./form";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -18,48 +19,43 @@ type Props = BaseComposite<
 
 export default function ScanMRZScreen({ navigation }: Props) {
   const { colors } = useTheme();
-  const [docNumber, setDocNumber] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
+  const [mrzDataDraft, setMrzDataDraft] = useState<MrzData>(emptyMrzData);
   const [showCamera, setShowCamera] = useState(true);
 
   const handleMrzFromCamera = useCallback((data: MrzData) => {
-    setDocNumber(data.documentNumber);
-    setDateOfBirth(data.dateOfBirth);
-    setExpiryDate(data.expiryDate);
+    setMrzDataDraft(data);
     setShowCamera(false);
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    const cleanDoc = docNumber.trim().toUpperCase();
-    const cleanDob = dateOfBirth.trim().replace(/\//g, "").replace(/-/g, "");
-    const cleanExp = expiryDate.trim().replace(/\//g, "").replace(/-/g, "");
+  const updateMrzField = useCallback(
+    (field: "documentNumber" | "dateOfBirth" | "expiryDate", value: string) => {
+      setMrzDataDraft(current => ({
+        ...current,
+        [field]: value,
+      }));
+    },
+    [],
+  );
 
-    if (cleanDoc.length < 1) {
+  const handleSubmit = useCallback(() => {
+    const cleanMrzData = sanitizeMrzDataForConfirmation(mrzDataDraft);
+    const { documentNumber, dateOfBirth, expiryDate } = cleanMrzData;
+
+    if (documentNumber.length < 1) {
       Alert.alert("Missing Field", "Please enter your document number.");
       return;
     }
-    if (cleanDob.length !== 6) {
+    if (dateOfBirth.length !== 6) {
       Alert.alert("Invalid Date of Birth", "Enter date of birth as YYMMDD (e.g. 900115).");
       return;
     }
-    if (cleanExp.length !== 6) {
+    if (expiryDate.length !== 6) {
       Alert.alert("Invalid Expiry Date", "Enter expiry date as YYMMDD (e.g. 301231).");
       return;
     }
 
-    const mrzData: MrzData = {
-      documentNumber: cleanDoc,
-      dateOfBirth: cleanDob,
-      expiryDate: cleanExp,
-      nationality: "N/A",
-      surname: "",
-      givenNames: "",
-      sex: "X",
-    };
-
-    navigation.navigate(ScreenName.PassportAttestationConfirm, { mrzData });
-  }, [docNumber, dateOfBirth, expiryDate, navigation]);
+    navigation.navigate(ScreenName.PassportAttestationConfirm, { mrzData: cleanMrzData });
+  }, [mrzDataDraft, navigation]);
 
   const handleDemo = useCallback(() => {
     const demoMrz: MrzData = {
@@ -106,8 +102,8 @@ export default function ScanMRZScreen({ navigation }: Props) {
                 Document Number
               </Text>
               <StyledInput
-                value={docNumber}
-                onChangeText={setDocNumber}
+                value={mrzDataDraft.documentNumber}
+                onChangeText={(value: string) => updateMrzField("documentNumber", value)}
                 placeholder="e.g. L898902C3"
                 autoCapitalize="characters"
                 autoCorrect={false}
@@ -121,8 +117,8 @@ export default function ScanMRZScreen({ navigation }: Props) {
                 Date of Birth (YYMMDD)
               </Text>
               <StyledInput
-                value={dateOfBirth}
-                onChangeText={setDateOfBirth}
+                value={mrzDataDraft.dateOfBirth}
+                onChangeText={(value: string) => updateMrzField("dateOfBirth", value)}
                 placeholder="e.g. 900115"
                 keyboardType="number-pad"
                 maxLength={6}
@@ -136,8 +132,8 @@ export default function ScanMRZScreen({ navigation }: Props) {
                 Expiry Date (YYMMDD)
               </Text>
               <StyledInput
-                value={expiryDate}
-                onChangeText={setExpiryDate}
+                value={mrzDataDraft.expiryDate}
+                onChangeText={(value: string) => updateMrzField("expiryDate", value)}
                 placeholder="e.g. 301231"
                 keyboardType="number-pad"
                 maxLength={6}

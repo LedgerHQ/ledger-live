@@ -4,6 +4,7 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import type { PassportAttestationNavigatorStackParamList } from "~/components/RootNavigator/types/PassportAttestationNavigator";
+import HeaderCloseButton from "LLM/components/Navigation/HeaderCloseButton";
 import LandingScreen from "./screens/Landing";
 import ScanMRZScreen from "./screens/ScanMRZ";
 import ReadNFCScreen from "./screens/ReadNFC";

@@ -1,11 +1,24 @@
 import React, { useCallback, useState } from "react";
-import { ScrollView } from "react-native";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import styled from "styled-components/native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput as NativeTextInput,
+  View,
+} from "react-native";
+import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { PassportAttestationNavigatorStackParamList } from "~/components/RootNavigator/types/PassportAttestationNavigator";
+import {
+  createPassportReviewForm,
+  sanitizeDisplayDateInput,
+  serializePassportReviewForm,
+  type PassportReviewForm,
+} from "./form";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -14,91 +27,182 @@ type Props = BaseComposite<
   >
 >;
 
-function formatDob(yymmdd: string): string {
-  if (yymmdd.length !== 6) return yymmdd;
-  const yy = parseInt(yymmdd.substring(0, 2), 10);
-  const mm = yymmdd.substring(2, 4);
-  const dd = yymmdd.substring(4, 6);
-  const century = yy <= 30 ? 2000 : 1900;
-  return `${dd}/${mm}/${century + yy}`;
-}
+const invalidFieldMessages: Record<keyof PassportReviewForm, string> = {
+  fullName: "Enter the passport holder full name to continue.",
+  documentNumber: "Enter a valid document number to continue.",
+  dateOfBirth: "Enter a valid date of birth in DD/MM/YYYY format.",
+  expiryDate: "Enter a valid expiry date in DD/MM/YYYY format.",
+};
 
 export default function ConfirmScreen({ navigation, route }: Props) {
   const { mrzData } = route.params;
+  const styles = useStyleSheet(
+    theme => ({
+      keyboard: {
+        flex: 1,
+      },
+      scroll: {
+        flex: 1,
+      },
+      scrollContent: {
+        flexGrow: 1,
+        justifyContent: "space-between",
+      },
+      content: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingTop: theme.spacings.s8,
+      },
+      description: {
+        marginTop: theme.spacings.s8,
+      },
+      fields: {
+        marginTop: theme.spacings.s24,
+        gap: theme.spacings.s16,
+      },
+      field: {
+        borderRadius: 12,
+        backgroundColor: theme.colors.bg.muted,
+        paddingHorizontal: theme.spacings.s16,
+        paddingVertical: theme.spacings.s12,
+      },
+      input: {
+        paddingHorizontal: 0,
+        paddingVertical: 0,
+        marginTop: theme.spacings.s4,
+        color: theme.colors.text.base,
+        fontSize: 16,
+        lineHeight: 24,
+        fontWeight: "600",
+      },
+      footer: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingTop: theme.spacings.s12,
+        paddingBottom: theme.spacings.s16,
+      },
+    }),
+    [],
+  );
+  const [form, setForm] = useState(() => createPassportReviewForm(mrzData));
 
-  const fullName = `${mrzData.givenNames} ${mrzData.surname}`.trim() || "N/A";
-  const [name, setName] = useState(fullName);
-  const [docNumber, setDocNumber] = useState(mrzData.documentNumber);
-  const [dob, setDob] = useState(formatDob(mrzData.dateOfBirth));
-  const [expiry, setExpiry] = useState(formatDob(mrzData.expiryDate));
+  const updateField = useCallback(
+    (field: keyof PassportReviewForm, value: string) => {
+      setForm(current => ({
+        ...current,
+        [field]: value,
+      }));
+    },
+    [setForm],
+  );
 
   const handleConfirm = useCallback(() => {
-    navigation.navigate(ScreenName.PassportAttestationSelectProof, { mrzData });
-  }, [navigation, mrzData]);
+    const result = serializePassportReviewForm(form, mrzData);
+
+    if (!result.ok) {
+      Alert.alert("Invalid passport information", invalidFieldMessages[result.field]);
+      return;
+    }
+
+    navigation.navigate(ScreenName.PassportAttestationReadNFC, { mrzData: result.mrzData });
+  }, [form, mrzData, navigation]);
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Flex flex={1} flexDirection="column" justifyContent="space-between">
-          <Flex flexDirection="column" px={16} pt={0}>
-            <Flex flexDirection="column" rowGap={8} mb={24}>
-              <Text variant="h4" color="neutral.c100" fontWeight="semiBold">
-                Passport informations
-              </Text>
-              <Text variant="bodyLineHeight" color="neutral.c70">
-                Review your information and edit them if needed
-              </Text>
-            </Flex>
+      <KeyboardAvoidingView
+        style={styles.keyboard}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            <Text typography="heading3SemiBold" lx={{ color: "base" }}>
+              Passport informations
+            </Text>
+            <Text typography="body2" lx={{ color: "muted" }} style={styles.description}>
+              Review your information and edit them if needed
+            </Text>
 
-            <Flex flexDirection="column" rowGap={16}>
-              <InputField label="Full name" value={name} onChangeText={setName} testID="passport-fullname" />
-              <InputField label="Document number" value={docNumber} onChangeText={setDocNumber} testID="passport-doc-number" />
-              <InputField label="Date of birth" value={dob} onChangeText={setDob} testID="passport-dob" />
-              <InputField label="Expiry date" value={expiry} onChangeText={setExpiry} testID="passport-expiry" />
-            </Flex>
-          </Flex>
+            <View style={styles.fields}>
+              <View style={styles.field}>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  Full name
+                </Text>
+                <NativeTextInput
+                  value={form.fullName}
+                  onChangeText={value => updateField("fullName", value)}
+                  style={styles.input}
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  keyboardAppearance="dark"
+                  selectionColor="white"
+                  testID="passport-confirm-full-name"
+                />
+              </View>
 
-          <Flex px={16} pb={16}>
-            <Button type="main" size="large" onPress={handleConfirm} testID="passport-confirm-button">
+              <View style={styles.field}>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  Document number
+                </Text>
+                <NativeTextInput
+                  value={form.documentNumber}
+                  onChangeText={value => updateField("documentNumber", value.toUpperCase())}
+                  style={styles.input}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  keyboardAppearance="dark"
+                  selectionColor="white"
+                  testID="passport-confirm-document-number"
+                />
+              </View>
+
+              <View style={styles.field}>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  Date of birth
+                </Text>
+                <NativeTextInput
+                  value={form.dateOfBirth}
+                  onChangeText={value =>
+                    updateField("dateOfBirth", sanitizeDisplayDateInput(value))
+                  }
+                  style={styles.input}
+                  keyboardType="number-pad"
+                  keyboardAppearance="dark"
+                  selectionColor="white"
+                  testID="passport-confirm-date-of-birth"
+                />
+              </View>
+
+              <View style={styles.field}>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  Expiry date
+                </Text>
+                <NativeTextInput
+                  value={form.expiryDate}
+                  onChangeText={value => updateField("expiryDate", sanitizeDisplayDateInput(value))}
+                  style={styles.input}
+                  keyboardType="number-pad"
+                  keyboardAppearance="dark"
+                  selectionColor="white"
+                  testID="passport-confirm-expiry-date"
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.footer}>
+            <Button
+              appearance="base"
+              size="lg"
+              onPress={handleConfirm}
+              testID="passport-confirm-button"
+            >
               I verified my information
             </Button>
-          </Flex>
-        </Flex>
-      </ScrollView>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-
-function InputField({
-  label,
-  value,
-  onChangeText,
-  testID,
-}: {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  testID: string;
-}) {
-  return (
-    <InputContainer>
-      <Text variant="small" color="neutral.c70">
-        {label}
-      </Text>
-      <StyledInput value={value} onChangeText={onChangeText} testID={testID} />
-    </InputContainer>
-  );
-}
-
-const InputContainer = styled(Flex)`
-  background-color: ${p => p.theme.colors.opacityDefault.c05};
-  border-radius: 8px;
-  padding: 8px 16px;
-  gap: 2px;
-`;
-
-const StyledInput = styled.TextInput`
-  font-size: 16px;
-  color: ${p => p.theme.colors.neutral.c100};
-  padding: 0;
-`;
