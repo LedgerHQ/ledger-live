@@ -11,6 +11,7 @@ import AgentsSection from "./components/AgentsSection";
 import CreateAgentBottomSheet from "./components/CreateAgentBottomSheet";
 import SettingsBottomSheet from "./components/SettingsBottomSheet";
 import TransactionDetailBottomSheet from "./components/TransactionDetailBottomSheet";
+import BaanxTransactionToast from "./components/BaanxTransactionToast";
 import type { BaanxDashboardViewModel } from "./useBaanxDashboardViewModel";
 
 const BaanxDashboardScreenView = ({
@@ -61,6 +62,8 @@ const BaanxDashboardScreenView = ({
   onCreateAgent,
   isRefreshing,
   onRefresh,
+  activeToast,
+  onDismissToast,
 }: Readonly<BaanxDashboardViewModel>) => {
   const { theme } = useTheme();
   const bgColor = theme.colors.bg.base;
@@ -166,6 +169,10 @@ const BaanxDashboardScreenView = ({
         onClose={onCloseCreateAgentSheet}
         onSubmit={onCreateAgent}
       />
+
+      {activeToast && (
+        <BaanxTransactionToast message={activeToast} onDismiss={onDismissToast} />
+      )}
     </View>
   );
 };

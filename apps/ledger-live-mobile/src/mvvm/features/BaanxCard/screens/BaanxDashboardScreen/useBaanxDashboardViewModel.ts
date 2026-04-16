@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCardTotalBalance, useCardTransactions, useGetUserWalletsQuery } from "@ledgerhq/baanx";
+import { useTranslation } from "~/context/Locale";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { selectBaanxTopUpTotal } from "~/reducers/baanxTopUp";
@@ -102,6 +103,9 @@ export interface BaanxDashboardViewModel {
 
   readonly isRefreshing: boolean;
   readonly onRefresh: () => void;
+
+  readonly activeToast: string | null;
+  readonly onDismissToast: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -180,6 +184,28 @@ export function useBaanxDashboardViewModel(
     [cardTx.transactions, fiatSymbol],
   );
   const isTransactionsLoading = cardTx.isLoading;
+
+  // --- New transaction notifications ---
+  const { t } = useTranslation();
+  const [activeToast, setActiveToast] = useState<string | null>(null);
+  const onDismissToast = useCallback(() => setActiveToast(null), []);
+
+  useEffect(() => {
+    if (cardTx.newTransactions.length === 0) return;
+
+    const count = cardTx.newTransactions.length;
+    if (count === 1) {
+      const tx = cardTx.newTransactions[0];
+      setActiveToast(
+        t("baanx.notifications.newTransaction", {
+          amount: `${fiatSymbol}${Math.abs(tx.amount).toFixed(2)}`,
+          merchant: tx.merchantName,
+        }),
+      );
+    } else {
+      setActiveToast(t("baanx.notifications.newTransactions", { count }));
+    }
+  }, [cardTx.newTransactions, t, fiatSymbol]);
 
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | null>(null);
   const [isTransactionDetailOpen, setIsTransactionDetailOpen] = useState(false);
@@ -486,5 +512,7 @@ export function useBaanxDashboardViewModel(
     onCreateAgent,
     isRefreshing,
     onRefresh,
+    activeToast,
+    onDismissToast,
   };
 }

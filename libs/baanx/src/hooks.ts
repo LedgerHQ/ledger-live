@@ -273,6 +273,8 @@ export interface CardTransaction {
 
 export interface CardTransactionsResult {
   transactions: CardTransaction[];
+  /** Transactions that appeared since the last fetch (empty on initial load). */
+  newTransactions: CardTransaction[];
   isLoading: boolean;
   error: unknown;
   refetch: () => void;
@@ -296,11 +298,16 @@ function parseCardTx(raw: Record<string, unknown>): CardTransaction {
   };
 }
 
-export function useCardTransactions(accessToken: string | null): CardTransactionsResult {
+const DEFAULT_TX_POLLING_INTERVAL = 30_000;
+
+export function useCardTransactions(
+  accessToken: string | null,
+  options?: { pollingInterval?: number },
+): CardTransactionsResult {
   const skip = !accessToken;
   const { data, isLoading, error, refetch } = useGetCardTransactionsQuery(
     { accessToken: accessToken ?? "" },
-    { skip },
+    { skip, pollingInterval: skip ? 0 : options?.pollingInterval ?? DEFAULT_TX_POLLING_INTERVAL },
   );
 
   const transactions = useMemo(() => {
@@ -309,7 +316,29 @@ export function useCardTransactions(accessToken: string | null): CardTransaction
     return txs.filter(isRecord).map(parseCardTx);
   }, [data]);
 
-  return { transactions, isLoading, error, refetch };
+  const previousIdsRef = useRef<Set<string> | null>(null);
+  const [newTransactions, setNewTransactions] = useState<CardTransaction[]>([]);
+
+  useEffect(() => {
+    if (transactions.length === 0) return;
+
+    const currentIds = new Set(transactions.map(tx => tx.id));
+    const prevIds = previousIdsRef.current;
+
+    if (prevIds === null) {
+      previousIdsRef.current = currentIds;
+      return;
+    }
+
+    const added = transactions.filter(tx => !prevIds.has(tx.id));
+    previousIdsRef.current = currentIds;
+
+    if (added.length > 0) {
+      setNewTransactions(added);
+    }
+  }, [transactions]);
+
+  return { transactions, newTransactions, isLoading, error, refetch };
 }
 
 // ---------------------------------------------------------------------------

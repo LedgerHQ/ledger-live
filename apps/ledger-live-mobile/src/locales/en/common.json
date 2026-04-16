@@ -7364,6 +7364,12 @@
       "header": "Status"
     }
   },
+  "baanx": {
+    "notifications": {
+      "newTransaction": "You paid {{amount}} at {{merchant}}",
+      "newTransactions": "You have {{count}} new card transactions"
+    }
+  },
   "browseWeb3": {
     "catalog": {
       "title": "Discover",
