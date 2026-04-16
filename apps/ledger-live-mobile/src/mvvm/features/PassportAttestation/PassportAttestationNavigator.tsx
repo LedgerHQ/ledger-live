@@ -1,5 +1,9 @@
 import React, { useMemo } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  type NativeStackNavigationOptions,
+  type NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -15,6 +19,37 @@ import SuccessScreen from "./screens/Success";
 
 const Stack = createNativeStackNavigator<PassportAttestationNavigatorStackParamList>();
 
+function closePassportAttestationFlow(
+  navigation: NativeStackNavigationProp<
+    PassportAttestationNavigatorStackParamList,
+    keyof PassportAttestationNavigatorStackParamList
+  >,
+) {
+  const parentNavigation = navigation.getParent();
+
+  if (parentNavigation?.canGoBack()) {
+    parentNavigation.goBack();
+    return;
+  }
+
+  navigation.popToTop();
+}
+
+function getFlowStepHeaderOptions(
+  navigation: NativeStackNavigationProp<
+    PassportAttestationNavigatorStackParamList,
+    keyof PassportAttestationNavigatorStackParamList
+  >,
+): NativeStackNavigationOptions {
+  return {
+    title: "",
+    headerTitle: () => null,
+    headerRight: () => (
+      <HeaderCloseButton onClose={() => closePassportAttestationFlow(navigation)} />
+    ),
+  };
+}
+
 export default function PassportAttestationNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
@@ -24,73 +59,37 @@ export default function PassportAttestationNavigator() {
       <Stack.Screen
         name={ScreenName.PassportAttestationLanding}
         component={LandingScreen}
-        options={{ title: "Generate a ZK proof of your ID" }}
+        options={({ navigation }) => getFlowStepHeaderOptions(navigation)}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationScanMRZ}
         component={ScanMRZScreen}
-        options={{ title: "Scan passport" }}
+        options={({ navigation }) => getFlowStepHeaderOptions(navigation)}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationReadNFC}
         component={ReadNFCScreen}
-        options={{ title: "Reading Passport", headerBackVisible: false }}
+        options={({ navigation }) => getFlowStepHeaderOptions(navigation)}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationConfirm}
         component={ConfirmScreen}
-        options={{ title: "Passport informations" }}
+        options={({ navigation }) => getFlowStepHeaderOptions(navigation)}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationSelectProof}
         component={SelectProofScreen}
-        options={({ navigation }) => ({
-          title: "",
-          headerLeft: () => null,
-          headerTitle: () => null,
-          headerRight: () => (
-            <HeaderCloseButton
-              onClose={() => {
-                const parentNavigation = navigation.getParent();
-
-                if (parentNavigation?.canGoBack()) {
-                  parentNavigation.goBack();
-                  return;
-                }
-
-                navigation.popToTop();
-              }}
-            />
-          ),
-        })}
+        options={({ navigation }) => getFlowStepHeaderOptions(navigation)}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationGenerateProof}
         component={GenerateProofScreen}
-        options={({ navigation }) => ({
-          title: "",
-          headerLeft: () => null,
-          headerTitle: () => null,
-          headerRight: () => (
-            <HeaderCloseButton
-              onClose={() => {
-                const parentNavigation = navigation.getParent();
-
-                if (parentNavigation?.canGoBack()) {
-                  parentNavigation.goBack();
-                  return;
-                }
-
-                navigation.popToTop();
-              }}
-            />
-          ),
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.PassportAttestationSuccess}
         component={SuccessScreen}
-        options={{ title: "", headerLeft: () => null, headerRight: () => null }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
