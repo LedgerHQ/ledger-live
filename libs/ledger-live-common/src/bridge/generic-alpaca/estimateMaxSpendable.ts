@@ -16,7 +16,7 @@ export function genericEstimateMaxSpendable(
       return account.spendableBalance;
     }
     const mainAccount = getMainAccount(account, parentAccount);
-    const alpacaApi = await getAlpacaApi(mainAccount.currency.id, kind);
+    const alpacaApi = getAlpacaApi(mainAccount.currency.id, kind);
     const bridgeApi = getBridgeApi(mainAccount.currency, network);
     const draftTransaction = {
       ...createTransaction(account),

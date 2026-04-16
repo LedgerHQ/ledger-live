@@ -50,7 +50,7 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+        const alpacaApi = getAlpacaApi(account.currency.id, kind);
         const bridgeApi = getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({

@@ -17,7 +17,7 @@ export function genericGetTransactionStatus(
   kind: string,
 ): AccountBridge<GenericTransaction>["getTransactionStatus"] {
   return async (account, transaction) => {
-    const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+    const alpacaApi = getAlpacaApi(account.currency.id, kind);
     const bridgeApi = getBridgeApi(account.currency, network);
 
     const draftTransaction = {

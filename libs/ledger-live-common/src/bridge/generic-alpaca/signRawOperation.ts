@@ -25,7 +25,7 @@ export const genericSignRawOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+        const alpacaApi = getAlpacaApi(account.currency.id, kind);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;

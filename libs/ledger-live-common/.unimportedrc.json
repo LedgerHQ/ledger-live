@@ -344,13 +344,6 @@
     "**/fixtures/**"
   ],
   "ignoreUnimported": [
-    "src/bridge/generic-alpaca/alpaca/local/canton.ts",
-    "src/bridge/generic-alpaca/alpaca/local/evm.ts",
-    "src/bridge/generic-alpaca/alpaca/local/solana.ts",
-    "src/bridge/generic-alpaca/alpaca/local/stellar.ts",
-    "src/bridge/generic-alpaca/alpaca/local/tezos.ts",
-    "src/bridge/generic-alpaca/alpaca/local/tron.ts",
-    "src/bridge/generic-alpaca/alpaca/local/xrp.ts",
     "src/account/typeGuards.ts",
     "src/api/ofacGeoBlockApi.ts",
     "src/bot/specs.ts",
@@ -601,13 +594,6 @@
     "yargs"
   ],
   "ignoreUnresolved": [
-    "./local/canton.js",
-    "./local/evm.js",
-    "./local/solana.js",
-    "./local/stellar.js",
-    "./local/tezos.js",
-    "./local/tron.js",
-    "./local/xrp.js",
     "../../Image/Image",
     "../../StyleSheet/PlatformColorValueTypes",
     "../../Utilities/Platform",
