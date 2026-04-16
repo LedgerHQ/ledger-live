@@ -13,8 +13,12 @@ export default function BorrowLiveAppNavigator() {
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
-    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: false }}>
-      <Stack.Screen name={ScreenName.Borrow} component={BorrowLiveAppWrapper} />
+    <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
+      <Stack.Screen
+        name={ScreenName.Borrow}
+        component={BorrowLiveAppWrapper}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }
