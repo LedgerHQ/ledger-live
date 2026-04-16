@@ -7,18 +7,20 @@ import { createGeneratedHelpers, registerGeneratedStore } from '@bunli/core'
 import Account from '../src/commands/account/index.js'
 import Balances from '../src/commands/balances.js'
 import Discover from '../src/commands/account/discover.js'
+import FreshAddress from '../src/commands/account/fresh-address.js'
 import Operations from '../src/commands/operations.js'
 import Receive from '../src/commands/receive.js'
 import Send from '../src/commands/send.js'
 
 // Narrow list of command names to avoid typeof-cycles in types
-const names = ['account', 'balances', 'discover', 'operations', 'receive', 'send'] as const
+const names = ['account', 'balances', 'discover', 'fresh-address', 'operations', 'receive', 'send'] as const
 type GeneratedNames = typeof names[number]
 
 const modules: Record<GeneratedNames, Command<any>> = {
   'account': Account,
   'balances': Balances,
   'discover': Discover,
+  'fresh-address': FreshAddress,
   'operations': Operations,
   'receive': Receive,
   'send': Send
@@ -37,6 +39,15 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
             'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
           },
           path: './src/commands/account/discover'
+        },
+        {
+          name: 'fresh-address',
+          description: 'Resolve the fresh receive address for an account descriptor (no device required)',
+          options: {
+            'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor (V1 format), or pass as first positional arg', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+            'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+          },
+          path: './src/commands/account/fresh-address'
         }
       ],
       path: './src/commands/account/index'
@@ -58,6 +69,15 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
       },
       path: './src/commands/account/discover'
+    },
+  'fresh-address': {
+      name: 'fresh-address',
+      description: 'Resolve the fresh receive address for an account descriptor (no device required)',
+      options: {
+        'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor (V1 format), or pass as first positional arg', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+      },
+      path: './src/commands/account/fresh-address'
     },
   'operations': {
       name: 'operations',
