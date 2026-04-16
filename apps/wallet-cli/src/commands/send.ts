@@ -1,4 +1,4 @@
-import { defineCommand, option } from "@bunli/core";
+import { defineCommand, option } from "../shared/command";
 import { z } from "zod";
 import { lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";

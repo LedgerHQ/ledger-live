@@ -1,4 +1,4 @@
-import { defineCommand, option } from "@bunli/core";
+import { defineCommand, option } from "../../shared/command";
 import { z } from "zod";
 import { WalletAdapter } from "../../wallet";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
