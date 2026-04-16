@@ -17,13 +17,13 @@ import {
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { track, updateIdentify } from "~/analytics";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
   type AnalyticsConsentPhase,
 } from "@ledgerhq/live-common/analyticsConsentUtils";
+import { resolveAnalyticsOptInParams } from "@shared/feature-flags";
 
 export const ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE = "Analytics consent drawer";
 
@@ -39,6 +39,7 @@ export function useAnalyticsConsentDrawerViewModel() {
   const navigation = useNavigation<BaseNavigation>();
   const isFocused = useIsFocused();
   const feature = useFeature("analyticsOptIn");
+  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(feature);
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
@@ -47,8 +48,8 @@ export function useAnalyticsConsentDrawerViewModel() {
     personalizedRecommendationsEnabledSelector,
   );
 
-  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
-  const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
+  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
+  const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
 
   const shouldOffer = Boolean(
     feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
@@ -80,18 +81,20 @@ export function useAnalyticsConsentDrawerViewModel() {
     needsUpdatePrivacy,
     analyticsEnabled,
     handleCloseDrawer,
+    policyVersion,
+    consentValidityDays,
   ]);
 
   const persistConsentCompletion = useCallback(async () => {
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     await updateIdentify();
-  }, [dispatch]);
+  }, [dispatch, policyVersion]);
 
   const applyOptIn = useCallback(async () => {
     track(
@@ -99,7 +102,7 @@ export function useAnalyticsConsentDrawerViewModel() {
       {
         button: "analytics_consent_opt_in",
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       },
       true,
     );
@@ -107,7 +110,7 @@ export function useAnalyticsConsentDrawerViewModel() {
     dispatch(setPersonalizedRecommendations(true));
     await persistConsentCompletion();
     handleCloseDrawer();
-  }, [dispatch, persistConsentCompletion, handleCloseDrawer]);
+  }, [dispatch, persistConsentCompletion, handleCloseDrawer, policyVersion]);
 
   const applyOptOut = useCallback(async () => {
     const isPreviouslyOptedOutCompletely = !analyticsEnabled && !personalizedRecommendationsEnabled;
@@ -117,7 +120,7 @@ export function useAnalyticsConsentDrawerViewModel() {
       {
         button: "analytics_consent_opt_out",
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       },
       trackMandatory,
     );
@@ -131,24 +134,25 @@ export function useAnalyticsConsentDrawerViewModel() {
     handleCloseDrawer,
     personalizedRecommendationsEnabled,
     persistConsentCompletion,
+    policyVersion,
   ]);
 
   const onPrivacyGotIt = useCallback(async () => {
     track("button_clicked", {
       button: "analytics_consent_privacy_got_it",
       page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      privacyPolicyVersion: policyVersion,
     });
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     await updateIdentify();
     handleCloseDrawer();
-  }, [dispatch, handleCloseDrawer]);
+  }, [dispatch, handleCloseDrawer, policyVersion]);
 
   const onSetPreferences = useCallback(() => {
     track("button_clicked", {

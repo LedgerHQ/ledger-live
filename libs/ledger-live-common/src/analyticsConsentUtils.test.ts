@@ -1,11 +1,9 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
+import { add } from "date-fns";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
 } from "./analyticsConsentUtils";
-
-const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 describe("analyticsConsentUtils", () => {
   describe("needsPrivacyPolicyAck", () => {
@@ -18,76 +16,88 @@ describe("analyticsConsentUtils", () => {
       expect(needsPrivacyPolicyAck(1, 2)).toBe(true);
     });
 
-    it("returns false when stored matches current", () => {
+    it("returns false when stored version matches current", () => {
       expect(needsPrivacyPolicyAck(1, 1)).toBe(false);
-      expect(
-        needsPrivacyPolicyAck(CURRENT_PRIVACY_POLICY_VERSION, CURRENT_PRIVACY_POLICY_VERSION),
-      ).toBe(false);
+      expect(needsPrivacyPolicyAck(20260531, 20260531)).toBe(false);
+    });
+
+    it("supports date-style numeric policy versions", () => {
+      expect(needsPrivacyPolicyAck(1, 20260531)).toBe(true);
+      expect(needsPrivacyPolicyAck(20260531, 20261231)).toBe(true);
+      expect(needsPrivacyPolicyAck(20261231, 20260531)).toBe(false);
     });
   });
 
   describe("needsConsentRenewal", () => {
-    const NOW_MS = 2_000_000_000_000;
+    const NOW = new Date("2024-06-15T12:00:00.000Z");
 
-    it("returns true when consent date is null", () => {
-      expect(needsConsentRenewal(null, 1_000_000_000_000)).toBe(true);
+    it("returns true when consent is null or empty", () => {
+      expect(needsConsentRenewal(null, 365, NOW)).toBe(true);
+      expect(needsConsentRenewal("", 365, NOW)).toBe(true);
     });
 
-    it("uses one-year default interval when third arg omitted", () => {
-      expect(needsConsentRenewal(new Date(NOW_MS - YEAR_MS - 1000).toISOString(), NOW_MS)).toBe(
-        true,
-      );
-      expect(needsConsentRenewal(new Date(NOW_MS - YEAR_MS + 1000).toISOString(), NOW_MS)).toBe(
-        false,
-      );
+    it("returns false when consent is within the validity window", () => {
+      const iso = add(NOW, { days: -300 }).toISOString();
+      expect(needsConsentRenewal(iso, 365, NOW)).toBe(false);
     });
 
-    it("returns false within one year when interval is one year in ms", () => {
-      const iso = new Date(NOW_MS - YEAR_MS + 1000).toISOString();
-      expect(needsConsentRenewal(iso, NOW_MS, YEAR_MS)).toBe(false);
+    it("returns true when consent is past the rolling window", () => {
+      const iso = add(NOW, { days: -400 }).toISOString();
+      expect(needsConsentRenewal(iso, 365, NOW)).toBe(true);
     });
 
-    it("returns true after one year when interval is one year in ms", () => {
-      const iso = new Date(NOW_MS - YEAR_MS - 1000).toISOString();
-      expect(needsConsentRenewal(iso, NOW_MS, YEAR_MS)).toBe(true);
+    it("returns false on the deadline instant", () => {
+      const consent = new Date("2023-06-01T12:00:00.000Z");
+      const deadline = add(consent, { days: 365 });
+      expect(needsConsentRenewal(consent.toISOString(), 365, deadline)).toBe(false);
     });
 
-    it("returns false for old consent when interval is null", () => {
-      const iso = new Date(NOW_MS - YEAR_MS - 1000).toISOString();
-      expect(needsConsentRenewal(iso, NOW_MS, null)).toBe(false);
+    it("returns true immediately after the deadline", () => {
+      const consent = new Date("2023-06-01T12:00:00.000Z");
+      const deadline = add(consent, { days: 365 });
+      const justAfter = new Date(deadline.getTime() + 1);
+      expect(needsConsentRenewal(consent.toISOString(), 365, justAfter)).toBe(true);
     });
 
-    it("returns true when consent date is empty string", () => {
-      expect(needsConsentRenewal("", NOW_MS)).toBe(true);
+    it("respects a shorter configured validity", () => {
+      const consent = add(NOW, { days: -31 });
+      expect(needsConsentRenewal(consent.toISOString(), 30, NOW)).toBe(true);
     });
 
-    it("returns true when consent date is invalid ISO", () => {
-      expect(needsConsentRenewal("not-a-date", NOW_MS)).toBe(true);
+    it("returns true for invalid ISO strings", () => {
+      expect(needsConsentRenewal("not-a-date", 365, NOW)).toBe(true);
     });
   });
 
   describe("resolveAnalyticsConsentPhase", () => {
-    it("leaves non-closed phase unchanged", () => {
-      expect(resolveAnalyticsConsentPhase("consentFresh", true, true, true)).toBe("consentFresh");
-      expect(resolveAnalyticsConsentPhase("privacy", false, true, false)).toBe("privacy");
+    it("returns current phase when not closed", () => {
+      expect(
+        resolveAnalyticsConsentPhase("privacy", true, true, false),
+      ).toBe("privacy");
     });
 
-    it("when closed and renewal: reconfirm if sharing on, else fresh", () => {
-      expect(resolveAnalyticsConsentPhase("closed", true, false, true)).toBe("consentReconfirm");
-      expect(resolveAnalyticsConsentPhase("closed", true, false, false)).toBe("consentFresh");
+    it("returns consentReconfirm when renewal needed and sharing was on", () => {
+      expect(
+        resolveAnalyticsConsentPhase("closed", true, false, true),
+      ).toBe("consentReconfirm");
     });
 
-    it("when closed, no renewal, privacy stale: privacy", () => {
-      expect(resolveAnalyticsConsentPhase("closed", false, true, true)).toBe("privacy");
+    it("returns consentFresh when renewal needed and sharing was off", () => {
+      expect(
+        resolveAnalyticsConsentPhase("closed", true, false, false),
+      ).toBe("consentFresh");
     });
 
-    it("when closed, no renewal, no privacy update: fresh", () => {
-      expect(resolveAnalyticsConsentPhase("closed", false, false, false)).toBe("consentFresh");
+    it("returns privacy when only policy update needed", () => {
+      expect(
+        resolveAnalyticsConsentPhase("closed", false, true, true),
+      ).toBe("privacy");
     });
 
-    it("renewal takes precedence over privacy update", () => {
-      expect(resolveAnalyticsConsentPhase("closed", true, true, true)).toBe("consentReconfirm");
-      expect(resolveAnalyticsConsentPhase("closed", true, true, false)).toBe("consentFresh");
+    it("returns consentFresh when nothing special is needed", () => {
+      expect(
+        resolveAnalyticsConsentPhase("closed", false, false, true),
+      ).toBe("consentFresh");
     });
   });
 });

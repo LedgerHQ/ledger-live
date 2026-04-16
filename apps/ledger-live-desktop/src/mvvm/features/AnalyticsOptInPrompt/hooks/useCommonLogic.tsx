@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveAnalyticsOptInParams } from "@shared/feature-flags";
 import {
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
@@ -29,6 +30,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
+  const analyticsOptInFlag = useFeature("analyticsOptIn");
+  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
 
   const dispatch = useDispatch();
@@ -75,7 +78,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
-    dispatch(setAnalyticsConsentInfo());
+    dispatch(setAnalyticsConsentInfo(policyVersion));
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });

@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import { render, screen, waitFor, within } from "tests/testSetup";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { AnalyticsConsentDialog } from "../index";
 
@@ -10,7 +9,10 @@ const featureFlagsWithAnalyticsOptIn = {
   ...FEATURE_FLAGS_INITIAL_STATE,
   overrides: {
     ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-    analyticsOptIn: { enabled: true },
+    analyticsOptIn: {
+      ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
+      enabled: true,
+    },
   },
 };
 
@@ -22,7 +24,7 @@ function baseSettings(overrides: Record<string, unknown> = {}) {
     sharePersonalizedRecommandations: false,
     analyticsConsentInfo: {
       consentDate: null,
-      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      privacyPolicyVersion: 1,
     },
     ...overrides,
   };
@@ -184,7 +186,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           sharePersonalizedRecommandations: true,
           analyticsConsentInfo: {
             consentDate: new Date().toISOString(),
-            privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
+            privacyPolicyVersion: 0,
           },
         }),
       },
@@ -195,12 +197,8 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
     });
     await user.click(screen.getByRole("button", { name: /got it/i }));
 
-    await waitFor(() => {
-      expect(privacyTitle).not.toBeInTheDocument();
-    });
-    expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
-      CURRENT_PRIVACY_POLICY_VERSION,
-    );
+    await waitFor(() => expect(privacyTitle).not.toBeInTheDocument());
+    expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
   });
 
@@ -221,7 +219,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
     // make sure the link is a11y compliant and does not navigate to a new page
     expect(setPreferencesLink).toHaveAttribute("href", "#");
-    
+
     await user.click(setPreferencesLink);
 
     await waitFor(() => {

@@ -1,7 +1,4 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
-
-/** Ms after `consentDate` to re-prompt; `null`/`Infinity` = never by time. */
-export const CONSENT_RENEWAL_INTERVAL_MS = 365 * 24 * 60 * 60 * 1000;
+import { add, isAfter, isValid, parseISO } from "date-fns";
 
 export type AnalyticsConsentPhase = "closed" | "privacy" | "consentFresh" | "consentReconfirm";
 
@@ -19,27 +16,20 @@ export function resolveAnalyticsConsentPhase(
 
 export function needsPrivacyPolicyAck(
   storedVersion: number | null,
-  currentVersion: number = CURRENT_PRIVACY_POLICY_VERSION,
+  currentVersion: number,
 ): boolean {
   if (storedVersion == null) return true;
   return storedVersion < currentVersion;
 }
 
-function consentDateToMs(consentDateIso: string | null): number | null {
-  if (consentDateIso == null || consentDateIso === "") return null;
-  const t = Date.parse(consentDateIso);
-  return Number.isNaN(t) ? null : t;
-}
-
 export function needsConsentRenewal(
   consentDateIso: string | null,
-  now: number = Date.now(),
-  renewalIntervalMs: number | null = CONSENT_RENEWAL_INTERVAL_MS,
+  consentValidityDays: number,
+  now: Date = new Date(),
 ): boolean {
-  const ms = consentDateToMs(consentDateIso);
-  if (ms == null) return true;
-  if (renewalIntervalMs === null || renewalIntervalMs === Number.POSITIVE_INFINITY) {
-    return false;
-  }
-  return now - ms > renewalIntervalMs;
+  if (consentDateIso == null || consentDateIso === "") return true;
+  const consentDate = parseISO(consentDateIso);
+  if (!isValid(consentDate)) return true;
+  const deadline = add(consentDate, { days: consentValidityDays });
+  return isAfter(now, deadline);
 }
