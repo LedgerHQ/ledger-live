@@ -15,6 +15,7 @@ export enum ScreenName {
   AccountsList = "AccountsList",
   AssetsList = "AssetsList",
   CryptoAddresses = "CryptoAddresses",
+  AgentDetail = "AgentDetail",
   BaanxCardDashboard = "BaanxCardDashboard",
   BaanxCardLogin = "BaanxCardLogin",
   BaanxTransactionHistory = "BaanxTransactionHistory",

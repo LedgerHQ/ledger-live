@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useFiatRates } from "@ledgerhq/baanx";
-import { addTopUp } from "~/reducers/baanxTopUp";
+import { addTopUp, addAgentTopUp } from "~/reducers/baanxTopUp";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import {
   Text,
@@ -65,7 +65,7 @@ export function TopUpAmountScreen({ navigation, route }: Props) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const fiatTicker = counterValueCurrency.ticker ?? "EUR";
   const fiatSymbol = counterValueCurrency.symbol ?? fiatTicker;
-  const { account, parentAccount, baanxAddress, coinTicker } = route.params;
+  const { account, parentAccount, baanxAddress, coinTicker, agentId } = route.params;
 
   const hasAccount = account != null;
   const mainAccount = hasAccount ? getMainAccount(account, parentAccount) : null;
@@ -292,7 +292,11 @@ export function TopUpAmountScreen({ navigation, route }: Props) {
       });
     } else {
       const fiatValue = isFiatMode ? inputNum : inputNum * coinToFiatRate;
-      dispatch(addTopUp(fiatValue));
+      if (agentId) {
+        dispatch(addAgentTopUp({ agentId, amount: fiatValue }));
+      } else {
+        dispatch(addTopUp(fiatValue));
+      }
       showOverlay("loading");
     }
   }, [
@@ -307,6 +311,7 @@ export function TopUpAmountScreen({ navigation, route }: Props) {
     inputNum,
     isFiatMode,
     coinToFiatRate,
+    agentId,
   ]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);

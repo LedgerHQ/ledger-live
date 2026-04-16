@@ -14,6 +14,15 @@ import { selectBaanxTopUpTotal } from "~/reducers/baanxTopUp";
 import { ScreenName, NavigatorName } from "~/const";
 import { type CardData, MOCK_CARDS } from "./mockData";
 import type { TransactionItem } from "./mapCardTransaction";
+import type { AgentData } from "./mockAgentsData";
+import type { CreateAgentFormData } from "./components/CreateAgentBottomSheet";
+import { useAgentsContext } from "../../AgentsContext";
+
+export type { TransactionItem };
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === "object";
@@ -79,6 +88,13 @@ export interface BaanxDashboardViewModel {
   readonly onBlockCard: () => void;
   readonly onCustomizeCard: () => void;
 
+  readonly agents: readonly AgentData[];
+  readonly onNavigateToAgent: (agentId: string) => void;
+  readonly isCreateAgentSheetOpen: boolean;
+  readonly onOpenCreateAgentSheet: () => void;
+  readonly onCloseCreateAgentSheet: () => void;
+  readonly onCreateAgent: (data: CreateAgentFormData) => void;
+
   readonly isRefreshing: boolean;
   readonly onRefresh: () => void;
 }
@@ -90,6 +106,7 @@ export interface BaanxDashboardViewModel {
 export function useBaanxDashboardViewModel(
   accessToken?: string,
   initialTransactionId?: string,
+  navigateToAgent?: (agentId: string) => void,
 ): BaanxDashboardViewModel {
   function fmtDate(dateStr: string | null): string {
     if (!dateStr) return "";
@@ -395,6 +412,52 @@ export function useBaanxDashboardViewModel(
     setStablecoinOrder(data.map(c => c.id));
   }, []);
 
+  // --- Agents ---
+  const { agents, setAgents } = useAgentsContext();
+  const [isCreateAgentSheetOpen, setIsCreateAgentSheetOpen] = useState(false);
+
+  const onOpenCreateAgentSheet = useCallback(() => {
+    setIsCreateAgentSheetOpen(true);
+  }, []);
+
+  const onCloseCreateAgentSheet = useCallback(() => {
+    setIsCreateAgentSheetOpen(false);
+  }, []);
+
+  const ICON_KEYS: AgentData["icon"][] = [
+    "UserCircle",
+    "UserShield",
+    "UserCheck",
+    "UserArrowRight",
+    "UserLock",
+  ];
+
+  const onCreateAgent = useCallback(
+    (data: CreateAgentFormData) => {
+      const newAgent: AgentData = {
+        id: `agent-${Date.now()}`,
+        name: data.name,
+        icon: ICON_KEYS[agents.length % ICON_KEYS.length],
+        status: "idle",
+        balance: 0,
+        pnlPercent: 0,
+        pnlPeriod: "7d",
+        role: data.role,
+        activity: [],
+      };
+      setAgents(prev => [...prev, newAgent]);
+      setIsCreateAgentSheetOpen(false);
+    },
+    [agents.length],
+  );
+
+  const onNavigateToAgent = useCallback(
+    (agentId: string) => {
+      navigateToAgent?.(agentId);
+    },
+    [navigateToAgent],
+  );
+
   // --- Pull to refresh ---
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -446,6 +509,12 @@ export function useBaanxDashboardViewModel(
     onFreezeCard,
     onBlockCard,
     onCustomizeCard,
+    agents,
+    onNavigateToAgent,
+    isCreateAgentSheetOpen,
+    onOpenCreateAgentSheet,
+    onCloseCreateAgentSheet,
+    onCreateAgent,
     isRefreshing,
     onRefresh,
   };

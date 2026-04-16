@@ -10,6 +10,7 @@ export type BaanxTopUpParamList = {
     baanxAddress: string;
     baanxMemo?: string;
     coinTicker: string;
+    agentId?: string;
   };
   [ScreenName.BaanxTopUpSelectDevice]: {
     accountId: string;

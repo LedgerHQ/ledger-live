@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { ActivityIndicator, View, StyleSheet, Pressable, Image } from "react-native";
+import { ActivityIndicator, View, StyleSheet, Image } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import {
   ListItem,
@@ -9,6 +9,7 @@ import {
   ListItemTitle,
   ListItemTrailing,
   Text,
+  Pressable,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -103,12 +104,6 @@ const listItemContentStyle = { flex: 1, minWidth: 0 };
 const styles = StyleSheet.create({
   section: {
     gap: 12,
-    paddingBottom: 24,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
   },
   list: {
     marginHorizontal: -4,
@@ -123,6 +118,11 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     alignItems: "center",
     justifyContent: "center",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 

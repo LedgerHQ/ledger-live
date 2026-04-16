@@ -7,6 +7,8 @@ import CardSection from "./components/CardSection";
 import BalanceTilesSection from "./components/BalanceTilesSection";
 import PayWithSection from "./components/PayWithSection";
 import TransactionsSection from "./components/TransactionsSection";
+import AgentsSection from "./components/AgentsSection";
+import CreateAgentBottomSheet from "./components/CreateAgentBottomSheet";
 import SettingsBottomSheet from "./components/SettingsBottomSheet";
 import TransactionDetailBottomSheet from "./components/TransactionDetailBottomSheet";
 import type { BaanxDashboardViewModel } from "./useBaanxDashboardViewModel";
@@ -51,6 +53,12 @@ const BaanxDashboardScreenView = ({
   onFreezeCard,
   onBlockCard,
   onCustomizeCard,
+  agents,
+  onNavigateToAgent,
+  isCreateAgentSheetOpen,
+  onOpenCreateAgentSheet,
+  onCloseCreateAgentSheet,
+  onCreateAgent,
   isRefreshing,
   onRefresh,
 }: Readonly<BaanxDashboardViewModel>) => {
@@ -129,6 +137,12 @@ const BaanxDashboardScreenView = ({
           onSelectTransaction={onSelectTransaction}
           onViewAllTransactions={onViewAllTransactions}
         />
+
+        <AgentsSection
+          agents={agents}
+          onAgentPress={onNavigateToAgent}
+          onCreateAgent={onOpenCreateAgentSheet}
+        />
       </ScrollView>
 
       <SettingsBottomSheet
@@ -145,6 +159,12 @@ const BaanxDashboardScreenView = ({
         transaction={selectedTransaction}
         isOpen={isTransactionDetailOpen}
         onClose={onCloseTransactionDetail}
+      />
+
+      <CreateAgentBottomSheet
+        isOpen={isCreateAgentSheetOpen}
+        onClose={onCloseCreateAgentSheet}
+        onSubmit={onCreateAgent}
       />
     </View>
   );

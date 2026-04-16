@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -30,6 +30,17 @@ export const BaanxDashboardScreen = () => {
     }
   }, [transactionId, navigation]);
 
-  const viewModel = useBaanxDashboardViewModel(accessToken ?? undefined, transactionId);
+  const navigateToAgent = useCallback(
+    (agentId: string) => {
+      navigation.navigate(ScreenName.AgentDetail, { agentId });
+    },
+    [navigation],
+  );
+
+  const viewModel = useBaanxDashboardViewModel(
+    accessToken ?? undefined,
+    transactionId,
+    navigateToAgent,
+  );
   return <BaanxDashboardScreenView {...viewModel} />;
 };

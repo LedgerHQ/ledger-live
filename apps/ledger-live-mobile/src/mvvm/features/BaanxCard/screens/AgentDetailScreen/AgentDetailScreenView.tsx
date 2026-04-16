@@ -1,0 +1,78 @@
+import React, { memo, useMemo } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import AgentHeaderSection from "./components/AgentHeaderSection";
+import AgentBalanceSection from "./components/AgentBalanceSection";
+import AgentRoleSection from "./components/AgentRoleSection";
+import AgentActivitySection from "./components/AgentActivitySection";
+import type { AgentDetailViewModel } from "./useAgentDetailViewModel";
+
+const AgentDetailScreenView = ({
+  name,
+  status,
+  iconComponent,
+  balanceInteger,
+  balanceDecimal,
+  pnlPercent,
+  pnlPeriod,
+  pnlIsPositive,
+  role,
+  activity,
+  onFundAgent,
+  onWithdraw,
+}: Readonly<AgentDetailViewModel>) => {
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+
+  const scrollContentStyle = useMemo(
+    () => [styles.container, { paddingBottom: insets.bottom + 32 }],
+    [insets.bottom],
+  );
+
+  return (
+    <View style={[styles.root, { backgroundColor: theme.colors.bg.base }]}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={scrollContentStyle}
+        showsVerticalScrollIndicator={false}
+      >
+        <AgentHeaderSection
+          name={name}
+          status={status}
+          iconComponent={iconComponent}
+          onFundAgent={onFundAgent}
+          onWithdraw={onWithdraw}
+        />
+
+        <AgentBalanceSection
+          balanceInteger={balanceInteger}
+          balanceDecimal={balanceDecimal}
+          pnlPercent={pnlPercent}
+          pnlPeriod={pnlPeriod}
+          pnlIsPositive={pnlIsPositive}
+        />
+
+        <AgentRoleSection role={role} />
+
+        <AgentActivitySection activity={activity} />
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  container: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    gap: 16,
+  },
+});
+
+export default memo(AgentDetailScreenView);
