@@ -1,6 +1,8 @@
-import * as bip32 from "bip32";
+import ecc from "@bitcoinerlab/secp256k1";
+import BIP32Factory from "bip32";
 import * as bip39 from "bip39";
 import * as bitcoin from "bitcoinjs-lib";
+import { ECPairFactory } from "ecpair";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
@@ -14,6 +16,11 @@ import * as utils from "../utils";
 import { InputInfo, OutputInfo, DerivationModes } from "../types";
 import { Merge } from "../pickingstrategies/Merge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+
+const bip32 = BIP32Factory(ecc);
+const ECPair = ECPairFactory(ecc);
+const verifyEcdsa = (pubkey: Buffer, msghash: Buffer, signature: Buffer) =>
+  ecc.verify(msghash, pubkey, signature);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -35,7 +42,7 @@ describe.skip("testing xpub legacy transactions", () => {
     const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
     const node = bip32.fromSeed(seed, network);
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
+      ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
     const xpub = new Xpub({
       storage,
       explorer,
@@ -105,7 +112,6 @@ describe.skip("testing xpub legacy transactions", () => {
       const tx = bitcoin.Transaction.fromHex(i.txHex);
 
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
@@ -120,7 +126,7 @@ describe.skip("testing xpub legacy transactions", () => {
     expect(outputs.length).toEqual(2);
     inputs.forEach((_, i) => {
       psbt.signInput(i, xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]));
-      psbt.validateSignaturesOfInput(i);
+      psbt.validateSignaturesOfInput(i, verifyEcdsa);
     });
     psbt.finalizeAllInputs();
     const rawTxHex = psbt.extractTransaction().toHex();
@@ -209,7 +215,6 @@ describe.skip("testing xpub legacy transactions", () => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
@@ -226,7 +231,7 @@ describe.skip("testing xpub legacy transactions", () => {
     expect(outputs.length).toEqual(3);
     inputs.forEach((_, i) => {
       psbt.signInput(i, xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]));
-      psbt.validateSignaturesOfInput(i);
+      psbt.validateSignaturesOfInput(i, verifyEcdsa);
     });
     psbt.finalizeAllInputs();
     const rawTxHex = psbt.extractTransaction().toHex();
@@ -293,7 +298,7 @@ describe.skip("Build transactions", () => {
     });
 
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
+      ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
 
     return {
       storage,
@@ -328,7 +333,6 @@ describe.skip("Build transactions", () => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
