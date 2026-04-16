@@ -800,6 +800,20 @@ jobs:
           DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
           echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
 
+      - name: Monitor system load during tests
+        if: always()
+        run: |
+          top -b -n 1 -o %CPU | head -30
+          ps aux --sort=-%cpu | head -20
+
+      - name: Stop netsimd before E2E
+        run: pkill netsimd || true
+
+      - name: Watch emulator processes
+        run: |
+          watch -n 5 'ps aux | grep emulator | grep -v grep' &
+          echo $! > /tmp/watch_pid
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
@@ -814,6 +828,41 @@ jobs:
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+
+      - name: Stop monitor
+        if: always()
+        run: |
+          kill $(cat /tmp/watch_pid) 2>/dev/null || true
+
+      - name: Post-crash diagnostics
+        if: failure()
+        run: |
+          sudo sysctl kernel.dmesg_restrict
+          sudo dmesg | tail -50
+          sudo dmesg | grep -iE 'oom|killed|out of memory' | tail -20
+          sudo dmesg | grep -iE 'kvm|emulator' | tail -20
+          free -h
+          cat /proc/loadavg
+
+      - name: Check for OOM kills
+        if: always()
+        run: |
+          cat /proc/vmstat | grep oom
+          cat /proc/meminfo | grep -E "MemTotal|MemFree|MemAvailable|SwapTotal"
+
+      - name: Check journal for kills
+        if: always()
+        run: |
+          journalctl -k --since "1 hour ago" | grep -i "killed\|oom\|memory" || \
+          journalctl --since "1 hour ago" | grep -i "killed\|oom" || \
+          echo "journalctl not available"
+
+      - name: Check syslog for kills
+        if: always()
+        run: |
+          sudo grep -i "killed\|oom\|out of memory" /var/log/syslog | tail -20 || \
+          sudo grep -i "killed\|oom\|out of memory" /var/log/kern.log | tail -20 || \
+          echo "syslog not accessible"
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
