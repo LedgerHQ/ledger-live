@@ -171,6 +171,7 @@ export const getTransactionStatus: AccountBridge<
         estimatedFees: feesForTotalSpent,
         amount,
         totalSpent,
+        feeCurrencyAccountId: transaction.feeCurrencyAccountId,
       };
     }
   }
@@ -181,6 +182,7 @@ export const getTransactionStatus: AccountBridge<
     estimatedFees: feesForTotalSpent,
     amount,
     totalSpent,
+    feeCurrencyAccountId: transaction.feeCurrencyAccountId,
   };
 };
 

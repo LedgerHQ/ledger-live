@@ -5812,6 +5812,9 @@
     "alerts": {
       "withdrawableAssets": "You have a withdrawable balance.",
       "activatableVotes": "You have votes that can now be activated."
+    },
+    "send": {
+      "feeCurrency": "Fee currency"
     }
   },
   "cosmos": {
