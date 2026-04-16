@@ -5,26 +5,31 @@ description: Official Ledger wallet-cli — USB-based CLI for Ledger hardware wa
 
 # wallet-cli usage guide
 
-`wallet-cli` is an experimental USB-based CLI for Ledger wallet flows, built on the Device Management Kit (DMK). Supported networks: **bitcoin**, **ethereum**, **solana** (mainnet and testnets).
+`wallet-cli` is an experimental USB-based CLI for Ledger wallet flows, built on the Device Management Kit (DMK). Supported networks: **bitcoin**, **ethereum**, **base**, **solana** (mainnet and testnets). On Ledger devices, **Base uses the Ethereum app**.
 
-**Prerequisites:** Ledger device connected via USB, target coin app open on device (for commands that require it).
+> **Device contention:** Only one command can use the device at a time. Never run two device-required commands in parallel — they will conflict and fail with `[object Object]` or a garbled APDU error. Run device commands sequentially.
+
+**Prerequisites:** Ledger device connected via USB, with the relevant coin app open on device for commands that require it (**Base requires opening the Ethereum app**).
 
 **Run from repo root:**
+
 ```bash
 pnpm --silent wallet-cli start <command> [flags]
 ```
+
+> **Sandbox:** Commands that open the USB device (`account discover`, `receive`, `send`) **must** be run with `dangerouslyDisableSandbox: true` in the Bash tool — the sandbox blocks USB access and causes a `Timeout has occurred` error. Commands that don't need the device (`balances`, `operations`, `send --dry-run`) work fine in the sandbox.
 
 ---
 
 ## Commands at a glance
 
-| Command | Device required |
-|---------|----------------|
-| `account discover` | Yes |
-| `receive` | Yes (optional with `--no-verify`) |
-| `send` | Yes (no device with `--dry-run`) |
-| `balances` | No |
-| `operations` | No |
+| Command            | Device required                   | Disable sandbox              |
+| ------------------ | --------------------------------- | ---------------------------- |
+| `account discover` | Yes                               | **Yes**                      |
+| `receive`          | Yes (optional with `--no-verify`) | **Yes**                      |
+| `send`             | Yes (unless `--dry-run`)          | **Yes** (unless `--dry-run`) |
+| `balances`         | No                                | No                           |
+| `operations`       | No                                | No                           |
 
 ---
 
@@ -39,6 +44,7 @@ account:1:<type>:<network>:<env>:<xpub_or_address>:<path>
 Hardened segments use `h` (shell-safe). `'` is also accepted for backward compatibility.
 
 Examples:
+
 ```
 account:1:utxo:bitcoin:main:xpub6BosfCn...:m/84h/0h/0h
 account:1:address:ethereum:main:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44h/60h/0h/0/0
@@ -56,11 +62,13 @@ All commands (`balances`, `operations`, `receive`, `send`) accept V1 descriptors
 
 ```bash
 pnpm --silent wallet-cli start account discover bitcoin
-pnpm --silent wallet-cli start account discover ethereum:goerli
-pnpm --silent wallet-cli start account discover --network bitcoin --output json
+pnpm --silent wallet-cli start account discover ethereum
+pnpm --silent wallet-cli start account discover base
+pnpm --silent wallet-cli start account discover ethereum:sepolia
+pnpm --silent wallet-cli start account discover bitcoin --output json
 ```
 
-Network forms: `bitcoin` (= mainnet), `ethereum:mainnet` (alias → `main`), `ethereum:goerli`, `bitcoin:testnet` (env → `testnet`), `solana:devnet` (env → `devnet`).
+Network forms: `bitcoin` (= mainnet), `ethereum:mainnet` (alias → `main`), `base`, `ethereum:sepolia`, `bitcoin:testnet` (env → `testnet`), `solana:devnet` (env → `devnet`).
 
 Human output: one account per line with fresh address and V1 descriptor to copy.
 JSON output: `{ "accounts": ["account:1:utxo:bitcoin:main:xpub...:m/84h/0h/0h", ...] }`
@@ -125,28 +133,28 @@ Ticker is **mandatory** in `--amount` (e.g. `'0.5 ETH'`, `'0.001 BTC'`). It driv
 
 ### All families
 
-| Flag | Description |
-|------|-------------|
-| `--amount '<value> <TICKER>'` | Required. e.g. `'0.001 BTC'`, `'0.01 ETH'`, `'0.4 USDT'` |
-| `--to <address>` | Required. Recipient address |
-| `--dry-run` | Prepare and validate without signing or opening the device |
-| `--output json` | Machine-readable JSON output |
+| Flag                          | Description                                                |
+| ----------------------------- | ---------------------------------------------------------- |
+| `--amount '<value> <TICKER>'` | Required. e.g. `'0.001 BTC'`, `'0.01 ETH'`, `'0.4 USDT'`   |
+| `--to <address>`              | Required. Recipient address                                |
+| `--dry-run`                   | Prepare and validate without signing or opening the device |
+| `--output json`               | Machine-readable JSON output                               |
 
 ### Bitcoin only
 
-| Flag | Description |
-|------|-------------|
+| Flag                        | Description                     |
+| --------------------------- | ------------------------------- |
 | `--fee-per-byte <satoshis>` | Custom fee per byte in satoshis |
-| `--rbf` | Enable Replace-By-Fee |
+| `--rbf`                     | Enable Replace-By-Fee           |
 
 ### Solana only
 
-| Flag | Description |
-|------|-------------|
-| `--mode <mode>` | `send`, `stake.createAccount`, `stake.delegate`, `stake.undelegate`, `stake.withdraw` (default: `send`) |
-| `--validator <address>` | Validator address (staking flows) |
-| `--stake-account <address>` | Stake account address (staking flows) |
-| `--memo <text>` | Memo/tag |
+| Flag                        | Description                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `--mode <mode>`             | `send`, `stake.createAccount`, `stake.delegate`, `stake.undelegate`, `stake.withdraw` (default: `send`) |
+| `--validator <address>`     | Validator address (staking flows)                                                                       |
+| `--stake-account <address>` | Stake account address (staking flows)                                                                   |
+| `--memo <text>`             | Memo/tag                                                                                                |
 
 ---
 
@@ -155,6 +163,7 @@ Ticker is **mandatory** in `--amount` (e.g. `'0.5 ETH'`, `'0.001 BTC'`). It driv
 All commands: `--output human` (default) or `--output json`.
 
 JSON envelope shape:
+
 ```json
 {
   "status": "success",
@@ -167,6 +176,7 @@ JSON envelope shape:
 ```
 
 Command-specific payloads:
+
 - `account discover`: `{ "accounts": ["account:1:...", ...] }`
 - `balances`: `{ "balances": [{ "asset": "ethereum", "amount": "1.5 ETH" }, ...] }`
 - `operations`: `{ "operations": [{ "accountId": "account:1:...", "value": "0.1 ETH", "fee": "...", ... }], "nextCursor": "..." }`
@@ -179,10 +189,10 @@ Error envelope: `{ "status": "error", "message": "...", ... }` — exit code non
 
 ## Common errors
 
-| Error | Cause |
-|-------|-------|
-| `Amount must include a ticker, e.g. '0.5 ETH' or '0.001 BTC'` | `--amount` given a bare number |
-| `Ticker UNKN not found in account. Available: ETH, USDT, ...` | Ticker not in account balances |
-| `No currencyId mapping for network "x:y"` | Unsupported network/env combination |
-| `UnknownDeviceExchangeError` | Device not connected or coin app not open |
-| `[x] Transaction Cancelled: Rejected on device. No funds moved.` | User rejected on device |
+| Error                                                            | Cause                                     |
+| ---------------------------------------------------------------- | ----------------------------------------- |
+| `Amount must include a ticker, e.g. '0.5 ETH' or '0.001 BTC'`    | `--amount` given a bare number            |
+| `Ticker UNKN not found in account. Available: ETH, USDT, ...`    | Ticker not in account balances            |
+| `No currencyId mapping for network "x:y"`                        | Unsupported network/env combination       |
+| `UnknownDeviceExchangeError`                                     | Device not connected or coin app not open |
+| `[x] Transaction Cancelled: Rejected on device. No funds moved.` | User rejected on device                   |
