@@ -4,11 +4,11 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { useOnboardingWidgetVisibility } from "../useOnboardingWidgetVisibility";
 import subDays from "date-fns/subDays";
 
-jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
+jest.mock("@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet");
 const mockedEntryPointVisible = jest.mocked(usePostOnboardingEntryPointVisibleOnWallet);
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
