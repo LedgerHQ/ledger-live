@@ -844,6 +844,7 @@ export const DEFAULT_FEATURES: Features = {
       brazePlacement: true,
       aggregatedAssets: true,
       myWallet: true,
+      finishOnboardingWidget: false,
     },
   },
   addressPoisoningOperationsFilter: {
