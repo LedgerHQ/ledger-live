@@ -39,7 +39,10 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import {
+  needsConsentRenewal,
+  resolveAnalyticsOptInParams,
+} from "@ledgerhq/live-common/analyticsConsent/index";
 
 /* Initial state */
 
@@ -253,6 +256,8 @@ export const AFTER_ONBOARDING_STATE: SettingsState = {
 
 type HandlersPayloads = {
   SAVE_SETTINGS: Partial<SettingsState>;
+  /** Merges into `analyticsConsentInfo` and keeps `lastAnalyticsConsentDate` / `privacyPolicyVersion` in sync. */
+  SAVE_ANALYTICS_CONSENT_INFO: Partial<AnalyticsConsentInfo>;
   FETCH_SETTINGS: Partial<SettingsState>;
   SETTINGS_DISMISS_BANNER: string;
   SHOW_TOKEN: string;
@@ -321,40 +326,33 @@ const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     const filteredPayload = filterValidSettings(payload);
-
-    let mergedPayload: Partial<SettingsState> = filteredPayload;
-    if (filteredPayload.analyticsConsentInfo !== undefined) {
-      mergedPayload = {
-        ...filteredPayload,
-        analyticsConsentInfo: {
-          ...state.analyticsConsentInfo,
-          ...filteredPayload.analyticsConsentInfo,
-        },
-      };
-    }
+    const { analyticsConsentInfo: _ignoredAnalyticsConsent, ...rest } = filteredPayload;
+    void _ignoredAnalyticsConsent;
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(mergedPayload) as (keyof typeof mergedPayload)[]).some(key => {
-      if (key === "analyticsConsentInfo" && mergedPayload.analyticsConsentInfo !== undefined) {
-        const m = mergedPayload.analyticsConsentInfo;
-        return (
-          m.consentDate !== state.analyticsConsentInfo.consentDate ||
-          m.privacyPolicyVersion !== state.analyticsConsentInfo.privacyPolicyVersion
-        );
-      }
-      return mergedPayload[key] !== state[key];
-    });
+    const changed = (Object.keys(rest) as (keyof typeof rest)[]).some(
+      key => rest[key] !== state[key],
+    );
     if (!changed) return state;
 
-    const next: SettingsState = {
-      ...state,
-      ...mergedPayload,
-    };
-    if (mergedPayload.analyticsConsentInfo !== undefined) {
-      next.lastAnalyticsConsentDate = mergedPayload.analyticsConsentInfo.consentDate;
-      next.privacyPolicyVersion = mergedPayload.analyticsConsentInfo.privacyPolicyVersion;
+    return { ...state, ...rest };
+  },
+
+  SAVE_ANALYTICS_CONSENT_INFO: (state, { payload }) => {
+    if (!payload) return state;
+    const merged: AnalyticsConsentInfo = { ...state.analyticsConsentInfo, ...payload };
+    if (
+      merged.consentDate === state.analyticsConsentInfo.consentDate &&
+      merged.privacyPolicyVersion === state.analyticsConsentInfo.privacyPolicyVersion
+    ) {
+      return state;
     }
-    return next;
+    return {
+      ...state,
+      analyticsConsentInfo: merged,
+      lastAnalyticsConsentDate: merged.consentDate,
+      privacyPolicyVersion: merged.privacyPolicyVersion,
+    };
   },
 
   FETCH_SETTINGS: (state, { payload: settings }) => {
@@ -770,27 +768,18 @@ export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo
     privacyPolicyVersion: null,
   };
 
-// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
+// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the consent window must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
+  const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
 
-  if (state.featureFlags?.resolved?.analyticsOptIn?.enabled) {
+  if (analyticsOptIn?.enabled) {
     if (!s.lastAnalyticsConsentDate) {
       return false;
     }
 
-    const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
-    if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
-      return false;
-    }
-
-    const now = new Date();
-    // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
-    const oneYearAgo = new Date(now.getTime());
-
-    oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
-
-    if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
+    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
+    if (needsConsentRenewal(s.lastAnalyticsConsentDate, consentValidityDays)) {
       return false;
     }
   }
