@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.2.0-next.1
+
+### Minor Changes
+
+- [#16410](https://github.com/LedgerHQ/ledger-live/pull/16410) [`ded8350`](https://github.com/LedgerHQ/ledger-live/commit/ded8350d18be6d332a9d0a68b6b5380729ec7d87) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: disable async chunk creation in re-pack to prevent chunk loading errors
+
 ## 4.2.0-next.0
 
 ### Minor Changes

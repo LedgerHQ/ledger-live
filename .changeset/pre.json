@@ -221,6 +221,7 @@
     "fix-coin-cosmos-cryptofactory-coinconfig",
     "fix-crypto-addresses-tracking",
     "fix-evm-internal-root-trace-dedup",
+    "fix-mobile-repack-async-chunks",
     "flat-trainers-fail",
     "forty-apes-drum",
     "forty-moose-reflect",
