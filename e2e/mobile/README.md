@@ -13,7 +13,7 @@ Dev teams are responsible for **adding/updating tests** for new features.
 ### 1. Prerequisites
 
 - macOS (required for iOS development)
-- Android Studio (with AVD: Pixel 6 / API 35 recommended)
+- Android Studio (with AVD: Pixel 9 Pro XL / API 36 recommended)
 - Xcode ≥ 16.2 (for iOS)
 - Read the e2e environment [guide](https://ledgerhq.atlassian.net/wiki/spaces/QA/pages/6945013939/Ledger+Wallet+E2E+Environment)❗
 - Docker Desktop installed and running (Speculos runs in Docker)
