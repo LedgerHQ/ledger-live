@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       affected_paths:
-        description: "Comma-separated list of affected paths from Turbo"
+        description: "Newline/comma-separated list of affected paths from Nx/Turbo"
         required: true
         type: string
 
@@ -27,7 +27,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const paths = '${{ inputs.affected_paths }}';
+            const pathsInput = ${{ toJSON(inputs.affected_paths) }};
+            const paths = String(pathsInput || "")
+              .split(/\r?\n|,/)
+              .map(path => path.trim())
+              .filter(Boolean);
+            const hasAffectedPath = needle =>
+              paths.some(path => path === needle || path.startsWith(`${needle}/`) || path.includes(needle));
 
             // Get all changed files to check for dependency updates
             const { data: files } = await github.rest.pulls.listFiles({
@@ -45,7 +51,7 @@ jobs:
                 filename.startsWith('libs/coin-framework/') && filename.endsWith('/package.json')
               );
             });
-            
+
             // Get affected coin modules
             const affectedCoins = new Set();
             files.forEach(f => {
@@ -54,29 +60,29 @@ jobs:
                 affectedCoins.add(coinMatch[1]);
               }
             });
-            
+
             // Check if changes are ONLY in specific coin modules (no LLC, coin-framework, or app changes)
             const onlyCoinsChanged = affectedCoins.size > 0 && 
-                                     !paths.includes('ledger-live-common') &&
-                                     !paths.includes('coin-framework') &&
-                                     !paths.includes('ledger-live-desktop') &&
-                                     !paths.includes('ledger-live-mobile') &&
+                                     !hasAffectedPath('libs/ledger-live-common') &&
+                                     !hasAffectedPath('libs/coin-framework') &&
+                                     !hasAffectedPath('apps/ledger-live-desktop') &&
+                                     !hasAffectedPath('apps/ledger-live-mobile') &&
                                      !criticalLibsChanged;
-            
-            const requiresDesktopE2E = paths.includes('ledger-live-desktop') || 
-                                       paths.includes('ledger-live-common') ||
-                                       paths.includes('coin-framework') ||
+
+            const requiresDesktopE2E = hasAffectedPath('apps/ledger-live-desktop') || 
+                                       hasAffectedPath('libs/ledger-live-common') ||
+                                       hasAffectedPath('libs/coin-framework') ||
                                        criticalLibsChanged ||
-                                       (paths.includes('coin-modules') && !onlyCoinsChanged);
-            
-            const requiresMobileE2E = paths.includes('ledger-live-mobile') ||
-                                      paths.includes('ledger-live-common') ||
-                                      paths.includes('coin-framework') ||
+                                       (hasAffectedPath('libs/coin-modules') && !onlyCoinsChanged);
+
+            const requiresMobileE2E = hasAffectedPath('apps/ledger-live-mobile') ||
+                                      hasAffectedPath('libs/ledger-live-common') ||
+                                      hasAffectedPath('libs/coin-framework') ||
                                       criticalLibsChanged ||
-                                      (paths.includes('coin-modules') && !onlyCoinsChanged);
-            
+                                      (hasAffectedPath('libs/coin-modules') && !onlyCoinsChanged);
+
             const needsE2E = requiresDesktopE2E || requiresMobileE2E || onlyCoinsChanged;
-            
+
             core.setOutput('needs_e2e', needsE2E);
             core.setOutput('desktop', requiresDesktopE2E);
             core.setOutput('mobile', requiresMobileE2E);
@@ -92,10 +98,10 @@ jobs:
             const mobile = '${{ steps.analyze.outputs.mobile }}' === 'true';
             const onlyCoins = '${{ steps.analyze.outputs.only_coins }}' === 'true';
             const coins = '${{ steps.analyze.outputs.coins }}';
-            
+
             const workflowUrl = 'https://github.com/LedgerHQ/ledger-live/actions/workflows';
             const branch = context.payload.pull_request.head.ref;
-            
+
             // Helper function to build E2E section
             const buildE2ESection = (platform, workflowName, device, isTargeted) => {
               const emoji = platform === 'Desktop' ? '🖥️' : '📱';
@@ -111,10 +117,10 @@ jobs:
               section += '\n';
               return section;
             };
-            
+
             let message = '## ⚠️ E2E tests are required\n\n';
             message += 'Changes detected require e2e testing before merge (even before asking for any review).\n\n';
-            
+
             if (onlyCoins && coins) {
               // Targeted E2E for specific coin modules only
               message += '### 🎯 Targeted E2E Tests (Coin Modules Only)\n\n';
@@ -127,28 +133,28 @@ jobs:
               if (desktop) {
                 message += buildE2ESection('Desktop', 'test-ui-e2e-only-desktop.yml', 'nanoSP or stax', false);
               }
-            
+
               if (mobile) {
                 message += buildE2ESection('Mobile', 'test-mobile-e2e-reusable.yml', 'nanoX', false);
               }
-            
+
               if (coins) {
                 message += `**Affected coins modules:** \`${coins}\`\n\n`;
               }
             }
-            
+
             // Check if the bot already commented the PR
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            
+
             const botComment = comments.find(c => 
               c.user.type === 'Bot' && 
               c.body.includes('E2E tests are required')
             );
-            
+
             if (botComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
