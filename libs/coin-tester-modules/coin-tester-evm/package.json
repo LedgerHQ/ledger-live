@@ -56,8 +56,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "start:debug": "DOTENV_CONFIG_PATH=.env node --inspect-brk ./node_modules/jest/bin/jest.js --runTestsByPath src/*.test.ts --runInBand",
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -72,14 +71,12 @@
     "bignumber.js": "^9.1.2",
     "bip39": "^3.1.0",
     "docker-compose": "^1.1.0",
-    "dotenv": "^16.4.5",
     "ethers": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
-    "dotenv": "^16.4.5",
     "jest": "catalog:",
     "rimraf": "^5.0.5",
     "@swc/jest": "catalog:",
