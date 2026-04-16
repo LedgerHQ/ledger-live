@@ -35,7 +35,6 @@ import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
-import { ActionConfirmationDialog } from "./modals/ActionConfirmationDialog";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
@@ -483,7 +482,6 @@ export default function Default() {
               <WalletSyncProvider>
                 <ContextMenuWrapper>
                   <ModalsLayer />
-                  <ActionConfirmationDialog />
                   <DebugWrapper>
                     {process.env.MOCK ? <DebugMock /> : null}
                     {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}

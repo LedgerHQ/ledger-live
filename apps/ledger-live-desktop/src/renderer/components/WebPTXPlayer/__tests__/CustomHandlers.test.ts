@@ -1,11 +1,10 @@
 import { createDialogInfoHandler } from "../CustomHandlers";
 import {
-  getActionDialogSnapshot,
-  subscribeActionDialog,
   resolveActionDialog,
-  showActionDialog,
+  createOpenActionDialogHandler,
 } from "../actionDialogStore";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
+import { setActionDialog } from "~/renderer/reducers/actionDialog";
 
 describe("createDialogInfoHandler", () => {
   it("should dispatch setPtxInfoDialog with validated params", async () => {
@@ -59,61 +58,92 @@ describe("createDialogInfoHandler", () => {
   });
 });
 
-describe("action dialog store", () => {
+describe("createOpenActionDialogHandler", () => {
   afterEach(() => {
-    // Clean up any pending state between tests
     resolveActionDialog(false);
   });
 
-  it("should start with null snapshot", () => {
-    expect(getActionDialogSnapshot()).toBeNull();
-  });
+  it("should dispatch setActionDialog with validated params and return a promise", async () => {
+    const dispatch = jest.fn();
+    const handler = createOpenActionDialogHandler(dispatch);
 
-  it("should notify subscribers when resolveActionDialog is called", () => {
-    const listener = jest.fn();
-    const unsubscribe = subscribeActionDialog(listener);
-
-    resolveActionDialog(false);
-
-    expect(listener).toHaveBeenCalled();
-    unsubscribe();
-  });
-
-  it("should unsubscribe correctly", () => {
-    const listener = jest.fn();
-    const unsubscribe = subscribeActionDialog(listener);
-    unsubscribe();
-
-    resolveActionDialog(false);
-
-    expect(listener).not.toHaveBeenCalled();
-  });
-
-  it("should reset snapshot to null after resolveActionDialog", () => {
-    showActionDialog({
-      title: "Test",
-      description: "Test description",
-      ctaLabel: "Confirm",
+    const promise = handler({
+      params: {
+        title: "Swap required",
+        description: "You need to swap first",
+        ctaLabel: "Go to Swap",
+      },
     });
 
-    expect(getActionDialogSnapshot()).not.toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      setActionDialog({
+        title: "Swap required",
+        description: "You need to swap first",
+        ctaLabel: "Go to Swap",
+      }),
+    );
 
+    // Resolve the pending dialog
     resolveActionDialog(true);
-
-    expect(getActionDialogSnapshot()).toBeNull();
+    const result = await promise;
+    expect(result).toEqual({ confirmed: true });
   });
 
-  it("should notify multiple subscribers", () => {
-    const listener1 = jest.fn();
-    const listener2 = jest.fn();
-    const unsub1 = subscribeActionDialog(listener1);
-    const unsub2 = subscribeActionDialog(listener2);
+  it("should dismiss previous dialog when opening a new one", async () => {
+    const dispatch = jest.fn();
+    const handler = createOpenActionDialogHandler(dispatch);
 
-    resolveActionDialog(false);
+    const firstPromise = handler({
+      params: {
+        title: "First",
+        description: "First dialog",
+        ctaLabel: "OK",
+      },
+    });
 
-    expect(listener1).toHaveBeenCalled();
-    expect(listener2).toHaveBeenCalled();
-    unsub1();
-    unsub2();
+    const secondPromise = handler({
+      params: {
+        title: "Second",
+        description: "Second dialog",
+        ctaLabel: "OK",
+      },
+    });
+
+    // First dialog should have been auto-dismissed
+    const firstResult = await firstPromise;
+    expect(firstResult).toEqual({ confirmed: false });
+
+    // Resolve the second dialog
+    resolveActionDialog(true);
+    const secondResult = await secondPromise;
+    expect(secondResult).toEqual({ confirmed: true });
+  });
+
+  it("should clear Redux state when resolving", async () => {
+    const dispatch = jest.fn();
+    const handler = createOpenActionDialogHandler(dispatch);
+
+    const promise = handler({
+      params: {
+        title: "Test",
+        description: "Test description",
+        ctaLabel: "Confirm",
+      },
+    });
+
+    resolveActionDialog(true);
+    await promise;
+
+    expect(dispatch).toHaveBeenCalledWith(setActionDialog(null));
+  });
+
+  it("should propagate validation errors", async () => {
+    const dispatch = jest.fn();
+    const handler = createOpenActionDialogHandler(dispatch);
+
+    await expect(handler({} as Parameters<typeof handler>[0])).rejects.toThrow(
+      "Invalid params for custom.dialog.confirmation: params are required.",
+    );
+    expect(dispatch).not.toHaveBeenCalled();
   });
 });

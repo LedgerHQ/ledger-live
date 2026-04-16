@@ -43,9 +43,7 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
-import { showActionDialog } from "./actionDialogStore";
-import { sanitizeActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
-import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
+import { createOpenActionDialogHandler } from "./actionDialogStore";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -367,7 +365,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           throw error;
         }
       },
-      "custom.dialog.confirmation": createActionDialogHandler(),
+      "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
       "custom.syncAccount": async request => {
         const { fromAccountId, toAccountId } = request.params || {};
         if (!fromAccountId || !toAccountId) {
@@ -411,9 +409,3 @@ export function createDialogInfoHandler(dispatch: Dispatch) {
   };
 }
 
-export function createActionDialogHandler() {
-  return async (request: { params?: ActionDialogParams }): Promise<{ confirmed: boolean }> => {
-    const validated = sanitizeActionDialogParams(request.params, "custom.dialog.confirmation");
-    return showActionDialog(validated);
-  };
-}
