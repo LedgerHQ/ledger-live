@@ -301,6 +301,11 @@ const extraProperties = (store: ReduxStore) => {
     osType,
     osVersion,
     sessionId,
+    distributionChannel: process.mas
+      ? "mac-app-store"
+      : process.windowsStore
+        ? "windows-store"
+        : "direct",
     sidebarCollapsed,
     accountsWithFunds,
     tokenWithFunds,

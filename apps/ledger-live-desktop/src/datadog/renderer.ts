@@ -120,6 +120,11 @@ export async function initDatadog(
     datadogRum.setGlobalContext({
       git_commit: __GIT_REVISION__,
       process: globalThis.window === undefined ? "main" : "renderer",
+      distributionChannel: process.mas
+        ? "mac-app-store"
+        : process.windowsStore
+          ? "windows-store"
+          : "direct",
     });
 
     initialized = true;

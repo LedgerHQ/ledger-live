@@ -127,6 +127,11 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
         osType: os.type(),
         osRelease: os.release(),
         process: process?.title || "",
+        distributionChannel: process.mas
+          ? "mac-app-store"
+          : process.windowsStore
+            ? "windows-store"
+            : "direct",
       },
       user: {
         ip_address: undefined,
