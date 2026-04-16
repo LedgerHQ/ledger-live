@@ -141,6 +141,9 @@ export default withRozeniteUrlFix(
         mode,
         context: __dirname,
         entry: "./index.js",
+        // Mobile uses a single Hermes bytecode bundle — async chunks are not supported
+        // and hurt performance with Hermes. Disable async chunk creation globally.
+        output: { asyncChunks: false },
         resolve: {
           ...Repack.getResolveOptions(platform, {
             enablePackageExports: true,
