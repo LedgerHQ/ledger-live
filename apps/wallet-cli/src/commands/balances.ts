@@ -1,70 +1,32 @@
-import { defineCommand, option } from "@bunli/core";
-import { z } from "zod";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
+import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../wallet";
-import { HumanFormatter, JsonFormatter } from "../wallet/formatter";
-import { parseAccountDescriptor, resolveAccountArg, OutputFormatSchema } from "../wallet/models";
+import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
-import { withSpinner, writeStdout } from "../shared/ui";
-import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
+import { createCommandOutput } from "../output";
+import { accountOption, outputOption } from "./shared-options";
 
 export default defineCommand({
   name: "balances",
   description: "Fetch native and token balances for an account descriptor (no device required)",
   options: {
-    account: option(z.string().min(1).optional(), {
-      description:
-        "Short account descriptor (output of account discover), or pass as first positional arg",
-      short: "a",
-    }),
-    output: option(OutputFormatSchema.default("human"), {
-      description: "Output format: human (default) or json",
-    }),
+    account: accountOption,
+    output: outputOption,
   },
   handler: async ({ flags, positional }) => {
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
     const network = networkStringFromCurrencyId(descriptor.currencyId);
     walletCliDebug(`balances: account=${descriptor.id}, output=${flags.output}`);
     const wallet = new WalletAdapter();
-    const isHuman = flags.output === "human";
+    const out = createCommandOutput(flags.output, { command: "balances", network, account: descriptor.id });
 
-    try {
-      const balances = await withSpinner(
+    await out.run(async () => {
+      const balances = await out.withActivity(
         `Fetching balances for ${network}…`,
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
-        isHuman,
       );
-
-      const store = getCryptoAssetsStore();
-      const fmt = new HumanFormatter(store);
-      if (isHuman) {
-        for (const b of balances) {
-          const line = await fmt.formatBalance(b);
-          writeStdout(line);
-        }
-      } else {
-        const jsonFmt = new JsonFormatter(fmt);
-        const jsonBalances = await jsonFmt.balances(balances);
-        writeStdout(
-          JSON.stringify(
-            makeEnvelope("balances", network, { balances: jsonBalances }, descriptor.id),
-            null,
-            2,
-          ),
-        );
-      }
-    } catch (e) {
-      if (isHuman) throw e;
-      writeStdout(
-        JSON.stringify(
-          makeErrorEnvelope("balances", HumanFormatter.formatError(e), network),
-          null,
-          2,
-        ),
-      );
-      process.exit(1);
-    }
+      await out.balances(balances);
+    });
   },
 });
