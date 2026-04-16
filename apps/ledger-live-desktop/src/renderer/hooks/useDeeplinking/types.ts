@@ -37,6 +37,8 @@ export interface DeeplinkHandlerContext {
   postOnboardingDeeplinkHandler: PostOnboardingDeeplinkHandlerFn;
   tryRedirectToPostOnboardingOrRecover: TryRedirectToPostOnboardingOrRecoverFn;
   currentPathname: string;
+  /** Feature-flag-aware path to the accounts list screen (`/cryptos` or `/accounts`). */
+  accountsPath: string;
   /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
   recoverAppId?: string;
 }

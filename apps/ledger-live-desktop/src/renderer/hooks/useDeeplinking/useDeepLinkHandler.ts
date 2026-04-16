@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -16,6 +16,7 @@ import { trackDeeplinkingEvent } from "./utils";
 import { parseDeepLink, createRoute } from "./parseDeepLink";
 import { executeHandler } from "./registry";
 import { DeeplinkHandlerContext, NavigateFn } from "./types";
+import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -38,6 +39,8 @@ export function useDeepLinkHandler() {
   const openSendFlow = useOpenSendFlow();
   const recoverFF = useFeature("protectServicesDesktop");
   const recoverAppId = recoverFF?.params?.protectId;
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
+  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const navigate: NavigateFn = useCallback(
     (pathname: string, state?: { [k: string]: string | object }, search?: string) => {
@@ -68,6 +71,7 @@ export function useDeepLinkHandler() {
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
       currentPathname: location.pathname,
+      accountsPath,
       recoverAppId,
     }),
     [
@@ -80,6 +84,7 @@ export function useDeepLinkHandler() {
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
       location.pathname,
+      accountsPath,
       recoverAppId,
     ],
   );
