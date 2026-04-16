@@ -789,7 +789,6 @@ export const DEFAULT_FEATURES: Features = {
       families: [],
     },
   },
-  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,

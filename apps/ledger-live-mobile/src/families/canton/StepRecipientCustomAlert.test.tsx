@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react-native";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import { View, Text } from "react-native";
 import { TooManyUtxosCritical, TooManyUtxosWarning } from "@ledgerhq/coin-canton";
 import {
@@ -50,6 +50,7 @@ jest.mock("~/components/Alert", () => {
 });
 
 jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
   useNavigation: jest.fn(() => createMockNavigation()),
   useRoute: jest.fn(() => ({
     name: ScreenName.SendSelectRecipient,

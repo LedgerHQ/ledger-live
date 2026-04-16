@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { renderHook } from "@tests/test-renderer";
-import { INITIAL_STATE } from "~/reducers/settings";
-import { State } from "~/reducers/types";
 import { useOnboardScreenViewModel } from "../useOnboardScreenViewModel";
 import { createMockAccount, createMockNavigation, createMockRouteParams } from "./test-utils";
 
@@ -13,31 +11,15 @@ const mockObservable = () => ({
 });
 
 const mockOnboardAccount = jest.fn(mockObservable);
-const mockAuthorizePreapproval = jest.fn(mockObservable);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: jest.fn(() => ({
     onboardAccount: mockOnboardAccount,
-    authorizePreapproval: mockAuthorizePreapproval,
   })),
 }));
 
 describe("useOnboardScreenViewModel", () => {
   const mockNavigation = createMockNavigation();
-
-  const overrideInitialStateWithFeatureFlag = (state: State): State => ({
-    ...state,
-    settings: {
-      ...INITIAL_STATE,
-      ...state.settings,
-    },
-    featureFlags: {
-      ...state.featureFlags,
-      overrides: {
-        cantonSkipPreapprovalStep: { enabled: false },
-      },
-    },
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,15 +29,11 @@ describe("useOnboardScreenViewModel", () => {
     const routeParams = createMockRouteParams();
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.onboardingStatus).toBe(OnboardStatus.INIT);
@@ -73,15 +51,11 @@ describe("useOnboardScreenViewModel", () => {
     });
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.accountsToDisplay).toEqual([reonboardAccount]);
@@ -96,15 +70,11 @@ describe("useOnboardScreenViewModel", () => {
     });
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.accountsToDisplay).toEqual([account1, account2]);
@@ -115,15 +85,11 @@ describe("useOnboardScreenViewModel", () => {
     const routeParams = createMockRouteParams();
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.isProcessing).toBe(false);
@@ -133,15 +99,11 @@ describe("useOnboardScreenViewModel", () => {
     const routeParams = createMockRouteParams();
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.confirmDisabled).toBe(true);
@@ -155,15 +117,11 @@ describe("useOnboardScreenViewModel", () => {
     });
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.confirmDisabled).toBe(false);
@@ -173,15 +131,11 @@ describe("useOnboardScreenViewModel", () => {
     const routeParams = createMockRouteParams();
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(typeof result.current.retryOnboarding).toBe("function");
@@ -191,15 +145,11 @@ describe("useOnboardScreenViewModel", () => {
     const routeParams = createMockRouteParams();
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(typeof result.current.handleConfirm).toBe("function");
@@ -209,15 +159,11 @@ describe("useOnboardScreenViewModel", () => {
     const routeParams = createMockRouteParams();
     const mockRoute = { params: routeParams };
 
-    const { result } = renderHook(
-      () =>
-        useOnboardScreenViewModel({
-          navigation: mockNavigation as any,
-          route: mockRoute as any,
-        }),
-      {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      },
+    const { result } = renderHook(() =>
+      useOnboardScreenViewModel({
+        navigation: mockNavigation as any,
+        route: mockRoute as any,
+      }),
     );
 
     expect(result.current.device).toBeDefined();
