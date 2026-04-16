@@ -35,7 +35,7 @@
         "@ledgerhq/dummy-wallet-app:build",
         "@ledgerhq/dummy-ptx-app:build"
       ],
-      "cache": false,
+      "cache": true,
       "outputs": [
         "{projectRoot}/artifacts/**",
         "{workspaceRoot}/e2e/mobile/artifacts/**",
