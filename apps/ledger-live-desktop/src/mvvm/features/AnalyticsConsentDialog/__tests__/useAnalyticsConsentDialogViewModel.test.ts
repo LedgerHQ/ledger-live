@@ -1,7 +1,5 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
-import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
@@ -12,7 +10,8 @@ import {
 
 const mockUseMatch = jest.fn();
 
-const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+/** Frozen clock; consent offsets align with `needsConsentRenewal` in live-common (`analyticsConsentUtils`). */
+const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -28,143 +27,139 @@ const dialogClosedPayload = {
   flow: ANALYTICS_CONSENT_FLOW,
 };
 
-describe("useAnalyticsConsentDialogViewModel", () => {
-  const featureFlagsWithAnalyticsOptIn = {
-    ...FEATURE_FLAGS_INITIAL_STATE,
-    overrides: {
-      ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-      analyticsOptIn: { enabled: true },
-    },
-  };
+type ViewModel = ReturnType<typeof useAnalyticsConsentDialogViewModel>;
+type SettingsState = typeof INITIAL_STATE;
+type SettingsOverrides = Partial<SettingsState> & {
+  analyticsConsentInfo?: Partial<SettingsState["analyticsConsentInfo"]>;
+};
 
+const featureFlagsWithAnalyticsOptIn = {
+  ...FEATURE_FLAGS_INITIAL_STATE,
+  overrides: {
+    ...FEATURE_FLAGS_INITIAL_STATE.overrides,
+    analyticsOptIn: {
+      ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
+      enabled: true,
+    },
+  },
+};
+
+const defaultSettings: SettingsState = {
+  ...INITIAL_STATE,
+  hasCompletedOnboarding: true,
+  shareAnalytics: true,
+  sharePersonalizedRecommandations: true,
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: 1,
+  },
+};
+
+const flushEffects = async () => {
+  await act(async () => {
+    await Promise.resolve();
+  });
+};
+
+const renderViewModel = (settings: SettingsOverrides = {}) =>
+  renderHook(() => useAnalyticsConsentDialogViewModel(), {
+    initialState: {
+      featureFlags: featureFlagsWithAnalyticsOptIn,
+      settings: {
+        ...defaultSettings,
+        ...settings,
+        analyticsConsentInfo: {
+          ...defaultSettings.analyticsConsentInfo,
+          ...settings.analyticsConsentInfo,
+        },
+      },
+    },
+  });
+
+const expectClosed = (viewModel: ViewModel) => {
+  expect(viewModel.phase).toBe("closed");
+  expect(viewModel.isDialogOpen).toBe(false);
+};
+
+const expectConsentReconfirm = (viewModel: ViewModel) => {
+  expect(viewModel.phase).toBe("consentReconfirm");
+  expect(viewModel.isDialogOpen).toBe(true);
+};
+
+const renderReconfirmViewModel = () => renderViewModel();
+
+describe("useAnalyticsConsentDialogViewModel", () => {
   beforeEach(() => {
+    jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
+    jest.setSystemTime(FIXED_NOW);
     jest.clearAllMocks();
     mockUseMatch.mockReturnValue({});
   });
 
-  const consentReconfirmState = {
-    featureFlags: featureFlagsWithAnalyticsOptIn,
-    settings: {
-      ...INITIAL_STATE,
-      hasCompletedOnboarding: true,
-      shareAnalytics: true,
-      sharePersonalizedRecommandations: true,
-      analyticsConsentInfo: {
-        consentDate: null,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-      },
-    },
-  };
+  afterEach(() => {
+    jest.useRealTimers();
+  });
 
   it("keeps phase closed when portfolio route is not focused", () => {
     mockUseMatch.mockReturnValue(null);
-    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: {
-          ...INITIAL_STATE,
-          hasCompletedOnboarding: true,
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-          analyticsConsentInfo: {
-            consentDate: null,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-          },
-        },
-      },
-    });
-    expect(result.current.phase).toBe("closed");
-    expect(result.current.isDialogOpen).toBe(false);
+    const { result } = renderReconfirmViewModel();
+
+    expectClosed(result.current);
   });
 
   it("opens consentReconfirm when renewal is needed, policy is current, and share analytics is on", async () => {
-    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-      initialState: consentReconfirmState,
-    });
+    const { result } = renderReconfirmViewModel();
 
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(result.current.phase).toBe("consentReconfirm");
-    expect(result.current.isDialogOpen).toBe(true);
+    await flushEffects();
+    expectConsentReconfirm(result.current);
   });
 
-  it("keeps modal closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
-    const renewalSpy = jest
-      .spyOn(analyticsConsentUtils, "needsConsentRenewal")
-      .mockReturnValue(false);
-    const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
-    try {
-      const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-        initialState: {
-          featureFlags: featureFlagsWithAnalyticsOptIn,
-          settings: {
-            ...INITIAL_STATE,
-            hasCompletedOnboarding: true,
-            shareAnalytics: false,
-            sharePersonalizedRecommandations: false,
-            analyticsConsentInfo: {
-              consentDate: oldIso,
-              privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-            },
-          },
-        },
-      });
+  it("keeps modal closed when consent is still within the renewal window", () => {
+    const consentWithinWindow = new Date(FIXED_NOW);
+    consentWithinWindow.setUTCDate(consentWithinWindow.getUTCDate() - 300);
 
-      await act(async () => {
-        await Promise.resolve();
-      });
+    const { result } = renderViewModel({
+      shareAnalytics: false,
+      sharePersonalizedRecommandations: false,
+      analyticsConsentInfo: {
+        consentDate: consentWithinWindow.toISOString(),
+        privacyPolicyVersion: 1,
+      },
+    });
 
-      expect(result.current.phase).toBe("closed");
-      expect(result.current.isDialogOpen).toBe(false);
-    } finally {
-      renewalSpy.mockRestore();
-    }
+    expectClosed(result.current);
   });
 
   it("dispatches opt-in and closes modal", async () => {
-    const { result, store } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-      initialState: consentReconfirmState,
-    });
+    const { result, store } = renderReconfirmViewModel();
 
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(result.current.phase).toBe("consentReconfirm");
+    await flushEffects();
+    expectConsentReconfirm(result.current);
 
     await act(async () => {
       await result.current.applyOptIn();
     });
 
-    const s = store.getState().settings;
-    expect(s.shareAnalytics).toBe(true);
-    expect(s.sharePersonalizedRecommandations).toBe(true);
-    expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
-    expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
-    expect(result.current.phase).toBe("closed");
+    const settings = store.getState().settings;
+    expect(settings.shareAnalytics).toBe(true);
+    expect(settings.sharePersonalizedRecommandations).toBe(true);
+    expect(settings.analyticsConsentInfo.consentDate).not.toBeNull();
+    expect(settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+    expectClosed(result.current);
   });
 
   it("tracks drawer_closed when leaving portfolio while modal is open", async () => {
-    mockUseMatch.mockReturnValue({});
-    const { result, rerender } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-      initialState: consentReconfirmState,
-    });
+    const { result, rerender } = renderReconfirmViewModel();
 
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(result.current.phase).toBe("consentReconfirm");
+    await flushEffects();
+    expectConsentReconfirm(result.current);
 
-    mockUseMatch.mockReturnValue(null);
-    rerender(undefined);
-
-    await act(async () => {
-      await Promise.resolve();
+    act(() => {
+      mockUseMatch.mockReturnValue(null);
+      rerender(undefined);
     });
 
     expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
-    expect(result.current.phase).toBe("closed");
+    expectClosed(result.current);
   });
 });

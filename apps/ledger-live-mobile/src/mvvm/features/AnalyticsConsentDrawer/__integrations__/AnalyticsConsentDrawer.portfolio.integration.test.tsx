@@ -3,21 +3,13 @@ import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import { overrideInitialStateWithFeatureFlag } from "LLM/features/Portfolio/__integrations__/shared";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
-import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
-
-const { needsConsentRenewal: realNeedsConsentRenewal } = jest.requireActual<
-  typeof import("@ledgerhq/live-common/analyticsConsentUtils")
->("@ledgerhq/live-common/analyticsConsentUtils");
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
+import subDays from "date-fns/subDays";
 
-const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
-
-const consentIsoOlderThanOneYear = () =>
-  new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
+const consentIsoOlderThanValidityWindow = () => subDays(new Date(), 366).toISOString();
 
 const Stack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
@@ -67,7 +59,7 @@ const overridePortfolioWithAnalyticsConsentDrawer = composePortfolioOverrides({
   analyticsEnabled: false,
   personalizedRecommendationsEnabled: false,
   consentDate: null,
-  privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+  privacyPolicyVersion: 1,
 });
 
 /** Reconfirm: renewal first, analytics on → consentReconfirm. */
@@ -77,7 +69,7 @@ const overridePortfolioWithAnalyticsConsentReconfirm = composePortfolioOverrides
   analyticsEnabled: true,
   personalizedRecommendationsEnabled: true,
   consentDate: null,
-  privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+  privacyPolicyVersion: 1,
 });
 
 /** Privacy policy ack only (stale policy version, valid consent). */
@@ -87,7 +79,7 @@ const overridePortfolioWithPrivacySheet = composePortfolioOverrides({
   analyticsEnabled: true,
   personalizedRecommendationsEnabled: true,
   consentDate: new Date().toISOString(),
-  privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
+  privacyPolicyVersion: 0,
 });
 
 describe("AnalyticsConsentDrawer on Portfolio", () => {
@@ -192,31 +184,12 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       await waitFor(() => {
         expect(screen.queryByText("We're updating our privacy policy")).toBeNull();
       });
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
-        CURRENT_PRIVACY_POLICY_VERSION,
-      );
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
     });
   });
 
-  describe("when yearly time-based renewal applies", () => {
-    let needsConsentRenewalSpy: jest.SpiedFunction<typeof analyticsConsentUtils.needsConsentRenewal>;
-
-    beforeEach(() => {
-      needsConsentRenewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockImplementation(
-        (consentDateIso, now = Date.now(), interval) =>
-          realNeedsConsentRenewal(
-            consentDateIso,
-            now,
-            interval !== undefined ? interval : YEAR_MS,
-          ),
-      );
-    });
-
-    afterEach(() => {
-      needsConsentRenewalSpy.mockRestore();
-    });
-
+  describe("when time-based renewal applies", () => {
     it("should show reconfirm when consent is older than one year and analytics are on", async () => {
       renderWithReactQuery(<IntegrationNavigator />, {
         overrideInitialState: composePortfolioOverrides({
@@ -224,8 +197,8 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           analyticsOptInEnabled: true,
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          consentDate: consentIsoOlderThanOneYear(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          consentDate: consentIsoOlderThanValidityWindow(),
+          privacyPolicyVersion: 1,
         }),
       });
 
@@ -240,8 +213,8 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           analyticsOptInEnabled: true,
           analyticsEnabled: false,
           personalizedRecommendationsEnabled: false,
-          consentDate: consentIsoOlderThanOneYear(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          consentDate: consentIsoOlderThanValidityWindow(),
+          privacyPolicyVersion: 1,
         }),
       });
 
