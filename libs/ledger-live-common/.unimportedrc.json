@@ -284,7 +284,6 @@
     "src/postOnboarding/logic/shouldRedirectToPostOnboardingOrRecoverUpsell.ts",
     "src/postOnboarding/PostOnboardingProvider.ts",
     "src/postOnboarding/reducer.ts",
-    "src/privacyConsent.ts",
     "src/promise.ts",
     "src/range.ts",
     "src/react.tsx",

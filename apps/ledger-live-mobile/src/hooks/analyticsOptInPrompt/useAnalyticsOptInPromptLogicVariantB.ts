@@ -9,7 +9,8 @@ import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveAnalyticsOptInParams } from "@shared/feature-flags";
 
 type Props = {
   entryPoint: EntryPoint;
@@ -18,6 +19,8 @@ type Props = {
 const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
   const variant = ABTestingVariants.variantB;
   const dispatch = useDispatch();
+  const analyticsOptInFeature = useFeature("analyticsOptIn");
+  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
   const { continueOnboarding, flow, shouldWeTrack, navigation, clickOnLearnMore } =
     useAnalyticsOptInPromptLogic({ entryPoint, variant });
 
@@ -34,7 +37,7 @@ const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       }),
     );
   };

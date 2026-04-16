@@ -82,7 +82,8 @@ import {
 } from "../actions/types";
 import { ScreenName } from "~/const";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
-import { CONSENT_RENEWAL_INTERVAL_MS } from "@ledgerhq/live-common/analyticsConsentUtils";
+import { needsConsentRenewal } from "@ledgerhq/live-common/analyticsConsentUtils";
+import { resolveAnalyticsOptInParams } from "@shared/feature-flags";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -745,7 +746,8 @@ export const personalizedRecommendationsEnabledSelector = createSelector(
 );
 export const trackingEnabledSelector = (state: State) => {
   const settings = state.settings;
-  const analyticsOptInEnabled = state.featureFlags?.resolved?.analyticsOptIn?.enabled ?? false;
+  const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
+  const analyticsOptInEnabled = analyticsOptIn?.enabled ?? false;
   if (analyticsOptInEnabled) {
     const { consentDate } = settings.analyticsConsentInfo;
 
@@ -753,12 +755,8 @@ export const trackingEnabledSelector = (state: State) => {
       return false;
     }
 
-    const consentTime = new Date(consentDate).getTime();
-    if (Number.isNaN(consentTime)) {
-      return false;
-    }
-    const cutoff = Date.now() - CONSENT_RENEWAL_INTERVAL_MS;
-    if (consentTime < cutoff) {
+    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
+    if (needsConsentRenewal(consentDate, consentValidityDays)) {
       return false;
     }
   }

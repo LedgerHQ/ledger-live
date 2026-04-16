@@ -21,9 +21,9 @@ import { track, updateIdentify } from "~/analytics";
 import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { resolveAnalyticsOptInParams } from "@shared/feature-flags";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   Onboarding: "consent onboarding",
@@ -47,6 +47,8 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const analyticsOptInFeature = useFeature("analyticsOptIn");
+  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
   const flow = trackingKeysByFlow?.[entryPoint];
 
   const privacyPolicyUrl =
@@ -89,7 +91,7 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       }),
     );
 
