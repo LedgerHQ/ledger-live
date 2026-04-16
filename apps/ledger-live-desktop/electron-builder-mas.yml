@@ -1,0 +1,65 @@
+appId: com.ledger.live
+
+protocols:
+  name: Ledger Wallet
+  schemes:
+    - ledgerlive
+    - ledgerwallet
+
+afterPack: scripts/afterPack.js
+# No afterSign — Apple handles signing for MAS builds
+
+mac:
+  artifactName: ${name}-${version}-mac-${arch}.${ext}
+  category: public.app-category.finance
+  hardenedRuntime: true
+  target:
+    - target: mas
+      arch:
+        - universal
+  extendInfo:
+    ElectronTeamID: ${env.DEVELOPER_TEAM_ID}
+
+mas:
+  type: distribution
+  identity: ${env.MAS_IDENTITY}
+  entitlements: ./build/mac/entitlements.mas.plist
+  entitlementsInherit: ./build/mac/entitlements.mas.inherit.plist
+  provisioningProfile: ${env.MAS_PROVISIONING_PROFILE}
+
+pkg:
+  identity: ${env.MAS_IDENTITY}
+
+files:
+  # Include files
+  - .webpack/**/*
+  - "!.webpack/**/*.js.map"
+  - from: "dist/node_modules"
+    to: "node_modules"
+    filter:
+      - "**/*"
+      # Default exclusion list
+      - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+      - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+      - "!**/node_modules/*.d.ts"
+      - "!**/node_modules/.bin"
+      - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+      - "!.editorconfig"
+      - "!**/._*"
+      - "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}"
+      - "!**/{__pycache__,thumbs.db,.idea,.vs,.nyc_output}"
+      - "!**/{appveyor.yml,.travis.yml,circle.yml}"
+      - "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+      # Custom exclusion list
+      - "!**/Makefile"
+      - "!**/*.{gyp,gypi,mk,Makefile}"
+      - "!**/build/**/*"
+      # Custom inclusion list
+      - "**/build/**/*.{js,cjs,mjs}"
+      - "**/*.node"
+  # Exclude files
+  - "!node_modules"
+
+# Disable native module rebuilding since we removed all native dependencies (node-hid, usb)
+buildDependenciesFromSource: false
+npmRebuild: false

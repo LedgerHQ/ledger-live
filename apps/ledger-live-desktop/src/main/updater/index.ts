@@ -2,6 +2,11 @@ let updater: {
   quitAndInstall?: () => void;
 } = {};
 export default (type: string) => {
+  // Auto-updater is disabled for Mac App Store builds — the App Store handles updates.
+  if (process.mas) {
+    return;
+  }
+
   console.log(`UPDATER: ${type}`);
   switch (type) {
     case "init":
