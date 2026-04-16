@@ -33,11 +33,11 @@ export const prepareTransaction: AccountBridge<
     const selectedAmountRecordCommitments = selectedAmountRecords.map(record => record.commitment);
 
     const nextFeeRecordCommitment = !config.isFeeSponsored
-      ? (findBestRecordForFee({
+      ? findBestRecordForFee({
           unspentRecords: unspentPrivateRecords,
           selectedAmountRecordCommitments,
           targetFee: estimatedFees,
-        })?.commitment ?? transaction.properties.feeRecordCommitment)
+        })?.commitment ?? transaction.properties.feeRecordCommitment
       : transaction.properties.feeRecordCommitment;
 
     const transactionWithAutoSelectedRecords = updateTransaction(transaction, {
