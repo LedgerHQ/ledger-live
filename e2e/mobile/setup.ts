@@ -1,5 +1,6 @@
-import { device } from "detox";
+import { device, log } from "detox";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { close as closeBridge } from "./bridge/server";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setAllureDescription } from "./helpers/allure/allure-helper";
@@ -21,5 +22,9 @@ beforeAll(
 afterAll(async () => {
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
-  await app.common.removeSpeculos();
+  try {
+    await app.common.removeSpeculos();
+  } catch (e) {
+    log.warn(`setup afterAll removeSpeculos failed: ${sanitizeError(e)}`);
+  }
 });

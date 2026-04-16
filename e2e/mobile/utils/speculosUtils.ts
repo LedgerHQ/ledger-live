@@ -291,7 +291,11 @@ export async function registerKnownSpeculos(speculosPort: number) {
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
   const speculosPort = await deleteSpeculos(deviceId);
   if (speculosPort) {
-    await device.unreverseTcpPort(speculosPort);
+    try {
+      await device.unreverseTcpPort(speculosPort);
+    } catch (e) {
+      log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
+    }
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
     await waitForBridgeEnv("DEVICE_PROXY_URL", "");
   }
