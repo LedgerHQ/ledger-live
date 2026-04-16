@@ -56,7 +56,7 @@
   "scripts": {
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
-    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
+    "prebuild:storybook": "nx run-many -t build -p @ledgerhq/ui-shared,@ledgerhq/icons-ui,@ledgerhq/crypto-icons-ui",
     "build:storybook": "NODE_PATH=./node_modules storybook build -c .storybook-web",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
