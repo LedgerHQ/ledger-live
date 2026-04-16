@@ -3643,8 +3643,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -3679,6 +3679,9 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
     devDependencies:
+      '@bitcoinerlab/secp256k1':
+        specifier: 1.2.0
+        version: 1.2.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -3731,11 +3734,14 @@ importers:
         specifier: 'catalog:'
         version: 1.13.2
       bip32:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^4.0.0
+        version: 4.0.0
       bip39:
         specifier: ^3.0.4
         version: 3.1.0
+      ecpair:
+        specifier: 3.0.1
+        version: 3.0.1(typescript@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -6260,8 +6266,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
@@ -7489,8 +7495,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip32:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^4.0.0
+        version: 4.0.0
       bip39:
         specifier: ^3.0.4
         version: 3.1.0
@@ -8240,8 +8246,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -11245,12 +11251,15 @@ importers:
   libs/psbtv2:
     dependencies:
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       varuint-bitcoin:
         specifier: 1.1.2
         version: 1.1.2
     devDependencies:
+      '@bitcoinerlab/secp256k1':
+        specifier: 1.2.0
+        version: 1.2.0
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11263,6 +11272,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      ecpair:
+        specifier: 3.0.1
+        version: 3.0.1(typescript@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -23977,6 +23989,10 @@ packages:
     resolution: {integrity: sha512-5DcLxGUDejgNBYcieMIUfjORtUeNWl828VWLHJGVKZCb4zIS1oOySTUr0LGmcqJBQgTBz3bGbRQla4FgrdQEIQ==}
     engines: {node: '>=8.0.0'}
 
+  bitcoinjs-lib@6.1.7:
+    resolution: {integrity: sha512-tlf/r2DGMbF7ky1MgUqXHzypYHakkEnm0SZP23CJKIqNY/5uNAnMbFhMJdhjrL/7anfb/U8+AlpdjPWjPnAalg==}
+    engines: {node: '>=8.0.0'}
+
   bl@0.8.2:
     resolution: {integrity: sha512-pfqikmByp+lifZCS0p6j6KreV6kNU6Apzpm2nKOk+94cZb/jvle55+JxWiByUQ0Wo/+XnDXEy5MxxKMb6r0VIw==}
 
@@ -24121,6 +24137,9 @@ packages:
 
   bs58check@3.0.1:
     resolution: {integrity: sha512-hjuuJvoWEybo7Hn/0xOrczQKKEKD63WguEjlhLExYs2wUBcebDC1jDNK17eEAD2lYfw82d5ASC1d7K3SWszjaQ==}
+
+  bs58check@4.0.0:
+    resolution: {integrity: sha512-FsGDOnFg9aVI9erdriULkd/JjEWONV/lQE5aYziB5PoBsXRind56lh8doIZIc9X4HoxT5x4bLjMWN1/NB8Zp5g==}
 
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
@@ -26154,6 +26173,10 @@ packages:
 
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
+
+  ecpair@3.0.1:
+    resolution: {integrity: sha512-uz8wMFvtdr58TLrXnAesBsoMEyY8UudLOfApcyg40XfZjP+gt1xO4cuZSIkZ8hTMTQ8+ETgt7xSIV4eM7M6VNw==}
+    engines: {node: '>=20.0.0'}
 
   ed25519-hd-key@1.1.2:
     resolution: {integrity: sha512-/0y9y6N7vM6Kj5ASr9J9wcMVDTtygxSOvYX+PJiMD7VcxCx2G03V5bLRl8Dug9EgkLFsLhGqBtQWQRcElEeWTA==}
@@ -35637,6 +35660,10 @@ packages:
     resolution: {integrity: sha512-erJsJwQ0tKdwuqI0359U8ijkFmfiTcq25JvvzRVc1VP+2son1NJRXhxcAKJmAW3ajM8JSGAfsAXye8g4s+znxA==}
     engines: {node: '>=18'}
 
+  uint8array-tools@0.0.8:
+    resolution: {integrity: sha512-xS6+s8e0Xbx++5/0L+yyexukU7pz//Yg6IHg3BKhXotg1JcYtgxVcUctQ0HxLByiJzpAkNFawz1Nz5Xadzo82g==}
+    engines: {node: '>=14.0.0'}
+
   uint8arrays@3.1.1:
     resolution: {integrity: sha512-+QJa8QRnbdXVpHYjLoTpJIdCTiw9Ir62nocClWuXIq2JIh4Uta0cQsTSpFL678p2CN8B+XSApwcU+pQEqVpKWg==}
 
@@ -36545,6 +36572,9 @@ packages:
 
   wif@2.0.6:
     resolution: {integrity: sha512-HIanZn1zmduSF+BQhkE+YXIbEiH0xPr1012QbFEGB0xsKqJii0/SqJjyn8dFv6y36kOznMgMB+LGcbZTJ1xACQ==}
+
+  wif@5.0.0:
+    resolution: {integrity: sha512-iFzrC/9ne740qFbNjTZ2FciSRJlHIXoxqk/Y5EnE08QOXu1WjJyCCswwDTYbohAOEnlCtLaAAQBhyaLRFh2hMA==}
 
   wildcard@2.0.1:
     resolution: {integrity: sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ==}
@@ -55495,6 +55525,15 @@ snapshots:
       varuint-bitcoin: 1.1.2
       wif: 2.0.6
 
+  bitcoinjs-lib@6.1.7:
+    dependencies:
+      '@noble/hashes': 1.8.0
+      bech32: 2.0.0
+      bip174: 2.1.1
+      bs58check: 3.0.1
+      typeforce: 1.18.0
+      varuint-bitcoin: 1.1.2
+
   bl@0.8.2:
     dependencies:
       readable-stream: 1.0.34
@@ -55707,6 +55746,11 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
       bs58: 5.0.0
+
+  bs58check@4.0.0:
+    dependencies:
+      '@noble/hashes': 1.8.0
+      bs58: 6.0.0
 
   bser@2.1.1:
     dependencies:
@@ -57982,6 +58026,14 @@ snapshots:
   ecdsa-sig-formatter@1.0.11:
     dependencies:
       safe-buffer: 5.2.1
+
+  ecpair@3.0.1(typescript@6.0.2):
+    dependencies:
+      uint8array-tools: 0.0.8
+      valibot: 1.2.0(typescript@6.0.2)
+      wif: 5.0.0
+    transitivePeerDependencies:
+      - typescript
 
   ed25519-hd-key@1.1.2:
     dependencies:
@@ -70858,6 +70910,8 @@ snapshots:
 
   uint8array-extras@0.3.0: {}
 
+  uint8array-tools@0.0.8: {}
+
   uint8arrays@3.1.1:
     dependencies:
       multiformats: 9.9.0
@@ -72060,6 +72114,10 @@ snapshots:
   wif@2.0.6:
     dependencies:
       bs58check: 2.1.2
+
+  wif@5.0.0:
+    dependencies:
+      bs58check: 4.0.0
 
   wildcard@2.0.1: {}
 
