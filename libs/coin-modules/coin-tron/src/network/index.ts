@@ -2,7 +2,6 @@ import { stringify } from "querystring";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -24,7 +23,6 @@ import type {
   Transaction,
   TrongridTxInfo,
   TronResource,
-  TronTransactionInfo,
   UnDelegateResourceTransactionData,
   UnFreezeTransactionData,
   WithdrawExpireUnfreezeTransactionData,
@@ -40,7 +38,6 @@ import {
   AccountTronAPI,
   Block,
   BlockWithTransactionsAPI,
-  isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
   TransactionInfoByBlockNumAPI,
@@ -431,18 +428,6 @@ function toBlock(data: BlockWithTransactionsAPI): Block {
   return ret;
 }
 
-export async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
-  const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
-    `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
-  );
-  return {
-    fee,
-    blockNumber,
-    withdraw_amount,
-    unfreeze_amount,
-  };
-}
-
 export async function getTransactionInfoByBlockNum(
   blockNum: number,
 ): Promise<TransactionInfoByBlockNumAPI[]> {
@@ -471,40 +456,26 @@ async function getAllTransactions<T>(
   return all;
 }
 
-const getTransactions =
-  (cacheTransactionInfoById: Record<string, TronTransactionInfo>) =>
-  async (
-    url: string,
-  ): Promise<{
-    results: Array<
-      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
-    >;
-    nextUrl?: string;
-  }> => {
-    const transactions =
-      await fetchWithBaseUrl<
-        TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
-      >(url);
-    const nextUrl = transactions.meta.links?.next?.replace(
-      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-      getBaseApiUrl(),
-    );
-    const results = await promiseAllBatched(3, transactions.data || [], async tx => {
-      if (isMalformedTransactionTronAPI(tx)) {
-        return tx;
-      }
-      const txID = tx.txID;
-
-      const detail = cacheTransactionInfoById[txID] || (await fetchTronTxDetail(txID));
-      cacheTransactionInfoById[txID] = detail;
-      return { ...tx, detail };
-    });
-
-    return {
-      results,
-      nextUrl,
-    };
+const getTransactions = async (
+  url: string,
+): Promise<{
+  results: Array<TransactionTronAPI | MalformedTransactionTronAPI>;
+  nextUrl?: string;
+}> => {
+  const transactions =
+    await fetchWithBaseUrl<
+      TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
+    >(url);
+  const nextUrl = transactions.meta.links?.next?.replace(
+    /https:\/\/api(\.[a-z]*)?.trongrid.io/,
+    getBaseApiUrl(),
+  );
+  const results = transactions.data ?? [];
+  return {
+    results,
+    nextUrl,
   };
+};
 
 const getTrc20 = async (
   url: string,
@@ -569,7 +540,6 @@ async function fetchSinglePage<T>(
 
 export async function fetchTronAccountTxsPage(
   addr: string,
-  cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchTxsPageParams,
 ): Promise<FetchTxsPageResult> {
   const maxTimestampParam =
@@ -577,11 +547,9 @@ export async function fetchTronAccountTxsPage(
   const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
   const [nativeResult, trc20Result] = await Promise.all([
-    fetchSinglePage<
-      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
-    >(
+    fetchSinglePage<TransactionTronAPI | MalformedTransactionTronAPI>(
       `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
-      getTransactions(cacheTransactionInfoById),
+      getTransactions,
     ),
     fetchSinglePage<Trc20API>(
       `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
@@ -611,7 +579,6 @@ export async function fetchTronAccountTxsPage(
 export async function fetchTronAccountTxs(
   addr: string,
   shouldFetchMoreTxs: FetchTxsStopPredicate,
-  cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
   const adjustedLimitPerCall = params.hintGlobalLimit
@@ -620,12 +587,10 @@ export async function fetchTronAccountTxs(
   const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
   const nativeTxs = await Promise.all(
     (
-      await getAllTransactions<
-        (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
-      >(
+      await getAllTransactions<TransactionTronAPI | MalformedTransactionTronAPI>(
         `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
         shouldFetchMoreTxs,
-        getTransactions(cacheTransactionInfoById),
+        getTransactions,
       )
     )
       .filter(isTransactionTronAPI)

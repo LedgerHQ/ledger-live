@@ -61,12 +61,6 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
 export function clearAccount<T extends AccountLike>(account: T): T {
   // FIXME add in the coins bridge a way for a coin to define extra clean up functions to modularize this.
   return commonClearAccount(account, (account: Account) => {
-    if (isTronAccount(account)) {
-      account.tronResources = {
-        ...account.tronResources,
-        cacheTransactionInfoById: {},
-      };
-    }
     if (account.currency.family === "bitcoin") {
       (account as BitcoinAccount).bitcoinResources = initialBitcoinResourcesValue;
     }
