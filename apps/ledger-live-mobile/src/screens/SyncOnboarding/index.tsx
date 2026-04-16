@@ -61,6 +61,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   const [isPreviousUpdateCancelled, setIsPreviousUpdateCancelled] = useState<boolean>(false);
 
+  // True when the device reported isOnboarded=true during polling. Used to bypass
+  // the exit toggle after ESC (the device was never put into ESC mode via toggle).
+  const [deviceDetectedOnboarded, setDeviceDetectedOnboarded] = useState<boolean>(false);
+
   // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
   const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
@@ -158,8 +162,14 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
-    setToggleOnboardingEarlyCheckType("exit");
-  }, []);
+    if (deviceDetectedOnboarded) {
+      // The device was not put into ESC mode via the toggle APDU, so there is
+      // nothing to exit. Go directly to the companion step.
+      setCurrentStep("companion");
+    } else {
+      setToggleOnboardingEarlyCheckType("exit");
+    }
+  }, [deviceDetectedOnboarded]);
 
   // Called when the device seems not to be in the correct state anymore.
   // Probably because the device restarted.
@@ -218,6 +228,13 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
       setToggleOnboardingEarlyCheckType(null);
+      setCurrentStep("early-security-check");
+    } else if (isOnboarded) {
+      // Device reports itself as already onboarded, force the ESC so the genuine check always
+      // runs. We skip the toggle APDU because the device is not in its onboarding state machine.
+      setIsPollingOn(false);
+      setToggleOnboardingEarlyCheckType(null);
+      setDeviceDetectedOnboarded(true);
       setCurrentStep("early-security-check");
     } else {
       setIsPollingOn(false);
