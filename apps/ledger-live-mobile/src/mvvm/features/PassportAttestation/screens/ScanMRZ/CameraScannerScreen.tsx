@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, ScrollView } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
-import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import { ActivityIndicator, Platform, View } from "react-native";
+import { Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import {
   Camera,
   useCameraDevice,
@@ -15,12 +14,11 @@ import { parseMrz, parseMrzLenient, type MrzData } from "../../utils/mrzParser";
 
 type Props = {
   onMrzDetected: (data: MrzData) => void;
-  onMockData: () => void;
-  onClose: () => void;
 };
 
 const SCAN_INTERVAL_MS = 2000;
 const MRZ_LINE_LENGTH = 44;
+const EXAMPLE_MRZ = "P<<JAMES<<SMITH<<<<<<<34677890DZRFBUT<<<<124FFP0453456<<<<34455";
 
 /**
  * Only keep OCR blocks whose vertical center is in the bottom portion
@@ -74,51 +72,193 @@ function extractMrzFromLines(rawLines: string[]): string | null {
   return l1 + l2;
 }
 
-export default function CameraScannerScreen({ onMrzDetected, onMockData, onClose }: Props) {
-  const { colors } = useTheme();
+export default function CameraScannerScreen({ onMrzDetected }: Props) {
   const device = useCameraDevice("back");
   const { hasPermission, requestPermission } = useCameraPermission();
   const [scanning, setScanning] = useState(true);
   const [permissionRequested, setPermissionRequested] = useState(false);
-  const [scanCount, setScanCount] = useState(0);
-  const [debugLog, setDebugLog] = useState<string[]>([]);
-  const [copied, setCopied] = useState(false);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const scanLock = useRef(false);
+  const captureLock = useRef(false);
   const cameraRef = useRef<Camera>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const styles = useStyleSheet(
+    theme => ({
+      root: {
+        flex: 1,
+        justifyContent: "space-between",
+      },
+      content: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingTop: theme.spacings.s8,
+      },
+      description: {
+        marginTop: theme.spacings.s8,
+      },
+      cameraFrame: {
+        marginTop: theme.spacings.s24,
+        height: 231,
+        borderRadius: 12,
+        overflow: "hidden",
+        borderWidth: 2,
+        borderColor: "#F2E2FF",
+        backgroundColor: "rgba(255,255,255,0.10)",
+      },
+      camera: {
+        width: "100%",
+        height: "100%",
+      },
+      cameraOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: "flex-end",
+        paddingHorizontal: theme.spacings.s16,
+        paddingBottom: 34,
+      },
+      targetBox: {
+        height: 56,
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderColor: "#FFFFFF",
+        borderRadius: 6,
+      },
+      cameraStatus: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: theme.spacings.s24,
+      },
+      cameraStatusTitle: {
+        marginTop: theme.spacings.s16,
+        textAlign: "center",
+      },
+      cameraStatusDescription: {
+        marginTop: theme.spacings.s8,
+        textAlign: "center",
+      },
+      exampleSection: {
+        alignItems: "center",
+        paddingHorizontal: theme.spacings.s16,
+        paddingBottom: theme.spacings.s12,
+      },
+      passportCard: {
+        width: 288,
+        height: 175,
+        borderRadius: 16,
+        borderWidth: 2,
+        borderColor: "rgba(255,255,255,0.28)",
+        paddingHorizontal: 22,
+        paddingTop: 18,
+        paddingBottom: 14,
+      },
+      passportTopRow: {
+        flexDirection: "row",
+      },
+      portraitBox: {
+        width: 85,
+        height: 77,
+        borderRadius: 11,
+        borderWidth: 2,
+        borderColor: "rgba(255,255,255,0.28)",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      portraitHead: {
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        borderWidth: 2,
+        borderColor: "rgba(255,255,255,0.35)",
+      },
+      portraitBody: {
+        width: 30,
+        height: 14,
+        marginTop: 8,
+        borderWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: "rgba(255,255,255,0.35)",
+        borderTopLeftRadius: 14,
+        borderTopRightRadius: 14,
+      },
+      lineGroup: {
+        flex: 1,
+        marginLeft: 22,
+        marginTop: 3,
+        gap: 8,
+      },
+      line: {
+        height: 3,
+        borderRadius: 999,
+        backgroundColor: "rgba(255,255,255,0.28)",
+      },
+      mrzBox: {
+        marginTop: 20,
+        height: 43,
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderColor: "#FFFFFF",
+        borderRadius: 6,
+        justifyContent: "center",
+        paddingHorizontal: 8,
+      },
+      mrzText: {
+        color: "#FFFFFF",
+        fontSize: 9,
+        lineHeight: 11,
+        fontWeight: "600",
+        letterSpacing: 1.3,
+        fontFamily: Platform.select({
+          ios: "Menlo",
+          android: "monospace",
+          default: "monospace",
+        }),
+      },
+      exampleHint: {
+        marginTop: theme.spacings.s8,
+        textAlign: "center",
+        fontSize: 10,
+        lineHeight: 16,
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
-    if (!hasPermission && !permissionRequested) {
-      setPermissionRequested(true);
-      requestPermission();
+    let cancelled = false;
+
+    if (hasPermission) {
+      setPermissionDenied(false);
+      return () => {
+        cancelled = true;
+      };
     }
+
+    if (!permissionRequested) {
+      setPermissionRequested(true);
+      void requestPermission().then(granted => {
+        if (!cancelled) {
+          setPermissionDenied(!granted);
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, [hasPermission, permissionRequested, requestPermission]);
 
-  const addLog = useCallback((msg: string) => {
-    setDebugLog(prev => [...prev.slice(-29), msg]);
-  }, []);
-
-  const handleCopyLog = useCallback(() => {
-    Clipboard.setString(debugLog.join("\n"));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }, [debugLog]);
-
   const processFrame = useCallback(async () => {
-    if (scanLock.current || !cameraRef.current) return;
+    if (scanLock.current || captureLock.current || !cameraRef.current) return;
 
-    const n = scanCount + 1;
-    setScanCount(n);
-
+    captureLock.current = true;
     try {
       const photo: PhotoFile = await cameraRef.current.takePhoto();
       const imgH = photo.height;
       const minY = imgH * ROI_TOP_RATIO;
-      addLog(`#${n} photo (${photo.width}x${imgH}) ROI y>${Math.round(minY)}`);
-
       const result = await TextRecognition.recognize(`file://${photo.path}`);
-
-      // Filter: only keep lines whose bounding box is in the bottom region
       const roiLines: string[] = [];
       const allLines: string[] = [];
 
@@ -141,187 +281,150 @@ export default function CameraScannerScreen({ onMrzDetected, onMockData, onClose
         }
       }
 
-      addLog(`#${n} OCR: ${allLines.length} total lines, ${roiLines.length} in ROI`);
-
       if (roiLines.length === 0) {
-        addLog(`#${n} no text in target zone`);
         return;
       }
 
-      addLog(`#${n} ROI: ${roiLines.join(" | ").slice(0, 120)}`);
-
-      const mrz88 = extractMrzFromLines(roiLines);
+      const mrz88 = extractMrzFromLines(roiLines) || extractMrzFromLines(allLines);
       if (!mrz88) {
-        // Fallback: try all lines if ROI filtering was too aggressive
-        const mrz88All = extractMrzFromLines(allLines);
-        if (mrz88All) {
-          addLog(`#${n} found MRZ in full scan (outside ROI)`);
-          addLog(`#${n} L1: ${mrz88All.slice(0, 44)}`);
-          addLog(`#${n} L2: ${mrz88All.slice(44, 88)}`);
-          const parsed = parseMrz(mrz88All) || parseMrzLenient(mrz88All);
-          if (parsed) {
-            addLog(`#${n} MRZ OK: ${parsed.documentNumber} DOB=${parsed.dateOfBirth}`);
-            scanLock.current = true;
-            setScanning(false);
-            onMrzDetected(parsed);
-          } else {
-            addLog(`#${n} parseMrz failed`);
-          }
-        } else {
-          addLog(`#${n} no MRZ candidates`);
-        }
         return;
       }
-
-      addLog(`#${n} L1: ${mrz88.slice(0, 44)}`);
-      addLog(`#${n} L2: ${mrz88.slice(44, 88)}`);
 
       const parsed = parseMrz(mrz88) || parseMrzLenient(mrz88);
       if (parsed) {
-        addLog(`#${n} MRZ OK: ${parsed.documentNumber} DOB=${parsed.dateOfBirth}`);
         scanLock.current = true;
         setScanning(false);
         onMrzDetected(parsed);
-      } else {
-        addLog(`#${n} parseMrz failed`);
       }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      addLog(`#${n} ERROR: ${msg.slice(0, 100)}`);
+    } catch {
+      // Keep scanning silently while OCR stabilizes.
+    } finally {
+      captureLock.current = false;
     }
-  }, [onMrzDetected, scanCount, addLog]);
+  }, [onMrzDetected]);
 
   useEffect(() => {
-    if (!scanning || !hasPermission) return;
+    if (!scanning || !hasPermission || !device) return;
+
     intervalRef.current = setInterval(processFrame, SCAN_INTERVAL_MS);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [scanning, hasPermission, processFrame]);
-
-  if (!hasPermission) {
-    return (
-      <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
-        <Flex flex={1} alignItems="center" justifyContent="center" px={6} rowGap={16}>
-          <ActivityIndicator size="large" color={colors.primary.c80} />
-          <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-            Requesting camera access...
-          </Text>
-          <Button type="default" outline onPress={onClose}>
-            Enter Manually Instead
-          </Button>
-          <Button type="default" outline onPress={onMockData} testID="passport-mock-button">
-            Continue with mock data
-          </Button>
-        </Flex>
-      </SafeAreaView>
-    );
-  }
-
-  if (!device) {
-    return (
-      <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
-        <Flex flex={1} alignItems="center" justifyContent="center" px={6} rowGap={16}>
-          <Text variant="body" color="neutral.c70" textAlign="center">
-            No camera available on this device
-          </Text>
-          <Button type="default" outline onPress={onClose}>
-            Enter Manually Instead
-          </Button>
-          <Button type="default" outline onPress={onMockData} testID="passport-mock-button">
-            Continue with mock data
-          </Button>
-        </Flex>
-      </SafeAreaView>
-    );
-  }
+  }, [device, hasPermission, processFrame, scanning]);
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
-      <Flex flex={1} flexDirection="column" alignItems="center" px={6} pt={6}>
-        <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold" mb={8}>
-          Scan Passport MRZ
-        </Text>
-        <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" mb={12}>
-          Align the two bottom lines of your passport inside the dotted box
-        </Text>
+      <View style={styles.root}>
+        <View style={styles.content}>
+          <Text typography="heading3SemiBold" lx={{ color: "base" }}>
+            Take a picture of your passport
+          </Text>
+          <Text typography="body2" lx={{ color: "muted" }} style={styles.description}>
+            Scan the bar code of your passport.
+          </Text>
 
-        <CameraContainer borderRadius={16} overflow="hidden">
-          <Camera
-            ref={cameraRef}
-            device={device}
-            isActive={scanning}
-            photo
-            style={{ width: "100%", height: "100%" }}
-            enableBufferCompression
-          />
-          <Overlay>
-            <TargetBox />
-          </Overlay>
-        </CameraContainer>
-
-        <DebugContainer mt={8} mb={8}>
-          <ScrollView nestedScrollEnabled>
-            {debugLog.length === 0 ? (
-              <Text variant="tiny" color="neutral.c50">
-                Scans: {scanCount} — waiting for first capture...
-              </Text>
+          <View style={styles.cameraFrame}>
+            {hasPermission && device ? (
+              <>
+                <Camera
+                  ref={cameraRef}
+                  device={device}
+                  isActive={scanning}
+                  photo
+                  style={styles.camera}
+                  enableBufferCompression
+                />
+                <View style={styles.cameraOverlay}>
+                  <View style={styles.targetBox} />
+                </View>
+              </>
             ) : (
-              debugLog.map((line, i) => (
-                <Text key={i} variant="tiny" color="neutral.c50">
-                  {line}
-                </Text>
-              ))
+              <View style={styles.cameraStatus}>
+                {!permissionDenied && !hasPermission ? (
+                  <>
+                    <ActivityIndicator size="large" color="white" />
+                    <Text
+                      typography="body2"
+                      lx={{ color: "base" }}
+                      style={styles.cameraStatusTitle}
+                    >
+                      Requesting camera access...
+                    </Text>
+                  </>
+                ) : permissionDenied ? (
+                  <>
+                    <Text
+                      typography="body2SemiBold"
+                      lx={{ color: "base" }}
+                      style={styles.cameraStatusTitle}
+                    >
+                      Camera access is required
+                    </Text>
+                    <Text
+                      typography="body2"
+                      lx={{ color: "muted" }}
+                      style={styles.cameraStatusDescription}
+                    >
+                      Enable camera access in your device settings to scan the passport MRZ.
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text
+                      typography="body2SemiBold"
+                      lx={{ color: "base" }}
+                      style={styles.cameraStatusTitle}
+                    >
+                      Camera unavailable
+                    </Text>
+                    <Text
+                      typography="body2"
+                      lx={{ color: "muted" }}
+                      style={styles.cameraStatusDescription}
+                    >
+                      No camera is available on this device to scan the passport MRZ.
+                    </Text>
+                  </>
+                )}
+              </View>
             )}
-          </ScrollView>
-          <Flex mt={4}>
-            <Button size="small" type="default" outline onPress={handleCopyLog}>
-              {copied ? "Copied!" : "Copy log"}
-            </Button>
-          </Flex>
-        </DebugContainer>
+          </View>
+        </View>
 
-        <Flex flexDirection="column" rowGap={10} width="100%">
-          <Button type="main" onPress={onMockData} testID="passport-mock-button">
-            Continue with mock data
-          </Button>
-          <Button type="default" outline onPress={onClose}>
-            Enter Manually Instead
-          </Button>
-        </Flex>
-      </Flex>
+        <View style={styles.exampleSection}>
+          <View style={styles.passportCard}>
+            <View style={styles.passportTopRow}>
+              <View style={styles.portraitBox}>
+                <View style={styles.portraitHead} />
+                <View style={styles.portraitBody} />
+              </View>
+
+              <View style={styles.lineGroup}>
+                <View style={[styles.line, { width: 128 }]} />
+                <View style={[styles.line, { width: 90 }]} />
+                <View style={[styles.line, { width: 60 }]} />
+                <View style={[styles.line, { width: 60 }]} />
+                <View style={[styles.line, { width: 128 }]} />
+              </View>
+            </View>
+
+            <View style={styles.mrzBox}>
+              <Text
+                typography="body3"
+                lx={{ color: "base" }}
+                style={styles.mrzText}
+                numberOfLines={2}
+              >
+                {EXAMPLE_MRZ}
+              </Text>
+            </View>
+          </View>
+
+          <Text typography="body3" lx={{ color: "muted" }} style={styles.exampleHint}>
+            Scan the bottom part of your passport
+          </Text>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
-
-const DebugContainer = styled(Flex)`
-  width: 100%;
-  max-height: 160px;
-  background-color: ${p => p.theme.colors.opacityDefault.c05};
-  border-radius: 8px;
-  padding: 8px;
-`;
-
-const CameraContainer = styled(Box)`
-  width: 100%;
-  height: 280px;
-  position: relative;
-`;
-
-const Overlay = styled(Flex)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 40px;
-`;
-
-const TargetBox = styled(Box)`
-  width: 92%;
-  height: 80px;
-  border: 2px dashed rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-`;
