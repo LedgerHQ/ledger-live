@@ -46,16 +46,16 @@ BIN_PATH = "{{ config_root }}/node_modules/.bin"
 HK_MISE = 1
 
 [hooks]
-# hk: install/update git hooks when tools are installed (skip in CI). nx: write Nx remote cache config.
+# hk + Nx cache config: local only (skip in CI; CI uses setup-caches / configure-nx-remote-cache-profile).
 postinstall = [
   """
 {% if env.CI is defined %}
   # skip for CI
 {% else %}
   hk install --mise
+  pnpm nx:write-cache-config
 {% endif %}
 """,
-  { task = "nx:write-cache-config" },
 ]
 
 [task_config]
