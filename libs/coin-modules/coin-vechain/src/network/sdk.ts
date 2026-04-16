@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
-import {
+import type {
   AccountResponse,
   VetTxsQuery,
   TokenTxsQuery,
@@ -17,6 +17,10 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
+const NET_ERROR_LOG_TRANSFERS_LIMIT = {
+  status: 403,
+  msgPattern: /exceeds the maximum allowed/,
+};
 
 export const getAccount = async (address: string): Promise<AccountResponse> => {
   const { data } = await network<AccountResponse>({
@@ -37,21 +41,24 @@ export const getLastBlockHeight = async (): Promise<number> => {
 };
 
 /**
- * Get VET operations
+ * Get VET operations (transfers log)
  * @param accountId
  * @param addr
  * @param startAt
+ * @param stopAt
  * @returns an array of operations
  */
-export const getOperations = async (
+const fetchRangeOfOperations = async (
   accountId: string,
   addr: string,
   startAt: number,
+  stopAt: number,
 ): Promise<Operation[]> => {
   const query: VetTxsQuery = {
     range: {
       unit: "block",
       from: startAt,
+      to: stopAt,
     },
     criteriaSet: [{ sender: addr }, { recipient: addr }],
     order: "desc",
@@ -63,24 +70,23 @@ export const getOperations = async (
     data: JSON.stringify(query),
   });
 
-  const operations: Operation[] = await mapVetTransfersToOperations(data, accountId, addr);
-
-  return operations;
+  return mapVetTransfersToOperations(data, accountId, addr);
 };
 
 /**
- * Get operations for a fungible token
+ * Get VTHO token events (transfer events log)
  * @param accountId
  * @param addr
- * @param tokenAddr - The token address (The VTHO token address is available from constants.ts)
  * @param startAt
+ * @param stopAt
  * @returns an array of operations
  */
-export const getTokenOperations = async (
+const fetchRangeOfTokenOperations = async (
   accountId: string,
   addr: string,
   tokenAddr: string,
   startAt: number,
+  stopAt: number,
 ): Promise<Operation[]> => {
   const paddedAddress = padAddress(addr);
 
@@ -91,6 +97,7 @@ export const getTokenOperations = async (
     range: {
       unit: "block",
       from: startAt,
+      to: stopAt,
     },
     criteriaSet: [
       {
@@ -113,8 +120,123 @@ export const getTokenOperations = async (
     data: JSON.stringify(query),
   });
 
-  const operations = await mapTokenTransfersToOperations(data, accountId, addr);
-  return operations;
+  return mapTokenTransfersToOperations(data, accountId, addr);
+};
+
+/**
+ * Utility for retrieving logs (transfer logs or transfer event logs) with pagination.
+ *
+ * This function retrieves the operations in the given range.
+ * It attempts to recover when the provided range leads to an unpredictable
+ * fetch error, where the transfers log (ie, operations) are more than a fixed limit
+ * set by the server (1000 at the moment of writing).
+ *
+ * The function returns after only one iteration if the first request to retrieve
+ * VET operations does not throw a `403 maximum allowed value of 1000`.
+ * When instead it catches this error, it then attempts to retrieve only the operations
+ * in the first half of the range of blocks.
+ * It keeps splitting the range until it manages to retrieve an array of operations
+ * successfully.
+ * After the first success it updates again the range to retrieve the next portion
+ * of the initial range, and so on.
+ *
+ * @param startAt
+ * @param stopAt
+ * @param fetchRangeOfLogs - function for retrieving a range a logs (event or transfer)
+ * @returns an array of operations
+ */
+const getLogsWithPagination = async (
+  startAt: number,
+  stopAt: number,
+  fetchRangeOfLogs: (from: number, to: number) => Promise<Operation[]>,
+): Promise<Operation[]> => {
+  let completed = false;
+  const ops: Operation[] = [];
+
+  let from = startAt;
+  let to = stopAt;
+
+  while (!completed) {
+    try {
+      // returns data in descending order
+      const data = await fetchRangeOfLogs(from, to);
+      // adds data to the beginning of the ops array to preserve descending order
+      ops.unshift(...data);
+    } catch (err: unknown) {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const error = err as { status: number; message: string };
+
+      if (
+        error.status === NET_ERROR_LOG_TRANSFERS_LIMIT.status &&
+        error.message.match(NET_ERROR_LOG_TRANSFERS_LIMIT.msgPattern)
+      ) {
+        const nextTo = from + Math.floor((to - from) / 2);
+
+        if (nextTo <= from) {
+          throw new Error(
+            `Unable to split VeChain operations range further: API still rejects block range ${from}-${to}.`,
+          );
+        }
+
+        to = nextTo;
+        continue;
+      }
+
+      throw err;
+    }
+
+    if (to === stopAt) {
+      completed = true;
+    } else {
+      from = to + 1;
+      to = stopAt;
+    }
+  }
+
+  return ops;
+};
+
+/**
+ * Get VET operations
+ *
+ * @param accountId
+ * @param addr - The VET address
+ * @param startAt
+ * @param stopAt
+ * @param fetchRangeOfLogs
+ * @returns an array of operations
+ */
+export const getOperations = async (
+  accountId: string,
+  addr: string,
+  startAt: number,
+  stopAt: number,
+): Promise<Operation[]> => {
+  const fetchRange = async (from: number, to: number) =>
+    fetchRangeOfOperations(accountId, addr, from, to);
+  return getLogsWithPagination(startAt, stopAt, fetchRange);
+};
+
+/**
+ * Get operations for a fungible token
+ *
+ * @param accountId
+ * @param addr - The VET address
+ * @param tokenAddr - The token address (The VTHO token address is available from constants.ts)
+ * @param startAt
+ * @param stopAt
+ * @returns an array of operations
+ */
+export const getTokenOperations = async (
+  accountId: string,
+  addr: string,
+  tokenAddr: string,
+  startAt: number,
+  stopAt: number,
+): Promise<Operation[]> => {
+  const fetchRange = async (from: number, to: number) =>
+    fetchRangeOfTokenOperations(accountId, addr, tokenAddr, from, to);
+  return getLogsWithPagination(startAt, stopAt, fetchRange);
 };
 
 /**
