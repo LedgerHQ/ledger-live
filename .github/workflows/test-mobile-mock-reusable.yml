@@ -588,7 +588,7 @@ jobs:
         run: |
           mise run mitmproxy:unpin-android \
             --apk="${{ env.ANDROID_APK_PATH }}" \
-            --package="com.ledger.live" \
+            --package="com.ledger.live.detox" \
             --android-simulator-name="Android_Emulator,Android_Emulator_2"
 
       - name: Inject unpinning
