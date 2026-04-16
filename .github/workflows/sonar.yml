@@ -50,8 +50,8 @@ jobs:
       - name: Build dependencies
         run: |
           pnpm exec nx run-many -t build --projects=tag:scope:libs
-          pnpm exec nx run ledger-live-desktop:build --with-deps
-          pnpm exec nx run live-mobile:build --with-deps
+          pnpm exec nx run ledger-live-desktop:build
+          pnpm exec nx run live-mobile:build
 
       - name: Generate Unit test coverage for LLD & LLM
         run: |
