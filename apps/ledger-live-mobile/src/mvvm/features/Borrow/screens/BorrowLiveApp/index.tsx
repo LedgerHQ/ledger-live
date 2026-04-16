@@ -4,6 +4,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { BorrowWebView } from "LLM/features/Borrow/components/BorrowWebView";
+import { useWallet40Theme } from "~/mvvm/hooks/useWallet40Theme";
 import type { BorrowWebviewInputs } from "./useBorrowLiveAppViewModel";
 
 type BorrowLiveAppViewProps = Readonly<{
@@ -23,6 +24,8 @@ export function BorrowLiveAppView({
   onWebviewStateChange,
   webviewInputs,
 }: BorrowLiveAppViewProps) {
+  const { backgroundColor } = useWallet40Theme("mobile");
+
   if (error) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
@@ -32,7 +35,7 @@ export function BorrowLiveAppView({
   }
 
   return (
-    <Flex flex={1} testID="borrow-screen">
+    <Flex flex={1} testID="borrow-screen" backgroundColor={backgroundColor}>
       {manifest && (
         <BorrowWebView
           ref={webviewRef}

@@ -26,6 +26,7 @@ import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
 import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { useWallet40Theme } from "~/mvvm/hooks/useWallet40Theme";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -174,6 +175,7 @@ export default function BaseNavigator() {
     }>
   >();
   const { colors } = useTheme();
+  const { backgroundColor } = useWallet40Theme("mobile");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
@@ -618,6 +620,8 @@ export default function BaseNavigator() {
                   closable: false,
                   headerTitle: t("borrow.title"),
                   headerRight: () => null,
+                  headerStyle: { backgroundColor },
+                  contentStyle: { backgroundColor },
                 }
               : { headerShown: false };
           }}
