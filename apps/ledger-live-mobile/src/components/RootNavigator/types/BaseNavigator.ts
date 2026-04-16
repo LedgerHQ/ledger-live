@@ -238,6 +238,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Card]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.BaanxCard]?: undefined;
   [ScreenName.BaanxTransactionHistory]: { accessToken: string };
+  [ScreenName.AgentDetail]: { agentId: string };
   [NavigatorName.BaanxTopUp]: NavigatorScreenParams<BaanxTopUpParamList>;
   [NavigatorName.Exchange]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {

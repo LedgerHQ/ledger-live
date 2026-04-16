@@ -2,11 +2,11 @@ import React from "react";
 import { useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import type { BaanxCardNavigatorParamList } from "../../types";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import AgentDetailScreenView from "./AgentDetailScreenView";
 import { useAgentDetailViewModel } from "./useAgentDetailViewModel";
 
-type AgentDetailRouteProp = RouteProp<BaanxCardNavigatorParamList, typeof ScreenName.AgentDetail>;
+type AgentDetailRouteProp = RouteProp<BaseNavigatorStackParamList, typeof ScreenName.AgentDetail>;
 
 export const AgentDetailScreen = () => {
   const route = useRoute<AgentDetailRouteProp>();

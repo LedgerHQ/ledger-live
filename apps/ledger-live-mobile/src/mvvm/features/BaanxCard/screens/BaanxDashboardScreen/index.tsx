@@ -32,7 +32,10 @@ export const BaanxDashboardScreen = () => {
 
   const navigateToAgent = useCallback(
     (agentId: string) => {
-      navigation.navigate(ScreenName.AgentDetail, { agentId });
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+        ScreenName.AgentDetail,
+        { agentId },
+      );
     },
     [navigation],
   );

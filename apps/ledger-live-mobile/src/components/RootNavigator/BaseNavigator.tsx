@@ -25,7 +25,9 @@ import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
 import BaanxCardNavigator from "LLM/features/BaanxCard";
+import { AgentsStateProvider } from "LLM/features/BaanxCard/AgentsContext";
 import { BaanxTransactionHistoryScreen } from "LLM/features/BaanxCard/screens/BaanxTransactionHistoryScreen";
+import { AgentDetailScreen } from "LLM/features/BaanxCard/screens/AgentDetailScreen";
 import BaanxTopUpNavigator from "LLM/features/BaanxCard/topup/BaanxTopUpNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
@@ -207,7 +209,7 @@ export default function BaseNavigator() {
   }, [initPushNotificationsData]);
 
   return (
-    <>
+    <AgentsStateProvider>
       <RootDrawer drawer={route.params?.drawer} />
       <Stack.Navigator screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
@@ -433,6 +435,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.BaanxTransactionHistory}
           component={BaanxTransactionHistoryScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={ScreenName.AgentDetail}
+          component={AgentDetailScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -710,7 +717,7 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    </>
+    </AgentsStateProvider>
   );
 }
 
