@@ -856,6 +856,7 @@ export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboarding
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;
+    finishOnboardingWidget?: boolean;
   } & Feature_Wallet40_Params
 >;
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
