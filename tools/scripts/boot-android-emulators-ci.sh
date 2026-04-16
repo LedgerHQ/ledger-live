@@ -7,6 +7,7 @@
 # Optional environment:
 #   AVD_OPTIONS       — extra emulator flags (word-split like the workflow; may be empty)
 #   EMULATOR_SERIALS  — space-separated adb serials (default: emulator-5554 emulator-5556 emulator-5558)
+#   LOGCAT_DIR        — directory for per-emulator logcat files (default: e2e/mobile/artifacts)
 #
 # Requires: ANDROID_HOME, adb on PATH
 
@@ -61,6 +62,15 @@ while [[ "$(adb devices 2>/dev/null | grep -c emulator || true)" -lt "$_EXPECTED
   sleep 2
 done
 log "✅ $_EXPECTED_EMULATOR_COUNT emulators connected"
+
+LOGCAT_DIR="${LOGCAT_DIR:-e2e/mobile/artifacts}"
+mkdir -p "$LOGCAT_DIR"
+for serial in "${SERIALS[@]}"; do
+  logfile="${LOGCAT_DIR}/logcat-${serial}.log"
+  log "📝 Starting logcat for $serial → $logfile"
+  # nohup so logcat survives the boot script exiting (same pattern as workflow nohup bash … &).
+  nohup adb -s "$serial" logcat -v threadtime >"$logfile" 2>&1 &
+done
 
 log "⏳ Waiting for all emulators to finish booting..."
 for serial in "${SERIALS[@]}"; do
