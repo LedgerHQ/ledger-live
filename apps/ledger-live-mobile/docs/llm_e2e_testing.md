@@ -49,8 +49,8 @@ Most of the setup is taken care of in the React Native docs, but you will have t
 The Android toolkit can be more complex than the iOS one. Once you've done the React Native and Detox setup steps, follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for further steps. The main things to make sure of are:
 
 - Java version 17 installed. Check with `java -version`
-- Android 15 (API Level 35) is installed.
-- An Android Virtual Device (AVD) for Pixel 7 Pro named 'Android_Emulator'
+- Android 16 (API Level 36) is installed.
+- An Android Virtual Device (AVD) for Pixel 9 Pro XL named 'Android_Emulator'
 - Android SDK Build Tools, SDK Platform Tools, SDK Command Line Tools, Android Emulator, CMake 3.10.2 and NDK 21.4.7075529 are installed. You can do this through Android Studio > Tools > SDK Tools, or via the [command line](https://wix.github.io/Detox/docs/guide/android-dev-env#heres-how-to-install-them-using-the-command-line).
 - Your shell profile (for example `~/.zshrc`) should have environmental variables setup something like this:
 
