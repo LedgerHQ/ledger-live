@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import AgentHeaderSection from "./components/AgentHeaderSection";
 import AgentBalanceSection from "./components/AgentBalanceSection";
+import AgentPnlSection from "./components/AgentPnlSection";
 import AgentRoleSection from "./components/AgentRoleSection";
 import AgentActivitySection from "./components/AgentActivitySection";
 import type { AgentDetailViewModel } from "./useAgentDetailViewModel";
@@ -15,8 +16,10 @@ const AgentDetailScreenView = ({
   balanceInteger,
   balanceDecimal,
   pnlPercent,
+  pnlAbsolute,
   pnlPeriod,
   pnlIsPositive,
+  pnlChartData,
   role,
   activity,
   onFundAgent,
@@ -51,6 +54,14 @@ const AgentDetailScreenView = ({
           pnlPercent={pnlPercent}
           pnlPeriod={pnlPeriod}
           pnlIsPositive={pnlIsPositive}
+        />
+
+        <AgentPnlSection
+          pnlPercent={pnlPercent}
+          pnlAbsolute={pnlAbsolute}
+          pnlPeriod={pnlPeriod}
+          pnlIsPositive={pnlIsPositive}
+          chartData={pnlChartData}
         />
 
         <AgentRoleSection role={role} />

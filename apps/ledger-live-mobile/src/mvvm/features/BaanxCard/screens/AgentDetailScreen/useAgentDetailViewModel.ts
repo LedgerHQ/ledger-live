@@ -37,8 +37,10 @@ export interface AgentDetailViewModel {
   readonly balanceInteger: string;
   readonly balanceDecimal: string;
   readonly pnlPercent: number;
+  readonly pnlAbsolute: number;
   readonly pnlPeriod: string;
   readonly pnlIsPositive: boolean;
+  readonly pnlChartData: readonly number[];
   readonly role: string;
   readonly activity: readonly AgentActivityItem[];
   readonly onFundAgent: () => void;
@@ -83,8 +85,10 @@ export function useAgentDetailViewModel(agentId: string): AgentDetailViewModel {
     balanceInteger: integer,
     balanceDecimal: decimal,
     pnlPercent: agent?.pnlPercent ?? 0,
+    pnlAbsolute: agent?.pnlAbsolute ?? 0,
     pnlPeriod: agent?.pnlPeriod ?? "7d",
     pnlIsPositive: (agent?.pnlPercent ?? 0) >= 0,
+    pnlChartData: agent?.pnlChartData ?? [],
     role: agent?.role ?? "",
     activity: agent?.activity ?? [],
     onFundAgent,

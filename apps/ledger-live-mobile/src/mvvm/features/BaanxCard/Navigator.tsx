@@ -71,10 +71,17 @@ export default function BaanxCardNavigator() {
           amount: `+$${t.amount.toFixed(2)}`,
         }));
 
+        const newBalance = agent.balance + totalFunded;
+        const startValue = agent.pnlChartData.length > 0 ? agent.pnlChartData[0] : agent.balance;
+        const newPnlAbsolute = newBalance - startValue;
+        const newPnlPercent = startValue > 0 ? (newPnlAbsolute / startValue) * 100 : 0;
         return {
           ...agent,
-          balance: agent.balance + totalFunded,
+          balance: newBalance,
           status: "active" as const,
+          pnlAbsolute: newPnlAbsolute,
+          pnlPercent: Math.round(newPnlPercent * 100) / 100,
+          pnlChartData: [...agent.pnlChartData, newBalance],
           activity: [...newEntries, ...agent.activity],
         };
       }),

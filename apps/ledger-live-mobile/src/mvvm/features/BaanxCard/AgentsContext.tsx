@@ -43,16 +43,22 @@ export function useAgentActions() {
       };
 
       setAgents(prev =>
-        prev.map(agent =>
-          agent.id === agentId
-            ? {
-                ...agent,
-                balance: agent.balance + amount,
-                status: "active" as const,
-                activity: [entry, ...agent.activity],
-              }
-            : agent,
-        ),
+        prev.map(agent => {
+          if (agent.id !== agentId) return agent;
+          const newBalance = agent.balance + amount;
+          const startValue = agent.pnlChartData.length > 0 ? agent.pnlChartData[0] : agent.balance;
+          const newPnlAbsolute = newBalance - startValue;
+          const newPnlPercent = startValue > 0 ? (newPnlAbsolute / startValue) * 100 : 0;
+          return {
+            ...agent,
+            balance: newBalance,
+            status: "active" as const,
+            pnlAbsolute: newPnlAbsolute,
+            pnlPercent: Math.round(newPnlPercent * 100) / 100,
+            pnlChartData: [...agent.pnlChartData, newBalance],
+            activity: [entry, ...agent.activity],
+          };
+        }),
       );
     },
     [setAgents],
@@ -73,9 +79,16 @@ export function useAgentActions() {
             amount: `-$${withdrawn.toFixed(2)}`,
           };
 
+          const newBalance = agent.balance - withdrawn;
+          const startValue = agent.pnlChartData.length > 0 ? agent.pnlChartData[0] : agent.balance;
+          const newPnlAbsolute = newBalance - startValue;
+          const newPnlPercent = startValue > 0 ? (newPnlAbsolute / startValue) * 100 : 0;
           return {
             ...agent,
-            balance: agent.balance - withdrawn,
+            balance: newBalance,
+            pnlAbsolute: newPnlAbsolute,
+            pnlPercent: Math.round(newPnlPercent * 100) / 100,
+            pnlChartData: [...agent.pnlChartData, newBalance],
             activity: [entry, ...agent.activity],
           };
         }),

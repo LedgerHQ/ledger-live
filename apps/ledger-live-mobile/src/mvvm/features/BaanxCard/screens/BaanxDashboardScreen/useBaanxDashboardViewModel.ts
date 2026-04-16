@@ -413,7 +413,9 @@ export function useBaanxDashboardViewModel(
         status: "idle",
         balance: 0,
         pnlPercent: 0,
+        pnlAbsolute: 0,
         pnlPeriod: "7d",
+        pnlChartData: [],
         role: data.role,
         activity: [],
       };
