@@ -42,11 +42,18 @@ interface AgentTileProps {
   readonly onPress: (id: string) => void;
 }
 
+function formatPnl(percent: number): string {
+  const sign = percent >= 0 ? "+" : "";
+  return `${sign}${percent.toFixed(1)}%`;
+}
+
 const AgentTile = memo(function AgentTile({ agent, onPress }: AgentTileProps) {
   const { theme } = useTheme();
   const IconComponent = ICON_MAP[agent.icon];
   const statusColor =
     agent.status === "active" ? theme.colors.text.success ?? "#47883a" : theme.colors.text.muted;
+
+  const hasPnl = agent.pnlChartData.length > 0;
 
   const handlePress = useCallback(() => {
     onPress(agent.id);
@@ -66,6 +73,15 @@ const AgentTile = memo(function AgentTile({ agent, onPress }: AgentTileProps) {
         <Text typography="body3" lx={{ color: "muted" }} numberOfLines={1}>
           {formatBalance(agent.balance)}
         </Text>
+        {hasPnl && (
+          <Text
+            typography="body3"
+            lx={{ color: agent.pnlPercent >= 0 ? "success" : "error" }}
+            numberOfLines={1}
+          >
+            {formatPnl(agent.pnlPercent)}
+          </Text>
+        )}
       </View>
     </Pressable>
   );

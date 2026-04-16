@@ -45,8 +45,22 @@ export function AgentsStateProvider({ children }: { children: React.ReactNode })
           amount: `+$${t.amount.toFixed(2)}`,
         }));
 
+        const isFirstTopUp = agent.pnlChartData.length === 0 && agent.balance === 0;
         const newBalance = agent.balance + totalFunded;
-        const startValue = agent.pnlChartData.length > 0 ? agent.pnlChartData[0] : agent.balance;
+
+        if (isFirstTopUp) {
+          return {
+            ...agent,
+            balance: newBalance,
+            status: "active" as const,
+            pnlAbsolute: 0,
+            pnlPercent: 0,
+            pnlChartData: [newBalance],
+            activity: [...newEntries, ...agent.activity],
+          };
+        }
+
+        const startValue = agent.pnlChartData[0];
         const newPnlAbsolute = newBalance - startValue;
         const newPnlPercent = startValue > 0 ? (newPnlAbsolute / startValue) * 100 : 0;
         return {
@@ -98,8 +112,22 @@ export function useAgentActions() {
       setAgents(prev =>
         prev.map(agent => {
           if (agent.id !== agentId) return agent;
+          const isFirstTopUp = agent.pnlChartData.length === 0 && agent.balance === 0;
           const newBalance = agent.balance + amount;
-          const startValue = agent.pnlChartData.length > 0 ? agent.pnlChartData[0] : agent.balance;
+
+          if (isFirstTopUp) {
+            return {
+              ...agent,
+              balance: newBalance,
+              status: "active" as const,
+              pnlAbsolute: 0,
+              pnlPercent: 0,
+              pnlChartData: [newBalance],
+              activity: [entry, ...agent.activity],
+            };
+          }
+
+          const startValue = agent.pnlChartData[0];
           const newPnlAbsolute = newBalance - startValue;
           const newPnlPercent = startValue > 0 ? (newPnlAbsolute / startValue) * 100 : 0;
           return {

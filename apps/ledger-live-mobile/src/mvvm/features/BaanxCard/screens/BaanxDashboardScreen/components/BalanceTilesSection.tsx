@@ -90,10 +90,14 @@ function CryptoAmount({
   const spaceIdx = display.indexOf(" ");
   const amount = spaceIdx > -1 ? display.slice(0, spaceIdx) : display;
   const currency = spaceIdx > -1 ? ` ${display.slice(spaceIdx + 1)}` : "";
+  const dotIdx = amount.indexOf(".");
+  const intPart = dotIdx > -1 ? amount.slice(0, dotIdx) : amount;
+  const decPart = dotIdx > -1 ? amount.slice(dotIdx) : "";
   return (
     <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-      {amount}
+      {intPart}
       <Text typography="body2SemiBold" lx={{ color: "muted" }}>
+        {decPart}
         {currency}
       </Text>
     </Text>

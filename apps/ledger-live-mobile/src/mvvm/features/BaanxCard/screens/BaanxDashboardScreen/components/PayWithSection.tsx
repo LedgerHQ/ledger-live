@@ -52,8 +52,10 @@ const SelectableTile = memo(function SelectableTile({
     <Pressable
       style={[
         styles.tile,
-        { backgroundColor: theme.colors.bg.surface },
-        selected && { borderWidth: 1, borderColor: theme.colors.text.base },
+        {
+          backgroundColor: theme.colors.bg.surface,
+          borderColor: selected ? theme.colors.text.base : "transparent",
+        },
       ]}
       onPress={onPress}
     >
@@ -323,6 +325,7 @@ const styles = StyleSheet.create({
     position: "relative",
     width: TILE_WIDTH,
     borderRadius: 12,
+    borderWidth: 1,
     paddingHorizontal: 8,
     paddingVertical: 12,
     alignItems: "center",

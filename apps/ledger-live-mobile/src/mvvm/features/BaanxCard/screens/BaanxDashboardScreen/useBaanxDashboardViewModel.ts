@@ -2,12 +2,8 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCardTotalBalance, useCardTransactions, useGetUserWalletsQuery } from "@ledgerhq/baanx";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
-import { useCategorizedAssetsFromPortfolio } from "~/mvvm/hooks/useCategorizedAssetsFromPortfolio";
-import { useDefaultAssetsByCategory } from "~/mvvm/hooks/useDefaultAssetsByCategory";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { selectBaanxTopUpTotal } from "~/reducers/baanxTopUp";
 import { ScreenName, NavigatorName } from "~/const";
@@ -27,8 +23,17 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === "object";
 }
 
-const MAX_STABLECOINS = 5;
 const SMART_PAY_ID = "smart-pay";
+
+const BAANX_COIN_TO_LEDGER_ID: Record<string, string> = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+  XRP: "ripple",
+  SOL: "solana",
+  USDC: "ethereum/erc20/usd__coin",
+  USDT: "ethereum/erc20/usd_tether__erc20_",
+  BXX: "ethereum/erc20/baanx",
+};
 
 // ---------------------------------------------------------------------------
 // Types
@@ -39,6 +44,7 @@ export interface StablecoinOption {
   readonly ticker: string;
   readonly name: string;
   readonly formattedBalance: string;
+  readonly fiatValue: number;
 }
 
 export interface BaanxDashboardViewModel {
@@ -155,12 +161,10 @@ export function useBaanxDashboardViewModel(
       const day = new Date(tx.date).getDate();
       dailySpend[day] = (dailySpend[day] ?? 0) + tx.amount;
     }
-    const spendDays = Object.keys(dailySpend).map(Number);
-    const firstDay = spendDays.length > 0 ? Math.min(...spendDays) : 1;
     const today = now.getDate();
     let cumulative = 0;
     const chart: number[] = [];
-    for (let d = firstDay; d <= today; d++) {
+    for (let d = 1; d <= today; d++) {
       cumulative += dailySpend[d] ?? 0;
       chart.push(cumulative);
     }
@@ -326,59 +330,50 @@ export function useBaanxDashboardViewModel(
     // TODO: navigate to card customization flow
   }, []);
 
-  // --- Stablecoins ---
-  const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
-
-  const portfolioStablecoins: readonly StablecoinOption[] = useMemo(
+  // --- Pay-with coins (from Baanx wallets API) ---
+  const baanxWalletCoins: readonly StablecoinOption[] = useMemo(
     () =>
-      categorizedAssets.stablecoins.map(({ currency, balance }) => {
-        const unit = currency.units[0];
-        const formatted = unit
-          ? formatCurrencyUnit(unit, new BigNumber(balance), { showCode: true })
-          : `${balance}`;
-        return {
-          id: currency.id,
-          ticker: currency.ticker,
-          name: currency.name,
-          formattedBalance: formatted,
-        };
-      }),
-    [categorizedAssets.stablecoins],
+      [...balance.wallets]
+        .sort((a, b) => {
+          const fiatDiff = (b.fiatValue ?? 0) - (a.fiatValue ?? 0);
+          if (fiatDiff !== 0) return fiatDiff;
+          return (b.balance ?? 0) - (a.balance ?? 0);
+        })
+        .map(w => {
+          const ticker = w.coin.toUpperCase();
+          const ledgerId = BAANX_COIN_TO_LEDGER_ID[ticker] ?? ticker.toLowerCase();
+          const fiat = w.fiatValue ?? 0;
+          return {
+            id: ledgerId,
+            ticker,
+            name: w.coinName ?? ticker,
+            formattedBalance:
+              fiat > 0
+                ? `${fiatSymbol}${fiat.toFixed(2)}`
+                : w.balance > 0
+                  ? w.balance.toFixed(w.balance < 1 ? 6 : 2)
+                  : "0",
+            fiatValue: fiat,
+          };
+        }),
+    [balance.wallets, fiatSymbol],
   );
-
-  const needsDefaults = portfolioStablecoins.length === 0;
-  const { stablecoins: defaultStablecoins } = useDefaultAssetsByCategory(
-    needsDefaults,
-    stablecoinTickers,
-    0,
-    MAX_STABLECOINS,
-  );
-
-  const baseStablecoins: readonly StablecoinOption[] = useMemo(() => {
-    if (portfolioStablecoins.length > 0) return portfolioStablecoins;
-    return defaultStablecoins.map(({ currency }) => ({
-      id: currency.id,
-      ticker: currency.ticker,
-      name: currency.name,
-      formattedBalance: "0",
-    }));
-  }, [portfolioStablecoins, defaultStablecoins]);
 
   const [stablecoinOrder, setStablecoinOrder] = useState<readonly string[] | null>(null);
 
   const stablecoins: readonly StablecoinOption[] = useMemo(() => {
-    if (!stablecoinOrder) return baseStablecoins;
-    const byId = new Map(baseStablecoins.map(c => [c.id, c]));
+    if (!stablecoinOrder) return baanxWalletCoins;
+    const byId = new Map(baanxWalletCoins.map(c => [c.id, c]));
     const ordered: StablecoinOption[] = stablecoinOrder.reduce<StablecoinOption[]>((acc, id) => {
       const coin = byId.get(id);
       if (coin) acc.push(coin);
       return acc;
     }, []);
-    baseStablecoins.forEach(c => {
+    baanxWalletCoins.forEach(c => {
       if (!stablecoinOrder.includes(c.id)) ordered.push(c);
     });
     return ordered;
-  }, [baseStablecoins, stablecoinOrder]);
+  }, [baanxWalletCoins, stablecoinOrder]);
 
   const onReorderStablecoins = useCallback((data: readonly StablecoinOption[]) => {
     setStablecoinOrder(data.map(c => c.id));
