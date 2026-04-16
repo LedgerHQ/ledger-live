@@ -18,6 +18,7 @@ import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
+import { buildSmartContractDetails } from "../utils";
 
 function internalTransactionsFetcher(
   nodeApi: NodeApi,
@@ -193,12 +194,15 @@ function prefetchedTransactionToBlockTransaction(
     erc20Transfers: receipt.erc20Transfers,
   });
 
+  const details = buildSmartContractDetails(tx.to, tx.input, receipt.contractAddress);
+
   return {
     hash: tx.hash,
     failed,
     operations,
     fees,
     feesPayer: tx.from,
+    ...(details ? { details } : {}),
   };
 }
 
@@ -214,11 +218,14 @@ async function getTransactionFromHash(
 
   const operations = rpcTransactionToBlockOperations(txInfo);
 
+  const details = buildSmartContractDetails(txInfo.to, txInfo.input, txInfo.contractAddress);
+
   return {
     hash: txHash,
     failed,
     operations,
     fees,
     feesPayer: txInfo.from,
+    ...(details ? { details } : {}),
   };
 }
