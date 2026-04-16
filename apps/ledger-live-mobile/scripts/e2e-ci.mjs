@@ -87,7 +87,7 @@ const build_android = async () => {
 const test_android = async () => {
   const result = await $`pnpm mobile ${testType}:test \\
       -c android.emu.${target} \\
-      --loglevel warn \\
+      --loglevel info \\
       --record-logs failing \\
       --take-screenshots failing \\
       --forceExit \\
