@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useCardTotalBalance, useCardTransactions, useCashback } from "@ledgerhq/baanx";
+import { useCardTotalBalance, useCardTransactions } from "@ledgerhq/baanx";
 import { useModularDrawerController } from "~/mvvm/features/ModularDrawer/hooks/useModularDrawerController";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { useCategorizedAssetsFromPortfolio } from "~/mvvm/hooks/useCategorizedAssetsFromPortfolio";
@@ -18,6 +18,10 @@ export type { TransactionItem };
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === "object";
+}
 
 const MAX_STABLECOINS = 5;
 const SMART_PAY_ID = "smart-pay";
@@ -43,7 +47,7 @@ export interface BaanxDashboardViewModel {
   readonly onCardIndexChange: (index: number) => void;
   readonly totalBalanceValue: number;
   readonly isBalanceLoading: boolean;
-  readonly cashbackValue: number;
+  readonly cashbackDisplay: string;
   readonly cashbackRate: number;
   readonly spentThisMonthValue: number;
   readonly spentTrend: number | null;
@@ -78,6 +82,9 @@ export interface BaanxDashboardViewModel {
   readonly onFreezeCard: () => void;
   readonly onBlockCard: () => void;
   readonly onCustomizeCard: () => void;
+
+  readonly isRefreshing: boolean;
+  readonly onRefresh: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -96,20 +103,67 @@ export function useBaanxDashboardViewModel(
   // --- API data ---
   const isDev = accessToken === "__DEV_BYPASS__";
   const balance = useCardTotalBalance(isDev ? null : accessToken ?? null, fiatCurrency);
-  const cashbackData = useCashback(isDev ? null : accessToken ?? null, "usd");
   const cardTx = useCardTransactions(isDev ? null : accessToken ?? null);
 
   const totalBalanceValue = isDev ? 142.3 : balance.totalFiatValue ?? 0;
   const isBalanceLoading = isDev ? false : balance.isLoading;
 
-  const cashbackValue = isDev ? 12.32 : cashbackData.fiatValue ?? 0;
+  const cashbackDisplay = useMemo(() => {
+    if (isDev) return "0.00001200 BTC";
+    const totals: Record<string, number> = {};
+    for (const tx of cardTx.transactions) {
+      const cb = tx.raw.cashback;
+      if (!isRecord(cb)) continue;
+      const amount = Number(cb.amount);
+      const currency = String(cb.currency ?? "").toUpperCase();
+      if (isNaN(amount) || !currency) continue;
+      totals[currency] = (totals[currency] ?? 0) + amount;
+    }
+    const entries = Object.entries(totals);
+    if (entries.length === 0) return "0 BTC";
+    return entries.map(([currency, amount]) => `${amount.toFixed(8)} ${currency}`).join(" + ");
+  }, [isDev, cardTx.transactions]);
   const cashbackRate = 1;
 
-  const spentThisMonthValue = isDev ? 132.3 : 0;
+  const { spentThisMonthValue, spentChartData } = useMemo(() => {
+    if (isDev) {
+      return {
+        spentThisMonthValue: 132.3,
+        spentChartData: [20, 25, 22, 30, 28, 35, 50, 48, 55, 70, 65, 80, 90, 85, 95],
+      };
+    }
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const monthTxs = cardTx.transactions.filter(tx => {
+      if (!tx.date) return false;
+      const d = new Date(tx.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    });
+
+    const total = monthTxs.reduce((sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum), 0);
+
+    const dailySpend: Record<number, number> = {};
+    for (const tx of monthTxs) {
+      if (tx.amount <= 0 || !tx.date) continue;
+      const day = new Date(tx.date).getDate();
+      dailySpend[day] = (dailySpend[day] ?? 0) + tx.amount;
+    }
+    const spendDays = Object.keys(dailySpend).map(Number);
+    const firstDay = spendDays.length > 0 ? Math.min(...spendDays) : 1;
+    const today = now.getDate();
+    let cumulative = 0;
+    const chart: number[] = [];
+    for (let d = firstDay; d <= today; d++) {
+      cumulative += dailySpend[d] ?? 0;
+      chart.push(cumulative);
+    }
+
+    return { spentThisMonthValue: total, spentChartData: chart };
+  }, [isDev, cardTx.transactions]);
+
   const spentTrend: number | null = isDev ? 70.32 : null;
-  const spentChartData: readonly number[] = isDev
-    ? [20, 25, 22, 30, 28, 35, 50, 48, 55, 70, 65, 80, 90, 85, 95]
-    : [];
 
   // --- Transactions ---
   const transactions: readonly TransactionItem[] = useMemo(
@@ -292,6 +346,16 @@ export function useBaanxDashboardViewModel(
     setStablecoinOrder(data.map(c => c.id));
   }, []);
 
+  // --- Pull to refresh ---
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    balance.refetch();
+    cardTx.refetch();
+    setTimeout(() => setIsRefreshing(false), 1000);
+  }, [balance, cardTx]);
+
   return {
     selectedCurrency,
     setSelectedCurrency,
@@ -300,7 +364,7 @@ export function useBaanxDashboardViewModel(
     onCardIndexChange,
     totalBalanceValue,
     isBalanceLoading,
-    cashbackValue,
+    cashbackDisplay,
     cashbackRate,
     spentThisMonthValue,
     spentTrend,
@@ -332,5 +396,7 @@ export function useBaanxDashboardViewModel(
     onFreezeCard,
     onBlockCard,
     onCustomizeCard,
+    isRefreshing,
+    onRefresh,
   };
 }

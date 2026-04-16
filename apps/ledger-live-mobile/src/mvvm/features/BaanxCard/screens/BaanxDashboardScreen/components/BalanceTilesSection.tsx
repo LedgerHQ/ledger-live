@@ -11,7 +11,8 @@ const DISCREET_PLACEHOLDER = "••••";
 interface Props {
   readonly totalBalanceValue: number;
   readonly isBalanceLoading?: boolean;
-  readonly cashbackValue: number;
+  readonly isTransactionsLoading?: boolean;
+  readonly cashbackDisplay: string;
   readonly cashbackRate: number;
   readonly spentThisMonthValue: number;
   readonly spentTrend: number | null;
@@ -58,6 +59,42 @@ function FiatAmount({
       {integer}
       <Text typography="body2SemiBold" lx={{ color: "muted" }}>
         {decimal}
+      </Text>
+    </Text>
+  );
+}
+
+function CryptoAmount({
+  display,
+  hidden,
+  loading,
+}: {
+  display: string;
+  hidden: boolean;
+  loading?: boolean;
+}) {
+  if (loading) {
+    return (
+      <Text typography="heading5SemiBold" lx={{ color: "muted" }}>
+        —
+      </Text>
+    );
+  }
+  if (hidden) {
+    return (
+      <Text typography="heading5SemiBold" lx={{ color: "base" }}>
+        {DISCREET_PLACEHOLDER}
+      </Text>
+    );
+  }
+  const spaceIdx = display.indexOf(" ");
+  const amount = spaceIdx > -1 ? display.slice(0, spaceIdx) : display;
+  const currency = spaceIdx > -1 ? ` ${display.slice(spaceIdx + 1)}` : "";
+  return (
+    <Text typography="heading5SemiBold" lx={{ color: "base" }}>
+      {amount}
+      <Text typography="body2SemiBold" lx={{ color: "muted" }}>
+        {currency}
       </Text>
     </Text>
   );
@@ -117,7 +154,8 @@ function TrendBadge({ value, color }: { value: number; color: string }) {
 const BalanceTilesSection = memo(function BalanceTilesSection({
   totalBalanceValue,
   isBalanceLoading,
-  cashbackValue,
+  isTransactionsLoading,
+  cashbackDisplay,
   cashbackRate,
   spentThisMonthValue,
   spentTrend,
@@ -160,7 +198,11 @@ const BalanceTilesSection = memo(function BalanceTilesSection({
         </Pressable>
 
         <View style={[styles.cashbackTile, { backgroundColor: tileBg }]}>
-          <FiatAmount value={cashbackValue} symbol={fiatCurrencySymbol} hidden={discreetMode} />
+          <CryptoAmount
+            display={cashbackDisplay}
+            hidden={discreetMode}
+            loading={isTransactionsLoading}
+          />
           <Text typography="body3" lx={{ color: "muted" }}>
             {t("baanxCard.dashboard.balance.cashback", { rate: cashbackRate })}
           </Text>
@@ -174,6 +216,7 @@ const BalanceTilesSection = memo(function BalanceTilesSection({
               value={spentThisMonthValue}
               symbol={fiatCurrencySymbol}
               hidden={discreetMode}
+              loading={isTransactionsLoading}
             />
             {spentTrend !== null && !discreetMode && (
               <TrendBadge value={spentTrend} color={successColor} />

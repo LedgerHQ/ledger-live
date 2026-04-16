@@ -18,6 +18,7 @@ function statusAppearance(status: string | undefined): "warning" | "success" | "
     case "pending":
       return "warning";
     case "validated":
+    case "confirmed":
       return "success";
     case "failed":
       return "error";

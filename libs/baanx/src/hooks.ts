@@ -146,6 +146,7 @@ export interface CardTotalBalance {
   totalFiatValue: number | null;
   fiatCurrency: string;
   isLoading: boolean;
+  refetch: () => void;
 }
 
 function extractFiatCurrency(data: unknown): string {
@@ -168,10 +169,11 @@ export function useCardTotalBalance(
   const skip = !accessToken;
   const token = accessToken ?? "";
 
-  const { data: walletsData, isLoading: wLoading } = useGetUserWalletsQuery(
-    { accessToken: token },
-    { skip },
-  );
+  const {
+    data: walletsData,
+    isLoading: wLoading,
+    refetch,
+  } = useGetUserWalletsQuery({ accessToken: token }, { skip });
   const { data: settingsData } = useGetSettingsQuery({ accessToken: token }, { skip });
 
   const rawWallets = useMemo(() => {
@@ -207,7 +209,7 @@ export function useCardTotalBalance(
   const hasFiat = wallets.some(w => w.fiatValue !== null);
   const totalFiatValue = hasFiat ? wallets.reduce((sum, w) => sum + (w.fiatValue ?? 0), 0) : null;
 
-  return { wallets, totalFiatValue, fiatCurrency, isLoading: wLoading };
+  return { wallets, totalFiatValue, fiatCurrency, isLoading: wLoading, refetch };
 }
 
 // ---------------------------------------------------------------------------
@@ -259,6 +261,7 @@ export interface CardTransactionsResult {
   transactions: CardTransaction[];
   isLoading: boolean;
   error: unknown;
+  refetch: () => void;
 }
 
 function parseCardTx(raw: Record<string, unknown>): CardTransaction {
@@ -281,7 +284,7 @@ function parseCardTx(raw: Record<string, unknown>): CardTransaction {
 
 export function useCardTransactions(accessToken: string | null): CardTransactionsResult {
   const skip = !accessToken;
-  const { data, isLoading, error } = useGetCardTransactionsQuery(
+  const { data, isLoading, error, refetch } = useGetCardTransactionsQuery(
     { accessToken: accessToken ?? "" },
     { skip },
   );
@@ -292,7 +295,7 @@ export function useCardTransactions(accessToken: string | null): CardTransaction
     return txs.filter(isRecord).map(parseCardTx);
   }, [data]);
 
-  return { transactions, isLoading, error };
+  return { transactions, isLoading, error, refetch };
 }
 
 // ---------------------------------------------------------------------------

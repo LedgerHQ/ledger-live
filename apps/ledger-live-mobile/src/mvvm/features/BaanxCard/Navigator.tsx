@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator<BaanxCardNavigatorParamList>();
 
 export default function BaanxCardNavigator() {
   // TODO: remove – bypass login for dev
-  const [accessToken, setAccessTokenRaw] = useState<string | null>("__DEV_BYPASS__");
+  const [accessToken, setAccessTokenRaw] = useState<string | null>(null);
 
   const setAccessToken = useCallback((token: string) => {
     setAccessTokenRaw(token);

@@ -104,15 +104,11 @@ function TabButton({
     <button
       onClick={onClick}
       className={`flex items-center gap-6 rounded-sm px-12 py-6 text-sm font-medium transition-colors ${
-        active
-          ? "bg-primary text-on-primary"
-          : "bg-surface text-muted hover:bg-surface-hover"
+        active ? "bg-primary text-on-primary" : "bg-surface text-muted hover:bg-surface-hover"
       }`}
     >
       {label}
-      {badge && (
-        <span className="inline-block h-6 w-6 rounded-full bg-green-500" />
-      )}
+      {badge && <span className="inline-block h-6 w-6 rounded-full bg-green-500" />}
     </button>
   );
 }

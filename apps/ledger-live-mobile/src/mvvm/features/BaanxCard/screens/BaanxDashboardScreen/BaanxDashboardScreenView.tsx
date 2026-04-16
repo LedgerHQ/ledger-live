@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from "react";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Platform, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TrackScreen } from "~/analytics";
@@ -18,7 +18,7 @@ const BaanxDashboardScreenView = ({
   onCardIndexChange,
   totalBalanceValue,
   isBalanceLoading,
-  cashbackValue,
+  cashbackDisplay,
   cashbackRate,
   spentThisMonthValue,
   spentTrend,
@@ -50,6 +50,8 @@ const BaanxDashboardScreenView = ({
   onFreezeCard,
   onBlockCard,
   onCustomizeCard,
+  isRefreshing,
+  onRefresh,
 }: Readonly<BaanxDashboardViewModel>) => {
   const { theme } = useTheme();
   const bgColor = theme.colors.bg.base;
@@ -75,6 +77,15 @@ const BaanxDashboardScreenView = ({
         keyboardShouldPersistTaps="handled"
         nestedScrollEnabled={Platform.OS === "android"}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.text.base}
+            colors={[theme.colors.text.base]}
+            progressViewOffset={insets.top + 72}
+          />
+        }
       >
         <CardSection
           cards={cards}
@@ -89,7 +100,8 @@ const BaanxDashboardScreenView = ({
         <BalanceTilesSection
           totalBalanceValue={totalBalanceValue}
           isBalanceLoading={isBalanceLoading}
-          cashbackValue={cashbackValue}
+          isTransactionsLoading={isTransactionsLoading}
+          cashbackDisplay={cashbackDisplay}
           cashbackRate={cashbackRate}
           spentThisMonthValue={spentThisMonthValue}
           spentTrend={spentTrend}

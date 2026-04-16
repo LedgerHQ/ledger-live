@@ -101,6 +101,7 @@ const listItemContentStyle = { flex: 1, minWidth: 0 };
 const styles = StyleSheet.create({
   section: {
     gap: 12,
+    paddingBottom: 24,
   },
   header: {
     flexDirection: "row",
