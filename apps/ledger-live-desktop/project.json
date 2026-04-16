@@ -5,6 +5,7 @@
       "cache": false,
       "inputs": [
         "default",
+        "^default",
         "desktopEnv",
         "sharedEnv"
       ]
@@ -24,6 +25,7 @@
     "lint": {
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -35,6 +37,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
