@@ -584,6 +584,18 @@ jobs:
             --setup-android-simulator="true" \
             --android-simulator-name="Android_Emulator,Android_Emulator_2"
 
+      - name: Unpin Android app
+        run: |
+          mise run mitmproxy:unpin-android \
+            --apk="${{ env.ANDROID_APK_PATH }}" \
+            --package="com.ledger.live" \
+            --android-simulator-name="Android_Emulator,Android_Emulator_2"
+
+      - name: Inject unpinning
+        run: |
+          mise run mitmproxy:unpin-app \
+            --android-simulator-name="Android_Emulator,Android_Emulator_2"
+
       - name: Run Android Tests
         id: detox
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
