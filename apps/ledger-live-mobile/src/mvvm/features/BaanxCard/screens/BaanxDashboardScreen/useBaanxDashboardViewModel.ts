@@ -5,7 +5,6 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCardTotalBalance, useCardTransactions, useGetUserWalletsQuery } from "@ledgerhq/baanx";
-import type { CardTransaction } from "@ledgerhq/baanx";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { useCategorizedAssetsFromPortfolio } from "~/mvvm/hooks/useCategorizedAssetsFromPortfolio";
 import { useDefaultAssetsByCategory } from "~/mvvm/hooks/useDefaultAssetsByCategory";
@@ -13,7 +12,7 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { selectBaanxTopUpTotal } from "~/reducers/baanxTopUp";
 import { ScreenName, NavigatorName } from "~/const";
 import { type CardData, MOCK_CARDS } from "./mockData";
-import type { TransactionItem } from "./mapCardTransaction";
+import { mapCardTxToItem, type TransactionItem } from "./mapCardTransaction";
 import type { AgentData } from "./mockAgentsData";
 import type { CreateAgentFormData } from "./components/CreateAgentBottomSheet";
 import { useAgentsContext } from "../../AgentsContext";
@@ -108,33 +107,6 @@ export function useBaanxDashboardViewModel(
   initialTransactionId?: string,
   navigateToAgent?: (agentId: string) => void,
 ): BaanxDashboardViewModel {
-  function fmtDate(dateStr: string | null): string {
-    if (!dateStr) return "";
-    try {
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return dateStr;
-      const now = new Date();
-      const isToday = d.toDateString() === now.toDateString();
-      const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-      return isToday
-        ? `Today ${time}`
-        : `${d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} ${time}`;
-    } catch {
-      return dateStr;
-    }
-  }
-
-  function mapCardTxToItem(tx: CardTransaction, fiatSymbol: string): TransactionItem {
-    const sign = tx.amount > 0 ? "-" : "";
-    return {
-      id: tx.id,
-      merchant: tx.merchantName,
-      date: fmtDate(tx.date),
-      amount: `${sign}${Math.abs(tx.amount).toFixed(2)}${fiatSymbol}`,
-      currency: tx.currency,
-    };
-  }
-
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const topUpTotal = useSelector(selectBaanxTopUpTotal);
   const fiatCurrency = counterValueCurrency.ticker ?? "EUR";
