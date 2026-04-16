@@ -76,6 +76,7 @@
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@bitcoinerlab/secp256k1": "1.2.0",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -95,6 +96,7 @@
     "axios": "catalog:",
     "bip32": "^4.0.0",
     "bip39": "^3.0.4",
+    "ecpair": "3.0.1",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
     "object-hash": "^2.2.0",
