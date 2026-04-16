@@ -100,7 +100,13 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   async run(fn: () => Promise<void>): Promise<void> {
-    await fn();
+    try {
+      await fn();
+    } catch (err) {
+      this._activeSpin?.error(HumanFormatter.formatError(err));
+      this._activeSpin = null;
+      throw err;
+    }
   }
 
   fail(e: unknown): never {
@@ -128,6 +134,7 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
+    this._activeSpin?.clear();
     writeStdout(this._fmt.formatDiscoveredAccount(d));
   }
 
