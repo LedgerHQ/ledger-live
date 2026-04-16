@@ -17,7 +17,6 @@
     "node-abi": "^4.9.0"
   },
   "scripts": {
-    "prepare": "node tools/nx/write-nx-cache-config.mjs",
     "nx:write-cache-config": "node tools/nx/write-nx-cache-config.mjs",
     "bump": "changeset version",
     "clean": "git clean -fdX",
