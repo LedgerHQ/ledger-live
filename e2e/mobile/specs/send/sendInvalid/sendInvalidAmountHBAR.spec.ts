@@ -11,6 +11,6 @@ const transaction = new Transaction(
 runSendInvalidAmountTest(
   transaction,
   "Sorry, insufficient funds",
-  ["B2CQA-4287"],
+  ["B2CQA-4287", "B2CQA-4281"],
   ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@family-hedera"],
 );
