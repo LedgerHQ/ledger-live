@@ -56,7 +56,27 @@ const getTransactions = () => {
     },
   };
 
-  return [send1DotTransaction, send100DotTransaction];
+  const sendAllDotTransaction: PolkadotScenarioTransaction = {
+    name: "Send all DOT",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    amount: parseCurrencyUnit(polkadot.units[0], "0"),
+    mode: "send",
+    useAllAmount: true,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.extra).toMatchObject({
+        palletMethod: "balances.transferAll",
+      });
+      expect(latestOperation.senders).toStrictEqual([previousAccount.freshAddress]);
+      expect(latestOperation.recipients).toStrictEqual([
+        "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+      ]);
+    },
+  };
+
+  return [send1DotTransaction, send100DotTransaction, sendAllDotTransaction];
 };
 
 const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";

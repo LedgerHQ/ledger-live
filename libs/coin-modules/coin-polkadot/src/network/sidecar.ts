@@ -42,7 +42,7 @@ const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
   let sidecarUrl = config.sidecar.url;
 
   if (
-    (currency?.id === "assethub_polkadot" || currency?.id === "assethub_westend") &&
+    currency?.id === "assethub_polkadot" &&
     route.startsWith("/pallets/staking") &&
     !config.hasBeenMigrated
   ) {

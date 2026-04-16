@@ -54,15 +54,10 @@ const getExtrinsicParams = ({
       return {
         pallet: "balances",
         name: useAllAmount ? "transferAll" : "transferKeepAlive",
-        args: useAllAmount
-          ? {
-              dest: recipient,
-              keepAlive: false,
-            }
-          : {
-              dest: recipient,
-              value: amount.toString(),
-            },
+        args: {
+          dest: recipient,
+          ...(useAllAmount ? { keepAlive: false } : { value: amount.toString() }),
+        },
       };
 
     case "bond":
