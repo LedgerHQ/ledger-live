@@ -53,7 +53,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-lib": "^6.1.7",
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
