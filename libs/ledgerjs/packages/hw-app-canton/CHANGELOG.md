@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-canton
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#15765](https://github.com/LedgerHQ/ledger-live/pull/15765) [`6347738`](https://github.com/LedgerHQ/ledger-live/commit/6347738922a958ccefb25eb532a0001c512fefda) Thanks [@ishaba](https://github.com/ishaba)! - refactor(canton): hardware wallet integration & transaction encoding
+
+### Patch Changes
+
+- Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
+  - @ledgerhq/errors@6.34.0-next.0
+  - @ledgerhq/hw-transport@6.35.1-next.0
+
 ## 0.11.0
 
 ### Minor Changes

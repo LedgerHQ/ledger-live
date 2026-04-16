@@ -1,5 +1,26 @@
 # @ledgerhq/types-live
 
+## 6.105.0-next.0
+
+### Minor Changes
+
+- [#16243](https://github.com/LedgerHQ/ledger-live/pull/16243) [`2d5c7e0`](https://github.com/LedgerHQ/ledger-live/commit/2d5c7e0cc27f45babe247b39b513d4e848707b01) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add buildAssetDistribution with DADA meta-currency grouping and bySlug lookup
+
+- [#15974](https://github.com/LedgerHQ/ledger-live/pull/15974) [`7aa0706`](https://github.com/LedgerHQ/ledger-live/commit/7aa070618866e7a4c70876e674f07fde9630ccfb) Thanks [@qperrot](https://github.com/qperrot)! - Feat: Add support for tz2 (secp256k1) Tezos accounts in add account and signing flows, while preserving tz1 (Ed25519) as the default new account type
+
+- [#15483](https://github.com/LedgerHQ/ledger-live/pull/15483) [`139cdbf`](https://github.com/LedgerHQ/ledger-live/commit/139cdbfd48120247ff54f5f7863ce866a6a755d0) Thanks [@benruseau](https://github.com/benruseau)! - Add DMK Cosmos Signer Kit under Feature Flag
+
+- [#16096](https://github.com/LedgerHQ/ledger-live/pull/16096) [`97d7278`](https://github.com/LedgerHQ/ledger-live/commit/97d727824cef6a5b5a2d034d9b029e4f977f1754) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add aggregatedAssets FF for W4.0
+
+- [#16098](https://github.com/LedgerHQ/ledger-live/pull/16098) [`63b5b9a`](https://github.com/LedgerHQ/ledger-live/commit/63b5b9a3f3b88fa41f02983350cdb6e73a887839) Thanks [@deepyjr](https://github.com/deepyjr)! - Add myWallet feature flag param to lwdWallet40 and lwmWallet40 for targeted rollout control of the My Wallet navigation component
+
+- [#16207](https://github.com/LedgerHQ/ledger-live/pull/16207) [`46e78cf`](https://github.com/LedgerHQ/ledger-live/commit/46e78cf3a057a9de39a5abbb49fe779655db6507) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add NetworkDistributionDetail type and extend DistributionItem with optional asset-based fields
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.8.3-next.0
+
 ## 6.104.0
 
 ### Minor Changes
