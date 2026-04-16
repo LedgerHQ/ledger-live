@@ -624,8 +624,8 @@ jobs:
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
-    needs: [build-android, determine-builds]
-    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    needs: [build-android, determine-builds, setup-android-avd]
+    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
