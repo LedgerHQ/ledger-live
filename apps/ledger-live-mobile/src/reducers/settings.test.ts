@@ -1,5 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { add } from "date-fns";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import reducer, {
   analyticsConsentInfoSelector,
   lastConnectedDeviceSelector,
@@ -33,18 +34,31 @@ const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
  * `trackingEnabledSelector` runs consent / policy / rolling-window checks only when the
  * `analyticsOptIn` feature is resolved as enabled; otherwise it only uses the toggles.
  */
-const withAnalyticsOptInResolved = (base: State): State =>
+const withAnalyticsOptInResolved = (
+  base: State,
+  params: Partial<{ policyVersion: number; consentValidityDays: number }> = {},
+): State =>
   ({
     ...base,
     featureFlags: {
+      ...FEATURE_FLAGS_INITIAL_STATE,
+      ...base.featureFlags,
       resolved: {
-        analyticsOptIn: { enabled: true },
+        ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+        ...base.featureFlags?.resolved,
+        analyticsOptIn: {
+          ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
+          ...base.featureFlags?.resolved?.analyticsOptIn,
+          enabled: true,
+          params: {
+            ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn.params,
+            ...base.featureFlags?.resolved?.analyticsOptIn?.params,
+            ...params,
+          },
+        },
       },
     },
   }) as State;
-
-/** Matches `ONE_YEAR_MS` in `trackingEnabledSelector` (365 × 24h). */
-const THREE_SIXTY_FIVE_DAYS_MS = 365 * 24 * 60 * 60 * 1000;
 
 describe("trackingEnabledSelector", () => {
   /** Fixed clock so consent ages / one-year cutoff in `trackingEnabledSelector` do not depend on real time. */
@@ -94,7 +108,7 @@ describe("trackingEnabledSelector", () => {
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "not-a-valid-date",
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
       }),
@@ -107,7 +121,7 @@ describe("trackingEnabledSelector", () => {
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "2025-06-01T00:00:00.000Z",
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION - 1,
+          privacyPolicyVersion: 0,
         },
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: true,
@@ -117,15 +131,13 @@ describe("trackingEnabledSelector", () => {
   });
 
   it("returns false when consent is older than a 365-day rolling window and analytics opt-in feature is on", () => {
-    const expiredConsent = new Date(
-      FIXED_NOW.getTime() - THREE_SIXTY_FIVE_DAYS_MS - 24 * 60 * 60 * 1000,
-    ).toISOString();
+    const expiredConsent = add(FIXED_NOW, { days: -366 }).toISOString();
 
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: expiredConsent,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
       }),
@@ -134,16 +146,16 @@ describe("trackingEnabledSelector", () => {
   });
 
   it("returns true when consent is exactly on the 365-day cutoff and analytics opt-in feature is on", () => {
-    const now = new Date("2026-01-10T00:00:00.000Z").getTime();
+    const now = new Date("2026-01-10T00:00:00.000Z");
     jest.setSystemTime(now);
 
-    const consentOnCutoff = new Date(now - THREE_SIXTY_FIVE_DAYS_MS).toISOString();
+    const consentOnCutoff = add(now, { days: -365 }).toISOString();
 
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: consentOnCutoff,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: false,
@@ -152,12 +164,26 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(true);
   });
 
+  it("uses consentValidityDays from resolved flag params", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: add(FIXED_NOW, { days: -40 }).toISOString(),
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+      }),
+      { consentValidityDays: 30 },
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
   it("returns false when consent is valid but analytics and personalized recommendations are off and analytics opt-in feature is on", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "2026-02-01T00:00:00.000Z",
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: false,
         personalizedRecommendationsEnabled: false,
@@ -170,7 +196,7 @@ describe("trackingEnabledSelector", () => {
     const state = stateWithSettings({
       analyticsConsentInfo: {
         consentDate: "2026-02-01T00:00:00.000Z",
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: 1,
       },
       analyticsEnabled: false,
       personalizedRecommendationsEnabled: false,
@@ -183,7 +209,7 @@ describe("trackingEnabledSelector", () => {
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "2026-02-01T00:00:00.000Z",
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: false,
@@ -197,7 +223,7 @@ describe("trackingEnabledSelector", () => {
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "2026-02-01T00:00:00.000Z",
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: false,
         personalizedRecommendationsEnabled: true,
