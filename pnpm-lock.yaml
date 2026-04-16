@@ -3643,8 +3643,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -3731,8 +3731,8 @@ importers:
         specifier: 'catalog:'
         version: 1.13.2
       bip32:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^4.0.0
+        version: 4.0.0
       bip39:
         specifier: ^3.0.4
         version: 3.1.0
@@ -6260,8 +6260,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
@@ -7489,8 +7489,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip32:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^4.0.0
+        version: 4.0.0
       bip39:
         specifier: ^3.0.4
         version: 3.1.0
@@ -8240,8 +8240,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -11245,8 +11245,8 @@ importers:
   libs/psbtv2:
     dependencies:
       bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^6.1.7
+        version: 6.1.7
       varuint-bitcoin:
         specifier: 1.1.2
         version: 1.1.2
@@ -23975,6 +23975,10 @@ packages:
 
   bitcoinjs-lib@5.2.0:
     resolution: {integrity: sha512-5DcLxGUDejgNBYcieMIUfjORtUeNWl828VWLHJGVKZCb4zIS1oOySTUr0LGmcqJBQgTBz3bGbRQla4FgrdQEIQ==}
+    engines: {node: '>=8.0.0'}
+
+  bitcoinjs-lib@6.1.7:
+    resolution: {integrity: sha512-tlf/r2DGMbF7ky1MgUqXHzypYHakkEnm0SZP23CJKIqNY/5uNAnMbFhMJdhjrL/7anfb/U8+AlpdjPWjPnAalg==}
     engines: {node: '>=8.0.0'}
 
   bl@0.8.2:
@@ -55494,6 +55498,15 @@ snapshots:
       typeforce: 1.18.0
       varuint-bitcoin: 1.1.2
       wif: 2.0.6
+
+  bitcoinjs-lib@6.1.7:
+    dependencies:
+      '@noble/hashes': 1.8.0
+      bech32: 2.0.0
+      bip174: 2.1.1
+      bs58check: 3.0.1
+      typeforce: 1.18.0
+      varuint-bitcoin: 1.1.2
 
   bl@0.8.2:
     dependencies:
