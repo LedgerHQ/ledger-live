@@ -1,0 +1,137 @@
+{
+  "name": "@ledgerhq/coin-tempo",
+  "version": "0.1.0",
+  "description": "Tempo blockchain integration",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "tempo",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-tempo",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "deviceTransactionConfig": [
+        "lib/bridge/deviceTransactionConfig"
+      ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
+      "transaction": [
+        "lib/bridge/transaction"
+      ],
+      "types": [
+        "lib/types/index"
+      ],
+      "*": [
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/types/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-module-framework": "catalog:",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "bignumber.js": "^9.1.2",
+    "invariant": "^2.2.4",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/invariant": "^2.2.37",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "dotenv": "^16.4.5",
+    "expect": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "test": "jest",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
+  }
+}
