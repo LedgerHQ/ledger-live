@@ -60,6 +60,9 @@ jobs:
           TURBO_TEAM: "foo"
         run: pnpm turbo build --filter "@ledgerhq/wallet-cli"
 
+      - name: Run tests
+        run: pnpm --filter "@ledgerhq/wallet-cli" test
+
       - name: Upload darwin-arm64 binary
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
