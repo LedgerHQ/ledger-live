@@ -14,7 +14,6 @@ export const useTransferDrawerController = () => {
   const dispatch = useDispatch();
 
   const { isOpen, sourceScreenName } = useSelector(transferDrawerStateSelector);
-
   // Stores a tap that arrived while the drawer was still open/animating,
   // so it can be replayed as soon as isOpen transitions to false.
   const pendingOpenRef = useRef<OpenDrawerParams | null>(null);
@@ -23,12 +22,29 @@ export const useTransferDrawerController = () => {
     (params: OpenDrawerParams) => {
       if (isOpen) {
         pendingOpenRef.current = params;
-        return;
+        dispatch(closeTransferDrawer());
+      } else {
+        dispatch(
+          openTransferDrawer({
+            sourceScreenName: params.sourceScreenName,
+          }),
+        );
       }
-      dispatch(openTransferDrawer({ sourceScreenName: params.sourceScreenName }));
     },
     [dispatch, isOpen],
   );
+
+  useEffect(() => {
+    if (!isOpen && pendingOpenRef.current) {
+      const pending = pendingOpenRef.current;
+      pendingOpenRef.current = null;
+      dispatch(
+        openTransferDrawer({
+          sourceScreenName: pending.sourceScreenName,
+        }),
+      );
+    }
+  }, [isOpen, dispatch]);
 
   const closeDrawer = useCallback(() => {
     dispatch(closeTransferDrawer());

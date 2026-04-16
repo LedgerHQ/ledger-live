@@ -1598,7 +1598,7 @@
     "desc" : "لفتح الإمكانات الكاملة لـ Ledger Wallet لديك، قم بتوصيل جهاز Ledger.",
     "0" : {
       "title" : "ملكية كاملة",
-      "desc" : "مفاتيحك الخاصة لا تغادر الجهاز مطلقاً."
+      "desc" : "لديك سيطرة على مفاتيحك الخاصة."
     },
     "1" : {
       "title" : "تداول بأمان",
@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "رؤية جميع الأصول",
     "cryptoAddresses" : {
-      "title" : "حسابات الأصول المشفرة",
+      "title" : "الحسابات",
       "count_one" : "{{count}} حساب",
       "count_other" : "{{count}} حساب",
-      "noAccountsYet" : "لا توجد حسابات بعد"
+      "noAccountsYet" : "لا توجد حسابات بعد",
+      "add" : "إضافة"
     },
     "seeAllAccounts" : "رؤية جميع الحسابات",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "شراء",
       "connect" : "اتصال",
       "buyLedger" : "شراء Ledger",
+      "receive" : "تلقي",
+      "send" : "إرسال",
       "transferDrawer" : {
         "title" : "تحويل",
         "receiveCrypto" : "تلقى عبر عنوان أصل مشفر",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "جارٍ التحديث...",
       "upToDate" : "المحفظة الاستثمارية مُحدّثة",
-      "syncError" : "تعذر تحميل بعض بيانات الحساب"
+      "syncError" : "تعذر تحميل بعض بيانات الحساب",
+      "offline" : "أنت غير متصل بالإنترنت. يرجى التحقق من اتصالك"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,18 @@
   "assets" : {
     "title" : "الأصول"
   },
+  "cryptoAddresses" : {
+    "title" : "الحسابات",
+    "addAccount" : "إضافة حساب",
+    "emptyState" : "لا توجد حسابات بعد",
+    "errorState" : "حدث خطأ أثناء تحميل حساباتك"
+  },
+  "crypto" : {
+    "title" : "الأصول المشفرة",
+    "stablecoinTitle" : "العملات المستقرة",
+    "errorState" : "حدث خطأ أثناء تحميل أصولك",
+    "emptyState" : "لا توجد أصول لعرضها"
+  },
   "accounts" : {
     "title" : "الحسابات",
     "cryptoAccountsTitle" : "حسابات {{currencyTicker}}",
@@ -3317,13 +3333,13 @@
       "reportErrorsDesc" : "إرسال التقارير تلقائياً لمساعدة Ledger في تحسين منتجاتها.",
       "developerMode" : "وضع المطور",
       "developerModeDesc" : "عرض تطبيقات المطور في My Ledger (جهازي Ledger) وتمكين تطبيقات Testnet.",
-      "analytics" : "تحليلات",
-      "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق للمساعدة في قياس أداء Ledger Wallet وتحسين كلٍ من التطبيق وتجربتك.",
+      "analytics" : "أداء التطبيق",
+      "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتحسين تجربة المستخدم",
       "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
       "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم.",
       "mevProtectionLearnMore" : "إشعار الخصوصية",
       "personalizedRecommendations" : "تجربة مخصصة",
-      "personalizedRecommendationsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
+      "personalizedRecommendationsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتوفير محتويات مخصصة",
       "analyticsModal" : {
         "title" : "مشاركة التحليلات",
         "desc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم.",
@@ -3432,6 +3448,14 @@
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
         "desc" : "تلقى إشعارات بخصوص معاملاتك لإيثريوم و Polygon وسلسلة BNB و Avalanche و Ethereum Classic"
+      },
+      "totalMarketCap" : {
+        "title" : "إجمالي سقف أسعار السوق (market cap)",
+        "desc" : "احصل على إشعار عندما يتحرك إجمالي سقف أسعار السوق (market cap) للأصول المشفرة بخطوة كبيرة"
+      },
+      "topGainersLosers" : {
+        "title" : "أعلى الرابحين والخاسرين",
+        "desc" : "احصل على تلخيص أسبوعي لأعلى رموز التوكن مكسب وخسارة في السوق"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
@@ -3576,9 +3600,13 @@
         "addSampleBanner" : "إضافة شريط عينة",
         "addSampleBannerDesc" : "إضافة شريط رئيسي عينة إلى المحفظة الاستثمارية.",
         "addSampleActionCarouselIcon" : "إضافة شريط دوّار للإجراءات (أيقونة)",
-        "addSampleActionCarouselIconDesc" : "لافتة المحتوى مع أيقونات النقاط — شراء، مبادلة، تكديس. يتطلب علامة وضع Braze.",
+        "addSampleActionCarouselIconDesc" : "Adds one ContentBanner card per tap. Same row as the image variant — mix icon and image cards in one carousel. Cycles Buy → Swap → Stake. Requires Braze placement flag.",
         "addSampleActionCarouselImageBackground" : "إضافة شريط دوّار للإجراءات (صورة)",
-        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner مع image_background — شراء ومبادلة وتكديس. يتطلب علامة وضع Braze.",
+        "addSampleActionCarouselImageBackgroundDesc" : "Adds one MediaBanner card per tap. Same row as the icon variant — mix both in one carousel. Cycles Buy → Swap → Stake. Requires Braze placement flag.",
+        "addSampleWalletCarouselPicto" : "إضافة شريط دوّار المحفظة السفلي (أيقونات)",
+        "addSampleWalletCarouselPictoDesc" : "One mock card with crypto icon (picto), title, image, link. No Braze.",
+        "addSampleWalletCarouselTag" : "Add bottom wallet carousel (tag)",
+        "addSampleWalletCarouselTagDesc" : "One mock card with tag, title, image, link. No Braze.",
         "dismissAll" : "تجاهل كل البطاقات المحلية",
         "dismissAllDesc" : "حذف كل بطاقات المحتوى التي تم إنشاؤها محلياً."
       }
@@ -3651,7 +3679,8 @@
         },
         "fiat" : {
           "title" : "عبر التحويل البنكي",
-          "description" : "تلقى العملات المستقرة عبر حساب النقود-إلى-العملات المستقرة. التسجيل مطلوب."
+          "description" : "تلقى العملات المستقرة ببساطة من خلال إرسال النقود.",
+          "description_legacy" : "تلقى العملات المستقرة عبر حساب النقود-إلى-العملات المستقرة. التسجيل مطلوب."
         }
       },
       "memoTag" : {
@@ -4324,13 +4353,15 @@
         "coinToSend" : "العملة المراد إرسالها",
         "changeToReturn" : "المتبقي المراد إرجاعه",
         "enterAmount" : "أدخل المبلغ",
+        "selectSufficientCoins" : "اختر ما يكفي من العملات",
         "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
         "amountInputLabel" : "المبلغ المطلوب إرساله",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (الأول دخولاً هو الأوّل خروجاً)",
             "OPTIMIZE_SIZE" : "تقليل الرسوم (تحقيق الحجم الأمثل)",
-            "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
+            "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)",
+            "CUSTOM" : "اختيار عملات مخصص"
           }
         }
       }
@@ -8056,6 +8087,32 @@
       }
     }
   },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "ساعدنا على تحسين Ledger",
+      "description" : "بموافقتك، سنقوم بجمع بيانات الاستخدام لتحسين الميزات وتخصيص تجربتك.",
+      "ctaAcceptAll" : "قبول الكل",
+      "ctaRefuseAll" : "رفض الكل"
+    },
+    "reconfirm" : {
+      "title" : "الاستمرار في تحسين Ledger؟",
+      "description" : "هل ترغب في الاستمرار في مشاركة بيانات الاستخدام لمساعدتنا في تحسين Ledger؟ تُستخدم هذه البيانات لتحسين الميزات وتخصيص تجربتك.",
+      "ctaContinue" : "نعم، تابع",
+      "ctaStop" : "لا ، توقف"
+    },
+    "privacy" : {
+      "title" : "نحن نقوم بتحديث سياسة الخصوصية لدينا",
+      "descriptionLead" : "يرجى مراجعة ",
+      "descriptionLinkLabel" : "سياسة الخصوصية",
+      "descriptionTrail" : " لتتعرف على ما تغير. يمكنك تحديث تفضيلاتك في أي وقت من في الإعدادات.",
+      "ctaGotIt" : "فهمت ذلك"
+    },
+    "setPreferences" : "تعيين التفضيلات",
+    "footer" : {
+      "lead" : "يمكنك إلغاء موافقتك في أي وقت من الإعدادات.",
+      "privacyLink" : "سياسة الخصوصية"
+    }
+  },
   "walletSync" : {
     "title" : "مزامنة Ledger",
     "banner" : {
@@ -8503,6 +8560,10 @@
       "title" : "انتهت صلاحية المعدَّل",
       "description" : "انتهت صلاحية مُعدل الصرف. يُرجى التحديث وإعادة المحاولة."
     },
+    "details" : {
+      "code" : "كود خطأ",
+      "correlationId" : "المُعرّف المرجعي"
+    },
     "default" : {
       "title" : "حدث خطأ ما",
       "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
@@ -8734,6 +8795,7 @@
     "bottomSheet" : {
       "title" : "تعذر تحميل بعض بيانات الحساب",
       "description" : "أصولك آمنة. هذه مشكلة مزامنة مؤقتة.\nالحسابات المتأثرة: {{accounts}}",
+      "tryToRefresh" : "حاول التنشيط",
       "close" : "إغلاق"
     }
   },

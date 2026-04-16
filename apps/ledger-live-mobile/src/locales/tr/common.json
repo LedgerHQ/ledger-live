@@ -1598,7 +1598,7 @@
     "desc" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
     "0" : {
       "title" : "Tam mülkiyet",
-      "desc" : "Özel anahtarlarınız asla cihazdan ayrılmaz."
+      "desc" : "Özel anahtarlarınızın kontrolü sizdedir."
     },
     "1" : {
       "title" : "Güvenle alıp satın",
@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "Tüm varlıkları gör",
     "cryptoAddresses" : {
-      "title" : "Kripto hesapları",
+      "title" : "Hesaplar",
       "count_one" : "{{count}} hesap",
       "count_other" : "{{count}} hesap",
-      "noAccountsYet" : "Henüz hesap yok"
+      "noAccountsYet" : "Henüz hesap yok",
+      "add" : "Ekle"
     },
     "seeAllAccounts" : "Tüm hesapları gör",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "Satın al",
       "connect" : "Bağlan",
       "buyLedger" : "Ledger satın alın",
+      "receive" : "Al",
+      "send" : "Gönder",
       "transferDrawer" : {
         "title" : "Transfer",
         "receiveCrypto" : "Kripto adresiyle transfer alın",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "Yenileniyor...",
       "upToDate" : "Portföy güncel",
-      "syncError" : "Bazı hesap verileri yüklenemedi"
+      "syncError" : "Bazı hesap verileri yüklenemedi",
+      "offline" : "Çevrim dışısınız. Lütfen bağlantınızı kontrol edin."
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,18 @@
   "assets" : {
     "title" : "Varlıklar"
   },
+  "cryptoAddresses" : {
+    "title" : "Hesaplar",
+    "addAccount" : "Hesap ekle",
+    "emptyState" : "Henüz hesap yok",
+    "errorState" : "Hesaplarınız yüklenirken bir hata oluştu"
+  },
+  "crypto" : {
+    "title" : "Kripto",
+    "stablecoinTitle" : "Stabil coin",
+    "errorState" : "Varlıklarınız yüklenirken bir hata oluştu",
+    "emptyState" : "Gösterilecek varlık yok"
+  },
   "accounts" : {
     "title" : "Hesaplar",
     "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
@@ -3317,13 +3333,13 @@
       "reportErrorsDesc" : "Ledger'ın ürünlerini geliştirmesine yardımcı olmak için raporları otomatik olarak gönderin.",
       "developerMode" : "Geliştirici modu",
       "developerModeDesc" : "Geliştirici uygulamalarını My Ledger'da görün ve Testnet uygulamalarını etkinleştirin.",
-      "analytics" : "Analiz",
-      "analyticsDesc" : "Ledger Wallet'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
+      "analytics" : "Uygulama performansı",
+      "analyticsDesc" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin",
       "mevProtection" : "MEV Koruması",
       "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
       "mevProtectionLearnMore" : "Gizlilik bildirimi",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
-      "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
+      "personalizedRecommendationsDesc" : "Kişiselleştirilmiş içerikler sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin",
       "analyticsModal" : {
         "title" : "Analiz verilerini paylaş",
         "desc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin",
@@ -3432,6 +3448,14 @@
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
         "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+      },
+      "totalMarketCap" : {
+        "title" : "Toplam Piyasa Değeri",
+        "desc" : "Toplam kripto piyasa değerinde önemli bir değişiklik olduğunda bildirim alın"
+      },
+      "topGainersLosers" : {
+        "title" : "En Çok Yükselenler ve Düşenler",
+        "desc" : "Piyasada en çok yükselen ve en çok düşen token'ların haftalık özetini alın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
@@ -3576,9 +3600,13 @@
         "addSampleBanner" : "Örnek banner ekle",
         "addSampleBannerDesc" : "Portföye örnek bir hero banner’ı ekleyin.",
         "addSampleActionCarouselIcon" : "Eylem galerisi ekle (simge)",
-        "addSampleActionCarouselIconDesc" : "Spot simgeleri içeren ContentBanner - Satın Al, Takas et ve Stake et. Braze yerleştirme bayrağı gerektirir.",
+        "addSampleActionCarouselIconDesc" : "Her dokunuşta bir adet ContentBanner kartı ekler. Görsel içeren varyantla aynı satırda gösterilir; yani ikonlu ve görselli kartlar aynı kaydırmalı menüde birlikte bulunur. Kartlar \"Satın Al → Takas et → Stake et\" sırasıyla döngüye girer. Bu özelliğin çalışması için Braze 'placement flag' konfigürasyonu gereklidir.",
         "addSampleActionCarouselImageBackground" : "Eylem galerisi ekle (resim)",
-        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner ve image_background — Satın Al, Takas Et, Stake Et. Braze yerleştirme bayrağı gerektirir.",
+        "addSampleActionCarouselImageBackgroundDesc" : "Her dokunuşta bir MediaBanner kartı ekler. İkonlu varyant ile aynı satırda yer alır; her iki türü tek bir kaydırmalı menüde karma olarak gösterir. Kartlar \"Satın Al → Takas et → Stake et\" sırasıyla döngüye girer. Bu özelliğin çalışması için Braze 'placement flag' konfigürasyonu gereklidir.",
+        "addSampleWalletCarouselPicto" : "Alt cüzdan kaydırmalı menüsünü (picto) ekle",
+        "addSampleWalletCarouselPictoDesc" : "İçinde bir adet kripto ikonu (picto), başlık, görsel ve bağlantı barındıran örnek (mock) bir kart bulunur. Braze entegrasyonu kullanılmayacak.",
+        "addSampleWalletCarouselTag" : "Alt cüzdan kaydırmalı görseli ekle (etiket).",
+        "addSampleWalletCarouselTagDesc" : "Etiket, başlık, görsel ve link içeren bir adet mock kart. Braze entegrasyonu kullanılmayacak.",
         "dismissAll" : "Tüm yerel kartları kaldır",
         "dismissAllDesc" : "Yerel olarak oluşturulan tüm içerik kartlarını kaldırın."
       }
@@ -3651,7 +3679,8 @@
         },
         "fiat" : {
           "title" : "Banka transferiyle",
-          "description" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
+          "description" : "Kolayca nakit göndererek stabil coin alın",
+          "description_legacy" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
         }
       },
       "memoTag" : {
@@ -4324,13 +4353,15 @@
         "coinToSend" : "Gönderilecek coin",
         "changeToReturn" : "Dönecek para üstü",
         "enterAmount" : "Tutar girin",
+        "selectSufficientCoins" : "Yeterli miktarda coin seçin",
         "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
         "amountInputLabel" : "Gönderilecek tutar",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Önce en eski coin'ler (FIFO)",
             "OPTIMIZE_SIZE" : "Ücretleri en aza indirin (boyutu optimize edin)",
-            "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)"
+            "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)",
+            "CUSTOM" : "Özel coin seçimi"
           }
         }
       }
@@ -7809,7 +7840,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Kripto",
-      "stablecoins" : "Stabil coin",
+      "stablecoins" : "Stabil coin'ler",
       "market" : "Piyasa"
     },
     "referralProgram" : "$20"
@@ -8054,6 +8085,32 @@
           "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
         }
       }
+    }
+  },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "Ledger'ın geliştirilmesine yardımcı olun",
+      "description" : "Onayınızla, özellikleri geliştirmek ve deneyiminizi kişiselleştirmek için kullanım verilerinizi toplayacağız.",
+      "ctaAcceptAll" : "Tümünü kabul et",
+      "ctaRefuseAll" : "Tümünü reddet"
+    },
+    "reconfirm" : {
+      "title" : "Hâlâ izniniz var mı?",
+      "description" : "Ledger'ı geliştirmemize yardımcı olmak için kullanım verilerinizi paylaşmaya devam etmek ister misiniz? Bu veriler, özellikleri geliştirmek ve deneyiminizi kişiselleştirmek için kullanılır.",
+      "ctaContinue" : "Evet, devam et",
+      "ctaStop" : "Hayır, dur"
+    },
+    "privacy" : {
+      "title" : "Gizlilik politikamızı güncelliyoruz",
+      "descriptionLead" : "Nelerin değiştiğini öğrenmek için lütfen ",
+      "descriptionLinkLabel" : "Gizlilik Politikası",
+      "descriptionTrail" : " göz atın. Tercihlerinizi dilediğiniz zaman Ayarlar bölümünden güncelleyebilirsiniz.",
+      "ctaGotIt" : "Anladım"
+    },
+    "setPreferences" : "Tercihlerinizi belirleyin",
+    "footer" : {
+      "lead" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz.",
+      "privacyLink" : "Gizlilik Politikası"
     }
   },
   "walletSync" : {
@@ -8503,6 +8560,10 @@
       "title" : "Kurun Süresi Doldu",
       "description" : "Kur zaman aşımına uğradı. Lütfen yenileyip tekrar deneyin."
     },
+    "details" : {
+      "code" : "Hata kodu",
+      "correlationId" : "Referans Kimliği"
+    },
     "default" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
@@ -8734,6 +8795,7 @@
     "bottomSheet" : {
       "title" : "Bazı hesap verileri yüklenemedi",
       "description" : "Varlıklarınız güvendedir. Bu, geçici bir senkronizasyon sorunudur.\nEtkilenen hesaplar: {{accounts}}",
+      "tryToRefresh" : "Yenilemeyi deneyin",
       "close" : "Kapat"
     }
   },
