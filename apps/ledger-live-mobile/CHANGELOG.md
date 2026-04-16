@@ -1,5 +1,13 @@
 # live-mobile
 
+## 4.2.0-next.2
+
+### Minor Changes
+
+- [#16413](https://github.com/LedgerHQ/ledger-live/pull/16413) [`35634fc`](https://github.com/LedgerHQ/ledger-live/commit/35634fc1cafeda03d45e3f61d57e0996392e6f3c) Thanks [@cfloume](https://github.com/cfloume)! - fix: remove onboarded optimisation
+
+- [#16413](https://github.com/LedgerHQ/ledger-live/pull/16413) [`4e95387`](https://github.com/LedgerHQ/ledger-live/commit/4e953874f6c1ea274f54640cb50744c85dfc3e41) Thanks [@cfloume](https://github.com/cfloume)! - fix: remove HW list apps optimisation
+
 ## 4.2.0-next.1
 
 ### Minor Changes

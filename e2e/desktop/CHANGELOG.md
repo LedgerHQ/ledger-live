@@ -1,5 +1,13 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.25.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`4e95387`](https://github.com/LedgerHQ/ledger-live/commit/4e953874f6c1ea274f54640cb50744c85dfc3e41)]:
+  - @ledgerhq/live-common@34.69.0-next.1
+  - @ledgerhq/live-cli@24.39.0-next.1
+
 ## 0.25.0-next.0
 
 ### Minor Changes

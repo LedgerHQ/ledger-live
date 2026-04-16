@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 4.2.0-next.1
+
+### Minor Changes
+
+- [#16413](https://github.com/LedgerHQ/ledger-live/pull/16413) [`35634fc`](https://github.com/LedgerHQ/ledger-live/commit/35634fc1cafeda03d45e3f61d57e0996392e6f3c) Thanks [@cfloume](https://github.com/cfloume)! - fix: remove onboarded optimisation
+
+- [#16413](https://github.com/LedgerHQ/ledger-live/pull/16413) [`4e95387`](https://github.com/LedgerHQ/ledger-live/commit/4e953874f6c1ea274f54640cb50744c85dfc3e41) Thanks [@cfloume](https://github.com/cfloume)! - fix: remove HW list apps optimisation
+
+### Patch Changes
+
+- Updated dependencies [[`4e95387`](https://github.com/LedgerHQ/ledger-live/commit/4e953874f6c1ea274f54640cb50744c85dfc3e41)]:
+  - @ledgerhq/live-common@34.69.0-next.1
+  - @ledgerhq/live-dmk-desktop@0.16.5-next.1
+
 ## 4.2.0-next.0
 
 ### Minor Changes

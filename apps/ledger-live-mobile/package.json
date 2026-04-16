@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.2.0-next.1",
+  "version": "4.2.0-next.2",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",

@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.69.0-next.1
+
+### Minor Changes
+
+- [#16413](https://github.com/LedgerHQ/ledger-live/pull/16413) [`4e95387`](https://github.com/LedgerHQ/ledger-live/commit/4e953874f6c1ea274f54640cb50744c85dfc3e41) Thanks [@cfloume](https://github.com/cfloume)! - fix: remove HW list apps optimisation
+
 ## 34.69.0-next.0
 
 ### Minor Changes
