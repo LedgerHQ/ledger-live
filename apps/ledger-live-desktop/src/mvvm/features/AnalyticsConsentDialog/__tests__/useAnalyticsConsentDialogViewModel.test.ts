@@ -1,7 +1,5 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
-import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
@@ -12,7 +10,8 @@ import {
 
 const mockUseMatch = jest.fn();
 
-const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+/** Frozen clock; consent offsets align with `needsConsentRenewal` in live-common (`analyticsConsentUtils`). */
+const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -33,13 +32,22 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     ...FEATURE_FLAGS_INITIAL_STATE,
     overrides: {
       ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-      analyticsOptIn: { enabled: true },
+      analyticsOptIn: {
+        ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
+        enabled: true,
+      },
     },
   };
 
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(FIXED_NOW);
     jest.clearAllMocks();
     mockUseMatch.mockReturnValue({});
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   const consentReconfirmState = {
@@ -51,7 +59,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       sharePersonalizedRecommandations: true,
       analyticsConsentInfo: {
         consentDate: null,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: 1,
       },
     },
   };
@@ -68,7 +76,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
           sharePersonalizedRecommandations: true,
           analyticsConsentInfo: {
             consentDate: null,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+            privacyPolicyVersion: 1,
           },
         },
       },
@@ -83,44 +91,39 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     });
 
     await act(async () => {
-      await Promise.resolve();
+      await jest.runOnlyPendingTimersAsync();
     });
 
     expect(result.current.phase).toBe("consentReconfirm");
     expect(result.current.isDialogOpen).toBe(true);
   });
 
-  it("keeps modal closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
-    const renewalSpy = jest
-      .spyOn(analyticsConsentUtils, "needsConsentRenewal")
-      .mockReturnValue(false);
-    const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
-    try {
-      const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
-        initialState: {
-          featureFlags: featureFlagsWithAnalyticsOptIn,
-          settings: {
-            ...INITIAL_STATE,
-            hasCompletedOnboarding: true,
-            shareAnalytics: false,
-            sharePersonalizedRecommandations: false,
-            analyticsConsentInfo: {
-              consentDate: oldIso,
-              privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-            },
+  it("keeps modal closed when consent is still within the renewal window", async () => {
+    const consentWithinWindow = new Date(FIXED_NOW);
+    consentWithinWindow.setUTCDate(consentWithinWindow.getUTCDate() - 300);
+
+    const { result } = renderHook(() => useAnalyticsConsentDialogViewModel(), {
+      initialState: {
+        featureFlags: featureFlagsWithAnalyticsOptIn,
+        settings: {
+          ...INITIAL_STATE,
+          hasCompletedOnboarding: true,
+          shareAnalytics: false,
+          sharePersonalizedRecommandations: false,
+          analyticsConsentInfo: {
+            consentDate: consentWithinWindow.toISOString(),
+            privacyPolicyVersion: 1,
           },
         },
-      });
+      },
+    });
 
-      await act(async () => {
-        await Promise.resolve();
-      });
+    await act(async () => {
+      await jest.runOnlyPendingTimersAsync();
+    });
 
-      expect(result.current.phase).toBe("closed");
-      expect(result.current.isDialogOpen).toBe(false);
-    } finally {
-      renewalSpy.mockRestore();
-    }
+    expect(result.current.phase).toBe("closed");
+    expect(result.current.isDialogOpen).toBe(false);
   });
 
   it("dispatches opt-in and closes modal", async () => {
@@ -129,7 +132,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     });
 
     await act(async () => {
-      await Promise.resolve();
+      await jest.runOnlyPendingTimersAsync();
     });
 
     expect(result.current.phase).toBe("consentReconfirm");
@@ -142,7 +145,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     expect(s.shareAnalytics).toBe(true);
     expect(s.sharePersonalizedRecommandations).toBe(true);
     expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
-    expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
+    expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
     expect(result.current.phase).toBe("closed");
   });
 
@@ -153,7 +156,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     });
 
     await act(async () => {
-      await Promise.resolve();
+      await jest.runOnlyPendingTimersAsync();
     });
     expect(result.current.phase).toBe("consentReconfirm");
 
@@ -161,7 +164,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     rerender(undefined);
 
     await act(async () => {
-      await Promise.resolve();
+      await jest.runOnlyPendingTimersAsync();
     });
 
     expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
