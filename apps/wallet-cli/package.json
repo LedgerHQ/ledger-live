@@ -13,6 +13,7 @@
     "build": "bunli build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
+    "test:integration": "bun test tests/ --timeout 15000",
     "coverage": "bun test src/ --coverage",
     "lint": "oxlint src bunli.config.ts",
     "lint:ci": "oxlint src bunli.config.ts --quiet",
