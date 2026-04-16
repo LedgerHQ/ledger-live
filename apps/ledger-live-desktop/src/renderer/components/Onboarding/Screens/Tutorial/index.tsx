@@ -346,6 +346,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [genuineCheckPassed, setGenuineCheckPassed] = useState(false);
 
   const [onboardingDone, setOnboardingDone] = useState(false);
 
@@ -660,8 +661,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         props: {
           connectedDevice,
           setConnectedDevice,
+          onGenuineCheckPassed: () => setGenuineCheckPassed(true),
         },
-        canContinue: !!connectedDevice,
+        canContinue: !!connectedDevice && genuineCheckPassed,
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
             if (nanoOnboardingFundWalletFeature) {
@@ -781,6 +783,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     userChosePinCodeHimself,
     userUnderstandConsequences,
     hasSyncStep,
+    genuineCheckPassed,
   ]);
 
   const steps = useMemo(() => {
