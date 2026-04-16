@@ -1,7 +1,6 @@
 import type { MrzData } from "../../utils/mrzParser";
 
 export type PassportReviewForm = {
-  fullName: string;
   documentNumber: string;
   dateOfBirth: string;
   expiryDate: string;
@@ -16,33 +15,6 @@ export type PassportReviewSubmitResult =
       ok: false;
       field: keyof PassportReviewForm;
     };
-
-function normalizeWhitespace(value: string) {
-  return value.trim().replace(/\s+/g, " ");
-}
-
-function splitFullName(fullName: string): Pick<MrzData, "surname" | "givenNames"> {
-  const parts = normalizeWhitespace(fullName).split(" ").filter(Boolean);
-
-  if (parts.length === 0) {
-    return {
-      surname: "",
-      givenNames: "",
-    };
-  }
-
-  if (parts.length === 1) {
-    return {
-      surname: parts[0],
-      givenNames: "",
-    };
-  }
-
-  return {
-    surname: parts[parts.length - 1] ?? "",
-    givenNames: parts.slice(0, -1).join(" "),
-  };
-}
 
 function parseDisplayDate(value: string): string | null {
   const digits = value.replace(/\D/g, "");
@@ -96,7 +68,6 @@ export function formatMrzDateForDisplay(value: string, kind: "birth" | "expiry" 
 
 export function createPassportReviewForm(mrzData: MrzData): PassportReviewForm {
   return {
-    fullName: normalizeWhitespace([mrzData.givenNames, mrzData.surname].filter(Boolean).join(" ")),
     documentNumber: mrzData.documentNumber,
     dateOfBirth: formatMrzDateForDisplay(mrzData.dateOfBirth, "birth"),
     expiryDate: formatMrzDateForDisplay(mrzData.expiryDate, "expiry"),
@@ -107,17 +78,9 @@ export function serializePassportReviewForm(
   form: PassportReviewForm,
   mrzData: MrzData,
 ): PassportReviewSubmitResult {
-  const fullName = normalizeWhitespace(form.fullName);
   const documentNumber = form.documentNumber.toUpperCase().replace(/\s+/g, "");
   const dateOfBirth = parseDisplayDate(form.dateOfBirth);
   const expiryDate = parseDisplayDate(form.expiryDate);
-
-  if (!fullName) {
-    return {
-      ok: false,
-      field: "fullName",
-    };
-  }
 
   if (!documentNumber) {
     return {
@@ -144,7 +107,6 @@ export function serializePassportReviewForm(
     ok: true,
     mrzData: {
       ...mrzData,
-      ...splitFullName(fullName),
       documentNumber,
       dateOfBirth,
       expiryDate,

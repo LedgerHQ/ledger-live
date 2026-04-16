@@ -17,7 +17,6 @@ const mrzData = {
 describe("passport confirm form helpers", () => {
   it("creates a review form from MRZ data", () => {
     expect(createPassportReviewForm(mrzData)).toEqual({
-      fullName: "JOHN DOE",
       documentNumber: "23AT30794",
       dateOfBirth: "14/01/1996",
       expiryDate: "25/03/2033",
@@ -33,7 +32,6 @@ describe("passport confirm form helpers", () => {
   it("serializes edited fields back to MRZ data", () => {
     const result = serializePassportReviewForm(
       {
-        fullName: "  Jane   Mary Doe  ",
         documentNumber: "ab 1234",
         dateOfBirth: "14/01/1996",
         expiryDate: "25/03/2033",
@@ -45,8 +43,6 @@ describe("passport confirm form helpers", () => {
       ok: true,
       mrzData: {
         ...mrzData,
-        givenNames: "Jane Mary",
-        surname: "Doe",
         documentNumber: "AB1234",
         dateOfBirth: "960114",
         expiryDate: "330325",
@@ -58,7 +54,6 @@ describe("passport confirm form helpers", () => {
     expect(
       serializePassportReviewForm(
         {
-          fullName: "John Doe",
           documentNumber: "AB1234",
           dateOfBirth: "31/02/1996",
           expiryDate: "25/03/2033",

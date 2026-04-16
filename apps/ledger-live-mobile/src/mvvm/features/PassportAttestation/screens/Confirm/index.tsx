@@ -28,7 +28,6 @@ type Props = BaseComposite<
 >;
 
 const invalidFieldMessages: Record<keyof PassportReviewForm, string> = {
-  fullName: "Enter the passport holder full name to continue.",
   documentNumber: "Enter a valid document number to continue.",
   dateOfBirth: "Enter a valid date of birth in DD/MM/YYYY format.",
   expiryDate: "Enter a valid expiry date in DD/MM/YYYY format.",
@@ -125,22 +124,6 @@ export default function ConfirmScreen({ navigation, route }: Props) {
             </Text>
 
             <View style={styles.fields}>
-              <View style={styles.field}>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  Full name
-                </Text>
-                <NativeTextInput
-                  value={form.fullName}
-                  onChangeText={value => updateField("fullName", value)}
-                  style={styles.input}
-                  autoCapitalize="words"
-                  autoCorrect={false}
-                  keyboardAppearance="dark"
-                  selectionColor="white"
-                  testID="passport-confirm-full-name"
-                />
-              </View>
-
               <View style={styles.field}>
                 <Text typography="body3" lx={{ color: "muted" }}>
                   Document number
