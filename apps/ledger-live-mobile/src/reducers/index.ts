@@ -29,6 +29,7 @@ import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
+import baanxTopUp from "./baanxTopUp";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -64,6 +65,7 @@ const appReducer = combineReducers({
   walletconnect,
   walletSync,
   portfolioRefresh,
+  baanxTopUp,
   ...llmRTKApiReducers,
 });
 

@@ -40,6 +40,7 @@ const BaanxDashboardScreenView = ({
   isTransactionDetailOpen,
   onSelectTransaction,
   onCloseTransactionDetail,
+  onViewAllTransactions,
   frozenCardIds,
   blockedCardIds,
   isActiveCardFrozen,
@@ -126,6 +127,7 @@ const BaanxDashboardScreenView = ({
           transactions={transactions}
           isLoading={isTransactionsLoading}
           onSelectTransaction={onSelectTransaction}
+          onViewAllTransactions={onViewAllTransactions}
         />
       </ScrollView>
 

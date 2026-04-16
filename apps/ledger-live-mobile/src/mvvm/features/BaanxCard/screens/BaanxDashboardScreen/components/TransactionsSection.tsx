@@ -18,6 +18,7 @@ interface Props {
   readonly transactions: readonly TransactionItem[];
   readonly isLoading?: boolean;
   readonly onSelectTransaction?: (tx: TransactionItem) => void;
+  readonly onViewAllTransactions?: () => void;
 }
 
 function MerchantLogo({ tx }: { tx: TransactionItem }) {
@@ -39,13 +40,14 @@ const TransactionsSection = memo(function TransactionsSection({
   transactions,
   isLoading,
   onSelectTransaction,
+  onViewAllTransactions,
 }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
   return (
     <View style={styles.section}>
-      <Pressable style={styles.header} hitSlop={8}>
+      <Pressable style={styles.header} hitSlop={8} onPress={onViewAllTransactions}>
         <Text typography="heading5SemiBold" lx={{ color: "base" }}>
           {t("baanxCard.transactions.title")}
         </Text>
@@ -64,7 +66,7 @@ const TransactionsSection = memo(function TransactionsSection({
         </View>
       ) : (
         <View style={styles.list}>
-          {transactions.map(tx => (
+          {transactions.slice(0, 3).map(tx => (
             <ListItem
               key={tx.id}
               lx={listItemLx}
@@ -94,7 +96,7 @@ const TransactionsSection = memo(function TransactionsSection({
   );
 });
 
-const listItemLx = { marginHorizontal: "-s8" as const };
+const listItemLx = { marginHorizontal: "-s4" as const };
 
 const listItemContentStyle = { flex: 1, minWidth: 0 };
 
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   list: {
-    marginHorizontal: -8,
+    marginHorizontal: -4,
   },
   emptyState: {
     alignItems: "center",

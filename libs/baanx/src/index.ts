@@ -41,6 +41,8 @@ export {
   useAggregatedWalletTransactions,
   useCardInfo,
   WalletTxCollector,
+  ledgerCurrencyToBaanxCoin,
+  useBaanxDepositAddress,
 } from "./hooks";
 
 export type {
@@ -55,4 +57,5 @@ export type {
   WalletInfo,
   AggregatedWalletTransactionsResult,
   CardInfo,
+  BaanxDepositInfo,
 } from "./hooks";

@@ -1,23 +1,19 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useCardTotalBalance, useCardTransactions } from "@ledgerhq/baanx";
-import { useModularDrawerController } from "~/mvvm/features/ModularDrawer/hooks/useModularDrawerController";
+import { useCardTotalBalance, useCardTransactions, useGetUserWalletsQuery } from "@ledgerhq/baanx";
+import type { CardTransaction } from "@ledgerhq/baanx";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { useCategorizedAssetsFromPortfolio } from "~/mvvm/hooks/useCategorizedAssetsFromPortfolio";
 import { useDefaultAssetsByCategory } from "~/mvvm/hooks/useDefaultAssetsByCategory";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import type { CardData } from "./mockData";
-import { MOCK_CARDS, MOCK_TRANSACTIONS } from "./mockData";
+import { selectBaanxTopUpTotal } from "~/reducers/baanxTopUp";
+import { ScreenName, NavigatorName } from "~/const";
+import { type CardData, MOCK_CARDS } from "./mockData";
 import type { TransactionItem } from "./mapCardTransaction";
-import { mapCardTxToItem } from "./mapCardTransaction";
-
-export type { TransactionItem };
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === "object";
@@ -25,7 +21,6 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 
 const MAX_STABLECOINS = 5;
 const SMART_PAY_ID = "smart-pay";
-const TOP_UP_CURRENCIES = ["ethereum", "bitcoin"];
 
 // ---------------------------------------------------------------------------
 // Types
@@ -71,6 +66,7 @@ export interface BaanxDashboardViewModel {
   readonly isTransactionDetailOpen: boolean;
   readonly onSelectTransaction: (tx: TransactionItem) => void;
   readonly onCloseTransactionDetail: () => void;
+  readonly onViewAllTransactions: () => void;
 
   readonly frozenCardIds: ReadonlySet<string>;
   readonly blockedCardIds: ReadonlySet<string>;
@@ -95,21 +91,47 @@ export function useBaanxDashboardViewModel(
   accessToken?: string,
   initialTransactionId?: string,
 ): BaanxDashboardViewModel {
+  function fmtDate(dateStr: string | null): string {
+    if (!dateStr) return "";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const now = new Date();
+      const isToday = d.toDateString() === now.toDateString();
+      const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+      return isToday
+        ? `Today ${time}`
+        : `${d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} ${time}`;
+    } catch {
+      return dateStr;
+    }
+  }
+
+  function mapCardTxToItem(tx: CardTransaction, fiatSymbol: string): TransactionItem {
+    const sign = tx.amount > 0 ? "-" : "";
+    return {
+      id: tx.id,
+      merchant: tx.merchantName,
+      date: fmtDate(tx.date),
+      amount: `${sign}${Math.abs(tx.amount).toFixed(2)}${fiatSymbol}`,
+      currency: tx.currency,
+    };
+  }
+
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const topUpTotal = useSelector(selectBaanxTopUpTotal);
   const fiatCurrency = counterValueCurrency.ticker ?? "EUR";
   const fiatSymbol = counterValueCurrency.symbol ?? fiatCurrency;
   const [selectedCurrency, setSelectedCurrency] = useState(fiatCurrency);
 
   // --- API data ---
-  const isDev = accessToken === "__DEV_BYPASS__";
-  const balance = useCardTotalBalance(isDev ? null : accessToken ?? null, fiatCurrency);
-  const cardTx = useCardTransactions(isDev ? null : accessToken ?? null);
+  const balance = useCardTotalBalance(accessToken ?? null, fiatCurrency);
+  const cardTx = useCardTransactions(accessToken ?? null);
 
-  const totalBalanceValue = isDev ? 142.3 : balance.totalFiatValue ?? 0;
-  const isBalanceLoading = isDev ? false : balance.isLoading;
+  const totalBalanceValue = (balance.totalFiatValue ?? 0) + topUpTotal;
+  const isBalanceLoading = balance.isLoading;
 
   const cashbackDisplay = useMemo(() => {
-    if (isDev) return "0.00001200 BTC";
     const totals: Record<string, number> = {};
     for (const tx of cardTx.transactions) {
       const cb = tx.raw.cashback;
@@ -122,16 +144,10 @@ export function useBaanxDashboardViewModel(
     const entries = Object.entries(totals);
     if (entries.length === 0) return "0 BTC";
     return entries.map(([currency, amount]) => `${amount.toFixed(8)} ${currency}`).join(" + ");
-  }, [isDev, cardTx.transactions]);
+  }, [cardTx.transactions]);
   const cashbackRate = 1;
 
   const { spentThisMonthValue, spentChartData } = useMemo(() => {
-    if (isDev) {
-      return {
-        spentThisMonthValue: 132.3,
-        spentChartData: [20, 25, 22, 30, 28, 35, 50, 48, 55, 70, 65, 80, 90, 85, 95],
-      };
-    }
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -161,17 +177,16 @@ export function useBaanxDashboardViewModel(
     }
 
     return { spentThisMonthValue: total, spentChartData: chart };
-  }, [isDev, cardTx.transactions]);
+  }, [cardTx.transactions]);
 
-  const spentTrend: number | null = isDev ? 70.32 : null;
+  const spentTrend: number | null = null;
 
   // --- Transactions ---
   const transactions: readonly TransactionItem[] = useMemo(
-    () =>
-      isDev ? MOCK_TRANSACTIONS : cardTx.transactions.map(tx => mapCardTxToItem(tx, fiatSymbol)),
-    [isDev, cardTx.transactions, fiatSymbol],
+    () => cardTx.transactions.map(tx => mapCardTxToItem(tx, fiatSymbol)),
+    [cardTx.transactions, fiatSymbol],
   );
-  const isTransactionsLoading = isDev ? false : cardTx.isLoading;
+  const isTransactionsLoading = cardTx.isLoading;
 
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | null>(null);
   const [isTransactionDetailOpen, setIsTransactionDetailOpen] = useState(false);
@@ -206,17 +221,51 @@ export function useBaanxDashboardViewModel(
 
   // --- Balance / discreet mode ---
   const { discreetMode, toggleDiscreetMode } = useToggleDiscreetMode();
-  const { openDrawer } = useModularDrawerController();
+  const navigation = useNavigation();
+
+  const onViewAllTransactions = useCallback(() => {
+    (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+      ScreenName.BaanxTransactionHistory,
+      { accessToken: accessToken ?? "" },
+    );
+  }, [navigation, accessToken]);
+
+  const { data: walletsData } = useGetUserWalletsQuery(
+    { accessToken: accessToken ?? "" },
+    { skip: !accessToken },
+  );
 
   const onTopUp = useCallback(() => {
-    openDrawer({
-      currencies: TOP_UP_CURRENCIES,
-      areCurrenciesFiltered: true,
-      enableAccountSelection: true,
-      source: "BaanxCard",
-      flow: "baanx-top-up",
-    });
-  }, [openDrawer]);
+    let addr = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
+    let coin = "XRP";
+    let memo: string | undefined;
+
+    if (walletsData && isRecord(walletsData)) {
+      const wallets = Array.isArray(walletsData.wallets) ? walletsData.wallets : [];
+      const first = wallets.find((w: unknown) => isRecord(w) && w.address && w.coin) as
+        | Record<string, unknown>
+        | undefined;
+      if (first) {
+        addr = String(first.address);
+        coin = String(first.coin);
+        memo = first.destination_tag ? String(first.destination_tag) : undefined;
+      }
+    }
+
+    (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+      NavigatorName.BaanxTopUp,
+      {
+        screen: ScreenName.BaanxTopUpAmount,
+        params: {
+          account: null,
+          parentAccount: undefined,
+          baanxAddress: addr,
+          baanxMemo: memo,
+          coinTicker: coin,
+        },
+      },
+    );
+  }, [walletsData, navigation]);
 
   // --- Pay with ---
   const [selectedPaymentId, setSelectedPaymentId] = useState(SMART_PAY_ID);
@@ -386,6 +435,7 @@ export function useBaanxDashboardViewModel(
     isTransactionDetailOpen,
     onSelectTransaction,
     onCloseTransactionDetail,
+    onViewAllTransactions,
     frozenCardIds,
     blockedCardIds,
     isActiveCardFrozen,

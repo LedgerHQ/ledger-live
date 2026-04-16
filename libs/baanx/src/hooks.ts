@@ -103,22 +103,36 @@ export function useFiatRates(coins: string[], fiat: string = "eur"): Record<stri
     }
 
     let cancelled = false;
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(",")}&vs_currencies=${fiatLower}`;
-    fetch(url)
-      .then(r => r.json())
-      .then((data: Record<string, Record<string, number>>) => {
-        if (cancelled) return;
-        const newRates: Record<string, number> = { ...baseRates };
-        for (const [coin, geckoId] of Object.entries(COINGECKO_IDS)) {
-          const rate = data[geckoId]?.[fiatLower];
-          if (rate) newRates[coin] = rate;
-        }
-        setRates(newRates);
-      })
-      .catch(() => {});
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const fetchRates = (attempt = 0) => {
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(",")}&vs_currencies=${fiatLower}`;
+      fetch(url)
+        .then(r => {
+          if (r.status === 429) throw new Error("rate-limited");
+          return r.json();
+        })
+        .then((data: Record<string, Record<string, number>>) => {
+          if (cancelled) return;
+          const newRates: Record<string, number> = { ...baseRates };
+          for (const [coin, geckoId] of Object.entries(COINGECKO_IDS)) {
+            const rate = data[geckoId]?.[fiatLower];
+            if (rate) newRates[coin] = rate;
+          }
+          setRates(newRates);
+        })
+        .catch(() => {
+          if (cancelled || attempt >= 3) return;
+          const delay = Math.min(2000 * Math.pow(2, attempt), 10000);
+          retryTimer = setTimeout(() => fetchRates(attempt + 1), delay);
+        });
+    };
+
+    fetchRates();
 
     return () => {
       cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
     };
   }, [ids, fiatLower, selfCoins]);
 
@@ -514,4 +528,65 @@ export function useCardInfo(accessToken: string | null): CardInfo {
     fiatCurrency: extractFiatCurrency(settingsData),
     isLoading: cardLoading || balLoading,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Ledger currency ID <-> Baanx coin ticker mapping
+// ---------------------------------------------------------------------------
+
+const LEDGER_TO_BAANX: Record<string, string> = {
+  bitcoin: "BTC",
+  ethereum: "ETH",
+  ripple: "XRP",
+};
+
+const LEDGER_TOKEN_TO_BAANX: Record<string, string> = {
+  "ethereum/erc20/usd~coin": "USDC",
+  "ethereum/erc20/usd_tether__erc20_": "USDT",
+};
+
+export function ledgerCurrencyToBaanxCoin(currencyId: string, tokenId?: string): string | null {
+  if (tokenId) {
+    return LEDGER_TOKEN_TO_BAANX[tokenId] ?? null;
+  }
+  return LEDGER_TO_BAANX[currencyId] ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Extended wallet info with memo/tag for deposit
+// ---------------------------------------------------------------------------
+
+export interface BaanxDepositInfo {
+  address: string;
+  coin: string;
+  memo?: string;
+}
+
+function extractDepositWallets(data: unknown): BaanxDepositInfo[] {
+  if (!isRecord(data)) return [];
+  const wallets = Array.isArray(data.wallets) ? data.wallets : [];
+  return wallets
+    .filter((w): w is Record<string, unknown> => isRecord(w) && "address" in w && "coin" in w)
+    .map(w => ({
+      address: String(w.address),
+      coin: String(w.coin),
+      memo: w.destination_tag ? String(w.destination_tag) : w.memo ? String(w.memo) : undefined,
+    }));
+}
+
+export function useBaanxDepositAddress(
+  accessToken: string | null,
+  baanxCoin: string | null,
+): { deposit: BaanxDepositInfo | null; isLoading: boolean } {
+  const skip = !accessToken;
+  const { data, isLoading } = useGetUserWalletsQuery({ accessToken: accessToken ?? "" }, { skip });
+
+  const deposit = useMemo(() => {
+    if (!baanxCoin || !data) return null;
+    const wallets = extractDepositWallets(data);
+    const upper = baanxCoin.toUpperCase();
+    return wallets.find(w => w.coin.toUpperCase() === upper) ?? null;
+  }, [data, baanxCoin]);
+
+  return { deposit, isLoading };
 }

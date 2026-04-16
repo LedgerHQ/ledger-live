@@ -89,6 +89,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
+import type { BaanxTopUpParamList } from "LLM/features/BaanxCard/topup/types";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -236,6 +237,8 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Fees]: NavigatorScreenParams<FeesNavigatorParamsList>;
   [NavigatorName.Card]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.BaanxCard]?: undefined;
+  [ScreenName.BaanxTransactionHistory]: { accessToken: string };
+  [NavigatorName.BaanxTopUp]: NavigatorScreenParams<BaanxTopUpParamList>;
   [NavigatorName.Exchange]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";

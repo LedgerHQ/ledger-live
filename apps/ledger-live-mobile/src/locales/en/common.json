@@ -7444,6 +7444,7 @@
     },
     "transactions": {
       "title": "Transactions",
+      "historyTitle": "Transaction history",
       "loading": "Loading transactions…",
       "error": "Failed to load transactions.",
       "empty": "No transactions yet.",
@@ -7457,6 +7458,15 @@
         "amount": "Amount",
         "crypto": "Crypto",
         "cashback": "Cashback"
+      },
+      "filters": {
+        "type": "Type",
+        "asset": "Asset",
+        "address": "Address",
+        "all": "All",
+        "sent": "Sent",
+        "received": "Received",
+        "pending": "Pending"
       }
     },
     "dashboard": {
