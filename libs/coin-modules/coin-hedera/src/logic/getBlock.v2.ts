@@ -107,6 +107,11 @@ function createBlockOperationFromERC20TokenTransfer({
     assetReference: transfer.token_evm_address,
   };
 
+  // if we don't have either sender or recipient info, we cannot create a meaningful operation, so we skip it
+  if (!sender || !recipient) {
+    return [];
+  }
+
   return [
     {
       type: "transfer",
