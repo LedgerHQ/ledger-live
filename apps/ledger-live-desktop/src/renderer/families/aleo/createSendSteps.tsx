@@ -14,8 +14,6 @@ import DefaultStepConfirmation, {
 import StepRecipient from "./modals/send/steps/StepRecipient";
 import StepRecipientFooter from "./modals/send/steps/StepRecipientFooter";
 import StepMandatoryPrivateSync from "./modals/send/steps/StepMandatoryPrivateSync";
-import StepRecordPicker from "./modals/send/steps/StepRecordPicker";
-import StepRecordPickerFooter from "./modals/send/steps/StepRecordPickerFooter";
 import type { St } from "./modals/send/types";
 import type { AleoFamily } from "./types";
 
@@ -35,33 +33,13 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
       onBack: ({ transitionTo }) => transitionTo("recipient"),
     },
     {
-      id: "record-picker",
-      excludeFromBreadcrumb: true,
-      component: StepRecordPicker,
-      footer: StepRecordPickerFooter,
-      onBack: ({ transitionTo, updateTransaction }) => {
-        updateTransaction(t => {
-          if (t.family !== "aleo" || !isPrivateTransaction(t)) return t;
-          return {
-            ...t,
-            properties: {
-              amountRecordCommitment: null,
-              feeRecordCommitment: null,
-            },
-          };
-        });
-
-        transitionTo("recipient");
-      },
-    },
-    {
       id: "amount",
       label: <Trans i18nKey="send.steps.amount.title" />,
       component: DefaultStepAmount,
       footer: DefaultStepAmountFooter,
       onBack: ({ transitionTo, transaction }) => {
         if (transaction?.family !== "aleo") return null;
-        const targetStep = isPrivateTransaction(transaction) ? "record-picker" : "recipient";
+        const targetStep = isPrivateTransaction(transaction) ? "private-sync" : "recipient";
         transitionTo(targetStep);
       },
     },

@@ -58,6 +58,9 @@ import {
   getNextSequenceNumber,
   extractViewKey,
   findBestRecordForFee,
+  selectPrivateRecordsForAmount,
+  selectTopPrivateRecordsByValue,
+  sumPrivateRecords,
 } from "./utils";
 
 jest.mock("../config");
@@ -1032,14 +1035,25 @@ describe("getAvailableBalance", () => {
       ...mockAleoResources,
       transparentBalance: mockTransparentBalance,
       privateBalance: mockPrivateBalance,
+      unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
     },
   });
 
   it.each([
     [TRANSACTION_TYPE.TRANSFER_PUBLIC, mockTransparentBalance],
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, mockTransparentBalance],
-    [TRANSACTION_TYPE.TRANSFER_PRIVATE, mockPrivateBalance],
-    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, mockPrivateBalance],
+    [
+      TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      new BigNumber(mockUnspentRecord1.microcredits).plus(
+        new BigNumber(mockUnspentRecord2.microcredits),
+      ),
+    ],
+    [
+      TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+      new BigNumber(mockUnspentRecord1.microcredits).plus(
+        new BigNumber(mockUnspentRecord2.microcredits),
+      ),
+    ],
   ])("should return correct balance for %s", (mode, expected) => {
     const transaction = getMockedTransaction({ mode });
 
@@ -1160,6 +1174,28 @@ describe("createTransactionIntent", () => {
       data: {
         type: transaction.mode,
         record: mockUnspentRecord1.decryptedData,
+      },
+    });
+  });
+
+  it("should include records payload for private transaction with multiple amount commitments", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: null,
+      },
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toMatchObject({
+      type: transaction.mode,
+      data: {
+        type: transaction.mode,
+        record: mockUnspentRecord1.decryptedData,
+        records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
       },
     });
   });
@@ -1462,6 +1498,18 @@ describe("findBestRecordForFee", () => {
     expect(result).toBe(mockUnspentRecord1);
   });
 
+  it("should exclude all selected amount records when commitments array is provided", () => {
+    const targetFee = new BigNumber(500000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [mockUnspentRecord1.commitment],
+    });
+
+    expect(result).toBe(mockUnspentRecord2);
+  });
+
   it("should return null when no record is sufficient to cover the fee", () => {
     const targetFee = new BigNumber(999999999);
     const result = findBestRecordForFee({
@@ -1489,5 +1537,63 @@ describe("findBestRecordForFee", () => {
       selectedAmountRecordCommitment: null,
     });
     expect(result).toBe(mockUnspentRecord1);
+  });
+});
+
+describe("selectPrivateRecordsForAmount", () => {
+  it("should pick the smallest sufficient single record", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "50" },
+      { ...mockUnspentRecord2, microcredits: "5" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(1),
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].microcredits).toBe("5");
+  });
+
+  it("should accumulate ascending records when no single record can cover target", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "5" },
+      { ...mockUnspentRecord2, microcredits: "7" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(10),
+    });
+
+    expect(result).toHaveLength(2);
+  });
+});
+
+describe("selectTopPrivateRecordsByValue", () => {
+  it("should cap selected records to 8 highest values", () => {
+    const records = Array.from({ length: 10 }, (_, index) => ({
+      ...mockUnspentRecord1,
+      commitment: `record-${index}`,
+      microcredits: `${(index + 1) * 10}`,
+    }));
+
+    const result = selectTopPrivateRecordsByValue({ unspentRecords: records });
+
+    expect(result).toHaveLength(8);
+    expect(result[0].microcredits).toBe("100");
+    expect(result[7].microcredits).toBe("30");
+  });
+});
+
+describe("sumPrivateRecords", () => {
+  it("should sum microcredits from all selected records", () => {
+    const result = sumPrivateRecords([
+      { ...mockUnspentRecord1, microcredits: "80" },
+      { ...mockUnspentRecord2, microcredits: "20" },
+    ]);
+
+    expect(result).toEqual(new BigNumber(100));
   });
 });

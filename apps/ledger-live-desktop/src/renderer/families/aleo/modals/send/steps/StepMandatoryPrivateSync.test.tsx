@@ -81,7 +81,7 @@ describe("StepMandatoryPrivateSync", () => {
     expect(mockSync).not.toHaveBeenCalled();
   });
 
-  describe("transition to record-picker when progress reaches 100%", () => {
+  describe("transition to amount when progress reaches 100%", () => {
     const makeAleoAccountAt100 = (): AleoAccount => ({
       ...ALEO_ACCOUNT_1,
       aleoResources: {
@@ -93,7 +93,7 @@ describe("StepMandatoryPrivateSync", () => {
       },
     });
 
-    it("should call transitionTo('record-picker') after progress reaches 100", async () => {
+    it("should call transitionTo('amount') after progress reaches 100", async () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
 
@@ -101,7 +101,7 @@ describe("StepMandatoryPrivateSync", () => {
         syncSubject.next(() => makeAleoAccountAt100());
       });
 
-      await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("record-picker"), {
+      await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("amount"), {
         timeout: 1000,
       });
     });

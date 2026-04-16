@@ -37,3 +37,6 @@ export const PROGRESS_AFTER_LIST_OPS = PROGRESS_AFTER_SCANNER + 35; // 65
 export const PROGRESS_AFTER_PARSING_RECORDS = 30; // 65 → 95
 export const PROGRESS_DONE = 100;
 export const PROGRESS_THROTTLE_MIN_STEP = 5;
+
+// Prototype cap for private send: at most 8 records can be used per transaction.
+export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;

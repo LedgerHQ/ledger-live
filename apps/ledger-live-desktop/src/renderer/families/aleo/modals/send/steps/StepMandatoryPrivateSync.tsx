@@ -40,7 +40,7 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
 
   useEffect(() => {
     if (progress < 100 || isSyncing) return;
-    const timer = setTimeout(() => transitionTo("record-picker"), 500);
+    const timer = setTimeout(() => transitionTo("amount"), 500);
     return () => clearTimeout(timer);
   }, [progress, isSyncing, transitionTo]);
 

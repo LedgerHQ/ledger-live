@@ -71,11 +71,22 @@ function validatePrivateTransaction({
 }): Errors {
   const errors: Errors = {};
   const { amountRecordCommitment, feeRecordCommitment } = transaction.properties;
-  const amountRecord = getValidRecord({ account, commitment: amountRecordCommitment });
+  const amountRecordCommitments = transaction.properties.amountRecordCommitments?.length
+    ? transaction.properties.amountRecordCommitments
+    : amountRecordCommitment
+      ? [amountRecordCommitment]
+      : [];
+  const amountRecords = amountRecordCommitments
+    .map(commitment => getValidRecord({ account, commitment }))
+    .filter((record): record is NonNullable<ReturnType<typeof getValidRecord>> => !!record);
+  const selectedAmountBalance = amountRecords.reduce(
+    (sum, record) => sum.plus(new BigNumber(record.microcredits)),
+    new BigNumber(0),
+  );
 
-  if (!amountRecord) {
+  if (amountRecords.length === 0) {
     errors.amountRecord = new AleoAmountRecordRequired();
-  } else if (amount.gt(new BigNumber(amountRecord.microcredits))) {
+  } else if (amount.gt(selectedAmountBalance)) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -90,7 +101,11 @@ function validatePrivateTransaction({
 
   if (availableRecords.length <= 1) {
     errors.feeRecord = new AleoTwoRecordsRequired();
-  } else if (!feeRecord || feeRecord.commitment === amountRecordCommitment) {
+  } else if (
+    !feeRecord ||
+    amountRecordCommitments.includes(feeRecord.commitment) ||
+    feeRecord.commitment === amountRecordCommitment
+  ) {
     errors.feeRecord = new AleoFeeRecordRequired();
   } else if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
     errors.feeRecord = new AleoFeeRecordInsufficientBalance();

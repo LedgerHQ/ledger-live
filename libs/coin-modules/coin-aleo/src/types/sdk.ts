@@ -26,6 +26,7 @@ interface TransferPrivateIntent {
   amount: string;
   to: string;
   record: AleoDecryptedRecordResponse;
+  records?: AleoDecryptedRecordResponse[];
 }
 
 interface TransferPublicIntent {
@@ -39,6 +40,7 @@ interface TransferPrivateToPublicIntent {
   amount: string;
   to: string;
   record: AleoDecryptedRecordResponse;
+  records?: AleoDecryptedRecordResponse[];
 }
 
 interface TransferPublicToPrivateIntent {

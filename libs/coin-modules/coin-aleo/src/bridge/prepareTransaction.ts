@@ -3,7 +3,13 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import aleoCoinConfig from "../config";
 import { estimateFees } from "../logic";
-import { calculateAmount, findBestRecordForFee, isPrivateTransaction } from "../logic/utils";
+import {
+  calculateAmount,
+  findBestRecordForFee,
+  isPrivateTransaction,
+  selectPrivateRecordsForAmount,
+  selectTopPrivateRecordsByValue,
+} from "../logic/utils";
 import type { AleoAccount, Transaction as AleoTransaction } from "../types";
 
 export const prepareTransaction: AccountBridge<
@@ -17,31 +23,50 @@ export const prepareTransaction: AccountBridge<
   });
 
   const estimatedFees = new BigNumber(feeEstimation.value.toString());
-  const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
+  const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords ?? [];
 
-  if (
-    isPrivateTransaction(transaction) &&
-    !config.isFeeSponsored &&
-    transaction.properties.amountRecordCommitment
-  ) {
-    const feeRecord = findBestRecordForFee({
-      unspentRecords: account.aleoResources?.unspentPrivateRecords ?? [],
-      selectedAmountRecordCommitment: transaction.properties.amountRecordCommitment,
-      targetFee: estimatedFees,
-    });
-    const nextFeeRecordCommitment =
-      feeRecord?.commitment ?? transaction.properties.feeRecordCommitment;
+  if (isPrivateTransaction(transaction)) {
+    const selectedAmountRecords = transaction.useAllAmount
+      ? selectTopPrivateRecordsByValue({ unspentRecords: unspentPrivateRecords })
+      : selectPrivateRecordsForAmount({
+          unspentRecords: unspentPrivateRecords,
+          targetAmount: transaction.amount,
+        });
 
-    return updateTransaction(transaction, {
-      amount: calculatedAmount.amount,
-      fees: estimatedFees,
+    const selectedAmountRecordCommitments = selectedAmountRecords.map(record => record.commitment);
+    const selectedPrimaryCommitment = selectedAmountRecordCommitments[0] ?? null;
+
+    const nextFeeRecordCommitment = !config.isFeeSponsored
+      ? findBestRecordForFee({
+          unspentRecords: unspentPrivateRecords,
+          selectedAmountRecordCommitment: selectedPrimaryCommitment,
+          selectedAmountRecordCommitments: selectedAmountRecordCommitments,
+          targetFee: estimatedFees,
+        })?.commitment ?? transaction.properties.feeRecordCommitment
+      : transaction.properties.feeRecordCommitment;
+
+    const transactionWithAutoSelectedRecords = updateTransaction(transaction, {
       properties: {
         ...transaction.properties,
-        amountRecordCommitment: transaction.properties.amountRecordCommitment,
-        ...(nextFeeRecordCommitment && { feeRecordCommitment: nextFeeRecordCommitment }),
+        amountRecordCommitment: selectedPrimaryCommitment,
+        amountRecordCommitments: selectedAmountRecordCommitments,
+        feeRecordCommitment: nextFeeRecordCommitment,
       },
     });
+
+    const calculatedAmount = calculateAmount({
+      transaction: transactionWithAutoSelectedRecords,
+      account,
+      estimatedFees,
+    });
+
+    return updateTransaction(transactionWithAutoSelectedRecords, {
+      amount: calculatedAmount.amount,
+      fees: estimatedFees,
+    });
   }
+
+  const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
   return updateTransaction(transaction, {
     amount: calculatedAmount.amount,

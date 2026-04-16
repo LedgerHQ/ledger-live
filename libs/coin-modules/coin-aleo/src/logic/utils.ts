@@ -14,7 +14,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
-import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
+import {
+  EXPLORER_TRANSFER_TYPES,
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  PROGRAM_ID,
+  TRANSACTION_TYPE,
+} from "../constants";
 import type {
   AleoOperation,
   AleoTransactionType,
@@ -233,6 +238,82 @@ export function getTransactionType(intent: TransactionIntent): TransactionType {
   return transactionType;
 }
 
+function sortByMicrocredits(
+  records: AleoUnspentRecord[],
+  order: "asc" | "desc" = "asc",
+): AleoUnspentRecord[] {
+  return [...records].sort((a, b) => {
+    const valueA = new BigNumber(a.microcredits);
+    const valueB = new BigNumber(b.microcredits);
+    return order === "asc" ? valueA.comparedTo(valueB) : valueB.comparedTo(valueA);
+  });
+}
+
+export function selectTopPrivateRecordsByValue({
+  unspentRecords,
+  maxRecords = MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+}: {
+  unspentRecords: AleoUnspentRecord[];
+  maxRecords?: number;
+}): AleoUnspentRecord[] {
+  return sortByMicrocredits(
+    unspentRecords.filter(record => new BigNumber(record.microcredits).isGreaterThan(0)),
+    "desc",
+  ).slice(0, maxRecords);
+}
+
+export function selectPrivateRecordsForAmount({
+  unspentRecords,
+  targetAmount,
+  maxRecords = MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+}: {
+  unspentRecords: AleoUnspentRecord[];
+  targetAmount: BigNumber;
+  maxRecords?: number;
+}): AleoUnspentRecord[] {
+  const positiveRecords = unspentRecords.filter(record =>
+    new BigNumber(record.microcredits).isGreaterThan(0),
+  );
+
+  if (positiveRecords.length === 0 || targetAmount.lte(0)) {
+    return [];
+  }
+
+  const sortedByValueAsc = sortByMicrocredits(positiveRecords, "asc");
+  const singleBestMatch = sortedByValueAsc.find(record =>
+    new BigNumber(record.microcredits).gte(targetAmount),
+  );
+
+  if (singleBestMatch) {
+    return [singleBestMatch];
+  }
+
+  const selected: AleoUnspentRecord[] = [];
+  let runningTotal = new BigNumber(0);
+
+  for (const record of sortedByValueAsc) {
+    if (selected.length >= maxRecords) {
+      break;
+    }
+
+    selected.push(record);
+    runningTotal = runningTotal.plus(new BigNumber(record.microcredits));
+
+    if (runningTotal.gte(targetAmount)) {
+      break;
+    }
+  }
+
+  return selected;
+}
+
+export function sumPrivateRecords(records: AleoUnspentRecord[]): BigNumber {
+  return records.reduce(
+    (sum, record) => sum.plus(new BigNumber(record.microcredits)),
+    new BigNumber(0),
+  );
+}
+
 function getAmountToSpend({
   account,
   transaction,
@@ -247,10 +328,21 @@ function getAmountToSpend({
   }
 
   if (isPrivateTransaction(transaction)) {
-    const commitment = transaction.properties.amountRecordCommitment;
-    const amountRecord = commitment ? getRecordByCommitment({ account, commitment }) : null;
+    const selectedCommitments = transaction.properties.amountRecordCommitments?.length
+      ? transaction.properties.amountRecordCommitments
+      : transaction.properties.amountRecordCommitment
+        ? [transaction.properties.amountRecordCommitment]
+        : [];
+    const selectedAmount = selectedCommitments.reduce((sum, commitment) => {
+      const record = getRecordByCommitment({ account, commitment });
+      if (!record) {
+        return sum;
+      }
 
-    return new BigNumber(amountRecord?.microcredits ?? "0");
+      return sum.plus(new BigNumber(record.microcredits));
+    }, new BigNumber(0));
+
+    return selectedAmount;
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
@@ -324,15 +416,20 @@ export function findBestRecordForFee({
   unspentRecords,
   targetFee,
   selectedAmountRecordCommitment,
+  selectedAmountRecordCommitments,
 }: {
   unspentRecords: AleoUnspentRecord[];
   targetFee: BigNumber;
   selectedAmountRecordCommitment: string | null;
+  selectedAmountRecordCommitments?: string[] | null;
 }): AleoUnspentRecord | null {
+  const excludedCommitments = new Set<string>(selectedAmountRecordCommitments ?? []);
+  if (selectedAmountRecordCommitment) {
+    excludedCommitments.add(selectedAmountRecordCommitment);
+  }
+
   const recordsSufficientForFee = unspentRecords.filter(
-    r =>
-      r.commitment !== selectedAmountRecordCommitment &&
-      new BigNumber(r.microcredits).gte(targetFee),
+    r => !excludedCommitments.has(r.commitment) && new BigNumber(r.microcredits).gte(targetFee),
   );
 
   if (recordsSufficientForFee.length === 0) {
@@ -403,6 +500,7 @@ export function mapTransactionIntentToSdkIntent(
         amount,
         to,
         record: txIntent.data.record,
+        ...(txIntent.data.records ? { records: txIntent.data.records } : {}),
       };
     }
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE: {
@@ -420,6 +518,7 @@ export function mapTransactionIntentToSdkIntent(
         amount,
         to,
         record: txIntent.data.record,
+        ...(txIntent.data.records ? { records: txIntent.data.records } : {}),
       };
     }
     case "fee_public": {
@@ -479,7 +578,11 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     // spending private balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
-      return account.aleoResources?.privateBalance ?? new BigNumber(0);
+      return sumPrivateRecords(
+        selectTopPrivateRecordsByValue({
+          unspentRecords: account.aleoResources?.unspentPrivateRecords ?? [],
+        }),
+      );
     default:
       // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
@@ -505,16 +608,27 @@ export function createTransactionIntent({
   } as const;
 
   if (isPrivateTx) {
-    const commitment = transaction.properties.amountRecordCommitment;
-    invariant(commitment, "aleo: missing amount record commitment");
-    const amountRecord = getRecordByCommitment({ account, commitment });
-    invariant(amountRecord, `aleo: no amount record found for commitment ${commitment}`);
+    const selectedCommitments = transaction.properties.amountRecordCommitments?.length
+      ? transaction.properties.amountRecordCommitments
+      : transaction.properties.amountRecordCommitment
+        ? [transaction.properties.amountRecordCommitment]
+        : [];
+    const firstCommitment = selectedCommitments[0] ?? null;
+    invariant(firstCommitment, "aleo: missing amount record commitment");
+    const amountRecord = getRecordByCommitment({ account, commitment: firstCommitment });
+    invariant(amountRecord, `aleo: no amount record found for commitment ${firstCommitment}`);
+
+    const selectedRecords = selectedCommitments
+      .map(commitment => getRecordByCommitment({ account, commitment }))
+      .filter((record): record is AleoUnspentRecord => !!record)
+      .map(record => record.decryptedData);
 
     return {
       ...commonFields,
       data: {
         type: transaction.mode,
         record: amountRecord.decryptedData,
+        ...(selectedRecords.length > 1 ? { records: selectedRecords } : {}),
       },
     };
   }
