@@ -1,0 +1,188 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+fastlane_require "dotenv"
+fastlane_require "semver"
+
+PROJECT_NAME = "ledger-live-desktop"
+OUTPUT_DIRECTORY = "./dist"
+
+default_platform(:mac)
+package = load_json(json_path: "./package.json")
+
+def trim_version_number(version)
+  SemVer.parse(version).format "%M.%m.%p"
+end
+
+def handle_dry_run(options, action_name)
+  if options[:dry_run]
+    UI.important "DRY RUN MODE - #{action_name} will be skipped"
+    return true
+  end
+  false
+end
+
+platform :mac do
+
+  # =============================== PRIVATE ===============================
+
+  desc "private: set app store connect api key"
+  private_lane :set_api_key do
+    app_store_connect_api_key(
+      key_id: ENV["APPLECONNECT_API_KEY_ID"],
+      issuer_id: ENV["APPLECONNECT_API_ISSUER_ID"],
+      key_content: ENV["APPLECONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+  end
+
+  desc "private: setup ci for macOS build"
+  private_lane :setup_mac_ci do
+    create_keychain(
+      name: ENV["CI_KEYCHAIN_NAME"],
+      password: ENV["CI_KEYCHAIN_PASSWORD"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+    set_api_key
+  end
+
+  desc "private: fetch latest build number from TestFlight and bump"
+  private_lane :bump_build_number do
+    version = trim_version_number(package["version"])
+
+    build_number = latest_testflight_build_number(
+      version: version,
+      app_identifier: ENV["APP_IDENTIFIER"]
+    )
+
+    new_build_number = build_number + 1
+    UI.message "Bumping build number: #{build_number} -> #{new_build_number} (version #{version})"
+
+    # Export to GITHUB_ENV for CI traceability (same pattern as mobile)
+    if ENV["GITHUB_ENV"]
+      sh(
+        <<-SHELL
+          echo "MAS_BUILD_NUMBER=#{new_build_number}" | tee -a $GITHUB_ENV
+        SHELL
+      )
+    end
+
+    new_build_number
+  end
+
+  desc "private: build the MAS .pkg using electron-builder"
+  private_lane :build_mas do |options|
+    config = options[:config] || "electron-builder-mas.yml"
+    build_number = options[:build_number]
+
+    UI.message "Building MAS package with config: #{config}"
+
+    # Build the JS bundle first
+    sh("cd .. && pnpm build:js")
+
+    # Run electron-builder with the specified config, injecting build number via CLI override
+    eb_cmd = "cross-env NODE_ENV=production DEBUG=electron-builder,electron-universal electron-builder --config #{config}"
+    if build_number
+      eb_cmd += " --config.mac.bundleVersion=#{build_number}"
+      UI.message "Using build number (CFBundleVersion): #{build_number}"
+    end
+
+    sh("cd .. && #{eb_cmd}")
+
+    UI.success "MAS build completed"
+  end
+
+  desc "private: find the built .pkg file"
+  private_lane :find_pkg do
+    pkg_files = Dir.glob("../dist/*.pkg")
+    UI.user_error!("No .pkg file found in dist/. Did the build succeed?") if pkg_files.empty?
+    pkg_path = File.expand_path(pkg_files.first)
+    UI.message "Found .pkg: #{pkg_path}"
+    pkg_path
+  end
+
+  desc "private: upload .pkg to App Store Connect / TestFlight"
+  private_lane :upload do |options|
+    pkg_path = find_pkg
+    version = trim_version_number(package["version"])
+
+    UI.message "Uploading #{pkg_path} to App Store Connect..."
+
+    deliver(
+      pkg: pkg_path,
+      app_identifier: ENV["APP_IDENTIFIER"],
+      skip_screenshots: true,
+      skip_metadata: true,
+      skip_app_version_update: true,
+      precheck_include_in_app_purchases: false,
+      force: true, # skip interactive confirmation
+      run_precheck_before_submit: false,
+    )
+  end
+
+  # ============================= END PRIVATE =============================
+  # ============================= LOCAL BUILD =============================
+
+  desc "build MAS package locally (dev signing)"
+  lane :local_mas do
+    UI.message "Building MAS dev package locally..."
+    sh("cd .. && pnpm dist:mas-dev")
+    UI.success "Local MAS dev build completed. Check dist/ for the .pkg file."
+  end
+
+  # =========================== END LOCAL BUILD ===========================
+  # ============================== CI BUILD ===============================
+
+  desc "ci: build and upload to App Store Connect (TestFlight)"
+  lane :ci_testflight do |options|
+    if options[:dry_run]
+      UI.important "DRY RUN MODE - No actual upload will be performed"
+    end
+
+    setup_mac_ci
+    new_build_number = bump_build_number
+    build_mas(build_number: new_build_number)
+
+    unless options[:dry_run]
+      upload
+    else
+      UI.success "DRY RUN: Build completed successfully (upload skipped)"
+    end
+  end
+
+  desc "ci: build and upload nightly to App Store Connect (TestFlight)"
+  lane :ci_nightly do |options|
+    if options[:dry_run]
+      UI.important "DRY RUN MODE - No actual upload will be performed"
+    end
+
+    setup_mac_ci
+    new_build_number = bump_build_number
+    build_mas(
+      config: "electron-builder-mas-nightly.yml",
+      build_number: new_build_number
+    )
+
+    unless options[:dry_run]
+      upload
+    else
+      UI.success "DRY RUN: Build completed successfully (upload skipped)"
+    end
+  end
+
+  desc "ci: build MAS package only (no upload)"
+  lane :ci_build do |options|
+    setup_mac_ci
+    new_build_number = bump_build_number
+    build_mas(build_number: new_build_number)
+  end
+
+  # ============================ END CI BUILD =============================
+end

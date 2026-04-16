@@ -6,7 +6,7 @@
     <true/>
     <key>com.apple.security.application-groups</key>
     <array>
-      <string>X6LFS5BQKN.com.ledger.live</string>
+      <string>group.com.ledger.live</string>
     </array>
     <key>com.apple.security.network.client</key>
     <true/>
