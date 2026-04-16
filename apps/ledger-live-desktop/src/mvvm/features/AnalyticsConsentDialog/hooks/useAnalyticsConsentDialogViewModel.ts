@@ -23,9 +23,9 @@ import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
-} from "@ledgerhq/live-common/analyticsConsentUtils";
+  resolveAnalyticsOptInParams,
+} from "@ledgerhq/live-common/analyticsConsent/index";
 import type { AnalyticsConsentDialogPhase } from "../types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 export const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
 
@@ -44,14 +44,15 @@ export function useAnalyticsConsentDialogViewModel() {
   const isPortfolioRouteFocused = Boolean(portfolioRouteMatch);
 
   const feature = useFeature("analyticsOptIn");
+  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(feature);
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const sharePersonalizedRecommendations = useSelector(sharePersonalizedRecommendationsSelector);
 
-  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
-  const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
+  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
+  const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
 
   const shouldOffer = Boolean(
     feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
@@ -110,7 +111,7 @@ export function useAnalyticsConsentDialogViewModel() {
   }, [isPortfolioRouteFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, shareAnalytics]);
 
   const persistAnalyticsConsentAck = async () => {
-    dispatch(setAnalyticsConsentInfo());
+    dispatch(setAnalyticsConsentInfo(policyVersion));
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
@@ -125,7 +126,7 @@ export function useAnalyticsConsentDialogViewModel() {
       {
         button: "analytics_consent_opt_in",
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       },
       true,
     );
@@ -143,7 +144,7 @@ export function useAnalyticsConsentDialogViewModel() {
       {
         button: "analytics_consent_opt_out",
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       },
       trackMandatory,
     );
@@ -157,7 +158,7 @@ export function useAnalyticsConsentDialogViewModel() {
     track("button_clicked", {
       button: "analytics_consent_privacy_got_it",
       page: ANALYTICS_CONSENT_DIALOG_PAGE,
-      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      privacyPolicyVersion: policyVersion,
     });
     await persistAnalyticsConsentAck();
     handleCloseDialog();
@@ -188,7 +189,7 @@ export function useAnalyticsConsentDialogViewModel() {
       {
         button: "analytics_consent_preferences_confirm",
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       },
       trackMandatory,
     );

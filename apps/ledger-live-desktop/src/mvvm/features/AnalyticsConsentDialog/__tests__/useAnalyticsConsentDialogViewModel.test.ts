@@ -1,7 +1,6 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
-import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsent/index";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
@@ -33,7 +32,10 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     ...FEATURE_FLAGS_INITIAL_STATE,
     overrides: {
       ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-      analyticsOptIn: { enabled: true },
+      analyticsOptIn: {
+        ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
+        enabled: true,
+      },
     },
   };
 
@@ -51,7 +53,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       sharePersonalizedRecommandations: true,
       analyticsConsentInfo: {
         consentDate: null,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: 1,
       },
     },
   };
@@ -68,7 +70,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
           sharePersonalizedRecommandations: true,
           analyticsConsentInfo: {
             consentDate: null,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+            privacyPolicyVersion: 1,
           },
         },
       },
@@ -106,7 +108,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
             sharePersonalizedRecommandations: false,
             analyticsConsentInfo: {
               consentDate: oldIso,
-              privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+              privacyPolicyVersion: 1,
             },
           },
         },
@@ -142,7 +144,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     expect(s.shareAnalytics).toBe(true);
     expect(s.sharePersonalizedRecommandations).toBe(true);
     expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
-    expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
+    expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
     expect(result.current.phase).toBe("closed");
   });
 

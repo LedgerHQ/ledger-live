@@ -306,6 +306,7 @@ apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                      
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/tests/specs/onboarding/                                               @ledgerhq/engagement
@@ -323,6 +324,7 @@ apps/ledger-live-mobile/e2e/specs/onboardingReadOnly.spec.ts                    
 apps/ledger-live-mobile/e2e/page/onboarding/                                                   @ledgerhq/engagement
 apps/ledger-live-mobile/e2e/page/postOnboarding/                                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Settings/Notifications                                     @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/Settings/Debug/AnalyticsConsentQA/                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/logic/postOnboarding/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/contentCards/                                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/dynamicContent/                                                    @ledgerhq/engagement
@@ -341,8 +343,7 @@ apps/ledger-live-mobile/src/reducers/dynamicContent.ts                          
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
 
 # Common
-libs/ledger-live-common/src/analyticsConsentUtils.ts                                           @ledgerhq/engagement
-libs/ledger-live-common/src/analyticsConsentUtils.test.ts                                      @ledgerhq/engagement
+libs/ledger-live-common/src/analyticsConsent/                                                  @ledgerhq/engagement
 libs/ledger-live-common/src/privacyConsent.ts                                                  @ledgerhq/engagement
 libs/ledger-live-common/src/analytics/                                                         @ledgerhq/engagement
 libs/ledger-live-common/src/onboarding/                                                        @ledgerhq/engagement
