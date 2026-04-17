@@ -321,8 +321,19 @@ export const etherscanInternalTransactionToOperations = (
 
 const NATIVE_ASSET = { type: "native" } as const;
 
+// EVM call types that execute code but do NOT transfer native value. Both Blockscout and Etherscan
+// still report a `value` on these entries (inherited from the enclosing call's msg.value), so
+// converting them into operations would double-count the native transfer.
+// Blockscout exposes the discriminator via `callType`, Etherscan via `type`.
+const NON_VALUE_TRANSFER_CALL_TYPES = new Set(["delegatecall", "staticcall", "callcode"]);
+
 function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
-  return it.isError === "0" && BigInt(it.value) > 0n && !!it.from && !!it.to;
+  if (it.isError !== "0") return false;
+  if (BigInt(it.value) === 0n) return false;
+  if (!it.from || !it.to) return false;
+  const callType = (it.callType || it.type || "").toLowerCase();
+  if (NON_VALUE_TRANSFER_CALL_TYPES.has(callType)) return false;
+  return true;
 }
 
 /**

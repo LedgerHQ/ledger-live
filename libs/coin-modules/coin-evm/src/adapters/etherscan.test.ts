@@ -1995,6 +1995,24 @@ describe("EVM Family", () => {
           expect(byHash.size).toBe(1);
           expect(byHash.get("0xtx1")!.length).toBe(4); // 2 internal txs × 2 ops each
         });
+
+        it.each(["delegatecall", "staticcall", "callcode"])(
+          "skips internal txs whose Blockscout callType is %s (no native value moves)",
+          callType => {
+            const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", callType }];
+            const byHash = internalTxsToOperationsByHash(internalTxs);
+            expect(byHash.size).toBe(0);
+          },
+        );
+
+        it.each(["delegatecall", "staticcall", "callcode"])(
+          "skips internal txs whose Etherscan type is %s (no native value moves)",
+          type => {
+            const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", type }];
+            const byHash = internalTxsToOperationsByHash(internalTxs);
+            expect(byHash.size).toBe(0);
+          },
+        );
       });
     });
 

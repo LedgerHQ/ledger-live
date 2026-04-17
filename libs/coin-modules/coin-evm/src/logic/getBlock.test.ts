@@ -14,7 +14,8 @@ import {
 } from "../network/node/types";
 import { EtherscanInternalTransaction } from "../types";
 import { safeEncodeEIP55 } from "../utils";
-import { getBlock } from "./getBlock";
+import { dropRootTraceDuplicates, getBlock } from "./getBlock";
+import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 
 // fixme refactor this test
 // use builder function to build the mocked return values
@@ -569,6 +570,125 @@ describe("getBlock", () => {
     });
   });
 
+  it("drops a root-trace internal transaction that duplicates the coin tx's native transfer", async () => {
+    // Blockscout's `txlistinternal` exposes the top-level call of every tx as an internal transaction.
+    // That entry has `from`, `to`, `value` identical to the coin tx's own native transfer, so merging
+    // it naively would double-count the native transfer. The dedup in mergeInternalTransactions
+    // drops internal native ops whose (address, peer, amount) match one of the coin tx's own.
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const amount = 200000000000000000n;
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValueOnce(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", value: amount.toString() })],
+        }),
+      ),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getTransaction: jest.fn(),
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockResolvedValueOnce([
+      // Root-trace duplicate: same from/to/value as the coin tx.
+      makeExplorerInternalTransaction({
+        hash: "0xtx1",
+        from: address1,
+        to: address2,
+        value: amount.toString(),
+      }),
+    ]);
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    // Only the two ops from the coin tx itself (sender + recipient side), no duplicates.
+    const nativeOps = result.transactions[0].operations.filter(
+      op => op.type === "transfer" && op.asset.type === "native",
+    );
+    expect(nativeOps).toHaveLength(2);
+  });
+
+  it("keeps a nested internal transaction that does not match the coin tx's native transfer", async () => {
+    // Sanity: when the explorer reports a legitimate subcall (different from/to than the coin tx),
+    // it is kept alongside the coin tx's own native ops.
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const coinAmount = 200000000000000000n;
+    const nestedAmount = 200000000000000000n;
+    const nestedRecipient = "0x330E16622F947CBBfA15aB2fdf83014EAa27eCd1";
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValueOnce(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", value: coinAmount.toString() })],
+        }),
+      ),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getTransaction: jest.fn(),
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockResolvedValueOnce([
+      // Root-trace duplicate: filtered.
+      makeExplorerInternalTransaction({
+        hash: "0xtx1",
+        from: address1,
+        to: address2,
+        value: coinAmount.toString(),
+      }),
+      // Nested subcall from the contract onwards: kept.
+      makeExplorerInternalTransaction({
+        hash: "0xtx1",
+        from: address2,
+        to: nestedRecipient,
+        value: nestedAmount.toString(),
+      }),
+    ]);
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    const nativeOps = result.transactions[0].operations.filter(
+      op => op.type === "transfer" && op.asset.type === "native",
+    );
+    // 2 ops from the coin tx + 2 from the nested subcall = 4. Root-trace dup dropped.
+    expect(nativeOps).toHaveLength(4);
+    expect(nativeOps).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          address: safeEncodeEIP55(address2),
+          peer: safeEncodeEIP55(nestedRecipient),
+          amount: -nestedAmount,
+        }),
+        expect.objectContaining({
+          address: safeEncodeEIP55(nestedRecipient),
+          peer: safeEncodeEIP55(address2),
+          amount: nestedAmount,
+        }),
+      ]),
+    );
+  });
+
   it("when explorer is not etherscan like, fallbacks to node.traceBlock", async () => {
     setCoinConfig(
       () =>
@@ -817,5 +937,62 @@ describe("getBlock", () => {
 
     expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(expect.anything(), 12345);
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
+  });
+});
+
+describe("dropRootTraceDuplicates", () => {
+  const A = "0xAAAa1111111111111111111111111111aaaaaaaa";
+  const B = "0xBBBb2222222222222222222222222222bbbbbbbb";
+  const C = "0xCCCc3333333333333333333333333333cccccccc";
+
+  function nativeTransfer(address: string, peer: string, amount: bigint): BlockOperation {
+    return { type: "transfer", address, peer, asset: { type: "native" }, amount };
+  }
+
+  it("drops internal native ops that exactly match a coin native op", () => {
+    const coinOps: BlockOperation[] = [
+      nativeTransfer(A, B, -100n),
+      nativeTransfer(B, A, 100n),
+    ];
+    const internalOps: BlockOperation[] = [
+      nativeTransfer(A, B, -100n), // root-trace duplicate
+      nativeTransfer(B, A, 100n),  // root-trace duplicate
+    ];
+    expect(dropRootTraceDuplicates(coinOps, internalOps)).toEqual([]);
+  });
+
+  it("keeps internal ops that differ in peer or amount", () => {
+    const coinOps: BlockOperation[] = [
+      nativeTransfer(A, B, -100n),
+      nativeTransfer(B, A, 100n),
+    ];
+    const internalOps: BlockOperation[] = [
+      nativeTransfer(B, C, -100n), // nested subcall
+      nativeTransfer(C, B, 100n),
+    ];
+    expect(dropRootTraceDuplicates(coinOps, internalOps)).toEqual(internalOps);
+  });
+
+  it("compares addresses case-insensitively", () => {
+    const coinOps: BlockOperation[] = [nativeTransfer(A.toLowerCase(), B.toLowerCase(), -100n)];
+    const internalOps: BlockOperation[] = [nativeTransfer(A.toUpperCase(), B.toUpperCase(), -100n)];
+    expect(dropRootTraceDuplicates(coinOps, internalOps)).toEqual([]);
+  });
+
+  it("leaves ERC20 internal ops alone even when they share address/peer/amount with a native op", () => {
+    const coinOps: BlockOperation[] = [nativeTransfer(A, B, -100n)];
+    const erc20Op: BlockOperation = {
+      type: "transfer",
+      address: A,
+      peer: B,
+      asset: { type: "erc20", assetReference: "0xtoken", assetOwner: A },
+      amount: -100n,
+    };
+    expect(dropRootTraceDuplicates(coinOps, [erc20Op])).toEqual([erc20Op]);
+  });
+
+  it("is a no-op when the coin tx has no native ops", () => {
+    const internalOps: BlockOperation[] = [nativeTransfer(A, B, -100n)];
+    expect(dropRootTraceDuplicates([], internalOps)).toEqual(internalOps);
   });
 });

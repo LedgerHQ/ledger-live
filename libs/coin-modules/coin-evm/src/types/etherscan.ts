@@ -110,6 +110,12 @@ export type EtherscanInternalTransaction = {
   contractAddress: string;
   input: string;
   type: string;
+  /**
+   * Blockscout-specific: the low-level call opcode ("call", "delegatecall", "staticcall",
+   * "callcode"). Etherscan folds this into `type` instead, so `callType` is only set on
+   * Blockscout responses.
+   */
+  callType?: string;
   gas: string;
   gasUsed: string;
   traceId: string;

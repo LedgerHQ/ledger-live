@@ -73,6 +73,10 @@ export function rpcTransactionToBlockOperations(
   return operations;
 }
 
+// EVM call types that execute code but do NOT transfer native value. Keeping this list in sync
+// with the one in `adapters/etherscan.ts` — both providers leak the same non-transferring frames.
+const NON_VALUE_TRANSFER_CALL_TYPES = new Set(["delegatecall", "staticcall", "callcode"]);
+
 function extractActionFields(
   item: TraceBlockItem,
 ): { from: string; to: string; value: bigint; hash: string } | null {
@@ -87,6 +91,11 @@ function extractActionFields(
   // When traceBlockItemsToOperationsByHash processed the top-level trace without filtering it out,
   // the same native transfer appeared twice after merging.
   if (item.traceAddress.length === 0) return null;
+
+  // `delegatecall`, `staticcall`, and `callcode` cannot move native ETH; the `value` field here
+  // is msg.value inherited from the enclosing frame. Converting them into operations would
+  // double-count the transfer.
+  if (NON_VALUE_TRANSFER_CALL_TYPES.has(action.callType.toLowerCase())) return null;
 
   const value = BigInt(action.value);
   if (value === 0n) return null;
