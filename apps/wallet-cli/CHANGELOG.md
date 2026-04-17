@@ -1,5 +1,13 @@
 # @ledgerhq/wallet-cli
 
+## 0.1.1-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`0b3f80f`](https://github.com/LedgerHQ/ledger-live/commit/0b3f80f20a2fbf25875ab7ebce3924722099a5ab)]:
+  - @ledgerhq/live-common@34.69.0-next.3
+  - @ledgerhq/coin-evm@3.4.0-next.1
+
 ## 0.1.1-next.2
 
 ### Patch Changes
