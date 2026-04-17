@@ -71,7 +71,7 @@ export const EditCryptoAddressNameDialog = ({
         onPointerDownOutside={handlePointerDownOutside}
       >
         <DialogHeader
-          appearance="expanded"
+          density="expanded"
           title={t("cryptoAddresses.editName.title")}
           onClose={() => handleOpenChange(false)}
         />

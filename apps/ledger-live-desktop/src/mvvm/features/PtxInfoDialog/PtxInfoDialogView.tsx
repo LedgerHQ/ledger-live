@@ -12,7 +12,7 @@ const PtxInfoDialogView = ({
 }: PtxInfoDialogViewProps) => (
   <Dialog open={isOpen} onOpenChange={onClose}>
     <DialogContent aria-describedby={undefined}>
-      <DialogHeader appearance="compact" title={title} onClose={onClose} />
+      <DialogHeader density="compact" title={title} onClose={onClose} />
       <DialogBody className="gap-0 px-24 pb-24">
         <p className="body-1 text-base whitespace-pre-line">
           {message}

@@ -300,6 +300,8 @@ apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts       
 apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ActionContentCards.tsx                 @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/hooks/**/useBannersVisibility*.ts @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/PortfolioBannerContent/ @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/reducers/dynamicContent.ts                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
@@ -339,6 +341,7 @@ apps/ledger-live-mobile/src/mvvm/features/Reborn/                               
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/OnboardingWidget/               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBannersSection/        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarouselSection/       @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/Portfolio/hooks/**/useOnboardingWidgetVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
 

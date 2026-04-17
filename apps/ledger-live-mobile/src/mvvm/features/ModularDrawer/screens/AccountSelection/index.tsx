@@ -91,7 +91,7 @@ const AccountSelectionContent = ({
     <>
       <TrackDrawerScreen page={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION} flow={flow} source={source} />
       {useLumenBottomSheet && (
-        <BottomSheetHeader spacing title={t("modularDrawer.selectAccount")} appearance="expanded" />
+        <BottomSheetHeader spacing title={t("modularDrawer.selectAccount")} density="expanded" />
       )}
       <BottomSheetVirtualizedList
         ref={listRef}

@@ -1,11 +1,4 @@
-import type {
-  Account,
-  DeviceInfo,
-  DeviceModelInfo,
-  Feature,
-  FeatureId,
-  PortfolioRange,
-} from "@ledgerhq/types-live";
+import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
@@ -40,6 +33,7 @@ import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
+import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
 
 // === ACCOUNT STATE ===
 
@@ -427,4 +421,5 @@ export type State = LLMRTKApiState & {
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
+  portfolioBalanceDisplay: PortfolioBalanceDisplayState;
 };

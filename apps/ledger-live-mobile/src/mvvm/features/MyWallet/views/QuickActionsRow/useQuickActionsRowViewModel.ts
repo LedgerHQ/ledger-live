@@ -1,7 +1,16 @@
 import { useCallback, useMemo } from "react";
+import { Linking } from "react-native";
 import { TileButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldCheckNotification, LifeRing, Gift } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import { urls } from "~/utils/urls";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 
 export interface QuickActionRowItem {
   readonly id: string;
@@ -17,24 +26,40 @@ interface QuickActionsRowViewModel {
 
 export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   const { t } = useTranslation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  const recoverFeature = useFeature("protectServicesMobile");
+  const protectId = recoverFeature?.params?.protectId ?? "protect-prod";
+
+  const hasDevice = lastConnectedDevice !== null;
+
+  const recoverLabel = hasDevice
+    ? t("myWallet.quickActions.recover")
+    : t("myWallet.quickActions.backup");
 
   const handleRecoverPress = useCallback(() => {
-    // TODO: implement recover navigation
-  }, []);
+    track("button_clicked", { button: "Recover", page: ScreenName.MyWallet });
+    navigation.navigate(ScreenName.Recover, {
+      platform: protectId,
+      device: lastConnectedDevice ?? undefined,
+    });
+  }, [navigation, protectId, lastConnectedDevice]);
 
   const handleHelpPress = useCallback(() => {
     // TODO: implement help navigation
   }, []);
 
   const handleReferralPress = useCallback(() => {
-    // TODO: implement referral navigation
+    track("button_clicked", { button: "Referral", page: ScreenName.MyWallet });
+    Linking.openURL(urls.referralProgram);
   }, []);
 
   const actions: readonly QuickActionRowItem[] = useMemo(
     () => [
       {
         id: "recover",
-        label: t("myWallet.quickActions.recover"),
+        label: recoverLabel,
         icon: ShieldCheckNotification,
         onPress: handleRecoverPress,
         testID: "my-wallet-quick-action-recover",
@@ -54,7 +79,7 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
         testID: "my-wallet-quick-action-referral",
       },
     ],
-    [t, handleRecoverPress, handleHelpPress, handleReferralPress],
+    [t, recoverLabel, handleRecoverPress, handleHelpPress, handleReferralPress],
   );
 
   return { actions };
