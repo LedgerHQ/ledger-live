@@ -12,7 +12,7 @@ const BASE_DEEPLINK = "ledgerlive://";
 
 export const currencyParam = "?currency=";
 
-export const isWallet40 = process.env.E2E_ENABLE_WALLET40 === "1";
+export const isWallet40 = process.env.E2E_ENABLE_WALLET40 !== "0";
 
 /**
  * Waits for a specified amount of time
