@@ -1,5 +1,6 @@
 import React from "react";
-import { render } from "@tests/test-renderer";
+import { View } from "react-native";
+import { render, screen } from "@tests/test-renderer";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { BorrowWebviewInputs } from "LLM/features/Borrow/screens/BorrowLiveApp/useBorrowLiveAppViewModel";
 import { BorrowWebView } from "../BorrowWebView";
@@ -9,7 +10,7 @@ jest.mock("~/components/Web3AppWebview", () => ({
     _props: Record<string, unknown>,
     _ref: React.Ref<unknown>,
   ) {
-    return <></>;
+    return <View testID="borrow-webview-mock" />;
   }),
 }));
 
@@ -34,7 +35,7 @@ describe("BorrowWebView", () => {
   it("should render without crashing", () => {
     const setWebviewState = jest.fn();
 
-    const { toJSON } = render(
+    render(
       <BorrowWebView
         manifest={mockManifest}
         setWebviewState={setWebviewState}
@@ -42,6 +43,6 @@ describe("BorrowWebView", () => {
       />,
     );
 
-    expect(toJSON()).not.toBeNull();
+    expect(screen.getByTestId("borrow-webview-mock")).toBeVisible();
   });
 });
