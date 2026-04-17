@@ -137,6 +137,11 @@ async function validateGas(
   const warnings: Record<string, Error> = {};
 
   const nativeBalance = findBalance({ type: "native" }, balances);
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
 
   const gasLimit =
     typeof estimatedFees.parameters?.gasLimit === "bigint" ? estimatedFees.parameters.gasLimit : 0n;
@@ -177,15 +182,12 @@ async function validateGas(
     errors.gasPrice = new FeeNotLoaded();
   } else if (
     intent.recipient &&
-    estimatedFees.value > nativeBalance.value - (nativeBalance.locked ?? 0n) &&
+    totalFees > nativeBalance.value - (nativeBalance.locked ?? 0n) &&
     !intent.sponsored
   ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
-      fees: formatCurrencyUnit(
-        getFeesUnit(currency),
-        new BigNumber(estimatedFees.value.toString()),
-      ),
+      fees: formatCurrencyUnit(getFeesUnit(currency), new BigNumber(totalFees.toString())),
       ticker: currency.ticker,
       cryptoName: currency.name,
       links: ["ledgerlive://buy"],

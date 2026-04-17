@@ -681,6 +681,32 @@ describe("validateIntent", () => {
           );
         });
 
+        it("includes additionalFees (L2 L1-data fee) when deciding NotEnoughGas", async () => {
+          // gas fee alone fits in the available balance, but the additionalFees
+          // (e.g. L1 data fee on L2s) push the total above the native balance.
+          const res = await validateIntent(
+            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            createIntent({ recipient: "recipient-address" }),
+            [{ value: 10n, asset: { type: "native" } }],
+            {
+              value: 9n,
+              parameters: {
+                gasLimit: 9n,
+                gasPrice: 1n,
+                maxFeePerGas: 1n,
+                maxPriorityFeePerGas: 1n,
+                additionalFees: 5n,
+              },
+            },
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              gasPrice: new NotEnoughGas(),
+            }),
+          );
+        });
+
         it("if the recipient has not been set, does not detect gas being too high", async () => {
           const notEnoughBalanceRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
