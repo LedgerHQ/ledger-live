@@ -68,11 +68,11 @@ export function extractBalances(
 ): Balance[] {
   const balances: Balance[] = [
     {
-      // Send flows expect spendable balances here. Using the account total balance
-      // makes `useAllAmount` include staked/locked funds for staking-enabled EVM accounts.
-      value: BigInt(account.spendableBalance.toFixed()),
+      // `value` is the total balance, `locked` is the non-spendable part of it.
+      // Consumers must compute available funds as `value - locked`.
+      value: BigInt(account.balance.toFixed()),
       asset: { type: "native" },
-      locked: 0n,
+      locked: BigInt(BigNumber.max(account.balance.minus(account.spendableBalance), 0).toFixed()),
     },
   ];
 
@@ -83,9 +83,11 @@ export function extractBalances(
   for (const subAccount of account.subAccounts) {
     const asset = getAssetFromToken(subAccount.token, account.freshAddress);
     balances.push({
-      value: BigInt(subAccount.spendableBalance.toFixed()),
+      value: BigInt(subAccount.balance.toFixed()),
       asset,
-      locked: 0n,
+      locked: BigInt(
+        BigNumber.max(subAccount.balance.minus(subAccount.spendableBalance), 0).toFixed(),
+      ),
     });
   }
 
