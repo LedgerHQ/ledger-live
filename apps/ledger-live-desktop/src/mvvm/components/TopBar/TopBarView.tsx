@@ -7,6 +7,7 @@ import { TopBarViewProps } from "./types";
 import { TopBarActionsList } from "./components/ActionsList";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Updater from "LLD/features/Updater";
+import { MyWallet } from "LLD/features/MyWallet";
 
 const TopBarView = ({ slots, shouldShowFirmwareUpdateBanner }: TopBarViewProps) => {
   return (
@@ -19,6 +20,7 @@ const TopBarView = ({ slots, shouldShowFirmwareUpdateBanner }: TopBarViewProps) 
         {shouldShowFirmwareUpdateBanner && <FirmwareUpdateBanner />}
         <Updater />
         <TopBarActionsList slots={slots} />
+        <MyWallet />
       </NavBarTrailing>
     </NavBar>
   );
