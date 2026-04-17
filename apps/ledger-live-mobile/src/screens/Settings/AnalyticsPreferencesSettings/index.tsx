@@ -39,7 +39,13 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
   );
 
   const onConfirm = useCallback(async () => {
-    track(
+    const wasFullyOptedOut = !analyticsFromStore && !personalizedFromStore;
+    const willBeFullyOptedOut = !appPerformanceEnabled && !personalizedEnabled;
+    // Same idea as analytics consent `applyOptOut`: do not force tracking when the user was already
+    // fully opted out in the store and confirms without enabling either toggle.
+    const mandatory = !(wasFullyOptedOut && willBeFullyOptedOut);
+
+    await track(
       "button_clicked",
       {
         button: "analytics_preferences_confirm",
@@ -47,7 +53,7 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
         appPerformance: appPerformanceEnabled,
         personalizedExperience: personalizedEnabled,
       },
-      true,
+      mandatory,
     );
     dispatch(setAnalytics(appPerformanceEnabled));
     dispatch(setPersonalizedRecommendations(personalizedEnabled));
@@ -58,13 +64,20 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    await updateIdentify(undefined, true);
+    await updateIdentify(undefined, mandatory);
     navigation.goBack();
-  }, [appPerformanceEnabled, dispatch, navigation, personalizedEnabled]);
+  }, [
+    analyticsFromStore,
+    appPerformanceEnabled,
+    dispatch,
+    navigation,
+    personalizedEnabled,
+    personalizedFromStore,
+  ]);
 
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <TrackScreen category="Analytics preferences settings" name="Set preferences" refreshSource={false} />
+      <TrackScreen category="Analytics preferences settings" name="Set preferences" />
       <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s12" }}>
         <Text
           typography="heading3SemiBold"
