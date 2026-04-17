@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 4.2.0-next.2
+
+### Minor Changes
+
+- [#16457](https://github.com/LedgerHQ/ledger-live/pull/16457) [`de99bc1`](https://github.com/LedgerHQ/ledger-live/commit/de99bc14f09e699af591dc6acf12f9547d792dfd) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(xrp): fix invalid param signer
+
+### Patch Changes
+
+- Updated dependencies [[`de99bc1`](https://github.com/LedgerHQ/ledger-live/commit/de99bc14f09e699af591dc6acf12f9547d792dfd)]:
+  - @ledgerhq/live-common@34.69.0-next.2
+  - @ledgerhq/live-dmk-desktop@0.16.5-next.2
+
 ## 4.2.0-next.1
 
 ### Minor Changes
