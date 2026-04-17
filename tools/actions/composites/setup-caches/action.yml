@@ -108,10 +108,11 @@ runs:
 
     - name: Install Linux native build dependencies
       if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential pkg-config
+      uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3
+      with:
+        max_attempts: 3
+        timeout_minutes: 5
+        command: sudo apt-get update && sudo apt-get install -y build-essential pkg-config
 
     - name: Setup the toolchain
       # If we're not using mise, keep this behaviour of activating proto tools
