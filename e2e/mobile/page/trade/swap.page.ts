@@ -29,7 +29,7 @@ export default class SwapPage extends CommonPage {
   historyButton = "navigation-header-swap-history";
   topBarSwapHistoryButton = "topbar-swap-history";
   swapStatus = "swap-status";
-  exportOperationsButton = "export-swap-operations-link";
+  exportOperationsButton = "enabled-export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
   swapFormTabId = "swap-form-tab";
   swapCloseButtonCompletedTestId = this.closeButtonTestId + "Completed";

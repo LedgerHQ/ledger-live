@@ -51,7 +51,7 @@ describe("AnalyticsOptInPrompt", () => {
   it("navigates to onboarding device selection when lazy onboarding is disabled", async () => {
     const { user } = renderAnalyticsOptInMain({ wallet40Enabled: true, lazyOnboarding: false });
 
-    await user.press(screen.getByTestId("accept-analytics-button"));
+    await user.press(screen.getByTestId("enabled-accept-analytics-button"));
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
@@ -70,7 +70,7 @@ describe("AnalyticsOptInPrompt", () => {
       lazyOnboarding: true,
     });
 
-    await user.press(screen.getByTestId("accept-analytics-button"));
+    await user.press(screen.getByTestId("enabled-accept-analytics-button"));
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Base, {
       screen: NavigatorName.Main,
@@ -89,7 +89,7 @@ describe("AnalyticsOptInPrompt", () => {
       lazyOnboarding: true,
     });
 
-    await user.press(screen.getByTestId("accept-analytics-button"));
+    await user.press(screen.getByTestId("enabled-accept-analytics-button"));
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,

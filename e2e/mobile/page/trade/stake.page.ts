@@ -5,8 +5,8 @@ export default class StakePage {
   celoLockAmountInput = "celo-lock-amount-input";
   celoVoteAmountId = "celo-vote-amount";
   celoVoteAmountInputId = "celo-vote-amount-input";
-  celoVoteAmountContinueId = "celo-vote-amount-continue";
-  celoVoteSummaryContinueId = "celo-vote-summary-continue";
+  celoVoteAmountContinueId = "enabled-celo-vote-amount-continue";
+  celoVoteSummaryContinueId = "enabled-celo-vote-summary-continue";
   searchPoolInput = "delegation-search-pool-input";
   selectAssetTitle = "select-asset-drawer-title";
 
@@ -21,9 +21,11 @@ export default class StakePage {
     `${currencyId}-delegate-ratio-${delegatedPercent}%`;
   delegationAmountInput = (currencyId: string) => `${currencyId}-delegation-amount-input`;
   delegationFees = (currencyId: string) => `${currencyId}-delegation-summary-fees`;
-  summaryContinueButtonId = (currencyId: string) => `${currencyId}-summary-continue-button`;
-  delegationStartId = (currencyId: string) => `${currencyId}-delegation-start-button`;
-  delegationAmountContinueId = (currencyId: string) => `${currencyId}-delegation-amount-continue`;
+  summaryContinueButtonId = (currencyId: string) => `enabled-${currencyId}-summary-continue-button`;
+  delegationStartId = (currencyId: string) =>
+    new RegExp(`^(enabled-)?${currencyId}-delegation-start-button$`);
+  delegationAmountContinueId = (currencyId: string) =>
+    `enabled-${currencyId}-delegation-amount-continue`;
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   providerRow = (providerTicker: string) => `provider-row-${providerTicker}`;
 
