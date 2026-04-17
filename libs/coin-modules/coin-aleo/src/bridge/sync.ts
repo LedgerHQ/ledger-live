@@ -19,6 +19,13 @@ import {
   splitPrivateAndPublicOperations,
 } from "../logic/utils";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import {
+  PROGRESS_AFTER_SCANNER,
+  PROGRESS_AFTER_LIST_OPS,
+  PROGRESS_AFTER_PARSING_RECORDS,
+  PROGRESS_DONE,
+  PROGRESS_THROTTLE_MIN_STEP,
+} from "../constants";
 import type {
   AleoAccount,
   AleoOperation,
@@ -27,6 +34,21 @@ import type {
 } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
+
+const privateSyncInFlight = new Set<string>();
+
+function throttleProgress(
+  fn: (progress: number) => void,
+  minStep = PROGRESS_THROTTLE_MIN_STEP,
+): (progress: number) => void {
+  let lastEmitted = -Infinity;
+  return (progress: number) => {
+    if (progress - lastEmitted >= minStep || progress >= 100) {
+      lastEmitted = progress;
+      fn(progress);
+    }
+  };
+}
 
 /**
  * Performs the public (transparent) portion of the Aleo account sync.
@@ -61,12 +83,12 @@ export async function performPublicSync(
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
   const shouldSyncFromScratch = !initialAccount;
-  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
+  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
-  const lastBlockHeight = shouldSyncFromScratch ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
 
   const latestAccountPublicOperations = await listOperations({
     currency,
@@ -158,6 +180,8 @@ export async function performPrivateSync(
   currentPublicOps: AleoOperation[],
   freshTransparentBalance?: BigNumber,
   emitProgressUpdates?: boolean,
+  onProgress?: (progress: number) => void,
+  signal?: AbortSignal,
 ): Promise<Partial<AleoAccount> | null> {
   const { initialAccount, address, derivationMode, currency } = info;
   invariant(initialAccount, "aleo: performPrivateSync requires initialAccount");
@@ -175,18 +199,24 @@ export async function performPrivateSync(
     return initialAccount.aleoResources?.provableApi ?? null;
   });
 
+  const freshScannerStatus = provableApi?.scannerStatus;
+
   if (!provableApi || !isProvableApiConfigured(provableApi)) {
     return null;
   }
 
+  signal?.throwIfAborted();
+
   if (!isRecordScannerReady(provableApi)) {
     if (emitProgressUpdates && initialAccount.aleoResources) {
+      const scannerPct = freshScannerStatus?.percentage ?? 0;
       return {
         operations: initialAccount.operations,
         operationsCount: initialAccount.operationsCount,
         aleoResources: {
           ...initialAccount.aleoResources,
           provableApi,
+          privateSyncProgress: Math.round(scannerPct * (PROGRESS_AFTER_SCANNER / 100)),
         },
       };
     }
@@ -214,13 +244,22 @@ export async function performPrivateSync(
       currency,
       uuid: provableApi.uuid,
       start: lastPrivateBlockHeight,
+      ...(signal && { signal }),
     }),
     fetchAllOwnedRecords({
       currency,
       uuid: provableApi.uuid,
       unspent: true,
+      ...(signal && { signal }),
     }),
   ]);
+
+  signal?.throwIfAborted();
+
+  // Emits PROGRESS_AFTER_SCANNER% progress when all records are fetched
+  onProgress?.(PROGRESS_AFTER_SCANNER);
+
+  signal?.throwIfAborted();
 
   const [latestAccountPrivateOperations, patchedPublicOperations] = await Promise.all([
     listPrivateOperations({
@@ -229,6 +268,18 @@ export async function performPrivateSync(
       address,
       ledgerAccountId,
       privateRecords: rawNewPrivateRecords,
+      ...(onProgress && rawNewPrivateRecords.length > 0
+        ? {
+            onProgress: (completed: number, total: number) =>
+              onProgress(
+                PROGRESS_AFTER_SCANNER +
+                  Math.round(
+                    (completed / total) * (PROGRESS_AFTER_LIST_OPS - PROGRESS_AFTER_SCANNER),
+                  ),
+              ),
+          }
+        : {}),
+      ...(signal && { signal }),
     }),
     patchPublicOperations({
       currency,
@@ -248,11 +299,23 @@ export async function performPrivateSync(
     record => !latestAccountPrivateOperations.consumedRecordTags.has(record.tag),
   );
 
+  signal?.throwIfAborted();
+
   const privateBalanceResult = await getPrivateBalance({
     currency,
     viewKey,
     privateRecords: filteredUnspentRecords,
     oldUnspentRecords: initialAccount.aleoResources?.unspentPrivateRecords ?? [],
+    ...(onProgress && filteredUnspentRecords.length > 0
+      ? {
+          onProgress: (completed: number, total: number) =>
+            onProgress(
+              PROGRESS_AFTER_LIST_OPS +
+                Math.round((completed / total) * PROGRESS_AFTER_PARSING_RECORDS),
+            ),
+        }
+      : {}),
+    ...(signal && { signal }),
   });
   const privateBalance = privateBalanceResult.balance;
   const unspentPrivateRecords: AleoUnspentRecord[] = privateBalanceResult.unspentRecords;
@@ -278,6 +341,8 @@ export async function performPrivateSync(
     privateBalance: privateBalance.toString(),
   });
 
+  onProgress?.(PROGRESS_DONE);
+
   return {
     type: "Account",
     id: ledgerAccountId,
@@ -293,6 +358,7 @@ export async function performPrivateSync(
       privateBalance,
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
+      privateSyncProgress: null,
     },
   };
 }
@@ -304,11 +370,53 @@ export function createPrivateSyncObservable(
   freshTransparentBalance?: BigNumber,
   emitProgressUpdates?: boolean,
 ): Observable<Partial<AleoAccount>> {
+  const { initialAccount } = info;
   const currencyId = info.currency.id;
+  const lockKey = `${info.currency.id}:${info.address}`;
   log("aleo/createPrivateSyncObservable", `Initiating private sync for ${currencyId}`);
   return new Observable<Partial<AleoAccount>>(subscriber => {
-    performPrivateSync(info, syncConfig, publicOps, freshTransparentBalance, emitProgressUpdates)
+    if (privateSyncInFlight.has(lockKey)) {
+      log(
+        "aleo/createPrivateSyncObservable",
+        `Private sync already in flight for ${currencyId}, skipping duplicate`,
+      );
+      subscriber.complete();
+      return;
+    }
+    privateSyncInFlight.add(lockKey);
+    const releaseLock = () => privateSyncInFlight.delete(lockKey);
+
+    const controller = new AbortController();
+
+    // Emit progress so UI guards (e.g. the disabled-button check) work.
+    const rawOnProgress = initialAccount?.aleoResources
+      ? (progress: number) => {
+          subscriber.next({
+            operations: initialAccount.operations,
+            operationsCount: initialAccount.operationsCount,
+            aleoResources: {
+              ...initialAccount.aleoResources!,
+              privateSyncProgress: progress,
+            },
+          } as Partial<AleoAccount>);
+        }
+      : undefined;
+    const onProgress = rawOnProgress ? throttleProgress(rawOnProgress) : undefined;
+
+    // Emit progress=0 immediately so any observer can detect an in-progress
+    rawOnProgress?.(0);
+
+    performPrivateSync(
+      info,
+      syncConfig,
+      publicOps,
+      freshTransparentBalance,
+      emitProgressUpdates,
+      onProgress,
+      controller.signal,
+    )
       .then(result => {
+        releaseLock();
         if (result) {
           log("aleo/createPrivateSyncObservable", `Private sync completed for ${currencyId}`, {
             operationsCount: result.operationsCount,
@@ -323,11 +431,22 @@ export function createPrivateSyncObservable(
         subscriber.complete();
       })
       .catch(err => {
+        releaseLock();
+        if (err instanceof Error && err.name === "AbortError") {
+          log("aleo/createPrivateSyncObservable", `Private sync aborted for ${currencyId}`);
+          subscriber.complete();
+          return;
+        }
         log("aleo/createPrivateSyncObservable", `Private sync error for ${currencyId}`, {
           error: err.message,
         });
         subscriber.error(err);
       });
+
+    return () => {
+      controller.abort();
+      releaseLock();
+    };
   });
 }
 
@@ -340,6 +459,12 @@ export function createPrivateSyncObservable(
  *
  * When only one sync type is requested a single observable is returned for
  * that type.
+ *
+ * Background combined syncs (public + private) only include the private step
+ * if the account has been privately synced at least once before
+ * (`lastPrivateSyncDate` is set).  For fresh accounts the private sync must
+ * first be triggered explicitly (via the manual button or an onboarding step);
+ * after that every background tick will include the private step automatically.
  */
 export function buildSyncObservables(
   info: AccountShapeInfo<AleoAccount>,
@@ -354,9 +479,12 @@ export function buildSyncObservables(
   const isPublicSync = !!(syncType & SYNC_TYPE_TRANSPARENT);
   const isPrivateSync = !!(syncType & SYNC_TYPE_SHIELDED) && privateEnabled;
 
+  const hasPrivateSyncedBefore = !!initialAccount?.aleoResources?.lastPrivateSyncDate;
+  const shouldRunPrivate = isPrivateSync && (hasPrivateSyncedBefore || !isPublicSync);
+
   const syncs: Observable<Partial<AleoAccount>>[] = [];
 
-  if (isPublicSync && isPrivateSync) {
+  if (isPublicSync && shouldRunPrivate) {
     syncs.push(
       createPublicSyncObservable(info, syncConfig).pipe(
         concatMap(publicResult =>
@@ -377,7 +505,7 @@ export function buildSyncObservables(
     );
   } else if (isPublicSync) {
     syncs.push(createPublicSyncObservable(info, syncConfig));
-  } else if (isPrivateSync) {
+  } else if (shouldRunPrivate) {
     const [, initialPublicOps] = splitPrivateAndPublicOperations(initialAccount?.operations ?? []);
     syncs.push(
       createPrivateSyncObservable(

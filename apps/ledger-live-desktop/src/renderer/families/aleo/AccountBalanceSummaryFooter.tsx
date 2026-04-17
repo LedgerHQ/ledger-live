@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
+import { accountSelector } from "~/renderer/reducers/accounts";
+import type { State } from "~/renderer/reducers";
+import { isAleoAccount } from "./modals/send/steps/utils";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -18,7 +21,7 @@ import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 
-type AleoSyncState = "ready" | "running" | "complete";
+type AleoSyncState = "ready" | "running" | "background-running" | "complete";
 
 const SyncActionButton = styled(ButtonV3).attrs(() => ({
   variant: "main",
@@ -52,6 +55,12 @@ const ActionButton = ({
           <Text>{t("aleo.account.syncButton.stopSync")}</Text>
         </SyncActionButton>
       );
+    case "background-running":
+      return (
+        <SyncActionButton disabled buttonTestId="background-sync-button">
+          <Text>{t("aleo.account.syncButton.pending")}</Text>
+        </SyncActionButton>
+      );
     case "complete":
       return (
         <SyncActionButton onClick={onSyncAgain} buttonTestId="sync-again-button">
@@ -72,7 +81,7 @@ const SyncProgress = ({
 }) => {
   const formatDayAndHour = useDateFormatter(dayAndHourFormat);
 
-  if (syncState === "running") {
+  if (syncState === "running" || syncState === "background-running") {
     return (
       <div
         style={{
@@ -125,6 +134,18 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     stop: handleStop,
   } = useAleoPrivateSync({ account });
 
+  // Track background sync progress from the Redux store so the button can
+  // reflect an in-progress sync that was not triggered from this component.
+  const accountId = account.type === "Account" ? account.id : undefined;
+  const liveAccount = useSelector((state: State) =>
+    accountId ? accountSelector(state, { accountId }) : undefined,
+  );
+  const backgroundProgress =
+    liveAccount && isAleoAccount(liveAccount)
+      ? liveAccount.aleoResources?.privateSyncProgress ?? null
+      : null;
+  const isBackgroundSyncing = !isSyncing && backgroundProgress != null;
+
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hookProgressRef = useRef(hookProgress);
@@ -165,7 +186,13 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     : PRIVATE_BALANCE_PLACEHOLDER;
 
   const lastSync = account.aleoResources.lastPrivateSyncDate ?? null;
-  const syncState: AleoSyncState = displaySyncing ? "running" : lastSync ? "complete" : "ready";
+  const syncState: AleoSyncState = displaySyncing
+    ? "running"
+    : isBackgroundSyncing
+      ? "background-running"
+      : lastSync
+        ? "complete"
+        : "ready";
 
   return (
     <Wrapper>
@@ -212,7 +239,8 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
         <div
           style={{
             display: "flex",
-            flexDirection: syncState === "running" ? "row" : "column",
+            flexDirection:
+              syncState === "running" || syncState === "background-running" ? "row" : "column",
           }}
         >
           <ActionButton
@@ -221,7 +249,11 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             onStop={handleStop}
             onSyncAgain={handleStart}
           />
-          <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
+          <SyncProgress
+            syncState={syncState}
+            progress={isBackgroundSyncing ? backgroundProgress ?? 0 : hookProgress}
+            lastSync={lastSync}
+          />
         </div>
       </BalanceDetail>
     </Wrapper>
