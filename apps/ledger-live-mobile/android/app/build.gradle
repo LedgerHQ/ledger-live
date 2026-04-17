@@ -76,14 +76,6 @@ react {
 }
 
 /**
-  * Clean and rebuild if changing
-  */
-project.ext.react = [
-    enableHermes: true,
-    bundleInDebug: System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null, // Generates JS bundle and sourcemap at build time
-]
-
-/**
  * Set this to true to create four separate APKs instead of one,
  * one for each native architecture. This is useful if you don't
  * use App Bundles (https://developer.android.com/guide/app-bundle/)
@@ -238,7 +230,6 @@ dependencies {
     androidTestImplementation('com.wix:detox:+')
     // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
     implementation 'com.google.android.material:material:1.6.0'
-    implementation 'com.facebook.soloader:soloader:0.10.4+'
 
     // Android 12+ SplashScreen API
     implementation 'androidx.core:core-splashscreen:1.0.1'
@@ -247,5 +238,3 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1"
 }
-
-apply plugin: 'kotlin-android'
