@@ -29,16 +29,17 @@ const SpendableAmount = <T extends TransactionCommon>({
   useEffect(() => {
     if (!account) return;
     let cancelled = false;
-    getAccountBridge(account, parentAccount)
-      .estimateMaxSpendable({
+    (async () => {
+      const bridge = await getAccountBridge(account, parentAccount);
+      if (cancelled) return;
+      const estimate = await bridge.estimateMaxSpendable({
         account,
         parentAccount,
         transaction: debouncedTransaction,
-      })
-      .then(estimate => {
-        if (cancelled) return;
-        setMaxSpendable(estimate);
       });
+      if (cancelled) return;
+      setMaxSpendable(estimate);
+    })();
     return () => {
       cancelled = true;
     };

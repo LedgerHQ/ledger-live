@@ -589,7 +589,7 @@ export async function completeExchangeLogic(
     toCurrency: toAccount ? getToCurrency(toAccount, newTokenAccount) : undefined,
   };
 
-  const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+  const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 

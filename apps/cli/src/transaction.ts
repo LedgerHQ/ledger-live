@@ -106,7 +106,7 @@ export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
-  const bridge = getAccountBridge(mainAccount, null);
+  const bridge = await getAccountBridge(mainAccount, null);
   const specific = loadSetupForFamily(mainAccount.currency.family).cliTools;
 
   const inferAccounts: (account: Account, opts: Record<string, unknown>) => AccountLikeArray =
