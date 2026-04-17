@@ -9,10 +9,11 @@
  */
 
 import type { Spinner } from "yocto-spinner";
+import { writeSync } from "node:fs";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
-import { makeEnvelope, makeErrorEnvelope } from "./shared/response";
+import { makeEnvelope } from "./shared/response";
 import { spinner, colors, writeStdout } from "./shared/ui";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
 
@@ -201,7 +202,7 @@ class JsonCommandOutput implements CommandOutput {
 
   private _errorEnvelope(e: unknown): string {
     return JSON.stringify(
-      makeErrorEnvelope(this._ctx.command, HumanFormatter.formatError(e), this._ctx.network),
+      { ok: false, error: { command: this._ctx.command, message: HumanFormatter.formatError(e) } },
       null,
       2,
     );
@@ -219,13 +220,15 @@ class JsonCommandOutput implements CommandOutput {
     try {
       await fn();
     } catch (e) {
-      writeStdout(this._errorEnvelope(e));
+      // Bun.spawn on Linux does not reliably capture fd 2 (stderr) from subprocesses.
+      // writeSync(1, ...) is a synchronous POSIX syscall — immune to process.exit() buffer drain.
+      writeSync(1, this._errorEnvelope(e) + "\n");
       process.exit(1);
     }
   }
 
   fail(e: unknown): never {
-    writeStdout(this._errorEnvelope(e));
+    writeSync(1, this._errorEnvelope(e) + "\n");
     process.exit(1);
   }
 

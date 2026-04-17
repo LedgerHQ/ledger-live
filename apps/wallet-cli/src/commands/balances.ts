@@ -14,15 +14,18 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
-    const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
-    walletCliDebug(`balances: account=${descriptor.id}, output=${flags.output}`);
-    const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, { command: "balances", network, account: descriptor.id });
+    const ctx = { command: "balances", network: "", account: "" };
+    const out = createCommandOutput(flags.output, ctx);
 
     await out.run(async () => {
+      const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
+      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
+      ctx.account = descriptor.id;
+      walletCliDebug(`balances: account=${descriptor.id}, output=${flags.output}`);
+      const wallet = new WalletAdapter();
+
       const balances = await out.withActivity(
-        `Fetching balances for ${network}…`,
+        `Fetching balances for ${ctx.network}…`,
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
       );
