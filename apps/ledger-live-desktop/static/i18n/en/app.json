@@ -8302,7 +8302,10 @@
       },
       "editName": "Edit name",
       "emptyState": "No crypto address yet",
-      "emptySearchState": "No accounts match your search"
+      "emptySearchState": "No accounts match your search",
+      "assetCount_zero": "{{count}} asset",
+      "assetCount_one": "{{count}} asset",
+      "assetCount_other": "{{count}} assets"
     },
     "editName": {
       "title": "Edit address name",
