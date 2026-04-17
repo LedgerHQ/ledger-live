@@ -84,7 +84,7 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@investigate
     secrets: inherit
 
   test-features:
@@ -116,7 +116,7 @@ jobs:
     name: "Test CLI"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@investigate
     secrets: inherit
 
   build-wallet-cli:

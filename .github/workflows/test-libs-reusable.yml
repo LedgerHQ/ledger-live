@@ -216,6 +216,8 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: run doc
         run: pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs
+      - name: print diff
+        run: git diff
       - name: get diff
         id: diff
         run: |

@@ -53,6 +53,8 @@ jobs:
       - name: test cli
         id: test
         run: pnpm exec nx run @ledgerhq/live-cli:test
+      - name: print diff
+        run: git diff
       - name: get diff
         id: diff
         run: |
