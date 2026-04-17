@@ -23,7 +23,7 @@ export default class StakePage {
   delegationFees = (currencyId: string) => `${currencyId}-delegation-summary-fees`;
   summaryContinueButtonId = (currencyId: string) => `enabled-${currencyId}-summary-continue-button`;
   delegationStartId = (currencyId: string) =>
-    new RegExp(`^(enabled-)?${currencyId}-delegation-start-button$`);
+    new RegExp(`^((enabled|disabled)-)?${currencyId}-delegation-start-button$`);
   delegationAmountContinueId = (currencyId: string) =>
     `enabled-${currencyId}-delegation-amount-continue`;
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;

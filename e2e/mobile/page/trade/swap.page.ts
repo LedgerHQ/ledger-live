@@ -32,7 +32,7 @@ export default class SwapPage extends CommonPage {
   exportOperationsButton = "enabled-export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
   swapFormTabId = "swap-form-tab";
-  swapCloseButtonCompletedTestId = this.closeButtonTestId + "Completed";
+  swapCloseButtonCompletedTestId = "NavigationHeaderCloseButtonCompleted";
 
   operationDetails = {
     fromAccount: "swap-operation-details-fromAccount",
