@@ -44,7 +44,7 @@ export function ExportResultScene({ variant, onAction }: Props) {
 
   return (
     <DialogContent>
-      <DialogHeader appearance="compact" className="relative" />
+      <DialogHeader density="compact" className="relative" />
       <DialogBody>
         <div className="flex flex-col items-center gap-24">
           <div
