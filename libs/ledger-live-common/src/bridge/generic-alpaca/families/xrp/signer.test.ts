@@ -10,17 +10,19 @@ const mockTransport = {} as Transport;
 
 describe("createSigner (XRP)", () => {
   let mockGetAddress: jest.Mock;
+  let mockSignTransaction: jest.Mock;
 
   beforeEach(() => {
     mockGetAddress = jest.fn().mockResolvedValue({
       publicKey: "deadbeef",
       address: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
     });
+    mockSignTransaction = jest.fn().mockResolvedValue("deadbeef");
     MockedXrp.mockImplementation(
       () =>
         ({
           getAddress: mockGetAddress,
-          signTransaction: jest.fn(),
+          signTransaction: mockSignTransaction,
         }) as unknown as Xrp,
     );
   });
@@ -76,6 +78,40 @@ describe("createSigner (XRP)", () => {
       await signer.getAddress("44'/144'/0'/0/0", true, false);
 
       expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true, false);
+    });
+  });
+
+  describe("signTransaction — ed25519 flag forwarded to hw-app-xrp", () => {
+    it("should use secp256k1 (ed25519=undefined) when called with a derivationMode options object (send flow)", async () => {
+      const signer = createSigner(mockTransport);
+
+      await signer.signTransaction("44'/144'/0'/0/0", "deadbeef", { derivationMode: "xrp" });
+
+      expect(mockSignTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "deadbeef", undefined);
+    });
+
+    it("should use secp256k1 (ed25519=undefined) when called without options", async () => {
+      const signer = createSigner(mockTransport);
+
+      await signer.signTransaction("44'/144'/0'/0/0", "deadbeef");
+
+      expect(mockSignTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "deadbeef", undefined);
+    });
+
+    it("should use ed25519 when called with boolean true", async () => {
+      const signer = createSigner(mockTransport);
+
+      await signer.signTransaction("44'/144'/0'/0/0", "deadbeef", true);
+
+      expect(mockSignTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "deadbeef", true);
+    });
+
+    it("should use secp256k1 (ed25519=false) when called with boolean false", async () => {
+      const signer = createSigner(mockTransport);
+
+      await signer.signTransaction("44'/144'/0'/0/0", "deadbeef", false);
+
+      expect(mockSignTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "deadbeef", false);
     });
   });
 });
