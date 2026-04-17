@@ -118,7 +118,10 @@ const detoxAliases = isDetoxBuild
     }
   : {};
 
-const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
+const hermesNonCompatibleDependencies = [
+  "@polkadot/types-codec",
+  "@mysten/sui",
+];
 
 /**
  * Checks if the specified resource file is compatible with hermes-parser following

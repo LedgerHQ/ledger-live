@@ -5701,8 +5701,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@mysten/signers':
-        specifier: 0.6.2
-        version: 0.6.2(typescript@6.0.2)
+        specifier: 1.0.1
+        version: 1.0.1(@mysten/sui@2.9.0(typescript@6.0.2))
       '@mysten/sui':
         specifier: 2.9.0
         version: 2.9.0(typescript@6.0.2)
@@ -9059,9 +9059,27 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
-      '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.7.0
-        version: 0.7.0
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-bolos':
+        specifier: workspace:^
+        version: link:../hw-bolos
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../hw-transport
+      '@ledgerhq/ledger-cal-service':
+        specifier: workspace:^
+        version: link:../../../ledger-services/cal
+      fast-sha256:
+        specifier: ^1.3.0
+        version: 1.3.0
+      semver:
+        specifier: '>=7.5.2'
+        version: 7.7.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -9078,6 +9096,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -16135,9 +16156,9 @@ packages:
     resolution: {integrity: sha512-V7bmBKYQyu0eVG2BFejuUjlBt+zrya6vtsKdY+JxMM/dNntPF41vZ9+LhOshEUH01zOHEqBSvI7Dad7ZS6aUeA==}
     engines: {node: '>=14.0.0'}
 
-  '@google-cloud/kms@4.5.0':
-    resolution: {integrity: sha512-i2vC0DI7bdfEhQszqASTw0KVvbB7HsO2CwTBod423NawAu7FWi+gVVa7NLfXVNGJaZZayFfci2Hu+om/HmyEjQ==}
-    engines: {node: '>=14.0.0'}
+  '@google-cloud/kms@5.4.0':
+    resolution: {integrity: sha512-+06zUCaJM+wyZISM3F6u/jSqoBs0iZ8Aj9rqOJFePoWkNN7FbR4mQpV7okGHA+Y7caVgq+4QtIDKiFd17SZT+A==}
+    engines: {node: '>=18'}
 
   '@google-cloud/logging@11.2.0':
     resolution: {integrity: sha512-Ma94jvuoMpbgNniwtelOt8w82hxK62FuOXZonEv0Hyk3B+/YVuLG/SWNyY9yMso/RXnPEc1fP2qo9kDrjf/b2w==}
@@ -16179,19 +16200,6 @@ packages:
     peerDependencies:
       react: 19.0.0
       react-native: '*'
-
-  '@gql.tada/cli-utils@1.7.1':
-    resolution: {integrity: sha512-wg5ysZNQxtNQm67T3laVWmZzLpGb7QfyYWZdaUD2r1OjDj5Bgftq7eQlplmH+hsdffjuUyhJw/b5XAjeE2mJtg==}
-    peerDependencies:
-      '@gql.tada/svelte-support': 1.0.1
-      '@gql.tada/vue-support': 1.0.1
-      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
-      typescript: ^5.0.0
-    peerDependenciesMeta:
-      '@gql.tada/svelte-support':
-        optional: true
-      '@gql.tada/vue-support':
-        optional: true
 
   '@gql.tada/cli-utils@1.7.3':
     resolution: {integrity: sha512-3iQY5E/jvv3Lnh6D1Mh7zr+Bb9C/TGk1DHkm+lbIjQBnZAu2m+BcTcr1e3spUt6Aa6HG/xAN2XxpbWw9oZALEg==}
@@ -16261,6 +16269,11 @@ packages:
 
   '@grpc/proto-loader@0.7.15':
     resolution: {integrity: sha512-tMXdRCfYVixjuFK+Hk0Q1s38gV9zDiDJfWL3h1rv4Qc39oILCu1TRTDt7+fGUI8K4G1Fj125Hx/ru3azECWTyQ==}
+    engines: {node: '>=6'}
+    hasBin: true
+
+  '@grpc/proto-loader@0.8.0':
+    resolution: {integrity: sha512-rc1hOQtjIWGxcxpb9aHAfLpIctjEnsDehj0DAiVfBlmT84uvR0uUtN2hEi/ecvWVjXUGf5qPF4qEgiLOx1YIMQ==}
     engines: {node: '>=6'}
     hasBin: true
 
@@ -16837,9 +16850,6 @@ packages:
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
 
-  '@ledgerhq/hw-bolos@6.32.9':
-    resolution: {integrity: sha512-4GDpBPPl0weqcvm/+gvYs01whsbwwl+HIiTtFi5iDfHa/6JmV7KxRaT8JfPRc8M4fSnJs5Z7NxHnrhEHu+tA2Q==}
-
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
 
@@ -16859,29 +16869,11 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/ledger-cal-service@1.9.1':
-    resolution: {integrity: sha512-QR5rdjrLn7qXPZj2Le+BSuLGUsgYFdOkHipm4Ky4WJOT8hm96kaBcQOJhqO4JTfo6bYvInkcfVaDwKytq2B13w==}
-
-  '@ledgerhq/ledger-trust-service@0.3.14':
-    resolution: {integrity: sha512-Q83QXnLDFIDnm2Bv4WgWilurE1WGSX7gGaMEhVxb/BQXH1O78QlNgNRys8K35wnG7BxYKjBJGMoK9U6JdWwW2Q==}
-
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
-  '@ledgerhq/live-env@2.18.0':
-    resolution: {integrity: sha512-wasAK0IPyyX4ZAU0FLTZUsRzxJfdHlewyhkbz3HryYKbNofuMRwIWyaZ2xhpXXjEdP6qHb9HzewAZevjSn7DLQ==}
-
   '@ledgerhq/live-env@2.22.0':
     resolution: {integrity: sha512-zOtxXQl0stQpNp/01nvClMyAdc5WLY8b4vAeP8KJvvoDPCY9VfKLNGvjfU7r/AGsTTmJqy8DOSlboQ24CNd+zg==}
-
-  '@ledgerhq/live-network@2.0.19':
-    resolution: {integrity: sha512-KVdqFDQcqEUNoC/TnaOJeo/I7TY39lQhzcVlnkAt2jbp5Xfv5YNuazL9lId5+bBb28jNPAv5uNJSlgvzpSSNIg==}
-
-  '@ledgerhq/live-network@2.1.2':
-    resolution: {integrity: sha512-Sz1kgRcHhD5y/cIQrNi69JDJf9clLylTzIBy33im0Bpfeq/Ko1xL1YBzzSeoHMPezrxwhHVO5Q1M1B5HBczSyw==}
-
-  '@ledgerhq/live-promise@0.1.1':
-    resolution: {integrity: sha512-oFo6KUZIdFEndp2uokSU9XE9UCT/7NLOOKa1nQUfHhAfyKxRWqBlZOGRuivM/BIwKm0IUFa3+HE7uxK497kYPg==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
@@ -17090,29 +17082,21 @@ packages:
   '@multiversx/sdk-transaction-decoder@1.0.2':
     resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
 
-  '@mysten/bcs@1.9.2':
-    resolution: {integrity: sha512-kBk5xrxV9OWR7i+JhL/plQrgQ2/KJhB2pB5gj+w6GXhbMQwS3DPpOvi/zN0Tj84jwPvHMllpEl0QHj6ywN7/eQ==}
-
   '@mysten/bcs@2.0.3':
     resolution: {integrity: sha512-dwcaL4HNAsEGpU3hKUAsXgCZp9l6++e2A3THpzoYZ8e7bsy4XH1V0dXD5dIzgNcVZiZfb6ZnDMG+gdF6+1WOQA==}
 
-  '@mysten/ledgerjs-hw-app-sui@0.7.0':
-    resolution: {integrity: sha512-Z2ydxg35U2tk3pThsWzPewticDnHWqAeLlh2Vp4NhYU/YFyoVxK9obh21pnvU/hmRzL+BRpYlwbX5Nuo77+lwA==}
+  '@mysten/ledgerjs-hw-app-sui@0.7.1':
+    resolution: {integrity: sha512-2KfPyTzdIeSq4auepS56T09rPE2dHz2VX3G9rFnYjayzynJtNd9tzKWPRpjpCEdBGjp8wg0kEzAeHSOwB0P/Kg==}
 
-  '@mysten/signers@0.6.2':
-    resolution: {integrity: sha512-TFdsoixjly/PHSRDF93wAl/6+cYGS/4J2PCg8lLoxmrLQZCDqIKYwP/dy1243qkXzyeN9d0Ri5IJvozcDpoY/g==}
-    engines: {node: '>=20'}
-
-  '@mysten/sui@1.45.2':
-    resolution: {integrity: sha512-gftf7fNpFSiXyfXpbtP2afVEnhc7p2m/MEYc/SO5pov92dacGKOpQIF7etZsGDI1Wvhv+dpph+ulRNpnYSs7Bg==}
-    engines: {node: '>=18'}
+  '@mysten/signers@1.0.1':
+    resolution: {integrity: sha512-R23Q5Nm4z4ydmGSbTcS9omw2pPA522WVwkOHiF+n0NJMm/icNlMmM7rTPzA0I6LkUDx1WE+ScEfF9knuAgc/1A==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@mysten/sui': ^2.3.2
 
   '@mysten/sui@2.9.0':
     resolution: {integrity: sha512-3x35qcYlsa81koEeGZx1gLWlmg7oF6FMBpvzOwahXBFUkb7mzU+q80/4AAQEpW+jTt6oiHMO4TDAoXlBI2N9TQ==}
     engines: {node: '>=22'}
-
-  '@mysten/utils@0.2.0':
-    resolution: {integrity: sha512-CM6kJcJHX365cK6aXfFRLBiuyXc5WSBHQ43t94jqlCAIRw8umgNcTb5EnEA9n31wPAQgLDGgbG/rCUISCTJ66w==}
 
   '@mysten/utils@0.3.1':
     resolution: {integrity: sha512-36KhxG284uhDdSnlkyNaS6fzKTX9FpP2WQWOwUKIRsqQFFIm2ooCf2TP1IuqrtMpkairwpiWkAS0eg7cpemVzg==}
@@ -17186,10 +17170,6 @@ packages:
 
   '@noble/curves@1.9.1':
     resolution: {integrity: sha512-k11yZxZg+t+gWvBbIswW0yoJlu8cHOC7dhunwOzoWH/mXGBiYyR4YY6hAEK/3EUs4UpB8la1RfdRpeGsFHkWsA==}
-    engines: {node: ^14.21.3 || >=16}
-
-  '@noble/curves@1.9.4':
-    resolution: {integrity: sha512-2bKONnuM53lINoDrSmK8qP8W271ms7pygDhZt4SiLOoLwBtoHqeCFi6RG42V8zd3mLHuJFhU/Bmaqo4nX0/kBw==}
     engines: {node: ^14.21.3 || >=16}
 
   '@noble/curves@1.9.7':
@@ -20470,9 +20450,6 @@ packages:
   '@stacks/transactions@6.17.0':
     resolution: {integrity: sha512-FUah2BRgV66ApLcEXGNGhwyFTRXqX5Zco3LpiM3essw8PF0NQlHwwdPgtDko5RfrJl3LhGXXe/30nwsfNnB3+g==}
 
-  '@standard-schema/spec@1.0.0':
-    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
-
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
@@ -23509,8 +23486,8 @@ packages:
   asciichart@1.5.25:
     resolution: {integrity: sha512-PNxzXIPPOtWq8T7bgzBtk9cI2lgS4SJZthUHEiQ1aoIc3lNzGfUvIvo9LiAnq26TACo9t1/4qP6KTGAUbzX9Xg==}
 
-  asn1-ts@8.0.5:
-    resolution: {integrity: sha512-d2oJ6RE+i89WsR/1XTFm3K4XsifGGghw04B+4Oh6dEdTT2hDI1zuKo4uqAlx0E9xYKwQUdjni8hqawb3RThBpg==}
+  asn1-ts@11.0.6:
+    resolution: {integrity: sha512-DZvnRuOBGjT38jmYCHPGdp784X97n8UH912J89x2385bKslQkbNWtGfZEXNY69ebymK7h31TI1oG3SpkzlsLwA==}
 
   asn1.js@4.10.1:
     resolution: {integrity: sha512-p32cOF5q0Zqs9uBiONKYLm6BClCoBCM5O9JfeUSlnQLBTxYdTK+pW+nXflm8UkKd2UYlEbYz5qEi0JuZR9ckSw==}
@@ -23642,9 +23619,6 @@ packages:
     resolution: {integrity: sha512-aR99oXhpEDGo0UuAlYcn2iGRds30k366Zfa05XWScR9QaQD4JYiP3/1Qt1u7YlefUOK+cn0CcwoL1oefavQUlQ==}
     peerDependencies:
       axios: 0.x || 1.x
-
-  axios@1.11.0:
-    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
 
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
@@ -27576,9 +27550,17 @@ packages:
     resolution: {integrity: sha512-LDODD4TMYx7XXdpwxAVRAIAuB0bzv0s+ywFonY46k126qzQHT9ygyoa9tncmOiQmmDrik65UYsEkv3lbfqQ3yQ==}
     engines: {node: '>=14'}
 
+  gaxios@7.1.4:
+    resolution: {integrity: sha512-bTIgTsM2bWn3XklZISBTQX7ZSddGW+IO3bMdGaemHZ3tbqExMENHLx6kKZ/KlejgrMtj8q7wBItt51yegqalrA==}
+    engines: {node: '>=18'}
+
   gcp-metadata@6.1.1:
     resolution: {integrity: sha512-a4tiq7E0/5fTjxPAaH4jpjkSv/uCaU2p5KC6HVGrvl0cDjA8iBZv4vv1gyzlmK0ZUKqwpOyQMKzZQe3lTit77A==}
     engines: {node: '>=14'}
+
+  gcp-metadata@8.1.2:
+    resolution: {integrity: sha512-zV/5HKTfCeKWnxG0Dmrw51hEWFGfcF2xiXqcA3+J90WDuP0SvoiSO5ORvcBsifmx/FoIjgQN3oNOGaQ5PhLFkg==}
+    engines: {node: '>=18'}
 
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -27791,6 +27773,10 @@ packages:
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
+  google-auth-library@10.6.2:
+    resolution: {integrity: sha512-e27Z6EThmVNNvtYASwQxose/G57rkRuaRbQyxM2bvYLLX/GqWZ5chWq2EBoUchJbCc57eC9ArzO5wMsEmWftCw==}
+    engines: {node: '>=18'}
+
   google-auth-library@9.15.1:
     resolution: {integrity: sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng==}
     engines: {node: '>=14'}
@@ -27799,8 +27785,16 @@ packages:
     resolution: {integrity: sha512-V6eky/xz2mcKfAd1Ioxyd6nmA61gao3n01C+YeuIwu3vzM9EDR6wcVzMSIbLMDXWeoi9SHYctXuKYC5uJUT3eQ==}
     engines: {node: '>=14'}
 
+  google-gax@5.0.6:
+    resolution: {integrity: sha512-1kGbqVQBZPAAu4+/R1XxPQKP0ydbNYoLAr4l0ZO2bMV0kLyLW4I1gAk++qBLWt7DPORTzmWRMsCZe86gDjShJA==}
+    engines: {node: '>=18'}
+
   google-logging-utils@0.0.2:
     resolution: {integrity: sha512-NEgUnEcBiP5HrPzufUkBzJOD/Sxsco3rLNo1F1TNf7ieU8ryUzBhqba8r756CjLX7rn3fHl6iLEwPYuqpoKgQQ==}
+    engines: {node: '>=14'}
+
+  google-logging-utils@1.1.3:
+    resolution: {integrity: sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==}
     engines: {node: '>=14'}
 
   google-protobuf@3.21.4:
@@ -27821,12 +27815,6 @@ packages:
   got@14.4.7:
     resolution: {integrity: sha512-DI8zV1231tqiGzOiOzQWDhsBmncFW7oQDH6Zgy6pDPrqJuVZMtoSgPLLsBZQj8Jg4JFfwoOsDA8NGtLQLnIx2g==}
     engines: {node: '>=20'}
-
-  gql.tada@1.8.13:
-    resolution: {integrity: sha512-fYoorairdPgxtE7Sf1X9/6bSN9Kt2+PN8KLg3hcF8972qFnawwUgs1OLVU8efZMHwL7EBHhhKBhrsGPlOs2lZQ==}
-    hasBin: true
-    peerDependencies:
-      typescript: ^5.0.0
 
   gql.tada@1.9.2:
     resolution: {integrity: sha512-QxRHVpxtrOVdYXz6oavq0lBM+Zdp0swapLGJcD4SLpXDcsD337BHDFrzqqjfkbepv0sSAiO0LGabu1kI5D5Gyg==}
@@ -32668,6 +32656,10 @@ packages:
     resolution: {integrity: sha512-SAzp/O4Yh02jGdRc+uIrGoe87dkN/XtwxfZ4ZyafJHymd79ozp5VG5nyZ7ygqPM5+cpLDjjGnYFUkngonyDPOQ==}
     engines: {node: '>=14.0.0'}
 
+  proto3-json-serializer@3.0.4:
+    resolution: {integrity: sha512-E1sbAYg3aEbXrq0n1ojJkRHQJGE1kaE/O6GLA94y8rnJBfgvOPTOd1b9hOceQK1FFZI9qMh1vBERCyO2ifubcw==}
+    engines: {node: '>=18'}
+
   protobufjs-cli@1.1.2:
     resolution: {integrity: sha512-8ivXWxT39gZN4mm4ArQyJrRgnIwZqffBWoLDsE21TmMcKI3XwJMV4lEF2WU02C4JAtgYYc2SfJIltelD8to35g==}
     engines: {node: '>=12.0.0'}
@@ -32769,7 +32761,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -33791,6 +33782,10 @@ packages:
   retry-request@7.0.2:
     resolution: {integrity: sha512-dUOvLMJ0/JJYEn8NrpOaGNE7X3vpI5XlZS/u0ANjqtcZVKnIxP7IgCFwrKTxENw29emmwug53awKtaMm4i9g5w==}
     engines: {node: '>=14'}
+
+  retry-request@8.0.2:
+    resolution: {integrity: sha512-JzFPAfklk1kjR1w76f0QOIhoDkNkSqW8wYKT08n9yysTmZfB+RQ2QoXoTAeOi1HD9ZipTyTAZg3c4pM/jeqgSw==}
+    engines: {node: '>=18'}
 
   retry@0.12.0:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
@@ -35023,6 +35018,10 @@ packages:
   tarn@3.0.2:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
     engines: {node: '>=8.0.0'}
+
+  teeny-request@10.1.0:
+    resolution: {integrity: sha512-3ZnLvgWF29jikg1sAQ1g0o+lr5JX6sVgYvfUJazn7ZjJroDBUTWp44/+cFVX0bULjv4vci+rBD+oGVAkWqhUbw==}
+    engines: {node: '>=18'}
 
   teeny-request@9.0.0:
     resolution: {integrity: sha512-resvxdc6Mgb7YEThw6G6bExlXKkv6+YbuzGg9xuXxSgxJF7Ozs+o8Y9+2R3sArdWdW8nOokoQb1yrpFB0pQK2g==}
@@ -36926,19 +36925,9 @@ snapshots:
 
   '@0no-co/graphql.web@1.0.11': {}
 
-  '@0no-co/graphql.web@1.0.11(graphql@16.11.0)':
-    optionalDependencies:
-      graphql: 16.11.0
-
   '@0no-co/graphql.web@1.0.11(graphql@16.13.2)':
     optionalDependencies:
       graphql: 16.13.2
-
-  '@0no-co/graphqlsp@1.12.16(graphql@16.11.0)(typescript@6.0.2)':
-    dependencies:
-      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@6.0.2)
-      graphql: 16.11.0
-      typescript: 6.0.2
 
   '@0no-co/graphqlsp@1.12.16(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
@@ -39577,7 +39566,7 @@ snapshots:
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
@@ -39632,7 +39621,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-member-expression-to-functions': 7.28.5
       '@babel/helper-optimise-call-expression': 7.27.1
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -40081,7 +40070,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/template': 7.27.2
+      '@babel/template': 7.28.6
 
   '@babel/plugin-transform-computed-properties@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -40684,13 +40673,13 @@ snapshots:
 
   '@babel/template@7.27.0':
     dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.5
+      '@babel/code-frame': 7.29.0
+      '@babel/parser': 7.29.2
       '@babel/types': 7.28.5
 
   '@babel/template@7.27.2':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
 
@@ -40717,10 +40706,10 @@ snapshots:
 
   '@babel/traverse@7.27.0':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.28.5
-      '@babel/template': 7.27.2
+      '@babel/parser': 7.29.2
+      '@babel/template': 7.28.6
       '@babel/types': 7.28.5
       debug: 4.4.3
       globals: 11.12.0
@@ -40729,7 +40718,7 @@ snapshots:
 
   '@babel/traverse@7.28.5':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.28.5
@@ -40741,7 +40730,7 @@ snapshots:
 
   '@babel/traverse@7.28.5(supports-color@5.5.0)':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.28.5
@@ -40920,7 +40909,7 @@ snapshots:
 
   '@callstack/repack-dev-server@5.2.3':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@fastify/middie': 8.3.3
       '@fastify/sensible': 5.6.0
       fastify: 4.29.1
@@ -41817,7 +41806,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.13.5
+      axios: 1.13.6
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -43032,7 +43021,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.2
       '@babel/types': 7.28.5
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
@@ -43056,8 +43045,8 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.29.2
+      '@babel/types': 7.29.0
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
       '@expo/json-file': 9.1.5
@@ -43921,11 +43910,10 @@ snapshots:
       - encoding
       - supports-color
 
-  '@google-cloud/kms@4.5.0':
+  '@google-cloud/kms@5.4.0':
     dependencies:
-      google-gax: 4.6.1
+      google-gax: 5.0.6
     transitivePeerDependencies:
-      - encoding
       - supports-color
 
   '@google-cloud/logging@11.2.0':
@@ -44005,24 +43993,11 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  '@gql.tada/cli-utils@1.7.1(graphql@16.11.0)(typescript@6.0.2)':
-    dependencies:
-      '@0no-co/graphqlsp': 1.12.16(graphql@16.11.0)(typescript@6.0.2)
-      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@6.0.2)
-      graphql: 16.11.0
-      typescript: 6.0.2
-
   '@gql.tada/cli-utils@1.7.3(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
       '@0no-co/graphqlsp': 1.12.16(graphql@16.13.2)(typescript@6.0.2)
       '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       graphql: 16.13.2
-      typescript: 6.0.2
-
-  '@gql.tada/internal@1.0.8(graphql@16.11.0)(typescript@6.0.2)':
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.11.0)
-      graphql: 16.11.0
       typescript: 6.0.2
 
   '@gql.tada/internal@1.0.8(graphql@16.13.2)(typescript@6.0.2)':
@@ -44098,6 +44073,13 @@ snapshots:
       yargs: 16.2.0
 
   '@grpc/proto-loader@0.7.15':
+    dependencies:
+      lodash.camelcase: 4.3.0
+      long: 5.3.1
+      protobufjs: 7.5.4
+      yargs: 17.7.2
+
+  '@grpc/proto-loader@0.8.0':
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.3.1
@@ -45241,10 +45223,6 @@ snapshots:
       axios: 1.7.7
       crypto-js: 4.2.0
 
-  '@ledgerhq/hw-bolos@6.32.9':
-    dependencies:
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
@@ -45266,52 +45244,15 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
 
-  '@ledgerhq/ledger-cal-service@1.9.1':
-    dependencies:
-      '@ledgerhq/live-env': 2.22.0
-      '@ledgerhq/live-network': 2.1.2
-
-  '@ledgerhq/ledger-trust-service@0.3.14':
-    dependencies:
-      '@ledgerhq/live-env': 2.18.0
-      '@ledgerhq/live-network': 2.0.19
-
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
-  '@ledgerhq/live-env@2.18.0':
-    dependencies:
-      rxjs: 7.8.2
-      utility-types: 3.11.0
-
   '@ledgerhq/live-env@2.22.0':
     dependencies:
       rxjs: 7.8.2
       utility-types: 3.11.0
-
-  '@ledgerhq/live-network@2.0.19':
-    dependencies:
-      '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/live-env': 2.22.0
-      '@ledgerhq/live-promise': 0.1.1
-      '@ledgerhq/logs': 6.14.0
-      axios: 1.11.0
-      lru-cache: 7.18.3
-
-  '@ledgerhq/live-network@2.1.2':
-    dependencies:
-      '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/live-env': 2.22.0
-      '@ledgerhq/live-promise': 0.1.1
-      '@ledgerhq/logs': 6.14.0
-      axios: 1.12.2
-      lru-cache: 7.18.3
-
-  '@ledgerhq/live-promise@0.1.1':
-    dependencies:
-      '@ledgerhq/logs': 6.14.0
 
   '@ledgerhq/logs@5.50.0': {}
 
@@ -45663,70 +45604,30 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.5
+      axios: 1.13.6
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
     dependencies:
       bech32: 2.0.0
 
-  '@mysten/bcs@1.9.2':
-    dependencies:
-      '@mysten/utils': 0.2.0
-      '@scure/base': 1.2.6
-
   '@mysten/bcs@2.0.3':
     dependencies:
       '@mysten/utils': 0.3.1
       '@scure/base': 2.0.0
 
-  '@mysten/ledgerjs-hw-app-sui@0.7.0':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.27.0
-      '@ledgerhq/hw-bolos': 6.32.9
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/ledger-cal-service': 1.9.1
-      '@ledgerhq/ledger-trust-service': 0.3.14
-      fast-sha256: 1.3.0
-      semver: 7.7.3
+  '@mysten/ledgerjs-hw-app-sui@0.7.1': {}
 
-  '@mysten/signers@0.6.2(typescript@6.0.2)':
+  '@mysten/signers@1.0.1(@mysten/sui@2.9.0(typescript@6.0.2))':
     dependencies:
-      '@google-cloud/kms': 4.5.0
-      '@mysten/ledgerjs-hw-app-sui': 0.7.0
-      '@mysten/sui': 1.45.2(typescript@6.0.2)
-      '@noble/curves': 1.9.4
-      '@noble/hashes': 1.8.0
-      asn1-ts: 8.0.5
+      '@google-cloud/kms': 5.4.0
+      '@mysten/ledgerjs-hw-app-sui': 0.7.1
+      '@mysten/sui': 2.9.0(typescript@6.0.2)
+      '@noble/curves': 2.0.1
+      '@noble/hashes': 2.0.1
+      asn1-ts: 11.0.6
     transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - encoding
       - supports-color
-      - typescript
-
-  '@mysten/sui@1.45.2(typescript@6.0.2)':
-    dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
-      '@mysten/bcs': 1.9.2
-      '@mysten/utils': 0.2.0
-      '@noble/curves': 1.9.4
-      '@noble/hashes': 1.8.0
-      '@protobuf-ts/grpcweb-transport': 2.11.1
-      '@protobuf-ts/runtime': 2.11.1
-      '@protobuf-ts/runtime-rpc': 2.11.1
-      '@scure/base': 1.2.6
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      gql.tada: 1.8.13(graphql@16.11.0)(typescript@6.0.2)
-      graphql: 16.11.0
-      poseidon-lite: 0.2.1
-      valibot: 1.2.0(typescript@6.0.2)
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - typescript
 
   '@mysten/sui@2.9.0(typescript@6.0.2)':
     dependencies:
@@ -45749,10 +45650,6 @@ snapshots:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
       - typescript
-
-  '@mysten/utils@0.2.0':
-    dependencies:
-      '@scure/base': 1.2.6
 
   '@mysten/utils@0.3.1':
     dependencies:
@@ -45899,10 +45796,6 @@ snapshots:
       '@noble/hashes': 1.7.1
 
   '@noble/curves@1.9.1':
-    dependencies:
-      '@noble/hashes': 1.8.0
-
-  '@noble/curves@1.9.4':
     dependencies:
       '@noble/hashes': 1.8.0
 
@@ -47679,7 +47572,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@react-native/codegen': 0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))
     transitivePeerDependencies:
       - '@babel/preset-env'
@@ -47687,7 +47580,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.2(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@react-native/codegen': 0.79.2(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47695,7 +47588,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.6(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@react-native/codegen': 0.79.6(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47703,7 +47596,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.7':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@react-native/codegen': 0.79.7
     transitivePeerDependencies:
       - '@babel/core'
@@ -47711,7 +47604,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.7(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@react-native/codegen': 0.79.7(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47810,7 +47703,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.27.2
+      '@babel/template': 7.28.6
       '@react-native/babel-plugin-codegen': 0.79.2(@babel/core@7.28.5)
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -47910,7 +47803,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.27.2
+      '@babel/template': 7.28.6
       '@react-native/babel-plugin-codegen': 0.79.7(@babel/core@7.28.5)
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -47952,7 +47845,7 @@ snapshots:
 
   '@react-native/codegen@0.79.7':
     dependencies:
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.2
       glob: 7.2.3
       hermes-parser: 0.25.1
       invariant: 2.2.4
@@ -47962,7 +47855,7 @@ snapshots:
   '@react-native/codegen@0.79.7(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.2
       glob: 7.2.3
       hermes-parser: 0.25.1
       invariant: 2.2.4
@@ -48545,7 +48438,7 @@ snapshots:
 
   '@reduxjs/toolkit@2.11.2':
     dependencies:
-      '@standard-schema/spec': 1.0.0
+      '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       immer: 11.1.3
       redux: 5.0.1
@@ -48554,7 +48447,7 @@ snapshots:
 
   '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)':
     dependencies:
-      '@standard-schema/spec': 1.0.0
+      '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       immer: 11.1.3
       redux: 5.0.1
@@ -48566,7 +48459,7 @@ snapshots:
 
   '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@standard-schema/spec': 1.0.0
+      '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       immer: 11.1.3
       redux: 5.0.1
@@ -50743,8 +50636,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@standard-schema/spec@1.0.0': {}
-
   '@standard-schema/spec@1.1.0': {}
 
   '@standard-schema/utils@0.3.0': {}
@@ -51392,7 +51283,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.13.5
+      axios: 1.13.6
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -52079,7 +51970,7 @@ snapshots:
 
   '@testing-library/dom@10.4.0':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -52090,7 +51981,7 @@ snapshots:
 
   '@testing-library/dom@10.4.1':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -52101,7 +51992,7 @@ snapshots:
 
   '@testing-library/dom@9.3.4':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.1.3
@@ -52234,7 +52125,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.13.5
+      axios: 1.13.6
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -54373,7 +54264,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
-      axios: 1.13.5
+      axios: 1.13.6
 
   JSONStream@1.3.5:
     dependencies:
@@ -54809,7 +54700,7 @@ snapshots:
 
   asciichart@1.5.25: {}
 
-  asn1-ts@8.0.5: {}
+  asn1-ts@11.0.6: {}
 
   asn1.js@4.10.1:
     dependencies:
@@ -54941,12 +54832,6 @@ snapshots:
     dependencies:
       axios: 1.13.6
       is-retry-allowed: 2.2.0
-
-  axios@1.11.0:
-    dependencies:
-      follow-redirects: 1.15.11
-      form-data: 4.0.5
-      proxy-from-env: 1.1.0
 
   axios@1.12.2:
     dependencies:
@@ -56105,7 +55990,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.13.5
+      axios: 1.13.6
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -59954,6 +59839,14 @@ snapshots:
       - encoding
       - supports-color
 
+  gaxios@7.1.4:
+    dependencies:
+      extend: 3.0.2
+      https-proxy-agent: 7.0.6
+      node-fetch: 3.3.2
+    transitivePeerDependencies:
+      - supports-color
+
   gcp-metadata@6.1.1:
     dependencies:
       gaxios: 6.7.1
@@ -59961,6 +59854,14 @@ snapshots:
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - encoding
+      - supports-color
+
+  gcp-metadata@8.1.2:
+    dependencies:
+      gaxios: 7.1.4
+      google-logging-utils: 1.1.3
+      json-bigint: 1.0.0
+    transitivePeerDependencies:
       - supports-color
 
   gensync@1.0.0-beta.2: {}
@@ -60205,6 +60106,17 @@ snapshots:
 
   globrex@0.1.2: {}
 
+  google-auth-library@10.6.2:
+    dependencies:
+      base64-js: 1.5.1
+      ecdsa-sig-formatter: 1.0.11
+      gaxios: 7.1.4
+      gcp-metadata: 8.1.2
+      google-logging-utils: 1.1.3
+      jws: 4.0.0
+    transitivePeerDependencies:
+      - supports-color
+
   google-auth-library@9.15.1:
     dependencies:
       base64-js: 1.5.1
@@ -60235,7 +60147,25 @@ snapshots:
       - encoding
       - supports-color
 
+  google-gax@5.0.6:
+    dependencies:
+      '@grpc/grpc-js': 1.13.4
+      '@grpc/proto-loader': 0.8.0
+      duplexify: 4.1.3
+      google-auth-library: 10.6.2
+      google-logging-utils: 1.1.3
+      node-fetch: 3.3.2
+      object-hash: 3.0.0
+      proto3-json-serializer: 3.0.4
+      protobufjs: 7.5.4
+      retry-request: 8.0.2
+      rimraf: 5.0.10
+    transitivePeerDependencies:
+      - supports-color
+
   google-logging-utils@0.0.2: {}
+
+  google-logging-utils@1.1.3: {}
 
   google-protobuf@3.21.4: {}
 
@@ -60284,18 +60214,6 @@ snapshots:
       p-cancelable: 4.0.1
       responselike: 3.0.0
       type-fest: 4.40.0
-
-  gql.tada@1.8.13(graphql@16.11.0)(typescript@6.0.2):
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.11.0)
-      '@0no-co/graphqlsp': 1.12.16(graphql@16.11.0)(typescript@6.0.2)
-      '@gql.tada/cli-utils': 1.7.1(graphql@16.11.0)(typescript@6.0.2)
-      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@6.0.2)
-      typescript: 6.0.2
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - graphql
 
   gql.tada@1.9.2(graphql@16.13.2)(typescript@6.0.2):
     dependencies:
@@ -61420,7 +61338,7 @@ snapshots:
   istanbul-lib-instrument@6.0.3:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.2
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 7.7.3
@@ -62076,7 +61994,7 @@ snapshots:
 
   jest-message-util@30.2.0:
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
       '@jest/types': 30.2.0
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -62231,7 +62149,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
       '@jest/expect-utils': 30.2.0
       '@jest/get-type': 30.1.0
       '@jest/snapshot-utils': 30.2.0
@@ -62555,7 +62473,7 @@ snapshots:
 
   jsdoc@4.0.3:
     dependencies:
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.2
       '@jsdoc/salty': 0.2.8
       '@types/markdown-it': 14.1.1
       bluebird: 3.7.2
@@ -64180,9 +64098,9 @@ snapshots:
 
   metro-source-map@0.82.5:
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.0'
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
       metro-symbolicate: 0.82.5
@@ -64219,7 +64137,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/template': 7.27.2
+      '@babel/template': 7.28.6
       '@babel/traverse': 7.28.5
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
@@ -64231,7 +64149,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/template': 7.28.6
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -64342,7 +64260,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
       accepts: 1.3.8
       chalk: 4.1.2
@@ -64935,7 +64853,7 @@ snapshots:
       '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.11.0
+      graphql: 16.13.2
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
@@ -65350,7 +65268,7 @@ snapshots:
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.2
       '@zkochan/js-yaml': 0.0.7
-      axios: 1.13.5
+      axios: 1.13.6
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
       cliui: 8.0.1
@@ -66803,6 +66721,10 @@ snapshots:
   property-information@6.4.1: {}
 
   proto3-json-serializer@2.0.2:
+    dependencies:
+      protobufjs: 7.5.4
+
+  proto3-json-serializer@3.0.4:
     dependencies:
       protobufjs: 7.5.4
 
@@ -68447,6 +68369,13 @@ snapshots:
       teeny-request: 9.0.0
     transitivePeerDependencies:
       - encoding
+      - supports-color
+
+  retry-request@8.0.2:
+    dependencies:
+      extend: 3.0.2
+      teeny-request: 10.1.0
+    transitivePeerDependencies:
       - supports-color
 
   retry@0.12.0: {}
@@ -70192,6 +70121,15 @@ snapshots:
       yallist: 5.0.0
 
   tarn@3.0.2: {}
+
+  teeny-request@10.1.0:
+    dependencies:
+      http-proxy-agent: 5.0.0
+      https-proxy-agent: 5.0.1
+      node-fetch: 3.3.2
+      stream-events: 1.0.5
+    transitivePeerDependencies:
+      - supports-color
 
   teeny-request@9.0.0:
     dependencies:

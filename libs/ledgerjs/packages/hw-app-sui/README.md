@@ -32,17 +32,100 @@ This package extends [@mysten/ledgerjs-hw-app-sui](https://www.npmjs.com/package
 #### Table of Contents
 
 *   [Sui](#sui)
+    *   [Parameters](#parameters)
     *   [Examples](#examples)
+    *   [getPublicKey](#getpublickey)
+        *   [Parameters](#parameters-1)
+    *   [signTransaction](#signtransaction)
+        *   [Parameters](#parameters-2)
+    *   [getVersion](#getversion)
+*   [checkAppVersion](#checkappversion)
+    *   [Parameters](#parameters-3)
+*   [provideTrustedDynamicDescriptor](#providetrusteddynamicdescriptor)
+    *   [Parameters](#parameters-4)
+*   [sendChunks](#sendchunks)
+    *   [Parameters](#parameters-5)
 
 ### Sui
 
-**Extends SuiAPI**
+Sui API
 
-Sui App API
+#### Parameters
+
+*   `transport` **Transport**&#x20;
+*   `scrambleKey`   (optional, default `"default_sui_scramble_key"`)
+*   `verbose`   (optional, default `false`)
 
 #### Examples
 
 ```javascript
-import Sui from "@ledgerhq/hw-app-sui";
+import Sui from "@mysten/ledgerjs-hw-app-sui";
 const sui = new Sui(transport)
 ```
+
+#### getPublicKey
+
+Retrieves the public key associated with a particular BIP32 path from the Ledger app.
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the path to retrieve.
+*   `displayOnDevice`  whether or not the address should be displayed on the device. (optional, default `false`)
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<GetPublicKeyResult>**&#x20;
+
+#### signTransaction
+
+Sign a transaction with the key at a BIP32 path.
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The path to use when signing the transaction.
+*   `txn` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** The transaction bytes to sign.
+*   `options` **{bcsObjects: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>}?** Additional options used for clear signing purposes.
+*   `resolution` **Resolution?** Additional data for token clear signing purposes.
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SignTransactionResult>**&#x20;
+
+#### getVersion
+
+Retrieve the app version on the attached Ledger device.
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<GetVersionResult>**&#x20;
+
+### checkAppVersion
+
+Retrieve the app version on the attached Ledger device.
+
+#### Parameters
+
+*   `minVersion` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `$1` **{throwOnOutdated: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}**&#x20;
+
+    *   `$1.throwOnOutdated` &#x20;
+
+### provideTrustedDynamicDescriptor
+
+Provides trusted dynamic and signed coin metadata
+
+#### Parameters
+
+*   `data` **DescriptorInput** An object containing the descriptor and its signature from the CAL
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**&#x20;
+
+### sendChunks
+
+Convert a raw payload into what is essentially a singly-linked list of chunks, which
+allows the ledger to re-seek the data in a secure fashion.
+
+#### Parameters
+
+*   `cla` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `ins` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `p1` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `p2` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `payload` **([Buffer](https://nodejs.org/api/buffer.html) | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>)**&#x20;
+*   `extraData` **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Buffer](https://nodejs.org/api/buffer.html)>**  (optional, default `new Map<string,Buffer>()`)
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>**&#x20;

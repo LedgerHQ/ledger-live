@@ -1152,8 +1152,7 @@ const createTransactionForDelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    // TODO: remove cast once @mysten/signers is bumped to v2-compat
-    const { bcsObjects } = await getInputObjects(tx as any, withBatchedMultiGetObjects(api) as any);
+    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1188,8 +1187,7 @@ const createTransactionForUndelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    // TODO: remove cast once @mysten/signers is bumped to v2-compat
-    const { bcsObjects } = await getInputObjects(tx as any, withBatchedMultiGetObjects(api) as any);
+    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1227,8 +1225,7 @@ const createTransactionForOthers = async (
     }
 
     const serialized = await tx.build({ client: api });
-    // TODO: remove cast once @mysten/signers is bumped to v2-compat
-    const { bcsObjects } = await getInputObjects(tx as any, withBatchedMultiGetObjects(api) as any);
+    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
   }, currencyId);
