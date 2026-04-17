@@ -283,6 +283,15 @@ export const etherscanInternalTransactionToOperations = (
   internalTx: EtherscanInternalTransaction,
   index = 0,
 ): Operation[] => {
+  // Skip non-value-transferring call types (`delegatecall`/`staticcall`/`callcode`).
+  // Both Blockscout and Etherscan report a non-zero `value` on these entries — it's the
+  // `msg.value` inherited from the enclosing frame, not an actual native transfer — so
+  // emitting operations here would surface phantom IN/OUT ops in the account's history.
+  // See `NON_VALUE_TRANSFER_CALL_TYPES` for the canonical list; `internalTxsToOperationsByHash`
+  // (the `getBlock` path) applies the same filter via `isInternalTransactionValid`.
+  const callType = (internalTx.callType || internalTx.type || "").toLowerCase();
+  if (NON_VALUE_TRANSFER_CALL_TYPES.has(callType)) return [];
+
   const { hash, blockNumber, isError } = internalTx;
   const { xpubOrAddress: address } = decodeAccountId(accountId);
 

@@ -996,4 +996,65 @@ describe("dropRootTraceDuplicates", () => {
     const internalOps: BlockOperation[] = [nativeTransfer(A, B, -100n)];
     expect(dropRootTraceDuplicates([], internalOps)).toEqual(internalOps);
   });
+
+  it("drops only the native duplicate when native and ERC20 ops overlap on the same key", () => {
+    // Regression: the ERC20 op shares (address, peer, amount) with the coin tx's native op.
+    // The dedup narrows to native-asset ops, so the ERC20 entry must be preserved.
+    const coinOps: BlockOperation[] = [nativeTransfer(A, B, -100n)];
+    const erc20Op: BlockOperation = {
+      type: "transfer",
+      address: A,
+      peer: B,
+      asset: { type: "erc20", assetReference: "0xtoken", assetOwner: A },
+      amount: -100n,
+    };
+    const nativeDup = nativeTransfer(A, B, -100n);
+    const internalOps: BlockOperation[] = [nativeDup, erc20Op];
+    expect(dropRootTraceDuplicates(coinOps, internalOps)).toEqual([erc20Op]);
+  });
+
+  it("treats ops with an undefined peer as matching each other", () => {
+    // Some explorer/adapter shapes omit `peer` (e.g. the sender-side op when `to` is missing).
+    // Two native ops that both omit `peer` with matching (address, amount) must still dedup.
+    const coinOp: BlockOperation = {
+      type: "transfer",
+      address: A,
+      asset: { type: "native" },
+      amount: -100n,
+    };
+    const internalOp: BlockOperation = {
+      type: "transfer",
+      address: A,
+      asset: { type: "native" },
+      amount: -100n,
+    };
+    expect(dropRootTraceDuplicates([coinOp], [internalOp])).toEqual([]);
+  });
+
+  it("does NOT match when only one side has a peer", () => {
+    // A coin op with peer B and an internal op without peer describe different transfers
+    // and must not collapse into one.
+    const coinOp: BlockOperation = nativeTransfer(A, B, -100n);
+    const internalOpWithoutPeer: BlockOperation = {
+      type: "transfer",
+      address: A,
+      asset: { type: "native" },
+      amount: -100n,
+    };
+    expect(dropRootTraceDuplicates([coinOp], [internalOpWithoutPeer])).toEqual([
+      internalOpWithoutPeer,
+    ]);
+
+    // Symmetric: coin without peer vs internal with peer.
+    const coinOpWithoutPeer: BlockOperation = {
+      type: "transfer",
+      address: A,
+      asset: { type: "native" },
+      amount: -100n,
+    };
+    const internalOpWithPeer: BlockOperation = nativeTransfer(A, B, -100n);
+    expect(dropRootTraceDuplicates([coinOpWithoutPeer], [internalOpWithPeer])).toEqual([
+      internalOpWithPeer,
+    ]);
+  });
 });

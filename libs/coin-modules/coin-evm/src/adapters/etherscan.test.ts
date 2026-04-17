@@ -1701,6 +1701,79 @@ describe("EVM Family", () => {
           expect(result).toHaveLength(1);
           expect(result[0].recipients).toEqual([]);
         });
+
+        // Blockscout reports `delegatecall`/`staticcall`/`callcode` internal frames with an
+        // inherited `msg.value`, but those opcodes cannot move native ETH. Emitting operations
+        // for them would surface phantom IN/OUT ops in the user's history.
+        it.each([
+          { field: "callType", value: "delegatecall" },
+          { field: "callType", value: "staticcall" },
+          { field: "callType", value: "callcode" },
+          { field: "type", value: "delegatecall" },
+          { field: "type", value: "staticcall" },
+          { field: "type", value: "callcode" },
+        ])(
+          "returns no operations when $field is $value (non-value-transferring call type)",
+          ({ field, value }) => {
+            const accountId = encodeAccountId({
+              type: "js",
+              version: "2",
+              currencyId: "ethereum",
+              xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              derivationMode: "",
+            });
+
+            const etherscanOp: EtherscanInternalTransaction = {
+              blockNumber: "14878012",
+              timeStamp: "1653990239",
+              hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+              from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              to: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+              value: "66616263350003",
+              contractAddress: "",
+              input: "",
+              type: field === "type" ? value : "call",
+              gas: "129878",
+              gasUsed: "0",
+              traceId: "0_1",
+              isError: "0",
+              errCode: "",
+              ...(field === "callType" ? { callType: value } : {}),
+            };
+
+            expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual([]);
+          },
+        );
+
+        it("is case-insensitive on the call type discriminator", () => {
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const etherscanOp: EtherscanInternalTransaction = {
+            blockNumber: "14878012",
+            timeStamp: "1653990239",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+            value: "66616263350003",
+            contractAddress: "",
+            input: "",
+            type: "call",
+            callType: "DelegateCall",
+            gas: "129878",
+            gasUsed: "0",
+            traceId: "0_1",
+            isError: "0",
+            errCode: "",
+          };
+
+          expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual([]);
+        });
       });
       describe("etherscanStakingToOperations", () => {
         it("should convert an etherscan-like staking smart contract delegate operation (from their API) to a Ledger Live Operation", () => {
