@@ -4,7 +4,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { BorrowWebView } from "LLM/features/Borrow/components/BorrowWebView";
-import { useWallet40Theme } from "~/mvvm/hooks/useWallet40Theme";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import type { BorrowWebviewInputs } from "./useBorrowLiveAppViewModel";
 
 type BorrowLiveAppViewProps = Readonly<{

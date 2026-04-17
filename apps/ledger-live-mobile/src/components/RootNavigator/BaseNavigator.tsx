@@ -26,7 +26,7 @@ import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
 import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import { useWallet40Theme } from "~/mvvm/hooks/useWallet40Theme";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
