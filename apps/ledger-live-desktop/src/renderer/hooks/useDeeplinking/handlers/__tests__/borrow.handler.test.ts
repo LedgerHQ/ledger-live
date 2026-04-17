@@ -13,6 +13,7 @@ const createMockContext = (
   postOnboardingDeeplinkHandler: jest.fn(),
   tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
   currentPathname: "/",
+  accountsPath: "/accounts",
   ...overrides,
 });
 

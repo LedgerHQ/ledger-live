@@ -32,7 +32,7 @@ export const PortfolioLoansSection = () => {
       flow: "borrow",
       page: ScreenName.Portfolio,
     });
-    navigation.navigate(NavigatorName.Borrow, { screen: ScreenName.Borrow });
+    navigation.navigate(NavigatorName.Borrow, { screen: ScreenName.Borrow, params: {} });
   }, [navigation]);
 
   return (
