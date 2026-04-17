@@ -136,9 +136,8 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
 
   // Track background sync progress from the Redux store so the button can
   // reflect an in-progress sync that was not triggered from this component.
-  const accountId = account.type === "Account" ? account.id : undefined;
   const liveAccount = useSelector((state: State) =>
-    accountId ? accountSelector(state, { accountId }) : undefined,
+    accountSelector(state, { accountId: account.id }),
   );
   const backgroundProgress =
     liveAccount && isAleoAccount(liveAccount)

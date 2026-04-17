@@ -268,7 +268,7 @@ export async function performPrivateSync(
       address,
       ledgerAccountId,
       privateRecords: rawNewPrivateRecords,
-      ...(onProgress && rawNewPrivateRecords.length > 0
+      ...(onProgress
         ? {
             onProgress: (completed: number, total: number) =>
               onProgress(
@@ -306,7 +306,7 @@ export async function performPrivateSync(
     viewKey,
     privateRecords: filteredUnspentRecords,
     oldUnspentRecords: initialAccount.aleoResources?.unspentPrivateRecords ?? [],
-    ...(onProgress && filteredUnspentRecords.length > 0
+    ...(onProgress
       ? {
           onProgress: (completed: number, total: number) =>
             onProgress(

@@ -161,23 +161,10 @@ export const useAleoPrivateSync = ({
   // Auto-start: kick off on mount; cleanup always runs on unmount.
   useEffect(() => {
     if (autoStart) {
-      seenBackgroundSyncRef.current = false;
-      const acc = accountRef.current;
-      initialLastPrivateSyncDateRef.current =
-        acc?.type === "Account" && isAleoAccount(acc)
-          ? acc.aleoResources?.lastPrivateSyncDate
-          : undefined;
-      isSyncingRef.current = true;
-      setIsSyncing(true);
-      runSync();
+      start();
     }
-    return () => {
-      isSyncingRef.current = false;
-      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
-      subscriptionRef.current?.unsubscribe();
-      subscriptionRef.current = null;
-    };
-  }, [autoStart, runSync]);
+    return () => stop();
+  }, [autoStart, start, stop]);
 
   // When this hook's own sync attempt is blocked (another sync holds the lock),
   // the observable completes immediately with no emissions and the hook waits
