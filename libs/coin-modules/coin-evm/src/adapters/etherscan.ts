@@ -333,7 +333,13 @@ function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
 
 /**
  * Converts valid internal transactions to BlockOperations grouped by transaction hash.
- * Skips internal txs with isError === "1" or value === "0".
+ * Skips internal txs that:
+ *   - failed (`isError === "1"`) or report a non-positive `value`;
+ *   - are missing `from` or `to`;
+ *   - have a `callType` (Blockscout) or `type` (Etherscan) in
+ *     `NON_VALUE_TRANSFER_CALL_TYPES` — those opcodes (`delegatecall`,
+ *     `staticcall`, `callcode`) inherit `msg.value` from their enclosing frame
+ *     but cannot move native ETH.
  */
 export function internalTxsToOperationsByHash(
   internalTxs: EtherscanInternalTransaction[],
