@@ -8,7 +8,7 @@ import {
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Operation } from "@ledgerhq/types-live";
 
-import byFamiliesOperationDetails from "../../generated/operationDetails";
+import { useOperationDetails as useOperationDetailsSlot } from "~/families/hooks";
 import { TrackScreen } from "~/analytics";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Footer from "./Footer";
@@ -26,6 +26,8 @@ type NavigatorProps = RootComposite<
 
 function OperationDetails({ route }: NavigatorProps) {
   const { account, parentAccount } = useAccountScreen(route);
+  const mainAccountForSlot = account ? getMainAccount(account, parentAccount) : undefined;
+  const specific = useOperationDetailsSlot(mainAccountForSlot?.currency?.family);
 
   if (!account) {
     return null;
@@ -37,13 +39,8 @@ function OperationDetails({ route }: NavigatorProps) {
   const currency = getAccountCurrency(account);
   const mainAccountCurrency = getAccountCurrency(mainAccount);
 
-  const specific =
-    byFamiliesOperationDetails[
-      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
-    ];
-
   const getTransactionExplorer =
-    specific && "getTransactionExplorer" in specific && specific.getTransactionExplorer;
+    specific && "getTransactionExplorer" in (specific as object) && (specific as { getTransactionExplorer?: (...args: unknown[]) => string }).getTransactionExplorer;
   const url = getTransactionExplorer
     ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation)
     : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
@@ -51,12 +48,12 @@ function OperationDetails({ route }: NavigatorProps) {
   const urlWhatIsThis =
     specific &&
     (
-      specific as typeof specific & {
-        getURLWhatIsThis: (_: Operation, c: string) => string;
+      specific as {
+        getURLWhatIsThis?: (_: Operation, c: string) => string;
       }
     ).getURLWhatIsThis &&
     (
-      specific as typeof specific & {
+      specific as {
         getURLWhatIsThis: (_: Operation, c: string) => string;
       }
     ).getURLWhatIsThis(operation, mainAccount.currency.id);

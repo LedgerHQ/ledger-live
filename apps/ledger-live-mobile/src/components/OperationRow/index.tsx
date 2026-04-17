@@ -20,17 +20,16 @@ import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
 import { ScreenName } from "~/const";
 import OperationRowDate from "../OperationRowDate";
-import perFamilyOperationDetails from "../../generated/operationDetails";
+import { useOperationDetails } from "~/families/hooks";
 import { track } from "~/analytics";
-import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
 import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
-type FamilyOperationDetailsIntersection = UnionToIntersection<
-  (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
->;
+type OperationDetailsSlot = {
+  amountCell?: Record<string, React.ComponentType<any>>; // eslint-disable-line @typescript-eslint/no-explicit-any
+};
 
 const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
@@ -96,6 +95,10 @@ function OperationRow({
   testID,
 }: Props) {
   const navigation = useNavigation<BaseNavigation>();
+  const mainAccountForSlot = getMainAccount(account, parentAccount);
+  const specificOperationDetails = useOperationDetails(
+    mainAccountForSlot?.currency?.family,
+  ) as OperationDetailsSlot | undefined;
 
   const goToOperationDetails = debounce(() => {
     track("transaction_clicked", {
@@ -120,24 +123,12 @@ function OperationRow({
   const unit = useAccountUnit(account);
 
   const renderAmountCellExtra = useCallback(() => {
-    const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
-
-    const specific = mainAccount?.currency?.family
-      ? (perFamilyOperationDetails[
-          mainAccount.currency.family as keyof typeof perFamilyOperationDetails
-        ] as FamilyOperationDetailsIntersection)
-      : null;
-
-    const SpecificAmountCell =
-      specific && specific.amountCell
-        ? specific.amountCell[operation.type as keyof typeof specific.amountCell]
-        : null;
-
+    const SpecificAmountCell = specificOperationDetails?.amountCell?.[operation.type] ?? null;
     return SpecificAmountCell ? (
       <SpecificAmountCell operation={operation} unit={unit} currency={currency} />
     ) : null;
-  }, [account, operation, parentAccount, unit]);
+  }, [account, operation, specificOperationDetails, unit]);
 
   const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);

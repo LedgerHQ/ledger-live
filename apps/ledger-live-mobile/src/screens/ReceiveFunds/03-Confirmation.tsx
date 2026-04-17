@@ -23,9 +23,11 @@ import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import { addOneAccount } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
-import byFamily from "../../generated/Confirmation";
-import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
-import byFamilyTokenAlert from "../../generated/ReceiveConfirmationTokenAlert";
+import {
+  useConfirmation as useConfirmationSlot,
+  useReceiveConfirmationPostAlert,
+  useReceiveConfirmationTokenAlert,
+} from "~/families/hooks";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
@@ -90,6 +92,15 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
+  const cryptoFamily = currency?.type === "CryptoCurrency" ? currency.family : undefined;
+  const tokenParentFamily =
+    currency?.type === "TokenCurrency" ? currency.parentCurrency.family : undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomConfirmation = useConfirmationSlot(cryptoFamily) as React.ComponentType<any> | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomConfirmationAlert = useReceiveConfirmationPostAlert(cryptoFamily) as React.ComponentType<any> | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomConfirmationTokenAlert = useReceiveConfirmationTokenAlert(tokenParentFamily) as React.ComponentType<any> | undefined;
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
   const { pushToast } = useToastsActions();
@@ -272,40 +283,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   if (!account || !currency || !mainAccount) return null;
 
-  if (currency.type === "CryptoCurrency" && Object.keys(byFamily).includes(currency.family)) {
-    const CustomConfirmation =
-      currency.type === "CryptoCurrency"
-        ? byFamily[currency.family as keyof typeof byFamily]
-        : null;
-    if (CustomConfirmation) {
-      return (
-        <CustomConfirmation
-          account={mainAccount || account}
-          parentAccount={mainAccount}
-          {...{ navigation, route }}
-        />
-      );
-    }
-  }
-
-  let CustomConfirmationAlert;
-  if (
-    currency.type === "CryptoCurrency" &&
-    Object.keys(byFamilyPostAlert).includes(currency.family)
-  ) {
-    CustomConfirmationAlert =
-      currency.type === "CryptoCurrency"
-        ? byFamilyPostAlert[currency.family as keyof typeof byFamilyPostAlert]
-        : null;
-  }
-
-  let CustomConfirmationTokenAlert;
-  if (
-    currency.type === "TokenCurrency" &&
-    Object.keys(byFamilyTokenAlert).includes(currency.parentCurrency.family)
-  ) {
-    CustomConfirmationTokenAlert =
-      byFamilyTokenAlert[currency.parentCurrency.family as keyof typeof byFamilyTokenAlert];
+  if (CustomConfirmation) {
+    return (
+      <CustomConfirmation
+        account={mainAccount || account}
+        parentAccount={mainAccount}
+        {...{ navigation, route }}
+      />
+    );
   }
 
   const isAnAccount = account.type === "Account";

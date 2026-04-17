@@ -3,14 +3,11 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import React from "react";
 import { ScreenName } from "~/const";
-import perFamily from "../generated/SendRowsFee";
+import { useSendRowsFee } from "~/families/hooks";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
-
-const isSupportedFamily = (family: string): family is keyof typeof perFamily =>
-  Object.prototype.hasOwnProperty.call(perFamily, family);
 
 type Props = {
   transaction: Transaction;
@@ -38,23 +35,21 @@ export default ({
   ...props
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const family = mainAccount.currency.family;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Component = useSendRowsFee(mainAccount.currency.family) as React.ComponentType<any> | undefined;
 
-  if (isSupportedFamily(family)) {
-    const Component = perFamily[family];
-    return (
-      <Component
-        {...props}
-        setTransaction={setTransaction}
-        transaction={transaction}
-        account={account}
-        parentAccount={parentAccount}
-        navigation={navigation}
-        route={route}
-        status={status}
-      />
-    );
-  }
+  if (!Component) return null;
 
-  return null;
+  return (
+    <Component
+      {...props}
+      setTransaction={setTransaction}
+      transaction={transaction}
+      account={account}
+      parentAccount={parentAccount}
+      navigation={navigation}
+      route={route}
+      status={status}
+    />
+  );
 };

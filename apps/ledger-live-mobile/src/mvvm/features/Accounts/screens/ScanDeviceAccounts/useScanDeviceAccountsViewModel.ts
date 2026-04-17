@@ -6,13 +6,12 @@ import { useDispatch } from "~/context/hooks";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
-import noAssociatedAccountsByFamily from "~/generated/NoAssociatedAccounts";
+import { useNoAssociatedAccounts } from "~/families/hooks";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
@@ -23,16 +22,6 @@ import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serializat
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
 
-const isNoAssociatedAccountsFamily = (
-  family: string,
-): family is keyof typeof noAssociatedAccountsByFamily =>
-  Object.prototype.hasOwnProperty.call(noAssociatedAccountsByFamily, family);
-
-const getCustomNoAssociatedAccounts = (currency: CryptoOrTokenCurrency) => {
-  if (currency.type !== "CryptoCurrency") return null;
-  if (!isNoAssociatedAccountsFamily(currency.family)) return null;
-  return noAssociatedAccountsByFamily[currency.family];
-};
 
 export default function useScanDeviceAccountsViewModel({
   existingAccounts,
@@ -62,6 +51,10 @@ export default function useScanDeviceAccountsViewModel({
     navigationDepth,
     context,
   } = route.params || {};
+
+  const CustomNoAssociatedAccounts = useNoAssociatedAccounts(
+    currency?.type === "CryptoCurrency" ? currency.family : undefined,
+  );
 
   const newAccountSchemes = useMemo(() => {
     // Find accounts that are (scanned && !existing && !used)
@@ -335,7 +328,6 @@ export default function useScanDeviceAccountsViewModel({
   const sanitizedSections = sections.filter(s => s.id !== "imported");
   const hasImportableAccounts = sections.find(s => s.id === "importable" && s.data.length > 0);
 
-  const CustomNoAssociatedAccounts = getCustomNoAssociatedAccounts(currency);
   useEffect(() => {
     startSubscription();
     return () => stopSubscription(false);

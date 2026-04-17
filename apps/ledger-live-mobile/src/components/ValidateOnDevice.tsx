@@ -20,7 +20,7 @@ import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import Alert from "./Alert";
-import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
+import { useTransactionConfirmFields } from "~/families/hooks";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
@@ -132,10 +132,7 @@ export default function ValidateOnDevice({
   const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const r =
-    perFamilyTransactionConfirmFields[
-      mainAccount.currency.family as keyof typeof perFamilyTransactionConfirmFields
-    ];
+  const r = useTransactionConfirmFields(mainAccount.currency.family);
 
   const fieldComponents = {
     ...commonFieldComponents,

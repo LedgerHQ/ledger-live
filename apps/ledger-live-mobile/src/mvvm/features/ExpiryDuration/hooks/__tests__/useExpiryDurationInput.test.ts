@@ -3,12 +3,12 @@ import { useExpiryDurationInput } from "../useExpiryDurationInput";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { TxPatch } from "../../types";
 
-// Mock the perFamily import
-jest.mock("~/generated/ExpiryDurationInput", () => ({
-  __esModule: true,
-  default: {
-    canton: () => null,
-  },
+// Mock the family slot hook to return a component synchronously for canton
+jest.mock("~/families/hooks", () => ({
+  useExpiryDurationInput: jest.fn().mockImplementation((family: string | undefined) => {
+    if (family === "canton") return () => null;
+    return undefined;
+  }),
 }));
 
 describe("useExpiryDurationInput", () => {

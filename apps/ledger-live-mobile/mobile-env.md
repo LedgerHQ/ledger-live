@@ -15,17 +15,17 @@ In other cases, these env files will be used:
 # App name
 | target | iOS | Android |
 |--|--|--|
-|release|Ledger Live|Ledger Live|
-|prerelease|Ledger Live|Ledger Live|
-|nightly|LL [STAGING]|LL [STAGING]|
-|staging|LL [STAGING]|LL [STAGING]|
+|release|Ledger Wallet|Ledger Wallet|
+|prerelease|LW [RC]|LW [RC]|
+|nightly|LW [NB]|LW [NB]|
+|staging|LW [Adhoc]|LW [Adhoc]|
 # App identifier
 | target | iOS | Android |
 |--|--|--|
 |release|com.ledger.live|com.ledger.live|
-|prerelease|com.ledger.live.prerelease|com.ledger.live|
-|nightly|com.ledger.live.nightly|com.ledger.live|
-|staging|com.ledger.live.dev|com.ledger.live.dev|
+|prerelease|com.ledger.live.prerelease|com.ledger.live.prerelease|
+|nightly|com.ledger.live.nightly|com.ledger.live.nightly|
+|staging|com.ledger.live.dev|com.ledger.live|
 # Google Service (feature flag)
 | target | iOS | Android |
 |--|--|--|

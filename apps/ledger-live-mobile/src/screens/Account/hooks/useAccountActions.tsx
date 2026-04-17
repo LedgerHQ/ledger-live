@@ -15,7 +15,7 @@ import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFea
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import perFamilyAccountActions from "../../../generated/accountActions";
+import { useAccountActions as useAccountActionsSlot } from "~/families/hooks";
 
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "~/components/FabActions";
@@ -72,8 +72,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
   const mainAccount = getMainAccount(account, parentAccount);
-  // @ts-expect-error issue in typing
-  const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
+  const decorators = useAccountActionsSlot(mainAccount?.currency?.family);
 
   const { isCurrencyAvailable } = useRampCatalog();
 
