@@ -184,7 +184,7 @@ const AssetSelection = ({
             spacing
             title={t("modularDrawer.selectAsset")}
             testID="modular-drawer-Asset-title"
-            appearance="expanded"
+            density="expanded"
           />
           <SearchInputContainer
             source={source}

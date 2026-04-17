@@ -47,7 +47,7 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
 
   return (
     <>
-      <NavBar appearance="compact">
+      <NavBar density="compact">
         {viewModel.canGoBack ? (
           <NavBarBackButton
             onPress={viewModel.handleBackPress}

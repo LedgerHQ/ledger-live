@@ -11,7 +11,6 @@ import {
   NavBarDescription,
   NavBarTitle,
   NavBarTrailing,
-  type NavBarAppearance,
 } from "@ledgerhq/lumen-ui-rnative";
 import type { TextStyle } from "react-native";
 import HeaderBackButton from "./HeaderBackButton";
@@ -19,11 +18,12 @@ import type {
   LumenNavBarScreenOptions,
   LumenNativeStackNavigationOptions,
   LumenStackNavBarDefaults,
+  NavBarDensity,
 } from "./lumenNativeStack";
 
 type NavBarHeaderProps = Omit<NativeStackHeaderProps, "options"> & {
   options: LumenNativeStackNavigationOptions;
-  appearance?: NavBarAppearance;
+  density?: NavBarDensity;
   navBarDefaults?: LumenStackNavBarDefaults;
 };
 
@@ -31,8 +31,8 @@ const defaultRenderLeading: NonNullable<LumenNativeStackNavigationOptions["heade
   <HeaderBackButton testID="navigation-header-back-button" />
 );
 
-const getNavBarTitleStyle = (appearance: NavBarAppearance): TextStyle => {
-  if (appearance === "expanded") {
+const getNavBarTitleStyle = (density: NavBarDensity): TextStyle => {
+  if (density === "expanded") {
     return { textAlign: "left" };
   }
   return { textAlign: "center" };
@@ -65,7 +65,7 @@ function renderNavBarCenter(title: string, lumen: LumenNavBarScreenOptions | und
 export default function NavBarHeader({
   options,
   route,
-  appearance: stackAppearance = "compact",
+  density: stackDensity = "compact",
   navBarDefaults,
 }: NavBarHeaderProps) {
   const insets = useSafeAreaInsets();
@@ -75,9 +75,9 @@ export default function NavBarHeader({
   const lumen = options.lumenNavBar;
   const HeaderLeft = lumen?.renderLeading ?? options.headerLeft ?? defaultRenderLeading;
   const HeaderRight = lumen?.renderTrailing ?? options.headerRight;
-  const effectiveAppearance = lumen?.appearance ?? stackAppearance;
+  const effectiveDensity = lumen?.density ?? stackDensity;
 
-  const navBarTitleStyle = getNavBarTitleStyle(effectiveAppearance);
+  const navBarTitleStyle = getNavBarTitleStyle(effectiveDensity);
   const title = getHeaderTitle(options, route.name);
 
   const { style: contentStyle, ...navBarContentRest } = lumen?.navBarContentProps ?? {};
@@ -92,11 +92,7 @@ export default function NavBarHeader({
         options.headerStyle,
       ]}
     >
-      <NavBar
-        appearance={effectiveAppearance}
-        {...navBarDefaults?.navBarProps}
-        {...lumen?.navBarProps}
-      >
+      <NavBar density={effectiveDensity} {...navBarDefaults?.navBarProps} {...lumen?.navBarProps}>
         {HeaderLeft && (
           <NavBarBackButtonSlot>
             <HeaderLeft />

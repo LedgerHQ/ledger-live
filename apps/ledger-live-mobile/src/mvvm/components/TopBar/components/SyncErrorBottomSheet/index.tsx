@@ -24,7 +24,7 @@ export function SyncErrorBottomSheet({
   return (
     <QueuedDrawerBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-        <BottomSheetHeader appearance="compact" />
+        <BottomSheetHeader density="compact" />
         <SyncErrorBottomSheetContent
           onClose={onClose}
           listOfErrorAccountNames={listOfErrorAccountNames}
