@@ -580,7 +580,6 @@ jobs:
           mise run mitmproxy:start \
             --port=9999 \
             --allow-hosts="firebaseremoteconfig\\.googleapis\\.com|firebaseinstallations\\.googleapis\\.com" \
-            --mock-responses-file="apps/ledger-live-mobile/tests/mocks/local/firebase_feature_flags_android.json" \
             --setup-android-simulator="true" \
             --android-simulator-name="Android_Emulator,Android_Emulator_2"
 
