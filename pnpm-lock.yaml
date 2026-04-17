@@ -6287,9 +6287,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
@@ -6344,9 +6341,6 @@ importers:
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.7
       ethers:
         specifier: 6.15.0
         version: 6.15.0
@@ -6423,9 +6417,6 @@ importers:
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.7
       expect:
         specifier: 'catalog:'
         version: 30.2.0
@@ -6530,9 +6521,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      dotenv:
-        specifier: ^16
-        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
@@ -39704,7 +39692,7 @@ snapshots:
 
   '@babel/parser@7.27.5':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
 
   '@babel/parser@7.28.5':
     dependencies:
