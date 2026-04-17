@@ -126,7 +126,7 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(op.parentId ? `  ${line}` : line);
     }
     if (nextCursor) {
-      process.stderr.write(`\n${colors.dim(`nextCursor: ${nextCursor}`)}\n`);
+      process.stderr.write("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
     }
   }
 
@@ -139,7 +139,7 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(this._fmt.formatDiscoveredAccount(d));
   }
 
-  flushDiscovery(): void {}
+  flushDiscovery(): void { /* noop */ }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(`  To:     ${p.recipient}`);
@@ -177,7 +177,7 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  sendComplete(): void {}
+  sendComplete(): void { /* noop */ }
 }
 
 // ---------------------------------------------------------------------------
@@ -186,8 +186,8 @@ class HumanCommandOutput implements CommandOutput {
 
 class JsonCommandOutput implements CommandOutput {
   private readonly _jsonFmt: JsonFormatter;
-  private _discoveredAccounts: DiscoveredAccount[] = [];
-  private _sendResult: Record<string, unknown> = {};
+  private readonly _discoveredAccounts: DiscoveredAccount[] = [];
+  private readonly _sendResult: Record<string, unknown> = {};
 
   constructor(
     private readonly _ctx: OutputContext,
