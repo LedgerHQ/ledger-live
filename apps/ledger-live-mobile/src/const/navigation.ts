@@ -1,5 +1,6 @@
 export enum ScreenName {
   Analytics = "Analytics",
+  AnalyticsPreferencesSettings = "AnalyticsPreferencesSettings",
   AboutSettings = "AboutSettings",
   Account = "Account",
   Accounts = "Accounts",
