@@ -56,14 +56,14 @@ describe("balances command", () => {
     expect(native.amount).toMatch(/1\.5/);
   });
 
-  it.skip("json output: invalid descriptor exits with code 1", async () => {
-    const { stdout, stderr, exitCode } = await runCli(
+  it("json output: invalid descriptor exits with code 1", async () => {
+    const { stdout, exitCode } = await runCli(
       ["balances", "--account", "not-a-valid-descriptor", "--output", "json"],
       { WALLET_CLI_MOCK_PORT: String(server.port) },
     );
     expect(exitCode).toBe(1);
-    expect(stdout).toBe("");
-    const err = JSON.parse(stderr);
+    // JSON mode routes all output to stdout; errors have { ok: false, ... }.
+    const err = JSON.parse(stdout);
     expect(err.ok).toBe(false);
     expect(err.error.command).toBe("balances");
     expect(err.error.message).toMatch(/invalid/i);
