@@ -7898,7 +7898,7 @@
       },
       "personalizedExperience": {
         "title": "Personalized experience",
-        "description": "Enable Ledger to collect app usage to provide personalized contents"
+        "description": "Enable Ledger to collect app usage to provide personalized content"
       },
       "ctaConfirm": "Confirm"
     },
