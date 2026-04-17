@@ -11,8 +11,7 @@ concurrency:
 
 on:
   schedule:
-    - cron: "0 3 * * 1,3,5" # Mon, Wed, Fri → Wallet 4.0
-    - cron: "0 3 * * 2,4"   # Tue, Thu → Legacy
+    - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
   workflow_dispatch:
     inputs:
       ref:
@@ -75,7 +74,7 @@ on:
         description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
-        default: false
+        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
@@ -120,7 +119,7 @@ on:
         description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
-        default: false
+        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
@@ -141,7 +140,7 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_ENABLE_WALLET40: ${{ ((github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5') || inputs.enable_wallet40 == true) && '1' || '0' }}
+  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == false && '0' || '1' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
