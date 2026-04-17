@@ -72,8 +72,7 @@
         "src/**/*.android.*",
         "src/**/*.ios.*",
         "babel-plugin-inject-collapsable.js",
-        "src/devTools/perfUtils.ts",
-        "src/shims/zcash-utils.ts"
+        "src/devTools/perfUtils.ts"
       ],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
