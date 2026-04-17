@@ -78,16 +78,21 @@ Follow the full wiki if you need setup details.
 
 Test commands below are run from the `e2e/mobile/` directory.
 
-**iOS (debug)** -- requires the Metro bundler running in a separate terminal:
+**iOS (debug)** -- requires the Re.Pack bundler running in a separate terminal:
 
 ```bash
-# Terminal 1: start the bundler (from repo root)
-pnpm mobile start
+# Terminal 1: start the bundler with E2E mode (from e2e/mobile/ or repo root)
+pnpm e2e:mobile start          # from repo root
+# OR: pnpm start               # from e2e/mobile/
 
 # Terminal 2: run tests (from e2e/mobile/)
 pnpm test:ios:debug                      # all tests
 pnpm test:ios:debug <testFileName>       # single file
 ```
+
+> **Why `start:e2e` instead of `start`?** The E2E bundler must run with `DETOX=1` so that
+> `@sbaiahmed1/react-native-blur` is replaced by a plain-View mock. Without it, `ProgressiveBlurView`
+> triggers a `NSInvalidArgumentException` crash in DetoxSync on iOS.
 
 **Android (release)** -- no bundler needed, JS is bundled in the APK:
 

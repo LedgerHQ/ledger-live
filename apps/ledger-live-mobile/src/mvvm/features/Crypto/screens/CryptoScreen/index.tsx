@@ -5,10 +5,16 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { CryptoContent } from "../../components/CryptoContent";
-import { CryptoScreenNavigator, CryptoScreenViewData } from "./types";
+import { CryptoScreenNavigator, CryptoScreenViewData, CryptoVariant } from "./types";
 import useCryptoViewModel from "./useCryptoViewModel";
 
 type Props = BaseComposite<StackNavigatorProps<CryptoScreenNavigator, ScreenName.Crypto>>;
+
+const LIST_TEST_ID_BY_VARIANT: Record<CryptoVariant, string> = {
+  stablecoin: "StablecoinList",
+  crypto: "CryptoList",
+  all: "CryptoList",
+};
 
 const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   assetsToDisplay,
@@ -17,6 +23,7 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   error,
   sourceScreenName,
   trackingType,
+  variant,
 }) => {
   return (
     <Box style={{ flex: 1 }}>
@@ -26,6 +33,7 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
         error={error}
         assetsToDisplay={assetsToDisplay}
         onItemPress={onItemPress}
+        listTestID={LIST_TEST_ID_BY_VARIANT[variant]}
       />
     </Box>
   );

@@ -13,9 +13,14 @@ const keyExtractor = (item: Asset) => item.currency.id;
 interface CryptoAssetListProps {
   assets: Asset[];
   onItemPress: (asset: Asset) => void;
+  testID?: string;
 }
 
-export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({ assets, onItemPress }) => {
+export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({
+  assets,
+  onItemPress,
+  testID = "CryptoList",
+}) => {
   const { contentContainerStyle } = useCryptoAssetListViewModel();
   const precomputedData = usePrecomputedAssetListData(assets);
 
@@ -33,7 +38,7 @@ export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({ assets, onItem
 
   return (
     <FlashList
-      testID="CryptoList"
+      testID={testID}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       data={assets}
