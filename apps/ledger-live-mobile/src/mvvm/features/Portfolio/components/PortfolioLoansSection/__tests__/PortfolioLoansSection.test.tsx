@@ -34,6 +34,7 @@ describe("PortfolioLoansSection", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Borrow, {
       screen: ScreenName.Borrow,
+      params: {},
     });
   });
 
