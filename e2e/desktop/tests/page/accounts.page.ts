@@ -5,14 +5,14 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
-  private firstAccount = this.page.locator(`[data-testid^="crypto-account-row-"]`).first();
+  private readonly visibleAccountsList = this.page
+    .locator(`[data-testid^="crypto-account-row-"]`)
+    .filter({ visible: true });
 
-  private getSanitizedAccountName = (accountName: string) => accountName.replaceAll(/\s+/g, "-");
-
-  // Accounts context menu
-  private async getAccountListLocator() {
-    return this.page.locator(`[data-testid^="crypto-account-row-"]:visible`);
-  }
+  private readonly getSanitizedAccountName = (accountName: string) =>
+    accountName.replaceAll(/\s+/g, "-");
+  private readonly tokenRow = (childCurrency: Currency) =>
+    this.page.getByTestId(`token-row-${childCurrency.ticker}`);
 
   private syncAccountButton = (accountName: string) =>
     this.page
@@ -47,52 +47,55 @@ export class AccountsPage extends AppPage {
   @step("Verify $0 children token accounts are not visible")
   async verifyChildrenTokensAreNotVisible(parentName: string, childCurrency: Currency) {
     await this.navigateToAccountByName(parentName);
-    await this.verifyTokenNotVisible(parentName, childCurrency);
+    await this.verifyTokenNotVisible(childCurrency);
   }
 
-  @step("Verify token visibility having parent $0")
-  async verifyTokenVisibility(_parentName: string, childCurrency: Currency) {
-    await expect(this.page.getByTestId(`token-row-${childCurrency.ticker}`)).toBeVisible();
+  @step("Verify token visibility")
+  async verifyTokenVisibility(childCurrency: Currency) {
+    await expect(this.tokenRow(childCurrency)).toBeVisible();
   }
 
-  @step("Verify token is not visible in parent account $0")
-  async verifyTokenNotVisible(_parentName: string, childCurrency: Currency) {
-    await expect(this.page.getByTestId(`token-row-${childCurrency.ticker}`)).not.toBeVisible();
+  @step("Verify token is not visible in parent account")
+  async verifyTokenNotVisible(childCurrency: Currency) {
+    await expect(this.tokenRow(childCurrency)).not.toBeVisible();
   }
 
   @step("Expect token balance to be null")
-  async expectTokenBalanceToBeNull(_parentName: string, childCurrency: Currency) {
+  async expectTokenBalanceToBeNull(childCurrency: Currency) {
     await expect(
-      this.page.getByTestId(`token-row-${childCurrency.ticker}`).getByText(`0 ${childCurrency.ticker}`),
+      this.page
+        .getByTestId(`token-row-${childCurrency.ticker}`)
+        .getByText(`0 ${childCurrency.ticker}`),
     ).toBeVisible();
   }
 
   @step("Check $0 account was deleted ")
   async expectAccountAbsence(accountName: string) {
-    expect(this.firstAccount).not.toBe(accountName);
+    await expect(
+      this.page
+        .getByTestId(`crypto-account-row-${this.getSanitizedAccountName(accountName)}`)
+        .filter({ visible: true }),
+    ).toHaveCount(0);
     expect(await this.getAccountsName()).not.toContain(accountName);
   }
 
   @step("Get number of accounts in the list")
   async countAccounts(): Promise<number> {
-    const accountList = await this.getAccountListLocator();
-    return await accountList.count();
+    return await this.visibleAccountsList.count();
   }
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number) {
-    const accountList = await this.getAccountListLocator();
-    await expect(accountList).toHaveCount(count, { timeout: 30000 });
+    await expect(this.visibleAccountsList).toHaveCount(count, { timeout: 30000 });
   }
 
-  @step("Expect number of accounts to be not null")
-  async expectAccountsCountToBeNotNull() {
-    expect(await this.countAccounts()).not.toBeNull();
+  @step("Expect at least one visible account in the list")
+  async expectAtLeastOneAccountVisible() {
+    expect(await this.countAccounts()).toBeGreaterThan(0);
   }
 
   async getAccountsName() {
-    const accountList = await this.getAccountListLocator();
-    const accountElements = await accountList.all();
+    const accountElements = await this.visibleAccountsList.all();
     const accountNames = [];
     for (const element of accountElements) {
       let accountName = await element.getAttribute("data-testid");

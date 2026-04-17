@@ -46,10 +46,12 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         accessorKey: "currency",
         header: t("assets.columns.name"),
         enableSorting: false,
-        cell: ({ row }) => (
-          <div
-            data-testid={`w40-asset-row-${sanitizeAssetNameForTestId(row.original.currency.name)}`}
-          >
+        cell: ({ row }) => {
+          const assetTestId = sanitizeAssetNameForTestId(
+            `${row.original.currency.name}-${row.original.currency.id}`,
+          );
+          return (
+            <div data-testid={`w40-asset-row-${assetTestId}`}>
             <TableCellContent
               leadingContent={
                 row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
@@ -66,7 +68,8 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
               description={row.original.currency.ticker}
             />
           </div>
-        ),
+          );
+        },
       },
       {
         accessorKey: "price",
@@ -93,20 +96,20 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         accessorKey: "value",
         header: t("assets.columns.value"),
         enableSorting: false,
-        cell: ({ row }) =>
-          row.original.isPlaceholder ? (
-            <div
-              data-testid={`w40-asset-row-value-${sanitizeAssetNameForTestId(row.original.currency.name)}`}
-            >
+        cell: ({ row }) => {
+          const assetValueTestId = sanitizeAssetNameForTestId(
+            `${row.original.currency.name}-${row.original.currency.id}`,
+          );
+          return row.original.isPlaceholder ? (
+            <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
               <TableCellContent align="end" title={emptyFiatValue} />
             </div>
           ) : (
-            <div
-              data-testid={`w40-asset-row-value-${sanitizeAssetNameForTestId(row.original.currency.name)}`}
-            >
+            <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
               <CounterValueCell currency={row.original.currency} balance={row.original.balance} />
             </div>
-          ),
+          );
+        },
         meta: { align: "end" },
       },
       {

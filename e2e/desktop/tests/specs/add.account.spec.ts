@@ -70,8 +70,7 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
-        // Wait for portfolio empty state to load before clicking add account
-        await app.portfolio.checkNoBalanceTitleVisibility();
+        await app.portfolio.waitForPortfolioEmptyState();
         await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");

@@ -25,10 +25,19 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Synchronize accounts")
   async syncAccounts() {
-    if (await this.continueButton.isVisible().catch(() => false)) {
+    await this.expectSyncAccountsButtonExist();
+
+    if (await this.walletSyncConnectDeviceButton.isVisible()) {
+      await this.walletSyncConnectDeviceButton.click();
+      return;
+    }
+
+    if (await this.continueButton.isVisible()) {
       await this.continueButton.click();
-    } else if (await this.alreadyTurnedOnButton.isVisible().catch(() => false)) {
+    } else if (await this.alreadyTurnedOnButton.isVisible()) {
       await this.alreadyTurnedOnButton.click();
+    } else {
+      throw new Error("No Ledger Sync entry-point button is visible.");
     }
 
     await expect(this.walletSyncConnectDeviceButton).toBeVisible();
@@ -63,23 +72,19 @@ export class LedgerSyncDrawer extends Drawer {
     await this.confirmBackupDeletion();
   }
 
-  @step("Check if sync entry point exists")
+  /** Entry-step controls only; connect-device appears after advancing past these. */
+  @step("Check if Ledger Sync entry controls exist")
   async expectSyncAccountsButtonExist() {
     await expect
       .poll(
         async () => {
-          const hasContinue = await this.continueButton.isVisible().catch(() => false);
-          const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton
-            .isVisible()
-            .catch(() => false);
-          const hasConnectDevice = await this.walletSyncConnectDeviceButton
-            .isVisible()
-            .catch(() => false);
-          return hasContinue || hasAlreadyTurnedOn || hasConnectDevice;
+          const hasContinue = await this.continueButton.isVisible();
+          const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton.isVisible();
+          return hasContinue || hasAlreadyTurnedOn;
         },
         { timeout: 30000 },
       )
-      .toBeTruthy();
+      .toBe(true);
   }
 
   @step("Check if synchronization was successful")

@@ -23,14 +23,8 @@ test.describe("Settings", () => {
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
-      await app.accounts.verifyTokenVisibility(
-        Account.ETH_1.accountName,
-        TokenAccount.ETH_USDT_1.currency,
-      );
-      await app.accounts.expectTokenBalanceToBeNull(
-        Account.ETH_1.accountName,
-        TokenAccount.ETH_USDT_1.currency,
-      );
+      await app.accounts.verifyTokenVisibility(TokenAccount.ETH_USDT_1.currency);
+      await app.accounts.expectTokenBalanceToBeNull(TokenAccount.ETH_USDT_1.currency);
       await app.mainNavigation.openSettings();
       await app.settings.goToAccountsTab();
       await app.settings.clickHideEmptyTokenAccountsToggle();

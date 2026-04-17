@@ -1,6 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
+import { sanitizeAssetNameForTestId } from "~/mvvm/features/Assets/utils/assetTableHelpers";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
@@ -12,22 +13,19 @@ export class PortfolioPage extends AppPage {
   private readonly chart = this.page.getByTestId("chart-container");
   private readonly operationList = this.page.locator("#operation-list");
   private readonly assetAllocationTitle = this.page.getByText("Asset allocation");
-  private readonly assetRowElements = this.page.locator("[data-testid^='asset-row-']");
+  private readonly assetRowElements = this.page.locator(
+    "[data-testid^='w40-asset-row-']:not([data-testid^='w40-asset-row-value-'])",
+  );
   private readonly showAllButton = this.page.getByText("Show all");
   private readonly showMoreButton = this.page.getByText("Show more");
-  private readonly assetRow = (asset: string) =>
-    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
-  private readonly sanitizeAssetNameForTestId = (asset: string) =>
-    asset
-      .toLowerCase()
-      .replaceAll(/\s+/g, "-")
-      .replaceAll(/[^a-z0-9-]/g, "");
   private readonly w40AssetRow = (asset: string) =>
-    this.page.getByTestId(`w40-asset-row-${this.sanitizeAssetNameForTestId(asset)}`).first();
+    this.page
+      .locator(`[data-testid^="w40-asset-row-${sanitizeAssetNameForTestId(asset)}-"]`)
+      .first();
   private readonly w40AssetRowValue = (asset: string) =>
-    this.page.getByTestId(`w40-asset-row-value-${this.sanitizeAssetNameForTestId(asset)}`).first();
-  private readonly assetRowValue = (asset: string) =>
-    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`).locator("//div[position()=5]");
+    this.page
+      .locator(`[data-testid^="w40-asset-row-value-${sanitizeAssetNameForTestId(asset)}-"]`)
+      .first();
   private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
 
   // Wallet 4.0 elements
@@ -48,25 +46,11 @@ export class PortfolioPage extends AppPage {
   private readonly cryptoBannerAddAccountButton = this.page.getByTestId(
     "crypto-addresses-banner-add-account-cta",
   );
+  /** Prefer banner CTA when both exist in DOM; Playwright picks the actionable (visible) match. */
+  private readonly addAccountCta = this.cryptoBannerAddAccountButton.or(
+    this.portfolioAddAccountButton,
+  );
   private readonly noDeviceTitle = this.page.getByTestId("no-device-title");
-
-  private async isVisible(locator: Locator): Promise<boolean> {
-    return locator.isVisible().catch(() => false);
-  }
-
-  private async resolveAssetRow(asset: string): Promise<{ row: Locator; isLegacy: boolean }> {
-    const legacyRow = this.assetRow(asset);
-    if (await this.isVisible(legacyRow)) {
-      return { row: legacyRow, isLegacy: true };
-    }
-
-    return { row: this.w40AssetRow(asset), isLegacy: false };
-  }
-
-  private async waitForBalanceDiffWidget(): Promise<Locator> {
-    await expect(this.portfolioTrendPercentage).toBeVisible({ timeout: 30000 });
-    return this.portfolioTrendPercentage;
-  }
 
   private getExpectedCounterValuePattern(counterValue: string): RegExp {
     const countervalueAliases: Record<string, RegExp> = {
@@ -82,26 +66,14 @@ export class PortfolioPage extends AppPage {
     await expect(locator).toBeVisible();
   }
 
-  private async getAddAccountButton(): Promise<Locator> {
-    // Check crypto banner button first (when asset section is enabled)
-    const cryptoBannerButtonCount = await this.cryptoBannerAddAccountButton.count();
-    if (cryptoBannerButtonCount > 0) {
-      return this.cryptoBannerAddAccountButton;
-    }
-
-    return this.portfolioAddAccountButton;
-  }
-
   @step("Check add account button visibility")
   async checkAddAccountButtonVisibility() {
-    const button = await this.getAddAccountButton();
-    await this.checkVisibility(button);
+    await this.checkVisibility(this.addAccountCta);
   }
 
   @step("Click add account button")
   async clickAddAccountButton() {
-    const button = await this.getAddAccountButton();
-    await button.click();
+    await this.addAccountCta.click();
   }
 
   @step("Check 'Buy/Sell' button visibility")
@@ -111,7 +83,6 @@ export class PortfolioPage extends AppPage {
 
   @step("Click on 'Buy/Sell' button")
   async clickBuySellButton() {
-    await this.checkBuySellButtonVisibility();
     await this.buySellEntryButton.click();
   }
 
@@ -138,15 +109,17 @@ export class PortfolioPage extends AppPage {
     await this.showAllButton.click();
     // Wait for the number of asset row elements to increase after clicking on show more button
     await this.page.waitForFunction(() => {
-      return document.querySelectorAll("[data-testid^='asset-row-']").length > 6;
+      return (
+        document.querySelectorAll(
+          "[data-testid^='w40-asset-row-']:not([data-testid^='w40-asset-row-value-'])",
+        ).length > 6
+      );
     });
   }
 
   @step("Click on asset row $0")
   async clickOnSelectedAssetRow(asset: string) {
-    const { row } = await this.resolveAssetRow(asset);
-    await expect(row).toBeVisible();
-    await row.click();
+    await this.w40AssetRow(asset).click();
   }
 
   @step("Click stake button")
@@ -181,39 +154,32 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect balance diff to display the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
-    const locator = await this.waitForBalanceDiffWidget();
-    await expect(locator).toBeVisible();
+    await expect(this.portfolioTrendPercentage).toBeVisible({ timeout: 30000 });
 
     // W40 trend percentage can be hidden in discreet mode and displayed as "***".
     if (counterValue === "%") {
-      await expect(locator).toContainText(/%|\*\*\*/);
-      return;
+      await expect(this.portfolioTrendPercentage).toContainText(/%|\*\*\*/);
+    } else {
+      await expect(this.portfolioTrendPercentage).toContainText(counterValue);
     }
-
-    await expect(locator).toContainText(counterValue);
   }
 
   @step("Expect asset row $0 to be visible")
   async expectAssetRowToBeVisible(asset: string) {
-    const { row } = await this.resolveAssetRow(asset);
-    await expect(row).toBeVisible();
+    await expect(this.w40AssetRow(asset)).toBeVisible();
   }
 
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    const { row, isLegacy } = await this.resolveAssetRow(asset);
-
-    if (isLegacy) {
-      await expect(this.assetRowValue(asset)).toContainText(counterValue);
-      return;
-    }
-
-    await expect(row).toBeVisible();
     const rowValue = this.w40AssetRowValue(asset);
     await expect(rowValue).toBeVisible();
 
     // W40 countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").
-    await expect(rowValue).toContainText(this.getExpectedCounterValuePattern(counterValue));
+    if (counterValue === "€" || counterValue === "$") {
+      await expect(rowValue).toContainText(this.getExpectedCounterValuePattern(counterValue));
+    } else {
+      await expect(rowValue).toContainText(counterValue);
+    }
   }
 
   @step("Expect operation row to be visible")
@@ -259,7 +225,6 @@ export class PortfolioPage extends AppPage {
 
   @step("Click on performance pill to navigate to analytics")
   async clickOnPerformancePill() {
-    await this.checkVisibility(this.portfolioTrend);
     await this.portfolioTrend.click();
   }
 
@@ -272,6 +237,15 @@ export class PortfolioPage extends AppPage {
   @step("Check no balance title is visible")
   async checkNoBalanceTitleVisibility() {
     await this.checkVisibility(this.noBalanceTitle);
+  }
+
+  /**
+   * Synchronisation gate before add-account: waits until the empty-portfolio shell is ready.
+   * Prefer this over {@link checkNoBalanceTitleVisibility} in specs so Allure shows a readiness step, not a product assertion.
+   */
+  @step("Wait until portfolio empty state is ready")
+  async waitForPortfolioEmptyState() {
+    await expect(this.noBalanceTitle).toBeVisible();
   }
 
   @step("Expect portfolio total balance to not be visible")

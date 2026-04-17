@@ -106,11 +106,7 @@ export class SettingsPage extends AppPage {
   async enableWalletSync() {
     if (await this.turnOnLedgerSyncButton.isVisible()) {
       await this.turnOnLedgerSyncButton.click();
-      return;
-    }
-
-    // Then check for WalletSync row buttons
-    if (await this.syncWalletSyncButton.isVisible()) {
+    } else if (await this.syncWalletSyncButton.isVisible()) {
       await this.syncWalletSyncButton.click();
     } else {
       await this.manageWalletSyncButton.click();
