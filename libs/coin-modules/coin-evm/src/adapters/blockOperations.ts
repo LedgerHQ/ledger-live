@@ -6,6 +6,7 @@ import type {
 import { TransactionInfo, TraceBlockItem, isTraceBlockCallAction } from "../network/node/types";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
+import { NON_VALUE_TRANSFER_CALL_TYPES } from "./nonValueTransferCallTypes";
 
 /**
  * Helper function to add transfer operations for a from/to pair.
@@ -72,10 +73,6 @@ export function rpcTransactionToBlockOperations(
 
   return operations;
 }
-
-// EVM call types that execute code but do NOT transfer native value. Keeping this list in sync
-// with the one in `adapters/etherscan.ts` — both providers leak the same non-transferring frames.
-const NON_VALUE_TRANSFER_CALL_TYPES = new Set(["delegatecall", "staticcall", "callcode"]);
 
 function extractActionFields(
   item: TraceBlockItem,

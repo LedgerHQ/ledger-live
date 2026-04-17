@@ -18,6 +18,7 @@ import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
+import { dropRootTraceDuplicates } from "./rootTraceDedup";
 import { buildSmartContractDetails } from "../utils";
 
 function internalTransactionsFetcher(
@@ -97,9 +98,10 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
 /**
  * Merges internal transaction operations into block transactions by matching tx hash.
  *
- * Runs a provider-agnostic root-trace dedup: any internal op whose
- * `(address, peer, amount, asset)` tuple exactly matches one of the coin tx's own native
- * operations is dropped, because it represents the same value transfer reported twice.
+ * Runs a provider-agnostic root-trace dedup on internal native operations: any internal op
+ * whose `(address, peer, amount)` tuple exactly matches one of the coin tx's own native ops
+ * is dropped, because it represents the same value transfer reported twice. ERC20/721/1155
+ * ops come from receipt logs, so they are never touched here.
  *
  * This complements the semantic filters applied upstream by each adapter:
  *   - `traceBlockItemsToOperationsByHash` skips items with `traceAddress.length === 0` and
@@ -127,35 +129,6 @@ function mergeInternalTransactions(
       operations: [...tx.operations, ...dedupedExtraOps],
     };
   });
-}
-
-/**
- * Drops any internal op that is structurally identical to one of the coin tx's native ops.
- * Only native-asset ops are considered: ERC20/721/1155 ops are surfaced by receipt logs,
- * which are a different (non-overlapping) source.
- */
-export function dropRootTraceDuplicates(
-  coinOps: readonly BlockOperation[],
-  internalOps: readonly BlockOperation[],
-): BlockOperation[] {
-  const coinNativeSignatures = new Set<string>();
-  for (const op of coinOps) {
-    if (op.type !== "transfer" || op.asset.type !== "native") continue;
-    coinNativeSignatures.add(signatureOf(op));
-  }
-  if (coinNativeSignatures.size === 0) return [...internalOps];
-  return internalOps.filter(op => {
-    if (op.type !== "transfer" || op.asset.type !== "native") return true;
-    return !coinNativeSignatures.has(signatureOf(op));
-  });
-}
-
-function signatureOf(op: BlockOperation): string {
-  if (op.type !== "transfer") return "";
-  const addr = (op.address ?? "").toLowerCase();
-  const peer = ("peer" in op && op.peer ? op.peer : "").toLowerCase();
-  const amount = op.amount?.toString() ?? "";
-  return `${addr}\t${peer}\t${amount}`;
 }
 
 async function getTransactionsFromNode(

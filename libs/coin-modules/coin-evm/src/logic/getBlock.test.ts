@@ -1,3 +1,4 @@
+import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
@@ -14,8 +15,8 @@ import {
 } from "../network/node/types";
 import { EtherscanInternalTransaction } from "../types";
 import { safeEncodeEIP55 } from "../utils";
-import { dropRootTraceDuplicates, getBlock } from "./getBlock";
-import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
+import { getBlock } from "./getBlock";
+import { dropRootTraceDuplicates } from "./rootTraceDedup";
 
 // fixme refactor this test
 // use builder function to build the mocked return values
