@@ -28,9 +28,11 @@ export const MAX_FEES_THRESHOLD_MULTIPLIER = 4;
  *   - `feeCurrency` on the transaction → adapter address
  *   - `contractAddress` (ERC-20 transfer target) → token address
  *
- * Tokens that are natively 18-decimal (cUSD, cEUR, …) do not need an adapter
- * and use their own token address for both purposes.
- * This list contains the fee currencies currently supported by the allowlist.
+ * Tokens that are natively 18-decimal do not need an adapter and use their own
+ * token address for both purposes.
+ * This list contains the tokens that are currently supported as fee currencies
+ * (CELO, USDT, USDC). Native 18-decimal tokens such as cUSD or cEUR are not
+ * included in the current allowlist.
  *
  * Reference: https://docs.celo.org/protocol/transaction/eip1559
  */
@@ -54,11 +56,13 @@ export const FEE_CURRENCY_OPTIONS: {
     adapterAddress: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B",
     contractAddress: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
   },
-] as const;
+];
 
-/** O(1) lookup of fee currency options by contract address. `null` key → native CELO.
+/** O(1) lookup of fee currency options by contract address.
  *  Keys are lowercased for case-insensitive matching against token contract addresses. */
-export const FEE_CURRENCY_BY_CONTRACT: Map<string | null, (typeof FEE_CURRENCY_OPTIONS)[number]> =
-  new Map(
-    FEE_CURRENCY_OPTIONS.map(option => [option.contractAddress?.toLowerCase() ?? null, option]),
-  );
+export const FEE_CURRENCY_BY_CONTRACT: Map<string, (typeof FEE_CURRENCY_OPTIONS)[number]> = new Map(
+  FEE_CURRENCY_OPTIONS.filter(option => option.contractAddress !== null).map(option => [
+    option.contractAddress!.toLowerCase(),
+    option,
+  ]),
+);

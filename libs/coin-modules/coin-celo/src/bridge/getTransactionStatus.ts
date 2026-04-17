@@ -143,13 +143,6 @@ export const getTransactionStatus: AccountBridge<
         }
       }
     }
-
-    // When fees are paid in native CELO for a token transaction, verify the main account has enough CELO for gas
-    if (!errors.fees && isTokenTransaction && !sameTokenAsFee && !feeTokenAccount) {
-      if (totalSpendableBalance.lt(estimatedFees)) {
-        errors.fees = new NotEnoughBalance();
-      }
-    }
   }
 
   if (transaction.mode === "send") {
