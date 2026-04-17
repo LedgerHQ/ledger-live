@@ -19,7 +19,12 @@ export const createSigner = (transport: Transport) => {
       const extra = [chainCode, ed25519].filter((v): v is boolean => v !== undefined);
       return originalGetAddress(path, display, ...(extra as [boolean?, boolean?]));
     },
-    signTransaction: async (path: string, rawTxHex: string, ed25519?: boolean) => {
+    signTransaction: async (
+      path: string,
+      rawTxHex: string,
+      options?: boolean | { derivationMode?: string },
+    ) => {
+      const ed25519 = typeof options === "boolean" ? options : undefined;
       return originalSignTransaction(path, rawTxHex, ed25519);
     },
   };
