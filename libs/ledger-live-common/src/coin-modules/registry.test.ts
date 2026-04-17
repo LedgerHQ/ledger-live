@@ -10,6 +10,13 @@ import {
   loadAccountModuleForFamily,
   loadMockBridgeForFamily,
   loadMockAccountForFamily,
+  loadIsAccountEmptyForFamily,
+  loadGetVotesCountForFamily,
+  loadClearAccountForFamily,
+  loadValidateAddressForFamily,
+  loadIsEditableOperationForFamily,
+  loadIsStuckOperationForFamily,
+  loadGetStuckAccountAndOperationForFamily,
 } from "./registry";
 import type { CoinModuleLoader, FamilySetup, TransactionModule } from "./types";
 
@@ -49,6 +56,13 @@ const allLoaders: LoaderEntry[] = [
   { loaderKey: "loadAccount", fn: loadAccountModuleForFamily },
   { loaderKey: "loadMockBridge", fn: loadMockBridgeForFamily },
   { loaderKey: "loadMockAccount", fn: loadMockAccountForFamily },
+  { loaderKey: "loadIsAccountEmpty", fn: loadIsAccountEmptyForFamily },
+  { loaderKey: "loadGetVotesCount", fn: loadGetVotesCountForFamily },
+  { loaderKey: "loadClearAccount", fn: loadClearAccountForFamily },
+  { loaderKey: "loadValidateAddress", fn: loadValidateAddressForFamily },
+  { loaderKey: "loadIsEditableOperation", fn: loadIsEditableOperationForFamily },
+  { loaderKey: "loadIsStuckOperation", fn: loadIsStuckOperationForFamily },
+  { loaderKey: "loadGetStuckAccountAndOperation", fn: loadGetStuckAccountAndOperationForFamily },
 ];
 
 for (const { loaderKey, fn, required } of allLoaders) {

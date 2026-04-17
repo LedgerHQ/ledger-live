@@ -4,12 +4,17 @@ import type {
   CoinModuleLoader,
   DeviceTransactionConfigFn,
   FamilySetup,
+  GetStuckAccountAndOperationFn,
+  IsEditableOperationFn,
+  IsStuckOperationFn,
   MockAccountModule,
   MockBridgeModule,
   PlatformAdapterModule,
   TransactionModule,
+  ValidateAddressFn,
   WalletApiAdapterModule,
 } from "./types";
+import type { Account } from "@ledgerhq/types-live";
 
 const loaders = new Map<string, CoinModuleLoader>();
 
@@ -80,3 +85,36 @@ export const loadMockBridgeForFamily = (family: string): MockBridgeModule | unde
 
 export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined =>
   loaders.get(family)?.loadMockAccount?.();
+
+export const loadIsAccountEmptyForFamily = (
+  family: string,
+): ((account: Account) => boolean) | undefined => loaders.get(family)?.loadIsAccountEmpty?.();
+
+export const loadGetVotesCountForFamily = (
+  family: string,
+): ((account: Account) => number) | undefined => loaders.get(family)?.loadGetVotesCount?.();
+
+export const loadClearAccountForFamily = (
+  family: string,
+): ((account: Account) => void) | undefined => loaders.get(family)?.loadClearAccount?.();
+
+export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
+  loaders.get(family)?.loadValidateAddress?.();
+
+export const loadIsEditableOperationForFamily = (
+  family: string,
+): IsEditableOperationFn | undefined => loaders.get(family)?.loadIsEditableOperation?.();
+
+export const loadIsStuckOperationForFamily = (
+  family: string,
+): IsStuckOperationFn | undefined => loaders.get(family)?.loadIsStuckOperation?.();
+
+export const loadGetStuckAccountAndOperationForFamily = (
+  family: string,
+): GetStuckAccountAndOperationFn | undefined =>
+  loaders.get(family)?.loadGetStuckAccountAndOperation?.();
+
+export const loadShouldUseTrustedInputForSegwitForFamily = (
+  family: string,
+): ((args: { name: string; version: string }) => boolean) | undefined =>
+  loaders.get(family)?.loadShouldUseTrustedInputForSegwit?.();

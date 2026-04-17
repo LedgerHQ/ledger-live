@@ -1,9 +1,9 @@
 import semver from "semver";
-import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "@ledgerhq/live-env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { loadShouldUseTrustedInputForSegwitForFamily } from "../coin-modules/registry";
 
 export function shouldUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
@@ -11,7 +11,7 @@ export function shouldUpgrade(appName: string, appVersion: string): boolean {
 
   if (
     (deps.includes("Bitcoin") &&
-      shouldUseTrustedInputForSegwit({
+      loadShouldUseTrustedInputForSegwitForFamily("bitcoin")?.({
         name: appName,
         version: "1.4.0",
       })) ||

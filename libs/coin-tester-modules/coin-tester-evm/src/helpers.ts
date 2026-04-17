@@ -10,6 +10,10 @@ import type { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/familie
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
+import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
+
+registerCoinModules(coinModuleLoaders);
 
 export const ethereum = getCryptoCurrencyById("ethereum");
 export const core = getCryptoCurrencyById("core");

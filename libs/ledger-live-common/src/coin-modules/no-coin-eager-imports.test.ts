@@ -48,16 +48,6 @@ function buildCausesMap(predicate: (pkg: string) => boolean): Record<string, str
 }
 
 test("coin-* eager imports — must be zero outside allowed zones", () => {
-  // Tracked exceptions not yet fixed — shrink this list as tickets close.
-  const KNOWN: Record<string, string> = {
-    "@ledgerhq/coin-bitcoin/operation": "LIVE-29326",
-    "@ledgerhq/coin-canton": "LIVE-29326",
-    "@ledgerhq/coin-cosmos/helpers": "LIVE-29326",
-    "@ledgerhq/coin-evm/config": "LIVE-29326",
-    "@ledgerhq/coin-evm/operation": "LIVE-29326",
-    "@ledgerhq/coin-tron/index": "LIVE-29326",
-    "@ledgerhq/coin-vechain/index": "LIVE-29326",
-  };
   const violations: Record<string, string[]> = {};
   for (const [file, info] of Object.entries(metafileInputs)) {
     const src = rel(file);
@@ -66,7 +56,6 @@ test("coin-* eager imports — must be zero outside allowed zones", () => {
       if (!imp.path.startsWith("@ledgerhq/coin-")) continue;
       if (imp.path.startsWith("@ledgerhq/coin-module-framework")) continue;
       if (LOW_IMPACT_PATH.test(imp.path)) continue;
-      if (KNOWN[imp.path]) continue;
       (violations[imp.path] ??= []).push(src);
     }
   }
@@ -77,7 +66,6 @@ test("families/* eager imports — must be zero outside allowed zones", () => {
   // Tracked exceptions not yet fixed — shrink this list as tickets close.
   const KNOWN: Record<string, string> = {
     "ledger-live-common/src/families/bitcoin/ACRESetup.ts": "LIVE-29411",
-    "ledger-live-common/src/families/tezos/staking.ts": "LIVE-29326",
   };
   const violations: Record<string, string[]> = {};
   for (const [file, info] of Object.entries(metafileInputs)) {

@@ -1,4 +1,4 @@
-import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
 export function isBitcoinBasedAccount(account: Account | AccountLike): account is BitcoinAccount {
