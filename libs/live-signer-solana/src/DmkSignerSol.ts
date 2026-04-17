@@ -170,6 +170,8 @@ export class DmkSignerSol implements SolanaSigner {
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
       transactionResolutionContext,
       skipOpenApp: true,
+      delayed: true,
+      solanaRPCURL: "https://solana.coin.ledger.com"
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
