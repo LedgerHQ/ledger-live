@@ -1,5 +1,5 @@
 diff --git a/dist/commands/common/config/normalizeConfig.js b/dist/commands/common/config/normalizeConfig.js
-index 7bfc195ae034abe9af8b559f732dd57f86684592..ffdd82789e04098041befe61d422f9bb4b304b3e 100644
+index 7bfc195ae0..ffdd82789e 100644
 --- a/dist/commands/common/config/normalizeConfig.js
 +++ b/dist/commands/common/config/normalizeConfig.js
 @@ -8,11 +8,10 @@ var _webpackMerge = require("webpack-merge");
@@ -17,7 +17,7 @@ index 7bfc195ae034abe9af8b559f732dd57f86684592..ffdd82789e04098041befe61d422f9bb
        return host;
    }
 diff --git a/dist/modules/configurePublicPath.js b/dist/modules/configurePublicPath.js
-index 9af637accdf7ac699063f3acdc01e7ccf0f1a539..e2a69a739bdd1976c2cffe066e839ba44326cf47 100644
+index 9af637accd..25240f08c2 100644
 --- a/dist/modules/configurePublicPath.js
 +++ b/dist/modules/configurePublicPath.js
 @@ -1,10 +1,4 @@
@@ -34,8 +34,9 @@ index 9af637accdf7ac699063f3acdc01e7ccf0f1a539..e2a69a739bdd1976c2cffe066e839ba4
 \ No newline at end of file
 +const { hostname } = getDevServerLocation();
 +__webpack_public_path__ = __webpack_public_path__.replace(/\/\/[^:/]+/, '//' + hostname);
+\ No newline at end of file
 diff --git a/dist/modules/getDevServerLocation.js b/dist/modules/getDevServerLocation.js
-index f74842575b5c4716de4dc657c9e9849734cb0529..74cb1e0dbc72abef72f841f8a7389c322d4fd9e5 100644
+index f74842575b..74cb1e0dbc 100644
 --- a/dist/modules/getDevServerLocation.js
 +++ b/dist/modules/getDevServerLocation.js
 @@ -1,16 +1,46 @@
@@ -98,3 +99,35 @@ index f74842575b5c4716de4dc657c9e9849734cb0529..74cb1e0dbc72abef72f841f8a7389c32
 -  return location;
 +  return computeLocation();
  }
+\ No newline at end of file
+diff --git a/dist/plugins/OutputPlugin/OutputPlugin.js b/dist/plugins/OutputPlugin/OutputPlugin.js
+index 603db530d2..ff67bde714 100644
+--- a/dist/plugins/OutputPlugin/OutputPlugin.js
++++ b/dist/plugins/OutputPlugin/OutputPlugin.js
+@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
+ });
+ exports.OutputPlugin = void 0;
+ var _nodeAssert = _interopRequireDefault(require("node:assert"));
++var _nodeFs = _interopRequireDefault(require("node:fs"));
+ var _nodePath = _interopRequireDefault(require("node:path"));
+ var _env = require("../../env.js");
+ var _AssetsCopyProcessor = require("../utils/AssetsCopyProcessor.js");
+@@ -125,6 +126,18 @@ class OutputPlugin {
+       }
+     });
+     compiler.hooks.done.tapPromise('RepackOutputPlugin', async stats => {
++      const emittedAssets = typeof stats.compilation?.getAssets === 'function' ? stats.compilation.getAssets() : [];
++      await Promise.all(emittedAssets.map(async asset => {
++        const targetPath = _nodePath.default.join(outputPath, asset.name);
++        const source = asset.source?.source?.();
++        if (source === undefined || source === null) {
++          return;
++        }
++        await _nodeFs.default.promises.mkdir(_nodePath.default.dirname(targetPath), {
++          recursive: true
++        });
++        await _nodeFs.default.promises.writeFile(targetPath, source);
++      }));
+       const compilationStats = stats.toJson({
+         all: false,
+         assets: true,
