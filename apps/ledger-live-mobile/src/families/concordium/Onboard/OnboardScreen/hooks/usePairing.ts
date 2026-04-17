@@ -38,7 +38,14 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
     void startPairingInternal();
 
     async function startPairingInternal() {
-      const bridge = await getConcordiumBridge(currency);
+      let bridge;
+      try {
+        bridge = await getConcordiumBridge(currency);
+      } catch {
+        unsubscribe();
+        setPairStatus(PairStatus.ERROR);
+        return;
+      }
       subscriptionRef.current = bridge.pairWalletConnect(currency.id, "").subscribe({
         next: (data: ConcordiumPairingProgress) => {
           switch (data.status) {

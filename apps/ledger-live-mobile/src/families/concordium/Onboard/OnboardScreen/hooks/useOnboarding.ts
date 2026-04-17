@@ -51,7 +51,14 @@ export function useOnboarding(
     setCompletedAccount(null);
     setCreateStatus(CreateStatus.PREPARING);
 
-    const bridge = await getConcordiumBridge(currency);
+    let bridge;
+    try {
+      bridge = await getConcordiumBridge(currency);
+    } catch {
+      unsubscribe();
+      setCreateStatus(CreateStatus.ERROR);
+      return;
+    }
     subscriptionRef.current = bridge
       .onboardAccount(currency.id, deviceId, creatableAccount)
       .subscribe({

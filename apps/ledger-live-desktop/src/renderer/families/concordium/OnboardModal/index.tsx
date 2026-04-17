@@ -90,6 +90,7 @@ class OnboardModal extends PureComponent<Props, State> {
 
   concordiumWalletConnect: ConcordiumWalletConnect | null = null;
   concordiumBridge: ConcordiumCurrencyBridge | null = null;
+  private concordiumBridgePromise: Promise<ConcordiumCurrencyBridge> | null = null;
   pairingSubscription: Subscription | null = null;
   onboardingSubscription: Subscription | null = null;
   stepTransitionTimeout: NodeJS.Timeout | null = null;
@@ -139,8 +140,29 @@ class OnboardModal extends PureComponent<Props, State> {
     this.mounted = true;
     this.concordiumWalletConnect = setWalletConnect();
     if (this.props.currency) {
-      this.concordiumBridge = await getConcordiumBridge(this.props.currency);
+      this.concordiumBridgePromise = getConcordiumBridge(this.props.currency);
+      try {
+        this.concordiumBridge = await this.concordiumBridgePromise;
+      } catch (error) {
+        this.concordiumBridgePromise = null;
+        if (!this.mounted) return;
+        this.setState({ error: toError(error) });
+        return;
+      }
       if (!this.mounted) return;
+    }
+  }
+
+  private async ensureBridgeReady(): Promise<boolean> {
+    if (this.concordiumBridge) return true;
+    if (!this.concordiumBridgePromise) return true;
+    try {
+      this.concordiumBridge = await this.concordiumBridgePromise;
+      return true;
+    } catch (error) {
+      this.concordiumBridgePromise = null;
+      this.setState({ error: toError(error) });
+      return false;
     }
   }
 
@@ -218,11 +240,12 @@ class OnboardModal extends PureComponent<Props, State> {
     this.pairingSubscription = null;
   };
 
-  handlePair = (isRetry = false) => {
+  handlePair = async (isRetry = false) => {
     this.clearPairingSubscription();
 
     const { currency, device } = this.props;
 
+    if (!(await this.ensureBridgeReady())) return;
     invariant(this.concordiumBridge, "concordiumBridge is required");
     invariant(device, "device is required");
     invariant(currency, "currency is required");
@@ -309,12 +332,13 @@ class OnboardModal extends PureComponent<Props, State> {
     this.onboardingSubscription = null;
   };
 
-  handleCreateAccount = () => {
+  handleCreateAccount = async () => {
     this.clearOnboardingSubscription();
 
     const { currency, device, selectedAccounts } = this.props;
     const creatableAccount = getCreatableAccount(selectedAccounts);
 
+    if (!(await this.ensureBridgeReady())) return;
     invariant(this.concordiumBridge, "concordiumBridge is required");
     invariant(creatableAccount, "creatableAccount is required");
     invariant(device, "device is required");

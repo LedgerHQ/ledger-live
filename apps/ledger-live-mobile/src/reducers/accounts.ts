@@ -130,13 +130,17 @@ export async function exportSelector(state: State): Promise<{
     version: number;
   }[];
 }> {
-  const active = [];
-  for (const account of state.accounts.active) {
-    const accountUserData = accountUserDataExportSelector(state.wallet, { account });
-    if (accountUserData) {
-      active.push(await accountModel.encode([account, accountUserData]));
-    }
-  }
+  const active = await Promise.all(
+    state.accounts.active
+      .map(account => {
+        const accountUserData = accountUserDataExportSelector(state.wallet, { account });
+        if (!accountUserData) return null;
+        return accountModel.encode([account, accountUserData]);
+      })
+      .filter(
+        (p): p is Promise<{ data: AccountRaw; version: number }> => p !== null,
+      ),
+  );
   return { active };
 }
 

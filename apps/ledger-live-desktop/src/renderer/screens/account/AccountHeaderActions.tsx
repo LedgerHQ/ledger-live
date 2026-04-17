@@ -224,9 +224,13 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const [canSendResult, setCanSendResult] = useState(false);
   useEffect(() => {
     let active = true;
-    canSend(account, parentAccount).then(result => {
-      if (active) setCanSendResult(result);
-    });
+    canSend(account, parentAccount)
+      .then(result => {
+        if (active) setCanSendResult(result);
+      })
+      .catch(() => {
+        if (active) setCanSendResult(false);
+      });
     return () => {
       active = false;
     };
