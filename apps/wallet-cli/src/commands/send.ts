@@ -1,5 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { lastValueFrom } from "rxjs";
+import { tap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
 import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
@@ -138,13 +140,11 @@ export default defineCommand({
         spin?.success("Device session established");
         out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
 
-        await new Promise<void>((resolve, reject) => {
-          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).subscribe({
-            next: event => out.sendEvent(event),
-            error: (e: unknown) => reject(e),
-            complete: resolve,
-          });
-        });
+        await lastValueFrom(
+          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).pipe(
+            tap(event => out.sendEvent(event)),
+          ),
+        );
 
         out.sendComplete();
       });
