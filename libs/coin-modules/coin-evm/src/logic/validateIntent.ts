@@ -71,7 +71,8 @@ async function validateAmount(
     return { errors: { amount: new AmountRequired() }, warnings: {} };
   }
 
-  if (totalSpent > balance.value) {
+  const available = balance.value - (balance.locked ?? 0n);
+  if (totalSpent > available) {
     return { errors: { amount: new NotEnoughBalance() }, warnings: {} };
   }
 
@@ -174,7 +175,11 @@ async function validateGas(
   // Gas Price
   if (!(hasLegacyGasPrice || hasEip1559GasPrice)) {
     errors.gasPrice = new FeeNotLoaded();
-  } else if (intent.recipient && estimatedFees.value > nativeBalance.value && !intent.sponsored) {
+  } else if (
+    intent.recipient &&
+    estimatedFees.value > nativeBalance.value - (nativeBalance.locked ?? 0n) &&
+    !intent.sponsored
+  ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
       fees: formatCurrencyUnit(
@@ -286,6 +291,8 @@ function computeAmount(
 ): bigint {
   if (!intent.useAllAmount) return intent.amount;
 
+  const available = balance.value - (balance.locked ?? 0n);
+
   if (isNative(intent.asset)) {
     const additionalFees =
       typeof estimatedFees.parameters?.additionalFees === "bigint"
@@ -293,10 +300,10 @@ function computeAmount(
         : 0n;
     const totalFees = estimatedFees.value + additionalFees;
 
-    return balance.value > totalFees ? balance.value - totalFees : 0n;
+    return available > totalFees ? available - totalFees : 0n;
   }
 
-  return balance.value;
+  return available;
 }
 
 function refreshEstimationValue(

@@ -357,6 +357,56 @@ describe("validateIntent", () => {
         }),
       );
     });
+
+    it("detects NotEnoughBalance when spending would dip into locked funds", async () => {
+      const res = await validateIntent(
+        {} as CryptoCurrency,
+        eip1559Intent({
+          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+          amount: 60n,
+          asset: { type: "native" },
+        }),
+        [{ value: 100n, locked: 50n, asset: { type: "native" } }],
+        {
+          value: 5n,
+          parameters: { gasLimit: 1n, maxFeePerGas: 5n, maxPriorityFeePerGas: 1n },
+        },
+      );
+
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          amount: new NotEnoughBalance(),
+        }),
+      );
+    });
+
+    it("computes useAllAmount on a locked native balance as value - locked - fees", async () => {
+      jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+        lastCoinOperations: [],
+        lastInternalOperations: [],
+        lastNftOperations: [],
+        lastTokenOperations: [],
+        nextPagingToken: "",
+      });
+
+      const res = await validateIntent(
+        {} as CryptoCurrency,
+        legacyIntent({
+          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+          useAllAmount: true,
+          asset: { type: "native" },
+        }),
+        [{ value: 20000000n, locked: 8000000n, asset: { type: "native" } }],
+        {
+          value: 105000n,
+          parameters: { gasLimit: 21000n, gasPrice: 5n },
+        },
+      );
+
+      expect(res.errors).toEqual({});
+      expect(res.amount).toBe(20000000n - 8000000n - 105000n);
+      expect(res.totalSpent).toBe(20000000n - 8000000n);
+    });
   });
 
   describe("staking", () => {

@@ -52,7 +52,7 @@ describe("genericEstimateMaxSpendable", () => {
     expect(result.toString()).toBe("49990000");
     expect(validateIntentMock).toHaveBeenCalledWith(
       expect.anything(),
-      [{ value: 50000000n, locked: 0n, asset: { type: "native" } }],
+      [{ value: 60000000n, locked: 10000000n, asset: { type: "native" } }],
       expect.anything(),
     );
   });
