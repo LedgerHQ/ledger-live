@@ -10,7 +10,7 @@ const swap = new Swap(
 );
 runSwapTest(
   swap,
-  ["B2CQA-2832", "B2CQA-3450", "B2CQA-3281"],
+  ["B2CQA-2832", "B2CQA-3281"],
   [
     "@NanoSP",
     "@LNS",

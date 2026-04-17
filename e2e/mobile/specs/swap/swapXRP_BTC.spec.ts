@@ -4,7 +4,7 @@ import { runSwapTest } from "./swap";
 const swap = new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "15", undefined, Fee.MEDIUM);
 runSwapTest(
   swap,
-  ["B2CQA-3077", "B2CQA-3450", "B2CQA-3281"],
+  ["B2CQA-3077", "B2CQA-3281"],
   [
     "@NanoSP",
     "@LNS",
