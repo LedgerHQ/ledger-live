@@ -2,10 +2,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { accountSelector } from "~/renderer/reducers/accounts";
-import type { State } from "~/renderer/reducers";
+import { filter, map, throttleTime } from "rxjs/operators";
+import { asyncScheduler } from "rxjs";
+import {
+  aleoPrivateSyncProgress$,
+  getAleoSyncProgress,
+} from "@ledgerhq/live-common/families/aleo/bridge";
+import { PROGRESS_THROTTLE_INTERVAL_MS } from "@ledgerhq/live-common/families/aleo/constants";
 import { MANDATORY_SYNC_POLLING_DELAY } from "../constants";
 import { isAleoAccount } from "../modals/send/steps/utils";
 
@@ -23,6 +28,8 @@ interface UseAleoPrivateSyncResult {
   error: Error | null;
   start: () => void;
   stop: () => void;
+  /** Non-null (0–100) when a background bridge sync is running and this hook is idle. */
+  backgroundProgress: number | null;
 }
 
 export const useAleoPrivateSync = ({
@@ -30,42 +37,42 @@ export const useAleoPrivateSync = ({
   autoStart = false,
   onAccountUpdated,
 }: UseAleoPrivateSyncOptions): UseAleoPrivateSyncResult => {
-  const dispatch = useDispatch();
-
   const accountId = account?.type === "Account" ? account.id : undefined;
-  const liveAccount = useSelector((state: State) =>
-    accountId ? accountSelector(state, { accountId }) : undefined,
-  );
 
+  const dispatch = useDispatch();
+  // Tracks the last non-null progress so components can detect "completed at 100%"
+  // vs "aborted early" even after the subject resets to null.
+  const lastProgressRef = useRef(0);
   const onAccountUpdatedRef = useRef(onAccountUpdated);
-  onAccountUpdatedRef.current = onAccountUpdated;
-
   const accountRef = useRef(account);
-  accountRef.current = account;
-
   const isSyncingRef = useRef(false);
   const subscriptionRef = useRef<{ unsubscribe(): void } | null>(null);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Set to true the first time we observe a non-null privateSyncProgress from
-  // the Redux store while we are in the retry-wait state (i.e. blocked by
-  // another sync holding the lock).  Used to distinguish a real background
-  // private-sync finish from an unrelated account update where
-  // privateSyncProgress is null by default.
-  const seenBackgroundSyncRef = useRef(false);
-  // Captures the lastPrivateSyncDate at the moment our sync starts so we can
-  // detect when the background sync has completed a full private sync for us.
-  const initialLastPrivateSyncDateRef = useRef<Date | null | undefined>(undefined);
-
+  const [aleoProgress, setAleoProgress] = useState<number | null>(() =>
+    accountId ? getAleoSyncProgress(accountId) : null,
+  );
   const [isSyncing, setIsSyncing] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<Error | null>(null);
+
+  onAccountUpdatedRef.current = onAccountUpdated;
+  accountRef.current = account;
+  // progress: when this hook is syncing, show subject progress (throttled 150ms) falling
+  // back to the last seen value so the display stays stable between ticks.
+  // backgroundProgress: non-null when a background bridge sync is running while this
+  // hook is idle — same subject, different condition.
+  const progress = isSyncing ? (aleoProgress ?? lastProgressRef.current) : lastProgressRef.current;
+  const backgroundProgress = isSyncing ? null : aleoProgress;
 
   const runSync = useCallback(() => {
     const acc = accountRef.current;
     if (!isSyncingRef.current || acc?.type !== "Account" || !isAleoAccount(acc)) return;
 
-    let latestPercentage = 0;
     let latestSynced = false;
+    // Tracks whether error/complete fired synchronously inside .subscribe() before it returned.
+    // When the lock is held, complete() fires synchronously, setting subscriptionRef.current = null before .subscribe() returns.
+    // Without this guard the outer assignment would overwrite that null with the already-closed subscription,
+    // corrupting the "are we between retries?" check.
+    let completedSynchronously = false;
     const bridge = getAccountBridge(acc);
     const sub = bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED }).subscribe({
       next: updater => {
@@ -74,31 +81,23 @@ export const useAleoPrivateSync = ({
         dispatch(updateAccountWithUpdater(currentAcc.id, updater));
         const updatedAccount = updater(currentAcc);
         if (!isAleoAccount(updatedAccount)) return;
-        latestPercentage =
-          updatedAccount.aleoResources?.privateSyncProgress ??
-          updatedAccount.aleoResources?.provableApi?.scannerStatus?.percentage ??
-          0;
 
-        const isFinalResult = updatedAccount.aleoResources?.privateSyncProgress == null;
-        latestSynced = isFinalResult
-          ? updatedAccount.aleoResources?.provableApi?.scannerStatus?.synced ?? false
-          : false;
-        setProgress(latestPercentage);
+        latestSynced = updatedAccount.aleoResources?.provableApi?.scannerStatus?.synced ?? false;
         onAccountUpdatedRef.current?.(updatedAccount);
-        // Scanner is done — mark syncing complete immediately so the
-        // component can react without waiting for the observable to complete.
         if (latestSynced) {
           isSyncingRef.current = false;
           setIsSyncing(false);
         }
       },
       error: (err: Error) => {
+        completedSynchronously = true;
         subscriptionRef.current = null;
         isSyncingRef.current = false;
         setIsSyncing(false);
         setError(err);
       },
       complete: () => {
+        completedSynchronously = true;
         subscriptionRef.current = null;
         if (isSyncingRef.current && !latestSynced) {
           retryTimerRef.current = setTimeout(runSync, MANDATORY_SYNC_POLLING_DELAY);
@@ -108,13 +107,8 @@ export const useAleoPrivateSync = ({
         }
       },
     });
-    // Guard against the synchronous-completion race: when the lock is held,
-    // subscriber.complete() fires synchronously inside .subscribe(), which
-    // sets subscriptionRef.current = null before .subscribe() returns.
-    // Without this guard the outer assignment would overwrite that null with
-    // the already-closed subscription, breaking the "are we between retries?"
-    // check used in the liveAccount effect below.
-    if (!sub.closed) {
+
+    if (!completedSynchronously) {
       subscriptionRef.current = sub;
     }
   }, [dispatch]);
@@ -124,13 +118,7 @@ export const useAleoPrivateSync = ({
     subscriptionRef.current?.unsubscribe();
     subscriptionRef.current = null;
     setError(null);
-    setProgress(0);
-    seenBackgroundSyncRef.current = false;
-    const acc = accountRef.current;
-    initialLastPrivateSyncDateRef.current =
-      acc?.type === "Account" && isAleoAccount(acc)
-        ? acc.aleoResources?.lastPrivateSyncDate
-        : undefined;
+    lastProgressRef.current = 0;
     isSyncingRef.current = true;
     setIsSyncing(true);
     runSync();
@@ -139,82 +127,40 @@ export const useAleoPrivateSync = ({
   const stop = useCallback(() => {
     isSyncingRef.current = false;
     if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
-    subscriptionRef.current?.unsubscribe();
+    subscriptionRef.current?.unsubscribe(); // triggers observable teardown -> emitAleoSyncDone
     subscriptionRef.current = null;
     setIsSyncing(false);
+  }, []);
 
-    const acc = accountRef.current;
-    if (
-      acc?.type === "Account" &&
-      isAleoAccount(acc) &&
-      acc.aleoResources?.privateSyncProgress != null
-    ) {
-      dispatch(
-        updateAccountWithUpdater(acc.id, (a: Account) => {
-          if (!isAleoAccount(a) || !a.aleoResources) return a;
-          return { ...a, aleoResources: { ...a.aleoResources, privateSyncProgress: null } };
+  useEffect(() => {
+    if (!accountId) return;
+    const sub = aleoPrivateSyncProgress$
+      .pipe(
+        filter(e => e.accountId === accountId),
+        map(e => e.progress),
+        throttleTime(PROGRESS_THROTTLE_INTERVAL_MS, asyncScheduler, {
+          leading: true,
+          trailing: true,
         }),
-      );
-    }
-  }, [dispatch]);
+      )
+      .subscribe(p => {
+        setAleoProgress(p);
+        if (p !== null) lastProgressRef.current = p;
+      });
+
+    return () => sub.unsubscribe();
+  }, [accountId]);
 
   // Auto-start: kick off on mount; cleanup always runs on unmount.
   useEffect(() => {
     if (autoStart) {
       start();
     }
-    return () => stop();
+
+    return () => {
+      stop();
+    };
   }, [autoStart, start, stop]);
 
-  // When this hook's own sync attempt is blocked (another sync holds the lock),
-  // the observable completes immediately with no emissions and the hook waits
-  // MANDATORY_SYNC_POLLING_DELAY before retrying. During that wait the account
-  // in the Redux store IS being updated with privateSyncProgress by the running
-  // background sync. Mirror those updates into the local progress state and, when
-  // the background sync finishes (privateSyncProgress becomes null), cancel the
-  // pending retry timer and schedule an immediate retry so there is no
-  // unnecessary extra wait.
-  useEffect(() => {
-    // Only act when we're syncing but our own observable is not active —
-    // i.e. we are between retries (blocked or waiting to retry).
-    if (!isSyncing || subscriptionRef.current !== null) return;
-
-    const live = liveAccount;
-    if (!live || !isAleoAccount(live)) return;
-
-    const bgProgress = live.aleoResources?.privateSyncProgress;
-    if (bgProgress != null) {
-      // Background private sync is in progress — mirror its progress.
-      seenBackgroundSyncRef.current = true;
-      setProgress(bgProgress);
-    } else if (seenBackgroundSyncRef.current) {
-      // Background sync just finished (we saw non-null progress before).
-      seenBackgroundSyncRef.current = false;
-      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
-
-      // If the background sync updated lastPrivateSyncDate it means it ran a
-      // full private sync that covers what we needed. Mark ourselves done so
-      // the step can transition instead of starting a redundant second sync.
-      const currentLastPrivateSyncDate = live.aleoResources?.lastPrivateSyncDate;
-      const initialDate = initialLastPrivateSyncDateRef.current;
-      const backgroundSyncCompletedOurWork =
-        currentLastPrivateSyncDate != null &&
-        (initialDate == null || currentLastPrivateSyncDate > initialDate);
-
-      if (backgroundSyncCompletedOurWork) {
-        // Push the fresh account (with updated records/balance) into the
-        // modal's local state so downstream steps don't see stale data.
-        onAccountUpdatedRef.current?.(live);
-        isSyncingRef.current = false;
-        setProgress(100);
-        setIsSyncing(false);
-      } else {
-        // Background sync ran but didn't complete a full private sync (e.g. it
-        // was a public-only sync that happened to emit progress). Retry.
-        retryTimerRef.current = setTimeout(runSync, 200);
-      }
-    }
-  }, [liveAccount, isSyncing, runSync]);
-
-  return { isSyncing, progress, error, start, stop };
+  return { isSyncing, progress, error, start, stop, backgroundProgress };
 };

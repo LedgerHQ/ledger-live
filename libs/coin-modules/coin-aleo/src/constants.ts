@@ -27,13 +27,14 @@ export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
 /**
  * Progress phase boundaries for private sync.
  *
- * Phase 1 (PROGRESS_AFTER_SCANNER):          0 → 30   — record scanner / fetch stage
- * Phase 2 (PROGRESS_AFTER_LIST_OPS):        30 → 65   — listing / decoding private operations (35 pts)
- * Phase 3 (PROGRESS_AFTER_PARSING_RECORDS): 65 → 95   — parsing records / computing private balance (30 pts)
- * Done:                                        100
+ * Phase 1 (PROGRESS_AFTER_SCANNER):  0 → 30   — record scanner / fetch stage
+ * Phase 2 (PROGRESS_AFTER_LIST_OPS): 30 → 65  — listing / decoding private operations (35 pts)
+ * Phase 3 (PROGRESS_AFTER_DECRYPT):  65 → 95  — decrypting records / computing private balance (30 pts)
+ * Done:                              100
  */
 export const PROGRESS_AFTER_SCANNER = 30;
 export const PROGRESS_AFTER_LIST_OPS = PROGRESS_AFTER_SCANNER + 35; // 65
-export const PROGRESS_AFTER_PARSING_RECORDS = 30; // 65 → 95
+export const PROGRESS_AFTER_DECRYPT = PROGRESS_AFTER_LIST_OPS + 30; // 95
 export const PROGRESS_DONE = 100;
-export const PROGRESS_THROTTLE_MIN_STEP = 5;
+/** Minimum interval (ms) between progress emissions passed downstream via RxJS throttleTime. */
+export const PROGRESS_THROTTLE_INTERVAL_MS = 150;

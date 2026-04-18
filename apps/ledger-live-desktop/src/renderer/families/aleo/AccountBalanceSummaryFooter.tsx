@@ -2,9 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import { accountSelector } from "~/renderer/reducers/accounts";
-import type { State } from "~/renderer/reducers";
-import { isAleoAccount } from "./modals/send/steps/utils";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -132,18 +129,10 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     progress: hookProgress,
     start: handleStart,
     stop: handleStop,
+    backgroundProgress,
   } = useAleoPrivateSync({ account });
 
-  // Track background sync progress from the Redux store so the button can
-  // reflect an in-progress sync that was not triggered from this component.
-  const liveAccount = useSelector((state: State) =>
-    accountSelector(state, { accountId: account.id }),
-  );
-  const backgroundProgress =
-    liveAccount && isAleoAccount(liveAccount)
-      ? liveAccount.aleoResources?.privateSyncProgress ?? null
-      : null;
-  const isBackgroundSyncing = !isSyncing && backgroundProgress != null;
+  const isBackgroundSyncing = backgroundProgress !== null;
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -250,7 +239,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
           />
           <SyncProgress
             syncState={syncState}
-            progress={isBackgroundSyncing ? backgroundProgress ?? 0 : hookProgress}
+            progress={isBackgroundSyncing ? backgroundProgress : hookProgress}
             lastSync={lastSync}
           />
         </div>

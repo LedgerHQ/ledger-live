@@ -78,8 +78,6 @@ export interface AleoResources {
   privateBalance: BigNumber | null;
   unspentPrivateRecords: AleoUnspentRecord[] | null;
   lastPrivateSyncDate: Date | null;
-  /** Transient in-progress decryption/processing progress (0-100). Null when idle. Never persisted. */
-  privateSyncProgress?: number | null;
 }
 
 export interface AleoResourcesRaw {
