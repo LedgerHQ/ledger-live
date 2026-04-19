@@ -159,9 +159,7 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
-    const providerList = await getWebElementsByCssSelector(
-      `[data-testid^='${this.quoteCardProviderName}']`,
-    );
+    const providerList = await getWebElementsText(`[data-testid^='${this.quoteCardProviderName}']`);
     jestExpect(numberOfQuotesText).toMatch(new RegExp(`${providerList.length} quotes? found`));
     return providerList;
   }
@@ -224,7 +222,7 @@ export default class SwapLiveAppPage {
 
   @Step("Get all swap providers available")
   async getAllSwapProviders() {
-    return await getWebElementsByCssSelector(
+    return await getWebElementsText(
       '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
     );
   }

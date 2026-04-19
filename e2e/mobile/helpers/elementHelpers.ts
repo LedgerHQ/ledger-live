@@ -344,24 +344,28 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsByCssSelector(selector: string): Promise<string[]> {
-    const texts: string[] = [];
-    let i = 0;
+  async getWebElementsText(selector: string): Promise<string[]> {
+    const collectTexts = (_root: HTMLElement, sel: string) =>
+      Array.from(document.querySelectorAll(sel)).map((node: Element) => {
+        const el = node as HTMLElement;
+        return (el.innerText || el.textContent || "").trim();
+      });
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        const element = web
-          .element(by.web.cssSelector(selector))
-          .atIndex(i) as unknown as IndexedWebElement;
-        const text: string = await element.runScript((node: HTMLElement) =>
-          (node.innerText || node.textContent || "").trim(),
-        );
-        texts.push(text);
-        i++;
-      } catch {
-        break;
-      }
+    let raw: unknown;
+    try {
+      raw = await WebElementHelpers.getWebElementByTag("body").runScript(collectTexts, [selector]);
+    } catch {
+      raw = await WebElementHelpers.getWebElementByTag("html").runScript(collectTexts, [selector]);
+    }
+
+    let texts: string[];
+    if (Array.isArray(raw)) {
+      texts = raw as string[];
+    } else if (raw != null && typeof raw === "object" && "result" in raw) {
+      const r = (raw as { result: unknown }).result;
+      texts = Array.isArray(r) ? (r as string[]) : [];
+    } else {
+      texts = [];
     }
 
     return texts.filter(Boolean);
@@ -378,25 +382,6 @@ export const WebElementHelpers = {
       : `//span[text()="${text}"]`;
     const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
-  },
-
-  async getWebElementsText(cssSelector: string): Promise<string[]> {
-    const texts: string[] = [];
-    let i = 0;
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        const element = getWebElementByCssSelector(cssSelector, i);
-        const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
-        texts.push(text);
-        i++;
-      } catch {
-        break;
-      }
-    }
-
-    return texts.filter(Boolean);
   },
 
   async waitWebElement(
