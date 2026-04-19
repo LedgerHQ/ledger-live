@@ -1,7 +1,9 @@
+import { delay } from "../helpers/commonHelpers";
+
 export async function retryUntilTimeout<T>(
   fn: () => Promise<T>,
   timeout = 60_000,
-  interval = 200,
+  interval = 500,
 ): Promise<T> {
   const start = Date.now();
   let lastError: unknown;
