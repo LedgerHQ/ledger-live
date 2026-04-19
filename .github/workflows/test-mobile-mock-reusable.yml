@@ -386,7 +386,7 @@ jobs:
       AVD_NAME: "Android_Emulator"
       AVD_CORES: 4
       AVD_RAM_SIZE: 5120
-      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none -camera-front none
+      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
       JEST_MAX_WORKERS: "2"
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
