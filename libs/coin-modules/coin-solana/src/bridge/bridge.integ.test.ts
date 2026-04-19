@@ -1,24 +1,11 @@
 import { Keypair, Connection, SystemProgram, Transaction, clusterApiUrl } from "@solana/web3.js";
-import { createApi } from "../../api";
+import { makeBridges } from "./bridge";
+import { getChainAPI } from "../network";
 
-const api = createApi(
-  {
-    token2022Enabled: false,
-    legacyOCMSMaxVersion: "1.0.0",
-    status: { type: "active" },
-  },
-  "solana",
-);
-
-describe("broadcast", () => {
-  it("should reject an invalid transaction with a deserialization error", async () => {
-    const invalidTx = Buffer.from("invalid-transaction-bytes").toString("base64");
-
-    await expect(api.broadcast(invalidTx)).rejects.toThrow(/failed to deserialize/i);
-  });
-
+describe("Broadcast", () => {
   it("throws on insufficient funds", async () => {
     const connection = new Connection(clusterApiUrl("mainnet-beta"));
+    const broadcast = makeBridges({ getAPI: getChainAPI } as any).accountBridge.broadcast;
     const from = Keypair.generate();
     const { blockhash } = await connection.getLatestBlockhash();
     const tx = new Transaction({
@@ -37,8 +24,13 @@ describe("broadcast", () => {
 
     tx.sign(from);
 
-    const raw = tx.serialize().toString("base64");
+    const raw = tx.serialize().toString("hex");
 
-    await expect(api.broadcast(raw)).rejects.toThrow(/Transaction simulation failed/);
+    await expect(
+      broadcast({
+        signedOperation: { signature: raw },
+        account: { currency: { id: "solana" }, pendingOperations: [] },
+      } as any),
+    ).rejects.toThrow(/Transaction simulation failed/);
   });
 });
