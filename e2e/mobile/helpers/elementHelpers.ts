@@ -344,17 +344,14 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsByCssSelector(selector: string): Promise<string[]> {
+  async getWebElementsText(selector: string): Promise<string[]> {
     const texts: string[] = [];
     let i = 0;
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        const element = web
-          .element(by.web.cssSelector(selector))
-          .atIndex(i) as unknown as IndexedWebElement;
-        const text: string = await element.runScript((node: HTMLElement) =>
+        const el = WebElementHelpers.getWebElementByCssSelector(selector, i);
+        const text: string = await el.runScript((node: HTMLElement) =>
           (node.innerText || node.textContent || "").trim(),
         );
         texts.push(text);
@@ -378,25 +375,6 @@ export const WebElementHelpers = {
       : `//span[text()="${text}"]`;
     const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
-  },
-
-  async getWebElementsText(cssSelector: string): Promise<string[]> {
-    const texts: string[] = [];
-    let i = 0;
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        const element = getWebElementByCssSelector(cssSelector, i);
-        const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
-        texts.push(text);
-        i++;
-      } catch {
-        break;
-      }
-    }
-
-    return texts.filter(Boolean);
   },
 
   async waitWebElement(
