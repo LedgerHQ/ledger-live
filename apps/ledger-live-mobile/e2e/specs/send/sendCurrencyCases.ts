@@ -10,4 +10,11 @@ export const sendCurrencyIdsUtxoEvm: CryptoCurrencyId[] = [
   ...sendCurrencyIdsUtxoEvmB,
 ];
 
-export const sendCurrencyIdsOther: CryptoCurrencyId[] = ["polkadot", "cosmos"];
+export const sendCurrencyIdsOtherA: CryptoCurrencyId[] = ["polkadot"];
+
+export const sendCurrencyIdsOtherB: CryptoCurrencyId[] = ["cosmos"];
+
+export const sendCurrencyIdsOther: CryptoCurrencyId[] = [
+  ...sendCurrencyIdsOtherA,
+  ...sendCurrencyIdsOtherB,
+];
