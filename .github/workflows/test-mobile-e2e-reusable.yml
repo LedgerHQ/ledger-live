@@ -768,28 +768,9 @@ jobs:
         run: |
           LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
           mkdir -p e2e/mobile/artifacts
-          nohup bash -c '
-            log() { echo "[$(date +%H:%M:%S)] $1"; }
-            ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
-
-            log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} -no-snapshot-save 2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} -no-snapshot-save 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} -no-snapshot-save 2>&1 | ts "EMU3" &
-
-            log "⏳ Waiting for 3 emulators to connect..."
-            while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
-            log "✅ 3 emulators connected"
-            log "⏳ Waiting for all emulators to finish booting..."
-            adb -s emulator-5554 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5554 booted"
-            adb -s emulator-5556 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5556 booted"
-            adb -s emulator-5558 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5558 booted"
-
-            log "✅ All 3 emulators are fully booted"
-          ' > "$LOG_FILE" 2>&1 &
+          export AVD_NAME="${{ env.AVD_NAME }}"
+          export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
+          nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
