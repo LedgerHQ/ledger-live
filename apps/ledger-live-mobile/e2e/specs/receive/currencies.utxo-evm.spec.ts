@@ -27,8 +27,15 @@ describe("Receive different currency (UTXO and EVM)", () => {
 
   it.each(receiveCurrencyCasesUtxoEvm)(
     "receive on %p (through scanning)",
-    async (currencyId: string, network = "") => {
-      await runReceiveCurrencyScanningFlow(deviceAction, firstDeviceSelectRef, currencyId, network);
+    async (...args: (string | undefined)[]) => {
+      const [currencyId, network] = args;
+      if (!currencyId) throw new Error("missing currencyId");
+      await runReceiveCurrencyScanningFlow(
+        deviceAction,
+        firstDeviceSelectRef,
+        currencyId,
+        network ?? "",
+      );
     },
   );
 });
