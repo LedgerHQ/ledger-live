@@ -31,6 +31,7 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
 const scroller = new PageScroller();
 
 const DEFAULT_TIMEOUT = 60000;
+const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
@@ -390,7 +391,11 @@ export const WebElementHelpers = {
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
     try {
-      await retryUntilTimeout(() => webElement.runScript(el => el.innerText), timeout);
+      await retryUntilTimeout(
+        () => webElement.runScript(el => el.innerText),
+        timeout,
+        DEFAULT_WEB_ELEMENT_INTERVAL,
+      );
       return webElement;
     } catch (e) {
       if (throwOnTimeout) {
@@ -432,25 +437,31 @@ export const WebElementHelpers = {
   },
 
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
-    await retryUntilTimeout(async () =>
-      WebElementHelpers.getWebElementByTestId(id).runScript(
-        (el: HTMLInputElement, val: string) => {
-          const setValue = Object.getOwnPropertyDescriptor(
-            HTMLInputElement.prototype,
-            "value",
-          )?.set;
-          if (setValue) setValue.call(el, val);
-          else el.value = val;
-          el.dispatchEvent(new Event("input", { bubbles: true }));
-        },
-        [text],
-      ),
+    await retryUntilTimeout(
+      async () =>
+        WebElementHelpers.getWebElementByTestId(id).runScript(
+          (el: HTMLInputElement, val: string) => {
+            const setValue = Object.getOwnPropertyDescriptor(
+              HTMLInputElement.prototype,
+              "value",
+            )?.set;
+            if (setValue) setValue.call(el, val);
+            else el.value = val;
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+          },
+          [text],
+        ),
+      DEFAULT_TIMEOUT,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
     );
   },
 
   async getValueByWebTestId(id: string): Promise<string> {
-    const raw = await retryUntilTimeout(() =>
-      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+    const raw = await retryUntilTimeout(
+      () =>
+        WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+      DEFAULT_TIMEOUT,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
     );
 
     if (raw != null && typeof raw === "object" && "result" in raw) {
@@ -489,13 +500,17 @@ export const WebElementHelpers = {
 
   async waitForCurrentWebviewUrlToContain(substring: string, timeout = 10000): Promise<string> {
     let currentUrl = "";
-    await retryUntilTimeout(async () => {
-      currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
-      if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
-        return currentUrl;
-      }
-      throw new Error(`URL ${currentUrl} does not contain the expected substring: ${substring}`);
-    }, timeout);
+    await retryUntilTimeout(
+      async () => {
+        currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
+        if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
+          return currentUrl;
+        }
+        throw new Error(`URL ${currentUrl} does not contain the expected substring: ${substring}`);
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+    );
     return currentUrl;
   },
 
@@ -505,15 +520,19 @@ export const WebElementHelpers = {
     timeout = 10000,
   ): Promise<string> {
     let webElementText = "";
-    await retryUntilTimeout(async () => {
-      webElementText = await WebElementHelpers.getWebElementText(webElementId);
-      if (new RegExp(regexPattern).test(webElementText)) {
-        return webElementText;
-      }
-      throw new Error(
-        `Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`,
-      );
-    }, timeout);
+    await retryUntilTimeout(
+      async () => {
+        webElementText = await WebElementHelpers.getWebElementText(webElementId);
+        if (new RegExp(regexPattern).test(webElementText)) {
+          return webElementText;
+        }
+        throw new Error(
+          `Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`,
+        );
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+    );
     return webElementText;
   },
 
@@ -545,7 +564,7 @@ export const WebElementHelpers = {
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
       }
-      await delay(100);
+      await delay(1000);
     }
 
     throw new Error(
