@@ -83,9 +83,9 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
       live_apps_blocklist: [],
     },
   },
-  ...(process.env.E2E_ENABLE_WALLET40 === "1"
-    ? LWD_WALLET_40_FF_ENABLED
-    : LWD_WALLET_40_FF_DISABLED),
+  ...(process.env.E2E_ENABLE_WALLET40 === "0"
+    ? LWD_WALLET_40_FF_DISABLED
+    : LWD_WALLET_40_FF_ENABLED),
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {

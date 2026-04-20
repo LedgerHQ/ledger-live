@@ -4,8 +4,7 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 4 * * 1,3,5" # Mon, Wed, Fri → Wallet 4.0
-    - cron: "0 4 * * 2,4" # Tue, Thu → Legacy
+    - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
       ref:
@@ -67,7 +66,7 @@ on:
       enable_wallet40:
         description: "Enable Wallet 4.0 feature"
         type: boolean
-        default: false
+        default: true
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -115,7 +114,7 @@ on:
       enable_wallet40:
         description: "Enable Wallet 4.0 feature"
         type: boolean
-        default: false
+        default: true
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -287,6 +286,7 @@ jobs:
             echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
+            echo "- **Wallet:** ${{ inputs.enable_wallet40 != false && 'Wallet 4.0' || 'Legacy' }}"
             echo "- **Device selected:** $DEVICE"
             echo "- **Filtered pattern:** $FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
@@ -319,7 +319,7 @@ jobs:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
-          enable_wallet40: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 1,3,5') || inputs.enable_wallet40 || false }}
+          enable_wallet40: ${{ inputs.enable_wallet40 != false }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}
