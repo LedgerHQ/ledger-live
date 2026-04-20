@@ -27,8 +27,9 @@
   "dependencies": {
     "@ledgerhq/coin-concordium": "workspace:^",
     "@ledgerhq/concordium-core": "workspace:^",
-    "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-signer-kit-concordium": "0.2.0",
+    "@ledgerhq/context-module": "^1.17.0",
+    "@ledgerhq/device-management-kit": "^1.3.0",
+    "@ledgerhq/device-signer-kit-concordium": "^0.3.0",
     "@ledgerhq/errors": "workspace:^",
     "rxjs": "catalog:"
   },

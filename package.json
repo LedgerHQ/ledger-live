@@ -291,7 +291,6 @@
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
       "@ledgerhq/hw-transport": "workspace:*",
-      "@ledgerhq/context-module": "catalog:",
       "tslib": "2.6.2",
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",

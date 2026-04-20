@@ -78,7 +78,7 @@ export function createFixtureSigner(
       serialized: "cc".repeat(128),
     }),
     signCredentialDeployment: jest.fn().mockResolvedValue("bb".repeat(64)),
-    verifyAddress: jest.fn().mockResolvedValue({ verified: true }),
+    verifyAddress: jest.fn().mockResolvedValue(undefined),
     ...overrides,
   };
 }
