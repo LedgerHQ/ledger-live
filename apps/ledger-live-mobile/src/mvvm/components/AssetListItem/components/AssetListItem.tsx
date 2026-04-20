@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import CurrencyIcon from "~/components/CurrencyIcon";
+import Delta from "LLM/components/Delta";
 import { Asset } from "~/types/asset";
 import type { AssetListItemViewModelResult } from "../usePrecomputedAssetListData";
 
@@ -23,7 +24,7 @@ interface AssetListItemProps {
 
 const AssetListItem: React.FC<AssetListItemProps> = memo(({ asset, onPress, precomputed, lx }) => {
   const handlePress = useCallback(() => onPress(asset), [asset, onPress]);
-  const { formattedBalance, formattedCounterValue, deltaText, deltaColor } = precomputed;
+  const { formattedBalance, formattedCounterValue, countervalueChange } = precomputed;
 
   return (
     <LumenListItem onPress={handlePress} testID={`assetItem-${asset.currency.name}`} lx={lx}>
@@ -41,9 +42,14 @@ const AssetListItem: React.FC<AssetListItemProps> = memo(({ asset, onPress, prec
               {formattedCounterValue}
             </Text>
           )}
-          <Text typography="body3" lx={{ color: deltaColor }}>
-            {deltaText}
-          </Text>
+          {countervalueChange && (
+            <Delta
+              valueChange={countervalueChange}
+              percent
+              fallbackToPercentPlaceholder
+              isArrowDisplayed
+            />
+          )}
         </Box>
       </ListItemTrailing>
     </LumenListItem>

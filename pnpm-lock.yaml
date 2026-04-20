@@ -1626,6 +1626,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
+      '@ledgerhq/live-hooks':
+        specifier: workspace:^
+        version: link:../../libs/live-hooks
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network

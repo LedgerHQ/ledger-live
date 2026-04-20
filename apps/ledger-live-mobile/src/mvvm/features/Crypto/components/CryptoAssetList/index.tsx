@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import { Asset } from "~/types/asset";
-import { LazyAssetListItem } from "LLM/components/AssetListItem";
-import { AssetListSharedStateContext } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
+import AssetListItem from "LLM/components/AssetListItem";
+import { usePrecomputedAssetListData } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import { useCryptoAssetListViewModel } from "./useCryptoAssetListViewModel";
 
 const ESTIMATED_ITEM_SIZE = 72;
@@ -16,28 +16,31 @@ interface CryptoAssetListProps {
 }
 
 export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({ assets, onItemPress }) => {
-  const { sharedState, contentContainerStyle } = useCryptoAssetListViewModel();
+  const { contentContainerStyle } = useCryptoAssetListViewModel();
+  const precomputedData = usePrecomputedAssetListData(assets);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<Asset>) => (
-      <LazyAssetListItem asset={item} onPress={onItemPress} />
+      <AssetListItem
+        asset={item}
+        onPress={onItemPress}
+        precomputed={precomputedData.get(item.currency.id)!}
+      />
     ),
-    [onItemPress],
+    [onItemPress, precomputedData],
   );
 
   return (
-    <AssetListSharedStateContext.Provider value={sharedState}>
-      <FlashList
-        testID="CryptoList"
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        data={assets}
-        drawDistance={DRAW_DISTANCE}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={contentContainerStyle}
-        style={FLEX_STYLE}
-      />
-    </AssetListSharedStateContext.Provider>
+    <FlashList
+      testID="CryptoList"
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      data={assets}
+      drawDistance={DRAW_DISTANCE}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={contentContainerStyle}
+      style={FLEX_STYLE}
+    />
   );
 };

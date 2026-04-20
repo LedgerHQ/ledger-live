@@ -1,8 +1,10 @@
-import { createContext, useContext, useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { getCurrencyPortfolio } from "@ledgerhq/live-countervalues/portfolio";
+import { useThrottledValue } from "@ledgerhq/live-hooks/useThrottledFunction";
+import { ValueChange } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useLocale } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
@@ -16,45 +18,21 @@ import { Asset } from "~/types/asset";
 export interface AssetListItemViewModelResult {
   formattedBalance: string;
   formattedCounterValue: string | null;
-  deltaText: string;
-  deltaColor: "success" | "error" | "muted";
+  countervalueChange: ValueChange | null;
 }
 
 // ---------------------------------------------------------------------------
-// Shared state – subscribed once at the list level, consumed by each item
+// Internal shared state – subscribed once at the list level
 // ---------------------------------------------------------------------------
 
-export interface AssetListSharedState {
+const CV_THROTTLE_MS = 5_000;
+
+interface SharedState {
   cvState: ReturnType<typeof useCountervaluesState>;
   counterValueCurrency: ReturnType<typeof counterValueCurrencySelector>;
   range: ReturnType<typeof selectedTimeRangeSelector>;
   locale: string;
   discreet: boolean;
-}
-
-export const AssetListSharedStateContext = createContext<AssetListSharedState | null>(null);
-
-export function useAssetListSharedStateContext(): AssetListSharedState {
-  const ctx = useContext(AssetListSharedStateContext);
-  if (!ctx) {
-    throw new Error(
-      "useAssetListSharedStateContext must be used within <AssetListSharedStateContext.Provider>",
-    );
-  }
-  return ctx;
-}
-
-export function useAssetListSharedState(): AssetListSharedState {
-  const { locale } = useLocale();
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const discreet = useSelector(discreetModeSelector);
-  const range = useSelector(selectedTimeRangeSelector);
-  const cvState = useCountervaluesState();
-
-  return useMemo(
-    () => ({ cvState, counterValueCurrency, range, locale, discreet }),
-    [cvState, counterValueCurrency, range, locale, discreet],
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -66,8 +44,8 @@ type FmtOpts = { locale: string; showCode: boolean; discreet: boolean };
 function formatCounterValue(
   asset: Asset,
   balance: BigNumber,
-  cvState: AssetListSharedState["cvState"],
-  counterValueCurrency: AssetListSharedState["counterValueCurrency"],
+  cvState: SharedState["cvState"],
+  counterValueCurrency: SharedState["counterValueCurrency"],
   fmtOpts: FmtOpts,
 ): string | null {
   const cvUnit = counterValueCurrency.units?.[0];
@@ -88,13 +66,8 @@ function formatCounterValue(
   return formatCurrencyUnit(cvUnit, new BigNumber(cv), fmtOpts);
 }
 
-function computeDelta(
-  asset: Asset,
-  state: AssetListSharedState,
-): Pick<AssetListItemViewModelResult, "deltaText" | "deltaColor"> {
-  if (asset.isPlaceholder || asset.accounts.length === 0) {
-    return { deltaText: "–", deltaColor: "muted" };
-  }
+function getCountervalueChange(asset: Asset, state: SharedState): ValueChange | null {
+  if (asset.isPlaceholder || asset.accounts.length === 0) return null;
 
   const { countervalueChange } = getCurrencyPortfolio(
     asset.accounts,
@@ -102,23 +75,10 @@ function computeDelta(
     state.cvState,
     state.counterValueCurrency,
   );
-  const percentage = countervalueChange.percentage;
-
-  if (percentage == null) return { deltaText: "–", deltaColor: "muted" };
-
-  const sign = percentage > 0 ? "+" : "";
-  const deltaText = `${sign}${(percentage * 100).toFixed(2)}%`;
-  let deltaColor: AssetListItemViewModelResult["deltaColor"] = "muted";
-  if (percentage > 0) deltaColor = "success";
-  else if (percentage < 0) deltaColor = "error";
-
-  return { deltaText, deltaColor };
+  return countervalueChange;
 }
 
-export function computeAssetItemData(
-  asset: Asset,
-  state: AssetListSharedState,
-): AssetListItemViewModelResult {
+function computeAssetItemData(asset: Asset, state: SharedState): AssetListItemViewModelResult {
   const balance = BigNumber(asset.amount);
   const fmtOpts: FmtOpts = { locale: state.locale, showCode: true, discreet: state.discreet };
 
@@ -131,24 +91,62 @@ export function computeAssetItemData(
     state.counterValueCurrency,
     fmtOpts,
   );
+  const countervalueChange = getCountervalueChange(asset, state);
 
-  return { formattedBalance, formattedCounterValue, ...computeDelta(asset, state) };
+  return { formattedBalance, formattedCounterValue, countervalueChange };
 }
 
 // ---------------------------------------------------------------------------
-// Batch hook – computes all items in one pass (for small, capped lists)
+// Stable-ref helpers
+// ---------------------------------------------------------------------------
+
+function shallowEqual(a: AssetListItemViewModelResult, b: AssetListItemViewModelResult): boolean {
+  return (
+    a.formattedBalance === b.formattedBalance &&
+    a.formattedCounterValue === b.formattedCounterValue &&
+    a.countervalueChange?.percentage === b.countervalueChange?.percentage &&
+    a.countervalueChange?.value === b.countervalueChange?.value
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Batch hook – computes all items in one pass with throttled CV state
+// and per-currency stable refs so React.memo works on consumers.
 // ---------------------------------------------------------------------------
 
 export function usePrecomputedAssetListData(
   assets: Asset[],
 ): Map<string, AssetListItemViewModelResult> {
-  const sharedState = useAssetListSharedState();
+  const { locale } = useLocale();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
+  const range = useSelector(selectedTimeRangeSelector);
+
+  const rawCvState = useCountervaluesState();
+  const cvState = useThrottledValue(rawCvState, CV_THROTTLE_MS);
+
+  const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());
 
   return useMemo(() => {
-    const map = new Map<string, AssetListItemViewModelResult>();
+    const state: SharedState = { cvState, counterValueCurrency, range, locale, discreet };
+    const prev = cacheRef.current;
+    const next = new Map<string, AssetListItemViewModelResult>();
+    let changed = prev.size !== assets.length;
+
     for (const asset of assets) {
-      map.set(asset.currency.id, computeAssetItemData(asset, sharedState));
+      const key = asset.currency.id;
+      const fresh = computeAssetItemData(asset, state);
+      const cached = prev.get(key);
+      if (cached && shallowEqual(cached, fresh)) {
+        next.set(key, cached);
+      } else {
+        next.set(key, fresh);
+        changed = true;
+      }
     }
-    return map;
-  }, [assets, sharedState]);
+
+    if (!changed) return prev;
+    cacheRef.current = next;
+    return next;
+  }, [assets, cvState, counterValueCurrency, range, locale, discreet]);
 }

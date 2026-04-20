@@ -9,8 +9,7 @@ const mockAsset = createCryptoAsset(bitcoin, 100000);
 const baseViewModelResult: AssetListItemViewModelResult = {
   formattedBalance: "0.001 BTC",
   formattedCounterValue: "$45.00",
-  deltaText: "+3.50%",
-  deltaColor: "success",
+  countervalueChange: { percentage: 0.035, value: 1.5 },
 };
 
 const renderView = (vmOverrides: Partial<AssetListItemViewModelResult> = {}) =>
@@ -48,13 +47,19 @@ describe("AssetListItem", () => {
       expect(screen.queryByText("$45.00")).toBeNull();
     });
 
-    it.each([
-      { deltaText: "+3.50%", deltaColor: "success" as const, label: "positive" },
-      { deltaText: "-1.20%", deltaColor: "error" as const, label: "negative" },
-      { deltaText: "–", deltaColor: "muted" as const, label: "unavailable" },
-    ])("should render the delta with $label variation", ({ deltaText, deltaColor }) => {
-      renderView({ deltaText, deltaColor });
-      expect(screen.getByText(deltaText)).toBeVisible();
+    it("should render the delta for a positive change", () => {
+      renderView({ countervalueChange: { percentage: 0.035, value: 1.5 } });
+      expect(screen.getByText(/3\.50%/)).toBeVisible();
+    });
+
+    it("should render the delta for a negative change", () => {
+      renderView({ countervalueChange: { percentage: -0.012, value: -0.5 } });
+      expect(screen.getByText(/1\.20%/)).toBeVisible();
+    });
+
+    it("should not render the delta when countervalueChange is null", () => {
+      renderView({ countervalueChange: null });
+      expect(screen.queryByText(/%/)).toBeNull();
     });
   });
 });
