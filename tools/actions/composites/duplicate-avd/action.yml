@@ -5,7 +5,7 @@ inputs:
     description: "Name of the source AVD to duplicate"
     required: true
   target_suffixes:
-    description: "Comma-separated suffixes for duplicated AVDs (e.g., '_2,_3')"
+    description: "Comma-separated suffixes for duplicated AVDs (e.g., '_2,_3,_4')"
     required: true
   avd_api:
     description: "Android API level"

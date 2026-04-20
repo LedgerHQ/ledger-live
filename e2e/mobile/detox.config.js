@@ -135,6 +135,14 @@ module.exports = {
       gpuMode,
       headless: !!process.env.CI,
     },
+    emulator4: {
+      type: "android.emulator",
+      device: {
+        avdName: "Android_Emulator_4",
+      },
+      gpuMode,
+      headless: !!process.env.CI,
+    },
   },
   configurations: {
     "ios.sim.debug": {
