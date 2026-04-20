@@ -30,6 +30,7 @@ import { useCurrentStep } from "../../hooks/useCurrentStep";
 type Props = {
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
+  navigateToWalletSyncActivationProcess: () => void;
   qrProcess: {
     url: string | null;
     error: Error | null;
@@ -45,6 +46,7 @@ type Props = {
 const ActivationFlow = ({
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  navigateToWalletSyncActivationProcess,
   qrProcess,
   currentOption,
   setOption,
@@ -95,7 +97,10 @@ const ActivationFlow = ({
         return (
           <>
             <TrackScreen category={AnalyticsPage.ChooseSyncMethod} />
-            <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
+            <ChooseSyncMethod
+              onScanMethodPress={navigateToQrCodeMethod}
+              onConnectWithLedgerPress={navigateToWalletSyncActivationProcess}
+            />
           </>
         );
       case Steps.QrCodeMethod:
