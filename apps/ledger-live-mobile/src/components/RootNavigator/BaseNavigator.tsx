@@ -618,6 +618,19 @@ export default function BaseNavigator() {
               ? {
                   headerShown: true,
                   closable: false,
+                  headerLeft: () => (
+                    <NavigationHeaderBackButton
+                      onPress={nav => {
+                        nav.navigate(NavigatorName.Borrow, {
+                          screen: ScreenName.Borrow,
+                          params: {
+                            ...props.route?.params?.params,
+                            action: "go-back",
+                          },
+                        });
+                      }}
+                    />
+                  ),
                   headerTitle: t("borrow.title"),
                   headerRight: () => null,
                   headerStyle: { backgroundColor },
