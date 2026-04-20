@@ -33,6 +33,12 @@ export function getAleoSyncProgress(accountId: string): number | null {
   return _inFlightProgress.get(accountId) ?? null;
 }
 
+/** Initialise the progress map for a fresh sync start. */
+export function emitAleoSyncInit(accountId: string): void {
+  if (_inFlightProgress.has(accountId)) return;
+  _inFlightProgress.set(accountId, 0);
+}
+
 /** Notify listeners that progress advanced for a given account. */
 export function emitAleoSyncProgress(accountId: string, progress: number): void {
   _inFlightProgress.set(accountId, progress);

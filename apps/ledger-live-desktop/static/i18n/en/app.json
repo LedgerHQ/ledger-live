@@ -8565,8 +8565,7 @@
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "syncAgain": "Sync again",
-        "lastSync": "Last synced: {{date}}",
-        "pending": "Pending..."
+        "lastSync": "Last synced: {{date}}"
       }
     },
     "operations": {

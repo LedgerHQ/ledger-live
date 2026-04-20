@@ -18,7 +18,7 @@ import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 
-type AleoSyncState = "ready" | "running" | "background-running" | "complete";
+type AleoSyncState = "ready" | "running" | "complete";
 
 const SyncActionButton = styled(ButtonV3).attrs(() => ({
   variant: "main",
@@ -52,12 +52,6 @@ const ActionButton = ({
           <Text>{t("aleo.account.syncButton.stopSync")}</Text>
         </SyncActionButton>
       );
-    case "background-running":
-      return (
-        <SyncActionButton disabled buttonTestId="background-sync-button">
-          <Text>{t("aleo.account.syncButton.pending")}</Text>
-        </SyncActionButton>
-      );
     case "complete":
       return (
         <SyncActionButton onClick={onSyncAgain} buttonTestId="sync-again-button">
@@ -78,7 +72,7 @@ const SyncProgress = ({
 }) => {
   const formatDayAndHour = useDateFormatter(dayAndHourFormat);
 
-  if (syncState === "running" || syncState === "background-running") {
+  if (syncState === "running") {
     return (
       <div
         style={{
@@ -129,10 +123,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     progress: hookProgress,
     start: handleStart,
     stop: handleStop,
-    backgroundProgress,
   } = useAleoPrivateSync({ account });
-
-  const isBackgroundSyncing = backgroundProgress !== null;
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -174,13 +165,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     : PRIVATE_BALANCE_PLACEHOLDER;
 
   const lastSync = account.aleoResources.lastPrivateSyncDate ?? null;
-  const syncState: AleoSyncState = displaySyncing
-    ? "running"
-    : isBackgroundSyncing
-      ? "background-running"
-      : lastSync
-        ? "complete"
-        : "ready";
+  const syncState: AleoSyncState = displaySyncing ? "running" : lastSync ? "complete" : "ready";
 
   return (
     <Wrapper>
@@ -227,8 +212,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
         <div
           style={{
             display: "flex",
-            flexDirection:
-              syncState === "running" || syncState === "background-running" ? "row" : "column",
+            flexDirection: syncState === "running" ? "row" : "column",
           }}
         >
           <ActionButton
@@ -237,11 +221,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             onStop={handleStop}
             onSyncAgain={handleStart}
           />
-          <SyncProgress
-            syncState={syncState}
-            progress={isBackgroundSyncing ? backgroundProgress : hookProgress}
-            lastSync={lastSync}
-          />
+          <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
         </div>
       </BalanceDetail>
     </Wrapper>

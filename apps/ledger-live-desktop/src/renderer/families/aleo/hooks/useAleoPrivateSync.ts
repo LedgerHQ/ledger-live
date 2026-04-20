@@ -27,11 +27,10 @@ interface UseAleoPrivateSyncOptions {
 interface UseAleoPrivateSyncResult {
   isSyncing: boolean;
   progress: number;
+  lastPrivateSyncDate: Date | null;
   error: Error | null;
   start: () => void;
   stop: () => void;
-  /** Non-null (0–100) when a background bridge sync is running and this hook is idle. */
-  backgroundProgress: number | null;
   /** The lastPrivateSyncDate from the most recently applied sync update. */
   lastPrivateSyncDate: Date | null;
 }
@@ -65,12 +64,12 @@ export const useAleoPrivateSync = ({
 
   onAccountUpdatedRef.current = onAccountUpdated;
   accountRef.current = account;
-  // progress: when this hook is syncing, show subject progress (throttled 150ms) falling
-  // back to the last seen value so the display stays stable between ticks.
-  // backgroundProgress: non-null when a background bridge sync is running while this
-  // hook is idle — same subject, different condition.
+  // progress: when this hook is syncing, show subject progress falling back to
+  // the last seen value so the display stays stable between poll retries.
+  // When idle, holds the last progress from a user-initiated sync (does NOT
+  // expose background bridge sync progress — that only becomes visible once
+  // the user clicks "sync again" and isSyncing becomes true).
   const progress = isSyncing ? (aleoProgress ?? lastProgressRef.current) : lastProgressRef.current;
-  const backgroundProgress = isSyncing ? null : aleoProgress;
 
   const runSync = useCallback(() => {
     const acc = accountRef.current;
@@ -171,5 +170,5 @@ export const useAleoPrivateSync = ({
     };
   }, [autoStart, start, stop]);
 
-  return { isSyncing, progress, error, start, stop, backgroundProgress, lastPrivateSyncDate };
+  return { isSyncing, progress, error, start, stop, lastPrivateSyncDate };
 };

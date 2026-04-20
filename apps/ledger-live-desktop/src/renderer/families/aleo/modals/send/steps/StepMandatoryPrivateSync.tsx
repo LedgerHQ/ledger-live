@@ -28,8 +28,7 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
   const mountedAtRef = useRef(new Date());
 
   const {
-    progress: localProgress,
-    backgroundProgress,
+    progress,
     error: privateSyncError,
     lastPrivateSyncDate,
   } = useAleoPrivateSync({
@@ -47,10 +46,6 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
     const timer = setTimeout(() => transitionTo("record-picker"), 500);
     return () => clearTimeout(timer);
   }, [syncDoneForThisStep, transitionTo]);
-
-  // backgroundProgress is non-null when the background bridge sync is running
-  // (and this hook is idle). Fall back to localProgress when the hook runs its own sync.
-  const displayProgress = backgroundProgress ?? localProgress;
 
   if (privateSyncError) {
     return (
@@ -73,9 +68,7 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
         <InfiniteLoader size={58} />
       </Flex>
 
-      <TitleText>
-        {t("aleo.send.mandatoryPrivateSync.title", { percentage: displayProgress })}
-      </TitleText>
+      <TitleText>{t("aleo.send.mandatoryPrivateSync.title", { percentage: progress })}</TitleText>
       <DescText>{t("aleo.send.mandatoryPrivateSync.desc")}</DescText>
     </Flex>
   );

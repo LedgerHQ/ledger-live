@@ -26,7 +26,7 @@ import {
   PROGRESS_DONE,
 } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
-import { emitAleoSyncProgress, emitAleoSyncDone } from "./privateSyncProgress";
+import { emitAleoSyncInit, emitAleoSyncProgress, emitAleoSyncDone } from "./privateSyncProgress";
 import type {
   AleoAccount,
   AleoOperation,
@@ -352,7 +352,7 @@ export function createPrivateSyncObservable(
 
     // configure locks for entire duration of the sync
     privateSyncInFlight.add(lockKey);
-    if (initialAccount?.id) emitAleoSyncProgress(initialAccount.id, 0);
+    if (initialAccount?.id) emitAleoSyncInit(initialAccount.id);
 
     // set to true before subscriber.complete() so the RxJS teardown (which fires
     // synchronously on every termination) can tell natural completion from early abort.
@@ -385,8 +385,7 @@ export function createPrivateSyncObservable(
           });
           subscriber.next(result);
         } else {
-          // scanner not ready - lock released for retry, but emitAleoSyncDone is intentionally skipped
-          // so the footer keeps showing progress instead of flickering back to idle on every poll cycle.
+          if (accountId) emitAleoSyncDone(accountId);
           log(
             "aleo/createPrivateSyncObservable",
             `Private sync skipped for ${currencyId} — provableApi not ready`,
