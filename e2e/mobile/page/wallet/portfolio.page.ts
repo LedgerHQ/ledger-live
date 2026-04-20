@@ -1,6 +1,5 @@
-import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { isAndroid, isWallet40, openDeeplink } from "../../helpers/commonHelpers";
+import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import { Feature_Noah } from "@ledgerhq/types-live";
 export default class PortfolioPage {
@@ -169,9 +168,6 @@ export default class PortfolioPage {
   @Step("Click on Add account button in portfolio")
   async addAccount() {
     await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
-    if (isAndroid()) {
-      await element(by.id(this.emptyPortfolioListId)).scroll(200, "down", NaN, 0.3);
-    }
     await tapById(this.addAccountCta);
   }
 
@@ -475,7 +471,7 @@ export default class PortfolioPage {
 
   @Step("Check total asset item count on page")
   async checkTotalAssetItemCount(expected: number) {
-    const count = await countElements(element(by.id(this.assetItemRegExp)));
+    const count = await countElements(getElementsById(this.assetItemRegExp));
     jestExpect(count).toBe(expected);
   }
 

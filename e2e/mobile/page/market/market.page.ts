@@ -1,4 +1,3 @@
-import { element, by, waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
@@ -9,7 +8,8 @@ export default class MarketPage {
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
-  assetDetailBackBtn = () => getElementById("market-back-btn");
+  backButtonId = "market-back-btn";
+  assetDetailBackBtn = () => getElementById(this.backButtonId);
   marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
@@ -26,12 +26,6 @@ export default class MarketPage {
     await detoxExpect(this.starButton()).toBeVisible();
   }
 
-  @Step("Expect market detail page for asset")
-  async expectMarketDetailPageForAsset(currencyName: string) {
-    await this.expectMarketDetailPage();
-    await detoxExpect(element(by.text(currencyName))).toBeVisible();
-  }
-
   @Step("Expect market list header left")
   async goBackToPortfolio() {
     await tapByElement(this.marketListHeaderLeft());
@@ -39,10 +33,8 @@ export default class MarketPage {
 
   @Step("Leave market detail page")
   async leaveMarketDetailPage() {
-    await waitFor(element(by.id("market-back-btn")))
-      .toBeVisible()
-      .withTimeout(5000);
-    await element(by.id("market-back-btn")).tap();
+    await waitForElementById(this.backButtonId, 5000);
+    await tapById(this.backButtonId);
   }
 
   @Step("Search for asset")
