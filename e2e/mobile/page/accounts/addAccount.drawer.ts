@@ -73,8 +73,6 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Add only discovered account at index")
   async addAccountAtIndex(currencyName: string, currencyId: string, index: number = 0) {
     await this.waitAccountsDiscovery();
-    // Wait for the reanimated entrance animation before counting or tapping.
-    await waitForElementById(this.accountItemRegExp(), 60000, { checkVisibility: false });
     const accountCount = await countElementsById(this.accountItemRegExp());
     if (accountCount > 1) {
       await tapById(this.deselectAllButtonId);

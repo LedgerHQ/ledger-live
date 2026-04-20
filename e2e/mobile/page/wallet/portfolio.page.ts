@@ -452,14 +452,16 @@ export default class PortfolioPage {
   }
 
   @Step("Check cryptos list section is visible")
-  async checkCryptosListSectionVisible() {
-    await scrollToId(this.portfolioCryptosListId);
+  async checkCryptosListSectionVisible(isEmptyPortfolio = false) {
+    const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
+    await scrollToId(this.portfolioCryptosListId, scrollViewId);
     await detoxExpect(getElementById(this.portfolioCryptosListId)).toBeVisible();
   }
 
   @Step("Check stablecoins list section is visible")
-  async checkStablecoinsListSectionVisible() {
-    await scrollToId(this.portfolioStablecoinsListId);
+  async checkStablecoinsListSectionVisible(isEmptyPortfolio = false) {
+    const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
+    await scrollToId(this.portfolioStablecoinsListId, scrollViewId);
     await detoxExpect(getElementById(this.portfolioStablecoinsListId)).toBeVisible();
   }
 
@@ -470,8 +472,12 @@ export default class PortfolioPage {
   }
 
   @Step("Check total asset item count equals expected")
-  async checkTotalAssetItemCount(expected: number) {
-    const count = await countElementsById(this.assetItemRegExp);
+  async checkTotalAssetItemCount(expected: number, assetType: "crypto" | "stablecoin") {
+    const assetContainer = getElementByIdWithAncestorIds(
+      this.assetItemRegExp,
+      assetType === "crypto" ? this.portfolioCryptosListId : this.portfolioStablecoinsListId,
+    );
+    const count = await countElements(assetContainer);
     jestExpect(count).toBe(expected);
   }
 
@@ -508,5 +514,10 @@ export default class PortfolioPage {
   async checkStablecoinListPageVisible() {
     await waitForElementById(this.stablecoinListId);
     await detoxExpect(getElementById(this.stablecoinListId)).toBeVisible();
+  }
+
+  @Step("Scroll to the top of the portfolio page")
+  async scrollToTopOfPortfolioPage() {
+    await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
   }
 }

@@ -27,9 +27,10 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
   TAGS.forEach(tag => $Tag(tag));
 
   it("should display 4 cryptos, 2 stablecoins and an Add account CTA", async () => {
-    await app.portfolio.checkCryptosListSectionVisible();
-    await app.portfolio.checkStablecoinsListSectionVisible();
-    await app.portfolio.checkTotalAssetItemCount(6);
+    await app.portfolio.checkCryptosListSectionVisible(true);
+    await app.portfolio.checkStablecoinsListSectionVisible(true);
+    await app.portfolio.checkTotalAssetItemCount(4, "crypto");
+    await app.portfolio.checkTotalAssetItemCount(2, "stablecoin");
     await app.portfolio.checkAddAccountCtaVisible();
   });
 
@@ -86,21 +87,19 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should cap cryptos at 6 and stablecoins at 6 when there are more than 6 of each", async () => {
+  it("should cap cryptos at 6 and display only cryptos when clicking the cryptos section title", async () => {
+    await app.portfolio.scrollToTopOfPortfolioPage();
     await app.portfolio.checkCryptosListSectionVisible();
-    await app.portfolio.checkStablecoinsListSectionVisible();
-    await app.portfolio.checkTotalAssetItemCount(12);
-  });
-
-  it("should display only cryptos when clicking the cryptos section title", async () => {
+    await app.portfolio.checkTotalAssetItemCount(6, "crypto");
     await app.portfolio.tapCryptosSectionTitle();
     await app.portfolio.checkCryptoListPageVisible();
     await app.common.goToPreviousPage();
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it("should display only stablecoins when clicking the stablecoins section title", async () => {
+  it("should cap stablecoins at 6 and display only stablecoins when clicking the stablecoins section title", async () => {
     await app.portfolio.checkStablecoinsListSectionVisible();
+    await app.portfolio.checkTotalAssetItemCount(6, "stablecoin");
     await app.portfolio.tapStablecoinsSectionTitle();
     await app.portfolio.checkStablecoinListPageVisible();
     await app.common.goToPreviousPage();
