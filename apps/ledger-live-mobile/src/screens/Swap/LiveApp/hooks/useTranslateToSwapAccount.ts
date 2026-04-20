@@ -10,6 +10,7 @@ import { DefaultAccountSwapParamList } from "../../types";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
+  fromAccountId?: string;
   toAccountId?: string;
   toTokenId?: string;
   fromTokenId?: string;
@@ -63,6 +64,10 @@ export const useTranslateToSwapAccount = (
 
     if (params.toAccountId) {
       newParams.toAccountId = params.toAccountId;
+    }
+
+    if (params.fromAccountId) {
+      newParams.fromAccountId = params.fromAccountId;
     }
 
     if (defaultCurrency) {
