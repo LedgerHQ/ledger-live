@@ -21,28 +21,44 @@ type Props = {
   operation: Operation;
   account: AccountLike;
   parentAccount: Account | undefined;
+  accountByAddress: Map<string, AccountLike>;
 };
 
-function OperationsListItem({ operation, account, parentAccount }: Readonly<Props>) {
+function OperationsListItem({
+  operation,
+  account,
+  parentAccount,
+  accountByAddress,
+}: Readonly<Props>) {
   const { t } = useTranslation();
   const {
+    accountName,
+    counterpartyLabel,
     operationType,
     isOutgoing,
     isASendOrReceive,
-    formattedAddress,
     currency,
     unit,
     amount,
     amountColor,
     isOptimistic,
     onPress,
-  } = useOperationsListItemViewModel({ operation, account, parentAccount });
+  } = useOperationsListItemViewModel({ operation, account, parentAccount, accountByAddress });
 
   const title = t(`operations.types.${operationType}`);
   const directionLabel = isOutgoing ? t("operationsList.to") : t("operationsList.from");
-  let subtitle = "";
-  if (!isASendOrReceive) subtitle = formattedAddress;
-  else if (formattedAddress) subtitle = `${directionLabel} ${formattedAddress}`;
+
+  // For send/receive: show counterpartyLabel (internal account name or address) with direction.
+  // For other types: show own account name without direction, or raw counterpartyLabel as fallback.
+  const getSubtitle = () => {
+    if (isASendOrReceive && counterpartyLabel) {
+      return `${directionLabel} ${counterpartyLabel}`;
+    }
+
+    return accountName || counterpartyLabel;
+  };
+
+  const subtitle = getSubtitle();
 
   return (
     <LumenListItem
