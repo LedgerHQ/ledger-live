@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import type { ActionDialogIcon } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import { useSelector } from "LLD/hooks/redux";
 import { selectActionDialog } from "~/renderer/reducers/actionDialog";
 import { resolveActionDialog } from "~/renderer/components/WebPTXPlayer/actionDialogStore";
@@ -8,21 +8,16 @@ export interface ActionConfirmationDialogViewProps {
   title: string;
   description: string;
   ctaLabel: string;
-  icon: "info" | "warning" | "success";
+  icon: ActionDialogIcon;
   onConfirm: () => void;
   onDismiss: () => void;
 }
 
+const onDismiss = () => resolveActionDialog(false);
+const onConfirm = () => resolveActionDialog(true);
+
 const useActionConfirmationDialogViewModel = (): ActionConfirmationDialogViewProps => {
   const data = useSelector(selectActionDialog);
-
-  const onDismiss = useCallback(() => {
-    resolveActionDialog(false);
-  }, []);
-
-  const onConfirm = useCallback(() => {
-    resolveActionDialog(true);
-  }, []);
 
   return {
     isOpen: data != null,
