@@ -164,6 +164,10 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
+    if (shouldDisplayLoansSection) {
+      sections.push(<PortfolioLoansSection key="loans" />);
+    }
+
     if (!shouldDisplayOperationsList) {
       sections.push(<PortfolioOperationsSection key="operations" />);
     }
@@ -187,6 +191,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    shouldDisplayLoansSection,
   ]);
 
   return (
