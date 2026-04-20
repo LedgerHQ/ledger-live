@@ -17,6 +17,11 @@ export function isUniswapXQuote(quote: RawQuote): boolean {
   return Boolean(quote.customFields?.["@type"]?.includes("UniswapDutchCustomFields"));
 }
 
+/**
+ * Derived from {@link computeLiquiditySource} rather than the raw API
+ * `liquiditySource`, which is unreliable for RFQ providers like
+ * `oneinchfusion` and UniswapX-tagged rows.
+ */
 export function isGasLess(quote: RawQuote): boolean {
   return computeLiquiditySource(quote) === "RFQ";
 }

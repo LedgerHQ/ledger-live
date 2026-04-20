@@ -261,6 +261,13 @@ export type QuoteEstimatedNetworkFee = {
   currencyId: string;
 };
 
+/**
+ * Extra network fee for a pre-swap ERC-20 approval transaction (EVM only).
+ * Shaped identically to {@link QuoteEstimatedNetworkFee}. Absent when no
+ * approval is required.
+ */
+export type QuoteApprovalNetworkFee = QuoteEstimatedNetworkFee;
+
 export type QuoteDetails = {
   type: TradeMethod;
   sendAmount: number;
@@ -276,6 +283,7 @@ export type QuoteDetails = {
   tags?: QuoteTags;
   permitData?: QuotePermitData;
   estimatedNetworkFee?: QuoteEstimatedNetworkFee;
+  approvalNetworkFee?: QuoteApprovalNetworkFee;
 };
 
 export type Quote = {
