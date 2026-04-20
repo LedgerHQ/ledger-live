@@ -11,7 +11,8 @@ import {
 import { setAnalytics, setAnalyticsConsentInfo, setHasSeenAnalyticsOptInPrompt, setPersonalizedRecommendations } from "~/actions/settings";
 import { ScreenName } from "~/const";
 import { TrackScreen, track, updateIdentify } from "~/analytics";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { ConsentFooter } from "LLM/features/AnalyticsConsentDrawer/components/ConsentFooter";
@@ -26,6 +27,8 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
   const { bottom: bottomInset } = useSafeAreaInsets();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.en);
   const footerBottomPadding = bottomInset + 16;
+  const analyticsOptInFeature = useFeature("analyticsOptIn");
+  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
 
   const initialTogglesOff = route.params?.initialTogglesOff === true;
   const analyticsFromStore = useSelector(analyticsEnabledSelector);
@@ -60,7 +63,7 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: policyVersion,
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
@@ -73,6 +76,7 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
     navigation,
     personalizedEnabled,
     personalizedFromStore,
+    policyVersion,
   ]);
 
   return (
