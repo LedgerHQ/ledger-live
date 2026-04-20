@@ -268,7 +268,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SEED: ${{ vars.SEED_QAA_B2C }}
-      JEST_MAX_WORKERS: ${{ contains(inputs.macos-specificity-runner-label, 'performance-pool') && '3' || '2' }}
+      JEST_MAX_WORKERS: ${{ contains(inputs.macos-specificity-runner-label, 'performance-pool') && '2' || '1' }}
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
