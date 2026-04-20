@@ -139,5 +139,14 @@ export function useCryptoDataTable({
     [lookupParentAccount, onRowClick],
   );
 
-  return { table, handleRowClick };
+  const getRowTestId = useCallback(
+    (row: Row<AccountLike>) => {
+      const accountName = accountNameWithDefaultSelector(walletState, row.original);
+      const sanitizedName = accountName.replaceAll(/\s+/g, "-");
+      return `crypto-account-row-${sanitizedName}`;
+    },
+    [walletState],
+  );
+
+  return { table, handleRowClick, getRowTestId };
 }
