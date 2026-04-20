@@ -112,7 +112,7 @@ type TokenParams = {
 type SwapLocationState = {
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
-  defaultAccountId?: string;
+  defaultAccountId?: string | { fromAccountId?: string; toAccountId?: string };
   defaultParentAccountId?: string;
   defaultCurrency?: { id?: string; fromCurrencyId?: string; toCurrencyId?: string };
   defaultAmountFrom?: string;
@@ -164,16 +164,27 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const location = useLocation();
   const state = isSwapLocationState(location.state) ? location.state : null;
-  const resolvedDefaultAccount = useMemo(() => {
+  const resolvedDefaultToAccount = useMemo(() => {
     if (state?.defaultAccount) {
       return state.defaultAccount;
     }
-    if (state?.defaultAccountId) {
-      return accounts.find(acc => acc.id === state.defaultAccountId);
+    const idState = state?.defaultAccountId;
+    if (typeof idState === "string") {
+      return accounts.find(acc => acc.id === idState);
+    }
+    if (idState && typeof idState === "object" && idState.toAccountId) {
+      return accounts.find(acc => acc.id === idState.toAccountId);
     }
     return undefined;
   }, [accounts, state?.defaultAccount, state?.defaultAccountId]);
-  const resolvedDefaultParentAccount = useMemo(() => {
+  const resolvedDefaultFromAccount = useMemo(() => {
+    const idState = state?.defaultAccountId;
+    if (idState && typeof idState === "object" && idState.fromAccountId) {
+      return accounts.find(acc => acc.id === idState.fromAccountId);
+    }
+    return undefined;
+  }, [accounts, state?.defaultAccountId]);
+  const resolvedDefaultToParentAccount = useMemo(() => {
     if (state?.defaultParentAccount) {
       return state.defaultParentAccount;
     }
@@ -181,8 +192,8 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
       const candidate = accounts.find(acc => acc.id === state.defaultParentAccountId);
       return candidate?.type === "Account" ? candidate : undefined;
     }
-    if (resolvedDefaultAccount?.type === "TokenAccount") {
-      const candidate = accounts.find(acc => acc.id === resolvedDefaultAccount.parentId);
+    if (resolvedDefaultToAccount?.type === "TokenAccount") {
+      const candidate = accounts.find(acc => acc.id === resolvedDefaultToAccount.parentId);
       return candidate?.type === "Account" ? candidate : undefined;
     }
     return undefined;
@@ -190,8 +201,15 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     accounts,
     state?.defaultParentAccount,
     state?.defaultParentAccountId,
-    resolvedDefaultAccount,
+    resolvedDefaultToAccount,
   ]);
+  const resolvedDefaultFromParentAccount = useMemo(() => {
+    if (resolvedDefaultFromAccount?.type === "TokenAccount") {
+      const candidate = accounts.find(acc => acc.id === resolvedDefaultFromAccount.parentId);
+      return candidate?.type === "Account" ? candidate : undefined;
+    }
+    return undefined;
+  }, [accounts, resolvedDefaultFromAccount]);
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
@@ -491,12 +509,21 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const hashString = useMemo(() => {
     const params = new URLSearchParams({
       ...(isOffline ? { isOffline: "true" } : {}),
-      ...(resolvedDefaultAccount
+      ...(resolvedDefaultFromAccount
+        ? {
+            fromAccountId: accountToWalletAPIAccount(
+              walletState,
+              resolvedDefaultFromAccount,
+              resolvedDefaultFromParentAccount,
+            ).id,
+          }
+        : {}),
+      ...(resolvedDefaultToAccount
         ? {
             toAccountId: accountToWalletAPIAccount(
               walletState,
-              resolvedDefaultAccount,
-              resolvedDefaultParentAccount,
+              resolvedDefaultToAccount,
+              resolvedDefaultToParentAccount,
             ).id,
             amountFrom: state?.defaultAmountFrom || "",
           }
@@ -528,7 +555,15 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     }).toString();
 
     return params;
-  }, [isOffline, resolvedDefaultAccount, resolvedDefaultParentAccount, state, walletState]);
+  }, [
+    isOffline,
+    resolvedDefaultFromAccount,
+    resolvedDefaultFromParentAccount,
+    resolvedDefaultToAccount,
+    resolvedDefaultToParentAccount,
+    state,
+    walletState,
+  ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     logger.critical(error);

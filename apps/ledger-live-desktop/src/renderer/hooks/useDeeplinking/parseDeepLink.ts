@@ -161,6 +161,7 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
       const route: SwapRoute = {
         type: "swap",
         amountFrom: query.amountFrom,
+        fromAccountId: query.fromAccountId,
         fromToken: query.fromToken,
         toToken: query.toToken,
         affiliate: query.affiliate,

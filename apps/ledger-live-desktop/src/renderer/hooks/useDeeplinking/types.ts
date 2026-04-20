@@ -115,6 +115,7 @@ export interface ManagerRoute {
 export interface SwapRoute {
   type: "swap";
   amountFrom?: string;
+  fromAccountId?: string;
   fromToken: string;
   toToken: string;
   affiliate?: string;

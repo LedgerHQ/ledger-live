@@ -4,6 +4,7 @@ import { DeeplinkHandler } from "../types";
 export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
   const {
     amountFrom,
+    fromAccountId,
     fromToken,
     toToken,
     affiliate,
@@ -19,7 +20,7 @@ export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
     defaultAmountFrom?: string;
     affiliate?: string;
     from?: string;
-    defaultAccountId?: string;
+    defaultAccountId?: { fromAccountId?: string; toAccountId?: string };
   } = {};
 
   if (fromToken) {
@@ -53,7 +54,14 @@ export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
   if (toAccountId) {
     const internalId = getAccountIdFromWalletAccountId(toAccountId);
     if (internalId) {
-      state.defaultAccountId = internalId;
+      state.defaultAccountId = { toAccountId: internalId };
+    }
+  }
+
+  if (fromAccountId) {
+    const internalId = getAccountIdFromWalletAccountId(fromAccountId);
+    if (internalId) {
+      state.defaultAccountId = { ...state.defaultAccountId, fromAccountId: internalId };
     }
   }
 
