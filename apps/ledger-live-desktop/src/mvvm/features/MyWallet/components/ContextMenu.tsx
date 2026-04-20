@@ -1,6 +1,7 @@
 import React from "react";
 import { Popover, PopoverTrigger, PopoverContent, IconButton } from "@ledgerhq/lumen-ui-react";
 import { Airplane } from "@ledgerhq/lumen-ui-react/symbols";
+import { Explore } from "./Explore";
 
 const side = "bottom";
 const align = "end";
@@ -10,10 +11,11 @@ export function ContextMenu() {
     <Popover>
       <PopoverTrigger render={<IconButton icon={Airplane} aria-label="Airplane" size="sm" />} />
 
-      <PopoverContent width="fixed" side={side} align={align}>
+      <PopoverContent width="fixed" side={side} align={align} className="bg-surface">
         <p className="body-2 text-base">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
         </p>
+        <Explore />
       </PopoverContent>
     </Popover>
   );
