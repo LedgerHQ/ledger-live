@@ -1,17 +1,22 @@
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import BigNumber from "bignumber.js";
-import { renderHook, waitFor } from "@tests/test-renderer";
+import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { type Account, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { usePostOnboardingHubDrawer } from "LLM/features/PostOnboardingHubDrawer";
+import { track } from "~/analytics";
 import { useOnboardingWidgetViewModel } from "../useOnboardingWidgetViewModel";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
-jest.mock("~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback", () => ({
-  useNavigateToPostOnboardingHubCallback: () => jest.fn(),
+jest.mock("LLM/features/PostOnboardingHubDrawer", () => ({
+  usePostOnboardingHubDrawer: jest.fn(),
 }));
+jest.mock("~/analytics", () => ({ track: jest.fn() }));
 
 const mockedUsePostOnboardingHubState = jest.mocked(usePostOnboardingHubState);
+const mockedUsePostOnboardingHubDrawer = jest.mocked(usePostOnboardingHubDrawer);
+const mockedTrack = jest.mocked(track);
 
 const makeAction = (completed: boolean) => ({
   completed,
@@ -22,6 +27,17 @@ const makeAction = (completed: boolean) => ({
 });
 
 describe("useOnboardingWidgetViewModel", () => {
+  const openPostOnboardingHubDrawer = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedUsePostOnboardingHubDrawer.mockReturnValue({
+      isPostOnboardingHubDrawerOpen: false,
+      openPostOnboardingHubDrawer,
+      closePostOnboardingHubDrawer: jest.fn(),
+    });
+  });
+
   it.each([
     { completed: 0, total: 3, expectedArcStep: 0, expectedTotal: 4, expectedLabel: "1/4" },
     { completed: 1, total: 3, expectedArcStep: 1, expectedTotal: 4, expectedLabel: "2/4" },
@@ -29,7 +45,7 @@ describe("useOnboardingWidgetViewModel", () => {
     { completed: 3, total: 3, expectedArcStep: 4, expectedTotal: 4, expectedLabel: "4/4" },
     { completed: 0, total: 4, expectedArcStep: 0, expectedTotal: 5, expectedLabel: "1/5" },
   ])(
-    "should return stepper currentStep $expectedArcStep, total $expectedTotal, label $expectedLabel when $completed of $total actions completed",
+    "returns stepper currentStep $expectedArcStep, total $expectedTotal, label $expectedLabel when $completed of $total actions completed",
     async ({ completed, total, expectedArcStep, expectedTotal, expectedLabel }) => {
       const actions = Array.from({ length: total }, (_, i) => makeAction(i < completed));
       mockedUsePostOnboardingHubState.mockReturnValue({
@@ -144,5 +160,27 @@ describe("useOnboardingWidgetViewModel", () => {
     expect(result.current.totalSteps).toBe(2);
     expect(result.current.stepperLabel).toBe("2/2");
     expect(result.current.currentStep).toBe(2);
+  });
+
+  it("opens the post-onboarding hub drawer and tracks click on press", async () => {
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.nanoX,
+      actionsState: [],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    const { result } = renderHook(() => useOnboardingWidgetViewModel());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.onPress());
+
+    expect(openPostOnboardingHubDrawer).toHaveBeenCalledTimes(1);
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "Post onboarding widget",
+      deviceModelId: DeviceModelId.nanoX,
+      flow: "post-onboarding",
+    });
   });
 });
