@@ -8638,9 +8638,13 @@
     }
   },
   "myWallet": {
-    "explore": "Explore all Ledger devices",
     "actionsList": {
       "help": "Help"
-    }
+    },
+    "myLedger": {
+      "title": "My Ledger",
+      "description": "Manage your Ledger device"
+    },
+    "explore": "Explore all Ledger devices"
   }
 }

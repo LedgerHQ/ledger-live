@@ -124,18 +124,18 @@ const useTopBarViewModel = () => {
               onClick: handleSettings,
             },
           },
+          {
+            type: "action" as const,
+            action: {
+              label: "my ledger",
+              tooltip: myLedgerTooltip,
+              icon: myLedgerIcon,
+              isInteractive: true,
+              onClick: handleMyLedger,
+            },
+          },
         ]
       : []),
-    {
-      type: "action",
-      action: {
-        label: "my ledger",
-        tooltip: myLedgerTooltip,
-        icon: myLedgerIcon,
-        isInteractive: true,
-        onClick: handleMyLedger,
-      },
-    },
   ];
 
   return {
