@@ -209,7 +209,7 @@ export async function listOperations(
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
-  const explorerOrder = options.limit === undefined ? "desc" : (options.order ?? "desc");
+  const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -278,6 +278,8 @@ export async function listOperations(
   // the native value is already accounted for in the coin operation — drop the internal one.
   // Analogous to the traceAddress.length === 0 check in getBlock's traceBlockItemsToOperationsByHash,
   // but using sender matching since txlistinternal does not expose traceAddress.
+  // The `getBlock` path uses a richer `(address, peer, amount)` key in `rootTraceDedup.ts`;
+  // the two should be unified once listOperations moves to the `BlockOperation` shape.
   const isRootTrace = (op: LiveOperation): boolean => {
     const parent = parents[op.hash];
     if (!parent) return false;

@@ -235,9 +235,9 @@ describe("getBlock", () => {
           ],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValueOnce([
-        makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] }),
-      ]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValueOnce([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
     } as any);
 
@@ -275,9 +275,11 @@ describe("getBlock", () => {
           ],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValueOnce([
-        makeNodeBlockReceipt({ hash: "0xdeploy", erc20Transfers: [], contractAddress: address2 }),
-      ]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValueOnce([
+          makeNodeBlockReceipt({ hash: "0xdeploy", erc20Transfers: [], contractAddress: address2 }),
+        ]),
       getTransaction: jest.fn(),
     } as any);
 
@@ -311,9 +313,9 @@ describe("getBlock", () => {
           ],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValueOnce([
-        makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] }),
-      ]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValueOnce([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
     } as any);
 
@@ -633,6 +635,8 @@ describe("getBlock", () => {
         }) as unknown as EvmCoinConfig,
     );
 
+    // Same amount as the coin tx, on purpose: the match key is (address, peer, amount),
+    // so a different peer must not collapse even when the amount matches.
     const coinAmount = 200000000000000000n;
     const nestedAmount = 200000000000000000n;
     const nestedRecipient = "0x330E16622F947CBBfA15aB2fdf83014EAa27eCd1";
@@ -951,22 +955,16 @@ describe("dropRootTraceDuplicates", () => {
   }
 
   it("drops internal native ops that exactly match a coin native op", () => {
-    const coinOps: BlockOperation[] = [
-      nativeTransfer(A, B, -100n),
-      nativeTransfer(B, A, 100n),
-    ];
+    const coinOps: BlockOperation[] = [nativeTransfer(A, B, -100n), nativeTransfer(B, A, 100n)];
     const internalOps: BlockOperation[] = [
       nativeTransfer(A, B, -100n), // root-trace duplicate
-      nativeTransfer(B, A, 100n),  // root-trace duplicate
+      nativeTransfer(B, A, 100n), // root-trace duplicate
     ];
     expect(dropRootTraceDuplicates(coinOps, internalOps)).toEqual([]);
   });
 
   it("keeps internal ops that differ in peer or amount", () => {
-    const coinOps: BlockOperation[] = [
-      nativeTransfer(A, B, -100n),
-      nativeTransfer(B, A, 100n),
-    ];
+    const coinOps: BlockOperation[] = [nativeTransfer(A, B, -100n), nativeTransfer(B, A, 100n)];
     const internalOps: BlockOperation[] = [
       nativeTransfer(B, C, -100n), // nested subcall
       nativeTransfer(C, B, 100n),

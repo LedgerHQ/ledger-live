@@ -275,6 +275,18 @@ export const etherscanERC1155EventToOperations = (
 };
 
 /**
+ * `delegatecall`/`staticcall`/`callcode` cannot move native ETH, but both Blockscout and
+ * Etherscan still report a non-zero `value` on those entries (it's the `msg.value` inherited
+ * from the enclosing frame). Blockscout exposes the discriminator via `callType`, Etherscan
+ * folds it into `type` — this helper hides that quirk from both call sites.
+ */
+function isNonValueTransferInternalTx(
+  it: Pick<EtherscanInternalTransaction, "callType" | "type">,
+): boolean {
+  return NON_VALUE_TRANSFER_CALL_TYPES.has((it.callType || it.type || "").toLowerCase());
+}
+
+/**
  * Adapter to convert an internal transaction
  * on etherscan APIs into LL Operations
  */
@@ -283,14 +295,8 @@ export const etherscanInternalTransactionToOperations = (
   internalTx: EtherscanInternalTransaction,
   index = 0,
 ): Operation[] => {
-  // Skip non-value-transferring call types (`delegatecall`/`staticcall`/`callcode`).
-  // Both Blockscout and Etherscan report a non-zero `value` on these entries — it's the
-  // `msg.value` inherited from the enclosing frame, not an actual native transfer — so
-  // emitting operations here would surface phantom IN/OUT ops in the account's history.
-  // See `NON_VALUE_TRANSFER_CALL_TYPES` for the canonical list; `internalTxsToOperationsByHash`
-  // (the `getBlock` path) applies the same filter via `isInternalTransactionValid`.
-  const callType = (internalTx.callType || internalTx.type || "").toLowerCase();
-  if (NON_VALUE_TRANSFER_CALL_TYPES.has(callType)) return [];
+  // Phantom IN/OUT guard; `isInternalTransactionValid` applies the same filter on the `getBlock` path.
+  if (isNonValueTransferInternalTx(internalTx)) return [];
 
   const { hash, blockNumber, isError } = internalTx;
   const { xpubOrAddress: address } = decodeAccountId(accountId);
@@ -331,12 +337,16 @@ export const etherscanInternalTransactionToOperations = (
 
 const NATIVE_ASSET = { type: "native" } as const;
 
+/**
+ * Validates an internal tx for the `getBlock` path. The same non-value-transferring filter
+ * is also applied at the entrypoint of `etherscanInternalTransactionToOperations`
+ * (the `listOperations` path) — see `isNonValueTransferInternalTx`.
+ */
 function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
   if (it.isError !== "0") return false;
   if (BigInt(it.value) <= 0n) return false;
   if (!it.from || !it.to) return false;
-  const callType = (it.callType || it.type || "").toLowerCase();
-  if (NON_VALUE_TRANSFER_CALL_TYPES.has(callType)) return false;
+  if (isNonValueTransferInternalTx(it)) return false;
   return true;
 }
 
