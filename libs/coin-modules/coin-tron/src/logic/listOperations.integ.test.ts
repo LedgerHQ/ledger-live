@@ -1,5 +1,6 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../config";
+import { getBlock } from "../network";
 import { listOperations, ListOperationsOptions } from "./listOperations";
 
 describe("listOperations", () => {
@@ -278,5 +279,79 @@ describe("listOperations", () => {
       expect(result.items).toHaveLength(0);
       expect(result.next).toBeUndefined();
     }, 30000);
+  });
+
+  describe("TriggerSmartContract transactions with internal_transactions", () => {
+    describe("failed transaction — Account TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z", () => {
+      // https://tronscan.org/#/address/TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z
+      const testingAccount = "TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z";
+      let minTimestamp: number;
+
+      beforeAll(async () => {
+        const block = await getBlock(63747682);
+        minTimestamp = block.time?.getTime() ?? 0;
+      });
+
+      it("should return failed transaction with internal_transactions with correct operation fields", async () => {
+        // https://tronscan.org/#/transaction/2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435
+        // Failed TriggerSmartContract at block 63747682 with fee 2,341,260 sun
+        // Failed TUSD (TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4) interaction — no to_address, so type is UNKNOWN
+        const txHash = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
+        const options: ListOperationsOptions = { limit: 100, minTimestamp, order: "asc" };
+        const result = await listOperations(testingAccount, options);
+        const operation = result.items.find(op => op.tx.hash === txHash);
+        expect(operation).toMatchObject({
+          type: "UNKNOWN",
+          value: 0n,
+          senders: [testingAccount],
+          recipients: [],
+          asset: { type: "trc20", assetReference: "TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4" },
+          tx: expect.objectContaining({
+            hash: txHash,
+            failed: true,
+            fees: 2341260n,
+            feesPayer: testingAccount,
+          }),
+        });
+      }, 60000);
+    });
+
+    describe("successful transaction — Account TP7qLhj12MV4boiYweAXiNZhZir3t2HkjA", () => {
+      // https://tronscan.org/#/address/TP7qLhj12MV4boiYweAXiNZhZir3t2HkjA
+      // SunSwap USDT→TRX swap: 9 internal_transactions with actual TRX callValue > 0 (15,400 TRX moved internally)
+      const testingAccount = "TP7qLhj12MV4boiYweAXiNZhZir3t2HkjA";
+      let minTimestamp: number;
+
+      beforeAll(async () => {
+        const block = await getBlock(81915749);
+        minTimestamp = block.time?.getTime() ?? 0;
+      });
+
+      it("should return successful TRC20 transfer with internal_transactions with correct operation fields", async () => {
+        // https://tronscan.org/#/transaction/a7e6e916b687984da1534b33b0acd7a6ef2cb59a252e3fdc0c229169e04b1242
+        // Successful SunSwap swap (USDT→TRX) at block 81915749 with fee 17,205,300 sun
+        // 9 internal_transactions, 2 of which carry 15,400 TRX callValue (pool→router→owner)
+        const txHash = "a7e6e916b687984da1534b33b0acd7a6ef2cb59a252e3fdc0c229169e04b1242";
+        const options: ListOperationsOptions = { limit: 100, minTimestamp, order: "asc" };
+        const result = await listOperations(testingAccount, options);
+        const operation = result.items.find(op => op.tx.hash === txHash);
+        expect(operation).toMatchObject({
+          type: "OUT",
+          value: BigInt("5000000000"),
+          senders: [testingAccount],
+          recipients: ["TFGDbUyP8xez44C76fin3bn3Ss6jugoUwJ"],
+          asset: {
+            type: "trc20",
+            assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          },
+          tx: expect.objectContaining({
+            hash: txHash,
+            failed: false,
+            fees: 17205300n,
+            feesPayer: testingAccount,
+          }),
+        });
+      }, 60000);
+    });
   });
 });

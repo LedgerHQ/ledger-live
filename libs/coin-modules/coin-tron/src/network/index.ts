@@ -50,14 +50,9 @@ import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
 function isValidNativeTx(tx: TransactionTronAPI): boolean {
-  const hasInternalTxs = tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
-  const isDuplicated = tx.tx_id;
-
-  if (hasInternalTxs) {
-    log("tron-error", `unsupported transaction ${tx.txID}`);
-  }
-
-  return !isDuplicated && !hasInternalTxs;
+  // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded.
+  // Transactions with internal_transactions are valid and should be included.
+  return !tx.tx_id;
 }
 
 function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
