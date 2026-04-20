@@ -5,23 +5,28 @@ import {
   type DeviceIntentExecutorHookState,
 } from "./useDeviceIntentExecutor";
 
-type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<JobState, Input, ExtraProps> & {
-  platformConfig: ExecutorPlatformConfiguration;
+type Props<JobState, Input, ExtraProps, InitInput> = DeviceIntentExecutorProps<
+  JobState,
+  Input,
+  ExtraProps,
+  InitInput
+> & {
+  platformConfig: ExecutorPlatformConfiguration<InitInput>;
   /**
    * @internal Test-only override. Inject a mock hook in unit tests.
    * Not intended for production use — the default is correct for all
    * runtime scenarios.
    */
   useExecutorHook?: (
-    props: DeviceIntentExecutorProps<JobState, Input, ExtraProps>,
-  ) => DeviceIntentExecutorHookState<JobState, Input, ExtraProps> | null;
+    props: DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>,
+  ) => DeviceIntentExecutorHookState<JobState, Input, ExtraProps, InitInput> | null;
 };
 
-export function DeviceIntentExecutor<JobState, Input, ExtraProps>({
+export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>({
   useExecutorHook = useDeviceIntentExecutor,
   platformConfig,
   ...executorProps
-}: Props<JobState, Input, ExtraProps>): React.ReactElement | null {
+}: Props<JobState, Input, ExtraProps, InitInput>): React.ReactElement | null {
   const state = useExecutorHook(executorProps);
   if (!state) return null;
 
@@ -29,7 +34,6 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps>({
     DeviceConnectionComponent,
     DeviceContextInitializerComponent,
     ConnectionErrorComponent,
-    InitializationErrorComponent,
     IntentErrorComponent,
     InvalidOperationComponent,
   } = platformConfig;
@@ -49,13 +53,10 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps>({
       return (
         <DeviceContextInitializerComponent
           connectionResult={state.connectionResult}
-          requiredDeviceContext={state.requiredDeviceContext}
+          deviceInitializationInput={state.deviceInitializationInput}
           onContextInitialized={state.onContextInitialized}
-          onError={state.onError}
         />
       );
-    case "initializationError":
-      return <InitializationErrorComponent error={state.error} onRetry={state.onRetry} />;
     case "intentExecution": {
       const IntentComponent = state.intentComponent;
       return (
