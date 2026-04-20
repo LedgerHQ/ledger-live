@@ -349,14 +349,16 @@ export function createPrivateSyncObservable(
       subscriber.complete();
       return;
     }
-    privateSyncInFlight.add(lockKey);
 
-    const controller = new AbortController();
-    const accountId = initialAccount?.id;
+    // configure locks for entire duration of the sync
+    privateSyncInFlight.add(lockKey);
+    if (initialAccount?.id) emitAleoSyncProgress(initialAccount.id, 0);
 
     // set to true before subscriber.complete() so the RxJS teardown (which fires
     // synchronously on every termination) can tell natural completion from early abort.
     let settled = false;
+    const controller = new AbortController();
+    const accountId = initialAccount?.id;
 
     const onProgress = accountId
       ? (progress: number) => {
