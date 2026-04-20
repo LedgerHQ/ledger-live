@@ -284,7 +284,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const [initialURL] = useState(() => getInitialURL(inputs, manifest));
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   // Mirror desktop's originWhitelist logic: when the flag is on, validate the initial URL
@@ -473,7 +473,7 @@ function useUiHook({ manifest }: Props): UiHook {
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+      : currentRouteNameRef.current ?? "Unknown";
 
   const flow = manifest.name;
 
@@ -734,7 +734,7 @@ export function useSelectAccount({
       source:
         currentRouteNameRef.current === "Platform Catalog"
           ? "Discover"
-          : (currentRouteNameRef.current ?? "Unknown"),
+          : currentRouteNameRef.current ?? "Unknown",
     });
   }, [currencyIds, onSelectAccountSuccess, manifest.name]);
 

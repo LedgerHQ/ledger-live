@@ -1,10 +1,11 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook } from "@testing-library/react-native";
 import { useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
+  getClientHeaders: jest.fn(() => ({})),
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
@@ -15,6 +16,14 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   safeGetRefValue: jest.fn(),
 }));
 
+jest.mock("styled-components/native", () => ({
+  useTheme: jest.fn(() => ({ theme: "dark" })),
+}));
+
+jest.mock("LLM/features/ModularDrawer", () => ({
+  useModularDrawerController: jest.fn(() => ({ openDrawer: jest.fn() })),
+}));
+
 const mockManifest: LiveAppManifest = {
   id: "test-app",
   name: "Test App",
@@ -22,7 +31,7 @@ const mockManifest: LiveAppManifest = {
   url: "https://example.com",
   homepageUrl: "https://example.com",
   icon: "",
-  platforms: ["desktop"],
+  platforms: ["ios", "android"],
   providerTestBaseUrl: "",
   providerTestId: "",
   apiVersion: "^2.0.0",
@@ -46,13 +55,17 @@ describe("useWebviewState", () => {
     jest.clearAllMocks();
   });
 
-  describe("webviewProps.src", () => {
+  describe("webviewProps.source.uri", () => {
     it("is set to the URL returned by getInitialURL on mount", () => {
       mockGetInitialURL.mockReturnValue("https://example.com/?theme=dark");
 
-      const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, null, undefined),
+      );
 
-      expect(result.current.webviewProps.src).toBe("https://example.com/?theme=dark");
+      expect(result.current.webviewProps.source).toMatchObject({
+        uri: "https://example.com/?theme=dark",
+      });
     });
 
     it("remains stable when inputs gets a new object reference after mount", () => {
@@ -60,22 +73,26 @@ describe("useWebviewState", () => {
       // re-renders with a new inputs object reference do not re-invoke it.
       mockGetInitialURL
         .mockReturnValueOnce("https://example.com/?theme=dark&lang=en")
-        .mockReturnValue("https://example.com/?theme=light&lang=fr"); // returned on subsequent calls
+        .mockReturnValue("https://example.com/?theme=light&lang=fr");
 
       const { result, rerender } = renderHook(
         (props: { inputs: Record<string, string> }) =>
-          useWebviewState({ manifest: mockManifest, inputs: props.inputs }, null),
+          useWebviewState({ manifest: mockManifest, inputs: props.inputs }, null, undefined),
         { initialProps: { inputs: { theme: "dark", lang: "en" } } },
       );
 
-      expect(result.current.webviewProps.src).toBe("https://example.com/?theme=dark&lang=en");
+      expect(result.current.webviewProps.source).toMatchObject({
+        uri: "https://example.com/?theme=dark&lang=en",
+      });
 
       // Simulate a parent re-render caused by a Redux update (e.g. lastSeenDevice).
       // inputs gets a new object reference — same values, different identity.
       rerender({ inputs: { theme: "dark", lang: "en" } });
 
-      // The webview src must not change — no navigation should occur.
-      expect(result.current.webviewProps.src).toBe("https://example.com/?theme=dark&lang=en");
+      // The webview source uri must not change — no navigation should occur.
+      expect(result.current.webviewProps.source).toMatchObject({
+        uri: "https://example.com/?theme=dark&lang=en",
+      });
     });
 
     it("remains stable even when inputs values change after mount", () => {
@@ -87,38 +104,19 @@ describe("useWebviewState", () => {
 
       const { result, rerender } = renderHook(
         (props: { inputs: Record<string, string> }) =>
-          useWebviewState({ manifest: mockManifest, inputs: props.inputs }, null),
+          useWebviewState({ manifest: mockManifest, inputs: props.inputs }, null, undefined),
         { initialProps: { inputs: { theme: "dark" } } },
       );
 
-      expect(result.current.webviewProps.src).toBe("https://example.com/?theme=dark");
+      expect(result.current.webviewProps.source).toMatchObject({
+        uri: "https://example.com/?theme=dark",
+      });
 
       rerender({ inputs: { theme: "light" } });
 
-      expect(result.current.webviewProps.src).toBe("https://example.com/?theme=dark");
-    });
-  });
-
-  describe("webviewPartition", () => {
-    it("is empty when manifest has no cacheBustingId", () => {
-      mockGetInitialURL.mockReturnValue("https://example.com/");
-
-      const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
-
-      expect(result.current.webviewPartition).toEqual({});
-    });
-
-    it("sets a persist partition keyed to manifest id and cacheBustingId", () => {
-      const manifestWithCache: LiveAppManifest = {
-        ...mockManifest,
-        id: "my-app",
-        cacheBustingId: 2,
-      };
-      mockGetInitialURL.mockReturnValue("https://example.com/");
-
-      const { result } = renderHook(() => useWebviewState({ manifest: manifestWithCache }, null));
-
-      expect(result.current.webviewPartition).toEqual({ partition: "persist:myapp-2" });
+      expect(result.current.webviewProps.source).toMatchObject({
+        uri: "https://example.com/?theme=dark",
+      });
     });
   });
 });
