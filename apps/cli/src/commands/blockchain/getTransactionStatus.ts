@@ -1,5 +1,5 @@
 import { from, of, concat, EMPTY, Observable } from "rxjs";
-import { map, mergeMap, concatMap } from "rxjs/operators";
+import { mergeMap, concatMap } from "rxjs/operators";
 import {
   toTransactionRaw,
   toTransactionStatusRaw,
@@ -22,20 +22,21 @@ type TransactionStatusFormatterInput = {
 
 const getTransactionStatusFormatters: Record<
   string,
-  (input: TransactionStatusFormatterInput) => string
+  (input: TransactionStatusFormatterInput) => Promise<string>
 > = {
-  default: ({ status, transaction, account }) =>
+  default: async ({ status, transaction, account }) =>
     "TRANSACTION " +
-    (formatTransaction(transaction, account) || JSON.stringify(toTransactionRaw(transaction))) +
+    ((await formatTransaction(transaction, account)) ||
+      JSON.stringify(await toTransactionRaw(transaction))) +
     "\n" +
     "STATUS " +
-    formatTransactionStatus(transaction, status, account),
-  json: ({ status, transaction, account }) =>
+    (await formatTransactionStatus(transaction, status, account)),
+  json: async ({ status, transaction, account }) =>
     "TRANSACTION " +
-    JSON.stringify(toTransactionRaw(transaction)) +
+    JSON.stringify(await toTransactionRaw(transaction)) +
     "\n" +
     "STATUS " +
-    JSON.stringify(toTransactionStatusRaw(status, account.currency.family)),
+    JSON.stringify(await toTransactionStatusRaw(status, account.currency.family)),
 };
 
 export type GetTransactionStatusJobOpts = ScanCommonOpts &
@@ -79,7 +80,7 @@ export default {
               EMPTY as Observable<any>,
             ),
           ),
-          map(e => {
+          mergeMap(e => {
             const f = getTransactionStatusFormatters[opts.format || "default"];
 
             if (!f) {
@@ -88,7 +89,7 @@ export default {
               );
             }
 
-            return f(e);
+            return from(f(e));
           }),
         ),
       ),

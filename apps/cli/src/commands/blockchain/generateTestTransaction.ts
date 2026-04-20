@@ -3,7 +3,7 @@ import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { toTransactionRaw, toSignedOperationRaw } from "@ledgerhq/live-common/transaction/index";
 import { listen } from "@ledgerhq/logs";
 import { from, defer, concat, EMPTY, Observable } from "rxjs";
-import { map, reduce, filter, switchMap, concatMap } from "rxjs/operators";
+import { map, reduce, filter, switchMap, concatMap, mergeMap } from "rxjs/operators";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -91,12 +91,12 @@ export default {
                                 .then(s => [signedOperation, s]),
                             ),
                           ),
-                          map(([signedOperation, status]) => {
+                          mergeMap(async ([signedOperation, status]) => {
                             unsubscribe();
                             return `
 {
   name: "NO_NAME",
-  transaction: fromTransactionRaw(${JSON.stringify(toTransactionRaw(t))}),
+  transaction: fromTransactionRaw(${JSON.stringify(await toTransactionRaw(t))}),
   expectedStatus: (account, transaction) => (
     // you can use account and transaction for smart logic. drop the =>fn otherwise
     ${toTransactionStatusJS(status)}

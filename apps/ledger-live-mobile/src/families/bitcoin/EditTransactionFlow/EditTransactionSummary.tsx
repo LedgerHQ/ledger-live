@@ -13,10 +13,10 @@ import type {
 } from "@ledgerhq/coin-bitcoin/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useFromTransactionRaw } from "~/hooks/useFromTransactionRaw";
 import EditTransactionSummaryView from "~/components/EditTransaction/EditTransactionSummaryView";
 import useEditTransactionSummaryActions from "~/components/EditTransaction/hooks/useEditTransactionSummaryActions";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -32,7 +32,13 @@ type Navigation = BaseComposite<
 
 type Props = Navigation;
 
-function BitcoinEditTransactionSummary({ navigation, route }: Props) {
+type ContentProps = Props & { transactionToUpdate: BtcTransaction };
+
+function BitcoinEditTransactionSummaryContent({
+  navigation,
+  route,
+  transactionToUpdate,
+}: ContentProps) {
   const { nextNavigation, overrideAmountLabel, transactionRaw, editType } = route.params;
 
   const { account, parentAccount } = useAccountScreen(route);
@@ -51,11 +57,6 @@ function BitcoinEditTransactionSummary({ navigation, route }: Props) {
     account,
     parentAccount,
   }));
-
-  const transactionToUpdate = useMemo<BtcTransaction>(
-    () => fromTransactionRaw(transactionRaw) as BtcTransaction,
-    [transactionRaw],
-  );
 
   const [originalFeePerByte, setOriginalFeePerByte] = useState<BigNumber | null>(null);
 
@@ -79,7 +80,7 @@ function BitcoinEditTransactionSummary({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [mainAccount, transactionToUpdate.replaceTxId, transactionToUpdate.feePerByte]);
+  }, [mainAccount, transactionToUpdate]);
 
   const statusParams: GetEditTransactionStatusParams = {
     editType,
@@ -91,21 +92,22 @@ function BitcoinEditTransactionSummary({ navigation, route }: Props) {
 
   const status = getEditTransactionStatus(statusParams);
 
-  invariant(transaction, "transaction is missing");
-
   useTransactionChangeFromNavigation(setTransaction);
 
-  const { amount, totalSpent, errors, warnings } = status;
   const { highFeesOpen, onAcceptFees, onRejectFees, onContinue } = useEditTransactionSummaryActions(
     {
       navigation,
       nextNavigation,
       routeParams: route.params,
-      transaction,
+      transaction: transaction ?? route.params.transaction,
       status,
-      feeTooHigh: warnings.feeTooHigh,
+      feeTooHigh: status.warnings.feeTooHigh,
     },
   );
+
+  if (!transaction) return null;
+
+  const { amount, totalSpent, errors, warnings } = status;
 
   const firstError = errors[Object.keys(errors)[0]];
 
@@ -148,6 +150,24 @@ function BitcoinEditTransactionSummary({ navigation, route }: Props) {
       highFeesOpen={highFeesOpen}
       onRejectFees={onRejectFees}
       onAcceptFees={onAcceptFees}
+    />
+  );
+}
+
+function BitcoinEditTransactionSummary({ navigation, route }: Props) {
+  const { transactionRaw } = route.params;
+
+  invariant(transactionRaw, "transactionRaw is missing");
+
+  const transactionToUpdate = useFromTransactionRaw<BtcTransaction>(transactionRaw);
+
+  if (!transactionToUpdate) return null;
+
+  return (
+    <BitcoinEditTransactionSummaryContent
+      navigation={navigation}
+      route={route}
+      transactionToUpdate={transactionToUpdate}
     />
   );
 }

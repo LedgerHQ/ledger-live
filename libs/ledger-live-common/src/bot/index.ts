@@ -275,11 +275,11 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
 
   if (errorCases.length && process.env.CI) {
     console.error(`================== MUTATION ERRORS =====================\n`);
-    errorCases.forEach(c => {
-      console.error(formatReportForConsole(c));
+    for (const c of errorCases) {
+      console.error(await formatReportForConsole(c));
       console.error(c.error);
       console.error("");
-    });
+    }
     console.error(
       `/!\\ ${errorCases.length} failures out of ${mutationReports.length} mutations. Check above!\n`,
     );
@@ -451,9 +451,9 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   if (errorCases.length) {
     appendBody("<details>\n");
     appendBody(`<summary>❌ ${errorCases.length} mutation errors</summary>\n\n`);
-    errorCases.forEach(c => {
-      appendBody("```\n" + formatReportForConsole(c) + "\n```\n\n");
-    });
+    for (const c of errorCases) {
+      appendBody("```\n" + (await formatReportForConsole(c)) + "\n```\n\n");
+    }
     appendBody("</details>\n\n");
   }
 
@@ -476,7 +476,8 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   appendBodyFullOnly("<details>\n");
 
   appendBodyFullOnly(`<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`);
-  results.forEach((r, i) => {
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
     const spec = specs[i];
     const logs = specsLogs[i];
     appendBodyFullOnly(`#### Spec ${spec.name} (${r.mutations ? r.mutations.length : "failed"})\n`);
@@ -484,15 +485,15 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
     appendBodyFullOnly(logs.join("\n"));
 
     if (r.mutations) {
-      r.mutations.forEach(m => {
+      for (const m of r.mutations) {
         if (m.error || m.mutation) {
-          appendBodyFullOnly(formatReportForConsole(m) + "\n");
+          appendBodyFullOnly((await formatReportForConsole(m)) + "\n");
         }
-      });
+      }
     }
 
     appendBodyFullOnly("\n```\n");
-  });
+  }
   appendBodyFullOnly("</details>\n\n");
 
   if (uncoveredMutations.length > 0) {
