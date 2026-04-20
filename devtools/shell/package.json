@@ -7,14 +7,41 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "format": "prettier --write 'src/**/*.{ts,tsx}' 'jest/**/*.{ts,tsx}'",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm run test:web && pnpm run test:native",
+    "test:native": "jest --config jest.native.config.js",
+    "test:web": "jest --config jest.config.js",
+    "test:watch": "jest --watch"
   },
   "peerDependencies": {
-    "react": ">=19"
+    "@ledgerhq/native-ui": "workspace:^",
+    "@ledgerhq/react-ui": "workspace:^",
+    "react": ">=19",
+    "react-native": "*"
   },
   "devDependencies": {
+    "@ledgerhq/native-ui": "workspace:^",
+    "@ledgerhq/react-ui": "workspace:^",
+    "@babel/plugin-transform-export-namespace-from": "7.27.1",
+    "@jest/globals": "catalog:",
+    "@react-native/babel-preset": "catalog:",
+    "babel-jest": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:"
   }
 }
