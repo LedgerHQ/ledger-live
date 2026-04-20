@@ -8,6 +8,7 @@ import { PlainCryptoTableHeader } from "./PlainCryptoTableHeader";
 type PlainCryptoTableProps<TData extends RowData> = {
   readonly table: TanStackTable<TData>;
   readonly onRowClick?: (row: Row<TData>) => void;
+  readonly getRowTestId?: (row: Row<TData>) => string | undefined;
 };
 
 /**
@@ -16,12 +17,13 @@ type PlainCryptoTableProps<TData extends RowData> = {
 export function PlainCryptoTable<TData extends RowData>({
   table,
   onRowClick,
+  getRowTestId,
 }: PlainCryptoTableProps<TData>) {
   return (
     <TableRoot appearance="plain" className="min-h-0 flex-1 overflow-auto mb-32">
       <Table>
         <PlainCryptoTableHeader table={table} />
-        <PlainCryptoTableBody table={table} onRowClick={onRowClick} />
+        <PlainCryptoTableBody table={table} onRowClick={onRowClick} getRowTestId={getRowTestId} />
       </Table>
     </TableRoot>
   );

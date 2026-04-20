@@ -5,7 +5,6 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -24,14 +23,8 @@ test.describe("Settings", () => {
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
-      await app.accounts.verifyTokenVisibility(
-        Account.ETH_1.accountName,
-        TokenAccount.ETH_USDT_1.currency,
-      );
-      await app.accounts.expectTokenBalanceToBeNull(
-        Account.ETH_1.accountName,
-        TokenAccount.ETH_USDT_1.currency,
-      );
+      await app.accounts.verifyTokenVisibility(TokenAccount.ETH_USDT_1.currency);
+      await app.accounts.expectTokenBalanceToBeNull(TokenAccount.ETH_USDT_1.currency);
       await app.mainNavigation.openSettings();
       await app.settings.goToAccountsTab();
       await app.settings.clickHideEmptyTokenAccountsToggle();
@@ -121,9 +114,7 @@ test.describe("counter value selection", () => {
       await app.layout.waitForAccountsSyncToBeDone();
       await app.portfolio.expectTotalBalanceCounterValue("€");
 
-      // Wallet 4.0 only shows percentage change
-      const expectedCounterValue = (await isWallet40Enabled(app.getPage())) ? "%" : "€";
-      await app.portfolio.expectBalanceDiffCounterValue(expectedCounterValue);
+      await app.portfolio.expectBalanceDiffCounterValue("%");
 
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
       await app.portfolio.expectOperationCounterValue("€");

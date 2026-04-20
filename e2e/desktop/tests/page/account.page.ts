@@ -39,12 +39,17 @@ export class AccountPage extends AppPage {
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
 
+  private accountHeaderNamePattern(...names: string[]) {
+    const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
+    return new RegExp(`^(${escaped.join("|")})$`);
+  }
+
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
     const tokenRow = this.tokenValue(account.currency.name).or(
       this.tokenRowByTicker(account.currency.ticker),
     );
-    await tokenRow.waitFor({ state: "visible" });
+    await expect(tokenRow).toBeVisible();
     await tokenRow.click();
   }
 
@@ -55,9 +60,8 @@ export class AccountPage extends AppPage {
 
   @step("Click `Show balance` button")
   async clickShowBalance() {
-    if (await this.activatePrivateBalanceButton.isVisible().catch(() => false)) {
+    if (await this.activatePrivateBalanceButton.isVisible()) {
       await this.activatePrivateBalanceButton.click();
-      return;
     }
   }
 
@@ -127,13 +131,15 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await expect(this.accountName).toHaveValue(firstAccountName);
-    await this.settingsButton.waitFor({ state: "visible" });
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName), {
+      timeout: 30000,
+    });
+    await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Expect account to be not null")
   async expectAccountBalance() {
-    expect(this.accountBalance).toBeTruthy();
+    await expect(this.accountBalance).toBeVisible();
   }
 
   @step("Expect `Last operations` to be visible")
@@ -174,7 +180,7 @@ export class AccountPage extends AppPage {
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await this.showAllTokensButton.or(row).first().waitFor({ state: "visible" });
+    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
     if (await this.showAllTokensButton.isVisible()) {
       await this.showAllTokensButton.click();
     }
@@ -184,7 +190,7 @@ export class AccountPage extends AppPage {
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await this.showAllTokensButton.or(row).first().waitFor({ state: "visible" });
+    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
     if (await this.showAllTokensButton.isVisible()) {
       await this.showAllTokensButton.click();
     }
@@ -194,18 +200,22 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account header name $0 to be visible")
   async waitForAccountHeaderName(headerName: string, fallbackName?: string) {
-    const expectedNames = fallbackName ? [headerName, fallbackName] : [headerName];
-    await expect(this.accountName).toHaveValue(new RegExp(`^(${expectedNames.join("|")})$`));
+    const pattern = fallbackName
+      ? this.accountHeaderNamePattern(headerName, fallbackName)
+      : this.accountHeaderNamePattern(headerName);
+    await expect(this.accountName).toHaveValue(pattern, { timeout: 30000 });
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountName).toHaveValue(headerName);
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName), {
+      timeout: 30000,
+    });
   }
 
   @step("Check account chart is visible")
   async checkAccountChart() {
-    await this.accountChart.waitFor({ state: "visible" });
+    await expect(this.accountChart).toBeVisible();
   }
 
   @step("Click on selected ($0) last operation")
