@@ -7818,7 +7818,8 @@
       "title": "What’s next?",
       "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
-      "viewWallet": "Explore my portfolio"
+      "viewWallet": "Explore my portfolio",
+      "deviceStepComplete": "Complete"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",

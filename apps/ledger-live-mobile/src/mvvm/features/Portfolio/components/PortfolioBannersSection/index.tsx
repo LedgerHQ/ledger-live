@@ -26,7 +26,13 @@ export const PortfolioBannersSection = ({
     });
 
   return (
-    <SectionContainer py="0" mt={0} isFirst={isFirst} key="BannersSection" testID="portfolio-banners-section">
+    <SectionContainer
+      py="0"
+      mt={0}
+      isFirst={isFirst}
+      key="BannersSection"
+      testID="portfolio-banners-section"
+    >
       <Box lx={{ marginTop: sectionMarginTop }}>
         {shouldShowOnboardingWidget ? (
           <Box lx={{ marginBottom: "s16" }}>
