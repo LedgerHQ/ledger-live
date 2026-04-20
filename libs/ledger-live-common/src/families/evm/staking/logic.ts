@@ -14,4 +14,7 @@ export {
   getValidatorExplorerUrl,
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
+  getValidators,
+  getCachedValidators,
+  prefetchValidators,
 } from "@ledgerhq/coin-evm/staking/index";
