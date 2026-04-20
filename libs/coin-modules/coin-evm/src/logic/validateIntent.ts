@@ -71,7 +71,8 @@ async function validateAmount(
     return { errors: { amount: new AmountRequired() }, warnings: {} };
   }
 
-  if (totalSpent > balance.value) {
+  const available = balance.value - (balance.locked ?? 0n);
+  if (totalSpent > available) {
     return { errors: { amount: new NotEnoughBalance() }, warnings: {} };
   }
 
@@ -136,6 +137,11 @@ async function validateGas(
   const warnings: Record<string, Error> = {};
 
   const nativeBalance = findBalance({ type: "native" }, balances);
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
 
   const gasLimit =
     typeof estimatedFees.parameters?.gasLimit === "bigint" ? estimatedFees.parameters.gasLimit : 0n;
@@ -174,13 +180,14 @@ async function validateGas(
   // Gas Price
   if (!(hasLegacyGasPrice || hasEip1559GasPrice)) {
     errors.gasPrice = new FeeNotLoaded();
-  } else if (intent.recipient && estimatedFees.value > nativeBalance.value && !intent.sponsored) {
+  } else if (
+    intent.recipient &&
+    totalFees > nativeBalance.value - (nativeBalance.locked ?? 0n) &&
+    !intent.sponsored
+  ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
-      fees: formatCurrencyUnit(
-        getFeesUnit(currency),
-        new BigNumber(estimatedFees.value.toString()),
-      ),
+      fees: formatCurrencyUnit(getFeesUnit(currency), new BigNumber(totalFees.toString())),
       ticker: currency.ticker,
       cryptoName: currency.name,
       links: ["ledgerlive://buy"],
@@ -286,6 +293,8 @@ function computeAmount(
 ): bigint {
   if (!intent.useAllAmount) return intent.amount;
 
+  const available = balance.value - (balance.locked ?? 0n);
+
   if (isNative(intent.asset)) {
     const additionalFees =
       typeof estimatedFees.parameters?.additionalFees === "bigint"
@@ -293,10 +302,10 @@ function computeAmount(
         : 0n;
     const totalFees = estimatedFees.value + additionalFees;
 
-    return balance.value > totalFees ? balance.value - totalFees : 0n;
+    return available > totalFees ? available - totalFees : 0n;
   }
 
-  return balance.value;
+  return available;
 }
 
 function refreshEstimationValue(
