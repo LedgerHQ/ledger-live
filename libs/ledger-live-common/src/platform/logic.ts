@@ -63,7 +63,7 @@ export function receiveOnAccountLogic(
   return uiNavigation(account, parentAccount, accountAddress);
 }
 
-export function signTransactionLogic(
+export async function signTransactionLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   transaction: RawPlatformTransaction,
@@ -99,7 +99,7 @@ export function signTransactionLogic(
     : account.currency.family;
 
   const { canEditFees, liveTx, hasFeesProvided } =
-    getPlatformTransactionSignFlowInfos(platformTransaction);
+    await getPlatformTransactionSignFlowInfos(platformTransaction);
 
   if (accountFamily !== liveTx.family) {
     return Promise.reject(
@@ -116,7 +116,7 @@ export function signTransactionLogic(
   });
 }
 
-export function broadcastTransactionLogic(
+export async function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
@@ -165,7 +165,7 @@ export type CompleteExchangeUiRequest = {
   swapId?: string;
   amountExpectedTo?: number;
 };
-export function completeExchangeLogic(
+export async function completeExchangeLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   {
     provider,
@@ -211,7 +211,7 @@ export function completeExchangeLogic(
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
   const platformTransaction = deserializePlatformTransaction(transaction);
-  const { liveTx: liveTransaction } = getPlatformTransactionSignFlowInfos(platformTransaction);
+  const { liveTx: liveTransaction } = await getPlatformTransactionSignFlowInfos(platformTransaction);
 
   if (liveTransaction.family !== mainFromAccountFamily) {
     return Promise.reject(
@@ -256,7 +256,7 @@ export function completeExchangeLogic(
   });
 }
 
-export function signMessageLogic(
+export async function signMessageLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   message: string,
@@ -273,7 +273,7 @@ export function signMessageLogic(
   let formattedMessage: AnyMessage;
   try {
     if (isAccount(account)) {
-      formattedMessage = prepareMessageToSign(account, message);
+      formattedMessage = await prepareMessageToSign(account, message);
     } else {
       throw new Error("account provided should be the main one");
     }
