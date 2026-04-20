@@ -65,9 +65,9 @@ runs:
       run: |
         TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | wc -w)
 
-        # Target one shard per group of 3 tests (matches 3 emulators/simulators per runner).
+        # Target one shard per group of 2 tests (matches 2 Detox workers / Android emulators per runner).
         # This ensures all emulators are kept busy without spinning up unnecessary runners.
-        EMULATORS_PER_RUNNER=3
+        EMULATORS_PER_RUNNER=2
         BASE_SHARD=$(( TEST_COUNT > 0 ? (TEST_COUNT + EMULATORS_PER_RUNNER - 1) / EMULATORS_PER_RUNNER : 1 ))
 
         if [ "${{ inputs.event_name }}" = "schedule" ]; then

@@ -755,7 +755,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/qaa_1153_test_update_emulator
         with:
           source_avd_name: ${{ env.AVD_NAME }}
-          target_suffixes: "_2,_3"
+          target_suffixes: "_2"
           avd_api: ${{ env.AVD_API }}
 
       - name: Cleanup any running Android emulators (pre-boot)
