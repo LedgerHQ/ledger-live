@@ -26,7 +26,13 @@ const defaultPortfolio = {
   countervalueSendSum: 0,
 };
 
-function makeReturn(overrides: Partial<{ balanceAvailable: boolean; syncPhase: SyncPhase }> = {}) {
+function makeReturn(
+  overrides: Partial<{
+    balanceAvailable: boolean;
+    syncPhase: SyncPhase;
+    isCvPending: boolean;
+  }> = {},
+) {
   return {
     portfolio: defaultPortfolio,
     balanceAvailable: true,
@@ -34,6 +40,7 @@ function makeReturn(overrides: Partial<{ balanceAvailable: boolean; syncPhase: S
     isBalanceLoading: false,
     isColdStart: false,
     isManualRefreshLoading: false,
+    isCvPending: false,
     allAccounts: [],
     accountsWithError: [],
     accountsImpactedByError: [],

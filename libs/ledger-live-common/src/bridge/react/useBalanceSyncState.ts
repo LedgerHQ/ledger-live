@@ -6,6 +6,13 @@ interface UseBalanceSyncStateParams {
   readonly syncPhase: SyncPhase;
   readonly latestBalance: number;
   readonly shouldFreezeOnSync: boolean;
+  /**
+   * When provided, scopes the sticky-clear and freeze logic to the CVS phase
+   * instead of the full sync cycle. Use `syncPhase === "syncing" && cvPending`
+   * so that auto-polls never trigger the shimmer.
+   * When omitted, falls back to `syncPhase === "syncing"` (desktop behaviour).
+   */
+  readonly cvPending?: boolean;
 }
 
 interface BalanceSyncState {
@@ -17,10 +24,10 @@ interface BalanceSyncState {
 /**
  * Shared balance-display logic consumed by both desktop and mobile during sync.
  *
- * - **Sticky balanceAvailable**: stays `false` while syncing so the skeleton
- *   covers the entire cycle (Skeleton → Animate balance, no shimmer gap).
+ * - **Sticky balanceAvailable**: stays `false` while the active phase holds so
+ *   the skeleton covers the cycle (Skeleton → Animate balance, no shimmer gap).
  * - **Frozen balance**: holds the pre-sync value so `AmountDisplay` can
- *   animate the delta once the sync settles.
+ *   animate the delta once the phase settles.
  * - **isLoading**: true while `syncPhase` is `"syncing"`.
  */
 export function useBalanceSyncState({
@@ -28,24 +35,30 @@ export function useBalanceSyncState({
   syncPhase,
   latestBalance,
   shouldFreezeOnSync,
+  cvPending,
 }: UseBalanceSyncStateParams): BalanceSyncState {
+  // When cvPending is provided (mobile), the "active phase" ends when CVS settles
+  // rather than when the full bridge sync settles. This lets the balance animate
+  // to the new CVS value and continue updating per account batch.
+  const isPhaseActive = cvPending !== undefined ? cvPending : syncPhase === "syncing";
+
   const [balanceUnavailable, setBalanceUnavailable] = useState(!rawBalanceAvailable);
   useEffect(() => {
     if (!rawBalanceAvailable) {
       setBalanceUnavailable(true);
-    } else if (syncPhase !== "syncing") {
+    } else if (!isPhaseActive) {
       setBalanceUnavailable(false);
     }
-  }, [rawBalanceAvailable, syncPhase]);
+  }, [rawBalanceAvailable, isPhaseActive]);
 
   const frozenBalanceRef = useRef(latestBalance);
   useEffect(() => {
-    if (syncPhase !== "syncing") {
+    if (!isPhaseActive) {
       frozenBalanceRef.current = latestBalance;
     }
-  }, [syncPhase, latestBalance]);
+  }, [isPhaseActive, latestBalance]);
 
-  const shouldFreeze = shouldFreezeOnSync && syncPhase === "syncing";
+  const shouldFreeze = shouldFreezeOnSync && isPhaseActive;
 
   return {
     balanceAvailable: !balanceUnavailable,

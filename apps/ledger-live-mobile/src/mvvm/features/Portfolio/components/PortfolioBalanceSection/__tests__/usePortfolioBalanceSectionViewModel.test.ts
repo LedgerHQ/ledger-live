@@ -28,6 +28,7 @@ function makeReturn(
     balanceAvailable: boolean;
     syncPhase: SyncPhase;
     portfolio: typeof defaultPortfolio;
+    isCvPending: boolean;
   }> = {},
 ) {
   return {
@@ -37,6 +38,7 @@ function makeReturn(
     isBalanceLoading: false,
     isColdStart: false,
     isManualRefreshLoading: false,
+    isCvPending: false,
     allAccounts: [],
     accountsWithError: [],
     accountsImpactedByError: [],
@@ -54,7 +56,9 @@ function makeReturn(
 const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
 const withFreezeFlag = {
-  overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } } }),
+  overrideInitialState: withFlagOverrides({
+    lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
+  }),
 };
 
 describe("usePortfolioBalanceSectionViewModel", () => {
@@ -97,7 +101,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
   });
 
   describe("balance freeze", () => {
-    it("freezes at pre-sync value and releases on settle", () => {
+    it("freezes while CVS is pending (iCvPending=true) and releases once CVS settles", () => {
       mockUsePortfolioBalance.mockReturnValue(
         makeReturn({
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
@@ -110,22 +114,35 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       );
       expect(result.current.balance).toBe(1500);
 
+      // Sync starts with CVS pending — balance must be frozen
       mockUsePortfolioBalance.mockReturnValue(
         makeReturn({
           syncPhase: "syncing",
+          isCvPending: true,
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
         }),
       );
       rerender({});
       expect(result.current.balance).toBe(1500);
+    });
 
+    it("scopes isLoading to isCvPending when flag is enabled", () => {
+      // With feature flag on: isLoading = iCvPending (not full syncPhase)
       mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({
-          portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
-        }),
+        makeReturn({ syncPhase: "syncing", isCvPending: true }),
+      );
+      const { result, rerender } = renderHook(
+        () => usePortfolioBalanceSectionViewModel(defaultProps),
+        withFreezeFlag,
+      );
+      expect(result.current.isLoading).toBe(true);
+
+      // CVS settles — shimmer turns off even though bridge sync continues
+      mockUsePortfolioBalance.mockReturnValue(
+        makeReturn({ syncPhase: "syncing", isCvPending: false }),
       );
       rerender({});
-      expect(result.current.balance).toBe(2000);
+      expect(result.current.isLoading).toBe(false);
     });
   });
 

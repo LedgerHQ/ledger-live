@@ -18,6 +18,8 @@ export interface SyncSourcesState {
   readonly hasCvOrBridgeError: boolean;
   readonly hasWalletSyncError: boolean;
   readonly triggerRefresh: () => void;
+  /** Raw countervalues polling pending flag — use to scope shimmer to the CVS phase only. */
+  readonly cvPending: boolean;
 }
 
 /**
@@ -58,5 +60,6 @@ export function useSyncSources(walletSyncState: WalletSyncUserState): SyncSource
     hasCvOrBridgeError,
     hasWalletSyncError,
     triggerRefresh,
+    cvPending: cvPolling.pending,
   };
 }

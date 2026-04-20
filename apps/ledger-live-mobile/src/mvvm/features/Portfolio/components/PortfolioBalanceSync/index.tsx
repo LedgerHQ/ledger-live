@@ -26,7 +26,12 @@ export function PortfolioBalanceSync(): null {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
-  const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
+  const {
+    portfolio,
+    balanceAvailable: rawBalanceAvailable,
+    syncPhase,
+    isCvPending,
+  } = usePortfolioBalance();
 
   const lastItem = portfolio.balanceHistory[portfolio.balanceHistory.length - 1];
   const latestBalance = lastItem?.value ?? 0;
@@ -44,9 +49,12 @@ export function PortfolioBalanceSync(): null {
     syncPhase,
     latestBalance: effectiveLatestBalance,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
 
-  const isLoading = syncPhase === "syncing";
+  // Shimmer is scoped to the CVS phase: disappears once countervalues settle,
+  // letting the balance animate to the fresh fiat value while account sync continues.
+  const isLoading = shouldDisplayBalanceRefreshRework ? isCvPending : syncPhase === "syncing";
 
   useEffect(() => {
     dispatch(

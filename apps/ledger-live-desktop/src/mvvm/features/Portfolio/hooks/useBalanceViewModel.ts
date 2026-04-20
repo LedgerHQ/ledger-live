@@ -41,17 +41,23 @@ export const useBalanceViewModel = (
     isColdStart,
     balanceAvailable: rawBalanceAvailable,
     syncPhase,
+    isCvPending,
   } = usePortfolioBalance({ legacyRange });
 
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
 
-  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
+  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
     rawBalanceAvailable,
     syncPhase,
     latestBalance: latestBalanceValue,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
+
+  // Shimmer is scoped to the CVS phase: disappears once countervalues settle,
+  // letting the balance animate to the fresh fiat value while account sync continues.
+  const isLoading = shouldDisplayBalanceRefreshRework ? isCvPending : syncPhase === "syncing";
 
   const unit = counterValue.units[0];
   const valueChange = portfolio.countervalueChange;

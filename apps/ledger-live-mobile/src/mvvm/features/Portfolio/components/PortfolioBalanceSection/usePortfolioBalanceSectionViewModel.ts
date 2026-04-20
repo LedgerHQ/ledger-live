@@ -20,7 +20,12 @@ export const usePortfolioBalanceSectionViewModel = ({
   const { toggleDiscreetMode } = useToggleDiscreetMode();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
-  const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
+  const {
+    portfolio,
+    balanceAvailable: rawBalanceAvailable,
+    syncPhase,
+    isCvPending,
+  } = usePortfolioBalance();
 
   const { countervalueChange, balanceHistory } = portfolio;
   const lastItem = balanceHistory[balanceHistory.length - 1];
@@ -42,9 +47,14 @@ export const usePortfolioBalanceSectionViewModel = ({
     syncPhase,
     latestBalance: effectiveLatestBalance,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
 
-  const effectiveIsLoading = syncPhase === "syncing";
+  // Shimmer is scoped to the CVS phase: disappears once countervalues settle,
+  // letting the balance animate to the fresh fiat value while account sync continues.
+  const effectiveIsLoading = shouldDisplayBalanceRefreshRework
+    ? isCvPending
+    : syncPhase === "syncing";
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {
