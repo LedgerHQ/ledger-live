@@ -6,7 +6,7 @@ const HIGH_SPREAD_EXCHANGE_RATE_THRESHOLD = 1_000_000;
 
 export function computeWarning(quote: RawQuote): QuoteWarning | null {
   if (quote.exchangeRate > HIGH_SPREAD_EXCHANGE_RATE_THRESHOLD) {
-    return "highSpread";
+    return { code: "highSpread" };
   }
   return null;
 }
