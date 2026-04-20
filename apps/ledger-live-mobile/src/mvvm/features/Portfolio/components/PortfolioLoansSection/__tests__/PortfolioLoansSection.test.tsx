@@ -11,10 +11,6 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-}));
-
 describe("PortfolioLoansSection", () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -43,7 +39,7 @@ describe("PortfolioLoansSection", () => {
     fireEvent.press(screen.getByTestId("loans-explore-cta"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "loans_entry_point",
+      button: "borrow_entry_point",
       flow: "borrow",
       page: ScreenName.Portfolio,
     });

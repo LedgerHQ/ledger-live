@@ -24,7 +24,7 @@ export const LoansEntryPoint = () => {
   const navigate = useNavigate();
   const handleClick = useCallback(() => {
     track("button_clicked", {
-      button: "loans_entry_point",
+      button: "borrow_entry_point",
       flow: "borrow",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
     });

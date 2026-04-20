@@ -10,11 +10,6 @@ jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
-  track: jest.fn(),
-}));
-
 describe("LoansEntryPoint", () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -37,7 +32,7 @@ describe("LoansEntryPoint", () => {
     await user.click(screen.getByText("Explore"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "loans_entry_point",
+      button: "borrow_entry_point",
       flow: "borrow",
       page: "Portfolio",
     });
