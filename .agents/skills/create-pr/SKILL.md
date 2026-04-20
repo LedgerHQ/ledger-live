@@ -123,7 +123,7 @@ open "$PR_URL"
 
 ### Step 5: Generate Slack Message
 
-Use the `slack-pr-message` skill (`.cursor/skills/slack-pr-message/SKILL.md`) to generate the Slack announcement message for the PR.
+Use the `slack-pr-message` skill (`.agents/skills/slack-pr-message/SKILL.md`) to generate the Slack announcement message for the PR.
 
 ## Template Fill Rules
 
