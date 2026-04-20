@@ -232,6 +232,8 @@ export const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
+        // Make CSV export filename unique per test (parallel-safe + traceable to a test id).
+        PLAYWRIGHT_EXPORT_CSV_PATH: `./ledgerwallet-operations-${testInfo.testId}.csv`,
         CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),

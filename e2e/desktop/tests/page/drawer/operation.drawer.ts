@@ -3,6 +3,7 @@ import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import type { ClickedHistoryOperationSnapshot } from "../history.page";
 
 export class OperationDrawer extends Drawer {
   readonly transactionIdLabel = this.page.getByText("Transaction ID");
@@ -24,6 +25,22 @@ export class OperationDrawer extends Drawer {
   readonly swapAmountSent = this.page.getByTestId("swap-drawer-amount-from");
   readonly swapAmountReceived = this.page.getByTestId("swap-drawer-amount-to");
   readonly swapOperationDetailsLink = this.page.getByTestId("swap-drawer-operation-details-link");
+
+  @step("Verify history operation details match clicked row")
+  async expectOperationDetailsVisible(snapshot: ClickedHistoryOperationSnapshot) {
+    await this.waitForDrawerToBeVisible();
+
+    await expect(this.transactionType).toHaveText(snapshot.typeLabel);
+
+    await expect(this.amountValue).toHaveText(snapshot.fiatAmountText);
+
+    await expect(this.transactionIdLabel).toBeVisible();
+    await expect(this.transactionIdValue).toHaveText(/\S{16,}/);
+
+    await expect(this.dateLabel).toBeVisible();
+    await expect(this.dateValue).toBeVisible();
+    await expect(this.dateValue).toHaveText(/^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/);
+  }
 
   @step("Verify drawer information")
   async expectDrawerInfos(accountName: string, status: string) {
