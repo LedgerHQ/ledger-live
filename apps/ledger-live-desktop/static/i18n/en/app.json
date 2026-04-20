@@ -8286,7 +8286,7 @@
       "description": "Trade with leverage",
       "cta": "Discover"
     },
-    "loansEntry": {
+    "borrowEntry": {
       "title": "Loans",
       "cardTitle": "Borrow Stablecoin",
       "cardDescription": "Unlock liquidity",

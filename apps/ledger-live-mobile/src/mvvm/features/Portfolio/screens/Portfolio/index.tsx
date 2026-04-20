@@ -33,7 +33,7 @@ import {
   PortfolioOperationsSection,
   PortfolioBannersSection,
   PortfolioPerpsEntryPoint,
-  PortfolioLoansSection,
+  PortfolioBorrowSection,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
@@ -54,7 +54,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
-    shouldDisplayLoansSection,
+    shouldDisplayBorrowSection,
     shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
@@ -164,8 +164,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    if (shouldDisplayLoansSection) {
-      sections.push(<PortfolioLoansSection key="loans" />);
+    if (shouldDisplayBorrowSection) {
+      sections.push(<PortfolioBorrowSection key="borrow" />);
     }
 
     if (!shouldDisplayOperationsList) {
@@ -177,7 +177,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     showAssets,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
-    shouldDisplayLoansSection,
+    shouldDisplayBorrowSection,
     shouldDisplayMarketBanner,
     onBackFromUpdate,
     isLNSUpsellBannerShown,

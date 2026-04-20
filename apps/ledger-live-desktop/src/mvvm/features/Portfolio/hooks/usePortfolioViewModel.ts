@@ -21,7 +21,7 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayGraphRework: boolean;
   readonly shouldDisplayQuickActionCtas: boolean;
   readonly shouldDisplayAssetSection: boolean;
-  readonly shouldDisplayLoansSection: boolean;
+  readonly shouldDisplayBorrowSection: boolean;
   readonly shouldDisplayOperationsList: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
   readonly isWallet40Enabled: boolean;
@@ -44,7 +44,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayLoansSection = borrowConfig?.enabled ?? false;
+  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
@@ -87,7 +87,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
-    shouldDisplayLoansSection,
+    shouldDisplayBorrowSection,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
     isWallet40Enabled,

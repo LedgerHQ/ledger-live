@@ -22,7 +22,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { track } from "~/analytics";
 
-export const PortfolioLoansSection = () => {
+export const PortfolioBorrowSection = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
@@ -44,24 +44,24 @@ export const PortfolioLoansSection = () => {
     >
       <Subheader>
         <SubheaderRow lx={{ marginBottom: "s12" }}>
-          <SubheaderTitle>{t("portfolio.loansEntry.title")}</SubheaderTitle>
+          <SubheaderTitle>{t("portfolio.borrowEntry.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
       <Box lx={{ marginTop: "s8" }}>
-        <Card onPress={handlePress} testID="portfolio-loans-entry-point">
+        <Card onPress={handlePress} testID="portfolio-borrow-entry-point">
           <CardHeader>
             <CardLeading>
               <Spot appearance="icon" icon={HandCoins} />
               <CardContent>
-                <CardContentTitle>{t("portfolio.loansEntry.cardTitle")}</CardContentTitle>
+                <CardContentTitle>{t("portfolio.borrowEntry.cardTitle")}</CardContentTitle>
                 <CardContentDescription>
-                  {t("portfolio.loansEntry.cardDescription")}
+                  {t("portfolio.borrowEntry.cardDescription")}
                 </CardContentDescription>
               </CardContent>
             </CardLeading>
             <CardTrailing>
-              <Button appearance="base" size="sm" onPress={handlePress} testID="loans-explore-cta">
-                {t("portfolio.loansEntry.cta")}
+              <Button appearance="base" size="sm" onPress={handlePress} testID="borrow-explore-cta">
+                {t("portfolio.borrowEntry.cta")}
               </Button>
             </CardTrailing>
           </CardHeader>
