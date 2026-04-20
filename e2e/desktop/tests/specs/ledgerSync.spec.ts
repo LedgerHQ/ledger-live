@@ -51,6 +51,10 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
+    featureFlags: {
+      lldWalletSync: { enabled: true },
+      lldLedgerSyncEntryPoints: { enabled: true },
+    },
   });
 
   test(

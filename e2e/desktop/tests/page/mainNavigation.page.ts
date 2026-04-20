@@ -4,14 +4,11 @@ import { Drawer } from "tests/component/drawer.component";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
   readonly expectActive: boolean;
   readonly selector: Locator;
-  // TODO: delete me when 4.0 permanent
-  readonly legacySelector: Locator;
 };
 
 export type TargetName =
@@ -26,9 +23,23 @@ export type TargetName =
 export class MainNavigationPage extends AppPage {
   private readonly drawer = new Drawer(this.page);
   private readonly layout = new Layout(this.page);
+  private readonly sidebarNavigation = this.page.getByTestId("sidebar-navigation");
 
-  private readonly sideBarButton: (name: TargetName | RegExp) => Locator = targetName =>
-    this.page.getByTestId("sidebar-navigation").getByRole("button", { name: targetName });
+  private readonly homeSideBarButton = this.sidebarNavigation.getByRole("button", { name: "home" });
+  private readonly accountsSideBarButton = this.sidebarNavigation.getByRole("button", {
+    name: "accounts",
+  });
+  private readonly swapSideBarButton = this.sidebarNavigation.getByRole("button", { name: "swap" });
+  private readonly earnSideBarButton = this.sidebarNavigation.getByRole("button", {
+    name: /^(earn|stake|yield)$/i,
+  });
+  private readonly discoverSideBarButton = this.sidebarNavigation.getByRole("button", {
+    name: "discover",
+  });
+  private readonly referAFriendSideBarButton = this.sidebarNavigation.getByRole("button", {
+    name: "refer a friend",
+  });
+  private readonly cardSideBarButton = this.sidebarNavigation.getByRole("button", { name: "card" });
 
   private async expectPath(expectedPath: RegExp) {
     await expect(this.page).toHaveURL(url => {
@@ -42,54 +53,43 @@ export class MainNavigationPage extends AppPage {
     return {
       home: {
         expectActive: true,
-        selector: this.sideBarButton("home"),
-        legacySelector: this.layout.drawerPortfolioButton,
+        selector: this.homeSideBarButton,
       },
       accounts: {
         expectActive: true,
-        expectedPath: /^\/accounts(?:\/|$|\?)/,
-        selector: this.sideBarButton("accounts"),
-        legacySelector: this.layout.drawerAccountsButton,
+        expectedPath: /^\/cryptos(?:\/|$|\?)/,
+        selector: this.accountsSideBarButton,
       },
       swap: {
         expectActive: true,
         expectedPath: /^\/swap(?:\/|$|\?)/,
-        selector: this.sideBarButton("swap"),
-        legacySelector: this.layout.drawerSwapButton,
+        selector: this.swapSideBarButton,
       },
       earn: {
         expectActive: true,
         expectedPath: /^\/earn(?:\/|$|\?)/,
-        selector: this.sideBarButton(/^(earn|stake|yield)$/i),
-        legacySelector: this.layout.drawerEarnButton,
+        selector: this.earnSideBarButton,
       },
       discover: {
         expectActive: true,
         expectedPath: /^\/platform(?:\/|$|\?)/,
-        selector: this.sideBarButton("discover"),
-        legacySelector: this.layout.drawerDiscoverButton,
+        selector: this.discoverSideBarButton,
       },
       "refer a friend": {
         expectActive: true,
         expectedPath: /^\/platform\/refer-a-friend(?:\/|$|\?)/,
-        selector: this.sideBarButton("refer a friend"),
-        legacySelector: this.layout.drawerReferButton,
+        selector: this.referAFriendSideBarButton,
       },
       card: {
         expectActive: true,
         expectedPath: /^\/card-new-wallet(?:\/|$|\?)/,
-        selector: this.sideBarButton("card"),
-        legacySelector: this.layout.drawerCardButton,
+        selector: this.cardSideBarButton,
       },
     };
   }
   @step("Open $0 from main navigation")
   async openTargetFromMainNavigation(target: TargetName) {
-    const targetSelector = (await isWallet40Enabled(this.page))
-      ? this.sidebarTargets[target].selector
-      : this.sidebarTargets[target].legacySelector;
-
-    await targetSelector.click();
+    await this.sidebarTargets[target].selector.click();
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")

@@ -27,11 +27,13 @@ const ROW_CLICK_IGNORE_SELECTOR =
 type PlainCryptoTableBodyProps<TData extends RowData> = {
   readonly table: TanStackTable<TData>;
   readonly onRowClick?: (row: Row<TData>) => void;
+  readonly getRowTestId?: (row: Row<TData>) => string | undefined;
 };
 
 export function PlainCryptoTableBody<TData extends RowData>({
   table,
   onRowClick,
+  getRowTestId,
 }: PlainCryptoTableBodyProps<TData>) {
   const clickable = !!onRowClick;
 
@@ -48,6 +50,7 @@ export function PlainCryptoTableBody<TData extends RowData>({
           key={row.id}
           clickable={clickable}
           onClick={clickable ? handleRowClick(row) : undefined}
+          data-testid={getRowTestId?.(row)}
         >
           {row.getVisibleCells().map(cell => {
             const meta = cell.column.columnDef.meta;

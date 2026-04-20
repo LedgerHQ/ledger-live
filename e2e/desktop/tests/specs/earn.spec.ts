@@ -155,7 +155,7 @@ test.describe("Inline Add Account", () => {
 
       await app.addAccount.close();
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCountToBeNotNull();
+      await app.accounts.expectAtLeastOneAccountVisible();
     },
   );
 });
