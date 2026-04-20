@@ -12,8 +12,10 @@ function isConcordiumCurrencyBridge(bridge: CurrencyBridge): bridge is Concordiu
   );
 }
 
-export function getConcordiumBridge(currency: CryptoCurrency): ConcordiumCurrencyBridge {
-  const bridge = getCurrencyBridge(currency);
+export async function getConcordiumBridge(
+  currency: CryptoCurrency,
+): Promise<ConcordiumCurrencyBridge> {
+  const bridge = await getCurrencyBridge(currency);
   if (!isConcordiumCurrencyBridge(bridge)) {
     throw new Error(`Expected ConcordiumCurrencyBridge for ${currency.id}`);
   }

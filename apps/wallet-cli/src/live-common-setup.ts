@@ -62,13 +62,13 @@ LiveConfig.setConfig(walletCliConfig);
 // and require() to lib/, creating separate LiveConfig.instance singletons.
 // Non-alpacaized families (solana, bitcoin) load their bridge via require() in
 // the lazy loaders above, so they read from the CJS instance.
-(require("@ledgerhq/live-config/LiveConfig") as typeof import("@ledgerhq/live-config/LiveConfig")).LiveConfig.setConfig(walletCliConfig);
+require("@ledgerhq/live-config/LiveConfig").LiveConfig.setConfig(walletCliConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
 setupCalClientStore();
 // Also require() — the ESM import would set the flag on a different module instance
 // than the CJS setup.ts loaded by the lazy loaders above.
-(require("@ledgerhq/live-common/families/solana/setup") as typeof import("@ledgerhq/live-common/families/solana/setup")).setSolanaLdmkEnabled(true);
+require("@ledgerhq/live-common/families/solana/setup").setSolanaLdmkEnabled(true);
 registerWalletCliDmkTransport();
 
 setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");

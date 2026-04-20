@@ -10,14 +10,14 @@ export {
 } from "@ledgerhq/live-app-sdk";
 
 // FIXME: can't use SDK implementations here because SDK don't know how to properly serialize / deserialize Operation object
-export function serializePlatformSignedTransaction(
+export async function serializePlatformSignedTransaction(
   signedTransaction: PlatformSignedTransaction,
-): RawPlatformSignedTransaction {
-  return toSignedOperationRaw(signedTransaction, true);
+): Promise<RawPlatformSignedTransaction> {
+  return await toSignedOperationRaw(signedTransaction, true);
 }
-export function deserializePlatformSignedTransaction(
+export async function deserializePlatformSignedTransaction(
   rawSignedTransaction: RawPlatformSignedTransaction,
   accountId: string,
-): PlatformSignedTransaction {
-  return fromSignedOperationRaw(rawSignedTransaction, accountId);
+): Promise<PlatformSignedTransaction> {
+  return await fromSignedOperationRaw(rawSignedTransaction, accountId);
 }

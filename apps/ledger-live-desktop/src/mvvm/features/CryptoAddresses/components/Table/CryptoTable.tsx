@@ -10,7 +10,11 @@ type CryptoTableProps = {
 };
 
 export function CryptoTable({ rows, lookupParentAccount, onRowClick }: CryptoTableProps) {
-  const { table, handleRowClick } = useCryptoDataTable({ rows, lookupParentAccount, onRowClick });
+  const { table, handleRowClick, getRowTestId } = useCryptoDataTable({
+    rows,
+    lookupParentAccount,
+    onRowClick,
+  });
 
-  return <PlainCryptoTable table={table} onRowClick={handleRowClick} />;
+  return <PlainCryptoTable table={table} onRowClick={handleRowClick} getRowTestId={getRowTestId} />;
 }

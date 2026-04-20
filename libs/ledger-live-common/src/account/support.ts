@@ -7,9 +7,12 @@ export {
   checkAccountSupported,
 } from "@ledgerhq/ledger-wallet-framework/account/support";
 
-export function canSend(account: AccountLike, parentAccount: Account | null | undefined): boolean {
+export async function canSend(
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+): Promise<boolean> {
   try {
-    getAccountBridge(account, parentAccount).createTransaction(
+    (await getAccountBridge(account, parentAccount)).createTransaction(
       getMainAccount(account, parentAccount),
     );
     return true;

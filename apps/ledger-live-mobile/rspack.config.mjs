@@ -205,7 +205,12 @@ export default withRozeniteUrlFix(
               use: {
                 loader: "@callstack/repack/babel-swc-loader",
                 parallel: true,
-                options: {},
+                options: {
+                  lazyImports: true,
+                  module: {
+                    lazy: true,
+                  },
+                },
               },
               resolve: { fullySpecified: false },
             },
@@ -214,7 +219,9 @@ export default withRozeniteUrlFix(
               test: /\.lottie$/,
               use: {
                 loader: "@callstack/repack/assets-loader",
-                options: {},
+                options: {
+                  lazyImports: true,
+                },
               },
             },
           ],

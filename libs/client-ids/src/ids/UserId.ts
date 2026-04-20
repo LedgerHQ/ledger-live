@@ -55,6 +55,11 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
+  /** For Chainwatch / transaction-alerts backend API (account path segment). Allowlisted in export-rules.json. */
+  exportUserIdForChainwatch(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
   equals(other: UserId): boolean {
     return this[USER_ID_SYMBOL] === other[USER_ID_SYMBOL];
   }

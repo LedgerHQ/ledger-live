@@ -8871,6 +8871,13 @@
       "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
+    },
+    "help": {
+      "title": "Help",
+      "sections": {
+        "supportAndLearning": "Support and learning",
+        "more": "More"
+      }
     }
   }
 }

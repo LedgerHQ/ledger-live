@@ -170,6 +170,7 @@ apps/ledger-live-desktop/src/renderer/drawers/SwapOperationDetails/  					@ledge
 apps/ledger-live-desktop/src/renderer/modals/Platform/               					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/modals/StartStake/             					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/reducers/swap.ts               					@ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/reducers/actionDialog.ts       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/earn/                  					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/exchange/              					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/stake/                 					@ledgerhq/ptx
@@ -200,6 +201,7 @@ apps/ledger-live-desktop/src/mvvm/features/Card/                                
 apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                     @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration

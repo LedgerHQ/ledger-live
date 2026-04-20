@@ -178,7 +178,7 @@ test.describe("Earn [v2]", () => {
 
         await app.addAccount.close();
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.expectAccountsCountToBeNotNull();
+        await app.accounts.expectAtLeastOneAccountVisible();
       },
     );
   });

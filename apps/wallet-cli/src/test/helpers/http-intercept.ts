@@ -8,8 +8,7 @@
  *
  * Axios uses node:http adapter by default in Bun (process is defined). We force it
  * onto the fetch adapter so its calls go through the globalThis.fetch patch below.
- * axios is not a direct dep of wallet-cli, so we resolve it via @ledgerhq/coin-evm
- * (which is) and patch both CJS and ESM instances.
+ * Axios is resolved via @ledgerhq/live-common (a direct dep of wallet-cli).
  */
 import path from "node:path";
 
@@ -21,14 +20,13 @@ if (!mockPort) {
 const mockBase = `http://localhost:${mockPort}`;
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const coinEvmDir = path.dirname(require.resolve("@ledgerhq/coin-evm/package.json"));
+const liveCommonDir = path.dirname(require.resolve("@ledgerhq/live-common/package.json"));
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const axiosPkgDir = path.dirname(require.resolve("axios/package.json", { paths: [coinEvmDir] }));
-
+const axiosPkgDir = path.dirname(require.resolve("axios/package.json", { paths: [liveCommonDir] }));
 // Patch CJS axios instance
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
 (require(path.join(axiosPkgDir, "dist/node/axios.cjs")) as any).defaults.adapter = "fetch";
-// Patch ESM axios instance (coin-evm's `import axios from "axios"` resolves here)
+// Patch ESM axios instance
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ((await import(path.join(axiosPkgDir, "index.js"))) as any).default.defaults.adapter = "fetch";
 
@@ -68,14 +66,14 @@ const origFetch = globalThis.fetch;
 };
 
 // ---------------------------------------------------------------------------
-// Layer 2: node:http / node:https — fallback for non-fetch callers.
+// Layer 2: node:http / node:https — fallback for any remaining node:http callers.
 // HTTPS requests are redirected to the plain-HTTP mock server.
 // ---------------------------------------------------------------------------
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const http = require("node:http") as typeof import("node:http");
+const http = require("node:http");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const https = require("node:https") as typeof import("node:https");
+const https = require("node:https");
 
 const origHttpRequest = http.request.bind(http);
 

@@ -2,10 +2,12 @@ import reducer, {
   INITIAL_STATE,
   earnInfoBottomSheetSelector,
   earnMenuBottomSheetSelector,
+  earnActionDialogSelector,
 } from "../earn";
 import {
   makeSetEarnInfoBottomSheetAction,
   makeSetEarnMenuBottomSheetAction,
+  makeSetEarnActionDialogAction,
 } from "../../actions/earn";
 import type { State } from "../types";
 
@@ -67,6 +69,53 @@ describe("earn reducer", () => {
       expect(state.menuBottomSheet).toBeUndefined();
     });
   });
+
+  describe("EARN_ACTION_DIALOG", () => {
+    it("should set actionDialog from payload", () => {
+      const payload = {
+        title: "Swap required",
+        description: "You need to swap before staking",
+        ctaLabel: "Go to Swap",
+        icon: "warning" as const,
+      };
+      const action = makeSetEarnActionDialogAction(payload);
+      const state = reducer(INITIAL_STATE, action);
+
+      expect(state.actionDialog).toEqual(payload);
+    });
+
+    it("should set actionDialog to undefined when payload is undefined", () => {
+      const stateWithDialog = reducer(
+        INITIAL_STATE,
+        makeSetEarnActionDialogAction({
+          title: "T",
+          description: "D",
+          ctaLabel: "C",
+        }),
+      );
+      const action = makeSetEarnActionDialogAction(undefined);
+      const state = reducer(stateWithDialog, action);
+
+      expect(state.actionDialog).toBeUndefined();
+    });
+
+    it("should preserve other earn state when updating actionDialog", () => {
+      const baseState = {
+        ...INITIAL_STATE,
+        infoModal: { messageTitle: "Modal" },
+      };
+      const payload = {
+        title: "Title",
+        description: "Desc",
+        ctaLabel: "CTA",
+      };
+      const action = makeSetEarnActionDialogAction(payload);
+      const state = reducer(baseState, action);
+
+      expect(state.actionDialog).toEqual(payload);
+      expect(state.infoModal).toEqual({ messageTitle: "Modal" });
+    });
+  });
 });
 
 describe("earnInfoBottomSheetSelector", () => {
@@ -120,5 +169,34 @@ describe("earnMenuBottomSheetSelector", () => {
     };
 
     expect(earnMenuBottomSheetSelector(state)).toBeUndefined();
+  });
+});
+
+describe("earnActionDialogSelector", () => {
+  it("should return actionDialog from earn state", () => {
+    const actionDialog = {
+      title: "Confirm",
+      description: "Please confirm",
+      ctaLabel: "OK",
+      icon: "info" as const,
+    };
+    const state: State = {
+      ...({} as State),
+      earn: {
+        ...INITIAL_STATE,
+        actionDialog,
+      },
+    };
+
+    expect(earnActionDialogSelector(state)).toEqual(actionDialog);
+  });
+
+  it("should return undefined when actionDialog is initial", () => {
+    const state: State = {
+      ...({} as State),
+      earn: INITIAL_STATE,
+    };
+
+    expect(earnActionDialogSelector(state)).toBeUndefined();
   });
 });

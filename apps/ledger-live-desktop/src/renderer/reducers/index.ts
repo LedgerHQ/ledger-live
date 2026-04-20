@@ -25,6 +25,7 @@ import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
+import actionDialog, { ActionDialogState } from "./actionDialog";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 import shieldedSyncSubscriptions, {
   ShieldedSyncSubscriptionsState,
@@ -54,6 +55,7 @@ export type State = LLDRTKApiState & {
   walletSync: WalletSyncState;
   dialogs: DialogsState;
   ptxInfoDialog: PtxInfoDialogState;
+  actionDialog: ActionDialogState;
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
@@ -80,6 +82,7 @@ const appReducer = combineReducers({
   trustchain,
   dialogs,
   ptxInfoDialog,
+  actionDialog,
   syncRefresh,
   shieldedSyncSubscriptions,
   countervaluesExtraTracking,

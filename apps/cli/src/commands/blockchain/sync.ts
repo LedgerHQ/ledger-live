@@ -1,4 +1,4 @@
-import { map, switchMap } from "rxjs/operators";
+import { mergeMap } from "rxjs/operators";
 import { accountFormatters, decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
@@ -23,7 +23,7 @@ export default {
   ],
   job: (opts: SyncJobOpts) =>
     scan(opts).pipe(
-      switchMap(async account => {
+      mergeMap(async account => {
         const { currencyId } = decodeAccountId(account.id);
         const currency = getCryptoCurrencyById(currencyId);
         const currencyBridge = getCurrencyBridge(currency);
@@ -46,6 +46,8 @@ export default {
             }
           : account;
       }),
-      map(account => (accountFormatters[opts.format] || accountFormatters.default)(account)),
+      mergeMap(async account =>
+        (accountFormatters[opts.format] || accountFormatters.default)(account),
+      ),
     ),
 };

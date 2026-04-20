@@ -5,17 +5,23 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import {
+  computeAggregatedAccountsData,
+  computeBalanceSortCountervalueByAccountId,
+} from "../../../utils/aggregateAccounts";
+import {
   AccountAddressCell,
   AccountNameCell,
   AccountRowActionCell,
   AccountValueCell,
+  AggregatedAccountNameCell,
+  AggregatedAccountValueCell,
 } from "../Cell";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 
@@ -31,20 +37,30 @@ export function useCryptoDataTable({
   onRowClick,
 }: UseCryptoDataTableParams) {
   const { t } = useTranslation();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const walletState = useSelector(walletSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
   const syncPhase = useSyncPhase();
   const isSyncing = syncPhase === "syncing";
 
-  /** One countervalue per row; avoids recalculations in sorting. */
-  const balanceSortFiatByAccountId = useMemo(() => {
-    const map = new Map<string, BigNumber>();
-    for (const account of rows) {
-      const currency = getAccountCurrency(account);
-      map.set(account.id, calculateCountervalue(currency, account.balance) ?? new BigNumber(0));
+  const aggregatedDataByAccountId = useMemo(
+    () =>
+      shouldDisplayAggregatedAssets
+        ? computeAggregatedAccountsData(rows, calculateCountervalue)
+        : null,
+    [shouldDisplayAggregatedAssets, rows, calculateCountervalue],
+  );
+
+  const getSortCountervalue = useMemo(() => {
+    if (aggregatedDataByAccountId) {
+      return (id: string) => aggregatedDataByAccountId.get(id)?.countervalue ?? new BigNumber(0);
     }
-    return map;
-  }, [rows, calculateCountervalue]);
+    const countervalueByAccountId = computeBalanceSortCountervalueByAccountId(
+      rows,
+      calculateCountervalue,
+    );
+    return (id: string) => countervalueByAccountId.get(id) ?? new BigNumber(0);
+  }, [aggregatedDataByAccountId, rows, calculateCountervalue]);
 
   const columns = useMemo<ColumnDef<AccountLike>[]>(
     () => [
@@ -58,12 +74,18 @@ export function useCryptoDataTable({
             { sensitivity: "base" },
           ),
         header: t("cryptoAddresses.table.columns.name"),
-        cell: ({ row }) => (
-          <AccountNameCell
-            account={row.original}
-            displayName={accountNameWithDefaultSelector(walletState, row.original)}
-          />
-        ),
+        cell: ({ row }) =>
+          shouldDisplayAggregatedAssets && row.original.type === "Account" ? (
+            <AggregatedAccountNameCell
+              account={row.original}
+              displayName={accountNameWithDefaultSelector(walletState, row.original)}
+            />
+          ) : (
+            <AccountNameCell
+              account={row.original}
+              displayName={accountNameWithDefaultSelector(walletState, row.original)}
+            />
+          ),
       },
       {
         id: "address",
@@ -77,13 +99,20 @@ export function useCryptoDataTable({
       {
         id: "balance",
         accessorKey: "balance",
-        sortingFn: (rowA, rowB) => {
-          const fiatA = balanceSortFiatByAccountId.get(rowA.original.id) ?? new BigNumber(0);
-          const fiatB = balanceSortFiatByAccountId.get(rowB.original.id) ?? new BigNumber(0);
-          return fiatA.comparedTo(fiatB);
-        },
+        sortingFn: (rowA, rowB) =>
+          getSortCountervalue(rowA.original.id).comparedTo(getSortCountervalue(rowB.original.id)),
         header: t("cryptoAddresses.table.columns.value"),
-        cell: ({ row }) => <AccountValueCell account={row.original} />,
+        cell: ({ row }) => {
+          const entry = aggregatedDataByAccountId?.get(row.original.id);
+          return shouldDisplayAggregatedAssets && aggregatedDataByAccountId ? (
+            <AggregatedAccountValueCell
+              aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
+              assetsCount={entry?.count ?? 0}
+            />
+          ) : (
+            <AccountValueCell account={row.original} />
+          );
+        },
         meta: { align: "end" },
       },
       {
@@ -100,7 +129,15 @@ export function useCryptoDataTable({
         meta: { align: "end" },
       },
     ],
-    [t, walletState, lookupParentAccount, balanceSortFiatByAccountId, isSyncing],
+    [
+      t,
+      walletState,
+      shouldDisplayAggregatedAssets,
+      lookupParentAccount,
+      getSortCountervalue,
+      aggregatedDataByAccountId,
+      isSyncing,
+    ],
   );
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "balance", desc: true }]);
@@ -139,5 +176,14 @@ export function useCryptoDataTable({
     [lookupParentAccount, onRowClick],
   );
 
-  return { table, handleRowClick };
+  const getRowTestId = useCallback(
+    (row: Row<AccountLike>) => {
+      const accountName = accountNameWithDefaultSelector(walletState, row.original);
+      const sanitizedName = accountName.replaceAll(/\s+/g, "-");
+      return `crypto-account-row-${sanitizedName}`;
+    },
+    [walletState],
+  );
+
+  return { table, handleRowClick, getRowTestId };
 }

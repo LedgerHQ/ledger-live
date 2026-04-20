@@ -10,7 +10,7 @@ import { useSettings } from "./useSettings";
 import { useHistory } from "./useHistory";
 
 const useTopBarViewModel = () => {
-  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("desktop");
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
   const {
     hasAccounts,
@@ -112,16 +112,20 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    {
-      type: "action",
-      action: {
-        label: "settings",
-        tooltip: settingsTooltip,
-        icon: settingsIcon,
-        isInteractive: true,
-        onClick: handleSettings,
-      },
-    },
+    ...(!shouldDisplayMyWallet
+      ? [
+          {
+            type: "action" as const,
+            action: {
+              label: "settings",
+              tooltip: settingsTooltip,
+              icon: settingsIcon,
+              isInteractive: true,
+              onClick: handleSettings,
+            },
+          },
+        ]
+      : []),
     {
       type: "action",
       action: {

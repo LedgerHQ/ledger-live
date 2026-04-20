@@ -27,7 +27,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     bitcoinBridge.mockClear();
   });
 
-  it("should call the bridge if the implementation exists", () => {
+  it("should call the bridge if the implementation exists", async () => {
     // Given
     const tx: PlatformTransaction = {
       family: FAMILIES.BITCOIN,
@@ -36,14 +36,14 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     };
 
     // When
-    getPlatformTransactionSignFlowInfos(tx);
+    await getPlatformTransactionSignFlowInfos(tx);
 
     // Then
     expect(bitcoinBridge).toHaveBeenCalledTimes(1);
     expect(evmBridge).toHaveBeenCalledTimes(0);
   });
 
-  it("should call the evm bridge for PlatformTransaction tx of ethereum family", () => {
+  it("should call the evm bridge for PlatformTransaction tx of ethereum family", async () => {
     // Given
     const tx: PlatformTransaction = {
       family: FAMILIES.ETHEREUM,
@@ -52,14 +52,14 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     };
 
     // When
-    getPlatformTransactionSignFlowInfos(tx);
+    await getPlatformTransactionSignFlowInfos(tx);
 
     // Then
     expect(evmBridge).toHaveBeenCalledTimes(1);
     expect(bitcoinBridge).toHaveBeenCalledTimes(0);
   });
 
-  it("should use its fallback if the bridge doesn't exist", () => {
+  it("should use its fallback if the bridge doesn't exist", async () => {
     // Given
     const platformTx: PlatformTransaction = {
       family: FAMILIES.ALGORAND,
@@ -77,7 +77,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
     // When
     const { canEditFees, hasFeesProvided, liveTx } =
-      getPlatformTransactionSignFlowInfos(platformTx);
+      await getPlatformTransactionSignFlowInfos(platformTx);
 
     // Then
     expect(evmBridge).toHaveBeenCalledTimes(0);
