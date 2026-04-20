@@ -66,7 +66,7 @@ function getBalanceOptions(currency: CryptoCurrency): BalanceOptions {
   };
 }
 
-export default function evmBridge(currency: CryptoCurrency): BridgeApi {
+export function evmBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) =>

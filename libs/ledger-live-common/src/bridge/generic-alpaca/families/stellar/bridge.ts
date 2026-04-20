@@ -37,7 +37,7 @@ export function getAssetFromToken(token: TokenCurrency): AssetInfo {
   };
 }
 
-export default {
+export const stellarBridge = {
   getTokenFromAsset,
   getAssetFromToken,
   getChainSpecificRules,

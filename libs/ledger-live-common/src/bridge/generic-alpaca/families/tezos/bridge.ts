@@ -22,7 +22,7 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
   };
 }
 
-export default {
+export const tezosBridge = {
   getTokenFromAsset,
   getAssetFromToken,
 } satisfies BridgeApi;

@@ -1,20 +1,24 @@
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import evmBridge from "./families/evm/bridge";
-import stellarBridge from "./families/stellar/bridge";
-import solanaBridge from "./families/solana/bridge";
-import tezosBridge from "./families/tezos/bridge";
 
-export function getBridgeApi(currency: CryptoCurrency, network: string): BridgeApi {
+export async function getBridgeApi(currency: CryptoCurrency, network: string): Promise<BridgeApi> {
   switch (network) {
-    case "evm":
+    case "evm": {
+      const { evmBridge } = await import("./families/evm/bridge.js");
       return evmBridge(currency);
-    case "solana":
+    }
+    case "solana": {
+      const { solanaBridge } = await import("./families/solana/bridge.js");
       return solanaBridge(currency);
-    case "stellar":
+    }
+    case "stellar": {
+      const { stellarBridge } = await import("./families/stellar/bridge.js");
       return stellarBridge;
-    case "tezos":
+    }
+    case "tezos": {
+      const { tezosBridge } = await import("./families/tezos/bridge.js");
       return tezosBridge;
+    }
     default:
       return {};
   }

@@ -43,7 +43,7 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
   }
 }
 
-export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
+export function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),

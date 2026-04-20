@@ -5,7 +5,21 @@ import * as path from "path";
 const ALLOWED_SOURCES = [
   "ledger-live-common/src/families/",
   "ledger-live-common/src/coin-modules/",
-  "ledger-live-common/src/bridge/generic-alpaca/", // LIVE-29339
+  // Lazy leaf modules under generic-alpaca — only reachable via dynamic import() or conditional
+  // require() in their parent (alpaca/index.ts or signer.ts). esbuild traces through import()
+  // boundaries so these appear in the metafile, but they are NOT loaded at startup.
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/canton.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/evm.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/solana.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/stellar.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/tezos.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/tron.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/alpaca/local/xrp.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/families/evm/signer.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/families/stellar/bridge.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/families/stellar/signer.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/families/tezos/signer.ts",
+  "ledger-live-common/src/bridge/generic-alpaca/families/xrp/signer.ts",
   "ledger-live-common/src/wallet-api/", // LIVE-29338
 ];
 

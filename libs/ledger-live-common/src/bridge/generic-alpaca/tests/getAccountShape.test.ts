@@ -28,7 +28,7 @@ jest.mock("../alpaca", () => ({
   }),
 }));
 jest.mock("../bridge", () => ({
-  getBridgeApi: () => ({
+  getBridgeApi: () => Promise.resolve({
     getTokenFromAsset: getTokenFromAssetMock,
     getChainSpecificRules: () => ({
       getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
