@@ -35,7 +35,7 @@ export function ExportScene({
   const { t } = useTranslation();
 
   return (
-    <DialogContent>
+    <DialogContent data-testid="history-export-dialog">
       <DialogHeader title={t("history.exportDialog.title")} />
       <DialogBody className="flex flex-col gap-24">
         <ExportDescription />
@@ -57,6 +57,7 @@ export function ExportScene({
           appearance="base"
           size="lg"
           isFull
+          data-testid="history-export-csv-confirm"
         >
           {t("history.exportDialog.export")}
         </Button>

@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron";
 import { useState, useCallback, useEffect, useRef } from "react";
+import { getEnv } from "@ledgerhq/live-env";
 import { useSelector } from "LLD/hooks/redux";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
@@ -67,11 +68,18 @@ export function useExportOperationsCsv({
 
   const exportCsv = useCallback(async () => {
     try {
-      const path = await ipcRenderer.invoke("show-save-dialog", {
-        title: "Exported account transactions",
-        defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
-        filters: [{ name: "All Files", extensions: ["csv"] }],
-      });
+      const path = getEnv("PLAYWRIGHT_RUN")
+        ? {
+            canceled: false,
+            // The Playwright fixture injects a unique per-test path (suffixed with the
+            // test id) to keep parallel runs from racing on the same CSV file.
+            filePath: process.env.PLAYWRIGHT_EXPORT_CSV_PATH || "./ledgerwallet-operations.csv",
+          }
+        : await ipcRenderer.invoke("show-save-dialog", {
+            title: "Exported account transactions",
+            defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
+            filters: [{ name: "All Files", extensions: ["csv"] }],
+          });
       if (path?.filePath) {
         const csv = accountsOpToCSV(
           accounts.filter(a => checkedIds.includes(a.id)),

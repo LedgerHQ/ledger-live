@@ -43,8 +43,8 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
     isToken && !shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrency.id : undefined;
 
   return (
-    <TableRow clickable onClick={handleClick}>
-      <TableCell>
+    <TableRow clickable onClick={handleClick} data-testid={`history-operation-row-${operation.id}`}>
+      <TableCell data-testid="history-operation-type">
         <TableCellContent
           leadingContent={
             shouldDisplayAggregatedAssets && cryptoCurrency ? (
@@ -60,7 +60,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
           title={typeLabel}
         />
       </TableCell>
-      <TableCell align="end">
+      <TableCell align="end" data-testid="history-operation-address">
         <TableCellContent
           align="end"
           title={
@@ -78,7 +78,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
           }
         />
       </TableCell>
-      <TableCell align="end">
+      <TableCell align="end" data-testid="history-operation-amount">
         <FormattedVal
           val={amount}
           unit={unit}
@@ -88,7 +88,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
           color={amount.isNegative() ? "neutral.c80" : undefined}
         />
       </TableCell>
-      <TableCell align="end">
+      <TableCell align="end" data-testid="history-operation-value">
         <CounterValue
           color="neutral.c80"
           fontSize={3}

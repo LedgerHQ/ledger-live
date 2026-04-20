@@ -52,7 +52,12 @@ export function ExportResultScene({ variant, onAction }: Props) {
           />
           <Spot appearance={config.spotAppearance} size={72} />
           <div className="flex flex-col items-center gap-12 text-center">
-            <span className="heading-4-semi-bold text-base">{t(config.titleKey)}</span>
+            <span
+              className="heading-4-semi-bold text-base"
+              data-testid={`history-export-${variant}-title`}
+            >
+              {t(config.titleKey)}
+            </span>
             <p className="body-2 text-muted">{t(config.descriptionKey)}</p>
           </div>
         </div>
