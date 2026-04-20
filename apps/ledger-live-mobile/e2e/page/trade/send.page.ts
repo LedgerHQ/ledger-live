@@ -7,15 +7,16 @@ export default class SendPage {
   baseLink = "send";
   summaryAmountId = "send-summary-amount";
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
-  recipientContinueButtonId = "recipient-continue-button";
+  recipientContinueEnabledButtonId = "enabled-recipient-continue-button";
+  recipientContinueDisabledButtonId = "disabled-recipient-continue-button";
   recipientInputId = "recipient-input";
   memoTagInputId = "memo-tag-input";
   memoTagDrawerTitleId = "memo-tag-drawer-title";
-  memoTagIgnoreButtonId = "memo-tag-ignore-button";
+  memoTagIgnoreButtonId = "enabled-memo-tag-ignore-button";
   amountInputId = "amount-input";
   amountMaxSwitch = () => getElementById("send-amount-max-switch");
-  amountContinueButton = () => getElementById("amount-continue-button");
-  summaryContinueButton = () => getElementById("summary-continue-button");
+  amountContinueButton = () => getElementById("enabled-amount-continue-button");
+  summaryContinueButton = () => getElementById("enabled-summary-continue-button");
   recipientErrorId = "send-recipient-error";
   recipientErrorDescriptionId = "send-recipient-error-description";
   learnMoreLinkId = "learn-more-link";
@@ -47,8 +48,8 @@ export default class SendPage {
 
   @Step("Continue to next step and skip memo tag if needed")
   async recipientContinue(memoTag?: string) {
-    await waitForElementById(this.recipientContinueButtonId); // To prevent flakiness
-    await tapById(this.recipientContinueButtonId);
+    await waitForElementById(this.recipientContinueEnabledButtonId); // To prevent flakiness
+    await tapById(this.recipientContinueEnabledButtonId);
     if (memoTag == "noTag") {
       await waitForElementById(this.memoTagDrawerTitleId);
       await tapById(this.memoTagIgnoreButtonId);
@@ -101,13 +102,13 @@ export default class SendPage {
 
   @Step("Expect Continue button disabled")
   async expectContinueButtonDisabled() {
-    await expect(getElementById(this.recipientContinueButtonId)).toBeVisible();
-    await tapById(this.recipientContinueButtonId);
+    await expect(getElementById(this.recipientContinueDisabledButtonId)).toBeVisible();
   }
 
   @Step("Expect Continue button not visible")
   async expectContinueButtonNotVisible() {
-    await expect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
+    await expect(getElementById(this.recipientContinueEnabledButtonId)).not.toBeVisible();
+    await expect(getElementById(this.recipientContinueDisabledButtonId)).not.toBeVisible();
   }
 
   @Step("Expect sender to have error title")

@@ -3,7 +3,7 @@ import { isIos } from "../../helpers/commonHelpers";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
-  acceptAnalyticsButtonId = "accept-analytics-button";
+  acceptAnalyticsButtonId = "enabled-accept-analytics-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
   recoveryPhrase = "onboarding-useCase-recoveryPhrase";
   setupLedger = "onboarding-setupLedger";

@@ -64,7 +64,7 @@ describe("DeviceAction - Deprecation", () => {
     ).toBeVisible();
     expect(screen.getByText("Continue")).toBeVisible();
 
-    const continueButton = screen.getByTestId("warning-deprecation-continue");
+    const continueButton = screen.getByTestId("enabled-warning-deprecation-continue");
     await user.press(continueButton);
 
     expect(screen.getByText("Ledger Nano S™ can not Clear Sign this transaction")).toBeVisible();
@@ -120,7 +120,7 @@ describe("DeviceAction - Deprecation", () => {
     ).toBeVisible();
     expect(screen.getByText("Continue")).toBeVisible();
 
-    const continueButton = screen.getByTestId("warning-deprecation-continue");
+    const continueButton = screen.getByTestId("enabled-warning-deprecation-continue");
     await user.press(continueButton);
     expect(mockOnContinue).toHaveBeenCalled();
   });
@@ -167,7 +167,7 @@ describe("DeviceAction - Deprecation", () => {
     expect(screen.getByText("Ledger Nano S™ can not Clear Sign this transaction")).toBeVisible();
     expect(screen.getByText("Proceed at your own risk")).toBeVisible();
 
-    const continueButton = screen.getByTestId("warning-deprecation-continue");
+    const continueButton = screen.getByTestId("enabled-warning-deprecation-continue");
     await user.press(continueButton);
     expect(mockOnContinue).toHaveBeenCalled();
   });
