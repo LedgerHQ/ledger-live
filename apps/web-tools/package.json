@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit --customConditions node"
   },
   "dependencies": {
-    "@devtools/core": "workspace:*",
+    "@devtools/shell": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
     "react-redux": "catalog:",

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { DevTools } from "@devtools/core";
+import { DevTools } from "@devtools/shell";
 
 export default function Home() {
   return (
