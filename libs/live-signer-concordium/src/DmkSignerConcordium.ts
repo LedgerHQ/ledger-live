@@ -1,12 +1,11 @@
 import { lastValueFrom } from "rxjs";
-import type { ConcordiumSigner } from "@ledgerhq/coin-concordium/types";
+import type { ConcordiumSigner, ConcordiumNetwork } from "@ledgerhq/coin-concordium/types";
 import {
   serializeTransaction,
   serializeCredentialDeploymentValues,
   serializeIdOwnershipProofs,
   encodeWord64,
   type Address,
-  type VerifyAddressResponse,
   type CredentialDeploymentTransaction,
   type Transaction,
   type SigningResult,
@@ -16,19 +15,26 @@ import {
   type DeviceActionState,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  ConcordiumAddressVerificationFailedError,
+  ConcordiumTrustedMetadataServiceError,
+  LockedDeviceError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import {
   type SignerConcordium,
   SignerConcordiumBuilder,
   type GetPublicKeyDAError,
   type SignTransactionDAError,
   type SignCredentialDeploymentTransactionDAError,
+  type VerifyAddressDAError,
 } from "@ledgerhq/device-signer-kit-concordium";
 
 type DAError =
   | GetPublicKeyDAError
   | SignTransactionDAError
-  | SignCredentialDeploymentTransactionDAError;
+  | SignCredentialDeploymentTransactionDAError
+  | VerifyAddressDAError;
 
 export class DmkSignerConcordium implements ConcordiumSigner {
   private readonly signer: SignerConcordium;
@@ -91,13 +97,15 @@ export class DmkSignerConcordium implements ConcordiumSigner {
     return Buffer.from(result).toString("hex");
   }
 
-  async verifyAddress(
-    _identityIndex: number,
-    _credNumber: number,
-    _ipIdentity: number,
-    _credId?: string,
-  ): Promise<VerifyAddressResponse> {
-    throw new Error("verifyAddress is not yet supported via DMK signer");
+  async verifyAddress(path: string, address: string, network: ConcordiumNetwork): Promise<void> {
+    const { observable } = this.signer.verifyAddress(path, address, network, {
+      skipOpenApp: true,
+    });
+
+    const confirmed = this.mapResult(await lastValueFrom(observable));
+    if (confirmed !== true) {
+      throw new Error("Address verification did not complete on the device");
+    }
   }
 
   private serializeCredentialDeploymentToBytes(tx: CredentialDeploymentTransaction): Uint8Array {
@@ -125,8 +133,10 @@ export class DmkSignerConcordium implements ConcordiumSigner {
   }
 
   private mapError<E extends DAError>(error: E): Error {
+    const originalMessage = this.originalErrorMessage(error);
+
     if (!("errorCode" in error)) {
-      return new Error(error._tag);
+      return new Error(this.formatGenericMessage(error._tag, originalMessage));
     }
 
     switch (error.errorCode) {
@@ -134,8 +144,22 @@ export class DmkSignerConcordium implements ConcordiumSigner {
         return new LockedDeviceError();
       case "6985":
         return new UserRefusedOnDevice();
+      case "trusted_metadata_service_error":
+        return new ConcordiumTrustedMetadataServiceError(originalMessage);
+      case "address_verification_failed":
+        return new ConcordiumAddressVerificationFailedError(originalMessage);
       default:
-        return new Error(error._tag);
+        return new Error(this.formatGenericMessage(error._tag, originalMessage));
     }
+  }
+
+  private originalErrorMessage<E extends DAError>(error: E): string | undefined {
+    return "originalError" in error && error.originalError instanceof Error
+      ? error.originalError.message
+      : undefined;
+  }
+
+  private formatGenericMessage(tag: string, originalMessage: string | undefined): string {
+    return originalMessage ? `${tag}: ${originalMessage}` : tag;
   }
 }

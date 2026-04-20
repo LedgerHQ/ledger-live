@@ -1,19 +1,13 @@
 import type {
   Address,
-  VerifyAddressResponse,
   CredentialDeploymentTransaction,
   Transaction,
   SigningResult,
 } from "@ledgerhq/concordium-core";
+import type { ConcordiumNetwork } from "./config";
 
 /**
  * Signer interface for Concordium device operations.
- *
- * This interface matches hw-app-concordium methods exactly.
- * All types are hw-app format (Buffer, primitives), not SDK types.
- *
- * Transformation from SDK → hw-app format happens in the bridge/business logic layer.
- * Implementation: ledger-live-common/families/concordium/setup.ts (just instantiates hw-app)
  */
 export interface ConcordiumSigner {
   /**
@@ -47,12 +41,9 @@ export interface ConcordiumSigner {
   signCredentialDeployment(tx: CredentialDeploymentTransaction, path: string): Promise<string>;
 
   /**
-   * Verify account address on device.
+   * Verify a Concordium account address on device using the trusted backend pattern.
+   * Fetches a signed account ownership descriptor from the metadata service,
+   * loads it onto the device, and displays the address for user confirmation.
    */
-  verifyAddress(
-    identityIndex: number,
-    credNumber: number,
-    ipIdentity: number,
-    credId?: string,
-  ): Promise<VerifyAddressResponse>;
+  verifyAddress(path: string, address: string, network: ConcordiumNetwork): Promise<void>;
 }

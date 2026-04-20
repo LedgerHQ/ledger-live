@@ -27,6 +27,9 @@ catalogs:
     '@ledgerhq/device-management-kit':
       specifier: 1.3.0
       version: 1.3.0
+    '@ledgerhq/device-signer-kit-concordium':
+      specifier: 0.3.0
+      version: 0.3.0
     '@ledgerhq/device-signer-kit-cosmos':
       specifier: 1.0.0
       version: 1.0.0
@@ -10974,12 +10977,15 @@ importers:
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../concordium-core
+      '@ledgerhq/context-module':
+        specifier: 1.17.1
+        version: 1.17.1(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.3.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
-        specifier: 0.2.0
-        version: 0.2.0(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))
+        specifier: 'catalog:'
+        version: 0.3.0(@ledgerhq/context-module@1.17.1(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -16924,10 +16930,11 @@ packages:
       '@ledgerhq/context-module': 1.17.1
       '@ledgerhq/device-management-kit': ^1.2.0
 
-  '@ledgerhq/device-signer-kit-concordium@0.2.0':
-    resolution: {integrity: sha512-OVsczSo0iRPLyN5JyodOnBP1+XxndU+zAiO6Vs6s56/dqUK2D3T3VYdiqcHOQODIlAtbiJCWu49xDCPQD9d5Xg==}
+  '@ledgerhq/device-signer-kit-concordium@0.3.0':
+    resolution: {integrity: sha512-o8/5e5fjFTQ3apRaN9UC3DCHcIWSe1hpc6p99Sc5c3Zh+WZFPS25AuaGxh1PcvqG5GoafcYsPpZfa0xdHuQQqA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/context-module': 1.17.1
+      '@ledgerhq/device-management-kit': ^1.3.0
 
   '@ledgerhq/device-signer-kit-cosmos@1.0.0':
     resolution: {integrity: sha512-z5r7TwUrROxzmKJLXPk4cjGWRY4vGrwdTIQuBVyM6p6/zaEIiOV5yq9CO6GUn1vMeUKtFmESXrWV8eyYyNHLEg==}
@@ -45500,8 +45507,9 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.2.0(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.3.0(@ledgerhq/context-module@1.17.1(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))':
     dependencies:
+      '@ledgerhq/context-module': 1.17.1(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.3.0(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)

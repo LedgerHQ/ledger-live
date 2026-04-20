@@ -3,7 +3,18 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ConcordiumSigner } from "../types";
 import { VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
 import { buildReceive } from "./receive";
-import { createFixtureConcordiumAccount } from "./bridge.fixture";
+import {
+  createFixtureConcordiumAccount,
+  createFixtureSigner,
+  createFixtureSignerContext,
+} from "./bridge.fixture";
+
+jest.mock("../config", () => ({
+  __esModule: true,
+  default: {
+    getCoinConfig: jest.fn().mockReturnValue({ networkType: "mainnet" }),
+  },
+}));
 
 /**
  * Creates a mock SignerContext that is a jest.fn() for call tracking.
@@ -153,6 +164,63 @@ describe("receive", () => {
 
       // THEN
       await expect(firstValueFrom(observable)).rejects.toThrow(errorMessage);
+    });
+
+    describe("with verify=true", () => {
+      it("should call signer.verifyAddress with path, address and network", async () => {
+        // GIVEN
+        const signer = createFixtureSigner();
+        const signerContext = createFixtureSignerContext(signer);
+        const receive = buildReceive(signerContext);
+        const account = createFixtureConcordiumAccount();
+
+        // WHEN
+        const observable = receive(account, { deviceId: "test-device", verify: true });
+        await firstValueFrom(observable.pipe(toArray()));
+
+        // THEN
+        expect(signer.verifyAddress).toHaveBeenCalledWith(
+          account.freshAddressPath,
+          account.freshAddress,
+          "mainnet",
+        );
+      });
+
+      it("should emit address info after successful verification", async () => {
+        // GIVEN
+        const signer = createFixtureSigner();
+        const signerContext = createFixtureSignerContext(signer);
+        const receive = buildReceive(signerContext);
+        const account = createFixtureConcordiumAccount();
+
+        // WHEN
+        const observable = receive(account, { deviceId: "test-device", verify: true });
+        const events = await firstValueFrom(observable.pipe(toArray()));
+
+        // THEN
+        expect(events).toHaveLength(1);
+        expect(events[0]).toEqual({
+          address: VALID_ADDRESS,
+          path: "44'/919'/404'/404'/0'",
+          publicKey: PUBLIC_KEY,
+        });
+      });
+
+      it("should propagate verifyAddress errors through observable", async () => {
+        // GIVEN
+        const signer = createFixtureSigner({
+          verifyAddress: jest.fn().mockRejectedValue(new Error("device error")),
+        });
+        const signerContext = createFixtureSignerContext(signer);
+        const receive = buildReceive(signerContext);
+        const account = createFixtureConcordiumAccount();
+
+        // WHEN
+        const observable = receive(account, { deviceId: "test-device", verify: true });
+
+        // THEN
+        await expect(firstValueFrom(observable)).rejects.toThrow("device error");
+      });
     });
   });
 });
