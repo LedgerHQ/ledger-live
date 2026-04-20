@@ -40,7 +40,7 @@ module.exports = {
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
     init: {
-      reinstallApp: false,
+      reinstallApp: true,
       exposeGlobals: false,
     },
     launchApp: "auto",

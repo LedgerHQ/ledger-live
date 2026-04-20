@@ -76,7 +76,6 @@ export async function launchApp() {
   closeBridge();
   initBridge(port);
   await device.launchApp({
-    resetAppState: true,
     launchArgs: {
       wsPort: port,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
