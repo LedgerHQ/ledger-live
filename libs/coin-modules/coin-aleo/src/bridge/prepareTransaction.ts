@@ -8,7 +8,6 @@ import {
   findBestRecordForFee,
   isPrivateTransaction,
   selectPrivateRecordsForAmount,
-  selectTopPrivateRecordsByValue,
 } from "../logic/utils";
 import type { AleoAccount, Transaction as AleoTransaction } from "../types";
 
@@ -26,12 +25,10 @@ export const prepareTransaction: AccountBridge<
   const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords ?? [];
 
   if (isPrivateTransaction(transaction)) {
-    const selectedAmountRecords = transaction.useAllAmount
-      ? selectTopPrivateRecordsByValue({ unspentRecords: unspentPrivateRecords })
-      : selectPrivateRecordsForAmount({
-          unspentRecords: unspentPrivateRecords,
-          targetAmount: transaction.amount,
-        });
+    const selectedAmountRecords = selectPrivateRecordsForAmount({
+      unspentRecords: unspentPrivateRecords,
+      targetAmount: transaction.useAllAmount ? null : transaction.amount,
+    });
 
     const selectedAmountRecordCommitments = selectedAmountRecords.map(record => record.commitment);
 

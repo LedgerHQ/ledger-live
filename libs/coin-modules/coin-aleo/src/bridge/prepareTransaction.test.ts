@@ -6,7 +6,6 @@ import {
   calculateAmount,
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
-  selectTopPrivateRecordsByValue,
 } from "../logic/utils";
 import {
   getMockedAccount,
@@ -24,7 +23,6 @@ jest.mock("../logic/utils", () => ({
   calculateAmount: jest.fn(),
   findBestRecordForFee: jest.fn(),
   selectPrivateRecordsForAmount: jest.fn(),
-  selectTopPrivateRecordsByValue: jest.fn(),
 }));
 
 const mockConfig = getMockedConfig("mainnet");
@@ -33,7 +31,6 @@ const mockEstimateFees = jest.mocked(estimateFees);
 const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockFindBestRecordForFee = jest.mocked(findBestRecordForFee);
 const mockSelectPrivateRecordsForAmount = jest.mocked(selectPrivateRecordsForAmount);
-const mockSelectTopPrivateRecordsByValue = jest.mocked(selectTopPrivateRecordsByValue);
 
 describe("prepareTransaction", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -58,7 +55,6 @@ describe("prepareTransaction", () => {
     });
     mockFindBestRecordForFee.mockReturnValue(null);
     mockSelectPrivateRecordsForAmount.mockReturnValue([mockUnspentRecord1]);
-    mockSelectTopPrivateRecordsByValue.mockReturnValue([mockUnspentRecord1]);
   });
 
   it("should return transaction with calculated amount and fees", async () => {
@@ -231,7 +227,7 @@ describe("prepareTransaction", () => {
     });
   });
 
-  it("should use top records selector for private send max", async () => {
+  it("should use selectPrivateRecordsForAmount for private send max", async () => {
     const mockPrivateTransaction: Transaction = {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
@@ -242,11 +238,14 @@ describe("prepareTransaction", () => {
       },
     };
 
-    mockSelectTopPrivateRecordsByValue.mockReturnValue([mockUnspentRecord1, mockUnspentRecord2]);
+    mockSelectPrivateRecordsForAmount.mockReturnValue([mockUnspentRecord1, mockUnspentRecord2]);
 
     await prepareTransaction(mockAccount, mockPrivateTransaction);
 
-    expect(mockSelectTopPrivateRecordsByValue).toHaveBeenCalledTimes(1);
-    expect(mockSelectPrivateRecordsForAmount).not.toHaveBeenCalled();
+    expect(mockSelectPrivateRecordsForAmount).toHaveBeenCalledTimes(1);
+    expect(mockSelectPrivateRecordsForAmount).toHaveBeenCalledWith({
+      unspentRecords: mockAccount.aleoResources?.unspentPrivateRecords ?? [],
+      targetAmount: null,
+    });
   });
 });

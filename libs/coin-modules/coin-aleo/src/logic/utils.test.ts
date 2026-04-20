@@ -59,7 +59,6 @@ import {
   extractViewKey,
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
-  selectTopPrivateRecordsByValue,
   sumPrivateRecords,
 } from "./utils";
 
@@ -1532,7 +1531,34 @@ describe("findBestRecordForFee", () => {
 });
 
 describe("selectPrivateRecordsForAmount", () => {
-  it("should pick the smallest sufficient single record", () => {
+  it("should return top maxRecords records by value descending when targetAmount is null", () => {
+    const records = Array.from({ length: 10 }, (_, i) => ({
+      ...mockUnspentRecord1,
+      commitment: `r${i}`,
+      microcredits: `${(i + 1) * 10}`,
+    }));
+
+    const result = selectPrivateRecordsForAmount({ unspentRecords: records, targetAmount: null });
+
+    expect(result.map(r => r.microcredits)).toEqual([
+      "100",
+      "90",
+      "80",
+      "70",
+      "60",
+      "50",
+      "40",
+      "30",
+    ]);
+  });
+
+  it("should return empty array when targetAmount is null and input is empty", () => {
+    const result = selectPrivateRecordsForAmount({ unspentRecords: [], targetAmount: null });
+
+    expect(result).toEqual([]);
+  });
+
+  it("should pick the smallest single record that covers the target", () => {
     const records = [
       { ...mockUnspentRecord1, microcredits: "50" },
       { ...mockUnspentRecord2, microcredits: "5" },
@@ -1543,14 +1569,44 @@ describe("selectPrivateRecordsForAmount", () => {
       targetAmount: new BigNumber(1),
     });
 
-    expect(result).toHaveLength(1);
-    expect(result[0].microcredits).toBe("5");
+    expect(result.map(r => r.microcredits)).toEqual(["5"]);
   });
 
-  it("should accumulate ascending records when no single record can cover target", () => {
+  it("should skip records below the target and pick the next sufficient one", () => {
+    // [1000, 500, 1, 1]: target 2 -> dust (1) is insufficient, so smallest sufficient is 500
     const records = [
-      { ...mockUnspentRecord1, microcredits: "5" },
-      { ...mockUnspentRecord2, microcredits: "7" },
+      { ...mockUnspentRecord1, commitment: "r0", microcredits: "1000" },
+      { ...mockUnspentRecord1, commitment: "r1", microcredits: "500" },
+      { ...mockUnspentRecord2, commitment: "r2", microcredits: "1" },
+      { ...mockUnspentRecord2, commitment: "r3", microcredits: "1" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(2),
+    });
+
+    expect(result.map(r => r.microcredits)).toEqual(["500"]);
+  });
+
+  it("should skip 500 when the target is 501 and only 1000 is sufficient", () => {
+    const records = [
+      { ...mockUnspentRecord1, commitment: "r0", microcredits: "1000" },
+      { ...mockUnspentRecord1, commitment: "r1", microcredits: "500" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(501),
+    });
+
+    expect(result.map(r => r.microcredits)).toEqual(["1000"]);
+  });
+
+  it("should accumulate largest records first when no single record covers the target", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "7" },
+      { ...mockUnspentRecord2, microcredits: "5" },
     ];
 
     const result = selectPrivateRecordsForAmount({
@@ -1558,23 +1614,105 @@ describe("selectPrivateRecordsForAmount", () => {
       targetAmount: new BigNumber(10),
     });
 
-    expect(result).toHaveLength(2);
+    expect(result.map(r => r.microcredits)).toEqual(["7", "5"]);
   });
-});
 
-describe("selectTopPrivateRecordsByValue", () => {
-  it("should cap selected records to 8 highest values", () => {
-    const records = Array.from({ length: 10 }, (_, index) => ({
+  it("should stop accumulating once the running total meets the target", () => {
+    const records = Array.from({ length: 10 }, (_, i) => ({
       ...mockUnspentRecord1,
-      commitment: `record-${index}`,
-      microcredits: `${(index + 1) * 10}`,
+      commitment: `r${i}`,
+      microcredits: "10",
     }));
 
-    const result = selectTopPrivateRecordsByValue({ unspentRecords: records });
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(50),
+    });
 
-    expect(result).toHaveLength(8);
-    expect(result[0].microcredits).toBe("100");
-    expect(result[7].microcredits).toBe("30");
+    expect(result.map(r => r.microcredits)).toEqual(["10", "10", "10", "10", "10"]);
+  });
+
+  it("should cap selection at maxRecords and overshoot rather than exceed the limit", () => {
+    // 10 x 10 ALEO, target 79: 8 records sum to 80 which covers the target
+    const records = Array.from({ length: 10 }, (_, i) => ({
+      ...mockUnspentRecord1,
+      commitment: `r${i}`,
+      microcredits: "10",
+    }));
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(79),
+    });
+
+    expect(result.map(r => r.microcredits)).toEqual([
+      "10",
+      "10",
+      "10",
+      "10",
+      "10",
+      "10",
+      "10",
+      "10",
+    ]);
+  });
+
+  it("should stop accumulating before recruiting dust when larger records already cover the target", () => {
+    const records = [
+      { ...mockUnspentRecord1, commitment: "r0", microcredits: "1000" },
+      { ...mockUnspentRecord1, commitment: "r1", microcredits: "500" },
+      { ...mockUnspentRecord2, commitment: "r2", microcredits: "1" },
+      { ...mockUnspentRecord2, commitment: "r3", microcredits: "1" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(1001),
+    });
+
+    expect(result.map(r => r.microcredits)).toEqual(["1000", "500"]);
+  });
+
+  it("should return empty array for target ≤ 0", () => {
+    const records = [{ ...mockUnspentRecord1, microcredits: "100" }];
+
+    expect(
+      selectPrivateRecordsForAmount({ unspentRecords: records, targetAmount: new BigNumber(0) }),
+    ).toEqual([]);
+    expect(
+      selectPrivateRecordsForAmount({ unspentRecords: records, targetAmount: new BigNumber(-1) }),
+    ).toEqual([]);
+  });
+
+  it("should filter out zero-value records before selection", () => {
+    const records = [
+      { ...mockUnspentRecord1, commitment: "r0", microcredits: "0" },
+      { ...mockUnspentRecord1, commitment: "r1", microcredits: "0" },
+      { ...mockUnspentRecord2, commitment: "r2", microcredits: "10" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(5),
+    });
+
+    expect(result.map(r => r.microcredits)).toEqual(["10"]);
+  });
+
+  it("should respect a custom maxRecords override", () => {
+    const records = Array.from({ length: 5 }, (_, i) => ({
+      ...mockUnspentRecord1,
+      commitment: `r${i}`,
+      microcredits: "10",
+    }));
+
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: new BigNumber(50),
+      maxRecords: 3,
+    });
+
+    expect(result.map(r => r.microcredits)).toEqual(["10", "10", "10"]);
   });
 });
 

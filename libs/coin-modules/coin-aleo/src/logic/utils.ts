@@ -249,50 +249,55 @@ function sortByMicrocredits(
   });
 }
 
-export function selectTopPrivateRecordsByValue({
-  unspentRecords,
-  maxRecords = MAX_PRIVATE_RECORDS_PER_TRANSACTION,
-}: {
-  unspentRecords: AleoUnspentRecord[];
-  maxRecords?: number;
-}): AleoUnspentRecord[] {
-  const positiveRecords = unspentRecords.filter(record =>
-    new BigNumber(record.microcredits).isGreaterThan(0),
-  );
-
-  return sortByMicrocredits(positiveRecords, "desc").slice(0, maxRecords);
-}
-
+/**
+ * Selects the minimum set of private records needed to cover `targetAmount` using a greedy largest-first strategy:
+ *
+ * - If `targetAmount` is omitted, returns the top `maxRecords` records by value (useAllAmount mode).
+ * - If `targetAmount` is provided and positive:
+ *   1. Prefer the **smallest single record** that alone covers the target (fewest records, least overshoot).
+ *   2. Otherwise accumulate the **largest records first** until the running total meets the target or `maxRecords` is exhausted.
+ */
 export function selectPrivateRecordsForAmount({
   unspentRecords,
   targetAmount,
   maxRecords = MAX_PRIVATE_RECORDS_PER_TRANSACTION,
 }: {
   unspentRecords: AleoUnspentRecord[];
-  targetAmount: BigNumber;
+  targetAmount: BigNumber | null;
   maxRecords?: number;
 }): AleoUnspentRecord[] {
   const positiveRecords = unspentRecords.filter(record =>
     new BigNumber(record.microcredits).isGreaterThan(0),
   );
 
-  if (positiveRecords.length === 0 || targetAmount.lte(0)) {
+  if (positiveRecords.length === 0) {
     return [];
   }
 
-  const sortedByValueAsc = sortByMicrocredits(positiveRecords, "asc");
-  const singleBestMatch = sortedByValueAsc.find(record =>
-    new BigNumber(record.microcredits).gte(targetAmount),
-  );
+  const sortedDesc = sortByMicrocredits(positiveRecords, "desc");
 
-  if (singleBestMatch) {
-    return [singleBestMatch];
+  // no target amount supplied -> useAllAmount mode: return top N records.
+  if (targetAmount === null) {
+    return sortedDesc.slice(0, maxRecords);
   }
 
+  if (targetAmount.lte(0)) {
+    return [];
+  }
+
+  // Step 1: Find the smallest single record that covers the target (least overshoot).
+  // Scanning from the end of the descending array gives us the smallest candidate first.
+  for (let i = sortedDesc.length - 1; i >= 0; i--) {
+    if (new BigNumber(sortedDesc[i].microcredits).gte(targetAmount)) {
+      return [sortedDesc[i]];
+    }
+  }
+
+  // Step 2: No single record is sufficient — accumulate largest-first.
   const selected: AleoUnspentRecord[] = [];
   let runningTotal = new BigNumber(0);
 
-  for (const record of sortedByValueAsc) {
+  for (const record of sortedDesc) {
     if (selected.length >= maxRecords) {
       break;
     }
@@ -570,8 +575,9 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
       return sumPrivateRecords(
-        selectTopPrivateRecordsByValue({
+        selectPrivateRecordsForAmount({
           unspentRecords: account.aleoResources?.unspentPrivateRecords ?? [],
+          targetAmount: null,
         }),
       );
     default:
