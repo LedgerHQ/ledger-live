@@ -5,6 +5,9 @@ import {
   loadSetupForFamily,
   loadTransactionForFamily,
   loadDeviceTxConfigForFamily,
+  loadWalletApiAdapterForFamily,
+  loadPlatformAdapterForFamily,
+  loadAccountModuleForFamily,
   loadMockBridgeForFamily,
   loadMockAccountForFamily,
 } from "./registry";
@@ -26,70 +29,47 @@ const makeLoader = (family: string, overrides: Partial<CoinModuleLoader> = {}): 
 
 describe("registerCoinModules / getRegisteredFamilies", () => {
   it("registers loaders and returns their families", () => {
-    registerCoinModules([makeLoader("bitcoin"), makeLoader("evm")]);
-    expect(getRegisteredFamilies()).toEqual(expect.arrayContaining(["bitcoin", "evm"]));
+    registerCoinModules([makeLoader("__regtest_a__"), makeLoader("__regtest_b__")]);
+    expect(getRegisteredFamilies()).toEqual(expect.arrayContaining(["__regtest_a__", "__regtest_b__"]));
   });
 });
 
-describe("loadSetupForFamily", () => {
-  it("calls the loader's loadSetup", () => {
-    const setup = { bridge: { currencyBridge: {}, accountBridge: {} } } as any;
-    registerCoinModules([makeLoader("bitcoin", { loadSetup: () => setup })]);
-    expect(loadSetupForFamily("bitcoin")).toBe(setup);
-  });
+type LoaderEntry = {
+  loaderKey: keyof CoinModuleLoader;
+  fn: (family: string) => unknown;
+  required?: true;
+};
 
-  it("throws CurrencyNotSupported for unknown family", () => {
-    expect(() => loadSetupForFamily("unknown_family")).toThrow(CurrencyNotSupported);
-  });
-});
+const allLoaders: LoaderEntry[] = [
+  { loaderKey: "loadSetup", fn: loadSetupForFamily, required: true },
+  { loaderKey: "loadTransaction", fn: loadTransactionForFamily, required: true },
+  { loaderKey: "loadDeviceTxConfig", fn: loadDeviceTxConfigForFamily },
+  { loaderKey: "loadWalletApiAdapter", fn: loadWalletApiAdapterForFamily },
+  { loaderKey: "loadPlatformAdapter", fn: loadPlatformAdapterForFamily },
+  { loaderKey: "loadAccount", fn: loadAccountModuleForFamily },
+  { loaderKey: "loadMockBridge", fn: loadMockBridgeForFamily },
+  { loaderKey: "loadMockAccount", fn: loadMockAccountForFamily },
+];
 
-describe("loadTransactionForFamily", () => {
-  it("calls the loader's loadTransaction", () => {
-    const txModule = { fromTransactionRaw: jest.fn() } as any;
-    registerCoinModules([makeLoader("evm", { loadTransaction: () => txModule })]);
-    expect(loadTransactionForFamily("evm")).toBe(txModule);
+for (const { loaderKey, fn, required } of allLoaders) {
+  describe(fn.name, () => {
+    it("returns module when loader has it", () => {
+      const stub = jest.fn();
+      registerCoinModules([makeLoader("__test__", { [loaderKey]: () => stub })]);
+      expect(fn("__test__")).toBe(stub);
+    });
+    if (required) {
+      it("throws CurrencyNotSupported for unknown family", () => {
+        expect(() => fn("__none__")).toThrow(CurrencyNotSupported);
+      });
+    } else {
+      it("returns undefined for unknown family", () => {
+        expect(fn("__none__")).toBeUndefined();
+      });
+      it("returns undefined when loader exists but method is absent", () => {
+        registerCoinModules([makeLoader("__bare__")]);
+        expect(fn("__bare__")).toBeUndefined();
+      });
+    }
   });
-});
-
-describe("loadDeviceTxConfigForFamily", () => {
-  it("returns the fn when loader has loadDeviceTxConfig", () => {
-    const fn = jest.fn() as any;
-    registerCoinModules([makeLoader("bitcoin", { loadDeviceTxConfig: () => fn })]);
-    expect(loadDeviceTxConfigForFamily("bitcoin")).toBe(fn);
-  });
-
-  it("returns undefined when loader has no loadDeviceTxConfig", () => {
-    registerCoinModules([makeLoader("evm")]);
-    expect(loadDeviceTxConfigForFamily("evm")).toBeUndefined();
-  });
-
-  it("returns undefined for unknown family", () => {
-    expect(loadDeviceTxConfigForFamily("unknown_family")).toBeUndefined();
-  });
-});
-
-describe("loadMockBridgeForFamily / loadMockAccountForFamily", () => {
-  it("returns undefined for unknown family", () => {
-    expect(loadMockBridgeForFamily("unknown")).toBeUndefined();
-    expect(loadMockAccountForFamily("unknown")).toBeUndefined();
-  });
-
-  it("returns undefined when loader has no mock loaders", () => {
-    registerCoinModules([makeLoader("bitcoin")]);
-    expect(loadMockBridgeForFamily("bitcoin")).toBeUndefined();
-    expect(loadMockAccountForFamily("bitcoin")).toBeUndefined();
-  });
-
-  it("calls loadMockBridge and loadMockAccount when present", () => {
-    const mockBridge = { currencyBridge: {} as any, accountBridge: {} as any };
-    const mockAccount = {};
-    registerCoinModules([
-      makeLoader("evm", {
-        loadMockBridge: () => mockBridge,
-        loadMockAccount: () => mockAccount,
-      }),
-    ]);
-    expect(loadMockBridgeForFamily("evm")).toBe(mockBridge);
-    expect(loadMockAccountForFamily("evm")).toBe(mockAccount);
-  });
-});
+}
