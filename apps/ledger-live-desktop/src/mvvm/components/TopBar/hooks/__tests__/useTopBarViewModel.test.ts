@@ -51,6 +51,7 @@ type SetupOptions = {
   experimentalVisible?: boolean;
   featureFlagsVisible?: boolean;
   operationsList?: boolean;
+  myWallet?: boolean;
   route?: string;
 };
 
@@ -60,6 +61,7 @@ const setup = ({
   experimentalVisible = false,
   featureFlagsVisible = false,
   operationsList = false,
+  myWallet = false,
   route,
 }: SetupOptions = {}) => {
   jest.mocked(useDiscreetMode).mockReturnValue(defaults.discreetMode);
@@ -79,8 +81,17 @@ const setup = ({
   });
   jest.mocked(useHistory).mockReturnValue(defaults.history);
 
-  const initialState = operationsList
-    ? withFlagOverrides({ lwdWallet40: { enabled: true, params: { operationsList: true } } })
+  const needsFlags = operationsList || myWallet;
+  const initialState = needsFlags
+    ? withFlagOverrides({
+        lwdWallet40: {
+          enabled: true,
+          params: {
+            ...(operationsList && { operationsList: true }),
+            ...(myWallet && { myWallet: true }),
+          },
+        },
+      })
     : undefined;
 
   const routeWrapper = route
@@ -127,9 +138,13 @@ describe("useTopBarViewModel", () => {
           "notification",
           "discreet",
           "history",
-          "settings",
           "my ledger",
         ],
+      ],
+      [
+        "myWallet enabled hides settings",
+        { myWallet: true },
+        ["synchronize", "notification", "discreet", "history", "my ledger"],
       ],
     ])("%s", (_name, options, expectedLabels) => {
       const { result } = setup(options);
