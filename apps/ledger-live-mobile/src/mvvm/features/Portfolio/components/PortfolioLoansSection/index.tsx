@@ -28,7 +28,7 @@ export const PortfolioLoansSection = () => {
 
   const handlePress = useCallback(() => {
     track("button_clicked", {
-      button: "loans_entry_point",
+      button: "borrow_entry_point",
       flow: "borrow",
       page: ScreenName.Portfolio,
     });

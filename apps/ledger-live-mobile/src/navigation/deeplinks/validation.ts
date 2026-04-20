@@ -16,22 +16,6 @@ const MAX_MESSAGE_LENGTH = 700;
 const MAX_TITLE_LENGTH = 100;
 const MAX_LABEL_LENGTH = 50;
 
-// Valid action types for borrow deeplinks
-export enum BorrowDeeplinkAction {
-  GO_BACK = "go-back",
-}
-
-function isValidBorrowAction(action: string): action is BorrowDeeplinkAction {
-  const validActions: string[] = [BorrowDeeplinkAction.GO_BACK];
-  return validActions.includes(action);
-}
-
-export function validateBorrowAction(action: string | null): BorrowDeeplinkAction | null {
-  if (!action || typeof action !== "string") return null;
-  const normalized = action.toLowerCase().trim();
-  return isValidBorrowAction(normalized) ? normalized : null;
-}
-
 // Valid action types for earn deeplinks
 export enum EarnDeeplinkAction {
   INFO_MODAL = "info-modal",
