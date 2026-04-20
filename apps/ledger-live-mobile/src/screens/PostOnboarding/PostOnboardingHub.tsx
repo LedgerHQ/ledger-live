@@ -26,7 +26,7 @@ const PostOnboardingHub = () => {
   const { t } = useTranslation();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const closePostOnboarding = useCompletePostOnboarding();
-  const { isLedgerSyncActive, accounts, protectId } = usePostOnboardingHubCompletionContext();
+  const { isLedgerSyncActive, accounts } = usePostOnboardingHubCompletionContext();
 
   const { isActivationDrawerVisible, closeActivationDrawer, openActivationDrawer } =
     useLedgerSyncEntryPointViewModel({
@@ -105,7 +105,6 @@ const PostOnboardingHub = () => {
               Icon={Icons.LedgerDevices}
               deviceModelId={deviceModelId}
               productName={productName}
-              protectId={protectId}
             />
             <Divider />
             {actionsState.map((action, index, arr) => (
@@ -117,7 +116,6 @@ const PostOnboardingHub = () => {
                   openActivationDrawer={openActivationDrawer}
                   isLedgerSyncActive={isLedgerSyncActive}
                   accounts={accounts}
-                  protectId={protectId}
                 />
                 {index !== arr.length - 1 && <Divider />}
               </React.Fragment>
