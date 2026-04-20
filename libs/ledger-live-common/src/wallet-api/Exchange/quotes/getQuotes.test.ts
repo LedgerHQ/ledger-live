@@ -1,4 +1,4 @@
-import { getQuotes } from "./getQuotes";
+import { getQuotes, type GetQuotesContext } from "./getQuotes";
 import { fetchQuotes } from "./service/fetchQuotes";
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import type { RawQuote, RawQuoteError } from "./service/types";
@@ -65,6 +65,8 @@ const aggregatorError: RawQuoteError = {
   parameter: {},
 };
 
+const emptyContext: GetQuotesContext = { accounts: [], spotPrices: {} };
+
 describe("getQuotes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,7 +79,7 @@ describe("getQuotes", () => {
       errors: [aggregatorError],
     });
 
-    const response = await getQuotes(makeArgs("near", "stellar"));
+    const response = await getQuotes(makeArgs("near", "stellar"), emptyContext);
 
     expect(response.quotes).toEqual([]);
     expect(response.errors).toEqual([aggregatorError]);
@@ -89,7 +91,7 @@ describe("getQuotes", () => {
       errors: [],
     });
 
-    const response = await getQuotes(makeArgs("stellar", "near"));
+    const response = await getQuotes(makeArgs("stellar", "near"), emptyContext);
 
     expect(response.quotes).toEqual([]);
     expect(response.errors).toEqual([]);
@@ -101,7 +103,7 @@ describe("getQuotes", () => {
     // the short-circuit path from regressions.
     fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
 
-    await getQuotes(makeArgs("near", "stellar"));
+    await getQuotes(makeArgs("near", "stellar"), emptyContext);
 
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
   });
@@ -112,7 +114,7 @@ describe("getQuotes", () => {
       errors: [aggregatorError],
     });
 
-    const response = await getQuotes(makeArgs("ethereum", "bitcoin"));
+    const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
     expect(response.quotes).toHaveLength(1);
     expect(response.quotes[0].quoteDetails.exchangeRate).toBe(0.999);
