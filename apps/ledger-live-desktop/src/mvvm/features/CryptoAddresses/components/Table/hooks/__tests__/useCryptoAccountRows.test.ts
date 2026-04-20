@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
   BTC_ACCOUNT,
@@ -7,6 +7,10 @@ import {
 } from "LLD/features/__mocks__/accounts.mock";
 import { createWalletState } from "../../../../testUtils/createWalletState";
 import { useCryptoAccountRows } from "../useCryptoAccountRows";
+
+const aggregatedFlags = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+});
 
 describe("useCryptoAccountRows", () => {
   it("should return lookupParentAccount that resolves a main account by id", () => {
@@ -127,5 +131,48 @@ describe("useCryptoAccountRows", () => {
     });
 
     expect(result.current.rows.some(r => r.id === token.id)).toBe(true);
+  });
+
+  describe("when shouldDisplayAggregatedAssets is ON", () => {
+    it("should return only main accounts, not token sub-accounts", () => {
+      const parent = ETH_ACCOUNT_WITH_USDC;
+      const token = parent.subAccounts![0];
+
+      const { result } = renderHook(() => useCryptoAccountRows(""), {
+        initialState: {
+          accounts: [parent],
+          ...aggregatedFlags,
+          ...createWalletState(
+            new Map([
+              [parent.id, "Ethereum main"],
+              [token.id, "USDC token"],
+            ]),
+          ),
+        },
+      });
+
+      expect(result.current.rows.some(r => r.id === parent.id)).toBe(true);
+      expect(result.current.rows.some(r => r.id === token.id)).toBe(false);
+    });
+
+    it("should match parent account when searching by token name (subMatch)", () => {
+      const parent = ETH_ACCOUNT_WITH_USDC;
+      const token = parent.subAccounts![0];
+
+      const { result } = renderHook(() => useCryptoAccountRows("usdc"), {
+        initialState: {
+          accounts: [parent],
+          ...aggregatedFlags,
+          ...createWalletState(
+            new Map([
+              [parent.id, "Ethereum main"],
+              [token.id, "USDC token"],
+            ]),
+          ),
+        },
+      });
+
+      expect(result.current.rows.some(r => r.id === parent.id)).toBe(true);
+    });
   });
 });
