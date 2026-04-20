@@ -2,7 +2,7 @@
 applyTo: "**/src/mvvm/**"
 ---
 
-<!-- Source: .cursor/rules/react-mvvm.mdc, .cursor/rules/ldls-web.mdc, .cursor/rules/ldls-native.mdc -->
+<!-- Source: .cursor/rules/react-mvvm.mdc, .cursor/skills/ldls-web/SKILL.md, .cursor/skills/ldls-native/SKILL.md -->
 <!-- Last synced: 2026-02-16 -->
 
 # MVVM Architecture

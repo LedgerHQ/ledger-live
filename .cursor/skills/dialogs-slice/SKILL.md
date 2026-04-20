@@ -1,6 +1,6 @@
 ---
+name: dialogs-slice
 description: Global dialogs Redux slice pattern for MVVM dialog state management
-alwaysApply: false
 ---
 
 # Global Dialogs Slice Pattern

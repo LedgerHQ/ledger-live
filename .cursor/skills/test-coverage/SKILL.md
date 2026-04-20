@@ -1,3 +1,9 @@
+---
+name: test-coverage
+description: Increase test coverage to 90% on a target zone with iterative writing and refactoring
+disable-model-invocation: true
+---
+
 # Test Coverage
 
 Increase test coverage to 90% on a target zone with iterative writing and refactoring.

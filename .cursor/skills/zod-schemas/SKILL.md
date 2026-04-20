@@ -1,6 +1,6 @@
 ---
+name: zod-schemas
 description: Zod schema validation patterns for API types
-alwaysApply: false
 ---
 
 # Zod Schema Validation

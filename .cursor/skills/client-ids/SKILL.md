@@ -1,6 +1,6 @@
 ---
+name: client-ids
 description: Privacy-protected ID management with @ledgerhq/client-ids — DeviceId, UserId, DatadogId, export-rules.json
-alwaysApply: false
 ---
 
 # Client IDs Library (`@ledgerhq/client-ids`)

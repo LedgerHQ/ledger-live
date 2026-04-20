@@ -1,4 +1,10 @@
 ---
+name: e2e-desktop-onboard
+description: Interactive setup wizard for running desktop E2E (Playwright + Speculos) tests locally
+disable-model-invocation: true
+---
+
+---
 description: Interactive setup wizard for running desktop E2E (Playwright + Speculos) tests locally
 ---
 

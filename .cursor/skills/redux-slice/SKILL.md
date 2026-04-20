@@ -1,6 +1,6 @@
 ---
+name: redux-slice
 description: Redux Toolkit createSlice best practices
-alwaysApply: false
 ---
 
 # Redux Toolkit - createSlice
