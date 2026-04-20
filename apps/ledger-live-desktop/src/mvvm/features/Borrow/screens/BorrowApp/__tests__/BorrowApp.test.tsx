@@ -1,4 +1,5 @@
 import React from "react";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { render, screen } from "tests/testSetup";
 import { BorrowApp } from "../index";
 import { useBorrowAppViewModel } from "../useBorrowAppViewModel";
@@ -39,7 +40,7 @@ describe("BorrowApp", () => {
 
   it("renders borrow webview when manifest is available", () => {
     jest.mocked(useBorrowAppViewModel).mockReturnValue({
-      manifest: { id: "borrow", url: "https://borrow.example" },
+      manifest: { id: "borrow", url: "https://borrow.example" } as LiveAppManifest,
       refreshManifests: jest.fn(),
       inputs: {} as ReturnType<typeof useBorrowAppViewModel>["inputs"],
       enablePlatformDevTools: true,

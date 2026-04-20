@@ -17,6 +17,7 @@ jest.mock("~/renderer/components/Web3AppWebview", () => ({
       canGoForward: false,
       title: "Borrow",
       loading: false,
+      isAppUnavailable: false,
     });
     return <div data-testid="borrow-web3app-webview" />;
   },
@@ -49,6 +50,7 @@ const defaultProps = {
     canGoForward: false,
     title: "",
     loading: false,
+    isAppUnavailable: false,
   },
   onStateChange: jest.fn(),
 };

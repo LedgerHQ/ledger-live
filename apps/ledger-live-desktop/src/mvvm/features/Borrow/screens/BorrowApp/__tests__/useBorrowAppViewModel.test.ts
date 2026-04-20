@@ -15,6 +15,10 @@ import {
 } from "~/renderer/reducers/settings";
 import { useBorrowAppViewModel } from "../useBorrowAppViewModel";
 
+const actualUseSelector = jest.requireActual<typeof import("LLD/hooks/redux")>(
+  "LLD/hooks/redux",
+).useSelector;
+
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
   useRemoteLiveAppManifest: jest.fn(),
   useRemoteLiveAppContext: jest.fn(),
@@ -25,6 +29,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index", () => (
 }));
 
 jest.mock("LLD/hooks/redux", () => ({
+  ...jest.requireActual("LLD/hooks/redux"),
   useSelector: jest.fn(),
 }));
 
@@ -55,7 +60,7 @@ describe("useBorrowAppViewModel", () => {
 
     jest.mocked(useRemoteLiveAppContext).mockReturnValue({
       updateManifests: jest.fn(),
-    } as ReturnType<typeof useRemoteLiveAppContext>);
+    } as unknown as ReturnType<typeof useRemoteLiveAppContext>);
     jest.mocked(useRemoteLiveAppManifest).mockReturnValue(remoteManifest);
     jest.mocked(useLocalLiveAppManifest).mockReturnValue(undefined);
     jest.mocked(useDiscreetMode).mockReturnValue(false);
@@ -70,7 +75,7 @@ describe("useBorrowAppViewModel", () => {
       if (selector === localeSelector) return "en-US";
       if (selector === developerModeSelector) return true;
       if (selector === enablePlatformDevToolsSelector) return true;
-      throw new Error("Unexpected selector in test");
+      return actualUseSelector(selector);
     });
   });
 
@@ -104,6 +109,7 @@ describe("useBorrowAppViewModel", () => {
         canGoForward: false,
         title: "Borrow",
         loading: false,
+        isAppUnavailable: false,
       });
     });
 
@@ -120,7 +126,7 @@ describe("useBorrowAppViewModel", () => {
     const updateManifests = jest.fn();
     jest.mocked(useRemoteLiveAppContext).mockReturnValue({
       updateManifests,
-    } as ReturnType<typeof useRemoteLiveAppContext>);
+    } as unknown as ReturnType<typeof useRemoteLiveAppContext>);
     jest.mocked(useDiscreetMode).mockReturnValue(true);
 
     const { result } = renderHook(() => useBorrowAppViewModel());
