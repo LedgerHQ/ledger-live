@@ -1,3 +1,5 @@
+import invariant from "invariant";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";

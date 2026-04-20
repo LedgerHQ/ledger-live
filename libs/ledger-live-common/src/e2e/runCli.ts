@@ -1,5 +1,6 @@
 import path from "path";
 import { spawn } from "child_process";
+import type { Result as GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { sanitizeError, sleep } from "./index";
 
 export const LEDGER_LIVE_CLI_BIN = path.resolve(__dirname, "../../../../apps/cli/bin/index.js");
@@ -208,7 +209,7 @@ export function runCliLiveData(opts: LiveDataOpts): Promise<string> {
   return runCliCommandWithRetry(cliOpts.join("+"));
 }
 
-export async function runCliGetAddress(opts: GetAddressOpts): Promise<{ address: string }> {
+export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddressResult> {
   const cliOpts = ["getAddress"];
   if (opts.currency) cliOpts.push(`--currency+${opts.currency}`);
   if (opts.device) cliOpts.push(`--device+${opts.device}`);
@@ -216,7 +217,7 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<{ address:
   if (opts.derivationMode) cliOpts.push(`--derivationMode+${opts.derivationMode}`);
   if (opts.verify) cliOpts.push("--verify");
   const output = await runCliCommandWithRetry(cliOpts.join("+"));
-  return parseGetAddressCliOutput(output) as { address: string };
+  return parseGetAddressCliOutput(output) as GetAddressResult;
 }
 
 export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {
