@@ -1,117 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { useNavigation } from "@react-navigation/native";
-import { PostOnboardingActionState, PostOnboardingAction, Account } from "@ledgerhq/types-live";
 import Touchable from "../Touchable";
-import { track } from "~/analytics";
-import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { isPostOnboardingHubActionFulfilled } from "~/logic/postOnboarding/postOnboardingHubCompletion";
-import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { usePostOnboardingActionHandlers } from "~/logic/postOnboarding/usePostOnboardingActionHandlers";
+import { usePostOnboardingActionPress } from "~/logic/postOnboarding/usePostOnboardingActionPress";
+import type { PostOnboardingActionRowProps } from "./PostOnboardingActionRow.types";
 
-export type Props = PostOnboardingAction &
-  PostOnboardingActionState & {
-    deviceModelId: DeviceModelId;
-    productName: string;
-    isLedgerSyncActive?: boolean;
-    openActivationDrawer?: () => void;
-    accounts?: Account[];
-    protectId: string;
-  };
+export type { PostOnboardingActionRowProps } from "./PostOnboardingActionRow.types";
 
-const PostOnboardingActionRow: React.FC<Props> = props => {
-  const {
-    id,
-    Icon,
-    title,
-    titleCompleted,
-    description,
-    tagLabel,
-    completed,
-    getIsAlreadyCompleted,
-    getIsAlreadyCompletedByState,
-    disabled,
-    buttonLabelForAnalyticsEvent,
-    deviceModelId,
-    productName,
-    shouldCompleteOnStart,
-    openActivationDrawer,
-    isLedgerSyncActive,
-    accounts,
-    protectId,
-  } = props;
+const PostOnboardingActionRow: React.FC<PostOnboardingActionRowProps> = props => {
+  const { Icon, title, titleCompleted, description, tagLabel, disabled, productName } = props;
   const { t } = useTranslation();
-
-  const navigation =
-    useNavigation<
-      BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
-    >();
-  const completeAction = useCompleteActionCallback();
-  const [isActionCompleted, setIsActionCompleted] = useState(false);
-
-  const initIsActionCompleted = useCallback(async () => {
-    const isComplete = await isPostOnboardingHubActionFulfilled(
-      { completed, getIsAlreadyCompletedByState, getIsAlreadyCompleted },
-      { isLedgerSyncActive: !!isLedgerSyncActive, accounts, protectId },
-    );
-    setIsActionCompleted(isComplete);
-  }, [
-    completed,
-    getIsAlreadyCompletedByState,
-    isLedgerSyncActive,
-    accounts,
-    getIsAlreadyCompleted,
-    protectId,
-  ]);
-
-  useEffect(() => {
-    initIsActionCompleted();
-  }, [initIsActionCompleted]);
-
-  const customActionHandlers = usePostOnboardingActionHandlers();
-
-  const handlePress = () => {
-    const trackAction = () => {
-      buttonLabelForAnalyticsEvent &&
-        track("button_clicked", {
-          button: buttonLabelForAnalyticsEvent,
-          deviceModelId,
-          flow: "post-onboarding",
-        });
-    };
-
-    // Execute custom handler if it exists
-    const customHandler = customActionHandlers[id];
-    if (customHandler) {
-      customHandler();
-    } else if ("getNavigationParams" in props) {
-      // Continue with standard navigation flow
-
-      const navigationArgs = props.getNavigationParams({
-        deviceModelId,
-        protectId,
-        referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
-      });
-      navigation.navigate(navigationArgs[0], navigationArgs[1]);
-    } else if ("startAction" in props) {
-      props.startAction?.({
-        openActivationDrawer,
-      });
-    }
-
-    trackAction();
-    shouldCompleteOnStart && completeAction(id);
-  };
+  const { isActionCompleted, handlePress, isPressDisabled } = usePostOnboardingActionPress(props);
 
   return (
-    <Touchable
-      disabled={disabled || isActionCompleted}
-      onPress={isActionCompleted ? undefined : handlePress}
-    >
+    <Touchable disabled={isPressDisabled} onPress={isPressDisabled ? undefined : handlePress}>
       <Flex
         flexDirection="row"
         alignItems="center"

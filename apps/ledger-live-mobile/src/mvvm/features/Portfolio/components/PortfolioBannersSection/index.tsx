@@ -32,7 +32,7 @@ export const PortfolioBannersSection = ({
       testID="portfolio-banners-section"
     >
       {shouldShowOnboardingWidget ? (
-        <Box style={{ marginBottom: 6 }}>
+        <Box lx={{ marginBottom: "s24" }}>
           <OnboardingWidget />
         </Box>
       ) : null}

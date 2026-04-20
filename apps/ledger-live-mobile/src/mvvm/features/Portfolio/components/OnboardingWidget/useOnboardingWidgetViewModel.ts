@@ -1,51 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { useCallback } from "react";
 import { track } from "~/analytics";
-import { isPostOnboardingHubActionFulfilled } from "~/logic/postOnboarding/postOnboardingHubCompletion";
-import { usePostOnboardingHubCompletionContext } from "~/logic/postOnboarding/usePostOnboardingHubCompletionContext";
-import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
+import { usePostOnboardingHubDrawer } from "LLM/features/PostOnboardingHubDrawer";
 import type { UseOnboardingWidgetViewModelResult } from "./types";
 
 export const useOnboardingWidgetViewModel = (): UseOnboardingWidgetViewModelResult => {
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
-  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
-  const hubCompletionContext = usePostOnboardingHubCompletionContext();
-
-  const [actionsCompleted, setActionsCompleted] = useState<number | undefined>();
-
-  useEffect(() => {
-    async function getCompletedActions() {
-      const actions = await Promise.all(
-        actionsState.map(async a => {
-          try {
-            const result = await isPostOnboardingHubActionFulfilled(a, hubCompletionContext);
-            return result;
-          } catch {
-            return false;
-          }
-        }),
-      );
-      const fulfilledActions = actions.filter(a => !!a).length;
-      if (actionsCompleted !== fulfilledActions) {
-        setActionsCompleted(fulfilledActions);
-      }
-    }
-    getCompletedActions();
-  }, [actionsState, hubCompletionContext, actionsCompleted]);
-
-  const { currentStep, totalSteps, stepperLabel } = useMemo(() => {
-    const actionsTotal = actionsState.length;
-    const actionsCompletedAmount = actionsCompleted || 0;
-    const total = 1 + Math.max(actionsTotal, 1);
-    const displayStep = 1 + actionsCompletedAmount;
-    const arcStep =
-      actionsTotal > 0 && actionsCompletedAmount === actionsTotal ? total : actionsCompletedAmount;
-    return {
-      currentStep: arcStep,
-      totalSteps: total,
-      stepperLabel: `${displayStep}/${total}`,
-    };
-  }, [actionsState, actionsCompleted]);
+  const { openPostOnboardingHubDrawer } = usePostOnboardingHubDrawer();
+  const { currentStep, totalSteps, stepperLabel, loading } =
+    usePostOnboardingHubStepperDisplay(actionsState);
 
   const onPress = useCallback(() => {
     track("button_clicked", {
@@ -53,14 +17,14 @@ export const useOnboardingWidgetViewModel = (): UseOnboardingWidgetViewModelResu
       deviceModelId,
       flow: "post-onboarding",
     });
-    navigateToPostOnboardingHub();
-  }, [deviceModelId, navigateToPostOnboardingHub]);
+    openPostOnboardingHubDrawer();
+  }, [deviceModelId, openPostOnboardingHubDrawer]);
 
   return {
     currentStep,
     totalSteps,
     stepperLabel,
     onPress,
-    loading: actionsCompleted === undefined,
+    loading,
   };
 };
