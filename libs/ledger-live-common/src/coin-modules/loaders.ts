@@ -26,6 +26,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "bitcoin",
     loadSetup: () => require("../families/bitcoin/setup"),
+    loadMessageSigner: () => require("../families/bitcoin/ACRESetup").messageSigner,
     loadTransaction: () => require("@ledgerhq/coin-bitcoin/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-bitcoin/deviceTransactionConfig").default,
     loadWalletApiAdapter: () => require("../families/bitcoin/walletApiAdapter").default,

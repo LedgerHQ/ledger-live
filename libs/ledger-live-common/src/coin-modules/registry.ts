@@ -7,6 +7,7 @@ import type {
   GetStuckAccountAndOperationFn,
   IsEditableOperationFn,
   IsStuckOperationFn,
+  MessageSignerModule,
   MockAccountModule,
   MockBridgeModule,
   PlatformAdapterModule,
@@ -43,6 +44,17 @@ export function getRegisteredFamilies(): string[] {
  */
 export const loadSetupForFamily = (family: string): FamilySetup =>
   getLoader(family).loadSetup();
+
+/**
+ * Loads the message signer for the given coin family.
+ * Uses the dedicated `loadMessageSigner` loader if available, otherwise falls
+ * back to `loadSetup().messageSigner`.
+ */
+export const loadMessageSignerForFamily = (family: string): MessageSignerModule | undefined => {
+  const loader = getLoader(family);
+  if (loader.loadMessageSigner) return loader.loadMessageSigner();
+  return loader.loadSetup().messageSigner;
+};
 
 export const loadTransactionForFamily = (family: string): TransactionModule =>
   getLoader(family).loadTransaction();

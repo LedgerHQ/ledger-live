@@ -5,14 +5,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { firstValueFrom, from, Observable } from "rxjs";
 import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
-import { loadSetupForFamily } from "../../coin-modules/registry";
+import { loadSetupForFamily, loadMessageSignerForFamily } from "../../coin-modules/registry";
 import type { AppRequest, AppState } from "../actions/app";
 import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { SignMessage, Result } from "./types";
-import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
 import { decodeAccountId } from "../../account";
 
 export const prepareMessageToSign = async (account: Account, message: string): Promise<AnyMessage> => {
@@ -36,15 +35,16 @@ const signMessage: SignMessage = (transport, account, opts) => {
   const setup = loadSetupForFamily(currency.family);
   let signMessage = setup.messageSigner?.signMessage;
   if ("type" in opts) {
+    const messageSigner = loadMessageSignerForFamily(currency.family);
     switch (opts.type) {
       case AcreMessageType.Withdraw:
-        signMessage = ACREMessageSigner.signWithdraw;
+        signMessage = messageSigner?.signWithdraw;
         break;
       case AcreMessageType.SignIn:
-        signMessage = ACREMessageSigner.signIn;
+        signMessage = messageSigner?.signIn;
         break;
       default:
-        signMessage = ACREMessageSigner.signMessage;
+        signMessage = messageSigner?.signMessage;
         break;
     }
   }

@@ -19,6 +19,8 @@ import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
 export type MessageSignerModule = {
   signMessage: SignMessage;
   prepareMessageToSign?: (opts: { account: Account; message: string }) => AnyMessage;
+  signWithdraw?: SignMessage;
+  signIn?: SignMessage;
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -103,6 +105,7 @@ export type GetStuckAccountAndOperationFn = (
 export type CoinModuleLoader = {
   family: string;
   loadSetup: () => FamilySetup;
+  loadMessageSigner?: () => MessageSignerModule;
   loadTransaction: () => TransactionModule;
   loadDeviceTxConfig?: () => DeviceTransactionConfigFn;
   loadWalletApiAdapter?: () => WalletApiAdapterModule;
