@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { InitialState } from "@react-navigation/native";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import * as analytics from "~/analytics";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -60,6 +61,10 @@ function renderAnalyticsPreferencesSettings(options: RenderOptions = {}) {
     navigationInitialState: createSettingsStackInitialState(params),
   });
 }
+
+const { policyVersion: expectedPrivacyPolicyVersion } = resolveAnalyticsOptInParams(
+  DEFAULT_FEATURES.analyticsOptIn,
+);
 
 describe("AnalyticsPreferencesSettings", () => {
   let trackSpy: jest.SpiedFunction<typeof analytics.track>;
@@ -166,7 +171,7 @@ describe("AnalyticsPreferencesSettings", () => {
       expect(settings.analyticsEnabled).toBe(false);
       expect(settings.personalizedRecommendationsEnabled).toBe(true);
       expect(settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-      expect(settings.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
+      expect(settings.analyticsConsentInfo.privacyPolicyVersion).toBe(expectedPrivacyPolicyVersion);
 
       const consentDate = settings.analyticsConsentInfo.consentDate;
       expect(consentDate).toEqual(expect.any(String));
