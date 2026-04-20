@@ -8,7 +8,6 @@ const ALLOWED_SOURCES = [
   "ledger-live-common/src/families/",
   "ledger-live-common/src/coin-modules/",
   "ledger-live-common/src/bridge/generic-alpaca/", // LIVE-29339
-  "ledger-live-common/src/wallet-api/", // LIVE-29338
 ];
 
 // Import paths with minimal bundle impact — types and error definitions only.

@@ -26,8 +26,9 @@ import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { loadGetWalletAccountForFamily } from "../coin-modules/registry";
+import type { Account as BitcoinWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -279,7 +280,7 @@ export const bitcoinFamilyAccountGetAddressLogic = (
       return Promise.reject(new Error("Invalid derivationPath"));
     }
 
-    const walletAccount = getWalletAccount(account);
+    const walletAccount = loadGetWalletAccountForFamily("bitcoin")!.getWalletAccount(account) as BitcoinWalletAccount;
     const address = walletAccount.xpub.crypto.getAddress(
       walletAccount.xpub.derivationMode,
       walletAccount.xpub.xpub,
@@ -332,7 +333,7 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
     return Promise.reject(new Error("Invalid derivationPath"));
   }
 
-  const walletAccount = getWalletAccount(account);
+  const walletAccount = loadGetWalletAccountForFamily("bitcoin")!.getWalletAccount(account) as BitcoinWalletAccount;
   const publicKey = await walletAccount.xpub.crypto.getPubkeyAt(
     walletAccount.xpub.xpub,
     accountNumber,
@@ -417,7 +418,7 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
   }
 
   try {
-    const walletAccount = getWalletAccount(account);
+    const walletAccount = loadGetWalletAccountForFamily("bitcoin")!.getWalletAccount(account) as BitcoinWalletAccount;
     const { xpub } = walletAccount;
     const { path: rootPath, index: accountIndex } = walletAccount.params;
 

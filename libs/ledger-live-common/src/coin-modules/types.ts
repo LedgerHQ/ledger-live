@@ -118,4 +118,7 @@ export type CoinModuleLoader = {
   loadClearAccount?: () => (account: Account) => void;
   loadValidateAddress?: () => ValidateAddressFn;
   loadShouldUseTrustedInputForSegwit?: () => (args: { name: string; version: string }) => boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  loadGetWalletAccount?: () => { getWalletAccount: (account: Account) => any };
+  loadEvmUtils?: () => { safeEncodeEIP55: (address: string) => string };
 };

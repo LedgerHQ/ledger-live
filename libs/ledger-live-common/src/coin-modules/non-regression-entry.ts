@@ -18,4 +18,6 @@ export { default as getAddress } from "../hw/getAddress/index";
 export { createAction as createAppAction } from "../hw/actions/app";
 export { prepareMessageToSign } from "../hw/signMessage/index";
 export { accountToWalletAPIAccount } from "../wallet-api/converters";
+export { bitcoinFamilyAccountGetAddressLogic } from "../wallet-api/logic";
+export { useDappLogic } from "../wallet-api/useDappLogic";
 export { accountToPlatformAccount } from "../platform/converters";

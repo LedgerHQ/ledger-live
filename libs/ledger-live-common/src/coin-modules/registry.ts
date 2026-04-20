@@ -118,3 +118,14 @@ export const loadShouldUseTrustedInputForSegwitForFamily = (
   family: string,
 ): ((args: { name: string; version: string }) => boolean) | undefined =>
   loaders.get(family)?.loadShouldUseTrustedInputForSegwit?.();
+
+export const loadGetWalletAccountForFamily = (
+  family: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): { getWalletAccount: (account: Account) => any } | undefined =>
+  loaders.get(family)?.loadGetWalletAccount?.();
+
+export const loadEvmUtilsForFamily = (
+  family: string,
+): { safeEncodeEIP55: (address: string) => string } | undefined =>
+  loaders.get(family)?.loadEvmUtils?.();

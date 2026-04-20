@@ -12,13 +12,13 @@ import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { UiHook, SetCurrentAccountHistDb } from "./react";
 import BigNumber from "bignumber.js";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { loadEvmUtilsForFamily } from "../coin-modules/registry";
 
 type MessageId = number | string | null;
 
@@ -57,6 +57,7 @@ const rejectedError = (code: number, message: string, data: object = {}) => ({
 // TODO remove any usage
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
+  const { safeEncodeEIP55 } = loadEvmUtilsForFamily("evm")!;
   return {
     family: "ethereum",
     amount:

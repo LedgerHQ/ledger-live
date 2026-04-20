@@ -35,6 +35,17 @@ jest.mock("../hw/signMessage/index", () => ({
   ...jest.requireActual("../hw/signMessage/index"),
   prepareMessageToSign: jest.fn(),
 }));
+
+jest.mock("../coin-modules/registry", () => ({
+  ...jest.requireActual("../coin-modules/registry"),
+  loadGetWalletAccountForFamily: (family: string) => {
+    if (family === "bitcoin") {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      return jest.requireMock("@ledgerhq/coin-bitcoin/lib/wallet-btc/index");
+    }
+    return undefined;
+  },
+}));
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";

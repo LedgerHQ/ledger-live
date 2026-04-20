@@ -37,6 +37,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadIsStuckOperation: () => require("../families/bitcoin/operations").isStuckOperation,
     loadGetStuckAccountAndOperation: () => require("../families/bitcoin/operations").getStuckAccountAndOperation,
     loadShouldUseTrustedInputForSegwit: () => require("@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit").shouldUseTrustedInputForSegwit,
+    loadGetWalletAccount: () => require("@ledgerhq/coin-bitcoin/wallet-btc/index"),
   },
   {
     family: "canton",
@@ -96,6 +97,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadIsEditableOperation: () => require("../families/evm/operations").isEditableOperation,
     loadIsStuckOperation: () => require("../families/evm/operations").isStuckOperation,
     loadGetStuckAccountAndOperation: () => require("../families/evm/operations").getStuckAccountAndOperation,
+    loadEvmUtils: () => require("@ledgerhq/coin-evm/utils"),
   },
   {
     family: "filecoin",
