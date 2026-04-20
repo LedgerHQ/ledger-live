@@ -47,6 +47,9 @@ module.exports = {
     cleanup: {
       shutdownDevice: false,
     },
+    session: {
+      debugSynchronization: 60000,
+    },
     extends: "detox-allure2-adapter/preset-detox",
   },
   apps: {
