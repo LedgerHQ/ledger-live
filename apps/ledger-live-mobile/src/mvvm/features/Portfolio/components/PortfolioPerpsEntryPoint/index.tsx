@@ -35,7 +35,7 @@ export const PortfolioPerpsEntryPoint = () => {
 
   return (
     <FeatureToggle featureId="ptxPerpsLiveAppMobile">
-      <Box lx={{ marginTop: "s16", paddingHorizontal: "s16" }}>
+      <Box lx={{ marginBottom: "s16", paddingHorizontal: "s16" }}>
         <Subheader>
           <SubheaderRow onPress={handlePress} data-testid="portfolio-perps-subheader-row">
             <SubheaderTitle>{t("portfolio.perpsEntry.title")}</SubheaderTitle>

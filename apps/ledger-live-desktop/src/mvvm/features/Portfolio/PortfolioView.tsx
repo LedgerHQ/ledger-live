@@ -66,8 +66,8 @@ export const PortfolioView = memo(function PortfolioView({
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
 
-          {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
           <PerpsEntryPoint />
+          {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
           {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}
