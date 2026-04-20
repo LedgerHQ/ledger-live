@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { reduce, filter, map } from "rxjs/operators";
-import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
 import {
@@ -208,11 +207,18 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               });
 
               if (!sa.unstableAccounts) {
-                const raws: AccountRawLike[] = flatMap(accounts, a => {
-                  const main = toAccountRaw(a);
-                  if (!main.subAccounts) return [main];
-                  return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
-                });
+                const raws: AccountRawLike[] = (
+                  await Promise.all(
+                    accounts.map(async a => {
+                      const main = await toAccountRaw(a);
+                      if (!main.subAccounts) return [main];
+                      return [
+                        { ...main, subAccounts: [] },
+                        ...main.subAccounts,
+                      ] as AccountRawLike[];
+                    }),
+                  )
+                ).flat();
                 const heads = raws.map(a => {
                   const copy = omit(
                     a,
@@ -413,7 +419,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           describe("sync", () => {
             makeTest("succeed", async () => {
               const account = await getSynced();
-              expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
+              expect(await fromAccountRaw(await toAccountRaw(account))).toBeDefined();
             });
 
             if (impl !== "mock") {

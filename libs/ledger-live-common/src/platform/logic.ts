@@ -139,7 +139,7 @@ export async function broadcastTransactionLogic(
 
   const parentAccount = getParentAccount(account, accounts);
 
-  const signedOperation = deserializePlatformSignedTransaction(signedTransaction, accountId);
+  const signedOperation = await deserializePlatformSignedTransaction(signedTransaction, accountId);
 
   return uiNavigation(account, parentAccount, signedOperation);
 }

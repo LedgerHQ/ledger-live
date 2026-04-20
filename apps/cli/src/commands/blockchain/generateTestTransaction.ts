@@ -120,20 +120,19 @@ ${apdus.map(a => "  " + a).join("\n")}
             ),
           ),
           reduce((jsCodes, code) => jsCodes.concat(code), []),
-          map(
-            codes => `{
+          switchMap(async codes => {
+            const raw = await toAccountRaw({
+              ...account,
+              operations: [],
+            });
+            return `{
   name: "${getDefaultAccountNameForCurrencyIndex(account)}",
-  raw: ${JSON.stringify(
-    toAccountRaw({
-      ...account,
-      operations: [],
-    }),
-  )},
+  raw: ${JSON.stringify(raw)},
   transactions: [
     ${codes.join(",")}
   ]
-  }`,
-          ),
+  }`;
+          }),
         ),
       ),
     ),

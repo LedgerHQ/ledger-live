@@ -109,7 +109,7 @@ export default {
                                               account,
                                             )(
                                               // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
-                                              fromOperationRaw(op, account.id),
+                                              await fromOperationRaw(op, account.id),
                                             )}`,
                                           );
                                           if (

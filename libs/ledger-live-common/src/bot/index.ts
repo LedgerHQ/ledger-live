@@ -59,26 +59,30 @@ function convertMutation<T extends Transaction>(
   };
 }
 
-function convertSpecReport<T extends Transaction>(
+async function convertSpecReport<T extends Transaction>(
   result: SpecReport<T>,
-): MinimalSerializedSpecReport {
-  const accounts = result.accountsAfter?.map(a => {
-    // remove the "expensive" data fields
-    const raw = toAccountRaw(a);
-    raw.operations = [];
-    delete raw.balanceHistoryCache;
-    if (raw.subAccounts) {
-      raw.subAccounts.forEach(a => {
-        a.operations = [];
-        delete a.balanceHistoryCache;
-      });
-    }
-    const unsafe = raw as any;
-    if (unsafe.bitcoinResources) {
-      delete unsafe.bitcoinResources.walletAccount;
-    }
-    return raw;
-  });
+): Promise<MinimalSerializedSpecReport> {
+  const accounts = result.accountsAfter
+    ? await Promise.all(
+        result.accountsAfter.map(async a => {
+          // remove the "expensive" data fields
+          const raw = await toAccountRaw(a);
+          raw.operations = [];
+          delete raw.balanceHistoryCache;
+          if (raw.subAccounts) {
+            raw.subAccounts.forEach(a => {
+              a.operations = [];
+              delete a.balanceHistoryCache;
+            });
+          }
+          const unsafe = raw as any;
+          if (unsafe.bitcoinResources) {
+            delete unsafe.bitcoinResources.walletAccount;
+          }
+          return raw;
+        }),
+      )
+    : undefined;
   const mutations = result.mutations?.map(convertMutation);
   return {
     specName: result.spec.name,
@@ -90,16 +94,18 @@ function convertSpecReport<T extends Transaction>(
   };
 }
 
-function makeAppJSON(accounts: Account[]) {
+async function makeAppJSON(accounts: Account[]) {
   const jsondata = {
     data: {
       settings: {
         hasCompletedOnboarding: true,
       },
-      accounts: accounts.map(account => ({
-        data: toAccountRaw(account),
-        version: 1,
-      })),
+      accounts: await Promise.all(
+        accounts.map(async account => ({
+          data: await toAccountRaw(account),
+          version: 1,
+        })),
+      ),
     },
   };
   return JSON.stringify(jsondata);
@@ -713,7 +719,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
 
   if (BOT_REPORT_FOLDER) {
     const serializedReport: MinimalSerializedReport = {
-      results: results.map(convertSpecReport),
+      results: await Promise.all(results.map(convertSpecReport)),
       environment: BOT_ENVIRONMENT,
       seedHash: sha256(getEnv("SEED")).toString("hex"),
     };
@@ -728,7 +734,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
       ),
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "app.json"),
-        makeAppJSON(allAccountsAfter),
+        await makeAppJSON(allAccountsAfter),
         "utf-8",
       ),
       fs.promises.writeFile(

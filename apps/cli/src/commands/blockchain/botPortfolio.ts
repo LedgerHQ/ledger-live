@@ -1,5 +1,5 @@
 import { from, defer, throwError } from "rxjs";
-import { catchError, filter, map, mergeAll, timeout } from "rxjs/operators";
+import { catchError, filter, map, mergeAll, mergeMap, timeout } from "rxjs/operators";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountFormatters } from "@ledgerhq/live-common/account/index";
@@ -43,7 +43,9 @@ export default {
       ),
       mergeAll(5),
       filter(e => e.type === "discovered"),
-      map(e => (accountFormatters[opts.format] || accountFormatters.default)(e.account)),
+      mergeMap(async e =>
+        (accountFormatters[opts.format] || accountFormatters.default)(e.account),
+      ),
     );
   },
 };

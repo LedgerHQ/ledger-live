@@ -149,10 +149,12 @@ export async function loadAccounts(accounts: Account[]) {
   await postMessage({
     type: "importAccounts",
     id: uniqueId(),
-    payload: accounts.map(account => ({
-      version: 1,
-      data: toAccountRaw(account),
-    })),
+    payload: await Promise.all(
+      accounts.map(async account => ({
+        version: 1,
+        data: await toAccountRaw(account),
+      })),
+    ),
   });
 }
 
