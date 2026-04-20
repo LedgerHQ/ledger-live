@@ -8636,5 +8636,8 @@
       "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
       "tryAgain": "Try again"
     }
+  },
+  "myWallet": {
+    "explore": "Explore all Ledger devices"
   }
 }
