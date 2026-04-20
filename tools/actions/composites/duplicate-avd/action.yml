@@ -32,6 +32,19 @@ runs:
 
         echo "✅ Source AVD found"
 
+        # Disable cameras in config.ini
+        patch_avd_config_disable_cameras() {
+          local cfg=$1
+          [[ -f "$cfg" ]] || return 0
+          local tmp
+          tmp=$(mktemp)
+          { grep -v '^hw\.camera\.back=' "$cfg" | grep -v '^hw\.camera\.front=' || true; } >"$tmp"
+          printf '%s\n' 'hw.camera.back=none' 'hw.camera.front=none' >>"$tmp"
+          mv "$tmp" "$cfg"
+        }
+        patch_avd_config_disable_cameras "${AVD_DIR}/${AVD_NAME}.avd/config.ini"
+        echo "  ✓ Patched cameras off in source config.ini"
+
         IFS=',' read -ra SUFFIXES <<< "${{ inputs.target_suffixes }}"
         for suffix in "${SUFFIXES[@]}"; do
           NEW_NAME="${AVD_NAME}${suffix}"
@@ -76,4 +89,3 @@ runs:
         echo ""
         echo "📋 Final AVD list:"
         ls -la "${AVD_DIR}/"
-
