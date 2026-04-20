@@ -3,11 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
-import { useSelector } from "LLD/hooks/redux";
-import { accountSelector } from "~/renderer/reducers/accounts";
-import type { State } from "~/renderer/reducers";
 import type { StepProps } from "~/renderer/modals/Send/types";
-import { isAleoAccount } from "./utils";
 import { useAleoPrivateSync } from "../../../hooks/useAleoPrivateSync";
 
 const TitleText = styled.p`
@@ -31,27 +27,20 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
   // opened the send flow).
   const mountedAtRef = useRef(new Date());
 
-  // get latest account state instead of snapshot from props
-  const accountId = account?.type === "Account" ? account.id : undefined;
-  const liveAccount = useSelector((state: State) =>
-    accountId ? accountSelector(state, { accountId }) : undefined,
-  );
-  const aleoAccount = liveAccount && isAleoAccount(liveAccount) ? liveAccount : null;
-  const lastPrivateSyncDate = aleoAccount?.aleoResources?.lastPrivateSyncDate ?? null;
-
-  // Transition when a full private sync completes during this step session.
-  const syncDoneForThisStep =
-    lastPrivateSyncDate !== null && lastPrivateSyncDate >= mountedAtRef.current;
-
   const {
     progress: localProgress,
     backgroundProgress,
     error: privateSyncError,
+    lastPrivateSyncDate,
   } = useAleoPrivateSync({
     account,
     autoStart: true,
     onAccountUpdated: updateAccount,
   });
+
+  // Transition when a full private sync completes during this step session.
+  const syncDoneForThisStep =
+    lastPrivateSyncDate !== null && lastPrivateSyncDate >= mountedAtRef.current;
 
   useEffect(() => {
     if (!syncDoneForThisStep) return;

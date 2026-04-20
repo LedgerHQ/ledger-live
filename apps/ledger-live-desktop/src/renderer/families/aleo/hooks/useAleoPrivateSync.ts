@@ -2,8 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { accountSelector } from "~/renderer/reducers/accounts";
+import type { State } from "~/renderer/reducers";
 import { filter, map, throttleTime } from "rxjs/operators";
 import { asyncScheduler } from "rxjs";
 import {
@@ -30,6 +32,8 @@ interface UseAleoPrivateSyncResult {
   stop: () => void;
   /** Non-null (0–100) when a background bridge sync is running and this hook is idle. */
   backgroundProgress: number | null;
+  /** The lastPrivateSyncDate from the most recently applied sync update. */
+  lastPrivateSyncDate: Date | null;
 }
 
 export const useAleoPrivateSync = ({
@@ -40,6 +44,11 @@ export const useAleoPrivateSync = ({
   const accountId = account?.type === "Account" ? account.id : undefined;
 
   const dispatch = useDispatch();
+  const liveAccount = useSelector((state: State) =>
+    accountId ? accountSelector(state, { accountId }) : undefined,
+  );
+  const aleoLiveAccount = liveAccount && isAleoAccount(liveAccount) ? liveAccount : null;
+  const lastPrivateSyncDate = aleoLiveAccount?.aleoResources?.lastPrivateSyncDate ?? null;
   // Tracks the last non-null progress so components can detect "completed at 100%"
   // vs "aborted early" even after the subject resets to null.
   const lastProgressRef = useRef(0);
@@ -162,5 +171,5 @@ export const useAleoPrivateSync = ({
     };
   }, [autoStart, start, stop]);
 
-  return { isSyncing, progress, error, start, stop, backgroundProgress };
+  return { isSyncing, progress, error, start, stop, backgroundProgress, lastPrivateSyncDate };
 };

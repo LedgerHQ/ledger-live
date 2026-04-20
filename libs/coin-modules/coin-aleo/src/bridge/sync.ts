@@ -172,8 +172,6 @@ export async function performPrivateSync(
   const { initialAccount, address, derivationMode, currency } = info;
   invariant(initialAccount, "aleo: performPrivateSync requires initialAccount");
 
-  onProgress?.(0);
-
   const viewKey = extractViewKey(initialAccount);
 
   const provableApi = await accessProvableApi({
