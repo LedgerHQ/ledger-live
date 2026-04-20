@@ -1,3 +1,9 @@
+---
+name: create-pr
+description: Create a pull request with proper description, changeset, and all required elements
+disable-model-invocation: true
+---
+
 # Create PR
 
 Create a pull request with proper description, changeset, and all required elements.

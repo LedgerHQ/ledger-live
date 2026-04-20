@@ -1,3 +1,9 @@
+---
+name: cleanup
+description: Run lint, format, and typecheck on modified files
+disable-model-invocation: true
+---
+
 # Cleanup
 
 Run lint, format, and typecheck on modified files.

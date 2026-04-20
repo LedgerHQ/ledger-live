@@ -2,7 +2,7 @@
 applyTo: "**/*.ts,**/*.tsx"
 ---
 
-<!-- Source: .cursor/rules/typescript.mdc, .cursor/rules/react-general.mdc, .cursor/rules/redux-slice.mdc, .cursor/rules/rtk-query-api.mdc, .cursor/rules/zod-schemas.mdc -->
+<!-- Source: .cursor/rules/typescript.mdc, .cursor/rules/react-general.mdc, .cursor/skills/redux-slice/SKILL.md, .cursor/skills/rtk-query-api/SKILL.md, .cursor/skills/zod-schemas/SKILL.md -->
 <!-- Last synced: 2026-02-13 -->
 
 # TypeScript & React

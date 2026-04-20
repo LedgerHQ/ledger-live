@@ -1,3 +1,9 @@
+---
+name: pre-review
+description: Deep code review
+disable-model-invocation: true
+---
+
 # Pre-Review
 
 Deep code review

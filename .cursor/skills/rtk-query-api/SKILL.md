@@ -1,6 +1,6 @@
 ---
+name: rtk-query-api
 description: RTK Query createApi best practices
-alwaysApply: false
 ---
 
 # RTK Query - createApi
