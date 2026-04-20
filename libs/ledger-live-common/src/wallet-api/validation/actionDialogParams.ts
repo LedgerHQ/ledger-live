@@ -17,8 +17,11 @@ export function sanitizeActionDialogParams(
     throw new Error(`Invalid params for ${handlerName}: params are required.`);
   }
 
-  const { title, description, ctaLabel, icon } = params as Partial<ActionDialogParams>;
-
+  const { title, description, ctaLabel, icon } = params;
+  /*
+   * Adding a check here since the parameters can be received from live apps
+   * and be wrong (no validation on reception). Function signature is not enough
+   */
   if (
     typeof title !== "string" ||
     typeof description !== "string" ||
@@ -39,7 +42,7 @@ export function sanitizeActionDialogParams(
     );
   }
 
-  if (icon != null && !ALLOWED_ICONS.includes(icon as ActionDialogIcon)) {
+  if (icon != null && !ALLOWED_ICONS.includes(icon)) {
     throw new Error(
       `Invalid params for ${handlerName}: 'icon' must be one of ${ALLOWED_ICONS.join(", ")} when provided.`,
     );
