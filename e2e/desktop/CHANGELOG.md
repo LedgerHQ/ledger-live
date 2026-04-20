@@ -1,5 +1,11 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.25.0-next.4
+
+### Minor Changes
+
+- [#16521](https://github.com/LedgerHQ/ledger-live/pull/16521) [`5486c95`](https://github.com/LedgerHQ/ledger-live/commit/5486c959375d91f62ccbe6a534da647df78075b2) Thanks [@claudiiafg](https://github.com/claudiiafg)! - test(e2e): enable Wallet 4.0 by default and improve desktop E2E reliability
+
 ## 0.25.0-next.3
 
 ### Patch Changes
