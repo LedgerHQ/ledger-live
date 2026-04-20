@@ -118,6 +118,22 @@
       "description": "Global npm minimum release age",
       "matchDatasources": ["npm"],
       "minimumReleaseAge": "2 days"
+    },
+    {
+      "description": "E2E - version updates",
+      "matchManagers": ["npm"],
+      "matchFileNames": ["e2e/desktop/**", "e2e/mobile/**"],
+      "commitMessagePrefix": "chore(e2e):",
+      "labels": ["dependencies", "e2e"],
+      "reviewers": ["team:qaa"],
+      "assignees": ["team:qaa"]
+    },
+    {
+      "description": "E2E - group major updates",
+      "matchManagers": ["npm"],
+      "matchFileNames": ["e2e/desktop/**", "e2e/mobile/**"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "e2e major updates"
     }
   ],
   "prConcurrentLimit": 10,
