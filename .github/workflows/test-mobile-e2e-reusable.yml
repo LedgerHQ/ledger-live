@@ -146,11 +146,11 @@ env:
   # Android AVD configuration
   AVD_API: 36
   AVD_ARCH: x86_64
-  AVD_PROFILE: pixel_9_pro_xl
+  AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
   AVD_CORES: 2
-  AVD_RAM_SIZE: 5120
+  AVD_RAM_SIZE: 3072
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
 
