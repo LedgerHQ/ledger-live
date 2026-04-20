@@ -2,13 +2,6 @@ name: "[Mobile] - E2E Only - Scheduled/Manual"
 run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
-# One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
-# test surface (tests_type or schedule cron), and filter. Matches checkout ref: inputs.ref || github.sha.
-concurrency:
-  group: >-
-    mobile-e2e-${{ github.workflow_ref }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter || '' }}
-  cancel-in-progress: false
-
 on:
   schedule:
     - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
