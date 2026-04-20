@@ -329,7 +329,8 @@
     "src/cmc-client/index.ts",
     "src/cmc-client/__mocks__/fearAndGreed.mock.ts",
     "src/wallet-api/validation/validateUrl.ts",
-    "src/wallet-api/validation/validateInfoDialogParams.ts"
+    "src/wallet-api/validation/validateInfoDialogParams.ts",
+    "src/wallet-api/validation/actionDialogParams.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
