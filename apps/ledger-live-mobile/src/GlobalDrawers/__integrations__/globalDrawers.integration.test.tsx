@@ -11,6 +11,12 @@ jest.mock("LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer", () =>
   jest.fn(() => <View testID="receive-drawer-wrapper" />),
 );
 
+jest.mock("LLM/features/PostOnboardingHubDrawer", () => ({
+  PostOnboardingHubDrawerWrapper: jest.fn(() => (
+    <View testID="post-onboarding-hub-drawer-wrapper" />
+  )),
+}));
+
 describe("GlobalDrawers Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
