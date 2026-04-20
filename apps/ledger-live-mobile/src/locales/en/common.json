@@ -2750,7 +2750,7 @@
       "title": "Perpetuals",
       "description": "Trade with leverage"
     },
-    "loansEntry": {
+    "borrowEntry": {
       "title": "Loans",
       "cardTitle": "Borrow Stablecoin",
       "cardDescription": "Unlock liquidity",

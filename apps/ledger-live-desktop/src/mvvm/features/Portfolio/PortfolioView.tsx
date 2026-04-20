@@ -10,7 +10,7 @@ import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
 import { AddAccount } from "./components/AddAccount";
 import { PerpsEntryPoint } from "./components/PerpsEntryPoint";
-import { LoansEntryPoint } from "./components/LoansEntryPoint";
+import { BorrowEntryPoint } from "./components/BorrowEntryPoint";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
@@ -28,7 +28,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayGraphRework,
   shouldDisplayQuickActionCtas,
   shouldDisplayAssetSection,
-  shouldDisplayLoansSection,
+  shouldDisplayBorrowSection,
   shouldDisplayOperationsList,
   shouldDisplayBrazePlacement,
   isWallet40Enabled,
@@ -68,10 +68,10 @@ export const PortfolioView = memo(function PortfolioView({
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
 
-          {shouldDisplayLoansSection && <LoansEntryPoint />}
+          <PerpsEntryPoint />
+          {shouldDisplayBorrowSection && <BorrowEntryPoint />}
 
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
-          <PerpsEntryPoint />
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
           {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}
