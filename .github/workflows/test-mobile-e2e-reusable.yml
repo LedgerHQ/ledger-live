@@ -246,10 +246,13 @@ jobs:
           if [ "${{ github.ref_name }}" = "develop" ]; then
             PREFIX="develop/"
           fi
+          # JS bundle S3 cache: fingerprint repo tree excluding root e2e/mobile so Detox-only changes reuse the same key.
+          REF="${{ inputs.ref || github.sha }}"
+          JS_TREE_HASH="$(git ls-tree -r "$REF" -- . ':!e2e/mobile' | sha256sum | awk '{print $1}')"
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${PREFIX}${JS_TREE_HASH}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${JS_TREE_HASH}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
