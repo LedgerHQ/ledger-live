@@ -4228,6 +4228,8 @@
         "activeTooltip": "Delegated amounts generate rewards",
         "inactiveTooltip": "Undelegated amounts do not generate rewards",
         "minSafeWarning": "Not enough funds",
+        "commission": "Commission",
+        "totalStake": "Total stake",
         "flow": {
           "title": "Delegate",
           "steps": {
@@ -4246,7 +4248,8 @@
               "title": "Amount"
             },
             "validator": {
-              "title": "Validators"
+              "title": "Validators",
+              "noResults": "No validators match your search"
             },
             "connectDevice": {
               "title": "Device"

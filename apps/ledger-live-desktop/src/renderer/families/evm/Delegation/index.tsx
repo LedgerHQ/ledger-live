@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -10,6 +10,7 @@ import {
   mapRedelegations,
   canDelegate,
   getValidatorExplorerUrl,
+  prefetchValidators,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
@@ -44,6 +45,16 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
     params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
 
   const unit = useAccountUnit(account);
+  const currencyId = account.currency.id;
+
+  // Warm the validators cache on the account page so that opening either the
+  // "Earn rewards" info modal or the "Delegate" modal directly never shows an
+  // empty list while the first fetch resolves.
+  useEffect(() => {
+    if (isCurrencySupported && isEvmNativeStakingEnabled) {
+      prefetchValidators(currencyId);
+    }
+  }, [currencyId, isCurrencySupported, isEvmNativeStakingEnabled]);
 
   const validators = account.stakingResources.validators ?? [];
 
