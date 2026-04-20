@@ -8638,6 +8638,9 @@
     }
   },
   "myWallet": {
-    "explore": "Explore all Ledger devices"
+    "explore": "Explore all Ledger devices",
+    "actionsList": {
+      "help": "Help"
+    }
   }
 }
