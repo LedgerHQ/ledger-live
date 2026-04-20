@@ -10,9 +10,9 @@ export const assetsTransferMock: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransferMock,
   disabled: false,
   Icon: Icons.Lock,
-  title: "postOnboarding.actions.assetsTransfer.title",
+  title: "postOnboarding.drawer.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
-  description: "postOnboarding.actions.assetsTransfer.description",
+  description: "postOnboarding.drawer.actions.assetsTransfer.description",
   actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   getNavigationParams: () => [
     NavigatorName.PostOnboarding,
@@ -52,9 +52,9 @@ export const buyCryptoMock: PostOnboardingAction = {
 export const customImageMock: PostOnboardingAction = {
   id: PostOnboardingActionId.customImageMock,
   Icon: Icons.PictureImage,
-  title: "postOnboarding.actions.customImage.title",
+  title: "postOnboarding.drawer.actions.customImage.title",
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
-  description: "postOnboarding.actions.customImage.description",
+  description: "postOnboarding.drawer.actions.customImage.description",
   actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
   getNavigationParams: () => [
     NavigatorName.PostOnboarding,
@@ -71,9 +71,9 @@ export const customImageMock: PostOnboardingAction = {
 export const syncAccountsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.syncAccounts,
   Icon: Icons.Refresh,
-  title: "postOnboarding.actions.syncAccounts.title",
+  title: "postOnboarding.drawer.actions.syncAccounts.title",
   titleCompleted: "postOnboarding.actions.syncAccounts.titleCompleted",
-  description: "postOnboarding.actions.syncAccounts.description",
+  description: "postOnboarding.drawer.actions.syncAccounts.description",
   actionCompletedPopupLabel: "postOnboarding.actions.syncAccounts.popupLabel",
   getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => {
     return !!isLedgerSyncActive;
@@ -86,9 +86,9 @@ export const syncAccountsMock: PostOnboardingAction = {
 export const recoverMock: PostOnboardingAction = {
   id: PostOnboardingActionId.recoverMock,
   Icon: Icons.ShieldCheck,
-  title: "postOnboarding.actions.recover.title",
+  title: "postOnboarding.drawer.actions.recover.title",
   titleCompleted: "postOnboarding.actions.recover.titleCompleted",
-  description: "postOnboarding.actions.recover.description",
+  description: "postOnboarding.drawer.actions.recover.description",
   actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
   getNavigationParams: () => [
     NavigatorName.PostOnboarding,

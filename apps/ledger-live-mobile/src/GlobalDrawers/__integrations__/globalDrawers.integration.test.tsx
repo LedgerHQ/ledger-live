@@ -11,6 +11,12 @@ jest.mock("LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer", () =>
   jest.fn(() => <View testID="receive-drawer-wrapper" />),
 );
 
+jest.mock("LLM/features/PostOnboardingHubDrawer", () => ({
+  PostOnboardingHubDrawerWrapper: jest.fn(() => (
+    <View testID="post-onboarding-hub-drawer-wrapper" />
+  )),
+}));
+
 describe("GlobalDrawers Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,6 +36,7 @@ describe("GlobalDrawers Integration", () => {
     await waitFor(() => {
       expect(getByTestId("modular-drawer-wrapper")).toBeTruthy();
       expect(getByTestId("receive-drawer-wrapper")).toBeTruthy();
+      expect(getByTestId("post-onboarding-hub-drawer-wrapper")).toBeTruthy();
     });
   });
 
@@ -43,9 +50,11 @@ describe("GlobalDrawers Integration", () => {
     await waitFor(() => {
       const modularDrawer = getByTestId("modular-drawer-wrapper");
       const receiveDrawer = getByTestId("receive-drawer-wrapper");
+      const postOnboardingHubDrawer = getByTestId("post-onboarding-hub-drawer-wrapper");
 
       expect(modularDrawer).toBeTruthy();
       expect(receiveDrawer).toBeTruthy();
+      expect(postOnboardingHubDrawer).toBeTruthy();
     });
   });
 
@@ -69,6 +78,7 @@ describe("GlobalDrawers Integration", () => {
     await waitFor(() => {
       expect(getByTestId("modular-drawer-wrapper")).toBeTruthy();
       expect(getByTestId("receive-drawer-wrapper")).toBeTruthy();
+      expect(getByTestId("post-onboarding-hub-drawer-wrapper")).toBeTruthy();
     });
   });
 
@@ -83,6 +93,8 @@ describe("GlobalDrawers Integration", () => {
 
     await waitFor(() => {
       expect(getByTestId("modular-drawer-wrapper")).toBeTruthy();
+      expect(getByTestId("receive-drawer-wrapper")).toBeTruthy();
+      expect(getByTestId("post-onboarding-hub-drawer-wrapper")).toBeTruthy();
     });
 
     expect(() => unmount()).not.toThrow();
