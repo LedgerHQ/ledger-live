@@ -222,7 +222,7 @@ export class Currency {
   );
 
   static readonly CCD_TESTNET = new Currency(
-    "Concordium Testnet",
+    "Concordium (Testnet)",
     "CCD",
     "concordium_testnet",
     AppInfos.CONCORDIUM,

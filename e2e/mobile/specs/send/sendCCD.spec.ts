@@ -3,11 +3,14 @@ import { log } from "detox";
 import { verifySendAndOperationDetails } from "./send";
 
 const WALLET_PROXY_URL = "https://ccd-wallet-proxy-testnet.coin.ledger-test.com";
+const WALLET_PROXY_TIMEOUT_MS = 10_000;
 
 // Resolve on-chain address from public key via wallet-proxy API.
 // Concordium addresses are NOT derived from BIP32 paths — they come from on-chain credential deployment.
 async function resolveAddressFromPublicKey(publicKey: string): Promise<string> {
-  const res = await fetch(`${WALLET_PROXY_URL}/v0/keyAccounts/${publicKey}`);
+  const res = await fetch(`${WALLET_PROXY_URL}/v0/keyAccounts/${publicKey}`, {
+    signal: AbortSignal.timeout(WALLET_PROXY_TIMEOUT_MS),
+  });
   if (!res.ok) {
     throw new Error(
       `[CCD] Wallet-proxy error ${res.status} ${res.statusText} for public key ${publicKey.slice(0, 16)}...`,
