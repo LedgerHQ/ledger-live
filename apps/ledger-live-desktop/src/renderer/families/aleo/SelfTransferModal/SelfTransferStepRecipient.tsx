@@ -87,7 +87,7 @@ export const SelfTransferStepRecipient = ({
                   ...t,
                   mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
                   properties: {
-                    amountRecordCommitment: null,
+                    amountRecordCommitments: [],
                     feeRecordCommitment: null,
                   },
                 };

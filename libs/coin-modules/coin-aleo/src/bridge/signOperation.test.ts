@@ -205,7 +205,7 @@ describe("buildSignOperation", () => {
     const privateTransaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });
@@ -230,7 +230,7 @@ describe("buildSignOperation", () => {
     const privateSponsoredTransaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });

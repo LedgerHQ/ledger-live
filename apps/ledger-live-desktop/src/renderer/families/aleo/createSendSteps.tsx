@@ -1,6 +1,5 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import DefaultStepAmount, {
   StepAmountFooter as DefaultStepAmountFooter,
 } from "~/renderer/modals/Send/steps/StepAmount";
@@ -39,8 +38,7 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
       footer: DefaultStepAmountFooter,
       onBack: ({ transitionTo, transaction }) => {
         if (transaction?.family !== "aleo") return null;
-        const targetStep = isPrivateTransaction(transaction) ? "private-sync" : "recipient";
-        transitionTo(targetStep);
+        transitionTo("recipient");
       },
     },
     {

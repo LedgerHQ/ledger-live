@@ -256,10 +256,11 @@ export function selectTopPrivateRecordsByValue({
   unspentRecords: AleoUnspentRecord[];
   maxRecords?: number;
 }): AleoUnspentRecord[] {
-  return sortByMicrocredits(
-    unspentRecords.filter(record => new BigNumber(record.microcredits).isGreaterThan(0)),
-    "desc",
-  ).slice(0, maxRecords);
+  const positiveRecords = unspentRecords.filter(record =>
+    new BigNumber(record.microcredits).isGreaterThan(0),
+  );
+
+  return sortByMicrocredits(positiveRecords, "desc").slice(0, maxRecords);
 }
 
 export function selectPrivateRecordsForAmount({
@@ -328,11 +329,7 @@ function getAmountToSpend({
   }
 
   if (isPrivateTransaction(transaction)) {
-    const selectedCommitments = transaction.properties.amountRecordCommitments?.length
-      ? transaction.properties.amountRecordCommitments
-      : transaction.properties.amountRecordCommitment
-        ? [transaction.properties.amountRecordCommitment]
-        : [];
+    const selectedCommitments = transaction.properties.amountRecordCommitments ?? [];
     const selectedAmount = selectedCommitments.reduce((sum, commitment) => {
       const record = getRecordByCommitment({ account, commitment });
       if (!record) {
@@ -415,19 +412,13 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
 export function findBestRecordForFee({
   unspentRecords,
   targetFee,
-  selectedAmountRecordCommitment,
   selectedAmountRecordCommitments,
 }: {
   unspentRecords: AleoUnspentRecord[];
   targetFee: BigNumber;
-  selectedAmountRecordCommitment: string | null;
   selectedAmountRecordCommitments?: string[] | null;
 }): AleoUnspentRecord | null {
   const excludedCommitments = new Set<string>(selectedAmountRecordCommitments ?? []);
-  if (selectedAmountRecordCommitment) {
-    excludedCommitments.add(selectedAmountRecordCommitment);
-  }
-
   const recordsSufficientForFee = unspentRecords.filter(
     r => !excludedCommitments.has(r.commitment) && new BigNumber(r.microcredits).gte(targetFee),
   );
@@ -608,11 +599,7 @@ export function createTransactionIntent({
   } as const;
 
   if (isPrivateTx) {
-    const selectedCommitments = transaction.properties.amountRecordCommitments?.length
-      ? transaction.properties.amountRecordCommitments
-      : transaction.properties.amountRecordCommitment
-        ? [transaction.properties.amountRecordCommitment]
-        : [];
+    const selectedCommitments = transaction.properties.amountRecordCommitments ?? [];
     const firstCommitment = selectedCommitments[0] ?? null;
     invariant(firstCommitment, "aleo: missing amount record commitment");
     const amountRecord = getRecordByCommitment({ account, commitment: firstCommitment });

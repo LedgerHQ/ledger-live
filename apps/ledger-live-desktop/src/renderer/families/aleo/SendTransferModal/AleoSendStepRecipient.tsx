@@ -77,7 +77,7 @@ export const AleoSendStepRecipient = ({
                   ...t,
                   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
                   properties: {
-                    amountRecordCommitment: null,
+                    amountRecordCommitments: [],
                     feeRecordCommitment: null,
                   },
                 };

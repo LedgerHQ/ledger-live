@@ -86,7 +86,7 @@ describe("prepareTransaction", () => {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
     };
@@ -111,7 +111,6 @@ describe("prepareTransaction", () => {
     expect(mockFindBestRecordForFee).toHaveBeenCalledTimes(1);
     expect(mockFindBestRecordForFee).toHaveBeenCalledWith({
       unspentRecords: accountWithPrivateRecords.aleoResources?.unspentPrivateRecords ?? [],
-      selectedAmountRecordCommitment: mockUnspentRecord1.commitment,
       selectedAmountRecordCommitments: [mockUnspentRecord1.commitment],
       targetFee: mockFees,
     });
@@ -120,7 +119,6 @@ describe("prepareTransaction", () => {
       amount: mockAmount,
       fees: mockFees,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
         amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
@@ -132,7 +130,7 @@ describe("prepareTransaction", () => {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     };
@@ -160,7 +158,6 @@ describe("prepareTransaction", () => {
       amount: mockAmount,
       fees: mockFees,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
         amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
@@ -172,7 +169,7 @@ describe("prepareTransaction", () => {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
     };
@@ -200,7 +197,6 @@ describe("prepareTransaction", () => {
       amount: mockAmount,
       fees: mockFees,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
         amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
@@ -212,7 +208,7 @@ describe("prepareTransaction", () => {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
     };
@@ -229,7 +225,6 @@ describe("prepareTransaction", () => {
       amount: mockAmount,
       fees: mockFees,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
         amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
@@ -242,7 +237,7 @@ describe("prepareTransaction", () => {
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       useAllAmount: true,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     };

@@ -98,7 +98,7 @@ describe("estimateMaxSpendable", () => {
       amount: new BigNumber(0),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -110,7 +110,7 @@ describe("estimateMaxSpendable", () => {
         ...mockPreparedTransaction,
         mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
         properties: {
-          amountRecordCommitment: null,
+          amountRecordCommitments: [],
           feeRecordCommitment: null,
         },
       },
@@ -141,7 +141,7 @@ describe("estimateMaxSpendable", () => {
       amount: new BigNumber(privateRecordAmount),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: commitment,
+        amountRecordCommitments: [commitment],
         feeRecordCommitment: null,
       },
     });
@@ -153,7 +153,7 @@ describe("estimateMaxSpendable", () => {
         ...mockPreparedTransaction,
         mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
         properties: {
-          amountRecordCommitment: commitment,
+          amountRecordCommitments: [commitment],
           feeRecordCommitment: null,
         },
       },
@@ -182,7 +182,7 @@ describe("estimateMaxSpendable", () => {
       amount: new BigNumber(0),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: commitment,
+        amountRecordCommitments: [commitment],
         feeRecordCommitment: null,
       },
     });
@@ -195,7 +195,7 @@ describe("estimateMaxSpendable", () => {
           ...mockPreparedTransaction,
           mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
           properties: {
-            amountRecordCommitment: commitment,
+            amountRecordCommitments: [commitment],
             feeRecordCommitment: null,
           },
         },

@@ -72,7 +72,7 @@ describe("createSendSteps", () => {
   it("should navigate to the correct step when going back", () => {
     const cases: { stepId: string; isPrivate?: boolean; expectedTarget: string }[] = [
       { stepId: "private-sync", expectedTarget: "recipient" },
-      { stepId: "amount", isPrivate: true, expectedTarget: "private-sync" },
+      { stepId: "amount", isPrivate: true, expectedTarget: "recipient" },
       { stepId: "amount", isPrivate: false, expectedTarget: "recipient" },
       { stepId: "summary", expectedTarget: "amount" },
       { stepId: "device", expectedTarget: "summary" },

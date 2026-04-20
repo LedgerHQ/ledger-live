@@ -5,7 +5,7 @@ import type {
   StepId as GenericStepId,
 } from "~/renderer/modals/Send/types";
 
-type AleoCustomStepId = "private-sync" | "record-picker";
+type AleoCustomStepId = "private-sync";
 
 export type StepId = Exclude<GenericStepId, "warning"> | AleoCustomStepId;
 

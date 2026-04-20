@@ -14,7 +14,6 @@ import type { ModalProps, StepId } from "../modals/send/types";
 const MODAL_LOCKED: Record<StepId, boolean> = {
   recipient: false,
   "private-sync": true,
-  "record-picker": true,
   amount: true,
   summary: true,
   device: true,
