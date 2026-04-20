@@ -15,6 +15,7 @@ import {
   captureNativeViewHierarchy,
   setupEnvironment,
 } from "./helpers/commonHelpers";
+import { device } from "detox";
 import { config as detoxConfig } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
@@ -35,6 +36,18 @@ import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 
+const DETOX_INSTALL_WORKERS_KEY = "LEDGER_MOBILE_E2E_DETOX_WORKER" as const;
+
+function getWorkerIdsWithDetoxInstall(): Set<string> {
+  const g = globalThis as typeof globalThis & {
+    [DETOX_INSTALL_WORKERS_KEY]?: Set<string>;
+  };
+  if (!g[DETOX_INSTALL_WORKERS_KEY]) {
+    g[DETOX_INSTALL_WORKERS_KEY] = new Set();
+  }
+  return g[DETOX_INSTALL_WORKERS_KEY];
+}
+
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
 
@@ -42,6 +55,13 @@ export default class TestEnvironment extends DetoxEnvironment {
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
     await super.setup();
+
+    const workerIdStr = process.env.JEST_WORKER_ID ?? "1";
+    const installedOnWorker = getWorkerIdsWithDetoxInstall();
+    if (!installedOnWorker.has(workerIdStr)) {
+      await this.reinstallConfiguredApp();
+      installedOnWorker.add(workerIdStr);
+    }
 
     setupEnvironment();
 
@@ -141,6 +161,15 @@ export default class TestEnvironment extends DetoxEnvironment {
     Object.assign(globalThis, nativeHelpers);
     Object.assign(globalThis, webHelpers);
     Object.assign(globalThis, cliCommandsUtils);
+  }
+
+  private async reinstallConfiguredApp() {
+    try {
+      await device.uninstallApp();
+    } catch {
+      // App may be absent on a fresh simulator / emulator.
+    }
+    await device.installApp();
   }
 
   private setupDeviceForSecondaryWorker(workerId: number) {
