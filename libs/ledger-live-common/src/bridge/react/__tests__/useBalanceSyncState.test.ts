@@ -32,9 +32,24 @@ describe("useBalanceSyncState", () => {
       { syncPhase: "syncing" as SyncPhase, expected: true },
       { syncPhase: "synced" as SyncPhase, expected: false },
       { syncPhase: "failed" as SyncPhase, expected: false },
-    ])("should be $expected when syncPhase is $syncPhase", ({ syncPhase, expected }) => {
-      const { result } = renderBalanceSyncState({ syncPhase });
-      expect(result.current.isLoading).toBe(expected);
+    ])(
+      "should be $expected when syncPhase is $syncPhase (no cvPending override)",
+      ({ syncPhase, expected }) => {
+        const { result } = renderBalanceSyncState({ syncPhase });
+        expect(result.current.isLoading).toBe(expected);
+      },
+    );
+
+    it("should be scoped to cvPending when provided: true while CVS pending, false once settled", () => {
+      const { result, rerender } = renderBalanceSyncState({
+        syncPhase: "syncing",
+        cvPending: true,
+      });
+      expect(result.current.isLoading).toBe(true);
+
+      // CVS settles — isLoading drops even though syncPhase stays syncing (bridge in progress)
+      rerender({ ...defaultProps, syncPhase: "syncing", cvPending: false });
+      expect(result.current.isLoading).toBe(false);
     });
   });
 

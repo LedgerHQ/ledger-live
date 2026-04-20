@@ -42,19 +42,17 @@ export const usePortfolioBalanceSectionViewModel = ({
   // immediately so the cached value is shown at cold start instead of a skeleton.
   const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
 
-  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
+  const {
+    balanceAvailable,
+    displayedBalance,
+    isLoading: effectiveIsLoading,
+  } = useBalanceSyncState({
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
     latestBalance: effectiveLatestBalance,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
     cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
-
-  // Shimmer is scoped to the CVS phase: disappears once countervalues settle,
-  // letting the balance animate to the fresh fiat value while account sync continues.
-  const effectiveIsLoading = shouldDisplayBalanceRefreshRework
-    ? isCvPending
-    : syncPhase === "syncing";
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {

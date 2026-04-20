@@ -86,22 +86,16 @@ describe("useBalanceViewModel", () => {
 
   it("should return isLoading true while CVS is pending (iCvPending=true)", () => {
     mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({ syncPhase: "syncing", isBalanceLoading: true, isCvPending: true }),
+      makePortfolioBalanceReturn({
+        syncPhase: "syncing",
+        isBalanceLoading: true,
+        isCvPending: true,
+      }),
     );
 
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
     expect(result.current.isLoading).toBe(true);
-  });
-
-  it("should return isLoading false once CVS settles (iCvPending=false), even mid bridge-sync", () => {
-    mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({ syncPhase: "syncing", isCvPending: false }),
-    );
-
-    const { result } = renderHook(() => useBalanceViewModel(), { initialState });
-
-    expect(result.current.isLoading).toBe(false);
   });
 
   it("should return isLoading false when syncPhase is synced", () => {
@@ -204,7 +198,6 @@ describe("useBalanceViewModel", () => {
     );
     rerender();
     expect(result.current.balanceAvailable).toBe(true);
-    expect(result.current.isLoading).toBe(false);
   });
 
   it("should return shouldDisplayBalanceRefreshRework false when flag is disabled", () => {

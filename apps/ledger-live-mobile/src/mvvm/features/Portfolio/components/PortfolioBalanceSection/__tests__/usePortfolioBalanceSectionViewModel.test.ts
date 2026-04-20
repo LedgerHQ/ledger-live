@@ -125,25 +125,6 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       rerender({});
       expect(result.current.balance).toBe(1500);
     });
-
-    it("scopes isLoading to isCvPending when flag is enabled", () => {
-      // With feature flag on: isLoading = iCvPending (not full syncPhase)
-      mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({ syncPhase: "syncing", isCvPending: true }),
-      );
-      const { result, rerender } = renderHook(
-        () => usePortfolioBalanceSectionViewModel(defaultProps),
-        withFreezeFlag,
-      );
-      expect(result.current.isLoading).toBe(true);
-
-      // CVS settles — shimmer turns off even though bridge sync continues
-      mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({ syncPhase: "syncing", isCvPending: false }),
-      );
-      rerender({});
-      expect(result.current.isLoading).toBe(false);
-    });
   });
 
   describe("isBalanceAvailable", () => {

@@ -40,7 +40,7 @@ export function useBalanceSyncState({
   // When cvPending is provided (mobile), the "active phase" ends when CVS settles
   // rather than when the full bridge sync settles. This lets the balance animate
   // to the new CVS value and continue updating per account batch.
-  const isPhaseActive = cvPending !== undefined ? cvPending : syncPhase === "syncing";
+  const isPhaseActive = cvPending ?? syncPhase === "syncing";
 
   const [balanceUnavailable, setBalanceUnavailable] = useState(!rawBalanceAvailable);
   useEffect(() => {
@@ -63,6 +63,6 @@ export function useBalanceSyncState({
   return {
     balanceAvailable: !balanceUnavailable,
     displayedBalance: shouldFreeze ? frozenBalanceRef.current : latestBalance,
-    isLoading: syncPhase === "syncing",
+    isLoading: isPhaseActive,
   };
 }

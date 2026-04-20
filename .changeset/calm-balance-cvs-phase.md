@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Scope mobile portfolio balance loading to the countervalues phase and expose `cvPending` from sync sources
+Scope portfolio balance loading to the countervalues phase and expose `cvPending` from sync sources
