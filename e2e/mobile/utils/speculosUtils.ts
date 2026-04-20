@@ -15,8 +15,11 @@ import { CLI } from "./cliUtils";
 import { promises as fs } from "fs";
 import path from "path";
 
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError, sleep } from "@ledgerhq/live-common/e2e/index";
 import { getCapturedStderr } from "./loggingUtils";
+
+const SPECULOS_START_MAX_ATTEMPTS = 3;
+const ADB_REVERSE_MAX_ATTEMPTS = 3;
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
 const SPECULOS_STDERR_MARKER = "--- Speculos stderr ---";
@@ -93,21 +96,67 @@ async function writeInstances(instances: SpeculosId[]) {
   await fs.writeFile(SPECULOS_TRACKING_FILE, JSON.stringify(instances, null, 2));
 }
 
+/** Network/device glitches where a short retry often helps (Speculos telnet, adb reverse). */
+function connectivityErrorText(error: unknown): string {
+  const msg = sanitizeError(error).message;
+  const stack = error instanceof Error ? error.stack ?? "" : "";
+  const code =
+    error && typeof error === "object" && "code" in error
+      ? String((error as { code?: unknown }).code ?? "")
+      : "";
+  return [code, msg, stack].join("\n").toLowerCase();
+}
+
+function isTransientConnectivityGlitch(error: unknown): boolean {
+  const s = connectivityErrorText(error);
+  if (/econnrefused|etimedout|econnreset|enotfound|socket hang up/.test(s)) return true;
+  if (s.includes("cannot connect")) return true;
+  if (s.includes("connection refused")) return true;
+  if (s.includes("device offline")) return true;
+  if (s.includes("no devices/emulators")) return true;
+  if (s.includes("telnet")) return true;
+  if (s.includes("emulator") && s.includes("not found")) return true;
+  return false;
+}
+
 export async function launchSpeculos(appName: string) {
   const testName = jestExpect.getState().testPath || "unknown";
+  const spec = specs[appName.replace(/ /g, "_")];
   let device;
-  try {
-    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
-  } catch (e: unknown) {
-    const err = e instanceof Error ? e : new Error(String(e));
-    globalThis.speculosStartupErrorMessage = err.message;
-    globalThis.speculosFailureStderr = getCapturedStderr();
-    await attachSpeculosOutputToAllure(err.message);
-    const message = ["[E2E Setup] Speculos failed to start.", err.message]
-      .filter(Boolean)
-      .join("\n\n");
-    log.error("E2E Setup", message);
-    throw new Error(message);
+  for (let attempt = 1; attempt <= SPECULOS_START_MAX_ATTEMPTS; attempt++) {
+    try {
+      device = await startSpeculos(testName ?? "cli_speculos", spec);
+      break;
+    } catch (e: unknown) {
+      if (isTransientConnectivityGlitch(e) && attempt < SPECULOS_START_MAX_ATTEMPTS) {
+        const waitMs = 1000 * 2 ** (attempt - 1);
+        log.warn(
+          "E2E Setup",
+          `Speculos start failed (attempt ${attempt}/${SPECULOS_START_MAX_ATTEMPTS}), retrying in ${waitMs}ms: ${sanitizeError(e).message}`,
+        );
+        await sleep(waitMs);
+        continue;
+      }
+      const err = e instanceof Error ? e : new Error(String(e));
+      globalThis.speculosStartupErrorMessage = err.message;
+      globalThis.speculosFailureStderr = getCapturedStderr();
+      await attachSpeculosOutputToAllure(err.message);
+      const connectivityHint = isTransientConnectivityGlitch(e)
+        ? [
+            "Transient connectivity error after retries.",
+            "If this persists in CI, check Speculos/Docker health, Android emulator stability (logcat -b crash), and that the worker serial matches a running device.",
+          ].join(" ")
+        : "";
+      const message = [
+        "[E2E Setup] Speculos failed to start.",
+        connectivityHint,
+        err.message,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      log.error("E2E Setup", message);
+      throw new Error(message);
+    }
   }
 
   if (!device) {
@@ -235,7 +284,26 @@ export async function takeSpeculosScreenshot() {
 
 export async function registerSpeculos(speculosPort: number) {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
-  await device.reverseTcpPort(speculosPort);
+  for (let attempt = 1; attempt <= ADB_REVERSE_MAX_ATTEMPTS; attempt++) {
+    try {
+      await device.reverseTcpPort(speculosPort);
+      break;
+    } catch (e: unknown) {
+      if (isTransientConnectivityGlitch(e) && attempt < ADB_REVERSE_MAX_ATTEMPTS) {
+        const waitMs = 1000 * attempt;
+        log.warn(
+          "E2E Setup",
+          `adb reverseTcpPort failed (attempt ${attempt}/${ADB_REVERSE_MAX_ATTEMPTS}), retrying in ${waitMs}ms: ${sanitizeError(e).message}`,
+        );
+        await sleep(waitMs);
+        continue;
+      }
+      const hint =
+        "adb reverseTcpPort failed. If the message mentions a missing emulator serial, the Android device may have crashed or Detox lost the session; check CI emulator crash artifacts and logcat.";
+      log.error("E2E Setup", `${hint} ${sanitizeError(e).message}`);
+      throw new Error([hint, sanitizeError(e).message].join("\n"));
+    }
+  }
   process.env.SPECULOS_API_PORT = speculosPort.toString();
   delete process.env.DEVICE_PROXY_URL;
   CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
