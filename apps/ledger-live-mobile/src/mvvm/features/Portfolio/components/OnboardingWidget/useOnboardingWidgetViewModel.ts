@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { track } from "~/analytics";
 import { isPostOnboardingHubActionFulfilled } from "~/logic/postOnboarding/postOnboardingHubCompletion";
@@ -11,21 +11,41 @@ export const useOnboardingWidgetViewModel = (): UseOnboardingWidgetViewModelResu
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const hubCompletionContext = usePostOnboardingHubCompletionContext();
 
+  const [actionsCompleted, setActionsCompleted] = useState<number | undefined>();
+
+  useEffect(() => {
+    async function getCompletedActions() {
+      const actions = await Promise.all(
+        actionsState.map(async a => {
+          try {
+            const result = await isPostOnboardingHubActionFulfilled(a, hubCompletionContext);
+            return result;
+          } catch {
+            return false;
+          }
+        }),
+      );
+      const fulfilledActions = actions.filter(a => !!a).length;
+      if (actionsCompleted !== fulfilledActions) {
+        setActionsCompleted(fulfilledActions);
+      }
+    }
+    getCompletedActions();
+  }, [actionsState, hubCompletionContext, actionsCompleted]);
+
   const { currentStep, totalSteps, stepperLabel } = useMemo(() => {
     const actionsTotal = actionsState.length;
-    const actionsCompleted = actionsState.filter(a =>
-      isPostOnboardingHubActionFulfilled(a, hubCompletionContext),
-    ).length;
+    const actionsCompletedAmount = actionsCompleted || 0;
     const total = 1 + Math.max(actionsTotal, 1);
-    const displayStep = 1 + actionsCompleted;
+    const displayStep = 1 + actionsCompletedAmount;
     const arcStep =
-      actionsTotal > 0 && actionsCompleted === actionsTotal ? total : actionsCompleted;
+      actionsTotal > 0 && actionsCompletedAmount === actionsTotal ? total : actionsCompletedAmount;
     return {
       currentStep: arcStep,
       totalSteps: total,
       stepperLabel: `${displayStep}/${total}`,
     };
-  }, [actionsState, hubCompletionContext]);
+  }, [actionsState, actionsCompleted]);
 
   const onPress = useCallback(() => {
     track("button_clicked", {
@@ -41,5 +61,6 @@ export const useOnboardingWidgetViewModel = (): UseOnboardingWidgetViewModelResu
     totalSteps,
     stepperLabel,
     onPress,
+    loading: actionsCompleted === undefined,
   };
 };
