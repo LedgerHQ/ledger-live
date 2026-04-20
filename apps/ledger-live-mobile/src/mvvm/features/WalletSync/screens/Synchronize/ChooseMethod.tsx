@@ -18,18 +18,23 @@ type NavigationProps = BaseComposite<
 
 type Props = {
   onScanMethodPress: () => void;
+  onConnectWithLedgerPress?: () => void;
 };
 
-const ChooseSyncMethod = ({ onScanMethodPress }: Props) => {
+const ChooseSyncMethod = ({ onScanMethodPress, onConnectWithLedgerPress }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { onClickTrack } = useLedgerSyncAnalytics();
 
   const onConnectDeviceMethodPress = () => {
     onClickTrack({ button: AnalyticsButton.UseYourLedger, page: AnalyticsPage.ChooseSyncMethod });
-    navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncActivationProcess,
-    });
+    if (onConnectWithLedgerPress) {
+      onConnectWithLedgerPress();
+    } else {
+      navigation.navigate(NavigatorName.WalletSync, {
+        screen: ScreenName.WalletSyncActivationProcess,
+      });
+    }
   };
 
   return (
