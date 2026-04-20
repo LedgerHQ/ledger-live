@@ -164,26 +164,27 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const location = useLocation();
   const state = isSwapLocationState(location.state) ? location.state : null;
+
+  const rawFromAccountId =
+    typeof state?.defaultAccountId === "object"
+      ? state?.defaultAccountId?.fromAccountId
+      : undefined;
+
+  const rawToAccountId =
+    typeof state?.defaultAccountId === "string"
+      ? state.defaultAccountId
+      : state?.defaultAccountId?.toAccountId;
+
   const resolvedDefaultToAccount = useMemo(() => {
-    if (state?.defaultAccount) {
-      return state.defaultAccount;
-    }
-    const idState = state?.defaultAccountId;
-    if (typeof idState === "string") {
-      return accounts.find(acc => acc.id === idState);
-    }
-    if (idState && typeof idState === "object" && idState.toAccountId) {
-      return accounts.find(acc => acc.id === idState.toAccountId);
-    }
-    return undefined;
-  }, [accounts, state?.defaultAccount, state?.defaultAccountId]);
-  const resolvedDefaultFromAccount = useMemo(() => {
-    const idState = state?.defaultAccountId;
-    if (idState && typeof idState === "object" && idState.fromAccountId) {
-      return accounts.find(acc => acc.id === idState.fromAccountId);
-    }
-    return undefined;
-  }, [accounts, state?.defaultAccountId]);
+    if (state?.defaultAccount) return state.defaultAccount;
+    return rawToAccountId ? accounts.find(acc => acc.id === rawToAccountId) : undefined;
+  }, [accounts, state?.defaultAccount, rawToAccountId]);
+
+  const resolvedDefaultFromAccount = useMemo(
+    () => (rawFromAccountId ? accounts.find(acc => acc.id === rawFromAccountId) : undefined),
+    [accounts, rawFromAccountId],
+  );
+
   const resolvedDefaultToParentAccount = useMemo(() => {
     if (state?.defaultParentAccount) {
       return state.defaultParentAccount;
@@ -507,24 +508,31 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   );
 
   const hashString = useMemo(() => {
+    // Prefer recomputing the wallet-API id from the resolved account (this also
+    // warms the uuidToAccountId map used by later custom.* handlers). If the
+    // local account isn't available (e.g. cold-start deeplink), fall back to
+    // whatever raw id came in — typically already a wallet-API id.
+    const fromAccountIdForUrl = resolvedDefaultFromAccount
+      ? accountToWalletAPIAccount(
+          walletState,
+          resolvedDefaultFromAccount,
+          resolvedDefaultFromParentAccount,
+        ).id
+      : rawFromAccountId;
+    const toAccountIdForUrl = resolvedDefaultToAccount
+      ? accountToWalletAPIAccount(
+          walletState,
+          resolvedDefaultToAccount,
+          resolvedDefaultToParentAccount,
+        ).id
+      : rawToAccountId;
+
     const params = new URLSearchParams({
       ...(isOffline ? { isOffline: "true" } : {}),
-      ...(resolvedDefaultFromAccount
+      ...(fromAccountIdForUrl ? { fromAccountId: fromAccountIdForUrl } : {}),
+      ...(toAccountIdForUrl
         ? {
-            fromAccountId: accountToWalletAPIAccount(
-              walletState,
-              resolvedDefaultFromAccount,
-              resolvedDefaultFromParentAccount,
-            ).id,
-          }
-        : {}),
-      ...(resolvedDefaultToAccount
-        ? {
-            toAccountId: accountToWalletAPIAccount(
-              walletState,
-              resolvedDefaultToAccount,
-              resolvedDefaultToParentAccount,
-            ).id,
+            toAccountId: toAccountIdForUrl,
             amountFrom: state?.defaultAmountFrom || "",
           }
         : {}),
@@ -557,6 +565,8 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     return params;
   }, [
     isOffline,
+    rawFromAccountId,
+    rawToAccountId,
     resolvedDefaultFromAccount,
     resolvedDefaultFromParentAccount,
     resolvedDefaultToAccount,

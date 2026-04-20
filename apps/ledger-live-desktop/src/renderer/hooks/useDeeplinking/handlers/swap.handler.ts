@@ -51,18 +51,22 @@ export const swapHandler: DeeplinkHandler<"swap"> = (route, { navigate }) => {
     state.from = fromPath;
   }
 
+  // For deeplinks that arrive at cold start, the internal id map
+  // may not be populated yet. In that case we forward the raw id as-is so the
+  // swap screen can still attempt to resolve it (or pass it straight to the Live App).
   if (toAccountId) {
     const internalId = getAccountIdFromWalletAccountId(toAccountId);
-    if (internalId) {
-      state.defaultAccountId = { toAccountId: internalId };
-    }
+    state.defaultAccountId = {
+      toAccountId: internalId ?? toAccountId,
+    };
   }
 
   if (fromAccountId) {
     const internalId = getAccountIdFromWalletAccountId(fromAccountId);
-    if (internalId) {
-      state.defaultAccountId = { ...state.defaultAccountId, fromAccountId: internalId };
-    }
+    state.defaultAccountId = {
+      ...state.defaultAccountId,
+      fromAccountId: internalId ?? fromAccountId,
+    };
   }
 
   navigate("/swap", state);
