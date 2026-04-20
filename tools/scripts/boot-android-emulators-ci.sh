@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Boots two Android emulators in parallel for mobile E2E CI (Detox workers = 2).
+# Boots three Android emulators in parallel for mobile E2E CI (Detox workers).
 #
 # Required environment:
-#   AVD_NAME — base AVD name; also starts "${AVD_NAME}_2" (see duplicate-avd step).
+#   AVD_NAME — base AVD name; also starts "${AVD_NAME}_2" and "${AVD_NAME}_3" (see duplicate-avd step).
 #
 # Optional environment:
 #   AVD_OPTIONS       — extra emulator flags (word-split like the workflow; may be empty)
-#   EMULATOR_SERIALS  — space-separated adb serials (default: emulator-5554 emulator-5556)
+#   EMULATOR_SERIALS  — space-separated adb serials (default: emulator-5554 emulator-5556 emulator-5558)
 #   LOGCAT_DIR        — directory for per-emulator logcat files (default: e2e/mobile/artifacts)
 #
 # Requires: ANDROID_HOME, adb on PATH
 
 set -uo pipefail
 
-readonly _EXPECTED_EMULATOR_COUNT=2
+readonly _EXPECTED_EMULATOR_COUNT=3
 
 log() {
   echo "[$(date +%H:%M:%S)] $*"
@@ -41,13 +41,13 @@ disable_ui_animations() {
 : "${AVD_NAME:?AVD_NAME is required}"
 : "${ANDROID_HOME:?ANDROID_HOME is required}"
 
-IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556}"
+IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
 if [[ "${#SERIALS[@]}" -ne "$_EXPECTED_EMULATOR_COUNT" ]]; then
   log "ERROR: expected $_EXPECTED_EMULATOR_COUNT serials in EMULATOR_SERIALS, got ${#SERIALS[@]}"
   exit 1
 fi
 
-AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2")
+AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2" "${AVD_NAME}_3")
 
 log "🛫 Starting emulators..."
 i=1
