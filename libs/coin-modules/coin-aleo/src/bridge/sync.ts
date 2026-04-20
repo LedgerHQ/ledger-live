@@ -25,6 +25,7 @@ import {
   PROGRESS_AFTER_DECRYPT,
   PROGRESS_DONE,
 } from "../constants";
+import { AleoApiConfigurationResetError } from "../errors";
 import { emitAleoSyncProgress, emitAleoSyncDone } from "./privateSyncProgress";
 import type {
   AleoAccount,
@@ -179,16 +180,14 @@ export async function performPrivateSync(
     viewKey,
     provableApi: initialAccount.aleoResources?.provableApi ?? null,
   }).catch(err => {
-    // private sync logic will be probably handled separately with https://ledgerhq.atlassian.net/browse/LIVE-26440
-    // for now, if provable API access configuration fails, we still want to preserve existing state
     log("aleo/sync", "Error while configuring record scanner API access", { err, address });
-    return initialAccount.aleoResources?.provableApi ?? null;
+    return null;
   });
 
   const freshScannerStatus = provableApi?.scannerStatus;
 
   if (!provableApi || !isProvableApiConfigured(provableApi)) {
-    return null;
+    throw new AleoApiConfigurationResetError();
   }
 
   signal?.throwIfAborted();
@@ -355,24 +354,10 @@ export function createPrivateSyncObservable(
     const controller = new AbortController();
     const accountId = initialAccount?.id;
 
-    // Both the async promise and the RxJS teardown path call finalize(), but only
-    // the first call should take effect. The idempotency guard prevents the lock
-    // from being released twice (which would corrupt privateSyncInFlight for a
-    // concurrently-started sync) and prevents a spurious null progress emission.
-    let finalized = false;
-    const finalize = () => {
-      if (finalized) return;
-      finalized = true;
-      privateSyncInFlight.delete(lockKey);
-      if (accountId) emitAleoSyncDone(accountId);
-    };
+    // set to true before subscriber.complete() so the RxJS teardown (which fires
+    // synchronously on every termination) can tell natural completion from early abort.
+    let settled = false;
 
-    // Write progress directly to the module-level subject — no account partial emitted,
-    // no accounts reducer touched. UI hooks subscribe to aleoPrivateSyncProgress$.
-    // Guard against the abort signal: finalize() runs synchronously in the teardown
-    // (before the in-flight performPrivateSync promise has a chance to throw AbortError),
-    // so without this check a zombie promise continuation could re-add the accountId to
-    // _inFlightProgress and emit non-null progress after the null was already broadcast.
     const onProgress = accountId
       ? (progress: number) => {
           if (controller.signal.aborted) return;
@@ -389,13 +374,17 @@ export function createPrivateSyncObservable(
       controller.signal,
     )
       .then(result => {
-        finalize();
+        settled = true;
+        privateSyncInFlight.delete(lockKey);
         if (result) {
+          if (accountId) emitAleoSyncDone(accountId);
           log("aleo/createPrivateSyncObservable", `Private sync completed for ${currencyId}`, {
             operationsCount: result.operationsCount,
           });
           subscriber.next(result);
         } else {
+          // scanner not ready - lock released for retry, but emitAleoSyncDone is intentionally skipped
+          // so the footer keeps showing progress instead of flickering back to idle on every poll cycle.
           log(
             "aleo/createPrivateSyncObservable",
             `Private sync skipped for ${currencyId} — provableApi not ready`,
@@ -404,11 +393,19 @@ export function createPrivateSyncObservable(
         subscriber.complete();
       })
       .catch(err => {
-        finalize();
+        settled = true;
+        privateSyncInFlight.delete(lockKey);
+        if (accountId) emitAleoSyncDone(accountId);
         if (err instanceof Error && err.name === "AbortError") {
           log("aleo/createPrivateSyncObservable", `Private sync aborted for ${currencyId}`);
           subscriber.complete();
           return;
+        }
+        if (err instanceof AleoApiConfigurationResetError && initialAccount?.aleoResources) {
+          // set `provableApi` to null before surfacing the error so the next sync cycle starts fresh re-registration
+          subscriber.next({
+            aleoResources: { ...initialAccount.aleoResources, provableApi: null },
+          });
         }
         log("aleo/createPrivateSyncObservable", `Private sync error for ${currencyId}`, {
           error: err.message,
@@ -418,7 +415,8 @@ export function createPrivateSyncObservable(
 
     return () => {
       controller.abort();
-      finalize();
+      privateSyncInFlight.delete(lockKey);
+      if (!settled && accountId) emitAleoSyncDone(accountId);
     };
   });
 }
