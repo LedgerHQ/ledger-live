@@ -34,6 +34,7 @@ type BorrowLiveAppViewModel = {
   manifest: LiveAppManifest | undefined;
   error: Error | null;
   isLoading: boolean;
+  webviewState: WebviewState;
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
   webviewInputs: BorrowWebviewInputs;
@@ -46,7 +47,7 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const { t } = useTranslation();
   const borrowConfig = useBorrowLiveConfig();
   const { isConnected } = useNetInfo();
-  const [_webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
@@ -106,6 +107,7 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
     manifest,
     error,
     isLoading: remoteLiveAppState.isLoading,
+    webviewState,
     webviewRef,
     onWebviewStateChange,
     webviewInputs,

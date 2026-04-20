@@ -1,6 +1,7 @@
 import React, { type RefObject } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { BorrowWebView } from "LLM/features/Borrow/components/BorrowWebView";
@@ -14,6 +15,7 @@ type BorrowLiveAppViewProps = Readonly<{
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
   webviewInputs: BorrowWebviewInputs;
+  customHandlers?: WalletAPICustomHandlers;
 }>;
 
 export function BorrowLiveAppView({
@@ -23,6 +25,7 @@ export function BorrowLiveAppView({
   webviewRef,
   onWebviewStateChange,
   webviewInputs,
+  customHandlers,
 }: BorrowLiveAppViewProps) {
   const { backgroundColor } = useWallet40Theme("mobile");
 
@@ -42,6 +45,7 @@ export function BorrowLiveAppView({
           manifest={manifest}
           setWebviewState={onWebviewStateChange}
           inputs={webviewInputs}
+          customHandlers={customHandlers}
         />
       )}
     </Flex>

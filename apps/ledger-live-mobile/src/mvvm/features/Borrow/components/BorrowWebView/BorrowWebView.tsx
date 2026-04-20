@@ -10,14 +10,15 @@ type Props = {
   manifest: LiveAppManifest;
   setWebviewState: (webviewState: WebviewState) => void;
   inputs: BorrowWebviewInputs;
+  customHandlers?: WalletAPICustomHandlers;
 };
 
 export const BorrowWebView = forwardRef<WebviewAPI, Props>(
-  ({ manifest, setWebviewState, inputs }, ref) => {
+  ({ manifest, setWebviewState, inputs, customHandlers }, ref) => {
     const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-    const customHandlers = useMemo<WalletAPICustomHandlers>(
-      () => ({ ...customDeeplinkHandlers }),
-      [customDeeplinkHandlers],
+    const mergedCustomHandlers = useMemo<WalletAPICustomHandlers>(
+      () => ({ ...customDeeplinkHandlers, ...customHandlers }),
+      [customDeeplinkHandlers, customHandlers],
     );
 
     return (
@@ -26,7 +27,7 @@ export const BorrowWebView = forwardRef<WebviewAPI, Props>(
         manifest={manifest}
         onStateChange={setWebviewState}
         inputs={inputs}
-        customHandlers={customHandlers}
+        customHandlers={mergedCustomHandlers}
       />
     );
   },
