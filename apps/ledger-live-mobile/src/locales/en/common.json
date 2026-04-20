@@ -7831,27 +7831,53 @@
   "postOnboarding": {
     "hub": {
       "title": "What’s next?",
-      "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
+      "areAllPostOnboardingActionsCompletedTitle": "You’re all set!",
       "skip": "I’ll do this later",
-      "viewWallet": "Explore my portfolio"
+      "viewWallet": "Explore my portfolio",
+      "deviceStepComplete": "Complete"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
       "description": "Secure your assets and go further.",
       "buttonLabel": "See what's next"
     },
+    "drawer": {
+      "title": "Next, finish wallet setup",
+      "titleCompleted": "You’re all set!",
+      "primaryLabel": "Got it",
+      "actionCompletedLabel": "Complete",
+      "actions": {
+        "deviceOnboarded": {
+          "title": "Set up your Ledger"
+        },
+        "assetsTransfer": {
+          "title": "Add crypto",
+          "description": "Receive or buy crypto to fund your wallet"
+        },
+        "syncAccounts": {
+          "title": "Sync your wallet",
+          "description": "Keep your crypto accounts synced"
+        },
+        "customImage": {
+          "title": "Customize the lock screen",
+          "description": "Display your favorite digital art or photo as your device’s lock screen."
+        },
+        "recover": {
+          "title": "Finish securing your backup",
+          "description": "Complete activating Ledger Recover"
+        }
+      }
+    },
     "widget": {
       "title": "Next, finish wallet setup",
-      "subtitle": "Start with funding your wallet."
+      "subtitle": "Secure your assets and go further."
     },
     "actions": {
       "deviceOnboarded": {
-        "titleCompleted": "Setup your Ledger device"
+        "titleCompleted": "Set up your Ledger"
       },
       "assetsTransfer": {
-        "title": "Transfer your assets",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Transfer from any exchange or wallet.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
@@ -7861,21 +7887,15 @@
         "popupLabel": "Crypto bought"
       },
       "customImage": {
-        "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
-        "description": "Display your favorite digital art or photo as your device’s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
       "recover": {
-        "title": "Finish securing your backup",
         "titleCompleted": "Backup secured",
-        "description": "Complete activating Ledger Recover",
         "popupLabel": "Successfully subscribed to Ledger Recover"
       },
       "syncAccounts": {
-        "title": "Sync your crypto accounts",
         "titleCompleted": "Your accounts are synchronized",
-        "description": "Activate Ledger Sync to sync your crypto accounts",
         "popupLabel": "Accounts synced"
       }
     }
