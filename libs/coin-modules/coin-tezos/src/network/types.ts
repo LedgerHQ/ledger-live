@@ -10,6 +10,10 @@ export type APIAccount =
       publicKey: string;
       revealed: boolean;
       balance: number;
+      stakedBalance?: number;
+      unstakedBalance?: number;
+      unstakedFinalizable?: number;
+      stakingUpdatesCount?: number;
       counter: number;
       delegate?: {
         alias: string;
@@ -73,6 +77,16 @@ export function isAPIRevealType(op: APIOperation): op is APIRevealType {
   return op.type === "reveal";
 }
 
+export type APIStakingType = CommonOperationType & {
+  type: "staking";
+  kind: "stake" | "unstake" | "finalize";
+  amount: number;
+  sender: { address: string } | undefined | null;
+};
+export function isAPIStakingType(op: APIOperation): op is APIStakingType {
+  return op.type === "staking";
+}
+
 // https://api.tzkt.io/#operation/Accounts_GetOperations
 export type AccountsGetOperationsOptions = {
   lastId?: number; // used as a pagination cursor to fetch more transactions
@@ -84,9 +98,7 @@ export type AccountsGetOperationsOptions = {
 
 export type APIOperation =
   | APITransactionType
-  | (CommonOperationType & {
-      type: "reveal";
-    })
+  | APIRevealType
   | APIDelegationType
   | (CommonOperationType & {
       type: "activation";
@@ -103,6 +115,7 @@ export type APIOperation =
       type: "migration";
       balanceChange: number;
     })
+  | APIStakingType
   | (CommonOperationType & {
       type: ""; // this is to express fact we have others and we need to always filter out others
     });
