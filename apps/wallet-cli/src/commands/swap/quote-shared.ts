@@ -1,4 +1,4 @@
-import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
+import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { colors } from "../../shared/ui";
 

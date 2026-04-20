@@ -366,11 +366,8 @@ class JsonCommandOutput implements CommandOutput {
     writeStdout(this._envelope({ quotes: args.quotes }));
   }
 
-  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
-    void errors;
-    writeStdout(
-      JSON.stringify(makeErrorEnvelope(this._ctx.command, message, this._ctx.network), null, 2),
-    );
+  swapQuotesUnavailable(message: string, _errors: SwapQuoteProviderError[]): never {
+    writeStdout(JSON.stringify(this._errorEnvelope(message), null, 2));
     process.exit(1);
   }
 }

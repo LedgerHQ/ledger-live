@@ -1,7 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/getQuotes";
-import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { outputOption } from "../shared-options";
@@ -48,6 +47,8 @@ export default defineCommand({
           receiveCurrencyId: flags.to,
           sendAddress: flags["from-fresh-address"],
           receiveAddress: flags["to-fresh-address"],
+          sendAccountId: "",
+          receiveAccountId: "",
         },
       });
 
