@@ -2,7 +2,9 @@ import { getEnv } from "@ledgerhq/live-env";
 import type { AccountLike } from "@ledgerhq/types-live";
 
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
+import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { fetchQuotes } from "./service/fetchQuotes";
+import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import { normalizeQuote } from "./normalizer";
 import type { GetQuotesArgs, GetQuotesResponse } from "./types";
 import { isUnsupportedPair } from "./unsupportedPairs";
@@ -48,12 +50,26 @@ export async function getQuotes(
     return { quotes: [], errors };
   }
 
+  // Skip the provider-data fetch (CAL + CDN) and the bridge-side fee-context
+  // build (sync + prepareTransaction + getTransactionStatus) when the
+  // aggregator returned only error rows — neither result would be consumed
+  // by `normalizeQuote`/`computeFeeEstimate`, and forwarding the errors
+  // alone keeps the response semantically identical.
+  if (rawQuotes.length === 0) {
+    return { quotes: [], errors };
+  }
+
   const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
   const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
-  const providerData = await fetchAndMergeProviderData({
-    ledgerSignatureEnv,
-    partnerSignatureEnv,
-  });
+
+  const [providerData, feeContext] = await Promise.all([
+    fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }),
+    fetchNetworkFeeContext({
+      accounts: context.accounts,
+      fromAccountId: args.data.sendAccountId,
+      amountFrom: args.data.amount,
+    }),
+  ]);
 
   const normalizationContext = {
     sendCurrencyId: args.data.sendCurrencyId,
@@ -61,7 +77,10 @@ export async function getQuotes(
     spotPrices: context.spotPrices,
   };
 
-  const quotes = rawQuotes.map(raw => normalizeQuote(raw, providerData, normalizationContext));
+  const quotes = rawQuotes.map(raw => {
+    const feeEstimate = feeContext ? computeFeeEstimate(raw, feeContext) : undefined;
+    return normalizeQuote(raw, providerData, normalizationContext, feeEstimate);
+  });
 
   return { quotes, errors };
 }
