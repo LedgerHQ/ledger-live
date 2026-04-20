@@ -37,7 +37,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayMarketBanner: boolean;
-  shouldDisplayLoansSection: boolean;
+  shouldDisplayBorrowSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
@@ -71,7 +71,7 @@ const usePortfolioViewModel = (navigation: {
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayLoansSection = borrowConfig?.enabled ?? false;
+  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
@@ -161,7 +161,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
-    shouldDisplayLoansSection,
+    shouldDisplayBorrowSection,
     shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
     showAssets,

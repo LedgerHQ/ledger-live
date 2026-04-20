@@ -19,7 +19,7 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
-export const LoansEntryPoint = () => {
+export const BorrowEntryPoint = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const handleClick = useCallback(() => {
@@ -32,10 +32,10 @@ export const LoansEntryPoint = () => {
   }, [navigate]);
 
   return (
-    <div className="flex flex-col gap-12" data-testid="portfolio-loans-entry-point">
+    <div className="flex flex-col gap-12" data-testid="portfolio-borrow-entry-point">
       <Subheader>
         <SubheaderRow>
-          <SubheaderTitle>{t("portfolio.loansEntry.title")}</SubheaderTitle>
+          <SubheaderTitle>{t("portfolio.borrowEntry.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
       <Card onClick={handleClick}>
@@ -43,15 +43,15 @@ export const LoansEntryPoint = () => {
           <CardLeading>
             <Spot appearance="icon" icon={Wallet} />
             <CardContent>
-              <CardContentTitle>{t("portfolio.loansEntry.cardTitle")}</CardContentTitle>
+              <CardContentTitle>{t("portfolio.borrowEntry.cardTitle")}</CardContentTitle>
               <CardContentDescription>
-                {t("portfolio.loansEntry.cardDescription")}
+                {t("portfolio.borrowEntry.cardDescription")}
               </CardContentDescription>
             </CardContent>
           </CardLeading>
           <CardTrailing>
             <Button appearance="base" size="sm" onClick={handleClick}>
-              {t("portfolio.loansEntry.cta")}
+              {t("portfolio.borrowEntry.cta")}
             </Button>
           </CardTrailing>
         </CardHeader>
