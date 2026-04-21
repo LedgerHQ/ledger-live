@@ -62,7 +62,7 @@ export const AppLoadingManager: React.FC<AppLoadingManagerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#131214",
+    backgroundColor: "#000000",
   },
   absoluteFill: {
     position: "absolute",
