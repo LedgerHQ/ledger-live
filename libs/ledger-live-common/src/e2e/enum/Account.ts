@@ -256,6 +256,8 @@ export class Account {
   static readonly SUI_1 = new Account(Currency.SUI, "Sui 1", 0, "44'/784'/0'/0'/0'");
   static readonly SUI_2 = new Account(Currency.SUI, "Sui 2", 1, "44'/784'/1'/0'/0'");
 
+  static readonly ARBITRUM_1 = new Account(Currency.ARBITRUM, "Arbitrum 1", 0, "44'/60'/0'/0/0");
+
   static readonly BASE_1 = new Account(Currency.BASE, "Base 1", 0, "44'/60'/0'/0/0");
   static readonly BASE_2 = new Account(Currency.BASE, "Base 2", 1, "44'/60'/1'/0/0");
 

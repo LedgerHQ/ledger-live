@@ -5,4 +5,5 @@ export enum Team {
   BUY_AND_SELL = "BuyAndSell",
   EARN = "Earn",
   BST = "BST",
+  PERPS = "Perps",
 }

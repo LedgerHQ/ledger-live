@@ -95,6 +95,9 @@ export class Currency {
     Network.BNB_CHAIN,
   ]);
   static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON, [Network.TON]);
+  static readonly ARBITRUM = new Currency("Arbitrum", "ETH", "arbitrum", AppInfos.ETHEREUM, [
+    Network.ARBITRUM,
+  ]);
   static readonly ETH_USDT = new Currency(
     "Tether USD",
     "USDT",

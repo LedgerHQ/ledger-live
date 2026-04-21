@@ -385,6 +385,13 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Hyperliquid: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Hyperliquid",
+    },
+    dependencies: [],
+  },
   Velora: {
     appQuery: {
       model: getSpeculosModel(),
