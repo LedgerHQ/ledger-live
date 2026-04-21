@@ -21,6 +21,7 @@ type SendFlags = {
   validator?: string;
   "stake-account"?: string;
   memo?: string;
+  data?: string;
   "dry-run": boolean;
   output: "human" | "json";
 };
@@ -39,6 +40,7 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
     family: "evm",
     recipient: flags.to,
     amount: flags.amount,
+    data: flags.data,
   }),
   solana: flags => ({
     family: "solana",
@@ -85,6 +87,15 @@ export default defineCommand({
     memo: option(z.string().min(1).optional(), {
       description: "Memo/tag (Solana only)",
     }),
+    data: option(
+      z
+        .string()
+        .regex(/^0x([0-9a-fA-F]{2})*$/, "data must be 0x-prefixed hex with an even number of digits")
+        .optional(),
+      {
+        description: "EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)",
+      },
+    ),
     "dry-run": option(z.boolean().default(false), {
       description: "Prepare and validate transaction but do not sign or broadcast",
     }),
