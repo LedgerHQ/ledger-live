@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import featureFlagsReducer from "@shared/feature-flags";
+import featureFlagsReducer, { setResolutionConfig } from "@shared/feature-flags";
+
+setResolutionConfig({});
 
 export const store = configureStore({
   reducer: {
