@@ -9,6 +9,8 @@ import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { Account } from "@ledgerhq/types-live";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import subDays from "date-fns/subDays";
 
 type TestStackParamList = WalletTabNavigatorStackParamList;
 
@@ -89,3 +91,33 @@ export const overrideInitialStateWithNoAccountsAndAssetSection =
   (assetSection: boolean) =>
   (state: State): State =>
     overrideInitialStateWithAssetSection(assetSection, [])(state);
+
+const onboardingWidgetBaseState = (state: State): State => ({
+  ...state,
+  postOnboarding: {
+    ...state.postOnboarding,
+    deviceModelId: DeviceModelId.nanoX,
+    walletEntryPointEligibleForPortfolio: true,
+  },
+  settings: {
+    ...state.settings,
+    hasCompletedOnboarding: true,
+    onboardingCompletionDate: subDays(new Date(), 2).toISOString(),
+  },
+});
+
+export const overrideInitialStateWithOnboardingWidgetVisible = withFlagOverrides(
+  { lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true, onboardingWidget: true } } },
+  onboardingWidgetBaseState,
+);
+
+export const overrideInitialStateWithOnboardingWidgetVisibleAndReadOnly = withFlagOverrides(
+  { lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true, onboardingWidget: true } } },
+  state => ({
+    ...onboardingWidgetBaseState(state),
+    settings: {
+      ...onboardingWidgetBaseState(state).settings,
+      readOnlyModeEnabled: true,
+    },
+  }),
+);

@@ -7,6 +7,7 @@ import {
   btcCurrency,
   ethCurrency,
   overrideInitialStateWithAssetSection,
+  overrideInitialStateWithOnboardingWidgetVisible,
 } from "../../../__integrations__/shared";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 
@@ -92,7 +93,7 @@ describe("PortfolioEmptySection", () => {
 
     it("should render portfolio banners section", () => {
       renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
-        overrideInitialState: emptyAccountState,
+        overrideInitialState: overrideInitialStateWithOnboardingWidgetVisible,
       });
 
       expect(screen.getAllByTestId("portfolio-banners-section").length).toBeGreaterThan(0);
@@ -134,7 +135,8 @@ describe("PortfolioEmptySection", () => {
 
     it("should display the portfolio banners section", () => {
       render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
-        overrideInitialState: createAccountState,
+        overrideInitialState: state =>
+          overrideInitialStateWithOnboardingWidgetVisible(createAccountState(state)),
       });
 
       expect(screen.getAllByTestId("portfolio-banners-section").length).toBeGreaterThan(0);
