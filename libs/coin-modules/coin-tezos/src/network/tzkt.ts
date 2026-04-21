@@ -7,6 +7,7 @@ import {
   APIBlock,
   APIDelegationType,
   APIOperation,
+  APIStakingType,
   APITokenTransfer,
   APITransactionType,
   AccountsGetOperationsOptions,
@@ -175,6 +176,21 @@ const api = {
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APIDelegationType[]>({
       url: `${getExplorerUrl()}/v1/operations/delegations`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches a single page of `staking` operations at the given block level.
+   * Internal — used by `fetchBlockStaking` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetStaking
+   */
+  async getBlockStakingPage(level: number, cursor?: number): Promise<APIStakingType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIStakingType[]>({
+      url: `${getExplorerUrl()}/v1/operations/staking`,
       params,
     });
     return data;
@@ -350,6 +366,30 @@ export const fetchBlockDelegations = async (level: number): Promise<APIDelegatio
     );
   }
   return delegations;
+};
+
+/**
+ * Fetches ALL `staking` operations for a given block level, paginating through
+ * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ */
+export const fetchBlockStaking = async (level: number): Promise<APIStakingType[]> => {
+  const stakingOps: APIStakingType[] = [];
+  let cursor: number | undefined;
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
+  do {
+    const page = await api.getBlockStakingPage(level, cursor);
+    if (page.length === 0) break;
+    stakingOps.push(...page);
+    if (page.length < BLOCK_PAGE_SIZE) break;
+    cursor = page.at(-1)!.id;
+  } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockStaking: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
+  return stakingOps;
 };
 
 export default api;
