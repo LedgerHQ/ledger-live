@@ -1,13 +1,15 @@
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
-import * as segment from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import { ActionsList } from "..";
 
 const HELP_LABEL = "Help";
 const RECOVER_LABEL = "[L] Recover";
+const REFER_LABEL = "Referral";
 const MY_WALLET_ROUTE = "/my-wallet";
 const RECOVER_HOME_PATH = "/recover";
+const REFER_PATH = "/refer-a-friend";
 
 const mockNavigate = jest.fn();
 
@@ -21,11 +23,10 @@ jest.mock("react-router", () => ({
 }));
 
 const mockUseAccountPath = jest.mocked(useAccountPath);
+const mockTrack = jest.mocked(track);
 const renderActionsList = (options?: Parameters<typeof render>[1]) =>
   render(<ActionsList />, options);
-const getHelpButton = () => screen.getByRole("button", { name: HELP_LABEL });
-const getRecoverButton = () => screen.getByRole("button", { name: RECOVER_LABEL });
-const queryRecoverButton = () => screen.queryByRole("button", { name: RECOVER_LABEL });
+const getButton = (name: string) => screen.getByRole("button", { name });
 
 describe("ActionsList", () => {
   beforeEach(() => {
@@ -35,12 +36,11 @@ describe("ActionsList", () => {
     jest.clearAllMocks();
   });
 
-  it("shows help and hides recover by default", () => {
+  it("shows only help by default", () => {
     renderActionsList();
 
     expect(screen.getByTestId("my-wallet-actions-list")).toBeVisible();
-    expect(getHelpButton()).toBeVisible();
-    expect(queryRecoverButton()).not.toBeInTheDocument();
+    expect(getButton(HELP_LABEL)).toBeVisible();
   });
 
   it("shows recover when the feature is enabled", () => {
@@ -53,17 +53,16 @@ describe("ActionsList", () => {
       }),
     });
 
-    expect(getRecoverButton()).toBeVisible();
+    expect(getButton(RECOVER_LABEL)).toBeVisible();
   });
 
   it("navigates to help settings and tracks the click", async () => {
-    const trackSpy = jest.spyOn(segment, "track");
     const { user } = renderActionsList({ initialRoute: MY_WALLET_ROUTE });
 
-    await user.click(getHelpButton());
+    await user.click(getButton(HELP_LABEL));
 
     expect(mockNavigate).toHaveBeenCalledWith("/settings/help");
-    expect(trackSpy).toHaveBeenCalledWith("button_clicked", {
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: "Help",
       page: MY_WALLET_ROUTE,
       entry: "my_wallet_actions_list",
@@ -71,7 +70,6 @@ describe("ActionsList", () => {
   });
 
   it("navigates to the recover home and tracks the click", async () => {
-    const trackSpy = jest.spyOn(segment, "track");
     mockUseAccountPath.mockReturnValue(RECOVER_HOME_PATH);
 
     const { user } = renderActionsList({
@@ -87,10 +85,10 @@ describe("ActionsList", () => {
       }),
     });
 
-    await user.click(getRecoverButton());
+    await user.click(getButton(RECOVER_LABEL));
 
     expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH);
-    expect(trackSpy).toHaveBeenCalledWith("button_clicked", {
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: "Recover",
       page: MY_WALLET_ROUTE,
       entry: "my_wallet_actions_list",
@@ -115,8 +113,42 @@ describe("ActionsList", () => {
 
     expect(store.getState().settings.hasClickedRecover).toBe(false);
 
-    await user.click(getRecoverButton());
+    await user.click(getButton(RECOVER_LABEL));
 
     expect(store.getState().settings.hasClickedRecover).toBe(true);
+  });
+
+  it("shows refer when the feature is enabled", () => {
+    renderActionsList({
+      initialState: withFlagOverrides({
+        referralProgramDesktopSidebar: {
+          enabled: true,
+          params: { path: REFER_PATH },
+        },
+      }),
+    });
+
+    expect(getButton(REFER_LABEL)).toBeVisible();
+  });
+
+  it("navigates to the refer path and tracks the click", async () => {
+    const { user } = renderActionsList({
+      initialRoute: MY_WALLET_ROUTE,
+      initialState: withFlagOverrides({
+        referralProgramDesktopSidebar: {
+          enabled: true,
+          params: { path: REFER_PATH },
+        },
+      }),
+    });
+
+    await user.click(getButton(REFER_LABEL));
+
+    expect(mockNavigate).toHaveBeenCalledWith(REFER_PATH);
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "Refer",
+      page: MY_WALLET_ROUTE,
+      entry: "my_wallet_actions_list",
+    });
   });
 });
