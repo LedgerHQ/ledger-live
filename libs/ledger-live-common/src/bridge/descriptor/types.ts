@@ -249,9 +249,19 @@ export type StakeMode = "delegate" | "undelegate" | "redelegate";
 /**
  * Staking flow descriptor: declares that a currency supports native delegation
  * and specifies which modes are available.
+ *
+ * When `customUI` is true the family provides its own delegation table and
+ * flow modals (e.g. cosmos, tezos).  When false (or omitted) the generic
+ * staking UI in `renderer/components/Staking/` is used.
+ *
+ * When `currencyIds` is set, staking is restricted to those specific currency
+ * IDs within the family (ex. EVM where only sei_evm and celo support it).
+ * Omit for families where every currency supports staking (ex. cosmos, tezos).
  */
 export type StakeDescriptor = {
   supportedModes: readonly StakeMode[];
+  customUI?: boolean;
+  currencyIds?: readonly string[];
 };
 
 /**

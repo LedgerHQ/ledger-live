@@ -22,4 +22,19 @@ export const stakeFeatures = {
     (currency: CryptoOrTokenCurrency | undefined) =>
     (mode: StakeMode): boolean =>
       (getStakeDescriptor(currency)?.supportedModes ?? []).includes(mode),
+
+  /**
+   * Returns true when the coin uses a family-specific (custom) staking UI,
+   * meaning the generic staking components should NOT be rendered.
+   */
+  hasCustomUI: fromDescriptor(d => d.customUI, false),
+
+  /**
+   * Returns true when the coin supports staking AND uses the generic UI
+   * (i.e. does NOT have a custom UI).
+   */
+  usesGenericStakingUI: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const d = getStakeDescriptor(currency);
+    return d !== null && !d.customUI;
+  },
 };

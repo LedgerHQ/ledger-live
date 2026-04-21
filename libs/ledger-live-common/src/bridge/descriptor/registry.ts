@@ -97,10 +97,22 @@ export function getSendDescriptor(
 /**
  * Get the stake flow descriptor for a given currency.
  * Returns null if the currency does not support native staking.
+ *
+ * When the descriptor defines `currencyIds`, staking is only available for
+ * those specific IDs (e.g. EVM where only sei_evm and celo are supported).
  */
 export function getStakeDescriptor(
   currency: CryptoOrTokenCurrency | undefined,
 ): StakeDescriptor | null {
-  const descriptor = getDescriptor(currency);
-  return descriptor?.stake ?? null;
+  if (!currency) return null;
+  const coinDescriptor = getDescriptor(currency);
+  const stake = coinDescriptor?.stake ?? null;
+  if (!stake) return null;
+
+  if (stake.currencyIds) {
+    const id = currency.type === "TokenCurrency" ? currency.parentCurrency.id : currency.id;
+    if (!stake.currencyIds.includes(id)) return null;
+  }
+
+  return stake;
 }

@@ -101,6 +101,11 @@
       "require": "./lib/bridge/descriptor/send/memo.js",
       "default": "./lib-es/bridge/descriptor/send/memo.js"
     },
+    "./bridge/descriptor/stake/features": {
+      "@ledgerhq/source": "./src/bridge/descriptor/stake/features.ts",
+      "require": "./lib/bridge/descriptor/stake/features.js",
+      "default": "./lib-es/bridge/descriptor/stake/features.js"
+    },
     "./test-helpers/cryptoAssetsStore": {
       "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
