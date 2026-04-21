@@ -49,7 +49,8 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayMyWallet: isEnabled && Boolean(params?.myWallet),
       shouldDisplayFinishOnboardingWidget:
-        isEnabled && Boolean(params && "finishOnboardingWidget" in params && params.finishOnboardingWidget),
+        isEnabled &&
+        Boolean(params && "finishOnboardingWidget" in params && params.finishOnboardingWidget),
     };
   }, [walletFeatureFlag]);
 };
