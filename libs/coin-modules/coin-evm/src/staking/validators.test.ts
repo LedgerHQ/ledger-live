@@ -202,11 +202,23 @@ describe("staking/validators", () => {
       expect(getUnbondingPeriodDays("sei_evm")).toBe(21);
     });
 
-    it("hasUnbondingPeriod is true for Sei and false without config", () => {
+    it.each(["celo", "__unknown__"])(
+      "getUnbondingPeriodDays returns undefined without config (%s)",
+      currencyId => {
+        expect(getUnbondingPeriodDays(currencyId)).toBeUndefined();
+      },
+    );
+
+    it("hasUnbondingPeriod is true for Sei", () => {
       expect(hasUnbondingPeriod("sei_evm")).toBe(true);
-      expect(hasUnbondingPeriod("celo")).toBe(false);
-      expect(hasUnbondingPeriod("unknown")).toBe(false);
     });
+
+    it.each(["celo", "__unknown__"])(
+      "hasUnbondingPeriod is false without configured unbonding (%s)",
+      currencyId => {
+        expect(hasUnbondingPeriod(currencyId)).toBe(false);
+      },
+    );
   });
 
   describe("getValidatorsPage", () => {
