@@ -319,7 +319,7 @@ jobs:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
-          enable_wallet40: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 1,3,5') || inputs.enable_wallet40 || false }}
+          enable_wallet40: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 1,3,5') || inputs.enable_wallet40 == 'true' }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}
