@@ -12,6 +12,8 @@ export interface FeatureFlagsToolProps {
   exportOverrides?: () => PartialFeatures;
 }
 
+export type FlagFilter = "all" | "enabled" | "disabled" | "overridden";
+
 export interface FlagDisplayState {
   id: FeatureId;
   resolved: Features[FeatureId];

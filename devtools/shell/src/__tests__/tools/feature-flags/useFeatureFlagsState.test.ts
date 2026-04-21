@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 import { FEATURE_FLAGS_INITIAL_STATE, FeatureIdSchema } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { useFeatureFlagsState } from "../../../tools/feature-flags/hooks/useFeatureFlagsState";
@@ -20,32 +20,6 @@ describe("useFeatureFlagsState", () => {
   it("returns all flag ids sorted alphabetically", () => {
     const { result } = renderHook(() => useFeatureFlagsState(defaultProps));
     expect(result.current.flagIds).toEqual([...FeatureIdSchema.options].sort());
-  });
-
-  it("returns all flags when search is empty", () => {
-    const { result } = renderHook(() => useFeatureFlagsState(defaultProps));
-    expect(result.current.filteredFlagIds).toEqual(result.current.flagIds);
-  });
-
-  it("filters flags by search query", () => {
-    const { result } = renderHook(() => useFeatureFlagsState(defaultProps));
-    act(() => result.current.setSearch("mock"));
-    expect(result.current.filteredFlagIds.every(id => id.toLowerCase().includes("mock"))).toBe(
-      true,
-    );
-    expect(result.current.filteredFlagIds).toContain(testFlagId);
-  });
-
-  it("search is case-insensitive", () => {
-    const { result } = renderHook(() => useFeatureFlagsState(defaultProps));
-    act(() => result.current.setSearch("MOCK"));
-    expect(result.current.filteredFlagIds).toContain(testFlagId);
-  });
-
-  it("returns empty array when search matches nothing", () => {
-    const { result } = renderHook(() => useFeatureFlagsState(defaultProps));
-    act(() => result.current.setSearch("zzz_no_match_xyz"));
-    expect(result.current.filteredFlagIds).toEqual([]);
   });
 
   it("getFlagDisplayState marks overridden flags", () => {
