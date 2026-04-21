@@ -64,6 +64,22 @@ const swaps = [
     ],
   },
   {
+    fromAccount: TokenAccount.ETH_USDT_1,
+    toAccount: Account.ETH_1,
+    xrayTicket: "B2CQA-2752, B2CQA-3450",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+    ],
+  },
+  {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2746, B2CQA-3450",
