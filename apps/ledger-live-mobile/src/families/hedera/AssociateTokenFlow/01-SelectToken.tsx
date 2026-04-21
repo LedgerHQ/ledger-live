@@ -71,6 +71,14 @@ export default function SelectToken({ navigation, route }: Props) {
             parentId: subAccount.parentId,
           },
         });
+      } else if (currency.tokenType !== "hts") {
+        navigation.navigate(NavigatorName.ReceiveFunds, {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            currency,
+            accountId: mainAccount.id,
+          },
+        });
       } else {
         navigation.navigate(ScreenName.HederaAssociateTokenSummary, {
           accountId: mainAccount.id,
