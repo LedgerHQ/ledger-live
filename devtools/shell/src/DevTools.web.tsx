@@ -4,7 +4,7 @@ import { Category } from "./types";
 import { useAccordion, useDevToolsNavigation } from "./hooks";
 
 export const DevTools = () => {
-  const { activeTool, setActiveTool, categories } = useDevToolsNavigation(TOOLS);
+  const { activeToolId, setActiveToolId, activeTool, categories } = useDevToolsNavigation(TOOLS);
   const { isExpanded, toggle } = useAccordion<Category>();
 
   return (
@@ -61,15 +61,14 @@ export const DevTools = () => {
                         style={{ listStyle: "none", margin: 0, padding: "0 8px" }}
                       >
                         {tools.map(tool => (
-                          <Flex as="li" key={tool.label}>
+                          <Flex as="li" key={tool.id}>
                             <Button
-                              // Works because tool is currently static, it is not supposed to change
-                              variant={activeTool === tool ? "main" : "shade"}
+                              variant={tool.id === activeToolId ? "main" : "shade"}
                               size="xs"
                               width="100%"
-                              aria-current={activeTool === tool ? "page" : undefined}
-                              onClick={() => setActiveTool(tool)}
-                              backgroundColor={activeTool !== tool ? "background.main" : undefined}
+                              aria-current={tool.id === activeToolId ? "page" : undefined}
+                              onClick={() => setActiveToolId(tool.id)}
+                              backgroundColor={tool.id !== activeToolId ? "background.main" : undefined}
                             >
                               {tool.label}
                             </Button>

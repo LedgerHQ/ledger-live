@@ -7,6 +7,7 @@ export enum Category {
 }
 
 export interface Tool {
+  id: string;
   label: string;
   category: Category;
 }

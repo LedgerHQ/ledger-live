@@ -3,9 +3,9 @@ import { useDevToolsNavigation } from "../../hooks/useDevToolsNavigation";
 import { Category, type Tool } from "../../types";
 
 const tools: Tool[] = [
-  { label: "Feature Flags", category: Category.DEV_TOOLS },
-  { label: "Another Dev Tool", category: Category.DEV_TOOLS },
-  { label: "Network Inspector", category: Category.NETWORK },
+  { id: "feature-flags", label: "Feature Flags", category: Category.DEV_TOOLS },
+  { id: "another-dev-tool", label: "Another Dev Tool", category: Category.DEV_TOOLS },
+  { id: "network-inspector", label: "Network Inspector", category: Category.NETWORK },
 ];
 
 describe("useDevToolsNavigation", () => {
@@ -30,12 +30,20 @@ describe("useDevToolsNavigation", () => {
 
   it("starts with no active tool", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
+    expect(result.current.activeToolId).toBeNull();
     expect(result.current.activeTool).toBeNull();
   });
 
-  it("updates active tool via setActiveTool", () => {
+  it("updates activeToolId and derives activeTool via setActiveToolId", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
-    act(() => result.current.setActiveTool(tools[0]));
+    act(() => result.current.setActiveToolId("feature-flags"));
+    expect(result.current.activeToolId).toBe("feature-flags");
     expect(result.current.activeTool).toBe(tools[0]);
+  });
+
+  it("activeTool is null for an unknown id", () => {
+    const { result } = renderHook(() => useDevToolsNavigation(tools));
+    act(() => result.current.setActiveToolId("does-not-exist"));
+    expect(result.current.activeTool).toBeNull();
   });
 });

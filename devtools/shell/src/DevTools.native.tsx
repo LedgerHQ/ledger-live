@@ -5,7 +5,7 @@ import { Category } from "./types";
 import { useAccordion, useDevToolsNavigation } from "./hooks";
 
 export const DevTools = () => {
-  const { activeTool, setActiveTool, categories } = useDevToolsNavigation(TOOLS);
+  const { activeToolId, setActiveToolId, activeTool, categories } = useDevToolsNavigation(TOOLS);
   const { isExpanded, toggle } = useAccordion<Category>();
 
   return (
@@ -41,6 +41,7 @@ export const DevTools = () => {
                       type="shade"
                       size="small"
                       accessibilityLabel={category}
+                      accessibilityState={{ expanded }}
                       onPress={() => toggle(category)}
                     >
                       {(expanded ? "▾ " : "▸ ") + category}
@@ -50,11 +51,11 @@ export const DevTools = () => {
                         <Flex flexDirection="column" px={2}>
                           {tools.map(tool => (
                             <Button
-                              key={tool.label}
-                              type={activeTool === tool ? "main" : "shade"}
+                              key={tool.id}
+                              type={tool.id === activeToolId ? "main" : "shade"}
                               size="small"
                               accessibilityLabel={tool.label}
-                              onPress={() => setActiveTool(tool)}
+                              onPress={() => setActiveToolId(tool.id)}
                             >
                               {tool.label}
                             </Button>
