@@ -18,7 +18,7 @@ export const OnboardingWidgetView = ({
 }: OnboardingWidgetViewProps) => {
   const { t } = useTranslation();
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} testID="onboarding-widget">
       <ContentBanner>
         <Stepper currentStep={currentStep} totalSteps={totalSteps} label={stepperLabel} />
         <ContentBannerContent>
