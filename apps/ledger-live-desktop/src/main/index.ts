@@ -32,6 +32,7 @@ import {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
+import { setupZcashNativeHost, cleanupZcashNativeHost } from "./zcashNativeHost";
 import { openURL } from "./openURL";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 // End import timing, start initialization
@@ -128,6 +129,11 @@ app.on("ready", async () => {
 
   // Set up transport handlers for Speculos and HTTP proxy in main process
   setupTransportHandlers();
+
+  // Set up ZCash native host: lazy-spawn a UtilityProcess hosting the
+  // napi-rs engine, bridged to the renderer via IPC.
+  // See @ledgerhq/zcash-shielded/ipc/main-host.
+  setupZcashNativeHost();
 
   /**
    * Clears the session’s HTTP cache
@@ -285,6 +291,7 @@ app.on("before-quit", () => {
 
 app.on("window-all-closed", () => {
   cleanupTransports();
+  cleanupZcashNativeHost();
   app.quit();
 });
 
