@@ -1,4 +1,5 @@
+---
 "@ledgerhq/live-common": patch
 ---
 
-Extract connect-app AppRequest resolution helpers for device initialization
+Add shared connect-app device-initialization input helpers for DIE migrations

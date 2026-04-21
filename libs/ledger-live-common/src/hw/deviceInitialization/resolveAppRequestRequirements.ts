@@ -5,8 +5,8 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { loadAccountModuleForFamily } from "../../coin-modules/registry";
-import type { ConnectAppRequest } from "../connectApp";
-import type { AppRequestInput, ConnectAppInitializationInput, RequiresDerivation } from "./types";
+import type { ConnectAppRequest, RequiresDerivation } from "../connectApp";
+import type { AppRequestInput, ConnectAppInitializationInput } from "./types";
 
 export type ResolvedAppRequirements = {
   appName: string;
@@ -17,7 +17,7 @@ export type ResolvedAppRequirements = {
 };
 
 /**
- * Map between an AppRequest and a ConnectAppRequest, allowing us to
+ * Map between an AppRequest and a ResolvedAppRequirements, allowing us to
  * specify an account or a currency without resolving manually the actual
  * applications we depend on in order to access the flow.
  */

@@ -1,6 +1,6 @@
 import { interval, Observable, of } from "rxjs";
 import { scan, debounce, tap, takeWhile } from "rxjs/operators";
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { log } from "@ledgerhq/logs";
 import type {
   AppAndVersion,
@@ -17,12 +17,15 @@ import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types
 import { DeviceId } from "@ledgerhq/client-ids/ids";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import {
   resolveAppRequestRequirements,
   toConnectAppRequest,
 } from "../deviceInitialization/resolveAppRequestRequirements";
 import type { AppRequestInput } from "../deviceInitialization/types";
+import {
+  buildExpectedAccountIdentity,
+  validateDerivedAddress,
+} from "../deviceInitialization/wrongDeviceValidation";
 
 export type State = {
   isLoading: boolean;
@@ -474,16 +477,23 @@ export const createAction = (
         displayUpgradeWarning: false,
       }));
     }, []);
+
+    const wrongDeviceCheck = useMemo(
+      () =>
+        validateDerivedAddress(
+          appRequest.account ? buildExpectedAccountIdentity(appRequest.account) : undefined,
+          state.derivation?.address,
+        ),
+      [appRequest.account, state.derivation?.address],
+    );
+
     return {
       ...state,
       inWrongDeviceForAccount:
-        state.derivation && appRequest.account
-          ? state.derivation.address !== appRequest.account.freshAddress &&
-            state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
-            ? {
-                accountName: getDefaultAccountName(appRequest.account),
-              }
-            : null
+        wrongDeviceCheck.status === "mismatch"
+          ? {
+              accountName: wrongDeviceCheck.accountName,
+            }
           : null,
       onRetry,
       passWarning,
