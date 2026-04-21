@@ -20,7 +20,7 @@ export type MyLedgerViewProps = {
 
 export function MyLedgerView({ title, description, icon, onClick }: MyLedgerViewProps) {
   return (
-    <ListItem onClick={onClick} className="bg-muted">
+    <ListItem onClick={onClick} className="bg-surface">
       <ListItemLeading>
         <Spot icon={icon} appearance="icon" />
         <ListItemContent>

@@ -37,6 +37,7 @@ export interface SideBarViewModel {
   readonly isMarketBannerEnabled: boolean;
   readonly isQuickActionCtasEnabled: boolean;
   readonly isWallet40MainNavEnabled: boolean;
+  readonly isMyWalletEnabled: boolean;
   readonly referralProgramConfig: ReferralProgramConfig | null;
   readonly recoverFeature: RecoverFeatureConfig | null;
   readonly recoverHomePath: string | undefined;

@@ -132,6 +132,7 @@ export type SettingsState = {
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
+  hasClickedRecover: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   lastAnalyticsConsentDate: string | null;
@@ -235,6 +236,7 @@ export const INITIAL_STATE: SettingsState = {
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
+  hasClickedRecover: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
   lastAnalyticsConsentDate: null,
@@ -299,6 +301,7 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
+  SET_HAS_CLICKED_RECOVER: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -527,6 +530,10 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
+  }),
+  SET_HAS_CLICKED_RECOVER: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasClickedRecover: payload,
   }),
 };
 
@@ -841,6 +848,7 @@ export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.al
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;
 
 // Last onboarded device is the device set when a user goes through the onboarding flow.
 // Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
