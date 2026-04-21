@@ -15,7 +15,6 @@ import { ScreenName } from "~/const";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
-import RecoverBanner from "~/components/RecoverBanner";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -53,6 +52,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import RecoverBanner from "LLM/features/Portfolio/components/RecoverBanner";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
