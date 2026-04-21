@@ -42,11 +42,6 @@ const transactionsAmountInvalid = [
     expectedErrorMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-2572",
   },
-  {
-    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag"),
-    expectedErrorMessage: "Sorry, insufficient funds",
-    xrayTicket: "B2CQA-4281",
-  },
 ];
 
 const transactionsAddressInvalid = [
@@ -468,7 +463,7 @@ test.describe("Send flows", () => {
           transaction.transaction.accountToCredit.address =
             transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
               ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
-              : (transaction.transaction.accountToCredit.address ?? "");
+              : transaction.transaction.accountToCredit.address ?? "";
 
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);

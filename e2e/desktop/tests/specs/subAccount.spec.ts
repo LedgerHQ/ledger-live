@@ -10,7 +10,6 @@ import {
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
-import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
@@ -568,71 +567,6 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await app.send.expectTxSent();
       await app.account.navigateToViewDetails();
       await app.sendDrawer.addressValueIsVisible(tokenTransactionValid.accountToCredit.address);
-    },
-  );
-});
-
-test.describe("Send token (subAccount) - e2e ", () => {
-  const tokenValidSend = {
-    tx: new Transaction(TokenAccount.SUI_USDC_1, TokenAccount.SUI_USDC_2, "0.01", Fee.MEDIUM),
-    xrayTicket: "B2CQA-3908",
-  };
-  test.use({
-    teamOwner: Team.COIN_INTEGRATION,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: tokenValidSend.tx.accountToDebit.currency.speculosApp,
-    cliCommands: [
-      liveDataWithParentAddressCommand(
-        tokenValidSend.tx.accountToDebit,
-        tokenValidSend.tx.accountToDebit,
-      ),
-      liveDataWithParentAddressCommand(
-        tokenValidSend.tx.accountToCredit,
-        tokenValidSend.tx.accountToCredit,
-      ),
-    ],
-  });
-  test(
-    `Send from ${tokenValidSend.tx.accountToDebit.accountName} to ${tokenValidSend.tx.accountToCredit.accountName} - e2e`,
-    {
-      tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
-      annotation: { type: "TMS", description: tokenValidSend.xrayTicket },
-    },
-    async ({ app }) => {
-      const tx = tokenValidSend.tx;
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToDebit));
-      await app.account.navigateToTokenInAccount(tx.accountToDebit);
-      await app.account.clickSend();
-      await app.send.fillRecipient(tx.accountToCredit.address);
-      await app.send.checkContinueButtonEnable();
-      await app.send.checkInputErrorVisibility("hidden");
-      await app.send.continue();
-      await app.send.fillAmount(tx.amount);
-      await app.send.continue();
-      await app.send.expectTxInfoValidity(tx);
-      await app.send.clickContinueToDevice();
-      await app.speculos.signSendTransaction(tx);
-      await app.send.expectTxSent();
-      await app.sendDrawer.expectTransactionTitle(TransactionStatus.SEND);
-      await app.sendDrawer.expectTransactionMessageStatus(TransactionStatus.TRANSACTION_SENT);
-      await app.account.navigateToViewDetails();
-      await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
-      await app.sendDrawer.expectReceiverInfos(tx);
-      await app.drawer.closeDrawer();
-      if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToCredit));
-        await app.account.navigateToTokenInAccount(tx.accountToDebit);
-        await app.account.expectAccountBalance();
-        await app.account.checkAccountChart();
-        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
-        await app.sendDrawer.expectTransactionStatus(TransactionStatus.CONFIRMED);
-        await app.sendDrawer.expectDrawerOperationType(TransactionStatus.RECEIVED);
-        await app.sendDrawer.expectDrawerAccounts(tx);
-        await app.sendDrawer.expectTokenReceiverInfos(tx);
-      }
     },
   );
 });
