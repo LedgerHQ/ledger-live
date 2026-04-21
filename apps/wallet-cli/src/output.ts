@@ -64,6 +64,8 @@ export interface CommandOutput {
   discoveredAccount(d: DiscoveredAccount): void;
   /** Signal end of discovery stream. Json: flush buffered accounts as envelope. Human: noop. */
   flushDiscovery(): void;
+  /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
+  sessionSaved(added: number): void;
 
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
@@ -141,6 +143,10 @@ class HumanCommandOutput implements CommandOutput {
 
   flushDiscovery(): void {
     /* noop */
+  }
+
+  sessionSaved(added: number): void {
+    writeStdout(colors.dim(`  session: ${added} new account${added === 1 ? "" : "s"} saved`));
   }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
@@ -262,6 +268,8 @@ class JsonCommandOutput implements CommandOutput {
     const accounts = JsonFormatter.discoveredAccounts(this._discoveredAccounts);
     writeStdout(this._envelope({ accounts }));
   }
+
+  sessionSaved(_added: number): void { /* noop */ }
 
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(
