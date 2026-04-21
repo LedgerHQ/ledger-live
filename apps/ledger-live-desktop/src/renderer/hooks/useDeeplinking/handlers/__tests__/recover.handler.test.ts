@@ -37,6 +37,33 @@ describe("recover.handler", () => {
       expect(context.navigate).toHaveBeenCalledWith("/recover/platform", undefined, "?step=2");
     });
 
+    it("merges location state and bumps recoverDeeplinkAt when already on the same recover URL", () => {
+      const context = createMockContext({
+        currentPathname: "/recover/platform",
+        currentSearch: "?step=2",
+        currentLocationState: { deviceId: "device-1", fromOnboarding: true },
+      });
+
+      recoverHandler(
+        {
+          type: "recover",
+          path: "platform",
+          search: "?step=2",
+        },
+        context,
+      );
+
+      expect(context.navigate).toHaveBeenCalledWith(
+        "/recover/platform",
+        expect.objectContaining({
+          deviceId: "device-1",
+          fromOnboarding: true,
+          recoverDeeplinkAt: expect.any(String),
+        }),
+        "?step=2",
+      );
+    });
+
     it("handles empty path by navigating to /recover/ when no recoverAppId in context", () => {
       const context = createMockContext();
 

@@ -4,7 +4,7 @@ import type { AppDispatch } from "~/state-manager/configureStore";
 
 export type NavigateFn = (
   pathname: string,
-  state?: { [k: string]: string | object },
+  state?: { [k: string]: string | number | boolean | object | null | undefined },
   search?: string,
 ) => void;
 
@@ -37,6 +37,10 @@ export interface DeeplinkHandlerContext {
   postOnboardingDeeplinkHandler: PostOnboardingDeeplinkHandlerFn;
   tryRedirectToPostOnboardingOrRecover: TryRedirectToPostOnboardingOrRecoverFn;
   currentPathname: string;
+  /** Current URL search (e.g. `?foo=bar`), used to detect repeated Recover deeplinks. */
+  currentSearch: string;
+  /** Current React Router location state (used to preserve fields when forcing Recover navigation). */
+  currentLocationState: unknown;
   /** Feature-flag-aware path to the accounts list screen (`/cryptos` or `/accounts`). */
   accountsPath: string;
   /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
