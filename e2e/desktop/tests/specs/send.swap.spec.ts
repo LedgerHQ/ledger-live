@@ -15,7 +15,7 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620, B2CQA-3450",
+    xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -50,7 +50,7 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
-    xrayTicket: "B2CQA-2749, B2CQA-3450",
+    xrayTicket: "B2CQA-2749",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -66,7 +66,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2752, B2CQA-3450, B2CQA-2048",
+    xrayTicket: "B2CQA-2752, B2CQA-2048",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -82,7 +82,7 @@ const swaps = [
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: TokenAccount.ETH_USDT_1,
-    xrayTicket: "B2CQA-2746, B2CQA-3450",
+    xrayTicket: "B2CQA-2746",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -99,7 +99,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2753, B2CQA-3450",
+    xrayTicket: "B2CQA-2753",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -117,7 +117,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2751, B2CQA-3450",
+    xrayTicket: "B2CQA-2751",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -135,7 +135,7 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2748, B2CQA-3450",
+    xrayTicket: "B2CQA-2748",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -153,7 +153,7 @@ const swaps = [
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2775, B2CQA-3450",
+    xrayTicket: "B2CQA-2775",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -170,7 +170,7 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.DOT_1,
-    xrayTicket: "B2CQA-3017, B2CQA-3450",
+    xrayTicket: "B2CQA-3017",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -188,7 +188,7 @@ const swaps = [
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2747, B2CQA-3450",
+    xrayTicket: "B2CQA-2747",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -206,7 +206,7 @@ const swaps = [
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2776, B2CQA-3450",
+    xrayTicket: "B2CQA-2776",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -224,7 +224,7 @@ const swaps = [
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.LTC_1,
-    xrayTicket: "B2CQA-3078, B2CQA-3450",
+    xrayTicket: "B2CQA-3078",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -242,7 +242,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2832, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-2832, B2CQA-3281",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -259,7 +259,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2830, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-2830, B2CQA-3281",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -275,7 +275,7 @@ const swaps = [
   {
     fromAccount: Account.XRP_1,
     toAccount: TokenAccount.ETH_USDC_1,
-    xrayTicket: "B2CQA-3075, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-3075, B2CQA-3281",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -292,7 +292,7 @@ const swaps = [
   {
     fromAccount: Account.XRP_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-3077, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-3077, B2CQA-3281",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -310,7 +310,7 @@ const swaps = [
   // {
   //   fromAccount: Account.APTOS_1,
   //   toAccount: Account.SOL_1,
-  //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
+  //   xrayTicket: "B2CQA-3081, B2CQA-3281",
   //   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aptos", "@solana", "@family-solana","@family-aptos"],
   // },
   {
