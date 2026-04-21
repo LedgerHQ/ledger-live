@@ -27,6 +27,28 @@ export type EvmConfig = {
          * so that the underlying `limit + 1` request never exceeds `M`.
          */
         maxLimit?: number | undefined;
+        /** Optional per-currency policy for handling explorer rate limiting headers. */
+        rateLimitPolicy?:
+          | {
+              /** Header carrying remaining requests in the current rate-limit window. */
+              remainingHeader?: string | undefined;
+              /** Header carrying reset information for the current window. */
+              resetHeader?: string | undefined;
+              /**
+               * Interpretation format of `resetHeader`.
+               * - "ms": header value is milliseconds remaining until reset.
+               * - "unix-seconds": header value is a Unix timestamp in seconds.
+               */
+              resetFormat?: "ms" | "unix-seconds" | undefined;
+              /** Extra milliseconds to wait after reset, as a safety margin. */
+              resetBufferMs?: number | undefined;
+              /**
+               * Proactive threshold. When remaining requests are <= this value,
+               * we wait until reset before making the next request.
+               */
+              remainingThreshold?: number | undefined;
+            }
+          | undefined;
         uri: string;
       }
     | {

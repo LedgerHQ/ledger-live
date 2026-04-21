@@ -4,7 +4,12 @@ import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponseHeaders,
+  RawAxiosResponseHeaders,
+} from "axios";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -28,9 +33,91 @@ import {
   EtherscanOperation,
 } from "../../types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
+
+type RateLimitPolicy = {
+  remainingHeader?: string | undefined;
+  resetHeader?: string | undefined;
+  resetBufferMs?: number | undefined;
+  remainingThreshold?: number | undefined;
+  resetFormat?: "ms" | "unix-seconds" | undefined;
+};
+type RateLimitHeaders = AxiosResponseHeaders | RawAxiosResponseHeaders | undefined;
+
+const DEFAULT_REMAINING_HEADER = "x-ratelimit-remaining";
+const DEFAULT_RESET_HEADER = "x-ratelimit-reset";
+const STATUSCODE_TOO_MANY_REQS = 429;
+
+function getHeaderValue(headers: RateLimitHeaders, headerName: string): string | undefined {
+  if (!headers) return undefined;
+  const normalizedHeaderName = headerName.toLowerCase();
+
+  if ("get" in headers && typeof headers.get === "function") {
+    const getValue = headers.get(normalizedHeaderName) ?? headers.get(headerName);
+    if (getValue !== undefined) return String(getValue);
+  }
+
+  const directValue =
+    Reflect.get(headers, normalizedHeaderName) ?? Reflect.get(headers, headerName);
+  if (Array.isArray(directValue)) {
+    return directValue.length > 0 ? String(directValue[0]) : undefined;
+  }
+  return directValue === undefined || directValue === null ? undefined : String(directValue);
+}
+
+function parseNonNegativeInteger(value: string | undefined): number | undefined {
+  if (value === undefined) return undefined;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return undefined;
+  const floored = Math.floor(parsed);
+  return floored >= 0 ? floored : undefined;
+}
+
+function parseServerDate(headers: RateLimitHeaders): number | undefined {
+  const headerValue = getHeaderValue(headers, "date");
+  if (!headerValue) return undefined;
+  const parsedDate = Date.parse(headerValue);
+  return Number.isNaN(parsedDate) ? undefined : parsedDate;
+}
+
+function getWaitDurationFromHeaders(
+  headers: RateLimitHeaders,
+  rateLimitPolicy?: RateLimitPolicy,
+): number | undefined {
+  if (!rateLimitPolicy) return undefined;
+  const resetHeader = rateLimitPolicy.resetHeader ?? DEFAULT_RESET_HEADER;
+  const resetValue = parseNonNegativeInteger(getHeaderValue(headers, resetHeader));
+  if (resetValue === undefined) return undefined;
+  const resetBufferMs = Math.max(0, rateLimitPolicy.resetBufferMs ?? 0);
+
+  const now = Date.now();
+
+  const serverTimeMs = parseServerDate(headers) ?? now;
+  const resetTimeMs =
+    rateLimitPolicy.resetFormat === "unix-seconds" ? resetValue * 1000 : resetValue;
+  const timeNextReqMs = serverTimeMs + resetTimeMs;
+
+  const waitDuration = timeNextReqMs - now + resetBufferMs;
+  return waitDuration > 0 ? waitDuration : resetBufferMs;
+}
+
+async function applyProactiveRateLimitDelay(
+  headers: RateLimitHeaders,
+  rateLimitPolicy?: RateLimitPolicy,
+): Promise<void> {
+  const threshold = Math.max(0, rateLimitPolicy?.remainingThreshold ?? 0);
+  if (threshold <= 0) return;
+
+  const remainingHeader = rateLimitPolicy?.remainingHeader ?? DEFAULT_REMAINING_HEADER;
+  const remaining = parseNonNegativeInteger(getHeaderValue(headers, remainingHeader));
+  if (remaining === undefined || remaining > threshold) return;
+
+  const waitDuration = getWaitDurationFromHeaders(headers, rateLimitPolicy) ?? ETHERSCAN_TIMEOUT;
+  await delay(waitDuration);
+}
 
 function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
   const config = getCoinConfig(currency.id).info;
@@ -96,13 +183,15 @@ export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
   retries = DEFAULT_RETRIES_API,
   messageIsAnError = ["NOTOK"],
+  rateLimitPolicy?: RateLimitPolicy,
 ): Promise<T> {
   try {
-    const { data } = await axios.request<{
+    const response = await axios.request<{
       status: string;
       message: string;
       result: T;
     }>(params);
+    const { data, headers } = response;
 
     if (!Number(data.status) && messageIsAnError.includes(data.message)) {
       throw new EtherscanAPIError("Error while fetching data from Etherscan like API", {
@@ -111,13 +200,27 @@ export async function fetchWithRetries<T>(
       });
     }
 
+    await applyProactiveRateLimitDelay(headers, rateLimitPolicy);
     return data.result;
   } catch (e) {
     if (retries) {
-      // wait the API timeout before trying again
-      await delay(ETHERSCAN_TIMEOUT);
+      if (
+        rateLimitPolicy &&
+        (
+          (e instanceof AxiosError && e.response?.status === STATUSCODE_TOO_MANY_REQS) ||
+          (e instanceof LedgerAPI4xx && e.status === STATUSCODE_TOO_MANY_REQS)
+        )
+      ) {
+        const headers = e instanceof AxiosError ? e.response?.headers : e.headers;
+        const waitDuration =
+          getWaitDurationFromHeaders(headers, rateLimitPolicy) ?? ETHERSCAN_TIMEOUT;
+        await delay(waitDuration);
+      } else {
+        // wait the API timeout before trying again
+        await delay(ETHERSCAN_TIMEOUT);
+      }
       // decrement with prefix here or it won't work
-      return fetchWithRetries<T>(params, --retries, messageIsAnError);
+      return fetchWithRetries<T>(params, --retries, messageIsAnError, rateLimitPolicy);
     }
     throw e;
   }
@@ -271,11 +374,16 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
       ? `${explorer.uri}/accounts/list_of_txs_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=txlist&address=${params.address}`;
 
-  const ops = await fetchWithRetries<EtherscanOperation[]>({
-    method: "GET",
-    url,
-    params: paginationParams(params),
-  });
+  const ops = await fetchWithRetries<EtherscanOperation[]>(
+    {
+      method: "GET",
+      url,
+      params: paginationParams(params),
+    },
+    DEFAULT_RETRIES_API,
+    ["NOTOK"],
+    explorer.rateLimitPolicy,
+  );
 
   const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
   const maxBlock = boundBlockFromOperations(operations);
@@ -305,11 +413,16 @@ export const getTokenOperations = async (
       ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=tokentx&address=${params.address}`;
 
-  const ops = await fetchWithRetries<EtherscanERC20Event[]>({
-    method: "GET",
-    url,
-    params: paginationParams(params),
-  });
+  const ops = await fetchWithRetries<EtherscanERC20Event[]>(
+    {
+      method: "GET",
+      url,
+      params: paginationParams(params),
+    },
+    DEFAULT_RETRIES_API,
+    ["NOTOK"],
+    explorer.rateLimitPolicy,
+  );
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -354,11 +467,16 @@ export const getERC721Operations = async (
       ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=tokennfttx&address=${params.address}`;
 
-  const ops = await fetchWithRetries<EtherscanERC721Event[]>({
-    method: "GET",
-    url,
-    params: paginationParams(params),
-  });
+  const ops = await fetchWithRetries<EtherscanERC721Event[]>(
+    {
+      method: "GET",
+      url,
+      params: paginationParams(params),
+    },
+    DEFAULT_RETRIES_API,
+    ["NOTOK"],
+    explorer.rateLimitPolicy,
+  );
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -403,11 +521,16 @@ export const getERC1155Operations = async (
     return EMPTY_RESULT;
   }
 
-  const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
-    method: "GET",
-    url: `${explorer.uri}?module=account&action=token1155tx&address=${params.address}`,
-    params: paginationParams(params),
-  });
+  const ops = await fetchWithRetries<EtherscanERC1155Event[]>(
+    {
+      method: "GET",
+      url: `${explorer.uri}?module=account&action=token1155tx&address=${params.address}`,
+      params: paginationParams(params),
+    },
+    DEFAULT_RETRIES_API,
+    ["NOTOK"],
+    explorer.rateLimitPolicy,
+  );
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -487,11 +610,16 @@ export const getInternalOperations = async (
   }
 
   // Some explorers (e.g. Monad Testnet) return null instead of [] for empty results.
-  const ops = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
-    method: "GET",
-    url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
-    params: paginationParams(params),
-  }).then(ops => (ops ?? []).map(fixTxHash));
+  const ops = await fetchWithRetries<EtherscanInternalTransaction[] | null>(
+    {
+      method: "GET",
+      url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
+      params: paginationParams(params),
+    },
+    DEFAULT_RETRIES_API,
+    ["NOTOK"],
+    explorer.rateLimitPolicy,
+  ).then(ops => (ops ?? []).map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
@@ -558,6 +686,7 @@ export async function getInternalTransactionsByBlock(
         // this is the common error message for all etherscan like explorers
         "NOTOK",
       ],
+      explorer.rateLimitPolicy,
     );
 
     const ops = Array.isArray(raw) ? raw : [];
@@ -732,9 +861,9 @@ export const getOperations = makeLRUCache<
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
         const effectiveToBlock =
-          order === "asc" ? (boundBlock ?? toBlock) : (paginationBlock ?? toBlock);
+          order === "asc" ? boundBlock ?? toBlock : paginationBlock ?? toBlock;
         const effectiveFromBlock =
-          order === "asc" ? (paginationBlock ?? fromBlock) : (boundBlock ?? fromBlock);
+          order === "asc" ? paginationBlock ?? fromBlock : boundBlock ?? fromBlock;
         const params: FetchOperationsParams = {
           ...baseParams,
           fromBlock: effectiveFromBlock,

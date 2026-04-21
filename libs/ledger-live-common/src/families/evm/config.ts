@@ -1185,6 +1185,13 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "blockscout",
         uri: "https://explorer.somnia.network/api",
+        rateLimitPolicy: {
+          remainingHeader: "x-ratelimit-remaining",
+          resetHeader: "x-ratelimit-reset",
+          resetFormat: "ms",
+          resetBufferMs: 200,
+          remainingThreshold: 50,
+        },
       },
       showNfts: false,
     },

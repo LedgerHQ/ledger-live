@@ -25,6 +25,10 @@ export type ExplorerApi = {
 };
 
 type ExplorerConfig = EvmConfigInfo["explorer"];
+type EtherscanLikeExplorerConfig = Extract<
+  ExplorerConfig,
+  { type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan" }
+>;
 
 /**
  * Type guard
@@ -40,10 +44,15 @@ export const isLedgerExplorerConfig = (
  */
 export const isEtherscanLikeExplorerConfig = (
   explorerConfig: ExplorerConfig,
-): explorerConfig is ExplorerConfig & {
-  type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
-} => {
-  return ["etherscan", "blockscout", "teloscan", "klaytnfinder", "corescan"].includes(
-    explorerConfig?.type as string,
-  );
+): explorerConfig is EtherscanLikeExplorerConfig => {
+  switch (explorerConfig?.type) {
+    case "etherscan":
+    case "blockscout":
+    case "teloscan":
+    case "klaytnfinder":
+    case "corescan":
+      return true;
+    default:
+      return false;
+  }
 };
