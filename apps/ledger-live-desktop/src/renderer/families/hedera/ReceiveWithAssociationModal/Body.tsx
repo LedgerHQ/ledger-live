@@ -153,10 +153,10 @@ const Body = ({
     bridgePending,
     updateTransaction,
     setAccount: updateTransactionAccount,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(account, "hedera: account is required");
 
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const transaction = bridge.createTransaction(account);
 
     return {

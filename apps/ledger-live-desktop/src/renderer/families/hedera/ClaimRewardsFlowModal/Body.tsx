@@ -85,8 +85,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
-    useBridgeTransaction(() => {
-      const bridge = getAccountBridge(account);
+    useBridgeTransaction(async () => {
+      const bridge = await getAccountBridge(account);
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {

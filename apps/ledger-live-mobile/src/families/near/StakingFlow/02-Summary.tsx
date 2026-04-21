@@ -1,5 +1,5 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useLedgerFirstShuffledValidatorsNear } from "@ledgerhq/live-common/families/near/react";
@@ -46,7 +46,7 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   const validators = useLedgerFirstShuffledValidatorsNear("");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {

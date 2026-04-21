@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -33,7 +33,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { amount, account, validator } = route.params;
 
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge(account, undefined);
   const { locale } = useSettings();
 
   const [value, setValue] = useState(new BigNumber(amount));

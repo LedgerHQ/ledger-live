@@ -131,10 +131,10 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     const parentAccount = params && params.parentAccount;
     const account = params && params.account;
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const tx = bridge.createTransaction(account);
     const { recipient, ...txData } = transactionData;
     const tx2 = bridge.updateTransaction(tx, {

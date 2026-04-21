@@ -159,8 +159,8 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   invariant(account, "account is undefined");
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const bridge = getAccountBridge(account, parentAccount);
+    async () => {
+      const bridge = await getAccountBridge(account, parentAccount);
       return {
         account,
         parentAccount,

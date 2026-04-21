@@ -70,10 +70,10 @@ function Body({
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(accountProp.cosmosResources, "cosmos: account and cosmos resources required");
     const delegations = accountProp.cosmosResources.delegations || [];
-    const bridge = getAccountBridge(accountProp, undefined);
+    const bridge = await getAccountBridge(accountProp, undefined);
     const initTx = bridge.createTransaction(accountProp);
     const newTx = {
       mode: "undelegate",

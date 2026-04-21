@@ -35,8 +35,8 @@ export default function Summary({ navigation, route }: Props) {
   invariant(account, "hedera: account is required");
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(account, parentAccount);
+  const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account, parentAccount);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       mode: HEDERA_TRANSACTION_MODES.TokenAssociate,

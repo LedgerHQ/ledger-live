@@ -37,11 +37,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { locale } = useSettings();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
-  const bridge = getAccountBridge(mainAccount, undefined);
   invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { rewards } = mainAccount.algorandResources;
   const unit = useAccountUnit(mainAccount);
-  const { transaction, status } = useBridgeTransaction(() => {
+  const { transaction, status } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(mainAccount, undefined);
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 
 import BigNumber from "bignumber.js";
@@ -25,7 +25,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const { colors } = useTheme();
 
   const mainAccount = getMainAccount(account, undefined);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge(account, undefined);
   const unit = useAccountUnit(account);
 
   /*

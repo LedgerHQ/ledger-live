@@ -96,9 +96,9 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",

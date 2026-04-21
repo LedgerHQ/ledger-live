@@ -34,7 +34,6 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
 
   const mainAccount = getMainAccount(account, undefined);
   const currency = getAccountCurrency(mainAccount);
-  const bridge = getAccountBridge(account);
   const unit = useAccountUnit(mainAccount);
   const name = validator.identity.name || validator.contract;
 
@@ -42,14 +41,17 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
    * Instantiate a new transaction with the given arguments.
    */
 
-  const { transaction, status } = useBridgeTransaction(() => ({
-    account,
-    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
-      mode: "withdraw",
-      recipient: validator.contract,
-      amount,
-    }),
-  }));
+  const { transaction, status } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account);
+    return {
+      account,
+      transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+        mode: "withdraw",
+        recipient: validator.contract,
+        amount,
+      }),
+    };
+  });
 
   /*
    * Callback called when navigating to the next screen of the current flow.

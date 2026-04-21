@@ -84,7 +84,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     const { account, validatorAddress } = params;
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
 
@@ -98,7 +98,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         address: validatorAddress,
         amount: pendingRewards,
       }));
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "claimReward",

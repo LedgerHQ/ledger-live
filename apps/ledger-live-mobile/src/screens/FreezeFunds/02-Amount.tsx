@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
@@ -63,7 +63,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
   invariant(account && account.type === "Account", "account is required");
 
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge(account, undefined);
 
   const defaultUnit = useAccountUnit(account);
   const { spendableBalance } = account;

@@ -13,7 +13,7 @@ import SendConnectDevice from "~/screens/ConnectDevice";
 import SendValidationSuccess from "~/screens/SendFunds/07-ValidationSuccess";
 import SendBroadcastError from "~/screens/SendFunds/07-SendBroadcastError";
 import SendValidationError from "~/screens/SendFunds/07-ValidationError";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
 
@@ -28,7 +28,10 @@ export default function SendFundsNavigator() {
 
   return (
     <DomainServiceProvider>
-      <Stack.Navigator screenOptions={stackNavigationConfig}>
+      <Stack.Navigator
+        screenOptions={stackNavigationConfig}
+        screenLayout={bridgeSuspenseScreenLayout}
+      >
         <Stack.Screen
           name={ScreenName.SendCoin}
           component={SendCoin}

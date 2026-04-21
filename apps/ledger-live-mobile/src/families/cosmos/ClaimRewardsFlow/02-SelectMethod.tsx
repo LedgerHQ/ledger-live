@@ -4,7 +4,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "~/context/Locale";
 import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
@@ -56,7 +56,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useAccountScreen(route).account as CosmosAccount;
   invariant(account && account.cosmosResources, "account and cosmos transaction required");
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const unit = useAccountUnit(mainAccount);
   const currency = getAccountCurrency(mainAccount);

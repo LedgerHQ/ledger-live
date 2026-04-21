@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import Info from "~/screens/FreezeFunds/01-Info";
 import Amount from "~/screens/FreezeFunds/02-Amount";
 import SelectDevice from "~/screens/SelectDevice";
@@ -21,7 +21,10 @@ export default function FreezeNavigator() {
   const { t } = useTranslation();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
-    <Stack.Navigator screenOptions={stackNavConfig}>
+    <Stack.Navigator
+      screenOptions={stackNavConfig}
+      screenLayout={bridgeSuspenseScreenLayout}
+    >
       <Stack.Screen
         name={ScreenName.FreezeInfo}
         component={Info}

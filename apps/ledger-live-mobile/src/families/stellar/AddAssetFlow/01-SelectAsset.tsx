@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -93,7 +93,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account);
-  const bridge = getAccountBridge(mainAccount);
+  const bridge = useAccountBridge(mainAccount);
   invariant(mainAccount, "stellar Account required");
   const { transaction, status } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);

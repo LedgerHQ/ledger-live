@@ -39,11 +39,11 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
-  const bridge = getAccountBridge(account, undefined);
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations;
-  const bridgeTransaction = useBridgeTransaction(() => {
+  const bridgeTransaction = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

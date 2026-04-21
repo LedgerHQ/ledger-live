@@ -76,8 +76,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { account, parentAccount, source } = params;
   const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
-    () => {
-      const bridge = getAccountBridge(account, parentAccount);
+    async () => {
+      const bridge = await getAccountBridge(account, parentAccount);
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         mode: "lock",

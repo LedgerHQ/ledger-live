@@ -45,7 +45,6 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const bridge = getAccountBridge(account);
   const mainAccount = getMainAccount(account, undefined);
   const unit = useAccountUnit(account);
 
@@ -62,14 +61,17 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    * Instantiate the transaction when opening the flow. Only gets runned once.
    */
 
-  const { transaction, updateTransaction, status, bridgeError } = useBridgeTransaction(() => ({
-    account,
-    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
-      amount: new BigNumber(0),
-      recipient: defaultValidator ? defaultValidator.contract : "",
-      mode: "delegate",
-    }),
-  }));
+  const { transaction, updateTransaction, status, bridgeError } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account);
+    return {
+      account,
+      transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+        amount: new BigNumber(0),
+        recipient: defaultValidator ? defaultValidator.contract : "",
+        mode: "delegate",
+      }),
+    };
+  });
 
   /*
    * Use the transaction recipient to find the chosen validator and access more data about it..

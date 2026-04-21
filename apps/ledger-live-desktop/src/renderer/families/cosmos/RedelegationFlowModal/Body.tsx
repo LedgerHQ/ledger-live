@@ -103,12 +103,12 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
     const source = account.cosmosResources?.delegations.find(
       d => d.validatorAddress === validatorAddress,
     );
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "redelegate",

@@ -12,7 +12,7 @@ import {
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -38,7 +38,7 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState(0);
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge(account);
 
   const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
     return {

@@ -74,9 +74,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { transaction, setTransaction, account, status, bridgeError, bridgePending } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(async () => {
       const { account } = params;
-      const bridge = getAccountBridge(account);
+      const bridge = await getAccountBridge(account);
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         mode: "rebond",

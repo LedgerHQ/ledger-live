@@ -19,11 +19,11 @@ type Props = StackNavigatorProps<
 function UndelegationAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const validator = route.params.delegation.validator;
   const amount = route.params.delegation.amount;
-  const { transaction } = useBridgeTransaction(() => {
+  const { transaction } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

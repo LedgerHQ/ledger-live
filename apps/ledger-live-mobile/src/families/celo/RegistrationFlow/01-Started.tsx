@@ -26,9 +26,9 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   invariant(account, "account needed");
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
 
-  const { transaction, status } = useBridgeTransaction(() => {
+  const { transaction, status } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account, parentAccount);
     const t = bridge.createTransaction(mainAccount);
 
     const transaction = bridge.updateTransaction(t, {

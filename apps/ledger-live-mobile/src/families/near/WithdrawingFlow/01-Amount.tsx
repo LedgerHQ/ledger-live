@@ -19,7 +19,6 @@ type Props = BaseComposite<
 function WithdrawingAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const { validatorId } = route.params.stakingPosition;
   const {
@@ -27,7 +26,8 @@ function WithdrawingAmount({ navigation, route }: Props) {
     updateTransaction,
     status,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

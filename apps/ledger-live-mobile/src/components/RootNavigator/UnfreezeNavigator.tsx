@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import Amount from "~/screens/UnfreezeFunds/01-Amount";
 import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
@@ -18,7 +18,10 @@ export default function UnfreezeNavigator() {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
-    <Stack.Navigator screenOptions={stackNavigationConfig}>
+    <Stack.Navigator
+      screenOptions={stackNavigationConfig}
+      screenLayout={bridgeSuspenseScreenLayout}
+    >
       <Stack.Screen
         name={ScreenName.UnfreezeAmount}
         component={Amount}

@@ -72,9 +72,9 @@ function Body({
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(accountProp.nearResources, "near: account and near resources required");
-    const bridge = getAccountBridge(accountProp, undefined);
+    const bridge = await getAccountBridge(accountProp, undefined);
     const initTx = bridge.createTransaction(accountProp);
     const mode = "unstake";
     const recipient = validatorAddress;

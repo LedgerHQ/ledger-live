@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 
 import StepHeader from "~/components/StepHeader";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
 
 import EarnRewards from "./components/EarnRewards";
@@ -47,6 +47,7 @@ const Delegate = () => {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.MultiversXDelegationStarted}

@@ -22,6 +22,12 @@ export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
 type ColorV2 = Theme["colors"];
 type ColorV3 = DefaultTheme["colors"];
 
+export const bridgeSuspenseScreenLayout = ({
+  children,
+}: {
+  children: React.ReactElement;
+}): React.ReactElement => <React.Suspense fallback={null}>{children}</React.Suspense>;
+
 export const getStackNavigatorConfig = (
   c: ColorV2 | ColorV3,
   closable = false,

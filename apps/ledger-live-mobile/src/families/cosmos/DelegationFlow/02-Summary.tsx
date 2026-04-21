@@ -1,5 +1,5 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
@@ -48,7 +48,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(mainAccount.currency.id);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {

@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
 
 import UnlockAmount from "./01-Amount";
@@ -22,7 +22,10 @@ function UnlockFlow() {
   const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
-    <Stack.Navigator screenOptions={stackNavigatorConfig}>
+    <Stack.Navigator
+      screenOptions={stackNavigatorConfig}
+      screenLayout={bridgeSuspenseScreenLayout}
+    >
       <Stack.Screen
         name={ScreenName.CeloUnlockAmount}
         component={UnlockAmount}

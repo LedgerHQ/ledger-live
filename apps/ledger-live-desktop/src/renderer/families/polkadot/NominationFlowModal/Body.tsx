@@ -86,13 +86,13 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     const { account } = params;
     invariant(
       account && account.polkadotResources,
       "polkadot: account and polkadot resources required",
     );
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const initialValidators = (account?.polkadotResources?.nominations || [])
       .filter(nomination => !!nomination.status)

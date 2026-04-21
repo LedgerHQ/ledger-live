@@ -28,10 +28,10 @@ export default function CosmosBridgeTransaction({ navigation, route }: Props) {
   invariant(account, "account required");
 
   const mainAccount = getMainAccount(account) as CosmosAccount;
-  const bridge = getAccountBridge(account);
   const { transaction: initialTx, mode } = route.params;
 
-  const { transaction, bridgePending, status } = useBridgeTransaction(() => {
+  const { transaction, bridgePending, status } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account);
     if (!initialTx) {
       const t = bridge.createTransaction(mainAccount);
 

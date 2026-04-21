@@ -85,8 +85,8 @@ function Delegations({ account }: Props) {
     cosmosResources &&
     cosmosResources.unbondings &&
     mapUnbondings(cosmosResources.unbondings, validators, unit);
-  const bridge = getAccountBridge(account, undefined);
-  const { transaction } = useBridgeTransaction(() => {
+  const { transaction } = useBridgeTransaction(async () => {
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(mainAccount);
     const { validatorSrcAddress } = { ...banner };
     return {

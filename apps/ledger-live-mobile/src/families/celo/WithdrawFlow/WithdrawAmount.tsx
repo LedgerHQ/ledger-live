@@ -6,7 +6,7 @@ import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text, Icons } from "@ledgerhq/native-ui";
@@ -42,7 +42,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(

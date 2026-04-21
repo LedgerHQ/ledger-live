@@ -98,9 +98,9 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(isStakingAccount(account), "evm: account with staking resources required");
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const baseTransaction = bridge.createTransaction(account);
     // NB: `mode` is intentionally not set here. It is set later together with `valAddress`
     // (see StepDelegation → updateValidator) once the user has picked a validator.

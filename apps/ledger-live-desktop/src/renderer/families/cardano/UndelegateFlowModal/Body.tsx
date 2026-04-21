@@ -94,13 +94,13 @@ const Body = ({
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     const { account } = params;
     invariant(
       account && account.cardanoResources,
       "cardano: account and cardano resources required",
     );
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       mode: "undelegate",

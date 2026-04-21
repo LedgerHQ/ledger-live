@@ -94,10 +94,10 @@ const Body = ({ t, stepId, device, openModal, onChangeStepId, params, onClose, m
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     const { account } = params;
     invariant(account, "polkadot: account required");
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = await getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode,

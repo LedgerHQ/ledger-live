@@ -77,10 +77,10 @@ function Body({
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(async () => {
     invariant(accountProp.aptosResources, "aptos: account and aptos resources required");
 
-    const bridge = getAccountBridge(accountProp, undefined);
+    const bridge = await getAccountBridge(accountProp, undefined);
     const initTx = bridge.createTransaction(accountProp);
     const mode = "restake";
     const recipient = validatorAddress;

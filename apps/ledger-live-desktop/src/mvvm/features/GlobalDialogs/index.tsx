@@ -12,7 +12,9 @@ const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
 const GlobalDialogs = () => (
   <>
     <ModularDialogRoot />
-    <SendFlowRoot />
+    <Suspense fallback={null}>
+      <SendFlowRoot />
+    </Suspense>
     <PerpsSignRoot />
     <ActionConfirmationDialog />
     <Suspense fallback={null}>

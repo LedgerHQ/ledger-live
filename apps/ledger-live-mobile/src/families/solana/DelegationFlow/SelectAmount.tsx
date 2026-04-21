@@ -1,5 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/staking";
 import { useTheme } from "@react-navigation/native";
@@ -48,7 +48,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState(0);
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge(account);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
