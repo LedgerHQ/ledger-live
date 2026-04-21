@@ -1,42 +1,122 @@
-import { t } from "i18next";
+import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import React from "react";
-import { render, screen } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
+import * as segment from "~/renderer/analytics/segment";
 import { ActionsList } from "..";
 
+const HELP_LABEL = "Help";
+const RECOVER_LABEL = "[L] Recover";
+const MY_WALLET_ROUTE = "/my-wallet";
+const RECOVER_HOME_PATH = "/recover";
+
 const mockNavigate = jest.fn();
+
+jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
+  useAccountPath: jest.fn(),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
 
-const mockTrack = jest.mocked(track);
+const mockUseAccountPath = jest.mocked(useAccountPath);
+const renderActionsList = (options?: Parameters<typeof render>[1]) =>
+  render(<ActionsList />, options);
+const getHelpButton = () => screen.getByRole("button", { name: HELP_LABEL });
+const getRecoverButton = () => screen.getByRole("button", { name: RECOVER_LABEL });
+const queryRecoverButton = () => screen.queryByRole("button", { name: RECOVER_LABEL });
 
 describe("ActionsList", () => {
   beforeEach(() => {
+    mockUseAccountPath.mockReturnValue(undefined);
+  });
+  afterAll(() => {
     jest.clearAllMocks();
   });
 
-  it("should render the list with the help action", () => {
-    render(<ActionsList />);
+  it("shows help and hides recover by default", () => {
+    renderActionsList();
 
     expect(screen.getByTestId("my-wallet-actions-list")).toBeVisible();
-    expect(screen.getByRole("button", { name: t("myWallet.actionsList.help") })).toBeVisible();
+    expect(getHelpButton()).toBeVisible();
+    expect(queryRecoverButton()).not.toBeInTheDocument();
   });
 
-  it("should navigate to the help settings and track the click when the help action is pressed", async () => {
-    const { user } = render(<ActionsList />, { initialRoute: "/my-wallet" });
+  it("shows recover when the feature is enabled", () => {
+    renderActionsList({
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: { protectId: "protect-id" },
+        },
+      }),
+    });
 
-    await user.click(screen.getByRole("button", { name: t("myWallet.actionsList.help") }));
+    expect(getRecoverButton()).toBeVisible();
+  });
 
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
+  it("navigates to help settings and tracks the click", async () => {
+    const trackSpy = jest.spyOn(segment, "track");
+    const { user } = renderActionsList({ initialRoute: MY_WALLET_ROUTE });
+
+    await user.click(getHelpButton());
+
     expect(mockNavigate).toHaveBeenCalledWith("/settings/help");
-    expect(mockTrack).toHaveBeenCalledTimes(1);
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(trackSpy).toHaveBeenCalledWith("button_clicked", {
       button: "Help",
-      page: "/my-wallet",
+      page: MY_WALLET_ROUTE,
       entry: "my_wallet_actions_list",
     });
+  });
+
+  it("navigates to the recover home and tracks the click", async () => {
+    const trackSpy = jest.spyOn(segment, "track");
+    mockUseAccountPath.mockReturnValue(RECOVER_HOME_PATH);
+
+    const { user } = renderActionsList({
+      initialRoute: MY_WALLET_ROUTE,
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: {
+            openRecoverFromSidebar: true,
+            protectId: "protect-id",
+          },
+        },
+      }),
+    });
+
+    await user.click(getRecoverButton());
+
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH);
+    expect(trackSpy).toHaveBeenCalledWith("button_clicked", {
+      button: "Recover",
+      page: MY_WALLET_ROUTE,
+      entry: "my_wallet_actions_list",
+    });
+  });
+
+  it("persists hasClickedRecover in the store after the first recover click", async () => {
+    mockUseAccountPath.mockReturnValue(RECOVER_HOME_PATH);
+
+    const { user, store } = renderActionsList({
+      initialRoute: MY_WALLET_ROUTE,
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: {
+            openRecoverFromSidebar: true,
+            protectId: "protect-id",
+          },
+        },
+      }),
+    });
+
+    expect(store.getState().settings.hasClickedRecover).toBe(false);
+
+    await user.click(getRecoverButton());
+
+    expect(store.getState().settings.hasClickedRecover).toBe(true);
   });
 });

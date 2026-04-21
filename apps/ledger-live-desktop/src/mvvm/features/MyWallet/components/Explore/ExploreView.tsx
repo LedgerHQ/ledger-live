@@ -17,7 +17,7 @@ export type ExploreViewProps = {
 
 export function ExploreView({ title, onClick }: ExploreViewProps) {
   return (
-    <ListItem onClick={onClick} className="bg-muted">
+    <ListItem onClick={onClick} className="bg-surface">
       <ListItemLeading>
         <Image resource={ExploreImage} alt="Explore" className="w-48 h-48" />
         <ListItemContent>

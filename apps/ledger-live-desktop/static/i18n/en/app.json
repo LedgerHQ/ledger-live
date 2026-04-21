@@ -8639,7 +8639,8 @@
   },
   "myWallet": {
     "actionsList": {
-      "help": "Help"
+      "help": "Help",
+      "recover": "[L] Recover"
     },
     "myLedger": {
       "title": "My Ledger",
