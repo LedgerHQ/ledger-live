@@ -1,4 +1,4 @@
-import { createSignerStellar } from "./signer";
+import { createSignerStellar } from "../../loaders/stellar";
 import Stellar from "@ledgerhq/hw-app-str";
 import Transport from "@ledgerhq/hw-transport";
 

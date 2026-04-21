@@ -1,4 +1,4 @@
-import { createSigner } from "./signer";
+import { createSigner } from "../../loaders/xrp";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
 

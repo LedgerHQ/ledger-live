@@ -48,7 +48,7 @@ describe("genericPrepareTransaction", () => {
       findTokenById: () => Promise.resolve(undefined),
     });
     (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
-    (getBridgeApi as jest.Mock).mockReturnValue({
+    (getBridgeApi as jest.Mock).mockResolvedValue({
       getAssetFromToken: jest.fn().mockReturnValue(undefined),
     });
   });
@@ -209,7 +209,7 @@ describe("genericPrepareTransaction", () => {
     (getAlpacaApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),
     });
-    (getBridgeApi as jest.Mock).mockReturnValue({
+    (getBridgeApi as jest.Mock).mockResolvedValue({
       getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
         assetOwner: owner,
         assetReference: token.id,

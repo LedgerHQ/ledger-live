@@ -1,5 +1,5 @@
 import bs58 from "bs58";
-import { createSigner, solanaGetAddress } from "./signer";
+import { createSigner, solanaGetAddress } from "../../loaders/solana";
 
 jest.mock("@ledgerhq/live-signer-solana");
 jest.mock("../../../../hw/dmkUtils");

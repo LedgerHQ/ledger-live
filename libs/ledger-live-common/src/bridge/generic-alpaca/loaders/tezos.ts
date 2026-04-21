@@ -1,18 +1,30 @@
+// ─── api ──────────────────────────────────────────────────────────────────────
+import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
+import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
+import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/types";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { getCurrencyConfiguration } from "../../../config";
+
+// ─── signer ───────────────────────────────────────────────────────────────────
 import Tezos from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";
 import { DerivationType, LedgerSigner as TaquitoLedgerSigner } from "@taquito/ledger-signer";
-import type { AlpacaSigner } from "../../types";
-import { CreateSigner, executeWithSigner } from "../../../setup";
-import resolver from "../../../../families/tezos/getAddress";
+import type { AlpacaSigner } from "../types";
+import { CreateSigner, executeWithSigner } from "../../setup";
+import resolver from "../../../families/tezos/getAddress";
 
-/**
- * Converts a DER-encoded secp256k1 ECDSA signature (returned by the Tezos Ledger app)
- * to the raw 64-byte r||s format expected by the Tezos protocol.
- * Format: 0x30/0x31 <totalLen> 0x02 <rLen> <r_bytes> 0x02 <sLen> <s_bytes>
- */
+// ─── bridge (no coin-* violations — re-export) ────────────────────────────────
+export { default as bridge } from "../families/tezos/bridge";
+
+export function createApi(currencyId: string): AlpacaApi<any> & BridgeApi {
+  return createTezosApi(
+    getCurrencyConfiguration<TezosCoinConfig>(currencyId),
+  ) as AlpacaApi<any> & BridgeApi;
+}
+
 export function convertSecp256k1DERToRaw(derHex: string): string {
   const buf = Buffer.from(derHex, "hex");
-  if (buf.length === 64) return derHex; // already raw 64-byte format
+  if (buf.length === 64) return derHex;
   const rLen = buf[3];
   const rStart = 4;
   const sLenIdx = rStart + rLen + 1;
@@ -48,7 +60,6 @@ const createSignerTezos: CreateSigner<
   }
 > = (transport: Transport) => {
   const tezos = new Tezos(transport);
-  // align with genericSignOperation that calls signer.signTransaction
   return Object.assign(tezos, {
     async signTransaction(path: string, rawTxHex: string, options?: { derivationMode?: string }) {
       const curve = curveForDerivationMode(options?.derivationMode);
@@ -63,7 +74,6 @@ const createSignerTezos: CreateSigner<
       return { path, address, publicKey };
     },
     createLedgerSigner(path: string, prompt: boolean, derivationType: number) {
-      // Map 0 -> ED25519, 1 -> SECP256K1, 2 -> P256 by convention
       let dt: DerivationType = DerivationType.ED25519;
       if (derivationType === 1) dt = DerivationType.SECP256K1;
       else if (derivationType === 2) dt = DerivationType.P256;
@@ -74,7 +84,7 @@ const createSignerTezos: CreateSigner<
 
 export const context = executeWithSigner(createSignerTezos);
 
-export default {
+export const signer = {
   context,
   getAddress: resolver(context),
 } satisfies AlpacaSigner;

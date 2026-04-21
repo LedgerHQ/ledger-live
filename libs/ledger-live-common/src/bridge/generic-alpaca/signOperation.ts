@@ -51,7 +51,7 @@ export const genericSignOperation =
     new Observable(o => {
       async function main() {
         const alpacaApi = await getAlpacaApi(account.currency.id, kind);
-        const bridgeApi = getBridgeApi(account.currency, network);
+        const bridgeApi = await getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),

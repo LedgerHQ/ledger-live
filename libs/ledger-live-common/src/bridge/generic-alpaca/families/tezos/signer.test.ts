@@ -1,4 +1,4 @@
-import { convertSecp256k1DERToRaw, normalizeTo32Bytes } from "./signer";
+import { convertSecp256k1DERToRaw, normalizeTo32Bytes } from "../../loaders/tezos";
 
 // DER encoding helpers
 function buildDer(r: Buffer, s: Buffer): string {

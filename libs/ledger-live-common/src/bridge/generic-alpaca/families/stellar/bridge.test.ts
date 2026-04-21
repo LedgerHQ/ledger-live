@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getAssetFromToken, getTokenFromAsset } from "./bridge";
+import { getAssetFromToken, getTokenFromAsset } from "../../loaders/stellar";
 
 beforeAll(() => {
   const stellar = getCryptoCurrencyById("stellar");

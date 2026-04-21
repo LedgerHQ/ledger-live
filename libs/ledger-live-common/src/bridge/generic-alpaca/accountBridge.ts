@@ -16,7 +16,7 @@ import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
 import { postSync } from "./postSync";
-import { getValidateAddress } from "./validateAddress";
+import { getValidateAddress } from "./loaders/validateAddress";
 import type { GenericTransaction, AlpacaSigner } from "./types";
 
 export function getAlpacaAccountBridge(

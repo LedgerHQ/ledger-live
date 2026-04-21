@@ -1,4 +1,4 @@
-import { createSigner } from "./signer";
+import { createSigner } from "../../loaders/evm";
 import { LegacySignerEth, DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";

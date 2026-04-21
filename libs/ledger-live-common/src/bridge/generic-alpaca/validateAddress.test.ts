@@ -1,4 +1,4 @@
-import { getValidateAddress } from "./validateAddress";
+import { getValidateAddress } from "./loaders/validateAddress";
 
 describe("validateAddress", () => {
   it.each(["evm", "stellar", "tezos", "xrp", "ripple"])(

@@ -17,19 +17,19 @@ export async function getAlpacaApi(
     const currency = findCryptoCurrencyByNetwork(network);
     switch (currency?.family) {
       case "xrp":
-        return (await import("./local/xrp.js")).createLocalXrpApi(currency.id);
+        return (await import("../loaders/xrp.js")).createApi(currency.id);
       case "stellar":
-        return (await import("./local/stellar.js")).createLocalStellarApi(currency.id);
+        return (await import("../loaders/stellar.js")).createApi(currency.id);
       case "canton":
-        return (await import("./local/canton.js")).createLocalCantonApi(currency.id);
+        return (await import("../loaders/canton.js")).createApi(currency.id);
       case "tron":
-        return (await import("./local/tron.js")).createLocalTronApi(currency.id);
+        return (await import("../loaders/tron.js")).createApi(currency.id);
       case "evm":
-        return (await import("./local/evm.js")).createLocalEvmApi(currency.id);
+        return (await import("../loaders/evm.js")).createApi(currency.id);
       case "tezos":
-        return (await import("./local/tezos.js")).createLocalTezosApi(currency.id);
+        return (await import("../loaders/tezos.js")).createApi(currency.id);
       case "solana":
-        return (await import("./local/solana.js")).createLocalSolanaApi(currency.id);
+        return (await import("../loaders/solana.js")).createApi(currency.id);
     }
   }
   return getNetworkAlpacaApi(network) satisfies Partial<AlpacaApi<any> & BridgeApi>;
