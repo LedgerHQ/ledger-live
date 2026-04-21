@@ -1,27 +1,19 @@
 // React Native stub — Metro/Repack resolves this file instead of ZCash.ts.
 //
-// The JSON-RPC backend depends on `@ledgerhq/zcash-decrypt` which ships a WASM
-// module unusable inside a React Native bundle. This stub exports a no-op
-// class plus the public constants so the mobile bundler does not pull the
-// WASM payload into the graph.
+// The JSON-RPC backend depends on `@ledgerhq/zcash-decrypt`, which ships a
+// WASM payload unusable inside a React Native bundle. Exporting a no-op class
+// plus the public constants here keeps the WASM out of the mobile graph.
 //
-// ZCash should never be instantiated on mobile: coin-bitcoin's
-// `zcashShieldedSyncEnabled` defaults to `false` so `zcashSyncShielded` — the
-// only runtime caller of this module — is never invoked.
+// If an actual sync is attempted on mobile (e.g. `coin-bitcoin`'s
+// `zcashSyncShielded` gets invoked), the stub's `syncShielded` errors loudly
+// rather than silently falling back to something half-working.
 
 import { Observable, throwError } from "rxjs";
-import type { ShieldedSyncResult } from "./types";
+import type { ShieldedSyncResult, SyncShieldedArgs } from "./types";
 
-export { ZCashNative } from "./ZCashNative";
 export { ZCASH_JSON_RPC_SERVER_MAINNET, ZCASH_JSON_RPC_SERVER_TESTNET } from "./constants";
 
 const UNSUPPORTED_ERROR_MESSAGE = "ZCash is not supported on React Native";
-
-export type SyncShieldedArgs = {
-  startBlockHeight: number;
-  viewingKey: string;
-  maxBatchSize: number;
-};
 
 export class ZCash {
   constructor(_args: { nodeUrl: string }) {}
