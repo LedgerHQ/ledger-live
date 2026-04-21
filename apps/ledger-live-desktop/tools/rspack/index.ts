@@ -16,6 +16,7 @@ export { createPreloaderConfig } from "./rspack.preloader";
 export { createWebviewPreloaderConfig } from "./rspack.webviewPreloader";
 export { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader";
 export { createWorkerConfig, getWorkerEntries } from "./rspack.worker";
+export { createZcashUtilityConfig } from "./rspack.zcashUtility";
 
 export * from "./rspack.common";
 export * from "./utils";
