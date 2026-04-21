@@ -125,10 +125,7 @@ export function buildSmartContractDetails(
   const contractPayload = /^0x/i.test(trimmedInput)
     ? `0x${trimmedInput.slice(2)}`
     : `0x${trimmedInput}`;
-  const encodedDeployed =
-    deployedContractAddress
-      ? safeEncodeEIP55(deployedContractAddress)
-      : "";
+  const encodedDeployed = deployedContractAddress ? safeEncodeEIP55(deployedContractAddress) : "";
   const contractAddress = encodedDeployed || encodedTo;
   return {
     contractInteraction,

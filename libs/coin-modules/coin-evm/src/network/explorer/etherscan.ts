@@ -206,10 +206,8 @@ export async function fetchWithRetries<T>(
     if (retries) {
       if (
         rateLimitPolicy &&
-        (
-          (e instanceof AxiosError && e.response?.status === STATUSCODE_TOO_MANY_REQS) ||
-          (e instanceof LedgerAPI4xx && e.status === STATUSCODE_TOO_MANY_REQS)
-        )
+        ((e instanceof AxiosError && e.response?.status === STATUSCODE_TOO_MANY_REQS) ||
+          (e instanceof LedgerAPI4xx && e.status === STATUSCODE_TOO_MANY_REQS))
       ) {
         const headers = e instanceof AxiosError ? e.response?.headers : e.headers;
         const waitDuration =
@@ -861,9 +859,9 @@ export const getOperations = makeLRUCache<
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
         const effectiveToBlock =
-          order === "asc" ? boundBlock ?? toBlock : paginationBlock ?? toBlock;
+          order === "asc" ? (boundBlock ?? toBlock) : (paginationBlock ?? toBlock);
         const effectiveFromBlock =
-          order === "asc" ? paginationBlock ?? fromBlock : boundBlock ?? fromBlock;
+          order === "asc" ? (paginationBlock ?? fromBlock) : (boundBlock ?? fromBlock);
         const params: FetchOperationsParams = {
           ...baseParams,
           fromBlock: effectiveFromBlock,

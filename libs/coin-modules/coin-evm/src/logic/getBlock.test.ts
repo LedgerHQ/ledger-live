@@ -233,9 +233,9 @@ describe("getBlock", () => {
           ],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValueOnce([
-        makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] }),
-      ]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValueOnce([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
     } as any);
 
@@ -273,9 +273,11 @@ describe("getBlock", () => {
           ],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValueOnce([
-        makeNodeBlockReceipt({ hash: "0xdeploy", erc20Transfers: [], contractAddress: address2 }),
-      ]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValueOnce([
+          makeNodeBlockReceipt({ hash: "0xdeploy", erc20Transfers: [], contractAddress: address2 }),
+        ]),
       getTransaction: jest.fn(),
     } as any);
 
@@ -309,9 +311,9 @@ describe("getBlock", () => {
           ],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValueOnce([
-        makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] }),
-      ]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValueOnce([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
     } as any);
 
