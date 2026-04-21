@@ -28,6 +28,10 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
 
+  private swapPageHeading = this.page
+    .getByTestId("page-header")
+    .getByRole("heading", { name: "Swap" });
+
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
@@ -471,29 +475,13 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Go and wait for Swap app to be ready")
   async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+    // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
+    // perform passed in action and wait for the swap page and webview
     await swapFunction();
-
-    const overallTimeout = 90_000;
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < overallTimeout) {
-      try {
-        this._webviewPage = undefined;
-        const remaining = overallTimeout - (Date.now() - startTime);
-        const webview = await this.getWebView(remaining);
-        await webview.waitForSelector(`[data-testid="${this.executeButtonDisabled}"]`, {
-          timeout: Math.min(15_000, overallTimeout - (Date.now() - startTime)),
-        });
-        return;
-      } catch {
-        // The webview may have reloaded or been replaced; reset and retry
-        await this.page.waitForTimeout(500);
-      }
-    }
-
-    throw new Error(`Swap app did not become ready within ${overallTimeout}ms`);
+    await this.swapPageHeading.waitFor({ state: "visible", timeout: 60_000 });
+    await this.getWebView();
   }
 
   @step("Go to swap history")
