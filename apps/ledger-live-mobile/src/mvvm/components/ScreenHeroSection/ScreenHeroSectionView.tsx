@@ -16,10 +16,6 @@ const contentAreaStyle: LumenViewStyle = {
   paddingBottom: "s8",
 };
 
-const ctasStyle: LumenViewStyle = {
-  paddingBottom: "s8",
-};
-
 export const ScreenHeroSectionView = ({
   children,
   ctas,
@@ -30,6 +26,6 @@ export const ScreenHeroSectionView = ({
     <Box lx={contentAreaStyle} style={{ minHeight: minContentHeight ?? CONTENT_AREA_HEIGHT }}>
       {children}
     </Box>
-    {ctas && <Box lx={ctasStyle}>{ctas}</Box>}
+    {ctas && <Box>{ctas}</Box>}
   </Box>
 );
