@@ -257,7 +257,7 @@ export class SwapPage extends WebViewAppPage {
   async extractQuotesAndFees(quoteContainers: string[]) {
     const quotes = quoteContainers
       .map(quote => {
-        const match = quote.match(/Network Fees \$(\d+\.\d+).*?[A-Z]{2,10}\$(\d+\.\d+)/);
+        const match = quote.match(/Network Fees \$(\d+(?:\.\d+)?).*?[A-Z]{2,10}\$(\d+\.\d+)/);
         if (match) {
           const fees = parseFloat(match[1]);
           const rate = parseFloat(match[2]);
