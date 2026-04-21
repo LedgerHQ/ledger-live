@@ -7,6 +7,7 @@ import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import GlobalDrawers from "./GlobalDrawers";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
@@ -35,9 +36,11 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
               <PostOnboardingProviderWrapped>
                 <NotificationsProvider>
                   <SnackbarContainer />
-                  <InViewProvider>
-                    <GlobalDrawers>{children}</GlobalDrawers>
-                  </InViewProvider>
+                  <NotificationsPromptProvider>
+                    <InViewProvider>
+                      <GlobalDrawers>{children}</GlobalDrawers>
+                    </InViewProvider>
+                  </NotificationsPromptProvider>
                 </NotificationsProvider>
               </PostOnboardingProviderWrapped>
               <GlobalSelectBottomSheet />

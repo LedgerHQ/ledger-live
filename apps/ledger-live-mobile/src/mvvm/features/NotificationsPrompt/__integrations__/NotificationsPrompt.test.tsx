@@ -1,12 +1,12 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useCallback } from "react";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { useNotifications } from "../hooks/useNotifications";
+import { NotificationsPromptProvider } from "../components/NotificationsPromptProvider";
 
 import storage from "LLM/storage";
 import { add, sub, type Duration } from "date-fns";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { NotificationsPromptDrawer } from "../screens/NotificationsPromptDrawer";
 import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 import { NotificationsState } from "~/reducers/types";
 
@@ -101,25 +101,18 @@ describe("NotificationsPrompt Integration", () => {
     }
 
     function SetupComponent() {
-      const [isReady, setIsReady] = useState(false);
-      const [reloadCount, reload] = useReducer(x => x + 1, 0);
-
       const {
         tryTriggerPushNotificationDrawerAfterAction,
         initPushNotificationsData,
         tryTriggerPushNotificationDrawerAfterInactivity,
+        isInitialized,
       } = useNotifications();
 
-      useEffect(() => {
-        initPushNotificationsData()
-          .then(tryTriggerPushNotificationDrawerAfterInactivity)
-          .then(() => setIsReady(true));
+      const reload = useCallback(() => {
+        void initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
+      }, [initPushNotificationsData, tryTriggerPushNotificationDrawerAfterInactivity]);
 
-        // No dependency because we only want to run it once.
-        // oxlint-disable-next-line react-hooks/exhaustive-deps
-      }, [reloadCount]);
-
-      if (!isReady) {
+      if (!isInitialized) {
         return <Text>Loading permission status and push notifications data of user</Text>;
       }
 
@@ -134,10 +127,9 @@ describe("NotificationsPrompt Integration", () => {
     }
 
     const rendered = render(
-      <>
-        <NotificationsPromptDrawer />
+      <NotificationsPromptProvider>
         <SetupComponent />
-      </>,
+      </NotificationsPromptProvider>,
       {
         overrideInitialState: withFlagOverrides(
           {
@@ -176,34 +168,40 @@ describe("NotificationsPrompt Integration", () => {
                     timer: 0,
                   },
                 },
-                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({ months: 0, hours: 0, minutes: 0, seconds: 0, days: "days" in s ? s.days : 0 })),
+                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({
+                  months: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                  days: "days" in s ? s.days : 0,
+                })),
 
-                  notificationsCategories: [
-                    {
-                      displayed: true,
-                      category: "announcementsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "recommendationsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "largeMoverCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "transactionsAlertsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "totalMarketCap",
-                    },
-                    {
-                      displayed: true,
-                      category: "topGainersLosers",
-                    },
-                  ],
+                notificationsCategories: [
+                  {
+                    displayed: true,
+                    category: "announcementsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "recommendationsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "largeMoverCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "transactionsAlertsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "totalMarketCap",
+                  },
+                  {
+                    displayed: true,
+                    category: "topGainersLosers",
+                  },
+                ],
 
                 inactivity_enabled: true,
                 inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },
@@ -220,6 +218,7 @@ describe("NotificationsPrompt Integration", () => {
             ...state,
             settings: {
               ...state.settings,
+              hasCompletedOnboarding: true,
               notifications: {
                 ...state.settings.notifications,
                 areNotificationsAllowed: appNotifications,

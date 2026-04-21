@@ -3,6 +3,10 @@ export { useNotificationsData } from "./hooks/useNotificationsData";
 export { useNotificationsPrompt } from "./hooks/useNotificationsPrompt";
 export { useNotificationsDrawer } from "./hooks/useNotificationsDrawer";
 export {
+  NotificationsPromptProvider,
+  useNotificationsPromptContext,
+} from "./components/NotificationsPromptProvider";
+export {
   INACTIVITY_DRAWER_DELAY_MS,
   checkIsInactive,
   evaluateAfterActionTrigger,
