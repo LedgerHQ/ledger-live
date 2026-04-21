@@ -60,6 +60,9 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 
+      - name: Check wallet-cli generated commands
+        run: pnpm exec nx run "@ledgerhq/wallet-cli:generate:check"
+
       - name: Build wallet-cli
         run: pnpm exec nx run @ledgerhq/wallet-cli:build
 
