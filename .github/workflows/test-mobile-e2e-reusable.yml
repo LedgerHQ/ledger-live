@@ -259,7 +259,7 @@ jobs:
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Prepare test filter
         id: test-filter
