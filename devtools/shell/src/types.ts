@@ -1,3 +1,5 @@
+import type { ComponentType } from "react";
+
 export enum Category {
   CONFIGURATION = "Configuration",
   FEATURES_AND_FLOWS = "Features & flows",
@@ -16,4 +18,5 @@ export interface Tool {
   owner?: string;
   desc?: string;
   icon?: string;
+  component: ComponentType;
 }
