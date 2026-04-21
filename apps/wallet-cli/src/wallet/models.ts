@@ -58,18 +58,6 @@ export function parseAccountDescriptor(input: string): AccountDescriptor {
   return parseShortAccountDescriptor(input);
 }
 
-export function resolveAccountArg(
-  account: string | undefined,
-  positional: readonly string[],
-): string {
-  const arg = account ?? positional[0];
-  if (!arg) {
-    throw new Error(
-      "Missing account: use --account <descriptor> or pass it as the first positional argument.",
-    );
-  }
-  return arg;
-}
 
 export const CurrencyIdSchema = z.string().min(1);
 export type CurrencyId = z.infer<typeof CurrencyIdSchema>;
