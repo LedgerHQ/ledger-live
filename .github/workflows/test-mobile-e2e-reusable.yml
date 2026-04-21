@@ -140,7 +140,7 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == false && '0' || '1' }}
+  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration

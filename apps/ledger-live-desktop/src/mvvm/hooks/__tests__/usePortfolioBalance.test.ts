@@ -24,6 +24,7 @@ const mockUseSyncSources = jest.fn().mockReturnValue({
   hasCvOrBridgeError: false,
   hasWalletSyncError: false,
   triggerRefresh: mockTriggerRefresh,
+  cvPending: false,
 });
 
 jest.mock("../useSyncSources", () => ({
@@ -52,6 +53,7 @@ const syncingState = {
   hasCvOrBridgeError: false,
   hasWalletSyncError: false,
   triggerRefresh: mockTriggerRefresh,
+  cvPending: true,
 };
 
 describe("usePortfolioBalance", () => {
@@ -67,6 +69,7 @@ describe("usePortfolioBalance", () => {
       hasCvOrBridgeError: false,
       hasWalletSyncError: false,
       triggerRefresh: mockTriggerRefresh,
+      cvPending: false,
     });
   });
 

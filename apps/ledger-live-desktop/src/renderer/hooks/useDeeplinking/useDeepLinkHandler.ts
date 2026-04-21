@@ -43,7 +43,7 @@ export function useDeepLinkHandler() {
   const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const navigate: NavigateFn = useCallback(
-    (pathname: string, state?: { [k: string]: string | object }, search?: string) => {
+    (pathname: string, state?: Parameters<NavigateFn>[1], search?: string) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
       const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
@@ -71,6 +71,8 @@ export function useDeepLinkHandler() {
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
       currentPathname: location.pathname,
+      currentSearch: location.search,
+      currentLocationState: location.state,
       accountsPath,
       recoverAppId,
     }),
@@ -84,6 +86,8 @@ export function useDeepLinkHandler() {
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
       location.pathname,
+      location.search,
+      location.state,
       accountsPath,
       recoverAppId,
     ],

@@ -120,20 +120,34 @@
       "minimumReleaseAge": "2 days"
     },
     {
-      "description": "E2E - version updates",
+      "description": "E2E Playwright and Allure linked updates",
       "matchManagers": ["npm"],
-      "matchFileNames": ["e2e/desktop/**", "e2e/mobile/**"],
+      "groupName": "e2e playwright and allure",
+      "matchPackageNames": [
+        "@playwright/test",
+        "playwright",
+        "allure-js-commons",
+        "allure-playwright",
+        "allure-commandline"
+      ],
       "commitMessagePrefix": "chore(e2e):",
       "labels": ["dependencies", "e2e"],
       "reviewers": ["team:qaa"],
       "assignees": ["team:qaa"]
     },
     {
-      "description": "E2E - group major updates",
+      "description": "E2E Detox and Allure linked updates",
       "matchManagers": ["npm"],
-      "matchFileNames": ["e2e/desktop/**", "e2e/mobile/**"],
-      "matchUpdateTypes": ["major"],
-      "groupName": "e2e major updates"
+      "groupName": "e2e detox and allure",
+      "matchPackageNames": [
+        "detox",
+        "detox-allure2-adapter",
+        "jest-allure2-reporter"
+      ],
+      "commitMessagePrefix": "chore(e2e):",
+      "labels": ["dependencies", "e2e"],
+      "reviewers": ["team:qaa"],
+      "assignees": ["team:qaa"]
     }
   ],
   "prConcurrentLimit": 10,

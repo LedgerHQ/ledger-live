@@ -1626,6 +1626,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
+      '@ledgerhq/live-hooks':
+        specifier: workspace:^
+        version: link:../../libs/live-hooks
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network
@@ -2385,6 +2388,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.13
+      '@devtools/shell':
+        specifier: workspace:*
+        version: link:../../devtools/shell
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
@@ -2478,6 +2484,12 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
       '@tanstack/react-table':
         specifier: 8.21.3
         version: 8.21.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2526,6 +2538,9 @@ importers:
       react-inspector:
         specifier: ^4.0.1
         version: 4.0.1(react@19.0.0)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.0.0)
       react-router-dom:
         specifier: ^6.30.3
         version: 6.30.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2644,6 +2659,18 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.18
+
+  devtools/shell:
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
 
   domain/entity/currency:
     dependencies:
@@ -23903,7 +23930,7 @@ packages:
   basic-ftp@5.0.5:
     resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==}
     engines: {node: '>=10.0.0'}
-    deprecated: Security vulnerability fixed in 5.2.0, please upgrade
+    deprecated: Security vulnerability fixed in 5.2.1, please upgrade
 
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}

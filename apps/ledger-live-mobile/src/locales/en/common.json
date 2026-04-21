@@ -8878,6 +8878,13 @@
         "supportAndLearning": "Support and learning",
         "more": "More"
       }
+    },
+    "deviceSection": {
+      "title": "My devices",
+      "add": "Add",
+      "exploreAllDevices": "Explore all Ledger devices",
+      "available": "Available",
+      "unavailable": "Not connected"
     }
   }
 }

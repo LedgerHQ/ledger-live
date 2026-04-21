@@ -16,6 +16,10 @@
     "typecheck": "tsc --noEmit --customConditions node"
   },
   "dependencies": {
+    "@devtools/shell": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:*",
+    "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
     "@ledgerhq/coin-module-framework": "catalog:",

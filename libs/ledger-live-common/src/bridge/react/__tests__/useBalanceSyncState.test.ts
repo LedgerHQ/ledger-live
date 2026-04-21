@@ -11,6 +11,7 @@ interface Props {
   syncPhase: SyncPhase;
   latestBalance: number;
   shouldFreezeOnSync: boolean;
+  cvPending?: boolean;
 }
 
 const defaultProps: Props = {
@@ -31,9 +32,24 @@ describe("useBalanceSyncState", () => {
       { syncPhase: "syncing" as SyncPhase, expected: true },
       { syncPhase: "synced" as SyncPhase, expected: false },
       { syncPhase: "failed" as SyncPhase, expected: false },
-    ])("should be $expected when syncPhase is $syncPhase", ({ syncPhase, expected }) => {
-      const { result } = renderBalanceSyncState({ syncPhase });
-      expect(result.current.isLoading).toBe(expected);
+    ])(
+      "should be $expected when syncPhase is $syncPhase (no cvPending override)",
+      ({ syncPhase, expected }) => {
+        const { result } = renderBalanceSyncState({ syncPhase });
+        expect(result.current.isLoading).toBe(expected);
+      },
+    );
+
+    it("should be scoped to cvPending when provided: true while CVS pending, false once settled", () => {
+      const { result, rerender } = renderBalanceSyncState({
+        syncPhase: "syncing",
+        cvPending: true,
+      });
+      expect(result.current.isLoading).toBe(true);
+
+      // CVS settles — isLoading drops even though syncPhase stays syncing (bridge in progress)
+      rerender({ ...defaultProps, syncPhase: "syncing", cvPending: false });
+      expect(result.current.isLoading).toBe(false);
     });
   });
 
@@ -132,6 +148,59 @@ describe("useBalanceSyncState", () => {
         shouldFreezeOnSync: false,
       });
       expect(result.current.displayedBalance).toBe(2000);
+    });
+  });
+
+  describe("cvPending override (mobile CVS-phase behaviour)", () => {
+    it("freezes while cvPending is true and releases once false, regardless of syncPhase", () => {
+      const { result, rerender } = renderBalanceSyncState({
+        syncPhase: "syncing",
+        latestBalance: 1000,
+        shouldFreezeOnSync: true,
+        cvPending: true,
+      });
+      expect(result.current.displayedBalance).toBe(1000);
+
+      // Balance updated by CVS — still frozen while cvPending
+      rerender({ ...defaultProps, syncPhase: "syncing", latestBalance: 1200, cvPending: true });
+      expect(result.current.displayedBalance).toBe(1000);
+
+      // CVS settles — balance animates even though bridge sync (syncPhase) is still active
+      rerender({ ...defaultProps, syncPhase: "syncing", latestBalance: 1200, cvPending: false });
+      expect(result.current.displayedBalance).toBe(1200);
+
+      // Balance continues to update per-batch after CVS settles
+      rerender({ ...defaultProps, syncPhase: "syncing", latestBalance: 1500, cvPending: false });
+      expect(result.current.displayedBalance).toBe(1500);
+    });
+
+    it("clears sticky balanceUnavailable once cvPending is false (no balance case)", () => {
+      const { result, rerender } = renderBalanceSyncState({
+        rawBalanceAvailable: false,
+        syncPhase: "syncing",
+        latestBalance: 0,
+        shouldFreezeOnSync: true,
+        cvPending: true,
+      });
+      expect(result.current.balanceAvailable).toBe(false);
+
+      // Balance becomes available mid-sync but CVS still pending — still blocked
+      rerender({
+        ...defaultProps,
+        rawBalanceAvailable: true,
+        syncPhase: "syncing",
+        cvPending: true,
+      });
+      expect(result.current.balanceAvailable).toBe(false);
+
+      // CVS settles — balance unlocks immediately even with bridge sync still running
+      rerender({
+        ...defaultProps,
+        rawBalanceAvailable: true,
+        syncPhase: "syncing",
+        cvPending: false,
+      });
+      expect(result.current.balanceAvailable).toBe(true);
     });
   });
 });
