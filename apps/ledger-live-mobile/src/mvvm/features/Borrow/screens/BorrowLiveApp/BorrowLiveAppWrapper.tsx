@@ -18,7 +18,7 @@ export function BorrowLiveAppWrapper({
 }: BorrowLiveAppWrapperProps) {
   const { manifest, error, isLoading, webviewRef, webviewState, onWebviewStateChange, webviewInputs } =
     useBorrowLiveAppViewModel();
-  const isSetupAmountStep = webviewState.url.includes("/setup-amount");
+  const isSetupAmountStep = webviewState.url.includes("/loan");
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(
     () => ({
