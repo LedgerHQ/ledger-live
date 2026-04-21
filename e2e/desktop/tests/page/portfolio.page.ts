@@ -68,7 +68,10 @@ export class PortfolioPage extends AppPage {
 
   @step("Check add account button visibility")
   async checkAddAccountButtonVisibility() {
-    await this.checkVisibility(this.addAccountCta);
+    // Wallet 4.0 + asset section: CTA lives under the Assets block and may need scroll / extra settle time.
+    await this.addAccountCta.waitFor({ state: "attached", timeout: 30000 });
+    await this.addAccountCta.scrollIntoViewIfNeeded();
+    await expect(this.addAccountCta).toBeVisible({ timeout: 30000 });
   }
 
   @step("Click add account button")

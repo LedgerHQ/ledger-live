@@ -11,15 +11,16 @@ export class AccountsPage extends AppPage {
 
   private readonly getSanitizedAccountName = (accountName: string) =>
     accountName.replaceAll(/\s+/g, "-");
+
+  private cryptoAccountRow(accountName: string) {
+    return this.page.getByTestId(`crypto-account-row-${this.getSanitizedAccountName(accountName)}`);
+  }
+
   private readonly tokenRow = (childCurrency: Currency) =>
     this.page.getByTestId(`token-row-${childCurrency.ticker}`);
 
   private syncAccountButton = (accountName: string) =>
-    this.page
-      .getByTestId(`crypto-account-row-${this.getSanitizedAccountName(accountName)}`)
-      .getByTestId("sync-button")
-      .locator("div")
-      .first();
+    this.cryptoAccountRow(accountName).getByTestId("sync-button").locator("div").first();
 
   @step("Wait for Accounts title to be visible")
   async expectAccountsTitleVisibility() {
@@ -28,9 +29,7 @@ export class AccountsPage extends AppPage {
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    const accountRow = this.page.getByTestId(
-      `crypto-account-row-${this.getSanitizedAccountName(accountName)}`,
-    );
+    const accountRow = this.cryptoAccountRow(accountName);
     await accountRow.click();
   }
 
@@ -85,8 +84,37 @@ export class AccountsPage extends AppPage {
   }
 
   @step("Expect number of accounts to be $0")
-  async expectAccountsCount(count: number) {
-    await expect(this.visibleAccountsList).toHaveCount(count);
+  async expectAccountsCount(count: number, timeout = 30_000) {
+    await expect(this.visibleAccountsList).toHaveCount(count, { timeout });
+  }
+
+  /**
+   * Waits until the in-app Redux store has the expected number of accounts.
+   * Use after Ledger Sync / bridge merges (CI can show the success screen before all rows exist).
+   */
+  @step("Expect Redux accounts length to be $0")
+  async expectReduxAccountsLength(count: number) {
+    await expect
+      .poll(
+        async () =>
+          this.page.evaluate(() => {
+            const store = // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              (globalThis as { __STORE__?: { getState?: () => { accounts?: unknown[] } } })
+                .__STORE__;
+            if (!store?.getState) return -1;
+            return store.getState().accounts?.length ?? 0;
+          }),
+        { timeout: 120_000 },
+      )
+      .toBe(count);
+  }
+
+  @step("Expect crypto account row for $0 to be visible")
+  async expectCryptoAccountRowVisible(accountName: string) {
+    const row = this.cryptoAccountRow(accountName);
+    await row.waitFor({ state: "attached", timeout: 120_000 });
+    await row.scrollIntoViewIfNeeded();
+    await expect(row).toBeVisible({ timeout: 60_000 });
   }
 
   @step("Expect at least one visible account in the list")
