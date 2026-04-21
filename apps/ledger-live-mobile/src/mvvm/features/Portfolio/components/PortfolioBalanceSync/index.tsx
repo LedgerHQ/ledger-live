@@ -26,7 +26,12 @@ export function PortfolioBalanceSync(): null {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
-  const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
+  const {
+    portfolio,
+    balanceAvailable: rawBalanceAvailable,
+    syncPhase,
+    isCvPending,
+  } = usePortfolioBalance();
 
   const lastItem = portfolio.balanceHistory[portfolio.balanceHistory.length - 1];
   const latestBalance = lastItem?.value ?? 0;
@@ -39,14 +44,13 @@ export function PortfolioBalanceSync(): null {
 
   const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
 
-  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
+  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
     latestBalance: effectiveLatestBalance,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
-
-  const isLoading = syncPhase === "syncing";
 
   useEffect(() => {
     dispatch(
