@@ -143,8 +143,8 @@ env:
   AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 2
-  AVD_RAM_SIZE: 3072
+  AVD_CORES: 3
+  AVD_RAM_SIZE: 5120
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
 
@@ -755,7 +755,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/qaa_1153_test_update_emulator
         with:
           source_avd_name: ${{ env.AVD_NAME }}
-          target_suffixes: "_2,_3,_4"
+          target_suffixes: "_2,_3"
           avd_api: ${{ env.AVD_API }}
 
       - name: Cleanup any running Android emulators (pre-boot)
