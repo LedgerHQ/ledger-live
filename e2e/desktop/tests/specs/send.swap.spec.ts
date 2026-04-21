@@ -283,7 +283,7 @@ const swaps = [
       "@Stax",
       "@Flex",
       "@NanoGen5",
-      "@ripple",
+      "@xrp",
       "@family-xrp",
       "@ethereum",
       "@family-evm",
