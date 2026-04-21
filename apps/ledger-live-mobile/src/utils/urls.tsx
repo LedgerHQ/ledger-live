@@ -210,6 +210,7 @@ export const urls = {
     whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
     ethereumStakingHowToStakeEth:
       "https://www.ledger.com/academy/ethereum-staking-how-to-stake-eth",
+    root: "https://www.ledger.com/academy",
   },
   ledgerStatus: "https://status.ledger.com/",
   bitcoinAddressType: "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
