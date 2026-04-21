@@ -2,7 +2,7 @@
 applyTo: "**/src/mvvm/**"
 ---
 
-<!-- Source: .cursor/rules/react-mvvm.mdc, .cursor/skills/ldls-web/SKILL.md, .cursor/skills/ldls-native/SKILL.md -->
+<!-- Source: .cursor/rules/react-mvvm.mdc, .agents/skills/ldls-web/SKILL.md, .agents/skills/ldls-native/SKILL.md -->
 <!-- Last synced: 2026-02-16 -->
 
 # MVVM Architecture
@@ -105,6 +105,7 @@ New UI code in `src/mvvm/` must use the Lumen design system:
 Preferred components: `Button`, `IconButton`, `Dialog`, `Text`, `Box`, `Banner`, `Tag`, `ListItem`, `Tile`, `AmountDisplay`, `NavBar`, `BottomSheet`, `TextInput`, `SearchInput`, `Divider`, `Checkbox`, `Switch`, `Select`, `Spinner`.
 
 Flag these anti-patterns:
+
 - Using raw HTML elements (`<div>`, `<span>`, `<button>`) or React Native primitives (`<View>`, `<TouchableOpacity>`) instead of Lumen components.
 - Inline styles or hardcoded color values instead of design tokens.
 - Typography using raw `<Text>` with manual font sizing instead of Lumen typography components.

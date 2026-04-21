@@ -131,20 +131,12 @@ describe("useTopBarViewModel", () => {
       [
         "all optional slots visible",
         { experimentalVisible: true, featureFlagsVisible: true, operationsList: true },
-        [
-          "experimental",
-          "feature flags",
-          "synchronize",
-          "notification",
-          "discreet",
-          "history",
-          "my ledger",
-        ],
+        ["experimental", "feature flags", "synchronize", "notification", "discreet", "history"],
       ],
       [
-        "myWallet enabled hides settings",
+        "myWallet enabled hides settings and my ledger",
         { myWallet: true },
-        ["synchronize", "notification", "discreet", "history", "my ledger"],
+        ["synchronize", "notification", "discreet", "history"],
       ],
     ])("%s", (_name, options, expectedLabels) => {
       const { result } = setup(options);

@@ -7663,6 +7663,9 @@ importers:
       env-cmd:
         specifier: '*'
         version: 10.1.0
+      esbuild:
+        specifier: 0.25.5
+        version: 0.25.5
       fs:
         specifier: ^0.0.1-security
         version: 0.0.1-security

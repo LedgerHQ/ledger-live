@@ -8638,9 +8638,15 @@
     }
   },
   "myWallet": {
-    "explore": "Explore all Ledger devices",
     "actionsList": {
-      "help": "Help"
-    }
+      "help": "Help",
+      "recover": "[L] Recover",
+      "refer": "Referral"
+    },
+    "myLedger": {
+      "title": "My Ledger",
+      "description": "Manage your Ledger device"
+    },
+    "explore": "Explore all Ledger devices"
   }
 }

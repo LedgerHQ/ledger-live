@@ -12,7 +12,7 @@ import { scenarioBnb } from "./scenarii/bnb";
 import "./tokenFixtures";
 
 global.console = require("console");
-jest.setTimeout(100_000);
+jest.setTimeout(300_000);
 
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {

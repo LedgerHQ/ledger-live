@@ -54,12 +54,13 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     const signer = await buildSigner();
 
-    await spawnAnvil("https://base-rpc.publicnode.com", signer.exportMnemonic());
+    // 2797222 = deployment block of USDC on Base + 1
+    await spawnAnvil("https://mainnet.base.org", signer.exportMnemonic(), 2797222);
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
     const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
+
     setBlock(lastBlockNumber);
 
     setCoinConfig(() => ({

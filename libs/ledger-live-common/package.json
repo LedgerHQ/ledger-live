@@ -358,6 +358,7 @@
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
+    "esbuild": "0.25.5",
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
     "jest": "catalog:",

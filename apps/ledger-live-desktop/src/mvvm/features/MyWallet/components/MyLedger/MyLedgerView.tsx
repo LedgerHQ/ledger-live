@@ -5,27 +5,31 @@ import {
   ListItemContent,
   ListItemTitle,
   ListItemTrailing,
+  ListItemDescription,
+  Spot,
 } from "@ledgerhq/lumen-ui-react";
-import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
-import Image from "~/renderer/components/Image";
-import ExploreImage from "./explore.webp";
+import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
+import type { DeviceIconComponent } from "LLD/utils/getDeviceIcon";
 
-export type ExploreViewProps = {
+export type MyLedgerViewProps = {
   title: string;
+  description: string;
+  icon: DeviceIconComponent;
   onClick: () => void;
 };
 
-export function ExploreView({ title, onClick }: ExploreViewProps) {
+export function MyLedgerView({ title, description, icon, onClick }: MyLedgerViewProps) {
   return (
     <ListItem onClick={onClick} className="bg-surface">
       <ListItemLeading>
-        <Image resource={ExploreImage} alt="Explore" className="w-48 h-48" />
+        <Spot icon={icon} appearance="icon" />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
+          <ListItemDescription>{description}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <ExternalLink size={24} />
+        <ChevronRight size={24} />
       </ListItemTrailing>
     </ListItem>
   );
