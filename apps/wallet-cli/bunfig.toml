@@ -1,12 +1,5 @@
 # Bun runtime configuration for wallet-cli.
 
-# Preload the proto/goog stub before any module is evaluated.
-# tronweb's CJS protobuf files reference `proto` as a bare global; without this
-# they crash non-deterministically because Bun can evaluate CJS modules in the
-# transitive import graph before cli.ts top-level imports settle.
-# (account/helpers.js → @ledgerhq/coin-tron/index → tronweb)
-preload = ["./src/polyfill.ts"]
-
 [test]
 coverageReporter = ["lcov"]
 coverageDir = "coverage"
