@@ -523,6 +523,7 @@ jobs:
           ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }}
+          pre-emulator-launch-script: bash "./tools/scripts/patch-avd-config.sh" "${{ env.AVD_NAME }}"
           script: ./tools/scripts/wait_emulator_idle.sh
 
       - name: Cache android emulator
