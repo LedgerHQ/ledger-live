@@ -2,13 +2,7 @@ import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
-import {
-  buildRendererEnv,
-  buildDotEnvDefine,
-  DOTENV_FILE,
-  lldRoot,
-  resolveNativeExternals,
-} from "./utils";
+import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, lldRoot } from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron renderer process
@@ -82,6 +76,9 @@ export function createRendererConfig(
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
         "styled-components": styledComponentsPath,
+        // Route `ZCashNative` to the IPC client in the renderer so the
+        // `zcash-utils` .node addon stays out of the bundle (see `main/zcashNativeHost.ts`).
+        "@ledgerhq/zcash-shielded/ZCashNative$": "@ledgerhq/zcash-shielded/ZCashNativeIPC",
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
@@ -294,7 +291,6 @@ export function createRendererConfig(
     optimization: {
       minimize: !isDev,
     },
-    externals: resolveNativeExternals(),
     stats: isDev ? "errors-warnings" : "normal",
     experiments: {
       css: true,

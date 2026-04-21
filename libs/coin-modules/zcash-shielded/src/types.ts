@@ -2,7 +2,12 @@ import type { BigNumber } from "bignumber.js";
 
 export type * from "./jsonRpcClient";
 export type * from "./shieldedTransaction";
-export type * from "./ZCash";
+
+export type SyncShieldedArgs = {
+  startBlockHeight: number;
+  viewingKey: string;
+  maxBatchSize: number;
+};
 
 export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
 
@@ -77,6 +82,21 @@ export type ShieldedSyncResult = {
   remainingBlocks: number;
   lastProcessedBlock?: number;
   transactions: ShieldedTransaction[];
+};
+
+/**
+ * IPC-safe variant of {@link ShieldedSyncResult}.
+ *
+ * `BigNumber` does not survive `structuredClone` (used by Electron IPC and
+ * UtilityProcess `parentPort.postMessage`), so the native engine emits this
+ * raw shape; the renderer client rehydrates it into {@link ShieldedSyncResult}
+ * with real `BigNumber` instances.
+ */
+export type ShieldedSyncResultRaw = {
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessedBlock?: number;
+  transactions: ShieldedTransactionRaw[];
 };
 
 export type SyncEstimatedTime = {

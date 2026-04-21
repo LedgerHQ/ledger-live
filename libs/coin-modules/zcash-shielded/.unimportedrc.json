@@ -1,5 +1,10 @@
 {
-  "entry": ["src/ZCash.ts"],
+  "entry": [
+    "src/ZCash.ts",
+    "src/ZCashNative.ts",
+    "src/ZCashNativeIPC.ts",
+    "src/native-engine/utility-entry.ts"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/*.fixture.ts",
@@ -9,7 +14,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"
+    "jest-util",
+    "electron"
   ],
   "ignoreUnused": [
     "@ledgerhq/coin-bitcoin",
