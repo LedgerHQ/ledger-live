@@ -8865,6 +8865,16 @@
       "sections": {
         "supportAndLearning": "Support and learning",
         "more": "More"
+      },
+      "rows": {
+        "ledgerSupport": {
+          "title": "Ledger Support",
+          "description": "Get help with our FAQs or chat"
+        },
+        "ledgerAcademy": {
+          "title": "Ledger Academy",
+          "description": "Learn crypto"
+        }
       }
     },
     "deviceSection": {
