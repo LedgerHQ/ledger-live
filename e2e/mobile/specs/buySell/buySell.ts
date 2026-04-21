@@ -181,7 +181,7 @@ export async function runQueryParametersTest(
     tags.forEach(tag => $Tag(tag));
     test(`Buy / Sell [${buySell.crypto.currency.name}] asset - query parameters`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow(buySell, paymentMethod, true);
     });
   });
 }
