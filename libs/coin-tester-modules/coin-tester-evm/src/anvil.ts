@@ -1,7 +1,11 @@
 import chalk from "chalk";
 import * as compose from "docker-compose";
 
-export const spawnAnvil = async (rpc: string, seed: string): Promise<void> => {
+export const spawnAnvil = async (
+  rpc: string,
+  seed: string,
+  forkBlockNumber?: number,
+): Promise<void> => {
   console.log("Starting anvil...");
   await compose.upOne("anvil", {
     cwd: __dirname,
@@ -10,6 +14,8 @@ export const spawnAnvil = async (rpc: string, seed: string): Promise<void> => {
       ...process.env,
       RPC: rpc,
       SEED: seed,
+      FORK_BLOCK_OPT:
+        typeof forkBlockNumber === "number" ? `--fork-block-number ${forkBlockNumber}` : "",
     },
     commandOptions: ["--wait"],
   });
