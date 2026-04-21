@@ -485,8 +485,10 @@ export class SwapPage extends WebViewAppPage {
         this._webviewPage = undefined;
         const remaining = overallTimeout - (Date.now() - startTime);
         const webview = await this.getWebView(remaining);
-        await webview.waitForSelector(`[data-testid="${this.executeButtonDisabled}"]`, {
-          timeout: Math.min(15_000, overallTimeout - (Date.now() - startTime)),
+        const readyStateTimeout = Math.min(15_000, overallTimeout - (Date.now() - startTime));
+        await webview.getByRole("heading", { name: "Trending Assets" }).waitFor({
+          state: "visible",
+          timeout: readyStateTimeout,
         });
         return;
       } catch {
