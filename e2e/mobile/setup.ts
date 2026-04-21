@@ -20,6 +20,16 @@ beforeAll(
 );
 
 afterAll(async () => {
+  if (process.env.CI) {
+    try {
+      await app.portfolio.openViaDeeplink();
+      await app.portfolio.waitForPortfolioPageToLoad();
+      await device.terminateApp();
+    } catch (e) {
+      log.warn(`setup afterAll terminateApp failed: ${sanitizeError(e)}`);
+    }
+  }
+
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
   try {
