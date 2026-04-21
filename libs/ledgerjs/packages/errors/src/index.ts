@@ -192,6 +192,7 @@ type NetworkType = {
   status: number;
   url: string | undefined;
   method: string;
+  headers: Record<string, string> | undefined;
 };
 export const LedgerAPI4xx = createCustomErrorClass<
   NetworkType,

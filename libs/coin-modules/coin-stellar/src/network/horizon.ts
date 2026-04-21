@@ -471,7 +471,7 @@ export async function fetchOperations({
       return noResult;
     }
     if (errorMsg.match(/too many requests/i)) {
-      throw new LedgerAPI4xx("status code 4xx", { status: 429, url: undefined, method: "GET" });
+      throw new LedgerAPI4xx("status code 4xx", { status: 429, url: undefined, method: "GET", headers: undefined });
     }
     if (errorMsg.match(/status code 4[0-9]{2}/)) {
       throw new LedgerAPI4xx();

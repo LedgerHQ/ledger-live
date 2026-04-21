@@ -70,7 +70,8 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
-    const { data, status } = error.response;
+    const { data, status, headers: rawHeaders } = error.response;
+    const headers = rawHeaders as Record<string, string> | undefined;
     let msg;
     try {
       if (data && typeof data === "string") {
@@ -83,9 +84,9 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
     }
 
     if (msg) {
-      errorToThrow = makeError(msg, status, url, method);
+      errorToThrow = makeError(msg, status, url, method, headers);
     } else {
-      errorToThrow = makeError(`API HTTP ${status} ${url}`, status, url, method);
+      errorToThrow = makeError(`API HTTP ${status} ${url}`, status, url, method, headers);
     }
 
     log(
@@ -118,12 +119,13 @@ if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
 }
 
-const makeError = (msg: string, status: number, url: string | undefined, method: string) => {
+const makeError = (msg: string, status: number, url: string | undefined, method: string, headers: Record<string, string> | undefined) => {
   const obj = {
     status,
     url,
     method,
     msg,
+    headers,
   };
   return (status || "").toString().startsWith("4")
     ? new LedgerAPI4xx(msg, obj)
