@@ -181,8 +181,8 @@ const api = {
   },
 
   /**
-   * Fetches FA2 token transfers (tokenId = 0 only) for a given account.
-   * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * Fetches FA2 token transfers for a given account (all token ids on multi-asset contracts).
+   * Filtered to `token.standard=fa2` on the TzKT API.
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getAccountTokenTransfers(
@@ -191,7 +191,6 @@ const api = {
   ): Promise<(APITokenTransfer & { hash: string })[]> {
     const params: Record<string, unknown> = {
       "anyof.from.to": address,
-      "token.tokenId": "0",
       "token.standard": "fa2",
     };
 
@@ -219,9 +218,9 @@ const api = {
   },
 
   /**
-   * Fetches FA token balances for a given account.
-   * When `tokenFilter` is omitted, only FA2 tokenId 0 balances are returned (legacy behaviour).
-   * Pass `tokenFilter` to query a specific FA2 contract + token id (e.g. send-max for FA2).
+   * Fetches FA2 token balances for a given account.
+   * When `tokenFilter` is omitted, all FA2 balances are returned (including multi-asset contracts).
+   * Pass `tokenFilter` to query a specific contract + token id (e.g. send-max for FA2).
    * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
    */
   async getTokensBalances(
@@ -235,8 +234,6 @@ const api = {
     if (tokenFilter) {
       params["token.contract"] = tokenFilter.contractAddress;
       params["token.tokenId"] = String(tokenFilter.tokenId);
-    } else {
-      params["token.tokenId"] = "0";
     }
     const { data } = await network<APITokenBalance[]>({
       url: `${getExplorerUrl()}/v1/tokens/balances`,

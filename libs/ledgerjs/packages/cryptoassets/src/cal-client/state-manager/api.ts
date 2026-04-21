@@ -112,6 +112,7 @@ export const cryptoAssetsApi = createApi({
             id: apiId,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ref: "commit:c5dc578dce8eeb417f8e9e43a3f79f1c180aa2b3"
           },
         };
       },
@@ -125,6 +126,7 @@ export const cryptoAssetsApi = createApi({
     >({
       query: params => {
         const baseUrl = getEnv("CAL_SERVICE_URL");
+        console.log("params========>", params);
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
@@ -132,6 +134,7 @@ export const cryptoAssetsApi = createApi({
             network: params.network,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ref: "commit:c5dc578dce8eeb417f8e9e43a3f79f1c180aa2b3"
           },
         };
       },

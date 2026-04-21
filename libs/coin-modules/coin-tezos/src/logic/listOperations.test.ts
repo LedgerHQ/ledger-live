@@ -344,7 +344,7 @@ describe("listOperations", () => {
     });
   });
 
-  it("FA2 token transfers (tokenId 0), attributes fees from parent tx", async () => {
+  it("FA2 token transfers, attributes fees from parent tx", async () => {
     const fa2: APITokenTransfer & { hash: string } = {
       id: 9001,
       level: 100,
@@ -399,6 +399,35 @@ describe("listOperations", () => {
       },
     });
     expect(results.length).toBe(2);
+  });
+
+  it("FA2 multi-asset encodes assetReference as contract:tokenId", async () => {
+    const fa2Multi: APITokenTransfer & { hash: string } = {
+      id: 9201,
+      level: 200,
+      timestamp: "2023-07-01T10:00:00Z",
+      token: {
+        id: 99,
+        contract: { address: "KT1MultiAsset" },
+        tokenId: "7",
+        standard: "fa2",
+        metadata: { name: "NFT", symbol: "NFT", decimals: "0" },
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1",
+      hash: "ooMultiFa2",
+    };
+    mockGetAccountOperations.mockResolvedValue([]);
+    mockGetAccountTokenTransfers.mockResolvedValue([fa2Multi]);
+    const [results] = await listOperations(someDestinationAddress, options);
+    const tokenOp = results.find(o => o.asset.type === "fa2");
+    expect(tokenOp).toMatchObject({
+      asset: {
+        type: "fa2",
+        assetReference: "KT1MultiAsset_7",
+      },
+    });
   });
 
   it("drops failed incoming native transactions (target is the listed account)", async () => {

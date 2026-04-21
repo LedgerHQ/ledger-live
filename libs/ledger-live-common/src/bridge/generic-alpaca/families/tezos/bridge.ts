@@ -4,12 +4,16 @@ import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
-  return "assetReference" in asset
-    ? await getCryptoAssetsStore().findTokenByAddressInCurrency(
-        asset.assetReference as string,
-        "tezos",
-      )
-    : undefined;
+  const assetReference = "assetReference" in asset ? asset.assetReference : undefined;
+  if (!assetReference) {
+    return undefined;
+  }
+
+  if (assetReference.indexOf("_") > 0) {
+    return await getCryptoAssetsStore().findTokenById(`tezos/fa2/${assetReference.toLowerCase()}`);
+  } else {
+    return await getCryptoAssetsStore().findTokenByAddressInCurrency(assetReference, "tezos");
+  }
 }
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
@@ -26,3 +30,5 @@ export default {
   getTokenFromAsset,
   getAssetFromToken,
 } satisfies BridgeApi;
+
+

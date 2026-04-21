@@ -45,11 +45,14 @@ export async function getBalance(address: string): Promise<Balance[]> {
             code: symbol,
           }
         : undefined;
+
+    const assetReference =
+      token.tokenId !== "0" ? `${token.contract.address}_${token.tokenId}` : token.contract.address;
     return {
       value: BigInt(balance),
       asset: {
         type: token.standard,
-        assetReference: token.contract.address,
+        assetReference: assetReference,
         assetOwner: address,
         name: token.contract.alias,
         ...(unit && { unit }),
