@@ -15,12 +15,14 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { hasClickedRecoverSelector } from "~/renderer/reducers/settings";
 import { setHasClickedRecover } from "~/renderer/actions/settings";
+import { useContextMenuClose } from "../ContextMenuContext";
 
 export type ActionsListViewModel = {
   actions: Action[];
 };
 
 export function useActionsListViewModel(): ActionsListViewModel {
+  const close = useContextMenuClose();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,7 +41,8 @@ export function useActionsListViewModel(): ActionsListViewModel {
       entry: "my_wallet_actions_list",
     });
     navigate("/settings/help");
-  }, [location.pathname, navigate]);
+    close();
+  }, [location.pathname, navigate, close]);
 
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
@@ -60,6 +63,7 @@ export function useActionsListViewModel(): ActionsListViewModel {
       page: location.pathname,
       entry: "my_wallet_actions_list",
     });
+    close();
   }, [
     recoverFeature?.enabled,
     recoverFeature?.params?.openRecoverFromSidebar,
@@ -69,6 +73,7 @@ export function useActionsListViewModel(): ActionsListViewModel {
     navigate,
     dispatch,
     location.pathname,
+    close,
   ]);
 
   const handleClickRefer = useCallback(() => {

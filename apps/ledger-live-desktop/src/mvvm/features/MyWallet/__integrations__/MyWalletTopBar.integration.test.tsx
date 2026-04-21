@@ -37,13 +37,14 @@ describe("MyWallet ContextMenu", () => {
     expect(screen.getByRole("button", { name: "Airplane" })).toBeVisible();
   });
 
-  it("should show a settings button inside the popover when opened", async () => {
+  it("should show settings and notifications buttons inside the popover when opened", async () => {
     const { user } = render(<ContextMenu />);
 
     await user.click(screen.getByRole("button", { name: "Airplane" }));
 
     await waitFor(() => {
       expect(screen.getByTestId("topbar-action-button-settings")).toBeVisible();
+      expect(screen.getByTestId("topbar-action-button-notifications")).toBeVisible();
     });
   });
 
