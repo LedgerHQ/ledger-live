@@ -2819,15 +2819,8 @@
       }
     },
     "recoverBanner": {
-      "subscribeDone": {
-        "title": "Reminder: Finish subscribing to Ledger Recover"
-      },
-      "verifyIdentity": {
-        "title": "Access to your wallet is not backed up yet"
-      },
-      "connectDevice": {
-        "title": "Access to your wallet is not backed up yet"
-      }
+      "title": "Finish securing your backup",
+      "description": "Complete activating Ledger Recover"
     },
     "refreshStatus": {
       "refreshing": "Refreshing...",
