@@ -11,15 +11,10 @@ const align = "end";
 
 export function ContextMenu() {
   return (
-    <Popover>
+    <Popover overlay>
       <PopoverTrigger render={<IconButton icon={Airplane} aria-label="Airplane" size="sm" />} />
 
-      <PopoverContent
-        width="fixed"
-        side={side}
-        align={align}
-        className="flex flex-col bg-surface gap-24"
-      >
+      <PopoverContent width="fixed" side={side} align={align} className="flex flex-col gap-24">
         <TopBar />
         <ActionsList />
         <div className="flex flex-col gap-12">

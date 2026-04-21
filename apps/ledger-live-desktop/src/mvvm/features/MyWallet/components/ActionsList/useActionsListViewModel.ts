@@ -1,14 +1,30 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
-import { LifeRing } from "@ledgerhq/lumen-ui-react/symbols";
+import { LifeRing, ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-react/symbols";
 import { track } from "~/renderer/analytics/segment";
 import type { Action } from "./types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { openModal } from "~/renderer/actions/modals";
+import { hasClickedRecoverSelector } from "~/renderer/reducers/settings";
+import { setHasClickedRecover } from "~/renderer/actions/settings";
 
-export function useActionsListViewModel() {
+export type ActionsListViewModel = {
+  actions: Action[];
+};
+
+export function useActionsListViewModel(): ActionsListViewModel {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const recoverFeature = useFeature("protectServicesDesktop");
+  const recoverHomePath = useAccountPath(recoverFeature);
+  const dispatch = useDispatch();
+  const hasClickedRecover = useSelector(hasClickedRecoverSelector);
+  const recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
 
   const openHelp = useCallback(() => {
     track("button_clicked", {
@@ -19,27 +35,54 @@ export function useActionsListViewModel() {
     navigate("/settings/help");
   }, [location.pathname, navigate]);
 
-  const actions = useMemo<Action[]>(
-    () => [
-      {
-        icon: LifeRing,
-        label: "1",
-        id: "1",
-      },
-      {
-        icon: LifeRing,
-        label: t("myWallet.actionsList.help"),
-        onClick: openHelp,
-        id: "help",
-      },
-      {
-        icon: LifeRing,
-        label: "3",
-        id: "3",
-      },
-    ],
-    [openHelp, t],
-  );
+  const handleClickRecover = useCallback(() => {
+    const enabled = recoverFeature?.enabled;
+    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
+    const liveAppId = recoverFeature?.params?.protectId;
+
+    if (!hasClickedRecover) {
+      dispatch(setHasClickedRecover(true));
+    }
+
+    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
+      navigate(recoverHomePath);
+    } else if (enabled) {
+      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+    }
+    track("button_clicked", {
+      button: "Recover",
+      page: location.pathname,
+      entry: "my_wallet_actions_list",
+    });
+  }, [
+    recoverFeature?.enabled,
+    recoverFeature?.params?.openRecoverFromSidebar,
+    recoverFeature?.params?.protectId,
+    recoverHomePath,
+    hasClickedRecover,
+    navigate,
+    dispatch,
+    location.pathname,
+  ]);
+
+  const actions: Action[] = [
+    ...(recoverFeature?.enabled
+      ? [
+          {
+            icon: recoverIcon,
+            label: t("myWallet.actionsList.recover"),
+            onClick: handleClickRecover,
+            id: "recover",
+          },
+        ]
+      : []),
+    {
+      icon: LifeRing,
+      label: t("myWallet.actionsList.help"),
+      onClick: openHelp,
+      id: "help",
+    },
+  ];
 
   return { actions };
 }
