@@ -77,7 +77,6 @@ const zcashSyncShielded = (
       const blockHeight = acc.initialAccount?.privateInfo?.lastProcessedBlock;
       return blockHeight !== null && blockHeight !== undefined ? blockHeight + 1 : 0;
     })();
-
     if (useNative) {
       // Native Rust engine: only loads ZCashNative — no WASM dependency
       return from(getNativeModule()).pipe(
