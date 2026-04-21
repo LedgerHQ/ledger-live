@@ -36,7 +36,11 @@ const usePortfolioStablecoinsSectionViewModel = ({
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
+  const {
+    categorizedAssets,
+    stablecoinTickers,
+    isLoadingStablecoinTickers: isDistributionLoading,
+  } = useCategorizedAssetsFromPortfolio();
 
   const filteredStablecoins = useMemo(
     () =>
@@ -52,9 +56,11 @@ const usePortfolioStablecoinsSectionViewModel = ({
   const needsPadding = isLimitedView || filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS;
   const {
     stablecoins: defaultStablecoins,
-    isLoading,
+    isLoading: isDefaultLoading,
     isError,
   } = useDefaultAssetsByCategory(needsPadding, stablecoinTickers, 0, EMPTY_STATE_MAX_STABLECOINS);
+
+  const isLoading = isDefaultLoading || isDistributionLoading;
 
   const assets = useMemo<Asset[]>(() => {
     if (isLimitedView) return defaultStablecoins;

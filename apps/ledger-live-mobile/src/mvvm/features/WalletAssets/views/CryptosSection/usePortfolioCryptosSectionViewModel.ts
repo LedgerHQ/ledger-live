@@ -43,7 +43,11 @@ const usePortfolioCryptosSectionViewModel = ({
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
+  const {
+    categorizedAssets,
+    stablecoinTickers,
+    isLoadingStablecoinTickers: isDistributionLoading,
+  } = useCategorizedAssetsFromPortfolio();
 
   const filteredAssets = useMemo(
     () =>
@@ -72,7 +76,7 @@ const usePortfolioCryptosSectionViewModel = ({
     [sortedCryptoCurrencies, stablecoinTickers],
   );
 
-  const isLoading = isLegacyReadOnly ? false : isDefaultLoading;
+  const isLoading = isLegacyReadOnly ? false : isDefaultLoading || isDistributionLoading;
   const isError = isLegacyReadOnly ? false : isDefaultError;
 
   const assets = useMemo<Asset[]>(() => {
