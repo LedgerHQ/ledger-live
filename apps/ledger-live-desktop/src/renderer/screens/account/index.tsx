@@ -30,6 +30,7 @@ import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHead
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
+import StakingDelegations from "~/renderer/components/Staking/Delegation";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -173,6 +174,7 @@ const AccountPage = ({
             />
           </Box>
           <AccountStakeBanner account={account} />
+          <StakingDelegations account={account} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}

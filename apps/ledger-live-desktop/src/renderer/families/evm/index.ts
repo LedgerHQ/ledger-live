@@ -1,6 +1,5 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import sendAmountFields from "./SendAmountFields";
@@ -12,7 +11,6 @@ const family: EvmFamily = {
   operationDetails: {
     OperationDetailsExtra: () => null,
   },
-  AccountBodyHeader,
   AccountFooter,
   accountHeaderManageActions,
   transactionConfirmFields,

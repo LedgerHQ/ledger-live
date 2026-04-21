@@ -15,6 +15,8 @@ import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
 import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
+import { Data as StakeDelegateData } from "../components/Staking/DelegationFlowModal/Body";
+import { Props as StakeRewardsInfoProps } from "../components/Staking/DelegationFlowModal/Info";
 import { CoinModalsData } from "../families/generated";
 import { Language } from "~/config/languages";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -84,6 +86,9 @@ export type GlobalModalData = {
   MODAL_CONFIRM: ConfirmProps;
   MODAL_ERROR: ErrorProps;
   MODAL_VAULT_SIGNER: undefined;
+
+  MODAL_STAKE_DELEGATE: StakeDelegateData;
+  MODAL_STAKE_REWARDS_INFO: StakeRewardsInfoProps;
 };
 
 /**

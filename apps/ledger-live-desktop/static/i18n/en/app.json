@@ -4272,6 +4272,68 @@
       }
     }
   },
+  "staking": {
+    "delegation": {
+      "emptyState": {
+        "description": "You can earn {{currencyTicker}} rewards by delegating your assets.",
+        "delegation": "Earn rewards"
+      },
+      "claimRewards": "Claim rewards",
+      "header": "Delegation(s)",
+      "noRewards": "No rewards available",
+      "delegate": "Add",
+      "undelegate": "Undelegate",
+      "redelegate": "Redelegate",
+      "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
+      "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+      "reward": "Claim rewards",
+      "activeTooltip": "Delegated amounts generate rewards",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards",
+      "minSafeWarning": "Not enough funds",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your {{currencyTicker}} assets to a validator.",
+            "bullet": [
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "Assets will be available after undelegation"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            }
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "header": "Redelegation(s)"
+    },
+    "undelegation": {
+      "header": "Undelegation(s)",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards."
+    }
+  },
   "graph": {
     "noGraphWarning": "The graph is not available for this token"
   },

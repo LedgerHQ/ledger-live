@@ -30,6 +30,8 @@ import MODAL_ERROR from "./ErrorModal";
 import MODAL_VAULT_SIGNER from "./VaultSigner";
 import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
 import MODAL_BRAZE_TOOLS from "../screens/settings/sections/Developer/BrazeTools/Modal";
+import MODAL_STAKE_DELEGATE from "../components/Staking/DelegationFlowModal";
+import MODAL_STAKE_REWARDS_INFO from "../components/Staking/DelegationFlowModal/Info";
 
 type GlobalModals = MakeModalsType<GlobalModalData>;
 
@@ -73,6 +75,9 @@ const globalModals: GlobalModals = {
 
   MODAL_CONFIRM,
   MODAL_ERROR,
+
+  MODAL_STAKE_DELEGATE,
+  MODAL_STAKE_REWARDS_INFO,
 };
 
 export type Modals = MakeModalsType<ModalData>;
