@@ -1,6 +1,7 @@
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -65,7 +66,7 @@ export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => 
   image: card.extras?.image,
   image_background: card.extras?.image_background,
   icon: card.extras?.icon,
-  link: card.extras?.link,
+  link: appendDeeplinkLocationIfDefined(card.extras?.link, LocationContentCard.Action),
   location: LocationContentCard.Action,
   mainCta: card.extras?.mainCta,
   order: parseOrder(card.extras?.order),
@@ -90,7 +91,7 @@ const mapBrazeCardToPortfolioContentCard = (
   tag: card.extras?.tag,
   picto: card.extras?.picto,
   title: card.extras?.title,
-  url: card.extras?.url || card.extras?.link,
+  url: appendDeeplinkLocationIfDefined(card.extras?.url || card.extras?.link, location),
 });
 
 export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard =>
@@ -108,7 +109,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   order: parseOrder(card.extras?.order),
   path: card.extras?.path,
   title: card.extras?.title,
-  url: card.extras?.url,
+  url: appendDeeplinkLocationIfDefined(card.extras?.url, LocationContentCard.NotificationCenter),
   viewed: card.viewed,
 });
 

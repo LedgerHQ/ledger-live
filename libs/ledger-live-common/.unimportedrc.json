@@ -41,6 +41,7 @@
     "src/currencies/sortByMarketcap.ts",
     "src/customImage/errors.ts",
     "src/DataModel.ts",
+    "src/deeplinks/index.ts",
     "src/deposit/type.ts",
     "src/deposit/api.ts",
     "src/deviceSDK/actions/getBatteryStatuses.ts",
