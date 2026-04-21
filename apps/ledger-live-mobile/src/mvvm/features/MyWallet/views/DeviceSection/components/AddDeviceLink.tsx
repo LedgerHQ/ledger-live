@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Link } from "@ledgerhq/lumen-ui-rnative";
+import { Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
 import { PlusCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 
@@ -11,14 +11,15 @@ export function AddDeviceLink({ onPress }: AddDeviceLinkProps) {
   const { t } = useTranslation();
 
   return (
-    <Box
+    <Pressable
       lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}
+      onPress={onPress}
       testID="my-wallet-device-section-add"
     >
-      <Link appearance="accent" size="md" underline={false} onPress={onPress}>
-        {t("myWallet.deviceSection.add")}
-      </Link>
       <PlusCircleFill size={20} color="interactive" />
-    </Box>
+      <Text typography="body2SemiBold" lx={{ color: "active" }}>
+        {t("myWallet.deviceSection.add")}
+      </Text>
+    </Pressable>
   );
 }
