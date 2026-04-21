@@ -8870,6 +8870,7 @@
     "deviceSection": {
       "title": "My devices",
       "add": "Add",
+      "addDevice": "Add a Ledger device",
       "exploreAllDevices": "Explore all Ledger devices",
       "available": "Available",
       "unavailable": "Not connected"
