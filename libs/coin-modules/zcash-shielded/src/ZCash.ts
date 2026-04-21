@@ -8,22 +8,15 @@ import type {
   ShieldedTransaction,
   SyncEstimatedTime,
   ShieldedSyncResult,
+  SyncShieldedArgs,
 } from "./types";
 import { ZCASH_LOG_TYPE } from "./constants";
-
-export { ZCashNative } from "./ZCashNative";
 
 /**
  * ZCash API
  */
 
 export { ZCASH_JSON_RPC_SERVER_MAINNET, ZCASH_JSON_RPC_SERVER_TESTNET } from "./constants";
-
-export type SyncShieldedArgs = {
-  startBlockHeight: number;
-  viewingKey: string;
-  maxBatchSize: number;
-};
 
 export class ZCash {
   jsonRpcClient: JsonRpcClient;
