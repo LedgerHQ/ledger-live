@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.2.0-next.5
+
+### Minor Changes
+
+- [#16590](https://github.com/LedgerHQ/ledger-live/pull/16590) [`75e9bd1`](https://github.com/LedgerHQ/ledger-live/commit/75e9bd148aa5ec64fafcab2c80dbf42f69922d94) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix Recover webview not reloading when the same deeplink is opened while already on Recover
+
 ## 4.2.0-next.4
 
 ### Minor Changes
