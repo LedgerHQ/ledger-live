@@ -1,14 +1,14 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-react";
-import { LifeRing } from "@ledgerhq/lumen-ui-react/symbols";
+import { useActionsListViewModel } from "./useActionsListViewModel";
 
-const nbTiles = 3;
 export function ActionsList() {
+  const { actions } = useActionsListViewModel();
   return (
     <div className="flex gap-8 justify-between" data-testid="my-wallet-actions-list">
-      {Array.from({ length: nbTiles }).map((_, index) => (
-        <TileButton key={index} icon={LifeRing} className="flex-1">
-          {index + 1}
+      {actions.map(({ icon, label, onClick, id }) => (
+        <TileButton key={id} icon={icon} className="flex-1" onClick={onClick}>
+          {label}
         </TileButton>
       ))}
     </div>

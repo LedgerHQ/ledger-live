@@ -20,12 +20,8 @@ export function ContextMenu() {
         className="flex flex-col bg-surface gap-24"
       >
         <TopBar />
-        <p className="body-2 text-base">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
-        </p>
-        <Explore />
-
         <ActionsList />
+        <Explore />
       </PopoverContent>
     </Popover>
   );
