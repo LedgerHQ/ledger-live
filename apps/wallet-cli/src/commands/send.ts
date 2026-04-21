@@ -73,6 +73,7 @@ export default defineCommand({
     }),
     rbf: option(z.boolean().optional(), {
       description: "Enable Replace-By-Fee (Bitcoin only)",
+      argumentKind: "flag",
     }),
     mode: option(z.string().min(1).optional(), {
       description:
@@ -98,6 +99,7 @@ export default defineCommand({
     ),
     "dry-run": option(z.boolean().default(false), {
       description: "Prepare and validate transaction but do not sign or broadcast",
+      argumentKind: "flag",
     }),
     output: outputOption,
   },
