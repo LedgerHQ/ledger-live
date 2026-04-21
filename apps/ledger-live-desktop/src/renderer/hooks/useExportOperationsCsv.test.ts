@@ -8,7 +8,7 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useExportOperationsCsv } from "./useExportOperationsCsv";
-import { BridgeSyncState } from "node_modules/@ledgerhq/live-common/src/bridge/react/types";
+import type { BridgeSyncState } from "@ledgerhq/live-common/bridge/react/types";
 
 const mockSync = jest.fn();
 const mockSyncState = jest.fn();

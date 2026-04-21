@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": minor
+"ledger-live-desktop": patch
 ---
 
 bugfix(desktop): Export Operations Hang
