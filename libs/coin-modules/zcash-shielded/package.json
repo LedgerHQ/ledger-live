@@ -34,14 +34,14 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./ZCash": {
-      "react-native": "./src/ZCash.native.ts",
+      "react-native": "./src/stubs/ZCash.native.ts",
       "@ledgerhq/source": "./src/ZCash.ts",
       "types": "./lib/ZCash.d.ts",
       "require": "./lib/ZCash.js",
       "default": "./lib-es/ZCash.js"
     },
     "./ZCashNative": {
-      "react-native": "./src/ZCashNative.native.ts",
+      "react-native": "./src/stubs/ZCashNative.native.ts",
       "@ledgerhq/source": "./src/ZCashNative.ts",
       "types": "./lib/ZCashNative.d.ts",
       "require": "./lib/ZCashNative.js",
