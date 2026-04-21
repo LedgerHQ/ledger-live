@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
-import { FEATURE_FLAGS_INITIAL_STATE, FeatureIdSchema } from "@shared/feature-flags";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { ALL_FLAG_IDS } from "../../../tools/feature-flags/constants";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { useFeatureFlagsFilters } from "../../../tools/feature-flags/hooks/useFeatureFlagsFilters";
 import type { FeatureFlagsFiltersInput } from "../../../tools/feature-flags/hooks/useFeatureFlagsFilters";
@@ -17,7 +18,7 @@ describe("useFeatureFlagsFilters", () => {
   describe("search", () => {
     it("returns all flags when search is empty", () => {
       const { result } = renderHook(() => useFeatureFlagsFilters(defaultInput));
-      expect(result.current.filteredFlagIds).toEqual([...FeatureIdSchema.options].sort());
+      expect(result.current.filteredFlagIds).toEqual(ALL_FLAG_IDS);
     });
 
     it("filters flags by search query", () => {

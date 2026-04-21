@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { FeatureId, Features, PartialFeatures } from "@shared/feature-flags";
 import type { FlagFilter } from "../types";
-import { ALL_FLAG_IDS } from "./useFeatureFlagsState";
+import { ALL_FLAG_IDS } from "../constants";
 
 export interface FeatureFlagsFiltersInput {
   resolved: Features;
