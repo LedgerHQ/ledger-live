@@ -3,6 +3,7 @@ import { Popover, PopoverTrigger, PopoverContent, IconButton } from "@ledgerhq/l
 import { Airplane } from "@ledgerhq/lumen-ui-react/symbols";
 import { Explore } from "./Explore";
 import TopBar from "./TopBar";
+import { ActionsList } from "./ActionsList";
 
 const side = "bottom";
 const align = "end";
@@ -23,6 +24,8 @@ export function ContextMenu() {
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
         </p>
         <Explore />
+
+        <ActionsList />
       </PopoverContent>
     </Popover>
   );
