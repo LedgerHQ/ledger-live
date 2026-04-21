@@ -8,9 +8,12 @@ import { useFeatureFlags } from "./useFeatureFlags";
 import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
 import { useHistory } from "./useHistory";
+import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
   const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("desktop");
+  const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
+    useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
   const {
     hasAccounts,
@@ -86,7 +89,7 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    { type: "notification" },
+    ...(shouldDisplayMyWallet ? [] : [{ type: "notification" as const }]),
     {
       type: "action",
       action: {
@@ -112,8 +115,9 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    ...(!shouldDisplayMyWallet
-      ? [
+    ...(shouldDisplayMyWallet
+      ? []
+      : [
           {
             type: "action" as const,
             action: {
@@ -134,13 +138,14 @@ const useTopBarViewModel = () => {
               onClick: handleMyLedger,
             },
           },
-        ]
-      : []),
+        ]),
   ];
 
   return {
     topBarSlots,
     inManager,
+    isInformationCenterOpen,
+    onInformationCenterClose,
   };
 };
 

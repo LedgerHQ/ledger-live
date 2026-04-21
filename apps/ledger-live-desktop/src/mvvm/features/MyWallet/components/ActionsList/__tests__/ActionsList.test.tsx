@@ -3,6 +3,7 @@ import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
 import { ActionsList } from "..";
+import ContextMenuContext from "../../ContextMenuContext";
 
 const HELP_LABEL = "Help";
 const RECOVER_LABEL = "[L] Recover";
@@ -12,6 +13,7 @@ const RECOVER_HOME_PATH = "/recover";
 const REFER_PATH = "/refer-a-friend";
 
 const mockNavigate = jest.fn();
+const mockClose = jest.fn();
 
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useAccountPath: jest.fn(),
@@ -25,7 +27,12 @@ jest.mock("react-router", () => ({
 const mockUseAccountPath = jest.mocked(useAccountPath);
 const mockTrack = jest.mocked(track);
 const renderActionsList = (options?: Parameters<typeof render>[1]) =>
-  render(<ActionsList />, options);
+  render(
+    <ContextMenuContext.Provider value={{ close: mockClose }}>
+      <ActionsList />
+    </ContextMenuContext.Provider>,
+    options,
+  );
 const getButton = (name: string) => screen.getByRole("button", { name });
 
 describe("ActionsList", () => {
