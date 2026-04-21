@@ -17,7 +17,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
-type Props = BaseComposite<
+export type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSelectToken>
 >;
 
