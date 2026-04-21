@@ -1,6 +1,12 @@
 module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
-  coveragePathIgnorePatterns: ["test/cli.ts", ".*\\.integration\\.test\\.[tj]s", ".*\\.integ\\.test\\.[tj]s"],
+  coveragePathIgnorePatterns: [
+    "test/cli.ts",
+    "src/stubs/",
+    "src/ipc/",
+    ".*\\.integration\\.test\\.[tj]s",
+    ".*\\.integ\\.test\\.[tj]s",
+  ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   coverageDirectory: "coverage",
   testEnvironment: "node",
