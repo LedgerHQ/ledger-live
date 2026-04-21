@@ -1,17 +1,20 @@
 /**
- * Integration tests for ZCashNative against the real Zcash mainnet gRPC endpoint.
+ * Integration tests for the native ZCash engine against the real Zcash
+ * mainnet gRPC endpoint.
+ *
  * Run only locally: pnpm test-integ
  * Not run in CI (pnpm test ignores *.integ.test.ts).
  *
  * Expected values are cross-referenced with the Rust integration tests in
  * ledger-zcash-utils/crates/zcash-sync/tests/integration_sync.rs
+ *
+ * The engine emits IPC-safe `ShieldedSyncResultRaw` chunks (fee/amount as
+ * string) — BigNumber rehydration is verified in the client-side test.
  */
-import BigNumber from "bignumber.js";
-import { firstValueFrom } from "rxjs";
-import { ZCashNative } from "../src/ZCashNative";
+
+import { getChainTipJob, startSyncJob } from "../src/native-engine/engine";
 import { ZCASH_GRPC_URL_MAINNET } from "../src/constants";
-import type { ShieldedSyncResult } from "../src/types";
-import type { ShieldedTransaction } from "../src/types";
+import type { ShieldedSyncResultRaw, ShieldedTransactionRaw } from "../src/types";
 
 // Alice's mainnet UFVK — public test key, never use with real funds.
 const ALICE_UFVK =
@@ -19,15 +22,16 @@ const ALICE_UFVK =
 
 // ── Known Alice mainnet Orchard transactions ──────────────────────────────────
 // Cross-referenced with zingo-cli and Rust integration tests.
+// Amounts are strings here because the engine emits the raw IPC-safe shape.
 
 /** TX1: shielded incoming — fee 10,000 zat, memo "Don't be Nozy" */
 const TX1 = {
   txid: "d592576d3b57264a5003c495e4808cdfcb6e055a331178597f7889067ea512de",
   blockHeight: 3_047_167,
-  fee: new BigNumber(10_000),
+  fee: "10000",
   orchardNotes: [
     {
-      amount: new BigNumber(1_247_504),
+      amount: "1247504",
       transfer_type: "incoming",
       memo: "Don\u2019t be Nozy",
     },
@@ -38,63 +42,77 @@ const TX1 = {
 const TX2 = {
   txid: "22e5f6de0750db0d3e5e0f003339b4d435f7f7e5f3820f898e6ecda411ab0d6a",
   blockHeight: 3_055_407,
-  fee: new BigNumber(15_000),
-  orchardNotes: [{ amount: new BigNumber(122_504), transfer_type: "internal", memo: "" }],
+  fee: "15000",
+  orchardNotes: [{ amount: "122504", transfer_type: "internal", memo: "" }],
 };
 
 /** TX3: change (internal) note — fee 15,000 zat */
 const TX3 = {
   txid: "0b5baa0c01ea74f93effe5cc0566eaf086bf67329ff2923bc07a5d0e8859a65e",
   blockHeight: 3_055_417,
-  fee: new BigNumber(15_000),
-  orchardNotes: [{ amount: new BigNumber(7_504), transfer_type: "internal", memo: "" }],
+  fee: "15000",
+  orchardNotes: [{ amount: "7504", transfer_type: "internal", memo: "" }],
 };
 
 // Smallest range covering all 3 transactions (~8,251 blocks, <1s at 72k bl/s).
 const SCAN_START = TX1.blockHeight;
 
+async function runSync(args: {
+  startBlockHeight: number;
+  viewingKey: string;
+  maxBatchSize: number;
+}): Promise<ShieldedSyncResultRaw> {
+  const chunks: ShieldedSyncResultRaw[] = [];
+  await startSyncJob(
+    {
+      grpcUrl: ZCASH_GRPC_URL_MAINNET,
+      network: "mainnet",
+      ...args,
+    },
+    chunk => chunks.push(chunk),
+    { isCancelled: () => false },
+  );
+  if (chunks.length === 0) throw new Error("no chunks emitted");
+  return chunks[0];
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("ZCashNative integration (real gRPC, mainnet)", () => {
-  describe("getChainTip", () => {
+describe("ZCash native engine integration (real gRPC, mainnet)", () => {
+  describe("getChainTipJob", () => {
     it("should return a realistic mainnet chain tip (> 3,000,000)", async () => {
-      const engine = new ZCashNative({ grpcUrl: ZCASH_GRPC_URL_MAINNET, network: "mainnet" });
-      const tip = await engine.getChainTip();
+      const tip = await getChainTipJob(ZCASH_GRPC_URL_MAINNET);
       expect(typeof tip).toBe("number");
       expect(Number.isInteger(tip)).toBe(true);
       expect(tip).toBeGreaterThan(3_000_000);
     });
   });
 
-  describe("syncShielded — empty range", () => {
-    it("should emit one result with no transactions when already at tip", async () => {
-      const engine = new ZCashNative({ grpcUrl: ZCASH_GRPC_URL_MAINNET, network: "mainnet" });
-      const tip = await engine.getChainTip();
+  describe("startSyncJob — empty range", () => {
+    it("should emit one chunk with no transactions when already at tip", async () => {
+      const tip = await getChainTipJob(ZCASH_GRPC_URL_MAINNET);
 
-      const steps: ShieldedSyncResult[] = [];
-      await engine
-        .syncShielded({ startBlockHeight: tip + 1000, viewingKey: ALICE_UFVK, maxBatchSize: 1000 })
-        .forEach(s => steps.push(s));
+      const result = await runSync({
+        startBlockHeight: tip + 1000,
+        viewingKey: ALICE_UFVK,
+        maxBatchSize: 1000,
+      });
 
-      expect(steps).toHaveLength(1);
-      expect(steps[0].transactions).toHaveLength(0);
-      expect(steps[0].remainingBlocks).toBe(0);
+      expect(result.transactions).toHaveLength(0);
+      expect(result.remainingBlocks).toBe(0);
     });
   });
 
-  describe("syncShielded — Alice's known Orchard transactions", () => {
+  describe("startSyncJob — Alice's known Orchard transactions", () => {
     // Single chunk covering TX1→TX3 (~8,251 blocks).
-    let txMap: Map<string, ShieldedTransaction>;
+    let txMap: Map<string, ShieldedTransactionRaw>;
 
     beforeAll(async () => {
-      const engine = new ZCashNative({ grpcUrl: ZCASH_GRPC_URL_MAINNET, network: "mainnet" });
-      const result = await firstValueFrom(
-        engine.syncShielded({
-          startBlockHeight: SCAN_START,
-          viewingKey: ALICE_UFVK,
-          maxBatchSize: 10_000,
-        }),
-      );
+      const result = await runSync({
+        startBlockHeight: SCAN_START,
+        viewingKey: ALICE_UFVK,
+        maxBatchSize: 10_000,
+      });
       txMap = new Map(result.transactions.map(tx => [tx.id, tx]));
     }, 30_000);
 
@@ -112,14 +130,14 @@ describe("ZCashNative integration (real gRPC, mainnet)", () => {
       });
 
       it("should have fee = 10,000 zatoshis", () => {
-        expect(txMap.get(TX1.txid)!.fee).toEqual(TX1.fee);
+        expect(txMap.get(TX1.txid)!.fee).toBe(TX1.fee);
       });
 
       it("should have one incoming Orchard note with the correct amount and memo", () => {
         const notes = txMap.get(TX1.txid)!.decryptedData?.orchard_outputs ?? [];
         expect(notes).toHaveLength(1);
         expect(notes[0].transfer_type).toBe("incoming");
-        expect(notes[0].amount).toEqual(TX1.orchardNotes[0].amount);
+        expect(notes[0].amount).toBe(TX1.orchardNotes[0].amount);
         expect(notes[0].memo).toBe(TX1.orchardNotes[0].memo);
       });
 
@@ -136,14 +154,14 @@ describe("ZCashNative integration (real gRPC, mainnet)", () => {
       });
 
       it("should have fee = 15,000 zatoshis", () => {
-        expect(txMap.get(TX2.txid)!.fee).toEqual(TX2.fee);
+        expect(txMap.get(TX2.txid)!.fee).toBe(TX2.fee);
       });
 
       it("should have one internal Orchard note with the correct amount", () => {
         const notes = txMap.get(TX2.txid)!.decryptedData?.orchard_outputs ?? [];
         expect(notes).toHaveLength(1);
         expect(notes[0].transfer_type).toBe("internal");
-        expect(notes[0].amount).toEqual(TX2.orchardNotes[0].amount);
+        expect(notes[0].amount).toBe(TX2.orchardNotes[0].amount);
       });
 
       it("should have no Sapling notes", () => {
@@ -159,14 +177,14 @@ describe("ZCashNative integration (real gRPC, mainnet)", () => {
       });
 
       it("should have fee = 15,000 zatoshis", () => {
-        expect(txMap.get(TX3.txid)!.fee).toEqual(TX3.fee);
+        expect(txMap.get(TX3.txid)!.fee).toBe(TX3.fee);
       });
 
       it("should have one internal Orchard note with the correct amount", () => {
         const notes = txMap.get(TX3.txid)!.decryptedData?.orchard_outputs ?? [];
         expect(notes).toHaveLength(1);
         expect(notes[0].transfer_type).toBe("internal");
-        expect(notes[0].amount).toEqual(TX3.orchardNotes[0].amount);
+        expect(notes[0].amount).toBe(TX3.orchardNotes[0].amount);
       });
 
       it("should have no Sapling notes", () => {
