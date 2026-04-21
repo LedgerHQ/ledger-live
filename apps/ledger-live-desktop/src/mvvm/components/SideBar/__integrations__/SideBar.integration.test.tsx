@@ -90,16 +90,18 @@ describe("SideBar", () => {
       expect(screen.queryByText("[L] Recover")).not.toBeInTheDocument();
     });
 
-    it("should hide Recover when My Wallet is enabled", () => {
+    it("should hide Recover and Refer a friend when My Wallet is enabled", () => {
       renderSideBarWithRoute(
         "/",
         withFeatureFlags({
           lwdWallet40: { enabled: true, params: { myWallet: true } },
           protectServicesDesktop: { enabled: true },
+          referralProgramDesktopSidebar: { enabled: true, params: { path: "/refer" } },
         }),
       );
 
       expect(screen.queryByText("[L] Recover")).not.toBeInTheDocument();
+      expect(screen.queryByText("Refer a friend")).not.toBeInTheDocument();
     });
 
     it("should disable Card item when card manifest is unavailable", () => {

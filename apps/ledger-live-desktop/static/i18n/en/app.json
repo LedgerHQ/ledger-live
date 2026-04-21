@@ -8640,7 +8640,8 @@
   "myWallet": {
     "actionsList": {
       "help": "Help",
-      "recover": "[L] Recover"
+      "recover": "[L] Recover",
+      "refer": "Referral"
     },
     "myLedger": {
       "title": "My Ledger",

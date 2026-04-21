@@ -88,18 +88,25 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
             />
           </SideBarLeading>
           <SideBarTrailing>
-            <FeatureToggle featureId="referralProgramDesktopSidebar">
-              <SideBarItem value="refer" icon={Gift} activeIcon={Gift} label={t("sidebar.refer")} />
-            </FeatureToggle>
             {viewModel.isMyWalletEnabled ? null : (
-              <FeatureToggle featureId="protectServicesDesktop">
-                <SideBarItem
-                  value="recover"
-                  icon={ShieldCheck}
-                  activeIcon={ShieldCheck}
-                  label={t("sidebar.recover")}
-                />
-              </FeatureToggle>
+              <>
+                <FeatureToggle featureId="referralProgramDesktopSidebar">
+                  <SideBarItem
+                    value="refer"
+                    icon={Gift}
+                    activeIcon={Gift}
+                    label={t("sidebar.refer")}
+                  />
+                </FeatureToggle>
+                <FeatureToggle featureId="protectServicesDesktop">
+                  <SideBarItem
+                    value="recover"
+                    icon={ShieldCheck}
+                    activeIcon={ShieldCheck}
+                    label={t("sidebar.recover")}
+                  />
+                </FeatureToggle>
+              </>
             )}
             <SideBarCollapseToggle />
           </SideBarTrailing>

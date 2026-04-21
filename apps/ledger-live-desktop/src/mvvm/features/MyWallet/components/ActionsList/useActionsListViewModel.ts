@@ -1,7 +1,12 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
-import { LifeRing, ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  Gift,
+  LifeRing,
+  ShieldCheck,
+  ShieldCheckNotification,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import { track } from "~/renderer/analytics/segment";
 import type { Action } from "./types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -20,6 +25,7 @@ export function useActionsListViewModel(): ActionsListViewModel {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
   const dispatch = useDispatch();
@@ -65,6 +71,17 @@ export function useActionsListViewModel(): ActionsListViewModel {
     location.pathname,
   ]);
 
+  const handleClickRefer = useCallback(() => {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
+      navigate(referralProgramConfig.params.path);
+      track("button_clicked", {
+        button: "Refer",
+        page: location.pathname,
+        entry: "my_wallet_actions_list",
+      });
+    }
+  }, [referralProgramConfig, navigate, location.pathname]);
+
   const actions: Action[] = [
     ...(recoverFeature?.enabled
       ? [
@@ -82,6 +99,16 @@ export function useActionsListViewModel(): ActionsListViewModel {
       onClick: openHelp,
       id: "help",
     },
+    ...(referralProgramConfig?.enabled
+      ? [
+          {
+            icon: Gift,
+            label: t("myWallet.actionsList.refer"),
+            onClick: handleClickRefer,
+            id: "refer",
+          },
+        ]
+      : []),
   ];
 
   return { actions };
