@@ -345,6 +345,7 @@
     "**/fixtures/**"
   ],
   "ignoreUnimported": [
+    "src/coin-modules/non-regression-entry.ts",
     "src/bridge/generic-alpaca/alpaca/local/canton.ts",
     "src/bridge/generic-alpaca/alpaca/local/evm.ts",
     "src/bridge/generic-alpaca/alpaca/local/solana.ts",
