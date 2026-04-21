@@ -476,26 +476,28 @@ export class SwapPage extends WebViewAppPage {
     this._webviewPage = undefined;
 
     await swapFunction();
+    await this.page.waitForURL(/\/swap(?:\/|$|\?)/);
 
-    const overallTimeout = 90_000;
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < overallTimeout) {
-      try {
-        this._webviewPage = undefined;
-        const remaining = overallTimeout - (Date.now() - startTime);
-        const webview = await this.getWebView(remaining);
-        await webview.waitForSelector(`[data-testid="${this.executeButtonDisabled}"]`, {
-          timeout: Math.min(15_000, overallTimeout - (Date.now() - startTime)),
-        });
-        return;
-      } catch {
-        // The webview may have reloaded or been replaced; reset and retry
-        await this.page.waitForTimeout(500);
-      }
-    }
-
-    throw new Error(`Swap app did not become ready within ${overallTimeout}ms`);
+    const swapTimeout = 90_000;
+    await expect
+      .poll(
+        async () => {
+          try {
+            this._webviewPage = undefined;
+            await this.getWebView(5_000);
+            return true;
+          } catch {
+            // Webview not ready yet
+            return false;
+          }
+        },
+        {
+          intervals: [500],
+          timeout: swapTimeout,
+          message: `Swap app should be ready within ${swapTimeout}ms`,
+        },
+      )
+      .toBe(true);
   }
 
   @step("Go to swap history")
