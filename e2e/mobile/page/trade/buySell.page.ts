@@ -203,10 +203,12 @@ export default class BuySellPage {
   }
 
   @Step("Handle buy flow")
-  async handleBuyFlow(buySell: BuySell, paymentMethod: string) {
+  async handleBuyFlow(buySell: BuySell, paymentMethod: string, skipQuickAmountVerify?: boolean) {
     await this.expectBuyScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
-    await this.verifyQuickAmountButtonsFunctionality();
+    if (!skipQuickAmountVerify) {
+      await this.verifyQuickAmountButtonsFunctionality();
+    }
     await this.setAmountToPay(buySell.amount);
     await this.chooseCountryIfNotSelected(buySell.fiat);
     await this.tapSeeQuotes();
