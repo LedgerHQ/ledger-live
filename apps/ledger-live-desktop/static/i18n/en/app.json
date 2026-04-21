@@ -4272,7 +4272,35 @@
       },
       "undelegation": {
         "header": "Undelegation(s)",
-        "inactiveTooltip": "Undelegated amounts do not generate rewards."
+        "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "flow": {
+          "title": "Stop staking",
+          "steps": {
+            "amount": {
+              "title": "Amount",
+              "subtitle": "The undelegation process takes <0>{{numberOfDays}} days</0> to finalize.",
+              "warningWithTimelock": "Rewards will be automatically claimed. The undelegated amount will be back in the available balance after the <0>{{numberOfDays}}-day timelock</0>.",
+              "warningInstant": "Rewards will be automatically claimed. The undelegated amount will be immediately available in your balance.",
+              "fields": {
+                "validator": "Validator",
+                "amount": "Amount to undelegate"
+              }
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully undelegated your assets.",
+                "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
       }
     }
   },
