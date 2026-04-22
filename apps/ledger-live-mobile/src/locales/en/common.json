@@ -8141,6 +8141,18 @@
       "privacyLink": "Privacy policy"
     }
   },
+  "analyticsPreferencesSettings": {
+    "screenTitle": "Set preferences",
+    "appPerformance": {
+      "title": "App performance",
+      "description": "Enable Ledger to collect app usage to enhance the experience."
+    },
+    "personalizedExperience": {
+      "title": "Personalized experience",
+      "description": "Enable Ledger to collect app usage to provide personalized content."
+    },
+    "confirmCta": "Confirm"
+  },
   "walletSync": {
     "title": "Ledger Sync",
     "banner": {
@@ -8865,11 +8877,34 @@
       "sections": {
         "supportAndLearning": "Support and learning",
         "more": "More"
+      },
+      "rows": {
+        "ledgerSupport": {
+          "title": "Ledger Support",
+          "description": "Get help with our FAQs or chat"
+        },
+        "ledgerAcademy": {
+          "title": "Ledger Academy",
+          "description": "Learn crypto"
+        },
+        "saveLogs": {
+          "title": "Save logs",
+          "description": "Save Ledger Wallet logs for troubleshooting"
+        },
+        "ledgerStatus": {
+          "title": "Ledger Status",
+          "description": "Check our system status"
+        },
+        "clearCache": {
+          "title": "Clear cache",
+          "description": "Scan transactions and recalculate balances"
+        }
       }
     },
     "deviceSection": {
       "title": "My devices",
       "add": "Add",
+      "addDevice": "Add a Ledger device",
       "exploreAllDevices": "Explore all Ledger devices",
       "available": "Available",
       "unavailable": "Not connected"

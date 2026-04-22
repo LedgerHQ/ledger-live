@@ -1,16 +1,23 @@
 import React from "react";
-import { Box, Link, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
-import { PlusCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Box, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { type DeviceSectionDevice } from "./useDeviceSectionViewModel";
-import { DeviceListItem } from "./components/DeviceListItem";
-import { ExploreDevicesItem } from "./components/ExploreDevicesItem";
+import { AddDeviceLink } from "./components/AddDeviceLink";
+import { DeviceListContent } from "./components/DeviceListContent";
 
 interface DeviceSectionViewProps {
   readonly devices: readonly DeviceSectionDevice[];
+  readonly hasDevices: boolean;
+  readonly onAddDevice: () => void;
+  readonly onExploreDevices: () => void;
 }
 
-export function DeviceSectionView({ devices }: DeviceSectionViewProps) {
+export function DeviceSectionView({
+  devices,
+  hasDevices,
+  onAddDevice,
+  onExploreDevices,
+}: DeviceSectionViewProps) {
   const { t } = useTranslation();
 
   return (
@@ -21,25 +28,16 @@ export function DeviceSectionView({ devices }: DeviceSectionViewProps) {
             {t("myWallet.deviceSection.title")}
           </SubheaderTitle>
           <Box lx={{ flex: 1 }} />
-          <Box
-            lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}
-            testID="my-wallet-device-section-add"
-          >
-            <Link appearance="accent" size="md" underline={false}>
-              {t("myWallet.deviceSection.add")}
-            </Link>
-            <PlusCircleFill size={20} color="interactive" />
-          </Box>
+          {hasDevices && <AddDeviceLink onPress={onAddDevice} />}
         </SubheaderRow>
       </Subheader>
 
       <Box lx={{ gap: "s16" }}>
-        <Box lx={{ backgroundColor: "surface", borderRadius: "md" }}>
-          {devices.map(device => (
-            <DeviceListItem key={device.id} device={device} />
-          ))}
-        </Box>
-        <ExploreDevicesItem />
+        <DeviceListContent
+          devices={devices}
+          onAddDevice={onAddDevice}
+          onExploreDevices={onExploreDevices}
+        />
       </Box>
     </Box>
   );

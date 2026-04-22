@@ -92,15 +92,14 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Latest is chosen by highest numeric ID
-  const latestFirmware = providerFirmwares.reduce((latest, current) =>
-    current.id > latest.id ? current : latest,
-  );
+  // Second-latest is chosen by second-highest numeric ID (falls back to sole entry if only one exists)
+  const sortedByIdDesc = [...providerFirmwares].sort((a, b) => b.id - a.id);
+  const firmwareBeforeLatest = sortedByIdDesc.length >= 2 ? sortedByIdDesc[1]! : sortedByIdDesc[0]!;
 
-  firmwareVersionCache.set(device, latestFirmware.version);
-  process.env.SPECULOS_FIRMWARE_VERSION = latestFirmware.version;
+  firmwareVersionCache.set(device, firmwareBeforeLatest.version);
+  process.env.SPECULOS_FIRMWARE_VERSION = firmwareBeforeLatest.version;
 
-  return latestFirmware.version;
+  return firmwareBeforeLatest.version;
 }
 
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {

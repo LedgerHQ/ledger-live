@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/concordium-core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Shared Concordium protocol types, serialization, and utilities",
   "main": "lib/index.js",
   "module": "lib-es/index.js",

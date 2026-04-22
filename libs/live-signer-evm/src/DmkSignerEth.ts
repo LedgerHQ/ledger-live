@@ -38,7 +38,7 @@ export class DmkSignerEth implements EvmSigner {
     readonly dmk: DeviceManagementKit,
     readonly sessionId: string,
   ) {
-    const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5";
+    const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     const contextModule = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
       .build();

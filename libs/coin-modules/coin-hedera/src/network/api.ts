@@ -339,6 +339,19 @@ async function getTransactionsByTimestampRange({
   return transactions;
 }
 
+async function getNode(nodeId: number): Promise<HederaMirrorNode | null> {
+  const params = new URLSearchParams({
+    "node.id": `eq:${nodeId}`,
+    limit: "1",
+  });
+
+  const res = await network<HederaMirrorNodesResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/network/nodes?${params.toString()}`,
+  });
+  return res.data.nodes[0] ?? null;
+}
+
 async function getNodes({
   cursor,
   limit = 100,
@@ -405,5 +418,6 @@ export const apiClient = {
   getERC20Balance,
   estimateContractCallGas,
   getTransactionsByTimestampRange,
+  getNode,
   getNodes,
 };

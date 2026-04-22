@@ -12,4 +12,6 @@ export {
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
   getValidatorExplorerUrl,
+  getUnbondingPeriodDays,
+  hasUnbondingPeriod,
 } from "@ledgerhq/coin-evm/staking/index";

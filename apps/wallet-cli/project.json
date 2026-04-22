@@ -6,6 +6,12 @@
     "coverage": {
       "outputs": ["{projectRoot}/coverage/**"]
     },
+    "generate": {
+      "outputs": ["{projectRoot}/.bunli/commands.gen.ts"]
+    },
+    "generate:check": {
+      "cache": false
+    },
     "build": {
       "cache": false
     }

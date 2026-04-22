@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,7 +21,7 @@
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" red="0.074509803921568626" green="0.070588235294117646" blue="0.078431372549019607" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0" green="0" blue="0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="2tu-j2-iR2" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="centerX"/>
                             <constraint firstItem="2tu-j2-iR2" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="centerY"/>
@@ -35,7 +35,8 @@
             <point key="canvasLocation" x="-170.22900763358777" y="93.661971830985919"/>
         </scene>
     </scenes>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
     <resources>
-        <image name="splash_logo.png" width="640" height="640"/>
+        <image name="splash_logo.png" width="1920" height="1920"/>
     </resources>
 </document>

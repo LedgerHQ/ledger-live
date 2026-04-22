@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding": {
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
@@ -7898,7 +7902,7 @@
       },
       "personalizedExperience": {
         "title": "Personalized experience",
-        "description": "Enable Ledger to collect app usage to provide personalized contents"
+        "description": "Enable Ledger to collect app usage to provide personalized content"
       },
       "ctaConfirm": "Confirm"
     },
@@ -8638,6 +8642,7 @@
     }
   },
   "myWallet": {
+    "title": "My Wallet",
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, fireEvent, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceSectionView } from "../DeviceSectionView";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
@@ -10,10 +10,27 @@ const mockDevices: DeviceSectionDevice[] = [
   { id: "device-3", name: "Flex 3294", modelId: DeviceModelId.europa, available: false },
 ];
 
+const mockOnAddDevice = jest.fn();
+const mockOnExploreDevices = jest.fn();
+
+const renderView = (devices: readonly DeviceSectionDevice[]) =>
+  render(
+    <DeviceSectionView
+      devices={devices}
+      hasDevices={devices.length > 0}
+      onAddDevice={mockOnAddDevice}
+      onExploreDevices={mockOnExploreDevices}
+    />,
+  );
+
 describe("DeviceSection", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("with no devices", () => {
     beforeEach(() => {
-      render(<DeviceSectionView devices={[]} />);
+      renderView([]);
     });
 
     it("renders the section container", () => {
@@ -25,12 +42,14 @@ describe("DeviceSection", () => {
       expect(screen.getByTestId("my-wallet-device-section-title")).toHaveTextContent("My devices");
     });
 
-    it("renders the Add button", () => {
-      expect(screen.getByTestId("my-wallet-device-section-add")).toBeVisible();
+    it("renders the Add button and calls onAddDevice when pressed", async () => {
+      expect(screen.getByTestId("my-wallet-device-section-add-device")).toBeVisible();
+      fireEvent.press(screen.getByTestId("my-wallet-device-section-add-device"));
+      await waitFor(() => expect(mockOnAddDevice).toHaveBeenCalledTimes(1));
     });
 
-    it('renders the "Explore all Ledger devices" item', () => {
-      expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    it('does not render the "Explore all Ledger devices" item', () => {
+      expect(screen.queryByTestId("my-wallet-device-section-explore")).toBeNull();
     });
 
     it("does not render any device item", () => {
@@ -42,7 +61,7 @@ describe("DeviceSection", () => {
     const singleDevice: DeviceSectionDevice[] = [mockDevices[0]];
 
     beforeEach(() => {
-      render(<DeviceSectionView devices={singleDevice} />);
+      renderView(singleDevice);
     });
 
     it("renders the device item", () => {
@@ -57,6 +76,14 @@ describe("DeviceSection", () => {
       expect(screen.getByText("Not connected")).toBeVisible();
     });
 
+    it("renders the Add header link", () => {
+      expect(screen.getByTestId("my-wallet-device-section-add")).toBeVisible();
+    });
+
+    it('does not render the "Add a Ledger device" CTA', () => {
+      expect(screen.queryByTestId("my-wallet-device-section-add-device")).toBeNull();
+    });
+
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
     });
@@ -68,7 +95,7 @@ describe("DeviceSection", () => {
     ];
 
     beforeEach(() => {
-      render(<DeviceSectionView devices={availableDevice} />);
+      renderView(availableDevice);
     });
 
     it('renders "Available" status', () => {
@@ -78,7 +105,7 @@ describe("DeviceSection", () => {
 
   describe("with multiple devices", () => {
     beforeEach(() => {
-      render(<DeviceSectionView devices={mockDevices} />);
+      renderView(mockDevices);
     });
 
     it("renders all device items", () => {

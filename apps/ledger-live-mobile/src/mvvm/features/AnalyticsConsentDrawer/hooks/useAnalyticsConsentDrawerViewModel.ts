@@ -161,7 +161,8 @@ export function useAnalyticsConsentDrawerViewModel() {
     });
     handleCloseDrawer();
     navigation.navigate(NavigatorName.Settings, {
-      screen: ScreenName.GeneralSettings,
+      screen: ScreenName.AnalyticsPreferencesSettings,
+      params: { initialTogglesOff: true },
     });
   }, [navigation, handleCloseDrawer]);
 

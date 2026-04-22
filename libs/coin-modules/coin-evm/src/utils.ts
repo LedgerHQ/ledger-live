@@ -125,10 +125,7 @@ export function buildSmartContractDetails(
   const contractPayload = /^0x/i.test(trimmedInput)
     ? `0x${trimmedInput.slice(2)}`
     : `0x${trimmedInput}`;
-  const encodedDeployed =
-    deployedContractAddress
-      ? safeEncodeEIP55(deployedContractAddress)
-      : "";
+  const encodedDeployed = deployedContractAddress ? safeEncodeEIP55(deployedContractAddress) : "";
   const contractAddress = encodedDeployed || encodedTo;
   return {
     contractInteraction,
@@ -231,7 +228,19 @@ export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefine
   return undefined;
 };
 
-// usei has 6 decimals, sei_evm native token has 18 → scale factor 10^12
+/**
+ * usei has 6 decimals, sei_evm native token has 18 → scale factor 10^12
+ * Used to convert between the Cosmos staking module's native unit (usei, 6 decimals)
+ * usei has 6 decimals, while the SEI EVM-native base unit has 18 decimals,
+ * so the scale factor between them is 10^12.
+ *
+ * Used to convert:
+ * - from the Cosmos staking module's native unit (`usei`, 6 decimals) to the
+ *   EVM-native 18-decimal unit by multiplying by `USEI_TO_EVM_SCALE`
+ * - from the EVM-native 18-decimal unit back to `usei` by dividing by
+ *   `USEI_TO_EVM_SCALE`
+ */
+export const USEI_TO_EVM_SCALE = 10n ** 12n;
 
 /**
  * Gets amount from SEI delegation with safe conversion.
@@ -245,13 +254,20 @@ export const getSeiDelegationAmount = (delegation: SeiDelegation | undefined): b
   const { amount, denom } = delegation.balance;
   if (typeof amount === "string" || typeof amount === "number" || typeof amount === "bigint") {
     const base = safeBigInt(amount);
-    const USEI_TO_EVM_SCALE = 10n ** 12n;
 
     return denom === "usei" ? base * USEI_TO_EVM_SCALE : base;
   }
 
   return 0n;
 };
+
+/**
+ * Converts a SEI amount from the EVM-exposed unit (18 decimals) to usei (6 decimals).
+ *
+ * The SEI staking precompile (0x1005) expects `undelegate` and `redelegate` amounts
+ * in usei, not in the 18-decimal EVM representation.
+ */
+export const seiEvmAmountToUsei = (amount: bigint): bigint => amount / USEI_TO_EVM_SCALE;
 
 /**
  * Gets amount from CELO decoded result with safe conversion

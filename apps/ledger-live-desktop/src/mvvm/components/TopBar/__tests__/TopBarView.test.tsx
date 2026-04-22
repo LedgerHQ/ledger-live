@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { getBrazeWebSdkJestMock as mockGetBrazeWebSdkJestMock } from "tests/mocks/brazeWebSdk";
 import TopBarView from "../TopBarView";
 import { TopBarSlot } from "../types";
@@ -33,5 +33,15 @@ describe("TopBarView", () => {
     render(<TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />);
 
     expect(screen.queryByTestId("firmware-update-banner")).not.toBeInTheDocument();
+  });
+
+  it("should render the UserAvatar", () => {
+    render(<TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />, {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true, params: { myWallet: true } },
+      }),
+    });
+
+    expect(screen.getByTestId("my-wallet-avatar")).toBeInTheDocument();
   });
 });
