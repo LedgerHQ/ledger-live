@@ -346,6 +346,7 @@ apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarousel
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/hooks/**/useOnboardingWidgetVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                                     @ledgerhq/engagement
 
 # Common
 libs/ledger-live-common/src/analyticsConsent/                                                  @ledgerhq/engagement
