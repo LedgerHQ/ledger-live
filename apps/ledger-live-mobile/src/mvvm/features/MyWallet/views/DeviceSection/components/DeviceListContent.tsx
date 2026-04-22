@@ -8,9 +8,14 @@ import { AddDeviceItem } from "./AddDeviceItem";
 type DeviceListContentProps = {
   readonly devices: readonly DeviceSectionDevice[];
   readonly onAddDevice: () => void;
+  readonly onExploreDevices: () => void;
 };
 
-export function DeviceListContent({ devices, onAddDevice }: DeviceListContentProps) {
+export function DeviceListContent({
+  devices,
+  onAddDevice,
+  onExploreDevices,
+}: DeviceListContentProps) {
   if (devices.length === 0) {
     return <AddDeviceItem onPress={onAddDevice} />;
   }
@@ -22,7 +27,7 @@ export function DeviceListContent({ devices, onAddDevice }: DeviceListContentPro
           <DeviceListItem key={device.id} device={device} />
         ))}
       </Box>
-      <ExploreDevicesItem />
+      <ExploreDevicesItem onPress={onExploreDevices} />
     </>
   );
 }

@@ -9,9 +9,15 @@ interface DeviceSectionViewProps {
   readonly devices: readonly DeviceSectionDevice[];
   readonly hasDevices: boolean;
   readonly onAddDevice: () => void;
+  readonly onExploreDevices: () => void;
 }
 
-export function DeviceSectionView({ devices, hasDevices, onAddDevice }: DeviceSectionViewProps) {
+export function DeviceSectionView({
+  devices,
+  hasDevices,
+  onAddDevice,
+  onExploreDevices,
+}: DeviceSectionViewProps) {
   const { t } = useTranslation();
 
   return (
@@ -27,7 +33,11 @@ export function DeviceSectionView({ devices, hasDevices, onAddDevice }: DeviceSe
       </Subheader>
 
       <Box lx={{ gap: "s16" }}>
-        <DeviceListContent devices={devices} onAddDevice={onAddDevice} />
+        <DeviceListContent
+          devices={devices}
+          onAddDevice={onAddDevice}
+          onExploreDevices={onExploreDevices}
+        />
       </Box>
     </Box>
   );
