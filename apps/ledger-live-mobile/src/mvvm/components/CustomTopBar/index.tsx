@@ -8,16 +8,22 @@ export type { TopBarActionIcon } from "./useMyLedgerTopBarAction";
 export { useMyLedgerTopBarAction } from "./useMyLedgerTopBarAction";
 
 type CustomTopBarProps = {
+  leadingElement?: React.ReactNode;
   leadingIcons: readonly TopBarActionIcon[];
   trailingIcons: readonly TopBarActionIcon[];
 };
 
-export function CustomTopBar({ leadingIcons, trailingIcons }: Readonly<CustomTopBarProps>) {
+export function CustomTopBar({
+  leadingElement,
+  leadingIcons,
+  trailingIcons,
+}: Readonly<CustomTopBarProps>) {
   const isAndroid = Platform.OS === "android";
   const appearance: IconButtonProps["appearance"] = isAndroid ? "gray" : "transparent";
   return (
     <Box lx={rowLx}>
       <Box lx={iconsGroupLayout}>
+        {leadingElement}
         {leadingIcons.map(item => (
           <IconButton
             key={item.id}
