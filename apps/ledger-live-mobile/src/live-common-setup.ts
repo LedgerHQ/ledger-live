@@ -10,7 +10,6 @@ import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { setResolutionConfig } from "@shared/feature-flags";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
@@ -26,10 +25,6 @@ listen(log => {
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
 setWalletAPIVersion(WALLET_API_VERSION);
-setResolutionConfig({
-  platform: Platform.OS === "ios" ? "ios" : "android",
-  appVersion: VersionNumber.appVersion ?? undefined,
-});
 liveBlindSigningReporter.setContext({
   platform: "mobile",
   appVersion: VersionNumber.appVersion ?? undefined,
