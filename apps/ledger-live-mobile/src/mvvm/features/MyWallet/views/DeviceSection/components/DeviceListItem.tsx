@@ -1,5 +1,5 @@
-import React from "react";
-import { Image, type ImageSourcePropType } from "react-native";
+import React, { useCallback } from "react";
+import { Image, Pressable, type ImageSourcePropType } from "react-native";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
   Box,
@@ -30,10 +30,12 @@ const deviceSources: Record<DeviceModelId, ImageSourcePropType> = {
 type DeviceListItemProps = {
   readonly device: DeviceSectionDevice;
   readonly onPress: (device: DeviceSectionDevice) => void;
+  readonly onOpenMenu: (device: DeviceSectionDevice) => void;
 };
 
-export function DeviceListItem({ device, onPress }: DeviceListItemProps) {
-  const handlePress = () => onPress(device);
+export function DeviceListItem({ device, onPress, onOpenMenu }: DeviceListItemProps) {
+  const handlePress = useCallback(() => onPress(device), [device, onPress]);
+  const handleMenuPress = useCallback(() => onOpenMenu(device), [device, onOpenMenu]);
 
   return (
     <ListItem testID={`my-wallet-device-item-${device.id}`} onPress={handlePress}>
@@ -51,7 +53,13 @@ export function DeviceListItem({ device, onPress }: DeviceListItemProps) {
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <MoreVertical size={24} color="muted" />
+        <Pressable
+          onPress={handleMenuPress}
+          testID={`my-wallet-device-item-${device.id}-menu`}
+          hitSlop={8}
+        >
+          <MoreVertical size={24} color="muted" />
+        </Pressable>
       </ListItemTrailing>
     </ListItem>
   );

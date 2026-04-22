@@ -1,11 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Linking } from "react-native";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { findMatchingNewDevice, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
+import { removeKnownDevice } from "~/actions/ble";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { track } from "~/analytics";
@@ -24,12 +26,20 @@ interface DeviceSectionViewModel {
   readonly onAddDevice: () => void;
   readonly onExploreDevices: () => void;
   readonly onDevicePress: (device: DeviceSectionDevice) => void;
+  readonly selectedDevice: DeviceSectionDevice | null;
+  readonly isRemoveDrawerOpen: boolean;
+  readonly onOpenRemoveMenu: (device: DeviceSectionDevice) => void;
+  readonly onCloseRemoveMenu: () => void;
+  readonly onRemoveDevice: () => void;
 }
 
 export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
+  const dispatch = useDispatch();
   const knownDevices = useSelector(bleDevicesSelector);
+  const [selectedDevice, setSelectedDevice] = useState<DeviceSectionDevice | null>(null);
+  const [isRemoveDrawerOpen, setIsRemoveDrawerOpen] = useState(false);
   const { scannedDevices } = useBleDevicesScanning(true);
 
   const devices = useMemo(
@@ -81,5 +91,33 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     [navigation],
   );
 
-  return { devices, onAddDevice, onExploreDevices, hasDevices, onDevicePress };
+  const onOpenRemoveMenu = useCallback((device: DeviceSectionDevice) => {
+    setSelectedDevice(device);
+    setIsRemoveDrawerOpen(true);
+  }, []);
+
+  const onCloseRemoveMenu = useCallback(() => {
+    setIsRemoveDrawerOpen(false);
+  }, []);
+
+  const onRemoveDevice = useCallback(async () => {
+    if (!selectedDevice) return;
+    dispatch(removeKnownDevice(selectedDevice.id));
+    setIsRemoveDrawerOpen(false);
+    await disconnect(selectedDevice.id).catch(() => {});
+    setSelectedDevice(null);
+  }, [selectedDevice, dispatch]);
+
+  return {
+    devices,
+    hasDevices,
+    onAddDevice,
+    onExploreDevices,
+    onDevicePress,
+    selectedDevice,
+    isRemoveDrawerOpen,
+    onOpenRemoveMenu,
+    onCloseRemoveMenu,
+    onRemoveDevice,
+  };
 };
