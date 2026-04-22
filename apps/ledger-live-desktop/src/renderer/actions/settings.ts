@@ -21,6 +21,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+  SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -402,6 +403,11 @@ export const updateAnonymousUserNotifications = (payload: {
 export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
+});
+
+export const setProductTourCompleted = (productTourCompleted: boolean) => ({
+  type: SET_PRODUCT_TOUR_COMPLETED,
+  payload: productTourCompleted,
 });
 
 export const setHasClickedRecover = (hasClickedRecover: boolean) => ({

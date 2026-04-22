@@ -4862,6 +4862,17 @@
         "debugDialog": "Debug Dialog",
         "debugDuplicates": "Debug Duplicates"
       },
+      "featuresAndFlowsDevTool": {
+        "title": "Features & Flows",
+        "description": "Developer tools for feature-related flows.",
+        "productTour": {
+          "title": "Product Tour",
+          "label": "Product Tour",
+          "completed": "Product tour is marked as completed.",
+          "notCompleted": "Product tour is not completed yet.",
+          "open": "Open"
+        }
+      },
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
         "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
