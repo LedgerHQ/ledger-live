@@ -2,8 +2,6 @@ import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBal
 import {
   AlpacaApi,
   BalanceOptions,
-  Block,
-  BlockInfo,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -26,6 +24,8 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   lastBlock,
   listOperations,
   validateIntent,
@@ -55,12 +55,8 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
       rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
-    getBlock(_height: number): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -165,7 +161,7 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
       state.apiNextCursor = nextCursor ?? "";
       state.continueIterations = !!nextCursor;
     } catch (e: unknown) {
-      if (e instanceof LedgerAPI4xx && (e as unknown as { status: number }).status === 429) {
+      if (e instanceof LedgerAPI4xx && e.status === 429) {
         log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");
         await new Promise(resolve => setTimeout(resolve, 4000));
       } else {
