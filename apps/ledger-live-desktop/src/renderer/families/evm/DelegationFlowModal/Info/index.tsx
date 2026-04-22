@@ -5,6 +5,7 @@ import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import {
+  getUnbondingPeriodDays,
   hasUnbondingPeriod,
   prefetchValidators,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
