@@ -6,9 +6,10 @@ import { useTheme, LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 
 type Props = {
   onPress: () => void;
+  showNotification: boolean;
 };
 
-export function MyWalletTopBarAction({ onPress }: Readonly<Props>) {
+export function MyWalletTopBarAction({ onPress, showNotification }: Readonly<Props>) {
   const { theme } = useTheme();
   const isAndroid = Platform.OS === "android";
   const backgroundColor: LumenViewStyle["backgroundColor"] = isAndroid
@@ -29,7 +30,7 @@ export function MyWalletTopBarAction({ onPress }: Readonly<Props>) {
         backgroundColor: pressed ? theme.colors.bg[pressedBackgroundColor] : undefined,
       })}
     >
-      <UserAvatar size="md" lx={{ backgroundColor }} />
+      <UserAvatar size="md" lx={{ backgroundColor }} showNotification={showNotification} />
     </Pressable>
   );
 }

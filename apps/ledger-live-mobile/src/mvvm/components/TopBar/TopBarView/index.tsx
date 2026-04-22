@@ -50,7 +50,7 @@ export function TopBarView({
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
 
   const leadingElement = shouldDisplayMyWallet ? (
-    <MyWalletTopBarAction onPress={onMyWalletPress} />
+    <MyWalletTopBarAction onPress={onMyWalletPress} showNotification={hasUnreadNotifications} />
   ) : undefined;
 
   const notificationIcon = useCallback<IconButtonProps["icon"]>(
