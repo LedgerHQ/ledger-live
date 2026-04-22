@@ -5,16 +5,29 @@ import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import type { LiveDataCommandOptions } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import type { InitOptions } from "../../utils/initUtil";
 
-const beforeAllFunction = async (transaction: TransactionType) => {
+export type SendTestOptions = {
+  featureFlags?: InitOptions["featureFlags"];
+  userdata?: InitOptions["userdata"];
+  liveDataOptions?: LiveDataCommandOptions;
+};
+
+const beforeAllFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
+    ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
     featureFlags: {
       llmAccountListUI: { enabled: true },
+      ...options?.featureFlags,
     },
     cliCommands: [
       async (userdataPath?: string) => {
-        await liveDataWithAddressCommand(transaction.accountToDebit)(userdataPath);
+        await liveDataWithAddressCommand(
+          transaction.accountToDebit,
+          options?.liveDataOptions,
+        )(userdataPath);
         transaction.accountToCredit.address = await getAccountAddress(transaction.accountToCredit);
         transaction.recipientAddress = transaction.accountToCredit.address;
       },
@@ -82,12 +95,17 @@ export async function verifySendAndOperationDetails(
   await app.operationDetails.checkTransactionType("OUT");
 }
 
-export function runSendTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+export function runSendTest(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[],
+  options?: SendTestOptions,
+) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send from 1 account to another", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllFunction(transaction, options);
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
