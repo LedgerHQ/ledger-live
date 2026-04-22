@@ -149,11 +149,38 @@ type ExchangeUiHooks = {
   }) => void;
 };
 
+/**
+ * Build the wallet-api exchange handlers for a given wallet instance.
+ *
+ * The factory captures the per-session wallet state (`accounts`, tracking
+ * sink, locale, counter-value) and returns the RPC handlers used by the
+ * wallet-api server. Locale and counter-value are threaded into
+ * `custom.exchange.getQuotes` so quotes can carry fully formatted values
+ * without the caller having to pass them on the wire.
+ *
+ * @param deps - Per-session wallet state and UI hooks.
+ * @param deps.accounts - Wallet accounts, used to resolve account ids and
+ *   build formatting context for quotes.
+ * @param deps.tracking - Analytics sink for the Exchange flow.
+ * @param deps.manifest - Live-app manifest initiating the exchange.
+ * @param deps.flags - Optional feature flags (e.g. `wallet40Ux`).
+ * @param deps.locale - BCP 47 tag (e.g. `"en-US"`) used to format numbers
+ *   on `Quote.formatted`. Sourced from the wallet's i18n selector.
+ * @param deps.counterValueCurrency - Fiat ticker (e.g. `"USD"`) used for
+ *   countervalue strings on `Quote.formatted` and to price spot values
+ *   for the unrealistic-quote warning. Sourced from the wallet's
+ *   counter-value setting.
+ * @param deps.uiHooks - Host-specific callbacks that drive the
+ *   device / drawer flows.
+ * @returns The wallet-api `Handlers` map for the Exchange module.
+ */
 export const handlers = ({
   accounts,
   tracking,
   manifest,
   flags,
+  locale,
+  counterValueCurrency,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -166,6 +193,8 @@ export const handlers = ({
   tracking: TrackingAPI;
   manifest: AppManifest;
   flags?: FeatureFlags;
+  locale: string;
+  counterValueCurrency: string;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -733,15 +762,20 @@ export const handlers = ({
         if (!params) {
           throw new ServerError(createUnknownError({ message: "params is undefined" }));
         }
+        // Fetch spot prices for the three currency ids that matter for
+        // the `unrealisticQuote` warning (send + receive + optional
+        // network-fee currency) against the wallet's counter-value
+        // setting. `fetchSpotPrices` never throws: on any failure it
+        // returns `{}` and the warning check short-circuits.
         const spotPrices = await fetchSpotPrices({
           currencyIds: [
             params.data.sendCurrencyId,
             params.data.receiveCurrencyId,
             params.data.networkFeesCurrencyId,
           ],
-          counterValue: params.data.counterValueCurrency || "usd",
+          counterValue: counterValueCurrency,
         });
-        return getQuotes(params, { accounts, spotPrices });
+        return getQuotes(params, { accounts, spotPrices, locale, counterValueCurrency });
       },
     ),
   }) as const satisfies Handlers;

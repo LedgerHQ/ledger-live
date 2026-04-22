@@ -1,3 +1,4 @@
+import type { FormatContext } from "../format/types";
 import type { ProviderData } from "../lookupProviderConfig";
 import type { RawQuote } from "../service/types";
 import { normalizeQuote } from "./normalizeQuote";
@@ -533,6 +534,229 @@ describe("normalizeQuote", () => {
         amount: "1500000000000000",
         currencyId: "ethereum",
       });
+    });
+  });
+
+  describe("quote.formatted — wallet-side display strings", () => {
+    const NBSP = "\u00A0";
+
+    const formatContext: FormatContext = {
+      locale: "en",
+      fiat: { ticker: "USD", symbol: "$", magnitude: 2 },
+      spotPrices: {
+        ethereum: 3000,
+        "ethereum/erc20/usd__coin": 1,
+      },
+      sendCurrency: { id: "ethereum", decimals: 18, ticker: "ETH" },
+      receiveCurrency: {
+        id: "ethereum/erc20/usd__coin",
+        decimals: 6,
+        ticker: "USDC",
+      },
+      networkFeesCurrency: { id: "ethereum", decimals: 18, ticker: "ETH" },
+    };
+
+    it("leaves `formatted` undefined when no formatContext is supplied (legacy callers)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1.5, amountTo: 4500, exchangeRate: 3000 }),
+        emptyProviderData,
+      );
+      expect(quote.formatted).toBeUndefined();
+    });
+
+    it("attaches a complete FormattedQuoteValues object when formatContext is supplied", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({
+          amountFrom: 1.5,
+          amountTo: 4500,
+          exchangeRate: 3000,
+          slippage: 0,
+          type: "float",
+        }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "ethereum/erc20/usd__coin",
+          spotPrices: formatContext.spotPrices,
+        },
+        {
+          // 0.0005 ETH at 18 decimals = 5e14 wei
+          estimatedNetworkFee: { amount: "500000000000000", currencyId: "ethereum" },
+          approvalNetworkFee: undefined,
+          notEnoughBalance: false,
+        },
+        formatContext,
+      );
+
+      expect(quote.formatted).toEqual({
+        sendAmount: {
+          numberValue: "1.5",
+          withPrefix: `ETH${NBSP}1.5`,
+          withSuffix: `1.5${NBSP}ETH`,
+        },
+        sendAmountCountervalue: {
+          numberValue: "4,500",
+          withPrefix: "$4,500",
+          withSuffix: `4,500${NBSP}$`,
+        },
+        receiveAmount: {
+          numberValue: "4,500",
+          withPrefix: `USDC${NBSP}4,500`,
+          withSuffix: `4,500${NBSP}USDC`,
+        },
+        receiveAmountCountervalue: {
+          numberValue: "4,500",
+          withPrefix: "$4,500",
+          withSuffix: `4,500${NBSP}$`,
+        },
+        networkFee: {
+          numberValue: "0.0005",
+          withPrefix: `ETH${NBSP}0.0005`,
+          withSuffix: `0.0005${NBSP}ETH`,
+        },
+        networkFeeCountervalue: {
+          numberValue: "1.5",
+          withPrefix: "$1.5",
+          withSuffix: `1.5${NBSP}$`,
+        },
+        rate: {
+          numberValue: `1 ETH = 3,000${NBSP}USDC`,
+          withPrefix: `1 ETH = 3,000${NBSP}USDC`,
+          withSuffix: `1 ETH = 3,000${NBSP}USDC`,
+        },
+        slippage: {
+          numberValue: "0",
+          withPrefix: "0",
+          withSuffix: "0%",
+        },
+      });
+    });
+
+    it("renders `0 <feeTicker>` for the network fee when the fee estimate is undefined (gasless / no bridge)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 3000, exchangeRate: 3000, type: "fixed" }),
+        emptyProviderData,
+        undefined,
+        undefined,
+        formatContext,
+      );
+      expect(quote.formatted?.networkFee.withSuffix).toBe(`0${NBSP}ETH`);
+      expect(quote.formatted?.networkFee.numberValue).toBe("0");
+    });
+
+    it("excludes the approval fee from formatted.networkFee (only estimatedNetworkFee counts)", () => {
+      // estimated = 0.0003 ETH, approval = 0.0002 ETH; swap-parity: only
+      // the base swap-gas amount flows into the `networkFee` display string.
+      const quote = normalizeQuote(
+        makeRawQuote(),
+        emptyProviderData,
+        undefined,
+        {
+          estimatedNetworkFee: { amount: "300000000000000", currencyId: "ethereum" },
+          approvalNetworkFee: { amount: "200000000000000", currencyId: "ethereum" },
+          notEnoughBalance: false,
+        },
+        formatContext,
+      );
+      expect(quote.formatted?.networkFee.withSuffix).toBe(`0.0003${NBSP}ETH`);
+      expect(quote.formatted?.networkFee.numberValue).toBe("0.0003");
+    });
+  });
+
+  describe("quote.id — resolved from raw.quoteId then customFields.quoteId", () => {
+    it("uses raw.quoteId when present (top-level wins over customFields)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({
+          quoteId: "top-level-id",
+          customFields: { quoteId: "custom-id" },
+        }),
+        emptyProviderData,
+      );
+      expect(quote.id).toBe("top-level-id");
+    });
+
+    it("falls back to customFields.quoteId when raw.quoteId is missing", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({
+          quoteId: undefined,
+          customFields: { quoteId: "fallback-quote-id-42" },
+        }),
+        emptyProviderData,
+      );
+      expect(quote.id).toBe("fallback-quote-id-42");
+    });
+
+    it("returns undefined when neither field is set", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ quoteId: undefined, customFields: undefined }),
+        emptyProviderData,
+      );
+      expect(quote.id).toBeUndefined();
+    });
+
+    it("ignores empty-string customFields.quoteId (not a usable identifier)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({
+          quoteId: undefined,
+          customFields: { quoteId: "" },
+        }),
+        emptyProviderData,
+      );
+      expect(quote.id).toBeUndefined();
+    });
+
+    it("ignores non-string customFields.quoteId values defensively", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({
+          quoteId: undefined,
+          // Aggregator could in theory send a number; the wallet contract
+          // only accepts strings. Anything else is treated as missing.
+          customFields: { quoteId: 42 as unknown as string },
+        }),
+        emptyProviderData,
+      );
+      expect(quote.id).toBeUndefined();
+    });
+  });
+
+  describe("quote.key — fallback to `${normalizedProvider}-${type}` when raw.key is missing", () => {
+    it("preserves raw.key verbatim when present", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ key: "custom-aggregator-key-xyz" }),
+        emptyProviderData,
+      );
+      expect(quote.key).toBe("custom-aggregator-key-xyz");
+    });
+
+    it("derives `${provider}-${type}` when raw.key is missing", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ provider: "lifi", type: "float", key: undefined }),
+        emptyProviderData,
+      );
+      expect(quote.key).toBe("lifi-float");
+    });
+
+    it("derives the key from the NORMALIZED provider id (changelly_v2 → changelly) when raw.key is missing", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ provider: "changelly_v2", type: "fixed", key: undefined }),
+        emptyProviderData,
+      );
+      expect(quote.key).toBe("changelly-fixed");
+    });
+
+    it("preserves raw.key verbatim even when the provider would be renamed (raw.key wins)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({
+          provider: "changelly_v2",
+          type: "fixed",
+          key: "changelly_v2-fixed-bitcoin",
+        }),
+        emptyProviderData,
+      );
+      // `quote.provider` is renamed but `quote.key` stays as the raw value.
+      // Consumers of `key` are expected to treat it opaquely.
+      expect(quote.provider).toBe("changelly");
+      expect(quote.key).toBe("changelly_v2-fixed-bitcoin");
     });
   });
 });

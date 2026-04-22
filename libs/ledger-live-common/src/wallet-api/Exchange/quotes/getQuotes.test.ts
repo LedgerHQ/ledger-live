@@ -29,7 +29,8 @@ jest.mock("./normalizer/networkFeeEstimate", () => ({
 }));
 
 jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn().mockReturnValue(false),
+  getEnv: jest.fn().mockReturnValue(""),
+  changes: { subscribe: jest.fn() },
 }));
 
 const fetchQuotesMock = jest.mocked(fetchQuotes);
@@ -69,7 +70,6 @@ function makeArgs(
       receiveAddress: "0xto",
       sendCurrencyId,
       receiveCurrencyId,
-      counterValueCurrency: "usd",
       ...overrides,
     },
   };
@@ -83,7 +83,12 @@ const aggregatorError: RawQuoteError = {
   parameter: {},
 };
 
-const emptyContext: GetQuotesContext = { accounts: [], spotPrices: {} };
+const emptyContext: GetQuotesContext = {
+  accounts: [],
+  spotPrices: {},
+  locale: "en",
+  counterValueCurrency: "usd",
+};
 
 describe("getQuotes", () => {
   beforeEach(() => {
@@ -175,6 +180,8 @@ describe("getQuotes", () => {
       await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
         accounts: [],
         spotPrices: {},
+        locale: "en",
+        counterValueCurrency: "usd",
       });
 
       expect(fetchNetworkFeeContextMock).toHaveBeenCalledTimes(1);
@@ -231,6 +238,28 @@ describe("getQuotes", () => {
       expect(response.quotes[0].quoteDetails.estimatedNetworkFee).toBeUndefined();
       expect(response.quotes[0].quoteDetails.approvalNetworkFee).toBeUndefined();
       expect(response.quotes[0].error).toBeNull();
+    });
+
+    it("does not drop `oneinchfusion` rows on Ethereum source (filter is hook-permanent)", async () => {
+      // LIVE-29454 / commit b76fc9c4a (Apr 30 2026) added an Ethereum-only
+      // exclusion of `oneinchfusion` quotes in the legacy `useGetQuotes`
+      // hook. The phase 2 plan classifies the dedupe-pair as hook-permanent
+      // (sort + dedupe travel together client-side); the wallet pipeline
+      // intentionally does NOT replicate the rule. This smoke test pins
+      // that decision so a future server-side migration does not silently
+      // drop fusion rows. The hook-side filter remains outside this
+      // wallet-side pipeline and covers the user-facing behavior.
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [
+          makeRawQuote({ provider: "oneinch", key: "oneinch-key" }),
+          makeRawQuote({ provider: "oneinchfusion", key: "oneinchfusion-key" }),
+        ],
+        errors: [],
+      });
+
+      const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+      expect(response.quotes.map(q => q.provider)).toEqual(["oneinch", "oneinchfusion"]);
     });
 
     it("computes a fee estimate per quote (one call per row)", async () => {
