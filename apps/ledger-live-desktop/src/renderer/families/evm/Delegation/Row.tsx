@@ -23,6 +23,7 @@ import EvmValidatorIcon from "~/renderer/families/evm/shared/components/EvmValid
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
+import type { DelegationActionsModalName } from "../modals";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -99,7 +100,8 @@ export const ManageDropDownItem = ({
 type RowProps = Readonly<{
   account: StakingAccount;
   delegation: StakingMappedDelegation;
-  onManageAction: (address: string, action: string) => void;
+  onManageAction: (address: string, action: DelegationActionsModalName) => void;
+  onClaimRewards: (address: string) => void;
   onExternalLink: (address: string) => void;
 }>;
 
@@ -115,13 +117,18 @@ export function Row({
   },
   delegation,
   onManageAction,
+  onClaimRewards,
   onExternalLink,
 }: RowProps) {
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
-      onManageAction(validatorAddress, action.key as string);
+      if (action.key === "MODAL_EVM_CLAIM_REWARDS") {
+        onClaimRewards(validatorAddress);
+      } else {
+        onManageAction(validatorAddress, action.key);
+      }
     },
-    [onManageAction, validatorAddress],
+    [onManageAction, onClaimRewards, validatorAddress],
   );
   const _canUndelegate = canUndelegate(account);
   const _canRedelegate = canRedelegate(account, delegation);
@@ -147,7 +154,13 @@ export function Row({
       </Trans>
     );
   }, [_canRedelegate, formattedRedelegationDate]);
-  const dropDownItems = useMemo(
+  type DropDownItem = {
+    key: DelegationActionsModalName | "MODAL_EVM_CLAIM_REWARDS";
+    label: React.JSX.Element;
+    disabled?: boolean;
+    tooltip?: React.ReactNode | null;
+  };
+  const dropDownItems = useMemo<DropDownItem[]>(
     () => [
       {
         key: "MODAL_EVM_REDELEGATE",
@@ -166,12 +179,12 @@ export function Row({
         ),
       },
       ...(pendingRewards.gt(0)
-        ? [
+        ? ([
             {
-              key: "MODAL_EVM_CLAIM_REWARDS",
+              key: "MODAL_EVM_CLAIM_REWARDS" as const,
               label: <Trans i18nKey="ethereum.evmStaking.delegation.reward" />,
             },
-          ]
+          ] satisfies DropDownItem[])
         : []),
     ],
     [pendingRewards, _canRedelegate, _canUndelegate, redelegateDisabledTooltip],

@@ -3,6 +3,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bri
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
+import { log } from "@ledgerhq/logs";
 import { getAlpacaApi } from "./alpaca";
 import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
@@ -449,6 +450,26 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
       alpacaApi.stakingSupported ?? (delegations.length > 0 || unbondings.length > 0);
+
+    if (stakingEnabled && bridgeApi.enrichStakingResources) {
+      try {
+        const enriched = await bridgeApi.enrichStakingResources(
+          currency,
+          address,
+          operations,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          stakingResources as unknown as Record<string, unknown>,
+        );
+        Object.assign(stakingResources, enriched);
+      } catch (e) {
+        log(
+          "generic-alpaca",
+          "enrichStakingResources failed, falling back to base staking resources",
+          e,
+        );
+      }
+    }
+
     const res: Partial<Account> & { stakingResources?: StakingResources } = {
       id: accountId,
       xpub: address,
