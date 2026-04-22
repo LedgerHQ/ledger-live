@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
@@ -23,6 +24,10 @@ export default class ReceivePage {
     `option-button-content-${receiveFundsOption}`;
   receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
+  receiveNetworkWarningId = "receive-network-warning";
+
+  sendAssetWarningMessage = (account: AccountType) =>
+    `Send only tokens from ${account.currency.name} network. Sending from another network may result in permanent loss of your tokens.`;
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -130,6 +135,15 @@ export default class ReceivePage {
     await detoxExpect(getElementById(warnId)).toBeVisible();
     await detoxExpect(getElementById(descId)).toHaveText(
       "You first need to send at least 0.1 TRX to this address to activate it.",
+    );
+  }
+
+  @Step("Expect receive network warning message for $0")
+  async expectSendCurrencyTokensWarningMessage(account: AccountType): Promise<void> {
+    await scrollToId(this.receiveNetworkWarningId, this.receivePageScrollViewId);
+    await detoxExpect(getElementById(this.receiveNetworkWarningId)).toBeVisible();
+    await detoxExpect(getElementById(this.receiveNetworkWarningId)).toHaveText(
+      this.sendAssetWarningMessage(account),
     );
   }
 
