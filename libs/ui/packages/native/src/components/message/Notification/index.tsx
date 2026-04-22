@@ -94,7 +94,7 @@ type NotificationContainerProps = FlexBoxProps & {
   variant: NotificationVariant;
 };
 
-const NotificationContainer = styled(FlexBox).attrs<NotificationContainerProps>((p) => ({
+const NotificationContainer = styled(FlexBox).attrs<NotificationContainerProps>(p => ({
   width: "100%",
   flexDirection: "row",
   alignItems: "center",

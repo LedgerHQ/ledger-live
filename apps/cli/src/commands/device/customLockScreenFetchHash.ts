@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { from } from "rxjs";
 import type { ScanCommonOpts } from "../../scan";
 import { deviceOpt } from "../../scan";

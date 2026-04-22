@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { Box } from "@ledgerhq/react-ui/components/layout/index";
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
@@ -17,21 +16,19 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
   const { isPostOnboardingBannerVisible, isActionCardsVisible, isLNSUpsellBannerVisible } =
     useBannersVisibility();
 
+  if (isPostOnboardingBannerVisible) {
+    return <PostOnboardingHubBanner />;
+  }
+
   return (
-    <Box>
-      {isPostOnboardingBannerVisible ? (
-        <PostOnboardingHubBanner />
+    <RecoverBanner>
+      {isActionCardsVisible ? (
+        <ActionContentCards variant={ABTestingVariants.variantA} />
+      ) : isLNSUpsellBannerVisible ? (
+        <LNSUpsellBanner location="portfolio" />
       ) : (
-        <RecoverBanner>
-          {isActionCardsVisible ? (
-            <ActionContentCards variant={ABTestingVariants.variantA} />
-          ) : isLNSUpsellBannerVisible ? (
-            <LNSUpsellBanner location="portfolio" />
-          ) : (
-            <PortfolioContentCards />
-          )}
-        </RecoverBanner>
+        <PortfolioContentCards />
       )}
-    </Box>
+    </RecoverBanner>
   );
 });

@@ -7,7 +7,7 @@ import { CustomFeesScreen } from "../CustomFeesScreen";
 import * as UseCustomFeesViewModel from "../hooks/useCustomFeesViewModel";
 
 // Minimal stubs — shape is enough, logic is delegated to the mocked ViewModel
-const mockNavigation = { goToStep: jest.fn() };
+const mockNavigation = { goToStep: jest.fn(), goToPreviousStep: jest.fn() };
 const mockTransactionActions = { updateTransaction: jest.fn() };
 const mockAccount = { id: "acc_bitcoin", type: "Account" };
 const mockTransaction = { family: "bitcoin", amount: {} };

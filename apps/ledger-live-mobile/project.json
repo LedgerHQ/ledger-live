@@ -1,4 +1,5 @@
 {
+  "name": "live-mobile",
   "targets": {
     "lint": {
       "inputs": [
@@ -25,14 +26,33 @@
       ]
     },
     "e2e:ci": {
+      "dependsOn": [
+        "^build",
+        "@ledgerhq/dummy-live-app:build",
+        "@ledgerhq/dummy-wallet-app:build",
+        "@ledgerhq/dummy-ptx-app:build"
+      ],
+      "cache": false,
       "outputs": [
-        "{projectRoot}/artifacts/**"
+        "{projectRoot}/artifacts/**",
+        "{workspaceRoot}/e2e/mobile/artifacts/**",
+        "{projectRoot}/main.jsbundle",
+        "{projectRoot}/main.jsbundle.minified",
+        "{projectRoot}/build/**",
+        "{projectRoot}/ios/build/**",
+        "{projectRoot}/android/app/build/**"
       ],
       "inputs": [
         "default",
         "mobileEnv",
-        "sharedEnv"
+        "sharedEnv",
+        {
+          "env": "RUNNER_OS"
+        }
       ]
+    },
+    "build": {
+      "executor": "nx:noop"
     },
     "android:apk": {
       "outputs": [

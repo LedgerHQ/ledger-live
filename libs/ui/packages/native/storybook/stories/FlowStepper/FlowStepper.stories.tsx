@@ -397,7 +397,7 @@ export const Demo = (): JSX.Element => {
           </Flex>
         )}
         extraProps={{
-          onBack: index === 0 ? null : () => setIndex((index) => index - 1),
+          onBack: index === 0 ? null : () => setIndex(index => index - 1),
         }}
         renderTransition={renderTransitionSlide}
         transitionDuration={transitionDuration}
@@ -538,7 +538,7 @@ export const TransitionPreset = (): JSX.Element => {
         <Flex flex={1} minWidth={300} ml={4} mt={4}>
           <NumberInput
             value={duration}
-            onChange={(value) => setDuration(value || 0)}
+            onChange={value => setDuration(value || 0)}
             onPercentClick={(percent: number) => {
               setDuration(2000 * percent);
             }}
@@ -549,8 +549,8 @@ export const TransitionPreset = (): JSX.Element => {
         </Flex>
       </Flex>
       <Flex flexDirection="row" justifyContent="space-around">
-        <Button onPress={() => setIndex((i) => Math.max(0, (i || 0) - 1))}>-</Button>
-        <Button onPress={() => setIndex((i) => Math.min(4, (i || 0) + 1))}>+</Button>
+        <Button onPress={() => setIndex(i => Math.max(0, (i || 0) - 1))}>-</Button>
+        <Button onPress={() => setIndex(i => Math.min(4, (i || 0) + 1))}>+</Button>
       </Flex>
     </Flex>
   );
@@ -750,8 +750,8 @@ export const CustomTransition = (): JSX.Element => {
         <Item label="error" />
       </FlowStepper>
       <Flex flexDirection="row" justifyContent="space-around">
-        <Button onPress={() => setIndex((i) => Math.max(0, (i || 0) - 1))}>-</Button>
-        <Button onPress={() => setIndex((i) => Math.min(4, (i || 0) + 1))}>+</Button>
+        <Button onPress={() => setIndex(i => Math.max(0, (i || 0) - 1))}>-</Button>
+        <Button onPress={() => setIndex(i => Math.min(4, (i || 0) + 1))}>+</Button>
       </Flex>
     </Flex>
   );

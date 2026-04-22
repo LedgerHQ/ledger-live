@@ -1,12 +1,16 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as coinConfigModule from "../../config";
+import { createMockCantonCurrency, createMockCoinConfigValue } from "../../test/fixtures";
 import { estimateFees } from "./estimateFees";
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
-
+const mockCurrency = createMockCantonCurrency();
 const magnitude: bigint = 10n ** 38n;
+const createMockConfigWithFee = (fee: number | undefined): coinConfigModule.CantonCoinConfig => {
+  const base = createMockCoinConfigValue();
+  if (fee !== undefined) {
+    return { ...base, fee };
+  }
+  return base;
+};
 
 describe("estimateFees", () => {
   const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");
@@ -16,9 +20,7 @@ describe("estimateFees", () => {
   });
 
   it("returns 2 CC fees for 100 CC", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      fee: undefined,
-    } as unknown as coinConfigModule.CantonCoinConfig);
+    mockGetCoinConfig.mockReturnValue(createMockConfigWithFee(undefined));
 
     const result = await estimateFees(mockCurrency, 100n * magnitude);
 
@@ -27,9 +29,7 @@ describe("estimateFees", () => {
   });
 
   it("returns 11 CC fees for 1000 CC", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      fee: undefined,
-    } as unknown as coinConfigModule.CantonCoinConfig);
+    mockGetCoinConfig.mockReturnValue(createMockConfigWithFee(undefined));
 
     const result = await estimateFees(mockCurrency, 1000n * magnitude);
 
@@ -38,9 +38,7 @@ describe("estimateFees", () => {
   });
 
   it("returns forced fees when setup in config", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      fee: 3,
-    } as unknown as coinConfigModule.CantonCoinConfig);
+    mockGetCoinConfig.mockReturnValue(createMockConfigWithFee(3));
 
     const result = await estimateFees(mockCurrency, 1000n * magnitude);
 
@@ -49,9 +47,7 @@ describe("estimateFees", () => {
   });
 
   it("returns forced fees when 0 is setup in config", async () => {
-    mockGetCoinConfig.mockReturnValue({
-      fee: 0,
-    } as unknown as coinConfigModule.CantonCoinConfig);
+    mockGetCoinConfig.mockReturnValue(createMockConfigWithFee(0));
 
     const result = await estimateFees(mockCurrency, 1000n * magnitude);
 

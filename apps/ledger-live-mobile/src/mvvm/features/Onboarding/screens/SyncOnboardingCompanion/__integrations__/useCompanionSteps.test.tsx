@@ -1,5 +1,5 @@
 import React from "react";
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import useCompanionSteps from "../hooks/useCompanionSteps";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FirstStepCompanionStepKey } from "~/screens/SyncOnboarding/TwoStepStepper/types";
@@ -54,21 +54,23 @@ describe("useCompanionSteps", () => {
   it("when ledger sync step is active and has not synced before should return correct state", () => {
     const ref = React.createRef() as React.RefObject<SeedOriginType | undefined>;
 
-    const overrideInitialStateWithFeatureFlag = (state: State): State => ({
-      ...state,
-      settings: {
-        ...INITIAL_STATE,
-        ...state.settings,
-        overriddenFeatureFlags: {
-          llmOnboardingEnableSync: {
-            enabled: true,
-            params: {
-              touchscreens: true,
-            },
+    const overrideInitialStateWithFeatureFlag = withFlagOverrides(
+      {
+        llmOnboardingEnableSync: {
+          enabled: true,
+          params: {
+            touchscreens: true,
           },
         },
       },
-    });
+      (state: State): State => ({
+        ...state,
+        settings: {
+          ...INITIAL_STATE,
+          ...state.settings,
+        },
+      }),
+    );
 
     const { result } = renderHook(
       () =>

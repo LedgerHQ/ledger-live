@@ -44,6 +44,7 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          skip-nx-cache: "true"
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -53,7 +54,7 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
       - name: build libs
-        run: pnpm turbo build --filter="./libs/**"
+        run: pnpm exec nx run-many -t build --projects=tag:scope:libs
 
       - name: snapshot versioning
         env:

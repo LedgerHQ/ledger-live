@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any */
 import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { usePendingTransferProposalsViewModel } from "../usePendingTransferProposalsViewModel";
@@ -10,6 +11,13 @@ import {
   createMockRoute,
   createRawProposal,
 } from "./test-utils";
+
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
+  useFeature: jest.fn(),
+}));
+
+const mockUseFeature = useFeature as jest.MockedFunction<typeof useFeature>;
 
 describe("usePendingTransferProposalsViewModel", () => {
   const account = createCantonAccount();
@@ -224,7 +232,8 @@ describe("usePendingTransferProposalsViewModel", () => {
       );
     });
 
-    it("should close modal and redirect to reonboarding on TopologyChangeError", async () => {
+    it("should close modal and open reonboard drawer on TopologyChangeError when llmModularDrawer is enabled", async () => {
+      mockUseFeature.mockReturnValue({ enabled: true } as any);
       mockPerformTransferInstruction.mockRejectedValueOnce(new TopologyChangeError());
       const { result } = renderViewModel();
 
@@ -237,15 +246,32 @@ describe("usePendingTransferProposalsViewModel", () => {
       });
 
       expect(result.current.modal.isOpen).toBe(false);
-      expect(mockNavigation.navigate).toHaveBeenCalledWith(
-        NavigatorName.CantonOnboard,
-        expect.objectContaining({
-          screen: ScreenName.CantonOnboardAccount,
-          params: expect.objectContaining({
-            isReonboarding: true,
-          }),
+      expect(result.current.reonboardDrawer.isOpen).toBe(true);
+      expect(result.current.reonboardDrawer.restoreState).toBeDefined();
+    });
+
+    it("should close modal and navigate to legacy onboard screen on TopologyChangeError when llmModularDrawer is disabled", async () => {
+      mockUseFeature.mockReturnValue(null);
+      mockPerformTransferInstruction.mockRejectedValueOnce(new TopologyChangeError());
+      const { result } = renderViewModel();
+
+      act(() => {
+        result.current.onOpenModal("contract-abc", "accept");
+      });
+
+      await act(async () => {
+        await result.current.onDeviceConfirm("device-1");
+      });
+
+      expect(result.current.modal.isOpen).toBe(false);
+      expect(result.current.reonboardDrawer.isOpen).toBe(false);
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(NavigatorName.CantonOnboard, {
+        screen: ScreenName.CantonOnboardAccount,
+        params: expect.objectContaining({
+          isReonboarding: true,
+          accountToReonboard: account,
         }),
-      );
+      });
     });
 
     it("should re-throw non-TopologyChangeError errors", async () => {

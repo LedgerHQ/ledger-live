@@ -7,7 +7,7 @@ import { Pressable } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 const StyledPressable = styled(Pressable)<{ width: number }>`
-  width: ${(p) => p.width}px;
+  width: ${p => p.width}px;
   flex: 1;
   height: 100%;
 `;
@@ -23,8 +23,7 @@ const StyledText = styled(Text)<{ isSelected: boolean }>`
   overflow: visible;
   text-align: center;
   font-size: 12px;
-  color: ${(p) =>
-    p.isSelected ? p.theme.colors.constant.black : p.theme.colors.opacityDefault.c50};
+  color: ${p => (p.isSelected ? p.theme.colors.constant.black : p.theme.colors.opacityDefault.c50)};
 `;
 
 interface OptionButtonProps<T> {
@@ -119,7 +118,7 @@ export default function DrawerTabSelector<T extends string | number>({
           animatedStyle,
         ]}
       />
-      {options.map((option) => (
+      {options.map(option => (
         <OptionButton
           width={width}
           key={option}

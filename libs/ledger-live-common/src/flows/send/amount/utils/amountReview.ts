@@ -1,5 +1,5 @@
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { TransactionStatus } from "../../../../generated/types";
+import type { TransactionStatus } from "../../../../coin-modules/transaction-types";
 import { BigNumber } from "bignumber.js";
 
 /**

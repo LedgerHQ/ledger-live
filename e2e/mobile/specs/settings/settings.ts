@@ -2,14 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ApplicationOptions } from "page";
 import { isWallet40 } from "../../helpers/commonHelpers";
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
-
 async function initApp(options: ApplicationOptions) {
   await app.init({
     userdata: options.userdata,
@@ -28,7 +20,7 @@ export function runUserClearApplicationCacheTest(
     beforeAll(async () => {
       await initApp({
         userdata: "skip-onboarding",
-        cliCommands: [liveDataCommand(account.currency, account.index)],
+        cliCommands: [liveDataCommand(account)],
         speculosApp: account.currency.speculosApp,
       });
     });
@@ -96,7 +88,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
       beforeAll(async () => {
         await initApp({
           userdata: "skip-onboarding",
-          cliCommands: [liveDataCommand(account.currency, account.index)],
+          cliCommands: [liveDataCommand(account)],
           speculosApp: account.currency.speculosApp,
         });
       });

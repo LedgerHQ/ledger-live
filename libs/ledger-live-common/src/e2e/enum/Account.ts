@@ -188,6 +188,9 @@ export class Account {
 
   static readonly LTC_1 = new Account(Currency.LTC, "Litecoin 1", 0, "84'/2'/0'/0/0");
 
+  static readonly MINA_1 = new Account(Currency.MINA, "Mina 1", 0, "44'/12586'/0'/0/0");
+  static readonly MINA_2 = new Account(Currency.MINA, "Mina 2", 1, "44'/12586'/1'/0/0");
+
   static readonly MULTIVERS_X_1 = new Account(
     Currency.MULTIVERS_X,
     "MultiversX 1",
@@ -264,18 +267,8 @@ export class Account {
   static readonly ZEC_1 = new Account(Currency.ZEC, "Zcash 1", 0, "44'/133'/0'/0/0");
   static readonly ZEC_2 = new Account(Currency.ZEC, "Zcash 2", 0, "44'/133'/1'/0/0");
 
-  static readonly ICP_1 = new Account(
-    Currency.ICP,
-    "Internet Computer 1",
-    0,
-    "44'/223'/0'/0/0",
-  );
-  static readonly ICP_2 = new Account(
-    Currency.ICP,
-    "Internet Computer 2",
-    1,
-    "44'/223'/1'/0/0",
-  );
+  static readonly ICP_1 = new Account(Currency.ICP, "Internet Computer 1", 0, "44'/223'/0'/0/0");
+  static readonly ICP_2 = new Account(Currency.ICP, "Internet Computer 2", 1, "44'/223'/1'/0/0");
 
   static readonly EMPTY = new Account(Currency.BTC, "Empty", 0, "");
 }

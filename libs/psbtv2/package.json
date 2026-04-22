@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/psbtv2",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Partially Signed Bitcoin Transaction version 2 (BIP370) implementation",
   "keywords": [
     "Ledger",
@@ -62,6 +62,8 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "rimraf": "^4.4.1",
     "typescript": "catalog:"
   },
@@ -71,8 +73,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "jest",
     "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit --customConditions node"

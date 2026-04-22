@@ -16,7 +16,7 @@ import type { TrackingAPI } from "./tracking";
 import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { Exchange } from "../exchange/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";

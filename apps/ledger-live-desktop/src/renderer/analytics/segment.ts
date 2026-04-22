@@ -236,6 +236,9 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
     : { enabled: false };
+  const ldmkCosmosSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkCosmosSigner")
+    : { enabled: false };
   const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
     : { enabled: false };
@@ -321,6 +324,7 @@ const extraProperties = (store: ReduxStore) => {
       hasCompletedOnboarding,
     ),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
+    isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,

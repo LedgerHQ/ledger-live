@@ -1,5 +1,5 @@
 import ReactNative from "react-native";
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import { State } from "~/reducers/types";
 
@@ -54,34 +54,34 @@ function withState(overrides: {
   withWallet40MainNav?: boolean;
 }) {
   return {
-    overrideInitialState: (state: State): State => ({
-      ...state,
-      settings: {
-        ...state.settings,
-        ...(overrides.hasCompletedOnboarding !== undefined && {
-          hasCompletedOnboarding: overrides.hasCompletedOnboarding,
-        }),
-        ...(overrides.lastConnectedDevice !== undefined && {
-          lastConnectedDevice:
-            overrides.lastConnectedDevice as State["settings"]["lastConnectedDevice"],
-        }),
-        ...(overrides.seenDevices !== undefined && {
-          seenDevices: overrides.seenDevices as State["settings"]["seenDevices"],
-        }),
-        ...(overrides.withWallet40MainNav && {
-          overriddenFeatureFlags: {
-            ...state.settings.overriddenFeatureFlags,
-            lwmWallet40: { enabled: true, params: { mainNavigation: true } },
-          },
-        }),
-      },
-      appstate: {
-        ...state.appstate,
-        ...(overrides.hasConnectedDevice !== undefined && {
-          hasConnectedDevice: overrides.hasConnectedDevice,
-        }),
-      },
-    }),
+    overrideInitialState: (state: State): State => {
+      const base: State = {
+        ...state,
+        settings: {
+          ...state.settings,
+          ...(overrides.hasCompletedOnboarding !== undefined && {
+            hasCompletedOnboarding: overrides.hasCompletedOnboarding,
+          }),
+          ...(overrides.lastConnectedDevice !== undefined && {
+            lastConnectedDevice:
+              overrides.lastConnectedDevice as State["settings"]["lastConnectedDevice"],
+          }),
+          ...(overrides.seenDevices !== undefined && {
+            seenDevices: overrides.seenDevices as State["settings"]["seenDevices"],
+          }),
+        },
+        appstate: {
+          ...state.appstate,
+          ...(overrides.hasConnectedDevice !== undefined && {
+            hasConnectedDevice: overrides.hasConnectedDevice,
+          }),
+        },
+      };
+      if (overrides.withWallet40MainNav) {
+        return withFlagOverrides({ lwmWallet40: { enabled: true, params: { mainNavigation: true } } })(base);
+      }
+      return base;
+    },
   };
 }
 

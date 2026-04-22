@@ -9,18 +9,22 @@ const signResult = {
   rawMessage: "Sign raw results",
 };
 const signFunction = jest.fn(() => signResult);
-jest.mock("../../generated/hw-signMessage", () => {
-  return {
-    signExistFamily: {
-      prepareMessageToSign: function () {
-        return signFunction();
-      },
-    },
-    bitcoin: {
-      otherMethod: function () {},
-    },
-  };
-});
+jest.mock("../../coin-modules/registry", () => ({
+  loadSetupForFamily: (family: string) => {
+    switch (family) {
+      case "signExistFamily":
+        return {
+          messageSigner: {
+            prepareMessageToSign: () => signFunction(),
+          },
+        };
+      case "bitcoin":
+        return { messageSigner: { signMessage: () => {} } };
+      default:
+        return {};
+    }
+  },
+}));
 
 describe("prepareMessageToSign", () => {
   it("calls the perFamily function if it's exist and returns this function results", () => {

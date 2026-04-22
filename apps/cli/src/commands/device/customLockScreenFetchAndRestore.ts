@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { firstValueFrom, from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
@@ -44,7 +43,7 @@ const exec = async (opts: CustomLockScreenFetchAndRestoreJobOpts) => {
   );
 
   // TODO: rework without double resolving promise
-  // eslint-disable-next-line
+  // oxlint-disable-next-line eslint/no-async-promise-executor
   await new Promise<void>(async () => {
     const hash = crypto.createHash("sha256").update(hexImage).digest("hex");
     console.log("Computing hash for input file");

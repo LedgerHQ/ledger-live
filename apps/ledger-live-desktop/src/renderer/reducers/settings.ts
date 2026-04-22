@@ -14,8 +14,6 @@ import {
   AccountLike,
   DeviceInfo,
   DeviceModelInfo,
-  Feature,
-  FeatureId,
   FirmwareUpdateContext,
   PortfolioRange,
 } from "@ledgerhq/types-live";
@@ -41,7 +39,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 /* Initial state */
 
@@ -50,6 +48,11 @@ export type VaultSigner = {
   host: string;
   workspace: string;
   token: string;
+};
+
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export type SettingsState = {
@@ -80,6 +83,7 @@ export type SettingsState = {
   developerMode: boolean;
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
+  analyticsConsentInfo: AnalyticsConsentInfo;
   sentryLogs: boolean; // also used for Datadog RUM opt-in
   lastUsedVersion: string;
   dismissedBanners: string[];
@@ -112,10 +116,6 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  overriddenFeatureFlags: {
-    [key in FeatureId]: Feature;
-  };
-  featureFlagsButtonVisible: boolean;
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
@@ -174,6 +174,10 @@ export const INITIAL_STATE: SettingsState = {
   loaded: false,
   shareAnalytics: true,
   sharePersonalizedRecommandations: true,
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  },
   hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
@@ -211,10 +215,6 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
-  featureFlagsButtonVisible: false,
-
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
@@ -268,18 +268,6 @@ type HandlersPayloads = {
     imageSize: number;
     imageHash: string;
   };
-  SET_OVERRIDDEN_FEATURE_FLAG: {
-    key: FeatureId;
-    value: Feature;
-  };
-  SET_OVERRIDDEN_FEATURE_FLAGS: {
-    overriddenFeatureFlags: {
-      [key in FeatureId]: Feature;
-    };
-  };
-  SET_FEATURE_FLAGS_BUTTON_VISIBLE: {
-    featureFlagsButtonVisible: boolean;
-  };
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
@@ -306,10 +294,6 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
-  SET_ANALYTICS_CONSENT_INFO: {
-    consentDate: Date;
-    privacyPolicyVersion: number;
-  };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -337,15 +321,40 @@ const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     const filteredPayload = filterValidSettings(payload);
+
+    let mergedPayload: Partial<SettingsState> = filteredPayload;
+    if (filteredPayload.analyticsConsentInfo !== undefined) {
+      mergedPayload = {
+        ...filteredPayload,
+        analyticsConsentInfo: {
+          ...state.analyticsConsentInfo,
+          ...filteredPayload.analyticsConsentInfo,
+        },
+      };
+    }
+
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(filteredPayload) as (keyof typeof filteredPayload)[]).some(
-      key => filteredPayload[key] !== state[key],
-    );
+    const changed = (Object.keys(mergedPayload) as (keyof typeof mergedPayload)[]).some(key => {
+      if (key === "analyticsConsentInfo" && mergedPayload.analyticsConsentInfo !== undefined) {
+        const m = mergedPayload.analyticsConsentInfo;
+        return (
+          m.consentDate !== state.analyticsConsentInfo.consentDate ||
+          m.privacyPolicyVersion !== state.analyticsConsentInfo.privacyPolicyVersion
+        );
+      }
+      return mergedPayload[key] !== state[key];
+    });
     if (!changed) return state;
-    return {
+
+    const next: SettingsState = {
       ...state,
-      ...filteredPayload,
+      ...mergedPayload,
     };
+    if (mergedPayload.analyticsConsentInfo !== undefined) {
+      next.lastAnalyticsConsentDate = mergedPayload.analyticsConsentInfo.consentDate;
+      next.privacyPolicyVersion = mergedPayload.analyticsConsentInfo.privacyPolicyVersion;
+    }
+    return next;
   },
 
   FETCH_SETTINGS: (state, { payload: settings }) => {
@@ -411,21 +420,6 @@ const handlers: SettingsHandlers = {
       ...state.currenciesSettings,
       [payload.key]: payload.value,
     },
-  }),
-  SET_OVERRIDDEN_FEATURE_FLAG: (state: SettingsState, { payload }) => ({
-    ...state,
-    overriddenFeatureFlags: {
-      ...state.overriddenFeatureFlags,
-      [payload.key]: payload.value,
-    },
-  }),
-  SET_OVERRIDDEN_FEATURE_FLAGS: (state: SettingsState, { payload }) => ({
-    ...state,
-    overriddenFeatureFlags: payload.overriddenFeatureFlags,
-  }),
-  SET_FEATURE_FLAGS_BUTTON_VISIBLE: (state: SettingsState, { payload }) => ({
-    ...state,
-    featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
   SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
     ...state,
@@ -536,14 +530,6 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
-  }),
-  SET_ANALYTICS_CONSENT_INFO: (
-    state: SettingsState,
-    { payload: { consentDate, privacyPolicyVersion } },
-  ) => ({
-    ...state,
-    lastAnalyticsConsentDate: consentDate.toISOString(),
-    privacyPolicyVersion: privacyPolicyVersion,
   }),
 };
 
@@ -778,12 +764,18 @@ export const shareAnalyticsSelector = (state: State) => state.settings.shareAnal
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
 
+export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo =>
+  state.settings.analyticsConsentInfo ?? {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  };
+
 // Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
 
   if (state.featureFlags?.resolved?.analyticsOptIn?.enabled) {
-    if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
+    if (!s.lastAnalyticsConsentDate) {
       return false;
     }
 
@@ -801,15 +793,10 @@ export const trackingEnabledSelector = (state: State) => {
     if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
       return false;
     }
-
-    if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
-      return false;
-    }
   }
 
   return s.shareAnalytics || s.sharePersonalizedRecommandations;
 };
-
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>
@@ -871,11 +858,3 @@ export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasS
 // Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
 export const hasOnboardedDeviceSelector = (state: State) =>
   !!lastOnboardedDeviceSelector(state) || lastSeenDeviceSelector(state) !== null;
-
-export const analyticsConsentInfoSelector = (state: State) => ({
-  consentDate:
-    state.settings.lastAnalyticsConsentDate !== null
-      ? new Date(state.settings.lastAnalyticsConsentDate)
-      : null,
-  privacyPolicyVersion: state.settings.privacyPolicyVersion,
-});

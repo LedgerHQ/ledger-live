@@ -11,7 +11,7 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import BigNumber from "bignumber.js";
 import React from "react";
-import { renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/testSetup";
+import { renderWithMockedCounterValuesProvider, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   arbitrumCurrency,
@@ -51,15 +51,15 @@ const createMockedInitialState = (dialogParams = {}) => ({
     ],
     settings: {
       ...INITIAL_STATE,
-      overriddenFeatureFlags: {
-        lldModularDrawer: {
-          enabled: true,
-          params: {
-            enableModularization: true,
-          },
+    },
+    ...withFlagOverrides({
+      lldModularDrawer: {
+        enabled: true,
+        params: {
+          enableModularization: true,
         },
       },
-    },
+    }),
     modularDialog: {
       isOpen: true,
       dialogParams: {
@@ -181,15 +181,10 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       accounts: ETH_ACCOUNT,
       settings: {
         ...INITIAL_STATE,
-        overriddenFeatureFlags: {
-          lldModularDrawer: {
-            enabled: true,
-            params: {
-              enableModularization: false,
-            },
-          },
-        },
       },
+      ...withFlagOverrides({
+        lldModularDrawer: { enabled: true, params: { enableModularization: false } },
+      }),
       initialState: {
         modularDialog: {
           isOpen: true,

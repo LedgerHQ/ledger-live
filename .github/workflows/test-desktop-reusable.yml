@@ -52,6 +52,9 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -67,7 +70,6 @@ jobs:
         run: pnpm desktop lint:ci
       - name: lint (guardrails)
         run: pnpm desktop lint:guardrails
-        continue-on-error: true  # TODO: Remove once release branch is back-merged into develop (see JIRA)
       - name: typecheck
         run: pnpm desktop typecheck
       - name: check for dead code
@@ -96,6 +98,9 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -141,6 +146,9 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -223,6 +231,9 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -233,10 +244,38 @@ jobs:
           skip_ruby: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
           install_playwright: true
+
+      - name: Start mitmproxy
+        continue-on-error: true
+        run: |
+          mise run mitmproxy:decrypt \
+            --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}" \
+            --file="apps/ledger-live-desktop/tests/mocks/firebase_feature_flags.tar.gz.enc" \
+            --output-dir="apps/ledger-live-desktop/tests/mocks/local"
+          mise run mitmproxy:start --mock-responses-file="apps/ledger-live-desktop/tests/mocks/local/firebase_feature_flags.json"
+
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+
+      - name: Stop mitmproxy
+        id: stop-mitmproxy
+        continue-on-error: true
+        if: ${{ !cancelled() }}
+        run: |
+          mise run mitmproxy:stop --encrypt-key="${{ secrets.MITMPROXY_LOGS_KEY }}"
+          rm -f "apps/ledger-live-desktop/tests/mocks/local/firebase_feature_flags.json"
+
+      - name: Upload mitmproxy logs
+        continue-on-error: true
+        if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mitmproxy-logs
+          path: ${{ steps.stop-mitmproxy.outputs.mitmproxy_logs_archive }}
+          retention-days: 1
+
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
@@ -246,6 +285,7 @@ jobs:
           workspace: ${{ github.workspace }}
           os: linux
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

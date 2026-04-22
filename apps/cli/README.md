@@ -287,6 +287,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
      --subAccount <String>    : use a sub account instead of the parent by index
      --duration <String>      : duration in day
      --resource <String>      : reward ENERGY or BANDWIDTH
+     --tronVoteName <String>: name of the super representative voting
      --tronVoteAddress <String>: address of the super representative voting
      --tronVoteCount <String> : number of votes for the vote address
      --validator <String>     : address of recipient validator that will receive the delegate

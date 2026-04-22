@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import Allocations from "~/screens/WalletCentricSections/Allocations";
+import Allocations from "./Allocations";
 import { NavigatorName, ScreenName } from "~/const";
 import { LumenTextStyle, LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { track } from "~/analytics";

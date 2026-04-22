@@ -1,20 +1,22 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
+  AlpacaApi,
+  BalanceOptions,
   Block,
   BlockInfo,
-  Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
-  FeeEstimation,
-  Operation,
-  Stake,
-  Reward,
-  TransactionIntent,
   CraftedTransaction,
-  AlpacaApi,
+  Cursor,
+  FeeEstimation,
+  ListOperationsOptions,
+  Operation,
+  Page,
+  Reward,
+  Stake,
+  TransactionIntent,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
 import coinConfig, { type StellarConfig } from "../config";
@@ -24,9 +26,9 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  validateIntent,
   lastBlock,
   listOperations,
+  validateIntent,
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
@@ -48,7 +50,8 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
     getBlock(_height: number): Promise<Block> {
@@ -72,6 +75,7 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
       throw new Error("getValidators is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 
@@ -124,18 +128,9 @@ async function estimate(_transactionIntent: TransactionIntent): Promise<FeeEstim
 
 async function operations(
   address: string,
-  { minHeight, cursor }: ListOperationsOptions,
+  { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  if (minHeight) {
-    const [items, next] = await operationsFromHeight(address, minHeight);
-    return { items, next: next || undefined };
-  }
-  const isInitSync = !cursor || cursor === "";
-  // FIXME: why bother creating limit and pagingToken here, something is off?!
-  const newPagination = isInitSync
-    ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
-    : { pagingToken: cursor, minHeight: 0 };
-  const [items, next] = await operationsFromHeight(address, newPagination.minHeight);
+  const { items, next } = await operationsFromHeight(address, minHeight);
   return { items, next: next || undefined };
 }
 
@@ -147,10 +142,7 @@ type PaginationState = {
   accumulator: Operation[];
 };
 
-async function operationsFromHeight(
-  address: string,
-  minHeight: number,
-): Promise<[Operation[], string]> {
+async function operationsFromHeight(address: string, minHeight: number): Promise<Page<Operation>> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,
@@ -181,7 +173,7 @@ async function operationsFromHeight(
     }
   }
 
-  return [state.accumulator, state.apiNextCursor ? state.apiNextCursor : ""];
+  return { items: state.accumulator, next: state.apiNextCursor ? state.apiNextCursor : "" };
 }
 
 /**

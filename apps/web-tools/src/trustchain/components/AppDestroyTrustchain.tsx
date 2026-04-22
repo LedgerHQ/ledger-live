@@ -16,7 +16,6 @@ export function AppDestroyTrustchain({
   const action = useCallback(
     (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
       sdk.destroyTrustchain(trustchain, memberCredentials).then(() => {
-        // all of these state should be reset
         setTrustchain(null);
       }),
     [sdk, setTrustchain],
@@ -27,10 +26,6 @@ export function AppDestroyTrustchain({
       buttonTitle="sdk.destroyTrustchain"
       inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
       action={action}
-      buttonProps={{
-        "data-tooltip-id": "tooltip",
-        "data-tooltip-content": "completely removes the trustchain",
-      }}
     />
   );
 }

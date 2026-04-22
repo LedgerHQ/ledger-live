@@ -4,6 +4,8 @@ import {
   accountWithTokenAccountFixture,
   tokenTransactionFixture,
   transactionFixture,
+  tokenTransactionWithUsdcFeeFixture,
+  usdcTokenAccount,
 } from "../../bridge/fixtures";
 import prepareTransaction from "../../bridge/prepareTransaction";
 
@@ -251,5 +253,74 @@ describe("prepareTransaction", () => {
       subAccountId: "subAccountId",
       data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
+  });
+
+  it("should return token transaction with fee currency preserved", async () => {
+    const transaction = await prepareTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(222222),
+        spendableBalance: BigNumber(222222),
+      },
+      {
+        ...tokenTransactionWithUsdcFeeFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(22),
+      },
+    );
+
+    expect(transaction.feeCurrency).toEqual(tokenTransactionWithUsdcFeeFixture.feeCurrency);
+    expect(transaction.feeCurrencyUnwrapped).toEqual(
+      tokenTransactionWithUsdcFeeFixture.feeCurrencyUnwrapped,
+    );
+    expect(transaction.feeCurrencyAccountId).toEqual(usdcTokenAccount.id);
+  });
+
+  it("should handle useAllAmount with fee currency in same token", async () => {
+    const transaction = await prepareTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(222222),
+        spendableBalance: BigNumber(222222),
+      },
+      {
+        ...tokenTransactionWithUsdcFeeFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(1000000), // 1 USDC
+        useAllAmount: true,
+      },
+    );
+
+    // With useAllAmount and paying fees in USDC, the amount should be full balance minus normalized fees
+    expect(transaction.useAllAmount).toBe(true);
+    expect(transaction.feeCurrency).toEqual(tokenTransactionWithUsdcFeeFixture.feeCurrency);
+    // Amount should be calculated considering fee conversion from Wei to token decimals
+    expect(transaction.amount.gt(0)).toBe(true);
+  });
+
+  it("should handle useAllAmount with fee currency in different token", async () => {
+    const transaction = await prepareTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(222222),
+        spendableBalance: BigNumber(222222),
+      },
+      {
+        ...tokenTransactionFixture,
+        feeCurrency: "0x617f3112bf5397d0467d315cc709ef968d9ba546" as `0x${string}`, // USDT
+        feeCurrencyUnwrapped: "0x617f3112bf5397d0467d315cc709ef968d9ba546" as `0x${string}`,
+        feeCurrencyAccountId:
+          accountWithTokenAccountFixture.subAccounts[
+            accountWithTokenAccountFixture.subAccounts.length - 1
+          ].id,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(22),
+        useAllAmount: true,
+      },
+    );
+
+    // When paying fees in different token, should use full balance (212)
+    expect(transaction.amount).toEqual(BigNumber(212));
+    expect(transaction.useAllAmount).toBe(true);
   });
 });

@@ -1,0 +1,33 @@
+{
+  "name": "ledger-live-mobile-e2e-tests",
+  "targets": {
+    "e2e:ci": {
+      "executor": "nx:run-script",
+      "dependsOn": ["ledger-live-mobile:prepare-e2e-deps"],
+      "options": {
+        "script": "e2e:ci"
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/ledger-live-mobile/artifacts/**",
+        "{projectRoot}/artifacts/**"
+      ],
+      "inputs": ["default", "mobileEnv", "sharedEnv"],
+      "cache": true,
+      "parallelism": true
+    },
+    "e2e:ci:with-cli": {
+      "executor": "nx:run-script",
+      "dependsOn": ["ledger-live-mobile:prepare-e2e-deps", "@ledgerhq/live-cli:build"],
+      "options": {
+        "script": "e2e:ci"
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/ledger-live-mobile/artifacts/**",
+        "{projectRoot}/artifacts/**"
+      ],
+      "inputs": ["default", "mobileEnv", "sharedEnv"],
+      "cache": true,
+      "parallelism": true
+    }
+  }
+}

@@ -7,7 +7,7 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -26,13 +26,16 @@ const tooLowAmountForQuoteSwaps = [
     ctaBanner: false,
     quotesVisible: true,
   },
-  {
-    swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
-    xrayTicket: "B2CQA-3241",
-    errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
-    ctaBanner: true,
-    quotesVisible: true,
-  },
+
+  // Enable test when "Sponsored" program is over
+
+  // {
+  //   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
+  //   xrayTicket: "B2CQA-3241",
+  //   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
+  //   ctaBanner: true,
+  //   quotesVisible: true,
+  // },
   {
     swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
@@ -187,7 +190,8 @@ test.describe(`Swap - Error message when network fees are above account balance 
     ],
   });
 
-  test(
+  // Enable test when "Sponsored" program is over
+  test.skip(
     `Swap - Network fees above account balance`,
     {
       tag: [

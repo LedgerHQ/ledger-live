@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
@@ -139,7 +140,6 @@ export function AppWalletSync({
         };
       });
     const data = { accounts, accountNames };
-    // locally reset the editor
     setData(data);
     setJson(JSON.stringify(data, null, 2));
   }, [setData]);
@@ -184,42 +184,32 @@ export function AppWalletSync({
   }, [trustchain, memberCredentials, walletSyncSdk]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       {readOnly ? (
-        <p>
-          Accounts Sync was enabled. The data is read-only.{" "}
-          <button onClick={() => takeControl && takeControl()}>Take Control Back</button>
-        </p>
+        <div className="flex items-center gap-8 body-2 text-muted">
+          <span>Accounts Sync was enabled. The data is read-only.</span>
+          <Button size="sm" appearance="transparent" onClick={() => takeControl && takeControl()}>
+            Take Control Back
+          </Button>
+        </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Actionable action={onPull} buttonTitle="Pull" inputs={[]}></Actionable>
+        <div className="flex items-center gap-8 flex-wrap">
+          <Actionable action={onPull} buttonTitle="Pull" inputs={[]} />
           <Actionable action={onPush} buttonTitle="Push" inputs={[]} />
-          <Actionable action={onGenRandomAccountData} buttonTitle="🎲" inputs={[]} />
+          <Actionable action={onGenRandomAccountData} buttonTitle="Random" inputs={[]} />
           <Actionable action={onDestroy} buttonTitle="Destroy" inputs={[]} />
           <Actionable action={onListen} buttonTitle="Listen" inputs={[]} />
           {onUnsubscribe ? (
-            <a
-              style={{
-                cursor: "pointer",
-                fontWeight: "bold",
-                color: "black",
-                textDecoration: "underline",
-              }}
-              onClick={onUnsubscribe}
-            >
+            <Button size="sm" appearance="transparent" onClick={onUnsubscribe}>
               Stop
-            </a>
+            </Button>
           ) : null}
         </div>
       )}
-      <JsonEditor value={json} onChange={onJsonEditorChange} readOnly={readOnly} />
-      {error ? <div style={{ color: "red" }}>{error}</div> : null}
+      <div className="border border-base rounded-lg overflow-hidden">
+        <JsonEditor value={json} onChange={onJsonEditorChange} readOnly={readOnly} />
+      </div>
+      {error ? <p className="text-error body-3">{error}</p> : null}
     </div>
   );
 }

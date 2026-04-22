@@ -1,3 +1,11 @@
+import {
+  FEATURE_FLAGS_DEFAULTS,
+  FEATURE_FLAGS_INITIAL_STATE,
+  Feature,
+  FeatureId,
+  Features,
+  PartialFeatures,
+} from "@shared/feature-flags";
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -60,7 +68,36 @@ type DeepPartial<T> = T extends Function
       ? { [P in keyof T]?: DeepPartial<T[P]> }
       : T;
 
-config.disabled = true;
+type LooseFlagOverrides = {
+  [K in FeatureId]?: {
+    enabled?: boolean;
+    params?: Features[K] extends { params?: infer P } ? Partial<NonNullable<P>> : never;
+  };
+};
+
+export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State> {
+  const merged: Record<string, Feature> = {};
+  for (const key of Object.keys(flags) as FeatureId[]) {
+    const override = flags[key];
+    const def = FEATURE_FLAGS_DEFAULTS[key] ?? { enabled: false };
+    merged[key] = {
+      ...def,
+      ...(override?.enabled !== undefined && { enabled: override.enabled }),
+      ...(override?.params !== undefined && {
+        params: {
+          ...((def as Record<string, unknown>)["params"] as Record<string, unknown> | undefined),
+          ...override.params,
+        },
+      }),
+    };
+  }
+  return {
+    featureFlags: {
+      ...FEATURE_FLAGS_INITIAL_STATE,
+      overrides: merged as unknown as PartialFeatures,
+    },
+  };
+}
 
 function CountervaluesProviders({
   children,

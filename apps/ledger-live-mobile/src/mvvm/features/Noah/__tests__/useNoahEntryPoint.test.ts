@@ -12,9 +12,9 @@ describe("useReceiveNoahEntry", () => {
     const { result } = renderHook(() => useReceiveNoahEntry({}), {
       overrideInitialState: (state: State) => ({
         ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: { noah: { enabled: false } },
+        featureFlags: {
+          ...state.featureFlags,
+          overrides: { noah: { enabled: false } },
         },
       }),
     });
@@ -31,9 +31,9 @@ describe("useReceiveNoahEntry", () => {
       {
         overrideInitialState: (state: State) => ({
           ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
+          featureFlags: {
+            ...state.featureFlags,
+            overrides: {
               noah: { enabled: true, params: { activeCurrencyIds: ["ethereum/erc20/usd__coin"] } },
             },
           },
@@ -56,9 +56,9 @@ describe("useReceiveNoahEntry", () => {
       {
         overrideInitialState: (state: State) => ({
           ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
+          featureFlags: {
+            ...state.featureFlags,
+            overrides: {
               noah: { enabled: true, params: { activeCurrencyIds: ["ethereum/erc20/usd__coin"] } },
             },
           },

@@ -1,63 +1,36 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
-import { useTheme } from "styled-components/native";
-import { track } from "~/analytics";
-import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import {
+  createLumenNativeStackNavigator,
+  getStackNavigationConfigV4,
+} from "LLM/components/Navigation";
+import NavigationHeaderCloseButton from "LLM/components/Navigation/HeaderCloseButton";
 import AnalyticsMain from "./screens/AnalyticsMain";
 import DetailedAllocation from "./screens/DetailedAllocation";
 import { AnalyticsNavigatorParamsList } from "./types";
-import { RouteProp } from "@react-navigation/native";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 
-type NavigationProps = NativeStackNavigationProp<
+const Stack = createLumenNativeStackNavigator<AnalyticsNavigatorParamsList>();
+
+type DetailedAllocationNavigation = StackNavigatorNavigation<
   AnalyticsNavigatorParamsList,
-  ScreenName.Analytics | ScreenName.DetailedAllocation,
-  undefined
+  ScreenName.DetailedAllocation
 >;
 
-type RouteProps = RouteProp<
-  AnalyticsNavigatorParamsList,
-  ScreenName.Analytics | ScreenName.DetailedAllocation
->;
-
-type HeaderProps = {
-  navigation: NavigationProps;
-  route: RouteProps;
+const renderHeaderRight = (navigation: DetailedAllocationNavigation) => {
+  const handleClose = () => {
+    navigation.goBack();
+  };
+  return <NavigationHeaderCloseButton onClose={handleClose} />;
 };
 
 export default function Navigator() {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const { t } = useTranslation();
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-
-  const headerLeft = ({ navigation, route }: HeaderProps) => {
-    const handleBack = () => {
-      track("button_clicked", {
-        button: "Back",
-        page: route.name,
-      });
-      navigation.goBack();
-    };
-    return <NavigationHeaderBackButton extraMarginLeft={8} onPress={handleBack} />;
-  };
-
-  const headerRight = ({ navigation, route }: HeaderProps) => {
-    const handleClose = () => {
-      track("button_clicked", {
-        button: "Close",
-        page: route.name,
-      });
-      navigation.goBack();
-    };
-    return <NavigationHeaderCloseButton onPress={handleClose} />;
-  };
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
 
   return (
     <Stack.Navigator
@@ -69,24 +42,25 @@ export default function Navigator() {
       <Stack.Screen
         name={ScreenName.Analytics}
         component={AnalyticsMain}
-        options={({ navigation, route }) => ({
-          headerTitle: t("analyticsAllocation.header.main"),
-          headerRight: () => null,
-          headerLeft: () => headerLeft({ navigation, route }),
+        options={() => ({
+          title: t("analyticsAllocation.header.main"),
+          lumenNavBar: {
+            renderTrailing: () => null,
+          },
         })}
       />
       <Stack.Screen
         name={ScreenName.DetailedAllocation}
         component={DetailedAllocation}
-        options={({ navigation, route }) => ({
-          headerTitle: t("analyticsAllocation.allocation.title"),
-          headerRight: () => headerRight({ navigation, route }),
-          headerLeft: () => null,
+        options={({ navigation }) => ({
+          title: t("analyticsAllocation.allocation.title"),
+          lumenNavBar: {
+            renderLeading: () => null,
+            renderTrailing: () => renderHeaderRight(navigation),
+          },
           animation: "slide_from_bottom",
         })}
       />
     </Stack.Navigator>
   );
 }
-
-const Stack = createNativeStackNavigator<AnalyticsNavigatorParamsList>();

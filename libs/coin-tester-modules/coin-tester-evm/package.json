@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -51,8 +51,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --runInBand",
     "start:debug": "DOTENV_CONFIG_PATH=.env node --inspect-brk ./node_modules/jest/bin/jest.js --runTestsByPath src/*.test.ts --runInBand",
@@ -83,6 +85,8 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.9.2",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }

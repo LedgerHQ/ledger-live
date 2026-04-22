@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { setEnv } from "@ledgerhq/live-env";
+import { Tag } from "@ledgerhq/lumen-ui-react";
 import { v4 as uuid } from "uuid";
 import { Actionable } from "./Actionable";
 import useEnv from "../useEnv";
@@ -14,7 +15,9 @@ export function AppMockEnv() {
       action={action}
       value={mockEnv}
       setValue={v => setEnv("MOCK", v || "")}
-      valueDisplay={v => "MOCK ENV: " + (v || "(unset)")}
+      valueDisplay={v => (
+        <Tag size="sm" label={v ? "MOCK ON" : "MOCK OFF"} />
+      )}
     />
   );
 }

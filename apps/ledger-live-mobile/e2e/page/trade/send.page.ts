@@ -101,6 +101,12 @@ export default class SendPage {
 
   @Step("Expect Continue button disabled")
   async expectContinueButtonDisabled() {
+    await expect(getElementById(this.recipientContinueButtonId)).toBeVisible();
+    await tapById(this.recipientContinueButtonId);
+  }
+
+  @Step("Expect Continue button not visible")
+  async expectContinueButtonNotVisible() {
     await expect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
   }
 

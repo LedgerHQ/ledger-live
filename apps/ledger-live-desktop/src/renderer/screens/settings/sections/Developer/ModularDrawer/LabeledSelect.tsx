@@ -8,6 +8,7 @@ import {
   SelectContent,
   SelectItemText,
   SelectItem,
+  SelectList,
 } from "@ledgerhq/lumen-ui-react";
 
 interface LabeledSelectProps<T extends SelectOption = SelectOption> {
@@ -23,6 +24,8 @@ export const LabeledSelect = <T extends SelectOption = SelectOption>({
   options,
   onChange,
 }: LabeledSelectProps<T>) => {
+  const items = options.map(option => ({ value: option.value, label: option.label }));
+
   return (
     <div className="flex w-400 flex-row items-center">
       <Text variant="body" fontSize="14px" mr="2">
@@ -31,18 +34,22 @@ export const LabeledSelect = <T extends SelectOption = SelectOption>({
 
       <Select
         value={value.value}
+        items={items}
         onValueChange={option => {
-          const found = option && options.find(o => o.value === option);
+          if (option == null) return;
+          const found = options.find(o => o.value === option);
           if (found) onChange(found);
         }}
       >
         <SelectTrigger label={label} />
         <SelectContent>
-          {options.map(option => (
-            <SelectItem key={option.value} value={option.value}>
-              <SelectItemText>{option.label}</SelectItemText>
-            </SelectItem>
-          ))}
+          <SelectList
+            renderItem={item => (
+              <SelectItem key={item.value} value={item.value}>
+                <SelectItemText>{item.label}</SelectItemText>
+              </SelectItem>
+            )}
+          />
         </SelectContent>
       </Select>
     </div>

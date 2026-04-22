@@ -50,6 +50,8 @@ business logic or state management**. Its only job is:
   - **Connection / initialization / intent error** → render the corresponding
     platform-injected error component (`ConnectionErrorComponent`,
     `InitializationErrorComponent`, `IntentErrorComponent`).
+  - **Invalid operation** → render the platform-injected
+    `InvalidOperationComponent`.
   - **Idle** → render the last intent snapshot (component + last `jobState` +
     `extraProps`) if one exists, otherwise render nothing.
 
@@ -107,6 +109,15 @@ pnpm workspace catalog). Rationale:
 The machine is wrapped in a `DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>`
 class that exposes typed public methods for every event and accepts
 `StateMachineListeners` at construction for state observation.
+
+#### Two-level listener dispatch
+
+When a job emits, completes or errors, the SM calls **intent-level listeners
+first** (optional callbacks on the `Intent` object: `onJobStateChanged`,
+`onJobComplete`, `onJobError`), then **executor-level listeners**
+(`StateMachineListeners`). This ordering lets intent-specific handlers
+(e.g. storing a derived address) execute before cross-cutting executor
+callbacks read the updated state.
 
 ---
 

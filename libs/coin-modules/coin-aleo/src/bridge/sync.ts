@@ -18,7 +18,7 @@ import {
   isRecordScannerReady,
   splitPrivateAndPublicOperations,
 } from "../logic/utils";
-import { accessProvableApi, patchPublicOperations } from "../network/utils";
+import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
 import type {
   AleoAccount,
   AleoOperation,
@@ -27,7 +27,6 @@ import type {
 } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
-import { apiClient } from "../network/api";
 
 /**
  * Performs the public (transparent) portion of the Aleo account sync.
@@ -168,7 +167,6 @@ export async function performPrivateSync(
   const provableApi = await accessProvableApi({
     currency,
     viewKey,
-    address,
     provableApi: initialAccount.aleoResources?.provableApi ?? null,
   }).catch(err => {
     // private sync logic will be probably handled separately with https://ledgerhq.atlassian.net/browse/LIVE-26440
@@ -212,18 +210,14 @@ export async function performPrivateSync(
   const lastPrivateBlockHeight = oldPrivateOps[0]?.blockHeight ?? 0;
 
   const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
-    apiClient.getAccountOwnedRecords({
+    fetchAllOwnedRecords({
       currency,
-      jwtToken: provableApi.jwt.token,
       uuid: provableApi.uuid,
-      apiKey: provableApi.apiKey,
       start: lastPrivateBlockHeight,
     }),
-    apiClient.getAccountOwnedRecords({
+    fetchAllOwnedRecords({
       currency,
-      jwtToken: provableApi.jwt.token,
       uuid: provableApi.uuid,
-      apiKey: provableApi.apiKey,
       unspent: true,
     }),
   ]);
@@ -258,6 +252,7 @@ export async function performPrivateSync(
     currency,
     viewKey,
     privateRecords: filteredUnspentRecords,
+    oldUnspentRecords: initialAccount.aleoResources?.unspentPrivateRecords ?? [],
   });
   const privateBalance = privateBalanceResult.balance;
   const unspentPrivateRecords: AleoUnspentRecord[] = privateBalanceResult.unspentRecords;
@@ -425,7 +420,38 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
     });
 }
 
+/**
+ * Aleo doesn't have a per-account transaction nonce, so there is no natural value
+ * to assign to `transactionSequenceNumber` on confirmed operations.
+ *
+ * The framework's `shouldRetainPendingOperation` drops a pending operation when the most recent
+ * confirmed operation from the same sender has an equal or higher `transactionSequenceNumber`.
+ *
+ * Optimistic pending operations are created with increasing sequence numbers via `getNextSequenceNumber`,
+ * because without this only one pending operation could be rendered in LW.
+ * Confirmed operations lack this field, making the comparison always false and leaving pending operations stuck.
+ *
+ * Instead pending operations are removed here by matching on operation id:
+ * once a confirmed operation with the same id appears in the confirmed list,
+ * the corresponding pending operation is no longer needed.
+ */
+export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccount {
+  const pendingOperations = synced.pendingOperations ?? [];
+
+  if (pendingOperations.length === 0) {
+    return synced;
+  }
+
+  const confirmedIds = new Set(synced.operations.map(o => o.id));
+
+  return {
+    ...synced,
+    pendingOperations: pendingOperations.filter(po => !confirmedIds.has(po.id)),
+  };
+}
+
 export const sync = makeSync<AleoTransaction, AleoAccount>({
   getAccountShape: makeGetAccountShape(),
   shouldMergeOps: false,
+  postSync,
 });

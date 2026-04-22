@@ -237,10 +237,10 @@ describe("portfolioAssets", () => {
             const base = INITIAL_STATE.overrideInitialState(state);
             return {
               ...base,
-              settings: {
-                ...base.settings,
-                overriddenFeatureFlags: {
-                  ...base.settings.overriddenFeatureFlags,
+              featureFlags: {
+                ...base.featureFlags,
+                overrides: {
+                  ...base.featureFlags.overrides,
                   lwmWallet40: { enabled: false },
                   ptxPerpsLiveAppMobile: { enabled: true },
                 },
@@ -263,10 +263,10 @@ describe("portfolioAssets", () => {
             const base = INITIAL_STATE.overrideInitialState(state);
             return {
               ...base,
-              settings: {
-                ...base.settings,
-                overriddenFeatureFlags: {
-                  ...base.settings.overriddenFeatureFlags,
+              featureFlags: {
+                ...base.featureFlags,
+                overrides: {
+                  ...base.featureFlags.overrides,
                   lwmWallet40: { enabled: true },
                   ptxPerpsLiveAppMobile: { enabled: true },
                 },

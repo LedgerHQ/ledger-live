@@ -821,7 +821,7 @@ describe("serialization", () => {
         amount: 1000n,
         memo: Buffer.from("temp"),
       };
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      // oxlint-disable-next-line typescript/consistent-type-assertions
       delete (payload as Partial<typeof payload>).memo;
 
       const tx: Transaction = {

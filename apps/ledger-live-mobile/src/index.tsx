@@ -102,6 +102,7 @@ import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 logStartupEvent("After js imports");
 
@@ -139,7 +140,7 @@ function App() {
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
-
+  const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
       trackErrors: datadogFF?.params?.trackErrors ?? false,
@@ -165,11 +166,17 @@ function App() {
   }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
+    if (typeof ldmkCosmosSignerFeatureFlag?.enabled === "boolean") {
+      setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
+    }
+  }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
     if (providerNumber) {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk, providerNumber]);
 
   useEffect(() => registerTransports(), []);

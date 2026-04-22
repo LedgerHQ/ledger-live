@@ -65,6 +65,8 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
     storageLimit: tx?.storageLimit || undefined,
     estimatedFees: tx?.estimatedFees || undefined,
     taquitoError: tx?.taquitoError || undefined,
+    contractAddress: tx?.contractAddress,
+    tokenId: tx?.tokenId,
   };
 }
 

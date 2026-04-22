@@ -14,6 +14,10 @@ export const lwmWallet40 = flagWith(
     onboardingWidget: z.boolean(),
     newReceiveDialog: z.boolean().optional(),
     operationsList: z.boolean(),
+    aggregatedAssets: z.boolean(),
+    myWallet: z.boolean(),
+    quickActionsCtasVariant: z.boolean().optional(),
+    brazePlacement: z.boolean().optional(),
   },
   {
     enabled: false,
@@ -28,6 +32,8 @@ export const lwmWallet40 = flagWith(
       assetSection: true,
       onboardingWidget: true,
       operationsList: true,
+      aggregatedAssets: true,
+      myWallet: true,
     },
   },
 );

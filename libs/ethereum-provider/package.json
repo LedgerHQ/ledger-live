@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ethereum-provider",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Ledger Live ethereum provider",
   "keywords": [
@@ -33,13 +33,17 @@
     "@types/jest": "catalog:",
     "@types/uuid": "^9.0.8",
     "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:"
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib",
     "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "jest",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"

@@ -37,6 +37,12 @@ const options = [
     desc: "reward ENERGY or BANDWIDTH",
   },
   {
+    name: "tronVoteName",
+    type: String,
+    multiple: true,
+    desc: "name of the super representative voting",
+  },
+  {
     name: "tronVoteAddress",
     type: String,
     multiple: true,
@@ -111,12 +117,14 @@ function inferTransactions(
     invariant(["BANDWIDTH", "ENERGY"].includes(resource), `Unexpected resource: ${resource}`);
   }
 
+  const voteNames: string[] = opts["tronVoteName"] || [];
   const voteAddresses: string[] = opts["tronVoteAddress"] || [];
   const voteCounts: number[] = (opts["tronVoteCount"] || []).map((value: string) => {
     invariant(Number.isInteger(Number(value)), `Invalid integer: ${value}`);
     return parseInt(value);
   });
-  const votes: Vote[] = zipWith(voteAddresses, voteCounts, (a, c) => ({
+  const votes: Vote[] = zipWith(voteNames, voteAddresses, voteCounts, (n, a, c) => ({
+    name: n,
     address: a,
     voteCount: c,
   }));
@@ -148,12 +156,9 @@ const formatOptStr = (str: string | null | undefined): string => str || "";
 const superRepresentativesFormatters = {
   json: (srData: SuperRepresentativeData): string => JSON.stringify(srData),
   default: (srData: SuperRepresentativeData): string => {
-    const headerList = 'address "name" url voteCount brokerage isJobs';
+    const headerList = "address url voteCount isJobs";
     const strList = srData.list.map(
-      sr =>
-        `${sr.address} "${formatOptStr(sr.name)}" ${formatOptStr(sr.url)} ${sr.voteCount} ${
-          sr.brokerage
-        } ${sr.isJobs}`,
+      sr => `${sr.address} ${formatOptStr(sr.url)} ${sr.voteCount} ${sr.isJobs}`,
     );
     const metaData = [
       `nextVotingDate: ${srData.nextVotingDate}`,

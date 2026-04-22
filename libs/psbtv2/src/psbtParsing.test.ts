@@ -68,17 +68,17 @@ describe("psbtParsing helpers", () => {
         if (encoding === "base64" && typeof value === "string" && value.includes("causeError")) {
           throw new Error("base64 decode failure");
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/consistent-type-assertions
+        // oxlint-disable-next-line typescript/no-explicit-any, typescript/consistent-type-assertions
         return originalFrom(value as any, encoding as any);
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/consistent-type-assertions
+      // oxlint-disable-next-line typescript/no-explicit-any, typescript/consistent-type-assertions
       (Buffer as any).from = patchedFrom as any;
 
       try {
         expect(() => parsePsbt("causeError")).toThrow("Invalid PSBT: not valid base64");
       } finally {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/consistent-type-assertions
+        // oxlint-disable-next-line typescript/no-explicit-any, typescript/consistent-type-assertions
         (Buffer as any).from = originalFrom as any;
       }
     });

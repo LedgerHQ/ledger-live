@@ -1,0 +1,5 @@
+# Bun runtime configuration for wallet-cli.
+
+[test]
+coverageReporter = ["lcov"]
+coverageDir = "coverage"

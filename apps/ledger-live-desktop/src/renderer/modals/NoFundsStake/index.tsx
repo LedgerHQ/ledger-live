@@ -122,7 +122,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     trackPage("Stake", "Service_modal", {
       source: location.pathname,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const actionsMap: Record<"buy" | "swap" | "receive", boolean> = {

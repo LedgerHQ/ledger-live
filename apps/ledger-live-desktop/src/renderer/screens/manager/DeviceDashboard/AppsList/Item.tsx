@@ -163,7 +163,7 @@ const Item = ({
           </AppTitleAndSubtitleContainer>
         </ToolTip>
       </Box>
-      <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
+      <Box flex="0.7" noShrink horizontal alignContent="center" justifyContent="flex-start" ml={5}>
         {isLiveSupported ? (
           <>
             <Box>

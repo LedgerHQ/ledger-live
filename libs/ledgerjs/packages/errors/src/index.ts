@@ -102,6 +102,7 @@ export const UnstakeNotEnoughStakedBalanceLeft = createCustomErrorClass(
 export const RestakeNotEnoughStakedBalanceLeft = createCustomErrorClass(
   "RestakeNotEnoughStakedBalanceLeft",
 );
+
 export const NotEnoughToRestake = createCustomErrorClass("NotEnoughToRestake");
 export const NotEnoughToUnstake = createCustomErrorClass("NotEnoughToUnstake");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
@@ -178,6 +179,10 @@ export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeNotLoadedSwap = createCustomErrorClass("FeeNotLoadedSwap");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
+export const ValAddressRequired = createCustomErrorClass("ValAddressRequired");
+export const RedelegateDstValAddressRequired = createCustomErrorClass(
+  "RedelegateDstValAddressRequired",
+);
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");

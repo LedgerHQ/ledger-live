@@ -6,6 +6,7 @@ import { CELO_STABLE_TOKENS } from "../constants";
 import { celoKit } from "../network/sdk";
 import { CeloAccount, Transaction } from "../types";
 import getFeesForTransaction from "./getFeesForTransaction";
+import { isSameTokenAsFee } from "./utils";
 
 export const prepareTransaction: AccountBridge<
   Transaction,
@@ -29,8 +30,16 @@ export const prepareTransaction: AccountBridge<
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
+  const shouldSubtractFee = isSameTokenAsFee(
+    isTokenTransaction,
+    tokenAccount?.token?.contractAddress,
+    transaction.feeCurrencyUnwrapped,
+  );
+
   const amount =
-    transaction.useAllAmount && isTokenTransaction ? tokenAccount.balance : transaction.amount;
+    transaction.useAllAmount && isTokenTransaction && !shouldSubtractFee
+      ? tokenAccount?.spendableBalance
+      : transaction.amount;
 
   let token;
   if (isTokenTransaction) {

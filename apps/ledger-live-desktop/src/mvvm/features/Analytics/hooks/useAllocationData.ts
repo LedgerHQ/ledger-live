@@ -6,6 +6,7 @@ import {
   blacklistedTokenIdsSelector,
 } from "~/renderer/reducers/settings";
 import { useDistribution } from "~/renderer/actions/general";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import type { AllocationTableItem, AllocationViewProps } from "../types";
 
@@ -13,10 +14,14 @@ const PAGE_SIZE = 6;
 
 export function useAllocationData(): AllocationViewProps {
   const navigate = useNavigate();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
-  const distribution = useDistribution({ hideEmptyTokenAccount });
+  const distribution = useDistribution({
+    hideEmptyTokenAccount,
+    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
+  });
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 

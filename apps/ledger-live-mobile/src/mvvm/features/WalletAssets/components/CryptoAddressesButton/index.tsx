@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Button,
   Card,
   CardHeader,
@@ -10,8 +11,9 @@ import {
   CardContentRow,
   CardTrailing,
   Spot,
+  Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ChevronRight, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useTranslation } from "~/context/Locale";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
@@ -24,6 +26,7 @@ export const CryptoAddressesButton: React.FC = () => {
     accountsCount,
     hasAccounts,
     firstThreeCurrencies,
+    moreAccountsCount,
     onPress,
     isAddAccountOpen,
     onCloseAddAccount,
@@ -45,8 +48,30 @@ export const CryptoAddressesButton: React.FC = () => {
                     </CardContentDescription>
                     <IconStack size={20} borderRadius={5}>
                       {firstThreeCurrencies.map(currency => (
-                        <CurrencyIcon key={currency.id} currency={currency} size={20} squared />
+                        <CurrencyIcon
+                          key={currency.id}
+                          currency={currency}
+                          size={20}
+                          squared
+                          hideNetwork
+                        />
                       ))}
+                      {moreAccountsCount > 0 && (
+                        <Box
+                          lx={{
+                            flex: 1,
+                            width: "full",
+                            height: "full",
+                            backgroundColor: "interactive",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Text typography="body4" lx={{ color: "onInteractive" }}>
+                            +{moreAccountsCount}
+                          </Text>
+                        </Box>
+                      )}
                     </IconStack>
                   </>
                 ) : (
@@ -57,7 +82,11 @@ export const CryptoAddressesButton: React.FC = () => {
               </CardContentRow>
             </CardContent>
           </CardLeading>
-          {!hasAccounts && (
+          {hasAccounts ? (
+            <CardTrailing>
+              <ChevronRight size={24} color="muted" />
+            </CardTrailing>
+          ) : (
             <CardTrailing>
               <Button appearance="base" size="sm" onPress={onPress} testID="add-account-cta">
                 {t("portfolio.cryptoAddresses.add")}

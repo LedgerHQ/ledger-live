@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, Pressable } from "react-native";
 import { screen, waitForElementToBeRemoved } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { render, withFlagOverrides } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { getDefaultStore } from "jotai";
 import { dismissedManifestsAtom, recentlyUsedAtom } from "LLM/features/Web3Hub/db";
@@ -51,6 +51,9 @@ async function waitForLoader() {
   });
 }
 
+const withWalletV4 = (enabled: boolean) =>
+  withFlagOverrides({ lwmWallet40: { enabled } });
+
 describe("Web3Hub integration test", () => {
   beforeEach(() => {
     const store = getDefaultStore();
@@ -86,45 +89,58 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
   });
 
-  it("Should list manifests, go to search and navigate to app page", async () => {
-    const { user } = render(<Web3HubTest />);
+  it.each([
+    { isWalletV4Enabled: false, shouldShowMainBackButton: false },
+    { isWalletV4Enabled: true, shouldShowMainBackButton: true },
+  ])(
+    "Should let users open search and navigate to an app when wallet V4 is $isWalletV4Enabled",
+    async ({ isWalletV4Enabled, shouldShowMainBackButton }) => {
+      const { user } = render(<Web3HubTest />, {
+        overrideInitialState: withWalletV4(isWalletV4Enabled),
+      });
 
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+      expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
 
-    await waitForLoader();
+      await waitForLoader();
 
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeDisabled();
-    await user.press(screen.getByRole("searchbox"));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
+      expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+      expect(screen.getByRole("searchbox")).toBeDisabled();
+      if (shouldShowMainBackButton) {
+        expect(screen.getByRole("button", { name: /back/i })).toBeOnTheScreen();
+      } else {
+        expect(screen.queryByRole("button", { name: /back/i })).toBeNull();
+      }
+      await user.press(screen.getByRole("searchbox"));
+      expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+      expect(screen.getByRole("searchbox")).toBeEnabled();
 
-    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
-    await user.press(screen.getAllByText("Dummy Wallet App")[0]);
-    expect(await screen.findByText("Do not remind me again.")).toBeOnTheScreen();
-    expect(await screen.findByText("Open Dummy Wallet App")).toBeOnTheScreen();
-    await user.press(screen.getByText("Open Dummy Wallet App"));
-    expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
-    expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
+      expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+      await user.press(screen.getAllByText("Dummy Wallet App")[0]);
+      expect(await screen.findByText("Do not remind me again.")).toBeOnTheScreen();
+      expect(await screen.findByText("Open Dummy Wallet App")).toBeOnTheScreen();
+      await user.press(screen.getByText("Open Dummy Wallet App"));
+      expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
+      expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();
 
-    await user.press(screen.getByRole("button", { name: /close/i }));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
+      await user.press(screen.getByRole("button", { name: /close/i }));
+      expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+      expect(screen.getByRole("searchbox")).toBeEnabled();
 
-    expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
-    await user.press(screen.getAllByText("Wallet API Tools")[0]);
-    expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
-    expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
+      expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
+      await user.press(screen.getAllByText("Wallet API Tools")[0]);
+      expect(await screen.findByText("wallet-api-tools-0")).toBeOnTheScreen();
+      expect(await screen.findByText("Wallet API Tools")).toBeOnTheScreen();
 
-    await user.press(screen.getByRole("button", { name: /close/i }));
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeEnabled();
+      await user.press(screen.getByRole("button", { name: /close/i }));
+      expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+      expect(screen.getByRole("searchbox")).toBeEnabled();
 
-    await user.press(screen.getByRole("button", { name: /back/i }));
-    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
-    expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
-    expect(screen.getByRole("searchbox")).toBeDisabled();
-  });
+      await user.press(screen.getByRole("button", { name: /back/i }));
+      expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+      expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
+      expect(screen.getByRole("searchbox")).toBeDisabled();
+    },
+  );
 
   it("Should list manifests, select a category and navigate to app page", async () => {
     const { user } = render(<Web3HubTest />);
@@ -170,7 +186,9 @@ describe("Web3Hub integration test", () => {
   });
 
   it("Should list manifests, go to search and search an app and go it app page", async () => {
-    const { user } = render(<Web3HubTest />);
+    const { user } = render(<Web3HubTest />, {
+      overrideInitialState: withWalletV4(false),
+    });
 
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
 

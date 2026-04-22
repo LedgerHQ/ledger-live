@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -7,19 +7,36 @@ import {
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
+import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 
 export function useSignatureViewModel() {
   const { navigation } = useFlowWizard();
-  const { operation, status } = useSendFlowActions();
+  const { operation, status, close } = useSendFlowActions();
   const { state } = useSendFlowData();
   const reduxDispatch = useDispatch();
 
   const hasFinishedRef = useRef(false);
+  const wasBuyDeviceOpenRef = useRef(false);
+
+  const isBuyDeviceOpen = useSelector(selectIsBuyDeviceOpen);
+  const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+
+  // When BuyDevice intercept modal opens then closes without the user having connected a device,
+  // close the Send flow to avoid leaving an empty modal behind
+  useEffect(() => {
+    if (isBuyDeviceOpen) {
+      wasBuyDeviceOpenRef.current = true;
+    } else if (wasBuyDeviceOpenRef.current && !hasOnboardedDevice) {
+      wasBuyDeviceOpenRef.current = false;
+      close();
+    }
+  }, [isBuyDeviceOpen, hasOnboardedDevice, close]);
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount;

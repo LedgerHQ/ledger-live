@@ -12,6 +12,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { dayAndHourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
@@ -69,6 +70,8 @@ const SyncProgress = ({
   progress: number;
   lastSync: Date | null;
 }) => {
+  const formatDayAndHour = useDateFormatter(dayAndHourFormat);
+
   if (syncState === "running") {
     return (
       <div
@@ -87,6 +90,8 @@ const SyncProgress = ({
   }
 
   if (syncState === "complete") {
+    const formattedLastSync = lastSync ? formatDayAndHour(lastSync) : "";
+
     return (
       <div
         style={{
@@ -96,10 +101,7 @@ const SyncProgress = ({
           paddingTop: "10px",
         }}
       >
-        <Trans
-          i18nKey="aleo.account.syncButton.lastSync"
-          values={{ date: lastSync?.toLocaleString().replace(",", "") }}
-        />
+        <Trans i18nKey="aleo.account.syncButton.lastSync" values={{ date: formattedLastSync }} />
       </div>
     );
   }

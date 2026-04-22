@@ -5,6 +5,8 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Dispatch } from "redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import type { ModalData } from "~/renderer/modals/types";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import CantonReonboardDrawer from "../AddAccountDrawer/CantonReonboardDrawer";
 import type { TransferProposalAction } from "../PendingTransferProposals/types";
 import { isCantonCurrency } from "../utils/currency";
 
@@ -25,14 +27,29 @@ export type TransferProposalSnapshot = {
 
 export type NavigationSnapshot = ModalSnapshot | TransferProposalSnapshot;
 
-type ReonboardingModalConfig = {
+type ReonboardingConfig = {
   currency: CryptoCurrency;
   device: Device | null;
   mainAccount: Account;
+  useModularDrawer: boolean;
   navigationSnapshot?: NavigationSnapshot;
 };
 
-function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConfig): void {
+function openReonboardingDrawer(dispatch: Dispatch, config: ReonboardingConfig): void {
+  const { currency, mainAccount, navigationSnapshot } = config;
+
+  if (navigationSnapshot?.type === "modal") {
+    dispatch(closeModal(navigationSnapshot.modalName));
+  }
+
+  setDrawer(CantonReonboardDrawer, {
+    currency,
+    accountToReonboard: mainAccount,
+    navigationSnapshot,
+  });
+}
+
+function openReonboardingModal(dispatch: Dispatch, config: ReonboardingConfig): void {
   const { currency, mainAccount, navigationSnapshot } = config;
 
   if (navigationSnapshot?.type === "modal") {
@@ -53,16 +70,17 @@ function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConf
 
 export function handleTopologyChangeError(
   dispatch: Dispatch,
-  config: ReonboardingModalConfig,
+  config: ReonboardingConfig,
 ): boolean {
   if (!config.device || !isCantonCurrency(config.currency)) {
     return false;
   }
 
-  openReonboardingModal(dispatch, {
-    ...config,
-    currency: config.currency,
-  });
+  if (config.useModularDrawer) {
+    openReonboardingDrawer(dispatch, config);
+  } else {
+    openReonboardingModal(dispatch, config);
+  }
 
   return true;
 }

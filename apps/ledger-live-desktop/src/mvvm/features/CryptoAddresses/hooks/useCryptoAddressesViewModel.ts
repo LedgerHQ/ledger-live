@@ -51,7 +51,7 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
 
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount?: Account | null) => {
-      setTrackingSource("Addresses");
+      setTrackingSource(CRYPTO_TRACKING_PAGE_NAME);
       track("account_clicked", {
         page: CRYPTO_TRACKING_PAGE_NAME,
         currency: getAccountCurrency(account).name,

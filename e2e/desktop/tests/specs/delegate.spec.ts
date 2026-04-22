@@ -2,7 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { CLI } from "tests/utils/cliUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
@@ -10,6 +9,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isWallet40Enabled, LWD_WALLET_40_FF_DISABLED } from "tests/utils/featureFlagUtils";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -54,7 +54,7 @@ const e2eDelegationAccountsWithoutBroadcast = [
     xrayTicket: "B2CQA-3023",
   },
   {
-    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
+    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
     xrayTicket: "B2CQA-3020",
   },
 ];
@@ -77,7 +77,7 @@ const validators = [
     xrayTicket: "B2CQA-2766",
   },
   {
-    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "Ledger by Figment"),
+    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "1"),
     xrayTicket: "B2CQA-2767",
   },
   {
@@ -107,16 +107,7 @@ for (const account of e2eDelegationAccounts) {
       teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.delegate.account.currency.id,
-            index: account.delegate.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account.delegate.account)],
     });
 
     const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
@@ -194,16 +185,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
       teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.delegate.account.currency.id,
-            index: account.delegate.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(account.delegate.account)],
     });
 
     const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
@@ -236,7 +218,11 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
           await app.delegate.openSearchProviderModal();
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
-        } else if (account.delegate.account.currency.name == Currency.APT.name) {
+        } else if (
+          [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
+            account.delegate.account.currency.name,
+          )
+        ) {
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
         } else {
@@ -283,16 +269,7 @@ test.describe("e2e delegation - Tezos", () => {
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.account.currency.id,
-          index: account.account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account.account)],
   });
 
   const family = getFamilyByCurrencyId(account.account.currency.id);
@@ -342,16 +319,7 @@ test.describe("e2e delegation - Celo", () => {
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.account.currency.id,
-          index: account.account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account.account)],
   });
 
   const family = getFamilyByCurrencyId(account.account.currency.id);
@@ -403,16 +371,7 @@ for (const validator of validators) {
       teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: validator.delegate.account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: validator.delegate.account.currency.id,
-            index: validator.delegate.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(validator.delegate.account)],
     });
 
     const family = getFamilyByCurrencyId(validator.delegate.account.currency.id);
@@ -441,12 +400,19 @@ for (const validator of validators) {
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
-        await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-        if (validator.delegate.account.currency.name == Currency.SOL.name) {
+        if (validator.delegate.account.currency.name == Currency.MULTIVERS_X.name) {
           await app.delegate.verifyContinueDisabled();
-          await app.delegate.selectProviderByName(validator.delegate.provider);
-          await app.delegate.verifyProviderTC(validator.delegate.provider);
-        } else await app.delegate.verifyContinueEnabled();
+          await app.delegate.checkValidatorListIsVisible();
+          await app.delegate.selectProviderOnRow(Number.parseInt(validator.delegate.provider, 10));
+          await app.delegate.closeProviderList(Number.parseInt(validator.delegate.provider, 10));
+        } else {
+          await app.delegate.verifyFirstProviderName(validator.delegate.provider);
+          if (validator.delegate.account.currency.name == Currency.SOL.name) {
+            await app.delegate.verifyContinueDisabled();
+            await app.delegate.selectProviderByName(validator.delegate.provider);
+            await app.delegate.verifyProviderTC(validator.delegate.provider);
+          } else await app.delegate.verifyContinueEnabled();
+        }
         await app.delegate.verifyProvider(1);
         await app.delegate.openSearchProviderModal();
         await app.delegate.checkValidatorListIsVisible();
@@ -464,16 +430,7 @@ test.describe("Staking flow from different entry point - legacy", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: delegateAccount.account.currency.speculosApp,
     featureFlags: LWD_WALLET_40_FF_DISABLED,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: delegateAccount.account.currency.id,
-          index: delegateAccount.account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(delegateAccount.account)],
   });
 
   const family = getFamilyByCurrencyId(delegateAccount.account.currency.id);
@@ -526,16 +483,7 @@ test.describe("Staking flow from different entry point", () => {
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: delegateAccount.account.currency.speculosApp,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: delegateAccount.account.currency.id,
-          index: delegateAccount.account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(delegateAccount.account)],
   });
 
   const family = getFamilyByCurrencyId(delegateAccount.account.currency.id);
@@ -589,16 +537,7 @@ for (const currency of liveApps) {
       teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.delegate.account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: currency.delegate.account.currency.id,
-            index: currency.delegate.account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(currency.delegate.account)],
     });
 
     const family = getFamilyByCurrencyId(currency.delegate.account.currency.id);

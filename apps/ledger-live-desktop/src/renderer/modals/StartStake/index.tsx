@@ -56,7 +56,7 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, sou
       stakeAction.onClick?.();
     }
     // ignoring manageList from dependency array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
   return null;

@@ -43,6 +43,9 @@ jobs:
           skip-turbo-cache: "false"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -61,7 +64,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm turbo run coverage --filter="./features/**" --concurrency=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:features --parallel=4 -- --runInBand=1
 
       - name: Process coverage files
         id: process-coverage

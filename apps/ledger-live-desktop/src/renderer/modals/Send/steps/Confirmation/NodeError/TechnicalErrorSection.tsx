@@ -77,14 +77,16 @@ const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
           <Text color="neutral.c70">{error.message}</Text>
         </StyledText>
       </Box>
-      <Flex columnGap={2} alignSelf="start">
-        <InteractFlex onClick={onSaveLogs} flexShrink={1}>
+      <Flex columnGap={2} flexShrink={0} alignSelf="start">
+        <InteractFlex onClick={onSaveLogs} flexShrink={0} flexGrow={0} alignSelf="start">
           <Icons.Download color="neutral.c100" size="S" />
-          <Text variant="bodyLineHeight" fontSize={13}>
+          <Text variant="bodyLineHeight" fontSize={13} style={{ whiteSpace: "nowrap" }}>
             {t("errors.TransactionBroadcastError.saveLogs")}
           </Text>
         </InteractFlex>
-        <InteractFlex onClick={handleCopyError}>{icon}</InteractFlex>
+        <InteractFlex onClick={handleCopyError} flexShrink={0} flexGrow={0} alignSelf="start">
+          {icon}
+        </InteractFlex>
       </Flex>
     </Container>
   );

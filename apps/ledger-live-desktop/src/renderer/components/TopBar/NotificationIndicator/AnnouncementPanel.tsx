@@ -250,7 +250,7 @@ export function AnnouncementPanel() {
   const { notificationsCards, groupNotifications, onClickNotif } = useNotifications();
   const groups = useMemo(
     () => groupNotifications(notificationsCards),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [notificationsCards],
   );
 

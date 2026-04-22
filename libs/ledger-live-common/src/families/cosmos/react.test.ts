@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import "./setup"; // side-effect: triggers cosmosCoinConfig.setCoinConfig, required by cryptoFactory
 import invariant from "invariant";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";

@@ -1,8 +1,7 @@
 import { act } from "@testing-library/react-native";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { State } from "~/reducers/types";
 import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import usePortfolioStablecoinsSectionViewModel from "../usePortfolioStablecoinsSectionViewModel";
 import { bitcoin, ethereum, createAsset } from "./shared";
@@ -112,15 +111,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
     it("should navigate to Crypto screen on onPressShowAll when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { assetSection: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection: true } } }),
       });
 
       act(() => result.current.onPressShowAll());
@@ -187,5 +178,4 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(result.current.isError).toBe(false);
     });
   });
-
 });

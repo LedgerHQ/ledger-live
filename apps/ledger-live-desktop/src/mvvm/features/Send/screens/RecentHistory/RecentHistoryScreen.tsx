@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 
 export function RecentHistoryScreen() {
@@ -9,7 +9,7 @@ export function RecentHistoryScreen() {
   const { navigation } = useFlowWizard<SendFlowStep>();
 
   const goBackToRecipient = useCallback(() => {
-    navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
+    navigation.goToPreviousStep();
   }, [navigation]);
 
   return (

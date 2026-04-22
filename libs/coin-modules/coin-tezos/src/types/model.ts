@@ -1,1 +1,1 @@
-export type TezosOperationMode = "send" | "delegate" | "undelegate";
+export type TezosOperationMode = "send" | "delegate" | "undelegate" | "send_token";

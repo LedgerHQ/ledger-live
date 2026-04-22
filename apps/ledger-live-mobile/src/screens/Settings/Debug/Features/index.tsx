@@ -31,6 +31,13 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugSwap)}
       />
 
+      <SettingsRow
+        title="Device Intent Executor"
+        desc="Test the DeviceIntentExecutor with dummy intents"
+        iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutor)}
+      />
+
       <BLEPairingFlow />
       {/* Split all the custom lockscreen screens into a separate menu maybe? */}
       <CustomImage />

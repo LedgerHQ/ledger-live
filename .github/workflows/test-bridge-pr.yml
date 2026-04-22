@@ -60,6 +60,9 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -75,7 +78,7 @@ jobs:
           TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
-        run: pnpm turbo build --filter=./libs/ledger-live-common
+        run: pnpm exec nx run @ledgerhq/live-common:build
       - name: Test
         shell: bash
         env:

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, renderWithReactQuery, screen } from "@tests/test-renderer";
+import { render, renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
 import { PortfolioEmptySection } from "../index";
 import { State } from "~/reducers/types";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
@@ -22,25 +22,21 @@ jest.mock("@react-navigation/native", () => ({
   }),
 }));
 
-const createAccountState = (state: State): State => {
-  const btcAccount = genAccount("btc-1", { currency: btcCurrency });
-  const ethAccount = genAccount("eth-1", { currency: ethCurrency });
+const createAccountState = withFlagOverrides(
+  { lwmWallet40: { enabled: true, params: { assetSection: true } } },
+  state => {
+    const btcAccount = genAccount("btc-1", { currency: btcCurrency });
+    const ethAccount = genAccount("eth-1", { currency: ethCurrency });
 
-  return {
-    ...state,
-    accounts: {
-      ...state.accounts,
-      active: [btcAccount, ethAccount],
-    },
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        lwmWallet40: { enabled: true, params: { assetSection: true } },
+    return {
+      ...state,
+      accounts: {
+        ...state.accounts,
+        active: [btcAccount, ethAccount],
       },
-    },
-  };
-};
+    };
+  },
+);
 
 const emptyAccountState = (state: State): State => ({
   ...state,

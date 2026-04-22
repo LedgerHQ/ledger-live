@@ -1,5 +1,4 @@
-import { Page, TestInfo } from "@playwright/test";
-import { ElectronApplication } from "@playwright/test";
+import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-common/e2e/speculos";
@@ -42,6 +41,16 @@ export async function addTeamOwner(team: Team) {
   await allure.owner(teamString);
   await allure.parentSuite(teamString);
   await allure.feature(teamString);
+}
+
+export async function attachMergedFeatureFlags(
+  testInfo: TestInfo,
+  mergedFeatureFlags: unknown,
+): Promise<void> {
+  await testInfo.attach("Merged Feature Flags", {
+    body: Buffer.from(JSON.stringify(mergedFeatureFlags, null, 2)),
+    contentType: "application/json",
+  });
 }
 
 async function attachSpeculosScreenshots(testInfo: TestInfo): Promise<void> {

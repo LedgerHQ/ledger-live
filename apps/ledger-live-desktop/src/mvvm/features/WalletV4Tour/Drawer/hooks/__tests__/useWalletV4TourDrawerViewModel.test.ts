@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useWalletV4TourDrawerViewModel } from "../useWalletV4TourDrawerViewModel";
 
 const tourEnabledOverrides = {
@@ -19,9 +19,9 @@ describe("useWalletV4TourDrawerViewModel", () => {
         () => useWalletV4TourDrawerViewModel({ isOnPortfolioPage: false }),
         {
           initialState: {
+            ...withFlagOverrides(tourEnabledOverrides),
             settings: {
               hasSeenWalletV4Tour: false,
-              overriddenFeatureFlags: tourEnabledOverrides,
             },
           },
         },
@@ -37,9 +37,9 @@ describe("useWalletV4TourDrawerViewModel", () => {
         () => useWalletV4TourDrawerViewModel({ isOnPortfolioPage: true }),
         {
           initialState: {
+            ...withFlagOverrides(tourEnabledOverrides),
             settings: {
               hasSeenWalletV4Tour: false,
-              overriddenFeatureFlags: tourEnabledOverrides,
             },
           },
         },
@@ -55,9 +55,9 @@ describe("useWalletV4TourDrawerViewModel", () => {
         () => useWalletV4TourDrawerViewModel({ isOnPortfolioPage: false }),
         {
           initialState: {
+            ...withFlagOverrides(tourEnabledOverrides),
             settings: {
               hasSeenWalletV4Tour: false,
-              overriddenFeatureFlags: tourEnabledOverrides,
             },
           },
         },
@@ -77,9 +77,9 @@ describe("useWalletV4TourDrawerViewModel", () => {
         () => useWalletV4TourDrawerViewModel({ isOnPortfolioPage: false }),
         {
           initialState: {
+            ...withFlagOverrides(tourEnabledOverrides),
             settings: {
               hasSeenWalletV4Tour: true,
-              overriddenFeatureFlags: tourEnabledOverrides,
             },
           },
         },
@@ -97,11 +97,9 @@ describe("useWalletV4TourDrawerViewModel", () => {
         () => useWalletV4TourDrawerViewModel({ isOnPortfolioPage: false }),
         {
           initialState: {
+            ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { tour: false } } }),
             settings: {
               hasSeenWalletV4Tour: false,
-              overriddenFeatureFlags: {
-                lwdWallet40: { enabled: true, params: { tour: false } },
-              },
             },
           },
         },
@@ -121,9 +119,9 @@ describe("useWalletV4TourDrawerViewModel", () => {
         () => useWalletV4TourDrawerViewModel({ isOnPortfolioPage: true }),
         {
           initialState: {
+            ...withFlagOverrides(tourEnabledOverrides),
             settings: {
               hasSeenWalletV4Tour: false,
-              overriddenFeatureFlags: tourEnabledOverrides,
             },
           },
         },

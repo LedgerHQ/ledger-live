@@ -18,6 +18,7 @@ export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");
 export const blast = getCryptoCurrencyById("blast");
 export const bnb = getCryptoCurrencyById("bsc");
+export const base = getCryptoCurrencyById("base");
 export const ERC20Interface = new ethers.Interface(ERC20_ABI);
 export const ERC721Interface = new ethers.Interface(ERC721_ABI);
 export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);

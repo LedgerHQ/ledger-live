@@ -1,7 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { TransportReplayer } from "@ledgerhq/hw-transport-mocker";
-import { RecordStore } from "@ledgerhq/hw-transport-mocker";
+import { RecordStore, TransportReplayer } from "@ledgerhq/hw-transport-mocker";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ScenarioOptions } from "../../../tests/test-helpers/types";
 import { getSdk } from "../..";
@@ -23,7 +22,7 @@ fs.readdirSync(scenarioFolder).forEach(file => {
     const slug = file.slice(0, -3);
     if (nonMockableScenarios.includes(slug)) return;
     const e2eFile = path.join(scenarioFolder, file);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // oxlint-disable-next-line typescript/no-require-imports -- dynamic scenario path
     const mod = require(e2eFile);
     test(slug, async () => {
       const scenario = mod.scenario;

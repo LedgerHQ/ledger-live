@@ -137,7 +137,7 @@ export const VerticalTimelineStory: StoryFn<typeof VerticalTimeline> = () => {
     return () => {
       timeout && clearTimeout(timeout);
     };
-    // eslint-disable-next-line
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [animate, currentIndex]);
   return (
     <Flex width={"100%"} px={30} flex={1}>

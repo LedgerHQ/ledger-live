@@ -4,7 +4,7 @@ import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/in
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getStuckAccountAndOperation } from "@ledgerhq/coin-bitcoin/operation";
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import EditStuckTransactionPanelBodyHeader from "../EditStuckTransactionPanelBodyHeader";
 import StepFees, { StepFeesFooter } from "../steps/StepFees";
 import { StepSummaryFooter } from "../steps/StepSummaryFooter";
@@ -133,16 +133,7 @@ describe("Bitcoin EditTransaction components", () => {
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            editBitcoinTx: {
-              enabled: true,
-              params: { supportedCurrencyIds: ["bitcoin"] },
-            },
-          },
-        },
-      },
+      initialState: withFlagOverrides({ editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } } }),
     });
 
     expect(screen.getByTestId("edit-operation-panel")).toBeInTheDocument();

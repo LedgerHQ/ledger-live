@@ -35,7 +35,7 @@ const ScrollContainerHeader = <ItemType,>({
   ...props
 }: ScrollContainerHeaderProps<ItemType>): React.ReactElement => {
   const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler((event) => {
+  const handleScroll = useAnimatedScrollHandler(event => {
     currentPositionY.value = event.contentOffset.y;
     if (onScroll) onScroll(event.contentOffset.y);
   });

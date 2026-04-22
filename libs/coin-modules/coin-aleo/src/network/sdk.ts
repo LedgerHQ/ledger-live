@@ -153,7 +153,6 @@ async function createAuthorization({
 
 async function encryptProvingRequest({
   currency,
-  jwt,
   publicKey,
   authorization,
   feeAuthorization,
@@ -161,7 +160,6 @@ async function encryptProvingRequest({
 }: {
   publicKey: string;
   currency: CryptoCurrency;
-  jwt: string;
   authorization: Record<string, unknown>;
   feeAuthorization?: Record<string, unknown>;
   broadcast: boolean;
@@ -171,9 +169,6 @@ async function encryptProvingRequest({
   const res = await network<EncryptProvingRequestResponse>({
     method: "POST",
     url: `${sdkUrl}/encrypt_proving_request`,
-    headers: {
-      Authorization: jwt,
-    },
     data: {
       public_key: publicKey,
       proving_request: {

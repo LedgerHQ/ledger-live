@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "Deterministic testing of Ledger coin-modules",
   "license": "Apache-2.0",
   "scripts": {
@@ -9,8 +9,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint .",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "axios": "catalog:",
@@ -26,7 +28,9 @@
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   },
   "typesVersions": {
     "*": {

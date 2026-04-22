@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,6 +8,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import BackButton from "LLM/features/Web3Hub/components/BackButton";
+import ClearButton from "LLM/features/Web3Hub/components/ClearButton";
 import { SearchProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
 
@@ -32,6 +33,17 @@ export default function Web3HubSearchHeader({ navigation, onSearch, layoutY }: P
     onSearch(debouncedSearch);
   }, [debouncedSearch, onSearch]);
 
+  const clearSearch = useCallback(() => {
+    setSearch("");
+  }, []);
+
+  const inputContainerStyle = useMemo(() => {
+    return {
+      paddingLeft: 0,
+      paddingRight: search ? 0 : 16,
+    };
+  }, [search]);
+
   return (
     <AnimatedBar
       pt={insets.top}
@@ -43,9 +55,11 @@ export default function Web3HubSearchHeader({ navigation, onSearch, layoutY }: P
       totalHeight={TOTAL_HEADER_HEIGHT}
       opacityChildren={
         <Flex flex={1} height={SEARCH_HEIGHT} flexDirection="row" alignItems="center">
-          <BackButton onPress={navigation.goBack} />
-          <Flex flex={1} marginRight={8}>
+          <Flex flex={1} mx={5}>
             <TextInput
+              inputContainerStyle={inputContainerStyle}
+              renderLeft={<BackButton onPress={navigation.goBack} />}
+              renderRight={search ? <ClearButton onPress={clearSearch} /> : undefined}
               autoFocus
               role="searchbox"
               placeholder={t("web3hub.main.header.placeholder")}

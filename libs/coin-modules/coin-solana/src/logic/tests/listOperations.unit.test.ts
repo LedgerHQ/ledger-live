@@ -673,6 +673,87 @@ describe("listOperations", () => {
       expect(result.items).toHaveLength(1);
       expect(result.items[0].type).toBe("DELEGATE");
     });
+
+    it("should not set feesPayer on DELEGATE operation", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-delegate", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT })]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("DELEGATE");
+      expect(result.items[0].tx.feesPayer).toBeUndefined();
+    });
+
+    it("should not set feesPayer on UNDELEGATE operation", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-undelegate", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([makeParsedIx("stake", "deactivate")]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("UNDELEGATE");
+      expect(result.items[0].tx.feesPayer).toBeUndefined();
+    });
+
+    it("should not set feesPayer on WITHDRAW_UNBONDED operation", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-withdraw", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([
+          makeParsedIx("stake", "withdraw", {
+            stakeAccount: STAKE_ACCOUNT,
+            lamports: 1_000_000_000,
+          }),
+        ]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("WITHDRAW_UNBONDED");
+      expect(result.items[0].tx.feesPayer).toBeUndefined();
+    });
+
+    it("should set feesPayer on native OUT operation (non-staking)", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-out", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            message: {
+              accountKeys: [
+                { pubkey: new PublicKey(TEST_ADDRESS) },
+                { pubkey: new PublicKey(TEST_RECIPIENT) },
+              ],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [],
+            },
+          },
+          meta: {
+            fee: 5000,
+            preBalances: [1_000_000_000, 0],
+            postBalances: [899_995_000, 100_000_000],
+          },
+        },
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("OUT");
+      expect(result.items[0].tx.feesPayer).toBe(TEST_ADDRESS);
+    });
   });
 
   describe("token operations", () => {

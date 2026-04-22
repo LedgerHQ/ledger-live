@@ -8,15 +8,7 @@ export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], t
         featureFlags: {
           llmAccountListUI: { enabled: true },
         },
-        cliCommands: [
-          async (userdataPath?: string) =>
-            CLI.liveData({
-              currency: account.currency.id,
-              index: account.index,
-              appjson: userdataPath,
-              add: true,
-            }),
-        ],
+        cliCommands: [liveDataCommand(account)],
       });
       await app.portfolio.waitForPortfolioPageToLoad();
     });

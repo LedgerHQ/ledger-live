@@ -1,5 +1,5 @@
 import React from "react";
-import { act, render } from "@tests/test-renderer";
+import { act, render, withFlagOverrides } from "@tests/test-renderer";
 import * as getStakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import {
   mockedAccounts,
@@ -8,7 +8,6 @@ import {
   WITHOUT_ACCOUNT_SELECTION,
 } from "./shared";
 import { INITIAL_STATE } from "~/reducers/settings";
-import { State } from "~/reducers/types";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -37,16 +36,15 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            active: mockedAccounts,
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(
+          mockedFF,
+          state => ({
+            ...state,
+            accounts: {
+              active: mockedAccounts,
+            },
+          }),
+        ),
       },
     );
 
@@ -75,13 +73,7 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(mockedFF),
       },
     );
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -107,13 +99,7 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(mockedFF),
       },
     );
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -133,13 +119,7 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(mockedFF),
       },
     );
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -160,16 +140,15 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            active: mockedAccounts,
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(
+          mockedFF,
+          state => ({
+            ...state,
+            accounts: {
+              active: mockedAccounts,
+            },
+          }),
+        ),
       },
     );
 
@@ -191,16 +170,15 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            active: mockedAccounts,
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(
+          mockedFF,
+          state => ({
+            ...state,
+            accounts: {
+              active: mockedAccounts,
+            },
+          }),
+        ),
       },
     );
 
@@ -219,16 +197,15 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            active: mockedAccounts,
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: mockedFF,
-          },
-        }),
+        overrideInitialState: withFlagOverrides(
+          mockedFF,
+          state => ({
+            ...state,
+            accounts: {
+              active: mockedAccounts,
+            },
+          }),
+        ),
       },
     );
 
@@ -257,13 +234,7 @@ describe("ModularDrawer modules integration", () => {
         />,
         {
           ...INITIAL_STATE,
-          overrideInitialState: (state: State) => ({
-            ...state,
-            settings: {
-              ...state.settings,
-              overriddenFeatureFlags: mockedFF,
-            },
-          }),
+          overrideInitialState: withFlagOverrides(mockedFF),
         },
       );
 
@@ -284,13 +255,7 @@ describe("ModularDrawer modules integration", () => {
         />,
         {
           ...INITIAL_STATE,
-          overrideInitialState: (state: State) => ({
-            ...state,
-            settings: {
-              ...state.settings,
-              overriddenFeatureFlags: mockedFF,
-            },
-          }),
+          overrideInitialState: withFlagOverrides(mockedFF),
         },
       );
 

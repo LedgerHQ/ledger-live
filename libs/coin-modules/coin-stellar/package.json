@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stellar",
-  "version": "6.20.0",
+  "version": "6.21.0",
   "description": "Ledger Stellar Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -99,9 +99,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@stellar/stellar-sdk": "^14.0.0",

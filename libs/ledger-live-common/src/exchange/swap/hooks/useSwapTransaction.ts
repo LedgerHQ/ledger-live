@@ -10,7 +10,7 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
-import { Transaction } from "../../../generated/types";
+import { Transaction } from "../../../coin-modules/transaction-types";
 import {
   ExchangeRate,
   OnNoRatesCallback,

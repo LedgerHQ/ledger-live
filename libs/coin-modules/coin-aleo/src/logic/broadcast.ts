@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import { apiClient } from "../network/api";
 import type { AleoAccount, AleoCoinConfig } from "../types";
 import { sdkClient } from "../network/sdk";
@@ -14,8 +13,6 @@ export async function broadcast({
   signedTx: string;
 }): Promise<string> {
   const config = resolveConfig(configOrCurrencyId);
-  const jwt = account.aleoResources?.provableApi?.jwt?.token;
-  invariant(jwt, `aleo: jwt token is missing for ${account.freshAddress}`);
 
   // get authorization and feeAuthorization from signed transaction
   const { authorization, feeAuthorization } = fromHex<{
@@ -28,7 +25,6 @@ export async function broadcast({
       currency: account.currency,
       authorization,
       ...(feeAuthorization && { feeAuthorization }),
-      jwt,
       broadcast: true,
     });
 
@@ -37,13 +33,11 @@ export async function broadcast({
 
   const publicKeyResponse = await apiClient.getProvePublicKey({
     currency: account.currency,
-    jwt,
   });
 
   const encryptedData = await sdkClient.encryptProvingRequest({
     publicKey: publicKeyResponse.public_key,
     currency: account.currency,
-    jwt,
     authorization,
     ...(feeAuthorization && { feeAuthorization }),
     broadcast: true,
@@ -51,7 +45,6 @@ export async function broadcast({
 
   const res = await apiClient.submitEncryptedDelegatedProvingRequest({
     currency: account.currency,
-    jwt,
     keyId: publicKeyResponse.key_id,
     encryptedData,
   });

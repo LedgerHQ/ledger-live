@@ -11,6 +11,8 @@ interface UseAleoPrivateSyncOptions {
   account: Account | TokenAccount | null | undefined;
   /** If true, sync starts automatically on mount and cannot be stopped. */
   autoStart?: boolean;
+  /** Called with the locally-computed updated account after each sync emission. */
+  onAccountUpdated?: (account: Account) => void;
 }
 
 interface UseAleoPrivateSyncResult {
@@ -24,8 +26,12 @@ interface UseAleoPrivateSyncResult {
 export const useAleoPrivateSync = ({
   account,
   autoStart = false,
+  onAccountUpdated,
 }: UseAleoPrivateSyncOptions): UseAleoPrivateSyncResult => {
   const dispatch = useDispatch();
+
+  const onAccountUpdatedRef = useRef(onAccountUpdated);
+  onAccountUpdatedRef.current = onAccountUpdated;
 
   const accountRef = useRef(account);
   accountRef.current = account;
@@ -43,6 +49,7 @@ export const useAleoPrivateSync = ({
     if (!isSyncingRef.current || acc?.type !== "Account" || !isAleoAccount(acc)) return;
 
     let latestPercentage = 0;
+    let latestSynced = false;
     const bridge = getAccountBridge(acc);
     subscriptionRef.current = bridge
       .sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED })
@@ -55,7 +62,15 @@ export const useAleoPrivateSync = ({
           if (!isAleoAccount(updatedAccount)) return;
           latestPercentage =
             updatedAccount.aleoResources?.provableApi?.scannerStatus?.percentage ?? 0;
+          latestSynced = updatedAccount.aleoResources?.provableApi?.scannerStatus?.synced ?? false;
           setProgress(latestPercentage);
+          onAccountUpdatedRef.current?.(updatedAccount);
+          // Scanner is done — mark syncing complete immediately so the
+          // component can react without waiting for the observable to complete.
+          if (latestSynced) {
+            isSyncingRef.current = false;
+            setIsSyncing(false);
+          }
         },
         error: (err: Error) => {
           subscriptionRef.current = null;
@@ -65,7 +80,7 @@ export const useAleoPrivateSync = ({
         },
         complete: () => {
           subscriptionRef.current = null;
-          if (isSyncingRef.current && latestPercentage < 100) {
+          if (isSyncingRef.current && !latestSynced) {
             retryTimerRef.current = setTimeout(runSync, MANDATORY_SYNC_POLLING_DELAY);
           } else if (isSyncingRef.current) {
             isSyncingRef.current = false;

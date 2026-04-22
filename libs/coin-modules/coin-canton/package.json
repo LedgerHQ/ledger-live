@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -110,6 +110,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-canton": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -117,7 +118,6 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
-    "protobufjs": "7.5.4",
     "rxjs": "catalog:"
   },
   "devDependencies": {

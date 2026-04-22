@@ -115,12 +115,21 @@ const IntentErrorComponent: React.FC<{ error: unknown; onRetry: () => void }> = 
   </button>
 );
 
+const InvalidOperationComponent: React.FC<{ error: unknown; onClose: () => void }> = ({
+  onClose,
+}) => (
+  <button data-testid="invalid-operation" onClick={onClose}>
+    Close Executor
+  </button>
+);
+
 const platformConfig: ExecutorPlatformConfiguration = {
   DeviceConnectionComponent: ConnectionComponent,
   DeviceContextInitializerComponent: InitializerComponent,
   ConnectionErrorComponent,
   InitializationErrorComponent: InitErrorComponent,
   IntentErrorComponent,
+  InvalidOperationComponent,
 };
 
 type TestProps = DeviceIntentExecutorProps<unknown, unknown, unknown> & {
@@ -139,6 +148,7 @@ function makeProps(overrides: Partial<TestProps> = {}): TestProps {
     onIntentJobError: jest.fn(),
     enabled: true,
     cancellableUI: false,
+    onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     platformConfig,
     ...overrides,
@@ -206,6 +216,7 @@ function makeMockPlatformConfig() {
     ConnectionErrorComponent: jest.fn(() => <div data-testid="connection-error" />),
     InitializationErrorComponent: jest.fn(() => <div data-testid="init-error" />),
     IntentErrorComponent: jest.fn(() => <div data-testid="intent-error" />),
+    InvalidOperationComponent: jest.fn(() => <div data-testid="invalid-operation" />),
   };
 }
 
@@ -224,6 +235,7 @@ function makeUnitProps(
     onIntentJobError: jest.fn(),
     enabled: true,
     cancellableUI: false,
+    onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     platformConfig,
     useExecutorHook: jest.fn(() => hookReturn),
@@ -239,6 +251,7 @@ describe("DeviceIntentExecutor (unit)", () => {
     const onIntentJobStateChanged = jest.fn();
     const onIntentJobComplete = jest.fn();
     const onIntentJobError = jest.fn();
+    const onUserCancel = jest.fn();
     const deviceConnectionParams = { acceptedDeviceModelIds: [] };
     render(
       <DeviceIntentExecutor
@@ -252,6 +265,7 @@ describe("DeviceIntentExecutor (unit)", () => {
         onIntentJobError={onIntentJobError}
         enabled={true}
         cancellableUI={false}
+        onUserCancel={onUserCancel}
         cancelIntentRequestId={undefined}
         platformConfig={platformConfig}
         useExecutorHook={mockHook}
@@ -270,6 +284,7 @@ describe("DeviceIntentExecutor (unit)", () => {
       onIntentJobError,
       enabled: true,
       cancellableUI: false,
+      onUserCancel,
       cancelIntentRequestId: undefined,
     });
   });
@@ -407,6 +422,25 @@ describe("DeviceIntentExecutor (unit)", () => {
 
       expect(screen.getByTestId("intent-error")).toBeTruthy();
       expect(mockConfig.IntentErrorComponent).toHaveBeenCalledWith({ error, onRetry }, undefined);
+    });
+  });
+
+  describe("invalidOperation phase", () => {
+    it("renders InvalidOperationComponent with the correct props", () => {
+      const mockConfig = makeMockPlatformConfig();
+      const error = new Error("invalid operation");
+      const onClose = jest.fn();
+      const props = makeUnitProps(
+        { phase: "invalidOperation", error, onClose },
+        { platformConfig: mockConfig },
+      );
+      render(<DeviceIntentExecutor {...props} />);
+
+      expect(screen.getByTestId("invalid-operation")).toBeTruthy();
+      expect(mockConfig.InvalidOperationComponent).toHaveBeenCalledWith(
+        { error, onClose },
+        undefined,
+      );
     });
   });
 

@@ -26,6 +26,7 @@ jest.mock("../components/SyncErrorBottomSheet", () => ({
 
 describe("TopBarView", () => {
   const onMyLedgerPress = jest.fn();
+  const onMyWalletPress = jest.fn();
   const onDiscoverPress = jest.fn();
   const onNotificationsPress = jest.fn();
   const onSettingsPress = jest.fn();
@@ -37,6 +38,9 @@ describe("TopBarView", () => {
 
   const defaultProps = {
     onMyLedgerPress,
+    onMyWalletPress,
+    shouldDisplayMyWallet: false,
+    shouldDisplayOperationsList: false,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
@@ -58,15 +62,9 @@ describe("TopBarView", () => {
   });
 
   it("should call expected callbacks when top bar buttons are pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />, {
-      overrideInitialState: state => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: { lwmWallet40: { enabled: true, params: { operationsList: true } } },
-        },
-      }),
-    });
+    const { user, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayOperationsList />,
+    );
 
     await user.press(getByTestId("topbar-myledger"));
     await user.press(getByTestId("topbar-discover"));
@@ -82,12 +80,9 @@ describe("TopBarView", () => {
   });
 
   it("should not render transaction history icon when operations list is disabled", () => {
-    const { queryByTestId, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />, {
-      overrideInitialState: state => ({
-        ...state,
-        settings: { ...state.settings, overriddenFeatureFlags: { lwmWallet40: { enabled: true, params: { operationsList: false } } } },
-      }),
-    });
+    const { queryByTestId, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayOperationsList={false} />,
+    );
     expect(queryByTestId("topbar-transaction-history")).toBeNull();
     expect(getByTestId("topbar-myledger")).toBeVisible();
     expect(getByTestId("topbar-discover")).toBeVisible();

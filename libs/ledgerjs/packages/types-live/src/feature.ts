@@ -262,6 +262,7 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkCosmosSigner: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
@@ -306,7 +307,6 @@ export type Features = CurrencyFeatures & {
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
-  cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;
@@ -845,7 +845,8 @@ type Feature_Wallet40_Params = {
   balanceRefreshRework: boolean;
   assetSection: boolean;
   operationsList: boolean;
-
+  aggregatedAssets: boolean;
+  myWallet: boolean;
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;

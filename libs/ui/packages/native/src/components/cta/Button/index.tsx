@@ -41,11 +41,11 @@ const IconContainer = styled.View<{
   iconPosition: "right" | "left";
   iconButton?: boolean;
 }>`
-  ${(p) =>
+  ${p =>
     p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
-export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
+export const Base = baseStyled(Pressable).attrs<ButtonProps>(p => {
   // if onPressWhenDisabled prop exists then the button will look
   // disabled but will still be press-able.
   const disabled = !p.onPressWhenDisabled && p.disabled;
@@ -67,8 +67,8 @@ export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
   } & Omit<ButtonProps, "size">
 >`
 
-  border-radius: ${(p) => p.theme.space[10]}px;
-  padding: 0 ${(p) => p.theme.space[7]}px;
+  border-radius: ${p => p.theme.space[10]}px;
+  padding: 0 ${p => p.theme.space[7]}px;
   flex-direction: row;
   border-style: solid;
   text-align: center;
@@ -77,9 +77,9 @@ export const Base = baseStyled(Pressable).attrs<ButtonProps>((p) => {
   align-content: center;
   overflow: hidden;
   position: relative;
-  ${(p) => buttonSizeStyle[p.sizeVariant || "medium"]}
+  ${p => buttonSizeStyle[p.sizeVariant || "medium"]}
 
-  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : null)}
+  ${p => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : null)}
 `;
 
 const Container = styled.View<{
@@ -90,13 +90,13 @@ const Container = styled.View<{
   align-items: center;
   justify-content: center;
   align-content: center;
-  opacity: ${(p) => (p.hide ? 0 : 1)};
+  opacity: ${p => (p.hide ? 0 : 1)};
 `;
 
 const SpinnerContainer = styled.View<{
   displayContentWhenPending?: boolean;
 }>`
-  position: ${(p) => (p.displayContentWhenPending ? "relative" : "absolute")};
+  position: ${p => (p.displayContentWhenPending ? "relative" : "absolute")};
   top: 0;
   left: 0;
   right: 0;
@@ -187,7 +187,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
       pointerEvents="box-only"
       hitSlop={16}
       {...props}
-      style={(state) => [props.style, state.pressed ? { opacity: 1 } : {}]}
+      style={state => [props.style, state.pressed ? { opacity: 1 } : {}]}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
       disabled={disabled || pending}

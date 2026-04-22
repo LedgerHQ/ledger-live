@@ -5,18 +5,26 @@ import Transport from "@ledgerhq/hw-transport";
 import Stellar from "@ledgerhq/hw-app-str";
 import { StrKey } from "@stellar/stellar-sdk";
 
-const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
+type StellarSigner = Stellar & {
+  signTransaction: (path: string, transaction: string) => Promise<string>;
+  getAddress: (
+    path: string,
+    options?: boolean | { verify?: boolean; derivationMode?: string },
+  ) => Promise<{ path: string; address: string; publicKey: string }>;
+};
+
+export const createSignerStellar: CreateSigner<StellarSigner> = (transport: Transport) => {
   const stellar = new Stellar(transport);
   const originalSignTransaction = stellar.signTransaction;
-  // Return the original Stellar instance with overridden methods
   return Object.assign(stellar, {
     signTransaction: async (path: string, transaction: string) => {
       const unsignedPayload: Buffer = Buffer.from(transaction, "base64");
       const { signature } = await originalSignTransaction(path, unsignedPayload);
       return signature.toString("base64");
     },
-    getAddress: async (path: string, verify?: boolean) => {
-      const { rawPublicKey } = await stellar.getPublicKey(path, verify);
+    getAddress: async (path: string, options?: boolean | { verify?: boolean }) => {
+      const verify = typeof options === "boolean" ? options : options?.verify;
+      const { rawPublicKey } = await stellar.getPublicKey(path, !!verify);
       const publicKey = StrKey.encodeEd25519PublicKey(rawPublicKey);
       return {
         path,

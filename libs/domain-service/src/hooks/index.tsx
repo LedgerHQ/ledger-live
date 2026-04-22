@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { resolveAddress, resolveDomain } from "../resolvers";
-import { getRegistriesForAddress } from "../registries";
-import { getRegistriesForDomain } from "../registries";
+import { getRegistriesForAddress, getRegistriesForDomain } from "../registries";
 import { SupportedRegistries } from "../types";
 import { validateDomain } from "../utils";
 import { isOutdated } from "./logic";

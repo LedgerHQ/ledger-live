@@ -6,33 +6,34 @@ import { EntryPoint } from "../types";
 import { useActivationDrawer } from "../hooks/useActivationDrawer";
 import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
 import WalletSyncDrawer from "../../WalletSync/components/Drawer";
+import { withFlagOverrides } from "tests/testSetup";
 
 export const INITIAL_STATE = {
   settings: {
     readOnlyModeEnabled: false,
-    overriddenFeatureFlags: {
-      lldWalletSync: {
-        enabled: true,
-        params: {
-          environment: "STAGING",
-          watchConfig: {},
-        },
-      },
-      lldLedgerSyncEntryPoints: {
-        enabled: true,
-        params: {
-          onboarding: true,
-          manager: true,
-          accounts: true,
-          settings: true,
-          postOnboarding: true,
-        },
-      },
-    },
     lastSeenDevice: {
       modelId: DeviceModelId.stax,
     } as DeviceModelInfo,
   },
+  ...withFlagOverrides({
+    lldWalletSync: {
+      enabled: true,
+      params: {
+        environment: "STAGING" as const,
+        watchConfig: {},
+      },
+    },
+    lldLedgerSyncEntryPoints: {
+      enabled: true,
+      params: {
+        onboarding: true,
+        manager: true,
+        accounts: true,
+        settings: true,
+        postOnboarding: true,
+      },
+    },
+  }),
   trustchain: {
     trustchain: null,
     memberCredentials: null,

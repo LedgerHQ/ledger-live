@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "~/context/hooks";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
@@ -10,6 +11,9 @@ import ToggleServiceStatusIncident from "./ToggleServiceStatus";
 import SettingsRow from "~/components/SettingsRow";
 import { dangerouslyOverrideState } from "~/actions/settings";
 import { reboot } from "~/actions/appstate";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
@@ -17,6 +21,10 @@ import { INITIAL_STATE as INITIAL_BLE_STATE } from "~/reducers/ble";
 
 export default function Generators() {
   const dispatch = useDispatch();
+  const navigation =
+    useNavigation<
+      StackNavigatorNavigation<SettingsNavigatorStackParamList, ScreenName.DebugGenerators>
+    >();
 
   const onCallbackWithConfirmation = (callback: () => void) => {
     Confirmation.alert(
@@ -79,6 +87,12 @@ export default function Generators() {
         title="Accounts by currency"
         desc="Select for which currencies you want to generate accounts"
         iconLeft={<IconsLegacy.ClipboardListCheckMedium size={24} color="black" />}
+      />
+      <SettingsRow
+        title="Accounts by type"
+        desc="Generate accounts filtered by crypto/stablecoin/testnet"
+        iconLeft={<IconsLegacy.FiltersMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccountsByType)}
       />
       <GenerateMockAccounts
         title="Accounts"

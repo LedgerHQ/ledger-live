@@ -13,10 +13,14 @@ interface CryptoAddressesButtonViewModelResult {
   accountsCount: number;
   hasAccounts: boolean;
   firstThreeCurrencies: (CryptoCurrency | TokenCurrency)[];
+  moreAccountsCount: number;
   onPress: () => void;
   isAddAccountOpen: boolean;
   onCloseAddAccount: () => void;
 }
+
+const MAX_ACCOUNTS_TO_DISPLAY = 3;
+const MAX_MORE_ACCOUNTS_DISPLAY = 99;
 
 export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewModelResult {
   const accounts = useSelector(shallowAccountsSelector);
@@ -33,7 +37,7 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
     () =>
       [...categorizedAssets.cryptos, ...categorizedAssets.stablecoins]
         .sort((a, b) => b.value - a.value)
-        .slice(0, 3)
+        .slice(0, MAX_ACCOUNTS_TO_DISPLAY)
         .map(asset => asset.currency),
     [categorizedAssets],
   );
@@ -64,10 +68,16 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
 
   const onCloseAddAccount = useCallback(() => setIsAddAccountOpen(false), []);
 
+  const moreAccountsCount = Math.min(
+    Math.max(0, accountsCount - MAX_ACCOUNTS_TO_DISPLAY),
+    MAX_MORE_ACCOUNTS_DISPLAY,
+  );
+
   return {
     accountsCount,
     hasAccounts,
     firstThreeCurrencies,
+    moreAccountsCount,
     onPress,
     isAddAccountOpen: shouldShowAddAccount,
     onCloseAddAccount,

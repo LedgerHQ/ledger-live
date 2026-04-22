@@ -8,7 +8,7 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import WalletSyncNavigator from "../WalletSyncNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { State } from "~/reducers/types";
+import { withFlagOverrides } from "@tests/test-renderer";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { EMPTY } from "rxjs";
 
@@ -53,23 +53,25 @@ export const simpleTrustChain = {
   walletSyncEncryptionKey: "walletSyncEncryptionKey",
 };
 
-export const INITIAL_TEST = (state: State) => ({
-  ...state,
-  settings: {
-    ...state.settings,
-    readOnlyModeEnabled: false,
-    overriddenFeatureFlags: {
-      llmWalletSync: {
-        enabled: true,
-        params: {
-          environment: "STAGING",
-          watchConfig: {},
-          learnMoreLink: "https://www.ledger.com",
-        },
+export const INITIAL_TEST = withFlagOverrides(
+  {
+    llmWalletSync: {
+      enabled: true,
+      params: {
+        environment: "STAGING",
+        watchConfig: {},
+        learnMoreLink: "https://www.ledger.com",
       },
     },
   },
-});
+  state => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      readOnlyModeEnabled: false,
+    },
+  }),
+);
 
 export const mockedSdk = getSdk(
   true,

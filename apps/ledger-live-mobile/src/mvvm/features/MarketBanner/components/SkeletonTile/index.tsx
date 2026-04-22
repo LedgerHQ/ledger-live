@@ -41,7 +41,7 @@ const SkeletonTile = ({ index }: SkeletonTileProps) => {
     () => ({
       opacity: opacity.value,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

@@ -23,7 +23,7 @@ const PostOnboardingDeeplinkHandler = ({ route, navigation }: Props) => {
 
   useEffect(() => {
     postOnboardingDeeplinkHandler(route.params?.device);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <Loading />;

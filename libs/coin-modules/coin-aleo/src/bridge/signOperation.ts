@@ -33,22 +33,31 @@ interface SigningParams {
   viewKey: string;
 }
 
-async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
-  const { account, transaction, request, config, baseFee, priorityFee, viewKey } = params;
-
-  // sign root request
-  const rootIntentSignature = await signer.signRootIntent(
+async function buildRootAuthorization(
+  signer: AleoSigner,
+  account: AleoAccount,
+  request: PreparedRequestResponse,
+  viewKey: string,
+) {
+  const { signature } = await signer.signRootIntent(
     account.freshAddressPath,
     Buffer.from(request.tlv, "hex"),
   );
 
-  // create authorization
-  const authorization = await sdkClient.createAuthorization({
+  return sdkClient.createAuthorization({
     currency: account.currency,
     request,
-    signatures: rootIntentSignature.signature,
+    signatures: signature,
     viewKey,
   });
+}
+
+async function buildFeeAuthorization(
+  signer: AleoSigner,
+  params: SigningParams,
+  executionId: string,
+): Promise<string> {
+  const { account, transaction, config, baseFee, priorityFee, viewKey } = params;
 
   // craft fee request even if it's zero, because device needs the second APDU in signing flow to move forward
   const craftedFeeRequest = await craftTransaction({
@@ -58,30 +67,35 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
     txIntent: createFeeTransactionIntent({
       account,
       transaction,
-      executionId: authorization.execution_id,
+      executionId,
       baseFee,
       priorityFee,
+      isFeeSponsored: config.isFeeSponsored,
     }),
   });
 
   const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
 
-  // sign fee request
-  const feeIntentSignature = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
+  const { signature } = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
 
-  // create fee authorization, but only if fee is not zero
-  let feeAuthorization: string | null = null;
+  const result = await sdkClient.createAuthorization({
+    currency: account.currency,
+    request: feeRequest,
+    signatures: signature,
+    viewKey,
+  });
 
-  if (!config.isFeeSponsored) {
-    const result = await sdkClient.createAuthorization({
-      currency: account.currency,
-      request: feeRequest,
-      signatures: feeIntentSignature.signature,
-      viewKey,
-    });
+  return result.authorization;
+}
 
-    feeAuthorization = result.authorization;
-  }
+async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
+  const { account, request, config, viewKey } = params;
+
+  const authorization = await buildRootAuthorization(signer, account, request, viewKey);
+
+  const feeAuthorization = config.isFeeSponsored
+    ? null
+    : await buildFeeAuthorization(signer, params, authorization.execution_id);
 
   const signedTransaction = {
     authorization: authorization.authorization,

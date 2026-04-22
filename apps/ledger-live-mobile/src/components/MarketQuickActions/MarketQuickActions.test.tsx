@@ -1,11 +1,10 @@
 import React from "react";
-import { renderWithReactQuery } from "@tests/test-renderer";
+import { renderWithReactQuery, withFlagOverrides } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -123,21 +122,16 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            ...state.accounts,
-            active: [kaspaAccount],
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              currencyKaspa: {
-                enabled: false,
-              },
+        overrideInitialState: withFlagOverrides(
+          { currencyKaspa: { enabled: false } },
+          state => ({
+            ...state,
+            accounts: {
+              ...state.accounts,
+              active: [kaspaAccount],
             },
-          },
-        }),
+          }),
+        ),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();
@@ -153,19 +147,16 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            ...state.accounts,
-            active: [kaspaAccount],
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              currencyKaspa: { enabled: true },
+        overrideInitialState: withFlagOverrides(
+          { currencyKaspa: { enabled: true } },
+          state => ({
+            ...state,
+            accounts: {
+              ...state.accounts,
+              active: [kaspaAccount],
             },
-          },
-        }),
+          }),
+        ),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();
@@ -181,19 +172,16 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            ...state.accounts,
-            active: [kaspaAccount],
-          },
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              currencyKaspa: { enabled: false },
+        overrideInitialState: withFlagOverrides(
+          { currencyKaspa: { enabled: false } },
+          state => ({
+            ...state,
+            accounts: {
+              ...state.accounts,
+              active: [kaspaAccount],
             },
-          },
-        }),
+          }),
+        ),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();
@@ -209,15 +197,7 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              currencyKaspa: { enabled: true },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ currencyKaspa: { enabled: true } }),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();
@@ -246,19 +226,13 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={usdtCurrency} accounts={[ethereumAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              stakePrograms: {
-                enabled: true,
-                params: {
-                  list: [],
-                  redirects: {
-                    "ethereum/erc20/usd_tether__erc20_": { platform: "earn" },
-                  },
-                },
+        overrideInitialState: withFlagOverrides({
+          stakePrograms: {
+            enabled: true,
+            params: {
+              list: [],
+              redirects: {
+                "ethereum/erc20/usd_tether__erc20_": { platform: "earn", name: "Earn" },
               },
             },
           },

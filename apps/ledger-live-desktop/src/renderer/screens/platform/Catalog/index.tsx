@@ -17,7 +17,7 @@ const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-gap: 20px;
   width: 100%;
   justify-content: stretch;
@@ -26,6 +26,8 @@ const Grid = styled.div`
 `;
 
 const GridItem = styled.div`
+  min-width: 0;
+
   > * {
     height: 100%;
   }

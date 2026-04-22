@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from "tests/testSetup";
+import { renderHook, act, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server } from "tests/server";
 import { http, HttpResponse } from "msw";
 import { useMarketCoin } from "../useMarketCoin";
@@ -50,9 +50,6 @@ const createMarketState = (overrides = {}) => ({
 
 const createSettingsState = (starredMarketCoins: string[] = []) => ({
   starredMarketCoins,
-  overriddenFeatureFlags: {
-    lldRefreshMarketData: { enabled: false },
-  },
 });
 
 const defaultStarredMarketCoins: string[] = [];
@@ -66,6 +63,7 @@ const renderMarketCoinHook = ({
     initialState: {
       market: createMarketState(marketOverrides),
       settings: createSettingsState(starredMarketCoins),
+      ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
     },
   });
 

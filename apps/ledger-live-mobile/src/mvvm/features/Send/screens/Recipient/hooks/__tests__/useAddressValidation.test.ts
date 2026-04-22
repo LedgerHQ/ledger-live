@@ -127,7 +127,7 @@ describe("useAddressValidation", () => {
     });
   });
 
-  it("resolves ENS names for Ethereum", async () => {
+  it("resolves ENS names when recipientSupportsDomain is true", async () => {
     const ensResolution = {
       domain: "vitalik.eth",
       address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -146,6 +146,7 @@ describe("useAddressValidation", () => {
         searchValue: "vitalik.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 
@@ -168,6 +169,7 @@ describe("useAddressValidation", () => {
         searchValue: "test.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 
@@ -475,6 +477,7 @@ describe("useAddressValidation", () => {
         searchValue: "test.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 

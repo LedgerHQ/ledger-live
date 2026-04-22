@@ -62,6 +62,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     storageLimit: tr.storageLimit ? new BigNumber(tr.storageLimit) : undefined,
     estimatedFees: tr.estimatedFees ? new BigNumber(tr.estimatedFees) : undefined,
     taquitoError: tr.taquitoError,
+    contractAddress: tr.contractAddress,
+    tokenId: tr.tokenId,
   };
 };
 
@@ -81,6 +83,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     storageLimit: t.storageLimit ? t.storageLimit.toString() : null,
     estimatedFees: t.estimatedFees ? t.estimatedFees.toString() : null,
     taquitoError: t.taquitoError,
+    contractAddress: t.contractAddress,
+    tokenId: t.tokenId,
   };
 };
 

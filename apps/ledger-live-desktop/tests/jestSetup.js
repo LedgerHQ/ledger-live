@@ -1,3 +1,10 @@
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { setCoinConfig } from "@ledgerhq/coin-evm/config";
+registerAllCoins();
+LiveConfig.setConfig(liveConfig);
+setCoinConfig(() => ({ info: {} }));
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { server } from "./server";
@@ -98,6 +105,7 @@ jest.mock("src/renderer/analytics/segment", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
   useTrack: jest.fn(),
+  updateIdentify: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock("src/renderer/analytics/originFlow", () => ({

@@ -8,6 +8,7 @@ import type { SendFlowStep, SendFlowBusinessContext } from "@ledgerhq/live-commo
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight } from "./AnimatedHeight";
+import { track } from "~/renderer/analytics/segment";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
@@ -24,17 +25,22 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
+        track("button_clicked", {
+          button: "close",
+          page: `step ${wizard.currentStep}`,
+          flow: "send",
+        });
         onClose();
       }
     },
-    [onClose],
+    [onClose, wizard.currentStep],
   );
 
   const dialogHeight = currentStepConfig?.height ?? "fixed";
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
-  const shouldAnimateHeight = dialogHeight === "hug";
+  const shouldAnimateHeight = dialogHeight === "fit";
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>

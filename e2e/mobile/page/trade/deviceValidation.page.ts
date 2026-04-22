@@ -1,8 +1,10 @@
+import CommonPage from "../common.page";
 import { Step } from "jest-allure2-reporter/api";
 
-export default class DeviceValidationPage {
+export default class DeviceValidationPage extends CommonPage {
   validationScrollViewId = "device-validation-scroll-view";
-  validationAmount = () => getElementById("device-validation-amount");
+  validationAmountId = "device-validation-amount";
+  validationAmount = () => getElementById(this.validationAmountId);
   validationAddress = () => getElementById("device-validation-address");
   validationProvider = () => getElementById("device-validation-provider");
   validationFees = () => getElementById("device-validation-transaction-fee");

@@ -6,7 +6,7 @@ import {
   clearIsTopologyChangeRequiredCache,
 } from "../network/gateway";
 import { createMockSigner, generateMockKeyPair } from "../test/cantonTestUtils";
-import { createMockAccount, createMockCantonCurrency } from "../test/fixtures";
+import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
 import {
   AuthorizeStatus,
   CantonAuthorizeProgress,
@@ -20,7 +20,7 @@ import { buildAuthorizePreapproval, buildOnboardAccount, isAccountOnboarded } fr
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
   const mockCurrency = createMockCantonCurrency();
-  const mockAccount = createMockAccount();
+  const mockAccount = createMockCantonAccount();
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -164,7 +164,7 @@ describe("onboard (devnet)", () => {
       expect(finalResult.partyId).toEqual(expect.any(String));
 
       expect(mockSignerContext).toHaveBeenCalled();
-    }, 30000);
+    }, 90000);
 
     it.skip("should complete full onboarding flow with already onboarded account", async () => {
       // GIVEN
@@ -227,7 +227,7 @@ describe("onboard (devnet)", () => {
       const originalNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet");
       const keyPair = generateMockKeyPair();
-      const mockAccount = createMockAccount({ xpub: keyPair.publicKeyHex });
+      const mockAccount = createMockCantonAccount({ xpub: keyPair.publicKeyHex });
       const mockSigner = createMockSigner(keyPair);
       const mockSignerContext = jest.fn().mockImplementation((_, callback) => {
         return callback(mockSigner);

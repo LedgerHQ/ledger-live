@@ -35,7 +35,6 @@ import {
   toAlpacaOperation,
   toBridgeOperation,
   toPrivateBridgeOperation,
-  generateUniqueUsername,
   resolveConfig,
   getTransactionType,
   calculateAmount,
@@ -381,27 +380,6 @@ describe("toBridgeOperation", () => {
   });
 });
 
-describe("generateUniqueUsername", () => {
-  it("should generate a SHA-256 hash from timestamp and address", () => {
-    const mockAddress = "aleo1test123";
-    const result = generateUniqueUsername(mockAddress);
-
-    expect(result).toMatch(/^[a-f0-9]{64}$/);
-  });
-
-  it("should generate unique hashes for different addresses", () => {
-    const address1 = "aleo1address1";
-    const address2 = "aleo1address2";
-
-    const result1 = generateUniqueUsername(address1);
-    const result2 = generateUniqueUsername(address2);
-
-    expect(result1).toMatch(/^[a-f0-9]{64}$/);
-    expect(result2).toMatch(/^[a-f0-9]{64}$/);
-    expect(result1).not.toBe(result2);
-  });
-});
-
 describe("resolveConfig", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -582,13 +560,7 @@ describe("calculateAmount", () => {
 
 describe("isProvableApiConfigured", () => {
   const validProvableApi: Required<ProvableApi> = {
-    apiKey: "test-api-key",
-    consumerId: "test-consumer-id",
     uuid: "test-uuid",
-    jwt: {
-      token: "test-token",
-      exp: 123456789,
-    },
     scannerStatus: {
       synced: true,
       percentage: 100,
@@ -608,32 +580,11 @@ describe("isProvableApiConfigured", () => {
 
     expect(isProvableApiConfigured(rest)).toBe(false);
   });
-
-  it("returns false when apiKey is missing", () => {
-    const { apiKey: _, ...rest } = validProvableApi;
-
-    expect(isProvableApiConfigured(rest)).toBe(false);
-  });
-
-  it("returns false when jwt is missing", () => {
-    const { jwt: _, ...rest } = validProvableApi;
-
-    expect(isProvableApiConfigured(rest)).toBe(false);
-  });
-
-  it("returns false when jwt.token is missing", () => {
-    const api: ProvableApi = { ...validProvableApi, jwt: { token: "", exp: 123456789 } };
-
-    expect(isProvableApiConfigured(api)).toBe(false);
-  });
 });
 
 describe("isRecordScannerReady", () => {
   const baseProvableApi: ProvableApi = {
-    apiKey: "test-api-key",
-    consumerId: "test-consumer-id",
     uuid: "test-uuid",
-    jwt: { token: "test-token", exp: 123456789 },
     scannerStatus: { synced: true, percentage: 100 },
   };
 
@@ -1212,6 +1163,34 @@ describe("createTransactionIntent", () => {
       },
     });
   });
+
+  it("should throw when amountRecordCommitment is null for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: missing amount record commitment",
+    );
+  });
+
+  it("should throw when amountRecordCommitment does not match any unspent record", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: "non-existent-commitment",
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: no amount record found for commitment non-existent-commitment",
+    );
+  });
 });
 
 describe("createFeeTransactionIntent", () => {
@@ -1235,6 +1214,7 @@ describe("createFeeTransactionIntent", () => {
       executionId,
       baseFee,
       priorityFee,
+      isFeeSponsored: false,
     });
 
     expect(result).toEqual({
@@ -1269,6 +1249,7 @@ describe("createFeeTransactionIntent", () => {
       executionId,
       baseFee,
       priorityFee,
+      isFeeSponsored: false,
     });
 
     expect(result).toEqual({
@@ -1305,6 +1286,7 @@ describe("createFeeTransactionIntent", () => {
         executionId,
         baseFee,
         priorityFee,
+        isFeeSponsored: false,
       }),
     ).toThrow("aleo: missing fee record commitment");
   });
@@ -1325,6 +1307,7 @@ describe("createFeeTransactionIntent", () => {
         executionId,
         baseFee,
         priorityFee,
+        isFeeSponsored: false,
       }),
     ).toThrow("aleo: missing fee record commitment");
   });

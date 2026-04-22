@@ -26,7 +26,7 @@ const IconContainer = styled(Flex).attrs<{ boxSize: number }>(({ boxSize = DEFAU
   width: `${boxSize}px`,
   height: `${boxSize}px`,
 }))<{ boxSize: number }>`
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
+  border-radius: ${p => `${p.theme.radii[1]}px`};
 `;
 
 export default function IconBox({

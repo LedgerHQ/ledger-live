@@ -48,6 +48,7 @@ export const CryptoAddressesBannerView = memo(function CryptoAddressesBannerView
             <Button
               appearance="base"
               size="sm"
+              data-testid="crypto-addresses-banner-add-account-cta"
               onClick={e => {
                 e.stopPropagation();
                 onAddAccount?.();

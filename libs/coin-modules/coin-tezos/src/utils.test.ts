@@ -1,4 +1,79 @@
-import { normalizePublicKeyForAddress } from "./utils";
+import {
+  normalizePublicKeyForAddress,
+  parseTezosTokenAsset,
+  resolveTezosOperationMode,
+} from "./utils";
+
+describe("parseTezosTokenAsset", () => {
+  it("returns null for native asset", () => {
+    expect(parseTezosTokenAsset({ type: "native" })).toBeNull();
+  });
+
+  it("returns null when asset is undefined", () => {
+    expect(parseTezosTokenAsset(undefined)).toBeNull();
+  });
+
+  it("parses KT1-only reference as token id 0", () => {
+    expect(
+      parseTezosTokenAsset({
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
+      }),
+    ).toEqual({
+      contractAddress: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
+      tokenId: 0,
+    });
+  });
+
+  it("parses contract:tokenId reference", () => {
+    expect(
+      parseTezosTokenAsset({
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:42",
+      }),
+    ).toEqual({
+      contractAddress: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU",
+      tokenId: 42,
+    });
+  });
+
+  it("returns null for invalid token id suffix", () => {
+    expect(
+      parseTezosTokenAsset({
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:abc",
+      }),
+    ).toBeNull();
+  });
+
+  it("returns null when reference does not start with KT1", () => {
+    expect(parseTezosTokenAsset({ type: "token", assetReference: "not-a-contract" })).toBeNull();
+  });
+});
+
+describe("resolveTezosOperationMode", () => {
+  it("returns send_token for send intent with token asset", () => {
+    expect(
+      resolveTezosOperationMode("send", {
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:0",
+      }),
+    ).toBe("send_token");
+  });
+
+  it("returns send for send intent with native asset", () => {
+    expect(resolveTezosOperationMode("send", { type: "native" })).toBe("send");
+  });
+
+  it("maps stake to delegate regardless of asset", () => {
+    expect(
+      resolveTezosOperationMode("stake", {
+        type: "token",
+        assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:0",
+      }),
+    ).toBe("delegate");
+  });
+});
 
 describe("normalizePublicKeyForAddress", () => {
   it("should normalize hex public key for tz2 address (secp256k1) to base58 format", () => {

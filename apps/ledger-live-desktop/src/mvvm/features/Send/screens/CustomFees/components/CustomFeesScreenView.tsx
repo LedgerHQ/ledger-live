@@ -39,7 +39,7 @@ export function CustomFeesScreenView({
 }: CustomFeesScreenViewProps) {
   return (
     <>
-      <DialogBody className="gap-32 -mt-12">
+      <DialogBody className="gap-32 -mt-12 pt-2">
         {hasCustomAssets && assetOptions.length > 0 && (
           <FeeAssetSelector
             options={assetOptions}

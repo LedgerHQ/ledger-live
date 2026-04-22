@@ -27,6 +27,7 @@ const EntryButtonContainer = styled.button`
   cursor: pointer;
   display: flex;
   flex-grow: 1;
+  min-width: 0;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -81,6 +82,7 @@ const IconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 40px;
+  min-width: 40px;
   height: 40px;
   border-radius: 100%;
   margin-right: ${p => p.theme.space[3]}px;

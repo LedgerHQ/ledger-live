@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-ledger-key-ring-protocol",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "Ledger Key Ring Protocol hardware layer",
   "keywords": [
     "Ledger"
@@ -30,6 +30,8 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "@types/secp256k1": "^4.0.6",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"
@@ -40,8 +42,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/hw-ledger-key-ring-protocol",
     "test": "jest",

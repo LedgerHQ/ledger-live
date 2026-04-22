@@ -52,8 +52,8 @@ export const Default = (args: typeof DefaultArgs): JSX.Element => {
   const [_index, setIndex] = React.useState<number | null>(null);
   const index = _index ?? args.index;
 
-  const add = () => setIndex((_index) => Math.min((_index ?? index) + 1, length - 1));
-  const remove = () => setIndex((_index) => Math.max((_index ?? index) - 1, 0));
+  const add = () => setIndex(_index => Math.min((_index ?? index) + 1, length - 1));
+  const remove = () => setIndex(_index => Math.max((_index ?? index) - 1, 0));
 
   return (
     <>

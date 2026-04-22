@@ -8,9 +8,14 @@ import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  StakingDelegation,
+  StakingResources,
+  StakingUnbonding,
+} from "@ledgerhq/coin-evm/types/staking";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -30,6 +35,24 @@ function isIncomingCoreOp(operation: Operation): boolean {
 
 function isInternalLiveOp(operation: OperationCommon): boolean {
   return !!operation.extra?.internal;
+}
+
+function hasActiveStake(balance: Balance): balance is Balance & {
+  stake: Stake & { state: "active" | "activating" };
+} {
+  return balance.stake !== undefined && ["active", "activating"].includes(balance.stake.state);
+}
+
+function hasDeactivatingStake(balance: Balance): balance is Balance & {
+  stake: Stake & { state: "deactivating" };
+} {
+  return balance.stake !== undefined && balance.stake.state === "deactivating";
+}
+
+function hasStakeDelegate<T extends Balance & { stake: Stake }>(
+  balance: T,
+): balance is T & { stake: Stake & { delegate: string } } {
+  return typeof balance.stake.delegate === "string" && balance.stake.delegate.length > 0;
 }
 
 /** True when the op is a main-account (native) op, not a token/sub-account op */
@@ -279,7 +302,7 @@ function buildParentOperations(
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
-    const alpacaApi = getAlpacaApi(currency.id, kind);
+    const alpacaApi = await getAlpacaApi(currency.id, kind);
     const bridgeApi = getBridgeApi(currency, network);
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
@@ -295,12 +318,54 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
 
     const blockInfo = await alpacaApi.lastBlock();
-    const balanceRes = await alpacaApi.getBalance(address);
+
+    const balanceRes = await alpacaApi.getBalance(address, bridgeApi.balanceOptions);
+
     const nativeAsset = extractBalance(balanceRes, "native");
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
-    const nativeBalance = BigInt(nativeAsset?.value ?? "0");
 
-    const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
+    const activeStakes = balanceRes.filter(hasActiveStake);
+    const deactivatingStakes = balanceRes.filter(hasDeactivatingStake);
+
+    const delegatedBalance = activeStakes.reduce((acc, b) => acc + b.value, 0n);
+    const unbondingBalance = deactivatingStakes.reduce((acc, b) => acc + b.value, 0n);
+    const pendingRewardsBalance = activeStakes.reduce(
+      (acc, b) => acc + (b.stake.amountRewarded ?? 0n),
+      0n,
+    );
+
+    const nativeAvailable = nativeAsset?.value ?? 0n;
+    const nativeLocked = nativeAsset?.locked ?? 0n;
+    const noStaking = !hasActiveStake(nativeAsset) && !hasDeactivatingStake(nativeAsset);
+
+    // Some account-level staking models attach stake metadata to the native balance itself.
+    // Avoid adding that same native balance twice while preserving staking resources metadata.
+    const nativeBalance = delegatedBalance + unbondingBalance + (noStaking ? nativeAvailable : 0n);
+    const spendableBalance = nativeAvailable - nativeLocked;
+
+    const delegations: StakingDelegation[] = activeStakes
+      .filter(hasStakeDelegate)
+      .map(({ stake, value }) => ({
+        validatorAddress: stake.delegate,
+        amount: new BigNumber(value.toString()),
+        pendingRewards: new BigNumber((stake.amountRewarded ?? 0n).toString()),
+        status: "bonded" as const,
+      }));
+    const unbondings: StakingUnbonding[] = deactivatingStakes
+      .filter(hasStakeDelegate)
+      .map(({ stake, value }) => ({
+        validatorAddress: stake.delegate,
+        amount: new BigNumber(value.toString()),
+        completionDate: stake.stateUpdatedAt ?? new Date(),
+      }));
+    const stakingResources: StakingResources = {
+      delegations,
+      redelegations: [],
+      unbondings,
+      delegatedBalance: new BigNumber(delegatedBalance.toString()),
+      pendingRewardsBalance: new BigNumber(pendingRewardsBalance.toString()),
+      unbondingBalance: new BigNumber(unbondingBalance.toString()),
+    };
 
     // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent
     const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
@@ -369,7 +434,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
-    const res: Partial<Account> = {
+    const stakingEnabled =
+      alpacaApi.stakingSupported ?? (delegations.length > 0 || unbondings.length > 0);
+    const res: Partial<Account> & { stakingResources?: StakingResources } = {
       id: accountId,
       xpub: address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
@@ -379,6 +446,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      ...(stakingEnabled ? { stakingResources } : {}),
     };
     return res;
   };

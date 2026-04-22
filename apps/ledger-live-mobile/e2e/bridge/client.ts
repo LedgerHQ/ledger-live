@@ -110,9 +110,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "overrideFeatureFlags": {
-        store.dispatch(
-          setAllOverrides(msg.payload as PartialFeatures),
-        );
+        store.dispatch(setAllOverrides(msg.payload as PartialFeatures));
         break;
       }
       case "overrideFeatureFlag": {

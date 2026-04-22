@@ -73,6 +73,10 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
   },
+  tezosSecp256k1: {
+    tag: "tz2",
+    overridesDerivation: "44'/1729'/<account>'",
+  },
   galleonL: {
     tag: "legacy",
     startsAt: 1,
@@ -228,7 +232,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
+  tezos: ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   westend: ["polkadotbip44"],
@@ -237,6 +241,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   hedera: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
+  mina: ["minabip44"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
@@ -398,6 +403,7 @@ const disableBIP44: Record<string, boolean> = {
   icon_berlin_testnet: true,
   vechain: true,
   internet_computer: true,
+  mina: true,
   casper: true,
   filecoin: true,
   ton: true,

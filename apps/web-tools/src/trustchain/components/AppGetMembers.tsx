@@ -44,10 +44,6 @@ export function AppGetMembers({
       valueDisplay={valueDisplay}
       value={members}
       setValue={setMembers}
-      buttonProps={{
-        "data-tooltip-id": "tooltip",
-        "data-tooltip-content": "fetches all members of the trustchain",
-      }}
     />
   );
 }

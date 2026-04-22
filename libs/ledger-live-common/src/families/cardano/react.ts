@@ -42,7 +42,7 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
     );
 
     return () => clearInterval(delayDebounceFn);
-  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchQuery]); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onScrollEndReached = () => {
     if (isPaginationDisabled.current) return;

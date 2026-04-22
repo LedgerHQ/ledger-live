@@ -82,6 +82,8 @@ const mapBrazeCardToPortfolioContentCard = (
   description: card.extras?.description,
   id: String(card.id),
   image: card.extras?.image,
+  image_background: card.extras?.image_background,
+  icon: card.extras?.icon,
   location,
   order: parseOrder(card.extras?.order),
   path: card.extras?.path,

@@ -273,27 +273,31 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("WHEN SET_INTENT is received THEN it transitions to executingIntentError", () => {
+    it("WHEN SET_INTENT is received THEN it transitions to invalidOperation", () => {
       const originalIntent = makeIntent(() => NEVER);
       const { sm, listeners } = createSM({ intent: originalIntent });
       driveToExecution(sm);
       const newIntent = makeIntent(() => NEVER);
       sm.setIntent(newIntent);
       expect(lastExecutorState(listeners)).toEqual({
-        type: "executingIntentError",
-        error: expect.objectContaining({ message: "Intent changed during execution" }),
+        type: "invalidOperation",
+        error: expect.objectContaining({
+          message: "SET_INTENT received during intent execution",
+        }),
       });
       sm.stop();
     });
 
-    it("WHEN SET_REQUIRED_CONTEXT is received THEN it transitions to executingIntentError", () => {
+    it("WHEN SET_REQUIRED_CONTEXT is received THEN it transitions to invalidOperation", () => {
       const originalIntent = makeIntent(() => NEVER);
       const { sm, listeners } = createSM({ intent: originalIntent });
       driveToExecution(sm);
       sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
       expect(lastExecutorState(listeners)).toEqual({
-        type: "executingIntentError",
-        error: expect.objectContaining({ message: "Required context changed during execution" }),
+        type: "invalidOperation",
+        error: expect.objectContaining({
+          message: "SET_REQUIRED_CONTEXT received during intent execution",
+        }),
       });
       sm.stop();
     });
@@ -424,6 +428,16 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.setIntent(newIntent);
       expect(lastExecutorState(listeners)).toEqual({ type: "executingIntent" });
       expect(newJobSpy).toHaveBeenCalled();
+      sm.stop();
+    });
+
+    it("WHEN SET_REQUIRED_CONTEXT is received THEN it transitions to initializingDeviceContext", () => {
+      const { sm, listeners } = createSM({ job: () => throwError(() => new Error("fail")) });
+      driveToExecution(sm);
+      expect(lastExecutorState(listeners)?.type).toBe("executingIntentError");
+
+      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
+      expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
       sm.stop();
     });
   });
@@ -605,6 +619,118 @@ describe("DeviceIntentExecutorStateMachine", () => {
       expect(listeners.onIntentJobComplete).toHaveBeenCalledWith(intentB);
       expect(listeners.onIntentJobComplete).not.toHaveBeenCalledWith(intentA);
       expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
+      sm.stop();
+    });
+  });
+
+  describe("intent-level listeners", () => {
+    it("WHEN the job emits THEN intent.onJobStateChanged fires before the executor listener", async () => {
+      const callOrder: string[] = [];
+      const subject = new Subject<TestJobState>();
+      const intent = makeBaseIntent({
+        job: () => subject.asObservable(),
+        onJobStateChanged: () => callOrder.push("intent"),
+      });
+      const listeners = makeListeners();
+      (listeners.onIntentJobStateChanged as jest.Mock).mockImplementation(() =>
+        callOrder.push("executor"),
+      );
+      const { sm } = createSM({ intent, listeners });
+      driveToExecution(sm);
+
+      subject.next({ step: "running" });
+      await flushMicrotasks();
+
+      expect(callOrder).toEqual(["intent", "executor"]);
+      expect(intent.onJobStateChanged).toBeDefined();
+      sm.stop();
+    });
+
+    it("WHEN the job completes THEN intent.onJobComplete fires before the executor listener", () => {
+      const callOrder: string[] = [];
+      const intent = makeBaseIntent({
+        job: () => of({ step: "done" as const }),
+        onJobComplete: () => callOrder.push("intent"),
+      });
+      const listeners = makeListeners();
+      (listeners.onIntentJobComplete as jest.Mock).mockImplementation(() =>
+        callOrder.push("executor"),
+      );
+      const { sm } = createSM({ intent, listeners });
+      driveToExecution(sm);
+
+      expect(callOrder).toEqual(["intent", "executor"]);
+      sm.stop();
+    });
+
+    it("WHEN the job errors THEN intent.onJobError fires before the executor listener", () => {
+      const callOrder: string[] = [];
+      const jobError = new Error("boom");
+      const intent = makeBaseIntent({
+        job: () => throwError(() => jobError),
+        onJobError: () => callOrder.push("intent"),
+      });
+      const listeners = makeListeners();
+      (listeners.onIntentJobError as jest.Mock).mockImplementation(() =>
+        callOrder.push("executor"),
+      );
+      const { sm } = createSM({ intent, listeners });
+      driveToExecution(sm);
+
+      expect(callOrder).toEqual(["intent", "executor"]);
+      sm.stop();
+    });
+
+    it("WHEN no intent-level listeners are set THEN only executor listeners fire without error", async () => {
+      const subject = new Subject<TestJobState>();
+      const intent = makeBaseIntent({ job: () => subject.asObservable() });
+      expect(intent.onJobStateChanged).toBeUndefined();
+      expect(intent.onJobComplete).toBeUndefined();
+      expect(intent.onJobError).toBeUndefined();
+
+      const { sm, listeners } = createSM({ intent });
+      driveToExecution(sm);
+
+      subject.next({ step: "running" });
+      await flushMicrotasks();
+      expect(listeners.onIntentJobStateChanged).toHaveBeenCalled();
+
+      subject.complete();
+      await flushMicrotasks();
+      expect(listeners.onIntentJobComplete).toHaveBeenCalledWith(intent);
+      sm.stop();
+    });
+
+    it("WHEN intent.onJobStateChanged is set THEN it receives the jobState value", async () => {
+      const onJobStateChanged = jest.fn();
+      const subject = new Subject<TestJobState>();
+      const intent = makeBaseIntent({
+        job: () => subject.asObservable(),
+        onJobStateChanged,
+      });
+      const { sm } = createSM({ intent });
+      driveToExecution(sm);
+
+      subject.next({ step: "running" });
+      await flushMicrotasks();
+      expect(onJobStateChanged).toHaveBeenCalledWith({ step: "running" });
+
+      subject.next({ step: "done" });
+      await flushMicrotasks();
+      expect(onJobStateChanged).toHaveBeenCalledWith({ step: "done" });
+      sm.stop();
+    });
+
+    it("WHEN intent.onJobError is set THEN it receives the error value", () => {
+      const onJobError = jest.fn();
+      const jobError = new Error("fail");
+      const intent = makeBaseIntent({
+        job: () => throwError(() => jobError),
+        onJobError,
+      });
+      const { sm } = createSM({ intent });
+      driveToExecution(sm);
+      expect(onJobError).toHaveBeenCalledWith(jobError);
       sm.stop();
     });
   });

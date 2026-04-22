@@ -29,10 +29,12 @@ export function Logo({
       borderRadius={borderRadius}
       width={logoSize}
       height={logoSize}
+      minWidth={logoSize}
       marginRight={2}
       overflow="hidden"
       alignItems="center"
       justifyContent="center"
+      flexShrink={0}
       backgroundColor={isLoaded ? "transparent" : "neutral.c50"}
       data-testid="live-icon-container"
     >

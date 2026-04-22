@@ -31,6 +31,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps>({
     ConnectionErrorComponent,
     InitializationErrorComponent,
     IntentErrorComponent,
+    InvalidOperationComponent,
   } = platformConfig;
 
   switch (state.phase) {
@@ -63,6 +64,8 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps>({
     }
     case "intentError":
       return <IntentErrorComponent error={state.error} onRetry={state.onRetry} />;
+    case "invalidOperation":
+      return <InvalidOperationComponent error={state.error} onClose={state.onClose} />;
     case "idle": {
       if (state.lastIntentSnapshot) {
         const IntentComponent = state.lastIntentSnapshot.intentComponent;

@@ -51,11 +51,11 @@ function createNavigationReducer<
       case "GO_TO_STEP": {
         if (action.step === state.currentStep) return state;
         const direction = determineDirection(state.currentStep, action.step, stepOrder);
-        const newHistory =
-          direction === FLOW_NAVIGATION_DIRECTION.FORWARD
-            ? [...state.stepHistory, state.currentStep]
-            : state.stepHistory.slice(0, -1);
-        return { currentStep: action.step, direction, stepHistory: newHistory };
+        return {
+          currentStep: action.step,
+          direction,
+          stepHistory: [...state.stepHistory, state.currentStep],
+        };
       }
 
       case "GO_FORWARD": {

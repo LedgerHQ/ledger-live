@@ -1,5 +1,11 @@
 import type { AssetTableItem } from "../types";
-export { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+
+export function sanitizeAssetNameForTestId(name: string): string {
+  return name
+    .toLowerCase()
+    .replaceAll(/\s+/g, "-")
+    .replaceAll(/[^a-z0-9-]/g, "");
+}
 
 export function padItems(
   realItems: AssetTableItem[],

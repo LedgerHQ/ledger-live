@@ -1,7 +1,5 @@
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
-import { LumenTextStyle, LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { TrackScreen } from "~/analytics";
@@ -18,23 +16,11 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   isLoading,
   error,
   sourceScreenName,
-  onNavigateBack,
-  title,
   trackingType,
 }) => {
-  const { top } = useSafeAreaInsets();
-
   return (
-    <Box style={{ paddingTop: top, flex: 1 }}>
+    <Box style={{ flex: 1 }}>
       <TrackScreen name="Assets" source={sourceScreenName} type={trackingType} />
-      <NavBar appearance="compact">
-        <NavBarBackButton onPress={onNavigateBack} />
-      </NavBar>
-      <Box lx={titleContainerStyle}>
-        <Text typography="heading3SemiBold" lx={titleTextStyle}>
-          {title}
-        </Text>
-      </Box>
       <CryptoContent
         isLoading={isLoading}
         error={error}
@@ -56,12 +42,3 @@ const CryptoScreen = ({ route }: Props) => {
 };
 
 export default withDiscreetMode(CryptoScreen);
-
-const titleContainerStyle: LumenViewStyle = {
-  paddingHorizontal: "s16",
-  paddingBottom: "s12",
-};
-
-const titleTextStyle: LumenTextStyle = {
-  color: "base",
-};

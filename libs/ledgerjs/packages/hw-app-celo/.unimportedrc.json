@@ -1,6 +1,6 @@
 {
   "entry": [
-    "src/Polkadot.ts"
+    "src/Celo.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
@@ -18,8 +18,5 @@
     "bip32-path",
     "rlp",
     "semver"
-  ],
-  "ignoreUnimported": [
-    "src/Celo.ts"
   ]
 }

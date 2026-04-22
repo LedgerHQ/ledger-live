@@ -123,7 +123,9 @@ describe("LNSUpsellBanner", () => {
               personalizedRecommendationsEnabled: isOptIn,
               knownDeviceModelIds: Object.fromEntries(devicesModelList.map(model => [model, true])),
               anonymousUserNotifications: {},
-              overriddenFeatureFlags: {
+            },
+            featureFlags: {
+              overrides: {
                 llmNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
                 ...(brazePlacement
                   ? {

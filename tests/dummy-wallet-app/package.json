@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/dummy-wallet-app",
-  "version": "0.16.4",
+  "version": "0.17.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
@@ -19,7 +19,8 @@
   "scripts": {
     "start": "rspack serve",
     "build": "rspack build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "oxlint . --deny-warnings",
+    "lint:fix": "oxfmt . && oxlint . --fix"
   },
   "browserslist": {
     "production": [
@@ -40,11 +41,14 @@
     "@types/node": "catalog:",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

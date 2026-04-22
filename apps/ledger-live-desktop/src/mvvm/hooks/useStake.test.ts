@@ -1,6 +1,6 @@
 import { useStake } from "LLD/hooks/useStake";
 import BigNumber from "bignumber.js";
-import { renderHookWithLiveAppProvider } from "tests/testSetup";
+import { renderHookWithLiveAppProvider, withFlagOverrides } from "tests/testSetup";
 
 import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
 
@@ -165,18 +165,12 @@ const feature_stake_programs_json = {
       },
     },
   },
-};
+} as unknown as Parameters<typeof withFlagOverrides>[0]["stakePrograms"];
 
 describe("useStake()", () => {
   it("should return the correct currency ids for staking for natively enabled currencies and for partner supported tokens", async () => {
     const { result } = renderHookWithLiveAppProvider(() => useStake(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_json,
-          },
-        },
-      },
+      initialState: withFlagOverrides({ stakePrograms: feature_stake_programs_json }),
     });
 
     expect(result.current.enabledCurrencies).toEqual([
@@ -207,13 +201,7 @@ describe("useStake()", () => {
 
   it("should NOT return a route path for an ETH account that has a native flow.", async () => {
     const { result } = renderHookWithLiveAppProvider(() => useStake(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_json,
-          },
-        },
-      },
+      initialState: withFlagOverrides({ stakePrograms: feature_stake_programs_json }),
     });
 
     expect(result.current.getRouteToPlatformApp(mockEthereumAccount, walletState)).toEqual(null);
@@ -227,13 +215,7 @@ describe("useStake()", () => {
 
   it("should NOT return a route path for a USDT token account with no funds, but SHOULD return v3 dapp route for the same account WITH funds", async () => {
     const { result } = renderHookWithLiveAppProvider(() => useStake(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_json,
-          },
-        },
-      },
+      initialState: withFlagOverrides({ stakePrograms: feature_stake_programs_json }),
     });
 
     expect(result.current.getCanStakeUsingLedgerLive(mockUSDTTokenAccount.token.id)).toEqual(false);
@@ -275,13 +257,7 @@ describe("useStake()", () => {
 
   it("should return the correct dapp browser v1 navigation params for a given token account", async () => {
     const { result } = renderHookWithLiveAppProvider(() => useStake(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_json,
-          },
-        },
-      },
+      initialState: withFlagOverrides({ stakePrograms: feature_stake_programs_json }),
     });
 
     expect(
@@ -305,13 +281,7 @@ describe("useStake()", () => {
 
   it("should get the correct live app staking route params for a given Tron account", async () => {
     const { result } = renderHookWithLiveAppProvider(() => useStake(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_json,
-          },
-        },
-      },
+      initialState: withFlagOverrides({ stakePrograms: feature_stake_programs_json }),
     });
 
     expect(result.current.getCanStakeUsingLedgerLive(mockTronAccount.currency.id)).toEqual(false);

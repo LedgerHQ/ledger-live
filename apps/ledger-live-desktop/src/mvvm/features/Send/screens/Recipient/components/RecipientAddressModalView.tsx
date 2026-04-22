@@ -1,5 +1,6 @@
 import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
+import { cn } from "LLD/utils/cn";
 import type {
   AddressSearchResult,
   AddressValidationError as AddressValidationErrorType,
@@ -65,8 +66,10 @@ export function RecipientAddressModalView({
       showBridgeRecipientError ||
       showBridgeRecipientWarning);
 
+  const isWaitingForMemo = hasMemo && isAddressComplete && !hasFilledMemo;
+
   return (
-    <DialogBody className="flex flex-col py-16 min-h-[156px]">
+    <DialogBody className={cn("flex flex-col py-16", !isWaitingForMemo && "min-h-[156px]")}>
       {isLoading && (
         <div className="flex flex-1 items-center">
           <LoadingState />

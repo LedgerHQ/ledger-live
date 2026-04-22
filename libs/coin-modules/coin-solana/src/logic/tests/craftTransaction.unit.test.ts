@@ -220,8 +220,8 @@ describe("craftTransaction", () => {
       recipient: TEST_RECIPIENT,
       amount: 1000000n,
       asset: { type: "native" },
-      memo: "test memo",
-    } as TransactionIntent);
+      memo: { type: "string", kind: "text", value: "test memo" },
+    });
 
     expect(mockedBuildTransferInstructions).toHaveBeenCalledWith(
       api,
@@ -824,10 +824,8 @@ describe("craftTransaction – staking", () => {
       const result = await craftTransaction(api, {
         intentType: "staking",
         type: "stake.createAccount",
-        mode: "delegate",
         sender: TEST_ADDRESS,
         recipient: TEST_RECIPIENT,
-        valAddress: TEST_RECIPIENT,
         amount: 5_000_000_000n,
         asset: { type: "native" },
       } as StakingTransactionIntent);
@@ -849,10 +847,8 @@ describe("craftTransaction – staking", () => {
       await craftTransaction(api, {
         intentType: "staking",
         type: "stake.createAccount",
-        mode: "delegate",
         sender: TEST_ADDRESS,
         recipient: TEST_RECIPIENT,
-        valAddress: TEST_RECIPIENT,
         amount: 10_000_000_000n,
         useAllAmount: true,
         asset: { type: "native" },
@@ -872,10 +868,8 @@ describe("craftTransaction – staking", () => {
         {
           intentType: "staking",
           type: "stake.createAccount",
-          mode: "delegate",
           sender: TEST_ADDRESS,
           recipient: TEST_RECIPIENT,
-          valAddress: TEST_RECIPIENT,
           amount: 1_000_000_000n,
           asset: { type: "native" },
         } as StakingTransactionIntent,
@@ -892,7 +886,6 @@ describe("craftTransaction – staking", () => {
       await craftTransaction(api, {
         intentType: "staking",
         type: "stake.delegate",
-        mode: "delegate",
         sender: TEST_ADDRESS,
         recipient: "StakeAccXYZ111111111111111111111111111111111",
         valAddress: TEST_RECIPIENT,
@@ -916,7 +909,6 @@ describe("craftTransaction – staking", () => {
         craftTransaction(api, {
           intentType: "staking",
           type: "stake.delegate",
-          mode: "delegate",
           sender: TEST_ADDRESS,
           recipient: "",
           valAddress: TEST_RECIPIENT,
@@ -932,10 +924,8 @@ describe("craftTransaction – staking", () => {
       await craftTransaction(api, {
         intentType: "staking",
         type: "stake.undelegate",
-        mode: "undelegate",
         sender: TEST_ADDRESS,
         recipient: "StakeAccAddr1111111111111111111111111111111",
-        valAddress: "",
         amount: 0n,
         asset: { type: "native" },
       } as StakingTransactionIntent);
@@ -960,7 +950,7 @@ describe("craftTransaction – staking", () => {
         recipient: "StakeAccAddr1111111111111111111111111111111",
         amount: 3_000_000_000n,
         asset: { type: "native" },
-      } as TransactionIntent);
+      } as StakingTransactionIntent);
 
       expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
         api,

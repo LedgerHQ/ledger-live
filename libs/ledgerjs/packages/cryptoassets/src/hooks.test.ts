@@ -126,6 +126,21 @@ describe("Hooks", () => {
       expect(mockUseFindTokenByIdQuery).toHaveBeenCalledWith({ id: "ethereum/erc20/usd_coin" });
     });
 
+    it("should skip the query when skip option is true", () => {
+      mockUseFindTokenByIdQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      renderHook(() => useTokenById("ethereum/erc20/usd_coin", { skip: true }));
+
+      expect(mockUseFindTokenByIdQuery).toHaveBeenCalledWith(
+        { id: "ethereum/erc20/usd_coin" },
+        { skip: true },
+      );
+    });
+
     it("should handle loading state", () => {
       mockUseFindTokenByIdQuery.mockReturnValue({
         data: undefined,

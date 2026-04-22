@@ -24,10 +24,14 @@ import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
+import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 import shieldedSyncSubscriptions, {
   ShieldedSyncSubscriptionsState,
 } from "./shieldedSyncSubscriptions";
+import countervaluesExtraTracking, {
+  CountervaluesExtraTrackingState,
+} from "./countervaluesExtraTracking";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -49,8 +53,10 @@ export type State = LLDRTKApiState & {
   wallet: WalletState;
   walletSync: WalletSyncState;
   dialogs: DialogsState;
+  ptxInfoDialog: PtxInfoDialogState;
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
+  countervaluesExtraTracking: CountervaluesExtraTrackingState;
 };
 
 const appReducer = combineReducers({
@@ -73,8 +79,10 @@ const appReducer = combineReducers({
   walletSync,
   trustchain,
   dialogs,
+  ptxInfoDialog,
   syncRefresh,
   shieldedSyncSubscriptions,
+  countervaluesExtraTracking,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

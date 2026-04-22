@@ -56,7 +56,7 @@ import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import {
   DISCOVER_INITIAL_CATEGORY,
   INITIAL_PLATFORM_STATE,
@@ -1368,6 +1368,7 @@ export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
 export type CacheBustedLiveAppsdDB = StateDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>;
 export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
+export type SetCurrentAccountHistDb = CurrentAccountHistDB[1];
 
 export interface LocalLiveApp {
   state: LiveAppManifest[];

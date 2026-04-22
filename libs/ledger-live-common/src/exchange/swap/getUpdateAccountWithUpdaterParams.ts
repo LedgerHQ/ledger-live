@@ -3,7 +3,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import addToSwapHistory from "./addToSwapHistory";
 import { ExchangeSwap, ExchangeRate } from "./types";
 import { addPendingOperation, getMainAccount } from "../../account/index";
-import { Transaction } from "../../generated/types";
+import { Transaction } from "../../coin-modules/transaction-types";
 
 export const getUpdateAccountWithUpdaterParams = ({
   result,

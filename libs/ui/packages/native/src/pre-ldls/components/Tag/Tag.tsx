@@ -5,10 +5,10 @@ import { Text } from "../../../components";
 
 const Wrapper = styled.View<{ $spacing: "sm" | "md" }>`
   border-radius: 4px;
-  background-color: ${(props) => props.theme.colors.neutral.c30};
+  background-color: ${props => props.theme.colors.neutral.c30};
   flex-shrink: 0;
   align-self: flex-start;
-  padding: ${(props) => (props.$spacing === "sm" ? "1px 4px" : "2px 6px")};
+  padding: ${props => (props.$spacing === "sm" ? "1px 4px" : "2px 6px")};
 `;
 
 export const Tag = ({

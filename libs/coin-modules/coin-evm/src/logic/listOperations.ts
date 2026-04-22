@@ -231,20 +231,31 @@ export async function listOperations(
       op,
     ),
   );
-  const internalOperations = lastInternalOperations.map<Operation<MemoNotSupported>>(op => {
-    // Explorers don't provide block hash and fees for internal operations.
-    // When a matching parent transaction exists, we take these values from it.
-    // Otherwise, we use the internal operation's defaults.
+  // Some explorers (e.g. Blockscout on Somnia) report the top-level call trace as an
+  // internal transaction, duplicating the native transfer already present in txlist.
+  // When an internal tx and its parent coin tx both have the queried address as sender,
+  // the native value is already accounted for in the coin operation — drop the internal one.
+  // Analogous to the traceAddress.length === 0 check in getBlock's traceBlockItemsToOperationsByHash,
+  // but using sender matching since txlistinternal does not expose traceAddress.
+  const isRootTrace = (op: LiveOperation): boolean => {
     const parent = parents[op.hash];
-    return toOperation(
-      currency.id,
-      address,
-      { type: "native", internal: true, parent },
-      // Explorers don't provide block hash and fees for internal operations.
-      // When a parent exists, we take these values from the parent; otherwise keep the internal op values.
-      parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
-    );
-  });
+    if (!parent) return false;
+    const internalSenderMatch = op.senders.some(s => s.toLowerCase() === addressLower);
+    const parentSenderMatch = parent.senders.some(s => s.toLowerCase() === addressLower);
+    return internalSenderMatch && parentSenderMatch;
+  };
+
+  const internalOperations = lastInternalOperations
+    .filter(op => !isRootTrace(op))
+    .map<Operation<MemoNotSupported>>(op => {
+      const parent = parents[op.hash];
+      return toOperation(
+        currency.id,
+        address,
+        { type: "native", internal: true, parent },
+        parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
+      );
+    });
 
   const hasValidType = (operation: Operation): boolean =>
     [

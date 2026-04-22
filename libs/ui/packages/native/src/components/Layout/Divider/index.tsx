@@ -9,7 +9,7 @@ const DividerBase = styled(Flex).attrs<FlexBoxProps>((p: FlexBoxProps) => ({
   backgroundColor: "neutral.c40",
 }))``;
 
-const Divider: React.FC<FlexBoxProps & { text?: string }> = (props) => {
+const Divider: React.FC<FlexBoxProps & { text?: string }> = props => {
   if (!props.text) return <DividerBase {...props} />;
   return (
     <Flex {...props} flexDirection="row" alignItems="center">

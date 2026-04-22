@@ -1,4 +1,4 @@
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { render, renderHook, screen } from "@tests/test-renderer";
 import React from "react";
 import { ContentSection } from "../components/ContentSection";
@@ -93,74 +93,24 @@ describe("ContentSection", () => {
 
     expect(screen.getByText(/Preparing account onboarding transaction/i)).toBeDefined();
   });
-
-  it("should show authorization status when hasResult is true", () => {
-    renderContentSection(
-      createMockStatus({
-        onboarding: OnboardStatus.SUCCESS,
-        authorize: AuthorizeStatus.PREPARE,
-        hasResult: true,
-      }),
-      defaultAccounts,
-      null,
-    );
-
-    expect(screen.getByText("Preparing authorization...")).toBeDefined();
-  });
 });
 
 describe("getStatusTranslationKey", () => {
   it("should return correct translation keys for onboarding statuses", () => {
-    expect(getStatusTranslationKey(OnboardStatus.PREPARE, false)).toBe(
+    expect(getStatusTranslationKey(OnboardStatus.PREPARE)).toBe(
       "canton.onboard.status.prepare",
     );
-    expect(getStatusTranslationKey(OnboardStatus.SUBMIT, false)).toBe(
+    expect(getStatusTranslationKey(OnboardStatus.SUBMIT)).toBe(
       "canton.onboard.status.submit",
     );
-    expect(getStatusTranslationKey(OnboardStatus.INIT, false)).toBe(
+    expect(getStatusTranslationKey(OnboardStatus.INIT)).toBe(
       "canton.onboard.status.default",
-    );
-  });
-
-  it("should return correct translation keys for authorization statuses", () => {
-    expect(getStatusTranslationKey(AuthorizeStatus.PREPARE, true)).toBe(
-      "canton.authorize.status.prepare",
-    );
-    expect(getStatusTranslationKey(AuthorizeStatus.SUBMIT, true)).toBe(
-      "canton.authorize.status.submit",
-    );
-    expect(getStatusTranslationKey(AuthorizeStatus.INIT, true)).toBe(
-      "canton.authorize.status.default",
     );
   });
 });
 
 describe("useContentSectionViewModel", () => {
-  it("should compute isAuthorizationPhase correctly", () => {
-    const { result } = renderHook(() =>
-      useContentSectionViewModel({
-        status: createMockStatus({ hasResult: true, onboarding: OnboardStatus.SUCCESS }),
-        isReonboarding: false,
-        error: null,
-      }),
-    );
-
-    expect(result.current.isAuthorizationPhase).toBe(true);
-  });
-
-  it("should not set isAuthorizationPhase when onboarding is ERROR", () => {
-    const { result } = renderHook(() =>
-      useContentSectionViewModel({
-        status: createMockStatus({ hasResult: true, onboarding: OnboardStatus.ERROR }),
-        isReonboarding: false,
-        error: null,
-      }),
-    );
-
-    expect(result.current.isAuthorizationPhase).toBe(false);
-  });
-
-  it("should return onboarding status when not in authorization phase", () => {
+  it("should return onboarding status as displayStatus", () => {
     const { result } = renderHook(() =>
       useContentSectionViewModel({
         status: createMockStatus({ onboarding: OnboardStatus.PREPARE, hasResult: false }),
@@ -172,44 +122,11 @@ describe("useContentSectionViewModel", () => {
     expect(result.current.displayStatus).toBe(OnboardStatus.PREPARE);
   });
 
-  it("should return authorize status when in authorization phase", () => {
-    const { result } = renderHook(() =>
-      useContentSectionViewModel({
-        status: createMockStatus({
-          onboarding: OnboardStatus.SUCCESS,
-          authorize: AuthorizeStatus.PREPARE,
-          hasResult: true,
-        }),
-        isReonboarding: false,
-        error: null,
-      }),
-    );
-
-    expect(result.current.displayStatus).toBe(AuthorizeStatus.PREPARE);
-  });
-
   it("should compute showError correctly for onboarding error", () => {
     const error = new Error("Test error");
     const { result } = renderHook(() =>
       useContentSectionViewModel({
         status: createMockStatus({ onboarding: OnboardStatus.ERROR }),
-        isReonboarding: false,
-        error,
-      }),
-    );
-
-    expect(result.current.showError).toBe(true);
-  });
-
-  it("should compute showError correctly for authorization error", () => {
-    const error = new Error("Test error");
-    const { result } = renderHook(() =>
-      useContentSectionViewModel({
-        status: createMockStatus({
-          onboarding: OnboardStatus.SUCCESS,
-          authorize: AuthorizeStatus.ERROR,
-          hasResult: true,
-        }),
         isReonboarding: false,
         error,
       }),

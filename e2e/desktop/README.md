@@ -32,6 +32,12 @@ docker pull ghcr.io/ledgerhq/speculos:latest
 proto use
 ```
 
+- Install [mise](https://mise.jdx.dev/getting-started.html#installing-mise-cli) then run:
+
+```bash
+mise install
+```
+
 ### 2. Environment Variables
 
 Set these environment variables before you run tests and change the values as per your testing needs:
@@ -82,7 +88,7 @@ pnpm e2e:desktop test:playwright <testFileName>
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
-### 5. Wallet 4.0
+### 6. Wallet 4.0
 
 To reduce noise in test reports the Wallet 4.0 feature is OFF by default (regardless of Firebase).
 You can force Wallet 4.0 ON by setting the E2E environment variable:
@@ -94,3 +100,34 @@ export E2E_ENABLE_WALLET40=1
 Individual tests can still switch the feature ON explicitly passing the flag and parameters.
 
 To switch Wallet 4.0 on for all tests please use the checkbox on the Workflow.
+
+### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+
+You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
+
+Example shape:
+
+```json
+{
+  "myFeature": {
+    "enabled": true,
+    "params": {
+      "foo": "bar"
+    }
+  }
+}
+```
+
+Usage examples:
+
+```bash
+# Enable one feature with params
+export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar"}}}'
+
+```
+
+Notes:
+
+- Arrays, scalars, or invalid JSON are rejected.
+- `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
+- Per-test `featureFlags` fixture values still override env-provided values when both set the same key.

@@ -7,7 +7,7 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 

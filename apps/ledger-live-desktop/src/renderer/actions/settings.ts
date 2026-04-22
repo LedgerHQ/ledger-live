@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
   PortfolioRange,
   DeviceModelInfo,
-  FeatureId,
-  Feature,
   DeviceInfo,
 } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
+  AnalyticsConsentInfo,
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
@@ -29,7 +29,6 @@ import {
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
 } from "./constants";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -70,6 +69,38 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
   saveSettings({
     sharePersonalizedRecommandations,
   });
+
+export const setAnalyticsConsentInfo = () =>
+  saveSettings({
+    analyticsConsentInfo: {
+      consentDate: new Date().toISOString(),
+      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+    },
+  });
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Merges a partial patch into `analyticsConsentInfo` (e.g. force stale privacy version or clear consent date).
+ */
+export const DANGEROUSLY_setAnalyticsConsentInfoForQa = (patch: Partial<AnalyticsConsentInfo>) =>
+  saveSettings({
+    analyticsConsentInfo: patch as AnalyticsConsentInfo,
+  });
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Clears consent metadata and turns off analytics sharing flags to simulate a pre-consent state.
+ */
+export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () =>
+  saveSettings({
+    shareAnalytics: false,
+    sharePersonalizedRecommandations: false,
+    analyticsConsentInfo: {
+      consentDate: null,
+      privacyPolicyVersion: null,
+    },
+  });
+
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,
@@ -275,33 +306,6 @@ export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });
-export const setOverriddenFeatureFlag = (featureFlag: {
-  key: FeatureId;
-  value: Feature | undefined;
-}) => ({
-  type: "SET_OVERRIDDEN_FEATURE_FLAG",
-  payload: {
-    key: featureFlag.key,
-    value: featureFlag.value,
-  },
-});
-export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: Partial<{
-    [key in FeatureId]: Feature;
-  }>,
-) => ({
-  type: "SET_OVERRIDDEN_FEATURE_FLAGS",
-  payload: {
-    overriddenFeatureFlags,
-  },
-});
-export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean) => ({
-  type: "SET_FEATURE_FLAGS_BUTTON_VISIBLE",
-  payload: {
-    featureFlagsButtonVisible,
-  },
-});
-
 export const setVaultSigner = (payload: VaultSigner) => ({
   type: "SET_VAULT_SIGNER",
   payload,
@@ -397,12 +401,4 @@ export const updateAnonymousUserNotifications = (payload: {
 export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
-});
-
-export const setAnalyticsConsentInfo = () => ({
-  type: "SET_ANALYTICS_CONSENT_INFO",
-  payload: {
-    consentDate: new Date(),
-    privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-  },
 });

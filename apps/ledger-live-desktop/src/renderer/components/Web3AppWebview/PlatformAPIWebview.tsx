@@ -380,7 +380,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
 
       return Promise.resolve();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const [receive] = useJSONRPCServer(handlers, handleSend);
@@ -406,7 +406,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           webview.removeEventListener("ipc-message", handleMessage);
         }
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, [manifest, handleMessage]);
 
     const handleLoad = useCallback(() => {
@@ -444,7 +444,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           webview.removeEventListener("dom-ready", handleDomReady);
         }
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, [handleLoad, handleDomReady]);
 
     const webviewStyle = useMemo(() => {

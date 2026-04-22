@@ -21,7 +21,7 @@ import { TextVariants } from "../../styles/theme";
 const uppercase = system({
   uppercase: {
     property: "textTransform",
-    transform: (value) => (value ? "uppercase" : "none"),
+    transform: value => (value ? "uppercase" : "none"),
   },
 });
 
@@ -32,11 +32,7 @@ const textTransform = system({
 });
 
 export interface BaseTextProps
-  extends TextProps,
-    BaseStyledProps,
-    FontSizeProps,
-    TextAlignProps,
-    LineHeightProps {
+  extends TextProps, BaseStyledProps, FontSizeProps, TextAlignProps, LineHeightProps {
   variant?: TextVariants;
   fontWeight?: FontWeightTypes;
   fontFamily?: string;
@@ -50,11 +46,11 @@ export interface BaseTextProps
   children?: React.ReactNode;
 }
 
-const Base = baseStyled.Text.attrs<BaseTextProps>((p) => ({
-  fontSize: p.fontSize ? p.fontSize : p.variant ?? "paragraph",
+const Base = baseStyled.Text.attrs<BaseTextProps>(p => ({
+  fontSize: p.fontSize ? p.fontSize : (p.variant ?? "paragraph"),
   color: p.color || "neutral.c100",
 }))<BaseTextProps>`
-  ${(p) => getTextStyle(p)}
+  ${p => getTextStyle(p)}
   ${compose(lineHeight, fontSize, textAlign, uppercase, textTransform)}
   justify-content: center;
   align-items: center;

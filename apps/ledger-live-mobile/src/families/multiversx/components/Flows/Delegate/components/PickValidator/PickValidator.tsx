@@ -75,6 +75,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
           placeholder={t("common.search")}
           value={search}
           numberOfLines={1}
+          testID="delegation-search-pool-input"
         />
       </Box>
 

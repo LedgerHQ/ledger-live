@@ -294,6 +294,11 @@
       "title" : "Échec de la connexion",
       "description" : "Veuillez réessayer."
     },
+    "CounterfeitDevice" : {
+      "title" : "Ce {{productName}} a échoué la vérification de l’authenticité",
+      "description" : "Utiliser cet appareil Ledger n’est pas sécurisé.\n Veuillez contacter l’Assistance Ledger.",
+      "contactSupportCTA" : "Contacter l’Assistance Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Échec de la connexion",
       "description" : "Veuillez réessayer."
@@ -415,8 +420,8 @@
       "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
     },
     "AlreadySendingApduError" : {
-      "title" : "Erreur de communication",
-      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+      "title" : "Action requise sur votre appareil Ledger",
+      "description" : "Veuillez terminer l’action sur votre appareil."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Erreur de communication",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Vous avez besoin d’un compte pour accéder à cette app.",
-      "add" : "Ajouter un compte"
+      "select" : "Sélectionnez un compte"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Comptes",
     "transfer" : "Transfert",
     "manager" : "My Ledger",
+    "myWallet" : "Mon wallet",
     "settings" : "Paramètres",
     "platform" : "Apps",
     "discover" : "Discover",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Compte mis à jour"
     }
   },
+  "operationsList" : {
+    "to" : "À",
+    "from" : "De"
+  },
   "operationDetails" : {
     "title" : "Détails de la transaction",
     "account" : "Compte",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
+    "emptyTitle" : "Aucune transaction pour le moment",
+    "emptySubtitle" : "Revenez plus tard pour voir vos transactions.",
     "noMoreTransactions" : "Aucune autre transaction"
   },
   "selectableAccountsList" : {
@@ -4347,7 +4359,7 @@
         "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
       },
       "coinControl" : {
-        "title" : "Contrôle des coins",
+        "title" : "Sélection manuelle",
         "strategy" : "La stratégie",
         "learnMore" : "En savoir plus",
         "coinToSend" : "Crypto à envoyer",
@@ -4424,7 +4436,7 @@
     "summary" : {
       "solanaRawTransaction" : {
         "title" : "Demande de signature aveugle",
-        "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+        "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site web."
       },
       "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
       "tag" : "Tag (Facultatif)",
@@ -4484,7 +4496,7 @@
       "slow" : "Lent",
       "custom" : "Personnalisé",
       "customFees" : "Modifier les frais",
-      "coinControl" : "Contrôle des coins",
+      "coinControl" : "Choisir",
       "edit" : {
         "title" : "Choisir une unité"
       },
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "Échec de l’installation : {{appName}}",
       "description" : "Une erreur est survenue pendant l’installation. Veuillez réessayer."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Aide",
+      "referral" : "Parrainage"
     }
   }
 }

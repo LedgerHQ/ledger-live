@@ -48,38 +48,27 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo lint --filter="live-mobile" -- --quiet
+        run: pnpm exec nx run live-mobile:lint -- --quiet
       - name: Run lint (i18n)
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo lint:i18n --filter="live-mobile"
-        continue-on-error: true  # TODO: Remove once release branch is back-merged into develop (see JIRA)
+        run: pnpm exec nx run live-mobile:lint:i18n
       - name: check for dead code
         run: pnpm mobile knip-check
         shell: bash
       - name: Run code checkers
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo typecheck --filter="live-mobile"
+        run: pnpm exec nx run live-mobile:typecheck
       - name: Run unit tests
         run: pnpm mobile test:jest:coverage
       - name: upload coverage

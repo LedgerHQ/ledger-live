@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "tests/testSetup";
+import { render, withFlagOverrides } from "tests/testSetup";
 import { ConnectEnvsToDatadog } from "./ConnectEnvsToDatadog";
 
 jest.mock("~/datadog/renderer", () => ({
@@ -27,9 +27,9 @@ describe("ConnectEnvsToDatadog", () => {
   it("should not call initDatadog when sentryLogs is false", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
           sentryLogs: false,
-          overriddenFeatureFlags: { lldDatadog: { enabled: true, params: {} } },
         },
       },
     });
@@ -40,9 +40,9 @@ describe("ConnectEnvsToDatadog", () => {
   it("should call initDatadog when lldDatadog.enabled, sentryLogs and isDatadogAvailable are true", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
           sentryLogs: true,
-          overriddenFeatureFlags: { lldDatadog: { enabled: true, params: {} } },
         },
       },
     });
@@ -57,9 +57,9 @@ describe("ConnectEnvsToDatadog", () => {
   it("should pass shouldSend that reads current store so opt-out is respected after init", async () => {
     const { store } = render(<ConnectEnvsToDatadog />, {
       initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
           sentryLogs: true,
-          overriddenFeatureFlags: { lldDatadog: { enabled: true, params: {} } },
         },
       },
     });

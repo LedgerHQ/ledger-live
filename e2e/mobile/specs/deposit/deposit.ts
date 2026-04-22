@@ -4,14 +4,6 @@ import { setEnv } from "@ledgerhq/live-env";
 import { isWallet40 } from "../../helpers/commonHelpers";
 import { ApplicationOptions } from "page";
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
-
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function beforeAllFunction(options: ApplicationOptions) {
@@ -38,9 +30,7 @@ export async function runSelectCryptoNetworkTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: withAccount ? account.currency.speculosApp : undefined,
-        cliCommands: withAccount
-          ? [liveDataCommand(account.currency.speculosApp, account.index)]
-          : undefined,
+        cliCommands: withAccount ? [liveDataCommand(account)] : undefined,
       });
     });
 

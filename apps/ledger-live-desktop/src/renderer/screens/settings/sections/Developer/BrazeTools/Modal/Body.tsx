@@ -104,7 +104,19 @@ export const ModalBody: React.FC = () => {
       order,
     } = formData;
     if (selectedTab === "PortfolioContentCard") {
-      addLocalPortfolioCard(title, description, image, order, url, cta, tag, picto || undefined);
+      addLocalPortfolioCard(
+        title,
+        description,
+        image,
+        order,
+        url,
+        cta,
+        tag,
+        picto,
+        path,
+        icon,
+        image_background,
+      );
     } else if (selectedTab === "BottomPortfolioContentCard") {
       addLocalBottomPortfolioCard(
         title,
@@ -114,7 +126,10 @@ export const ModalBody: React.FC = () => {
         url,
         cta,
         tag,
-        picto || undefined,
+        picto,
+        path,
+        icon,
+        image_background,
       );
     } else if (selectedTab === "ActionContentCard") {
       addLocalActionCard(
@@ -179,13 +194,28 @@ export const ModalBody: React.FC = () => {
     PortfolioContentCard: [
       {
         field: "image",
-        placeholder: "Image URL",
+        placeholder: "Image URL (carousel / ContentBanner fallback)",
         label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "image_background",
+        placeholder: "Image background URL (Lumen MediaBanner when brazePlacement on)",
+        label: "Image background",
+      },
+      {
+        field: "icon",
+        placeholder: "Icon name for ContentBanner variant (e.g. Settings, Wallet)",
+        label: "Icon",
       },
       {
         field: "url",
         placeholder: "URL",
         label: t("settings.developer.brazeTools.modal.fields.url"),
+      },
+      {
+        field: "path",
+        placeholder: "In-app path (deep link)",
+        label: t("settings.developer.brazeTools.modal.fields.path"),
       },
       {
         field: "cta",
@@ -210,9 +240,24 @@ export const ModalBody: React.FC = () => {
         label: t("settings.developer.brazeTools.modal.fields.image"),
       },
       {
+        field: "image_background",
+        placeholder: "Image background URL (optional)",
+        label: "Image background",
+      },
+      {
+        field: "icon",
+        placeholder: "Icon name (optional)",
+        label: "Icon",
+      },
+      {
         field: "url",
         placeholder: "URL",
         label: t("settings.developer.brazeTools.modal.fields.url"),
+      },
+      {
+        field: "path",
+        placeholder: "In-app path (deep link)",
+        label: t("settings.developer.brazeTools.modal.fields.path"),
       },
       {
         field: "cta",
@@ -238,7 +283,7 @@ export const ModalBody: React.FC = () => {
       },
       {
         field: "image_background",
-        placeholder: "Image background URL (braze placement)",
+        placeholder: "Image background URL (MediaBanner variant)",
         label: "Image background",
       },
       {

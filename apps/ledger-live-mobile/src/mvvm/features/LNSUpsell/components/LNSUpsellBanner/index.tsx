@@ -13,11 +13,7 @@ export function LNSUpsellBanner({ location, ...styledProps }: Props) {
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
   const model = useLNSUpsellBannerModel(location);
   return (
-    <View
-      {...styledProps}
-      {...model}
-      shouldUseLumenMediaBanner={shouldDisplayBrazePlacement}
-    />
+    <View {...styledProps} {...model} shouldUseLumenMediaBanner={shouldDisplayBrazePlacement} />
   );
 }
 

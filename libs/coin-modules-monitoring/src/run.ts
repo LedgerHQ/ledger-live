@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import currencies, { AccountInfo, AccountType } from "./currencies";
 import { LogEntry, submitLogs } from "./datadog";
 import { Dist, measureCalls } from "./measure";
@@ -144,6 +145,8 @@ function getSync(currency: CryptoCurrency) {
 }
 
 export default async function (currencyIds: string[], accountTypes: AccountType[]) {
+  registerAllCoins();
+
   LiveConfig.setConfig(liveConfig);
 
   // Setup CAL client store for monitoring (automatically set as global store)

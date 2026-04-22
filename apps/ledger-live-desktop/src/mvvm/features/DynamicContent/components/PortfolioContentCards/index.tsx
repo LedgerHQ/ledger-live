@@ -1,11 +1,17 @@
-import React from "react";
+import React, { memo } from "react";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 import { Carousel } from "@ledgerhq/react-ui";
-import { track } from "~/renderer/analytics/segment";
-import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
-import Slide from "./Slide";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { track } from "~/renderer/analytics/segment";
+import { openURL } from "~/renderer/linking";
+import type { PortfolioContentCard as PortfolioCardType } from "~/types/dynamicContent";
+import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
+import type { CarouselActions } from "../../types";
+import { ContentBannerActionCard } from "../ContentBannerActionCard";
+import LogContentCardWrapper from "../LogContentCardWrapper";
+import Slide from "./Slide";
 
 export default PortfolioContentCards;
 
@@ -21,13 +27,98 @@ const CarouselWrapper = styled.div<{ $isWallet40Enabled: boolean }>`
   }
 `;
 
+/** 2 columns, max 2 cards (Braze placement portfolio) */
+const BrazePlacementGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  & > * {
+    min-width: 0;
+  }
+`;
+
+type BrazeSlideProps = {
+  card: PortfolioCardType;
+  index: number;
+} & CarouselActions;
+
+/** Braze placement grid: only cards with at least one of these (extras) are shown when FF is on. */
+function isPortfolioCardEligibleForLumenGrid(card: PortfolioCardType): boolean {
+  return Boolean(card.image_background?.trim()) || Boolean(card.icon?.trim());
+}
+
+/** MediaBanner URL from `image_background` only (`image` is not used as fallback). */
+function lumenImageBackgroundForPortfolio(card: PortfolioCardType): string | undefined {
+  const bg = card.image_background?.trim();
+  return bg || undefined;
+}
+
+const PortfolioBrazePlacementSlide = memo(function PortfolioBrazePlacementSlide({
+  card,
+  index,
+  logSlideClick,
+  dismissCard,
+}: BrazeSlideProps) {
+  const navigate = useNavigate();
+
+  const handleClose = () => dismissCard(index);
+  const handleClick = () => {
+    logSlideClick(card.id);
+    if (card.path) {
+      navigate(card.path, { state: { source: "banner" } });
+    } else if (card.url) {
+      openURL(card.url);
+    }
+  };
+
+  const imageBackground = lumenImageBackgroundForPortfolio(card);
+
+  return (
+    <LogContentCardWrapper id={card.id} location={card.location}>
+      <ContentBannerActionCard
+        title={card.title}
+        description={card.description}
+        onClose={handleClose}
+        onClick={handleClick}
+        icon={card.icon}
+        image_background={imageBackground}
+      />
+    </LogContentCardWrapper>
+  );
+});
+
 function PortfolioContentCards() {
   const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCarouselCards("top");
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
+  const { isEnabled: isWallet40Enabled, shouldDisplayBrazePlacement } =
+    useWalletFeaturesConfig("desktop");
   const handlePrevButton = () => trackSlide("prev");
   const handleNextButton = () => trackSlide("next");
 
   if (portfolioCards.length === 0) return null;
+
+  if (shouldDisplayBrazePlacement) {
+    const eligibleEntries = portfolioCards
+      .map((card, portfolioIndex) => ({ card, portfolioIndex }))
+      .filter(({ card }) => isPortfolioCardEligibleForLumenGrid(card))
+      .slice(0, 2);
+
+    if (eligibleEntries.length === 0) return null;
+
+    return (
+      <BrazePlacementGrid>
+        {eligibleEntries.map(({ card, portfolioIndex }) => (
+          <PortfolioBrazePlacementSlide
+            key={card.id}
+            card={card}
+            index={portfolioIndex}
+            logSlideClick={logSlideClick}
+            dismissCard={dismissCard}
+          />
+        ))}
+      </BrazePlacementGrid>
+    );
+  }
 
   return (
     <CarouselWrapper $isWallet40Enabled={isWallet40Enabled}>

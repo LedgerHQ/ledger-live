@@ -33,7 +33,7 @@ function getAnalyticsEvent(route: string) {
       return "Market";
     case ScreenName.Portfolio:
     default:
-      return "Crypto";
+      return ScreenName.Crypto;
   }
 }
 

@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  AssetInfo,
+  BalanceOptions,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { AnyTuple } from "@polkadot/types/types";
 import type { PolkadotConfig } from "../config";
@@ -43,7 +48,7 @@ describe("index", () => {
         craftTransaction: expect.any(Function),
         craftRawTransaction: expect.any(Function),
         estimateFees: expect.any(Function),
-        getBalance: logic.getBalance,
+        getBalance: expect.any(Function),
         getBlock: expect.any(Function),
         getBlockInfo: expect.any(Function),
         getRewards: expect.any(Function),
@@ -54,6 +59,7 @@ describe("index", () => {
         validateIntent: expect.any(Function),
         validateAddress: expect.any(Function),
         getNextSequence: expect.any(Function),
+        craftTransactionData: expect.any(Function),
       });
     });
   });
@@ -176,6 +182,26 @@ describe("index", () => {
       mockListOperations.mockResolvedValue([[], 2]);
       const result = await api.listOperations("some random address", { minHeight: 0 });
       expect(result).toEqual({ items: [], next: "2" });
+    });
+  });
+
+  describe("getBalance", () => {
+    it.each([
+      {
+        title: "empty object",
+        options: {} as unknown as BalanceOptions,
+      },
+      {
+        title: "regular object",
+        options: {
+          includeAssets: (_assetInfo: AssetInfo) => true,
+        } as unknown as BalanceOptions,
+      },
+    ])("should throw an exception when options is provided as $title", async ({ options }) => {
+      const api = generateApi();
+      await expect(api.getBalance("random address", options)).rejects.toThrow(
+        InvalidParameterError,
+      );
     });
   });
 });

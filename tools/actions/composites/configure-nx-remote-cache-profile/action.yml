@@ -1,0 +1,84 @@
+name: "Configure Nx remote cache profile"
+description: |
+  Resolves the AWS OIDC role ARN and Nx S3 `cacheKeyPrefix` from `github.ref` (single source of truth).
+
+  **Prefix rules**
+  - `refs/heads/develop` → prefix `develop`, role = develop OIDC ARN when both profile ARNs are set.
+  - All other refs (feature branches, `refs/pull/N/merge`, tags, etc.) → prefix `branch`, role = branch OIDC ARN.
+
+  **PR jobs:** `github.ref` is `refs/pull/N/merge`, so they use the **branch** profile and **branch** prefix (not the develop role) unless you change this script.
+
+  **workflow_dispatch:** `github.ref` is the ref that was checked out. To use the develop profile for a manual run, dispatch against `refs/heads/develop` (or extend this action later with an optional ref override input).
+
+  **Credential modes**
+  - Prefer `develop-role-arn` + `branch-role-arn` (full IAM role ARNs for GitHub OIDC).
+  - Otherwise, if `legacy-account-id` + `legacy-role-name` are set, the role ARN is built as `arn:aws:iam::<account>:role/<name>` (same role for every ref; prefix still follows `github.ref`).
+
+inputs:
+  develop-role-arn:
+    description: "Full IAM role ARN trusted by GitHub OIDC for develop cache writes (optional if using legacy account/role)."
+    required: false
+    default: ""
+  branch-role-arn:
+    description: "Full IAM role ARN for non-develop refs (optional if using legacy account/role)."
+    required: false
+    default: ""
+  legacy-account-id:
+    description: "AWS account id for legacy cache role (optional if both OIDC role ARNs are set)."
+    required: false
+    default: ""
+  legacy-role-name:
+    description: "IAM role name for legacy cache role (optional if both OIDC role ARNs are set)."
+    required: false
+    default: ""
+
+outputs:
+  role-arn:
+    description: "IAM role ARN to pass to configure-aws-credentials"
+    value: ${{ steps.resolve.outputs.role-arn }}
+  nx-cache-key-prefix:
+    description: "Literal Nx S3 cacheKeyPrefix (`develop` or `branch`)"
+    value: ${{ steps.resolve.outputs.nx-cache-key-prefix }}
+  cache-profile:
+    description: "develop | branch"
+    value: ${{ steps.resolve.outputs.cache-profile }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Resolve role and Nx cache prefix
+      id: resolve
+      env:
+        GITHUB_REF: ${{ github.ref }}
+        DEVELOP_ROLE_ARN: ${{ inputs.develop-role-arn }}
+        BRANCH_ROLE_ARN: ${{ inputs.branch-role-arn }}
+        LEGACY_ACCOUNT_ID: ${{ inputs.legacy-account-id }}
+        LEGACY_ROLE_NAME: ${{ inputs.legacy-role-name }}
+        ACTION_PATH: ${{ github.action_path }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const scriptPath = path.join(process.env.ACTION_PATH, 'resolve-nx-remote-cache-profile.js');
+          const { resolveNxRemoteCacheProfile } = require(scriptPath);
+          const { roleArn, nxCacheKeyPrefix, cacheProfile } = resolveNxRemoteCacheProfile({
+            githubRef: process.env.GITHUB_REF || '',
+            developRoleArn: process.env.DEVELOP_ROLE_ARN || '',
+            branchRoleArn: process.env.BRANCH_ROLE_ARN || '',
+            legacyAccountId: process.env.LEGACY_ACCOUNT_ID || '',
+            legacyRoleName: process.env.LEGACY_ROLE_NAME || '',
+          });
+          if (!roleArn) {
+            throw new Error(
+              'configure-nx-remote-cache-profile: could not resolve role ARN. Provide develop-role-arn + branch-role-arn, or legacy-account-id + legacy-role-name.',
+            );
+          }
+          const out = process.env.GITHUB_OUTPUT;
+          fs.appendFileSync(out, `role-arn=${roleArn}\n`);
+          fs.appendFileSync(out, `nx-cache-key-prefix=${nxCacheKeyPrefix}\n`);
+          fs.appendFileSync(out, `cache-profile=${cacheProfile}\n`);
+
+    - name: Write Nx cache config (gitignored nx.cache-config.json)
+      shell: bash
+      run: node "${{ github.workspace }}/tools/nx/write-nx-cache-config.mjs" --cache-key-prefix "${{ steps.resolve.outputs.nx-cache-key-prefix }}"

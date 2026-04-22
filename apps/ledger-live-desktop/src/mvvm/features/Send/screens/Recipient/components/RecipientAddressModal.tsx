@@ -1,6 +1,7 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import React from "react";
+import React, { useEffect } from "react";
+import { useSendFlowActions } from "../../../context/SendFlowContext";
 import { useRecipientAddressModalViewModel } from "../hooks/useRecipientAddressModalViewModel";
 import { RecipientAddressModalView } from "./RecipientAddressModalView";
 
@@ -21,6 +22,7 @@ export function RecipientAddressModal({
   onAddressSelected,
   recipientSupportsDomain = false,
 }: RecipientAddressModalProps) {
+  const { setIsRecipientAddressComplete } = useSendFlowActions();
   const { handleAddressSelect, ...viewModel } = useRecipientAddressModalViewModel({
     account,
     parentAccount,
@@ -28,6 +30,10 @@ export function RecipientAddressModal({
     onAddressSelected,
     recipientSupportsDomain,
   });
+
+  useEffect(() => {
+    setIsRecipientAddressComplete(viewModel.isAddressComplete);
+  }, [viewModel.isAddressComplete, setIsRecipientAddressComplete]);
 
   return <RecipientAddressModalView {...viewModel} onAddressSelect={handleAddressSelect} />;
 }

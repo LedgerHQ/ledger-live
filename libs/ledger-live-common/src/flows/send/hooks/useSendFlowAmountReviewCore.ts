@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountBridge } from "../../../bridge/impl";
 import type { SendFlowTransactionActions } from "../types";
-import type { Transaction, TransactionStatus } from "../../../generated/types";
+import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMaxAvailable, isInsufficientFundsAmountError } from "../amount/utils/amountReview";
 

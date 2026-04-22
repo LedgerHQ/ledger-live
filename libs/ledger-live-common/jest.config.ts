@@ -12,7 +12,7 @@ const testPathIgnorePatterns = [
   "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
 ];
 
-const esmDeps = ["ky"];
+const esmDeps = ["ky", "@mysten", "@scure", "@noble"];
 
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
@@ -51,6 +51,7 @@ const defaultConfig = {
   testEnvironment: "node",
   reporters,
   setupFiles: ["./jest.polyfills.js"],
+  setupFilesAfterEnv: ["<rootDir>/src/__tests__/test-helpers/setup-registry.ts"],
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers", "src/wallet-api/SmartWebsocket.ts"], // Type issue with event in SmartWebsocket.ts breaking coverage report
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
@@ -72,7 +73,7 @@ const defaultConfig = {
         },
       },
     ],
-    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
+    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|jsx|mjs)$`]: [
       "@swc/jest",
       {
         jsc: {
@@ -84,6 +85,7 @@ const defaultConfig = {
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
+    "^(\\.{1,2}/.+)\\.js$": "$1",
     "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",
     "^@tests$": "<rootDir>/src/__tests__/server",
     // TODO: Remove this once we upgrade all projects React 19

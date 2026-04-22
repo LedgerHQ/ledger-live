@@ -256,7 +256,7 @@ const Body = ({
     if (account) {
       computeAccountError(account, parentAccount);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const errorSteps = verifyAddressError ? [2] : [];

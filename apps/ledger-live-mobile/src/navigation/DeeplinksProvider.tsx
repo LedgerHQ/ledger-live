@@ -180,11 +180,6 @@ const linkingOptions = () => ({
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
 
-          /**
-           * @params ?platform: string
-           * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
-           */
-          [ScreenName.PlatformApp]: "discover/:platform",
           [NavigatorName.Card]: {
             initialRouteName: ScreenName.Card,
             screens: {
@@ -355,6 +350,7 @@ export const DeeplinksProvider = ({
   const llmAccountListUI = useFeature("llmAccountListUI");
   const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav, shouldDisplayAssetSection } =
     useWalletFeaturesConfig("mobile");
+  const web3hubFlag = useFeature("web3hub");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -365,20 +361,37 @@ export const DeeplinksProvider = ({
     : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
+    const options = linkingOptions();
     return (
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
         ...(hasCompletedOnboarding
           ? {
-              ...linkingOptions(),
+              ...options,
               config: {
-                ...linkingOptions().config,
+                ...options.config,
                 screens: {
-                  ...linkingOptions().config.screens,
+                  ...options.config.screens,
                   [NavigatorName.Base]: {
-                    ...linkingOptions().config.screens[NavigatorName.Base],
+                    ...options.config.screens[NavigatorName.Base],
                     screens: {
-                      ...linkingOptions().config.screens[NavigatorName.Base].screens,
+                      ...options.config.screens[NavigatorName.Base].screens,
+
+                      /**
+                       * @params ?platform: string
+                       * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                       */
+                      ...(!web3hubFlag?.enabled
+                        ? {
+                            [ScreenName.PlatformApp]: "discover/:platform",
+                          }
+                        : {
+                            [NavigatorName.Web3Hub]: {
+                              screens: {
+                                [ScreenName.Web3HubApp]: "discover/:manifestId",
+                              },
+                            },
+                          }),
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
@@ -475,14 +488,24 @@ export const DeeplinksProvider = ({
                               [ScreenName.Earn]: "earn",
                             },
                           },
-                          [NavigatorName.Discover]: {
-                            screens: {
-                              /**
-                               * ie: "ledgerlive://discover" will open the catalog
-                               */
-                              [ScreenName.PlatformCatalog]: "discover",
-                            },
-                          },
+                          ...(!web3hubFlag?.enabled
+                            ? {
+                                [NavigatorName.Discover]: {
+                                  screens: {
+                                    /**
+                                     * ie: "ledgerlive://discover" will open the catalog
+                                     */
+                                    [ScreenName.PlatformCatalog]: "discover",
+                                  },
+                                },
+                              }
+                            : {
+                                [NavigatorName.Web3HubTab]: {
+                                  screens: {
+                                    [ScreenName.Web3HubMain]: "discover",
+                                  },
+                                },
+                              }),
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**
@@ -846,6 +869,7 @@ export const DeeplinksProvider = ({
     shouldDisplayAssetSection,
     liveAppProviderInitialized,
     manifests,
+    web3hubFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);

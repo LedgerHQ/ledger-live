@@ -1,6 +1,10 @@
 import { useMemo, useState, useEffect, useCallback, Dispatch, SetStateAction } from "react";
 
-export type StateDB<State, Selected> = [Selected, Dispatch<SetStateAction<State>>];
+export type StateDB<State, Selected> = [Selected, Dispatch<SetStateAction<State>>, boolean];
+
+function isUpdater<S>(action: SetStateAction<S>): action is (prev: S) => S {
+  return typeof action === "function";
+}
 
 export function useDBRaw<State, Selected>({
   initialState,
@@ -14,30 +18,35 @@ export function useDBRaw<State, Selected>({
   selector: (state: State) => Selected;
 }): StateDB<State, Selected> {
   const [state, setState] = useState<State>(initialState);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    getter().then(state => {
-      if (!state) {
-        setterRaw(initialState);
-        return;
-      }
-
-      setState(state);
-    });
+    getter()
+      .then(getterState => {
+        if (!getterState) {
+          setterRaw(initialState);
+        } else {
+          setState(getterState);
+        }
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
     // Run once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const setter = useCallback(
-    async newState => {
-      const val = typeof newState === "function" ? newState(await getter()) : newState;
-
-      setState(val);
-      return setterRaw(val);
+  const setter: Dispatch<SetStateAction<State>> = useCallback(
+    (newState: SetStateAction<State>) => {
+      setState(prev => {
+        const val = isUpdater(newState) ? newState(prev) : newState;
+        setterRaw(val);
+        return val;
+      });
     },
-    [getter, setterRaw],
+    [setterRaw],
   );
 
   const result = useMemo(() => selector(state), [state, selector]);
-  return [result, setter];
+  return useMemo(() => [result, setter, isLoaded], [result, setter, isLoaded]);
 }

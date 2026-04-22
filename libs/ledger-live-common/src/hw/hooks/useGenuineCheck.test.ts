@@ -7,6 +7,7 @@ import {
   UserRefusedAllowManager,
   DisconnectedDeviceDuringOperation,
   UnresponsiveDeviceError,
+  DeviceSocketFail,
 } from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";
 import {
@@ -115,6 +116,26 @@ describe("useGenuineCheck", () => {
 
       expect(result.current.genuineState).toEqual("unchecked");
       expect(result.current.error).toBeInstanceOf(DisconnectedDeviceDuringOperation);
+    });
+
+    it("should set genuineState to non-genuine when HSM returns a counterfeit error", async () => {
+      mockedGetGenuineCheckFromDeviceId.mockReturnValue(
+        throwError(() => new DeviceSocketFail("Counterfeit device detected.")),
+      );
+      const { result } = renderHook(() =>
+        useGenuineCheck({
+          getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
+          deviceId: "A_DEVICE_ID",
+          deviceName: null,
+        }),
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      expect(result.current.genuineState).toEqual("non-genuine");
+      expect(result.current.error).toBeNull();
     });
   });
 

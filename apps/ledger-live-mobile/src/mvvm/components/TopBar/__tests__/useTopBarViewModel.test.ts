@@ -30,9 +30,9 @@ const mockNavigation = { navigate: mockNavigate };
 
 const withWeb3Hub = (enabled: boolean) => (state: State) => ({
   ...state,
-  settings: {
-    ...state.settings,
-    overriddenFeatureFlags: {
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: {
       web3hub: { enabled },
     },
   },

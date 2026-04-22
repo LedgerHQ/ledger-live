@@ -1,5 +1,7 @@
-import { BoilerplateConfig } from "../config";
+import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
+import { BoilerplateConfig } from "../config";
 
 describe("createApi", () => {
   it("should return every api methods", () => {
@@ -20,6 +22,16 @@ describe("createApi", () => {
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       getNextSequence: expect.any(Function),
+      craftTransactionData: expect.any(Function),
+    });
+  });
+
+  describe("getBalance", () => {
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi({} as BoilerplateConfig);
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
     });
   });
 });

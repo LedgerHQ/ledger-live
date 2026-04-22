@@ -8,6 +8,7 @@ import { track } from "~/analytics";
 import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { isPostOnboardingHubActionFulfilled } from "~/logic/postOnboarding/postOnboardingHubCompletion";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
@@ -52,10 +53,14 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const completeAction = useCompleteActionCallback();
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
-  const initIsActionCompleted = useCallback(async () => {
-    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
-    setIsActionCompleted(completed || !!isAlreadyCompleted);
-  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
+  const initIsActionCompleted = useCallback(() => {
+    setIsActionCompleted(
+      isPostOnboardingHubActionFulfilled(
+        { completed, getIsAlreadyCompletedByState },
+        { isLedgerSyncActive: !!isLedgerSyncActive, accounts },
+      ),
+    );
+  }, [completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
 
   useEffect(() => {
     initIsActionCompleted();

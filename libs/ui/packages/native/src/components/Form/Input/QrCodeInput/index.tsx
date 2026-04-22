@@ -7,7 +7,7 @@ import FlexBox from "../../../Layout/Flex";
 import QrCodeMedium from "@ledgerhq/icons-ui/nativeLegacy/QrCodeMedium";
 
 const QrCodeButton = styled(TouchableOpacity)`
-  background-color: ${(p) => p.theme.colors.neutral.c100};
+  background-color: ${p => p.theme.colors.neutral.c100};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,7 +17,7 @@ const QrCodeButton = styled(TouchableOpacity)`
   border-width: 0;
 `;
 
-const Icon = styled(QrCodeMedium).attrs((p) => ({
+const Icon = styled(QrCodeMedium).attrs(p => ({
   color: p.theme.colors.neutral.c00,
 }))``;
 

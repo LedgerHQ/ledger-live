@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable eslint/no-console */
 import fsPromises from "fs/promises";
 import { listen } from "@ledgerhq/logs";
 import { recordTestTrustchainSdk } from "../tests/test-helpers/recordTrustchainSdkTests";

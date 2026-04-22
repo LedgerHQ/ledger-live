@@ -80,6 +80,7 @@ describe("acceptOffer", () => {
       },
     },
     serialized: "serialized-transaction",
+    step: { type: "single-step" as const },
   };
 
   const mockSignature: CantonSignature = {
@@ -101,7 +102,10 @@ describe("acceptOffer", () => {
     jest.clearAllMocks();
     mockedGateway.prepareTransferInstruction.mockResolvedValue(mockPreparedTransaction);
     mockedSignTransaction.signTransaction.mockResolvedValue(mockSignature);
-    mockedGateway.submitTransferInstruction.mockResolvedValue({ update_id: "test-update-id" });
+    mockedGateway.submitTransferInstruction.mockResolvedValue({
+      submission_id: "test-submission-id",
+      update_id: "test-update-id",
+    });
     mockedGetTransactionStatus.validateTopology.mockResolvedValue(null);
   });
 

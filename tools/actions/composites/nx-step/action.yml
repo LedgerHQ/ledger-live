@@ -1,0 +1,24 @@
+name: nx-step
+description: Runs a command with Nx remote cache (NX_KEY / AWS from setup-caches) or skips cache when requested
+inputs:
+  command:
+    description: "Command to run (e.g. pnpm nx run live-mobile:build)"
+  disable_cache:
+    description: "Skip Nx cache (local and remote) for this step"
+    type: boolean
+    required: false
+    default: false
+runs:
+  using: composite
+  steps:
+    - name: Run (cache disabled)
+      if: ${{ inputs.disable_cache == 'true' }}
+      run: ${{ inputs.command }}
+      shell: bash
+      env:
+        NX_SKIP_NX_CACHE: "true"
+
+    - name: Run (Nx cache enabled)
+      if: ${{ inputs.disable_cache != 'true' }}
+      run: ${{ inputs.command }}
+      shell: bash

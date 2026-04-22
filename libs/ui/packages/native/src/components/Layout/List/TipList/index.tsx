@@ -14,7 +14,7 @@ export type TipListProps = Omit<BaseListProps, "items"> & {
 export default function TipList({ items, ...props }: TipListProps): React.ReactElement {
   const tipItems = useMemo(
     () =>
-      items.map((item) => ({
+      items.map(item => ({
         ...item,
         bullet: item.isPositive ? (
           <Check size={20} color={"success.c50"} />

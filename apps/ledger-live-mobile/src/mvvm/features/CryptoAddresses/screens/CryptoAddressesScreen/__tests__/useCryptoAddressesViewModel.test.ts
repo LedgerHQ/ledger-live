@@ -13,7 +13,7 @@ const mockNavigate = jest.fn();
 jest.mock("@react-navigation/core", () => ({
   ...jest.requireActual("@react-navigation/core"),
   useNavigation: () => ({ navigate: mockNavigate }),
-  useRoute: () => ({ name: "CryptoAddresses" }),
+  useRoute: () => ({ name: ScreenName.CryptoAddresses }),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/react/useGlobalSyncState", () => ({
@@ -51,10 +51,9 @@ describe("useCryptoAddressesViewModel", () => {
 
     expect(result.current.accounts.length).toBeGreaterThanOrEqual(1);
     expect(result.current.hasNoAccount).toBe(false);
-    expect(result.current.title).toBe("Accounts");
     expect(result.current.addAccountLabel).toBe("Add account");
     expect(result.current.emptyStateLabel).toBe("No accounts yet");
-    expect(result.current.trackingPage).toBe("CryptoAddresses");
+    expect(result.current.trackingPage).toBe(ScreenName.Accounts);
     expect(result.current.sourceScreenName).toBe(ScreenName.Portfolio);
   });
 
@@ -123,8 +122,8 @@ describe("useCryptoAddressesViewModel", () => {
 
       expect(result.current.isAddAccountOpen).toBe(true);
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "add a new account",
-        page: "CryptoAddresses",
+        button: "add_account",
+        page: ScreenName.Accounts,
       });
 
       act(() => result.current.onCloseAddAccount());
@@ -146,8 +145,7 @@ describe("useCryptoAddressesViewModel", () => {
       });
       expect(jest.mocked(track)).toHaveBeenCalledWith("account_clicked", {
         currency: "Bitcoin",
-        account: expect.any(String),
-        page: "CryptoAddresses",
+        page: ScreenName.Accounts,
       });
     });
 
@@ -170,8 +168,7 @@ describe("useCryptoAddressesViewModel", () => {
       });
       expect(jest.mocked(track)).toHaveBeenCalledWith("account_clicked", {
         currency: tokenAccount.token.parentCurrency.name,
-        account: expect.any(String),
-        page: "CryptoAddresses",
+        page: ScreenName.Accounts,
       });
     });
   });

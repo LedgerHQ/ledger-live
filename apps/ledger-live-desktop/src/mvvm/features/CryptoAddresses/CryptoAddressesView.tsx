@@ -33,7 +33,7 @@ export function CryptoAddressesView({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24">
-      <TrackPage category={CRYPTO_TRACKING_PAGE_NAME} />
+      <TrackPage category={CRYPTO_TRACKING_PAGE_NAME} source={CRYPTO_TRACKING_PAGE_NAME} />
       <PageHeader title={t("cryptoAddresses.title")} />
       <div data-testid="crypto-page-content" className="flex min-h-0 flex-1 flex-col gap-16">
         <TableActionBar>

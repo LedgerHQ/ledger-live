@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import invariant from "invariant";
 import fs from "fs";
 import { from, EMPTY, concat, defer, of } from "rxjs";

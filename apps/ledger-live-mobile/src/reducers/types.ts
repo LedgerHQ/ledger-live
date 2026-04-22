@@ -231,6 +231,7 @@ export type SettingsState = {
   orderAccounts: string;
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
+  onboardingCompletionDate: string | null;
   isOnboardingFlow: boolean;
   isOnboardingFlowReceiveSuccess: boolean;
   isPostOnboardingFlow: boolean;
@@ -274,8 +275,6 @@ export type SettingsState = {
   /** True if user never clicked on the AllowNotifications button in the notifications settings */
   neverClickedOnAllowNotificationsButton: boolean;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
-  overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
-  featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   /* NB: Protect is the former codename for Ledger Recover */

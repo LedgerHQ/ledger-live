@@ -1,4 +1,4 @@
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
 import { getBalance } from "./getBalance";
 
@@ -11,7 +11,7 @@ describe("getBalance", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("testnet"),
+        url: getJsonRpcFullnodeUrl("testnet"),
       },
     }));
   });

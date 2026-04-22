@@ -302,6 +302,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "send",
       ...buttonSharedTrackingFields,
     });
+    track("button_clicked", {
+      button: "send",
+      page: "account",
+      flow: "send",
+    });
     openSendFlow({
       parentAccount,
       account,

@@ -77,7 +77,7 @@ export const OperationDetailsVotes = ({
         {sp.length > 0 &&
           formattedVotes &&
           formattedVotes.length > 0 &&
-          formattedVotes.map(({ voteCount, address, validator }, i) => (
+          formattedVotes.map(({ voteCount, address, name }, i) => (
             <OpDetailsData key={address + i} justifyContent="flex-start">
               <OpDetailsVoteData>
                 <Box>
@@ -86,7 +86,7 @@ export const OperationDetailsVotes = ({
                       i18nKey="operationDetails.extra.votesAddress"
                       values={{
                         votes: !discreet ? voteCount : "***",
-                        name: validator && validator.name,
+                        name,
                       }}
                     >
                       <Text ff="Inter|SemiBold">{""}</Text>

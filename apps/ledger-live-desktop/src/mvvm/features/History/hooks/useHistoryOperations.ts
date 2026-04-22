@@ -17,19 +17,12 @@ import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hoo
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { currencySettingsDefaults, type CurrencySettings } from "~/renderer/reducers/settings";
-import { isIncomingType } from "../utils/isIncomingType";
+import { getOperationCounterpartyAddress } from "../utils/getOperationCounterpartyAddress";
 import type { OperationTableItem } from "../types";
 
 type AccountInfo = { account: AccountLike; parentAccount?: Account };
 type FilterFn = (operation: Operation, account: AccountLike) => boolean;
 type TaggedOperation = { operation: Operation; isPending: boolean };
-
-function getOperationAddress(operation: Operation): string {
-  if (isIncomingType(operation.type)) {
-    return operation.senders[0] ?? "";
-  }
-  return operation.recipients[0] ?? "";
-}
 
 function buildAccountsMap(accounts: Account[]): Map<string, AccountInfo> {
   const allAccounts = flattenAccounts(accounts);
@@ -78,7 +71,7 @@ function toTableItem(
     parentAccount,
     date: operation.date,
     type: operation.type,
-    address: getOperationAddress(operation),
+    address: getOperationCounterpartyAddress(operation),
     amount: getOperationAmountNumber(operation),
     currency: getAccountCurrency(account),
     isPending,

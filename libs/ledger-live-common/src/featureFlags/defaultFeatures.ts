@@ -728,6 +728,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   ldmkSolanaSigner: DEFAULT_FEATURE,
+  ldmkCosmosSigner: DEFAULT_FEATURE,
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
@@ -788,7 +789,6 @@ export const DEFAULT_FEATURES: Features = {
       families: [],
     },
   },
-  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,
@@ -823,6 +823,8 @@ export const DEFAULT_FEATURES: Features = {
       onboardingWidget: true,
       brazePlacement: true,
       operationsList: true,
+      aggregatedAssets: true,
+      myWallet: true,
     },
   },
   lwdWallet40: {
@@ -840,6 +842,8 @@ export const DEFAULT_FEATURES: Features = {
       assetSection: true,
       operationsList: true,
       brazePlacement: true,
+      aggregatedAssets: true,
+      myWallet: true,
     },
   },
   addressPoisoningOperationsFilter: {

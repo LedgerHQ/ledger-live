@@ -5,7 +5,7 @@ import {
   ListItem,
   ListItemContent,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as LumenSymbols from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -107,11 +107,12 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
           return link ? (
             <ListItem
               key={label}
+              testID={`earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`}
               onPress={() => handleMenuItemPress(link, live_app, tracked)}
               style={{ marginHorizontal: -8 }}
             >
               <ListItemLeading>
-                {IconComponent && <ListItemSpot appearance="icon" icon={IconComponent} />}
+                {IconComponent && <Spot appearance="icon" icon={IconComponent} />}
                 <ListItemContent>
                   <ListItemTitle>{label}</ListItemTitle>
                 </ListItemContent>
