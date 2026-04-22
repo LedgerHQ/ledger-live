@@ -100,8 +100,6 @@ export type StakingContractConfig = {
   explorerConfig?: {
     validatorUrl: string;
   };
-  // Unbonding/lock-up period in days. Omit (or 0) when withdrawals are instant,
-  // in which case lock-up warnings must not be displayed.
   unbondingPeriodDays?: number;
 };
 
