@@ -84,8 +84,8 @@ export default class PortfolioPage {
   }
 
   @Step("Wait for portfolio page to load")
-  async waitForPortfolioPageToLoad() {
-    await waitForElementById(this.portfolioSettingsButtonId, 120000);
+  async waitForPortfolioPageToLoad(timeout = 120000) {
+    await waitForElementById(this.portfolioSettingsButtonId, timeout);
   }
 
   @Step("Expect Portfolio read only")
@@ -146,9 +146,9 @@ export default class PortfolioPage {
   }
 
   @Step("Open Portfolio via deeplink")
-  async openViaDeeplink() {
+  async openViaDeeplink(timeout = 120000) {
     await openDeeplink(this.baseLink);
-    await waitForElementById(this.portfolioSettingsButtonId); // Issue with RN75 : QAA-370
+    await waitForElementById(this.portfolioSettingsButtonId, timeout); // Issue with RN75 : QAA-370
   }
 
   @Step("Click on Add account button in portfolio")

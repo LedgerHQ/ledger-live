@@ -163,7 +163,7 @@ export default class ModularDrawer {
     const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
     jestExpect(modularDrawerAttributes.label).toMatch(/Select account.*/i);
     if (!accounts) {
-      detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
+      await detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
       return;
     }
     for (const account of accounts) {
