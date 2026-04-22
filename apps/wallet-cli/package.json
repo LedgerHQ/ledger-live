@@ -10,6 +10,8 @@
   "scripts": {
     "start": "bun run ./src/cli.ts",
     "dev": "bunli dev",
+    "generate": "bunli generate",
+    "generate:check": "bunli generate && git diff --exit-code -- .bunli/commands.gen.ts",
     "build": "bunli build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
