@@ -294,6 +294,11 @@
       "title" : "ขออภัย การเชื่อมต่อล้มเหลว",
       "description" : "โปรดลองอีกครั้ง"
     },
+    "CounterfeitDevice" : {
+      "title" : "{{productName}} นี้ไม่ผ่าน Genuine Check",
+      "description" : "การใช้อุปกรณ์ Ledger นี้ไม่ปลอดภัย โปรดติดต่อ Ledger Support",
+      "contactSupportCTA" : "ติดต่อฝ่ายสนับสนุน Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "การเชื่อมต่อล้มเหลว",
       "description" : "โปรดลองอีกครั้ง"
@@ -415,8 +420,8 @@
       "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "AlreadySendingApduError" : {
-      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
-      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+      "title" : "ต้องดำเนินการบนอุปกรณ์ Ledger ของคุณ",
+      "description" : "ดำเนินการให้เสร็จสิ้นบนอุปกรณ์ของคุณ"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "คุณต้องมีบัญชีเพื่อเข้าถึงแอปนี้",
-      "add" : "เพิ่มบัญชี"
+      "select" : "เลือกบัญชี"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "บัญชี",
     "transfer" : "การโอน",
     "manager" : "Ledger ของฉัน",
+    "myWallet" : "วอลเล็ตของฉัน",
     "settings" : "การตั้งค่า",
     "platform" : "แอป Live",
     "discover" : "ผู้ให้บริการ",
@@ -2734,7 +2740,7 @@
       "title" : "สำหรับคุณ"
     },
     "perpsEntry" : {
-      "title" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
+      "title" : "Perpetuals",
       "description" : "เทรดแบบมีเลเวอเรจ"
     },
     "recommended" : {
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต"
     }
   },
+  "operationsList" : {
+    "to" : "ไปยัง",
+    "from" : "จาก"
+  },
   "operationDetails" : {
     "title" : "รายละเอียดธุรกรรม",
     "account" : "บัญชี",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "ไม่มีการดำเนินการ",
+    "emptyTitle" : "ยังไม่มีธุรกรรม",
+    "emptySubtitle" : "โปรดกลับมาดูธุรกรรมของคุณในภายหลัง",
     "noMoreTransactions" : "ไม่มีธุรกรรมอื่น"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "ไม่สามารถติดตั้ง {{appName}} ได้",
       "description" : "เกิดข้อผิดพลาดระหว่างการติดตั้ง โปรดลองอีกครั้ง"
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "ช่วยเหลือ",
+      "referral" : "แนะนำเพื่อน"
     }
   }
 }
