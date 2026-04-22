@@ -8642,6 +8642,7 @@
     }
   },
   "myWallet": {
+    "title": "My Wallet",
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",
