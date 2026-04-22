@@ -9093,9 +9093,18 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
       '@mysten/ledgerjs-hw-app-sui':
         specifier: ^0.8.0
         version: 0.8.0
+      semver:
+        specifier: 'catalog:'
+        version: 7.7.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
