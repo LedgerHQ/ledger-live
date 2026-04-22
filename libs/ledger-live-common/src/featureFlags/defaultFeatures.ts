@@ -868,6 +868,10 @@ export const DEFAULT_FEATURES: Features = {
       thresholdUsd: 0.5,
     },
   },
+  transferButtonCopyVariant: {
+    enabled: false,
+    params: { variantId: "control" },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
