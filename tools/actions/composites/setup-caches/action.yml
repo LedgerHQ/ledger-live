@@ -106,8 +106,13 @@ runs:
       run: proto upgrade
       shell: bash
 
+    - name: Install Linux native build dependencies (mise)
+      if: runner.os == 'Linux' && inputs.use-mise == 'true'
+      shell: bash
+      run: mise run apt:update --packages "build-essential pkg-config"
+
     - name: Install Linux native build dependencies
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && inputs.use-mise != 'true'
       shell: bash
       run: |
         sudo apt-get update
