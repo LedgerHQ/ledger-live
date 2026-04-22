@@ -45,7 +45,7 @@ export class Provider {
   );
 
   static readonly ONE_INCH = new Provider(
-    "oneinchfusion",
+    "oneinch",
     "1inch",
     false,
     false,
