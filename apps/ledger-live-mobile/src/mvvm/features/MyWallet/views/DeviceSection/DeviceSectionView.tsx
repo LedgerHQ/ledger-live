@@ -10,6 +10,7 @@ interface DeviceSectionViewProps {
   readonly hasDevices: boolean;
   readonly onAddDevice: () => void;
   readonly onExploreDevices: () => void;
+  readonly onDevicePress: (device: DeviceSectionDevice) => void;
 }
 
 export function DeviceSectionView({
@@ -17,6 +18,7 @@ export function DeviceSectionView({
   hasDevices,
   onAddDevice,
   onExploreDevices,
+  onDevicePress,
 }: DeviceSectionViewProps) {
   const { t } = useTranslation();
 
@@ -37,6 +39,7 @@ export function DeviceSectionView({
           devices={devices}
           onAddDevice={onAddDevice}
           onExploreDevices={onExploreDevices}
+          onDevicePress={onDevicePress}
         />
       </Box>
     </Box>

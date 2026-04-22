@@ -6,7 +6,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import { findMatchingNewDevice, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 import { useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { track } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -23,6 +23,7 @@ interface DeviceSectionViewModel {
   readonly hasDevices: boolean;
   readonly onAddDevice: () => void;
   readonly onExploreDevices: () => void;
+  readonly onDevicePress: (device: DeviceSectionDevice) => void;
 }
 
 export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
@@ -58,5 +59,27 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     Linking.openURL(exploreDevicesUrl);
   }, [exploreDevicesUrl]);
 
-  return { devices, onAddDevice, onExploreDevices, hasDevices };
+  const onDevicePress = useCallback(
+    (device: DeviceSectionDevice) => {
+      track("button_clicked", {
+        button: "Device",
+        page: ScreenName.MyWallet,
+        deviceModelId: device.modelId,
+      });
+      navigation.navigate(NavigatorName.MyLedger, {
+        screen: ScreenName.MyLedgerChooseDevice,
+        params: {
+          device: {
+            deviceId: device.id,
+            deviceName: device.name,
+            modelId: device.modelId,
+            wired: false,
+          },
+        },
+      });
+    },
+    [navigation],
+  );
+
+  return { devices, onAddDevice, onExploreDevices, hasDevices, onDevicePress };
 };
