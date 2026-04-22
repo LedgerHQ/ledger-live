@@ -1,9 +1,8 @@
 import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
-import { Trans } from "~/context/Locale";
-import Button from "~/components/Button";
-import Trash from "~/icons/Trash";
-import QueuedDrawer from "~/components/QueuedDrawer";
+import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTranslation } from "~/context/Locale";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { DeviceIllustration } from "~/components/DeviceIllustration";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 
@@ -15,20 +14,18 @@ type DeviceRemoveDrawerProps = {
 };
 
 export function DeviceRemoveDrawer({ device, isOpen, onClose, onRemove }: DeviceRemoveDrawerProps) {
+  const { t } = useTranslation();
+
   return (
-    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
+    <QueuedDrawerBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
       {device ? (
-        <Flex alignItems="center" mb={8}>
+        <Box lx={{ alignItems: "center", marginBottom: "s32" }}>
           <DeviceIllustration deviceModelId={device.modelId} />
-        </Flex>
+        </Box>
       ) : null}
-      <Button
-        event="DeviceRemoveAction"
-        type="alert"
-        IconLeft={Trash}
-        title={<Trans i18nKey="common.forgetDevice" />}
-        onPress={onRemove}
-      />
-    </QueuedDrawer>
+      <Button appearance="red" size="lg" icon={Trash} onPress={onRemove}>
+        {t("common.forgetDevice")}
+      </Button>
+    </QueuedDrawerBottomSheet>
   );
 }

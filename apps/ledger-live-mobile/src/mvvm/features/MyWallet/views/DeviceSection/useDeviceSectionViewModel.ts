@@ -91,20 +91,25 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     [navigation],
   );
 
-  const onOpenRemoveMenu = useCallback((device: DeviceSectionDevice) => {
+  const onOpenRemoveMenu = (device: DeviceSectionDevice) => {
     setSelectedDevice(device);
     setIsRemoveDrawerOpen(true);
-  }, []);
+  };
 
-  const onCloseRemoveMenu = useCallback(() => {
+  const onCloseRemoveMenu = () => {
     setIsRemoveDrawerOpen(false);
-  }, []);
+  };
 
   const onRemoveDevice = useCallback(async () => {
     if (!selectedDevice) return;
     dispatch(removeKnownDevice(selectedDevice.id));
     setIsRemoveDrawerOpen(false);
-    await disconnect(selectedDevice.id).catch(() => {});
+    try {
+      await disconnect(selectedDevice.id);
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+    } catch {
+      /* empty */
+    }
     setSelectedDevice(null);
   }, [selectedDevice, dispatch]);
 

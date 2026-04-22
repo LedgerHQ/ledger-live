@@ -8907,7 +8907,8 @@
       "addDevice": "Add a Ledger device",
       "exploreAllDevices": "Explore all Ledger devices",
       "available": "Available",
-      "unavailable": "Not connected"
+      "unavailable": "Not connected",
+      "menuAccessibilityLabel": "Device options"
     }
   }
 }

@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
-import { Image, Pressable, type ImageSourcePropType } from "react-native";
+import { Image, type ImageSourcePropType } from "react-native";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
   Box,
+  IconButton,
   ListItem,
   ListItemContent,
   ListItemLeading,
@@ -10,6 +11,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { MoreVertical } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTranslation } from "~/context/Locale";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 import { DeviceStatusTag } from "./DeviceStatusTag";
 
@@ -34,6 +36,7 @@ type DeviceListItemProps = {
 };
 
 export function DeviceListItem({ device, onPress, onOpenMenu }: DeviceListItemProps) {
+  const { t } = useTranslation();
   const handlePress = useCallback(() => onPress(device), [device, onPress]);
   const handleMenuPress = useCallback(() => onOpenMenu(device), [device, onOpenMenu]);
 
@@ -53,13 +56,14 @@ export function DeviceListItem({ device, onPress, onOpenMenu }: DeviceListItemPr
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <Pressable
+        <IconButton
+          appearance="no-background"
+          size="md"
+          icon={MoreVertical}
           onPress={handleMenuPress}
           testID={`my-wallet-device-item-${device.id}-menu`}
-          hitSlop={8}
-        >
-          <MoreVertical size={24} color="muted" />
-        </Pressable>
+          accessibilityLabel={t("myWallet.deviceSection.menuAccessibilityLabel")}
+        />
       </ListItemTrailing>
     </ListItem>
   );
