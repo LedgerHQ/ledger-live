@@ -449,6 +449,18 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
       alpacaApi.stakingSupported ?? (delegations.length > 0 || unbondings.length > 0);
+
+    if (stakingEnabled && bridgeApi.enrichStakingResources) {
+      const enriched = await bridgeApi.enrichStakingResources(
+        currency,
+        address,
+        operations,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        stakingResources as unknown as Record<string, unknown>,
+      );
+      Object.assign(stakingResources, enriched);
+    }
+
     const res: Partial<Account> & { stakingResources?: StakingResources } = {
       id: accountId,
       xpub: address,

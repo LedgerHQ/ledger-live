@@ -1,4 +1,5 @@
 import type { StakingContractConfig } from "../types/staking";
+import { USEI_TO_EVM_SCALE } from "../utils";
 
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
@@ -28,6 +29,9 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // EVM precompile staking). Source: https://docs.sei.io/learn/general-staking
     // (sections Un-delegation and Un-Bonding).
     unbondingPeriodDays: 21,
+    // The redelegate/undelegate precompile encodes amounts in usei (6 decimals).
+    // Multiply by this scale to convert back to the EVM-native 18-decimal unit.
+    calldataAmountScale: USEI_TO_EVM_SCALE,
   },
 
   // Celo staking
