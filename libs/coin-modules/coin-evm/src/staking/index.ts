@@ -25,6 +25,7 @@ export {
   getRedelegation,
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
+  decodeRedelegatePayload,
 } from "./logic";
 export {
   assignFromAccountRaw,
@@ -32,3 +33,9 @@ export {
   fromStakingResourcesRaw,
   toStakingResourcesRaw,
 } from "./serialization";
+export {
+  fetchRedelegations,
+  buildRedelegationsFromOps,
+  resolveRedelegationValidators,
+  resolveStakingValidator,
+} from "./redelegations";

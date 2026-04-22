@@ -11,8 +11,8 @@ import { getAdditionalLayer2Fees } from "../logic";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
 import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
-import { isEthAddress } from "../utils";
-import { prepareUnsignedTxParams } from "./common";
+import { isEthAddress, isStakingIntent } from "../utils";
+import { getTransactionType, prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
 async function computeAdditionalFees(
@@ -112,22 +112,29 @@ export async function estimateFees(
     return { value: 0n };
   }
 
-  const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
-    currency,
-    transactionIntent,
-    customFeesParameters,
-  );
+  // Skip fee estimation for redelegate without a destination validator — the
+  // validateStaking step in validateIntent will surface RedelegateDstValAddressRequired.
+  if (
+    isStakingIntent(transactionIntent) &&
+    transactionIntent.mode === "redelegate" &&
+    !transactionIntent.dstValAddress
+  ) {
+    return { value: 0n };
+  }
 
-  // Some apps including, including Magic Eden, set the nonce to -1
-  // instead of simply not providing it.
-  // In case of missing or nagative nonce, it must be re-computed.
-  const nonce =
-    typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
-      ? transactionIntent.sequence
-      : await getNextSequence(currency, transactionIntent.sender);
+  // Determine the transaction type synchronously so fee-data and gas-estimation
+  // requests can be fired in parallel without waiting on each other.
+  const txType = getTransactionType(transactionIntent.type);
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
-  const { finalFeeData, finalGasOptions } = await (async (): Promise<{
+  // Some apps, including Magic Eden, set the nonce to -1 instead of simply not
+  // providing it. In case of a missing or negative nonce, it must be re-fetched.
+  const noncePromise: Promise<bigint> =
+    typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
+      ? Promise.resolve(transactionIntent.sequence)
+      : getNextSequence(currency, transactionIntent.sender);
+
+  const feeDataPromise = (async (): Promise<{
     finalFeeData: FeeData;
     finalGasOptions?: GasOptions;
   }> => {
@@ -146,7 +153,7 @@ export async function estimateFees(
     const gasTracker = getGasTracker(currency);
     const remoteGasOptions = await gasTracker?.getGasOptions({
       currency,
-      options: { useEIP1559: type === TransactionTypes.eip1559 },
+      options: { useEIP1559: txType === TransactionTypes.eip1559 },
     });
 
     if (remoteGasOptions && feesStrategy) {
@@ -155,15 +162,24 @@ export async function estimateFees(
 
     const node = getNodeApi(currency);
     const feeData = await node.getFeeData(currency, {
-      type,
+      type: txType,
       feesStrategy: transactionIntent.feesStrategy,
     });
 
     return { finalFeeData: feeData };
   })();
 
+  // Run gas estimation, nonce fetch, and fee-data fetch in parallel — they are
+  // all independent network calls and sequencing them triples the latency.
+  const [{ to, data, value, gasLimit }, nonce, { finalFeeData, finalGasOptions }] =
+    await Promise.all([
+      prepareUnsignedTxParams(currency, transactionIntent, customFeesParameters),
+      noncePromise,
+      feeDataPromise,
+    ]);
+
   // Recompute the transaction type from the fee data, since
-  // the one in input may not be supported by the Blockchain
+  // the one in input may not be supported by the Blockchain.
   const finalType =
     finalFeeData.maxFeePerGas && finalFeeData.maxPriorityFeePerGas
       ? TransactionTypes.eip1559

@@ -9,6 +9,7 @@ import { isPayable } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 import { isStakingOperation } from "./detectOperationType";
 import { encodeStakingData } from "./encoder";
+import { RedelegateDstValAddressRequired } from "@ledgerhq/errors";
 
 type OperationFn = (
   valAddress: string,
@@ -27,7 +28,7 @@ const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
     // so we scale it down here. See `seiEvmAmountToUsei` for details.
     undelegate: (valAddress, amount) => [valAddress, seiEvmAmountToUsei(amount)],
     redelegate: (valAddress, amount, dstValAddress) => {
-      if (!dstValAddress) throw new Error("SEI redelegate requires dstValAddress");
+      if (!dstValAddress) throw new RedelegateDstValAddressRequired();
       return [valAddress, dstValAddress, seiEvmAmountToUsei(amount)];
     },
     getStakedBalance: (_recipient, _amount, dstValAddress, delegator) => {
