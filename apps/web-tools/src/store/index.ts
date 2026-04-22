@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import featureFlagsReducer, { setResolutionConfig } from "@shared/feature-flags";
-
-setResolutionConfig({});
+import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
 
 export const store = configureStore({
   reducer: {
     featureFlags: featureFlagsReducer,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware().concat(createFeatureFlagsMiddleware({})),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

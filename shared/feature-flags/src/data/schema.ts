@@ -34,7 +34,7 @@ export interface FeatureFlagsState {
 }
 
 const FlagRegistrySchema = z.object(flagRegistry);
-const OverrideValueSchema = FeatureSchema.extend({ params: z.unknown().optional() });
+export const OverrideValueSchema = FeatureSchema.extend({ params: z.unknown().optional() });
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const FeatureFlagsStateSchema = z.object({
@@ -43,3 +43,12 @@ export const FeatureFlagsStateSchema = z.object({
   resolved: FlagRegistrySchema,
   bannerVisible: z.boolean(),
 }) as z.ZodType<FeatureFlagsState>;
+
+export const ResolutionConfigSchema = z.object({
+  platform: z.enum(["desktop", "ios", "android"]).optional(),
+  appVersion: z.string().optional(),
+  appLanguage: z.string().optional(),
+  envFlags: z.record(z.string(), OverrideValueSchema.optional()).optional(),
+});
+
+export type ResolutionConfig = z.infer<typeof ResolutionConfigSchema>;
