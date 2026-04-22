@@ -8886,6 +8886,18 @@
         "ledgerAcademy": {
           "title": "Ledger Academy",
           "description": "Learn crypto"
+        },
+        "saveLogs": {
+          "title": "Save logs",
+          "description": "Save Ledger Wallet logs for troubleshooting"
+        },
+        "ledgerStatus": {
+          "title": "Ledger Status",
+          "description": "Check our system status"
+        },
+        "clearCache": {
+          "title": "Clear cache",
+          "description": "Scan transactions and recalculate balances"
         }
       }
     },
