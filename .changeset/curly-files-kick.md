@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-canton: remove moodal add account dependency
+canton: remove MODAL_ADD_ACCOUNTS dependency
