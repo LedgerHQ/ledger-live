@@ -17,5 +17,9 @@ module.exports = {
     ],
   },
   testPathIgnorePatterns: ["\\.native\\.test\\."],
+  moduleNameMapper: {
+    "^@ledgerhq/lumen-ui-react$": "<rootDir>/jest/mocks/lumen-ui-react.tsx",
+    "^@ledgerhq/lumen-design-core$": "<rootDir>/jest/mocks/lumen-design-core.ts",
+  },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };

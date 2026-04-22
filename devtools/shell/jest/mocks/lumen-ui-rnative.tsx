@@ -1,9 +1,13 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
-jest.mock("@ledgerhq/native-ui", () => ({
-  StyleProvider: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  Flex: ({ children, testID }: { children?: React.ReactNode; testID?: string }) => (
+jest.mock("@ledgerhq/lumen-design-core", () => ({
+  ledgerLiveThemes: {},
+}));
+
+jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
+  ThemeProvider: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+  Box: ({ children, testID }: { children?: React.ReactNode; testID?: string }) => (
     <View testID={testID}>{children}</View>
   ),
   Text: ({ children, testID }: { children?: React.ReactNode; testID?: string }) => (

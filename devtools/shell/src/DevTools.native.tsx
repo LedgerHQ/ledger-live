@@ -1,96 +1,109 @@
-import { StyleProvider, Flex, Text, Button } from "@ledgerhq/native-ui";
+import { ThemeProvider, Box, Text, Button } from "@ledgerhq/lumen-ui-rnative";
+import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { ScrollView } from "react-native";
 import { TOOLS } from "./tools.config";
 import { Category } from "./types";
 import { useAccordion, useDevToolsNavigation } from "./hooks";
 
 export const DevTools = () => {
-  const { activeToolId, setActiveToolId, activeTool, categories } = useDevToolsNavigation(TOOLS);
+  const { activeTool, setActiveToolId, categories } = useDevToolsNavigation(TOOLS);
   const { isExpanded, toggle } = useAccordion<Category>();
 
   return (
-    <StyleProvider selectedPalette="dark">
-      <Flex testID="devtools" flex={1} flexDirection="row" backgroundColor="background.main">
-        <Flex
+    <ThemeProvider themes={ledgerLiveThemes} colorScheme="dark">
+      <Box testID="devtools" lx={{ flex: 1, flexDirection: "row", backgroundColor: "canvas" }}>
+        <Box
           testID="devtools-nav"
-          flexDirection="column"
-          width={220}
-          flexShrink={0}
-          backgroundColor="background.card"
-          borderRightWidth={1}
-          borderRightColor="neutral.c30"
+          lx={{
+            flexDirection: "column",
+            flexShrink: 0,
+            backgroundColor: "surface",
+            borderRightWidth: "s1",
+            borderRightColor: "muted",
+          }}
+          style={{ width: 220 }}
         >
           <Text
-            variant="small"
-            fontWeight="medium"
-            uppercase
-            px={3}
-            py={2}
-            borderBottomWidth={1}
-            borderBottomColor="neutral.c30"
+            typography="body2SemiBold"
+            lx={{
+              paddingHorizontal: "s12",
+              paddingVertical: "s8",
+              borderBottomWidth: "s1",
+              borderBottomColor: "muted",
+            }}
+            style={{ textTransform: "uppercase" }}
           >
             DevTools
           </Text>
           <ScrollView>
-            <Flex flexDirection="column" py={1} px={2}>
-              {categories.map(({ category, tools }) => {
-                const expanded = isExpanded(category);
-                return (
-                  <Flex key={category} flexDirection="column">
-                    <Button
-                      type="shade"
-                      size="small"
-                      accessibilityLabel={category}
-                      accessibilityState={{ expanded }}
-                      onPress={() => toggle(category)}
-                    >
-                      {(expanded ? "▾ " : "▸ ") + category}
-                    </Button>
-                    {expanded &&
-                      (tools.length > 0 ? (
-                        <Flex flexDirection="column" px={2}>
-                          {tools.map(tool => (
-                            <Button
-                              key={tool.id}
-                              type={tool.id === activeToolId ? "main" : "shade"}
-                              size="small"
-                              accessibilityLabel={tool.label}
-                              onPress={() => setActiveToolId(tool.id)}
-                            >
-                              {tool.label}
-                            </Button>
-                          ))}
-                        </Flex>
-                      ) : (
-                        <Text variant="tiny" color="neutral.c50" px={3} py={1}>
-                          No tools available
-                        </Text>
+            <Box lx={{ flexDirection: "column", paddingVertical: "s4", paddingHorizontal: "s8" }}>
+              {categories.map(({ category, tools }) => (
+                <Box key={category} lx={{ flexDirection: "column" }}>
+                  <Button
+                    appearance="gray"
+                    size="sm"
+                    isFull
+                    accessibilityLabel={category}
+                    onPress={() => toggle(category)}
+                  >
+                    {(isExpanded(category) ? "▾ " : "▸ ") + category}
+                  </Button>
+                  {isExpanded(category) && tools.length > 0 && (
+                    <Box lx={{ flexDirection: "column", paddingHorizontal: "s8" }}>
+                      {tools.map(tool => (
+                        <Button
+                          key={tool.id}
+                          appearance={activeTool?.id === tool.id ? "accent" : "gray"}
+                          size="sm"
+                          isFull
+                          accessibilityLabel={tool.label}
+                          onPress={() => setActiveToolId(tool.id)}
+                        >
+                          {tool.label}
+                        </Button>
                       ))}
-                  </Flex>
-                );
-              })}
-            </Flex>
+                    </Box>
+                  )}
+                  {isExpanded(category) && tools.length === 0 && (
+                    <Text
+                      typography="body3"
+                      lx={{ color: "muted", paddingHorizontal: "s12", paddingVertical: "s4" }}
+                    >
+                      No tools available
+                    </Text>
+                  )}
+                </Box>
+              ))}
+            </Box>
           </ScrollView>
-        </Flex>
-        <Flex testID="devtools-content" flexDirection="column" flex={1}>
+        </Box>
+        <Box testID="devtools-content" lx={{ flexDirection: "column", flex: 1 }}>
           {activeTool !== null && (
-            <Text variant="h5" px={6} py={4} borderBottomWidth={1} borderBottomColor="neutral.c30">
+            <Text
+              typography="heading3SemiBold"
+              lx={{
+                paddingHorizontal: "s24",
+                paddingVertical: "s16",
+                borderBottomWidth: "s1",
+                borderBottomColor: "muted",
+              }}
+            >
               {activeTool.label}
             </Text>
           )}
           <ScrollView>
-            <Flex p={6}>
+            <Box lx={{ padding: "s24" }}>
               {activeTool === null ? (
-                <Text testID="devtools-empty" color="neutral.c50">
+                <Text testID="devtools-empty" typography="body2" lx={{ color: "muted" }}>
                   Select a tool from the sidebar.
                 </Text>
               ) : (
-                <Text>{activeTool.label}</Text>
+                <Text typography="body2">{activeTool.label}</Text>
               )}
-            </Flex>
+            </Box>
           </ScrollView>
-        </Flex>
-      </Flex>
-    </StyleProvider>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 };

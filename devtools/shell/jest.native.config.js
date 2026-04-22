@@ -21,5 +21,5 @@ module.exports = {
   transformIgnorePatterns: [
     "node_modules/(?!(.pnpm|(jest-)?react-native|@react-native(-community)?)/.)",
   ],
-  setupFilesAfterEnv: ["<rootDir>/jest/mocks/native-ui.tsx", "<rootDir>/jest/setup.native.ts"],
+  setupFilesAfterEnv: ["<rootDir>/jest/mocks/lumen-ui-rnative.tsx", "<rootDir>/jest/setup.native.ts"],
 };
