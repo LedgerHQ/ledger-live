@@ -77,7 +77,6 @@ export default class AccountPage {
 
   @Step("Open account settings")
   async openAccountSettings() {
-    await waitForElementById(this.accountSettingsButtonId); // Issue with RN75 : QAA-370
     await tapById(this.accountSettingsButtonId);
   }
 
@@ -147,13 +146,11 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
-    await waitForElementById(this.receiveButtonId); // Issue with RN75 : QAA-370
     await tapById(this.receiveButtonId);
   }
 
   @Step("Tap on send button")
   async tapSend() {
-    await waitForElementById(this.sendButtonId); // Issue with RN75 : QAA-370
     await tapById(this.sendButtonId);
   }
 

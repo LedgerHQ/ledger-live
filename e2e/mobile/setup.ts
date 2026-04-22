@@ -22,7 +22,8 @@ beforeAll(
 afterAll(async () => {
   if (process.env.CI) {
     try {
-      await app.portfolio.openViaDeeplink(5000);
+      await app.portfolio.openViaDeeplink();
+      await app.portfolio.waitForPortfolioPageToLoad(5000);
       await device.terminateApp();
     } catch (e) {
       log.warn(`setup afterAll terminateApp failed: ${sanitizeError(e)}`);
