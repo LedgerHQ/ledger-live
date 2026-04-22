@@ -278,7 +278,6 @@ async function getGasEstimation(
   const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
   const value = BigInt(transaction.amount.toFixed(0));
   const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
-
   try {
     const gasEstimation = await api.estimateGas({
       ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),

@@ -1,6 +1,7 @@
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { getAlpacaApi } from "./api";
@@ -157,7 +158,7 @@ function syntheticParentForTokenOnlyTx(
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
   const contract = getTokenContract(referenceOp);
-  const parentRecipients = contract !== undefined ? [contract] : (referenceOp.recipients ?? []);
+  const parentRecipients = contract !== undefined ? [contract] : referenceOp.recipients ?? [];
   const parentSenders = referenceOp.senders ?? [];
   return cleanedOperation({
     id: encodeOperationId(accountId, referenceOp.hash, parentType),
@@ -449,6 +450,26 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
       alpacaApi.stakingSupported ?? (delegations.length > 0 || unbondings.length > 0);
+
+    if (stakingEnabled && bridgeApi.enrichStakingResources) {
+      try {
+        const enriched = await bridgeApi.enrichStakingResources(
+          currency,
+          address,
+          operations,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          stakingResources as unknown as Record<string, unknown>,
+        );
+        Object.assign(stakingResources, enriched);
+      } catch (e) {
+        log(
+          "generic-alpaca",
+          "enrichStakingResources failed, falling back to base staking resources",
+          e,
+        );
+      }
+    }
+
     const res: Partial<Account> & { stakingResources?: StakingResources } = {
       id: accountId,
       xpub: address,
