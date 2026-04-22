@@ -101,7 +101,7 @@ export default function StepAmount({
       <ValidatorField account={account} transaction={transaction} onChange={onChangeValidator} />
       <AmountField
         amount={amount}
-        validator={validator}
+        delegatedAmount={validator?.amount ?? BigNumber(0)}
         account={account}
         status={status}
         onChange={onChangeAmount}

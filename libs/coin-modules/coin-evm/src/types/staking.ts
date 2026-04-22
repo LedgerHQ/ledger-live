@@ -124,6 +124,13 @@ export type StakingContractConfig = {
     validatorUrl: string;
   };
   unbondingPeriodDays?: number;
+  /**
+   * Multiplier to convert amounts from the calldata unit back to the EVM-native
+   * 18-decimal unit (wei).  Needed for chains whose staking precompile encodes
+   * amounts in a smaller unit (e.g. SEI uses usei = 10^6, so the scale is 10^12).
+   * Defaults to 1n (no conversion) when omitted.
+   */
+  calldataAmountScale?: bigint;
 };
 
 export type StakeCreate = {

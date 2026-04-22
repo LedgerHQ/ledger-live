@@ -68,7 +68,7 @@ describe("buildTransactionParams", () => {
           validatorAddress,
           amount,
         );
-      }).toThrow("SEI redelegate requires dstValAddress");
+      }).toThrow("RedelegateDstValAddressRequired");
     });
 
     it("should build params for getStakedBalance operation", () => {
