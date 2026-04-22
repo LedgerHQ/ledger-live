@@ -282,7 +282,7 @@ export const buildVersionedTransaction = async (
   readonly [
     VersionedTransaction,
     BlockhashWithExpiryBlockHeight,
-    (signature: Buffer) => VersionedTransaction,
+    (signature: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => VersionedTransaction,
   ]
 > => {
   const recentBlockhash = await api.getLatestBlockhash();
@@ -309,7 +309,10 @@ export const buildVersionedTransaction = async (
   return [
     web3SolanaTransaction,
     recentBlockhash,
-    (signature: Buffer) => {
+    (signature: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
+      if (recentBlockhash) {
+        web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
+      }
       web3SolanaTransaction.addSignature(new PublicKey(address), signature);
       return web3SolanaTransaction;
     },
