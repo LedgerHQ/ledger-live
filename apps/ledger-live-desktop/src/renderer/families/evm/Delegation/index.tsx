@@ -11,6 +11,7 @@ import {
   getValidatorExplorerUrl,
   prefetchValidators,
   hasUnbondingPeriod,
+  getUnbondingPeriodDays,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
@@ -29,6 +30,7 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import type { DelegationActionsModalName } from "../modals";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -77,10 +79,8 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
     [account, dispatch],
   );
   const onRedirect = useCallback(
-    (validatorAddress: string, modalName: string) => {
-      if (modalName === "MODAL_EVM_UNDELEGATE") {
-        dispatch(openModal("MODAL_EVM_UNDELEGATE", { account, validatorAddress }));
-      }
+    (validatorAddress: string, modalName: DelegationActionsModalName) => {
+      dispatch(openModal(modalName, { account, validatorAddress }));
     },
     [account, dispatch],
   );
@@ -231,6 +231,12 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
           <TableHeader
             title={<Trans i18nKey="ethereum.evmStaking.undelegation.header" />}
             titleProps={{ "data-e2e": "title_Undelegation" }}
+            tooltip={
+              <Trans
+                i18nKey="ethereum.evmStaking.undelegation.headerTooltip"
+                values={{ numberOfDays: getUnbondingPeriodDays(currencyId) }}
+              />
+            }
           />
           <UnbondingHeader />
           {mappedUnbondings.map(unbonding => (

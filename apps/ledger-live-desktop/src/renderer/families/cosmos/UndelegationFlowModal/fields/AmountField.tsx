@@ -1,11 +1,8 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
-import {
-  CosmosDelegationInfo,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/cosmos/types";
+import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import type { TransactionStatusCommon } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
@@ -13,53 +10,39 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   amount: BigNumber;
-  validator: CosmosDelegationInfo;
-  account: Account;
-  status: TransactionStatus;
+  delegatedAmount: BigNumber;
+  account: CosmosAccount;
+  status: TransactionStatusCommon;
   onChange: (amount: BigNumber) => void;
   label: React.ReactNode;
 };
+
 export default function AmountField({
   amount,
-  validator,
+  delegatedAmount,
   account,
   onChange,
   status: { errors, warnings },
   label,
 }: Props) {
   const unit = useAccountUnit(account);
-  const [currentValidator, setCurrentValidator] = useState(validator);
   const [focused, setFocused] = useState(false);
-  const [initialAmount, setInitialAmount] = useState(validator ? validator.amount : BigNumber(0));
-  useEffect(() => {
-    if (validator && validator.address !== currentValidator.address) {
-      setCurrentValidator(validator);
-      setInitialAmount(validator.amount);
-    }
-  }, [validator, currentValidator]);
+
   const options = useMemo(
     () => [
-      {
-        label: "25%",
-        value: initialAmount.multipliedBy(0.25).integerValue(),
-      },
-      {
-        label: "50%",
-        value: initialAmount.multipliedBy(0.5).integerValue(),
-      },
-      {
-        label: "75%",
-        value: initialAmount.multipliedBy(0.75).integerValue(),
-      },
-      {
-        label: "100%",
-        value: initialAmount,
-      },
+      { label: "25%", value: delegatedAmount.multipliedBy(0.25).integerValue() },
+      { label: "50%", value: delegatedAmount.multipliedBy(0.5).integerValue() },
+      { label: "75%", value: delegatedAmount.multipliedBy(0.75).integerValue() },
+      { label: "100%", value: delegatedAmount },
     ],
-    [initialAmount],
+    [delegatedAmount],
   );
-  const error = errors.amount || errors.redelegation || errors.unbonding;
+
+  // Forward only errors that make sense here: `amount` and the generic-alpaca `unbonding` bucket,
+  // while skipping validator-level (`valAddress`) which is surfaced at the row selection step.
+  const error = errors?.amount || errors?.unbonding;
   const warning = useMemo(() => focused && Object.values(warnings || {})[0], [focused, warnings]);
+
   return (
     <Box my={2}>
       <Label>{label}</Label>
@@ -93,6 +76,7 @@ export default function AmountField({
     </Box>
   );
 }
+
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "neutral.c70",
@@ -101,6 +85,7 @@ const InputLeft = styled(Box).attrs(() => ({
   horizontal: true,
   pl: 3,
 }))``;
+
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "neutral.c70",
@@ -110,6 +95,7 @@ const InputRight = styled(Box).attrs(() => ({
 }))`
   padding: ${p => p.theme.space[2]}px;
 `;
+
 const AmountButton = styled.button.attrs<{
   error: boolean;
   active: boolean;
