@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.34.0
+
+### Minor Changes
+
+- [#15916](https://github.com/LedgerHQ/ledger-live/pull/15916) [`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(generic-staking): update generic adapter to support staking
+
 ## 6.34.0-next.0
 
 ### Minor Changes

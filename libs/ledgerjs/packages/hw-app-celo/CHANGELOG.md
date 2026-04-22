@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-polkadot
 
+## 7.0.0
+
+### Major Changes
+
+- [#15635](https://github.com/LedgerHQ/ledger-live/pull/15635) [`946be6e`](https://github.com/LedgerHQ/ledger-live/commit/946be6e0111c79e77eb486619b4ad645523b1966) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - update hw-celo-app and hw-eth-app to support new fee currency field and CIP64 transaction. Move to live-signer-celo
+
+### Patch Changes
+
+- Updated dependencies [[`946be6e`](https://github.com/LedgerHQ/ledger-live/commit/946be6e0111c79e77eb486619b4ad645523b1966), [`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
+  - @ledgerhq/hw-app-eth@7.8.0
+  - @ledgerhq/errors@6.34.0
+  - @ledgerhq/hw-transport@6.35.1
+
 ## 7.0.0-next.0
 
 ### Major Changes

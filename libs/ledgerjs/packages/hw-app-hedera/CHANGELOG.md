@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-hedera
 
+## 1.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
+  - @ledgerhq/errors@6.34.0
+  - @ledgerhq/hw-transport@6.35.1
+
 ## 1.6.1-next.0
 
 ### Patch Changes

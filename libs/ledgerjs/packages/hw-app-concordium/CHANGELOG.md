@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-concordium
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9)]:
+  - @ledgerhq/concordium-core@0.4.0
+  - @ledgerhq/hw-transport@6.35.1
+
 ## 0.7.1-next.0
 
 ### Patch Changes

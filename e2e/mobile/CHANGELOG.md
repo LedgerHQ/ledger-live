@@ -1,5 +1,17 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.21.0
+
+### Minor Changes
+
+- [#16248](https://github.com/LedgerHQ/ledger-live/pull/16248) [`17d7027`](https://github.com/LedgerHQ/ledger-live/commit/17d7027e38a4f67c869d6ecc24e914cb4d94dba2) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Skip swap network-fee validation E2E cases while the sponsored program is active
+
+- [#16049](https://github.com/LedgerHQ/ledger-live/pull/16049) [`11cd80f`](https://github.com/LedgerHQ/ledger-live/commit/11cd80f7c262f3e44fbbb19a8b034e9767c02db6) Thanks [@henri-ly](https://github.com/henri-ly)! - remove Ledger default validator for MultiversX
+
+- [#16084](https://github.com/LedgerHQ/ledger-live/pull/16084) [`50e1fc6`](https://github.com/LedgerHQ/ledger-live/commit/50e1fc618cee9ec01603108e230358a6b7b6a91e) Thanks [@sergiubreban](https://github.com/sergiubreban)! - test: add e2e tests for earn v2 on mobile
+
+- [#15798](https://github.com/LedgerHQ/ledger-live/pull/15798) [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: use `coin-module-framework` from npmjs and remove the now migrated `coin-framework`
+
 ## 0.21.0-next.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.25.0-next.4",
+  "version": "0.25.0",
   "private": true,
   "scripts": {
     "lint": "oxlint .",

@@ -1,5 +1,23 @@
 # @ledgerhq/zcash-shielded
 
+## 0.9.0
+
+### Minor Changes
+
+- [#15679](https://github.com/LedgerHQ/ledger-live/pull/15679) [`c353f29`](https://github.com/LedgerHQ/ledger-live/commit/c353f29b9174c20c708662c160f55c597020ee58) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(coin-modules): add oxfmt with shared config (Prettier parity)
+
+  - Add libs/coin-modules/.oxfmtrc.json aligned with root .prettierrc and desktop/mobile oxfmt
+  - Add format, format:check, and run oxfmt before oxlint in lint:fix; add oxfmt devDependency
+  - Remove coin-ton prettier script; turbo format/format:check tasks
+  - Initial oxfmt pass on src
+
+- [#16065](https://github.com/LedgerHQ/ledger-live/pull/16065) [`37fe0e0`](https://github.com/LedgerHQ/ledger-live/commit/37fe0e0011efb6b9cf4e7a9d1ddb01768aa77798) Thanks [@semeano](https://github.com/semeano)! - Update Zcash types
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.1
+
 ## 0.9.0-next.0
 
 ### Minor Changes

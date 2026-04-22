@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-eth
 
+## 7.8.0
+
+### Minor Changes
+
+- [#15635](https://github.com/LedgerHQ/ledger-live/pull/15635) [`946be6e`](https://github.com/LedgerHQ/ledger-live/commit/946be6e0111c79e77eb486619b4ad645523b1966) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - update hw-celo-app and hw-eth-app to support new fee currency field and CIP64 transaction. Move to live-signer-celo
+
+### Patch Changes
+
+- Updated dependencies [[`2d5c7e0`](https://github.com/LedgerHQ/ledger-live/commit/2d5c7e0cc27f45babe247b39b513d4e848707b01), [`7aa0706`](https://github.com/LedgerHQ/ledger-live/commit/7aa070618866e7a4c70876e674f07fde9630ccfb), [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9), [`139cdbf`](https://github.com/LedgerHQ/ledger-live/commit/139cdbfd48120247ff54f5f7863ce866a6a755d0), [`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d), [`97d7278`](https://github.com/LedgerHQ/ledger-live/commit/97d727824cef6a5b5a2d034d9b029e4f977f1754), [`63b5b9a`](https://github.com/LedgerHQ/ledger-live/commit/63b5b9a3f3b88fa41f02983350cdb6e73a887839), [`46e78cf`](https://github.com/LedgerHQ/ledger-live/commit/46e78cf3a057a9de39a5abbb49fe779655db6507)]:
+  - @ledgerhq/types-live@6.105.0
+  - @ledgerhq/domain-service@1.8.0
+  - @ledgerhq/errors@6.34.0
+  - @ledgerhq/evm-tools@1.12.4
+  - @ledgerhq/hw-transport@6.35.1
+  - @ledgerhq/hw-transport-mocker@6.34.1
+
 ## 7.8.0-next.0
 
 ### Minor Changes

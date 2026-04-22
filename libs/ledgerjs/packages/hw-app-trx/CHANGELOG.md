@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-trx
 
+## 6.36.0
+
+### Minor Changes
+
+- [#15691](https://github.com/LedgerHQ/ledger-live/pull/15691) [`1359dcf`](https://github.com/LedgerHQ/ledger-live/commit/1359dcf6423e6831b5eb25b8cb3a605d9251b082) Thanks [@refi93](https://github.com/refi93)! - Expose chain code from @ledgerhq/hw-app-trx getAddress call which allows efficient non-hardened derivation of accounts following the "Tronlink" scheme `m/44'/195'/0'/0/x`
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.1
+
 ## 6.36.0-next.0
 
 ### Minor Changes
