@@ -1,23 +1,34 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { Linking } from "react-native";
+import { render, screen, fireEvent } from "@tests/test-renderer";
 import { MyWalletHelpScreen } from "../index";
+import { urls } from "~/utils/urls";
 
-jest.mock("~/analytics", () => ({
-  ...jest.requireActual("~/analytics"),
-  TrackScreen: () => null,
+jest.mock("LLM/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => url,
 }));
 
 describe("MyWalletHelpScreen", () => {
-  it("should render both section headers", () => {
-    render(<MyWalletHelpScreen />);
-
-    expect(screen.getByText("Support and learning")).toBeVisible();
-    expect(screen.getByText("More")).toBeVisible();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
-  it("should render the scrollable container", () => {
+  it("should render all sections and rows, and open correct URLs on press", () => {
     render(<MyWalletHelpScreen />);
 
     expect(screen.getByTestId("my-wallet-help-screen")).toBeVisible();
+    expect(screen.getByText(/support and learning/i)).toBeVisible();
+    expect(screen.getByText(/more/i)).toBeVisible();
+    expect(screen.getByText(/ledger support/i)).toBeVisible();
+    expect(screen.getByText(/get help with our faqs or chat/i)).toBeVisible();
+    expect(screen.getByText(/ledger academy/i)).toBeVisible();
+    expect(screen.getByText(/learn crypto/i)).toBeVisible();
+
+    fireEvent.press(screen.getByTestId("help-ledger-support-row"));
+    expect(Linking.openURL).toHaveBeenCalledWith(urls.faq);
+
+    fireEvent.press(screen.getByTestId("help-ledger-academy-row"));
+    expect(Linking.openURL).toHaveBeenCalledWith(urls.resources.ledgerAcademy);
   });
 });
