@@ -10,13 +10,13 @@ import {
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import {
   CustomTopBar,
-  TopBarActionIcon,
+  type TopBarActionIcon,
   useMyLedgerTopBarAction,
 } from "LLM/components/CustomTopBar";
-import { useMyWalletTopBarAction } from "LLM/features/MyWallet/useMyWalletTopBarAction";
 import { ICON_SIZE } from "LLM/components/TopBar/const";
 import { SyncErrorBottomSheet } from "../components/SyncErrorBottomSheet";
 import { useTopBarViewModel } from "../useTopBarViewModel";
+import { MyWalletTopBarAction } from "../components/MyWalletTopBarAction";
 
 const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
   <Warning size={size ?? ICON_SIZE} style={style} color="base" />
@@ -48,8 +48,10 @@ export function TopBarView({
   onTryRefresh,
 }: Readonly<TopBarViewProps>) {
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
-  const myWalletAction = useMyWalletTopBarAction(onMyWalletPress);
-  const leadingAction = shouldDisplayMyWallet ? myWalletAction : myLedgerAction;
+
+  const leadingElement = shouldDisplayMyWallet ? (
+    <MyWalletTopBarAction onPress={onMyWalletPress} />
+  ) : undefined;
 
   const notificationIcon = useCallback<IconButtonProps["icon"]>(
     ({ size, style }) => {
@@ -100,8 +102,14 @@ export function TopBarView({
     loading: isSyncPending,
   };
 
+  const displayMyLedgerIconLeading = !shouldDisplayMyWallet;
+  const displayDiscoverIconLeading = shouldDisplayOperationsList;
+
   const getLeadingIcons = (): TopBarActionIcon[] =>
-    filterIcons([leadingAction, shouldDisplayOperationsList && discoverIcon]);
+    filterIcons([
+      displayMyLedgerIconLeading && myLedgerAction,
+      displayDiscoverIconLeading && discoverIcon,
+    ]);
 
   const displaySyncStatusIcon = hasAccounts && isSyncError;
   const displayDiscoverIcon = !shouldDisplayOperationsList;
@@ -120,7 +128,11 @@ export function TopBarView({
 
   return (
     <>
-      <CustomTopBar leadingIcons={getLeadingIcons()} trailingIcons={getTrailingIcons()} />
+      <CustomTopBar
+        leadingElement={leadingElement}
+        leadingIcons={getLeadingIcons()}
+        trailingIcons={getTrailingIcons()}
+      />
 
       <SyncErrorBottomSheet
         isOpen={isSyncDrawerOpen}
