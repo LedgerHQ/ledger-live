@@ -118,7 +118,10 @@ const detoxAliases = isDetoxBuild
     }
   : {};
 
-const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
+const hermesNonCompatibleDependencies = [
+  "@polkadot/types-codec",
+  "@mysten/sui",
+];
 
 /**
  * Checks if the specified resource file is compatible with hermes-parser following
@@ -202,7 +205,12 @@ export default withRozeniteUrlFix(
               use: {
                 loader: "@callstack/repack/babel-swc-loader",
                 parallel: true,
-                options: {},
+                options: {
+                  lazyImports: true,
+                  module: {
+                    lazy: true,
+                  },
+                },
               },
               resolve: { fullySpecified: false },
             },
@@ -211,7 +219,9 @@ export default withRozeniteUrlFix(
               test: /\.lottie$/,
               use: {
                 loader: "@callstack/repack/assets-loader",
-                options: {},
+                options: {
+                  lazyImports: true,
+                },
               },
             },
           ],

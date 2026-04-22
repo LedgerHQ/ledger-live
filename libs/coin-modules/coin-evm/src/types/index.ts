@@ -5,3 +5,4 @@ export * from "./editTransaction";
 export * from "./etherscan";
 export * from "./ledger";
 export * from "./transaction";
+export * from "./staking";

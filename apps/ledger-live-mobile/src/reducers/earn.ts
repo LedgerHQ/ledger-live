@@ -9,6 +9,7 @@ import {
   EarnSetMenuModalPayload,
   EarnSetMenuBottomSheetPayload,
   EarnSetProtocolInfoModalPayload,
+  EarnSetActionDialogPayload,
 } from "../actions/types";
 import type { EarnState, State } from "./types";
 
@@ -18,6 +19,7 @@ export const INITIAL_STATE: EarnState = {
   menuModal: undefined,
   menuBottomSheet: undefined,
   protocolInfoModal: undefined,
+  actionDialog: undefined,
 };
 
 const handlers: ReducerMap<EarnState, EarnPayload> = {
@@ -40,6 +42,10 @@ const handlers: ReducerMap<EarnState, EarnPayload> = {
   [EarnActionTypes.EARN_PROTOCOL_INFO_MODAL]: (state, action): EarnState => ({
     ...state,
     protocolInfoModal: (action as Action<EarnSetProtocolInfoModalPayload>).payload,
+  }),
+  [EarnActionTypes.EARN_ACTION_DIALOG]: (state, action): EarnState => ({
+    ...state,
+    actionDialog: (action as Action<EarnSetActionDialogPayload>).payload,
   }),
 };
 
@@ -70,6 +76,11 @@ export const earnMenuBottomSheetSelector = createSelector(
 export const earnProtocolInfoModalSelector = createSelector(
   storeSelector,
   (state: EarnState) => state.protocolInfoModal,
+);
+
+export const earnActionDialogSelector = createSelector(
+  storeSelector,
+  (state: EarnState) => state.actionDialog,
 );
 
 export default handleActions<EarnState, EarnPayload>(handlers, INITIAL_STATE);

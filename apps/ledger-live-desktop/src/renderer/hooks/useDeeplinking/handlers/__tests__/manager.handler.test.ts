@@ -1,23 +1,5 @@
 import { managerHandler } from "../manager.handler";
-import { DeeplinkHandlerContext } from "../../types";
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  currentSearch: "",
-  currentLocationState: undefined,
-  accountsPath: "/accounts",
-  ...overrides,
-});
+import { createMockContext } from "./test-utils";
 
 describe("manager.handler", () => {
   beforeEach(() => {

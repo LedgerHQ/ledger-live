@@ -89,7 +89,8 @@ export function BaseButton({
 
   function getTestID() {
     if (!otherProps.isFocused) return undefined;
-    if (otherProps.testID) return otherProps.testID;
+    const prefix = isDisabled ? "disabled-" : "enabled-";
+    if (otherProps.testID) return `${prefix}${otherProps.testID}`;
     if (isDisabled) return undefined;
 
     switch (type) {

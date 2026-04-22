@@ -39,7 +39,10 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import {
+  needsConsentRenewal,
+  resolveAnalyticsOptInParams,
+} from "@ledgerhq/live-common/analyticsConsent/index";
 
 /* Initial state */
 
@@ -129,6 +132,7 @@ export type SettingsState = {
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
+  hasClickedRecover: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   lastAnalyticsConsentDate: string | null;
@@ -232,6 +236,7 @@ export const INITIAL_STATE: SettingsState = {
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
+  hasClickedRecover: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
   lastAnalyticsConsentDate: null,
@@ -253,6 +258,8 @@ export const AFTER_ONBOARDING_STATE: SettingsState = {
 
 type HandlersPayloads = {
   SAVE_SETTINGS: Partial<SettingsState>;
+  /** Merges into `analyticsConsentInfo` and keeps `lastAnalyticsConsentDate` / `privacyPolicyVersion` in sync. */
+  SAVE_ANALYTICS_CONSENT_INFO: Partial<AnalyticsConsentInfo>;
   FETCH_SETTINGS: Partial<SettingsState>;
   SETTINGS_DISMISS_BANNER: string;
   SHOW_TOKEN: string;
@@ -294,6 +301,7 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
+  SET_HAS_CLICKED_RECOVER: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -321,40 +329,32 @@ const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     const filteredPayload = filterValidSettings(payload);
-
-    let mergedPayload: Partial<SettingsState> = filteredPayload;
-    if (filteredPayload.analyticsConsentInfo !== undefined) {
-      mergedPayload = {
-        ...filteredPayload,
-        analyticsConsentInfo: {
-          ...state.analyticsConsentInfo,
-          ...filteredPayload.analyticsConsentInfo,
-        },
-      };
-    }
+    const { analyticsConsentInfo, ...rest } = filteredPayload;
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(mergedPayload) as (keyof typeof mergedPayload)[]).some(key => {
-      if (key === "analyticsConsentInfo" && mergedPayload.analyticsConsentInfo !== undefined) {
-        const m = mergedPayload.analyticsConsentInfo;
-        return (
-          m.consentDate !== state.analyticsConsentInfo.consentDate ||
-          m.privacyPolicyVersion !== state.analyticsConsentInfo.privacyPolicyVersion
-        );
-      }
-      return mergedPayload[key] !== state[key];
-    });
+    const changed = (Object.keys(rest) as (keyof typeof rest)[]).some(
+      key => rest[key] !== state[key],
+    );
     if (!changed) return state;
 
-    const next: SettingsState = {
-      ...state,
-      ...mergedPayload,
-    };
-    if (mergedPayload.analyticsConsentInfo !== undefined) {
-      next.lastAnalyticsConsentDate = mergedPayload.analyticsConsentInfo.consentDate;
-      next.privacyPolicyVersion = mergedPayload.analyticsConsentInfo.privacyPolicyVersion;
+    return { ...state, ...rest };
+  },
+
+  SAVE_ANALYTICS_CONSENT_INFO: (state, { payload }) => {
+    if (!payload) return state;
+    const merged: AnalyticsConsentInfo = { ...state.analyticsConsentInfo, ...payload };
+    if (
+      merged.consentDate === state.analyticsConsentInfo.consentDate &&
+      merged.privacyPolicyVersion === state.analyticsConsentInfo.privacyPolicyVersion
+    ) {
+      return state;
     }
-    return next;
+    return {
+      ...state,
+      analyticsConsentInfo: merged,
+      lastAnalyticsConsentDate: merged.consentDate,
+      privacyPolicyVersion: merged.privacyPolicyVersion,
+    };
   },
 
   FETCH_SETTINGS: (state, { payload: settings }) => {
@@ -530,6 +530,10 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
+  }),
+  SET_HAS_CLICKED_RECOVER: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasClickedRecover: payload,
   }),
 };
 
@@ -770,27 +774,18 @@ export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo
     privacyPolicyVersion: null,
   };
 
-// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
+// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the consent window must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
+  const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
 
-  if (state.featureFlags?.resolved?.analyticsOptIn?.enabled) {
+  if (analyticsOptIn?.enabled) {
     if (!s.lastAnalyticsConsentDate) {
       return false;
     }
 
-    const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
-    if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
-      return false;
-    }
-
-    const now = new Date();
-    // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
-    const oneYearAgo = new Date(now.getTime());
-
-    oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
-
-    if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
+    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
+    if (needsConsentRenewal(s.lastAnalyticsConsentDate, consentValidityDays)) {
       return false;
     }
   }
@@ -853,6 +848,7 @@ export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.al
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;
 
 // Last onboarded device is the device set when a user goes through the onboarding flow.
 // Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).

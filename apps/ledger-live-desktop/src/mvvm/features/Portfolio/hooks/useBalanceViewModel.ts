@@ -41,6 +41,7 @@ export const useBalanceViewModel = (
     isColdStart,
     balanceAvailable: rawBalanceAvailable,
     syncPhase,
+    isCvPending,
   } = usePortfolioBalance({ legacyRange });
 
   const latestBalanceValue =
@@ -51,6 +52,7 @@ export const useBalanceViewModel = (
     syncPhase,
     latestBalance: latestBalanceValue,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
 
   const unit = counterValue.units[0];

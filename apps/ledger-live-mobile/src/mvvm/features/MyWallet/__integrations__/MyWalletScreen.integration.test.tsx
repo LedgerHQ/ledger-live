@@ -55,7 +55,7 @@ describe("MyWalletScreen", () => {
     renderScreen();
 
     expect(screen.getByTestId("my-wallet-quick-actions-row")).toBeVisible();
-    expect(screen.getByLabelText("[L] Recover")).toBeVisible();
+    expect(screen.getByLabelText("Backup")).toBeVisible();
     expect(screen.getByLabelText("Help")).toBeVisible();
     expect(screen.getByLabelText("Referral")).toBeVisible();
   });

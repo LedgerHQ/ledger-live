@@ -35,6 +35,8 @@ import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 type Params = {
   id?: string;
@@ -85,6 +87,8 @@ const AccountPage = ({
   countervalueFirst,
   setCountervalueFirst,
 }: Props) => {
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
+  const fallbackPath = getAccountsSidebarPath(shouldDisplayAssetSection);
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const AccountBodyHeader = specific?.AccountBodyHeader;
@@ -114,7 +118,7 @@ const AccountPage = ({
   const currency = mainAccount?.currency;
 
   if (!account || !mainAccount || !currency) {
-    return <Navigate to="/accounts" replace />;
+    return <Navigate to={fallbackPath} replace />;
   }
 
   const color = getCurrencyColor(currency, bgColor);

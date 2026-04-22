@@ -6,15 +6,27 @@ import { logStartupEvent } from "../utils/logStartupTime";
 
 const MAX_WAIT = 1_000;
 
+export interface WaitForAppReadyProps {
+  currencyInitialized: boolean;
+  importAccounts: () => Promise<void>;
+}
+
 export function WaitForAppReady({
   children,
   currencyInitialized,
-}: React.PropsWithChildren<{ currencyInitialized: boolean }>) {
+  importAccounts,
+}: React.PropsWithChildren<WaitForAppReadyProps>) {
   logStartupEvent("WaitForAppReady render");
 
   const initialQueries = useContext(InitialQueriesContext);
+  const accountsImported = useWait<boolean>(resolve =>
+    importAccounts().finally(() => resolve(true)),
+  );
   const isLoaded =
-    currencyInitialized && !initialQueries.ofacResult.isLoading && initialQueries.firebaseIsReady;
+    accountsImported &&
+    currencyInitialized &&
+    !initialQueries.ofacResult.isLoading &&
+    initialQueries.firebaseIsReady;
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
 

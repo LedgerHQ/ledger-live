@@ -12,7 +12,7 @@ import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
-import { safeEncodeEIP55, normalizeAddress } from "../../utils";
+import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { withRetries } from "../withRetries";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
 import {
@@ -204,6 +204,12 @@ async function getTransaction(
     value: tx.value.toString(),
     from: tx.from,
     to: tx.to ?? undefined,
+    ...(tx.data !== null && tx.data !== undefined && isSmartContractInput(tx.data)
+        ? { input: tx.data }
+        : {}),
+    ...(receipt.contractAddress
+      ? { contractAddress: receipt.contractAddress }
+      : {}),
     erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
   };
 }
@@ -426,11 +432,15 @@ async function getBlockByHeight(
         `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
       );
 
+    const rawTx = tx as { data?: string };
     return {
       hash: tx.hash,
       value: tx.value.toString(),
       from: tx.from,
       to: tx.to ?? undefined,
+      ...(rawTx.data !== null && rawTx.data !== undefined && isSmartContractInput(rawTx.data)
+          ? { input: rawTx.data }
+          : {}),
     };
   });
 
@@ -524,12 +534,26 @@ async function getBlockByHeightFromRawRpc(
             throw new Error(
               "Malformed prefetched transaction value in eth_getBlockByNumber response",
             );
+          if (
+            "input" in tx &&
+            tx.input !== undefined &&
+            tx.input !== null &&
+            typeof tx.input !== "string"
+          )
+            throw new Error(
+              "Malformed prefetched transaction input in eth_getBlockByNumber response",
+            );
 
           return {
             hash: tx.hash,
             value: BigInt(tx.value ?? "0x0").toString(),
             from: tx.from,
             to: tx.to ?? undefined,
+            ...("input" in tx &&
+            typeof tx.input === "string" &&
+            isSmartContractInput(tx.input)
+              ? { input: tx.input }
+              : {}),
           };
         })
       : undefined;
@@ -572,12 +596,20 @@ async function getBlockReceipts(
     if (!isTransactionReceipt(receipt))
       throw new Error(`Malformed eth_getBlockReceipts response at index ${index}`);
 
+    const raw = receipt as Record<string, unknown>;
+    const contractAddressRaw = raw.contractAddress;
+    const contractAddress =
+      typeof contractAddressRaw === "string" && contractAddressRaw.startsWith("0x")
+        ? contractAddressRaw
+        : undefined;
+
     return {
       hash: receipt.transactionHash,
       gasUsed: BigInt(receipt.gasUsed).toString(),
       gasPrice: BigInt(receipt.effectiveGasPrice ?? receipt.gasPrice ?? "0x0").toString(),
       status: receipt.status === null ? null : Number(receipt.status),
       erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
+      ...(contractAddress ? { contractAddress } : {}),
     };
   });
 }
@@ -666,7 +698,11 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
       : true) &&
     typeof value.hash === "string" &&
     (typeof value.value === "string" || typeof value.value === "bigint") &&
-    typeof value.from === "string"
+    typeof value.from === "string" &&
+    (!("data" in value) ||
+      value.data === undefined ||
+      value.data === null ||
+      typeof value.data === "string")
   );
 }
 

@@ -22,6 +22,8 @@ import ExpoModulesCore
 @main
 class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
 
+  private var launchedFromPush = false
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -61,6 +63,8 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       )
     }
 
+    UNUserNotificationCenter.current().delegate = self
+
     BrazeManager.shared.configure(
       pushAutoEnabled: pushAutoEnabled
     )
@@ -77,6 +81,8 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       .populateInitialPayload(
         fromLaunchOptions: launchOptions
       )
+
+    launchedFromPush = launchOptions?[.remoteNotification] != nil
 
     let appLaunched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
@@ -148,11 +154,19 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     didReceive response: UNNotificationResponse,
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
-    BrazeReactUtils
-      .sharedInstance()
-      .populateInitialPayload(
-        fromLaunchOptions: response.notification.request.content.userInfo
+    let userInfo = response.notification.request.content.userInfo
+
+    if launchedFromPush {
+      launchedFromPush = false
+    } else if let urlString = userInfo["ab_uri"] as? String,
+              let url = URL(string: urlString) {
+      RCTLinkingManager.application(
+        UIApplication.shared,
+        open: url,
+        options: [:]
       )
+    }
+
     let processedByBraze = BrazeManager.shared.handleUserNotification(
       response: response,
       completion: completionHandler

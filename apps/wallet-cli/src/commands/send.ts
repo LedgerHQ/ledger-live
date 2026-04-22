@@ -2,14 +2,14 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
-import { HumanFormatter } from "../wallet/formatter";
-import { parseAccountDescriptor, resolveAccountArg, OutputFormatSchema } from "../wallet/models";
-import { TransactionIntentSchema, type TransactionIntent } from "../wallet/intents";
+import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
+import { TransactionIntentSchema } from "../wallet/intents";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
-import { spinner, colors, writeStdout } from "../shared/ui";
-import { makeEnvelope, makeErrorEnvelope } from "../shared/response";
+import { colors } from "../shared/ui";
+import { createCommandOutput } from "../output";
+import { accountOption, outputOption } from "./shared-options";
 
 type SendFlags = {
   account?: string;
@@ -21,6 +21,7 @@ type SendFlags = {
   validator?: string;
   "stake-account"?: string;
   memo?: string;
+  data?: string;
   "dry-run": boolean;
   output: "human" | "json";
 };
@@ -39,6 +40,7 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
     family: "evm",
     recipient: flags.to,
     amount: flags.amount,
+    data: flags.data,
   }),
   solana: flags => ({
     family: "solana",
@@ -55,11 +57,7 @@ export default defineCommand({
   name: "send",
   description: "Sign and broadcast a transaction (bridge only, no Alpaca)",
   options: {
-    account: option(z.string().min(1).optional(), {
-      description:
-        "Short account descriptor (output of account discover), or pass as first positional arg",
-      short: "a",
-    }),
+    account: accountOption,
     to: option(z.string().min(1, "Recipient address is required (--to <address>)"), {
       description: "Recipient address",
       short: "t",
@@ -75,6 +73,7 @@ export default defineCommand({
     }),
     rbf: option(z.boolean().optional(), {
       description: "Enable Replace-By-Fee (Bitcoin only)",
+      argumentKind: "flag",
     }),
     mode: option(z.string().min(1).optional(), {
       description:
@@ -89,19 +88,27 @@ export default defineCommand({
     memo: option(z.string().min(1).optional(), {
       description: "Memo/tag (Solana only)",
     }),
+    data: option(
+      z
+        .string()
+        .regex(/^0x([0-9a-fA-F]{2})*$/, "data must be 0x-prefixed hex with an even number of digits")
+        .optional(),
+      {
+        description: "EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)",
+      },
+    ),
     "dry-run": option(z.boolean().default(false), {
       description: "Prepare and validate transaction but do not sign or broadcast",
+      argumentKind: "flag",
     }),
-    output: option(OutputFormatSchema.default("human"), {
-      description: "Output format: human (default) or json",
-    }),
+    output: outputOption,
   },
   handler: async ({ flags, positional }) => {
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
     const network = networkStringFromCurrencyId(descriptor.currencyId);
     const wallet = new WalletAdapter();
-    const isHuman = flags.output === "human";
     const dryRun = flags["dry-run"];
+    const out = createCommandOutput(flags.output, { command: "send", network, account: descriptor.id });
 
     // Build the TransactionIntent based on the currency family
     const { family } = getCryptoCurrencyById(descriptor.currencyId);
@@ -113,139 +120,34 @@ export default defineCommand({
     }
     const intentData = builder(flags as SendFlags);
 
-    let intent: TransactionIntent;
-    try {
-      intent = TransactionIntentSchema.parse(intentData);
-    } catch (e) {
-      if (!isHuman) {
-        writeStdout(
-          JSON.stringify(
-            makeErrorEnvelope("send", HumanFormatter.formatError(e), network),
-            null,
-            2,
-          ),
-        );
-        process.exit(1);
-      }
-      throw e;
-    }
+    await out.run(async () => {
+      // Intent schema parse may throw (ZodError) — out.run catches it in json mode
+      const intent = TransactionIntentSchema.parse(intentData);
 
-    try {
-      // Phase 4a: dry-run should NOT open the device
       if (dryRun) {
-        const dryRunSpin = isHuman ? spinner("Preparing transaction (dry run)…") : null;
+        const spin = out.spin("Preparing transaction (dry run)…");
         const prepared = await wallet.prepareSend(descriptor, intent);
-        if (isHuman) {
-          dryRunSpin!.clear();
-          writeStdout(`  To:     ${prepared.recipient}`);
-          writeStdout(`  Amount: ${colors.bold(colors.green(prepared.amount))}`);
-          writeStdout(`  Fees:   ${colors.dim(prepared.fees)}`);
-          dryRunSpin!.success("Dry run complete (transaction not broadcasted)");
-        } else {
-          writeStdout(
-            JSON.stringify(
-              makeEnvelope(
-                "send",
-                network,
-                {
-                  dry_run: true,
-                  recipient: prepared.recipient,
-                  amount: prepared.amount,
-                  fee: prepared.fees,
-                },
-                descriptor.id,
-              ),
-              null,
-              2,
-            ),
-          );
-        }
+        spin?.clear();
+        out.sendDryRun(prepared);
+        spin?.success("Dry run complete (transaction not broadcasted)");
         return;
       }
 
-      const spin = isHuman
-        ? spinner(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`)
-        : null;
-
+      const spin = out.spin(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`);
       await withCurrencyDeviceSession(descriptor.currencyId, async () => {
         spin?.success("Device session established");
-
-        const sendSpin = isHuman
-          ? spinner(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`)
-          : null;
-        const result: Record<string, unknown> = {};
+        out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
 
         await new Promise<void>((resolve, reject) => {
           wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).subscribe({
-            next: event => {
-              if (!isHuman) {
-                if (event.type === "prepared") {
-                  result.recipient = event.recipient;
-                  result.amount = event.amount;
-                  result.fee = event.fees;
-                } else if (event.type === "broadcasted") {
-                  result.tx_hash = event.txHash;
-                } else if (event.type === "dry-run") {
-                  result.dry_run = true;
-                }
-                return;
-              }
-              switch (event.type) {
-                case "prepared":
-                  sendSpin!.clear();
-                  writeStdout(`  To:     ${event.recipient}`);
-                  writeStdout(`  Amount: ${colors.bold(colors.green(event.amount))}`);
-                  writeStdout(`  Fees:   ${colors.dim(event.fees)}`);
-                  sendSpin!.text = "Confirm transaction on device…";
-                  break;
-                case "device-streaming":
-                  sendSpin!.text = `Streaming to device… ${Math.round(event.progress * 100)}%`;
-                  break;
-                case "device-signature-requested":
-                  sendSpin!.text = "Please confirm on device…";
-                  break;
-                case "device-signature-granted":
-                  sendSpin!.text = "Signed, broadcasting…";
-                  break;
-                case "dry-run":
-                  sendSpin!.success("Dry run complete (transaction not broadcasted)");
-                  break;
-                case "broadcasted":
-                  sendSpin!.success(`Broadcasted  ${colors.dim(event.txHash)}`);
-                  break;
-              }
-            },
-            error: (e: unknown) => {
-              const msg = HumanFormatter.formatError(e);
-              sendSpin?.error(msg);
-              reject(new Error(msg));
-            },
+            next: event => out.sendEvent(event),
+            error: (e: unknown) => reject(e),
             complete: resolve,
           });
         });
 
-        if (!isHuman) {
-          writeStdout(
-            JSON.stringify(
-              makeEnvelope("send", network, result, descriptor.id),
-              null,
-              2,
-            ),
-          );
-        }
+        out.sendComplete();
       });
-    } catch (e) {
-      if (!isHuman) {
-        writeStdout(
-          JSON.stringify(
-            makeErrorEnvelope("send", HumanFormatter.formatError(e), network),
-            null,
-            2,
-          ),
-        );
-        process.exit(1);
-      }
-      throw e;
-    }
+    });
   },
 });

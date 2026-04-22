@@ -183,19 +183,27 @@ export class BridgeAdapter {
   }
 
   private buildTxExtras(intent: TransactionIntent, tokenAccount: TokenAccount | undefined) {
-    return {
-      ...(tokenAccount ? { subAccountId: tokenAccount.id } : {}),
-      ...("feePerByte" in intent && intent.feePerByte
-        ? { feePerByte: new BigNumber(intent.feePerByte) }
-        : {}),
-      ...("rbf" in intent && intent.rbf != null ? { rbf: intent.rbf } : {}),
-      ...("mode" in intent && intent.mode ? { mode: intent.mode } : {}),
-      ...("validator" in intent && intent.validator ? { validator: intent.validator } : {}),
-      ...("stakeAccount" in intent && intent.stakeAccount
-        ? { stakeAccountId: intent.stakeAccount }
-        : {}),
-      ...("memo" in intent && intent.memo ? { memo: intent.memo } : {}),
-    };
+    const patch: Record<string, unknown> = {};
+    if (tokenAccount) patch.subAccountId = tokenAccount.id;
+    switch (intent.family) {
+      case "bitcoin":
+        if (intent.feePerByte) patch.feePerByte = new BigNumber(intent.feePerByte);
+        if (intent.rbf != null) patch.rbf = intent.rbf;
+        break;
+      case "evm":
+        if (intent.data) {
+          const hexData = intent.data.slice(2);
+          if (hexData.length > 0) patch.data = Buffer.from(hexData, "hex");
+        }
+        break;
+      case "solana":
+        if (intent.mode) patch.mode = intent.mode;
+        if (intent.validator) patch.validator = intent.validator;
+        if (intent.stakeAccount) patch.stakeAccountId = intent.stakeAccount;
+        if (intent.memo) patch.memo = intent.memo;
+        break;
+    }
+    return patch;
   }
 
   private async buildValidatedTx(account: Account, intent: TransactionIntent) {

@@ -51,6 +51,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.next({ status: AccountOnboardStatus.SIGN });
     });
@@ -66,6 +67,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.next({ status: AccountOnboardStatus.SUBMIT });
     });
@@ -81,6 +83,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.next({ account: creatableAccount });
     });
@@ -97,6 +100,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.error(new ConcordiumSessionExpiredError());
     });
@@ -112,6 +116,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.error(new LockedDeviceError());
     });
@@ -128,6 +133,7 @@ describe("useOnboarding", () => {
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
     act(() => {
       onboardSubject.error(new Error("network failure"));
     });
@@ -138,13 +144,13 @@ describe("useOnboarding", () => {
     });
   });
 
-  it("should unsubscribe on unmount", () => {
+  it("should unsubscribe on unmount", async () => {
     const onSessionExpired = jest.fn();
     const { unmount } = renderHook(() =>
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
     );
 
-    expect(onboardSubject.observed).toBe(true);
+    await waitFor(() => expect(onboardSubject.observed).toBe(true));
 
     act(() => {
       unmount();

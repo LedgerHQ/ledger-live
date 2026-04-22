@@ -33,7 +33,7 @@ const ReleaseNotesDialogView = ({ isOpen, notes, onClose, onGotIt }: ReleaseNote
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh]" aria-describedby={undefined}>
-        <DialogHeader appearance="compact" title={t("releaseNotes.title")} onClose={onClose} />
+        <DialogHeader density="compact" title={t("releaseNotes.title")} onClose={onClose} />
         <DialogBody className="min-h-0 flex-1 gap-24 overflow-y-auto px-24">
           {releaseNoteImage ? (
             <img

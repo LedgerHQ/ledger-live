@@ -88,7 +88,10 @@ runs:
           SHARD_ARG="--shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}"
         fi
 
-        if [[ "${{ inputs.enable_wallet40 }}" = "true" ]]; then
+        if [[ "${{ inputs.enable_wallet40 }}" = "false" ]]; then
+          export E2E_ENABLE_WALLET40=0
+          echo "Wallet 4.0 disabled!"
+        else
           export E2E_ENABLE_WALLET40=1
           echo "Wallet 4.0 enabled!"
         fi

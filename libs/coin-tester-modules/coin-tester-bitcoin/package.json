@@ -56,8 +56,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "start:debug": "DOTENV_CONFIG_PATH=.env node --inspect-brk ./node_modules/jest/bin/jest.js --runTestsByPath src/*.test.ts --runInBand",
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -76,7 +75,7 @@
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
     "bitcoin-core": "^5.0.0",
-    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-lib": "^6.1.7",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },
@@ -85,7 +84,6 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "dotenv": "^16.4.5",
     "jest": "catalog:",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",

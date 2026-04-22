@@ -50,8 +50,8 @@ jobs:
       - name: Build dependencies
         run: |
           pnpm exec nx run-many -t build --projects=tag:scope:libs
-          pnpm exec nx run ledger-live-desktop:build --with-deps
-          pnpm exec nx run live-mobile:build --with-deps
+          pnpm exec nx run ledger-live-desktop:build
+          pnpm exec nx run live-mobile:build
 
       - name: Generate Unit test coverage for LLD & LLM
         run: |
@@ -121,13 +121,12 @@ jobs:
           pnpm turbo build --filter="@ledgerhq/wallet-cli^..."
           mkdir -p apps/wallet-cli/coverage
           touch apps/wallet-cli/coverage/lcov.info
-          touch apps/wallet-cli/coverage/sonar-executionTests-report.xml
           pnpm --filter="@ledgerhq/wallet-cli" coverage
 
       - name: Merge coverage files
         run: |
           cat libs/coverage/lcov.info features/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info apps/wallet-cli/coverage/lcov.info > ./lcov.info
-          cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml apps/wallet-cli/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
+          cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - name: Sonarqube Scan
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6

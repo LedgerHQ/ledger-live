@@ -47,6 +47,8 @@ type TopBarSlot = { type: "action"; action: TopBarAction } | { type: "notificati
 type TopBarViewProps = {
   slots: TopBarSlot[];
   shouldShowFirmwareUpdateBanner: boolean;
+  isInformationCenterOpen: boolean;
+  onInformationCenterClose: () => void;
 };
 
 export type { TopBarAction, TopBarActionAppearance, TopBarSlot, TopBarViewProps };

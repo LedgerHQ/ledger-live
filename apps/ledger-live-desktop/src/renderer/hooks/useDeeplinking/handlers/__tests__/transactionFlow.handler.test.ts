@@ -4,7 +4,7 @@ import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/in
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { sendHandler, receiveHandler, delegateHandler } from "../transactionFlow.handler";
-import { DeeplinkHandlerContext } from "../../types";
+import { createMockContext } from "./test-utils";
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   findCryptoCurrencyByKeyword: jest.fn(),
@@ -37,24 +37,6 @@ const mockGetAccountsOrSubAccountsByCurrency = jest.mocked(getAccountsOrSubAccou
 const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
 const mockSetDrawer = jest.mocked(setDrawer);
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  currentSearch: "",
-  currentLocationState: undefined,
-  accountsPath: "/accounts",
-  ...overrides,
-});
 
 const createMockAccount = (currencyId: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);

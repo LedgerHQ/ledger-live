@@ -12,8 +12,9 @@ export default class StakePage {
   delegatedRatioId = (currencyId: string, delegatedPercent: number) =>
     `${currencyId}-delegate-ratio-${delegatedPercent}%`;
   allAssetsUsedText = (currencyId: string) => `${currencyId}-all-assets-used-text`;
-  summaryContinueButtonId = (currencyId: string) => `${currencyId}-summary-continue-button`;
-  delegationAmountContinueId = (currencyId: string) => `${currencyId}-delegation-amount-continue`;
+  summaryContinueButtonId = (currencyId: string) => `enabled-${currencyId}-summary-continue-button`;
+  delegationAmountContinueId = (currencyId: string) =>
+    `enabled-${currencyId}-delegation-amount-continue`;
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   zeroAssetText = "0\u00a0ATOM";
 

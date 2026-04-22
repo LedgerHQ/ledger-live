@@ -16,6 +16,7 @@ export type Wallet40Params = {
   readonly operationsList?: boolean;
   readonly aggregatedAssets?: boolean;
   readonly myWallet?: boolean;
+  readonly finishOnboardingWidget?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -57,4 +58,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayAggregatedAssets: boolean;
   /** Whether to show the My Wallet component */
   readonly shouldDisplayMyWallet: boolean;
+  /** Whether to show the Finish Onboarding widget on Portfolio (desktop / lwdWallet40) */
+  readonly shouldDisplayFinishOnboardingWidget: boolean;
 }

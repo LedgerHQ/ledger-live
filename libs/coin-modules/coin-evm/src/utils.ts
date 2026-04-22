@@ -79,6 +79,61 @@ export function isEthAddress(address: string): boolean {
   return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
 }
 
+/** Discriminant for smart contract call vs contract creation (deployment). */
+export type ContractInteractionKind = "SmartContractInteraction" | "SmartContractDeployment";
+
+/**
+ * True when `input` carries non-trivial calldata or init code (not empty / whitespace-only /
+ * bare hex prefix). Leading and trailing whitespace are ignored; `0x` / `0X` with no payload
+ * after trim are treated as empty.
+ */
+export function isSmartContractInput(input: string | null | undefined): input is string {
+  if (input === null || input === undefined) {
+    return false;
+  }
+  const trimmed = input.trim();
+  if (trimmed === "") {
+    return false;
+  }
+  if (trimmed.length === 2 && trimmed.toLowerCase() === "0x") {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Builds flat `details` fields for Alpaca when a tx has smart contract input.
+ *
+ * `contractAddress` (when present) identifies the relevant contract: for
+ * `SmartContractInteraction` it is the called address (`to`); for
+ * `SmartContractDeployment` it is the created contract when
+ * `deployedContractAddress` is known (e.g. from a receipt), otherwise omitted.
+ */
+export function buildSmartContractDetails(
+  to: string | undefined,
+  input: string | undefined,
+  deployedContractAddress?: string | undefined,
+): Record<string, unknown> | undefined {
+  if (!isSmartContractInput(input)) {
+    return undefined;
+  }
+  const trimmedInput = input.trim();
+  const encodedTo = to ? safeEncodeEIP55(to) : "";
+  const contractInteraction: ContractInteractionKind = encodedTo
+    ? "SmartContractInteraction"
+    : "SmartContractDeployment";
+  const contractPayload = /^0x/i.test(trimmedInput)
+    ? `0x${trimmedInput.slice(2)}`
+    : `0x${trimmedInput}`;
+  const encodedDeployed = deployedContractAddress ? safeEncodeEIP55(deployedContractAddress) : "";
+  const contractAddress = encodedDeployed || encodedTo;
+  return {
+    contractInteraction,
+    ...(contractAddress ? { contractAddress } : {}),
+    contractPayload,
+  };
+}
+
 /**
  * Normalizes an Ethereum address to lowercase to avoid checksum validation issues.
  *
@@ -106,15 +161,53 @@ export const safeBigInt = (value: string | number | bigint): bigint => {
   }
 };
 
+export const unwrapProxy = (proxy: unknown): unknown => {
+  if (proxy && typeof proxy === "object" && proxy.constructor.name === "Proxy") {
+    return Object.fromEntries(Object.entries(proxy).map(([k, v]) => [k, unwrapProxy(v)]));
+  }
+  if (Array.isArray(proxy)) return proxy.map(unwrapProxy);
+  return proxy;
+};
+
 export const isSeiDelegation = (candidate: unknown): candidate is SeiDelegation => {
+  // Plain object format: { balance: { amount, denom }, delegation: { delegator_address, validator_address, ... } }
+  if (candidate !== null && typeof candidate === "object" && !Array.isArray(candidate)) {
+    const obj = candidate as Record<string, unknown>;
+    const balance = obj.balance;
+    const delegation = obj.delegation;
+    return (
+      balance !== null &&
+      typeof balance === "object" &&
+      !Array.isArray(balance) &&
+      "amount" in balance &&
+      "denom" in balance &&
+      typeof balance.denom === "string" &&
+      delegation !== null &&
+      typeof delegation === "object" &&
+      !Array.isArray(delegation) &&
+      "delegator_address" in delegation &&
+      "validator_address" in delegation &&
+      typeof delegation.delegator_address === "string" &&
+      typeof delegation.validator_address === "string"
+    );
+  }
+
+  // ABI-decoded tuple format from ethers.js: [[amount, denom], [delegator_address, shares, decimals, validator_address]]
+  if (!Array.isArray(candidate) || candidate.length !== 2) return false;
+
+  const [balance, delegation] = candidate;
+
   return (
-    typeof candidate === "object" &&
-    candidate !== null &&
-    "balance" in candidate &&
-    typeof (candidate as Record<string, unknown>).balance === "object" &&
-    (candidate as Record<string, unknown>).balance !== null &&
-    "amount" in ((candidate as Record<string, unknown>).balance as Record<string, unknown>) &&
-    "denom" in ((candidate as Record<string, unknown>).balance as Record<string, unknown>)
+    Array.isArray(balance) &&
+    balance.length === 2 &&
+    typeof balance[0] === "bigint" && // amount
+    typeof balance[1] === "string" && // denom
+    Array.isArray(delegation) &&
+    delegation.length === 4 &&
+    typeof delegation[0] === "string" && // delegator_address
+    typeof delegation[1] === "bigint" && // shares
+    typeof delegation[2] === "bigint" && // decimals
+    typeof delegation[3] === "string" // validator_address
   );
 };
 
@@ -136,20 +229,45 @@ export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefine
 };
 
 /**
- * Gets amount from SEI delegation with safe conversion
+ * usei has 6 decimals, sei_evm native token has 18 → scale factor 10^12
+ * Used to convert between the Cosmos staking module's native unit (usei, 6 decimals)
+ * usei has 6 decimals, while the SEI EVM-native base unit has 18 decimals,
+ * so the scale factor between them is 10^12.
+ *
+ * Used to convert:
+ * - from the Cosmos staking module's native unit (`usei`, 6 decimals) to the
+ *   EVM-native 18-decimal unit by multiplying by `USEI_TO_EVM_SCALE`
+ * - from the EVM-native 18-decimal unit back to `usei` by dividing by
+ *   `USEI_TO_EVM_SCALE`
+ */
+export const USEI_TO_EVM_SCALE = 10n ** 12n;
+
+/**
+ * Gets amount from SEI delegation with safe conversion.
+ * Converts usei (6 decimals) to the EVM-native unit (18 decimals) by applying a ×10^12 scale.
  */
 export const getSeiDelegationAmount = (delegation: SeiDelegation | undefined): bigint => {
   if (!delegation) {
     return 0n;
   }
 
-  const amount = delegation.balance.amount;
+  const { amount, denom } = delegation.balance;
   if (typeof amount === "string" || typeof amount === "number" || typeof amount === "bigint") {
-    return safeBigInt(amount);
+    const base = safeBigInt(amount);
+
+    return denom === "usei" ? base * USEI_TO_EVM_SCALE : base;
   }
 
   return 0n;
 };
+
+/**
+ * Converts a SEI amount from the EVM-exposed unit (18 decimals) to usei (6 decimals).
+ *
+ * The SEI staking precompile (0x1005) expects `undelegate` and `redelegate` amounts
+ * in usei, not in the 18-decimal EVM representation.
+ */
+export const seiEvmAmountToUsei = (amount: bigint): bigint => amount / USEI_TO_EVM_SCALE;
 
 /**
  * Gets amount from CELO decoded result with safe conversion

@@ -116,7 +116,7 @@ export async function runStartETHStakingFromEarnDashboardTest(
 
       await earnReady;
       await app.earnDashboard.goToTab("Earn Opportunities");
-      await app.earnDashboard.clickEarnCurrencyButton();
+      await app.earnDashboard.clickEarnCurrencyButton(account);
       await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
       await app.earnDashboard.goToProviderLiveApp(provider);
       await app.earnDashboard.verifyProviderURL(provider, account);

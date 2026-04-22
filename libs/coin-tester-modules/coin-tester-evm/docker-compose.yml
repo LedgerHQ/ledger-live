@@ -1,8 +1,29 @@
 services:
   anvil:
-    image: ghcr.io/foundry-rs/foundry:latest
     container_name: anvil
     platform: linux/amd64
+    build:
+      context: .
+      dockerfile: anvil.Dockerfile
+      tags:
+        - "coin-tester-anvil:latest"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://127.0.0.1:8545",
+          "-H",
+          "Content-Type: application/json",
+          "-H",
+          "Accept: application/json",
+          "-d",
+          '{ "jsonrpc": "2.0", "id": "healthcheck", "method": "eth_getBlockByNumber", "params": ["latest", false] }',
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 12
     ports:
       - "8545:8545"
-    command: -c "anvil --host 0.0.0.0 --fork-url ${RPC} --no-storage-caching --steps-tracing --mnemonic='${SEED}'"
+    command: -c "anvil --host 0.0.0.0 --fork-url ${RPC} ${FORK_BLOCK_OPT} --no-storage-caching --steps-tracing --mnemonic='${SEED}'"

@@ -77,8 +77,10 @@ export default {
                   acc,
                   from(
                     defer(() => {
-                      l(`✔️ transaction ${formatTransaction(t, account)}`);
-                      l(`STATUS ${formatTransactionStatus(t, status, account)}`);
+                      formatTransaction(t, account).then(str => l(`✔️ transaction ${str}`));
+                      formatTransactionStatus(t, status, account).then(str =>
+                        l(`STATUS ${str}`),
+                      );
                       const bridge = getAccountBridge(account);
                       return bridge
                         .signOperation({
@@ -107,7 +109,7 @@ export default {
                                               account,
                                             )(
                                               // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
-                                              fromOperationRaw(op, account.id),
+                                              await fromOperationRaw(op, account.id),
                                             )}`,
                                           );
                                           if (

@@ -7,7 +7,7 @@ You are a test automation expert for ledger-live (Jest unit/integration tests).
 
 ## References
 
-- **Skill**: `.cursor/skills/testing/SKILL.md` — Read first for all patterns
+- **Skill**: `.agents/skills/testing/SKILL.md` — Read first for all patterns
 - **Rule**: `.cursor/rules/testing.mdc` — Testing conventions
 
 ## Process
@@ -26,5 +26,6 @@ You are a test automation expert for ledger-live (Jest unit/integration tests).
 **Tests**: X passed, Y failed
 
 ### Failures (if any)
+
 - `test name`: root cause → fix applied
 ```

@@ -5812,6 +5812,9 @@
     "alerts": {
       "withdrawableAssets": "You have a withdrawable balance.",
       "activatableVotes": "You have votes that can now be activated."
+    },
+    "send": {
+      "feeCurrency": "Fee currency"
     }
   },
   "cosmos": {
@@ -7848,6 +7851,12 @@
         "description": "Display your favorite digital art or photo as your device’s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
+      "recover": {
+        "title": "Finish securing your backup",
+        "titleCompleted": "Backup secured",
+        "description": "Complete activating Ledger Recover",
+        "popupLabel": "Successfully subscribed to Ledger Recover"
+      },
       "syncAccounts": {
         "title": "Sync your crypto accounts",
         "titleCompleted": "Your accounts are synchronized",
@@ -8131,6 +8140,18 @@
       "lead": "You can revoke your consent anytime in settings.",
       "privacyLink": "Privacy policy"
     }
+  },
+  "analyticsPreferencesSettings": {
+    "screenTitle": "Set preferences",
+    "appPerformance": {
+      "title": "App performance",
+      "description": "Enable Ledger to collect app usage to enhance the experience."
+    },
+    "personalizedExperience": {
+      "title": "Personalized experience",
+      "description": "Enable Ledger to collect app usage to provide personalized content."
+    },
+    "confirmCta": "Confirm"
   },
   "walletSync": {
     "title": "Ledger Sync",
@@ -8847,8 +8868,34 @@
   "myWallet": {
     "quickActions": {
       "recover": "[L] Recover",
+      "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
+    },
+    "help": {
+      "title": "Help",
+      "sections": {
+        "supportAndLearning": "Support and learning",
+        "more": "More"
+      },
+      "rows": {
+        "ledgerSupport": {
+          "title": "Ledger Support",
+          "description": "Get help with our FAQs or chat"
+        },
+        "ledgerAcademy": {
+          "title": "Ledger Academy",
+          "description": "Learn crypto"
+        }
+      }
+    },
+    "deviceSection": {
+      "title": "My devices",
+      "add": "Add",
+      "addDevice": "Add a Ledger device",
+      "exploreAllDevices": "Explore all Ledger devices",
+      "available": "Available",
+      "unavailable": "Not connected"
     }
   }
 }

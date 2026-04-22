@@ -32,7 +32,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
 import { track } from "../../analytics";
-import getOrCreateUser from "../../user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { setOriginFlow } from "~/analytics/originFlow";
@@ -284,7 +284,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const [initialURL] = useState(() => getInitialURL(inputs, manifest));
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   // Mirror desktop's originWhitelist logic: when the flag is on, validate the initial URL
@@ -473,7 +473,7 @@ function useUiHook({ manifest }: Props): UiHook {
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+      : currentRouteNameRef.current ?? "Unknown";
 
   const flow = manifest.name;
 
@@ -681,19 +681,8 @@ const wallet = {
 };
 
 function useGetUserId() {
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let mounted = true;
-    getOrCreateUser().then(({ user }) => {
-      if (mounted) setUserId(user.id);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return userId;
+  const userId = useSelector(userIdSelector);
+  return userId.exportUserIdForWalletAPI();
 }
 
 export function useSelectAccount({
@@ -734,7 +723,7 @@ export function useSelectAccount({
       source:
         currentRouteNameRef.current === "Platform Catalog"
           ? "Discover"
-          : (currentRouteNameRef.current ?? "Unknown"),
+          : currentRouteNameRef.current ?? "Unknown",
     });
   }, [currencyIds, onSelectAccountSuccess, manifest.name]);
 
