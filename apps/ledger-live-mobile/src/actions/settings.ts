@@ -64,6 +64,7 @@ import {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
@@ -285,6 +286,10 @@ export const setSelectedTabPortfolioAssets =
 
 export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
   SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
+);
+
+export const setProductTourCompleted = createAction<SettingsSetProductTourCompletedPayload>(
+  SettingsActionTypes.SET_PRODUCT_TOUR_COMPLETED,
 );
 
 type PortfolioRangeOption = {
