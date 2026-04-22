@@ -30,6 +30,7 @@ import {
   NetworkCongestionLevel,
 } from "../types";
 import { getReservedBalance, rawOperationsToOperations } from "./serialization";
+import { throwHorizonLedgerOrOperationsError } from "./horizonLedgerErrors";
 import { parseAPIValue } from "../logic/common";
 
 const FALLBACK_BASE_FEE = 100;
@@ -580,6 +581,59 @@ export async function getLastBlock(): Promise<{
     hash: ledger.records[0].hash,
     time: new Date(ledger.records[0].closed_at),
   };
+}
+
+/**
+ * Loads a single ledger (closed block) by sequence number.
+ *
+ * Horizon `GET /ledgers/{sequence}` returns one ledger resource, not a page with `records`;
+ * do not read `records[0]` from this `.call()` result.
+ *
+ * @throws Error when the ledger does not exist (Horizon 404).
+ */
+export async function fetchLedgerRecord(sequence: number): Promise<Horizon.ServerApi.LedgerRecord> {
+  try {
+    const record = await getServer().ledgers().ledger(sequence).call();
+    // Horizon returns a single ledger; SDK typings still use CollectionPage for this builder.
+    return record as unknown as Horizon.ServerApi.LedgerRecord;
+  } catch (e: unknown) {
+    throwHorizonLedgerOrOperationsError(e, `Stellar ledger ${sequence} not found`);
+  }
+}
+
+/**
+ * Returns all operations included in `ledgerSequence`, ascending, including failed txs,
+ * with joined transaction payloads (same pattern as account operation listing).
+ *
+ * @throws Error when the ledger does not exist (Horizon 404).
+ */
+export async function fetchAllLedgerOperations(ledgerSequence: number): Promise<RawOperation[]> {
+  const limit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
+
+  try {
+    let response = await getServer()
+      .operations()
+      .forLedger(ledgerSequence)
+      .includeFailed(true)
+      .join("transactions")
+      .order("asc")
+      .limit(limit)
+      .call();
+
+    const records: RawOperation[] = [...(response.records as RawOperation[])];
+
+    while (response.records.length === limit) {
+      response = await response.next();
+      records.push(...(response.records as RawOperation[]));
+      if (response.records.length === 0) {
+        break;
+      }
+    }
+
+    return records;
+  } catch (e: unknown) {
+    throwHorizonLedgerOrOperationsError(e, `Stellar ledger ${ledgerSequence} not found`);
+  }
 }
 
 export const getRecipientAccount: CacheRes<
