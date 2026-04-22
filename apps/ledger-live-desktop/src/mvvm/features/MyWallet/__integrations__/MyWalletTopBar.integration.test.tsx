@@ -34,13 +34,14 @@ describe("MyWallet ContextMenu", () => {
   it("should render My Wallet trigger button", () => {
     render(<ContextMenu />);
 
-    expect(screen.getByRole("button", { name: "Airplane" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "My wallet" })).toBeVisible();
+    expect(screen.getByTestId("my-wallet-avatar")).toBeVisible();
   });
 
   it("should show settings and notifications buttons inside the popover when opened", async () => {
     const { user } = render(<ContextMenu />);
 
-    await user.click(screen.getByRole("button", { name: "Airplane" }));
+    await user.click(screen.getByRole("button", { name: "My wallet" }));
 
     await waitFor(() => {
       expect(screen.getByTestId("topbar-action-button-settings")).toBeVisible();
@@ -51,7 +52,7 @@ describe("MyWallet ContextMenu", () => {
   it("should navigate to /settings with 'mywallet' tracking source when clicking settings", async () => {
     const { user } = render(<ContextMenu />);
 
-    await user.click(screen.getByRole("button", { name: "Airplane" }));
+    await user.click(screen.getByRole("button", { name: "My wallet" }));
 
     await waitFor(() => {
       expect(screen.getByTestId("topbar-action-button-settings")).toBeVisible();
