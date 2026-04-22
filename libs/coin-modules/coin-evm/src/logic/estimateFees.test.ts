@@ -479,6 +479,27 @@ describe("estimateFees", () => {
     });
   });
 
+  it("returns 0 for redelegate without dstValAddress and makes no node/gas-tracker calls", async () => {
+    const redelegateNoDst = {
+      ...mockIntent,
+      intentType: "staking" as const,
+      mode: "redelegate",
+      recipient: "0x0000000000000000000000000000000000001005",
+      valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+      // dstValAddress intentionally omitted
+      amount: 1000000n,
+    };
+
+    const result = await estimateFees(
+      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
+      redelegateNoDst,
+    );
+
+    expect(result).toEqual({ value: 0n });
+    expect(mockGetNodeApi).not.toHaveBeenCalled();
+    expect(mockGetGasTracker).not.toHaveBeenCalled();
+  });
+
   it("estimates fees for redelegate and no custom options and no gas tracker", async () => {
     nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     nodeApiMock.getTransactionCount.mockResolvedValue(42);

@@ -758,7 +758,7 @@ describe("Alpaca utils", () => {
       });
     });
 
-    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"]])(
+    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"], ["REDELEGATE"]])(
       "handles %s operation where value = value + fees",
       operationType => {
         const op = {
