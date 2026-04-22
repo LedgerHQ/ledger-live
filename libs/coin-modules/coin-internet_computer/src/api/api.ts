@@ -1,5 +1,5 @@
+import type { RequestId } from "@dfinity/agent";
 import { log } from "@ledgerhq/logs";
-
 import {
   ledgerIdlFactory,
   indexIdlFactory,
@@ -10,7 +10,7 @@ import {
   GetAccountIdentifierTransactionsResponse,
   TransactionWithId,
 } from "@zondax/ledger-live-icp";
-import { getAgent } from "@zondax/ledger-live-icp/agent";
+import { Certificate, Cbor, getAgent, lookupResultToBuffer } from "@zondax/ledger-live-icp/agent";
 import { fromNullable } from "@zondax/ledger-live-icp/utils";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -20,6 +20,47 @@ import {
   MAINNET_LEDGER_CANISTER_ID,
   ICP_NETWORK_URL,
 } from "../consts";
+
+function toArrayBuffer(view: ArrayBuffer | Uint8Array): ArrayBuffer {
+  if (view instanceof ArrayBuffer) {
+    return view;
+  }
+  const copy = new Uint8Array(view.byteLength);
+  copy.set(view);
+  return copy.buffer;
+}
+
+function requestIdFromHex(hex: string): RequestId {
+  const bytes = Buffer.from(hex, "hex");
+  const copy = new Uint8Array(bytes);
+  return copy.buffer as RequestId;
+}
+
+function throwIfLedgerTransferReplyIsErr(replyBuf: ArrayBuffer) {
+  const transferIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
+  const decoded = decodeCanisterIdlFunc<[{ Err?: unknown; Ok?: unknown }]>(
+    transferIdlFunc,
+    replyBuf,
+  );
+
+  const out = decoded[0];
+  if (out.Err) {
+    const message = JSON.stringify(out.Err, (_, v) => (typeof v === "bigint" ? v.toString() : v));
+    throw new Error(message);
+  }
+}
+
+async function fetchRootKey(): Promise<ArrayBuffer> {
+  const res = await fetch(`${ICP_NETWORK_URL}/api/v2/status`);
+  if (res.status !== 200) {
+    throw new Error(`Failed to fetch status: ${await res.text()}`);
+  }
+
+  const status = Cbor.decode<{ root_key?: ArrayBuffer | Uint8Array }>(await res.arrayBuffer());
+  invariant(status.root_key, "[ICP](fetchRootKey) Missing root_key in status response");
+
+  return toArrayBuffer(status.root_key);
+}
 
 export const fetchBlockHeight = async (): Promise<BigNumber> => {
   const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
@@ -64,10 +105,40 @@ export const broadcastTxn = async (
   });
 
   if (res.status === 200) {
-    return await res.arrayBuffer();
+    return new Uint8Array(await res.arrayBuffer());
   }
 
-  throw new Error(`Failed to broadcast transaction: ${res.text()}`);
+  throw new Error(`Failed to broadcast transaction: ${await res.text()}`);
+};
+
+export const ensureTransferCallAccepted = async (
+  syncCallResponse: Uint8Array,
+  transferRequestIdHex: string,
+) => {
+  const requestId = requestIdFromHex(transferRequestIdHex);
+  const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
+  const top = Cbor.decode<{
+    status?: string;
+    certificate?: ArrayBuffer | Uint8Array;
+  }>(toArrayBuffer(syncCallResponse));
+
+  invariant(
+    top.status === "replied" && top.certificate,
+    "[ICP](ensureTransferCallAccepted) Decoding failed",
+  );
+
+  const rootKey = await fetchRootKey();
+  const cert = await Certificate.create({
+    certificate: toArrayBuffer(top.certificate),
+    rootKey,
+    canisterId,
+    maxAgeInMinutes: 100,
+  });
+  const replyBuf = lookupResultToBuffer(cert.lookup(["request_status", requestId, "reply"]));
+
+  invariant(replyBuf, "[ICP](ensureTransferCallAccepted) Reply status not found");
+
+  throwIfLedgerTransferReplyIsErr(replyBuf);
 };
 
 export const fetchBalance = async (address: string): Promise<BigNumber> => {

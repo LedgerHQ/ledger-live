@@ -5,9 +5,6 @@
     "src/bridge/bridgeHelpers/account.ts",
     "src/bridge/bridgeHelpers/addresses.ts",
     "src/bridge/bridgeHelpers/fee.ts",
-    "src/bridge/bridgeHelpers/icpRosetta/index.ts",
-    "src/bridge/bridgeHelpers/icpRosetta/types.ts",
-    "src/bridge/bridgeHelpers/icpRosetta/utils.ts",
     "src/bridge/broadcast.ts",
     "src/bridge/buildOptimisticOperation.ts",
     "src/bridge/createTransaction.ts",
@@ -34,11 +31,26 @@
     "src/types/index.ts",
     "src/types/signer.ts"
   ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}",
+    "**/*.integ.test.ts"
+  ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util","form-data", "proxy-from-env", "follow-redirects"],
-  "ignoreUnimported": [
-    "src/supportedFeatures.ts"
-  ]
+    "jest-util",
+    "form-data",
+    "proxy-from-env",
+    "follow-redirects",
+    "buffer/",
+    "@noble/hashes/sha256",
+    "borc",
+    "simple-cbor",
+    "@noble/curves/bls12-381",
+    "@noble/curves/ed25519"
+  ],
+  "ignoreUnimported": ["src/supportedFeatures.ts"]
 }
