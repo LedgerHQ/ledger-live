@@ -90,6 +90,14 @@ export const getValidators = async (
 export const getValidatorExplorerUrl = (currencyId: string, address: string): string | undefined =>
   STAKING_CONTRACTS[currencyId]?.explorerConfig?.validatorUrl?.replace("$address", address);
 
+export const getUnbondingPeriodDays = (currencyId: string): number | undefined =>
+  STAKING_CONTRACTS[currencyId]?.unbondingPeriodDays;
+
+export const hasUnbondingPeriod = (currencyId: string): boolean => {
+  const days = getUnbondingPeriodDays(currencyId);
+  return typeof days === "number" && days > 0;
+};
+
 export const getValidatorsPage = async (currencyId: string): Promise<Page<Validator>> => {
   const items = await getValidators(currencyId);
   return {
