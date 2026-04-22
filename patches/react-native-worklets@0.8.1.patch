@@ -1,7 +1,7 @@
 diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java b/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
 --- a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
 +++ b/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
-@@ -7,21 +7,46 @@ import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
+@@ -7,21 +7,48 @@ import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
 
  public class JSCallInvokerResolver {
 
@@ -26,6 +26,7 @@ diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.
 +    // In RN 0.81 bridgeless mode, getJSCallInvokerHolder() can return null when
 +    // ReactHostImpl.reactInstance has not been set yet (race condition during reload
 +    // or fast startup). Retry with short sleeps to allow the instance to initialize.
++    Exception lastException = null;
 +    for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 +      try {
 +        var method = context.getClass().getMethod("getJSCallInvokerHolder");
@@ -33,7 +34,8 @@ diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.
 +        if (holder != null) {
 +          return holder;
 +        }
-+      } catch (Exception ignored) {
++      } catch (Exception e) {
++        lastException = e;
 +        // In newer implementations, the method is in CatalystInstance, continue.
 +      }
 +      try {
@@ -44,8 +46,8 @@ diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.
 +        if (holder != null) {
 +          return holder;
 +        }
-+      } catch (Exception ignored) {
-+        // Also null or threw, retry.
++      } catch (Exception e) {
++        lastException = e;
 +      }
 +      if (attempt < MAX_ATTEMPTS - 1) {
 +        try {
@@ -58,6 +60,6 @@ diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.
      }
 +    throw new RuntimeException(
 +        "Failed to get JSCallInvokerHolder after " + MAX_ATTEMPTS
-+            + " attempts. React instance may not be initialized.");
++            + " attempts. React instance may not be initialized.", lastException);
    }
  }
