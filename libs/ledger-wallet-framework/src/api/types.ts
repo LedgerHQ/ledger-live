@@ -1,5 +1,5 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type ChainSpecificRules = {
@@ -21,4 +21,22 @@ export type BridgeApi = {
    */
   stakingSupported?: boolean;
   balanceOptions?: BalanceOptions;
+  /**
+   * Optional hook called after operations are merged, allowing a chain bridge to
+   * enrich the staking resources built from `getBalance` data (e.g. by fetching
+   * redelegations from a REST API or reconstructing them from on-chain tx history
+   * when the standard API does not surface them).
+   *
+   * @param currency - The crypto currency of the account being synced.
+   * @param address - The account address.
+   * @param operations - The full merged operation list.
+   * @param stakingResources - The current staking resources to enrich.
+   * @returns The enriched staking resources, or the same object unchanged when no enrichment is needed.
+   */
+  enrichStakingResources?: (
+    currency: CryptoCurrency,
+    address: string,
+    operations: LiveOperation[],
+    stakingResources: Record<string, unknown>,
+  ) => Promise<Record<string, unknown>>;
 };
