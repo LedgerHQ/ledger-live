@@ -167,9 +167,23 @@ export class DmkSignerSol implements SolanaSigner {
     const transactionResolutionContext = resolution
       ? this._toTransactionResolutionContext(resolution)
       : undefined;
+
+    const delayedSigningOptions =
+      resolution &&
+      resolution.delayed === true &&
+      resolution.solanaRPCURL !== undefined &&
+      resolution.fetchBlockhash !== undefined
+        ? {
+            delayed: true,
+            solanaRPCURL: resolution.solanaRPCURL,
+            fetchBlockhash: resolution.fetchBlockhash,
+          }
+        : {};
+
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
       transactionResolutionContext,
       skipOpenApp: true,
+      ...delayedSigningOptions,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
