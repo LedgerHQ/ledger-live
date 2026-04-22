@@ -294,6 +294,11 @@
       "title" : "Desculpe, falha de conexão",
       "description" : "Tente Novamente."
     },
+    "CounterfeitDevice" : {
+      "title" : "Esta {{productName}} foi reprovada na Verificação de Autenticidade",
+      "description" : "Não é seguro usar este dispositivo Ledger. Entre em contato com o Suporte Ledger.",
+      "contactSupportCTA" : "Fale com o Suporte Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Falha de conexão",
       "description" : "Tente Novamente."
@@ -415,8 +420,8 @@
       "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
     "AlreadySendingApduError" : {
-      "title" : "Erro de comunicação",
-      "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+      "title" : "Ação necessária no seu dispositivo Ledger",
+      "description" : "Finalize a ação em seu dispositivo."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Erro de comunicação",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Você precisa de uma conta para acessar este aplicativo.",
-      "add" : "Adicionar Conta"
+      "select" : "Selecionar Conta"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Contas",
     "transfer" : "Transferir",
     "manager" : "Minha Ledger",
+    "myWallet" : "Minha carteira",
     "settings" : "Configurações",
     "platform" : "Live Apps",
     "discover" : "Explorar",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Conta atualizada"
     }
   },
+  "operationsList" : {
+    "to" : "Para",
+    "from" : "De"
+  },
   "operationDetails" : {
     "title" : "Detalhes da transação",
     "account" : "Conta",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Sem operações",
+    "emptyTitle" : "Ainda nenhuma transação",
+    "emptySubtitle" : "Volte mais tarde para ver suas transações.",
     "noMoreTransactions" : "Sem mais transações"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "Falha ao instalar {{appName}}",
       "description" : "Algo deu errado durante a instalação. Tente novamente."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Ajuda",
+      "referral" : "Indicação"
     }
   }
 }

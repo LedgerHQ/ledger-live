@@ -294,6 +294,11 @@
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
       "description" : "Bitte versuche es noch einmal."
     },
+    "CounterfeitDevice" : {
+      "title" : "Die Echtheitsprüfung für dieses {{productName}}-Gerät ist fehlgeschlagen",
+      "description" : "Es ist nicht sicher, dieses Ledger-Gerät zu verwenden. Bitte kontaktiere den Ledger-Kundenservice.",
+      "contactSupportCTA" : "Ledger-Kundenservice kontaktieren"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Die Verbindung ist fehlgeschlagen",
       "description" : "Bitte versuche es noch einmal."
@@ -415,8 +420,8 @@
       "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
     },
     "AlreadySendingApduError" : {
-      "title" : "Kommunikationsfehler",
-      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+      "title" : "Aktion erforderlich auf deinem Ledger-Gerät",
+      "description" : "Beende die Aktion auf deinem Gerät."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Kommunikationsfehler",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Für den Zugriff auf diese App brauchst du ein Konto.",
-      "add" : "Konto hinzufügen"
+      "select" : "Konto auswählen"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Konten",
     "transfer" : "Übertragen",
     "manager" : "My Ledger",
+    "myWallet" : "Meine Wallet",
     "settings" : "Einstellungen",
     "platform" : "Live-Apps",
     "discover" : "Neues entdecken",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Aktualisiertes Konto"
     }
   },
+  "operationsList" : {
+    "to" : "An",
+    "from" : "Von"
+  },
   "operationDetails" : {
     "title" : "Transaktionsdetails",
     "account" : "Konto",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Keine Aktionen",
+    "emptyTitle" : "Noch keine Transaktionen",
+    "emptySubtitle" : "Komme später zurück, um deine Transaktionen zu sehen.",
     "noMoreTransactions" : "Keine anderen Transaktionen"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "Installation von {{appName}} fehlgeschlagen",
       "description" : "Bei der Installation ist ein Fehler aufgetreten. Bitte versuche es noch einmal."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Hilfe",
+      "referral" : "Empfehlung"
     }
   }
 }
