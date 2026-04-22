@@ -3,24 +3,25 @@ import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { StakingMappedDelegation } from "@ledgerhq/live-common/families/evm/staking/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
-import RedelegationSelectorField from "../fields/RedelegationSelectorField";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import Alert from "~/renderer/components/Alert";
-import { AmountField } from "~/renderer/families/cosmos/UndelegationFlowModal/fields/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import ChevronRight from "~/renderer/icons/ChevronRightSmall";
-import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
+import EvmValidatorIcon from "~/renderer/families/evm/shared/components/EvmValidatorIcon";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import RedelegationSelectorField from "../fields/RedelegationSelectorField";
+import { StepProps } from "../types";
+import { getUnbondingPeriodDays } from "@ledgerhq/live-common/families/evm/staking/logic";
+import { AmountField } from "../../UndelegationFlowModal/fields";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
@@ -34,6 +35,7 @@ const SelectButton = styled(Base)`
     border-color: ${p => p.theme.colors.neutral.c40};
   }
 `;
+
 const Container = styled(Box).attrs<{ isOpen?: boolean }>(p => ({
   flow: 1,
   relative: true,
@@ -50,6 +52,7 @@ const Container = styled(Box).attrs<{ isOpen?: boolean }>(p => ({
     margin-top: 0px;
   }
 `;
+
 export default function StepValidators({
   account,
   parentAccount,
@@ -60,86 +63,55 @@ export default function StepValidators({
   t,
   transitionTo,
 }: StepProps) {
-  invariant(account && account.cosmosResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
-  const sourceValidator = useMemo(() => {
-    const found = account.cosmosResources?.delegations.find(
-      d => d.validatorAddress === transaction.sourceValidator,
-    );
+  invariant(transaction, "transaction required");
 
-    if (!found) return;
+  const bridge = getAccountBridge(account, parentAccount) as AccountBridge<GenericTransaction>;
+  const validators = account.stakingResources.validators ?? [];
 
-    return { address: found.validatorAddress, amount: found.amount };
-  }, [account, transaction.sourceValidator]);
   const updateRedelegation = useCallback(
-    (newTransaction: Partial<NonNullable<StepProps["transaction"]>>) => {
-      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
+    (patch: Partial<GenericTransaction>) => {
+      onUpdateTransaction(tx => bridge.updateTransaction(tx, patch));
     },
     [bridge, onUpdateTransaction],
   );
 
   const updateSourceValidator = useCallback(
-    (delegation?: CosmosMappedDelegation | null) => {
+    (delegation?: StakingMappedDelegation | null) => {
+      console.log("delegation", delegation);
       if (!delegation) return;
       const { validatorAddress: sourceValidator } = delegation;
-      const source = account.cosmosResources?.delegations.find(
+      const source = account.stakingResources?.delegations.find(
         d => d.validatorAddress === sourceValidator,
       );
       updateRedelegation({
         ...transaction,
-        sourceValidator,
-        validators:
-          transaction.validators && transaction.validators.length > 0
-            ? [
-                {
-                  ...transaction.validators[0],
-                  amount: source?.amount ?? BigNumber(0),
-                },
-              ]
-            : [],
+        valAddress: sourceValidator,
+        amount: source?.amount ?? BigNumber(0),
       });
     },
-    [updateRedelegation, transaction, account.cosmosResources],
+    [updateRedelegation, transaction, account.stakingResources],
   );
+
   const onChangeAmount = useCallback(
-    (amount: BigNumber) =>
+    (amount: BigNumber) => {
+      console.log("amount", amount);
       updateRedelegation({
         ...transaction,
-        validators:
-          transaction.validators && transaction.validators.length > 0
-            ? [
-                {
-                  ...transaction.validators[0],
-                  amount,
-                },
-              ]
-            : [],
-      }),
-    [updateRedelegation, transaction],
+        valAddress: transaction.valAddress,
+        amount,
+      });
+    },
+    [updateRedelegation, transaction.valAddress],
   );
-  const selectedValidator = useMemo(
-    () => transaction.validators && transaction.validators[0],
-    [transaction],
-  );
-  const amount = useMemo(
-    () => (selectedValidator ? selectedValidator.amount : BigNumber(0)),
-    [selectedValidator],
-  );
-  const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
-  const selectedValidatorData = useMemo(
-    () =>
-      transaction.validators && transaction.validators[0]
-        ? validators.find(
-            ({ validatorAddress }) => validatorAddress === transaction.validators[0].address,
-          )
-        : null,
-    [transaction, validators],
-  );
+
+  const selectedDstValidator = useMemo(() => {
+    if (!transaction.dstValAddress) return null;
+    return validators.find(v => v.validatorAddress === transaction.dstValAddress) ?? null;
+  }, [transaction.dstValAddress]);
+
   const open = useCallback(() => {
     transitionTo("destinationValidators");
   }, [transitionTo]);
-  const crypto = cryptoFactory(account.currency.id);
   return (
     <Container>
       <TrackPage
@@ -149,7 +121,7 @@ export default function StepValidators({
         action="redelegation"
         currency={account.currency.id}
       />
-      {error && <ErrorBanner error={error} />}
+      {error && error.name !== "RedelegateDstValAddressRequired" && <ErrorBanner error={error} />}
       <RedelegationSelectorField
         transaction={transaction}
         account={account}
@@ -158,19 +130,21 @@ export default function StepValidators({
       <StepRecipientSeparator />
 
       <Box py={4}>
-        <Label mb={5}>{t("cosmos.redelegation.flow.steps.validators.newDelegation")}</Label>
+        <Label mb={5}>
+          {t("ethereum.evmStaking.redelegation.flow.steps.validators.newDelegation")}
+        </Label>
         <SelectButton onClick={open}>
           <Box flex="1" horizontal alignItems="center" justifyContent="space-between">
-            {selectedValidatorData ? (
+            {selectedDstValidator ? (
               <Box horizontal alignItems="center">
-                <CosmosFamilyLedgerValidatorIcon validator={selectedValidatorData} />
+                <EvmValidatorIcon validator={selectedDstValidator} />
                 <Text ff="Inter|Medium" ml={2}>
-                  {selectedValidatorData.name || selectedValidatorData.validatorAddress}
+                  {selectedDstValidator.name || selectedDstValidator.validatorAddress}
                 </Text>
               </Box>
             ) : (
               <Text ff="Inter|Medium">
-                {t("cosmos.redelegation.flow.steps.validators.chooseValidator")}
+                {t("ethereum.evmStaking.redelegation.flow.steps.validators.chooseValidator")}
               </Text>
             )}
             <Box color="neutral.c40">
@@ -179,24 +153,24 @@ export default function StepValidators({
           </Box>
         </SelectButton>
       </Box>
-      {selectedValidatorData && sourceValidator && (
+      {selectedDstValidator && transaction.valAddress && (
         <Box pb={4}>
           <AmountField
-            amount={amount}
-            delegatedAmount={sourceValidator.amount}
+            amount={transaction.amount}
+            delegatedAmount={transaction.amount}
             account={account}
             status={status}
             onChange={onChangeAmount}
-            label={t("cosmos.redelegation.flow.steps.validators.amountLabel")}
+            label={t("ethereum.evmStaking.redelegation.flow.steps.validators.amountLabel")}
           />
         </Box>
       )}
 
       <Alert type="primary">
         <Trans
-          i18nKey="cosmos.redelegation.flow.steps.validators.warning"
+          i18nKey="ethereum.evmStaking.redelegation.flow.steps.validators.warning"
           values={{
-            numberOfDays: crypto.unbondingPeriod,
+            numberOfDays: getUnbondingPeriodDays(account.currency.id),
           }}
         >
           <b></b>
@@ -205,6 +179,7 @@ export default function StepValidators({
     </Container>
   );
 }
+
 export function StepValidatorsFooter({
   transitionTo,
   account,
@@ -217,6 +192,7 @@ export function StepValidatorsFooter({
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
+
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />

@@ -23,6 +23,7 @@ import EvmValidatorIcon from "~/renderer/families/evm/shared/components/EvmValid
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
+import { DelegationActionsModalName } from "../modals";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -99,7 +100,7 @@ export const ManageDropDownItem = ({
 type RowProps = Readonly<{
   account: StakingAccount;
   delegation: StakingMappedDelegation;
-  onManageAction: (address: string, action: string) => void;
+  onManageAction: (address: string, action: DelegationActionsModalName) => void;
   onExternalLink: (address: string) => void;
 }>;
 
@@ -119,7 +120,7 @@ export function Row({
 }: RowProps) {
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
-      onManageAction(validatorAddress, action.key as string);
+      onManageAction(validatorAddress, action.key as DelegationActionsModalName);
     },
     [onManageAction, validatorAddress],
   );
