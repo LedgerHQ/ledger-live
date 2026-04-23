@@ -104,6 +104,7 @@ export type ConnectAppDAIntermediateValue = {
   installPlan: InstallPlan | null;
   deviceId?: Uint8Array;
   deviceDeprecation: DeviceDeprecationRules | undefined;
+  deviceMetadata: GetDeviceMetadataDAOutput | undefined;
 };
 
 export type ConnectAppDAState = DeviceActionState<

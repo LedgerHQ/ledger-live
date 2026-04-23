@@ -1,10 +1,10 @@
 import {
   resolveAppRequestRequirements,
-  toConnectAppInitializationInput,
+  toEnsureAppReadyInput,
   toConnectAppRequest,
 } from "./resolveAppRequestRequirements";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
+import { createFixtureAccount } from "../../../mock/fixtures/cryptoCurrencies";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
   getDerivationScheme: jest.fn(() => "mock-scheme"),
@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
   runDerivationScheme: jest.fn(() => "44'/60'/0'/0/0"),
 }));
 
-jest.mock("../../coin-modules/registry", () => ({
+jest.mock("../../../coin-modules/registry", () => ({
   loadAccountModuleForFamily: jest.fn(() => undefined),
 }));
 
@@ -21,7 +21,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { loadAccountModuleForFamily } from "../../coin-modules/registry";
+import { loadAccountModuleForFamily } from "../../../coin-modules/registry";
 
 const mockGetDerivationModesForCurrency = jest.mocked(getDerivationModesForCurrency);
 const mockGetDerivationScheme = jest.mocked(getDerivationScheme);
@@ -163,7 +163,7 @@ describe("deviceInitialization requirements", () => {
       requiresDerivation: undefined,
     });
 
-    expect(toConnectAppInitializationInput(resolved)).toEqual({
+    expect(toEnsureAppReadyInput(resolved)).toEqual({
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,

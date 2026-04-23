@@ -3,8 +3,8 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
-} from "../../mock/fixtures/cryptoCurrencies";
-import { FlowName } from "../../device-action/utils";
+} from "../../../mock/fixtures/cryptoCurrencies";
+import { FlowName } from "../../../device-action/utils";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
   getDerivationScheme: jest.fn(() => "mock-scheme"),
@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
   runDerivationScheme: jest.fn(() => "44'/60'/0'/0/0"),
 }));
 
-jest.mock("../../coin-modules/registry", () => ({
+jest.mock("../../../coin-modules/registry", () => ({
   loadAccountModuleForFamily: jest.fn(() => undefined),
 }));
 
@@ -21,8 +21,13 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { loadAccountModuleForFamily } from "../../coin-modules/registry";
-import { buildConnectAppInitializationInput } from "./buildConnectAppInitializationInput";
+import { loadAccountModuleForFamily } from "../../../coin-modules/registry";
+import {
+  buildEnsureAppReadyInputUseCase,
+  resolveAppRequestRequirements,
+  toEnsureAppReadyInput,
+  toConnectAppRequest,
+} from "./buildEnsureAppReadyInputUseCase";
 
 const mockGetDerivationModesForCurrency = jest.mocked(getDerivationModesForCurrency);
 const mockGetDerivationScheme = jest.mocked(getDerivationScheme);
@@ -31,7 +36,7 @@ const mockLoadAccountModuleForFamily = jest.mocked(loadAccountModuleForFamily);
 
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
-describe("deviceInitialization buildConnectAppInitializationInput", () => {
+describe("ensureAppReady buildEnsureAppReadyInputUseCase", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetDerivationModesForCurrency.mockReturnValue(["ethM", ""]);
@@ -48,7 +53,7 @@ describe("deviceInitialization buildConnectAppInitializationInput", () => {
     account.freshAddressPath = "44'/60'/1'/0/0";
 
     expect(
-      await buildConnectAppInitializationInput({
+      await buildEnsureAppReadyInputUseCase({
         appRequest: { account },
         flow: FlowName.send,
       }),
@@ -79,7 +84,7 @@ describe("deviceInitialization buildConnectAppInitializationInput", () => {
     account.freshAddressPath = "44'/60'/2'/0/0";
 
     expect(
-      await buildConnectAppInitializationInput({
+      await buildEnsureAppReadyInputUseCase({
         appRequest: { account },
         skipWrongDeviceCheck: true,
       }),
@@ -102,7 +107,7 @@ describe("deviceInitialization buildConnectAppInitializationInput", () => {
     const tokenCurrency = createFixtureTokenAccount("11").token;
 
     expect(
-      await buildConnectAppInitializationInput({
+      await buildEnsureAppReadyInputUseCase({
         appRequest: {
           appName: "Exchange",
           tokenCurrency,
@@ -122,18 +127,18 @@ describe("deviceInitialization buildConnectAppInitializationInput", () => {
   it("falls back from token currency to account currency to currency for deprecation naming", async () => {
     const account = createFixtureAccount("03", ethereumCurrency);
     const tokenCurrency = createFixtureTokenAccount("12").token;
-    const tokenInput = await buildConnectAppInitializationInput({
+    const tokenInput = await buildEnsureAppReadyInputUseCase({
       appRequest: {
         appName: "Exchange",
         tokenCurrency,
       },
       flow: FlowName.swap,
     });
-    const accountInput = await buildConnectAppInitializationInput({
+    const accountInput = await buildEnsureAppReadyInputUseCase({
       appRequest: { account },
       flow: FlowName.receive,
     });
-    const currencyInput = await buildConnectAppInitializationInput({
+    const currencyInput = await buildEnsureAppReadyInputUseCase({
       appRequest: { currency: ethereumCurrency },
       flow: FlowName.addAccount,
     });
@@ -152,5 +157,11 @@ describe("deviceInitialization buildConnectAppInitializationInput", () => {
       flow: FlowName.addAccount,
       currencyName: "Ethereum",
     });
+  });
+
+  it("re-exports requirement resolver helpers", () => {
+    expect(resolveAppRequestRequirements).toBeDefined();
+    expect(toEnsureAppReadyInput).toBeDefined();
+    expect(toConnectAppRequest).toBeDefined();
   });
 });

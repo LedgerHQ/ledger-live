@@ -1,6 +1,10 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { Account } from "@ledgerhq/types-live";
-import type { ExpectedAccountIdentity } from "./types";
+
+export type ExpectedAccountIdentity = {
+  accountName: string;
+  acceptableDerivedAddresses: string[];
+};
 
 export function buildExpectedAccountIdentity(account: Account): ExpectedAccountIdentity {
   return {
