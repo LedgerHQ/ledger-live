@@ -62,7 +62,7 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     navigation.navigate(ScreenName.BleDevicePairingFlow);
   }, [navigation]);
 
-  const exploreDevicesUrl = useLocalizedUrl(urls.hardwareWallet);
+  const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
 
   const onExploreDevices = useCallback(() => {
     track("button_clicked", { button: "ExploreDevices", page: ScreenName.MyWallet });

@@ -11,7 +11,7 @@ export type ExploreViewModel = {
 
 export function useExploreViewModel(): ExploreViewModel {
   const { t } = useTranslation();
-  const url = useLocalizedUrl(urls.buyNew);
+  const url = useLocalizedUrl(urls.exploreLedgerDevices);
 
   const handleClick = useCallback(() => {
     openURL(url, "button_clicked", {
