@@ -144,10 +144,14 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
             label: recoverBannerSelected.primaryCta,
             action: onRedirectRecover,
           },
-          dismiss: {
-            label: recoverBannerSelected.secondaryCta,
-            action: onCloseBanner,
-          },
+          ...(recoverBannerSelected.secondaryCta
+            ? {
+                dismiss: {
+                  label: recoverBannerSelected.secondaryCta,
+                  action: onCloseBanner,
+                },
+              }
+            : {}),
         }}
       />
     </Wrapper>

@@ -12,7 +12,6 @@ jest.mock("react-redux", () => ({
   useDispatch: () => mockedDispatch,
 }));
 jest.mock("../reducer");
-jest.mock("./useAllPostOnboardingActionsCompleted");
 jest.mock("./usePostOnboardingEntryPointVisibleOnWallet");
 
 const mockedUsePostOnboardingVisible = jest.mocked(usePostOnboardingEntryPointVisibleOnWallet);
@@ -36,9 +35,9 @@ describe("useAutoDismissPostOnboardingEntryPoint", () => {
     mockedDispatch.mockClear();
   });
 
-  it("should dismiss the entry point if it has been displayed more than 7 days ago", () => {
+  it("should dismiss the entry point when first display is past the auto-dismiss window", () => {
     mockedUsePostOnboardingVisible.mockReturnValue(true);
-    mockedEntryPointFirstDisplayedDateSelector.mockReturnValue(new Date("2020-01-12"));
+    mockedEntryPointFirstDisplayedDateSelector.mockReturnValue(new Date("2020-01-04"));
 
     renderHook(() => useAutoDismissPostOnboardingEntryPoint());
 
@@ -47,9 +46,9 @@ describe("useAutoDismissPostOnboardingEntryPoint", () => {
     });
   });
 
-  it("should be true if the entry point has been displayed less than 7 days ago", () => {
+  it("should not dismiss when first display is still inside the auto-dismiss window", () => {
     mockedUsePostOnboardingVisible.mockReturnValue(true);
-    mockedEntryPointFirstDisplayedDateSelector.mockReturnValue(new Date("2020-01-14"));
+    mockedEntryPointFirstDisplayedDateSelector.mockReturnValue(new Date("2020-01-06"));
 
     renderHook(() => useAutoDismissPostOnboardingEntryPoint());
 
