@@ -1,10 +1,7 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import {
-  buildExpectedAccountIdentity,
-  validateDerivedAddress,
-} from "./wrongDeviceValidation";
+import { createFixtureAccount } from "../../../mock/fixtures/cryptoCurrencies";
+import { buildExpectedAccountIdentity, validateDerivedAddress } from "./wrongDeviceValidation";
 
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 

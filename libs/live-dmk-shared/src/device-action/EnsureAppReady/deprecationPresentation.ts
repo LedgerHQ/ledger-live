@@ -1,15 +1,17 @@
-import type { DeviceDeprecationRules, DeviceDeprecationScreenRules } from "../connectApp";
-import { FlowName } from "../../device-action/utils";
-import type { DeprecationPresentationDecision, DeprecationScreenKind } from "./types";
+import type { DeviceDeprecationRules, DeviceDeprecationScreenRules } from "../ConnectApp/types";
+import type {
+  DeprecationPresentationDecision,
+  DeprecationScreenKind,
+} from "./deprecationPresentationTypes";
 
 function doesScreenApply(params: {
   rules: DeviceDeprecationScreenRules | undefined;
-  flow: FlowName;
+  flow: string;
   currencyName: string;
 }): boolean {
   const { rules, flow, currencyName } = params;
 
-  if (flow === FlowName.unknown) {
+  if (flow === "unknown") {
     return false;
   }
 
@@ -33,7 +35,7 @@ function doesScreenApply(params: {
  */
 export function decideDeprecationPresentation(params: {
   rules: DeviceDeprecationRules;
-  flow: FlowName;
+  flow: string;
   currencyName: string;
   deprecationDismissedCurrencyNames: string[];
 }): DeprecationPresentationDecision {

@@ -4,9 +4,12 @@ import {
   getDerivationModesForCurrency,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { loadAccountModuleForFamily } from "../../coin-modules/registry";
-import type { ConnectAppRequest, RequiresDerivation } from "../connectApp";
-import type { AppRequestInput, ConnectAppInitializationInput } from "./types";
+import { loadAccountModuleForFamily } from "../../../coin-modules/registry";
+import type { ConnectAppRequest, RequiresDerivation } from "../../connectApp";
+import type {
+  AppRequestInput,
+  EnsureAppReadyInput,
+} from "../../../device/use-cases/ensureAppReady/types";
 
 export type ResolvedAppRequirements = {
   appName: string;
@@ -107,9 +110,9 @@ export function toConnectAppRequest(requirements: ResolvedAppRequirements): Conn
   };
 }
 
-export function toConnectAppInitializationInput(
+export function toEnsureAppReadyInput(
   requirements: ResolvedAppRequirements,
-): Omit<ConnectAppInitializationInput, "expectedAccount" | "deprecation"> {
+): Omit<EnsureAppReadyInput, "expectedAccount" | "deprecation"> {
   return {
     appName: requirements.appName,
     dependencies: requirements.dependencies ?? [],

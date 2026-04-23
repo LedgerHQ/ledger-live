@@ -340,12 +340,7 @@
     "src/wallet-api/validation/actionDialogParams.ts",
     "src/domain/isMinEarnUiVersion.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -668,12 +663,7 @@
     "@react-native/virtualized-lists",
     "@solana/buffer-layout",
     "@solana/codecs-numbers",
-    [
-      "@solana/codecs-numbers",
-      [
-        "node_modules/@solana/web3.js/lib/index.cjs.js"
-      ]
-    ],
+    ["@solana/codecs-numbers", ["node_modules/@solana/web3.js/lib/index.cjs.js"]],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",
