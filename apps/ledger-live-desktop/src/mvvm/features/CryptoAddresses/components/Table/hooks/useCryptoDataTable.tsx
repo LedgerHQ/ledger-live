@@ -11,10 +11,8 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
-import {
-  computeAggregatedAccountsData,
-  computeBalanceSortCountervalueByAccountId,
-} from "../../../utils/aggregateAccounts";
+import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
+import { computeBalanceSortCountervalueByAccountId } from "../../../utils/aggregateAccounts";
 import {
   AccountAddressCell,
   AccountNameCell,
@@ -43,13 +41,11 @@ export function useCryptoDataTable({
   const syncPhase = useSyncPhase();
   const isSyncing = syncPhase === "syncing";
 
-  const aggregatedDataByAccountId = useMemo(
-    () =>
-      shouldDisplayAggregatedAssets
-        ? computeAggregatedAccountsData(rows, calculateCountervalue)
-        : null,
-    [shouldDisplayAggregatedAssets, rows, calculateCountervalue],
-  );
+  const aggregatedDataByAccountId = useMemo(() => {
+    if (!shouldDisplayAggregatedAssets) return null;
+    const mainAccounts = rows.filter((r): r is Account => r.type === "Account");
+    return computeAggregatedAccountsData(mainAccounts, calculateCountervalue);
+  }, [shouldDisplayAggregatedAssets, rows, calculateCountervalue]);
 
   const getSortCountervalue = useMemo(() => {
     if (aggregatedDataByAccountId) {
@@ -104,10 +100,12 @@ export function useCryptoDataTable({
         header: t("cryptoAddresses.table.columns.value"),
         cell: ({ row }) => {
           const entry = aggregatedDataByAccountId?.get(row.original.id);
+          const assetsCount =
+            (entry?.subAccountsCount ?? 0) + (row.original.balance.isZero() ? 0 : 1);
           return shouldDisplayAggregatedAssets && aggregatedDataByAccountId ? (
             <AggregatedAccountValueCell
               aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
-              assetsCount={entry?.count ?? 0}
+              assetsCount={assetsCount}
             />
           ) : (
             <AccountValueCell account={row.original} />

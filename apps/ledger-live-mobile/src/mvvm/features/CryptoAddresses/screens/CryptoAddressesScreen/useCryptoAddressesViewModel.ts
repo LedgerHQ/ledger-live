@@ -3,20 +3,28 @@ import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
-import { flattenAccountsSelector, isUpToDateSelector } from "~/reducers/accounts";
+import { accountsSelector, isUpToDateSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import {
   BaseNavigationComposite,
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
-import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
-import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useTranslation } from "~/context/Locale";
+import BigNumber from "bignumber.js";
+import {
+  computeAggregatedAccountsData,
+  type AggregatedAccountEntry,
+  type CalculateCountervalue,
+} from "@ledgerhq/asset-aggregation/index";
+
+export type { AggregatedAccountEntry };
 
 type NavigationProp = BaseNavigationComposite<
   StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.CryptoAddresses>
@@ -27,20 +35,28 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
-  const allAccounts = useSelector(flattenAccountsSelector, isEqual);
-  const orderedAccounts = orderAccountsByFiatValue(allAccounts, countervalueState, toCurrency);
+  const allAccounts = useSelector(accountsSelector, isEqual);
 
-  const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const accounts = useMemo(
-    () =>
-      orderedAccounts.filter(account => {
-        if (account.type === "TokenAccount") {
-          return !excludedTokenIds.includes(account.token.id);
-        }
-        return true;
-      }),
-    [orderedAccounts, excludedTokenIds],
-  );
+  const aggregatedAccountsData = useMemo(() => {
+    const calculateCv: CalculateCountervalue = (from, value) => {
+      const raw = calculate(countervalueState, {
+        value: value.toNumber(),
+        from,
+        to: toCurrency,
+        disableRounding: true,
+      });
+      return raw != null ? new BigNumber(raw) : undefined;
+    };
+    return computeAggregatedAccountsData(allAccounts, calculateCv);
+  }, [allAccounts, countervalueState, toCurrency]);
+
+  const accounts = useMemo((): Account[] => {
+    return [...allAccounts].sort((a, b) => {
+      const aCV = aggregatedAccountsData.get(a.id)?.countervalue ?? new BigNumber(0);
+      const bCV = aggregatedAccountsData.get(b.id)?.countervalue ?? new BigNumber(0);
+      return bCV.comparedTo(aCV);
+    });
+  }, [allAccounts, aggregatedAccountsData]);
 
   const hasNoAccount = accounts.length === 0;
 
@@ -62,35 +78,21 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
   const onCloseAddAccount = useCallback(() => setIsAddAccountOpen(false), []);
 
   const onAccountPress = useCallback(
-    (account: Account | TokenAccount) => {
-      if (account.type === "Account") {
-        track("account_clicked", {
-          currency: account.currency.name,
-          page: ScreenName.Accounts,
-        });
-        navigation.navigate(ScreenName.Account, {
-          accountId: account.id,
-        });
-      } else if (account.type === "TokenAccount") {
-        track("account_clicked", {
-          currency: account.token.parentCurrency.name,
-          page: ScreenName.Accounts,
-        });
-        navigation.navigate(NavigatorName.Accounts, {
-          screen: ScreenName.Account,
-          params: {
-            currencyId: account.token.parentCurrency.id,
-            parentId: account.parentId,
-            accountId: account.id,
-          },
-        });
-      }
+    (account: Account) => {
+      track("account_clicked", {
+        currency: account.currency.name,
+        page: ScreenName.Accounts,
+      });
+      navigation.navigate(ScreenName.Account, {
+        accountId: account.id,
+      });
     },
     [navigation],
   );
 
   return {
     accounts,
+    aggregatedAccountsData,
     hasNoAccount,
     isLoading,
     error,
