@@ -21,20 +21,29 @@ export async function listPrivateOperations({
   address,
   ledgerAccountId,
   privateRecords,
+  onProgress,
+  signal,
 }: {
   currency: CryptoCurrency;
   viewKey: string;
   address: string;
   ledgerAccountId: string;
   privateRecords: AleoPrivateRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
 }): Promise<{
   operations: AleoOperation[];
   consumedRecordTags: Set<string>;
 }> {
   const consumedRecordTags = new Set<string>();
-  const enrichedRecords = await promiseAllBatched(2, privateRecords, rawRecord =>
-    enrichPrivateRecord({ currency, rawRecord, address, viewKey }),
-  );
+
+  let completed = 0;
+  const enrichedRecords = await promiseAllBatched(2, privateRecords, async rawRecord => {
+    signal?.throwIfAborted();
+    const result = await enrichPrivateRecord({ currency, rawRecord, address, viewKey });
+    onProgress?.(++completed, privateRecords.length);
+    return result;
+  });
 
   // Build the set of record tags consumed as inputs in outgoing transactions.
   // This is used to compensate for the record scanner returning already-spent records as unspent.

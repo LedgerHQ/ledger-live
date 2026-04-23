@@ -240,4 +240,49 @@ describe("getPrivateBalance", () => {
     expect(balance).toEqual(new BigNumber(0));
     expect(unspentRecords).toEqual([]);
   });
+
+  it("should call onProgress after each decrypted record", async () => {
+    const record1 = { ...testnetPrivateRecord, commitment: "c1" };
+    const record2 = { ...testnetPrivateRecord, commitment: "c2" };
+
+    jest
+      .mocked(sdkClient.decryptRecord)
+      .mockResolvedValueOnce({
+        ...mockDecryptedRecord,
+        data: { microcredits: "100000u64.private" },
+      })
+      .mockResolvedValueOnce({
+        ...mockDecryptedRecord,
+        data: { microcredits: "200000u64.private" },
+      });
+
+    const onProgress = jest.fn();
+
+    await getPrivateBalance({
+      currency: mockCurrency,
+      viewKey: mockViewKey,
+      privateRecords: [record1, record2],
+      oldUnspentRecords: [],
+      onProgress,
+    });
+
+    expect(onProgress).toHaveBeenCalledTimes(2);
+    expect(onProgress).toHaveBeenNthCalledWith(1, 1, 2);
+    expect(onProgress).toHaveBeenNthCalledWith(2, 2, 2);
+  });
+
+  it("should throw AbortError when signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      getPrivateBalance({
+        currency: mockCurrency,
+        viewKey: mockViewKey,
+        privateRecords: [testnetPrivateRecord],
+        oldUnspentRecords: [],
+        signal: controller.signal,
+      }),
+    ).rejects.toThrow();
+  });
 });

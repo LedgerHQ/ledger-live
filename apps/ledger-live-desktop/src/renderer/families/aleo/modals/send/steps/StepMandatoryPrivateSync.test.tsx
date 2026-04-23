@@ -162,7 +162,7 @@ describe("StepMandatoryPrivateSync", () => {
       });
 
       // No crash — updateAccount being optional is handled gracefully
-      expect(screen.getByText(/30%/)).toBeInTheDocument();
+      expect(screen.getByText(/Syncing your private balance/)).toBeInTheDocument();
     });
   });
 });

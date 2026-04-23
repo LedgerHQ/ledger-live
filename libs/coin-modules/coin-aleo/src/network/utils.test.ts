@@ -1679,5 +1679,20 @@ describe("network/utils", () => {
         }),
       ).rejects.toThrow("Scanner unavailable");
     });
+
+    it("should throw AbortError when signal is aborted before the first page request", async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      await expect(
+        fetchAllOwnedRecords({
+          currency: mockCurrency,
+          uuid: mockUUID,
+          signal: controller.signal,
+        }),
+      ).rejects.toThrow();
+
+      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+    });
   });
 });

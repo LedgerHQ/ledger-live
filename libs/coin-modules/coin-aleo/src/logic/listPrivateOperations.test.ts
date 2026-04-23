@@ -398,4 +398,60 @@ describe("listPrivateOperations", () => {
 
     expect(result.consumedRecordTags).toEqual(new Set());
   });
+
+  it("should call onProgress after each enriched record", async () => {
+    const records = [
+      getMockedRecord({
+        transaction_id: "tx1",
+        program_name: PROGRAM_ID.CREDITS,
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+      }),
+      getMockedRecord({
+        transaction_id: "tx2",
+        program_name: PROGRAM_ID.CREDITS,
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+      }),
+    ];
+
+    mockEnrichPrivateRecord
+      .mockResolvedValueOnce(getMockedEnrichedPrivateRecord({ rawRecord: records[0] }))
+      .mockResolvedValueOnce(getMockedEnrichedPrivateRecord({ rawRecord: records[1] }));
+    mockToPrivateBridgeOperation.mockReturnValue(getMockedOperation());
+
+    const onProgress = jest.fn();
+
+    await listPrivateOperations({
+      currency: mockCurrency,
+      viewKey: mockViewKey,
+      address: mockAddress,
+      ledgerAccountId: mockLedgerAccountId,
+      privateRecords: records,
+      onProgress,
+    });
+
+    expect(onProgress).toHaveBeenCalledTimes(2);
+    expect(onProgress).toHaveBeenNthCalledWith(1, 1, 2);
+    expect(onProgress).toHaveBeenNthCalledWith(2, 2, 2);
+  });
+
+  it("should throw AbortError when signal is already aborted before processing", async () => {
+    const record = getMockedRecord({
+      program_name: PROGRAM_ID.CREDITS,
+      function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+    });
+
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      listPrivateOperations({
+        currency: mockCurrency,
+        viewKey: mockViewKey,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        privateRecords: [record],
+        signal: controller.signal,
+      }),
+    ).rejects.toThrow();
+  });
 });

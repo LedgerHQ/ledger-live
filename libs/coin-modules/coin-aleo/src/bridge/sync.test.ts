@@ -1067,7 +1067,7 @@ describe("sync.ts", () => {
       expect(emissions[0].aleoResources?.provableApi).toBeNull();
     });
 
-    it("private-only sync (SYNC_TYPE_SHIELDED) emits a progress update when scanner is configured but not fully synced", async () => {
+    it("private-only sync (SYNC_TYPE_SHIELDED) emits zero values when scanner is configured but not fully synced", async () => {
       // Account with provableApi already configured (has aleoResources)
       const accountWithProvableApi: AleoAccount = {
         ...getMockedAccount(),
@@ -1094,13 +1094,8 @@ describe("sync.ts", () => {
 
       expect(syncs).toHaveLength(1);
       const emissions = await collectAll(syncs[0]);
-      // Should emit exactly one partial update carrying the refreshed provableApi
-      expect(emissions).toHaveLength(1);
-      expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.percentage).toBe(75);
-      expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.synced).toBe(false);
-      // operations are preserved so makeSync (shouldMergeOps: false) does not wipe them
-      expect(emissions[0].operations).toEqual(accountWithProvableApi.operations);
-      expect(emissions[0].balance).toBeUndefined();
+      // performPrivateSync returns null when scanner is not ready → no subscriber.next call
+      expect(emissions).toHaveLength(0);
     });
 
     it("combined sync (SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED) does NOT emit progress when scanner is not ready", async () => {
@@ -1147,6 +1142,11 @@ describe("sync.ts", () => {
     it("should handle undefined operations in private-only sync path", async () => {
       const accountWithNoOps = { ...mockInitialAccount, operations: undefined as any };
 
+      mockAccessProvableApi.mockResolvedValue({
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      });
+
       const { syncs } = buildSyncObservables(
         { ...baseInfo, initialAccount: accountWithNoOps },
         { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
@@ -1168,7 +1168,19 @@ describe("sync.ts", () => {
         unspentRecords: [],
       });
 
-      const { syncs } = buildSyncObservables(baseInfo, {
+      // Combined sync only runs private when account has been synced before (lastPrivateSyncDate set)
+      const syncedBaseInfo = {
+        ...baseInfo,
+        initialAccount: {
+          ...mockInitialAccount,
+          aleoResources: {
+            ...mockInitialAccount.aleoResources!,
+            lastPrivateSyncDate: new Date("2024-01-01"),
+          },
+        },
+      };
+
+      const { syncs } = buildSyncObservables(syncedBaseInfo, {
         paginationConfig: {},
         syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
       });
@@ -1176,8 +1188,7 @@ describe("sync.ts", () => {
       expect(syncs).toHaveLength(1);
       const [first, second] = await collectAll(syncs[0]);
 
-      // first emission: public result (no lastPrivateSyncDate yet)
-      expect(first.aleoResources?.lastPrivateSyncDate).toBeNull();
+      // first emission: public result
       expect(first.blockHeight).toBe(100);
 
       // second emission: private result (has lastPrivateSyncDate, updated balance)
@@ -1218,10 +1229,22 @@ describe("sync.ts", () => {
       // Make one of the private sub-calls throw
       mockFetchAllOwnedRecords.mockRejectedValue(new Error("Scanner unavailable"));
 
-      const shape$ = makeGetAccountShape()(
-        { ...baseInfo },
-        { paginationConfig: {}, syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED },
-      );
+      // Combined sync only runs private when account has been privately synced before
+      const infoWithSyncedAccount = {
+        ...baseInfo,
+        initialAccount: {
+          ...mockInitialAccount,
+          aleoResources: {
+            ...mockInitialAccount.aleoResources!,
+            lastPrivateSyncDate: new Date("2024-01-01"),
+          },
+        },
+      };
+
+      const shape$ = makeGetAccountShape()(infoWithSyncedAccount, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
 
       const emissions: Partial<AleoAccount>[] = [];
       await expect(
