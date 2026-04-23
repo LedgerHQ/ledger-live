@@ -1,18 +1,13 @@
 import { act, renderHook } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, type PostOnboardingHubState } from "@ledgerhq/types-live";
-import { useFinishOnboardingWidgetViewModel } from "../useFinishOnboardingWidgetViewModel";
+import { useFinishOnboardingWidgetViewModel } from "LLD/features/FinishOnboarding/FinishOnboardingWidget/useFinishOnboardingWidgetViewModel";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
-jest.mock("~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback");
 
 const mockedUsePostOnboardingHubState = jest.mocked(usePostOnboardingHubState);
-const mockedUseNavigateToPostOnboardingHubCallback = jest.mocked(
-  useNavigateToPostOnboardingHubCallback,
-);
 
 function buildHubState(overrides: Partial<PostOnboardingHubState> = {}): PostOnboardingHubState {
   return {
@@ -25,11 +20,10 @@ function buildHubState(overrides: Partial<PostOnboardingHubState> = {}): PostOnb
 }
 
 describe("useFinishOnboardingWidgetViewModel", () => {
-  const navigateToPostOnboardingHub = jest.fn();
-
   beforeEach(() => {
-    mockedUseNavigateToPostOnboardingHubCallback.mockReturnValue(navigateToPostOnboardingHub);
+    jest.clearAllMocks();
     jest.mocked(track).mockClear();
+    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState());
   });
 
   it("should expose postOnboardingInProgress from the hub state", () => {
@@ -42,7 +36,7 @@ describe("useFinishOnboardingWidgetViewModel", () => {
     expect(result.current.postOnboardingInProgress).toBe(true);
   });
 
-  it("should derive currentStep as completed action count + 1 and totalSteps as actions length + 1", () => {
+  it("should derive completedActionsAmount as completed count + 1 and totalActionsAmount as filtered length + 1 (buyCrypto excluded from scope)", () => {
     const actionsState = [
       { id: PostOnboardingActionId.deviceOnboarded, completed: true },
       { id: PostOnboardingActionId.assetsTransfer, completed: true },
@@ -53,32 +47,32 @@ describe("useFinishOnboardingWidgetViewModel", () => {
 
     const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
 
-    expect(result.current.currentStep).toBe(3);
-    expect(result.current.totalSteps).toBe(4);
+    expect(result.current.completedActionsAmount).toBe(3);
+    expect(result.current.totalActionsAmount).toBe(3);
   });
 
-  it("should use step 1 when no action is completed", () => {
+  it("should use amount 1 / 2 when a single non-buyCrypto action is not completed", () => {
     mockedUsePostOnboardingHubState.mockReturnValue(
       buildHubState({
         actionsState: [
-          { id: PostOnboardingActionId.buyCrypto, completed: false },
+          { id: PostOnboardingActionId.personalizeMock, completed: false },
         ] as PostOnboardingHubState["actionsState"],
       }),
     );
 
     const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
 
-    expect(result.current.currentStep).toBe(1);
-    expect(result.current.totalSteps).toBe(2);
+    expect(result.current.completedActionsAmount).toBe(1);
+    expect(result.current.totalActionsAmount).toBe(2);
   });
 
-  it("should call track and navigate when handleNavigateToPostOnboardingHub runs", () => {
+  it("should call track when handleOpenFinishOnboardingDialog runs", () => {
     mockedUsePostOnboardingHubState.mockReturnValue(buildHubState());
 
     const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
 
     act(() => {
-      result.current.handleNavigateToPostOnboardingHub();
+      result.current.handleOpenFinishOnboardingDialog();
     });
 
     expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
@@ -86,6 +80,5 @@ describe("useFinishOnboardingWidgetViewModel", () => {
       button: "Post onboarding widget",
       flow: "post-onboarding",
     });
-    expect(navigateToPostOnboardingHub).toHaveBeenCalledTimes(1);
   });
 });

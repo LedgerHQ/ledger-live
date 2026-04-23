@@ -9,7 +9,8 @@ import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingH
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { State } from "~/renderer/reducers";
 import createStore from "~/state-manager/configureStore";
-import FinishOnboardingWidget from "..";
+import FinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog";
+import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 
 const mockNavigate = jest.fn();
 
@@ -48,6 +49,7 @@ function renderWithPostOnboarding(initialState: { postOnboarding: PostOnboarding
   return render(
     <PostOnboardingProviderWrapped>
       <FinishOnboardingWidget />
+      <FinishOnboardingDialog />
     </PostOnboardingProviderWrapped>,
     { store },
   );
@@ -77,21 +79,36 @@ describe("FinishOnboardingWidget integration", () => {
     expect(screen.getByText("2/3")).toBeInTheDocument();
   });
 
-  it("navigates to the post-onboarding hub and tracks when the widget is activated", async () => {
+  it("opens the finish-onboarding dialog and tracks when the widget is activated", async () => {
     const { user } = renderWithPostOnboarding({
       postOnboarding: postOnboardingActiveState(),
     });
 
     await user.click(screen.getByRole("button", { name: /Next, finish wallet setup/i }));
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/post-onboarding");
-    });
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    expect(mockNavigate).not.toHaveBeenCalled();
 
     expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
       deviceModelId: DeviceModelId.nanoX,
       button: "Post onboarding widget",
       flow: "post-onboarding",
+    });
+  });
+
+  it("closes the finish-onboarding dialog when a list row (post-onboarding action) is activated", async () => {
+    const { user } = renderWithPostOnboarding({
+      postOnboarding: postOnboardingActiveState(),
+    });
+
+    await user.click(screen.getByRole("button", { name: /Next, finish wallet setup/i }));
+    await screen.findByRole("dialog");
+    await user.click(
+      screen.getByRole("button", { name: /Personalize my Ledger/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
   });
 });

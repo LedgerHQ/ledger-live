@@ -1335,6 +1335,33 @@
       "title": "Next, finish wallet setup",
       "subtitle": "Start with funding your wallet."
     },
+    "dialog": {
+      "title": "Next, finish wallet setup",
+      "titleCompleted": "You’re all set!",
+      "primaryLabel": "Got it",
+      "actionCompletedLabel": "Complete",
+      "actions": {
+        "deviceOnboarded": {
+          "title": "Set up your Ledger"
+        },
+        "assetsTransfer": {
+          "title": "Add crypto",
+          "description": "Receive or buy crypto to fund your wallet"
+        },
+        "syncAccounts": {
+          "title": "Sync your wallet",
+          "description": "Keep your crypto accounts synced"
+        },
+        "customImage": {
+          "title": "Customize the lock screen",
+          "description": "Display your favorite digital art or photo as your device’s lock screen."
+        },
+        "recover": {
+          "title": "Finish securing your backup",
+          "description": "Complete activating Ledger Recover"
+        }
+      }
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
