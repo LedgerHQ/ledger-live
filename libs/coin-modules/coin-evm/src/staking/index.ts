@@ -9,6 +9,9 @@ export {
   getValidatorExplorerUrl,
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
+  getCachedValidators,
+  prefetchValidators,
+  clearValidatorsCache,
 } from "./validators";
 export {
   mapDelegations,
