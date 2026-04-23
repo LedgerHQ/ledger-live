@@ -12,10 +12,10 @@
  * Drive the hook through its full lifecycle using the real SM, verifying
  * end-to-end phase transitions and observable behavior at a smoke level:
  *   - Phase transitions: connection → initialization → execution → idle
- *   - Error / retry flows (connection and intent errors)
+ *   - Error / retry flows (connection and initialization errors)
  *   - Job emission, completion, and the lastIntentSnapshot contract
  *   - Device disconnection detection and re-connection
- *   - Prop-change reactivity (intent, deviceInitializationInput, cancelIntentRequestId)
+ *   - Prop-change reactivity (intent, requiredDeviceContext, cancelIntentRequestId)
  *   - enabled toggling (creates / destroys the SM)
  *   - Callback identity stability across re-renders
  *
@@ -33,7 +33,7 @@
 
 import { act, renderHook } from "@testing-library/react";
 import { NEVER, Subject, of, throwError } from "rxjs";
-import type { DeviceConnectionResult } from "./core";
+import type { DeviceConnectionResult, RequiredDeviceContext } from "./core";
 import type {
   DeviceIntentExecutorStateMachine,
   StateMachineListeners,
@@ -44,13 +44,11 @@ import {
   type DeviceIntentExecutorHookState,
 } from "./useDeviceIntentExecutor";
 import {
-  defaultDeviceInitializationInput,
-  makeDeviceInitializationInput,
+  defaultRequiredContext,
   makeExtractedContext,
   makeConnectionResult as makeBaseConnectionResult,
   makeIntent as makeBaseIntent,
   flushMicrotasks,
-  type MockDeviceInitializationInput,
 } from "./__tests__/test-utils";
 
 // ---- Mocks ----
@@ -81,17 +79,12 @@ const makeConnectionResult = (
   };
 };
 
-type TestProps = DeviceIntentExecutorProps<
-  unknown,
-  unknown,
-  unknown,
-  MockDeviceInitializationInput
->;
+type TestProps = DeviceIntentExecutorProps<unknown, unknown, unknown>;
 
 function makeProps(overrides: Partial<TestProps> = {}): TestProps {
   return {
     deviceConnectionParams: { acceptedDeviceModelIds: [] },
-    deviceInitializationInput: defaultDeviceInitializationInput,
+    requiredDeviceContext: defaultRequiredContext,
     onExecutorStateChanged: jest.fn(),
     intent: makeIntent(),
     intentComponentExtraProps: undefined,
@@ -106,12 +99,7 @@ function makeProps(overrides: Partial<TestProps> = {}): TestProps {
   };
 }
 
-type HookState = DeviceIntentExecutorHookState<
-  unknown,
-  unknown,
-  unknown,
-  MockDeviceInitializationInput
-> | null;
+type HookState = DeviceIntentExecutorHookState<unknown, unknown, unknown> | null;
 
 /**
  * Narrow `result.current` to a specific phase, failing the test early if the
@@ -213,6 +201,42 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
         );
       });
       inPhase(result.current, "intentExecution");
+    });
+
+    it("WHEN onError is called THEN it transitions to initializationError", () => {
+      const { result } = renderIntegration();
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(makeConnectionResult());
+      });
+
+      const err = new Error("init failed");
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onError(err);
+      });
+
+      const updated = inPhase(result.current, "initializationError");
+      expect(updated.error).toBe(err);
+    });
+  });
+
+  describe("GIVEN the hook is in initializationError phase", () => {
+    it("WHEN onRetry is called THEN it transitions back to deviceInitialization", () => {
+      const { result } = renderIntegration();
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(makeConnectionResult());
+      });
+
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onError(new Error("init failed"));
+      });
+      inPhase(result.current, "initializationError");
+
+      act(() => {
+        inPhase(result.current, "initializationError").onRetry();
+      });
+      inPhase(result.current, "deviceInitialization");
     });
   });
 
@@ -434,7 +458,7 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       expect(state.jobState).toBeUndefined();
     });
 
-    it("WHEN deviceInitializationInput changes from idle THEN it transitions to deviceInitialization", () => {
+    it("WHEN requiredDeviceContext changes from idle THEN it transitions to deviceInitialization", () => {
       const { result, rerender, props } = renderIntegration({
         intent: makeIntent(() => of("done")),
       });
@@ -450,13 +474,13 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       });
       inPhase(result.current, "idle");
 
-      const newDeviceInitializationInput = makeDeviceInitializationInput({ appName: "Bitcoin" });
-      rerender({ p: { ...props, deviceInitializationInput: newDeviceInitializationInput } });
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      rerender({ p: { ...props, requiredDeviceContext: newContext } });
 
       inPhase(result.current, "deviceInitialization");
     });
 
-    it("WHEN both deviceInitializationInput and intent change simultaneously from idle THEN initialization input is dispatched first (transitions to deviceInitialization, not intentError)", () => {
+    it("WHEN both requiredDeviceContext and intent change simultaneously from idle THEN context is dispatched first (transitions to deviceInitialization, not intentError)", () => {
       const { result, rerender, props } = renderIntegration({
         intent: makeIntent(() => of("done")),
       });
@@ -472,17 +496,11 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       });
       inPhase(result.current, "idle");
 
-      const newDeviceInitializationInput = makeDeviceInitializationInput({ appName: "Bitcoin" });
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
       const newIntent = makeIntent(() => NEVER);
-      rerender({
-        p: {
-          ...props,
-          deviceInitializationInput: newDeviceInitializationInput,
-          intent: newIntent,
-        },
-      });
+      rerender({ p: { ...props, requiredDeviceContext: newContext, intent: newIntent } });
 
-      // If context was dispatched first: idle -> deviceInitialization
+      // If context was dispatched first: idle -> deviceInitialization (via SET_REQUIRED_CONTEXT)
       // then SET_INTENT is absorbed as a self-transition.
       // If intent was dispatched first: idle -> intentExecution (wrong context!)
       inPhase(result.current, "deviceInitialization");
@@ -639,10 +657,11 @@ function renderWithMockSM(overrides: Partial<TestProps> = {}) {
       deviceConnected: jest.fn(),
       connectionError: jest.fn(),
       deviceContextInitialized: jest.fn(),
+      initializationError: jest.fn(),
       deviceDisconnected: jest.fn(),
       retry: jest.fn(),
       setIntent: jest.fn(),
-      reinitialize: jest.fn(),
+      setRequiredContext: jest.fn(),
       stopIntent: jest.fn(),
       stop: jest.fn(),
     };
@@ -681,6 +700,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       expect(SMClass).toHaveBeenCalledWith(
         expect.objectContaining({
           deviceConnectionParams: props.deviceConnectionParams,
+          requiredDeviceContext: props.requiredDeviceContext,
           intent: props.intent,
           listeners: expect.any(Object),
         }),
@@ -761,6 +781,23 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       expect(sm.deviceContextInitialized).toHaveBeenCalledWith(ctx);
+    });
+
+    it("WHEN onError (initialization) is called THEN sm.initializationError is called", () => {
+      const { result, sm, listeners } = renderWithMockSM();
+
+      act(() => {
+        const connectionResult = makeConnectionResult();
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+      });
+
+      const err = new Error("init fail");
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onError(err);
+      });
+
+      expect(sm.initializationError).toHaveBeenCalledWith(err);
     });
 
     it("WHEN onRetry is called THEN sm.retry is called", () => {
@@ -951,13 +988,13 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
   });
 
   describe("props -> SM actions", () => {
-    it("WHEN deviceInitializationInput changes THEN sm.reinitialize is called", () => {
+    it("WHEN requiredDeviceContext changes THEN sm.setRequiredContext is called", () => {
       const { rerender, sm, props } = renderWithMockSM();
 
-      const newDeviceInitializationInput = makeDeviceInitializationInput({ appName: "Bitcoin" });
-      rerender({ p: { ...props, deviceInitializationInput: newDeviceInitializationInput } });
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      rerender({ p: { ...props, requiredDeviceContext: newContext } });
 
-      expect(sm.reinitialize).toHaveBeenCalled();
+      expect(sm.setRequiredContext).toHaveBeenCalledWith(newContext);
     });
 
     it("WHEN intent changes THEN sm.setIntent is called", () => {
@@ -969,61 +1006,55 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       expect(sm.setIntent).toHaveBeenCalledWith(newIntent);
     });
 
-    it("WHEN both initialization input and intent change THEN reinitialize is called before setIntent", () => {
+    it("WHEN both context and intent change THEN setRequiredContext is called before setIntent", () => {
       const { rerender, sm, props } = renderWithMockSM();
 
       const callOrder: string[] = [];
-      sm.reinitialize.mockImplementation(() => {
-        callOrder.push("reinitialize");
+      sm.setRequiredContext.mockImplementation(() => {
+        callOrder.push("setRequiredContext");
       });
       sm.setIntent.mockImplementation(() => {
         callOrder.push("setIntent");
       });
 
-      const newDeviceInitializationInput = makeDeviceInitializationInput({ appName: "Bitcoin" });
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
       const newIntent = makeIntent(() => NEVER);
-      rerender({
-        p: {
-          ...props,
-          deviceInitializationInput: newDeviceInitializationInput,
-          intent: newIntent,
-        },
-      });
+      rerender({ p: { ...props, requiredDeviceContext: newContext, intent: newIntent } });
 
-      expect(callOrder).toEqual(["reinitialize", "setIntent"]);
+      expect(callOrder).toEqual(["setRequiredContext", "setIntent"]);
     });
 
     it("WHEN neither context nor intent change THEN no SM dispatch is made", () => {
       const { rerender, sm, props } = renderWithMockSM();
 
-      sm.reinitialize.mockClear();
+      sm.setRequiredContext.mockClear();
       sm.setIntent.mockClear();
 
       rerender({ p: props });
 
-      expect(sm.reinitialize).not.toHaveBeenCalled();
+      expect(sm.setRequiredContext).not.toHaveBeenCalled();
       expect(sm.setIntent).not.toHaveBeenCalled();
     });
 
-    it("WHEN only intent changes THEN only sm.setIntent is called (not reinitialize)", () => {
+    it("WHEN only intent changes THEN only sm.setIntent is called (not setRequiredContext)", () => {
       const { rerender, sm, props } = renderWithMockSM();
 
-      sm.reinitialize.mockClear();
+      sm.setRequiredContext.mockClear();
       const newIntent = makeIntent(() => NEVER);
       rerender({ p: { ...props, intent: newIntent } });
 
       expect(sm.setIntent).toHaveBeenCalledWith(newIntent);
-      expect(sm.reinitialize).not.toHaveBeenCalled();
+      expect(sm.setRequiredContext).not.toHaveBeenCalled();
     });
 
-    it("WHEN only initialization input changes THEN only sm.reinitialize is called (not setIntent)", () => {
+    it("WHEN only context changes THEN only sm.setRequiredContext is called (not setIntent)", () => {
       const { rerender, sm, props } = renderWithMockSM();
 
       sm.setIntent.mockClear();
-      const newDeviceInitializationInput = makeDeviceInitializationInput({ appName: "Bitcoin" });
-      rerender({ p: { ...props, deviceInitializationInput: newDeviceInitializationInput } });
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      rerender({ p: { ...props, requiredDeviceContext: newContext } });
 
-      expect(sm.reinitialize).toHaveBeenCalled();
+      expect(sm.setRequiredContext).toHaveBeenCalledWith(newContext);
       expect(sm.setIntent).not.toHaveBeenCalled();
     });
 
@@ -1032,15 +1063,9 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
 
       expect(SMClass).not.toHaveBeenCalled();
 
-      const newDeviceInitializationInput = makeDeviceInitializationInput({ appName: "Bitcoin" });
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
       const newIntent = makeIntent(() => NEVER);
-      rerender({
-        p: {
-          ...props,
-          deviceInitializationInput: newDeviceInitializationInput,
-          intent: newIntent,
-        },
-      });
+      rerender({ p: { ...props, requiredDeviceContext: newContext, intent: newIntent } });
 
       expect(SMClass).not.toHaveBeenCalled();
     });

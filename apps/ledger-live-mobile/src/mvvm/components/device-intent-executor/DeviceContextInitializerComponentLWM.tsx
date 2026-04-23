@@ -29,7 +29,6 @@ import {
   type ConnectAppDAError,
   type ConnectAppDAIntermediateValue,
 } from "@ledgerhq/live-dmk-shared";
-import type { ConnectAppDeviceInitializationInput } from "./types";
 
 type ConnectAppDAState = DeviceActionState<
   ConnectAppDAOutput,
@@ -37,29 +36,26 @@ type ConnectAppDAState = DeviceActionState<
   ConnectAppDAIntermediateValue
 >;
 
-const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
-  ConnectAppDeviceInitializationInput
-> = ({ connectionResult, deviceInitializationInput, onContextInitialized }) => {
+const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent = ({
+  connectionResult,
+  requiredDeviceContext,
+  onContextInitialized,
+  onError,
+}) => {
   const [daState, setDaState] = useState<ConnectAppDAState>({
     status: DeviceActionStatus.NotStarted,
   });
-  const [unexpectedError, setUnexpectedError] = useState<unknown>(null);
   const completedRef = useRef(false);
 
   useEffect(() => {
     const { dmk, sessionId } = connectionResult;
-    completedRef.current = false;
-    setUnexpectedError(null);
-    setDaState({
-      status: DeviceActionStatus.NotStarted,
-    });
 
     const deviceAction = new ConnectAppDeviceAction({
       input: {
-        application: { name: deviceInitializationInput.appName },
-        dependencies: deviceInitializationInput.dependencies.map(name => ({ name })),
-        requireLatestFirmware: deviceInitializationInput.requireLatestFirmware,
-        allowMissingApplication: deviceInitializationInput.allowPartialDependencies,
+        application: { name: requiredDeviceContext.appName },
+        dependencies: requiredDeviceContext.dependencies.map(name => ({ name })),
+        requireLatestFirmware: requiredDeviceContext.requireLatestFirmware,
+        allowMissingApplication: requiredDeviceContext.allowPartialDependencies,
         unlockTimeout: 0,
       },
     });
@@ -81,7 +77,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
           const extractedContext: DeviceExtractedContext = {
             currentOsVersion: output.deviceMetadata?.firmwareVersion.os ?? "unknown",
             osUpdateAvailable: !!output.deviceMetadata?.firmwareUpdateContext.availableUpdate,
-            currentAppName: deviceInitializationInput.appName,
+            currentAppName: requiredDeviceContext.appName,
             currentAppVersion: "unknown",
             derivedAddress: output.derivation,
           };
@@ -90,12 +86,13 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
 
         if (state.status === DeviceActionStatus.Error) {
           completedRef.current = true;
+          onError(state.error);
         }
       },
       error(err) {
         if (completedRef.current) return;
         completedRef.current = true;
-        setUnexpectedError(err);
+        onError(err);
       },
     });
 
@@ -103,7 +100,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
       subscription.unsubscribe();
       cancel();
     };
-  }, [connectionResult, deviceInitializationInput, onContextInitialized]);
+  }, [connectionResult, requiredDeviceContext, onContextInitialized, onError]);
 
   const installPlanLine =
     daState.status === DeviceActionStatus.Pending && daState.intermediateValue.installPlan
@@ -118,7 +115,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   return (
     <Flex p={4}>
       <Text variant="h5" mb={4}>
-        {"Initializing device context "} ({deviceInitializationInput.appName})
+        {"Initializing device context "} ({requiredDeviceContext.appName})
       </Text>
       <Text variant="small" color="neutral.c70" mb={2}>
         {"Status: "} {daState.status}
@@ -138,11 +135,6 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
       {daState.status === DeviceActionStatus.Error && (
         <Text variant="small" color="error.c60">
           {"Error: "} {String(daState.error)}
-        </Text>
-      )}
-      {unexpectedError !== null && (
-        <Text variant="small" color="error.c60">
-          {"Unexpected error: "} {String(unexpectedError)}
         </Text>
       )}
       {daState.status === DeviceActionStatus.Completed && (

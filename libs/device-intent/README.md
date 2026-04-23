@@ -39,7 +39,7 @@ and is responsible for:
   context switches so that individual jobs don't have to.
 
 The caller retains ownership of the business flow: it decides which intent is
-current, when the device initialization input changes, and when the flow is done. The
+current, when the required context changes, and when the flow is done. The
 executor standardises the difficult runtime concerns that are common to every
 device-centric flow.
 
@@ -47,29 +47,31 @@ device-centric flow.
 
 ### Core types (`src/core.ts`)
 
-| Export                                                  | Description                                                                  |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `DeviceConnectionParams`                                | Declarative params for device selection                                      |
-| `DeviceConnectionResult`                                | Result of a device connection (DMK session + compat ID)                      |
-| `DeviceExtractedContext`                                | Normalised info produced once the initializer has established device context |
-| `Job<JobState, Input>`                                  | Execution logic for one step, returns `Observable<JobState>`                 |
-| `IntentDefinition<JobState, Input>`                     | Reusable, cross-platform definition of one step                              |
-| `IntentPlatformDefinition<JobState, Input, ExtraProps>` | Platform-specific definition adding a UI component                           |
-| `IntentListeners<JobState>`                             | Optional lifecycle callbacks attachable to an intent instance                |
-| `Intent<JobState, Input, ExtraProps>`                   | Runtime instance passed to the executor                                      |
-| `createIntent(definition, input, listeners?)`           | Helper to instantiate an `Intent` from a platform definition                 |
+| Export                                                  | Description                                                           |
+| ------------------------------------------------------- | --------------------------------------------------------------------- |
+| `DeviceConnectionParams`                                | Declarative params for device selection                               |
+| `DeviceConnectionResult`                                | Result of a device connection (DMK session + compat ID)               |
+| `RequiresDerivation`                                    | Derivation requirements for a device context                          |
+| `RequiredDeviceContext`                                 | Declarative description of the device state needed before a step runs |
+| `DeviceExtractedContext`                                | Normalised info produced once the required context is established     |
+| `Job<JobState, Input>`                                  | Execution logic for one step, returns `Observable<JobState>`          |
+| `IntentDefinition<JobState, Input>`                     | Reusable, cross-platform definition of one step                       |
+| `IntentPlatformDefinition<JobState, Input, ExtraProps>` | Platform-specific definition adding a UI component                    |
+| `IntentListeners<JobState>`                             | Optional lifecycle callbacks attachable to an intent instance         |
+| `Intent<JobState, Input, ExtraProps>`                   | Runtime instance passed to the executor                               |
+| `createIntent(definition, input, listeners?)`           | Helper to instantiate an `Intent` from a platform definition          |
 
 ### Executor types (`src/executor.ts`)
 
-| Export                                                              | Description                                                                                               |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `DeviceConnectionComponent`                                         | React component type for the device connection UI                                                         |
-| `DeviceContextInitializerComponent`                                 | React component type for the device context initialisation UI                                             |
-| `ErrorComponent`                                                    | React component type for error screens (connection and intent)                                            |
-| `InvalidOperationComponent`                                         | React component type for the terminal invalid-operation screen                                            |
-| `ExecutorPlatformConfiguration`                                     | Groups all platform-injected UI components (connection, initialisation, intent errors, invalid-operation) |
-| `ExecutorState`                                                     | Discriminated union of executor lifecycle states                                                          |
-| `DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>` | Props for the `DeviceIntentExecutor` component                                                            |
+| Export                                                   | Description                                                                                        |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `DeviceConnectionComponent`                              | React component type for the device connection UI                                                  |
+| `DeviceContextInitializerComponent`                      | React component type for the device context initialisation UI                                      |
+| `ErrorComponent`                                         | React component type for error screens (connection, initialisation, intent)                        |
+| `InvalidOperationComponent`                              | React component type for the terminal invalid-operation screen                                     |
+| `ExecutorPlatformConfiguration`                          | Groups all platform-injected UI components (connection, initialisation, errors, invalid-operation) |
+| `ExecutorState`                                          | Discriminated union of executor lifecycle states                                                   |
+| `DeviceIntentExecutorProps<JobState, Input, ExtraProps>` | Props for the `DeviceIntentExecutor` component                                                     |
 
 ## Usage Guide
 
@@ -95,7 +97,7 @@ function MyFlowScreen({ enabled, onDone }: Props) {
     <LwmDeviceIntentExecutor
       enabled={enabled}
       deviceConnectionParams={{ acceptedDeviceModelIds: [] }}
-      deviceInitializationInput={{
+      requiredDeviceContext={{
         appName: "Ethereum",
         dependencies: [],
         requireLatestFirmware: false,
@@ -326,7 +328,7 @@ The caller owns the business flow. The recommended pattern is an
 1. Maintains flow state (current phase, terminal outcomes).
 2. Reacts to executor callbacks (`onIntentJobStateChanged`,
    `onIntentJobComplete`, `onIntentJobError`) to decide the next intent.
-3. Returns the current `intent`, `deviceInitializationInput`,
+3. Returns the current `intent`, `requiredDeviceContext`,
    `intentComponentExtraProps`, and the callback props for the executor.
 
 A simplified example for a two-step flow (sign then broadcast):
@@ -405,7 +407,7 @@ function MyFlowScreen({ enabled, quote, onClose }) {
 ### Job completion contract
 
 The executor's state machine enforces a strict rule: **no job may be running
-when the caller changes `intent` or `deviceInitializationInput`**. The job
+when the caller changes `intent` or `requiredDeviceContext`**. The job
 observable must have completed (or errored) first. If either prop changes
 while a job is still active, the state machine enters the terminal
 `invalidOperation` state -- an unrecoverable dead end that signals a bug in
@@ -451,22 +453,22 @@ const onContinue = () => done$.complete();
 When the user presses Continue, `done$.complete()` completes the observable,
 the executor fires `onIntentJobComplete`, and the orchestrator advances.
 
-### Changing `deviceInitializationInput` and `intent` together
+### Changing `requiredDeviceContext` and `intent` together
 
 When a flow step requires both a different app context (e.g. switching from
 Ethereum to Bitcoin) and a different intent, **both props must change in the
 same React render** -- i.e. from a single state update.
 
 The executor internally guarantees that when both change simultaneously,
-`reinitialize` is dispatched to the state machine before `setIntent`.
-From idle this produces: idle -> `deviceInitialization` (via reinitialization),
+`setRequiredContext` is dispatched to the state machine before `setIntent`.
+From idle this produces: idle -> `deviceInitialization` (via context change),
 then the intent change is absorbed as a self-transition that updates the stored
 intent without changing state. This is safe.
 
 If they change in **separate renders**, the executor may enter an inconsistent
 state. For example, changing the intent alone from idle triggers
-`intentExecution` with the old (stale) context; then reinitializing with the
-new input during intent execution causes an `invalidOperation`.
+`intentExecution` with the old (stale) context; then changing the context
+causes an `intentError`.
 
 ```typescript
 // CORRECT -- single state update, both values change in one render
@@ -475,24 +477,14 @@ setState({
   phase: {
     step: "next-phase",
     intent: createIntent(nextPlatformDef, nextInput),
-    deviceInitializationInput: {
-      appName: "Bitcoin",
-      dependencies: [],
-      requireLatestFirmware: false,
-      allowPartialDependencies: false,
-    },
+    requiredContext: { appName: "Bitcoin", dependencies: [], ... },
   },
 });
 
 // WRONG -- async work between updates causes two separate renders
 setIntent(createIntent(nextPlatformDef, nextInput));
 const data = await fetchSomething(); // <-- forces a new render boundary
-setDeviceInitializationInput({
-  appName: "Bitcoin",
-  dependencies: [],
-  requireLatestFirmware: false,
-  allowPartialDependencies: false,
-});
+setRequiredContext({ appName: "Bitcoin", dependencies: [], ... });
 ```
 
 > Note: in React 18+, two synchronous `setState` calls in the same event
@@ -667,7 +659,7 @@ if (!jobState) return <GenericLoadingIndicator />;
 
 #### Transitioning while a job is still running
 
-If the orchestrator changes `intent` or `deviceInitializationInput` while a job
+If the orchestrator changes `intent` or `requiredDeviceContext` while a job
 observable is still active (hasn't completed or errored), the state machine
 enters the terminal `invalidOperation` state. This is unrecoverable and
 requires restarting the executor (`enabled` toggled off and on).
@@ -693,13 +685,13 @@ interactive jobs, complete a `Subject<never>` from the button handler. For
 async jobs, let the observable complete naturally and react in
 `onIntentJobComplete`.
 
-#### Changing `deviceInitializationInput` and `intent` in separate renders
+#### Changing `requiredDeviceContext` and `intent` in separate renders
 
 If both need to change (e.g. switching app context for the next intent), they
 **must** change in a single state update so they appear in the same render.
 Otherwise the executor may briefly execute the new intent with stale context,
 then error when the context update arrives. See
-[Changing `deviceInitializationInput` and `intent` together](#changing-deviceinitializationinput-and-intent-together)
+[Changing `requiredDeviceContext` and `intent` together](#changing-requireddevicecontext-and-intent-together)
 above for correct and incorrect examples.
 
 #### Reusing the same `Intent` object reference
@@ -785,6 +777,30 @@ responsibility:
 
 ### State machine lifecycle
 
+The machine progresses through four main phases, each with a corresponding
+error state:
+
+```
+deviceConnection --> deviceInitialization --> intentExecution --> idle
+       |                    |                       |              |
+       v                    v                       v              |
+  connectionError   initializationError       intentError          |
+                                                    ^              |
+                                                    |              |
+                                           (context/intent change) |
+                                                    |              |
+                                                    +-<--<--<------+
+```
+
+Key transitions:
+
+- From **idle**, changing the intent starts a new `intentExecution`.
+- From **idle**, changing the required context returns to
+  `deviceInitialization`.
+- From any connected state, a device disconnection returns to
+  `connectionError`.
+- Error states support retry, which returns to the preceding phase.
+
 See the full transition table and state machine diagram in
 [`docs/architecture.md`](./docs/architecture.md).
 
@@ -799,11 +815,9 @@ class of subscription-leak bugs.
 ### Hook orchestration of simultaneous prop changes
 
 The hook uses a **single combined `useEffect`** watching both
-`deviceInitializationInput` and `intent`. When both change in the same render, it
-dispatches `reinitialize` **first**, then `setIntent`. The hook continues to pass the
-latest `deviceInitializationInput` prop directly to rendering; the state machine only
-receives the restart signal. This ordering guarantee ensures safe transitions from idle
-(reinitialize moves to
+`requiredDeviceContext` and `intent`. When both change in the same render, it
+dispatches `setRequiredContext` **first**, then `setIntent`. This ordering
+guarantee ensures safe transitions from idle (context change moves to
 `deviceInitialization`; the intent change is absorbed as a self-transition
 that updates the stored intent without changing state).
 

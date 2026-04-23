@@ -4,6 +4,7 @@ import type {
   DeviceConnectionResult,
   DeviceExtractedContext,
   Intent,
+  RequiredDeviceContext,
 } from "./core";
 
 // ---- Platform-injected components ----
@@ -26,15 +27,16 @@ export type DeviceConnectionComponent = React.ComponentType<{
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
-export type DeviceContextInitializerComponent<InitInput = void> = React.ComponentType<{
+export type DeviceContextInitializerComponent = React.ComponentType<{
   connectionResult: DeviceConnectionResult;
-  deviceInitializationInput: InitInput;
+  requiredDeviceContext: RequiredDeviceContext;
   onContextInitialized: (context: DeviceExtractedContext) => void;
+  onError: (error: unknown) => void;
 }>;
 
 /**
  * React component rendered when an error occurs during one of the executor
- * phases (connection or intent execution).
+ * phases (connection, initialisation, or intent execution).
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
@@ -58,10 +60,11 @@ export type InvalidOperationComponent = React.ComponentType<{
  * Platform wrappers (`LwmDeviceIntentExecutor`, `LwdDeviceIntentExecutor`)
  * supply this configuration so the executor itself remains platform-agnostic.
  */
-export interface ExecutorPlatformConfiguration<InitInput = void> {
+export interface ExecutorPlatformConfiguration {
   DeviceConnectionComponent: DeviceConnectionComponent;
-  DeviceContextInitializerComponent: DeviceContextInitializerComponent<InitInput>;
+  DeviceContextInitializerComponent: DeviceContextInitializerComponent;
   ConnectionErrorComponent: ErrorComponent;
+  InitializationErrorComponent: ErrorComponent;
   IntentErrorComponent: ErrorComponent;
   InvalidOperationComponent: InvalidOperationComponent;
 }
@@ -76,6 +79,7 @@ export type ExecutorState =
   | { type: "connectingDevice" }
   | { type: "connectingDeviceError"; error: unknown }
   | { type: "initializingDeviceContext" }
+  | { type: "initializingDeviceContextError"; error: unknown }
   | { type: "executingIntent" }
   | { type: "executingIntentError"; error: unknown }
   | { type: "invalidOperation"; error: unknown }
@@ -87,18 +91,17 @@ export type ExecutorState =
  * Props for the `DeviceIntentExecutor` component.
  *
  * The caller owns the business flow and drives the executor by changing these
- * props (e.g. swapping the current intent, updating the device initialization params).
+ * props (e.g. swapping the current intent, updating the required context).
  *
  * @typeParam JobState - Discriminated union of states emitted by the current intent's job.
  * @typeParam Input - Input type for the current intent's job.
  * @typeParam ExtraProps - Extra props forwarded to the intent's UI component.
- * @typeParam InitInput - Input type for the device context initializer.
  */
-export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput = void> {
+export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps> {
   /** Parameters for device selection / connection. */
   deviceConnectionParams: DeviceConnectionParams;
-  /** Initialization input; changing it triggers a new device-context initialisation. */
-  deviceInitializationInput: InitInput;
+  /** Required device context; changing it triggers a new context initialisation. */
+  requiredDeviceContext: RequiredDeviceContext;
   /** Called whenever the executor's own lifecycle state changes. */
   onExecutorStateChanged: (executorState: ExecutorState) => void;
   /** The current intent to execute. */

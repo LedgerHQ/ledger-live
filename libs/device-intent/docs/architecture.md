@@ -47,8 +47,9 @@ business logic or state management**. Its only job is:
     `DeviceContextInitializerComponent`.
   - **Executing intent** → render `intent.component` with the current `jobState`
     and `extraProps`.
-  - **Connection / intent error** → render the corresponding platform-injected
-    error component (`ConnectionErrorComponent`, `IntentErrorComponent`).
+  - **Connection / initialization / intent error** → render the corresponding
+    platform-injected error component (`ConnectionErrorComponent`,
+    `InitializationErrorComponent`, `IntentErrorComponent`).
   - **Invalid operation** → render the platform-injected
     `InvalidOperationComponent`.
   - **Idle** → render the last intent snapshot (component + last `jobState` +
@@ -64,12 +65,12 @@ know anything about the hook or the state machine underneath.
 The bridge between the React world (props, effects, callbacks) and the pure
 state machine. Responsibilities:
 
-| Concern                              | How                                                                                                                                                                     |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Props → actions**                  | `useEffect` hooks detect changes to `intent`, `deviceInitializationInput`, `enabled`, `cancelIntentRequestId` and decide which actions to trigger on the state machine. |
-| **State machine → React state**      | Subscribes to the state machine's state via listeners, stores the latest state in `useState`, and returns it to the component for rendering.                            |
-| **State machine → caller callbacks** | When the machine's state changes, invokes `onExecutorStateChanged` and `onIntentJobStateChanged` (callback props passed through the component).                         |
-| **Lifecycle**                        | Creates the state machine instance on mount, tears it down on unmount.                                                                                                  |
+| Concern                              | How                                                                                                                                                                 |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Props → actions**                  | `useEffect` hooks detect changes to `intent`, `requiredDeviceContext`, `enabled`, `cancelIntentRequestId` and decide which actions to trigger on the state machine. |
+| **State machine → React state**      | Subscribes to the state machine's state via listeners, stores the latest state in `useState`, and returns it to the component for rendering.                        |
+| **State machine → caller callbacks** | When the machine's state changes, invokes `onExecutorStateChanged` and `onIntentJobStateChanged` (callback props passed through the component).                     |
+| **Lifecycle**                        | Creates the state machine instance on mount, tears it down on unmount.                                                                                              |
 
 The hook does **not** contain the transition logic itself. It translates
 React lifecycle into imperative calls on the state machine and observation of
@@ -190,36 +191,36 @@ libs/device-intent/src/
 
 ## State machine
 
-The transition summary below complements the diagram and is the source of truth
-for transition semantics and state-to-state behavior.
+![State machine diagram](./device-intent-executor-state-machine.webp)
 
 ### Transition summary
 
-| From                           | Event                                  | Type                 | To                                                             |
-| ------------------------------ | -------------------------------------- | -------------------- | -------------------------------------------------------------- |
-| ●                              | start with initial intent + init input | caller               | Phase 1: Device connection                                     |
-| Phase 1: Device connection     | error                                  | internal (component) | Connection Error                                               |
-| Phase 1: Device connection     | device connected                       | internal (component) | Phase 2: Device initialization                                 |
-| Phase 1: Device connection     | terminate                              | caller               | ◉                                                              |
-| Connection Error               | user retry                             | internal (component) | Phase 1: Device connection                                     |
-| Phase 2: Device initialization | device context initialized             | internal (component) | Phase 3: Intent execution                                      |
-| Phase 2: Device initialization | change intent                          | caller               | Phase 2: Device initialization (self, updates stored intent)   |
-| Phase 2: Device initialization | change initialization input            | caller               | Phase 2: Device initialization (self, restarts initialization) |
-| Phase 2: Device initialization | device disconnected                    | internal (component) | Connection Error                                               |
-| Phase 2: Device initialization | terminate                              | caller               | ◉                                                              |
-| Phase 3: Intent execution      | job emits error                        | internal (job sub)   | Intent Error                                                   |
-| Phase 3: Intent execution      | intent stopped                         | caller               | Phase 4: Idle                                                  |
-| Phase 3: Intent execution      | intent completed                       | internal (job sub)   | Phase 4: Idle                                                  |
-| Phase 3: Intent execution      | device disconnected                    | internal (component) | Connection Error                                               |
-| Phase 3: Intent execution      | change intent                          | caller               | Invalid Operation                                              |
-| Phase 3: Intent execution      | change initialization input            | caller               | Invalid Operation                                              |
-| Phase 3: Intent execution      | terminate                              | caller               | ◉                                                              |
-| Intent Error                   | user retry (same intent)               | internal (component) | Phase 3: Intent execution                                      |
-| Intent Error                   | change intent                          | caller               | Phase 3: Intent execution                                      |
-| Phase 4: Idle                  | change intent                          | caller               | Phase 3: Intent execution                                      |
-| Phase 4: Idle                  | change initialization input            | caller               | Phase 2: Device initialization                                 |
-| Phase 4: Idle                  | device disconnected                    | internal (component) | Connection Error                                               |
-| Phase 4: Idle                  | terminate                              | caller               | ◉                                                              |
+| From                           | Event                                        | Type                 | To                                                           |
+| ------------------------------ | -------------------------------------------- | -------------------- | ------------------------------------------------------------ |
+| ●                              | start with initial intent + required context | caller               | Phase 1: Device connection                                   |
+| Phase 1: Device connection     | error                                        | internal (component) | Connection Error                                             |
+| Phase 1: Device connection     | device connected                             | internal (component) | Phase 2: Device initialization                               |
+| Phase 1: Device connection     | terminate                                    | caller               | ◉                                                            |
+| Connection Error               | user retry                                   | internal (component) | Phase 1: Device connection                                   |
+| Phase 2: Device initialization | error                                        | internal (component) | initialization Error                                         |
+| Phase 2: Device initialization | device context initialized                   | internal (component) | Phase 3: Intent execution                                    |
+| Phase 2: Device initialization | change intent                                | caller               | Phase 2: Device initialization (self, updates stored intent) |
+| Phase 2: Device initialization | device disconnected                          | internal (component) | Connection Error                                             |
+| Phase 2: Device initialization | terminate                                    | caller               | ◉                                                            |
+| initialization Error           | user retry                                   | internal (component) | Phase 2: Device initialization                               |
+| Phase 3: Intent execution      | job emits error                              | internal (job sub)   | Intent Error                                                 |
+| Phase 3: Intent execution      | intent stopped                               | caller               | Phase 4: Idle                                                |
+| Phase 3: Intent execution      | intent completed                             | internal (job sub)   | Phase 4: Idle                                                |
+| Phase 3: Intent execution      | device disconnected                          | internal (component) | Connection Error                                             |
+| Phase 3: Intent execution      | change intent                                | caller               | Intent Error                                                 |
+| Phase 3: Intent execution      | change required context                      | caller               | Intent Error                                                 |
+| Phase 3: Intent execution      | terminate                                    | caller               | ◉                                                            |
+| Intent Error                   | user retry (same intent)                     | internal (component) | Phase 3: Intent execution                                    |
+| Intent Error                   | change intent                                | caller               | Phase 3: Intent execution                                    |
+| Phase 4: Idle                  | change intent                                | caller               | Phase 3: Intent execution                                    |
+| Phase 4: Idle                  | change required context                      | caller               | Phase 2: Device initialization                               |
+| Phase 4: Idle                  | device disconnected                          | internal (component) | Connection Error                                             |
+| Phase 4: Idle                  | terminate                                    | caller               | ◉                                                            |
 
 ---
 
@@ -227,16 +228,14 @@ for transition semantics and state-to-state behavior.
 
 ### Hook-level orchestration of simultaneous prop changes
 
-When both `deviceInitializationInput` and `intent` props change in the same render,
-the order in which the hook dispatches `reinitialize` and `setIntent` to
+When both `requiredDeviceContext` and `intent` props change in the same render,
+the order in which the hook dispatches `setRequiredContext` and `setIntent` to
 the state machine matters — wrong ordering could trigger unnecessary errors
 (e.g. `setIntent` first from idle goes to `intentExecution` with stale context,
-then `reinitialize` causes an `invalidOperation`).
+then `setRequiredContext` causes an `intentError`).
 
 The hook uses a **single combined `useEffect`** watching both props. When both
-change, it dispatches **`reinitialize` first, then `setIntent`**: from idle,
-`reinitialize` transitions to `deviceInitialization`, and then `setIntent` is
-absorbed as a self-transition that updates the stored intent without changing
-state. The hook continues to hold the current `deviceInitializationInput`
-value; the state machine only receives the restart signal. See
-`useDeviceIntentExecutor.ts` section 6.
+change, it dispatches **`setRequiredContext` first, then `setIntent`**: from
+idle, `setRequiredContext` transitions to `deviceInitialization`, and then
+`setIntent` is absorbed as a self-transition that updates the stored intent
+without changing state. See `useDeviceIntentExecutor.ts` section 6.

@@ -1,10 +1,6 @@
 import type { ExecutorState } from "./executor";
 import { deriveHookState, type DeriveHookStateParams } from "./deriveHookState";
-import {
-  defaultDeviceInitializationInput,
-  makeConnectionResult,
-  type MockDeviceInitializationInput,
-} from "./__tests__/test-utils";
+import { defaultRequiredContext, makeConnectionResult } from "./__tests__/test-utils";
 
 const noop = () => {};
 
@@ -13,11 +9,11 @@ const defaultConnectionResult = makeConnectionResult();
 const DummyComponent = () => null;
 
 function makeParams(
-  overrides: Partial<DeriveHookStateParams<unknown, unknown, MockDeviceInitializationInput>> = {},
-): DeriveHookStateParams<unknown, unknown, MockDeviceInitializationInput> {
+  overrides: Partial<DeriveHookStateParams<unknown, unknown>> = {},
+): DeriveHookStateParams<unknown, unknown> {
   return {
     deviceConnectionParams: { acceptedDeviceModelIds: [] },
-    deviceInitializationInput: defaultDeviceInitializationInput,
+    requiredDeviceContext: defaultRequiredContext,
     connectionResult: defaultConnectionResult,
     latestJobState: undefined,
     intentComponent: DummyComponent,
@@ -26,6 +22,7 @@ function makeParams(
     onConnected: noop,
     onConnectionError: noop,
     onContextInitialized: noop,
+    onInitializationError: noop,
     onRetry: noop,
     onUserCancel: noop,
     ...overrides,
@@ -67,10 +64,12 @@ describe("deriveHookState", () => {
 
   it("maps initializingDeviceContext to deviceInitialization phase with connectionResult", () => {
     const onContextInitialized = jest.fn();
+    const onInitializationError = jest.fn();
     const params = makeParams({
       connectionResult: defaultConnectionResult,
-      deviceInitializationInput: defaultDeviceInitializationInput,
+      requiredDeviceContext: defaultRequiredContext,
       onContextInitialized,
+      onInitializationError,
     });
     const state: ExecutorState = { type: "initializingDeviceContext" };
 
@@ -79,8 +78,24 @@ describe("deriveHookState", () => {
     expect(result).toEqual({
       phase: "deviceInitialization",
       connectionResult: defaultConnectionResult,
-      deviceInitializationInput: defaultDeviceInitializationInput,
+      requiredDeviceContext: defaultRequiredContext,
       onContextInitialized,
+      onError: onInitializationError,
+    });
+  });
+
+  it("maps initializingDeviceContextError to initializationError phase", () => {
+    const onRetry = jest.fn();
+    const error = new Error("init failed");
+    const params = makeParams({ onRetry });
+    const state: ExecutorState = { type: "initializingDeviceContextError", error };
+
+    const result = deriveHookState(state, params);
+
+    expect(result).toEqual({
+      phase: "initializationError",
+      error,
+      onRetry,
     });
   });
 

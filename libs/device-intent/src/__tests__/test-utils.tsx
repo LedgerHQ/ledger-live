@@ -1,22 +1,17 @@
 import { NEVER } from "rxjs";
-import type { DeviceConnectionResult, DeviceExtractedContext, Intent } from "../core";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+  Intent,
+  RequiredDeviceContext,
+} from "../core";
 
-export type MockDeviceInitializationInput = {
-  appName: string;
-};
-
-export const defaultDeviceInitializationInput: MockDeviceInitializationInput = {
+export const defaultRequiredContext: RequiredDeviceContext = {
   appName: "Ethereum",
+  dependencies: [],
+  requireLatestFirmware: false,
+  allowPartialDependencies: false,
 };
-
-export function makeDeviceInitializationInput(
-  overrides: Partial<MockDeviceInitializationInput> = {},
-): MockDeviceInitializationInput {
-  return {
-    appName: "Ethereum",
-    ...overrides,
-  };
-}
 
 export const makeExtractedContext = (): DeviceExtractedContext => ({
   currentOsVersion: "2.0.0",

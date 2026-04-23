@@ -4,8 +4,8 @@ import {
   type DeviceIntentExecutorProps,
   type DeviceConnectionParams,
   type ExecutorState,
+  type RequiredDeviceContext,
 } from "@ledgerhq/device-intent";
-import type { ConnectAppDeviceInitializationInput } from "LLM/components/device-intent-executor/types";
 import type {
   AnyDemoJobState,
   AnyDemoInput,
@@ -23,20 +23,20 @@ const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
-const BOLOS_INITIALIZATION_INPUT: ConnectAppDeviceInitializationInput = {
+const BOLOS_CONTEXT: RequiredDeviceContext = {
   appName: "BOLOS",
   dependencies: [],
   requireLatestFirmware: false,
   allowPartialDependencies: true,
 };
 
-const ETHEREUM_INITIALIZATION_INPUT: ConnectAppDeviceInitializationInput = {
-  ...BOLOS_INITIALIZATION_INPUT,
+const ETHEREUM_CONTEXT: RequiredDeviceContext = {
+  ...BOLOS_CONTEXT,
   appName: "Ethereum",
 };
 
-const BITCOIN_INITIALIZATION_INPUT: ConnectAppDeviceInitializationInput = {
-  ...BOLOS_INITIALIZATION_INPUT,
+const BITCOIN_CONTEXT: RequiredDeviceContext = {
+  ...BOLOS_CONTEXT,
   appName: "Bitcoin",
 };
 
@@ -63,7 +63,7 @@ function buildPhase(
   phase: DemoPhase["phase"],
   defs: DemoIntentDefinitions,
   tickCount: number,
-  currentDeviceInitializationInput: ConnectAppDeviceInitializationInput,
+  currentRequiredContext: RequiredDeviceContext,
 ): DemoPhase {
   switch (phase) {
     case "idle":
@@ -74,7 +74,7 @@ function buildPhase(
         phase: "timer",
         intent: createIntent(defs.timer, { tickCount }),
         extraProps: {},
-        deviceInitializationInput: BOLOS_INITIALIZATION_INPUT,
+        requiredContext: BOLOS_CONTEXT,
       };
 
     case "legacy-get-address-eth":
@@ -86,7 +86,7 @@ function buildPhase(
           derivationMode: "",
         }),
         extraProps: {},
-        deviceInitializationInput: ETHEREUM_INITIALIZATION_INPUT,
+        requiredContext: ETHEREUM_CONTEXT,
       };
 
     case "legacy-get-address-btc":
@@ -98,7 +98,7 @@ function buildPhase(
           derivationMode: "native_segwit",
         }),
         extraProps: {},
-        deviceInitializationInput: BITCOIN_INITIALIZATION_INPUT,
+        requiredContext: BITCOIN_CONTEXT,
       };
 
     case "dmk-get-address":
@@ -106,7 +106,7 @@ function buildPhase(
         phase: "dmk-get-address",
         intent: createIntent(defs.getEthAddressDMKSigner, { derivationPath: "44'/60'/0'/0/0" }),
         extraProps: {},
-        deviceInitializationInput: ETHEREUM_INITIALIZATION_INPUT,
+        requiredContext: ETHEREUM_CONTEXT,
       };
 
     case "uninstall-eth":
@@ -114,7 +114,7 @@ function buildPhase(
         phase: "uninstall-eth",
         intent: createIntent(defs.uninstallApp, { appName: "Ethereum" }),
         extraProps: { appName: "Ethereum" },
-        deviceInitializationInput: currentDeviceInitializationInput,
+        requiredContext: currentRequiredContext,
       };
 
     case "uninstall-btc":
@@ -122,7 +122,7 @@ function buildPhase(
         phase: "uninstall-btc",
         intent: createIntent(defs.uninstallApp, { appName: "Bitcoin" }),
         extraProps: { appName: "Bitcoin" },
-        deviceInitializationInput: currentDeviceInitializationInput,
+        requiredContext: currentRequiredContext,
       };
 
     case "completed":
@@ -144,12 +144,7 @@ export type DemoOrchestrationResult = {
 } & (
   | {
       enabled: true;
-      executorProps: DeviceIntentExecutorProps<
-        AnyDemoJobState,
-        AnyDemoInput,
-        AnyDemoExtraProps,
-        ConnectAppDeviceInitializationInput
-      >;
+      executorProps: DeviceIntentExecutorProps<AnyDemoJobState, AnyDemoInput, AnyDemoExtraProps>;
     }
   | {
       enabled: false;
@@ -189,11 +184,8 @@ export function useDemoIntentOrchestration({
       if (next === "completed") {
         setEnabled(false);
       }
-      const currentDeviceInitializationInput =
-        "deviceInitializationInput" in prev
-          ? prev.deviceInitializationInput
-          : BOLOS_INITIALIZATION_INPUT;
-      return buildPhase(next, intentDefs, tickCount, currentDeviceInitializationInput);
+      const currentCtx = "requiredContext" in prev ? prev.requiredContext : BOLOS_CONTEXT;
+      return buildPhase(next, intentDefs, tickCount, currentCtx);
     });
   }, [intentDefs, tickCount]);
 
@@ -216,7 +208,7 @@ export function useDemoIntentOrchestration({
 
   useEffect(() => {
     if (enabled) {
-      setDemoPhase(buildPhase("timer", intentDefs, tickCount, BOLOS_INITIALIZATION_INPUT));
+      setDemoPhase(buildPhase("timer", intentDefs, tickCount, BOLOS_CONTEXT));
     } else {
       setDemoPhase({ phase: "idle" });
     }
@@ -229,12 +221,7 @@ export function useDemoIntentOrchestration({
   const isActive = demoPhase.phase !== "idle" && demoPhase.phase !== "completed";
 
   const executorProps = useMemo(():
-    | DeviceIntentExecutorProps<
-        AnyDemoJobState,
-        AnyDemoInput,
-        AnyDemoExtraProps,
-        ConnectAppDeviceInitializationInput
-      >
+    | DeviceIntentExecutorProps<AnyDemoJobState, AnyDemoInput, AnyDemoExtraProps>
     | undefined => {
     if (!enabled || !isActive) {
       return undefined;
@@ -242,7 +229,7 @@ export function useDemoIntentOrchestration({
     return {
       enabled: true,
       deviceConnectionParams: DEFAULT_CONNECTION_PARAMS,
-      deviceInitializationInput: demoPhase.deviceInitializationInput,
+      requiredDeviceContext: demoPhase.requiredContext,
       intent: demoPhase.intent as AnyDemoIntent, // eslint-disable-line @typescript-eslint/consistent-type-assertions
       intentComponentExtraProps: demoPhase.extraProps as AnyDemoExtraProps, // eslint-disable-line @typescript-eslint/consistent-type-assertions
       onExecutorStateChanged: handleExecutorStateChanged,
