@@ -7,6 +7,10 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/wall
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";
+import {
+  buildMainAccountByIdMap,
+  lookupParentAccountFromMap,
+} from "../../../utils/parentAccountLookup";
 
 export function useCryptoAccountRows(searchValue: string) {
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
@@ -23,15 +27,7 @@ export function useCryptoAccountRows(searchValue: string) {
   );
   const flattenedAccounts = useFlattenSortAccounts(flattenOptions);
 
-  const accountById = useMemo(() => {
-    const map = new Map<string, Account>();
-    for (const a of nestedAccounts) {
-      if (a.type === "Account") {
-        map.set(a.id, a);
-      }
-    }
-    return map;
-  }, [nestedAccounts]);
+  const accountById = useMemo(() => buildMainAccountByIdMap(nestedAccounts), [nestedAccounts]);
 
   const sortedMainAccounts = useMemo(() => {
     const mainAccounts = nestedAccounts.filter((a): a is Account => a.type === "Account");
@@ -61,9 +57,7 @@ export function useCryptoAccountRows(searchValue: string) {
   ]);
 
   const lookupParentAccount = useCallback(
-    (id: string): Account | undefined | null => {
-      return accountById.get(id) ?? null;
-    },
+    (id: string): Account | undefined | null => lookupParentAccountFromMap(accountById, id),
     [accountById],
   );
 
