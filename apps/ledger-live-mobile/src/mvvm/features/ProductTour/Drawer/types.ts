@@ -1,8 +1,9 @@
-export interface ProductTourDrawerViewModel {
-  readonly productTourCompleted: boolean;
+export type ProductTourDrawerViewModel = {
   readonly isDrawerOpen: boolean;
-  readonly openDrawer: () => void;
-  readonly closeDrawer: () => void;
-  readonly handleCloseDrawer: () => void;
-  readonly onSlideChange: (index: number) => void;
-}
+  readonly openProductTour: () => void;
+  readonly closeProductTour: () => void;
+};
+
+export type ProductTourDrawerProps = {
+  readonly isDrawerOpen: boolean;
+};

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
+import { ProductTourPortfolioMount } from "LLM/features/ProductTour/ProductTourPortfolioMount";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -225,6 +226,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         onSlideChange={onSlideChange}
         slides={slides}
       />
+      <ProductTourPortfolioMount />
       <AnalyticsConsentDrawer />
     </>
   );
