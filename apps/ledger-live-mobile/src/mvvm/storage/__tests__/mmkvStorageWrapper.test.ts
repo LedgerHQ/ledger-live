@@ -1,5 +1,4 @@
-import storage from "../mmkvStorageWrapper";
-import { MMKV } from "react-native-mmkv";
+import storage, { mmkv } from "../mmkvStorageWrapper";
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -16,7 +15,7 @@ describe("MMKVStorageWrapper", () => {
     beforeEach(() => {
       // Arrange
       getAllKeysMethod = jest
-        .spyOn(MMKV.prototype, "getAllKeys")
+        .spyOn(mmkv, "getAllKeys")
         .mockImplementation(() => returnedKeys);
 
       // Act
@@ -41,7 +40,7 @@ describe("MMKVStorageWrapper", () => {
       beforeEach(() => {
         // Arrange
         getStringMethod = jest
-          .spyOn(MMKV.prototype, "getString")
+          .spyOn(mmkv, "getString")
           .mockImplementation(() => returnedValue);
 
         // Act
@@ -69,7 +68,7 @@ describe("MMKVStorageWrapper", () => {
       beforeEach(() => {
         // Arrange
         multiGetMethod = jest
-          .spyOn(MMKV.prototype, "getString")
+          .spyOn(mmkv, "getString")
           .mockImplementation(key => returnedValues[key]);
 
         // Act
@@ -95,7 +94,7 @@ describe("MMKVStorageWrapper", () => {
       beforeEach(() => {
         // Arrange
         getStringMethod = jest
-          .spyOn(MMKV.prototype, "getString")
+          .spyOn(mmkv, "getString")
           .mockImplementation(() => returnedValue);
 
         // Act
@@ -118,7 +117,7 @@ describe("MMKVStorageWrapper", () => {
     describe("with a single key", () => {
       beforeEach(() => {
         // Arrange
-        setMethod = jest.spyOn(MMKV.prototype, "set").mockImplementation(noop);
+        setMethod = jest.spyOn(mmkv, "set").mockImplementation(noop);
 
         // Act
         storage.save("key", { value: 1 });
@@ -141,7 +140,7 @@ describe("MMKVStorageWrapper", () => {
 
       beforeEach(() => {
         // Arrange
-        setMethod = jest.spyOn(MMKV.prototype, "set").mockImplementation(() => Promise.resolve());
+        setMethod = jest.spyOn(mmkv, "set").mockImplementation(() => Promise.resolve());
 
         // Act
         storage.save(keyValuePairs);
@@ -167,7 +166,7 @@ describe("MMKVStorageWrapper", () => {
     describe("with a single key", () => {
       beforeEach(() => {
         // Arrange
-        setMethod = jest.spyOn(MMKV.prototype, "set").mockImplementation(noop);
+        setMethod = jest.spyOn(mmkv, "set").mockImplementation(noop);
 
         // Act
         storage.saveString("key", "stringToSave");
@@ -225,18 +224,18 @@ describe("MMKVStorageWrapper", () => {
 
       beforeEach(() => {
         // Arrange
-        containsMethod = jest.spyOn(MMKV.prototype, "contains").mockImplementation(() => true);
-        deleteMethod = jest.spyOn(MMKV.prototype, "delete").mockImplementation(noop);
+        containsMethod = jest.spyOn(mmkv, "contains").mockImplementation(() => true);
+        deleteMethod = jest.spyOn(mmkv, "remove").mockImplementation(noop);
 
         // Act
         storage.delete(deleteKey);
       });
 
-      it("should call MMKV#delete once", () => {
+      it("should call MMKV#remove once", () => {
         expect(deleteMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call MMKV#delete with the correct key", () => {
+      it("should call MMKV#remove with the correct key", () => {
         expect(deleteMethod).toHaveBeenCalledWith(deleteKey);
       });
     });
@@ -246,20 +245,20 @@ describe("MMKVStorageWrapper", () => {
 
       beforeEach(() => {
         // Arrange
-        containsMethod = jest.spyOn(MMKV.prototype, "contains").mockImplementation(() => true);
-        deleteMethod = jest.spyOn(MMKV.prototype, "delete").mockImplementation(noop);
+        containsMethod = jest.spyOn(mmkv, "contains").mockImplementation(() => true);
+        deleteMethod = jest.spyOn(mmkv, "remove").mockImplementation(noop);
 
         // Act
         storage.delete(deleteKeys);
       });
 
-      it("should call MMKV#delete as many times as there are keys", () => {
+      it("should call MMKV#remove as many times as there are keys", () => {
         expect(deleteMethod).toHaveBeenCalledTimes(2);
       });
 
       for (let i = 0; i < deleteKeys.length; i++) {
         const nth = i + 1;
-        it(`[${nth}] should call MMKV#delete for correct key`, () => {
+        it(`[${nth}] should call MMKV#remove for correct key`, () => {
           const k = deleteKeys[i];
           expect(deleteMethod).toHaveBeenNthCalledWith(nth, k);
         });
@@ -272,7 +271,7 @@ describe("MMKVStorageWrapper", () => {
 
     beforeEach(() => {
       // Arrange
-      clearMethod = jest.spyOn(MMKV.prototype, "clearAll").mockImplementation(() => {});
+      clearMethod = jest.spyOn(mmkv, "clearAll").mockImplementation(() => {});
 
       // Act
       storage.deleteAll();

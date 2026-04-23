@@ -1,6 +1,6 @@
 import { DevSettings, NativeModules, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
-import { MMKV } from "react-native-mmkv";
+import { createMMKV, type MMKV } from "react-native-mmkv";
 
 const STORAGE_KEY = "__dev_server_connected";
 const MAX_POLL_RETRIES = 30;
@@ -11,7 +11,7 @@ const shouldActivate = __DEV__ && Platform.OS === "ios" && !DeviceInfo.isEmulato
 /** Dedicated storage for debug */
 let storage: MMKV | null = null;
 if (shouldActivate) {
-  storage = new MMKV({ id: "dev-server-reload" });
+  storage = createMMKV({ id: "dev-server-reload" });
 }
 
 /** Retrieves the IP address of the development server. */
