@@ -60,16 +60,10 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 
-      - name: Check wallet-cli generated commands
-        run: pnpm exec nx run "@ledgerhq/wallet-cli:generate:check"
-
-      - name: Build wallet-cli
-        run: pnpm exec nx run @ledgerhq/wallet-cli:build
-
-      - name: Generate unit test coverage for wallet-cli
+      - name: Build, lint, typecheck and test wallet-cli
         run: |
           mkdir -p apps/wallet-cli/coverage
-          pnpm exec nx run @ledgerhq/wallet-cli:coverage
+          pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate:check,lint:ci,typecheck,build,coverage
 
       - name: Upload wallet-cli unit test coverage
         id: generate_coverage
