@@ -37,7 +37,9 @@ export async function getStakes(
       stake.delegate = delegateAddress;
     }
     if (delegation) {
-      stake.amountDeposited = BigInt(delegation.stake.toString());
+      const deposited = BigInt(delegation.stake.toString());
+      stake.amountDeposited = deposited;
+      stake.amountRewarded = stake.amount > deposited ? stake.amount - deposited : 0n;
     }
 
     return stake;
