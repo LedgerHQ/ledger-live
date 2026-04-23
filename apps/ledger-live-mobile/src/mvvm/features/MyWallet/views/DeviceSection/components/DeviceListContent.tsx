@@ -10,6 +10,7 @@ type DeviceListContentProps = {
   readonly onAddDevice: () => void;
   readonly onExploreDevices: () => void;
   readonly onDevicePress: (device: DeviceSectionDevice) => void;
+  readonly onOpenMenu: (device: DeviceSectionDevice) => void;
 };
 
 export function DeviceListContent({
@@ -17,6 +18,7 @@ export function DeviceListContent({
   onAddDevice,
   onExploreDevices,
   onDevicePress,
+  onOpenMenu,
 }: DeviceListContentProps) {
   if (devices.length === 0) {
     return <AddDeviceItem onPress={onAddDevice} />;
@@ -26,7 +28,7 @@ export function DeviceListContent({
     <>
       <Box lx={{ backgroundColor: "surface", borderRadius: "md" }}>
         {devices.map(device => (
-          <DeviceListItem key={device.id} device={device} onPress={onDevicePress} />
+          <DeviceListItem key={device.id} device={device} onPress={onDevicePress} onOpenMenu={onOpenMenu} />
         ))}
       </Box>
       <ExploreDevicesItem onPress={onExploreDevices} />

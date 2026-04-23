@@ -13,8 +13,17 @@ const mockDevices: DeviceSectionDevice[] = [
 const mockOnAddDevice = jest.fn();
 const mockOnExploreDevices = jest.fn();
 const mockOnDevicePress = jest.fn();
+const mockOnOpenMenu = jest.fn();
+const mockOnCloseRemoveMenu = jest.fn();
+const mockOnRemoveDevice = jest.fn();
 
-const renderView = (devices: readonly DeviceSectionDevice[]) =>
+const renderView = (
+  devices: readonly DeviceSectionDevice[],
+  overrides: Partial<{
+    selectedDevice: DeviceSectionDevice | null;
+    isRemoveDrawerOpen: boolean;
+  }> = {},
+) =>
   render(
     <DeviceSectionView
       devices={devices}
@@ -22,6 +31,11 @@ const renderView = (devices: readonly DeviceSectionDevice[]) =>
       onAddDevice={mockOnAddDevice}
       onExploreDevices={mockOnExploreDevices}
       onDevicePress={mockOnDevicePress}
+      onOpenMenu={mockOnOpenMenu}
+      selectedDevice={overrides.selectedDevice ?? null}
+      isRemoveDrawerOpen={overrides.isRemoveDrawerOpen ?? false}
+      onCloseRemoveMenu={mockOnCloseRemoveMenu}
+      onRemoveDevice={mockOnRemoveDevice}
     />,
   );
 
@@ -100,6 +114,11 @@ describe("DeviceSection", () => {
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
     });
+
+    it("calls onOpenMenu with the device when the 3-dot menu icon is pressed", async () => {
+      fireEvent.press(screen.getByTestId("my-wallet-device-item-device-1-menu"));
+      await waitFor(() => expect(mockOnOpenMenu).toHaveBeenCalledWith(mockDevices[0]));
+    });
   });
 
   describe("with an available device", () => {
@@ -135,6 +154,12 @@ describe("DeviceSection", () => {
 
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    });
+
+    it("renders a menu icon for each device", () => {
+      expect(screen.getByTestId("my-wallet-device-item-device-1-menu")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-item-device-2-menu")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-item-device-3-menu")).toBeVisible();
     });
   });
 });
