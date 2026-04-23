@@ -10,11 +10,10 @@ import {
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
 import { createWalletState } from "../../../testUtils/createWalletState";
-
-jest.mock("~/renderer/analytics/segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
+import {
+  buildMainAccountByIdMap,
+  lookupParentAccountFromMap,
+} from "../../../utils/parentAccountLookup";
 
 function expectColumnHeaders(): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();
@@ -125,9 +124,8 @@ describe("CryptoTable", () => {
     const parentAccount = ETH_ACCOUNT_WITH_USDC;
     const tokenAccount = parentAccount.subAccounts![0];
 
-    mockLookupParent.mockImplementation((id: string) =>
-      id === parentAccount.id ? parentAccount : undefined,
-    );
+    const mainById = buildMainAccountByIdMap([parentAccount]);
+    mockLookupParent.mockImplementation(id => lookupParentAccountFromMap(mainById, id));
 
     const { user } = render(
       <CryptoTable
@@ -162,7 +160,8 @@ describe("getCryptoTableRowFreshAddress", () => {
   it("returns the parent account fresh address for TokenAccount rows", () => {
     const parent = ETH_ACCOUNT_WITH_USDC;
     const token = parent.subAccounts![0];
-    const lookup = jest.fn((id: string) => (id === parent.id ? parent : undefined));
+    const mainById = buildMainAccountByIdMap([parent]);
+    const lookup = jest.fn((id: string) => lookupParentAccountFromMap(mainById, id));
 
     expect(getCryptoTableRowFreshAddress(token, lookup)).toBe(parent.freshAddress);
     expect(lookup).toHaveBeenCalledWith(token.parentId);
