@@ -1,6 +1,6 @@
 import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
-import { ElectronApplication, expect } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -76,8 +76,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Get provider list")
-  async getProviderList(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async getProviderList() {
+    const webview = await this.getWebView();
     await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
@@ -87,8 +87,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Check elements presence on swap approval step")
-  async checkElementsPresenceOnSwapApprovalStep(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async checkElementsPresenceOnSwapApprovalStep() {
+    const webview = await this.getWebView();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
     await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
     await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
@@ -100,12 +100,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Check quotes container infos")
-  async checkQuotesContainerInfos(
-    electronApp: ElectronApplication,
-    providerList: string[],
-    ticker: string,
-  ) {
-    const [, webview] = electronApp.windows();
+  async checkQuotesContainerInfos(providerList: string[], ticker: string) {
+    const webview = await this.getWebView();
     const provider = Provider.getNameByUiName(providerList[0]);
 
     await webview.locator(this.baseProviderSelector(provider, "amount-label")).first().click();
@@ -144,21 +140,20 @@ export class SwapPage extends WebViewAppPage {
         webview.locator(this.baseProviderSelector(provider, "extraFeesContainer")).getByText("%"),
       ).toBeVisible();
     }
-    await this.checkExchangeButton(electronApp, providerList[0]);
+    await this.checkExchangeButton(providerList[0]);
   }
 
   @step("Select specific provider")
-  async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async selectSpecificProvider(provider: Provider) {
+    const webview = await this.getWebView();
 
-    const providersList = await this.getProviderList(electronApp);
+    const providersList = await this.getProviderList();
 
     if (providersList.includes(provider.uiName)) {
       const providerLocator = webview
         .locator(this.specificQuoteCardProviderName(provider.name))
         .first();
 
-      await providerLocator.isVisible();
       await providerLocator.click();
     } else {
       throw new Error("No valid providers found");
@@ -166,10 +161,10 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Select available provider without KYC")
-  async selectExchangeWithoutKyc(electronApp: ElectronApplication, swap?: Swap) {
-    const [, webview] = electronApp.windows();
+  async selectExchangeWithoutKyc(swap?: Swap) {
+    const webview = await this.getWebView();
 
-    const providersList = await this.getProviderList(electronApp);
+    const providersList = await this.getProviderList();
 
     // Check if the swap is ETH <-> SOL pair (exclude LiFi for these pairs)
     const isEthSolPair =
@@ -205,7 +200,6 @@ export class SwapPage extends WebViewAppPage {
           .locator(this.specificQuoteCardProviderName(provider.name))
           .first();
 
-        await providerLocator.isVisible();
         await providerLocator.click();
 
         return provider;
@@ -216,10 +210,10 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Select available provider")
-  async selectExchange(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async selectExchange() {
+    const webview = await this.getWebView();
 
-    const providersList = await this.getProviderList(electronApp);
+    const providersList = await this.getProviderList();
 
     const providers = providersList.filter(providerName => {
       return Object.values(Provider).find(p => p.uiName === providerName);
@@ -239,8 +233,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Get all swap providers available")
-  async getAllSwapProviders(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async getAllSwapProviders() {
+    const webview = await this.getWebView();
     return await webview
       .locator(
         '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
@@ -249,8 +243,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Check drawer error message ($0)")
-  async checkFeeErrorMessage(electronApp: ElectronApplication, errorMessage: string | RegExp) {
-    const [, webview] = electronApp.windows();
+  async checkFeeErrorMessage(errorMessage: string | RegExp) {
+    const webview = await this.getWebView();
 
     const insufficientFundsWarningElem = webview.getByTestId(this.insufficientFundsWarning);
     const errorMessageSpan = insufficientFundsWarningElem.getByText(errorMessage);
@@ -281,8 +275,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step('Check "Best Offer" corresponds to the best quote')
-  async checkBestOffer(electronApp: ElectronApplication) {
-    const quoteContainers = await this.getAllSwapProviders(electronApp);
+  async checkBestOffer() {
+    const quoteContainers = await this.getAllSwapProviders();
     const quotes = await this.extractQuotesAndFees(quoteContainers);
     const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
       (max, current) =>
@@ -293,8 +287,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Check exchange button is visible and enabled")
-  async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
-    const [, webview] = electronApp.windows();
+  async checkExchangeButton(provider: string) {
+    const webview = await this.getWebView();
 
     const buttonLocator = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(buttonLocator).toBeVisible();
@@ -302,8 +296,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Click Exchange button")
-  async clickExchangeButton(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async clickExchangeButton() {
+    const webview = await this.getWebView();
     const swapButton = webview.getByTestId(this.swapBtn);
     await expect(swapButton).toBeVisible();
     await expect(swapButton).toBeEnabled();
@@ -311,8 +305,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Click Execute Swap button")
-  async clickExecuteSwapButton(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async clickExecuteSwapButton() {
+    const webview = await this.getWebView();
     const executeSwapButton = webview.getByTestId(this.executeSwapBtn);
     await expect(executeSwapButton).toBeVisible();
     await expect(executeSwapButton).toBeEnabled();
@@ -331,8 +325,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Retrieve send currency amount value")
-  async getAmountToSend(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async getAmountToSend() {
+    const webview = await this.getWebView();
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
   }
 
@@ -350,8 +344,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Expect asset or account selected $0 to be displayed")
-  async expectSelectedAssetDisplayed(asset: string | RegExp, electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async expectSelectedAssetDisplayed(asset: string | RegExp) {
+    const webview = await this.getWebView();
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }
 
@@ -401,9 +395,9 @@ export class SwapPage extends WebViewAppPage {
     return text?.includes(asset) ?? false;
   }
 
-  @step("Fill in amount: $1")
-  async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
-    const [, webview] = electronApp.windows();
+  @step("Fill in amount: $0")
+  async fillInOriginCurrencyAmount(amount: string) {
+    const webview = await this.getWebView();
 
     const amountInput = webview.getByTestId(this.fromAccountAmountInput);
 
@@ -419,16 +413,16 @@ export class SwapPage extends WebViewAppPage {
     await this.page.waitForTimeout(500);
   }
 
-  @step("Select currency to swap to: $1")
-  async selectAssetTo(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
+  @step("Select currency to swap to: $0")
+  async selectAssetTo(currency: string) {
+    const webview = await this.getWebView();
     await webview.getByTestId(this.toAccountCoinSelector).click();
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
-  @step("Select currency to swap from: $1")
-  async selectAssetFrom(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
+  @step("Select currency to swap from: $0")
+  async selectAssetFrom(currency: string) {
+    const webview = await this.getWebView();
     await webview.getByTestId(this.fromAccountCoinSelector).click();
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
@@ -456,25 +450,22 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
   }
 
-  @step("Verify swap amount error message match: $1")
-  async verifySwapAmountErrorMessageIsCorrect(
-    electronApp: ElectronApplication,
-    message: string | RegExp,
-  ) {
-    const [, webview] = electronApp.windows();
+  @step("Verify swap amount error message match: $0")
+  async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
+    const webview = await this.getWebView();
     const errorSpan = await webview.getByTestId("from-account-error").textContent();
     expect(errorSpan).toMatch(message);
   }
 
   @step("Check insufficient funds warning banner is visible")
-  async checkInsufficientFundsBannerVisible(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async checkInsufficientFundsBannerVisible() {
+    const webview = await this.getWebView();
     await expect(webview.getByTestId(this.insufficientFundsWarning)).toBeVisible();
   }
 
   @step("verify quotes are displayed")
-  async checkQuotes(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async checkQuotes() {
+    const webview = await this.getWebView();
     await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
   }
 
@@ -560,8 +551,8 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Click on swap max")
-  async clickSwapMax(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async clickSwapMax() {
+    const webview = await this.getWebView();
     await webview.getByTestId(this.swapMaxToggle).click();
   }
 
