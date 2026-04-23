@@ -52,6 +52,9 @@ export function rehydrateSyncResult(raw: ShieldedSyncResultRaw): ShieldedSyncRes
     processedBlocks: raw.processedBlocks,
     remainingBlocks: raw.remainingBlocks,
     ...(raw.lastProcessedBlock !== undefined && { lastProcessedBlock: raw.lastProcessedBlock }),
+    ...(raw.estimatedTimeRemaining !== undefined && {
+      estimatedTimeRemaining: raw.estimatedTimeRemaining,
+    }),
     transactions: raw.transactions.map(rehydrateTransaction),
   };
 }

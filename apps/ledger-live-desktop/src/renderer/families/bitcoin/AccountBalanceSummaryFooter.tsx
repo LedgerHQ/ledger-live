@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -163,13 +163,16 @@ const SyncProgress = ({
 const EstimatedTimeRemaining = ({
   syncState,
   estimatedTimeRemaining,
+  disabled = true,
 }: {
   syncState: ZcashSyncState;
   estimatedTimeRemaining: { hours: number; minutes: number };
+  disabled?: boolean;
 }) => {
   if (
     syncState !== "running" ||
-    (estimatedTimeRemaining.hours === 0 && estimatedTimeRemaining.minutes === 0)
+    (estimatedTimeRemaining.hours === 0 && estimatedTimeRemaining.minutes === 0) ||
+    !!disabled
   ) {
     return null;
   }
@@ -189,6 +192,13 @@ const EstimatedTimeRemaining = ({
   );
 };
 
+function usePrevious<T>(val: T): T {
+  const ref = useRef<T>(val);
+  const prevVal = ref.current;
+  ref.current = val;
+  return prevVal;
+}
+
 type Props = {
   account: ZcashAccount | TokenAccount;
 };
@@ -201,6 +211,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     saplingBalance: BigNumber(0),
   };
   const syncState = privateInfo?.syncState ?? "disabled";
+  const previousSyncState = usePrevious(syncState);
   const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
   const progress = privateInfo?.progress ?? 0;
   const estimatedTimeRemaining = privateInfo?.estimatedTimeRemaining ?? { hours: 0, minutes: 0 };
@@ -213,6 +224,15 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const { getFeature } = useFeatureFlags();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
+
+  if (
+    account.type !== "Account" ||
+    (account.currency.id as Currency) !== "zcash" ||
+    !showPrivateBalanceComponent
+  )
+    return null;
 
   // Save sync state to the account
   const saveSyncState = useCallback(
@@ -235,6 +255,13 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     }
   }, [privateInfo?.lastSyncTimestamp, saveSyncState]);
 
+  // Check if private balance has been activated
+  useEffect(() => {
+    if (previousSyncState === "disabled" && syncState === "running") {
+      startShieldedSync();
+    }
+  }, [previousSyncState, syncState]);
+
   // Check if sync is outdated (every 5 seconds)
   useEffect(() => {
     if (syncState === "complete") {
@@ -245,15 +272,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       };
     }
   }, [syncState, outdatedSyncCheck]);
-
-  const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
-
-  if (
-    account.type !== "Account" ||
-    (account.currency.id as Currency) !== "zcash" ||
-    !showPrivateBalanceComponent
-  )
-    return null;
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -278,7 +296,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         break;
       case "ready":
         // Start
-        startShieldedSync(account);
+        startShieldedSync();
         break;
       case "running":
         // Stop
@@ -286,16 +304,16 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         break;
       case "stopped":
         // Start
-        startShieldedSync(account);
+        startShieldedSync();
         break;
       case "outdated":
         // Start sync from the last known block
-        startShieldedSync(account);
+        startShieldedSync();
         break;
     }
   };
 
-  const startShieldedSync = (account: ZcashAccount) => {
+  const startShieldedSync = () => {
     saveSyncState({
       syncState: "running",
       progress: 0,
@@ -337,10 +355,13 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   // Check on mount if there is a subscription for this account, if not update the sync state to "stopped"
   useEffect(() => {
-    if (syncState === "running" && !shieldedSubscriptions.find(s => s.accountId === account.id)) {
+    const hasShieldedSubscription = shieldedSubscriptions.some(s => s.accountId === account.id);
+    const justEnteredRunning = syncState === "running" && previousSyncState !== "running";
+
+    if (syncState === "running" && !hasShieldedSubscription && !justEnteredRunning) {
       stopShieldedSync();
     }
-  });
+  }, [account.id, previousSyncState, shieldedSubscriptions, syncState]);
 
   return (
     <Wrapper>

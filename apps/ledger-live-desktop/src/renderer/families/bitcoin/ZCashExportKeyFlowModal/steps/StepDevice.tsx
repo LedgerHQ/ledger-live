@@ -64,7 +64,9 @@ const StepExport = (props: StepProps) => {
           verify: true,
         }),
       ).finally(() => setUfvkRequestSent(true));
-      onUfvkChanged("ufvk");
+      onUfvkChanged(
+        "uview16j9eaejmtpsj9q69tyhnh6spml5nhkjhn2vmxl9adjmewl4eyjksnewn9ucca7qdq86cs3njl2gmu7mkre63uqjxf0vs9fvwy2e7q929zvspkst9y80f7rjvvsugj8razy2fsxljkcjk9h9xe6a8cavuw7mny6pxta782z8d2csyxn6dxr6fm2t9u4qwtyj4mck53fmmtzpgjuaa88qakkt65xslacr8m3xzv68plnnqks24jwgjt3g8hx0dstg0f8c2znh3gz8mrvzrwk5a7xpu93j5tatljc5r58chq5tjrfhtxjvykl9772das3n5s4ychzjzewdjvlkxup87unzt8gg02gta20ak0dkrjcs3j0wln4xjtnclmwtv0wd78hxz3c9dkjt0272s74dqmgn0rrm8yuqmn27uphgw5e0acn3634a6sfp3my4sywsgnguucu05gd9uem6wr0tqvvs28rpy53uhkrzq4klt243hn3xw0g8aflr7",
+      );
       transitionTo("confirmation");
     } catch (error) {
       onUfvkChanged("", error as Error);

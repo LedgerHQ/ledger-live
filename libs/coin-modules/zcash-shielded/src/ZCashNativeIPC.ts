@@ -131,6 +131,9 @@ export class ZCashNativeIPC implements ZCashNativeClient {
     return new Observable<ShieldedSyncResult>(subscriber => {
       const ipc = getIpcRenderer();
       const requestId = nextRequestId();
+      let totalBlocksForEstimator: number | null = null;
+      let syncTimeEstimator: ((processedBlocks: number) => SyncEstimatedTime) | null = null;
+      let emitQueue = Promise.resolve();
 
       const validationError = this.validateSyncArgs(args);
       if (validationError) {
@@ -143,10 +146,34 @@ export class ZCashNativeIPC implements ZCashNativeClient {
         if (!evt || evt.requestId !== requestId) return;
         switch (evt.kind) {
           case "chunk":
-            subscriber.next(rehydrateSyncResult(evt.result));
+            emitQueue = emitQueue
+              .then(async () => {
+                if (subscriber.closed) return;
+                const totalBlocks = evt.result.processedBlocks + evt.result.remainingBlocks;
+                if (!syncTimeEstimator || totalBlocksForEstimator !== totalBlocks) {
+                  totalBlocksForEstimator = totalBlocks;
+                  syncTimeEstimator = await this.estimatedSyncTime(totalBlocks);
+                }
+                if (subscriber.closed) return;
+                subscriber.next(
+                  rehydrateSyncResult({
+                    ...evt.result,
+                    estimatedTimeRemaining: syncTimeEstimator(evt.result.processedBlocks),
+                  }),
+                );
+              })
+              .catch(err => {
+                subscriber.error(err instanceof Error ? err : new Error(String(err)));
+              });
             return;
           case "complete":
-            subscriber.complete();
+            emitQueue
+              .then(() => {
+                subscriber.complete();
+              })
+              .catch(err => {
+                subscriber.error(err instanceof Error ? err : new Error(String(err)));
+              });
             return;
           case "error":
             subscriber.error(new Error(evt.message));

@@ -101,6 +101,7 @@ export type ShieldedSyncResult = {
   processedBlocks: number;
   remainingBlocks: number;
   lastProcessedBlock?: number;
+  estimatedTimeRemaining?: SyncEstimatedTime;
   transactions: ShieldedTransaction[];
 };
 
@@ -116,6 +117,7 @@ export type ShieldedSyncResultRaw = {
   processedBlocks: number;
   remainingBlocks: number;
   lastProcessedBlock?: number;
+  estimatedTimeRemaining?: SyncEstimatedTime;
   transactions: ShieldedTransactionRaw[];
 };
 

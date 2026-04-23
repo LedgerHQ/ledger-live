@@ -84,6 +84,9 @@ export class ZCashNative implements ZCashNativeClient {
       let cancelled = false;
       let activeStream: NativeStreamHandle | null = null;
       const isCancelled = () => cancelled || subscriber.closed;
+      let totalBlocksForEstimator: number | null = null;
+      let syncTimeEstimator: ((processedBlocks: number) => SyncEstimatedTime) | null = null;
+      let emitQueue = Promise.resolve();
 
       const jobArgs: StartSyncJobArgs = {
         grpcUrl: this.grpcUrl,
@@ -96,8 +99,27 @@ export class ZCashNative implements ZCashNativeClient {
       startSyncJob(
         jobArgs,
         chunk => {
-          if (isCancelled()) return;
-          subscriber.next(rehydrateSyncResult(chunk));
+          emitQueue = emitQueue
+            .then(async () => {
+              if (isCancelled()) return;
+              const totalBlocks = chunk.processedBlocks + chunk.remainingBlocks;
+              if (!syncTimeEstimator || totalBlocksForEstimator !== totalBlocks) {
+                totalBlocksForEstimator = totalBlocks;
+                syncTimeEstimator = await this.estimatedSyncTime(totalBlocks);
+              }
+              if (isCancelled()) return;
+              subscriber.next(
+                rehydrateSyncResult({
+                  ...chunk,
+                  estimatedTimeRemaining: syncTimeEstimator(chunk.processedBlocks),
+                }),
+              );
+            })
+            .catch(err => {
+              if (!isCancelled()) {
+                subscriber.error(err instanceof Error ? err : new Error(String(err)));
+              }
+            });
         },
         {
           isCancelled,
@@ -107,7 +129,15 @@ export class ZCashNative implements ZCashNativeClient {
         },
       )
         .then(() => {
-          if (!isCancelled()) subscriber.complete();
+          emitQueue
+            .then(() => {
+              if (!isCancelled()) subscriber.complete();
+            })
+            .catch(err => {
+              if (!isCancelled()) {
+                subscriber.error(err instanceof Error ? err : new Error(String(err)));
+              }
+            });
         })
         .catch(err => subscriber.error(err));
 
