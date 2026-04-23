@@ -25,6 +25,7 @@ export const CryptoAssetList: React.FC<CryptoAssetListProps> = ({ assets, onItem
         asset={item}
         onPress={onItemPress}
         precomputed={precomputedData.get(item.currency.id)!}
+        hideNetwork
       />
     ),
     [onItemPress, precomputedData],
