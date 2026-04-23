@@ -204,13 +204,13 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2990, B2CQA-523",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
-      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
+      await app.swap.expectSelectedAssetDisplayed("BTC");
     },
   );
 });
@@ -284,7 +284,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.swap.goAndWaitForSwapToBeReady(() =>
           app.mainNavigation.openTargetFromMainNavigation("swap"),
@@ -306,17 +306,17 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           const networkName = fromAccount.parentAccount?.currency.name;
           await app.swap.selectAsset(fromAccount.currency.name, networkName);
           await app.swapDrawer.selectAccountByName(fromAccount);
-          await app.swap.selectAssetTo(electronApp, toAccount.currency.name);
+          await app.swap.selectAssetTo(toAccount.currency.name);
           await app.swapDrawer.selectAccountByName(toAccount);
         }
 
-        await app.swap.clickSwapMax(electronApp);
+        await app.swap.clickSwapMax();
 
-        const amountToSend = await app.swap.getAmountToSend(electronApp);
-        await app.swap.selectExchangeWithoutKyc(electronApp);
+        const amountToSend = await app.swap.getAmountToSend();
+        await app.swap.selectExchangeWithoutKyc();
         const swap = new Swap(fromAccount, toAccount, amountToSend);
 
-        await app.swap.clickExchangeButton(electronApp);
+        await app.swap.clickExchangeButton();
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -472,7 +472,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
         description: "B2CQA-3655",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
@@ -484,9 +484,9 @@ test.describe("Swap - Block blacklisted addresses", () => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      await app.swap.selectExchangeWithoutKyc(electronApp);
-      await app.swap.clickExchangeButton(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      await app.swap.selectExchangeWithoutKyc();
+      await app.swap.clickExchangeButton();
 
       await app.swapDrawer.checkErrorMessage(
         `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,

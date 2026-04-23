@@ -1,6 +1,5 @@
 import test from "tests/fixtures/common";
 import { Application } from "tests/page";
-import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
@@ -35,7 +34,6 @@ export async function checkAccountFromIsSynchronised(app: Application, swap: Swa
 
 export async function performSwapUntilQuoteSelectionStep(
   app: Application,
-  electronApp: ElectronApplication,
   swap: Swap,
   minAmount: string,
 ) {
@@ -57,7 +55,7 @@ export async function performSwapUntilQuoteSelectionStep(
   if (!isAssetToSelected) {
     await selectAccountTo(app, swap);
   }
-  await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
+  await app.swap.fillInOriginCurrencyAmount(minAmount);
 }
 
 async function selectAccountFrom(app: Application, swap: Swap) {
@@ -86,14 +84,13 @@ export async function selectAccountMAD(selector: ModularDialog, account: Account
 
 export async function handleSwapErrorOrSuccess(
   app: Application,
-  electronApp: ElectronApplication,
   swap: Swap,
   minAmount: string,
   errorMessage: string | null,
   expectedErrorPerDevice?: { [deviceId: string]: string },
 ) {
-  await app.swap.selectExchangeWithoutKyc(electronApp, swap);
-  await app.swap.clickExchangeButton(electronApp);
+  await app.swap.selectExchangeWithoutKyc(swap);
+  await app.swap.clickExchangeButton();
 
   const deviceId = getSpeculosModel();
 
