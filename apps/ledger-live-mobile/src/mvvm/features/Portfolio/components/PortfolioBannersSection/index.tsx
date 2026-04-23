@@ -19,32 +19,29 @@ export const PortfolioBannersSection = ({
   isLNSUpsellBannerShown,
   showAssets,
 }: PortfolioBannersSectionProps) => {
-  const { shouldShowOnboardingWidget } = usePortfolioBannersSectionViewModel({
-    isLNSUpsellBannerShown,
-  });
+  const { shouldShowOnboardingWidget, sectionMarginTop, hasAssets } =
+    usePortfolioBannersSectionViewModel({
+      isLNSUpsellBannerShown,
+      showAssets,
+    });
 
   return (
-    <SectionContainer
-      py="0"
-      mt={6}
-      isFirst={isFirst}
-      key="BannersSection"
-      testID="portfolio-banners-section"
-    >
-      {shouldShowOnboardingWidget ? (
-        <Box style={{ marginBottom: 6 }}>
-          <OnboardingWidget />
-        </Box>
-      ) : null}
-      {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mb={6} />}
-      {!isLNSUpsellBannerShown && !shouldShowOnboardingWidget && showAssets ? (
-        <ContentCardsLocation
-          key="contentCardsLocationPortfolio"
-          locationId={ContentCardLocation.TopWallet}
-          mb={6}
-        />
-      ) : null}
-      <RecoverBanner mb={6} />
+    <SectionContainer py="0" mt={0} isFirst={isFirst} key="BannersSection" testID="portfolio-banners-section">
+      <Box lx={{ marginTop: sectionMarginTop }}>
+        {shouldShowOnboardingWidget ? (
+          <Box lx={{ marginBottom: "s16" }}>
+            <OnboardingWidget />
+          </Box>
+        ) : null}
+        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mb={6} />}
+        {!isLNSUpsellBannerShown && !shouldShowOnboardingWidget && hasAssets ? (
+          <ContentCardsLocation
+            key="contentCardsLocationPortfolio"
+            locationId={ContentCardLocation.TopWallet}
+          />
+        ) : null}
+        <RecoverBanner mb={6} />
+      </Box>
     </SectionContainer>
   );
 };
