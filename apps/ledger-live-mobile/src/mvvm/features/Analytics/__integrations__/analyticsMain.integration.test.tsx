@@ -32,7 +32,10 @@ describe("AnalyticsMain Integration Tests", () => {
 
     return withFlagOverrides({
       ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
-      lwmWallet40: { enabled: true, params: { mainNavigation: isWallet40MainNavigation } },
+      lwmWallet40: {
+        enabled: true,
+        params: { mainNavigation: isWallet40MainNavigation, aggregatedAssets: false },
+      },
     })({
       ...state,
       accounts: {
