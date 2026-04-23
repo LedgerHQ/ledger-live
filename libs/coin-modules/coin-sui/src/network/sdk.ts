@@ -444,7 +444,7 @@ export const getOperationExtra = (
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
-  return new Date(parseInt(transaction.timestampMs!));
+  return new Date(Number(transaction.timestampMs ?? 0));
 };
 
 /**

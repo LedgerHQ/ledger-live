@@ -3,13 +3,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { UpdateYourApp } from "@ledgerhq/errors";
 import semver from "semver";
 
-import type {
-  GetPublicKeyResult,
-  SignTransactionResult,
-  GetVersionResult,
-  Resolution,
-  AppConfig,
-} from "@mysten/ledgerjs-hw-app-sui";
+import type { Resolution, SignTransactionResult } from "@mysten/ledgerjs-hw-app-sui";
 
 const MIN_VERSION = "1.5.4";
 const MANAGER_APP_NAME = "Sui";
@@ -21,11 +15,7 @@ export default class Sui extends SuiUpstream {
     options?: { bcsObjects: Uint8Array[] },
     resolution?: Resolution,
   ): Promise<SignTransactionResult> {
-    if (
-      resolution &&
-      resolution.deviceModelId &&
-      resolution.deviceModelId !== DeviceModelId.nanoS
-    ) {
+    if (resolution?.deviceModelId && resolution.deviceModelId !== DeviceModelId.nanoS) {
       const { major, minor, patch } = await this.getVersion();
       if (semver.lt(`${major}.${minor}.${patch}`, MIN_VERSION)) {
         throw new UpdateYourApp(undefined, { managerAppName: MANAGER_APP_NAME });
@@ -36,9 +26,9 @@ export default class Sui extends SuiUpstream {
 }
 
 export type {
+  AppConfig,
   GetPublicKeyResult,
-  SignTransactionResult,
   GetVersionResult,
   Resolution,
-  AppConfig,
-};
+  SignTransactionResult,
+} from "@mysten/ledgerjs-hw-app-sui";
