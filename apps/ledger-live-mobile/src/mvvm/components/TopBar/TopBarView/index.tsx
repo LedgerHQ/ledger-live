@@ -22,6 +22,9 @@ const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
   <Warning size={size ?? ICON_SIZE} style={style} color="base" />
 );
 
+const filterIcons = (icons: (TopBarActionIcon | false)[]): TopBarActionIcon[] =>
+  icons.filter((icon): icon is TopBarActionIcon => Boolean(icon));
+
 type TopBarViewProps = ReturnType<typeof useTopBarViewModel>;
 
 export function TopBarView({
@@ -97,19 +100,27 @@ export function TopBarView({
     loading: isSyncPending,
   };
 
-  const leadingIcons = shouldDisplayOperationsList
-    ? [leadingAction, discoverIcon]
-    : [leadingAction];
+  const getLeadingIcons = (): TopBarActionIcon[] =>
+    filterIcons([leadingAction, shouldDisplayOperationsList && discoverIcon]);
 
-  const baseIcons = shouldDisplayOperationsList
-    ? [notificationsIcon, transactionHistoryIcon, settingsIcon]
-    : [discoverIcon, notificationsIcon, settingsIcon];
+  const displaySyncStatusIcon = hasAccounts && isSyncError;
+  const displayDiscoverIcon = !shouldDisplayOperationsList;
+  const displayNotificationsIcon = !shouldDisplayMyWallet;
+  const displayTransactionHistoryIcon = shouldDisplayOperationsList;
+  const displaySettingsIcon = !shouldDisplayMyWallet;
 
-  const trailingIcons = hasAccounts && isSyncError ? [syncStatusIcon, ...baseIcons] : baseIcons;
+  const getTrailingIcons = (): TopBarActionIcon[] =>
+    filterIcons([
+      displaySyncStatusIcon && syncStatusIcon,
+      displayDiscoverIcon && discoverIcon,
+      displayNotificationsIcon && notificationsIcon,
+      displayTransactionHistoryIcon && transactionHistoryIcon,
+      displaySettingsIcon && settingsIcon,
+    ]);
 
   return (
     <>
-      <CustomTopBar leadingIcons={leadingIcons} trailingIcons={trailingIcons} />
+      <CustomTopBar leadingIcons={getLeadingIcons()} trailingIcons={getTrailingIcons()} />
 
       <SyncErrorBottomSheet
         isOpen={isSyncDrawerOpen}
