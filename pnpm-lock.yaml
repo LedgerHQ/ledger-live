@@ -461,8 +461,8 @@ pnpmfileChecksum: sha256-WizsKK+XY4tzYGFYz2IjQ3NcaxUnMgMAxQXmfGYtEqA=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
-    hash: 90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5
-    path: patches/@bunli+core@0.9.1.patch
+    hash: 07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb
+    path: patches/@bunli__core@0.9.1.patch
   '@callstack/repack@5.2.3':
     hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
     path: patches/@callstack__repack@5.2.3.patch
@@ -2252,7 +2252,7 @@ importers:
     dependencies:
       '@bunli/core':
         specifier: 0.9.1
-        version: 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+        version: 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
@@ -2313,9 +2313,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      bunli:
-        specifier: 0.9.1
-        version: 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       debug:
         specifier: 4.4.3
         version: 4.4.3
@@ -2362,34 +2359,18 @@ importers:
       bun-types:
         specifier: 1.3.12
         version: 1.3.12
+      bunli:
+        specifier: 0.9.1
+        version: 0.9.1(react@19.0.0)(typescript@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
-      react-devtools-core:
-        specifier: 7.0.1
-        version: 7.0.1
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
-    optionalDependencies:
-      '@opentui/core-darwin-arm64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-darwin-x64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-linux-arm64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-linux-x64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-win32-x64':
-        specifier: 0.1.97
-        version: 0.1.97
 
   apps/web-tools:
     dependencies:
@@ -32970,9 +32951,6 @@ packages:
   react-devtools-core@6.1.2:
     resolution: {integrity: sha512-ldFwzufLletzCikNJVYaxlxMLu7swJ3T2VrGfzXlMsVhZhPDKXA38DEROidaYZVgMAmQnIjymrmqto5pyfrwPA==}
 
-  react-devtools-core@7.0.1:
-    resolution: {integrity: sha512-C3yNvRHaizlpiASzy7b9vbnBGLrhvdhl1CbdU6EnZgxPNbai60szdLtl+VL76UNOt5bOoVTOz5rNWZxgGt+Gsw==}
-
   react-docgen-typescript@1.22.0:
     resolution: {integrity: sha512-MPLbF8vzRwAG3GcjdL+OHQlhgtWsLTXs+7uJiHfEeT3Ur7IsZaNYqRTLQ9sj2nB6M6jylcPCeCmH7qbszJmecg==}
     peerDependencies:
@@ -40901,9 +40879,9 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@bunli/core@0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/core@0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/runtime': 0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/runtime': 0.3.2(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils': 0.6.0
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -40922,11 +40900,11 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/generator@0.6.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/generator@0.6.5(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@babel/parser': 7.29.2
       '@babel/traverse': 7.29.0
-      '@bunli/core': 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
       debug: 4.4.3
       zod: 4.3.6
@@ -40940,9 +40918,9 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/plugin-completions@0.3.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/plugin-completions@0.3.5(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/core': 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
     transitivePeerDependencies:
       - bun
@@ -40954,10 +40932,10 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/runtime@0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/runtime@0.3.2(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@opentui/core': 0.1.97(typescript@6.0.2)
-      '@opentui/react': 0.1.97(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@opentui/react': 0.1.97(react@19.0.0)(typescript@6.0.2)
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       better-result: 2.8.2
@@ -40973,11 +40951,11 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/tui@0.6.0(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/tui@0.6.0(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/runtime': 0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/runtime': 0.3.2(react@19.0.0)(typescript@6.0.2)
       '@opentui/core': 0.1.97(typescript@6.0.2)
-      '@opentui/react': 0.1.97(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@opentui/react': 0.1.97(react@19.0.0)(typescript@6.0.2)
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       debug: 4.4.3
@@ -46390,11 +46368,10 @@ snapshots:
       - stage-js
       - typescript
 
-  '@opentui/react@0.1.97(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@opentui/react@0.1.97(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@opentui/core': 0.1.97(typescript@6.0.2)
       react: 19.0.0
-      react-devtools-core: 7.0.1
       react-reconciler: 0.32.0(react@19.0.0)
     transitivePeerDependencies:
       - stage-js
@@ -55913,12 +55890,12 @@ snapshots:
     dependencies:
       run-applescript: 7.0.0
 
-  bunli@0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2):
+  bunli@0.9.1(react@19.0.0)(typescript@6.0.2):
     dependencies:
-      '@bunli/core': 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
-      '@bunli/generator': 0.6.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
-      '@bunli/plugin-completions': 0.3.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
-      '@bunli/tui': 0.6.0(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/generator': 0.6.5(react@19.0.0)(typescript@6.0.2)
+      '@bunli/plugin-completions': 0.3.5(react@19.0.0)(typescript@6.0.2)
+      '@bunli/tui': 0.6.0(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils': 0.6.0
       better-result: 2.8.2
       zod: 4.3.6
@@ -67198,14 +67175,6 @@ snapshots:
       lodash-es: 4.17.21
 
   react-devtools-core@6.1.2:
-    dependencies:
-      shell-quote: 1.8.3
-      ws: 7.5.10
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  react-devtools-core@7.0.1:
     dependencies:
       shell-quote: 1.8.3
       ws: 7.5.10
