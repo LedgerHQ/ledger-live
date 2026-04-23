@@ -310,12 +310,13 @@ describe("getBlock", () => {
     const block = await getBlock(10);
     const ops = block.transactions[0].operations;
     expect(ops).toHaveLength(2);
-    expect(ops[0]).toMatchObject({ type: "transfer", asset: { type: "native" }, amount: expect.any(BigInt) });
+    expect(ops[0]).toMatchObject({ type: "transfer", asset: { type: "native" } });
+    expect(typeof ops[0].amount).toBe("bigint");
     expect(ops[1]).toMatchObject({
       type: "transfer",
       asset: { type: "token", assetReference: "Shitcoinz" },
-      amount: expect.any(BigInt),
     });
+    expect(typeof ops[1].amount).toBe("bigint");
   });
 
   it("path_payment_strict_receive debits source_amount when both send_max and source_amount are present", async () => {

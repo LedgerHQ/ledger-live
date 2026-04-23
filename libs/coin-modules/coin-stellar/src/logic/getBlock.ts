@@ -8,6 +8,7 @@ import type {
 import { fetchAllLedgerOperations, fetchLedgerRecord } from "../network";
 import type { RawOperation } from "../types";
 import { parseAPIValue } from "./common";
+import { assertUnreachable } from "./utils";
 import BigNumber from "bignumber.js";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "XLM" };
@@ -218,7 +219,7 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
   if (op.type === "path_payment_strict_receive") {
     return blockOperationsPathStrictReceive(op);
   }
-  return op as never as BlockOperation[];
+  return assertUnreachable(op);
 }
 
 async function blockTransactionForHash(hash: string, ops: RawOperation[]): Promise<BlockTransaction | null> {

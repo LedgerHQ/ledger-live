@@ -13,6 +13,7 @@ describe("createApi listOperations / operationsFromHeight (no listOperations moc
   afterEach(() => {
     nock.cleanAll();
     nock.enableNetConnect();
+    jest.restoreAllMocks();
   });
 
   it("rethrows non-429 errors from the operations pagination loop", async () => {
@@ -66,14 +67,17 @@ describe("createApi listOperations / operationsFromHeight (no listOperations moc
       return 0 as unknown as NodeJS.Timeout;
     });
 
-    const api = createApi({
-      explorer: {
-        url: `${HORIZON}/`,
-      },
-    });
+    try {
+      const api = createApi({
+        explorer: {
+          url: `${HORIZON}/`,
+        },
+      });
 
-    const page = await api.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
-    expect(page.items).toEqual([]);
-    setTimeoutSpy.mockRestore();
+      const page = await api.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      expect(page.items).toEqual([]);
+    } finally {
+      setTimeoutSpy.mockRestore();
+    }
   });
 });
