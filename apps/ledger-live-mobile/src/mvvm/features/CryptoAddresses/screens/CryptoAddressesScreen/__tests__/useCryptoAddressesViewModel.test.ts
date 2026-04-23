@@ -2,7 +2,7 @@ import { act, renderHook } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
@@ -67,21 +67,27 @@ describe("useCryptoAddressesViewModel", () => {
     expect(result.current.sourceScreenName).toBeUndefined();
   });
 
-  it("should filter out blacklisted token accounts", () => {
+  it("should show only main accounts, not token accounts separately", () => {
     const parentWithToken = { ...ethAccount, subAccounts: [tokenAccount] };
 
     const { result } = renderHook(() => useCryptoAddressesViewModel(), {
-      overrideInitialState: (state: State) => ({
-        ...withAccounts([parentWithToken])(state),
-        settings: { ...state.settings, blacklistedTokenIds: [tokenAccount.token.id] },
-      }),
+      overrideInitialState: withAccounts([parentWithToken]),
     });
 
-    const tokenIds = result.current.accounts
-      .filter(a => a.type === "TokenAccount")
-      .map(a => (a as typeof tokenAccount).token.id);
+    expect(result.current.accounts.every(a => a.type === "Account")).toBe(true);
+    expect(result.current.accounts.some(a => a.type === "TokenAccount")).toBe(false);
+  });
 
-    expect(tokenIds).not.toContain(tokenAccount.token.id);
+  it("should expose aggregated data with sub-account count", () => {
+    const parentWithToken = { ...ethAccount, subAccounts: [tokenAccount] };
+
+    const { result } = renderHook(() => useCryptoAddressesViewModel(), {
+      overrideInitialState: withAccounts([parentWithToken]),
+    });
+
+    const entry = result.current.aggregatedAccountsData.get(parentWithToken.id);
+    expect(entry).toBeDefined();
+    expect(entry?.subAccountsCount).toBe(1);
   });
 
   describe("loading and error states", () => {
@@ -133,7 +139,7 @@ describe("useCryptoAddressesViewModel", () => {
   });
 
   describe("account navigation", () => {
-    it("should navigate and track for a regular Account", () => {
+    it("should navigate and track for a main Account", () => {
       const { result } = renderHook(() => useCryptoAddressesViewModel(), {
         overrideInitialState: withAccounts([btcAccount]),
       });
@@ -145,29 +151,6 @@ describe("useCryptoAddressesViewModel", () => {
       });
       expect(jest.mocked(track)).toHaveBeenCalledWith("account_clicked", {
         currency: "Bitcoin",
-        page: ScreenName.Accounts,
-      });
-    });
-
-    it("should navigate and track for a TokenAccount", () => {
-      const parentWithToken = { ...ethAccount, subAccounts: [tokenAccount] };
-
-      const { result } = renderHook(() => useCryptoAddressesViewModel(), {
-        overrideInitialState: withAccounts([parentWithToken]),
-      });
-
-      act(() => result.current.onAccountPress(tokenAccount));
-
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Account,
-        params: {
-          currencyId: tokenAccount.token.parentCurrency.id,
-          parentId: tokenAccount.parentId,
-          accountId: tokenAccount.id,
-        },
-      });
-      expect(jest.mocked(track)).toHaveBeenCalledWith("account_clicked", {
-        currency: tokenAccount.token.parentCurrency.name,
         page: ScreenName.Accounts,
       });
     });

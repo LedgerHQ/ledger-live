@@ -19,6 +19,7 @@ const View: React.FC<ViewProps> = ({
   hideBalanceInfo,
   withPlaceholder,
   accountId,
+  squaredIcon,
 }) => (
   <>
     <Flex flex={1} rowGap={2} flexShrink={1} testID={`account-item-${accountId}`}>
@@ -45,7 +46,7 @@ const View: React.FC<ViewProps> = ({
         <Text numberOfLines={1} variant="body" color="neutral.c70" flexShrink={1}>
           {formattedAddress}
         </Text>
-        <CurrencyIcon currency={currency} size={20} hideNetwork />
+        <CurrencyIcon squared={squaredIcon} currency={currency} size={20} hideNetwork />
       </Flex>
     </Flex>
     {!hideBalanceInfo && (

@@ -34,11 +34,60 @@ const mockAccount = {
 describe("CryptoAddressesListItem", () => {
   it("should render the account and call onPress with it when pressed", () => {
     const onPress = jest.fn();
-    render(<CryptoAddressesListItem account={mockAccount} onPress={onPress} />);
+    render(
+      <CryptoAddressesListItem
+        account={mockAccount}
+        aggregatedCountervalue={new BigNumber(1000)}
+        subAccountsCount={0}
+        onPress={onPress}
+      />,
+    );
 
     expect(screen.getByText("Bitcoin")).toBeVisible();
 
     fireEvent.press(screen.getByText("Bitcoin"));
     expect(onPress).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("should always show the assets count", () => {
+    const onPress = jest.fn();
+    render(
+      <CryptoAddressesListItem
+        account={mockAccount}
+        aggregatedCountervalue={new BigNumber(1000)}
+        subAccountsCount={0}
+        onPress={onPress}
+      />,
+    );
+
+    expect(screen.getByTestId("assets-count")).toBeVisible();
+  });
+
+  it("should count the main account itself as 1 asset when there are no sub-accounts", () => {
+    const onPress = jest.fn();
+    render(
+      <CryptoAddressesListItem
+        account={mockAccount}
+        aggregatedCountervalue={new BigNumber(1000)}
+        subAccountsCount={0}
+        onPress={onPress}
+      />,
+    );
+
+    expect(screen.getByTestId("assets-count")).toHaveTextContent("1");
+  });
+
+  it("should count main account + sub-accounts", () => {
+    const onPress = jest.fn();
+    render(
+      <CryptoAddressesListItem
+        account={mockAccount}
+        aggregatedCountervalue={new BigNumber(1000)}
+        subAccountsCount={3}
+        onPress={onPress}
+      />,
+    );
+
+    expect(screen.getByTestId("assets-count")).toHaveTextContent("4");
   });
 });

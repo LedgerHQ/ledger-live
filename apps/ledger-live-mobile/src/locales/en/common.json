@@ -3218,7 +3218,9 @@
     "title": "Accounts",
     "addAccount": "Add account",
     "emptyState": "No accounts yet",
-    "errorState": "An error occurred while loading your accounts"
+    "errorState": "An error occurred while loading your accounts",
+    "assetsCount": "{{count}} assets",
+    "assetsCount_one": "{{count}} asset"
   },
   "crypto": {
     "title": "Crypto",
