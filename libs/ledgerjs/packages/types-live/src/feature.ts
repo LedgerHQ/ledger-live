@@ -314,7 +314,6 @@ export type Features = CurrencyFeatures & {
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
-  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwmWallet40: Feature_LwmWallet40;
@@ -813,8 +812,6 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
 
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
-
-export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
 
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
