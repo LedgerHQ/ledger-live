@@ -5,12 +5,19 @@ import { step } from "tests/misc/reporters/step";
 export class delegateModal extends Modal {
   private titleProvider = this.page.getByTestId("modal-provider-title");
   private rowProvider = this.page.getByTestId("modal-provider-row");
+  private validatorList = this.page.getByTestId("validator-list");
   private searchOpenButton = this.page.getByText("Show all");
   private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
   private stakeProviderContainer = (stakeProviderID: string) =>
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
+
+  @step("Wait for validator list to be visible")
+  async waitForValidatorListVisible() {
+    await expect(this.validatorList).toBeVisible();
+    await expect(this.rowProvider.first()).toBeVisible();
+  }
 
   @step("Get title provider on row $0")
   async getTitleProvider(row: number): Promise<string> {
@@ -28,16 +35,7 @@ export class delegateModal extends Modal {
 
   @step("Wait for crypto amount to be populated")
   async waitForCryptoAmountToBePopulated() {
-    const timeout = 100;
-    let retries = 0;
-    while (retries < 5) {
-      if ((await this.cryptoAmountField.inputValue()) === "") {
-        await this.page.waitForTimeout(timeout);
-        retries++;
-      } else {
-        break;
-      }
-    }
+    await expect(this.cryptoAmountField).not.toHaveValue("");
   }
 
   @step("Get crypto amount")
@@ -56,6 +54,11 @@ export class delegateModal extends Modal {
     const providerRow = this.rowProvider.filter({ hasText: name }).first();
     await providerRow.click({ position: { x: 10, y: 10 } }); // Prevent click on the title as it is a redirection
     await this.verifyContinueEnabled();
+  }
+
+  @step("Verify provider $0 is shown in the list")
+  async verifyProviderIsShown(name: string) {
+    await expect(this.rowProvider.filter({ hasText: name }).first()).toBeVisible();
   }
 
   @step("Verify continue button is enabled")
