@@ -1,11 +1,10 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 import type { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
-import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useState } from "react";
 import { ScreenName } from "~/const";
@@ -49,7 +48,7 @@ export default function EvmFeesStrategy({
   ...props
 }: Props<Transaction>) {
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
+  const bridge = useAccountBridge<Transaction>(mainAccount);
   const { colors } = useTheme();
   const { t } = useTranslation();
   const unit = useAccountUnit(mainAccount);
@@ -165,7 +164,6 @@ export default function EvmFeesStrategy({
 
   const onFeesSelected = useCallback(
     ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
-      const bridge = getAccountBridge(account, parentAccount);
 
       const patch: Partial<Transaction> =
         feesStrategy === "custom" && customStrategyTransactionPatch
@@ -178,8 +176,7 @@ export default function EvmFeesStrategy({
     },
     [
       setTransaction,
-      account,
-      parentAccount,
+      bridge,
       transaction,
       customStrategyTransactionPatch,
       gasOptions,

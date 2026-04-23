@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import Input from "~/renderer/components/Input";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
@@ -15,7 +15,7 @@ const MemoValueField = ({
   transaction: Transaction;
   status: TransactionStatus;
 }) => {
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onMemoValueChange = useCallback(
     (memoValue: string) => {
       onChange(bridge.updateTransaction(transaction, { memoValue }));

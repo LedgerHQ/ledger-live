@@ -2,7 +2,8 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { isStash } from "@ledgerhq/live-common/families/polkadot/logic";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { urls } from "~/config/urls";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
@@ -23,7 +24,7 @@ export default function StepAmount({
   error,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const { rewardDestination } = transaction;
   const setRewardDestination = useCallback(
     (rewardDestination: string) => {

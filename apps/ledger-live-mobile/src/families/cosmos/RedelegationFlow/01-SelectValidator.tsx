@@ -15,7 +15,7 @@ import type {
   CosmosValidatorItem,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
@@ -39,7 +39,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<Transaction>(account, undefined);
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations;

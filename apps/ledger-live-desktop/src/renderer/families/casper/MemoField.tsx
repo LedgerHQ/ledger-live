@@ -1,16 +1,17 @@
 import React, { useCallback } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
 import { useTranslation } from "react-i18next";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 import { MemoTagFieldProps } from "./types";
+import type { Transaction } from "@ledgerhq/live-common/families/casper/types";
 
 const MemoField = ({ onChange, account, transaction, status, autoFocus }: MemoTagFieldProps) => {
   invariant(transaction.family === "casper", "TransferIdField: casper family expected");
 
   const { t } = useTranslation();
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const onTransferIdFieldChange = useCallback(
     (value: string) => {

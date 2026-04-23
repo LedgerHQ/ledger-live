@@ -6,14 +6,14 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import AmountField from "../fields/AmountField";
 import ValidatorField from "../fields/ValidatorField";
 import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
 import Alert from "~/renderer/components/Alert";
-import { MappedStake } from "@ledgerhq/live-common/families/sui/types";
+import { MappedStake, Transaction } from "@ledgerhq/live-common/families/sui/types";
 
 export default function StepAmount({
   account,
@@ -25,7 +25,7 @@ export default function StepAmount({
   const { t } = useTranslation();
 
   const [staked, setStaked] = useState(transaction.amount);
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const updateAmount = useCallback(
     (amount: BigNumber) => {

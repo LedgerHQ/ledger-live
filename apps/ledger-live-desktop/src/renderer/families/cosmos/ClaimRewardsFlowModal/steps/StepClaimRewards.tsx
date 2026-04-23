@@ -3,7 +3,8 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -32,11 +33,13 @@ export default function StepClaimRewards({
 }: StepProps) {
   const locale = useSelector(localeSelector);
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const unit = useAccountUnit(account);
   const updateClaimRewards = useCallback(
     (newTransaction: Partial<CosmosLikeTransaction>) => {
-      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
+      onUpdateTransaction(transaction =>
+        bridge.updateTransaction(transaction, newTransaction as Partial<Transaction>),
+      );
     },
     [bridge, onUpdateTransaction],
   );

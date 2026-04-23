@@ -2,9 +2,9 @@ import React, { useCallback, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import RequestAmount from "~/renderer/components/RequestAmount";
@@ -14,7 +14,7 @@ import Text from "~/renderer/components/Text";
 type Props<T extends TransactionCommon> = {
   parentAccount?: Account | null;
   account: AccountLike;
-  transaction: Transaction;
+  transaction: T;
   onChangeTransaction: (_: T) => void;
   status: TransactionStatus;
   bridgePending: boolean;
@@ -38,18 +38,18 @@ const AmountField = <T extends TransactionCommon>({
   walletConnectProxy,
   withUseMaxLabel,
 }: Props<T>) => {
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<T>(account, parentAccount);
 
   useEffect(() => {
     if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue } as Partial<T>));
       resetInitValue?.();
     }
   }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
     (amount: BigNumber) => {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount }));
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount } as Partial<T>));
     },
     [bridge, transaction, onChangeTransaction],
   );
@@ -60,7 +60,7 @@ const AmountField = <T extends TransactionCommon>({
         bridge.updateTransaction(transaction, {
           useAllAmount,
           amount: new BigNumber(0),
-        }),
+        } as Partial<T>),
       );
     },
     [bridge, transaction, onChangeTransaction],

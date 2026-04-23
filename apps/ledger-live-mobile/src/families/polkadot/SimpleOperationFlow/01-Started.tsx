@@ -7,7 +7,7 @@ import type {
   Transaction as PolkadotTransaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Button, Alert, Text, Log } from "@ledgerhq/native-ui";
@@ -43,7 +43,7 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<PolkadotTransaction>(account, parentAccount);
   const { polkadotResources } = mainAccount as PolkadotAccount;
   invariant(polkadotResources, "polkadotResources required");
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
