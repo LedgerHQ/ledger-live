@@ -17,7 +17,11 @@ export default defineCommand({
     const v1 = parseV1(input);
     const network = serializeNetwork(v1.network);
     const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, { command: "account fresh-address", network, account: input });
+    const out = createCommandOutput(flags.output, {
+      command: "account fresh-address",
+      network,
+      account: input,
+    });
 
     await out.run(async () => {
       // address-based (EVM, Solana…): no sync needed, address is in the descriptor

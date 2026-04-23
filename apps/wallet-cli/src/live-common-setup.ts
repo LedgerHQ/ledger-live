@@ -31,8 +31,10 @@ const walletCliLoaders: CoinModuleLoader[] = [
     loadSetup: () => require("@ledgerhq/live-common/families/bitcoin/setup"),
     loadTransaction: () => require("@ledgerhq/coin-bitcoin/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-bitcoin/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("@ledgerhq/live-common/families/bitcoin/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("@ledgerhq/live-common/families/bitcoin/platformAdapter").default,
+    loadWalletApiAdapter: () =>
+      require("@ledgerhq/live-common/families/bitcoin/walletApiAdapter").default,
+    loadPlatformAdapter: () =>
+      require("@ledgerhq/live-common/families/bitcoin/platformAdapter").default,
     loadAccount: () => require("@ledgerhq/coin-bitcoin/account").default,
   },
   {
@@ -40,8 +42,10 @@ const walletCliLoaders: CoinModuleLoader[] = [
     loadSetup: () => require("@ledgerhq/live-common/families/evm/setup"),
     loadTransaction: () => require("@ledgerhq/coin-evm/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-evm/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("@ledgerhq/live-common/families/evm/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("@ledgerhq/live-common/families/evm/platformAdapter").default,
+    loadWalletApiAdapter: () =>
+      require("@ledgerhq/live-common/families/evm/walletApiAdapter").default,
+    loadPlatformAdapter: () =>
+      require("@ledgerhq/live-common/families/evm/platformAdapter").default,
     loadValidateAddress: () => require("@ledgerhq/coin-evm/logic/validateAddress").validateAddress,
   },
   {
@@ -49,7 +53,8 @@ const walletCliLoaders: CoinModuleLoader[] = [
     loadSetup: () => require("@ledgerhq/live-common/families/solana/setup"),
     loadTransaction: () => require("@ledgerhq/coin-solana/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-solana/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("@ledgerhq/live-common/families/solana/walletApiAdapter").default,
+    loadWalletApiAdapter: () =>
+      require("@ledgerhq/live-common/families/solana/walletApiAdapter").default,
   },
 ];
 

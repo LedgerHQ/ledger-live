@@ -170,7 +170,8 @@ export class BridgeAdapter {
       });
     });
 
-    if (signedOperation === undefined) throw new Error("signOperation completed without a signed event");
+    if (signedOperation === undefined)
+      throw new Error("signOperation completed without a signed event");
 
     if (dryRun) {
       subscriber.next({ type: "dry-run" });

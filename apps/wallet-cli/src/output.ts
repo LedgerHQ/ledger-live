@@ -139,7 +139,9 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(this._fmt.formatDiscoveredAccount(d));
   }
 
-  flushDiscovery(): void { /* noop */ }
+  flushDiscovery(): void {
+    /* noop */
+  }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(`  To:     ${p.recipient}`);
@@ -177,7 +179,9 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  sendComplete(): void { /* noop */ }
+  sendComplete(): void {
+    /* noop */
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -197,7 +201,11 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   private _envelope(data: Record<string, unknown>): string {
-    return JSON.stringify(makeEnvelope(this._ctx.command, this._ctx.network, data, this._ctx.account), null, 2);
+    return JSON.stringify(
+      makeEnvelope(this._ctx.command, this._ctx.network, data, this._ctx.account),
+      null,
+      2,
+    );
   }
 
   private _errorEnvelope(e: unknown): string {
@@ -256,7 +264,9 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
-    writeStdout(this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }));
+    writeStdout(
+      this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }),
+    );
   }
 
   sendEvent(event: SendEvent): void {
@@ -280,12 +290,8 @@ class JsonCommandOutput implements CommandOutput {
 // Factory
 // ---------------------------------------------------------------------------
 
-export function createCommandOutput(
-  format: "human" | "json",
-  ctx: OutputContext,
-): CommandOutput {
+export function createCommandOutput(format: "human" | "json", ctx: OutputContext): CommandOutput {
   const humanFmt = new HumanFormatter(getCryptoAssetsStore());
   if (format === "json") return new JsonCommandOutput(ctx, humanFmt);
   return new HumanCommandOutput(humanFmt);
 }
-

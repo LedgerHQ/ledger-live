@@ -93,7 +93,10 @@ export default defineCommand({
     data: option(
       z
         .string()
-        .regex(/^0x([0-9a-fA-F]{2})*$/, "data must be 0x-prefixed hex with an even number of digits")
+        .regex(
+          /^0x([0-9a-fA-F]{2})*$/,
+          "data must be 0x-prefixed hex with an even number of digits",
+        )
         .optional(),
       {
         description: "EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)",
@@ -110,7 +113,11 @@ export default defineCommand({
     const network = networkStringFromCurrencyId(descriptor.currencyId);
     const wallet = new WalletAdapter();
     const dryRun = flags["dry-run"];
-    const out = createCommandOutput(flags.output, { command: "send", network, account: descriptor.id });
+    const out = createCommandOutput(flags.output, {
+      command: "send",
+      network,
+      account: descriptor.id,
+    });
 
     // Build the TransactionIntent based on the currency family
     const { family } = getCryptoCurrencyById(descriptor.currencyId);
@@ -141,9 +148,9 @@ export default defineCommand({
         out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
 
         await lastValueFrom(
-          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).pipe(
-            tap(event => out.sendEvent(event)),
-          ),
+          wallet
+            .send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun)
+            .pipe(tap(event => out.sendEvent(event))),
         );
 
         out.sendComplete();

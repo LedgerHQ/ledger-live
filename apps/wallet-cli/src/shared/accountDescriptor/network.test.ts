@@ -117,9 +117,9 @@ describe("currencyIdFromNetwork", () => {
   });
 
   it("throws UnknownNetworkError for unknown network", () => {
-    expect(() =>
-      currencyIdFromNetwork({ name: "notachain", env: "main" }),
-    ).toThrow(UnknownNetworkError);
+    expect(() => currencyIdFromNetwork({ name: "notachain", env: "main" })).toThrow(
+      UnknownNetworkError,
+    );
   });
 
   it("round-trips with networkFromCurrencyId", () => {

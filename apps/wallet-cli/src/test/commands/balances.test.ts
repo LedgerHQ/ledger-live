@@ -29,10 +29,9 @@ describe("balances command", () => {
   afterAll(() => server.stop());
 
   it("human output: prints ETH balance line", async () => {
-    const { stdout, exitCode, stderr } = await runCli(
-      ["balances", "--account", ETH_DESCRIPTOR],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
-    );
+    const { stdout, exitCode, stderr } = await runCli(["balances", "--account", ETH_DESCRIPTOR], {
+      WALLET_CLI_MOCK_PORT: String(server.port),
+    });
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ETH/i);
     expect(stdout).toMatch(/1\.5/);
