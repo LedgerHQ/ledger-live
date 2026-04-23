@@ -10,7 +10,7 @@ let earnReady: Promise<string>;
 
 const EARN_V2_FLAGS = {
   ...WALLET_40_FEATURE_FLAGS,
-  ptxEarnUi: { enabled: true, params: { value: "v2" } },
+  ptxEarnUi: { enabled: true, params: { value: "v2" as const } },
 };
 
 async function navigateToEarn() {
