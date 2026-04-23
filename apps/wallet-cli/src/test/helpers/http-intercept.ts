@@ -107,10 +107,11 @@ function isExternalOptions(options: any): boolean {
 //   (options[, callback])
 //   (url[, options][, callback])
 // When the first arg is a URL/string and rest[0] is a non-function, it is an options object.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function resolveHttpArgs(
   base: Record<string, unknown>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   firstArg: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rest: any[],
 ): [Record<string, unknown>, ((...a: unknown[]) => unknown) | undefined] {
   if (
