@@ -3,10 +3,10 @@ import { fetchAccount } from "../network";
 
 export async function getBalance(addr: string): Promise<Balance[]> {
   const { balance, assets, spendableBalance } = await fetchAccount(addr);
-  const locked = BigInt(balance.toString()) - BigInt(spendableBalance.toString());
+  const locked = BigInt(balance.toFixed()) - BigInt(spendableBalance.toFixed());
   const nativeRes = [
     {
-      value: BigInt(balance.toString()),
+      value: BigInt(balance.toFixed()),
       asset: { type: "native" as const },
       locked: locked, // locked balance is the difference between native balance and spendable balance
     },
