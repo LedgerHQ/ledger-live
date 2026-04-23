@@ -6,6 +6,11 @@ import buildCoinConfig, {
 export type SolanaConfig = {
   token2022Enabled: boolean;
   legacyOCMSMaxVersion: string;
+  rpcUrls?: {
+    solana?: string;
+    solana_devnet?: string;
+    solana_testnet?: string;
+  };
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;
