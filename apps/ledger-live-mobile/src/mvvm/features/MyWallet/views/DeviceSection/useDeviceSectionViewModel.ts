@@ -4,6 +4,9 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Linking } from "react-native";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
+import { BluetoothRequired } from "@ledgerhq/errors";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { findMatchingNewDevice, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -12,6 +15,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { track } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
 export interface DeviceSectionDevice {
   readonly id: string;
@@ -20,17 +24,22 @@ export interface DeviceSectionDevice {
   readonly available: boolean;
 }
 
-interface DeviceSectionViewModel {
+export interface DeviceSectionViewModel {
   readonly devices: readonly DeviceSectionDevice[];
   readonly hasDevices: boolean;
   readonly onAddDevice: () => void;
   readonly onExploreDevices: () => void;
   readonly onDevicePress: (device: DeviceSectionDevice) => void;
-  readonly selectedDevice: DeviceSectionDevice | null;
+  readonly deviceToRemove: DeviceSectionDevice | null;
   readonly isRemoveDrawerOpen: boolean;
   readonly onOpenRemoveMenu: (device: DeviceSectionDevice) => void;
   readonly onCloseRemoveMenu: () => void;
   readonly onRemoveDevice: () => void;
+  readonly selectedDevice: Device | null;
+  readonly managerAction: ReturnType<typeof useManagerDeviceAction>;
+  readonly onDeviceActionResult: (result: Result) => void;
+  readonly onDeviceActionClose: () => void;
+  readonly onDeviceActionError: (error: Error) => void;
 }
 
 export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
@@ -38,9 +47,11 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const dispatch = useDispatch();
   const knownDevices = useSelector(bleDevicesSelector);
-  const [selectedDevice, setSelectedDevice] = useState<DeviceSectionDevice | null>(null);
+  const [deviceToRemove, setDeviceToRemove] = useState<DeviceSectionDevice | null>(null);
   const [isRemoveDrawerOpen, setIsRemoveDrawerOpen] = useState(false);
   const { scannedDevices } = useBleDevicesScanning(true);
+  const managerAction = useManagerDeviceAction();
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
 
   const devices = useMemo(
     () =>
@@ -69,30 +80,35 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     Linking.openURL(exploreDevicesUrl);
   }, [exploreDevicesUrl]);
 
-  const onDevicePress = useCallback(
-    (device: DeviceSectionDevice) => {
-      track("button_clicked", {
-        button: "Device",
-        page: ScreenName.MyWallet,
-        deviceModelId: device.modelId,
-      });
-      navigation.navigate(NavigatorName.MyLedger, {
-        screen: ScreenName.MyLedgerChooseDevice,
-        params: {
-          device: {
-            deviceId: device.id,
-            deviceName: device.name,
-            modelId: device.modelId,
-            wired: false,
-          },
-        },
-      });
+  const onDevicePress = useCallback((device: DeviceSectionDevice) => {
+    track("button_clicked", {
+      button: "Device",
+      page: ScreenName.MyWallet,
+      deviceModelId: device.modelId,
+    });
+    setSelectedDevice({
+      deviceId: device.id,
+      deviceName: device.name,
+      modelId: device.modelId,
+      wired: false,
+    });
+  }, []);
+
+  const onDeviceActionResult = useCallback(
+    (result: Result) => {
+      setSelectedDevice(null);
+      if (result && "result" in result) {
+        navigation.navigate(NavigatorName.MyLedger, {
+          screen: ScreenName.MyLedgerDevice,
+          params: { ...result, tab: "CATALOG" },
+        });
+      }
     },
     [navigation],
   );
 
   const onOpenRemoveMenu = (device: DeviceSectionDevice) => {
-    setSelectedDevice(device);
+    setDeviceToRemove(device);
     setIsRemoveDrawerOpen(true);
   };
 
@@ -101,17 +117,27 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   };
 
   const onRemoveDevice = useCallback(async () => {
-    if (!selectedDevice) return;
-    dispatch(removeKnownDevice(selectedDevice.id));
+    if (!deviceToRemove) return;
+    dispatch(removeKnownDevice(deviceToRemove.id));
     setIsRemoveDrawerOpen(false);
     try {
-      await disconnect(selectedDevice.id);
+      await disconnect(deviceToRemove.id);
       // eslint-disable-next-line @typescript-eslint/no-empty-function
     } catch {
       /* empty */
     }
+    setDeviceToRemove(null);
+  }, [deviceToRemove, dispatch]);
+
+  const onDeviceActionClose = useCallback(() => {
     setSelectedDevice(null);
-  }, [selectedDevice, dispatch]);
+  }, []);
+
+  const onDeviceActionError = useCallback((error: Error) => {
+    if (error instanceof BluetoothRequired) {
+      setSelectedDevice(null);
+    }
+  }, []);
 
   return {
     devices,
@@ -119,10 +145,15 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
     onAddDevice,
     onExploreDevices,
     onDevicePress,
-    selectedDevice,
+    deviceToRemove,
     isRemoveDrawerOpen,
     onOpenRemoveMenu,
     onCloseRemoveMenu,
     onRemoveDevice,
+    selectedDevice,
+    managerAction,
+    onDeviceActionResult,
+    onDeviceActionClose,
+    onDeviceActionError,
   };
 };

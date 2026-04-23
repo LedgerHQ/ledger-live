@@ -1,7 +1,10 @@
 import React from "react";
 import { Box, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useTranslation } from "~/context/Locale";
-import { type DeviceSectionDevice } from "./useDeviceSectionViewModel";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import { type DeviceSectionDevice, type DeviceSectionViewModel } from "./useDeviceSectionViewModel";
 import { AddDeviceLink } from "./components/AddDeviceLink";
 import { DeviceListContent } from "./components/DeviceListContent";
 import { DeviceRemoveDrawer } from "./components/DeviceRemoveDrawer";
@@ -13,10 +16,15 @@ interface DeviceSectionViewProps {
   readonly onExploreDevices: () => void;
   readonly onDevicePress: (device: DeviceSectionDevice) => void;
   readonly onOpenMenu: (device: DeviceSectionDevice) => void;
-  readonly selectedDevice: DeviceSectionDevice | null;
+  readonly deviceToRemove: DeviceSectionDevice | null;
   readonly isRemoveDrawerOpen: boolean;
   readonly onCloseRemoveMenu: () => void;
   readonly onRemoveDevice: () => void;
+  readonly selectedDevice: Device | null;
+  readonly managerAction: DeviceSectionViewModel["managerAction"];
+  readonly onDeviceActionResult: (result: Result) => void;
+  readonly onDeviceActionClose: () => void;
+  readonly onDeviceActionError: (error: Error) => void;
 }
 
 export function DeviceSectionView({
@@ -26,10 +34,15 @@ export function DeviceSectionView({
   onExploreDevices,
   onDevicePress,
   onOpenMenu,
-  selectedDevice,
+  deviceToRemove,
   isRemoveDrawerOpen,
   onCloseRemoveMenu,
   onRemoveDevice,
+  selectedDevice,
+  managerAction,
+  onDeviceActionResult,
+  onDeviceActionClose,
+  onDeviceActionError,
 }: DeviceSectionViewProps) {
   const { t } = useTranslation();
 
@@ -56,10 +69,19 @@ export function DeviceSectionView({
       </Box>
 
       <DeviceRemoveDrawer
-        device={selectedDevice}
+        device={deviceToRemove}
         isOpen={isRemoveDrawerOpen}
         onClose={onCloseRemoveMenu}
         onRemove={onRemoveDevice}
+      />
+
+      <DeviceActionModal
+        device={selectedDevice}
+        action={managerAction}
+        request={null}
+        onResult={onDeviceActionResult}
+        onClose={onDeviceActionClose}
+        onError={onDeviceActionError}
       />
     </Box>
   );

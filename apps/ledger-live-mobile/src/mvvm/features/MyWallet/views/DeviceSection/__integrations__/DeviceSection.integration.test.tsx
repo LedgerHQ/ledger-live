@@ -4,6 +4,18 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceSectionView } from "../DeviceSectionView";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 
+jest.mock("~/components/DeviceActionModal", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock("~/hooks/deviceActions", () => ({
+  useManagerDeviceAction: () => ({
+    useHook: jest.fn(),
+    mapResult: jest.fn(),
+  }),
+}));
+
 const mockDevices: DeviceSectionDevice[] = [
   { id: "device-1", name: "Flex Pro", modelId: DeviceModelId.europa, available: false },
   { id: "device-2", name: "Flex Perso", modelId: DeviceModelId.europa, available: false },
@@ -16,11 +28,16 @@ const mockOnDevicePress = jest.fn();
 const mockOnOpenMenu = jest.fn();
 const mockOnCloseRemoveMenu = jest.fn();
 const mockOnRemoveDevice = jest.fn();
+const mockOnDeviceActionResult = jest.fn();
+const mockOnDeviceActionClose = jest.fn();
+const mockOnDeviceActionError = jest.fn();
+
+const mockManagerAction = { useHook: jest.fn(), mapResult: jest.fn() } as const;
 
 const renderView = (
   devices: readonly DeviceSectionDevice[],
   overrides: Partial<{
-    selectedDevice: DeviceSectionDevice | null;
+    deviceToRemove: DeviceSectionDevice | null;
     isRemoveDrawerOpen: boolean;
   }> = {},
 ) =>
@@ -32,10 +49,15 @@ const renderView = (
       onExploreDevices={mockOnExploreDevices}
       onDevicePress={mockOnDevicePress}
       onOpenMenu={mockOnOpenMenu}
-      selectedDevice={overrides.selectedDevice ?? null}
+      deviceToRemove={overrides.deviceToRemove ?? null}
       isRemoveDrawerOpen={overrides.isRemoveDrawerOpen ?? false}
       onCloseRemoveMenu={mockOnCloseRemoveMenu}
       onRemoveDevice={mockOnRemoveDevice}
+      selectedDevice={null}
+      managerAction={mockManagerAction}
+      onDeviceActionResult={mockOnDeviceActionResult}
+      onDeviceActionClose={mockOnDeviceActionClose}
+      onDeviceActionError={mockOnDeviceActionError}
     />,
   );
 
