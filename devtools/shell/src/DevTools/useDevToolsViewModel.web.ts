@@ -2,6 +2,7 @@ import { TOOLS } from "../tools.config";
 import { useDevToolsNavigation } from "../hooks";
 import { useDevToolsStorage } from "../hooks/useDevToolsStorage.web";
 import type { Category, Tool } from "../types";
+import { filterToolsByPlatform } from "../utils/toolsUtils";
 
 type ColorScheme = "light" | "dark" | "system";
 
@@ -21,7 +22,9 @@ export interface DevToolsViewProps {
 export function useDevToolsViewModel({
   colorScheme = "system",
 }: DevToolsInput = {}): DevToolsViewProps {
-  const { activeTool, setActiveToolId, clearActiveTool, categories } = useDevToolsNavigation(TOOLS);
+  const { activeTool, setActiveToolId, clearActiveTool, categories } = useDevToolsNavigation(
+    filterToolsByPlatform(TOOLS, "web"),
+  );
   const { recentToolIds } = useDevToolsStorage(activeTool?.id, setActiveToolId);
 
   return {

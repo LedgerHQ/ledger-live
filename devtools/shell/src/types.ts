@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
 
+export type ToolPlatform = "web" | "native";
+
 export enum Category {
   CONFIGURATION = "Configuration",
   FEATURES_AND_FLOWS = "Features & flows",
@@ -18,5 +20,8 @@ export interface Tool {
   owner?: string;
   desc?: string;
   icon?: string;
-  component: ComponentType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: ComponentType<any>;
+  platform?: "web" | "native";
+  optional?: boolean;
 }

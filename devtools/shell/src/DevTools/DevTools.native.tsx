@@ -7,6 +7,7 @@ import { Category } from "../types";
 import type { Tool } from "../types";
 import { DevToolsProvider } from "../context";
 import type { DevToolsPropsRegistry } from "../context";
+import { filterToolsByPlatform } from "../utils/toolsUtils";
 
 export type DevToolsProps = DevToolsPropsRegistry;
 
@@ -21,10 +22,11 @@ const DevToolsShell = () => {
   const [query, setQuery] = useState("");
 
   const q = query.trim().toLowerCase();
+  const nativeTools = filterToolsByPlatform(TOOLS, "native");
 
   const toolsByCategory = CATEGORIES.map(cat => ({
     category: cat,
-    tools: TOOLS.filter(t => t.category === cat),
+    tools: nativeTools.filter(t => t.category === cat),
   })).filter(({ tools }) => tools.length > 0);
 
   const navigateToCategory = (cat: Category) => {
@@ -124,7 +126,7 @@ const DevToolsShell = () => {
               </Box>
             </Pressable>
             <ScrollView>
-              {TOOLS.filter(t => t.category === activeCategory).map(tool => (
+              {nativeTools.filter(t => t.category === activeCategory).map(tool => (
                 <Pressable
                   key={tool.id}
                   testID={`devtools-tool-${tool.id}`}

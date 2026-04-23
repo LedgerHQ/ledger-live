@@ -1,7 +1,11 @@
 import { Category } from "../types";
-import type { Tool } from "../types";
+import type { Tool, ToolPlatform } from "../types";
 
 type CategoryEntry = { category: Category; tools: Tool[] };
+
+export function filterToolsByPlatform(tools: Tool[], platform: ToolPlatform): Tool[] {
+  return tools.filter(t => !t.platform || t.platform === platform);
+}
 
 export function filterToolsByQuery(categories: CategoryEntry[], query: string): CategoryEntry[] {
   const q = query.trim().toLowerCase();
