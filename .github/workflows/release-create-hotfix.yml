@@ -38,13 +38,13 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          ref: ${{ steps.format-app-tag.outputs.main_ref }}
+          ref: hotfix
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: create hotfix branch
-        run: |
-          git checkout -b hotfix
+#      - name: create hotfix branch
+#        run: |
+#          git checkout hotfix
 #          git checkout origin/main -- .github/workflows
 #          git push -u origin hotfix
       - name: Setup the caches
