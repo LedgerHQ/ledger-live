@@ -6,6 +6,7 @@ import type {
 import { TransactionInfo, TraceBlockItem, isTraceBlockCallAction } from "../network/node/types";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
+import { NON_VALUE_TRANSFER_CALL_TYPES } from "./nonValueTransferCallTypes";
 
 /**
  * Helper function to add transfer operations for a from/to pair.
@@ -87,6 +88,11 @@ function extractActionFields(
   // When traceBlockItemsToOperationsByHash processed the top-level trace without filtering it out,
   // the same native transfer appeared twice after merging.
   if (item.traceAddress.length === 0) return null;
+
+  // `delegatecall`, `staticcall`, and `callcode` cannot move native ETH; the `value` field here
+  // is msg.value inherited from the enclosing frame. Converting them into operations would
+  // double-count the transfer.
+  if (NON_VALUE_TRANSFER_CALL_TYPES.has(action.callType.toLowerCase())) return null;
 
   const value = BigInt(action.value);
   if (value === 0n) return null;
