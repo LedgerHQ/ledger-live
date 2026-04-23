@@ -23,7 +23,7 @@ export function ContextMenu() {
             aria-label="My wallet"
             className="cursor-pointer items-center justify-center rounded-full hover:bg-muted-hover"
           >
-            <UserAvatar />
+            <UserAvatar showNotification />
           </button>
         }
       />
