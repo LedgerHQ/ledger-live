@@ -14,11 +14,13 @@ import {
   getMockedMirrorTransaction,
   getMockedMirrorContractCallResult,
 } from "../test/fixtures/mirror.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedThirdwebTransaction } from "../test/fixtures/thirdweb.fixture";
 import type { HederaMirrorCoinTransfer } from "../types";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import {
+  createTransactionId,
   enrichERC20Transfers,
   getERC20BalancesForAccount,
   getERC20BalancesForAccountV2,
@@ -31,8 +33,62 @@ jest.mock("./api");
 jest.mock("./hgraph");
 
 describe("network utils", () => {
+  const defaultConfig = getMockedConfig();
+
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  describe("createTransactionId", () => {
+    it("should use mirror node timestamp when feature flag is enabled", async () => {
+      (apiClient.getLatestBlock as jest.Mock).mockResolvedValue({
+        timestamp: { from: "1758733200.632122898", to: null },
+      });
+
+      const result = await createTransactionId("0.0.54321", {
+        ...defaultConfig,
+        useNetworkTimestamp: true,
+      });
+
+      expect(apiClient.getLatestBlock).toHaveBeenCalledTimes(1);
+      expect(result.validStart?.seconds.toString()).toEqual("1758733200");
+      expect(result.validStart?.nanos.toString()).toEqual("632122898");
+    });
+
+    it("should fallback to system timestamp when latest block fetch fails", async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date("2000-01-01T00:00:00.000Z"));
+      (apiClient.getLatestBlock as jest.Mock).mockRejectedValue(new Error("network unavailable"));
+
+      const result = await createTransactionId("0.0.54321", {
+        ...defaultConfig,
+        useNetworkTimestamp: true,
+      });
+
+      const localSkewSeconds = Number(result.validStart?.seconds.toString());
+      expect(apiClient.getLatestBlock).toHaveBeenCalledTimes(1);
+      expect(localSkewSeconds).toBeGreaterThanOrEqual(946684700);
+      expect(localSkewSeconds).toBeLessThanOrEqual(946684800);
+    });
+
+    it("should use system timestamp when feature flag is disabled", async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date("2000-01-01T00:00:00.000Z"));
+
+      const result = await createTransactionId("0.0.54321", {
+        ...defaultConfig,
+        useNetworkTimestamp: false,
+      });
+
+      const localSkewSeconds = Number(result.validStart?.seconds.toString());
+      expect(apiClient.getLatestBlock).not.toHaveBeenCalled();
+      expect(localSkewSeconds).toBeGreaterThanOrEqual(946684700);
+      expect(localSkewSeconds).toBeLessThanOrEqual(946684800);
+    });
   });
 
   describe("parseTransfers", () => {
@@ -314,20 +370,20 @@ describe("network utils", () => {
           },
         },
       });
-      const mockContractCallResult = {
+      const mockContractCallResult = getMockedMirrorContractCallResult({
         timestamp: "1234567890.000000000",
         contract_id: mockTokenERC20.contractAddress,
         gas_consumed: 50000,
         gas_limit: 100000,
         gas_used: 50000,
-      };
-      const mockMirrorTransaction = {
+      });
+      const mockMirrorTransaction = getMockedMirrorTransaction({
         consensus_timestamp: mockContractCallResult.timestamp,
         transaction_hash: "BASE64HASH",
         transaction_id: "0.0.123@1234567890.000",
         charged_tx_fee: 100000,
         memo_base64: "",
-      };
+      });
 
       (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
       (apiClient.findTransactionByContractCall as jest.Mock).mockResolvedValue(
@@ -383,17 +439,12 @@ describe("network utils", () => {
         transactionHash: "0xTXHASH1",
         address: mockTokenERC20.contractAddress,
       });
-      const mockContractCallResult = {
+      const mockContractCallResult = getMockedMirrorContractCallResult({
         timestamp: "1234567890.000000000",
         contract_id: mockTokenERC20.contractAddress,
-        gas_consumed: 50000,
-        gas_limit: 100000,
-        gas_used: 50000,
-      };
+      });
 
-      (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(
-        mockContractCallResult as any,
-      );
+      (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
       (apiClient.findTransactionByContractCall as jest.Mock).mockResolvedValue(null);
       setupMockCryptoAssetsStore({
         findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockTokenERC20),

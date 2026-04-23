@@ -1,5 +1,4 @@
 import {
-  AccountId,
   AccountUpdateTransaction,
   ContractExecuteTransaction,
   ContractFunctionParameters,
@@ -12,12 +11,14 @@ import {
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import type { HederaConfig } from "../config";
 import {
   DEFAULT_GAS_LIMIT,
   HEDERA_TRANSACTION_MODES,
   TRANSACTION_VALID_DURATION_SECONDS,
 } from "../constants";
 import { rpcClient } from "../network/rpc";
+import { createTransactionId } from "../network/utils";
 import type { HederaMemo, HederaTxData } from "../types";
 import { hasSpecificIntentData, serializeTransaction, toEVMAddress } from "./utils";
 
@@ -26,6 +27,7 @@ interface BuilderOperator {
 }
 
 interface BuilderCommonTransactionFields {
+  transactionId: TransactionId;
   maxFee: BigNumber | undefined;
   memo: string;
 }
@@ -76,7 +78,7 @@ async function buildUnsignedCoinTransaction({
 
   const tx = new TransferTransaction()
     .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
-    .setTransactionId(TransactionId.generate(accountId))
+    .setTransactionId(transaction.transactionId)
     .setTransactionMemo(transaction.memo)
     .addHbarTransfer(accountId, hbarAmount.negated())
     .addHbarTransfer(transaction.recipient, hbarAmount);
@@ -100,7 +102,7 @@ async function buildUnsignedHTSTokenTransaction({
 
   const tx = new TransferTransaction()
     .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
-    .setTransactionId(TransactionId.generate(accountId))
+    .setTransactionId(transaction.transactionId)
     .setTransactionMemo(transaction.memo)
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
     .addTokenTransfer(tokenId, transaction.recipient, transaction.amount.toNumber());
@@ -113,13 +115,10 @@ async function buildUnsignedHTSTokenTransaction({
 }
 
 async function buildUnsignedERC20TokenTransaction({
-  account,
   transaction,
 }: {
-  account: BuilderOperator;
   transaction: BuilderERC20TokenTransferTransaction;
 }): Promise<ContractExecuteTransaction> {
-  const accountId = AccountId.fromString(account.accountId);
   const contractId = ContractId.fromEvmAddress(0, 0, transaction.tokenAddress);
   const recipientEvmAddress = await toEVMAddress(transaction.recipient);
   invariant(recipientEvmAddress, `hedera: EVM address is missing ${transaction.recipient}`);
@@ -133,7 +132,7 @@ async function buildUnsignedERC20TokenTransaction({
 
   const tx = new ContractExecuteTransaction()
     .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
-    .setTransactionId(TransactionId.generate(accountId))
+    .setTransactionId(transaction.transactionId)
     .setTransactionMemo(transaction.memo ?? "")
     .setContractId(contractId)
     .setGas(gas)
@@ -157,7 +156,7 @@ async function buildTokenAssociateTransaction({
 
   const tx = new TokenAssociateTransaction()
     .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
-    .setTransactionId(TransactionId.generate(accountId))
+    .setTransactionId(transaction.transactionId)
     .setTransactionMemo(transaction.memo)
     .setAccountId(accountId)
     .setTokenIds([transaction.tokenId]);
@@ -180,7 +179,7 @@ async function buildUnsignedUpdateAccountTransaction({
 
   const tx = new AccountUpdateTransaction()
     .setTransactionValidDuration(TRANSACTION_VALID_DURATION_SECONDS)
-    .setTransactionId(TransactionId.generate(accountId))
+    .setTransactionId(transaction.transactionId)
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId);
 
@@ -199,12 +198,27 @@ async function buildUnsignedUpdateAccountTransaction({
   return tx.freezeWith(await rpcClient.getInstance());
 }
 
-export async function craftTransaction(
-  txIntent: TransactionIntent<HederaMemo, HederaTxData>,
-  customFees?: FeeEstimation,
-) {
+function isStakingMode(type: string): type is BuilderUpdateAccountTransaction["type"] {
+  return (
+    type === HEDERA_TRANSACTION_MODES.Redelegate ||
+    type === HEDERA_TRANSACTION_MODES.Undelegate ||
+    type === HEDERA_TRANSACTION_MODES.Delegate
+  );
+}
+
+export async function craftTransaction({
+  txIntent,
+  customFees,
+  config,
+}: {
+  txIntent: TransactionIntent<HederaMemo, HederaTxData>;
+  customFees?: FeeEstimation;
+  config: HederaConfig;
+}) {
   const account = { accountId: txIntent.sender };
   const maxFee = customFees ? new BigNumber(customFees.value.toString()) : undefined;
+
+  const transactionId = await createTransactionId(account.accountId, config);
 
   let tx;
 
@@ -216,6 +230,7 @@ export async function craftTransaction(
       account,
       transaction: {
         type: txIntent.type,
+        transactionId,
         tokenId: txIntent.asset.assetReference,
         memo: txIntent.memo.value,
         maxFee,
@@ -230,6 +245,7 @@ export async function craftTransaction(
       account,
       transaction: {
         type: txIntent.type,
+        transactionId,
         tokenAddress: txIntent.asset.assetReference,
         amount,
         recipient: txIntent.recipient,
@@ -246,9 +262,9 @@ export async function craftTransaction(
       : DEFAULT_GAS_LIMIT;
 
     tx = await buildUnsignedERC20TokenTransaction({
-      account,
       transaction: {
         type: txIntent.type,
+        transactionId,
         tokenAddress: txIntent.asset.assetReference,
         amount,
         recipient: txIntent.recipient,
@@ -257,11 +273,7 @@ export async function craftTransaction(
         gasLimit,
       },
     });
-  } else if (
-    txIntent.type === HEDERA_TRANSACTION_MODES.Redelegate ||
-    txIntent.type === HEDERA_TRANSACTION_MODES.Undelegate ||
-    txIntent.type === HEDERA_TRANSACTION_MODES.Delegate
-  ) {
+  } else if (isStakingMode(txIntent.type)) {
     const stakingNodeId = hasSpecificIntentData(txIntent, "staking")
       ? txIntent.data.stakingNodeId
       : undefined;
@@ -270,6 +282,7 @@ export async function craftTransaction(
       account,
       transaction: {
         type: txIntent.type,
+        transactionId,
         memo: txIntent.memo.value,
         maxFee,
         stakingNodeId,
@@ -284,6 +297,7 @@ export async function craftTransaction(
       account,
       transaction: {
         type: HEDERA_TRANSACTION_MODES.Send,
+        transactionId,
         amount,
         recipient: txIntent.recipient,
         memo: txIntent.memo.value,

@@ -8,9 +8,11 @@ import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import type {
   HederaMirrorAccountTokensResponse,
+  HederaMirrorBlocksResponse,
   HederaMirrorTransactionsResponse,
   HederaMirrorAccount,
   HederaMirrorAccountsResponse,
+  HederaMirrorBlock,
   HederaMirrorToken,
   HederaMirrorTransaction,
   HederaMirrorNetworkFees,
@@ -179,6 +181,25 @@ async function getLatestTransaction(before: Date): Promise<HederaMirrorTransacti
   }
 
   return transaction;
+}
+
+async function getLatestBlock(): Promise<HederaMirrorBlock> {
+  const params = new URLSearchParams({
+    limit: "1",
+    order: "desc",
+  });
+
+  const res = await network<HederaMirrorBlocksResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/blocks?${params.toString()}`,
+  });
+  const block = res.data.blocks[0];
+
+  if (!block) {
+    throw new Error("No blocks found on the Hedera network");
+  }
+
+  return block;
 }
 
 async function getNetworkFees(): Promise<HederaMirrorNetworkFees> {
@@ -410,6 +431,7 @@ export const apiClient = {
   getAccount,
   getAccountTokens,
   getAccountTransactions,
+  getLatestBlock,
   getLatestTransaction,
   getNetworkFees,
   getContractCallResult,
