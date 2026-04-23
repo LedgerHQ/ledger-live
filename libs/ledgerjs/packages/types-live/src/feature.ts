@@ -320,6 +320,7 @@ export type Features = CurrencyFeatures & {
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
+  transferButtonCopyVariant: Feature_TransferButtonCopyVariant;
 };
 
 /**
@@ -808,6 +809,16 @@ export type Feature_LldNanoSUpsellBanners = Feature<{
 export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
+}>;
+
+export type Feature_TransferButtonCopyVariant = Feature<{
+  variantId: string;
+  buttonLabel?: string;
+  modalTitle?: string;
+  rowReceiveTitle?: string;
+  rowSendTitle?: string;
+  rowCashToStableTitle?: string;
+  rowCashToStableDescription?: string;
 }>;
 
 export type Feature_LlmHomescreen = DefaultFeature;

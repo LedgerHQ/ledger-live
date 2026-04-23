@@ -16,10 +16,11 @@ import {
   RootNavigationComposite,
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsCountSelector, areAccountsEmptySelector } from "~/reducers/accounts";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveRemoteCopy } from "@ledgerhq/live-common/featureFlags/remoteABTesting/resolveRemoteCopy";
 import { track } from "~/analytics";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { QuickActionCta, UserQuickActionsState } from "../../types";
@@ -55,6 +56,10 @@ export const useQuickActionsCtasViewModel = ({
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isExchangeEnabled = ptxServiceCtaExchangeDrawer?.enabled ?? true;
+
+  const transferCopyFlag = useFeature("transferButtonCopyVariant");
+  const language = useSelector(languageSelector);
+  const isEN = language === "en";
 
   const { shouldDisplayQuickActionsCtasVariant } = useWalletFeaturesConfig("mobile");
 
@@ -148,7 +153,12 @@ export const useQuickActionsCtasViewModel = ({
     () => [
       {
         id: "transfer",
-        label: t("portfolio.quickActionsCtas.transfer"),
+        label: resolveRemoteCopy(
+          transferCopyFlag?.enabled,
+          isEN,
+          transferCopyFlag?.params?.buttonLabel,
+          t("portfolio.quickActionsCtas.transfer"),
+        ),
         icon: TransferVertical,
         disabled: false,
         onPress: handleTransferPress,
@@ -171,7 +181,15 @@ export const useQuickActionsCtasViewModel = ({
         testID: QUICK_ACTIONS_TEST_IDS.ctas.buy,
       },
     ],
-    [t, isExchangeEnabled, handleTransferPress, handleSwapPress, handleBuyPress],
+    [
+      t,
+      isEN,
+      transferCopyFlag,
+      isExchangeEnabled,
+      handleTransferPress,
+      handleSwapPress,
+      handleBuyPress,
+    ],
   );
 
   // variant: Receive + Swap + Buy + Send (Send omitted when no funds)
