@@ -8018,6 +8018,28 @@
         "daily": "Daily rewards",
         "eigenlayer_points": "Eigenlayer points",
         "validator": "Validator rewards"
+      },
+      "info": {
+        "available": {
+          "title": "{{currencyTicker}} available",
+          "description": "This amount is disposable."
+        },
+        "delegated": {
+          "title": "Delegated assets",
+          "description": "Delegated assets are used for {{currencyName}} voting. This is your total number of votes."
+        },
+        "undelegating": {
+          "title": "Undelegating",
+          "description": "Undelegated assets are in a timelock of {{numberOfDays}} days, before being available."
+        },
+        "delegationUnavailable": {
+          "title": "Delegation unavailable",
+          "description": "Not enough available balance in your account to start a new delegation."
+        },
+        "claimable": {
+          "title": "Claimable Rewards",
+          "description": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose."
+        }
       }
     },
     "noFundsModal": {

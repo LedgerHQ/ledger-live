@@ -39,6 +39,7 @@ import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
 import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
+import { StakingAccount } from "@ledgerhq/coin-evm/types/index";
 
 type Props = {
   account?: AccountLike;
@@ -147,6 +148,7 @@ export function useListHeaderComponents({
     perFamilyAccountBalanceSummaryFooter[
       family as keyof typeof perFamilyAccountBalanceSummaryFooter
     ];
+
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
@@ -157,14 +159,15 @@ export function useListHeaderComponents({
         PolkadotAccount &
         MultiversXAccount &
         HederaAccount &
-        NearAccount,
+        NearAccount &
+        StakingAccount,
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
 
   const isOperationStuck = Boolean(
     oldestEditableOperation &&
-    isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
+      isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
   );
 
   const disableDelegation =
