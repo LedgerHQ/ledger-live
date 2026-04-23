@@ -85,7 +85,8 @@ export function useActionsListViewModel(): ActionsListViewModel {
         entry: "my_wallet_actions_list",
       });
     }
-  }, [referralProgramConfig, navigate, location.pathname]);
+    close();
+  }, [referralProgramConfig, navigate, location.pathname, close]);
 
   const actions: Action[] = [
     ...(recoverFeature?.enabled
