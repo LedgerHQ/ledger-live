@@ -15,6 +15,5 @@ export * from "./llmModularDrawer";
 export * from "./llmRefreshMarketData";
 export * from "./llmThai";
 export * from "./lwdWallet40";
-export * from "./lwmProductTour";
 export * from "./lwmWallet40";
 export * from "./transferButtonCopyVariant";
