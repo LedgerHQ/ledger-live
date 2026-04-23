@@ -104,7 +104,7 @@ export class AccountsPage extends AppPage {
             if (!store?.getState) return -1;
             return store.getState().accounts?.length ?? 0;
           }),
-        { timeout: 120_000 },
+        { timeout: 60_000 },
       )
       .toBe(count);
   }
