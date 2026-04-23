@@ -5,12 +5,16 @@ import { useState } from "react";
 import { TOOLS } from "../tools.config";
 import { Category } from "../types";
 import type { Tool } from "../types";
+import { DevToolsProvider } from "../context";
+import type { DevToolsPropsRegistry } from "../context";
+
+export type DevToolsProps = DevToolsPropsRegistry;
 
 type Screen = "home" | "category" | "tool";
 
 const CATEGORIES = Object.values(Category);
 
-export const DevTools = () => {
+const DevToolsShell = () => {
   const [screen, setScreen] = useState<Screen>("home");
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeTool, setActiveTool] = useState<Tool | null>(null);
@@ -52,7 +56,6 @@ export const DevTools = () => {
   );
 
   return (
-    <ThemeProvider themes={ledgerLiveThemes}>
       <Box testID="devtools" lx={{ flex: 1, flexDirection: "column", backgroundColor: "canvas" }}>
         <Box lx={{ paddingHorizontal: "s16", paddingVertical: "s6", backgroundColor: "warning" }}>
           <Text typography="body3SemiBold" lx={{ color: "warning" }}>
@@ -196,6 +199,13 @@ export const DevTools = () => {
           </Box>
         )}
       </Box>
-    </ThemeProvider>
   );
 };
+
+export const DevTools = (props: DevToolsProps) => (
+  <ThemeProvider themes={ledgerLiveThemes}>
+    <DevToolsProvider {...props}>
+      <DevToolsShell />
+    </DevToolsProvider>
+  </ThemeProvider>
+);

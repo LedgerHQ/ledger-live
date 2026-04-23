@@ -1,8 +1,12 @@
 import { ThemeProvider, Divider } from "@ledgerhq/lumen-ui-react";
 import { Sidebar, ToolShell, Overview } from "../components";
 import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
+import { DevToolsProvider } from "../context";
+import type { DevToolsPropsRegistry } from "../context";
 
 type ColorScheme = "light" | "dark" | "system";
+
+export type DevToolsProps = DevToolsPropsRegistry & { colorScheme?: ColorScheme };
 
 function DevToolsView({
   colorScheme,
@@ -51,10 +55,8 @@ function DevToolsView({
   );
 }
 
-interface DevToolsProps {
-  colorScheme?: ColorScheme;
-}
-
-export const DevTools = ({ colorScheme }: DevToolsProps) => (
-  <DevToolsView {...useDevToolsViewModel({ colorScheme })} />
+export const DevTools = ({ colorScheme, ...toolProps }: DevToolsProps) => (
+  <DevToolsProvider {...toolProps}>
+    <DevToolsView {...useDevToolsViewModel({ colorScheme })} />
+  </DevToolsProvider>
 );
