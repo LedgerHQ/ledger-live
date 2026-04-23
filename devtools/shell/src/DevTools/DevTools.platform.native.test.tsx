@@ -7,9 +7,6 @@ jest.mock("../tools.config", () => ({
     makeTool({ id: "web-tool", label: "Web Tool", category: "Configuration", platform: "web" }),
     makeTool({ id: "native-tool", label: "Native Tool", category: "Configuration", platform: "native" }),
     makeTool({ id: "shared-tool", label: "Shared Tool", category: "Configuration" }),
-    makeTool({ id: "web-tool", label: "Web Tool", category: "Dev Tools", platform: "web" }),
-    makeTool({ id: "native-tool", label: "Native Tool", category: "Dev Tools", platform: "native" }),
-    makeTool({ id: "shared-tool", label: "Shared Tool", category: "Dev Tools" }),
   ],
 }));
 

@@ -1,5 +1,16 @@
 import { fireEvent, render, screen } from "jest/render.native";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
+import { FEATURE_FLAGS_ID } from "../toolIds";
 import { DevTools } from "./DevTools.native";
+
+const featureFlagsProps = {
+  resolved: FEATURE_FLAGS_INITIAL_STATE.resolved,
+  overrides: {} as PartialFeatures,
+  setOverride: jest.fn(),
+  clearOverride: jest.fn(),
+  clearAllOverrides: jest.fn(),
+};
 
 describe("DevTools (native)", () => {
   it("renders the shell", () => {
@@ -32,10 +43,11 @@ describe("DevTools (native)", () => {
   });
 
   it("tapping a tool shows the tool screen", () => {
-    render(<DevTools />);
+    render(<DevTools {...{ [FEATURE_FLAGS_ID]: featureFlagsProps }} />);
     fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
     fireEvent.press(screen.getByRole("button", { name: "Feature Flags" }));
     expect(screen.getByTestId("devtools-content")).toBeOnTheScreen();
     expect(screen.getByTestId("devtools-content")).toHaveTextContent(/Feature Flags/);
   });
+
 });
