@@ -97,13 +97,13 @@ test.describe("Swap - Default currency when landing on swap", () => {
       ],
       annotation: { type: "TMS", description: "B2CQA-3080" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsTitleVisibility();
       await app.swap.goAndWaitForSwapToBeReady(() =>
@@ -165,16 +165,16 @@ test.describe("Swap - Rejected on device", () => {
       ],
       annotation: { type: "TMS", description: "B2CQA-2212" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
-      await app.swap.selectExchangeWithoutKyc(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, rejectedSwap, minAmount);
+      await app.swap.selectExchangeWithoutKyc();
 
-      await app.swap.clickExchangeButton(electronApp);
+      await app.swap.clickExchangeButton();
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -270,7 +270,7 @@ for (const {
         ],
         annotation: { type: "TMS", description: xrayTicket },
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         const tmsDescription = getDescription(test.info().annotations, "TMS");
         await addTmsLink(tmsDescription.split(", "));
         swap.accountToDebit.address = addressFrom;
@@ -281,11 +281,10 @@ for (const {
           swap.accountToCredit,
         );
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
 
         await handleSwapErrorOrSuccess(
           app,
-          electronApp,
           swap,
           minAmount,
           errorMessage ?? null,
@@ -334,7 +333,7 @@ test.describe("Swap a coin for which you have no account yet - from present to n
       ],
       annotation: { type: "TMS", description: xrayTicket },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
@@ -354,10 +353,10 @@ test.describe("Swap a coin for which you have no account yet - from present to n
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
       } else {
-        await app.swap.selectAssetFrom(electronApp, account1.currency.name);
+        await app.swap.selectAssetFrom(account1.currency.name);
         await app.swapDrawer.selectAccountByName(account1);
 
-        await app.swap.selectAssetTo(electronApp, account2.currency.name);
+        await app.swap.selectAssetTo(account2.currency.name);
         await app.swapDrawer.clickOnAddAccountButton();
 
         await app.addAccount.addAccounts();
@@ -408,7 +407,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
       ],
       annotation: { type: "TMS", description: xrayTicket },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
@@ -427,14 +426,14 @@ test.describe("Swap a coin for which you have no account yet - from not present 
         await app.swap.selectToAccountCoinSelector();
         await selectAccountMAD(selector, account2);
       } else {
-        await app.swap.selectAssetFrom(electronApp, account1.currency.name);
+        await app.swap.selectAssetFrom(account1.currency.name);
         await app.swapDrawer.clickOnAddAccountButton();
 
         await app.addAccount.addAccounts();
         await app.addAccount.done();
         await app.swapDrawer.selectAccountByName(account1);
 
-        await app.swap.selectAssetTo(electronApp, account2.currency.name);
+        await app.swap.selectAssetTo(account2.currency.name);
         await app.swapDrawer.selectAccountByName(account2);
       }
       await app.swap.checkAssetFromContains(account1.currency.name);
@@ -545,10 +544,10 @@ test.describe("Swap - Switch You send and You receive currency", () => {
         description: "B2CQA-2136",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount ?? "0");
+      await performSwapUntilQuoteSelectionStep(app, swap, swap.amount ?? "0");
       await app.swap.switchYouSendAndYouReceive();
       await app.swap.checkAssetFromContains(swap.accountToCredit.currency.ticker);
       await app.swap.checkAssetToContains(swap.accountToDebit.currency.ticker);

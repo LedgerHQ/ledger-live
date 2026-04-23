@@ -37,8 +37,8 @@ catalogs:
       specifier: 1.0.2
       version: 1.0.2
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.7.1
-      version: 1.7.1
+      specifier: 1.8.0
+      version: 1.8.0
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.3.2
       version: 1.3.2
@@ -63,6 +63,9 @@ catalogs:
     '@ledgerhq/speculos-device-controller':
       specifier: 0.2.3
       version: 0.2.3
+    '@ledgerhq/zcash-utils':
+      specifier: 0.1.5
+      version: 0.1.5
     '@playwright/test':
       specifier: 1.53.0
       version: 1.53.0
@@ -457,6 +460,9 @@ packageExtensionsChecksum: sha256-oFPDBJXygat0iMzkO4oGwhSi6BtY54eC5dgXuFjN6jk=
 pnpmfileChecksum: sha256-WizsKK+XY4tzYGFYz2IjQ3NcaxUnMgMAxQXmfGYtEqA=
 
 patchedDependencies:
+  '@bunli/core@0.9.1':
+    hash: 07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb
+    path: patches/@bunli__core@0.9.1.patch
   '@callstack/repack@5.2.3':
     hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
     path: patches/@callstack__repack@5.2.3.patch
@@ -999,6 +1005,9 @@ importers:
       '@ledgerhq/zcash-shielded':
         specifier: workspace:^
         version: link:../../libs/coin-modules/zcash-shielded
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 0.1.5
       '@lottiefiles/dotlottie-react':
         specifier: 0.17.13
         version: 0.17.13(react@19.0.0)
@@ -2243,7 +2252,7 @@ importers:
     dependencies:
       '@bunli/core':
         specifier: 0.9.1
-        version: 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+        version: 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
@@ -2304,9 +2313,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      bunli:
-        specifier: 0.9.1
-        version: 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       debug:
         specifier: 4.4.3
         version: 4.4.3
@@ -2353,34 +2359,18 @@ importers:
       bun-types:
         specifier: 1.3.12
         version: 1.3.12
+      bunli:
+        specifier: 0.9.1
+        version: 0.9.1(react@19.0.0)(typescript@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
-      react-devtools-core:
-        specifier: 7.0.1
-        version: 7.0.1
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
-    optionalDependencies:
-      '@opentui/core-darwin-arm64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-darwin-x64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-linux-arm64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-linux-x64':
-        specifier: 0.1.97
-        version: 0.1.97
-      '@opentui/core-win32-x64':
-        specifier: 0.1.97
-        version: 0.1.97
 
   apps/web-tools:
     dependencies:
@@ -6178,6 +6168,9 @@ importers:
       '@ledgerhq/zcash-decrypt':
         specifier: 0.2.0
         version: 0.2.0
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 0.1.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11125,7 +11118,7 @@ importers:
         version: 1.2.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.7.1(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@6.0.2)
+        version: 1.8.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -12549,7 +12542,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -16844,8 +16837,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
 
-  '@ledgerhq/device-signer-kit-solana@1.7.1':
-    resolution: {integrity: sha512-VmaWZSPW+9/ISrEsJwhWRT4trVv3kPlGWW6EnYVX54ttuaGCaxducS7QnL2CeYPfegtGSt7LP1gUIzbe/RQy2g==}
+  '@ledgerhq/device-signer-kit-solana@1.8.0':
+    resolution: {integrity: sha512-oe0GfnHMBQHcP8FrkCEWI0lA2skuVQCl2sMIrtwsHSRxocmLftgbyzUZlcyDZ5+7GOJAHJmi347Xt4p7oQWftw==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
 
@@ -17015,6 +17008,9 @@ packages:
 
   '@ledgerhq/zcash-decrypt@0.2.0':
     resolution: {integrity: sha512-9UpIbA7KTLv/WJTua9mPF5Gvasjn4LbyBir2zIKATJkbPbUMv3ngfZrW8PP8f0RwvpgHUIKXEUqqKpJJGUIyFA==}
+
+  '@ledgerhq/zcash-utils@0.1.5':
+    resolution: {integrity: sha512-Aim30vuAIsiciRuXfQSI5qhS5ufhPnlH2gE9mma6Q1fSBJQFWkQWJuyp4S0M0vscFNjzAdNnsYYD+tP03xx4Rg==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -23073,7 +23069,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
+    deprecated: this version is no longer supported, please update to at least 0.8.*
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -32955,9 +32951,6 @@ packages:
   react-devtools-core@6.1.2:
     resolution: {integrity: sha512-ldFwzufLletzCikNJVYaxlxMLu7swJ3T2VrGfzXlMsVhZhPDKXA38DEROidaYZVgMAmQnIjymrmqto5pyfrwPA==}
 
-  react-devtools-core@7.0.1:
-    resolution: {integrity: sha512-C3yNvRHaizlpiASzy7b9vbnBGLrhvdhl1CbdU6EnZgxPNbai60szdLtl+VL76UNOt5bOoVTOz5rNWZxgGt+Gsw==}
-
   react-docgen-typescript@1.22.0:
     resolution: {integrity: sha512-MPLbF8vzRwAG3GcjdL+OHQlhgtWsLTXs+7uJiHfEeT3Ur7IsZaNYqRTLQ9sj2nB6M6jylcPCeCmH7qbszJmecg==}
     peerDependencies:
@@ -40886,9 +40879,9 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@bunli/core@0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/core@0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/runtime': 0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/runtime': 0.3.2(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils': 0.6.0
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -40907,11 +40900,11 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/generator@0.6.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/generator@0.6.5(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@babel/parser': 7.29.2
       '@babel/traverse': 7.29.0
-      '@bunli/core': 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
       debug: 4.4.3
       zod: 4.3.6
@@ -40925,9 +40918,9 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/plugin-completions@0.3.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/plugin-completions@0.3.5(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/core': 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
     transitivePeerDependencies:
       - bun
@@ -40939,10 +40932,10 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/runtime@0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/runtime@0.3.2(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@opentui/core': 0.1.97(typescript@6.0.2)
-      '@opentui/react': 0.1.97(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@opentui/react': 0.1.97(react@19.0.0)(typescript@6.0.2)
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       better-result: 2.8.2
@@ -40958,11 +40951,11 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/tui@0.6.0(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/tui@0.6.0(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/runtime': 0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/runtime': 0.3.2(react@19.0.0)(typescript@6.0.2)
       '@opentui/core': 0.1.97(typescript@6.0.2)
-      '@opentui/react': 0.1.97(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@opentui/react': 0.1.97(react@19.0.0)(typescript@6.0.2)
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       debug: 4.4.3
@@ -45203,11 +45196,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@1.7.1(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@6.0.2)':
+  '@ledgerhq/device-signer-kit-solana@1.8.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@6.0.2)':
     dependencies:
       '@ledgerhq/context-module': 1.16.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@6.0.2))(typescript@6.0.2)
       '@solana/web3.js': 1.98.4(typescript@6.0.2)
       bs58: 6.0.0
@@ -45516,6 +45509,8 @@ snapshots:
       - utf-8-validate
 
   '@ledgerhq/zcash-decrypt@0.2.0': {}
+
+  '@ledgerhq/zcash-utils@0.1.5': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
@@ -46373,11 +46368,10 @@ snapshots:
       - stage-js
       - typescript
 
-  '@opentui/react@0.1.97(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@opentui/react@0.1.97(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@opentui/core': 0.1.97(typescript@6.0.2)
       react: 19.0.0
-      react-devtools-core: 7.0.1
       react-reconciler: 0.32.0(react@19.0.0)
     transitivePeerDependencies:
       - stage-js
@@ -55896,12 +55890,12 @@ snapshots:
     dependencies:
       run-applescript: 7.0.0
 
-  bunli@0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2):
+  bunli@0.9.1(react@19.0.0)(typescript@6.0.2):
     dependencies:
-      '@bunli/core': 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
-      '@bunli/generator': 0.6.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
-      '@bunli/plugin-completions': 0.3.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
-      '@bunli/tui': 0.6.0(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/generator': 0.6.5(react@19.0.0)(typescript@6.0.2)
+      '@bunli/plugin-completions': 0.3.5(react@19.0.0)(typescript@6.0.2)
+      '@bunli/tui': 0.6.0(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils': 0.6.0
       better-result: 2.8.2
       zod: 4.3.6
@@ -67181,14 +67175,6 @@ snapshots:
       lodash-es: 4.17.21
 
   react-devtools-core@6.1.2:
-    dependencies:
-      shell-quote: 1.8.3
-      ws: 7.5.10
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  react-devtools-core@7.0.1:
     dependencies:
       shell-quote: 1.8.3
       ws: 7.5.10

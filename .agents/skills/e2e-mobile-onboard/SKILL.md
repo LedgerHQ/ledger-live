@@ -175,7 +175,7 @@ Run: `$ANDROID_HOME/emulator/emulator -list-avds | grep Android_Emulator`
 - **Required AVD name**: read from `e2e/mobile/detox.config.js` under `devices.emulator.device.avdName` (currently `Android_Emulator`)
 - If missing, **offer to auto-create it** (requires `avdmanager` on PATH or under `$ANDROID_HOME/cmdline-tools/`):
   ```bash
-  avdmanager create avd -n Android_Emulator -k "system-images;android-35;google_apis;arm64-v8a" -d pixel_7_pro
+  avdmanager create avd -n Android_Emulator -k "system-images;android-36;google_apis;arm64-v8a" -d pixel_9_pro
   ```
   Adjust the system image tag to match the installed image. If `avdmanager` is not available, guide the manual route.
 - Manual setup:

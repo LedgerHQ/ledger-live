@@ -158,10 +158,8 @@ export default class SwapLiveAppPage {
   async getProviderList() {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
-    const providerList = await getWebElementsByCssSelector(
-      `[data-testid^='${this.quoteCardProviderName}']`,
-    );
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
+    const providerList = await getWebElementsText(`[data-testid^='${this.quoteCardProviderName}']`);
     jestExpect(numberOfQuotesText).toMatch(new RegExp(`${providerList.length} quotes? found`));
     return providerList;
   }
@@ -175,17 +173,27 @@ export default class SwapLiveAppPage {
   @Step("Check first quote container infos")
   async checkFirstQuoteContainerInfos(providerList: string[]) {
     const provider: string = Provider.getNameByUiName(providerList[0]);
-    const baseProviderLocator = `quote-container-${provider}-`;
-    await waitWebElementByTestId(baseProviderLocator + "amount-label");
-    await tapWebElementByTestId(baseProviderLocator + "amount-label");
+    const baseProviderLocator = `quote-container-${provider}`;
+    await waitWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
+    await tapWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
 
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "fiatAmount-label")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-heading")).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" }),
+    ).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-fiatAmount-label" }),
+    ).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-networkFees-heading" }),
+    ).toExist();
 
-    const extraFeesContainer = getWebElementByTestId(baseProviderLocator + "extraFeesContainer");
+    const extraFeesContainer = getWebElementByTestId(baseProviderLocator, {
+      testIdSuffix: "extraFeesContainer",
+    });
     await detoxExpect(extraFeesContainer).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-infoIcon")).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-rate-infoIcon" }),
+    ).toExist();
 
     if (
       provider === Provider.ONE_INCH.name ||
@@ -193,7 +201,9 @@ export default class SwapLiveAppPage {
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
-      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-infoIcon")).toExist();
+      await detoxExpect(
+        getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-slippage-infoIcon" }),
+      ).toExist();
     }
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
@@ -224,7 +234,7 @@ export default class SwapLiveAppPage {
 
   @Step("Get all swap providers available")
   async getAllSwapProviders() {
-    return await getWebElementsByCssSelector(
+    return await getWebElementsText(
       '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
     );
   }

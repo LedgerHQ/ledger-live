@@ -10,17 +10,20 @@ import {
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import {
   CustomTopBar,
-  TopBarActionIcon,
+  type TopBarActionIcon,
   useMyLedgerTopBarAction,
 } from "LLM/components/CustomTopBar";
-import { useMyWalletTopBarAction } from "LLM/features/MyWallet/useMyWalletTopBarAction";
 import { ICON_SIZE } from "LLM/components/TopBar/const";
 import { SyncErrorBottomSheet } from "../components/SyncErrorBottomSheet";
 import { useTopBarViewModel } from "../useTopBarViewModel";
+import { MyWalletTopBarAction } from "../components/MyWalletTopBarAction";
 
 const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
   <Warning size={size ?? ICON_SIZE} style={style} color="base" />
 );
+
+const filterIcons = (icons: (TopBarActionIcon | false)[]): TopBarActionIcon[] =>
+  icons.filter((icon): icon is TopBarActionIcon => Boolean(icon));
 
 type TopBarViewProps = ReturnType<typeof useTopBarViewModel>;
 
@@ -45,8 +48,10 @@ export function TopBarView({
   onTryRefresh,
 }: Readonly<TopBarViewProps>) {
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
-  const myWalletAction = useMyWalletTopBarAction(onMyWalletPress);
-  const leadingAction = shouldDisplayMyWallet ? myWalletAction : myLedgerAction;
+
+  const leadingElement = shouldDisplayMyWallet ? (
+    <MyWalletTopBarAction onPress={onMyWalletPress} showNotification={hasUnreadNotifications} />
+  ) : undefined;
 
   const notificationIcon = useCallback<IconButtonProps["icon"]>(
     ({ size, style }) => {
@@ -97,19 +102,37 @@ export function TopBarView({
     loading: isSyncPending,
   };
 
-  const leadingIcons = shouldDisplayOperationsList
-    ? [leadingAction, discoverIcon]
-    : [leadingAction];
+  const displayMyLedgerIconLeading = !shouldDisplayMyWallet;
+  const displayDiscoverIconLeading = shouldDisplayOperationsList;
 
-  const baseIcons = shouldDisplayOperationsList
-    ? [notificationsIcon, transactionHistoryIcon, settingsIcon]
-    : [discoverIcon, notificationsIcon, settingsIcon];
+  const getLeadingIcons = (): TopBarActionIcon[] =>
+    filterIcons([
+      displayMyLedgerIconLeading && myLedgerAction,
+      displayDiscoverIconLeading && discoverIcon,
+    ]);
 
-  const trailingIcons = hasAccounts && isSyncError ? [syncStatusIcon, ...baseIcons] : baseIcons;
+  const displaySyncStatusIcon = hasAccounts && isSyncError;
+  const displayDiscoverIcon = !shouldDisplayOperationsList;
+  const displayNotificationsIcon = !shouldDisplayMyWallet;
+  const displayTransactionHistoryIcon = shouldDisplayOperationsList;
+  const displaySettingsIcon = !shouldDisplayMyWallet;
+
+  const getTrailingIcons = (): TopBarActionIcon[] =>
+    filterIcons([
+      displaySyncStatusIcon && syncStatusIcon,
+      displayDiscoverIcon && discoverIcon,
+      displayNotificationsIcon && notificationsIcon,
+      displayTransactionHistoryIcon && transactionHistoryIcon,
+      displaySettingsIcon && settingsIcon,
+    ]);
 
   return (
     <>
-      <CustomTopBar leadingIcons={leadingIcons} trailingIcons={trailingIcons} />
+      <CustomTopBar
+        leadingElement={leadingElement}
+        leadingIcons={getLeadingIcons()}
+        trailingIcons={getTrailingIcons()}
+      />
 
       <SyncErrorBottomSheet
         isOpen={isSyncDrawerOpen}

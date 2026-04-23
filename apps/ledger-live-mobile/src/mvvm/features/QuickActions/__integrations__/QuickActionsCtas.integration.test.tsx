@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import { render, screen, waitFor, within } from "@tests/test-renderer";
 import {
   TestQuickActionsWrapper,
   overrideStateWithFunds,
@@ -8,6 +8,8 @@ import {
   overrideStateReadOnly,
   overrideStateWithFundsVariant,
   overrideStateWithoutFundsVariant,
+  overrideStateWithTransferCopyVariant,
+  overrideStateWithTransferCopyDisabled,
   getCtaButtons,
   getVariantCtaButtons,
   getVariantNoFundsCtaButtons,
@@ -174,6 +176,52 @@ describe("QuickActionsCtas Integration Tests", () => {
         expect(screen.getByTestId(transferDrawer.bankTransfer)).toBeVisible();
       });
     });
+  });
+
+  describe("Remote copy A/B test (transferButtonCopyVariant)", () => {
+    const cases = [
+      {
+        name: "enabled — shows remote copy",
+        state: overrideStateWithTransferCopyVariant,
+        cta: "Move funds",
+        receive: "Get crypto",
+        send: "Send away",
+        bankTransfer: /Cash in/,
+        bankTransferDesc: /Turn your cash into stablecoins\./,
+      },
+      {
+        name: "disabled — shows default i18n",
+        state: overrideStateWithTransferCopyDisabled,
+        cta: "Transfer",
+        receive: "Receive via crypto address",
+        send: "Send crypto",
+        bankTransfer: /Receive via bank transfer/,
+        bankTransferDesc: /Receive stablecoins by simply sending cash\./,
+      },
+    ];
+
+    it.each(cases)(
+      "$name",
+      async ({ state, cta, receive, send, bankTransfer, bankTransferDesc }) => {
+        const { user } = render(<TestQuickActionsWrapper />, { overrideInitialState: state });
+
+        const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+        const transferButton = within(container).getByTestId(QUICK_ACTIONS_TEST_IDS.ctas.transfer);
+
+        expect(transferButton).toHaveTextContent(cta);
+
+        await user.press(transferButton);
+
+        await waitFor(() => {
+          expect(screen.getByTestId(transferDrawer.receive)).toHaveTextContent(receive);
+          expect(screen.getByTestId(transferDrawer.send)).toHaveTextContent(send);
+          expect(screen.getByTestId(transferDrawer.bankTransfer)).toHaveTextContent(bankTransfer);
+          expect(screen.getByTestId(transferDrawer.bankTransfer)).toHaveTextContent(
+            bankTransferDesc,
+          );
+        });
+      },
+    );
   });
 
   describe("Variant mode (quickActionsCtasVariant: true)", () => {

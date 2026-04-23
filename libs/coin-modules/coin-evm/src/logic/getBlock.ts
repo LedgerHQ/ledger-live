@@ -18,6 +18,7 @@ import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
+import { dropRootTraceDuplicates } from "./rootTraceDedup";
 import { buildSmartContractDetails } from "../utils";
 
 function internalTransactionsFetcher(
@@ -96,6 +97,21 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
 
 /**
  * Merges internal transaction operations into block transactions by matching tx hash.
+ *
+ * Runs a provider-agnostic root-trace dedup on internal native operations: any internal op
+ * whose `(address, peer, amount)` tuple exactly matches one of the coin tx's own native ops
+ * is dropped, because it represents the same value transfer reported twice. ERC20/721/1155
+ * ops come from receipt logs, so they are never touched here.
+ *
+ * This complements the semantic filters applied upstream by each adapter:
+ *   - `traceBlockItemsToOperationsByHash` skips items with `traceAddress.length === 0` and
+ *     items whose `callType` is `delegatecall`/`staticcall`/`callcode`.
+ *   - `internalTxsToOperationsByHash` skips items whose `callType` (Blockscout) or `type`
+ *     (Etherscan) matches the same non-value-transferring call types.
+ *
+ * The structural dedup here is the last line of defence: if a provider surfaces the root call
+ * in a shape the adapter didn't anticipate (e.g. a future explorer variant), it still gets
+ * collapsed into the coin tx's own ops.
  */
 function mergeInternalTransactions(
   transactions: BlockTransaction[],
@@ -106,9 +122,11 @@ function mergeInternalTransactions(
   return transactions.map(tx => {
     const extraOps = internalTxs.get(tx.hash);
     if (!extraOps || extraOps.length === 0) return tx;
+    const dedupedExtraOps = dropRootTraceDuplicates(tx.operations, extraOps);
+    if (dedupedExtraOps.length === 0) return tx;
     return {
       ...tx,
-      operations: [...tx.operations, ...extraOps],
+      operations: [...tx.operations, ...dedupedExtraOps],
     };
   });
 }

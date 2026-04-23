@@ -1,11 +1,13 @@
 import * as sdk from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import {
   HEDERA_TRANSACTION_MODES,
   TINYBAR_SCALE,
   TRANSACTION_VALID_DURATION_SECONDS,
 } from "../constants";
+import { apiClient } from "../network/api";
 import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
 import { craftTransaction } from "./craftTransaction";
@@ -14,6 +16,8 @@ import { serializeTransaction, toEVMAddress } from "./utils";
 jest.mock("./utils");
 
 describe("craftTransaction", () => {
+  const defaultConfig = getMockedConfig();
+
   beforeEach(() => {
     jest.clearAllMocks();
     (serializeTransaction as jest.Mock).mockReturnValue("serialized-transaction");
@@ -21,6 +25,10 @@ describe("craftTransaction", () => {
 
   afterAll(async () => {
     await rpcClient._resetInstance();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("should craft a native HBAR transfer transaction", async () => {
@@ -40,7 +48,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({ txIntent, config: defaultConfig });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -77,7 +85,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({ txIntent, config: defaultConfig });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -120,7 +128,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo, HederaTxData>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({ txIntent, config: defaultConfig });
 
     expect(result.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
     invariant(
@@ -158,7 +166,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({ txIntent, config: defaultConfig });
 
     expect(result.tx).toBeInstanceOf(sdk.TokenAssociateTransaction);
     invariant(
@@ -181,8 +189,8 @@ describe("craftTransaction", () => {
       value: BigInt(50000),
     };
 
-    const result = await craftTransaction(
-      {
+    const result = await craftTransaction({
+      txIntent: {
         intentType: "transaction",
         type: HEDERA_TRANSACTION_MODES.Send,
         amount: BigInt(1000000),
@@ -198,7 +206,8 @@ describe("craftTransaction", () => {
         },
       },
       customFees,
-    );
+      config: defaultConfig,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -222,7 +231,9 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction(txIntent)).rejects.toThrow();
+    await expect(craftTransaction({ txIntent, config: defaultConfig })).rejects.toThrow(
+      "hedera: invalid asset type",
+    );
   });
 
   it("should throw error when token associate transaction has missing assetReference", async () => {
@@ -242,7 +253,9 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction(txIntent)).rejects.toThrow();
+    await expect(craftTransaction({ txIntent, config: defaultConfig })).rejects.toThrow(
+      "hedera: assetReference is missing",
+    );
   });
 
   it("should throw error when token transfer transaction has missing assetReference", async () => {
@@ -262,6 +275,122 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction(txIntent)).rejects.toThrow();
+    await expect(craftTransaction({ txIntent, config: defaultConfig })).rejects.toThrow(
+      "hedera: no assetReference in token transfer",
+    );
+  });
+
+  it("should use mirror node timestamp when feature flag is enabled", async () => {
+    const mockGetLatestBlock = jest.spyOn(apiClient, "getLatestBlock");
+    mockGetLatestBlock.mockResolvedValue({
+      timestamp: { from: "1758733200.632122898", to: null },
+    });
+
+    const txIntent = {
+      intentType: "transaction",
+      type: HEDERA_TRANSACTION_MODES.Send,
+      amount: BigInt(1 * 10 ** TINYBAR_SCALE),
+      recipient: "0.0.12345",
+      sender: "0.0.54321",
+      asset: {
+        type: "native",
+      },
+      memo: {
+        kind: "text",
+        type: "string",
+        value: "Hbar transfer",
+      },
+    } satisfies TransactionIntent<HederaMemo>;
+
+    const result = await craftTransaction({
+      txIntent,
+      config: {
+        ...defaultConfig,
+        useNetworkTimestamp: true,
+      },
+    });
+
+    expect(mockGetLatestBlock).toHaveBeenCalledTimes(1);
+    expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
+  });
+
+  it("should fallback to system timestamp when latest block cannot be fetched", async () => {
+    const mockGetLatestBlock = jest.spyOn(apiClient, "getLatestBlock");
+    mockGetLatestBlock.mockRejectedValue(new Error("mirror unavailable"));
+
+    const txIntent = {
+      intentType: "transaction",
+      type: HEDERA_TRANSACTION_MODES.Send,
+      amount: BigInt(1 * 10 ** TINYBAR_SCALE),
+      recipient: "0.0.12345",
+      sender: "0.0.54321",
+      asset: {
+        type: "native",
+      },
+      memo: {
+        kind: "text",
+        type: "string",
+        value: "Hbar transfer",
+      },
+    } satisfies TransactionIntent<HederaMemo>;
+
+    const result = await craftTransaction({
+      txIntent,
+      config: {
+        ...defaultConfig,
+        useNetworkTimestamp: true,
+      },
+    });
+
+    expect(mockGetLatestBlock).toHaveBeenCalledTimes(1);
+    expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
+  });
+
+  it("should use mirror timestamp when system clock is skewed", async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2000-01-01T00:00:00.000Z"));
+    const mockGetLatestBlock = jest.spyOn(apiClient, "getLatestBlock");
+    mockGetLatestBlock.mockResolvedValue({
+      timestamp: { from: "1758733200.632122898", to: null },
+    });
+
+    const txIntent = {
+      intentType: "transaction",
+      type: HEDERA_TRANSACTION_MODES.Send,
+      amount: BigInt(1 * 10 ** TINYBAR_SCALE),
+      recipient: "0.0.12345",
+      sender: "0.0.54321",
+      asset: {
+        type: "native",
+      },
+      memo: {
+        kind: "text",
+        type: "string",
+        value: "Hbar transfer",
+      },
+    } satisfies TransactionIntent<HederaMemo>;
+
+    const [withoutMirror, withMirror] = await Promise.all([
+      craftTransaction({
+        txIntent,
+        config: {
+          ...defaultConfig,
+          useNetworkTimestamp: false,
+        },
+      }),
+      craftTransaction({
+        txIntent,
+        config: {
+          ...defaultConfig,
+          useNetworkTimestamp: true,
+        },
+      }),
+    ]);
+
+    const localSkewSeconds = Number(withoutMirror.tx.transactionId?.validStart?.seconds.toString());
+    expect(localSkewSeconds).toBeGreaterThanOrEqual(946684700);
+    expect(localSkewSeconds).toBeLessThanOrEqual(946684800);
+    expect(mockGetLatestBlock).toHaveBeenCalledTimes(1);
+    expect(withMirror.tx).toBeInstanceOf(sdk.TransferTransaction);
   });
 });

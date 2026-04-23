@@ -3,7 +3,18 @@ import { useDeviceSectionViewModel } from "./useDeviceSectionViewModel";
 import { DeviceSectionView } from "./DeviceSectionView";
 
 export function DeviceSection() {
-  const { devices, hasDevices, onAddDevice, onExploreDevices } = useDeviceSectionViewModel();
+  const {
+    devices,
+    hasDevices,
+    onAddDevice,
+    onExploreDevices,
+    onDevicePress,
+    selectedDevice,
+    isRemoveDrawerOpen,
+    onOpenRemoveMenu,
+    onCloseRemoveMenu,
+    onRemoveDevice,
+  } = useDeviceSectionViewModel();
 
   return (
     <DeviceSectionView
@@ -11,6 +22,12 @@ export function DeviceSection() {
       hasDevices={hasDevices}
       onAddDevice={onAddDevice}
       onExploreDevices={onExploreDevices}
+      onDevicePress={onDevicePress}
+      onOpenMenu={onOpenRemoveMenu}
+      selectedDevice={selectedDevice}
+      isRemoveDrawerOpen={isRemoveDrawerOpen}
+      onCloseRemoveMenu={onCloseRemoveMenu}
+      onRemoveDevice={onRemoveDevice}
     />
   );
 }

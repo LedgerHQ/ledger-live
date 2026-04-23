@@ -1,3 +1,4 @@
+import { isMinEarnUiVersion } from "@ledgerhq/live-common/domain/isMinEarnUiVersion";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -35,9 +36,8 @@ export const EarnV2Webview = ({
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const insets = useSafeAreaInsets();
   const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
-  const earnUiFlag = useFeature("ptxEarnUi");
-  const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
-  const isPtxUiV2 = earnUiVersion === "v2" || earnUiVersion === "2";
+  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
+  const isPtxUiMinV2 = isMinEarnUiVersion(earnUiVersion, "v2");
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const handleScroll = useCallback<NonNullable<ComponentProps<typeof WebView>["onScroll"]>>(
@@ -61,7 +61,7 @@ export const EarnV2Webview = ({
 
   return (
     <View testID="earn-screen" style={styles.container}>
-      {isPtxUiV2 && !hideMainNavigator && <LiveAppBackground type="earn" scrollY={scrollY} />}
+      {isPtxUiMinV2 && !hideMainNavigator && <LiveAppBackground type="earn" scrollY={scrollY} />}
       <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest ? (
           <Fragment>
@@ -70,7 +70,7 @@ export const EarnV2Webview = ({
               manifest={manifest}
               inputs={webviewInputs}
               isLwm40Enabled={isLwm40Enabled}
-              onScroll={isPtxUiV2 && !hideMainNavigator ? handleScroll : undefined}
+              onScroll={isPtxUiMinV2 && !hideMainNavigator ? handleScroll : undefined}
             />
           </Fragment>
         ) : (

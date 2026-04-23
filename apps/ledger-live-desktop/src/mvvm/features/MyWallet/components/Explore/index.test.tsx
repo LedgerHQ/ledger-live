@@ -30,7 +30,7 @@ describe("Explore", () => {
     await user.click(screen.getByText(t("myWallet.explore")));
 
     expect(openURL).toHaveBeenCalledTimes(1);
-    expect(openURL).toHaveBeenCalledWith(urls.buyNew, "button_clicked", {
+    expect(openURL).toHaveBeenCalledWith(urls.exploreLedgerDevices, "button_clicked", {
       button: "explore all",
     });
   });

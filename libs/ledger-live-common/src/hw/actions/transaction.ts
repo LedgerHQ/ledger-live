@@ -155,30 +155,36 @@ export const createAction = (
         return;
       }
 
-      const bridge = isACRE
-        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (ACREBridge.accountBridge as unknown as AccountBridge<any>)
-        : getAccountBridge(mainAccount);
-      const sub = bridge
-        .signOperation({
-          account: mainAccount,
-          transaction,
-          deviceId: device.deviceId,
-          deviceModelId: device.modelId,
-        })
-        .pipe(
-          catchError(error =>
-            of<{ type: "error"; error: Error }>({
-              type: "error",
-              error,
-            }),
-          ),
-          tap((e: Event) => log("actions-transaction-event", e.type, e)),
-          scan(reducer, initialState),
-        )
-        .subscribe((x: any) => setState(x));
+      let cancelled = false;
+      let sub: { unsubscribe: () => void } | undefined;
+      (async () => {
+        const bridge = isACRE
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (ACREBridge.accountBridge as unknown as AccountBridge<any>)
+          : await getAccountBridge(mainAccount);
+        if (cancelled) return;
+        sub = bridge
+          .signOperation({
+            account: mainAccount,
+            transaction,
+            deviceId: device.deviceId,
+            deviceModelId: device.modelId,
+          })
+          .pipe(
+            catchError(error =>
+              of<{ type: "error"; error: Error }>({
+                type: "error",
+                error,
+              }),
+            ),
+            tap((e: Event) => log("actions-transaction-event", e.type, e)),
+            scan(reducer, initialState),
+          )
+          .subscribe((x: any) => setState(x));
+      })();
       return () => {
-        sub.unsubscribe();
+        cancelled = true;
+        sub?.unsubscribe();
       };
     }, [device, mainAccount, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
     return {

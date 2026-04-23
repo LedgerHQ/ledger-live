@@ -113,7 +113,9 @@ export default class EarnDashboardPage {
 
   @Step("Verify 'available assets' is visible")
   async verifyAvailableAssets(account: Account) {
-    const assetTitleElement = getWebElementByTestId(this.assetsTitleId, 0, "data-test-id");
+    const assetTitleElement = getWebElementByTestId(this.assetsTitleId, {
+      testIdAttribute: "data-test-id",
+    });
     await detoxExpect(assetTitleElement).toExist();
     await detoxExpect(assetTitleElement).toHaveText(this.assetsTitleText(false));
     const rowsContent = await getWebElementsText(this.tableEarnMoreSelector);
@@ -126,7 +128,9 @@ export default class EarnDashboardPage {
 
   @Step("Verify Deposited assets is visible")
   async verifyDepositedAssets(account: Account) {
-    const assetTitleElement = getWebElementByTestId(this.assetsTitleId, 0, "data-test-id");
+    const assetTitleElement = getWebElementByTestId(this.assetsTitleId, {
+      testIdAttribute: "data-test-id",
+    });
     await detoxExpect(assetTitleElement).toExist();
     await detoxExpect(assetTitleElement).toHaveText(this.assetsTitleText(true));
 
@@ -140,7 +144,7 @@ export default class EarnDashboardPage {
   async goToTab(tabName: "My Rewards" | "Earn Opportunities") {
     const tabTestId = tabName === "My Rewards" ? "tab-assets" : "tab-earn-more";
     try {
-      const button = getWebElementByTestId(tabTestId, 0, "data-test-id");
+      const button = getWebElementByTestId(tabTestId, { testIdAttribute: "data-test-id" });
       await tapWebElementByElement(button, 10000);
     } catch {
       console.log(`${tabName} tab is not visible`);
@@ -149,7 +153,9 @@ export default class EarnDashboardPage {
 
   @Step("Verify earn by stacking button is visible")
   async verifyEarnByStackingButton() {
-    const earnButton = getWebElementByTestId(this.stakeCryptoAssetsButton, 0, "data-test-id");
+    const earnButton = getWebElementByTestId(this.stakeCryptoAssetsButton, {
+      testIdAttribute: "data-test-id",
+    });
     await scrollToWebElement(earnButton);
     await tapWebElementByElement(earnButton);
     await app.stake.verifyChooseAssetPage();

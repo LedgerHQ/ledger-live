@@ -2,6 +2,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { AleoApiConfigurationResetError } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
@@ -173,13 +174,10 @@ export async function fetchAllOwnedRecords({
  * @param viewKey - The view key for the account
  * @param provableApi - Existing Provable API credentials and state, or null for initial setup
  *
- * @returns A Promise resolving to updated ProvableApi credentials, or null if access needs to be reset
+ * @returns A Promise resolving to updated ProvableApi credentials
  *
- * @throws {Error} Re-throws any errors except 422 that should trigger uuid rotation
- *
- * @remarks
- * When null is returned, the caller should clear stored Provable API credentials
- * and allow the user to re-initialize access from scratch.
+ * @throws {AleoApiConfigurationResetError} When the scanner status endpoint returns 422 — the UUID is no longer valid and registration must restart
+ * @throws {Error} Re-throws any other errors from underlying API calls
  */
 
 export async function accessProvableApi({
@@ -190,7 +188,7 @@ export async function accessProvableApi({
   currency: CryptoCurrency;
   viewKey: string;
   provableApi: ProvableApi | null;
-}): Promise<ProvableApi | null> {
+}): Promise<ProvableApi> {
   let uuid = provableApi?.uuid;
   let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
   let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
@@ -219,7 +217,7 @@ export async function accessProvableApi({
     status = await apiClient.getRecordScannerStatus(currency, uuid);
   } catch (error) {
     if (error instanceof LedgerAPI4xx && error.status === 422) {
-      return null;
+      throw new AleoApiConfigurationResetError();
     }
     throw error;
   }

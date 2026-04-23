@@ -23,6 +23,14 @@ let singleton: Singleton | null = null;
 let persistentDmk: DeviceManagementKit | null = null;
 let exitHooksRegistered = false;
 
+let _testTransport: WalletCliDmkTransport | null = null;
+
+/** @internal Test seam — install before the CLI starts (e.g. from dmk-intercept.ts) to bypass USB discovery. */
+export function _setTestDmkTransport(t: WalletCliDmkTransport | null): void {
+  _testTransport = t;
+  singleton = null;
+}
+
 function closeDmkQuietly(dmk: DeviceManagementKit): void {
   try {
     dmk.close();
@@ -77,6 +85,11 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
  * If the initial session state is BUSY we disconnect and ask the user to retry.
  */
 export async function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
+  if (_testTransport) {
+    singleton ??= { dmk: _testTransport.dmk, transport: _testTransport };
+    return singleton.transport;
+  }
+
   if (singleton) {
     return singleton.transport;
   }

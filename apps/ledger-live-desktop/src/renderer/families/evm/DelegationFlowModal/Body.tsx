@@ -102,9 +102,12 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     invariant(isStakingAccount(account), "evm: account with staking resources required");
     const bridge = getAccountBridge(account, undefined);
     const baseTransaction = bridge.createTransaction(account);
+    // NB: `mode` is intentionally not set here. It is set later together with `valAddress`
+    // (see StepDelegation → updateValidator) once the user has picked a validator.
+    // Setting `mode: "delegate"` while `valAddress` is still empty makes the generic-alpaca
+    // bridge build a staking intent without a `mode`, which throws
+    // "Invalid staking operation: undefined" during the first status computation.
     const transaction = bridge.updateTransaction(baseTransaction, {
-      mode: "delegate",
-      valAddress: "",
       recipient: account.freshAddress,
     });
     return {

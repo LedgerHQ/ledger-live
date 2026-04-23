@@ -73,18 +73,18 @@ test.describe("Swap - Changelly KYC warning and feedback link", () => {
         description: "B2CQA-3389, B2CQA-2370",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(kycFromAccount, kycToAccount);
       const initialSwap = new Swap(kycFromAccount, kycToAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, initialSwap, minAmount);
-      await app.swap.selectSpecificProvider(kycProvider, electronApp);
-      const amountToSend = await app.swap.getAmountToSend(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, initialSwap, minAmount);
+      await app.swap.selectSpecificProvider(kycProvider);
+      const amountToSend = await app.swap.getAmountToSend();
       const swap = new Swap(kycFromAccount, kycToAccount, amountToSend);
 
-      await app.swap.clickExchangeButton(electronApp);
+      await app.swap.clickExchangeButton();
       await app.swapDrawer.checkKycWarningBannerVisible();
       await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);

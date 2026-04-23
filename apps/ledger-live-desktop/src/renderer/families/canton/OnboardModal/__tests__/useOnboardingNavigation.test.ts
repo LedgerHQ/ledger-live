@@ -2,11 +2,7 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { act, renderHook } from "tests/testSetup";
 import type { NavigationSnapshot } from "../../hooks/topologyChangeError";
 import { useOnboardingNavigation } from "../hooks/useOnboardingNavigation";
-import {
-  createMockAccount,
-  createMockCantonCurrency,
-  createMockOnboardingResult,
-} from "./testUtils";
+import { createMockAccount, createMockOnboardingResult } from "./testUtils";
 
 jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   addAccountsAction: jest.fn(() => ({
@@ -20,7 +16,6 @@ jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
 const mockAddAccountsAction = addAccountsAction as jest.MockedFunction<typeof addAccountsAction>;
 
 describe("useOnboardingNavigation", () => {
-  const mockCurrency = createMockCantonCurrency();
   const mockAccount = createMockAccount({ used: false });
   const mockImportable = createMockAccount({ id: "imp-1", used: true });
 
@@ -40,7 +35,6 @@ describe("useOnboardingNavigation", () => {
       const { result, store } = renderHook(
         () =>
           useOnboardingNavigation({
-            currency: mockCurrency,
             selectedAccounts: [mockImportable, mockAccount],
             existingAccounts: [],
             editedNames: {},
@@ -76,7 +70,6 @@ describe("useOnboardingNavigation", () => {
       const { result, store } = renderHook(
         () =>
           useOnboardingNavigation({
-            currency: mockCurrency,
             selectedAccounts: [accountToReonboard],
             existingAccounts: [],
             editedNames: {},
@@ -112,7 +105,6 @@ describe("useOnboardingNavigation", () => {
       const { result, store } = renderHook(
         () =>
           useOnboardingNavigation({
-            currency: mockCurrency,
             selectedAccounts: [accountToReonboard],
             existingAccounts: [],
             editedNames: {},
@@ -137,7 +129,6 @@ describe("useOnboardingNavigation", () => {
       const { result, store } = renderHook(
         () =>
           useOnboardingNavigation({
-            currency: mockCurrency,
             selectedAccounts: [mockAccount],
             existingAccounts: [],
             editedNames: {},
@@ -152,30 +143,6 @@ describe("useOnboardingNavigation", () => {
 
       expect(store.getState().modals.MODAL_CANTON_ONBOARD_ACCOUNT?.isOpened).toBe(false);
       expect(store.getState().modals.MODAL_SEND).toBeUndefined();
-    });
-  });
-
-  describe("handleAddMore", () => {
-    it("should add accounts then open add accounts modal", () => {
-      const onboardingResult = createMockOnboardingResult();
-      const { result, store } = renderHook(
-        () =>
-          useOnboardingNavigation({
-            currency: mockCurrency,
-            selectedAccounts: [mockAccount],
-            existingAccounts: [],
-            editedNames: {},
-            onboardingResult,
-          }),
-        { initialState },
-      );
-
-      act(() => {
-        result.current.handleAddMore();
-      });
-
-      expect(store.getState().modals.MODAL_CANTON_ONBOARD_ACCOUNT?.isOpened).toBe(false);
-      expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBe(true);
     });
   });
 });

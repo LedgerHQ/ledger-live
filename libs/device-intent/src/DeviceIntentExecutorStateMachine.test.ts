@@ -6,7 +6,6 @@ import {
 import type { Intent } from "./core";
 import type { ExecutorState } from "./executor";
 import {
-  defaultRequiredContext,
   makeExtractedContext,
   makeIntent as makeBaseIntent,
   makeConnectionResult,
@@ -62,7 +61,6 @@ function createSM(
   const intent = overrides.intent ?? makeIntent(overrides.job);
   const sm = new DefaultDeviceIntentExecutorStateMachine({
     deviceConnectionParams: { acceptedDeviceModelIds: [] },
-    requiredDeviceContext: defaultRequiredContext,
     intent,
     listeners,
   });
@@ -135,18 +133,6 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("WHEN INITIALIZATION_ERROR is received THEN it transitions to initializingDeviceContextError", () => {
-      const { sm, listeners } = createSM();
-      sm.deviceConnected(makeConnectionResult());
-      const err = new Error("init failed");
-      sm.initializationError(err);
-      expect(lastExecutorState(listeners)).toEqual({
-        type: "initializingDeviceContextError",
-        error: err,
-      });
-      sm.stop();
-    });
-
     it("WHEN DEVICE_DISCONNECTED is received THEN it transitions to connectingDeviceError", () => {
       const { sm, listeners } = createSM();
       sm.deviceConnected(makeConnectionResult());
@@ -170,19 +156,6 @@ describe("DeviceIntentExecutorStateMachine", () => {
       expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
       const callCountAfter = (listeners.onExecutorStateChanged as jest.Mock).mock.calls.length;
       expect(callCountAfter).toBe(callCountBefore);
-      sm.stop();
-    });
-  });
-
-  describe("GIVEN the machine is in initializationError state", () => {
-    it("WHEN RETRY is received THEN it transitions to initializingDeviceContext", () => {
-      const { sm, listeners } = createSM();
-      sm.deviceConnected(makeConnectionResult());
-      sm.initializationError(new Error("fail"));
-      expect(lastExecutorState(listeners)?.type).toBe("initializingDeviceContextError");
-
-      sm.retry();
-      expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
       sm.stop();
     });
   });
@@ -288,15 +261,15 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("WHEN SET_REQUIRED_CONTEXT is received THEN it transitions to invalidOperation", () => {
+    it("WHEN REINITIALIZE is received THEN it transitions to invalidOperation", () => {
       const originalIntent = makeIntent(() => NEVER);
       const { sm, listeners } = createSM({ intent: originalIntent });
       driveToExecution(sm);
-      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
+      sm.reinitialize();
       expect(lastExecutorState(listeners)).toEqual({
         type: "invalidOperation",
         error: expect.objectContaining({
-          message: "SET_REQUIRED_CONTEXT received during intent execution",
+          message: "REINITIALIZE received during intent execution",
         }),
       });
       sm.stop();
@@ -376,7 +349,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("WHEN SET_REQUIRED_CONTEXT is received THEN the job observable is auto-cancelled", async () => {
+    it("WHEN REINITIALIZE is received THEN the job observable is auto-cancelled", async () => {
       let subscribed = false;
       let unsubscribed = false;
       const job = () =>
@@ -392,7 +365,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       expect(subscribed).toBe(true);
       expect(unsubscribed).toBe(false);
 
-      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
+      sm.reinitialize();
       await flushMicrotasks();
       expect(unsubscribed).toBe(true);
       sm.stop();
@@ -431,12 +404,12 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("WHEN SET_REQUIRED_CONTEXT is received THEN it transitions to initializingDeviceContext", () => {
+    it("WHEN REINITIALIZE is received THEN it transitions to initializingDeviceContext", () => {
       const { sm, listeners } = createSM({ job: () => throwError(() => new Error("fail")) });
       driveToExecution(sm);
       expect(lastExecutorState(listeners)?.type).toBe("executingIntentError");
 
-      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
+      sm.reinitialize();
       expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
       sm.stop();
     });
@@ -454,12 +427,12 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("WHEN SET_REQUIRED_CONTEXT is received THEN it transitions to initializingDeviceContext", () => {
+    it("WHEN REINITIALIZE is received THEN it transitions to initializingDeviceContext", () => {
       const { sm, listeners } = createSM({ job: () => of({ step: "done" as const }) });
       driveToExecution(sm);
       expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
 
-      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
+      sm.reinitialize();
       expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
       sm.stop();
     });
@@ -552,7 +525,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.stop();
     });
 
-    it("GIVEN idle after intent A WHEN required context changes then intent B is set during init THEN intent B executes after re-initialization", () => {
+    it("GIVEN idle after intent A WHEN device initialization params change then intent B is set during init THEN intent B executes after re-initialization", () => {
       const intentA = makeIntent(() => of("a-done"));
       const intentB = makeIntent(() => of("b-done"));
       const { sm, listeners } = createSM({ intent: intentA });
@@ -561,7 +534,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
       expect(listeners.onIntentJobComplete).toHaveBeenCalledWith(intentA);
 
-      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
+      sm.reinitialize();
       expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
 
       sm.setIntent(intentB);

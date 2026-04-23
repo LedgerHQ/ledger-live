@@ -27,6 +27,8 @@ import {
   ExchangeType,
   SwapLiveError,
   SwapResult,
+  type GetQuotesResponse,
+  type GetQuotesWireArgs,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
 import { BigNumber } from "bignumber.js";
@@ -59,6 +61,7 @@ import { createStepError, StepError, toError } from "./parser";
 import { handleErrors } from "./handleSwapErrors";
 import get from "lodash/get";
 import { SwapError } from "./SwapError";
+import { getQuotes } from "./quotes";
 
 export { ExchangeType };
 
@@ -71,6 +74,7 @@ type Handlers = {
   "custom.exchange.error": RPCHandler<void, SwapLiveError>;
   "custom.isReady": RPCHandler<void, void>;
   "custom.exchange.swap": RPCHandler<SwapResult, ExchangeSwapParams>;
+  "custom.exchange.getQuotes": RPCHandler<GetQuotesResponse, GetQuotesWireArgs>;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -299,7 +303,7 @@ export const handlers = ({
           );
         }
 
-        const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+        const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
 
         /**
          * 'subAccountId' is used for ETH and it's ERC-20 tokens.
@@ -552,7 +556,7 @@ export const handlers = ({
           );
         }
 
-        const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+        const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
 
         /**
          * 'subAccountId' is used for ETH and it's ERC-20 tokens.
@@ -722,6 +726,15 @@ export const handlers = ({
         }),
       );
     }),
+
+    "custom.exchange.getQuotes": customWrapper<GetQuotesWireArgs, GetQuotesResponse>(
+      async params => {
+        if (!params) {
+          throw new ServerError(createUnknownError({ message: "params is undefined" }));
+        }
+        return getQuotes(params);
+      },
+    ),
   }) as const satisfies Handlers;
 
 async function extractSwapStartParam(

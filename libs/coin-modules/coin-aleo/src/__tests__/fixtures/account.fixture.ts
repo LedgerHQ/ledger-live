@@ -14,7 +14,7 @@ const defaultBalance = new BigNumber(100000);
 const defaultMockAccountId =
   "js:2:aleo:aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f::AViewKey123";
 
-export const mockAleoResources: AleoResources = {
+export const mockAleoResources = {
   transparentBalance: new BigNumber(1000),
   provableApi: {
     uuid: "uuid-1234",
@@ -26,7 +26,7 @@ export const mockAleoResources: AleoResources = {
   privateBalance: new BigNumber(1),
   unspentPrivateRecords: [],
   lastPrivateSyncDate: new Date(),
-};
+} satisfies AleoResources;
 
 export const mockAleoResourcesRaw: AleoResourcesRaw = {
   transparentBalance: mockAleoResources.transparentBalance.toString(),

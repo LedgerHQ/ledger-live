@@ -122,13 +122,56 @@ export const overrideStateReadOnly = (state: State): State => {
 };
 
 export const overrideStateWithFundsVariant = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { quickActionCtas: true, quickActionsCtasVariant: true } } },
+  {
+    lwmWallet40: {
+      enabled: true,
+      params: { quickActionCtas: true, quickActionsCtasVariant: true },
+    },
+  },
   overrideStateWithFunds,
 );
 
 export const overrideStateWithoutFundsVariant = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { quickActionCtas: true, quickActionsCtasVariant: true } } },
+  {
+    lwmWallet40: {
+      enabled: true,
+      params: { quickActionCtas: true, quickActionsCtasVariant: true },
+    },
+  },
   overrideStateWithoutFunds,
+);
+
+const overrideStateWithFundsEN = (state: State): State => ({
+  ...overrideStateWithFunds(state),
+  settings: { ...overrideStateWithFunds(state).settings, language: "en" },
+});
+
+export const overrideStateWithTransferCopyVariant = withFlagOverrides(
+  {
+    transferButtonCopyVariant: {
+      enabled: true,
+      params: {
+        variantId: "variant_a",
+        buttonLabel: "Move funds",
+        modalTitle: "Move your crypto",
+        rowReceiveTitle: "Get crypto",
+        rowSendTitle: "Send away",
+        rowCashToStableTitle: "Cash in",
+        rowCashToStableDescription: "Turn your cash into stablecoins.",
+      },
+    },
+  },
+  overrideStateWithFundsEN,
+);
+
+export const overrideStateWithTransferCopyDisabled = withFlagOverrides(
+  {
+    transferButtonCopyVariant: {
+      enabled: false,
+      params: { variantId: "control" },
+    },
+  },
+  overrideStateWithFundsEN,
 );
 
 export const getCtaButtons = async () => {

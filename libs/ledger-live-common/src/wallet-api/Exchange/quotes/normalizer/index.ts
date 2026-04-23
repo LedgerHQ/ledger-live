@@ -1,0 +1,1 @@
+export { normalizeQuote } from "./normalizeQuote";

@@ -3,7 +3,6 @@ import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
   DeviceExtractedContext,
-  RequiredDeviceContext,
 } from "./core";
 import type { ExecutorState } from "./executor";
 
@@ -18,7 +17,7 @@ export type IntentExecutionSnapshot<JobState, ExtraProps> = {
   intentComponentExtraProps: ExtraProps;
 };
 
-export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps> =
+export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInput> =
   | {
       phase: "deviceConnection";
       deviceConnectionParams: DeviceConnectionParams;
@@ -33,14 +32,8 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps> =
   | {
       phase: "deviceInitialization";
       connectionResult: DeviceConnectionResult;
-      requiredDeviceContext: RequiredDeviceContext;
+      deviceInitializationInput: InitInput;
       onContextInitialized: (ctx: DeviceExtractedContext) => void;
-      onError: (error: unknown) => void;
-    }
-  | {
-      phase: "initializationError";
-      error: unknown;
-      onRetry: () => void;
     }
   | {
       phase: "intentExecution";
@@ -66,9 +59,9 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps> =
       lastIntentSnapshot: IntentExecutionSnapshot<JobState, ExtraProps> | null;
     };
 
-export type DeriveHookStateParams<JobState, ExtraProps> = {
+export type DeriveHookStateParams<JobState, ExtraProps, InitInput> = {
   deviceConnectionParams: DeviceConnectionParams;
-  requiredDeviceContext: RequiredDeviceContext;
+  deviceInitializationInput: InitInput;
   connectionResult: DeviceConnectionResult | null;
   latestJobState: JobState | undefined;
   intentComponent: React.ComponentType<{
@@ -80,15 +73,14 @@ export type DeriveHookStateParams<JobState, ExtraProps> = {
   onConnected: (result: DeviceConnectionResult) => void;
   onConnectionError: (error: unknown) => void;
   onContextInitialized: (ctx: DeviceExtractedContext) => void;
-  onInitializationError: (error: unknown) => void;
   onRetry: () => void;
   onUserCancel: () => void;
 };
 
-export function deriveHookState<JobState, Input, ExtraProps>(
+export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
   executorState: ExecutorState,
-  params: DeriveHookStateParams<JobState, ExtraProps>,
-): DeviceIntentExecutorHookState<JobState, Input, ExtraProps> {
+  params: DeriveHookStateParams<JobState, ExtraProps, InitInput>,
+): DeviceIntentExecutorHookState<JobState, Input, ExtraProps, InitInput> {
   switch (executorState.type) {
     case "connectingDevice":
       return {
@@ -107,15 +99,8 @@ export function deriveHookState<JobState, Input, ExtraProps>(
       return {
         phase: "deviceInitialization",
         connectionResult: params.connectionResult!,
-        requiredDeviceContext: params.requiredDeviceContext,
+        deviceInitializationInput: params.deviceInitializationInput,
         onContextInitialized: params.onContextInitialized,
-        onError: params.onInitializationError,
-      };
-    case "initializingDeviceContextError":
-      return {
-        phase: "initializationError",
-        error: executorState.error,
-        onRetry: params.onRetry,
       };
     case "executingIntent":
       return {

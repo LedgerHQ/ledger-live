@@ -4,12 +4,19 @@ import { useTranslation } from "~/context/Locale";
 import { type DeviceSectionDevice } from "./useDeviceSectionViewModel";
 import { AddDeviceLink } from "./components/AddDeviceLink";
 import { DeviceListContent } from "./components/DeviceListContent";
+import { DeviceRemoveDrawer } from "./components/DeviceRemoveDrawer";
 
 interface DeviceSectionViewProps {
   readonly devices: readonly DeviceSectionDevice[];
   readonly hasDevices: boolean;
   readonly onAddDevice: () => void;
   readonly onExploreDevices: () => void;
+  readonly onDevicePress: (device: DeviceSectionDevice) => void;
+  readonly onOpenMenu: (device: DeviceSectionDevice) => void;
+  readonly selectedDevice: DeviceSectionDevice | null;
+  readonly isRemoveDrawerOpen: boolean;
+  readonly onCloseRemoveMenu: () => void;
+  readonly onRemoveDevice: () => void;
 }
 
 export function DeviceSectionView({
@@ -17,6 +24,12 @@ export function DeviceSectionView({
   hasDevices,
   onAddDevice,
   onExploreDevices,
+  onDevicePress,
+  onOpenMenu,
+  selectedDevice,
+  isRemoveDrawerOpen,
+  onCloseRemoveMenu,
+  onRemoveDevice,
 }: DeviceSectionViewProps) {
   const { t } = useTranslation();
 
@@ -37,8 +50,17 @@ export function DeviceSectionView({
           devices={devices}
           onAddDevice={onAddDevice}
           onExploreDevices={onExploreDevices}
+          onDevicePress={onDevicePress}
+          onOpenMenu={onOpenMenu}
         />
       </Box>
+
+      <DeviceRemoveDrawer
+        device={selectedDevice}
+        isOpen={isRemoveDrawerOpen}
+        onClose={onCloseRemoveMenu}
+        onRemove={onRemoveDevice}
+      />
     </Box>
   );
 }

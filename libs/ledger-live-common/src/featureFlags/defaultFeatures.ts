@@ -798,13 +798,6 @@ export const DEFAULT_FEATURES: Features = {
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
   lifiSolana: DEFAULT_FEATURE,
-  llmAnimatedSplashScreen: {
-    enabled: true,
-    params: {
-      ios: true,
-      android: true,
-    },
-  },
   llmOnboardingEnableSync: initFeature({
     enabled: false,
     params: {
@@ -875,6 +868,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       thresholdUsd: 0.5,
     },
+  },
+  transferButtonCopyVariant: {
+    enabled: false,
+    params: { variantId: "control" },
   },
 };
 

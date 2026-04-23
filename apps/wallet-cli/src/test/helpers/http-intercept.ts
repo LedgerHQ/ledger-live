@@ -43,16 +43,9 @@ function isLocal(urlStr: string): boolean {
 // Layer 1: globalThis.fetch
 // ---------------------------------------------------------------------------
 const origFetch = globalThis.fetch;
-(globalThis as Record<string, unknown>).fetch = (
-  input: RequestInfo | URL,
-  init?: RequestInit,
-) => {
+(globalThis as Record<string, unknown>).fetch = (input: RequestInfo | URL, init?: RequestInit) => {
   const urlStr =
-    typeof input === "string"
-      ? input
-      : input instanceof URL
-        ? input.href
-        : (input as Request).url;
+    typeof input === "string" ? input : input instanceof URL ? input.href : (input as Request).url;
   if (urlStr && !isLocal(urlStr)) {
     const u = new URL(urlStr);
     const redirected = `${mockBase}${u.pathname}${u.search}`;
@@ -81,7 +74,12 @@ const origHttpRequest = http.request.bind(http);
 function buildMockOptions(options: any): Record<string, unknown> {
   if (typeof options === "string" || options instanceof URL) {
     const u = new URL(typeof options === "string" ? options : (options as URL).href);
-    return { hostname: "localhost", port: Number(mockPort), path: u.pathname + u.search, method: "GET" };
+    return {
+      hostname: "localhost",
+      port: Number(mockPort),
+      path: u.pathname + u.search,
+      method: "GET",
+    };
   }
   return {
     hostname: "localhost",
@@ -109,9 +107,18 @@ function isExternalOptions(options: any): boolean {
 //   (options[, callback])
 //   (url[, options][, callback])
 // When the first arg is a URL/string and rest[0] is a non-function, it is an options object.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function resolveHttpArgs(base: Record<string, unknown>, firstArg: any, rest: any[]): [Record<string, unknown>, ((...a: unknown[]) => unknown) | undefined] {
-  if ((typeof firstArg === "string" || firstArg instanceof URL) && rest.length > 0 && typeof rest[0] !== "function") {
+function resolveHttpArgs(
+  base: Record<string, unknown>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  firstArg: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rest: any[],
+): [Record<string, unknown>, ((...a: unknown[]) => unknown) | undefined] {
+  if (
+    (typeof firstArg === "string" || firstArg instanceof URL) &&
+    rest.length > 0 &&
+    typeof rest[0] !== "function"
+  ) {
     const extra = rest[0] as Record<string, unknown>;
     const merged = {
       ...base,

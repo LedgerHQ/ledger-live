@@ -53,12 +53,28 @@ export const filterCardsThatHaveBeenDismissed = (
   return filteredCards;
 };
 
+export const dedupeCategoriesByCategoryId = (categories: CategoryContentCard[]) => {
+  const seenCategoryIds = new Set<string>();
+  const uniqueCategories: CategoryContentCard[] = [];
+  for (const category of categories) {
+    if (!category.categoryId) {
+      uniqueCategories.push(category);
+      continue;
+    }
+    if (seenCategoryIds.has(category.categoryId)) continue;
+    seenCategoryIds.add(category.categoryId);
+    uniqueCategories.push(category);
+  }
+  return uniqueCategories;
+};
+
 export const formatCategories = (
   categories: CategoryContentCard[],
   mobileCards: BrazeContentCard[],
 ) => {
   const categoriesSorted = categories.sort(compareCards);
-  const categoriesWithCards = categoriesSorted.map(category => ({
+  const uniqueCategories = dedupeCategoriesByCategoryId(categoriesSorted);
+  const categoriesWithCards = uniqueCategories.map(category => ({
     category,
     cards: mobileCards.filter(mobileCard => mobileCard.extras.categoryId === category.categoryId),
   }));

@@ -106,15 +106,15 @@ describe("craftTransaction", () => {
     const recipient = "WHATEVER";
     const amount = BigInt(0);
     const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
-    const mockTransferAllowDeath = jest.fn().mockReturnValue({
+    const mockTransferAll = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
-    (mockTransferAllowDeath as any).meta = {
-      args: [{ name: "dest" }, { name: "value" }],
+    (mockTransferAll as any).meta = {
+      args: [{ name: "dest" }, { name: "keepAlive" }],
     };
     mockExtrinsics.mockReturnValue({
       balances: {
-        transferAllowDeath: mockTransferAllowDeath,
+        transferAll: mockTransferAll,
       },
     });
 
@@ -124,9 +124,9 @@ describe("craftTransaction", () => {
     const result = await craftTransaction(address, 0, extrinsicArg);
 
     // THEN
-    expect(mockTransferAllowDeath).toHaveBeenCalledTimes(1);
-    expect(mockTransferAllowDeath.mock.lastCall[0]).toEqual(recipient);
-    expect(mockTransferAllowDeath.mock.lastCall[1]).toEqual(amount.toString());
+    expect(mockTransferAll).toHaveBeenCalledTimes(1);
+    expect(mockTransferAll.mock.lastCall[0]).toEqual(recipient);
+    expect(mockTransferAll.mock.lastCall[1]).toEqual(false);
     expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
 
     expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);

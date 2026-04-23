@@ -71,19 +71,19 @@ for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests
           },
         ],
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        await app.swap.selectSpecificProvider(provider, electronApp);
+        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await app.swap.selectSpecificProvider(provider);
 
-        await app.swap.clickExchangeButton(electronApp);
-        await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-        await app.swap.clickExecuteSwapButton(electronApp);
+        await app.swap.clickExchangeButton();
+        await app.swap.checkElementsPresenceOnSwapApprovalStep();
+        await app.swap.clickExecuteSwapButton();
         await app.swap.clickContinueButton();
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swap.expectTransactionSentToasterToBeVisible();
@@ -141,15 +141,15 @@ test.describe("Swap - Check Best Offer", () => {
       ],
       annotation: { type: "TMS", description: "B2CQA-2327" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      await app.swap.selectExchangeWithoutKyc(electronApp);
-      await app.swap.checkBestOffer(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      await app.swap.selectExchangeWithoutKyc();
+      await app.swap.checkBestOffer();
     },
   );
 });
@@ -193,7 +193,7 @@ test.describe("Swap - Landing page", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-2918" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
@@ -204,14 +204,10 @@ test.describe("Swap - Landing page", () => {
 
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      const providerList = await app.swap.getProviderList(electronApp);
-      await app.swap.checkQuotesContainerInfos(
-        electronApp,
-        providerList,
-        toAccount.currency.ticker,
-      );
-      await app.swap.checkBestOffer(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      const providerList = await app.swap.getProviderList();
+      await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
+      await app.swap.checkBestOffer();
     },
   );
 });

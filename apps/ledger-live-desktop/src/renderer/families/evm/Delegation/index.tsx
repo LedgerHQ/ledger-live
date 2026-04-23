@@ -1,15 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
   mapDelegations,
   mapUnbondings,
   mapRedelegations,
   canDelegate,
   getValidatorExplorerUrl,
+  prefetchValidators,
+  hasUnbondingPeriod,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
@@ -40,10 +41,19 @@ const Wrapper = styled(Box).attrs(() => ({
 const Delegation = ({ account }: { account: StakingAccount }) => {
   const dispatch = useDispatch();
   const { enabled: isEvmNativeStakingEnabled, params } = useFeature("evmNativeStaking") ?? {};
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
+  const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;
 
   const unit = useAccountUnit(account);
+  const currencyId = account.currency.id;
+
+  // Warm the validators cache on the account page so that opening either the
+  // "Earn rewards" info modal or the "Delegate" modal directly never shows an
+  // empty list while the first fetch resolves.
+  useEffect(() => {
+    if (isCurrencySupported && isEvmNativeStakingEnabled) {
+      prefetchValidators(currencyId);
+    }
+  }, [currencyId, isCurrencySupported, isEvmNativeStakingEnabled]);
 
   const validators = account.stakingResources.validators ?? [];
 
@@ -66,6 +76,14 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
     () => dispatch(openModal("MODAL_EVM_DELEGATE", { account })),
     [account, dispatch],
   );
+  const onRedirect = useCallback(
+    (validatorAddress: string, modalName: string) => {
+      if (modalName === "MODAL_EVM_UNDELEGATE") {
+        dispatch(openModal("MODAL_EVM_UNDELEGATE", { account, validatorAddress }));
+      }
+    },
+    [account, dispatch],
+  );
 
   if (!isCurrencySupported || !isEvmNativeStakingEnabled) return null;
 
@@ -79,10 +97,12 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const mappedRedelegations = mapRedelegations(redelegations, validators, unit);
   const onClaimRewards = () => {};
-  const onRedirect = () => {};
 
   const hasDelegations = delegations.length > 0;
-  const hasUnbondings = unbondings.length > 0;
+  // Only surface the "Pending undelegation" section when the chain enforces an unbonding
+  // period (Acceptance Criteria: Tracking). Instant-withdrawal chains never have pending
+  // unbondings so showing the header would be misleading.
+  const hasUnbondings = unbondings.length > 0 && hasUnbondingPeriod(account.currency.id);
   const hasRedelegations = redelegations.length > 0;
   const hasRewards = pendingRewardsBalance.gt(0);
 

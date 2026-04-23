@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
-import "./init-cwd";
 import "./embed-usb-native";
 import { createCLI } from "@bunli/core";
 import "./live-common-setup";
-// createCLI() also tries to import .bunli/commands.gen.ts from process.cwd(); that can hang or no-op
-// when cwd is not this package. init-cwd.ts fixes native builds (usb native addon + bunli cwd).
+// createCLI() normally tries to import .bunli/commands.gen.ts from process.cwd() via a file:// URL.
+// Our @bunli/core patch removes that dynamic import entirely because it can hang in Bun standalone
+// mode, this static import registers commands instead.
 // This side-effect import registers commands in the standalone binary.
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";

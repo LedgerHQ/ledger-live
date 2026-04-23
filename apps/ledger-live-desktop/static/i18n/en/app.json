@@ -4232,6 +4232,8 @@
         "activeTooltip": "Delegated amounts generate rewards",
         "inactiveTooltip": "Undelegated amounts do not generate rewards",
         "minSafeWarning": "Not enough funds",
+        "commission": "Commission",
+        "totalStake": "Total stake",
         "flow": {
           "title": "Delegate",
           "steps": {
@@ -4250,7 +4252,8 @@
               "title": "Amount"
             },
             "validator": {
-              "title": "Validators"
+              "title": "Validators",
+              "noResults": "No validators match your search"
             },
             "connectDevice": {
               "title": "Device"
@@ -4272,7 +4275,35 @@
       },
       "undelegation": {
         "header": "Undelegation(s)",
-        "inactiveTooltip": "Undelegated amounts do not generate rewards."
+        "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "flow": {
+          "title": "Stop staking",
+          "steps": {
+            "amount": {
+              "title": "Amount",
+              "subtitle": "The undelegation process takes <0>{{numberOfDays}} days</0> to finalize.",
+              "warningWithTimelock": "Rewards will be automatically claimed. The undelegated amount will be back in the available balance after the <0>{{numberOfDays}}-day timelock</0>.",
+              "warningInstant": "Rewards will be automatically claimed. The undelegated amount will be immediately available in your balance.",
+              "fields": {
+                "validator": "Validator",
+                "amount": "Amount to undelegate"
+              }
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully undelegated your assets.",
+                "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
       }
     }
   },
@@ -7369,6 +7400,9 @@
       "title": "No private record can cover the network fee.",
       "description": "Select a different record for the transfer amount or top up your balance with additional funds."
     },
+    "AleoApiConfigurationResetError": {
+      "title": "Record scanner configuration was reset, please sync your account again."
+    },
     "BackupAppDataError": {
       "title": "Error during app data backup"
     },
@@ -8574,7 +8608,8 @@
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",
-        "error": "Private sync failed. Please try again later."
+        "errorTitle": "Private sync failed",
+        "errorDesc": "Something went wrong, please try again"
       }
     }
   },
@@ -8643,6 +8678,11 @@
   },
   "myWallet": {
     "title": "My Wallet",
+    "avatar": {
+      "label": "Avatar",
+      "labelWithNotifications_one": "Avatar, {{count}} unseen notification",
+      "labelWithNotifications_other": "Avatar, {{count}} unseen notifications"
+    },
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",

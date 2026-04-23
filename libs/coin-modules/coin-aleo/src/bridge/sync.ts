@@ -11,6 +11,7 @@ import { concat, merge, Observable, of } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { AleoApiConfigurationResetError } from "../errors";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import {
   extractViewKey,
@@ -169,14 +170,28 @@ export async function performPrivateSync(
     viewKey,
     provableApi: initialAccount.aleoResources?.provableApi ?? null,
   }).catch(err => {
-    // private sync logic will be probably handled separately with https://ledgerhq.atlassian.net/browse/LIVE-26440
-    // for now, if provable API access configuration fails, we still want to preserve existing state
-    log("aleo/sync", "Error while configuring record scanner API access", { err, address });
-    return initialAccount.aleoResources?.provableApi ?? null;
+    log("aleo/sync", "Error while configuring record scanner API access", {
+      err,
+      address,
+      hasApiConfigured: !!initialAccount.aleoResources?.provableApi,
+    });
+
+    // this error means that the current provableApi configuration is invalid and needs to be reset
+    if (err instanceof AleoApiConfigurationResetError) {
+      throw err;
+    }
+
+    // for other errors (e.g. network issues) optimistically assume the existing provableApi is still valid
+    // so the sync can be retried without forcing a new registration immediately
+    if (initialAccount.aleoResources?.provableApi) {
+      return initialAccount.aleoResources.provableApi;
+    }
+
+    throw err;
   });
 
-  if (!provableApi || !isProvableApiConfigured(provableApi)) {
-    return null;
+  if (!isProvableApiConfigured(provableApi)) {
+    throw new AleoApiConfigurationResetError();
   }
 
   if (!isRecordScannerReady(provableApi)) {
@@ -304,6 +319,7 @@ export function createPrivateSyncObservable(
   freshTransparentBalance?: BigNumber,
   emitProgressUpdates?: boolean,
 ): Observable<Partial<AleoAccount>> {
+  const { initialAccount } = info;
   const currencyId = info.currency.id;
   log("aleo/createPrivateSyncObservable", `Initiating private sync for ${currencyId}`);
   return new Observable<Partial<AleoAccount>>(subscriber => {
@@ -323,6 +339,18 @@ export function createPrivateSyncObservable(
         subscriber.complete();
       })
       .catch(err => {
+        if (err instanceof AleoApiConfigurationResetError && initialAccount?.aleoResources) {
+          // set `provableApi` to null before surfacing the error so the next sync cycle starts fresh re-registration
+          subscriber.next({
+            operations: initialAccount.operations,
+            operationsCount: initialAccount.operationsCount,
+            aleoResources: {
+              ...initialAccount.aleoResources,
+              provableApi: null,
+            },
+          });
+        }
+
         log("aleo/createPrivateSyncObservable", `Private sync error for ${currencyId}`, {
           error: err.message,
         });

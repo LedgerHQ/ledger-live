@@ -16,6 +16,7 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsButtonId = "topbar-settings";
+  portfolioListIdRegex = /PortfolioAccountsList|PortfolioEmptyList/;
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
@@ -84,8 +85,8 @@ export default class PortfolioPage {
   }
 
   @Step("Wait for portfolio page to load")
-  async waitForPortfolioPageToLoad() {
-    await waitForElementById(this.portfolioSettingsButtonId, 120000);
+  async waitForPortfolioPageToLoad(timeout = 120000) {
+    await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
   }
 
   @Step("Expect Portfolio read only")
@@ -146,9 +147,9 @@ export default class PortfolioPage {
   }
 
   @Step("Open Portfolio via deeplink")
-  async openViaDeeplink() {
+  async openViaDeeplink(timeout = 120000) {
     await openDeeplink(this.baseLink);
-    await waitForElementById(this.portfolioSettingsButtonId); // Issue with RN75 : QAA-370
+    await waitForElementById(this.portfolioSettingsButtonId, timeout); // Issue with RN75 : QAA-370
   }
 
   @Step("Click on Add account button in portfolio")

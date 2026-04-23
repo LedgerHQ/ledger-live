@@ -1,4 +1,5 @@
 const iosArch = "arm64";
+const gpuMode = process.env.CI ? "swiftshader_indirect" : "host";
 // NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
 const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
 
@@ -13,7 +14,7 @@ module.exports = {
       setupTimeout: 500000,
     },
     retries: 0,
-    forwardEnv: true
+    forwardEnv: true,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -94,7 +95,7 @@ module.exports = {
       device: {
         avdName: "Android_Emulator",
       },
-      gpuMode: "swiftshader_indirect",
+      gpuMode,
       headless: !!process.env.CI,
     },
     emulator2: {
@@ -102,7 +103,7 @@ module.exports = {
       device: {
         avdName: "Android_Emulator_2",
       },
-      gpuMode: "swiftshader_indirect",
+      gpuMode,
       headless: !!process.env.CI,
     },
     emulator3: {
@@ -110,7 +111,7 @@ module.exports = {
       device: {
         avdName: "Android_Emulator_3",
       },
-      gpuMode: "swiftshader_indirect",
+      gpuMode,
       headless: !!process.env.CI,
     },
   },

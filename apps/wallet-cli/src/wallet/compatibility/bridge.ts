@@ -107,7 +107,7 @@ export class BridgeAdapter {
 
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {
     const account = await this.sync(descriptor);
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const result = await firstValueFrom(bridge.receive(account, { deviceId, verify: true }));
     return result.address;
   }
@@ -170,7 +170,8 @@ export class BridgeAdapter {
       });
     });
 
-    if (signedOperation === undefined) throw new Error("signOperation completed without a signed event");
+    if (signedOperation === undefined)
+      throw new Error("signOperation completed without a signed event");
 
     if (dryRun) {
       subscriber.next({ type: "dry-run" });
@@ -207,7 +208,7 @@ export class BridgeAdapter {
   }
 
   private async buildValidatedTx(account: Account, intent: TransactionIntent) {
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const nativeUnit = account.currency.units[0];
     const parsed = parseAmountWithTicker(intent.amount, account);
     const tokenAccount =
@@ -242,7 +243,7 @@ export class BridgeAdapter {
 
   private async sync(descriptor: AccountDescriptor): Promise<Account> {
     const account = this.buildAccount(descriptor);
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     await BridgeAdapter.cache.prepareCurrency(account.currency);
     return lastValueFrom(
       bridge

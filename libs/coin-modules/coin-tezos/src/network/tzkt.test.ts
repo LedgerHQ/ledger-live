@@ -11,6 +11,7 @@ import type {
   APIBlock,
   APIDelegationType,
   APIOperation,
+  APIStakingType,
   APITokenBalance,
   APITokenTransfer,
   APITransactionType,
@@ -20,6 +21,7 @@ import api from "./tzkt";
 import {
   fetchAllTransactions,
   fetchBlockDelegations,
+  fetchBlockStaking,
   fetchBlockTokenTransfers,
   fetchBlockTransactions,
 } from ".";
@@ -62,6 +64,10 @@ function makeDelegationItem(id: number): APIDelegationType {
   return { id } as APIDelegationType;
 }
 
+function makeStakingItem(id: number): APIStakingType {
+  return { id } as APIStakingType;
+}
+
 function makeOperation(id: number): APIOperation {
   return {
     id,
@@ -81,6 +87,14 @@ function makeTokenWithTxId(id: number, transactionId?: number): APITokenTransfer
   return { ...makeTokenItem(id), transactionId } as APITokenTransfer;
 }
 
+const localSpies: jest.SpyInstance[] = [];
+
+function spyOnApi<K extends keyof typeof api>(method: K) {
+  const spy = jest.spyOn(api, method);
+  localSpies.push(spy);
+  return spy;
+}
+
 // ---------------------------------------------------------------------------
 // Suite
 // ---------------------------------------------------------------------------
@@ -91,7 +105,7 @@ describe("tzkt network API", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    localSpies.splice(0).forEach(spy => spy.mockRestore());
     jest.clearAllMocks();
   });
 
@@ -289,10 +303,11 @@ describe("tzkt network API", () => {
 
   describe("api.getAccountTokenTransfers", () => {
     it("returns empty hash when no numeric transaction ids are present", async () => {
-      const spyToken = jest
-        .spyOn(api, "getTokenTransfers")
-        .mockResolvedValue([makeTokenWithTxId(1, undefined), makeTokenWithTxId(2, undefined)]);
-      const spyTx = jest.spyOn(api, "getOperationsTransactions");
+      const spyToken = spyOnApi("getTokenTransfers").mockResolvedValue([
+        makeTokenWithTxId(1, undefined),
+        makeTokenWithTxId(2, undefined),
+      ]);
+      const spyTx = spyOnApi("getOperationsTransactions");
 
       const result = await api.getAccountTokenTransfers("tz1x", {
         "level.ge": 10,
@@ -315,12 +330,13 @@ describe("tzkt network API", () => {
     });
 
     it("joins operation hashes and uses empty string when no match", async () => {
-      jest
-        .spyOn(api, "getTokenTransfers")
-        .mockResolvedValue([makeTokenWithTxId(1, 100), makeTokenWithTxId(2, 200)]);
-      jest
-        .spyOn(api, "getOperationsTransactions")
-        .mockResolvedValue([{ id: 100, hash: "h100" } as APITransactionType]);
+      spyOnApi("getTokenTransfers").mockResolvedValue([
+        makeTokenWithTxId(1, 100),
+        makeTokenWithTxId(2, 200),
+      ]);
+      spyOnApi("getOperationsTransactions").mockResolvedValue([
+        { id: 100, hash: "h100" } as APITransactionType,
+      ]);
 
       const result = await api.getAccountTokenTransfers("tz1y", {
         "level.ge": 0,
@@ -391,7 +407,7 @@ describe("tzkt network API", () => {
 
   describe("fetchAllTransactions", () => {
     it("returns empty when the first page is empty", async () => {
-      jest.spyOn(api, "getAccountOperations").mockResolvedValue([]);
+      spyOnApi("getAccountOperations").mockResolvedValue([]);
 
       const result = await fetchAllTransactions("tz1acc");
 
@@ -423,7 +439,7 @@ describe("tzkt network API", () => {
 
     it("logs and returns when the last operation has a falsy id", async () => {
       const opMissingId = { ...makeOperation(1), id: 0 } as APIOperation;
-      jest.spyOn(api, "getAccountOperations").mockResolvedValue([opMissingId]);
+      spyOnApi("getAccountOperations").mockResolvedValue([opMissingId]);
 
       const result = await fetchAllTransactions("tz1acc");
 
@@ -527,7 +543,7 @@ describe("tzkt network API", () => {
 
   describe("fetchBlockTransactions", () => {
     it("returns an empty array when the first page is empty", async () => {
-      jest.spyOn(api, "getBlockTransactionsPage").mockResolvedValue([]);
+      spyOnApi("getBlockTransactionsPage").mockResolvedValue([]);
 
       const result = await fetchBlockTransactions(100);
 
@@ -536,7 +552,7 @@ describe("tzkt network API", () => {
 
     it("returns a single page when the page is smaller than the page size", async () => {
       const txs = [makeTxItem(1), makeTxItem(2)];
-      jest.spyOn(api, "getBlockTransactionsPage").mockResolvedValue(txs);
+      spyOnApi("getBlockTransactionsPage").mockResolvedValue(txs);
 
       const result = await fetchBlockTransactions(100);
 
@@ -564,7 +580,7 @@ describe("tzkt network API", () => {
     it("stops after maxTxQuery iterations regardless of page length", async () => {
       // maxTxQuery = 100 (from mockConfig); every call returns a full page to keep the loop going
       const fullPage = Array.from({ length: 1000 }, (_, i) => makeTxItem(i + 1));
-      const spy = jest.spyOn(api, "getBlockTransactionsPage").mockResolvedValue(fullPage);
+      const spy = spyOnApi("getBlockTransactionsPage").mockResolvedValue(fullPage);
 
       const result = await fetchBlockTransactions(100);
 
@@ -583,7 +599,7 @@ describe("tzkt network API", () => {
 
   describe("fetchBlockTokenTransfers", () => {
     it("returns an empty array when the first page is empty", async () => {
-      jest.spyOn(api, "getBlockTokenTransfersPage").mockResolvedValue([]);
+      spyOnApi("getBlockTokenTransfersPage").mockResolvedValue([]);
 
       const result = await fetchBlockTokenTransfers(100);
 
@@ -592,7 +608,7 @@ describe("tzkt network API", () => {
 
     it("returns a single page when the page is smaller than the page size", async () => {
       const items = [makeTokenItem(1), makeTokenItem(2)];
-      jest.spyOn(api, "getBlockTokenTransfersPage").mockResolvedValue(items);
+      spyOnApi("getBlockTokenTransfersPage").mockResolvedValue(items);
 
       const result = await fetchBlockTokenTransfers(100);
 
@@ -618,7 +634,7 @@ describe("tzkt network API", () => {
 
     it("stops after maxTxQuery iterations regardless of page length", async () => {
       const fullPage = Array.from({ length: 1000 }, (_, i) => makeTokenItem(i + 1));
-      const spy = jest.spyOn(api, "getBlockTokenTransfersPage").mockResolvedValue(fullPage);
+      const spy = spyOnApi("getBlockTokenTransfersPage").mockResolvedValue(fullPage);
 
       const result = await fetchBlockTokenTransfers(100);
 
@@ -676,7 +692,7 @@ describe("tzkt network API", () => {
 
   describe("fetchBlockDelegations", () => {
     it("returns an empty array when the first page is empty", async () => {
-      jest.spyOn(api, "getBlockDelegationsPage").mockResolvedValue([]);
+      spyOnApi("getBlockDelegationsPage").mockResolvedValue([]);
 
       const result = await fetchBlockDelegations(100);
 
@@ -685,7 +701,7 @@ describe("tzkt network API", () => {
 
     it("returns a single page when the page is smaller than the page size", async () => {
       const items = [makeDelegationItem(1), makeDelegationItem(2)];
-      jest.spyOn(api, "getBlockDelegationsPage").mockResolvedValue(items);
+      spyOnApi("getBlockDelegationsPage").mockResolvedValue(items);
 
       const result = await fetchBlockDelegations(100);
 
@@ -711,7 +727,7 @@ describe("tzkt network API", () => {
 
     it("stops after maxTxQuery iterations regardless of page length", async () => {
       const fullPage = Array.from({ length: 1000 }, (_, i) => makeDelegationItem(i + 1));
-      const spy = jest.spyOn(api, "getBlockDelegationsPage").mockResolvedValue(fullPage);
+      const spy = spyOnApi("getBlockDelegationsPage").mockResolvedValue(fullPage);
 
       const result = await fetchBlockDelegations(100);
 
@@ -720,6 +736,99 @@ describe("tzkt network API", () => {
       expect(mockedLog).toHaveBeenCalledWith(
         "tezos",
         expect.stringContaining("fetchBlockDelegations: maxTxQuery limit reached at level 100"),
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // api.getBlockStakingPage
+  // -------------------------------------------------------------------------
+
+  describe("api.getBlockStakingPage", () => {
+    it("fetches a page without a cursor", async () => {
+      const items: APIStakingType[] = [makeStakingItem(10)];
+      mockedNetwork.mockReturnValue(networkResponse(items) as ReturnType<typeof network>);
+
+      const result = await api.getBlockStakingPage(400);
+
+      expect(result).toEqual(items);
+      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
+      expect(params).toMatchObject({ level: 400, limit: 1000, "sort.asc": "id" });
+      expect(params).not.toHaveProperty("offset.cr");
+    });
+
+    it("includes offset.cr in params when cursor is provided", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      await api.getBlockStakingPage(400, 88);
+
+      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
+      expect(params["offset.cr"]).toBe(88);
+    });
+
+    it("calls the staking endpoint", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      await api.getBlockStakingPage(500);
+
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("/v1/operations/staking"),
+        }),
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // fetchBlockStaking — pagination logic
+  // -------------------------------------------------------------------------
+
+  describe("fetchBlockStaking", () => {
+    it("returns an empty array when the first page is empty", async () => {
+      spyOnApi("getBlockStakingPage").mockResolvedValue([]);
+
+      const result = await fetchBlockStaking(100);
+
+      expect(result).toEqual([]);
+    });
+
+    it("returns a single page when the page is smaller than the page size", async () => {
+      const items = [makeStakingItem(1), makeStakingItem(2)];
+      spyOnApi("getBlockStakingPage").mockResolvedValue(items);
+
+      const result = await fetchBlockStaking(100);
+
+      expect(result).toEqual(items);
+    });
+
+    it("fetches a second page when the first page is full (1 000 items)", async () => {
+      const fullPage = Array.from({ length: 1000 }, (_, i) => makeStakingItem(i + 1));
+      const lastPage = [makeStakingItem(1001)];
+
+      const spy = jest
+        .spyOn(api, "getBlockStakingPage")
+        .mockResolvedValueOnce(fullPage)
+        .mockResolvedValueOnce(lastPage);
+
+      const result = await fetchBlockStaking(100);
+
+      expect(result).toHaveLength(1001);
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenNthCalledWith(1, 100, undefined);
+      expect(spy).toHaveBeenNthCalledWith(2, 100, 1000);
+    });
+
+    it("stops after maxTxQuery iterations regardless of page length", async () => {
+      const fullPage = Array.from({ length: 1000 }, (_, i) => makeStakingItem(i + 1));
+      const spy = spyOnApi("getBlockStakingPage").mockResolvedValue(fullPage);
+
+      const result = await fetchBlockStaking(100);
+
+      expect(spy).toHaveBeenCalledTimes(100);
+      expect(result).toHaveLength(100_000);
+      expect(mockedLog).toHaveBeenCalledWith(
+        "tezos",
+        expect.stringContaining("fetchBlockStaking: maxTxQuery limit reached at level 100"),
       );
     });
   });

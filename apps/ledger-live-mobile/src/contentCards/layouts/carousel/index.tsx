@@ -24,6 +24,7 @@ const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
 
 type Props = {
   showLumenPageIndicator?: boolean;
+  disableVerticalStretch?: boolean;
   styles?: {
     gap?: number;
     pagination?: boolean;
@@ -38,112 +39,118 @@ const defaultStyles = {
 };
 
 const Carousel = ContentLayoutBuilder<Props>(
-  ({ items, showLumenPageIndicator = false, styles: _styles = defaultStyles }) => {
-  const styles = {
-    gap: _styles.gap ?? defaultStyles.gap,
-    pagination: _styles.pagination ?? defaultStyles.pagination,
-    widthFactor: _styles.widthFactor ?? defaultStyles.widthFactor,
-  };
+  ({
+    items,
+    showLumenPageIndicator = false,
+    disableVerticalStretch = false,
+    styles: _styles = defaultStyles,
+  }) => {
+    const styles = {
+      gap: _styles.gap ?? defaultStyles.gap,
+      pagination: _styles.pagination ?? defaultStyles.pagination,
+      widthFactor: _styles.widthFactor ?? defaultStyles.widthFactor,
+    };
 
-  const width = useWindowDimensions().width * styles.widthFactor;
+    const width = useWindowDimensions().width * styles.widthFactor;
 
-  const isFullWidth = styles.widthFactor === WidthFactor.Full;
+    const isFullWidth = styles.widthFactor === WidthFactor.Full;
 
-  const separatorWidth = useTheme().space[styles.gap];
+    const theme = useTheme();
+    const separatorWidth = theme.space[styles.gap];
 
-  const isPaginationEnabled = styles.pagination && !showLumenPageIndicator;
-  const showDots =
-    showLumenPageIndicator && items.length > 1;
+    const isPaginationEnabled = styles.pagination && !showLumenPageIndicator;
+    const showDots = showLumenPageIndicator && items.length > 1;
 
-  const carouselRef = useRef<FlatList>(null);
-  const [carouselIndex, setCarouselIndex] = useState(0);
+    const carouselRef = useRef<FlatList>(null);
+    const [carouselIndex, setCarouselIndex] = useState(0);
 
-  const setIndexOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const contentOffsetX = e.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(contentOffsetX / (width - separatorWidth * 1.5));
-    if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
-  };
+    const setIndexOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const contentOffsetX = e.nativeEvent.contentOffset.x;
+      const newIndex = Math.round(contentOffsetX / (width - separatorWidth * 1.5));
+      if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
+    };
 
-  const viewRef = useRef<View | null>(null);
-  const isInViewRef = useRef(false);
-  const isContainerVisibleRef = useRef(false);
-  const visibleCardsRef = useRef<string[]>([]);
-  const { logImpressionCard } = useDynamicContent();
-  useInViewContext(
-    ({ isInView, progressRatio }) => {
-      isInViewRef.current = isInView;
-      if (isInView) visibleCardsRef.current.forEach(id => logImpressionCard(id));
+    const viewRef = useRef<View | null>(null);
+    const isInViewRef = useRef(false);
+    const isContainerVisibleRef = useRef(false);
+    const visibleCardsRef = useRef<string[]>([]);
+    const { logImpressionCard } = useDynamicContent();
+    useInViewContext(
+      ({ isInView, progressRatio }) => {
+        isInViewRef.current = isInView;
+        if (isInView) visibleCardsRef.current.forEach(id => logImpressionCard(id));
 
-      const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
-      if (isNowVisible && !isContainerVisibleRef.current) {
-        const page = currentRouteNameRef.current ?? "";
-        visibleCardsRef.current.forEach(id => {
-          const item = items.find(i => i.props.metadata.id === id);
-          if (item?.props.location) {
-            track("container_impression", { page, location: item.props.location });
-          }
-        });
-      }
-      isContainerVisibleRef.current = isNowVisible;
-    },
-    [logImpressionCard, items],
-    viewRef,
-  );
-  const handleViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken<ContentCardItem>[] }) => {
-      const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
-      const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
-      visibleCardsRef.current = visibleCards;
-      if (isInViewRef.current) newlyVisibleCards.forEach(id => logImpressionCard(id));
-    },
-    [logImpressionCard],
-  );
+        const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
+        if (isNowVisible && !isContainerVisibleRef.current) {
+          const page = currentRouteNameRef.current ?? "";
+          visibleCardsRef.current.forEach(id => {
+            const item = items.find(i => i.props.metadata.id === id);
+            if (item?.props.location) {
+              track("container_impression", { page, location: item.props.location });
+            }
+          });
+        }
+        isContainerVisibleRef.current = isNowVisible;
+      },
+      [logImpressionCard, items],
+      viewRef,
+    );
+    const handleViewableItemsChanged = useCallback(
+      ({ viewableItems }: { viewableItems: ViewToken<ContentCardItem>[] }) => {
+        const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
+        const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
+        visibleCardsRef.current = visibleCards;
+        if (isInViewRef.current) newlyVisibleCards.forEach(id => logImpressionCard(id));
+      },
+      [logImpressionCard],
+    );
 
-  return (
-    <View ref={viewRef} style={{ flex: 1, gap: 8 }}>
-      <FlatList
-        horizontal
-        ref={carouselRef}
-        showsHorizontalScrollIndicator={false}
-        onScroll={setIndexOnScroll}
-        disableIntervalMomentum
-        scrollEventThrottle={16}
-        bounces={false}
-        snapToInterval={width - separatorWidth * 1.5}
-        decelerationRate={0}
-        contentContainerStyle={{
-          paddingHorizontal: isFullWidth ? separatorWidth : separatorWidth / 2,
-        }}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-        onViewableItemsChanged={handleViewableItemsChanged}
-        data={items}
-        ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
-        renderItem={({ item }: ListRenderItemInfo<ContentCardItem>) => (
-          <Animated.View
-            key={item.props.metadata.id}
-            entering={SlideInRight}
-            layout={LinearTransition.duration(100)}
-            style={{
-              width: width - separatorWidth * 2,
-              flex: 1,
-            }}
-          >
-            {<item.component {...item.props} />}
-          </Animated.View>
-        )}
-      />
+    return (
+      <View ref={viewRef} style={[{ gap: 8 }, disableVerticalStretch ? null : { flex: 1 }]}>
+        <FlatList
+          horizontal
+          ref={carouselRef}
+          showsHorizontalScrollIndicator={false}
+          onScroll={setIndexOnScroll}
+          disableIntervalMomentum
+          scrollEventThrottle={16}
+          bounces={false}
+          snapToInterval={width - separatorWidth * 1.5}
+          decelerationRate={0}
+          contentContainerStyle={{
+            paddingHorizontal: isFullWidth ? separatorWidth : separatorWidth / 2,
+          }}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+          onViewableItemsChanged={handleViewableItemsChanged}
+          data={items}
+          ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
+          renderItem={({ item }: ListRenderItemInfo<ContentCardItem>) => (
+            <Animated.View
+              key={item.props.metadata.id}
+              entering={SlideInRight}
+              layout={LinearTransition.duration(100)}
+              style={{
+                width: width - separatorWidth * 2,
+                flex: 1,
+              }}
+            >
+              {<item.component {...item.props} />}
+            </Animated.View>
+          )}
+        />
 
-      {isPaginationEnabled ? <Pagination items={items} carouselIndex={carouselIndex} /> : null}
-      {showDots ? (
-        <Box lx={{ alignItems: "center", marginTop: "s8" }}>
-          <PageIndicator
-            currentPage={Math.min(carouselIndex + 1, items.length)}
-            totalPages={items.length}
-          />
-        </Box>
-      ) : null}
-    </View>
-  );
-});
+        {isPaginationEnabled ? <Pagination items={items} carouselIndex={carouselIndex} /> : null}
+        {showDots ? (
+          <Box lx={{ alignItems: "center" }}>
+            <PageIndicator
+              currentPage={Math.min(carouselIndex + 1, items.length)}
+              totalPages={items.length}
+            />
+          </Box>
+        ) : null}
+      </View>
+    );
+  },
+);
 
 export default Carousel;

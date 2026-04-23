@@ -314,7 +314,6 @@ export type Features = CurrencyFeatures & {
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
-  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwmProductTour: DefaultFeature;
@@ -322,6 +321,7 @@ export type Features = CurrencyFeatures & {
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
+  transferButtonCopyVariant: Feature_TransferButtonCopyVariant;
 };
 
 /**
@@ -812,10 +812,18 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
+export type Feature_TransferButtonCopyVariant = Feature<{
+  variantId: string;
+  buttonLabel?: string;
+  modalTitle?: string;
+  rowReceiveTitle?: string;
+  rowSendTitle?: string;
+  rowCashToStableTitle?: string;
+  rowCashToStableDescription?: string;
+}>;
+
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
-
-export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
 
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
