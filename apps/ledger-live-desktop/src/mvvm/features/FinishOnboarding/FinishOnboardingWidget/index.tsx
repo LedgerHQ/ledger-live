@@ -6,4 +6,5 @@ const FinishOnboardingWidget = () => (
   <FinishOnboardingWidgetView {...useFinishOnboardingWidgetViewModel()} />
 );
 
+export { useFinishOnboardingWidgetViewModel };
 export default FinishOnboardingWidget;

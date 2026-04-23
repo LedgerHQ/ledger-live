@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
-import FinishOnboardingWidget from "LLD/features/FinishOnboardingWidget";
+import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
