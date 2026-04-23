@@ -122,6 +122,7 @@ jobs:
             pnpm-lock.yaml
             .pnpmfile.cjs
             tools
+            .mise/tasks
 
       - name: Determine cache keys
         id: cache-keys
