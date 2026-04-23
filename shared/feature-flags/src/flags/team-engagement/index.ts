@@ -18,6 +18,7 @@ export * from "./llmRebornABtest";
 export * from "./llmRebornLP";
 export * from "./llmSyncOnboardingIncr1";
 export * from "./lwmNewWordingOptInNotificationsDrawer";
+export * from "./lwmProductTour";
 export * from "./nanoOnboardingFundWallet";
 export * from "./newsfeedPage";
 export * from "./npsRatingsPrompt";
