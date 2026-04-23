@@ -6,15 +6,15 @@
 set -e
 
 # Default values
-PLATFORM="android"
+FILE_PREFIX="e2e-test-results-android"
 ARTIFACTS_DIR="."
 VERBOSE=false
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --platform)
-      PLATFORM="$2"
+    --file-prefix)
+      FILE_PREFIX="$2"
       shift 2
       ;;
     --artifacts-dir)
@@ -51,13 +51,13 @@ log() {
   fi
 }
 
-log "Starting merge timing files for platform: $PLATFORM"
+log "Starting merge timing files for file: $FILE_PREFIX"
 log "Artifacts directory: $ARTIFACTS_DIR"
 
 # Set up file paths
-pattern="e2e-test-results-$PLATFORM-shard-*.json"
-existing_file="$ARTIFACTS_DIR/e2e-test-results-$PLATFORM.json"
-output_file="./e2e-test-results-$PLATFORM.json"
+pattern="$FILE_PREFIX-*.json"
+existing_file="$ARTIFACTS_DIR/$FILE_PREFIX.json"
+output_file="./$FILE_PREFIX.json"
 
 # Check if shard files exist
 if ! find . -maxdepth 1 -name "$pattern" -print -quit | grep -q .; then

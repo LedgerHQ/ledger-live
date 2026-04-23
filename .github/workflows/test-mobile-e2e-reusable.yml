@@ -153,6 +153,9 @@ env:
   AVD_RAM_SIZE: 3072
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
+  E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
+  E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
 jobs:
   determine-builds:
@@ -487,8 +490,8 @@ jobs:
 
       - name: Boot iOS Simulator in Background
         run: |
-          LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
-          mkdir -p e2e/mobile/artifacts
+          LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/simulator-boot.log"
+          mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
           nohup bash -c '
             echo "🔧 Creating iOS Simulator 2 (if not exists)"
             xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "${{ env.IOS_SIMULATOR_DEVICE }}"
@@ -588,7 +591,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
-        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -596,15 +599,15 @@ jobs:
         id: "test-artifacts"
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
-          path: e2e/mobile/artifacts
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           retention-days: 7
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: e2e/mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}
           retention-days: 7
 
       - name: Set job output based on detox result
@@ -761,8 +764,8 @@ jobs:
 
       - name: Boot Android Emulators in Background
         run: |
-          LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
-          mkdir -p e2e/mobile/artifacts
+          LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"
+          mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
           export AVD_NAME="${{ env.AVD_NAME }}"
           export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
           nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
@@ -807,7 +810,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
-        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
@@ -815,15 +818,15 @@ jobs:
         id: "test-artifacts"
         with:
           name: android-test-artifacts-${{ matrix.shard }}
-          path: e2e/mobile/artifacts
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           retention-days: 7
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: e2e/mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}
           retention-days: 7
 
       - name: Set job output based on detox result
@@ -1203,7 +1206,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
           platform: ios
-          artifacts_dir: e2e/mobile/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -1214,6 +1217,9 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}
 
   merge-android-timings:
     name: Merge Android Timing Files
@@ -1230,7 +1236,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
           platform: android
-          artifacts_dir: e2e/mobile/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -1241,3 +1247,6 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}
