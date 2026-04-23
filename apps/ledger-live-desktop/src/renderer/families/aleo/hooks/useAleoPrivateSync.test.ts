@@ -816,4 +816,99 @@ describe("useAleoPrivateSync", () => {
       expect(onAccountUpdated).not.toHaveBeenCalled();
     });
   });
+
+  describe("external completion via aleoPrivateSyncProgress$", () => {
+    it("should call onAccountUpdated immediately when Redux has already flushed lastPrivateSyncDate", () => {
+      jest.useFakeTimers();
+      const onAccountUpdated = jest.fn();
+      const syncDate = new Date();
+      const baseAccount = makeAleoAccount(100, true);
+      const syncedAccount: AleoAccount = {
+        ...baseAccount,
+        aleoResources: {
+          ...baseAccount.aleoResources!,
+          lastPrivateSyncDate: syncDate,
+        },
+      };
+
+      const { result } = renderHook(
+        () => useAleoPrivateSync({ account: syncedAccount, onAccountUpdated }),
+        { initialState: { accounts: [syncedAccount] } },
+      );
+
+      act(() => {
+        result.current.start();
+      });
+
+      // Complete without a result — subscriptionRef becomes null, retry timer pending
+      act(() => {
+        syncSubject.complete();
+      });
+
+      // A keepAlive instance emits progress=100; liveAccount already has lastPrivateSyncDate
+      act(() => {
+        aleoPrivateSyncProgress$.next({ accountId: syncedAccount.id, progress: 100 });
+        jest.advanceTimersByTime(PROGRESS_THROTTLE_INTERVAL_MS + 100);
+      });
+
+      expect(result.current.isSyncing).toBe(false);
+      expect(onAccountUpdated).toHaveBeenCalledTimes(1);
+      expect(onAccountUpdated).toHaveBeenCalledWith(syncedAccount);
+    });
+
+    it("should defer onAccountUpdated via the liveAccount effect when Redux has not yet flushed", () => {
+      jest.useFakeTimers();
+      const onAccountUpdated = jest.fn();
+      const account = makeAleoAccount();
+
+      const { result, store } = renderHook(
+        () => useAleoPrivateSync({ account, onAccountUpdated }),
+        { initialState: { accounts: [account] } },
+      );
+
+      act(() => {
+        result.current.start();
+      });
+
+      // Complete without a result — subscriptionRef becomes null, retry timer pending
+      act(() => {
+        syncSubject.complete();
+      });
+
+      // External progress=100 arrives; liveAccount still lacks lastPrivateSyncDate
+      act(() => {
+        aleoPrivateSyncProgress$.next({ accountId: account.id, progress: 100 });
+        jest.advanceTimersByTime(PROGRESS_THROTTLE_INTERVAL_MS + 100);
+      });
+
+      // pendingExternalCompletionRef is now true, but onAccountUpdated not yet fired
+      expect(onAccountUpdated).not.toHaveBeenCalled();
+      expect(result.current.isSyncing).toBe(false);
+
+      // Simulate Redux catching up: dispatch UPDATE_ACCOUNT with lastPrivateSyncDate set
+      const syncDate = new Date();
+      act(() => {
+        store.dispatch({
+          type: "UPDATE_ACCOUNT",
+          payload: {
+            accountId: account.id,
+            updater: (acc: AleoAccount): AleoAccount => ({
+              ...acc,
+              aleoResources: {
+                ...acc.aleoResources!,
+                lastPrivateSyncDate: syncDate,
+              },
+            }),
+          },
+        });
+      });
+
+      expect(onAccountUpdated).toHaveBeenCalledTimes(1);
+      expect(onAccountUpdated).toHaveBeenCalledWith(
+        expect.objectContaining({
+          aleoResources: expect.objectContaining({ lastPrivateSyncDate: syncDate }),
+        }),
+      );
+    });
+  });
 });
