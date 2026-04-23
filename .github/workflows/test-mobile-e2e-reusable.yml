@@ -177,6 +177,9 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+            .pnpmfile.cjs
+            tools
+            .mise/tasks
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Write summary

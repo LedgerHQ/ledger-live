@@ -109,6 +109,9 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             pnpm-lock.yaml
+            .pnpmfile.cjs
+            tools
+            .mise/tasks
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
