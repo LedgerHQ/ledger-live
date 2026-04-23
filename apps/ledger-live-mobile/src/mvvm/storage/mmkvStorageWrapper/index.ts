@@ -1,9 +1,9 @@
-import { MMKV } from "react-native-mmkv";
+import { createMMKV, type MMKV } from "react-native-mmkv";
 import merge from "lodash/merge";
 import { CONFIG_PARAMS } from "./constants";
 
 /** Singleton instance of MMKV storage */
-export const mmkv = new MMKV({
+export const mmkv = createMMKV({
   id: CONFIG_PARAMS.ID,
 });
 
@@ -137,12 +137,12 @@ const storageWrapper = {
   async delete(key: string | string[]) {
     if (!Array.isArray(key)) {
       if (mmkv.contains(key)) {
-        mmkv.delete(key);
+        mmkv.remove(key);
       }
     } else {
       for (const k of key) {
         if (mmkv.contains(k)) {
-          mmkv.delete(k);
+          mmkv.remove(k);
         }
       }
     }

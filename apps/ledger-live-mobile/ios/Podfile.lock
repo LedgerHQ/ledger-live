@@ -319,12 +319,73 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - MMKVCore (2.4.0)
   - MultiplatformBleAdapter (0.2.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
+  - NitroMmkv (4.3.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - MMKVCore (= 2.4.0)
+    - NitroModules
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - NitroModules (0.35.4):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - OpenTelemetrySwiftApi (1.13.1)
   - PLCrashReporter (1.12.0)
   - PromisesObjC (2.4.0)
@@ -2142,34 +2203,6 @@ PODS:
     - Yoga
   - react-native-launch-arguments (4.0.2):
     - React
-  - react-native-mmkv (3.3.1):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - react-native-netinfo (11.4.1):
     - React-Core
   - react-native-pager-view (7.0.0):
@@ -3573,6 +3606,8 @@ DEPENDENCIES:
   - "glog (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - "hermes-engine (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)"
   - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@7.3.6_react-native@0.81.6_p_1ec3fe5855eac7a3abc13318d49ab19e/node_modules/lottie-react-native`)"
+  - "NitroMmkv (from `../../../node_modules/.pnpm/react-native-mmkv@4.3.1_react-native-nitro-modu_233000bd2109a9fbf64b1e06c7436b59/node_modules/react-native-mmkv`)"
+  - "NitroModules (from `../../../node_modules/.pnpm/react-native-nitro-modules@0.35.4_react-native@_2d082e9deb4b040e31576dbfdef70d5e/node_modules/react-native-nitro-modules`)"
   - "RCT-Folly (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)"
   - "RCTDeprecation (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)"
   - "RCTRequired (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/Libraries/Required`)"
@@ -3616,7 +3651,6 @@ DEPENDENCIES:
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_5618e07d3ab9e911514a345e5a3de4b0/node_modules/react-native-image-crop-tools`)"
   - "react-native-image-picker (from `../../../node_modules/.pnpm/react-native-image-picker@8.2.0_react-native@0._023be01c515b2a29748a783c2c32a18c/node_modules/react-native-image-picker`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_10a18d02a802e3cb2337107ca9be8a1b/node_modules/react-native-launch-arguments`)"
-  - "react-native-mmkv (from `../../../node_modules/.pnpm/react-native-mmkv@3.3.1_react-native@0.81.6_pat_a4d630d293ced413660ee8313c65ee33/node_modules/react-native-mmkv`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@11.4.1_react-na_de915c7e848ca43faee5636c08c468c1/node_modules/@react-native-community/netinfo`)"
   - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_be79b397c49fc52854a6200b3b559e5c/node_modules/react-native-pager-view`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@5.1.2_react-native@0.8_e411376cb91239c7caa07c0160f55c71/node_modules/react-native-performance`)"
@@ -3714,6 +3748,7 @@ SPEC REPOS:
     - JWTDecode
     - libwebp
     - lottie-ios
+    - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
     - OpenTelemetrySwiftApi
@@ -3773,6 +3808,10 @@ EXTERNAL SOURCES:
     :tag: hermes-2025-07-07-RNv0.81.0-e0fc67142ec0763c6b6153ca2bf96df815539782
   lottie-react-native:
     :path: "../../../node_modules/.pnpm/lottie-react-native@7.3.6_react-native@0.81.6_p_1ec3fe5855eac7a3abc13318d49ab19e/node_modules/lottie-react-native"
+  NitroMmkv:
+    :path: "../../../node_modules/.pnpm/react-native-mmkv@4.3.1_react-native-nitro-modu_233000bd2109a9fbf64b1e06c7436b59/node_modules/react-native-mmkv"
+  NitroModules:
+    :path: "../../../node_modules/.pnpm/react-native-nitro-modules@0.35.4_react-native@_2d082e9deb4b040e31576dbfdef70d5e/node_modules/react-native-nitro-modules"
   RCT-Folly:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -3857,8 +3896,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-image-picker@8.2.0_react-native@0._023be01c515b2a29748a783c2c32a18c/node_modules/react-native-image-picker"
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_10a18d02a802e3cb2337107ca9be8a1b/node_modules/react-native-launch-arguments"
-  react-native-mmkv:
-    :path: "../../../node_modules/.pnpm/react-native-mmkv@3.3.1_react-native@0.81.6_pat_a4d630d293ced413660ee8313c65ee33/node_modules/react-native-mmkv"
   react-native-netinfo:
     :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@11.4.1_react-na_de915c7e848ca43faee5636c08c468c1/node_modules/@react-native-community/netinfo"
   react-native-pager-view:
@@ -4044,8 +4081,11 @@ SPEC CHECKSUMS:
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
   lottie-react-native: e542fe4b6e8eddcf893d5a8cef9f8b5c6d2f7331
+  MMKVCore: 3d16ce9f7d411e135020915fde98a056859a1efa
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  NitroMmkv: 473645d604aa4975981a158403c6291c329695a6
+  NitroModules: f6465691938fc8e4c5ea72851a8812fd9322a15a
   OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
   PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -4091,7 +4131,6 @@ SPEC CHECKSUMS:
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2
   react-native-image-picker: 12721145cf1f5a72d9de03beecf19b6df79f6c1a
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
-  react-native-mmkv: 66926c3186177c16724f1a7d0147412ff73120c2
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-pager-view: 4046e20b89f9ec1d29155668eb06c76a5f464951
   react-native-performance: 05f3b3d4418866a72dff821412160f96adc7460e

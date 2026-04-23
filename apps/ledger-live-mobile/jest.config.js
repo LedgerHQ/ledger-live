@@ -50,6 +50,7 @@ const transformIncludePatterns = [
   "@mysten",
   "@scure",
   "@noble",
+  "react-native-mmkv",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
