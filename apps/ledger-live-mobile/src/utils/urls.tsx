@@ -65,6 +65,8 @@ export const urls = {
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   buyFlex:
     "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
+  exploreLedgerDevices:
+    "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_wallet_mobile&utm_medium=page_my_wallet&utm_content=explore_ledger_devices",
   hardwareWallet:
     "https://shop.ledger.com/pages/hardware-wallet?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",

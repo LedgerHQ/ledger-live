@@ -42,7 +42,7 @@ describe("useDeviceSectionViewModel", () => {
 
       act(() => result.current.onExploreDevices());
 
-      expect(Linking.openURL).toHaveBeenCalledWith(urls.hardwareWallet);
+      expect(Linking.openURL).toHaveBeenCalledWith(urls.exploreLedgerDevices);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "ExploreDevices",
         page: ScreenName.MyWallet,
