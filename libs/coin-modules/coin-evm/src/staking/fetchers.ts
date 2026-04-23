@@ -11,7 +11,7 @@ import type {
   StakingExtractor,
   StakingValidatorItem,
 } from "../types/staking";
-import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../utils";
+import { extractSeiDelegation, getCeloAmount, getSeiDelegationAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./transactionData";
 import { getValidators } from "./validators";
@@ -124,6 +124,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           config,
           params,
         });
+
         const result = await rpcProvider.call({
           to: config.contractAddress,
           data: encodedData,
