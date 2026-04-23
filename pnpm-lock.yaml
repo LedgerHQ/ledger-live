@@ -457,6 +457,9 @@ packageExtensionsChecksum: sha256-oFPDBJXygat0iMzkO4oGwhSi6BtY54eC5dgXuFjN6jk=
 pnpmfileChecksum: sha256-WizsKK+XY4tzYGFYz2IjQ3NcaxUnMgMAxQXmfGYtEqA=
 
 patchedDependencies:
+  '@bunli/core@0.9.1':
+    hash: 90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5
+    path: patches/@bunli+core@0.9.1.patch
   '@callstack/repack@5.2.3':
     hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
     path: patches/@callstack__repack@5.2.3.patch
@@ -2243,7 +2246,7 @@ importers:
     dependencies:
       '@bunli/core':
         specifier: 0.9.1
-        version: 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+        version: 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
@@ -12549,7 +12552,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -23073,7 +23076,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
+    deprecated: this version is no longer supported, please update to at least 0.8.*
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -40886,7 +40889,7 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@bunli/core@0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/core@0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@bunli/runtime': 0.3.2(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils': 0.6.0
@@ -40911,7 +40914,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.2
       '@babel/traverse': 7.29.0
-      '@bunli/core': 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
       debug: 4.4.3
       zod: 4.3.6
@@ -40927,7 +40930,7 @@ snapshots:
 
   '@bunli/plugin-completions@0.3.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/core': 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
     transitivePeerDependencies:
       - bun
@@ -55898,7 +55901,7 @@ snapshots:
 
   bunli@0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2):
     dependencies:
-      '@bunli/core': 0.9.1(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=90189e1529ca7ea5be0bf8e95a3d23cbf335eeda5ccd19a00964ed50d36067e5)(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       '@bunli/generator': 0.6.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       '@bunli/plugin-completions': 0.3.5(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
       '@bunli/tui': 0.6.0(react-devtools-core@7.0.1)(react@19.0.0)(typescript@6.0.2)
