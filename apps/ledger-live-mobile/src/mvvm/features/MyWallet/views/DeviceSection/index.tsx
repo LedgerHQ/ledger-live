@@ -3,7 +3,8 @@ import { useDeviceSectionViewModel } from "./useDeviceSectionViewModel";
 import { DeviceSectionView } from "./DeviceSectionView";
 
 export function DeviceSection() {
-  const { devices, hasDevices, onAddDevice, onExploreDevices } = useDeviceSectionViewModel();
+  const { devices, hasDevices, onAddDevice, onExploreDevices, onDevicePress } =
+    useDeviceSectionViewModel();
 
   return (
     <DeviceSectionView
@@ -11,6 +12,7 @@ export function DeviceSection() {
       hasDevices={hasDevices}
       onAddDevice={onAddDevice}
       onExploreDevices={onExploreDevices}
+      onDevicePress={onDevicePress}
     />
   );
 }

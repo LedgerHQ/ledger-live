@@ -29,11 +29,14 @@ const deviceSources: Record<DeviceModelId, ImageSourcePropType> = {
 
 type DeviceListItemProps = {
   readonly device: DeviceSectionDevice;
+  readonly onPress: (device: DeviceSectionDevice) => void;
 };
 
-export function DeviceListItem({ device }: DeviceListItemProps) {
+export function DeviceListItem({ device, onPress }: DeviceListItemProps) {
+  const handlePress = () => onPress(device);
+
   return (
-    <ListItem testID={`my-wallet-device-item-${device.id}`}>
+    <ListItem testID={`my-wallet-device-item-${device.id}`} onPress={handlePress}>
       <ListItemLeading>
         <Image
           source={deviceSources[device.modelId]}

@@ -12,6 +12,7 @@ const mockDevices: DeviceSectionDevice[] = [
 
 const mockOnAddDevice = jest.fn();
 const mockOnExploreDevices = jest.fn();
+const mockOnDevicePress = jest.fn();
 
 const renderView = (devices: readonly DeviceSectionDevice[]) =>
   render(
@@ -20,12 +21,24 @@ const renderView = (devices: readonly DeviceSectionDevice[]) =>
       hasDevices={devices.length > 0}
       onAddDevice={mockOnAddDevice}
       onExploreDevices={mockOnExploreDevices}
+      onDevicePress={mockOnDevicePress}
     />,
   );
 
 describe("DeviceSection", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("device card press", () => {
+    beforeEach(() => {
+      renderView([mockDevices[0]]);
+    });
+
+    it("calls onDevicePress with the device when tapped", async () => {
+      fireEvent.press(screen.getByTestId("my-wallet-device-item-device-1"));
+      await waitFor(() => expect(mockOnDevicePress).toHaveBeenCalledWith(mockDevices[0]));
+    });
   });
 
   describe("with no devices", () => {
