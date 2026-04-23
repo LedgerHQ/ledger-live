@@ -5,6 +5,7 @@ import { useTheme } from "styled-components/native";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSelector } from "~/context/hooks";
 import chunk from "lodash/chunk";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { ensureContrast } from "~/colors";
 import { useDistribution } from "~/actions/general";
 import { track } from "~/analytics";
@@ -15,9 +16,11 @@ const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
 export function useAllocationsViewModel(screenName: string, onPress: () => void) {
   const { t } = useTranslation();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount: true,
+    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
   const { colors } = useTheme();
   const { theme } = useLumenTheme();
