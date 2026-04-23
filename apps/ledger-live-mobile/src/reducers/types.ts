@@ -84,6 +84,8 @@ export type AppState = {
   isPasswordLockBlocked: boolean;
   /** Reboot ID for triggering app remount */
   rebootId: number;
+  /** Incremented when `ledgerlive://product-tour` is handled so the Product Tour subtree can open after navigation to Portfolio. */
+  productTourDeeplinkNonce: number;
 };
 
 // === AUTH STATE ===

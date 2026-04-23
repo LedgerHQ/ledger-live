@@ -10,6 +10,12 @@ When working on deeplinks, please update the **Wiki** accordingly.
 
   Account page accessible via several deeplinks
 
+- **_product-tour_** 🠒 Portfolio + LWM Product Tour (when `lwmProductTour` is on and onboarding is complete)
+
+  `ledgerlive://product-tour`
+
+  If onboarding is not finished or `lwmProductTour` is off, the link is ignored (no navigation, no tick).
+
 - **_accounts?id_** 🠒 Accounts page
 
   `ledgerlive://accounts` will redirect to portfolio of accounts page

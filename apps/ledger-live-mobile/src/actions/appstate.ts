@@ -29,3 +29,6 @@ export const updateMainNavigatorVisibility =
 export const blockPasswordLock = createAction<boolean>(AppStateActionTypes.SET_BLOCK_PASSWORD_LOCK);
 
 export const reboot = createAction(AppStateActionTypes.INCREMENT_REBOOT_ID);
+
+/** Signals that `ledgerlive://product-tour` was opened; Product Tour listens and calls `openProductTour`. */
+export const tickProductTourDeeplink = createAction(AppStateActionTypes.TICK_PRODUCT_TOUR_DEEPLINK);

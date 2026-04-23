@@ -1,7 +1,7 @@
 import React from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ProductTourControlsProvider } from "./context/ProductTourControlsContext";
 import { ProductTourDrawer, useProductTourDrawerViewModel } from "./Drawer";
+import { useProductTourEligibility } from "./useProductTourEligibility";
 
 const ProductTourPortfolioMountWhenEnabled = () => {
   const { openProductTour, closeProductTour, isDrawerOpen } = useProductTourDrawerViewModel();
@@ -18,14 +18,10 @@ const ProductTourPortfolioMountWhenEnabled = () => {
   );
 };
 
-/**
- * Portfolio integration: mounts Product Tour controls + drawer when `lwmProductTour` is on.
- */
 export const ProductTourPortfolioMount = () => {
-  const lwmProductTour = useFeature("lwmProductTour");
-  const isEnabled = lwmProductTour?.enabled ?? false;
+  const { isProductTourEligible } = useProductTourEligibility();
 
-  if (!isEnabled) {
+  if (!isProductTourEligible) {
     return null;
   }
 

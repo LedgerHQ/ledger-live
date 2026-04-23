@@ -22,6 +22,7 @@ export const INITIAL_STATE: AppState = {
   isMainNavigatorVisible: true,
   isPasswordLockBlocked: false,
   rebootId: 0,
+  productTourDeeplinkNonce: 0,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -83,6 +84,11 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
     rebootId: state.rebootId + 1,
   }),
 
+  [AppStateActionTypes.TICK_PRODUCT_TOUR_DEEPLINK]: state => ({
+    ...state,
+    productTourDeeplinkNonce: state.productTourDeeplinkNonce + 1,
+  }),
+
   [EarnActionTypes.EARN_INFO_MODAL]: state => ({
     ...state,
     isPasswordLockBlocked: true,
@@ -105,5 +111,8 @@ export const isMainNavigatorVisibleSelector = (state: State) =>
 export const isPasswordLockBlocked = (state: State) => state.appstate.isPasswordLockBlocked;
 
 export const rebootIdSelector = (state: State) => state.appstate.rebootId;
+
+export const productTourDeeplinkNonceSelector = (state: State) =>
+  state.appstate.productTourDeeplinkNonce;
 
 export default handleActions<AppState, AppStatePayload>(handlers, INITIAL_STATE);
