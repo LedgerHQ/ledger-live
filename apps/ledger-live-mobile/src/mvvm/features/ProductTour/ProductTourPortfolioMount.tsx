@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import { ProductTourControlsProvider } from "./context/ProductTourControlsContext";
 import { ProductTourDrawer, useProductTourDrawerViewModel } from "./Drawer";
 import { useProductTourEligibility } from "./useProductTourEligibility";
@@ -7,14 +8,16 @@ const ProductTourPortfolioMountWhenEnabled = () => {
   const { openProductTour, closeProductTour, isDrawerOpen } = useProductTourDrawerViewModel();
 
   return (
-    <ProductTourControlsProvider
-      value={{
-        openProductTour,
-        closeProductTour,
-      }}
-    >
-      <ProductTourDrawer isDrawerOpen={isDrawerOpen} />
-    </ProductTourControlsProvider>
+    <View testID="lwm-product-tour-portfolio-mount" collapsable={false}>
+      <ProductTourControlsProvider
+        value={{
+          openProductTour,
+          closeProductTour,
+        }}
+      >
+        <ProductTourDrawer isDrawerOpen={isDrawerOpen} />
+      </ProductTourControlsProvider>
+    </View>
   );
 };
 
