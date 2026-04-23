@@ -27,23 +27,23 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   }
 };
 const handleDownload = async (info: UpdateDownloadedEvent) => {
-  function onSuccess() {
-    sendStatus("check-success");
-    autoUpdater.autoInstallOnAppQuit = true;
-  }
-  if (__PRERELEASE__) return onSuccess();
   try {
     sendStatus("checking");
-    const appUpdater = await createElectronAppUpdater({
-      feedURL: UPDATE_CHECK_FEED,
-      info,
-    });
-    await appUpdater.verify();
-    onSuccess();
+    if (!__PRERELEASE__) {
+      const appUpdater = await createElectronAppUpdater({
+        feedURL: UPDATE_CHECK_FEED,
+        info,
+      });
+      await appUpdater.verify();
+    }
+    sendStatus("check-success");
   } catch (err) {
     console.error(err);
-    if (UPDATE_CHECK_IGNORE) return onSuccess();
-    sendStatus("error", err);
+    if (UPDATE_CHECK_IGNORE) {
+      sendStatus("check-success");
+    } else {
+      sendStatus("error", err);
+    }
   }
 };
 const init = () => {
@@ -55,7 +55,7 @@ const init = () => {
   autoUpdater.on("error", err => {
     console.error(err);
   });
-  autoUpdater.autoInstallOnAppQuit = false;
+  autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.autoDownload = true;
   autoUpdater.checkForUpdates();
   if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
