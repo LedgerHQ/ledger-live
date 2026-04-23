@@ -90,7 +90,7 @@ async function main(): Promise<Report> {
       },
     });
 
-    const bridge = getCurrencyBridge(currency);
+    const bridge = await getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {},
     };

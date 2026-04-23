@@ -26,7 +26,7 @@ export default {
       mergeMap(async account => {
         const { currencyId } = decodeAccountId(account.id);
         const currency = getCryptoCurrencyById(currencyId);
-        const currencyBridge = getCurrencyBridge(currency);
+        const currencyBridge = await getCurrencyBridge(currency);
         const { nftResolvers } = currencyBridge;
 
         return account.nfts?.length && nftResolvers?.nftMetadata

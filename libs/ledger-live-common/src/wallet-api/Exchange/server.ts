@@ -299,7 +299,7 @@ export const handlers = ({
           );
         }
 
-        const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+        const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
 
         /**
          * 'subAccountId' is used for ETH and it's ERC-20 tokens.
@@ -552,7 +552,7 @@ export const handlers = ({
           );
         }
 
-        const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+        const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
 
         /**
          * 'subAccountId' is used for ETH and it's ERC-20 tokens.

@@ -15,7 +15,7 @@ export function makeBridgeCacheSystem({
 }): BridgeCacheSystem {
   const hydrateCurrency = async (currency: CryptoCurrency) => {
     const value = await getData(currency);
-    const bridge = getCurrencyBridge(currency);
+    const bridge = await getCurrencyBridge(currency);
     bridge.hydrate(value, currency);
     return value;
   };
@@ -26,7 +26,7 @@ export function makeBridgeCacheSystem({
     currency: CryptoCurrency,
     { forceUpdate }: { forceUpdate: boolean } = { forceUpdate: false },
   ) => {
-    const bridge = getCurrencyBridge(currency);
+    const bridge = await getCurrencyBridge(currency);
     const { preloadMaxAge } = {
       ...defaultCacheStrategy,
       ...(bridge.getPreloadStrategy && bridge.getPreloadStrategy(currency)),
