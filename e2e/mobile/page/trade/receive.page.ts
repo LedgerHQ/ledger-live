@@ -23,7 +23,7 @@ export default class ReceivePage {
     `option-button-content-${receiveFundsOption}`;
   receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
-  receiveNetworkWarningId = "receive-network-warning";
+  private readonly receiveNetworkWarningId = "receive-network-warning";
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -98,15 +98,22 @@ export default class ReceivePage {
     await tapById(this.noVerifyValidateButton);
   }
 
-  @Step("Expect account receive page is displayed")
-  async expectReceivePageIsDisplayed(tickerName: string, accountName: string): Promise<void> {
+  @Step("Expect receive page header")
+  private async expectReceivePageHeader(tickerName: string, accountName: string): Promise<void> {
     const titleID = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameID = this.accountNameReceiveId(accountName);
-    const qrCodeContainerID = this.receiveQrCodeContainerId(accountName);
+
     await waitForElementById(this.accountAddress);
     await waitForElementById(titleID);
     await detoxExpect(getElementById(titleID)).toBeVisible();
     await detoxExpect(getElementById(accountNameID)).toBeVisible();
+  }
+
+  @Step("Expect account receive page is displayed")
+  async expectReceivePageIsDisplayed(tickerName: string, accountName: string): Promise<void> {
+    const qrCodeContainerID = this.receiveQrCodeContainerId(accountName);
+
+    await this.expectReceivePageHeader(tickerName, accountName);
     await scrollToId(qrCodeContainerID, this.receivePageScrollViewId);
     await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
   }
@@ -116,12 +123,7 @@ export default class ReceivePage {
     tickerName: string,
     accountName: string,
   ): Promise<void> {
-    const titleID = this.titleReceiveConfirmationPageId(tickerName);
-    const accountNameID = this.accountNameReceiveId(accountName);
-    await waitForElementById(this.accountAddress);
-    await waitForElementById(titleID);
-    await detoxExpect(getElementById(titleID)).toBeVisible();
-    await detoxExpect(getElementById(accountNameID)).toBeVisible();
+    await this.expectReceivePageHeader(tickerName, accountName);
   }
 
   @Step("Verify address")

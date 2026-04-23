@@ -1,3 +1,4 @@
+---
 "live-mobile": patch
 "ledger-live-mobile-e2e-tests": patch
 ---
