@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList, FlashListProps, ListRenderItemInfo } from "@shopify/flash-list";
-import { AccountLike } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TrackScreen } from "~/analytics";
@@ -22,10 +23,11 @@ type Props = BaseComposite<
   StackNavigatorProps<CryptoAddressesNavigator, ScreenName.CryptoAddresses>
 >;
 
-const SyncList = globalSyncRefreshControl<FlashListProps<AccountLike>>(FlashList);
+const SyncList = globalSyncRefreshControl<FlashListProps<Account>>(FlashList);
 
 function CryptoAddressesView({
   accounts,
+  aggregatedAccountsData,
   hasNoAccount,
   isLoading,
   error,
@@ -40,10 +42,18 @@ function CryptoAddressesView({
 }: Readonly<ReturnType<typeof useCryptoAddressesViewModel>>) {
   const { bottom } = useSafeAreaInsets();
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AccountLike>) => (
-      <CryptoAddressesListItem account={item} onPress={onAccountPress} />
-    ),
-    [onAccountPress],
+    ({ item }: ListRenderItemInfo<Account>) => {
+      const data = aggregatedAccountsData.get(item.id);
+      return (
+        <CryptoAddressesListItem
+          account={item}
+          aggregatedCountervalue={data?.countervalue ?? new BigNumber(0)}
+          subAccountsCount={data?.subAccountsCount ?? 0}
+          onPress={onAccountPress}
+        />
+      );
+    },
+    [onAccountPress, aggregatedAccountsData],
   );
 
   const ListEmpty = useMemo(() => {
