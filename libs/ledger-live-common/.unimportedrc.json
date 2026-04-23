@@ -331,7 +331,7 @@
     "src/wallet-api/validation/validateUrl.ts",
     "src/wallet-api/validation/validateInfoDialogParams.ts",
     "src/wallet-api/validation/actionDialogParams.ts",
-    "src/featureFlags/earnUiVersion.ts"
+    "src/domain/isMinEarnUiVersion.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [

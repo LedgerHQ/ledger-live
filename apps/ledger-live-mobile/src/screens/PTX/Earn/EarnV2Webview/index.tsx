@@ -1,4 +1,4 @@
-import { isMinEarnUiVersion } from "@ledgerhq/live-common/featureFlags/earnUiVersion";
+import { isMinEarnUiVersion } from "@ledgerhq/live-common/domain/isMinEarnUiVersion";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";

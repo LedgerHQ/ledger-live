@@ -1,4 +1,4 @@
-import { isMinEarnUiVersion } from "./earnUiVersion";
+import { isMinEarnUiVersion } from "./isMinEarnUiVersion";
 
 describe("isMinEarnUiVersion", () => {
   it.each([
@@ -29,8 +29,9 @@ describe("isMinEarnUiVersion", () => {
     expect(isMinEarnUiVersion(actual, minimum)).toBe(expected);
   });
 
-  it("invalid actual returns false", () => {
-    expect(isMinEarnUiVersion("garbage", "v1")).toBe(false);
+  it("invalid actual coerces to v1", () => {
+    expect(isMinEarnUiVersion("garbage", "v1")).toBe(true);
+    expect(isMinEarnUiVersion("garbage", "v2")).toBe(false);
   });
 
   it("invalid minimum returns false", () => {
@@ -41,6 +42,15 @@ describe("isMinEarnUiVersion", () => {
     ["v10", "v9", true],
     ["v9", "v10", false],
   ])("numeric comparison, not lexicographic: (%s, %s) => %s", (actual, minimum, expected) => {
+    expect(isMinEarnUiVersion(actual, minimum)).toBe(expected);
+  });
+
+  it.each([
+    [2, "v2", true],
+    [2, "v3", false],
+    [3, 2, true],
+    [1, 2, false],
+  ])("number coercion: (%s, %s) => %s", (actual, minimum, expected) => {
     expect(isMinEarnUiVersion(actual, minimum)).toBe(expected);
   });
 });
