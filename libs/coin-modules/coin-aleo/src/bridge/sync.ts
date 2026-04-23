@@ -184,7 +184,7 @@ export async function performPrivateSync(
     // for other errors (e.g. network issues) optimistically assume the existing provableApi is still valid
     // so the sync can be retried without forcing a new registration immediately
     if (initialAccount.aleoResources?.provableApi) {
-      return initialAccount.aleoResources?.provableApi;
+      return initialAccount.aleoResources.provableApi;
     }
 
     throw err;

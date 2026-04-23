@@ -8577,8 +8577,8 @@
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",
-        "error": "Private sync failed",
-        "retry": "Retry"
+        "errorTitle": "Private sync failed",
+        "errorDesc": "Something went wrong, please try again"
       }
     }
   },
