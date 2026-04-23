@@ -219,12 +219,12 @@ const swapMax = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-3365, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-3365, B2CQA-3281",
   },
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-3366, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-3366",
   },
 ];
 
