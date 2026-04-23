@@ -14,7 +14,7 @@ export type SectionListContentProps = {
   errorMessage: string;
 };
 
-const NEGATIVE_MARGIN_OFFSET = { marginHorizontal: "-s8" } as const;
+const LIST_ITEM_STYLE = { marginHorizontal: "-s8", paddingVertical: "s4" } as const;
 
 export const SectionListContent = ({
   isLoading,
@@ -38,7 +38,7 @@ export const SectionListContent = ({
       asset={item}
       onPress={onItemPress}
       precomputed={precomputedData.get(item.currency.id)!}
-      lx={NEGATIVE_MARGIN_OFFSET}
+      lx={LIST_ITEM_STYLE}
       hideNetwork
     />
   ));
