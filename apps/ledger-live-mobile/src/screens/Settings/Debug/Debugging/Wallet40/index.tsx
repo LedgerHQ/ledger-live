@@ -214,6 +214,13 @@ export default function DebugWallet40() {
           arrowRight
           onPress={() => navigation.navigate(ScreenName.DebugWalletV4Tour)}
         />
+        <SettingsRow
+          title="Product Tour"
+          desc="Test product tour drawer"
+          iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
+          arrowRight
+          onPress={() => navigation.navigate(ScreenName.DebugProductTour)}
+        />
       </Box>
     </ScrollView>
   );
