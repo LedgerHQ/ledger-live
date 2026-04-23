@@ -16,7 +16,7 @@ DevTools is unaware of its environment. Every piece of host-specific information
 
 ### Package structure
 
-Each tool is an independent package. The shell is a separate package whose only responsibility is navigation, layout, and wiring tools together. Tools know nothing about the shell; the shell depends on tools.
+Each tool is an independent package. The shell is a separate package whose only responsibility is navigation, layout, and providing the registration primitives. Neither the shell depends on tools nor do tools depend on each other — the host app is the only place that knows which tools are enabled.
 
 ```
 devtools/
@@ -84,32 +84,36 @@ A tool is almost entirely driven by props passed by the host. It must not reach 
 
 - **Tools never import other tools.** There are no cross-tool dependencies, ever.
 - **External dependencies are limited to `shared/`, `domain/`, and `features/`** for truly generic types or utilities (Zod schemas, RTK slices, selectors). If the import feels specific to your tool's domain, it belongs in the tool itself.
-- **The only consumer of a tool's exports is `tools.config.ts`** in the shell, which stores the component entry point. Nothing else imports from a tool package.
+- **A tool's exports are consumed only by the host app**, never by the shell. Hosts import each tool's registration function and pass them to `setupDevTools` from `@devtools/shell`.
+
+### Runtime registration
+
+The shell is tool-agnostic. Each tool package exports a registration function (e.g. `registerMyTool`) that calls `registerTool` or `registerToolWithRequiredProps` from `@devtools/shell`, adding itself to the shell's runtime registry and declaring its props in `DevToolsPropsRegistry` via module augmentation. The host app orchestrates which tools are enabled by calling `setupDevTools([registerToolA, registerToolB, ...])` at bootstrap. The shell never imports a specific tool.
 
 ## Usage
 
 ```tsx
-import { DevTools } from "@devtools/shell";
+import { useMemo } from "react";
+import { DevTools, setupDevTools } from "@devtools/shell";
+import { registerMyTool, MY_TOOL_ID } from "@devtools/my-tool";
+
+setupDevTools([registerMyTool]);
 
 export default function DebugPage() {
-  return <DevTools />;
+  const myToolProps = useMyToolProps();
+  const toolProps = useMemo(() => ({ [MY_TOOL_ID]: myToolProps }), [myToolProps]);
+
+  return <DevTools toolProps={toolProps} />;
 }
 ```
+
+`setupDevTools` runs each registration function in order, populating the shell's runtime registry. `toolProps` carries per-tool props via React context — memoize it to keep consumers stable.
 
 ## Adding a new tool
 
-1. Create a package at `devtools/my-tool/` with its own `package.json` (`@devtools/my-tool`).
-2. Implement the tool entirely inside that package — types, logic, and UI. Use `.web` / `.native` suffixes for platform-specific files.
-3. Add `@devtools/my-tool` as a workspace dependency of `@devtools/shell`.
-4. Register the tool in `shell/src/tools.config.ts` — descriptor and component entry point. The shell renders tools from this config; it does not import tool packages anywhere else.
+See [`shell/addTool.md`](./shell/addTool.md) for the full walk-through. In short:
 
-```ts
-{
-  id: "my-tool",
-  label: "My Tool",
-  category: Category.DEBUGGING,
-  owner: "YourTeam",
-  desc: "One-line description.",
-  component: MyTool, // imported from @devtools/my-tool
-}
-```
+1. Create a package at `devtools/my-tool/` with `"private": true` and its own `package.json` (`@devtools/my-tool`).
+2. Implement the component as a plain React component that takes its props directly — no shell imports inside the component itself.
+3. In a `register.ts`, augment `DevToolsPropsRegistry` with the tool's id → props mapping and export a `registerMyTool()` function that calls `registerTool` (no required wiring) or `registerToolWithRequiredProps` (host must wire it).
+4. In the host app, add `@devtools/my-tool` as a dependency, call `setupDevTools([registerMyTool])` at bootstrap, and pass props via `<DevTools toolProps={...} />`.

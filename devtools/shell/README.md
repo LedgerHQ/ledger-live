@@ -7,9 +7,10 @@ The shell is the navigation and layout layer of the `devtools/` namespace. It ow
 - Render the navigation shell (sidebar, overview, category grouping)
 - Route to the active tool
 - Expose `<DevTools />` as the single entry point for host apps
-- Maintain `tools.config.ts` — the registry that maps tool descriptors to their component entry points
+- Expose the registration primitives (`registerTool`, `registerToolWithRequiredProps`, `setupDevTools`) and the augmentable `DevToolsPropsRegistry` interface
+- Maintain the runtime tool registry at `src/registry/tools.ts`, populated by tools as they register themselves
 
-The shell is the only package in `devtools/` that imports from tool packages. It does so exclusively through `tools.config.ts`.
+The shell is tool-agnostic — it imports no tool packages. Tools register themselves into the runtime registry; the host app orchestrates which tools are enabled via `setupDevTools([...])`.
 
 ## What is implemented
 
@@ -29,20 +30,15 @@ shell/
 ├── src/
 │   ├── DevTools/            # <DevTools /> entry point (web + native)
 │   ├── components/          # Shell UI components
-│   ├── hooks/               # Shell hooks
-│   ├── tools.config.ts      # Tool registry
+│   ├── context/             # DevToolsProvider, useToolProps, useDevToolsProps
+│   ├── hooks/               # Shell hooks (navigation, accordion, storage, status)
+│   ├── registry/            # Runtime tool registry + register* primitives
+│   ├── utils/               # Pure helpers (platform filter, status enrichment)
 │   ├── categoryConfig.ts    # Category metadata
 │   ├── types.ts             # Tool & Category types
-│   ├── index.ts             # Web exports
+│   ├── index.ts             # Web exports (declares DevToolsPropsRegistry)
 │   └── index.native.ts      # Native exports
 ├── jest/                    # Test helpers and mocks
 ├── package.json
 └── tsconfig.json
 ```
-
-## Notes
-
-- `"private": true` — not published to npm.
-- React `>=19` is a peer dependency — the host app provides it.
-- No build step: `main` and `types` in `package.json` point directly at `src/index.ts`. The consuming bundler compiles the TypeScript source.
-
