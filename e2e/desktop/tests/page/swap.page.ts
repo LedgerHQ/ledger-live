@@ -35,7 +35,9 @@ export class SwapPage extends WebViewAppPage {
   private toAccountCoinSelector = "to-account-coin-selector";
   private quoteCardProviderName = "compact-quote-card-provider-";
   private specificQuoteCardProviderName = (provider: string) =>
-    `compact-quote-card-provider-name-${provider.toLowerCase()}`;
+    `[data-testid^='compact-quote-card-provider-name-${provider.toLowerCase()}']`;
+  private baseProviderSelector = (provider: string, suffix: string) =>
+    `[data-testid^="quote-container-${provider}"][data-testid$="${suffix}"]`;
   private numberOfQuotes = "number-of-quotes";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
@@ -104,25 +106,28 @@ export class SwapPage extends WebViewAppPage {
     ticker: string,
   ) {
     const [, webview] = electronApp.windows();
-
     const provider = Provider.getNameByUiName(providerList[0]);
-    const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview
-      .getByTestId(baseProviderLocator + "amount-label")
-      .first()
-      .click();
-    await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
+    await webview.locator(this.baseProviderSelector(provider, "amount-label")).first().click();
+    await expect(
+      webview.locator(this.baseProviderSelector(provider, "amount-label")),
+    ).toBeVisible();
+    await expect(
+      webview.locator(this.baseProviderSelector(provider, "fiatAmount-label")),
+    ).toBeVisible();
+    await expect(
+      webview.locator(this.baseProviderSelector(provider, "networkFees-heading")),
+    ).toBeVisible();
     await expect(
       webview
-        .getByTestId(baseProviderLocator + "extraFeesContainer")
+        .locator(this.baseProviderSelector(provider, "extraFeesContainer"))
         .getByText(/Floating rate|Fixed rate/),
     ).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-infoIcon")).toBeVisible();
     await expect(
-      webview.getByTestId(baseProviderLocator + "extraFeesContainer").getByText(ticker),
+      webview.locator(this.baseProviderSelector(provider, "rate-infoIcon")),
+    ).toBeVisible();
+    await expect(
+      webview.locator(this.baseProviderSelector(provider, "extraFeesContainer")).getByText(ticker),
     ).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
@@ -131,10 +136,12 @@ export class SwapPage extends WebViewAppPage {
       provider === Provider.LIFI.name
     ) {
       await expect(
-        webview.getByTestId(baseProviderLocator + "extraFeesContainer").getByText("Max Slippage"),
+        webview
+          .locator(this.baseProviderSelector(provider, "extraFeesContainer"))
+          .getByText("Max Slippage"),
       ).toBeVisible();
       await expect(
-        webview.getByTestId(baseProviderLocator + "extraFeesContainer").getByText("%"),
+        webview.locator(this.baseProviderSelector(provider, "extraFeesContainer")).getByText("%"),
       ).toBeVisible();
     }
     await this.checkExchangeButton(electronApp, providerList[0]);
@@ -148,7 +155,7 @@ export class SwapPage extends WebViewAppPage {
 
     if (providersList.includes(provider.uiName)) {
       const providerLocator = webview
-        .getByTestId(this.specificQuoteCardProviderName(provider.name))
+        .locator(this.specificQuoteCardProviderName(provider.name))
         .first();
 
       await providerLocator.isVisible();
@@ -195,7 +202,7 @@ export class SwapPage extends WebViewAppPage {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
       if (provider && provider.isNative) {
         const providerLocator = webview
-          .getByTestId(this.specificQuoteCardProviderName(provider.name))
+          .locator(this.specificQuoteCardProviderName(provider.name))
           .first();
 
         await providerLocator.isVisible();
@@ -220,7 +227,7 @@ export class SwapPage extends WebViewAppPage {
 
     for (const providerName of providers) {
       const providerLocator = webview
-        .getByTestId(this.specificQuoteCardProviderName(providerName))
+        .locator(this.specificQuoteCardProviderName(providerName))
         .first();
 
       if (await providerLocator.isVisible()) {

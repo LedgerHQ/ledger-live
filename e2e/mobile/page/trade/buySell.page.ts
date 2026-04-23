@@ -149,7 +149,10 @@ export default class BuySellPage {
   @Step("Get available providers")
   async getAvailableProviders(): Promise<string[]> {
     await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
+      timeout: 2000,
+      throwOnTimeout: false,
+    });
     if (expandButton) {
       await tapWebElementByTestId(this.expandButtonId);
     }
@@ -183,7 +186,10 @@ export default class BuySellPage {
   @Step("Select provider")
   async selectProvider(provider: string) {
     await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
+      timeout: 2000,
+      throwOnTimeout: false,
+    });
     if (expandButton) {
       await tapWebElementByTestId(this.expandButtonId);
     }
