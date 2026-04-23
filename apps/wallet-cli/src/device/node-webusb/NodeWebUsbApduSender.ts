@@ -11,6 +11,7 @@ import type {
   LoggerPublisherService,
   SendApduResult,
 } from "@ledgerhq/device-management-kit";
+import type { Device as NativeUsbDevice } from "usb";
 import { Just, Left, Maybe, Nothing, Right } from "purify-ts";
 import { WebUSBDevice } from "usb";
 import {
@@ -21,6 +22,7 @@ import {
 
 export type NodeWebUsbApduSenderDependencies = {
   device: WebUSBDevice;
+  nativeDevice: NativeUsbDevice;
   interfaceNumber: number;
 };
 
@@ -32,6 +34,9 @@ export type NodeWebUsbApduSenderConstructorArgs = {
 };
 
 async function gracefullyResetDevice(device: WebUSBDevice): Promise<void> {
+  if (process.platform === "win32") {
+    return;
+  }
   try {
     await device.reset();
   } catch {
@@ -94,7 +99,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
   }
 
   async setupConnection(): Promise<void> {
-    const { device, interfaceNumber } = this.dependencies;
+    const { device, nativeDevice, interfaceNumber } = this.dependencies;
 
     if (device.opened) {
       try {
@@ -123,6 +128,46 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     } catch (e) {
       await device.close().catch(() => {});
       throw e;
+    }
+
+    if (process.platform === "win32") {
+      // WinUSB may skip SET_CONFIGURATION on reconnect; forcing SET_INTERFACE
+      // resynchronizes bulk endpoint DATA0/DATA1 toggles with the device.
+      try {
+        await device.selectAlternateInterface(interfaceNumber, 0);
+      } catch {
+        // best-effort
+      }
+
+      try {
+        const nativeInEp = nativeDevice
+          .interface(interfaceNumber)
+          .endpoints.find(
+            endpoint =>
+              (endpoint.address & 0x7f) === LEDGER_WEBUSB_ENDPOINT_NUMBER &&
+              endpoint.direction === "in",
+          );
+        if (nativeInEp) {
+          const previousTimeout = nativeInEp.timeout;
+          nativeInEp.timeout = 100;
+          try {
+            while (true) {
+              try {
+                const result = await device.transferIn(LEDGER_WEBUSB_ENDPOINT_NUMBER, FRAME_SIZE);
+                if (result.status !== "ok") {
+                  break;
+                }
+              } catch {
+                break;
+              }
+            }
+          } finally {
+            nativeInEp.timeout = previousTimeout;
+          }
+        }
+      } catch {
+        // best-effort: interface may not be present/accessible yet on reconnect
+      }
     }
 
     this.logger.info("Connected to device (WebUSB)");
