@@ -1,36 +1,36 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
+import { AssetSection } from "./assetSection";
+import { CryptoAssetsPage } from "./cryptoAssets.page";
 
 export class AssetsPage extends AppPage {
-  readonly cryptosSectionHeader = this.page.getByTestId("cryptos-section-header-button");
-  readonly stablecoinsSectionHeader = this.page.getByTestId("stablecoins-section-header-button");
-  readonly cryptosSection = this.page.getByTestId("cryptos-section");
-  readonly cryptosSectionRows = this.cryptosSection.locator("tbody tr");
-  readonly stablecoinsSection = this.page.getByTestId("stablecoins-section");
-  readonly stablecoinsSectionRows = this.stablecoinsSection.locator("tbody tr");
   readonly cryptoAddressesBanner = this.page.getByTestId("crypto-addresses-banner");
   readonly addAccountCTA = this.cryptoAddressesBanner.getByTestId(
     "crypto-addresses-banner-add-account-cta",
   );
-  readonly cryptoAssetPageContent = this.page.getByTestId("crypto-assets-page-content");
+
+  readonly cryptoAssetsPage = new CryptoAssetsPage(this.page, "cryptos");
+  readonly stablecoinsAssetsPage = new CryptoAssetsPage(this.page, "stablecoins");
+  readonly cryptosSection = new AssetSection(this.page, "cryptos");
+  readonly stablecoinsSection = new AssetSection(this.page, "stablecoins");
 
   @step("Wait for asset sections to load")
   async waitForAssetsToLoad() {
-    await this.cryptosSectionHeader.waitFor();
-    await this.stablecoinsSectionHeader.waitFor();
+    await this.cryptosSection.header.waitFor();
+    await this.stablecoinsSection.header.waitFor();
   }
 
   @step("Click cryptos section header")
   async clickCryptosHeader() {
-    await this.cryptosSectionHeader.click();
-    await this.cryptoAssetPageContent.waitFor({ state: "visible" });
+    await this.cryptosSection.header.click();
+    await this.cryptoAssetsPage.content.waitFor();
   }
 
   @step("Click stablecoins section header")
   async clickStablecoinsHeader() {
-    await this.stablecoinsSectionHeader.click();
-    await this.cryptoAssetPageContent.waitFor({ state: "visible" });
+    await this.stablecoinsSection.header.click();
+    await this.stablecoinsAssetsPage.content.waitFor();
   }
 
   @step("Click 'Add account' CTA from crypto addresses banner")
@@ -51,25 +51,5 @@ export class AssetsPage extends AppPage {
   @step("Expect 'Add account' CTA not to be visible in crypto addresses banner")
   async expectAddAccountCTANotVisible() {
     await expect(this.addAccountCTA).not.toBeVisible();
-  }
-
-  @step("Count visible rows in cryptos section")
-  async countCryptosRows(): Promise<number> {
-    return this.cryptosSectionRows.count();
-  }
-
-  @step("Count visible rows in stablecoins section")
-  async countStablecoinsRows(): Promise<number> {
-    return this.stablecoinsSectionRows.count();
-  }
-
-  @step("Click asset in cryptos section")
-  async clickAssetInCryptosSection(assetName: string) {
-    await this.cryptosSection.getByText(assetName, { exact: true }).click();
-  }
-
-  @step("Expect asset to be visible in cryptos section")
-  async expectAssetVisibleInCryptosSection(assetName: string) {
-    await expect(this.cryptosSection.getByText(assetName, { exact: true })).toBeVisible();
   }
 }

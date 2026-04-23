@@ -2,13 +2,13 @@ import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
 import { expect } from "@playwright/test";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
+import { MarketCoinPage } from "./marketCoin.page";
 
 export class MarketPage extends AppPage {
   private searchInput = this.page.getByTestId("market-search-input");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`).first();
-  private coinPageContainer = this.page.getByTestId("market-coin-page-container");
-  private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
+  private marketCoinPage = new MarketCoinPage(this.page);
 
   private buyButtonLegacy = (ticker: string) =>
     this.page.locator(`[data-testid="market-${ticker}-buy-button"]:visible`).first();
@@ -44,7 +44,7 @@ export class MarketPage extends AppPage {
   @step("Open coin page for $0")
   async openCoinPage(ticker: string) {
     await this.coinRow(ticker.toLowerCase()).click();
-    await this.coinPageContainer.waitFor({ state: "attached" });
+    await this.marketCoinPage.mainContainer.waitFor({ state: "attached" });
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
   }
 
@@ -64,11 +64,6 @@ export class MarketPage extends AppPage {
       : this.swapButtonLegacy(ticker.toLowerCase());
 
     await button.click();
-  }
-
-  @step("Click on swap button on asset")
-  async clickOnSwapButtonOnAsset() {
-    await this.swapButtonOnAsset.click();
   }
 
   @step("Click on stake button for $0")

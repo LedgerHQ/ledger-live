@@ -147,7 +147,7 @@ test.describe("Swap flow from different entry point", () => {
       }
 
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
+      await app.swap.goAndWaitForSwapToBeReady(() => app.marketCoin.clickSwapButton());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
     },
   );
