@@ -1,6 +1,4 @@
-import React, { useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
 import {
   Box,
   Button,
@@ -18,22 +16,13 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { HandCoins } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
-import { NavigatorName, ScreenName } from "~/const";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { track } from "~/analytics";
 
-export const PortfolioBorrowSection = () => {
+interface PortfolioBorrowSectionProps {
+  onPress: () => void;
+}
+
+export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-
-  const handlePress = useCallback(() => {
-    track("button_clicked", {
-      button: "borrow_entry_point",
-      flow: "borrow",
-      page: ScreenName.Portfolio,
-    });
-    navigation.navigate(NavigatorName.Borrow, { screen: ScreenName.Borrow, params: {} });
-  }, [navigation]);
 
   return (
     <Box
@@ -48,7 +37,7 @@ export const PortfolioBorrowSection = () => {
         </SubheaderRow>
       </Subheader>
       <Box lx={{ marginTop: "s8" }}>
-        <Card onPress={handlePress} testID="portfolio-borrow-entry-point">
+        <Card onPress={onPress} testID="portfolio-borrow-entry-point">
           <CardHeader>
             <CardLeading>
               <Spot appearance="icon" icon={HandCoins} />
@@ -60,7 +49,7 @@ export const PortfolioBorrowSection = () => {
               </CardContent>
             </CardLeading>
             <CardTrailing>
-              <Button appearance="base" size="sm" onPress={handlePress} testID="borrow-explore-cta">
+              <Button appearance="base" size="sm" onPress={onPress} testID="borrow-explore-cta">
                 {t("portfolio.borrowEntry.cta")}
               </Button>
             </CardTrailing>
