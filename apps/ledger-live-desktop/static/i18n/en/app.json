@@ -8674,6 +8674,11 @@
   },
   "myWallet": {
     "title": "My Wallet",
+    "avatar": {
+      "label": "Avatar",
+      "labelWithNotifications_one": "Avatar, {{count}} unseen notification",
+      "labelWithNotifications_other": "Avatar, {{count}} unseen notifications"
+    },
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",

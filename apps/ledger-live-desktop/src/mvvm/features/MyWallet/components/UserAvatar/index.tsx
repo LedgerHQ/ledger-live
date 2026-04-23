@@ -1,13 +1,10 @@
 import React from "react";
-import { Avatar } from "@ledgerhq/lumen-ui-react";
+import { UserAvatarView } from "./UserAvatarView";
+import { useUserAvatarViewModel } from "./useUserAvatarViewModel";
+import { UserAvatarProps } from "./types";
 
-export function UserAvatar() {
-  return (
-    <Avatar
-      size="sm"
-      aria-label="Avatar"
-      data-testid="my-wallet-avatar"
-      className="text-black dark:text-white"
-    />
-  );
+export function UserAvatar(props: UserAvatarProps = {}) {
+  const viewProps = useUserAvatarViewModel(props);
+
+  return <UserAvatarView {...viewProps} />;
 }
