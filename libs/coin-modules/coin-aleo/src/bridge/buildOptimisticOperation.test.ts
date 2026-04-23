@@ -30,8 +30,9 @@ describe("buildOptimisticOperation", () => {
       recipients: [transaction.recipient],
       accountId: account.id,
       date: expect.any(Date),
+      transactionSequenceNumber: expect.any(BigNumber),
       extra: {
-        functionId: "",
+        functionId: "transfer_public",
         transactionType: "public",
       },
     });

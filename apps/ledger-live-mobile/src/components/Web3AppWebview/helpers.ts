@@ -7,7 +7,7 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
-  CurrentAccountHistDB,
+  SetCurrentAccountHistDb,
   useCacheBustedLiveApps,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
@@ -32,10 +32,15 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
 import { track } from "../../analytics";
-import getOrCreateUser from "../../user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { setOriginFlow } from "~/analytics/originFlow";
+import {
+  E2E_WEBVIEW_CONSOLE_LOG_TYPE,
+  E2E_WEBVIEW_NETWORK_LOG_TYPE,
+} from "../../e2e/webviewNetworkLogCapture";
+import { webviewLogStore } from "../../e2e/webviewLogStore";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import {
@@ -51,10 +56,14 @@ export function useWebView(
   {
     manifest,
     currentAccountHistDb,
+    setCurrentAccountHistDb,
     inputs,
     customHandlers,
     manifestDomainCheckEnabled,
-  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb"> & {
+  }: Pick<
+    WebviewProps,
+    "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb"
+  > & {
     manifestDomainCheckEnabled?: boolean;
   },
   ref: React.ForwardedRef<WebviewAPI>,
@@ -147,26 +156,30 @@ export function useWebView(
     uiHook,
     customHandlers,
   });
-  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState] = useCacheBustedLiveAppsDB();
+  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
+    useCacheBustedLiveAppsDB();
   const { edit, getLatest } = useCacheBustedLiveApps([
     cacheBustedLiveAppsDb,
     setCacheBustedLiveAppsDbState,
+    cacheBustedLoaded,
   ]);
 
   useEffect(() => {
     serverRef.current = server;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage, noAccounts } = useDappLogic({
+  const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     currentAccountHistDb,
+    setCurrentAccountHistDb,
     accounts,
     uiHook,
     postMessage: webviewHook.postMessage,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
+    referrer: inputs?.referrer?.toString(),
     mevProtected,
   });
 
@@ -175,6 +188,15 @@ export function useWebView(
       if (e.nativeEvent?.data) {
         try {
           const msg = JSON.parse(e.nativeEvent.data);
+
+          if (Config.DETOX && msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+            webviewLogStore.addNetworkLog(msg.payload);
+            return;
+          }
+          if (Config.DETOX && msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+            webviewLogStore.addConsoleLog(msg.payload);
+            return;
+          }
 
           if (Config.MOCK && msg.type === "e2eTest") {
             sendWalletAPIResponse(msg.payload);
@@ -241,6 +263,7 @@ export function useWebView(
     webviewProps,
     webviewRef,
     noAccounts,
+    isLoadingAccounts,
   };
 }
 
@@ -261,7 +284,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const [initialURL] = useState(() => getInitialURL(inputs, manifest));
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   // Mirror desktop's originWhitelist logic: when the flag is on, validate the initial URL
@@ -316,7 +339,7 @@ export function useWebviewState(
         headers,
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [currentURI, manifest.id, manifest.nocache],
   );
 
@@ -353,7 +376,7 @@ export function useWebviewState(
         },
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [manifest.domains, manifestDomainCheckEnabled],
   );
 
@@ -658,34 +681,29 @@ const wallet = {
 };
 
 function useGetUserId() {
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let mounted = true;
-    getOrCreateUser().then(({ user }) => {
-      if (mounted) setUserId(user.id);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return userId;
+  const userId = useSelector(userIdSelector);
+  return userId.exportUserIdForWalletAPI();
 }
 
 export function useSelectAccount({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: {
   manifest: AppManifest;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 }) {
   const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
     manifest.id,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   );
   const { openDrawer } = useModularDrawerController();
+  // Using a ref because openDrawer's useCallback deps include callbackId
+  // from Redux state (which changes every time the drawer opens)
+  const openDrawerRef = useRef(openDrawer);
+  useEffect(() => {
+    openDrawerRef.current = openDrawer;
+  }, [openDrawer]);
 
   const onSelectAccountSuccess = useCallback(
     (account: AccountLike) => {
@@ -695,8 +713,8 @@ export function useSelectAccount({
     [manifest.id, setCurrentAccountHist, setCurrentAccount],
   );
 
-  const handleAddAccountPress = () => {
-    openDrawer({
+  const handleAddAccountPress = useCallback(() => {
+    openDrawerRef.current({
       currencies: currencyIds,
       areCurrenciesFiltered: true,
       enableAccountSelection: true,
@@ -707,7 +725,7 @@ export function useSelectAccount({
           ? "Discover"
           : currentRouteNameRef.current ?? "Unknown",
     });
-  };
+  }, [currencyIds, onSelectAccountSuccess, manifest.name]);
 
   return { handleAddAccountPress, currentAccount, currencyIds, onSelectAccountSuccess };
 }

@@ -1,7 +1,6 @@
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/coin-evm/logic";
-import { getTokenFromAsset } from "@ledgerhq/coin-evm/logic/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
@@ -20,6 +19,7 @@ import { BigNumber } from "bignumber.js";
 import { celoKit } from "../network/sdk";
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "../network/sdk";
 import { CeloAccount } from "../types/types";
+import { getTokenFromAsset } from "./getTokenFromAsset";
 
 const kit = celoKit();
 
@@ -228,7 +228,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const nonvotingLockedBalance = await lockedGold.getAccountNonvotingLockedGold(address);
 
   const configEvm = {
-    ...getCoinConfig(currency).info,
+    ...getCoinConfig(currency.id).info,
   } as const;
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);

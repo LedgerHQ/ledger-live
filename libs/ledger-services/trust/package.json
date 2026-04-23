@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-trust-service",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Ledger Trust service client",
   "keywords": [
     "Ledger",
@@ -68,6 +68,8 @@
     "expect": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
@@ -79,8 +81,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint -c ../.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../.oxfmtrc.json ./src && oxlint -c ../.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",

@@ -43,15 +43,7 @@
       "swapProviders": [],
       "showClearCacheBanner": false,
       "starredAccountIds": [],
-      "hasPassword": false,
-      "overriddenFeatureFlags": {
-        "ptxServiceCtaScreens": {
-          "enabled": true
-        },
-        "ptxServiceCtaExchangeDrawer": {
-          "enabled": true
-        }
-      }
+      "hasPassword": false
     },
     "user": {
       "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
@@ -21346,6 +21338,17 @@
         "version": 1
       }
     ],
-    "countervalues": {}
+    "countervalues": {},
+    "featureFlags": {
+      "overrides": {
+        "ptxServiceCtaScreens": {
+          "enabled": true
+        },
+        "ptxServiceCtaExchangeDrawer": {
+          "enabled": true
+        }
+      },
+      "bannerVisible": false
+    }
   }
 }

@@ -6,12 +6,14 @@ import {
   formatOperation,
   formatAccount,
   fromOperationRaw,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import {
   toSignOperationEventRaw,
   formatTransaction,
   formatTransactionStatus,
 } from "@ledgerhq/live-common/transaction/index";
+import { waitForTransactionConfirmation } from "@ledgerhq/live-common/families/evm/waitForConfirmation";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type { InferTransactionsOpts } from "../../transaction";
@@ -21,6 +23,8 @@ export type SendJobOpts = ScanCommonOpts &
   InferTransactionsOpts & {
     "ignore-errors": boolean;
     "disable-broadcast": boolean;
+    "wait-confirmation": boolean;
+    "wait-confirmation-timeout": number;
     format: string;
   };
 
@@ -40,6 +44,16 @@ export default {
       desc: "do not broadcast the transaction",
     },
     {
+      name: "wait-confirmation",
+      type: Boolean,
+      desc: "after broadcast, wait until the transaction is confirmed on-chain (EVM only)",
+    },
+    {
+      name: "wait-confirmation-timeout",
+      type: Number,
+      desc: "max ms to wait for confirmation (default 120000)",
+    },
+    {
       name: "format",
       type: String,
       desc: "default | json | silent",
@@ -47,7 +61,7 @@ export default {
   ],
   job: (opts: SendJobOpts) => {
     const l =
-      opts.format !== "json" && opts.format !== "silent" // eslint-disable-next-line no-console
+      opts.format !== "json" && opts.format !== "silent"
         ? (l: any) => console.log(l)
         : (_l: any) => {};
     return scan(opts).pipe(
@@ -63,8 +77,10 @@ export default {
                   acc,
                   from(
                     defer(() => {
-                      l(`✔️ transaction ${formatTransaction(t, account)}`);
-                      l(`STATUS ${formatTransactionStatus(t, status, account)}`);
+                      formatTransaction(t, account).then(str => l(`✔️ transaction ${str}`));
+                      formatTransactionStatus(t, status, account).then(str =>
+                        l(`STATUS ${str}`),
+                      );
                       const bridge = getAccountBridge(account);
                       return bridge
                         .signOperation({
@@ -87,15 +103,30 @@ export default {
                                           account,
                                           signedOperation: e.signedOperation,
                                         })
-                                        .then(op => {
+                                        .then(async op => {
                                           l(
                                             `✔️ broadcasted! optimistic operation: ${formatOperation(
                                               account,
                                             )(
                                               // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
-                                              fromOperationRaw(op, account.id),
+                                              await fromOperationRaw(op, account.id),
                                             )}`,
                                           );
+                                          if (
+                                            opts["wait-confirmation"] &&
+                                            op.hash &&
+                                            getMainAccount(account).currency.family === "evm"
+                                          ) {
+                                            const timeoutMs = opts["wait-confirmation-timeout"];
+                                            await waitForTransactionConfirmation(
+                                              getMainAccount(account),
+                                              op.hash,
+                                              timeoutMs ? { timeoutMs } : {},
+                                            );
+                                            l(
+                                              `✔️ transaction confirmed on-chain (hash: ${op.hash})`,
+                                            );
+                                          }
                                           return op;
                                         }),
                                     );

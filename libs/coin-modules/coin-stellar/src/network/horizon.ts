@@ -1,12 +1,10 @@
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import {
-  // @ts-expect-error stellar-sdk ts definition missing?
-  AccountRecord,
+  BadResponseError,
   BASE_FEE,
   Horizon,
   MuxedAccount,
@@ -15,25 +13,157 @@ import {
   NotFoundError,
   Transaction as StellarSdkTransaction,
   StrKey,
+  xdr,
 } from "@stellar/stellar-sdk";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
+import {
+  StellarBroadcastFailedError,
+  type StellarDecodedResultXdr,
+} from "../types/errors";
 import {
   type BalanceAsset,
   type NetworkInfo,
   type RawOperation,
   type Signer,
   NetworkCongestionLevel,
-  StellarOperation,
 } from "../types";
 import { getReservedBalance, rawOperationsToOperations } from "./serialization";
+import { parseAPIValue } from "../logic/common";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const FETCH_LIMIT = 100;
-const currency = getCryptoCurrencyById("stellar");
+
+const STELLAR_TX_RESULT_CODES_DOC_URL =
+  "https://developers.stellar.org/docs/data/apis/horizon/api-reference/errors/result-codes/transactions";
+
+/** Horizon `extras.result_codes.transaction` → one-line description (Stellar docs). */
+const HORIZON_TRANSACTION_RESULT_CODE_DOCUMENTATION: Record<string, string> = {
+  tx_success: "The transaction succeeded.",
+  tx_failed: "One of the operations failed (none were applied).",
+  tx_too_early: "The ledger closeTime was before the minTime.",
+  tx_too_late: "The ledger closeTime was after the maxTime.",
+  tx_missing_operation: "No operation was specified.",
+  tx_bad_seq: "Sequence number does not match source account.",
+  tx_bad_auth: "Too few valid signatures / wrong network.",
+  tx_insufficient_balance: "Fee would bring account below reserve.",
+  tx_no_source_account: "Source account not found.",
+  tx_insufficient_fee: "Fee is too small.",
+  tx_bad_auth_extra: "Unused signatures attached to transaction.",
+  tx_internal_error: "An unknown error occurred.",
+  tx_fee_bump_inner_success: "Fee bump inner transaction succeeded.",
+  tx_fee_bump_inner_failed: "Fee bump inner transaction failed.",
+  tx_not_supported: "Transaction type not supported.",
+  tx_bad_sponsorship: "Sponsorship is invalid.",
+  tx_bad_min_seq_age_or_gap: "Minimum sequence age or gap precondition failed.",
+  tx_malformed: "Transaction is malformed.",
+  tx_soroban_invalid: "Soroban transaction is invalid.",
+};
+
+type HorizonSubmitErrorBody = {
+  type?: string;
+  title?: string;
+  status?: number;
+  detail?: string;
+  extras?: {
+    envelope_xdr?: string;
+    result_xdr?: string;
+    result_codes?: {
+      transaction?: string;
+      operations?: string[];
+    };
+  };
+};
+
+function isHorizonSubmitErrorBody(data: unknown): data is HorizonSubmitErrorBody {
+  return !!(
+    data && typeof data === "object" && "extras" in data &&
+    typeof data.extras === "object" && data.extras !== null &&
+    "result_codes" in data.extras &&
+    data.extras.result_codes !== undefined &&
+    typeof data.extras.result_codes === "object"
+  );
+}
+
+/**
+ * Horizon submit failures are usually {@link BadResponseError} with `response` = problem+json body.
+ * In practice axios rejects with `AxiosError` first; the SDK's `.catch` forwards it unchanged (see js-stellar-sdk horizon/server.js),
+ * so the Horizon body lives on `error.response.data`.
+ */
+function getHorizonBodyFromSubmitFailure(error: unknown): HorizonSubmitErrorBody | null {
+  if (error instanceof BadResponseError && isHorizonSubmitErrorBody(error.response)) {
+    return error.response;
+  }
+  if (error && typeof error === "object" && "response" in error) {
+    const data = (error as { response?: { data?: unknown } }).response?.data;
+    if (isHorizonSubmitErrorBody(data)) {
+      return data;
+    }
+  }
+  return null;
+}
+
+function decodeTransactionResultFields(resultXdrBase64: string | undefined):
+  | {
+    feeChargedStroops?: string;
+    resultXdrSwitchName?: string;
+    decodedResultXdr: StellarDecodedResultXdr;
+  }
+  | undefined {
+  if (!resultXdrBase64) {
+    return undefined;
+  }
+  try {
+    const tr = xdr.TransactionResult.fromXDR(resultXdrBase64, "base64");
+    const feeChargedStroops = tr.feeCharged().toString();
+    const resultXdrSwitchName = tr.result().switch().name;
+    const decodedResultXdr: StellarDecodedResultXdr = {
+      feeChargedStroops,
+      resultSwitch: resultXdrSwitchName,
+    };
+    return { feeChargedStroops, resultXdrSwitchName, decodedResultXdr };
+  } catch {
+    return {
+      decodedResultXdr: { decodeFailed: true, rawResultXdrBase64: resultXdrBase64 },
+    };
+  }
+}
+
+function makeBroadcastFailedError(body: HorizonSubmitErrorBody, cause: Error): Error {
+  const extras = body.extras;
+  const horizonTransactionCode = extras?.result_codes?.transaction ?? "";
+  const horizonOperationCodes = extras?.result_codes?.operations;
+  const documentationSummary =
+    (horizonTransactionCode && HORIZON_TRANSACTION_RESULT_CODE_DOCUMENTATION[horizonTransactionCode]) ||
+    "Unknown transaction result code.";
+  const decodedResult = decodeTransactionResultFields(extras?.result_xdr);
+  const feeChargedStroops = decodedResult?.feeChargedStroops;
+  const resultXdrSwitchName = decodedResult?.resultXdrSwitchName;
+  const decodedResultXdr = decodedResult?.decodedResultXdr;
+  const envelopeXdr = extras?.envelope_xdr ?? "";
+  const message =
+    body.detail ||
+    body.title ||
+    `Transaction submission failed (${body.status ?? "unknown"}).`;
+
+  return new StellarBroadcastFailedError(
+    message,
+    {
+      documentationSummary,
+      horizonTransactionCode,
+      horizonOperationCodes,
+      resultXdrSwitchName,
+      feeChargedStroops,
+      stellarDocUrl: STELLAR_TX_RESULT_CODES_DOC_URL,
+      decodedResultXdr,
+      envelopeXdr,
+    },
+    { cause },
+  );
+}
 
 // Horizon client instance is cached to avoid costly rebuild at every request
 // Watch out: cache key is the URL, coin module can be instantiated several times with different URLs
@@ -70,7 +200,7 @@ function useConfigHost(url: string): string {
 }
 
 const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
-  return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
+  return parseAPIValue(getReservedBalance(account).toString());
 };
 
 export async function getAccountSpendableBalance(
@@ -180,7 +310,7 @@ export async function fetchAccount(addr: string): Promise<{
     balance = "0";
   }
 
-  const formattedBalance = parseCurrencyUnit(currency.units[0], balance);
+  const formattedBalance = parseAPIValue(balance);
 
   const spendableBalance = await getAccountSpendableBalance(formattedBalance, account);
 
@@ -209,13 +339,13 @@ export async function fetchAllOperations(
   order: "asc" | "desc",
   cursor: string = "",
   maxOperations?: number,
-): Promise<StellarOperation[]> {
+): Promise<Operation[]> {
   if (!addr) {
     return [];
   }
 
   const limit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
-  let operations: StellarOperation[] = [];
+  let operations: Operation[] = [];
   let fetchedOpsCount = limit;
 
   try {
@@ -299,8 +429,8 @@ export async function fetchOperations({
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
-}): Promise<[StellarOperation[], string]> {
-  const noResult: [StellarOperation[], string] = [[], ""];
+}): Promise<Page<Operation>> {
+  const noResult: Page<Operation> = { items: [], next: "" };
   if (!addr) {
     return noResult;
   }
@@ -329,7 +459,7 @@ export async function fetchOperations({
     const nextCursor =
       filteredOps.length === rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
 
-    return [filteredOps, nextCursor];
+    return { items: filteredOps, next: nextCursor };
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
@@ -399,22 +529,35 @@ export async function fetchSigners(account: string): Promise<Signer[]> {
   }
 }
 
+function interpretedError(error: unknown): unknown {
+  const body = getHorizonBodyFromSubmitFailure(error);
+  if (body) {
+    const cause = error instanceof Error ? error : new Error(String(error));
+    return makeBroadcastFailedError(body, cause);
+  }
+  return error;
+}
+
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
   try {
     patchHermesTypedArraysIfNeeded();
     const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
 
-    const res = await getServer().submitTransaction(transaction, {
-      skipMemoRequiredCheck: true,
-    });
-    return res.hash;
+    try {
+      const res = await getServer().submitTransaction(transaction, {
+        skipMemoRequiredCheck: true,
+      });
+      return res.hash;
+    } catch (error: unknown) {
+      throw interpretedError(error);
+    }
   } finally {
     // Restore
     unpatchHermesTypedArrays();
   }
 }
 
-export async function loadAccount(addr: string): Promise<AccountRecord | null> {
+export async function loadAccount(addr: string): Promise<Horizon.AccountResponse | null> {
   if (!addr || !addr.length) {
     return null;
   }
@@ -475,7 +618,7 @@ async function recipientAccount(address?: string): Promise<{
     accountAddress = muxedAccount.baseAccount().accountId();
   }
 
-  const account: AccountRecord = await loadAccount(accountAddress);
+  const account: Horizon.AccountResponse | null = await loadAccount(accountAddress);
 
   if (!account) {
     return null;

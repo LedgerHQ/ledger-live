@@ -7,11 +7,6 @@ export default `* {
   color: inherit;
   user-select: inherit;
   cursor: inherit;
-  min-width: 0;
-
-  /* it will surely make problem in the future... to be inspected. */
-  /* ;_; */
-  flex-shrink: 0;
 }
 
 body {

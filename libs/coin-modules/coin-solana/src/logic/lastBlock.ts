@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../network";
 
 export async function lastBlock(api: ChainAPI): Promise<BlockInfo> {

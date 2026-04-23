@@ -1,7 +1,7 @@
 import React, { useState, useCallback, SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import { Account, AccountLike, AccountLikeArray, PortfolioRange } from "@ledgerhq/types-live";
+import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";
 
 import Text from "~/renderer/components/Text";
 import { GenericBox } from "../index";
@@ -12,7 +12,6 @@ import ListBody from "./ListBody";
 import { useSelector } from "LLD/hooks/redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -54,7 +53,7 @@ export default function AccountList({ accounts, range, onAccountClick, mode }: P
   const hiddenAccounts = [];
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
-    if (matchesSearch(walletState, search, account, mode === "list")) {
+    if (accountMatchesSearch(walletState, search, account, mode === "list")) {
       visibleAccounts.push(account);
     } else {
       hiddenAccounts.push(account);
@@ -96,25 +95,3 @@ export default function AccountList({ accounts, range, onAccountClick, mode }: P
     </div>
   );
 }
-
-export const matchesSearch = (
-  walletState: WalletState,
-  search: string | undefined | null,
-  account: AccountLike,
-  subMatch = false,
-): boolean => {
-  if (!search) return true;
-  let match;
-  const accountName = accountNameWithDefaultSelector(walletState, account);
-  if (account.type === "Account") {
-    match = `${account.currency.ticker}|${account.currency.name}|${accountName}`;
-    subMatch =
-      subMatch &&
-      !!account.subAccounts &&
-      listSubAccounts(account).some(token => matchesSearch(walletState, search, token));
-  } else {
-    const c = getAccountCurrency(account);
-    match = `${c.ticker}|${c.name}|${accountName}`;
-  }
-  return match.toLowerCase().includes(search.toLowerCase()) || subMatch;
-};

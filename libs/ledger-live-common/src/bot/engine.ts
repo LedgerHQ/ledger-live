@@ -49,7 +49,7 @@ import type {
   SignOperationEvent,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import type { TransactionStatus } from "../generated/types";
+import type { TransactionStatus } from "../coin-modules/transaction-types";
 import { botTest } from "@ledgerhq/ledger-wallet-framework/bot/bot-test-context";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
@@ -275,7 +275,7 @@ export async function runWithAppSpec<T extends TransactionCommon>(
           }
         }
         // eslint-disable-next-line no-console
-        console.log(formatReportForConsole(report as any));
+        console.log(await formatReportForConsole(report as any));
         mutationReports.push(report);
         appReport.mutations = mutationReports;
 

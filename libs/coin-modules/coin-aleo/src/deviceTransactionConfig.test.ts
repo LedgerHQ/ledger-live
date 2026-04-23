@@ -1,11 +1,16 @@
 import BigNumber from "bignumber.js";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import { TRANSACTION_TYPE } from "./constants";
+import aleoCoinConfig from "./config";
 import { getMockedAccount } from "./__tests__/fixtures/account.fixture";
+import { getMockedConfig } from "./__tests__/fixtures/config.fixture";
 import { getMockedTransaction } from "./__tests__/fixtures/transaction.fixture";
 import type { TransactionStatus } from "./types";
 
+jest.mock("./config");
+
 describe("getDeviceTransactionConfig", () => {
+  const mockAleoConfig = jest.mocked(aleoCoinConfig);
   const mockTransaction = getMockedTransaction({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC });
   const mockAccount = getMockedAccount();
   const mockStatus: TransactionStatus = {
@@ -15,6 +20,14 @@ describe("getDeviceTransactionConfig", () => {
     amount: new BigNumber(1000),
     totalSpent: new BigNumber(1000),
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...getMockedConfig("testnet"),
+      isFeeSponsored: false,
+    });
+  });
 
   it.each([
     ["Transfer Public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
@@ -42,6 +55,34 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields).toContainEqual({ type: "text", label: "Method", value: "Unknown" });
   });
 
+  it("should include the From field with the account's address", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({
+      type: "address",
+      label: "From",
+      address: mockAccount.freshAddress,
+    });
+  });
+
+  it("should include the To field with the transaction recipient", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({
+      type: "address",
+      label: "To",
+      address: mockTransaction.recipient,
+    });
+  });
+
   it("should always include the Amount field", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
@@ -52,7 +93,7 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields).toContainEqual({ type: "amount", label: "Amount" });
   });
 
-  it("should include the Fees field when estimatedFees is non-zero", async () => {
+  it("should include the Fees field when estimatedFees is non-zero and sponsorship is disabled", async () => {
     const status: TransactionStatus = { ...mockStatus, estimatedFees: new BigNumber(100) };
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
@@ -63,7 +104,50 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields).toContainEqual({ type: "fees", label: "Fees" });
   });
 
-  it("should not include the fees field when estimatedFees is zero", async () => {
+  it("should include sponsored fee text when sponsorship is enabled, even when estimatedFees is zero", async () => {
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...getMockedConfig("testnet"),
+      isFeeSponsored: true,
+    });
+
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({
+      type: "text",
+      label: "Fees",
+      value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
+    });
+    expect(fields).not.toContainEqual({ type: "fees", label: "Fees" });
+  });
+
+  // https://ledgerhq.atlassian.net/browse/LIVE-29092
+  it.skip("should still include sponsored fee text when sponsorship is enabled and estimatedFees is non-zero", async () => {
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...getMockedConfig("testnet"),
+      isFeeSponsored: true,
+    });
+
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: { ...mockStatus, estimatedFees: new BigNumber(100) },
+    });
+
+    expect(fields).toContainEqual({
+      type: "text",
+      label: "Fees",
+      value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
+    });
+    expect(fields).not.toContainEqual({ type: "fees", label: "Fees" });
+  });
+
+  it("should not include the fees field when estimatedFees is zero and sponsorship is disabled", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
       transaction: mockTransaction,
@@ -80,6 +164,39 @@ describe("getDeviceTransactionConfig", () => {
       status: { ...mockStatus, estimatedFees: new BigNumber(100) },
     });
 
-    expect(fields.map(f => f.type)).toEqual(["text", "amount", "fees"]);
+    expect(fields.map(f => f.type)).toEqual(["text", "address", "address", "amount", "fees"]);
+  });
+
+  it("should return fields in correct order for sponsored transactions", async () => {
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...getMockedConfig("testnet"),
+      isFeeSponsored: true,
+    });
+
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields.map(f => f.type)).toEqual(["text", "address", "address", "amount", "text"]);
+    expect(fields[4]).toEqual({
+      type: "text",
+      label: "Fees",
+      value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
+    });
+  });
+
+  // https://ledgerhq.atlassian.net/browse/LIVE-29092
+  it.skip("should resolve config for the account currency", async () => {
+    await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledTimes(1);
+    expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockAccount.currency.id);
   });
 });

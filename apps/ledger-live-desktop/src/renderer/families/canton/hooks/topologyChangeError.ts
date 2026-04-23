@@ -1,10 +1,12 @@
 export { TopologyChangeError } from "@ledgerhq/coin-canton";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import type { Dispatch } from "redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import type { ModalData } from "~/renderer/modals/types";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import CantonReonboardDrawer from "../AddAccountDrawer/CantonReonboardDrawer";
 import type { TransferProposalAction } from "../PendingTransferProposals/types";
 import { isCantonCurrency } from "../utils/currency";
 
@@ -25,16 +27,30 @@ export type TransferProposalSnapshot = {
 
 export type NavigationSnapshot = ModalSnapshot | TransferProposalSnapshot;
 
-type ReonboardingModalConfig = {
+type ReonboardingConfig = {
   currency: CryptoCurrency;
   device: Device | null;
-  accounts: Account[];
   mainAccount: Account;
+  useModularDrawer: boolean;
   navigationSnapshot?: NavigationSnapshot;
 };
 
-function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConfig): void {
-  const { currency, device, accounts, mainAccount, navigationSnapshot } = config;
+function openReonboardingDrawer(dispatch: Dispatch, config: ReonboardingConfig): void {
+  const { currency, mainAccount, navigationSnapshot } = config;
+
+  if (navigationSnapshot?.type === "modal") {
+    dispatch(closeModal(navigationSnapshot.modalName));
+  }
+
+  setDrawer(CantonReonboardDrawer, {
+    currency,
+    accountToReonboard: mainAccount,
+    navigationSnapshot,
+  });
+}
+
+function openReonboardingModal(dispatch: Dispatch, config: ReonboardingConfig): void {
+  const { currency, mainAccount, navigationSnapshot } = config;
 
   if (navigationSnapshot?.type === "modal") {
     dispatch(closeModal(navigationSnapshot.modalName));
@@ -43,9 +59,7 @@ function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConf
   dispatch(
     openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
       currency,
-      device,
       selectedAccounts: [],
-      existingAccounts: accounts,
       editedNames: {},
       isReonboarding: true,
       accountToReonboard: mainAccount,
@@ -56,16 +70,17 @@ function openReonboardingModal(dispatch: Dispatch, config: ReonboardingModalConf
 
 export function handleTopologyChangeError(
   dispatch: Dispatch,
-  config: ReonboardingModalConfig,
+  config: ReonboardingConfig,
 ): boolean {
   if (!config.device || !isCantonCurrency(config.currency)) {
     return false;
   }
 
-  openReonboardingModal(dispatch, {
-    ...config,
-    currency: config.currency,
-  });
+  if (config.useModularDrawer) {
+    openReonboardingDrawer(dispatch, config);
+  } else {
+    openReonboardingModal(dispatch, config);
+  }
 
   return true;
 }

@@ -1,4 +1,4 @@
-import { Stake } from "@ledgerhq/coin-framework/api/types";
+import { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
@@ -8,6 +8,7 @@ import type {
   StakingContractConfig,
   StakingStrategy,
   StakingExtractor,
+  StakingValidatorItem,
 } from "../types/staking";
 import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
@@ -18,7 +19,10 @@ import { getValidators } from "./validators";
  * Generic staking fetcher that adapts to different blockchain requirements
  */
 const createStakingFetcher = (
-  getValidatorsFn: (config: StakingContractConfig, currency: CryptoCurrency) => Promise<string[]>,
+  getValidatorsFn: (
+    config: StakingContractConfig,
+    currency: CryptoCurrency,
+  ) => Promise<StakingValidatorItem[]>,
 ) => {
   return async (
     address: string,
@@ -26,8 +30,9 @@ const createStakingFetcher = (
     currency: CryptoCurrency,
   ): Promise<Stake[]> => {
     const validators = await getValidatorsFn(config, currency);
+    const validatorAddresses = validators.map(v => v.validatorAddress);
     const logPrefix = currency.id === "sei_evm" ? "SEI" : "CELO";
-    return getStakesForValidators(address, config, currency, validators, logPrefix);
+    return getStakesForValidators(address, config, currency, validatorAddresses, logPrefix);
   };
 };
 
@@ -38,7 +43,16 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
     ),
   },
   celo: {
-    fetcher: createStakingFetcher(async config => [config.contractAddress]),
+    fetcher: createStakingFetcher(async config => [
+      {
+        validatorAddress: config.contractAddress,
+        name: "",
+        commission: 0,
+        tokens: 0,
+        votingPower: 0,
+        estimatedYearlyRewardsRate: 0,
+      },
+    ]),
   },
 };
 
@@ -58,7 +72,7 @@ const getAmountFromDecoded = (currencyId: string, decoded: unknown): bigint => {
 // TODO: tech debt: the call should be implemented in the node API as an optional function (like traceBlock)
 const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
   const { currency, config, address, currencyId, validatorAddress } = stakingContract;
-  const node = getCoinConfig(currency).info.node;
+  const node = getCoinConfig(currency.id).info.node;
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
@@ -75,19 +89,16 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           validatorAddress,
           address,
         );
-
         const encodedData = encodeStakingData({
           currencyId,
           operation: "getStakedBalance",
           config,
           params,
         });
-
         const result = await rpcProvider.call({
           to: config.contractAddress,
           data: encodedData,
         });
-
         const decoded = decodeStakingResult(currencyId, "getStakedBalance", config, result);
         const amount = getAmountFromDecoded(currencyId, decoded);
 

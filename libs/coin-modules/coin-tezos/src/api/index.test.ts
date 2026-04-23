@@ -1,5 +1,6 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { BalanceOptions, Operation } from "@ledgerhq/coin-module-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import type { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";
@@ -389,6 +390,26 @@ describe("estimateFees", () => {
     ).rejects.toThrow("Fees estimation failed: test");
   });
 
+  it("should not throw for FA2 script_rejected errors (returns estimation)", async () => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      taquitoError: "proto.024-PtTALLiN.michelson_v1.script_rejected",
+    });
+    const result = await api.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz1recipient",
+      amount: 1000n,
+      asset: { type: "token", assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:0" },
+    } as TransactionIntent);
+    expect(result.value).toBe(DEFAULT_ESTIMATED_FEES);
+    expect(result.parameters?.gasLimit).toBe(DEFAULT_GAS_LIMIT);
+    expect(result.parameters?.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+  });
+
   it("should not throw for delegate.unchanged errors", async () => {
     logicEstimateFees.mockResolvedValue({
       estimatedFees: DEFAULT_ESTIMATED_FEES,
@@ -534,5 +555,231 @@ describe("estimateFees", () => {
     expect(result.parameters?.storageLimit).toBe(0n);
 
     logicEstimateFees.mockReset();
+  });
+
+  it("uses static fallback gas when both logicEstimate and toolkit.estimate.transfer throw (revealed sender)", async () => {
+    // SAFE_FALLBACK_GAS = 2500, FALLBACK_OP_SIZE_BYTES = 154
+    // baseTxFee = max(minFees=1, ceil(120 + 0.1*2500 + 154)) = max(1, 524) = 524
+    // createApi here to reset the global coinConfig to minFees=1 (other tests may leave it at a higher value)
+    const apiLowMinFees = createApi({
+      baker: { url: "https://baker.example.com" },
+      explorer: { url: "foo", maxTxQuery: 1 },
+      node: { url: "bar" },
+      fees: {
+        minGasLimit: 1,
+        minRevealGasLimit: 1,
+        minStorageLimit: 1,
+        minFees: 1,
+        minEstimatedFees: 2,
+      },
+    });
+    const revealedSender = "tz1test";
+    const recipient = "tz2recipient";
+
+    const revealedAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: true,
+      address: revealedSender,
+      publicKey: "edpktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    const recipientAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: true,
+      address: recipient,
+      publicKey: "edpkrecipient",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+
+    (networkApi.getAccountByAddress as jest.Mock)
+      .mockResolvedValueOnce(revealedAccount) // initial sender lookup
+      .mockResolvedValueOnce(recipientAccount) // recipient lookup in catch block
+      .mockResolvedValueOnce(revealedAccount); // sender lookup for needsReveal in catch block
+
+    logicEstimateFees.mockRejectedValue(new Error("Public key not found"));
+
+    mockGetTezosToolkit.mockReturnValueOnce({
+      estimate: {
+        transfer: jest.fn().mockRejectedValue(new Error("Public key not found")),
+      },
+    });
+
+    const result = await apiLowMinFees.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: revealedSender,
+      recipient,
+      amount: 1000n,
+    } as TransactionIntent);
+
+    // No reveal needed → revealFee = 0 → total = baseTxFee = 524
+    expect(result.value).toBe(524n);
+    expect(result.parameters?.txFee).toBe(524n);
+    expect(result.parameters?.gasLimit).toBe(2500n);
+    expect(result.parameters?.storageLimit).toBe(0n);
+
+    logicEstimateFees.mockReset();
+  });
+
+  it("uses static fallback gas and adds reveal fee when sender is unrevealed", async () => {
+    // baseTxFee = max(minFees=1, ceil(120 + 0.1*2500 + 154)) = 524
+    // revealFee = max(0, getRevealFee(tz2address)) — tz2 addresses have a non-zero reveal fee
+    // createApi here to reset the global coinConfig to minFees=1 (other tests may leave it at a higher value)
+    const apiLowMinFees = createApi({
+      baker: { url: "https://baker.example.com" },
+      explorer: { url: "foo", maxTxQuery: 1 },
+      node: { url: "bar" },
+      fees: {
+        minGasLimit: 1,
+        minRevealGasLimit: 1,
+        minStorageLimit: 1,
+        minFees: 1,
+        minEstimatedFees: 2,
+      },
+    });
+    const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
+    const recipient = "tz1recipient";
+
+    const unrevealedAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: false,
+      address: unrevealedSender,
+      publicKey: undefined,
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    const recipientAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: true,
+      address: recipient,
+      publicKey: "edpkrecipient",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+
+    (networkApi.getAccountByAddress as jest.Mock)
+      .mockResolvedValueOnce(unrevealedAccount) // initial sender lookup
+      .mockResolvedValueOnce(recipientAccount) // recipient lookup in catch block
+      .mockResolvedValueOnce(unrevealedAccount); // sender lookup for needsReveal in catch block
+
+    logicEstimateFees.mockRejectedValue(new Error("Public key not found"));
+
+    mockGetTezosToolkit.mockReturnValueOnce({
+      estimate: {
+        transfer: jest.fn().mockRejectedValue(new Error("Public key not found")),
+      },
+    });
+
+    const result = await apiLowMinFees.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: unrevealedSender,
+      recipient,
+      amount: 1000n,
+    } as TransactionIntent);
+
+    // baseTxFee = 524n; revealFee > 0 (tz2 secp256k1 address)
+    // total > 524n and txFee stays at 524n
+    expect(result.parameters?.txFee).toBe(524n);
+    expect(result.parameters?.gasLimit).toBe(2500n);
+    expect(result.parameters?.storageLimit).toBe(0n);
+    expect(result.value).toBeGreaterThan(524n);
+
+    logicEstimateFees.mockReset();
+  });
+
+  it("uses minFees floor when it exceeds the static fallback calculation", async () => {
+    // With minFees = 2000 > ceil(120 + 0.1*2500 + 154) = 524 → baseTxFee = 2000
+    const minFees = 2000;
+    const apiHighMinFees = createApi({
+      baker: { url: "https://baker.example.com" },
+      explorer: { url: "foo", maxTxQuery: 1 },
+      node: { url: "bar" },
+      fees: {
+        minGasLimit: 1,
+        minRevealGasLimit: 1,
+        minStorageLimit: 1,
+        minFees,
+        minEstimatedFees: minFees,
+      },
+    });
+
+    const revealedAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: true,
+      address: "tz1test",
+      publicKey: "edpktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+    const recipientAccount = {
+      type: "user" as const,
+      balance: 1000000,
+      revealed: true,
+      address: "tz2recipient",
+      publicKey: "edpkrecipient",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount;
+
+    (networkApi.getAccountByAddress as jest.Mock)
+      .mockResolvedValueOnce(revealedAccount)
+      .mockResolvedValueOnce(recipientAccount)
+      .mockResolvedValueOnce(revealedAccount);
+
+    logicEstimateFees.mockRejectedValue(new Error("Public key not found"));
+
+    mockGetTezosToolkit.mockReturnValueOnce({
+      estimate: {
+        transfer: jest.fn().mockRejectedValue(new Error("Public key not found")),
+      },
+    });
+
+    const result = await apiHighMinFees.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz2recipient",
+      amount: 1000n,
+    } as TransactionIntent);
+
+    expect(result.value).toBe(BigInt(minFees));
+    expect(result.parameters?.txFee).toBe(BigInt(minFees));
+    expect(result.parameters?.gasLimit).toBe(2500n);
+
+    logicEstimateFees.mockReset();
+  });
+});
+
+describe("getBalance", () => {
+  it("should throw an exception when options is provided", async () => {
+    await expect(api.getBalance("random address", {} as unknown as BalanceOptions)).rejects.toThrow(
+      InvalidParameterError,
+    );
   });
 });

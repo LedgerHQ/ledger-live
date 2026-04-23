@@ -6,6 +6,7 @@ import { CantonFamily } from "./types";
 import PendingTransferProposals from "./PendingTransferProposals";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
+import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowManager";
 
 const family: CantonFamily = {
   operationDetails,
@@ -15,6 +16,7 @@ const family: CantonFamily = {
   PendingTransferProposals,
   AccountBalanceSummaryFooter,
   StepSummaryAdditionalRows,
+  ModularDrawerAddAccountFlowManager,
 };
 
 export default family;

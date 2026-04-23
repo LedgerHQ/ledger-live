@@ -3,7 +3,7 @@ import type {
   Block,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
@@ -106,6 +106,11 @@ function createBlockOperationFromERC20TokenTransfer({
     type: "erc20",
     assetReference: transfer.token_evm_address,
   };
+
+  // if we don't have either sender or recipient info, we cannot create a meaningful operation, so we skip it
+  if (!sender || !recipient) {
+    return [];
+  }
 
   return [
     {
@@ -216,7 +221,7 @@ export async function getBlockV2(height: number): Promise<Block> {
       )[] = [
         ...mirrorTx.transfers,
         ...mirrorTx.token_transfers,
-        ...(item.type === "erc20" ? [item.data.transfer] : []),
+        ...(item.type === "erc20" ? item.data.transfers : []),
       ];
 
       operations = allTransfers.flatMap(transfer => {

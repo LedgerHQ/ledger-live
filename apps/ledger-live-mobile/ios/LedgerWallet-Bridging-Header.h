@@ -11,6 +11,7 @@
 
 
 #import <React/RCTBridgeModule.h>
+#import <React/RCTHTTPRequestHandler.h>
 
 
 // Environment variables:

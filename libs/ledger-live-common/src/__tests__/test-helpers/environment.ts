@@ -4,6 +4,9 @@ import { listen } from "@ledgerhq/logs";
 import winston from "winston";
 import { liveConfig } from "../../config/sharedConfig";
 import { setSupportedCurrencies } from "../../currencies";
+import { registerAllCoins } from "../../coin-modules/load-all-coins";
+
+registerAllCoins();
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 
@@ -79,6 +82,8 @@ setSupportedCurrencies([
   "energy_web",
   "astar",
   "metis",
+  "mantle",
+  "mantle_sepolia",
   "boba",
   "moonriver",
   "velas_evm",

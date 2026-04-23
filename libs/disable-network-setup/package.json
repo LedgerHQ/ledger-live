@@ -17,6 +17,7 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",

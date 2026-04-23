@@ -1,4 +1,4 @@
-import type { Stake } from "@ledgerhq/coin-framework/api/types";
+import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { getAllBalancesCached, getStakes } from "../network";
 import { getBalance } from "./getBalance";
 
@@ -54,8 +54,8 @@ describe("getBalance", () => {
     const address = "0x123";
     const result = await getBalance(address);
 
-    expect(getAllBalancesCached).toHaveBeenCalledWith(address);
-    expect(getStakes).toHaveBeenCalledWith(address);
+    expect(getAllBalancesCached).toHaveBeenCalledWith(address, undefined);
+    expect(getStakes).toHaveBeenCalledWith(address, undefined);
     expect(result).toHaveLength(3);
 
     expect(result[2]).toMatchObject({

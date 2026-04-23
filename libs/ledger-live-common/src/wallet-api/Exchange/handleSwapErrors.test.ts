@@ -19,11 +19,11 @@ describe("handleErrors", () => {
     expect(isHandledError(error)).toBe(true);
   });
 
-  it("invokes onDisplayError for swap errors that should be surfaced", async () => {
+  it("invokes onDisplayError for swap errors that should be surfaced", () => {
     const error = new SignatureStepError(new Error("Unexpected failure"));
     const onDisplayError = jest.fn().mockResolvedValue(undefined);
 
-    await expect(handleErrors(error, { onDisplayError })).resolves.toBeUndefined();
+    expect(() => handleErrors(error, { onDisplayError })).toThrow(error);
     expect(onDisplayError).toHaveBeenCalledWith(error);
   });
 

@@ -27,6 +27,9 @@ export class SettingsPage extends AppPage {
   readonly openLocalManifestFormButton = this.page.getByTestId("settings-open-local-manifest-form");
   readonly exportLocalManifestButton = this.page.getByTestId("settings-export-local-manifest");
   readonly createLocalManifestButton = this.page.getByTestId("create-local-manifest");
+  readonly neverAskAgainSkipMemoSwitch = this.page.getByTestId(
+    "settings-never-ask-again-skip-memo-switch",
+  );
   readonly filterTokenOperationsZeroAmountToggle = this.page.getByTestId(
     "switch-filter-token-operations-zero-amount",
   );
@@ -73,6 +76,11 @@ export class SettingsPage extends AppPage {
     await this.counterValueSelector.click();
     await this.counterValueSearchBar.fill(currency);
     await this.counterValueropdownChoiceEuro.click();
+  }
+
+  @step("Switch never ask again skip memo")
+  async switchNeverAskAgainSkipMemo() {
+    await this.neverAskAgainSkipMemoSwitch.click();
   }
 
   @step("Expect counter value to be $0")

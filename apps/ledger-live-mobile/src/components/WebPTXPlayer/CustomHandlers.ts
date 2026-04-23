@@ -9,7 +9,7 @@ import {
   WalletAPICustomHandlers,
   AccountIdFormatsResponse,
 } from "@ledgerhq/live-common/wallet-api/types";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { track } from "~/analytics";
@@ -23,6 +23,7 @@ import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 import {
   getParentAccount,
+  isAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -39,6 +40,14 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
+import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import {
+  makeSetEarnInfoBottomSheetAction,
+  makeSetEarnMenuBottomSheetAction,
+} from "~/actions/earn";
+import { createOpenActionDialogHandler } from "./actionDialogStore";
+import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -96,13 +105,11 @@ export function useCustomExchangeHandlers({
       if (accountId.includes("+")) {
         const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
 
-        const parentAccount = accounts.find(
-          acc => acc.type === "Account" && acc.id === parentAccountId,
-        ) as Account | undefined;
+        const parentAccount = accounts.find(acc => isAccount(acc) && acc.id === parentAccountId);
 
         const { token } = await decodeTokenAccountId(accountId);
 
-        if (parentAccount && token) {
+        if (parentAccount && token && isAccount(parentAccount)) {
           return makeEmptyTokenAccount(parentAccount, token);
         }
       }
@@ -287,6 +294,9 @@ export function useCustomExchangeHandlers({
 
         return results;
       },
+      "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
+      "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
+      "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
     };
 
     return {
@@ -500,4 +510,30 @@ export function useCustomExchangeHandlers({
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   return useCustomExchangeHandlers({ manifest, accounts, sendAppReady: sendEarnLiveAppReady });
+}
+
+export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
+  return async (request: { params?: InfoDialogParams }) => {
+    const validated = validateInfoDialogParams(request.params, "custom.bottomSheet.info");
+    dispatch(makeSetEarnInfoBottomSheetAction(validated));
+  };
+}
+
+
+export function createOpenMenuBottomSheetHandler(dispatch: Dispatch) {
+  return async (request: {
+    params?: {
+      icon: string;
+      label: string;
+      metadata: { button: string; live_app: string; flow: string; link?: string };
+    }[];
+  }) => {
+    const { params } = request;
+
+    if (!params) {
+      throw new Error("Missing params for custom.bottomSheet.menu");
+    }
+
+    dispatch(makeSetEarnMenuBottomSheetAction(params));
+  };
 }

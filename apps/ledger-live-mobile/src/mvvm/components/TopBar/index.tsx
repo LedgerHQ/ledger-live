@@ -13,9 +13,13 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const {
     onMyLedgerPress,
+    onMyWalletPress,
+    shouldDisplayMyWallet,
+    shouldDisplayOperationsList,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
+    onTransactionHistoryPress,
     hasUnreadNotifications,
     hasAccounts,
     isSyncError,
@@ -25,14 +29,19 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     isSyncDrawerOpen,
     openSyncDrawer,
     closeSyncDrawer,
+    onTryRefresh,
   } = useTopBarViewModel(navigation, screenName);
 
   return (
     <TopBarView
       onMyLedgerPress={onMyLedgerPress}
+      onMyWalletPress={onMyWalletPress}
+      shouldDisplayMyWallet={shouldDisplayMyWallet}
+      shouldDisplayOperationsList={shouldDisplayOperationsList}
       onDiscoverPress={onDiscoverPress}
       onNotificationsPress={onNotificationsPress}
       onSettingsPress={onSettingsPress}
+      onTransactionHistoryPress={onTransactionHistoryPress}
       hasUnreadNotifications={hasUnreadNotifications}
       hasAccounts={hasAccounts}
       isSyncError={isSyncError}
@@ -42,6 +51,7 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
       isSyncDrawerOpen={isSyncDrawerOpen}
       openSyncDrawer={openSyncDrawer}
       closeSyncDrawer={closeSyncDrawer}
+      onTryRefresh={onTryRefresh}
     />
   );
 }

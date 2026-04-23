@@ -12,6 +12,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
     BellNotification: makeIcon("icon-bell-notification"),
     Settings: makeIcon("icon-settings"),
     Warning: makeIcon("icon-warning"),
+    Clock: makeIcon("icon-clock"),
     Nano: makeIcon("device-icon-nano"),
     Flex: makeIcon("device-icon-flex"),
     Apex: makeIcon("device-icon-apex"),
@@ -25,18 +26,25 @@ jest.mock("../components/SyncErrorBottomSheet", () => ({
 
 describe("TopBarView", () => {
   const onMyLedgerPress = jest.fn();
+  const onMyWalletPress = jest.fn();
   const onDiscoverPress = jest.fn();
   const onNotificationsPress = jest.fn();
   const onSettingsPress = jest.fn();
+  const onTransactionHistoryPress = jest.fn();
 
   const openSyncDrawer = jest.fn();
   const closeSyncDrawer = jest.fn();
+  const onTryRefresh = jest.fn();
 
   const defaultProps = {
     onMyLedgerPress,
+    onMyWalletPress,
+    shouldDisplayMyWallet: false,
+    shouldDisplayOperationsList: false,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
+    onTransactionHistoryPress,
     hasUnreadNotifications: false,
     hasAccounts: false,
     isSyncError: false,
@@ -46,6 +54,7 @@ describe("TopBarView", () => {
     isSyncDrawerOpen: false,
     openSyncDrawer,
     closeSyncDrawer,
+    onTryRefresh,
   };
 
   beforeEach(() => {
@@ -53,17 +62,32 @@ describe("TopBarView", () => {
   });
 
   it("should call expected callbacks when top bar buttons are pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
+    const { user, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayOperationsList />,
+    );
 
     await user.press(getByTestId("topbar-myledger"));
     await user.press(getByTestId("topbar-discover"));
     await user.press(getByTestId("topbar-notifications"));
     await user.press(getByTestId("topbar-settings"));
+    await user.press(getByTestId("topbar-transaction-history"));
 
     expect(onMyLedgerPress).toHaveBeenCalledTimes(1);
     expect(onDiscoverPress).toHaveBeenCalledTimes(1);
     expect(onNotificationsPress).toHaveBeenCalledTimes(1);
     expect(onSettingsPress).toHaveBeenCalledTimes(1);
+    expect(onTransactionHistoryPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not render transaction history icon when operations list is disabled", () => {
+    const { queryByTestId, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayOperationsList={false} />,
+    );
+    expect(queryByTestId("topbar-transaction-history")).toBeNull();
+    expect(getByTestId("topbar-myledger")).toBeVisible();
+    expect(getByTestId("topbar-discover")).toBeVisible();
+    expect(getByTestId("topbar-notifications")).toBeVisible();
+    expect(getByTestId("topbar-settings")).toBeVisible();
   });
 
   it("should render bell icon when there are no unread notifications", () => {

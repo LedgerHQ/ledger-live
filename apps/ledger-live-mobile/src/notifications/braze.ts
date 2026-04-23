@@ -1,11 +1,12 @@
 import Braze from "@braze/react-native-sdk";
-import getOrCreateUser from "../user";
+import { type UserId, isDummyUserId } from "@ledgerhq/client-ids/store";
 import { NotificationsSettings } from "../reducers/types";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
-export const start = async (isTrackedUser: boolean) => {
-  const { user } = await getOrCreateUser();
-  if (user) Braze.changeUser(isTrackedUser ? user.id : generateAnonymousId());
+export const start = (isTrackedUser: boolean, userId: UserId) => {
+  if (!isDummyUserId(userId)) {
+    Braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : generateAnonymousId());
+  }
 };
 
 export const updateUserPreferences = (notificationsPreferences: NotificationsSettings) => {
@@ -13,6 +14,8 @@ export const updateUserPreferences = (notificationsPreferences: NotificationsSet
     optInAnnouncements: notificationsPreferences.announcementsCategory,
     optInLargeMovers: notificationsPreferences.largeMoverCategory,
     optInTxAlerts: notificationsPreferences.transactionsAlertsCategory,
+    optInTotalMarketCap: notificationsPreferences.totalMarketCap,
+    optInTopGainersLosers: notificationsPreferences.topGainersLosers,
   };
   const notificationsBlacklisted = Object.entries(notificationsPreferences)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)

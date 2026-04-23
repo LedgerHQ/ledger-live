@@ -254,10 +254,7 @@ export type AccountInfo = {
 };
 export function getTronResources(
   acc: AccountInfo,
-): Omit<
-  TronResources,
-  "energy" | "bandwidth" | "unwithdrawnReward" | "lastVotedDate" | "cacheTransactionInfoById"
-> {
+): Omit<TronResources, "energy" | "bandwidth" | "unwithdrawnReward" | "lastVotedDate" | "votes"> {
   const delegatedFrozenBandwidth = get(acc, "delegated_frozenV2_balance_for_bandwidth", undefined);
   const delegatedFrozenEnergy = get(
     acc,
@@ -361,11 +358,6 @@ export function getTronResources(
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
 
-  const votes = get(acc, "votes", []).map((v: any) => ({
-    address: v.vote_address,
-    voteCount: v.vote_count,
-  }));
-
   const lastWithdrawnRewardDate = acc.latest_withdraw_time
     ? new Date(acc.latest_withdraw_time)
     : undefined;
@@ -375,7 +367,6 @@ export function getTronResources(
     unFrozen,
     delegatedFrozen,
     legacyFrozen,
-    votes,
     tronPower,
     lastWithdrawnRewardDate,
   };

@@ -40,6 +40,7 @@ const Container = styled(Box).attrs(() => ({
   padding: 10px 16px;
   background-color: ${p => p.theme.colors?.background.card};
   border-bottom: 1px solid ${p => p.theme.colors?.neutral.c30};
+  color: ${p => p.theme.colors?.neutral.c70};
 `;
 
 const ItemContainer = styled(Tabbable).attrs(p => ({

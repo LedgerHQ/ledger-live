@@ -2,23 +2,29 @@
 import type {
   AlpacaApi,
   Balance,
+  BalanceOptions,
   CraftedTransaction,
   Operation,
   Page,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
-import coinConfig from "../config";
+} from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
+import { createApi } from ".";
 import type { SolanaCoinConfig } from "../config";
+import coinConfig from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
+import { getNextSequence } from "../logic/getNextSequence";
+import { getStakes } from "../logic/getStakes";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateAddress } from "../logic/validateAddress";
+import { validateIntent } from "../logic/validateIntent";
 import { ChainAPI } from "../network";
-import { createApi } from ".";
 
 const mockChainAPI = {} as unknown as ChainAPI;
 
@@ -56,6 +62,22 @@ jest.mock("../logic/getBalance", () => ({
 
 jest.mock("../logic/listOperations", () => ({
   listOperations: jest.fn(),
+}));
+
+jest.mock("../logic/getStakes", () => ({
+  getStakes: jest.fn(),
+}));
+
+jest.mock("../logic/getNextSequence", () => ({
+  getNextSequence: jest.fn(),
+}));
+
+jest.mock("../logic/validateIntent", () => ({
+  validateIntent: jest.fn(),
+}));
+
+jest.mock("../logic/validateAddress", () => ({
+  validateAddress: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -226,25 +248,71 @@ describe("createApi", () => {
     expect(result).toEqual(mockResult);
   });
 
-  it("should throw for unsupported methods", () => {
-    const api = createApi(mockConfig, "solana");
+  it("should delegate getStakes to the logic function", async () => {
+    const mockResult = { items: [] };
+    jest.mocked(getStakes).mockResolvedValueOnce(mockResult);
 
+    const api = createApi(mockConfig, "solana");
+    const result = await api.getStakes("address");
+
+    expect(getStakes).toHaveBeenCalledWith(mockChainAPI, "address", undefined);
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should delegate validateIntent to the logic function", async () => {
+    const mockResult = { errors: {}, warnings: {}, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+    jest.mocked(validateIntent).mockResolvedValueOnce(mockResult);
+
+    const api = createApi(mockConfig, "solana");
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
       sender: "sender",
       recipient: "recipient",
-      amount: BigInt(10),
+      amount: 10n,
       asset: { type: "native" },
     };
+    const result = await api.validateIntent(intent, []);
+
+    expect(validateIntent).toHaveBeenCalledWith(intent, [], undefined);
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should delegate getNextSequence to the logic function", async () => {
+    jest.mocked(getNextSequence).mockReturnValueOnce(42n);
+
+    const api = createApi(mockConfig, "solana");
+    const result = await api.getNextSequence("address");
+
+    expect(getNextSequence).toHaveBeenCalledWith("address");
+    expect(result).toBe(42n);
+  });
+
+  it("should delegate validateAddress to the logic function", async () => {
+    jest.mocked(validateAddress).mockResolvedValueOnce(true);
+
+    const api = createApi(mockConfig, "solana");
+    const result = await api.validateAddress("address", {});
+
+    expect(validateAddress).toHaveBeenCalledWith("address", {});
+    expect(result).toBe(true);
+  });
+
+  it("should throw for unsupported methods", () => {
+    const api = createApi(mockConfig, "solana");
 
     expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
-    expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
     expect(() => api.getValidators()).toThrow("getValidators is not supported");
-    expect(() => api.validateIntent(intent, [])).toThrow("validateIntent is not supported");
-    expect(() => api.getNextSequence("address")).toThrow("getNextSequence is not supported");
-    expect(() => api.validateAddress("address", {})).toThrow("validateAddress is not supported");
+  });
+
+  describe("getBalance", () => {
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(mockConfig, "solana");
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
+    });
   });
 });

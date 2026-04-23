@@ -13,8 +13,8 @@ export default {
 const ColorArea = styled(Flex)<{ type: keyof ColorPalette; shade: string }>`
   width: 200px;
   aspect-ratio: 1;
-  background-color: ${(p) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  background-color: ${p => {
+    // oxlint-disable-next-line typescript/ban-ts-comment
     // @ts-ignore next-line
     return p.theme.colors[p.type][p.shade];
   }};
@@ -31,7 +31,7 @@ const CardColor = ({ shade, type }: CardColorProps): JSX.Element => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line typescript/no-unused-vars
 const { type: _, ...palette } = palettes.dark;
 
 export const Colors = (): JSX.Element => (

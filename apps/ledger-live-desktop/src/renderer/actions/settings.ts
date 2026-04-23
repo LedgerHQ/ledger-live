@@ -1,17 +1,13 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { Dispatch, Action } from "redux";
+import type { AppDispatch } from "~/state-manager/configureStore";
 import { useTranslation } from "react-i18next";
+import { createAction } from "@reduxjs/toolkit";
 import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  PortfolioRange,
-  DeviceModelInfo,
-  FeatureId,
-  Feature,
-  DeviceInfo,
-} from "@ledgerhq/types-live";
+import { PortfolioRange, DeviceModelInfo, DeviceInfo } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
+  AnalyticsConsentInfo,
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
@@ -37,6 +33,10 @@ export const saveSettings: SaveSettings = payload => ({
   type: "SAVE_SETTINGS",
   payload,
 });
+
+export const saveAnalyticsConsentInfo = createAction<Partial<AnalyticsConsentInfo>>(
+  "SAVE_ANALYTICS_CONSENT_INFO",
+);
 export const setCountervalueFirst = (countervalueFirst: boolean) =>
   saveSettings({
     countervalueFirst,
@@ -69,6 +69,39 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
   saveSettings({
     sharePersonalizedRecommandations,
   });
+
+export const setAnalyticsConsentInfo = (privacyPolicyVersion: number) =>
+  saveAnalyticsConsentInfo({
+    consentDate: new Date().toISOString(),
+    privacyPolicyVersion,
+  });
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Merges a partial patch into `analyticsConsentInfo` (e.g. force stale privacy version or clear consent date).
+ */
+export const DANGEROUSLY_setAnalyticsConsentInfoForQa = (patch: Partial<AnalyticsConsentInfo>) =>
+  saveAnalyticsConsentInfo(patch);
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Clears consent metadata and turns off analytics sharing flags to simulate a pre-consent state.
+ */
+export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () => (dispatch: AppDispatch) => {
+  dispatch(
+    saveSettings({
+      shareAnalytics: false,
+      sharePersonalizedRecommandations: false,
+    }),
+  );
+  dispatch(
+    saveAnalyticsConsentInfo({
+      consentDate: null,
+      privacyPolicyVersion: null,
+    }),
+  );
+};
+
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,
@@ -230,7 +263,7 @@ export const showToken = (tokenId: string) => ({
   payload: tokenId,
 });
 
-type FetchSettings = (a: SettingsState) => (a: Dispatch<Action<"FETCH_SETTINGS">>) => void;
+type FetchSettings = (a: SettingsState) => (a: AppDispatch) => void;
 export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatch => {
   dispatch({
     type: "FETCH_SETTINGS",
@@ -274,33 +307,6 @@ export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });
-export const setOverriddenFeatureFlag = (featureFlag: {
-  key: FeatureId;
-  value: Feature | undefined;
-}) => ({
-  type: "SET_OVERRIDDEN_FEATURE_FLAG",
-  payload: {
-    key: featureFlag.key,
-    value: featureFlag.value,
-  },
-});
-export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: Partial<{
-    [key in FeatureId]: Feature;
-  }>,
-) => ({
-  type: "SET_OVERRIDDEN_FEATURE_FLAGS",
-  payload: {
-    overriddenFeatureFlags,
-  },
-});
-export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean) => ({
-  type: "SET_FEATURE_FLAGS_BUTTON_VISIBLE",
-  payload: {
-    featureFlagsButtonVisible,
-  },
-});
-
 export const setVaultSigner = (payload: VaultSigner) => ({
   type: "SET_VAULT_SIGNER",
   payload,
@@ -396,4 +402,9 @@ export const updateAnonymousUserNotifications = (payload: {
 export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
+});
+
+export const setHasClickedRecover = (hasClickedRecover: boolean) => ({
+  type: "SET_HAS_CLICKED_RECOVER",
+  payload: hasClickedRecover,
 });

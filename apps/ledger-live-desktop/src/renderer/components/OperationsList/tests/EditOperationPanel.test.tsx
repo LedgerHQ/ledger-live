@@ -2,7 +2,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { getLLDCoinFamily } from "~/renderer/families";
 import EditOperationPanel from "../EditOperationPanel";
@@ -110,16 +110,9 @@ describe("EditOperationPanel", () => {
         params: familyParams,
       }),
     });
-    const { user } = renderComponent({
-      settings: {
-        overriddenFeatureFlags: {
-          editBitcoinTx: {
-            enabled: true,
-            params: { supportedCurrencyIds: ["bitcoin"] },
-          },
-        },
-      },
-    });
+    const { user } = renderComponent(
+      withFlagOverrides({ editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } } }),
+    );
 
     await user.click(screen.getByText("Speed up or Cancel"));
 

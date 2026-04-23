@@ -69,6 +69,8 @@ setSupportedCurrencies([
   "optimism_sepolia",
   "linea",
   "linea_sepolia",
+  "mantle",
+  "mantle_sepolia",
   "mantra",
   "xion",
   "zenrock",

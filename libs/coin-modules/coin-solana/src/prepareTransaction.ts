@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   AmountRequired,
@@ -14,6 +14,7 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   SolanaAccountNotFunded,
+  SolanaRecipientAccountNotFunded,
   SolanaTokenAccountFrozen,
   SolanaAddressOffEd25519,
   SolanaInvalidValidator,
@@ -448,6 +449,20 @@ async function deriveTransferCommandDescriptor(
       errors.amount = new AmountRequired();
     } else if (txAmount.gt(spendable)) {
       errors.amount = new NotEnoughBalance();
+    }
+  }
+
+  // Unfunded recipient wallets require enough lamports to create an account (space = 0).
+  // Without this guard, the transaction can pass local checks and fail at broadcast simulation.
+  if (!errors.amount && warnings.recipient instanceof SolanaAccountNotFunded && txAmount.gt(0)) {
+    const recipientMinAmount = await api.getMinimumBalanceForRentExemption(0);
+    if (txAmount.lt(recipientMinAmount)) {
+      const feesUnit = getFeesUnit(mainAccount.currency);
+      const ticker = mainAccount.currency.ticker ?? feesUnit.code ?? "";
+      errors.amount = new SolanaRecipientAccountNotFunded("", {
+        minimumAmount:
+          `${formatCurrencyUnit(feesUnit, new BigNumber(recipientMinAmount))} ${ticker}`.trim(),
+      });
     }
   }
 

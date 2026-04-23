@@ -3,14 +3,13 @@ import React from "react";
 import axios from "axios";
 import { TFunction } from "i18next";
 import BigNumber from "bignumber.js";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import RecipientField from "./RecipientField";
@@ -21,17 +20,6 @@ jest.mock("../../../../sentry/install", () => ({
 }));
 
 nock.disableNetConnect();
-
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  useFeature: jest.fn(),
-}));
-
-jest.mock("../../../components/FirebaseFeatureFlags", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  FirebaseFeatureFlagsProvider: ({ children }: { children: any }) => children,
-}));
-
-const mockedUseFeature = jest.mocked(useFeature);
 
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
 
@@ -123,10 +111,19 @@ const baseMockStatus: TransactionStatus = {
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
 
+const domainInputResolutionOn = {
+  domainInputResolution: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } },
+};
+
+const domainInputResolutionOff = {
+  domainInputResolution: { enabled: false },
+};
+
 const setup = (
   mockStatus: Partial<TransactionStatus> | null = {},
   mockTransaction: Partial<Transaction> | null = {},
   account = ethMockAccount,
+  featureFlagOverrides?: Parameters<typeof withFlagOverrides>[0],
 ) => {
   return render(
     <DomainServiceProvider>
@@ -140,6 +137,7 @@ const setup = (
         status={{ ...baseMockStatus, ...mockStatus }}
       />
     </DomainServiceProvider>,
+    featureFlagOverrides ? { initialState: withFlagOverrides(featureFlagOverrides) } : undefined,
   );
 };
 
@@ -192,15 +190,8 @@ describe("RecipientField", () => {
 
   describe("Feature Flag", () => {
     describe("Flag on", () => {
-      beforeEach(() => {
-        mockedUseFeature.mockReturnValue({
-          enabled: true,
-          params: { supportedCurrencyIds: ["ethereum"] },
-        });
-      });
-
       it("should change domain in transaction", async () => {
-        const { user } = setup();
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
         await user.type(input, "vitalik.eth");
@@ -219,7 +210,7 @@ describe("RecipientField", () => {
       });
 
       it("should reverse addr to domain name in transaction", async () => {
-        const { user } = setup();
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
         await user.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
         await waitFor(() =>
@@ -237,7 +228,7 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain because invalid recipient name", async () => {
-        const { user } = setup();
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
         await user.type(input, "vitalik.notadomainservice");
@@ -251,7 +242,7 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain if domain is invalid", async () => {
-        const { user } = setup();
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
         await user.type(input, "vitalik👋.eth");
@@ -267,7 +258,7 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain if domain has no resolution", async () => {
-        const { user } = setup();
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
         await user.type(input, "anything-not-existing.eth");
@@ -297,6 +288,8 @@ describe("RecipientField", () => {
               type: "forward",
             },
           },
+          ethMockAccount,
+          domainInputResolutionOn,
         );
         const input = screen.getByRole("textbox");
 
@@ -311,8 +304,7 @@ describe("RecipientField", () => {
       });
 
       it("should add then remove domain on input change", async () => {
-        const { user } = setup();
-
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
         await user.type(input, "vitalik.eth");
@@ -341,7 +333,7 @@ describe("RecipientField", () => {
 
       it("should not change domain because currency not supported", async () => {
         const spy = jest.spyOn(axios, "request");
-        const { user } = setup(null, null, polygonMockAccount);
+        const { user } = setup(null, null, polygonMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
         await user.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
         await waitFor(() =>
@@ -356,12 +348,8 @@ describe("RecipientField", () => {
     });
 
     describe("Flag off", () => {
-      beforeEach(() => {
-        mockedUseFeature.mockReturnValue({ enabled: false });
-      });
-
       it("should not change domain", async () => {
-        const { user } = setup();
+        const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOff);
         const input = screen.getByRole("textbox");
         await user.type(input, "vitalik.eth");
         await waitFor(() =>

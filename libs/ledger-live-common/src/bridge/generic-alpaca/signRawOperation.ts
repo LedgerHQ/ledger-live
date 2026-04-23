@@ -6,7 +6,7 @@ import { buildOptimisticOperation } from "./utils";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { GenericTransaction } from "./types";
+import type { GenericTransaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -25,7 +25,7 @@ export const genericSignRawOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const alpacaApi = getAlpacaApi(account.currency.id, kind);
+        const alpacaApi = await getAlpacaApi(account.currency.id, kind);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;

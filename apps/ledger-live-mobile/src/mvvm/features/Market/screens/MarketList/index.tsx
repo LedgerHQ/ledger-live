@@ -115,7 +115,7 @@ function View({
    * */
   useEffect(() => {
     resetMarketPageToInital(marketParams.page ?? 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

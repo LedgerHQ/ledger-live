@@ -9,7 +9,7 @@ import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, bypass, http } from "msw";
 import { setupServer } from "msw/node";
 
 export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
@@ -137,7 +137,7 @@ export const makeAccount = (
   };
 };
 
-export function initMSW() {
+export function initMSW(): () => void {
   const mockServer = setupServer(
     http.get("https://crypto-assets-service.api.ledger.com/v1/certificates", ({ request }) => {
       const url = new URL(request.url);
@@ -304,6 +304,24 @@ export function initMSW() {
       }
       return HttpResponse.json([]);
     }),
+    http.post("http://localhost:8899", async ({ request }) => {
+      const body: unknown = await request.clone().json();
+
+      if (
+        typeof body === "object" &&
+        !!body &&
+        "method" in body &&
+        body.method === "confirmTransaction"
+      ) {
+        return HttpResponse.json({
+          jsonrpc: "2.0",
+          error: { code: -32601, message: "Method not found" },
+          id: "1",
+        });
+      }
+
+      return HttpResponse.json(await fetch(bypass(request)).then(res => res.json()));
+    }),
   );
   mockServer.listen({
     onUnhandledRequest: request => {
@@ -312,4 +330,5 @@ export function initMSW() {
       throw new Error("Unhandled request");
     },
   });
+  return () => mockServer.close();
 }

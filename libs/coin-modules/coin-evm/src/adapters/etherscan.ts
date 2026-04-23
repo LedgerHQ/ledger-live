@@ -1,6 +1,9 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
-import type { BlockOperation, TransferBlockOperation } from "@ledgerhq/coin-framework/api/index";
+import type {
+  BlockOperation,
+  TransferBlockOperation,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import {
@@ -14,6 +17,7 @@ import {
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
+import { InvalidExplorerResponse } from "../errors";
 import { NO_TOKEN } from "../network/explorer/types";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 import {
@@ -23,7 +27,7 @@ import {
   EtherscanERC1155Event,
   EtherscanInternalTransaction,
 } from "../types";
-import { safeEncodeEIP55 } from "../utils";
+import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
 
 /**
  * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.
@@ -39,6 +43,24 @@ export const safeBigNumber = (value: string | undefined): BigNumber => {
 };
 
 /**
+ * Extracts a unix timestamp from an etherscan-like operation.
+ * Some explorers (e.g., chainscan.0g.ai for zero_gravity) return "timestamp" (lowercase)
+ * instead of the standard "timeStamp" (camelCase).
+ * Throws InvalidExplorerResponse when neither field is present or the value is non-numeric,
+ * so malformed responses surface as errors rather than silently producing epoch dates.
+ */
+export const safeDate = (op: { timeStamp?: string; timestamp?: string }): Date => {
+  const raw = op.timeStamp ?? op.timestamp;
+  if (raw !== undefined) {
+    const ts = Number.parseInt(raw, 10);
+    if (!Number.isNaN(ts)) return new Date(ts * 1000);
+  }
+  throw new InvalidExplorerResponse(`Missing or non-numeric timestamp in explorer response`, {
+    op: JSON.stringify(op),
+  });
+};
+
+/**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
  * It can return more than one operation in case of self-send
  */
@@ -49,7 +71,7 @@ export const etherscanOperationToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
-  const to = safeEncodeEIP55(etherscanOp.to);
+  const to = safeEncodeEIP55(etherscanOp.to) || safeEncodeEIP55(etherscanOp.contractAddress);
   const value = safeBigNumber(etherscanOp.value);
   const fee = safeBigNumber(etherscanOp.gasUsed).times(safeBigNumber(etherscanOp.gasPrice));
   const hasFailed = etherscanOp.isError === "1";
@@ -67,37 +89,35 @@ export const etherscanOperationToOperations = (
     types.push("NONE");
   }
 
-  const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
+  const contractExtra = buildSmartContractDetails(
+    etherscanOp.to,
+    etherscanOp.input,
+    etherscanOp.contractAddress,
+  );
 
-  return types.map(type => {
-    let operationValue: BigNumber = value;
-
-    if (valueIncludesFees.includes(type) && hasFailed) {
-      operationValue = fee;
-    } else if (valueIncludesFees.includes(type)) {
-      operationValue = value.plus(fee);
-    }
-
-    return {
-      id: encodeOperationId(accountId, etherscanOp.hash, type),
-      hash: etherscanOp.hash,
-      type,
-      value: operationValue,
-      fee,
-      senders: [from],
-      recipients: [to],
-      blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
-      blockHash: etherscanOp.blockHash,
-      transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
-      accountId: accountId,
-      date: new Date(Number.parseInt(etherscanOp.timeStamp, 10) * 1000),
-      subOperations: [],
-      nftOperations: [],
-      internalOperations: [],
-      hasFailed,
-      extra: {},
-    } as Operation;
-  });
+  // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
+  return types.map(
+    type =>
+      ({
+        id: encodeOperationId(accountId, etherscanOp.hash, type),
+        hash: etherscanOp.hash,
+        type,
+        value,
+        fee,
+        senders: from ? [from] : [],
+        recipients: to ? [to] : [],
+        blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
+        blockHash: etherscanOp.blockHash,
+        transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
+        accountId: accountId,
+        date: safeDate(etherscanOp),
+        subOperations: [],
+        nftOperations: [],
+        internalOperations: [],
+        hasFailed,
+        extra: contractExtra ? { ...contractExtra } : {},
+      }) as Operation,
+  );
 };
 
 /**
@@ -136,8 +156,8 @@ export const etherscanERC20EventToOperations = (
         type,
         value,
         fee,
-        senders: [from],
-        recipients: [to],
+        senders: from ? [from] : [],
+        recipients: to ? [to] : [],
         contract: eip55.encode(event.contractAddress),
         blockHeight: Number.parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
@@ -145,7 +165,7 @@ export const etherscanERC20EventToOperations = (
         // NOTE Bridge implementations replace property `accountId`
         // TODO Remove property once the legacy bridge is deleted
         accountId,
-        date: new Date(Number.parseInt(event.timeStamp, 10) * 1000),
+        date: safeDate(event),
         extra: {},
       }) as Operation,
   );
@@ -187,8 +207,8 @@ export const etherscanERC721EventToOperations = (
         hash: event.hash,
         type,
         fee,
-        senders: [from],
-        recipients: [to],
+        senders: from ? [from] : [],
+        recipients: to ? [to] : [],
         blockHeight: Number.parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
         transactionSequenceNumber: new BigNumber(event.nonce),
@@ -197,7 +217,7 @@ export const etherscanERC721EventToOperations = (
         contract,
         tokenId: event.tokenID,
         value,
-        date: new Date(Number.parseInt(event.timeStamp, 10) * 1000),
+        date: safeDate(event),
         extra: {},
       }) as Operation,
   );
@@ -237,8 +257,8 @@ export const etherscanERC1155EventToOperations = (
         hash: event.hash,
         type,
         fee,
-        senders: [from],
-        recipients: [to],
+        senders: from ? [from] : [],
+        recipients: to ? [to] : [],
         blockHeight: Number.parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
         transactionSequenceNumber: new BigNumber(event.nonce),
@@ -247,7 +267,7 @@ export const etherscanERC1155EventToOperations = (
         contract,
         tokenId: event.tokenID,
         value,
-        date: new Date(Number.parseInt(event.timeStamp, 10) * 1000),
+        date: safeDate(event),
         extra: {},
       }) as Operation,
   );
@@ -262,7 +282,7 @@ export const etherscanInternalTransactionToOperations = (
   internalTx: EtherscanInternalTransaction,
   index = 0,
 ): Operation[] => {
-  const { hash, blockNumber, timeStamp, isError } = internalTx;
+  const { hash, blockNumber, isError } = internalTx;
   const { xpubOrAddress: address } = decodeAccountId(accountId);
 
   const checksummedAddress = eip55.encode(address);
@@ -286,13 +306,13 @@ export const etherscanInternalTransactionToOperations = (
         hash: hash,
         type,
         fee: new BigNumber(0), // unecessary as it's already contained in the fees of the main op
-        senders: [from],
-        recipients: [to],
+        senders: from ? [from] : [],
+        recipients: to ? [to] : [],
         blockHeight: Number.parseInt(blockNumber, 10),
         blockHash: undefined, // not made directly available by etherscan, only blockNumber is provided
         accountId,
         value,
-        date: new Date(Number.parseInt(timeStamp, 10) * 1000),
+        date: safeDate(internalTx),
         hasFailed,
         extra: {},
       }) as Operation,

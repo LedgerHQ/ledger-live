@@ -2,10 +2,16 @@ name: "[Mobile] - E2E Only - Scheduled/Manual"
 run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
+# One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
+# test surface (tests_type or schedule cron), and filter. Matches checkout ref: inputs.ref || github.sha.
+concurrency:
+  group: >-
+    mobile-e2e-${{ github.workflow_ref }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter || '' }}
+  cancel-in-progress: false
+
 on:
   schedule:
-    - cron: "0 3 * * 1,3,5" # Mon, Wed, Fri → Wallet 4.0
-    - cron: "0 3 * * 2,4"   # Tue, Thu → Legacy
+    - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
   workflow_dispatch:
     inputs:
       ref:
@@ -68,6 +74,11 @@ on:
         description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
+        default: true
+      generate_ai_artifacts:
+        description: "Generate AI analysis artifacts"
+        required: false
+        type: boolean
         default: false
 
   workflow_call:
@@ -108,6 +119,11 @@ on:
         description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
+        default: true
+      generate_ai_artifacts:
+        description: "Generate AI analysis artifacts"
+        required: false
+        type: boolean
         default: false
 
 permissions:
@@ -115,7 +131,7 @@ permissions:
   contents: read
 
 env:
-  cache-bucket: ll-gha-s3-cache
+  cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
@@ -124,7 +140,9 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_ENABLE_WALLET40: ${{ ((github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5') || inputs.enable_wallet40 == true) && '1' || '0' }}
+  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
+  # iOS Simulator configuration
+  IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
   AVD_API: 35
   AVD_ARCH: x86_64
@@ -182,6 +200,24 @@ jobs:
             .mise/tasks
           token: ${{ steps.generate-token.outputs.token }}
 
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          skip-pnpm-cache: "true"
+          skip-pod-cache: "true"
+          skip-turbo-cache: "true"
+          skip-nx-cache: "true"
+
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
       - name: Write summary
         run: |
           FILTER_PATTERN="${{ inputs.test_filter || '' }}"
@@ -211,20 +247,17 @@ jobs:
           echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
           } >> $GITHUB_STEP_SUMMARY
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - name: Determine cache keys
         id: cache-keys
         run: |
-          echo "ios_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
+          PREFIX=""
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
@@ -394,7 +427,7 @@ jobs:
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on:
       [
-        "${{ github.event_name == 'schedule' && 'performance-pool' || 'general-pool' }}",
+        "qaa",
         macOS,
         ARM64,
       ]
@@ -429,12 +462,22 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pod-cache: "true"
+          skip-turbo-cache: "true"
+          skip-pnpm-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
 
       - name: Set shard test files from pre-computed matrix
         run: |
@@ -444,6 +487,7 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Install scrcpy
+        timeout-minutes: 10
         run: |
           brew install scrcpy
 
@@ -453,9 +497,9 @@ jobs:
           mkdir -p e2e/mobile/artifacts
           nohup bash -c '
             echo "🔧 Creating iOS Simulator 2 (if not exists)"
-            xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "${{ env.IOS_SIMULATOR_DEVICE }}"
             echo "🔧 Creating iOS Simulator 3 (if not exists)"
-            xcrun simctl list devices | grep -q "iOS Simulator 3" || xcrun simctl create "iOS Simulator 3" "iPhone 15"
+            xcrun simctl list devices | grep -q "iOS Simulator 3" || xcrun simctl create "iOS Simulator 3" "${{ env.IOS_SIMULATOR_DEVICE }}"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -470,26 +514,14 @@ jobs:
           echo "ℹ️ Simulator boot started in background."
         shell: bash
 
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
       - uses: nick-fields/retry@v3
         name: install dependencies
         id: install-dependencies
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -522,20 +554,10 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="live-mobile^..."
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
-
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm turbo build --filter=@ledgerhq/live-cli
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
 
       - name: Setup Speculos image and Coin Apps
@@ -552,15 +574,15 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
+      - name: Get iOS device info
+        run: |
+          set -o pipefail
+          IOS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes[-1].version // "unknown"' || echo "unknown")
+          echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> $GITHUB_ENV
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
-        run: |
-          pnpm mobile e2e:ci -p ios -t \
-            --e2e \
-            $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
-            $SHARD_TEST_FILES \
-            --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
@@ -570,6 +592,9 @@ jobs:
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+          DEVICE_INFO: ${{ env.DEVICE_INFO }}
+          NX_SKIP_NX_CACHE: true
+        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -578,6 +603,7 @@ jobs:
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
+          retention-days: 7
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -585,6 +611,7 @@ jobs:
         with:
           path: e2e/mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
           name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+          retention-days: 7
 
       - name: Set job output based on detox result
         id: set-output
@@ -635,14 +662,23 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pnpm-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install scrcpy 3.x and dependencies
+        timeout-minutes: 10
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
@@ -698,33 +734,13 @@ jobs:
           /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
           /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          install-proto: true
-          skip-pnpm-cache: "false"
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
         working-directory: apps/ledger-live-mobile
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="live-mobile^..."
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
 
       - name: Download android emulator
         timeout-minutes: 10
@@ -758,9 +774,9 @@ jobs:
             ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
 
             log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} --read-only  2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} --read-only 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} --read-only 2>&1 | ts "EMU3" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU1" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU2" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU3" &
 
             log "⏳ Waiting for 3 emulators to connect..."
             while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
@@ -787,11 +803,9 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm turbo build --filter=@ledgerhq/live-cli
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
@@ -800,16 +814,14 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
+      - name: Get Android device info
+        run: |
+          DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
+          echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
-        run: |
-          pnpm mobile e2e:ci -p android -t \
-            --e2e \
-            $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
-            $SHARD_TEST_FILES \
-            --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
-
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -819,6 +831,8 @@ jobs:
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
+          DEVICE_INFO: ${{ env.DEVICE_INFO }}
+        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
@@ -827,6 +841,7 @@ jobs:
         with:
           name: android-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
+          retention-days: 7
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
@@ -834,6 +849,7 @@ jobs:
         with:
           path: e2e/mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
           name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
+          retention-days: 7
 
       - name: Set job output based on detox result
         id: set-output
@@ -891,6 +907,27 @@ jobs:
           status_10: ${{ needs.detox-tests-ios.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          sparse-checkout: e2e/mobile/scripts
+          path: repo
+      - name: Build iOS AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        env:
+          ARTIFACTS: ios-test-artifacts
+          OUT: ios-ai
+        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+      - name: Upload iOS AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ios-ai-analysis
+          path: ios-ai
+          retention-days: 7
 
   allure-report-android:
     name: Allure Report Android
@@ -942,6 +979,27 @@ jobs:
           status_10: ${{ needs.detox-tests-android.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          sparse-checkout: e2e/mobile/scripts
+          path: repo
+      - name: Build Android AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        env:
+          ARTIFACTS: android-test-artifacts
+          OUT: android-ai
+        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+      - name: Upload Android AI artifact
+        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-ai-analysis
+          path: android-ai
+          retention-days: 7
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
@@ -1208,3 +1266,4 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+

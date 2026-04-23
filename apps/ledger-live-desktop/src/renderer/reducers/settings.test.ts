@@ -5,6 +5,7 @@
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FEATURE_FLAGS_INITIAL_STATE, type Features } from "@shared/feature-flags";
 import { State } from ".";
 import { purgeExpiredAnonymousUserNotifications } from "../actions/settings";
 import reducer, {
@@ -13,10 +14,32 @@ import reducer, {
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   SettingsState,
   filterValidSettings,
+  trackingEnabledSelector,
 } from "./settings";
-
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
+
+const mockStateWithSettings = (
+  settings: Partial<SettingsState>,
+  analyticsOptInPatch: Partial<Features["analyticsOptIn"]> = {},
+): State => ({
+  ...({} as State),
+  featureFlags: {
+    ...FEATURE_FLAGS_INITIAL_STATE,
+    resolved: {
+      ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+      analyticsOptIn: {
+        ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
+        enabled: true,
+        ...analyticsOptInPatch,
+      },
+    },
+  },
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
+    ...settings,
+  },
+});
 
 describe("lastSeenDeviceSelector", () => {
   it("should return the last seen device if the deviceModelId is valid", () => {
@@ -288,6 +311,51 @@ describe("FETCH_SETTINGS action", () => {
   });
 });
 
+describe("SAVE_SETTINGS and analytics consent", () => {
+  it("should not apply analyticsConsentInfo via SAVE_SETTINGS (use SAVE_ANALYTICS_CONSENT_INFO)", () => {
+    const initialState = SETTINGS_INITIAL_STATE;
+    const action = {
+      type: "SAVE_SETTINGS" as const,
+      payload: {
+        analyticsConsentInfo: {
+          consentDate: "2099-01-01T00:00:00.000Z",
+          privacyPolicyVersion: 99,
+        },
+      },
+    };
+    const newState = reducer(initialState, action);
+
+    expect(newState).toBe(initialState);
+  });
+});
+
+describe("SAVE_ANALYTICS_CONSENT_INFO action", () => {
+  it("should merge into analyticsConsentInfo and sync legacy consent fields", () => {
+    const initialState = SETTINGS_INITIAL_STATE;
+    const action = {
+      type: "SAVE_ANALYTICS_CONSENT_INFO" as const,
+      payload: { privacyPolicyVersion: 2 },
+    };
+    const newState = reducer(initialState, action);
+
+    expect(newState.analyticsConsentInfo.privacyPolicyVersion).toBe(2);
+    expect(newState.analyticsConsentInfo.consentDate).toBe(
+      initialState.analyticsConsentInfo.consentDate,
+    );
+    expect(newState.privacyPolicyVersion).toBe(2);
+    expect(newState.lastAnalyticsConsentDate).toBe(initialState.analyticsConsentInfo.consentDate);
+  });
+
+  it("should be a no-op when merged values are unchanged", () => {
+    const initialState = SETTINGS_INITIAL_STATE;
+    const action = {
+      type: "SAVE_ANALYTICS_CONSENT_INFO" as const,
+      payload: {},
+    };
+    expect(reducer(initialState, action)).toBe(initialState);
+  });
+});
+
 describe("SAVE_SETTINGS action", () => {
   it("should filter out unknown fields when saving settings", () => {
     const initialState = SETTINGS_INITIAL_STATE;
@@ -306,5 +374,216 @@ describe("SAVE_SETTINGS action", () => {
     expect(newState.counterValue).toBe("AUD");
     expect(newState.theme).toBe("light");
     expect("nftCollectionsStatusByNetwork" in newState).toBe(false);
+  });
+});
+
+describe("trackingEnabledSelector", () => {
+  /** Frozen clock; consent age uses the same `needsConsentRenewal` + `consentValidityDays` path as production. */
+  const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
+
+  const addDaysUtc = (date: Date, days: number): Date => {
+    const d = new Date(date.getTime());
+    d.setUTCDate(d.getUTCDate() + days);
+    return d;
+  };
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  beforeEach(() => {
+    jest.setSystemTime(FIXED_NOW);
+  });
+
+  it("should not track if lastAnalyticsConsentDate is not set", () => {
+    expect(
+      trackingEnabledSelector(
+        mockStateWithSettings({
+          lastAnalyticsConsentDate: null,
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("should track when privacyPolicyVersion is null if consent date is valid and share toggles are on", () => {
+    expect(
+      trackingEnabledSelector(
+        mockStateWithSettings({
+          lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+          privacyPolicyVersion: null,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  describe("opt-in analytics", () => {
+    it("should track if lastAnalyticsConsentDate is set and share toggles are on", () => {
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+            privacyPolicyVersion: 1,
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should not track if lastAnalyticsConsentDate is outside the configured validity window", () => {
+      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -400).toISOString();
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate,
+            privacyPolicyVersion: 1,
+          }),
+        ),
+      ).toBe(false);
+    });
+
+    it("should track if lastAnalyticsConsentDate is exactly on the rolling window boundary", () => {
+      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -365).toISOString();
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate,
+            privacyPolicyVersion: 1,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should track if lastAnalyticsConsentDate is within the window", () => {
+      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -300).toISOString();
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate,
+            privacyPolicyVersion: 1,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should track if lastAnalyticsConsentDate is within the window even when privacyPolicyVersion is older than the flag", () => {
+      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -300).toISOString();
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings(
+            {
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: true,
+              lastAnalyticsConsentDate,
+              privacyPolicyVersion: 0,
+            },
+            { params: { policyVersion: 1, consentValidityDays: 365 } },
+          ),
+        ),
+      ).toBe(true);
+    });
+
+    it("should respect consentValidityDays from resolved flag params", () => {
+      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -40).toISOString();
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings(
+            {
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: true,
+              lastAnalyticsConsentDate,
+              privacyPolicyVersion: 1,
+            },
+            { params: { policyVersion: 1, consentValidityDays: 30 } },
+          ),
+        ),
+      ).toBe(false);
+    });
+  });
+
+  describe("opt-out analytics", () => {
+    it("should not track even if lastAnalyticsConsentDate is set and consent metadata is complete", () => {
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+            privacyPolicyVersion: 1,
+            shareAnalytics: false,
+            sharePersonalizedRecommandations: false,
+          }),
+        ),
+      ).toBe(false);
+    });
+  });
+
+  describe("when analyticsOptIn feature flag is disabled (legacy)", () => {
+    const legacyMockState = (settings: Partial<SettingsState>): State => ({
+      ...({} as State),
+      featureFlags: {
+        ...FEATURE_FLAGS_INITIAL_STATE,
+        resolved: {
+          ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+          analyticsOptIn: {
+            ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
+            enabled: false,
+          },
+        },
+      },
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+        ...settings,
+      },
+    });
+
+    it("should track from share toggles without consent metadata", () => {
+      expect(
+        trackingEnabledSelector(
+          legacyMockState({
+            lastAnalyticsConsentDate: null,
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: false,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should not track when both share toggles are off", () => {
+      expect(
+        trackingEnabledSelector(
+          legacyMockState({
+            lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+            privacyPolicyVersion: 1,
+            shareAnalytics: false,
+            sharePersonalizedRecommandations: false,
+          }),
+        ),
+      ).toBe(false);
+    });
+  });
+
+  it("should fall back to share toggles when featureFlags state is missing", () => {
+    expect(
+      trackingEnabledSelector({
+        ...({} as State),
+        settings: {
+          ...SETTINGS_INITIAL_STATE,
+          lastAnalyticsConsentDate: null,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: false,
+        },
+      }),
+    ).toBe(true);
   });
 });

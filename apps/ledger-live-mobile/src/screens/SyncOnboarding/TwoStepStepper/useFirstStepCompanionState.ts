@@ -115,7 +115,7 @@ const useFirstStepCompanionState = ({
     return () => {
       if (timer) clearTimeout(timer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [deviceOnboardingState, notifyEarlySecurityCheckShouldReset, activeStep]);
 };
 

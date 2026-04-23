@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
 
-const Selectable = ({ name }: { name: string }) => {
+const Selectable = ({ name, testID }: { name: string; testID?: string }) => {
   const { colors } = useTheme();
   return (
     <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
@@ -13,6 +13,7 @@ const Selectable = ({ name }: { name: string }) => {
         numberOfLines={1}
         style={styles.validatorSelectionText}
         color={colors.primary}
+        testID={testID}
       >
         {name}
       </Text>

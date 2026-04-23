@@ -19,6 +19,10 @@ on:
         required: false
         default: "false"
         type: string
+      should_download_wallet_cli_coverage:
+        required: false
+        default: "false"
+        type: string
 
 permissions:
   id-token: write
@@ -43,8 +47,12 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: false
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -78,6 +86,13 @@ jobs:
           name: coverage-features
           path: coverage-features
 
+      - name: Download wallet-cli unit test coverage
+        if: ${{ inputs.should_download_wallet_cli_coverage == 'true' }}
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-wallet-cli
+          path: coverage-wallet-cli
+
       - name: Merge coverage files
         run: |
           if [ -d ./coverage-desktop ]; then
@@ -99,6 +114,10 @@ jobs:
             echo "Merging features coverage files"
             cat ./coverage-features/lcov.info >> ./lcov.info
             cat ./coverage-features/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-wallet-cli ]; then
+            echo "Merging wallet-cli coverage files"
+            cat ./coverage-wallet-cli/lcov.info >> ./lcov.info
           fi
           if [ ! -f ./sonar-executionTests-report.xml ]; then
             echo "No report found, creating empty report to avoid sonar scan failing!"

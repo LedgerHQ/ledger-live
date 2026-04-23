@@ -27,6 +27,8 @@ import { CLI as CLIType } from "../utils/cliUtils";
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<string, number>;
+  var speculosStartupErrorMessage: string | undefined;
+  var speculosFailureStderr: string | undefined;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;
@@ -69,6 +71,7 @@ declare global {
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var tapByElement: typeof NativeElementHelpers.tapByElement;
   var tapById: typeof NativeElementHelpers.tapById;
+  var tapByIdAndExpectToDisappear: typeof NativeElementHelpers.tapByIdAndExpectToDisappear;
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var typeTextById: typeof NativeElementHelpers.typeTextById;
@@ -77,6 +80,7 @@ declare global {
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
 
+  var expectWebElementNotVisible: typeof WebElementHelpers.expectWebElementNotVisible;
   var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
   var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
   var getWebElementByCssSelector: typeof WebElementHelpers.getWebElementByCssSelector;
@@ -84,6 +88,7 @@ declare global {
   var getWebElementByTag: typeof WebElementHelpers.getWebElementByTag;
   var getWebElementByTestId: typeof WebElementHelpers.getWebElementByTestId;
   var getWebElementsByCssSelector: typeof WebElementHelpers.getWebElementsByCssSelector;
+  var getWebElementByXpath: typeof WebElementHelpers.getWebElementByXpath;
   var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
   var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
   var getWebElementText: typeof WebElementHelpers.getWebElementText;
@@ -94,5 +99,16 @@ declare global {
   var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
   var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
+  var waitWebElement: typeof WebElementHelpers.waitWebElement;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
+
+  var getAccountAddress: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getAccountAddress;
+  var liveDataCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataCommand;
+  var liveDataWithAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithAddressCommand;
+  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithParentAddressCommand;
+  var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithRecipientAddressCommand;
+  var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").parseTokenAllowanceCliOutput;
+  var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").isTokenAllowanceSufficientCommand;
+  var approveTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").approveTokenCommand;
+  var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").setDisableTransactionBroadcastEnv;
 }

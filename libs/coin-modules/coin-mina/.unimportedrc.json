@@ -10,13 +10,16 @@
   ],
   "ignorePatterns": [
     "**/node_modules/**",
-    "**/*.fixture.ts",
+    "**/fixtures.ts",
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnimported": [
     "src/test/fixtures.ts",
-    "src/supportedFeatures.ts"
+    "src/test/helpers/msw-fixtures.ts",
+    "src/test/helpers/msw-setup.ts",
+    "src/supportedFeatures.ts",
+    "src/logic/index.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",

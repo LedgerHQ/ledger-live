@@ -1,10 +1,11 @@
 "use strict";
 import "../../__tests__/test-helpers/environment";
-import fs from "fs/promises";
+import * as fsSync from "node:fs";
+import fs from "node:fs/promises";
 import mkdirp from "mkdirp";
-import path from "path";
+import path from "node:path";
 import { promiseAllBatched } from "../../promise";
-import { exec, spawn } from "child_process";
+import { spawn } from "node:child_process";
 import { Report } from "./types";
 import { getSpecsPerBots } from "./logic";
 import { finalMarkdownReport, csvReports } from "./formatter";
@@ -125,17 +126,22 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
   return report;
 }).then(async (results: Report[]) => {
   if (REPORT_FOLDER) {
+    const reportDir = path.resolve(REPORT_FOLDER);
     try {
-      const opts = { cwd: REPORT_FOLDER, env: { PATH: process.env.PATH } };
-      await execp(`node --prof-process --preprocess -j */isolate*.log > cpuprofile.txt`, opts);
-      await execp(`rm */isolate*.log`, opts);
+      const isolateLogFiles = await globIsolateLogs(reportDir);
+      if (isolateLogFiles.length > 0) {
+        await runNodeProfProcess(reportDir, isolateLogFiles);
+        for (const rel of isolateLogFiles) {
+          await fs.unlink(path.join(reportDir, rel));
+        }
+      }
     } catch (e) {
       console.error(e);
     }
 
     // TODO write folder
-    fs.writeFile(
-      path.join(REPORT_FOLDER, "report.json"),
+    await fs.writeFile(
+      path.join(reportDir, "report.json"),
       JSON.stringify(
         results.map((r, i) => {
           const spb = specsPerBots[i];
@@ -148,7 +154,7 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
 
     const csvs = csvReports(results, specsPerBots);
     for (const { filename, content } of csvs) {
-      const folder = path.join(REPORT_FOLDER, path.dirname(filename));
+      const folder = path.join(reportDir, path.dirname(filename));
       await mkdirp(folder);
       await fs.writeFile(path.join(folder, path.basename(filename)), content);
     }
@@ -162,14 +168,102 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
   }
 });
 
-function execp(cmd, opts) {
-  return new Promise((resolve, reject) => {
-    exec(cmd, opts, (err, stdout) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(stdout);
+/**
+ * List isolate*.log paths relative to `dir` (e.g. `runFolder/isolate-0.log`).
+ * Safe to pass to `node --prof-process` with `cwd: path.resolve(dir)` and to join with `dir` for parent `fs` calls.
+ */
+async function globIsolateLogs(dir: string): Promise<string[]> {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files: string[] = [];
+  const isolateRe = /^isolate.*\.log$/;
+  for (const e of entries) {
+    if (e.isDirectory()) {
+      const subEntries = await fs.readdir(path.join(dir, e.name), { withFileTypes: true });
+      for (const s of subEntries) {
+        if (s.isFile() && isolateRe.test(s.name)) {
+          files.push(path.join(e.name, s.name));
+        }
       }
+    }
+  }
+  return files;
+}
+
+/** Run node --prof-process --preprocess -j <files>; `logFiles` are relative to `cwd` (use absolute `cwd`). */
+function runNodeProfProcess(cwd: string, logFiles: string[]): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let finalize!: (err: Error | null) => void;
+    const outPath = path.join(cwd, "cpuprofile.txt");
+    const outStream = fsSync.createWriteStream(outPath);
+    outStream.on("error", streamError => {
+      const err = streamError instanceof Error ? streamError : new Error(String(streamError));
+      finalize(err);
+    });
+
+    let childProcess: ReturnType<typeof spawn> | null = null;
+    let settled = false;
+
+    finalize = (err: Error | null) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+
+      // Ensure the child process is not left running in error scenarios.
+      if (childProcess && childProcess.exitCode === null && childProcess.signalCode === null) {
+        try {
+          childProcess.kill();
+        } catch {
+          // Ignore kill errors; we're already handling the primary failure.
+        }
+      }
+
+      const done = () => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      };
+
+      if (!outStream.destroyed) {
+        outStream.end(done);
+      } else {
+        done();
+      }
+    };
+
+    try {
+      // Sonar S4036: use absolute path to executable (process.execPath), no PATH lookup.
+      childProcess = spawn(
+        process.execPath,
+        ["--prof-process", "--preprocess", "-j", ...logFiles],
+        {
+          cwd,
+          stdio: ["inherit", outStream, "inherit"],
+        },
+      );
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      finalize(err);
+      return;
+    }
+
+    childProcess.on("error", childError => {
+      const err = childError instanceof Error ? childError : new Error(String(childError));
+      finalize(err);
+    });
+
+    childProcess.on("close", (code, signal) => {
+      if (code === 0) {
+        finalize(null);
+        return;
+      }
+      if (code === null && signal) {
+        finalize(new Error(`node terminated by signal ${signal}`));
+        return;
+      }
+      finalize(new Error(`node exited with code ${code}`));
     });
   });
 }

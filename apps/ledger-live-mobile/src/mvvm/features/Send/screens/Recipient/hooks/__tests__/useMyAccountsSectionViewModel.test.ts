@@ -1,5 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { renderHook } from "@testing-library/react-native";
 import { useSelector } from "~/context/hooks";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
@@ -9,7 +9,7 @@ import { createMockAccount, createMockCurrency } from "./accounts";
 jest.mock("~/context/hooks");
 jest.mock("~/reducers/wallet");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);

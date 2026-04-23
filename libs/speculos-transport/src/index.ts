@@ -68,6 +68,20 @@ const getSpeculosModel = (model: DeviceModelId): string => {
       return model.toLowerCase();
   }
 };
+
+function enrichSpeculosError(err: Error, stdout: string, stderr: string): Error {
+  const extra = [
+    stdout && `--- Speculos stdout ---\n${stdout}`,
+    stderr && `--- Speculos stderr ---\n${stderr}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  if (extra) {
+    err.message = `${err.message}\n\n${extra}`;
+  }
+  return err;
+}
+
 /**
  * Release a speculos device
  */
@@ -141,7 +155,7 @@ async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
   throw new Error(`Failed to find an available port after ${MAX_PORT_RETRIES} attempts`);
 }
 
-const getPorts = async (isSpeculosWebsocket?: boolean) => {
+const getPorts = async (isSpeculosWebsocket?: boolean, wantedApiPort?: number) => {
   const usedPorts: number[] = [];
   const getPort = async () => {
     const port = await getRandomAvailablePort(usedPorts);
@@ -157,7 +171,10 @@ const getPorts = async (isSpeculosWebsocket?: boolean) => {
 
     return { apduPort, vncPort, buttonPort, automationPort };
   } else {
-    const apiPort = await getPort();
+    const apiPort = wantedApiPort ?? (await getPort());
+    if (wantedApiPort) {
+      usedPorts.push(wantedApiPort);
+    }
     const vncPort = await getPort();
 
     return { apiPort, vncPort };
@@ -199,6 +216,7 @@ export type DeviceParams = {
 export async function createSpeculosDevice(
   arg: DeviceParams,
   maxRetry = 3,
+  wantedApiPort?: number,
 ): Promise<SpeculosDevice> {
   const {
     overridesAppPath,
@@ -212,7 +230,7 @@ export async function createSpeculosDevice(
     dependencies,
   } = arg;
   const speculosID = `speculosID-${randomUUID()}`;
-  const ports = await getPorts(isSpeculosWebsocket);
+  const ports = await getPorts(isSpeculosWebsocket, wantedApiPort);
 
   const sdk = inferSDK(firmware, model);
 
@@ -285,6 +303,7 @@ export async function createSpeculosDevice(
 
   const p = spawn("docker", [...params, "--seed", `${seed}`]);
 
+  let stdoutAccumulator = "";
   let resolveReady: (value: boolean) => void;
   let rejectReady: (e: Error) => void;
   const ready = new Promise((resolve, reject) => {
@@ -313,23 +332,30 @@ export async function createSpeculosDevice(
 
   p.stdout.on("data", data => {
     if (data) {
-      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
+      const s = String(data).trim();
+      stdoutAccumulator += (stdoutAccumulator ? "\n" : "") + s;
+      log("speculos-stdout", `${speculosID}: ${s}`);
     }
   });
-  let latestStderr: string | undefined;
+  let stderrAccumulator = "";
   p.stderr.on("data", async data => {
     if (!data) return;
-    latestStderr = data;
+    const s = String(data);
+    stderrAccumulator += (stderrAccumulator ? "\n" : "") + s.trim();
 
     if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
+      log("speculos-stderr", `${speculosID}: ${s.trim()}`);
     }
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by")) {
       rejectReady(
-        new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
+        enrichSpeculosError(
+          new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
+          stdoutAccumulator,
+          stderrAccumulator,
+        ),
       );
     } else if (data.includes("is in use by another program")) {
       if (maxRetry > 0) {
@@ -338,8 +364,12 @@ export async function createSpeculosDevice(
         resolveReady(false);
       } else {
         rejectReady(
-          new Error(
-            `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${latestStderr || ""}`,
+          enrichSpeculosError(
+            new Error(
+              "Speculos could not bind to port (already in use). Another container or process may be holding it.",
+            ),
+            stdoutAccumulator,
+            stderrAccumulator,
           ),
         );
       }
@@ -356,14 +386,20 @@ export async function createSpeculosDevice(
 
     if (!destroyed) {
       await destroy();
-      rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
+      rejectReady(
+        enrichSpeculosError(
+          new Error("Speculos process exited unexpectedly."),
+          stdoutAccumulator,
+          stderrAccumulator,
+        ),
+      );
     }
   });
   const hasSucceed = await ready;
 
   if (!hasSucceed) {
     await delay(1000);
-    return createSpeculosDevice(arg, maxRetry - 1);
+    return createSpeculosDevice(arg, maxRetry - 1, wantedApiPort);
   }
 
   let transport: SpeculosTransport;

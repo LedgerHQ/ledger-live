@@ -1,6 +1,7 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
+import featureFlags from "@shared/feature-flags";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -28,6 +29,7 @@ import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
+import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -42,6 +44,7 @@ const appReducer = combineReducers({
   deeplinkInstallApp,
   dynamicContent,
   earn,
+  featureFlags,
   identities: identitiesSlice.reducer,
   inView,
   largeMover,
@@ -62,6 +65,7 @@ const appReducer = combineReducers({
   walletconnect,
   walletSync,
   portfolioRefresh,
+  portfolioBalanceDisplay,
   ...llmRTKApiReducers,
 });
 

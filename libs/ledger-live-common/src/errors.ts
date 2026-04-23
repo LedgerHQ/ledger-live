@@ -105,7 +105,7 @@ export const BluetoothNotSupportedError = createCustomErrorClass("FwUpdateBlueto
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
-export * from "@ledgerhq/coin-framework/errors";
+export * from "@ledgerhq/coin-module-framework/errors";
 export * from "@ledgerhq/coin-algorand/errors";
 export * from "@ledgerhq/coin-aptos/errors";
 export * from "@ledgerhq/coin-bitcoin/errors";

@@ -1,0 +1,77 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "19.0.0"
+    }
+  },
+  "categories": {
+    "correctness": "off",
+    "suspicious": "off",
+    "pedantic": "off"
+  },
+  "plugins": [
+    "eslint",
+    "import",
+    "typescript",
+    "react",
+    "jest",
+    "jsx-a11y"  ],
+  "ignorePatterns": ["*.min.js", "node_modules"],
+  "rules": {
+    "eslint/no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "eslint/linebreak-style": ["error", "unix"],
+    "typescript/no-empty-function": "off",
+    "typescript/no-namespace": [
+      "error",
+      {
+        "allowDeclarations": true
+      }
+    ],
+    "typescript/no-explicit-any": "warn",
+    "import/no-duplicates": "error",
+    "import/no-named-as-default": "off",
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "react/jsx-key": "warn",
+    "react/no-did-mount-set-state": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "jest/no-export": "off",
+    "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": []
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.{ts,tsx}", "**/__tests__/**"],
+      "env": {
+        "jest": true
+      },
+      "plugins": ["jest"],
+      "rules": {
+        "typescript/no-explicit-any": "warn",
+        "eslint/no-console": "off"
+      }
+    }
+  ]
+}

@@ -419,7 +419,8 @@
     "webviewErrorDrawer": {
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
-      "code": "Code: {{errorCode}}"
+      "code": "Code",
+      "correlationId": "Reference ID"
     }
   },
   "swap": {
@@ -823,11 +824,11 @@
     "title": "Card",
     "imageAlt": "Card Image",
     "spendYourCrypto": "Spend your crypto",
-    "payDescription": "Pay online or in store with a crypto card",
+    "payDescription": "Pay online or in stores with a crypto card.",
     "exploreCards": "Explore Cards",
-    "iAlreadyHaveACard": "I already have a card",
-    "unlockLiquidity": "Unlock liquidity",
-    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
+    "iAlreadyHaveACard": "I have a card",
+    "unlockLiquidity": "Spend crypto in real life",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
   "lend": {
     "title": "Lend crypto",
@@ -1255,8 +1256,8 @@
             "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Wallet “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError": {
-            "title": "This {{productName}} is not genuine",
-            "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+            "title": "This {{productName}} failed the Genuine Check",
+            "description": "It is not safe to use this Ledger device.\nPlease contact Ledger Support."
           }
         },
         "whyPerformChecksLink": "Learn more about Ledger Genuine Check",
@@ -1330,6 +1331,10 @@
     }
   },
   "postOnboarding": {
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
@@ -2178,7 +2183,7 @@
     "subtitle": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
     "0": {
       "title": "Full ownership",
-      "desc": "Your private keys never leave the device."
+      "desc": "You have control over your private keys."
     },
     "1": {
       "title": "Trade securely",
@@ -2273,11 +2278,11 @@
     "steps": {
       "options": {
         "fromBank": {
-          "title": "Bank transfer",
-          "description": "Receive stablecoin by sending cash"
+          "title": "Via bank transfer",
+          "description": "Receive stablecoin by simply sending cash"
         },
         "fromCrypto": {
-          "title": "Receive crypto"
+          "title": "Via crypto address"
         }
       }
     }
@@ -2312,7 +2317,8 @@
         "banner": "Maximum spendable amount is",
         "fees": "Learn more about fees",
         "standard": "Standard",
-        "advanced": "Advanced"
+        "advanced": "Advanced",
+        "feeCurrency": "Fee currency"
       },
       "summary": {
         "title": "Summary"
@@ -2513,6 +2519,7 @@
       "coinToSend": "Coin to send",
       "changeToReturn": "Change to return",
       "enterAmount": "Enter amount",
+      "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
     }
@@ -2968,7 +2975,8 @@
     "pickingStrategyLabels": {
       "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
       "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
-      "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+      "MERGE_OUTPUTS": "Minimize future fees (merge coins)",
+      "CUSTOM": "Custom coin selection"
     }
   },
   "celo": {
@@ -4204,6 +4212,68 @@
         "eigenlayer_points": "Eigenlayer points",
         "validator": "Validator rewards"
       }
+    },
+    "evmStaking": {
+      "delegation": {
+        "emptyState": {
+          "description": "You can earn {{currencyTicker}} rewards by delegating your assets.",
+          "delegation": "Earn rewards"
+        },
+        "claimRewards": "Claim rewards",
+        "header": "Delegation(s)",
+        "noRewards": "No rewards available",
+        "delegate": "Add",
+        "undelegate": "Undelegate",
+        "redelegate": "Redelegate",
+        "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
+        "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
+        "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+        "reward": "Claim rewards",
+        "activeTooltip": "Delegated amounts generate rewards",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards",
+        "minSafeWarning": "Not enough funds",
+        "flow": {
+          "title": "Delegate",
+          "steps": {
+            "starter": {
+              "description": "You may earn rewards by delegating your {{currencyTicker}} assets to a validator.",
+              "bullet": [
+                "You keep ownership of delegated assets",
+                "Delegate using your Ledger device",
+                "Assets will be available after undelegation"
+              ],
+              "warning": {
+                "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+              }
+            },
+            "amount": {
+              "title": "Amount"
+            },
+            "validator": {
+              "title": "Validators"
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully delegated your assets",
+                "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
+      },
+      "redelegation": {
+        "header": "Redelegation(s)"
+      },
+      "undelegation": {
+        "header": "Undelegation(s)",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards."
+      }
     }
   },
   "graph": {
@@ -4462,6 +4532,8 @@
     "delegated": "Delegated",
     "completionDate": "Completion date",
     "rewards": "Rewards",
+    "sourceValidator": "Source Validator",
+    "destinationValidator": "Destination Validator",
     "duration": "Duration",
     "durationJustStarted": "Just started",
     "durationDays": "{{count}} day",
@@ -4627,6 +4699,10 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
+      "analyticsConsentOptInQa": {
+        "rowTitle": "Analytics opt-in consent (QA)",
+        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal."
+      },
       "brazeTools": {
         "title": "Braze Tools",
         "description": "Generate local braze cards",
@@ -4638,7 +4714,8 @@
           "fields": {
             "notification": "Notification Content Card",
             "action": "Action Content Card",
-            "portfolio": "Portfolio Content Card",
+            "portfolio": "Portfolio",
+            "bottomPortfolio": "Bottom Portfolio",
             "title": "Title",
             "description": "Description",
             "order": "Order",
@@ -4648,10 +4725,31 @@
             "secondaryCta": "Secondary CTA",
             "cta": "CTA",
             "tag": "Tag",
+            "picto": "Picto (ledger id)",
             "url": "URL",
             "path": "Path"
           }
         }
+      },
+      "appJsonImporter": {
+        "title": "Load app.json",
+        "desc": "Drag & drop an app.json file to import accounts and settings",
+        "dropOrBrowse": "Drop app.json here or click to browse",
+        "importing": "Importing...",
+        "success": "Imported {{count}} account successfully.",
+        "success_other": "Imported {{count}} accounts successfully.",
+        "lastDeviceSeen": "Last device seen: {{device}}",
+        "invalidFileType": "Invalid file type. Expected a .json file.",
+        "missingDataField": "Invalid app.json: missing top-level data field.",
+        "encryptedAccounts": "Encrypted accounts detected. Decrypt the file first.",
+        "successLabel": "Success",
+        "appJsonFile": "App.json file",
+        "accountsImported": "Accounts imported",
+        "accountsFailed": "Accounts failed",
+        "importFailed": "Import failed: {{message}}",
+        "unknownError": "Unknown error during import.",
+        "failedCount": "{{count}} account could not be loaded.",
+        "failedCount_other": "{{count}} accounts could not be loaded."
       },
       "mockAccounts": {
         "title": "Generate mock accounts",
@@ -4667,6 +4765,10 @@
         "emptyGenerate": {
           "title": "Empty generation",
           "desc": "Generate an empty account"
+        },
+        "stablecoinGenerate": {
+          "title": "Stablecoin preset",
+          "desc": "Generate Ethereum, Arbitrum, Optimism, Base, Solana, Tron and Algorand accounts with top stablecoins (max 5 per network)"
         },
         "currencySelector": {
           "placeholder": "Choose currencies...",
@@ -4684,7 +4786,9 @@
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
           "generateAccountsQuick": "Generate {{count}} accounts",
-          "generateEmptyAccount": "Generate empty account"
+          "generateEmptyAccount": "Generate empty account",
+          "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
+          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -5884,6 +5988,10 @@
     },
     "recipientWording": {
       "send": "recipient",
+      "transfer_public": "public recipient",
+      "transfer_private": "private recipient",
+      "convert_public_to_private": "private recipient",
+      "convert_private_to_public": "public recipient",
       "delegate": "validator",
       "redelegate": "validator",
       "undelegate": "validator",
@@ -5993,7 +6101,7 @@
         "auth": {
           "title": "Authorization",
           "validator": "Authorize",
-          "hint": "Automaticaly accept incoming funds to this account.",
+          "hint": "Automatically accept incoming funds to this account.",
           "reonboard": {
             "hint": "A topology change has been detected. Please re-authorize the Ledger validator to continue receiving funds automatically."
           },
@@ -6329,6 +6437,11 @@
     "DeviceSocketFail": {
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again. ({{message}})"
+    },
+    "CounterfeitDevice": {
+      "title": "This {{productName}} failed the Genuine Check",
+      "description": "It is not safe to use this Ledger device. Please contact Ledger Support.",
+      "contactSupportCTA": "Contact Ledger support"
     },
     "DeviceSocketNoBulkStatus": {
       "title": "The connection failed",
@@ -6966,6 +7079,9 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaRecipientAccountNotFunded": {
+      "title": "Amount too low. Send at least {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken": {
       "title": "This associated token account holds another token"
     },
@@ -7237,6 +7353,22 @@
     "TonMinimumRequired": {
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
     },
+    "AleoAmountRecordRequired": {
+      "title": "Select a valid private record for the amount.",
+      "description": "Choose one of your available private records to fund the transfer amount."
+    },
+    "AleoFeeRecordRequired": {
+      "title": "Another private record is required to cover the network fee.",
+      "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
+    },
+    "AleoTwoRecordsRequired": {
+      "title": "Private send requires at least two records.",
+      "description": "You need one record for the transfer amount and another one to cover the network fee."
+    },
+    "AleoFeeRecordInsufficientBalance": {
+      "title": "No private record can cover the network fee.",
+      "description": "Select a different record for the transfer amount or top up your balance with additional funds."
+    },
     "BackupAppDataError": {
       "title": "Error during app data backup"
     },
@@ -7400,8 +7532,8 @@
       "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "AlreadySendingApduError": {
-      "title": "Communication error",
-      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title": "Action needed on your Ledger device",
+      "description": "Finish the action on your device, then select \"Retry\" below."
     },
     "UnknownDeviceExchangeError": {
       "title": "Communication error",
@@ -7736,11 +7868,48 @@
     },
     "noAccounts": {
       "title": "You need an account to access this app.",
-      "add": "Add Account"
+      "select": "Select Account"
     }
   },
   "recoverRestore": {
     "title": "Connect and unlock your Ledger"
+  },
+  "analyticsConsentModal": {
+    "fresh": {
+      "title": "Help us improve Ledger",
+      "description": "With your consent, we'll collect usage data to improve features and personalize your experience.",
+      "ctaAcceptAll": "Accept all",
+      "ctaRefuseAll": "Refuse all"
+    },
+    "reconfirm": {
+      "title": "Continue improving Ledger?",
+      "description": "Would you like to continue sharing usage data to help us improve Ledger? This data is used to improve features and personalize your experience.",
+      "ctaContinue": "Yes, continue",
+      "ctaStop": "No, stop"
+    },
+    "privacy": {
+      "title": "We're updating our privacy policy",
+      "descriptionLead": "Please review our ",
+      "descriptionLinkLabel": "Privacy policy",
+      "descriptionTrail": " to learn what has changed. You can update your preferences at any time in Settings.",
+      "ctaGotIt": "Got it"
+    },
+    "setPreferences": "Set preferences",
+    "preferences": {
+      "appPerformance": {
+        "title": "App performance",
+        "description": "Enable Ledger to collect app usage to enhance the experience"
+      },
+      "personalizedExperience": {
+        "title": "Personalized experience",
+        "description": "Enable Ledger to collect app usage to provide personalized content"
+      },
+      "ctaConfirm": "Confirm"
+    },
+    "footer": {
+      "lead": "You can revoke your consent anytime in settings.",
+      "privacyLink": "Privacy policy"
+    }
   },
   "analyticsOptInPrompt": {
     "variantA": {
@@ -7796,9 +7965,9 @@
     },
     "profileSettings": {
       "personalizedExp": "Personalized experience",
-      "analytics": "Analytics",
-      "personalizedExpDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
-      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience."
+      "analytics": "App performance",
+      "personalizedExpDesc": "Enable Ledger to collect app usage to provide personalized contents",
+      "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience"
     }
   },
   "analytics": {
@@ -8004,6 +8173,16 @@
       "cta": "Learn more"
     }
   },
+  "lnsUpsellMediaBanner": {
+    "opted_in": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers."
+    },
+    "opted_out": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
+    }
+  },
   "modularAssetDrawer": {
     "addAccounts": {
       "title": "Select the accounts you want to add",
@@ -8100,17 +8279,20 @@
   "portfolio": {
     "title": "Home",
     "today": "Today",
+    "carousel": {
+      "title": "For you"
+    },
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto",
+    "noBalanceTitle": "Start by funding your wallet",
     "perpsEntry": {
       "title": "Perpetuals",
       "description": "Trade with leverage",
       "cta": "Discover"
     },
-    "noDeviceTitle": "The most secure wallet"
+    "noDeviceTitle": "Your secure crypto wallet"
   },
   "marketBanner": {
-    "title": "Explore market",
+    "title": "Explore the market",
     "genericError": "Connection failed",
     "cta": "View all",
     "scrollLeft": "Scroll left",
@@ -8129,7 +8311,7 @@
     },
     "dialog": {
       "title": "Mood index",
-      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
       "cta": "Got it"
     }
   },
@@ -8142,7 +8324,7 @@
     "buyALedger": "Buy a Ledger"
   },
   "assets": {
-    "cryptos": "Cryptos",
+    "cryptos": "Crypto",
     "stablecoins": "Stablecoins",
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
@@ -8155,8 +8337,41 @@
       "balance": "Balance",
       "value": "Value",
       "trend": "1D Trend",
-      "trendTooltip": "24h balance change"
+      "trendTooltip": "Changes to your balance in the last 24 hours."
     }
+  },
+  "cryptoAddresses": {
+    "title": "Accounts",
+    "tableActions": {
+      "searchAddress": "Search by name, address",
+      "addAddress": "Add address"
+    },
+    "table": {
+      "columns": {
+        "name": "Name",
+        "address": "Address",
+        "value": "Value"
+      },
+      "editName": "Edit name",
+      "emptyState": "No crypto address yet",
+      "emptySearchState": "No accounts match your search",
+      "assetCount_zero": "{{count}} asset",
+      "assetCount_one": "{{count}} asset",
+      "assetCount_other": "{{count}} assets"
+    },
+    "editName": {
+      "title": "Edit address name",
+      "input": "Address name",
+      "suggestions": {
+        "trading": "{{asset}} trading",
+        "savings": "{{asset}} savings"
+      },
+      "cta": "Confirm",
+      "syncingTooltip": "Sync in progress, please wait"
+    }
+  },
+  "cryptoAssets": {
+    "title": "Crypto assets"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
@@ -8166,10 +8381,14 @@
     }
   },
   "topBar": {
+    "history": {
+      "cta": "History",
+      "tooltip": "History"
+    },
     "activityIndicator": {
-      "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
-      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
-      "upToDate": "You're up to date",
+      "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "Your assets are safe. This is a temporary sync issue.\n Tap to retry",
+      "upToDate": "Portfolio up to date",
       "lastSync": "Last sync: {{timeAgo}}. Tap to refresh",
       "refreshing": "Refreshing..."
     },
@@ -8208,8 +8427,9 @@
         "showBalance": "Show balance",
         "startSync": "Start sync",
         "stopSync": "Stop sync",
-        "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
-        "lastSync": "Last sync: {{date}}"
+        "upToDate": "Up to date",
+        "lastSync": "Last sync: {{date}}",
+        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
       },
       "datepicker": {
         "label": "Birthday height",
@@ -8308,11 +8528,20 @@
       }
     },
     "shared": {
+      "sponsoredByProvable": "Sponsored by Provable",
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
-        "lastUpdate": "Last update",
+        "lastUpdate": "Last updated: {{label}}",
+        "recently": "Recently",
         "switchBalance": "Switch balance source"
+      },
+      "recordPicker": {
+        "label": "Available records",
+        "noRecords": "No records available",
+        "noRecordsAlert": "You don't have any records available. Perform self transfer or receive private funds to get started.",
+        "alert": "The maximum spendable amount depends on the maximum value of your selected record. Fees are sponsored by Provable for Ledger users.",
+        "recordsLimit": "Maximum {{max}} records are shown"
       }
     },
     "account": {
@@ -8321,7 +8550,13 @@
       "transparentBalance": "Transparent balance",
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
-      "privateBalanceTooltip": "Balance that is hidden from the public"
+      "privateBalanceTooltip": "Balance that is hidden from the public",
+      "syncButton": {
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "syncAgain": "Sync again",
+        "lastSync": "Last synced: {{date}}"
+      }
     },
     "operations": {
       "type": {
@@ -8334,8 +8569,12 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Covered by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
+      },
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "error": "Private sync failed. Please try again later."
       }
     }
   },
@@ -8364,5 +8603,54 @@
       "continue": "Continue",
       "explore": "Explore my new portfolio"
     }
+  },
+  "history": {
+    "title": "Transactions",
+    "pending": "Pending transaction",
+    "pending_other": "Pending transactions",
+    "columns": {
+      "type": "Type",
+      "address": "Address",
+      "amount": "Amount",
+      "value": "Value"
+    },
+    "address": {
+      "from": "From",
+      "to": "To"
+    },
+    "emptyState": {
+      "title": "No transactions yet",
+      "description": "Come back later to see your transactions."
+    },
+    "actionsBar": {
+      "csv": "CSV"
+    },
+    "exportDialog": {
+      "title": "Transaction History",
+      "description": "Choose the accounts to include in the export",
+      "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
+      "accountsToInclude": "Accounts to include",
+      "selectAll": "Select all ({{count}})",
+      "deselectAll": "Deselect all ({{count}})",
+      "export": "Export history",
+      "successTitle": "Transaction history saved successfully",
+      "successDescription": "The CSV file of your transaction history was saved successfully in the selected folder",
+      "done": "Done",
+      "errorTitle": "Something went wrong",
+      "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
+      "tryAgain": "Try again"
+    }
+  },
+  "myWallet": {
+    "actionsList": {
+      "help": "Help",
+      "recover": "[L] Recover",
+      "refer": "Referral"
+    },
+    "myLedger": {
+      "title": "My Ledger",
+      "description": "Manage your Ledger device"
+    },
+    "explore": "Explore all Ledger devices"
   }
 }

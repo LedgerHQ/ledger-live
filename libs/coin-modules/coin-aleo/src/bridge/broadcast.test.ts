@@ -1,21 +1,27 @@
 import BigNumber from "bignumber.js";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Operation } from "@ledgerhq/types-live";
+import aleoCoinConfig from "../config";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { broadcast as logicBroadcast } from "../logic/broadcast";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { broadcast as bridgeBroadcast } from "./broadcast";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../logic/broadcast");
+jest.mock("../config");
 
 const mockLogicBroadcast = jest.mocked(logicBroadcast);
 const mockPatchOperationWithHash = jest.mocked(patchOperationWithHash);
+const mockAleoConfig = jest.mocked(aleoCoinConfig);
 
 describe("bridge broadcast", () => {
   const account = getMockedAccount();
+  const mockConfig = getMockedConfig("testnet");
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
   });
 
   it("should broadcast the signed operation and return an operation with the hash", async () => {
@@ -47,9 +53,13 @@ describe("bridge broadcast", () => {
     });
 
     expect(mockLogicBroadcast).toHaveBeenCalledTimes(1);
-    expect(mockLogicBroadcast.mock.lastCall).toEqual([{ account, signedTx: signature }]);
+    expect(mockLogicBroadcast).toHaveBeenCalledWith({
+      configOrCurrencyId: mockConfig,
+      account,
+      signedTx: signature,
+    });
     expect(mockPatchOperationWithHash).toHaveBeenCalledTimes(1);
-    expect(mockPatchOperationWithHash.mock.lastCall).toEqual([mockOperation, hash]);
+    expect(mockPatchOperationWithHash).toHaveBeenCalledWith(mockOperation, hash);
     expect(result).toEqual(patchedOperation);
   });
 });

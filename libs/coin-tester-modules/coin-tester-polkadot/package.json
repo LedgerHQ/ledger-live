@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.11.0",
+  "version": "1.15.0-next.0",
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -48,14 +48,16 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
-    "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
   },
   "dependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
@@ -67,11 +69,11 @@
     "bignumber.js": "^9.1.2",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",
-    "dotenv": "^16.4.5",
     "expect": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@polkadot/rpc-provider": "catalog:",
     "@polkadot/util": "catalog:",
     "@swc/core": "catalog:",
@@ -79,6 +81,8 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "ts-node": "^10.9.2",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }

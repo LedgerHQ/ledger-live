@@ -1,11 +1,15 @@
 import { useState, useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import {
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { setHasSeenAnalyticsOptInPrompt } from "~/renderer/actions/settings";
+import {
+  setAnalyticsConsentInfo,
+  setHasSeenAnalyticsOptInPrompt,
+} from "~/renderer/actions/settings";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
@@ -26,6 +30,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
+  const analyticsOptInFlag = useFeature("analyticsOptIn");
+  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
 
   const dispatch = useDispatch();
@@ -72,6 +78,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
+    dispatch(setAnalyticsConsentInfo(policyVersion));
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });

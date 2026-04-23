@@ -8,8 +8,10 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
+import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 
 export function useTopBarViewModel(
   navigation: NativeStackNavigationProp<{ [key: string]: object | undefined }>,
@@ -17,6 +19,7 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { navigateToRebornFlow } = useRebornFlow();
@@ -28,6 +31,8 @@ export function useTopBarViewModel(
     syncAccessibilityLabel,
     errorCurrencyIds,
   } = useSyncIndicator();
+  const { triggerRefresh, isBridgeSyncPending } = usePortfolioBalance();
+
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
   const openSyncDrawer = useCallback(() => {
     setIsSyncDrawerOpen(true);
@@ -37,6 +42,15 @@ export function useTopBarViewModel(
     });
   }, [errorCurrencyIds, page]);
   const closeSyncDrawer = useCallback(() => setIsSyncDrawerOpen(false), []);
+
+  const [hasTryRefreshBeenRequested, setHasTryRefreshBeenRequested] = useState(false);
+  const isTryRefreshPending = hasTryRefreshBeenRequested && isBridgeSyncPending;
+
+  const onTryRefresh = useCallback(() => {
+    setHasTryRefreshBeenRequested(true);
+    triggerRefresh();
+    closeSyncDrawer();
+  }, [triggerRefresh, closeSyncDrawer]);
 
   const hasUnreadNotifications = useMemo(
     () => notificationCards.some(n => !n.viewed),
@@ -60,6 +74,13 @@ export function useTopBarViewModel(
     }
   }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
 
+  const onMyWalletPress = useCallback(() => {
+    track("menuentry_clicked", { button: "MyWallet", page });
+    navigation.navigate(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
+    });
+  }, [navigation, page]);
+
   const onDiscoverPress = useCallback(() => {
     track("menuentry_clicked", { button: "Discover", page });
     if (web3hub?.enabled) {
@@ -81,23 +102,35 @@ export function useTopBarViewModel(
   }, [navigation, page]);
 
   const onSettingsPress = useCallback(() => {
-    track("menuentry_clicked", { button: "Settings" });
+    track("menuentry_clicked", { button: "Settings", page });
     navigation.navigate(NavigatorName.Settings);
-  }, [navigation]);
+  }, [navigation, page]);
+
+  const onTransactionHistoryPress = useCallback(() => {
+    track("menuentry_clicked", { button: "operation_list", page });
+    navigation.navigate(NavigatorName.OperationsHistory, {
+      screen: ScreenName.OperationsList,
+    });
+  }, [navigation, page]);
 
   return {
     onMyLedgerPress,
+    onMyWalletPress,
+    shouldDisplayMyWallet,
+    shouldDisplayOperationsList,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
+    onTransactionHistoryPress,
     hasUnreadNotifications,
     hasAccounts,
     isSyncError: isError,
-    isSyncPending: isPending,
+    isSyncPending: isPending || isTryRefreshPending,
     listOfErrorAccountNames,
     syncAccessibilityLabel,
     isSyncDrawerOpen,
     openSyncDrawer,
     closeSyncDrawer,
+    onTryRefresh,
   };
 }

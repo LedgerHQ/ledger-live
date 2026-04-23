@@ -8,6 +8,7 @@ import type {
 import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
 import { AmountPluginsHost } from "./AmountPluginsHost";
+import { track } from "~/renderer/analytics/segment";
 
 type AmountScreenInnerProps = Readonly<{
   account: AccountLike;
@@ -37,6 +38,11 @@ export function AmountScreenInner({
   onSelectCoinControl,
 }: AmountScreenInnerProps) {
   const handleReview = useCallback(() => {
+    track("button_clicked", {
+      button: "review",
+      page: "step amount",
+      flow: "send",
+    });
     onReview();
   }, [onReview]);
 

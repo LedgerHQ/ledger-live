@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
 import * as signTransactionModule from "../common-logic/transaction/sign";
 import * as gateway from "../network/gateway";
-import { createMockAccount } from "../test/fixtures";
+import { createMockCantonAccount } from "../test/fixtures";
 import type { CantonSigner, CantonSignature } from "../types";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
 import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
@@ -94,8 +94,7 @@ describe("onboard", () => {
 
     it("should skip submission when account is onboarded on network but has no local xpub", async () => {
       // GIVEN
-      const account = createMockAccount();
-      delete account.xpub;
+      const account = createMockCantonAccount();
       mockedGateway.getPartyByPubKey.mockResolvedValue({
         party_id: mockPartyId,
         public_key: mockPublicKey,
@@ -124,7 +123,7 @@ describe("onboard", () => {
     it("should proceed with submission when account has xpub (re-onboarding scenario)", async () => {
       // GIVEN - account already has xpub (re-onboarding)
       const existingPartyId = "existing-party-id";
-      const account = createMockAccount({ xpub: existingPartyId });
+      const account = createMockCantonAccount({ xpub: existingPartyId });
       const newPartyId = "new-party-id";
 
       mockedGateway.getPartyByPubKey.mockResolvedValue({
@@ -135,7 +134,10 @@ describe("onboard", () => {
         party_id: newPartyId,
         party_name: "test-party-name",
         public_key_fingerprint: "test-fingerprint",
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         transactions: {} as any,
+        challenge_nonce: "test-nonce",
+        challenge_deadline: 1735689599,
       });
       mockedGateway.submitOnboarding.mockResolvedValue({
         party: {

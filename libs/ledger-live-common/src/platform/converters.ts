@@ -1,7 +1,7 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { isTokenAccount } from "../account";
-import byFamily from "../generated/platformAdapter";
-import type { Transaction } from "../generated/types";
+import { loadPlatformAdapterForFamily } from "../coin-modules/registry";
+import type { Transaction } from "../coin-modules/transaction-types";
 import {
   FAMILIES_MAPPING_LL_TO_PLATFORM,
   FAMILIES_MAPPING_PLATFORM_TO_LL,
@@ -86,16 +86,16 @@ export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency):
   };
 }
 
-export const getPlatformTransactionSignFlowInfos = (
+export const getPlatformTransactionSignFlowInfos = async (
   platformTx: PlatformTransaction,
-): {
+): Promise<{
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
-} => {
+}> => {
   const liveFamily = FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family;
 
-  const familyModule = byFamily[liveFamily];
+  const familyModule = loadPlatformAdapterForFamily(liveFamily);
 
   if (familyModule) {
     return familyModule.getPlatformTransactionSignFlowInfos(platformTx);

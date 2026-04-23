@@ -54,6 +54,7 @@ import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
+import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
 
 const rootNode = document.getElementById("react-root");
 
@@ -207,6 +208,42 @@ async function init() {
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
+  }
+
+  const persistedFeatureFlags = await getKey("app", "featureFlags");
+  if (persistedFeatureFlags) {
+    store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
+    store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
+  } else if (initialSettings) {
+    // One-time migration from legacy settings fields.
+    // These fields have been removed from SettingsState but may still exist in old persisted payloads.
+    const rawOverrides =
+      "overriddenFeatureFlags" in initialSettings &&
+      typeof initialSettings["overriddenFeatureFlags"] === "object" &&
+      initialSettings["overriddenFeatureFlags"] !== null
+        ? (initialSettings["overriddenFeatureFlags"] as Record<string, unknown>)
+        : undefined;
+
+    if (rawOverrides && Object.keys(rawOverrides).length > 0) {
+      const filteredOverrides: Parameters<typeof setAllOverrides>[0] = Object.fromEntries(
+        Object.entries(rawOverrides).filter(
+          ([, v]) =>
+            v !== undefined &&
+            typeof v === "object" &&
+            v !== null &&
+            "enabled" in v &&
+            typeof (v as Record<string, unknown>)["enabled"] === "boolean",
+        ),
+      );
+      store.dispatch(setAllOverrides(filteredOverrides));
+    }
+
+    if (
+      "featureFlagsButtonVisible" in initialSettings &&
+      typeof initialSettings["featureFlagsButtonVisible"] === "boolean"
+    ) {
+      store.dispatch(setBannerVisible(initialSettings["featureFlagsButtonVisible"]));
+    }
   }
 
   const initialCountervalues = await getKey("app", "countervalues");

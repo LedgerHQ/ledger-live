@@ -262,7 +262,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
 const Delegations = ({ account }: { account: CosmosAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
 
-  const coinConfig = getCurrencyConfiguration(account.currency);
+  const coinConfig = getCurrencyConfiguration(account.currency.id);
   if ("disableDelegation" in coinConfig && coinConfig.disableDelegation === true) {
     return null;
   }

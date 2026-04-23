@@ -25,6 +25,10 @@ export type CoreTransactionInfo = {
   recipient: string;
   amount: bigint;
   useAllAmount?: boolean;
+  /** FA2 token contract; required when `mode` is `send_token` */
+  contractAddress?: string;
+  /** FA2 token id; required when `mode` is `send_token` */
+  tokenId?: number;
 };
 
 export type EstimatedFees = {
@@ -75,12 +79,18 @@ export async function estimateFees({
   }
 
   let amount = transaction.amount;
-  if (transaction.useAllAmount || amount === 0n) {
-    amount = 1n; // send max do a pre-estimation with minimum amount (taquito refuses 0)
+  const coerceMinAmountForEstimation =
+    (transaction.useAllAmount && transaction.mode === "send") ||
+    (amount === 0n && transaction.mode !== "send_token");
+  if (coerceMinAmountForEstimation) {
+    amount = 1n; // send max / zero-amount pre-estimation (taquito refuses 0); not used for FA2 send_token
   }
 
   try {
-    if (transaction.mode === "send" && !transaction.recipient) {
+    if (
+      (transaction.mode === "send" || transaction.mode === "send_token") &&
+      !transaction.recipient
+    ) {
       return {
         ...estimation,
         ...createFallbackEstimation(),
@@ -108,6 +118,31 @@ export async function estimateFees({
           source: account.address,
         });
         break;
+      case "send_token": {
+        if (!transaction.contractAddress || transaction.tokenId === undefined) {
+          throw new Error("FA2 transfer requires contractAddress and tokenId");
+        }
+        const tokenContract = await tezosToolkit.contract.at(transaction.contractAddress);
+        const transferParams = tokenContract.methods
+          .transfer([
+            {
+              from_: account.address,
+              txs: [
+                {
+                  to_: transaction.recipient,
+                  token_id: transaction.tokenId,
+                  amount: amount,
+                },
+              ],
+            },
+          ])
+          .toTransferParams({ mutez: true });
+        estimate = await tezosToolkit.estimate.transfer({
+          ...transferParams,
+          source: account.address,
+        });
+        break;
+      }
       default:
         throw new UnsupportedTransactionMode("unsupported mode", { mode: transaction.mode });
     }
@@ -115,8 +150,8 @@ export async function estimateFees({
     const minFees = coinConfig.getCoinConfig().fees.minFees ?? 0;
     const mainOpFee = Math.max(minFees, estimate.suggestedFeeMutez);
 
-    // NOTE: if useAllAmount is true, is it for sure in the send mode (ie. transfer)?
-    if (transaction.useAllAmount) {
+    // NOTE: send-max only applies to native XTZ transfer, not FA2
+    if (transaction.useAllAmount && transaction.mode === "send") {
       let totalFees: number;
       if (estimate.burnFeeMutez > 0) {
         // NOTE: from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
@@ -180,7 +215,7 @@ export async function estimateFees({
             estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
         }
         // Handle useAllAmount also for send mode when estimation falls back
-        if (transaction.useAllAmount) {
+        if (transaction.useAllAmount && transaction.mode === "send") {
           // Approximate Taquito behavior for send-max using stable constants
           const suggestedFee =
             transaction.mode === "send"
@@ -230,7 +265,7 @@ export async function estimateFees({
           estimation.estimatedFees =
             estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
         }
-        if (transaction.useAllAmount) {
+        if (transaction.useAllAmount && transaction.mode === "send") {
           const suggestedFee =
             transaction.mode === "send"
               ? MIN_SUGGESTED_FEE_SMALL_TRANSFER

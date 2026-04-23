@@ -2,12 +2,13 @@ import { Step } from "jest-allure2-reporter/api";
 
 export default class CeloManageAssetsPage {
   titleId = "live-app-title";
-  celoLockButton = "celo-lock-button";
-  celoUnlockButton = "celo-unlock-button";
-  celoWithdrawButton = "celo-withdraw-button";
-  celoVoteButton = "celo-vote-button";
-  celoActivateVoteButton = "celo-activate-vote-button";
-  celoRevokeButton = "celo-revoke-button";
+  celoLockButton = "enabled-celo-lock-button";
+  celoUnlockButton = "enabled-celo-unlock-button";
+  celoWithdrawButton = "disabled-celo-withdraw-button";
+  celoVoteButton = "enabled-celo-vote-button";
+  celoActivateVoteButton = /^(enabled|disabled)-celo-activate-vote-button$/;
+  celoRevokeButton = /^(enabled|disabled)-celo-revoke-button$/;
+  celoVoteStartButton = "enabled-celo-vote-start-button";
 
   title = () => getElementById(this.titleId);
 
@@ -21,14 +22,24 @@ export default class CeloManageAssetsPage {
     await tapById(this.celoLockButton);
   }
 
+  @Step("Click on Vote for CELO")
+  async clickVote() {
+    await tapById(this.celoVoteButton);
+  }
+
+  @Step("Click start on the CELO vote started screen")
+  async clickVoteStart() {
+    await tapById(this.celoVoteStartButton);
+  }
+
   @Step("Check manage assets page - CELO")
   async checkManagePage() {
     await this.waitForManageAssets();
     await detoxExpect(getElementById(this.celoLockButton)).toBeVisible();
     await detoxExpect(getElementById(this.celoUnlockButton)).toBeVisible();
-    await detoxExpect(getElementById(this.celoWithdrawButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoWithdrawButton)).toBeVisible();
     await detoxExpect(getElementById(this.celoVoteButton)).toBeVisible();
-    await detoxExpect(getElementById(this.celoActivateVoteButton)).not.toBeVisible();
-    await detoxExpect(getElementById(this.celoRevokeButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoActivateVoteButton)).toBeVisible();
+    await detoxExpect(getElementById(this.celoRevokeButton)).toBeVisible();
   }
 }

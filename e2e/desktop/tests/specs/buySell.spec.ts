@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
@@ -6,14 +7,15 @@ import {
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "tests/utils/cliUtils";
 import { setupEnv } from "tests/utils/swapUtils";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
+import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
-const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }> = [
+const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellProvider }> = [
   {
     buySell: {
       crypto: Account.BTC_NATIVE_SEGWIT_1,
@@ -23,7 +25,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
     },
     xrayTicket:
       "B2CQA-3391, B2CQA-3412, B2CQA-3467, B2CQA-3520, B2CQA-3521, B2CQA-3449, B2CQA-3282",
-    provider: Provider.MOONPAY,
+    provider: BuySellProvider.MOONPAY,
   },
   {
     buySell: {
@@ -34,7 +36,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
     },
     xrayTicket:
       "B2CQA-3392, B2CQA-3413, B2CQA-3466, B2CQA-3519, B2CQA-3522, B2CQA-3449, B2CQA-3289",
-    provider: Provider.MOONPAY,
+    provider: BuySellProvider.MOONPAY,
   },
   {
     buySell: {
@@ -44,7 +46,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       operation: OperationType.Buy,
     },
     xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523, B2CQA-3449",
-    provider: Provider.MOONPAY,
+    provider: BuySellProvider.MOONPAY,
   },
 ];
 
@@ -55,18 +57,10 @@ for (const asset of assets) {
     const { crypto, fiat, operation, amount } = asset.buySell;
 
     test.use({
+      teamOwner: Team.BUY_AND_SELL,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: crypto.currency.speculosApp.name,
-            index: crypto.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(crypto)],
     });
 
     const family = getFamilyByCurrencyId(crypto.currency.id);
@@ -91,11 +85,16 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToPortfolio();
+        await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.clickOnSelectedAssetRow(crypto.currency.name);
         await app.assetPage.startBuyFlow();
 
-        await app.layout.verifyBuySellSideBarIsSelected();
+        if ((await isWallet40Enabled(app.getPage())) === false) {
+          // TODO: Remove this when wallet 4.0 is permanent
+          // Buy / Sell is only in the side navigation for legacy app
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
+
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -112,11 +111,22 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToMarket();
+
+        if (await isWallet40Enabled(app.getPage())) {
+          await app.marketBanner.clickExploreMarketHeader();
+        } else {
+          await app.layout.goToMarket();
+        }
+
         await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
 
-        await app.layout.verifyBuySellSideBarIsSelected();
+        if ((await isWallet40Enabled(app.getPage())) === false) {
+          // TODO: Remove this when wallet 4.0 is permanent
+          // Buy / Sell is only in the side navigation for legacy app
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
+
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -142,7 +152,7 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(asset.buySell.crypto));
         if (asset.buySell.crypto.tokenType) {
           await app.account.navigateToTokenInAccount(asset.buySell.crypto);
@@ -154,7 +164,12 @@ for (const asset of assets) {
         );
         await app.account.clickBuy();
 
-        await app.layout.verifyBuySellSideBarIsSelected();
+        if ((await isWallet40Enabled(app.getPage())) === false) {
+          // TODO: Remove this when wallet 4.0 is permanent
+          // Buy / Sell is only in the side navigation for legacy app
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
+
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(
           asset.buySell.crypto,
           operation,
@@ -183,13 +198,17 @@ for (const asset of assets) {
       },
       async ({ app, userdataDestinationPath }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.portfolio.clickBuySellButton();
+        if (await isWallet40Enabled(app.getPage())) {
+          await app.portfolio.clickBuyButton();
+        } else {
+          await app.portfolio.clickBuySellButton();
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
 
-        await app.layout.verifyBuySellSideBarIsSelected();
         await app.buyAndSell.chooseAssetIfNotSelected(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
-        await app.buyAndSell.verifyInfoBox();
+        await app.buyAndSell.verifyBuyInfoBox();
         await app.buyAndSell.verifyProviderInfoIsNotVisible();
 
         await app.buyAndSell.setAmountToPay(amount, operation);
@@ -206,7 +225,7 @@ for (const asset of assets) {
   });
 }
 
-const sellAsset: { buySell: BuySell; xrayTicket: string; provider: Provider } = {
+const sellAsset: { buySell: BuySell; xrayTicket: string; provider: BuySellProvider } = {
   buySell: {
     crypto: Account.BTC_NATIVE_SEGWIT_1,
     fiat: { locale: "fr-FR", currencyTicker: "EUR" },
@@ -214,7 +233,7 @@ const sellAsset: { buySell: BuySell; xrayTicket: string; provider: Provider } = 
     operation: OperationType.Sell,
   },
   xrayTicket: "B2CQA-3524",
-  provider: Provider.MOONPAY,
+  provider: BuySellProvider.MOONPAY,
 };
 
 test.describe("Sell flow - ", () => {
@@ -223,18 +242,10 @@ test.describe("Sell flow - ", () => {
   const { crypto, fiat, amount, operation } = sellAsset.buySell;
 
   test.use({
+    teamOwner: Team.BUY_AND_SELL,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: crypto.currency.speculosApp.name,
-          index: crypto.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(crypto)],
   });
 
   const family = getFamilyByCurrencyId(crypto.currency.id);
@@ -259,15 +270,21 @@ test.describe("Sell flow - ", () => {
     },
     async ({ app, userdataDestinationPath }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.layout.goToBuySellCrypto();
-
-      await app.layout.verifyBuySellSideBarIsSelected();
-      await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Buy);
-      await app.buyAndSell.verifyFiatAssetSelector("USD");
-      await app.buyAndSell.verifyInfoBox();
-      await app.buyAndSell.verifyProviderInfoIsNotVisible();
-
-      await app.buyAndSell.selectTab(operation);
+      if (await isWallet40Enabled(app.getPage())) {
+        await app.portfolio.clickSellButton();
+        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Sell);
+        await app.buyAndSell.verifyFiatAssetSelector("USD");
+        await app.buyAndSell.verifySellInfoBox();
+        await app.buyAndSell.verifyProviderInfoIsNotVisible();
+      } else {
+        await app.layout.goToBuySellCrypto();
+        await app.layout.verifyBuySellSideBarIsSelected();
+        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Buy);
+        await app.buyAndSell.verifyFiatAssetSelector("USD");
+        await app.buyAndSell.verifyBuyInfoBox();
+        await app.buyAndSell.verifyProviderInfoIsNotVisible();
+        await app.buyAndSell.selectTab(operation);
+      }
       await app.buyAndSell.changeRegionAndCurrency(fiat);
       await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
 

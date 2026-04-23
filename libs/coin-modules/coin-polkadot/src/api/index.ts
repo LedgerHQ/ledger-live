@@ -1,21 +1,24 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
   AlpacaApi,
-  BroadcastConfig,
+  Balance,
   Block,
   BlockInfo,
+  BroadcastConfig,
+  CraftedTransaction,
   Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
   FeeEstimation,
+  ListOperationsOptions,
   Operation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
-  Balance,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/index";
+  Validator,
+  BalanceOptions,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -48,7 +51,8 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
     getBlock(_height): Promise<Block> {
@@ -77,6 +81,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 

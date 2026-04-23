@@ -85,7 +85,7 @@ export default function VoteSummary({ navigation, route }: Props) {
         recipient: chosenValidator.address,
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params.amount, updateTransaction, bridge, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
@@ -211,6 +211,7 @@ export default function VoteSummary({ navigation, route }: Props) {
       )}
       <View style={styles.footer}>
         <Button
+          testID="celo-vote-summary-continue"
           event="SummaryContinue"
           type="primary"
           title={<Trans i18nKey="common.continue" />}
@@ -305,7 +306,7 @@ function SummaryWords({
         <Words>
           <Trans i18nKey={`celo.vote.iVote`} />
         </Words>
-        <Touchable onPress={onChangeAmount}>
+        <Touchable onPress={onChangeAmount} touchableTestID="celo-vote-amount">
           <Selectable name={formattedAmount} />
         </Touchable>
       </Line>
@@ -313,7 +314,7 @@ function SummaryWords({
         <Words>
           <Trans i18nKey="delegation.to" />
         </Words>
-        <Touchable onPress={onChangeValidator}>
+        <Touchable onPress={onChangeValidator} touchableTestID="celo-vote-validator">
           <Selectable name={validator?.name ?? validator?.address ?? "-"} />
         </Touchable>
       </Line>

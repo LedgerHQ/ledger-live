@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class AccountPage {
   baseLink = "account";
@@ -35,6 +35,12 @@ export default class AccountPage {
   subAccountId = (account: Account) =>
     `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
+
+  @Step("Wait for account screen and verify account name: $0")
+  async waitAndVerifyAccountName(accountName: string) {
+    await waitForElementById(this.accountScreenScrollView);
+    await detoxExpect(getElementByText(accountName, 0)).toBeVisible();
+  }
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
@@ -174,6 +180,14 @@ export default class AccountPage {
     const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
     await this.scrollToSubAccount(subAccountId);
     await tapById(subAccountId);
+  }
+
+  @Step("Navigate to sub account")
+  async navigateToSubAccount(account: AccountType) {
+    const subAccountId = this.subAccountId(account);
+    await this.openViaDeeplink();
+    await this.goToAccountById(subAccountId);
+    await waitForElement(this.accountGraph(subAccountId));
   }
 
   @Step("Scroll to history and click on last operation")

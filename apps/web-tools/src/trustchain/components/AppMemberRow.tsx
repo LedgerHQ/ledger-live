@@ -42,7 +42,7 @@ export function AppMemberRow({
   );
 
   return (
-    <div style={{ paddingLeft: 140 }}>
+    <div className="pl-40">
       <Actionable
         reverseRow
         buttonTitle="sdk.removeMember"
@@ -50,11 +50,6 @@ export function AppMemberRow({
         action={action}
         value={member}
         valueDisplay={member => <DisplayName pubkey={member.id} overridesName={member.name} />}
-        buttonProps={{
-          "data-tooltip-id": "tooltip",
-          "data-tooltip-content":
-            "removes a member from the app trustchain & rotates the derivation. (device required)",
-        }}
       />
     </div>
   );

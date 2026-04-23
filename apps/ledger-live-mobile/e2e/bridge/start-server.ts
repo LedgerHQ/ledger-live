@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-/* 
+/*
 
 This script will allow you to upload app.json userdata files into LLM
 

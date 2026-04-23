@@ -1,0 +1,15 @@
+
+["pnpm:install"]
+description = 'Installs dependencies with pnpm'
+run = 'pnpm install'
+sources = [
+  '{{config_root}}/package.json',
+  '{{config_root}}/pnpm-lock.yaml',
+  '{{config_root}}/pnpm-workspace.yaml',
+  '{{config_root}}/mise.toml',
+]
+outputs = ['{{config_root}}/node_modules/.pnpm/lock.yaml']
+
+["pnpm:clean"]
+description = "Removes packages installed with pnpm"
+run = "pnpm store prune"

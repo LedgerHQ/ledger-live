@@ -1,9 +1,11 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
+  DEFAULT_RECORDS_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
   RECIPIENT_ARG_INDEX,
@@ -16,7 +18,7 @@ import type {
   AleoPrivateRecord,
   AleoOperation,
 } from "../types";
-import { generateUniqueUsername, parseMicrocredits } from "../logic/utils";
+import { parseMicrocredits } from "../logic/utils";
 import { apiClient } from "./api";
 
 function limitTransactions(
@@ -115,78 +117,87 @@ export async function fetchAccountTransactionsFromHeight({
 }
 
 /**
+ * Fetches all pages of owned records from the scanner
+ *
+ * @param params.currency - The cryptocurrency being accessed
+ * @param params.uuid - The scanner UUID for the account
+ * @param params.unspent - When true, fetch only unspent records
+ * @param params.start - Optional block height to start scanning from
+ * @param params.resultsPerPage - Number of records to fetch per page (default: 1000)
+ * @returns A flat array of all matching records across all pages
+ */
+export async function fetchAllOwnedRecords({
+  currency,
+  uuid,
+  unspent,
+  start,
+  resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
+}: {
+  currency: CryptoCurrency;
+  uuid: string;
+  unspent?: boolean;
+  start?: number;
+  resultsPerPage?: number;
+}): Promise<AleoPrivateRecord[]> {
+  const allRecords: AleoPrivateRecord[] = [];
+  let page = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const records = await apiClient.getAccountOwnedRecords({
+      currency,
+      uuid,
+      ...(typeof unspent === "boolean" && { unspent }),
+      ...(typeof start === "number" && { start }),
+      resultsPerPage,
+      page,
+    });
+
+    allRecords.push(...records);
+    hasMore = records.length === resultsPerPage;
+    page += 1;
+  }
+
+  return allRecords;
+}
+
+/**
  * Manages access to the Provable API by handling authentication and account registration.
  *
  * This function ensures valid API credentials are available and up-to-date. It handles:
  * - Initial account registration if API key or consumer ID are missing
- * - JWT token refresh when expired or about to expire (within 5 minutes)
  * - Account registration for scanning records if UUID is not set
  * - Retrieval of current scanner status
  *
  * @param currency - The cryptocurrency being accessed
  * @param viewKey - The view key for the account
- * @param address - The account address
  * @param provableApi - Existing Provable API credentials and state, or null for initial setup
  *
  * @returns A Promise resolving to updated ProvableApi credentials, or null if access needs to be reset
  *
- * @throws {Error} Re-throws any errors except unauthorized errors during JWT retrieval
+ * @throws {Error} Re-throws any errors except 422 that should trigger uuid rotation
  *
  * @remarks
- * Edge cases that trigger Provable API access reset (returns null):
- * - Unauthorized error during JWT retrieval, typically indicating:
- *   - Revoked API key
- *   - Invalid consumer credentials
- *   - Account access has been terminated
- *
  * When null is returned, the caller should clear stored Provable API credentials
  * and allow the user to re-initialize access from scratch.
  */
 
-const JWT_EXPIRY_BUFFER_SECONDS = 5 * 60; // 5 minutes safe buffer
-
 export async function accessProvableApi({
   currency,
   viewKey,
-  address,
   provableApi,
 }: {
   currency: CryptoCurrency;
   viewKey: string;
-  address: string;
   provableApi: ProvableApi | null;
 }): Promise<ProvableApi | null> {
-  let apiKey = provableApi?.apiKey;
-  let consumerId = provableApi?.consumerId;
-  let jwt = provableApi?.jwt;
   let uuid = provableApi?.uuid;
   let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
   let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
-
-  if (!apiKey || !consumerId) {
-    const username = generateUniqueUsername(address);
-
-    const { key, consumer } = await apiClient.registerNewAccount(currency, username);
-
-    apiKey = key;
-    consumerId = consumer.id;
-  }
-
-  const currentTimestamp = Math.floor(Date.now() / 1000);
-  if (!jwt || currentTimestamp >= jwt.exp - JWT_EXPIRY_BUFFER_SECONDS) {
-    try {
-      jwt = await apiClient.getAccountJWT(currency, apiKey, consumerId);
-    } catch (error) {
-      // If unauthorized, likely due to revoked API key - return null to reset Provable API access
-      if (error instanceof Error && error.message.includes("Unauthorized")) {
-        return null;
-      }
-      throw error;
-    }
-  }
+  let status;
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getPublicKey(currency, jwt.token);
+    const { public_key, key_id } = await apiClient.getScannerPublicKey(currency);
 
     const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
       currency,
@@ -197,23 +208,28 @@ export async function accessProvableApi({
 
     const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecordsEncrypted({
       currency,
-      jwt: jwt.token,
       encryptedData,
       keyId: key_id,
     });
+
     uuid = accountUuid;
   }
 
-  const status = await apiClient.getRecordScannerStatus(currency, jwt.token, uuid);
+  try {
+    status = await apiClient.getRecordScannerStatus(currency, uuid);
+  } catch (error) {
+    if (error instanceof LedgerAPI4xx && error.status === 422) {
+      return null;
+    }
+    throw error;
+  }
+
   if (status) {
     synced = status.synced;
     percentage = status.percentage;
   }
 
   return {
-    apiKey,
-    consumerId,
-    jwt,
     uuid,
     scannerStatus: { synced, percentage },
   };
@@ -263,16 +279,29 @@ export async function enrichPrivateRecord({
       return null;
     }
 
+    // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
+    // Other input (missing `value` field) would indicate unexpected API data.
+    // In that case we skip processing rather than crash.
+    const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
+    const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
+    const recipientArgument = recipientInput && "value" in recipientInput ? recipientInput : null;
+    const amountArgument = amountInput && "value" in amountInput ? amountInput : null;
+
+    if (!recipientArgument || !amountArgument) {
+      log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
+      return null;
+    }
+
     if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-      if (recordTransition.inputs[RECIPIENT_ARG_INDEX].value === address) return null;
+      if (recipientArgument.value === address) return null;
       sender = address;
-      recipient = recordTransition.inputs[RECIPIENT_ARG_INDEX].value;
-      value = new BigNumber(parseMicrocredits(recordTransition.inputs[AMOUNT_ARG_INDEX].value));
+      recipient = recipientArgument.value;
+      value = new BigNumber(parseMicrocredits(amountArgument.value));
     } else {
       const [recipientData, amountData] = await Promise.all([
         sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+          ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: rawRecord.program_name,
@@ -281,7 +310,7 @@ export async function enrichPrivateRecord({
         }),
         sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+          ciphertext: amountArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: rawRecord.program_name,
@@ -426,15 +455,20 @@ export const patchPublicOperations = async ({
     // - semi-transparent transfer from our own account to another account
     else {
       const txDetails = await apiClient.getTransactionById(currency, operation.hash);
-      const recordTransition = txDetails.execution.transitions[0];
+      const recordTransition = txDetails.execution.transitions[0] ?? null;
+      const recipientInput = recordTransition?.inputs[0] ?? {};
+      const recipientArgument = "value" in recipientInput ? recipientInput : null;
 
       // if this is public to private, our account is sender, so it's possible to decrypt the recipient address
       // arguments of transfer_public_to_private function are (address_ciphertext, amount)
-      if (operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE) {
+      if (
+        recipientArgument &&
+        operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
+      ) {
         const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
         const recipientData = await sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[0].value,
+          ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: PROGRAM_ID.CREDITS,

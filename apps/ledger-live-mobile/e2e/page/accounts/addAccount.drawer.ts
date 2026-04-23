@@ -2,13 +2,12 @@ import { expect } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
-
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
   accountId = (currency: string, index: number) => `mock:1:${currency}:MOCK_${currency}_${index}:`;
   modalButtonId = "add-accounts-modal-add-button";
-  continueButtonId = "add-accounts-continue-button";
+  continueButtonId = "enabled-add-accounts-continue-button";
   closeAddAccountButtonId = "button-close-add-account";
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";

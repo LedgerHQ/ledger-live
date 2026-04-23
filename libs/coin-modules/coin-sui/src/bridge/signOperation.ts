@@ -2,7 +2,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/signers/ledger";
-import type { SuiClient } from "@mysten/sui/client";
+import type { ClientWithCoreApi } from "@mysten/sui/client";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { withApi } from "../network/sdk";
@@ -46,14 +46,14 @@ export const buildSignOperation = (
         );
 
         const signed = await signerContext(deviceId, async suiSigner =>
-          withApi(async (suiClient: SuiClient) => {
+          withApi(async (suiClient: ClientWithCoreApi) => {
             const ledgerSigner = await LedgerSigner.fromDerivationPath(
               account.freshAddressPath,
-              suiSigner,
+              suiSigner as unknown as Parameters<typeof LedgerSigner.fromDerivationPath>[1],
               suiClient,
             );
             return ledgerSigner.signTransaction(unsigned, objects, resolution);
-          }),
+          }, account.currency.id),
         );
 
         subscriber.next({

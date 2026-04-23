@@ -1,6 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { RectButton, Gesture, GestureDetector } from "react-native-gesture-handler";
+import { scheduleOnRN } from "react-native-worklets";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { createStructuredSelector } from "~/context/selectors";
@@ -47,12 +48,17 @@ function SubAccountRow({
     range,
   });
 
+  const handleLongPress = useCallback(() => {
+    if (account.type === "TokenAccount") {
+      onSubAccountLongPress(account, parentAccount);
+    }
+  }, [account, parentAccount, onSubAccountLongPress]);
+
   const longPressGesture = Gesture.LongPress()
     .minDuration(600)
     .onStart(() => {
-      if (account.type === "TokenAccount") {
-        onSubAccountLongPress(account, parentAccount);
-      }
+      "worklet";
+      scheduleOnRN(handleLongPress);
     });
 
   return (

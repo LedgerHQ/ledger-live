@@ -30,7 +30,8 @@
     "**/*.config.*",
     "**/scripts/**",
     "**/tools/**",
-    "**/.eslintrc.guardrails.js"
+    "**/.eslintrc.guardrails.js",
+    "**/.eslintrc.i18n.js"
   ],
   "workspaces": {
     "./apps/ledger-live-desktop": {

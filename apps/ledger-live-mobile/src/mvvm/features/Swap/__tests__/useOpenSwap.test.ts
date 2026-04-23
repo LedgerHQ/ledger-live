@@ -1,4 +1,4 @@
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useOpenSwap } from "../index";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -30,19 +30,13 @@ function createBitcoinAccount(id: string): Account {
 
 const withWallet40MainNav =
   (show: boolean) =>
-  (state: State): State => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        lwmWallet40: {
-          enabled: show,
-          ...(show && { params: { mainNavigation: true } }),
-        },
+  (state: State): State =>
+    withFlagOverrides({
+      lwmWallet40: {
+        enabled: show,
+        ...(show && { params: { mainNavigation: true } }),
       },
-    },
-  });
+    })(state);
 
 describe("useOpenSwap (Market / QuickActions origin)", () => {
   beforeEach(() => {

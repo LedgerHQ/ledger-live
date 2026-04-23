@@ -1,4 +1,4 @@
-import type { APITokenTransfer, APITransactionType } from "../network/types";
+import type { APIDelegationType, APITokenTransfer, APITransactionType } from "../network/types";
 import { getBlock } from "./getBlock";
 
 // ---------------------------------------------------------------------------
@@ -10,11 +10,13 @@ import { getBlock } from "./getBlock";
 const mockGetBlockByLevel = jest.fn();
 const mockFetchBlockTransactions = jest.fn();
 const mockFetchBlockTokenTransfers = jest.fn();
+const mockFetchBlockDelegations = jest.fn();
 
 jest.mock("../network", () => ({
   tzkt: { getBlockByLevel: (...args: unknown[]) => mockGetBlockByLevel(...args) },
   fetchBlockTransactions: (...args: unknown[]) => mockFetchBlockTransactions(...args),
   fetchBlockTokenTransfers: (...args: unknown[]) => mockFetchBlockTokenTransfers(...args),
+  fetchBlockDelegations: (...args: unknown[]) => mockFetchBlockDelegations(...args),
 }));
 
 // ---------------------------------------------------------------------------
@@ -66,15 +68,37 @@ function makeTokenTransfer(overrides: Partial<APITokenTransfer> = {}): APITokenT
   };
 }
 
+function makeDelegation(overrides: Partial<APIDelegationType> = {}): APIDelegationType {
+  return {
+    id: 200,
+    hash: "opDelegation1",
+    type: "delegation",
+    amount: 0,
+    sender: { address: "tz1Delegator" },
+    counter: 1,
+    level: 5_000_000,
+    block: "BLockHash123",
+    timestamp: "2024-01-01T00:00:00Z",
+    bakerFee: 1000,
+    storageFee: 0,
+    allocationFee: 0,
+    status: "applied",
+    prevDelegate: null,
+    newDelegate: { address: "tz1Baker" },
+    ...overrides,
+  } as APIDelegationType;
+}
+
 // ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
   jest.clearAllMocks();
-  // Default: empty transactions and token transfers so tests only set what they need
+  // Default: empty transactions, token transfers, and delegations so tests only set what they need
   mockFetchBlockTransactions.mockResolvedValue([]);
   mockFetchBlockTokenTransfers.mockResolvedValue([]);
+  mockFetchBlockDelegations.mockResolvedValue([]);
 });
 
 // ---------------------------------------------------------------------------
@@ -714,11 +738,264 @@ describe("FA token transfers", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 7. Network call contract
+// 7. Delegation operations
+// ---------------------------------------------------------------------------
+
+describe("delegation operations", () => {
+  it("creates a BlockTransaction for a DELEGATE operation with correct details", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({
+        sender: { address: "tz1Delegator" },
+        newDelegate: { address: "tz1Baker" },
+        prevDelegate: null,
+        counter: 42,
+        gasLimit: 1000,
+        storageLimit: 257,
+      }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.hash).toBe("opDelegation1");
+    expect(tx.failed).toBe(false);
+    expect(tx.feesPayer).toBe("tz1Delegator");
+    expect(tx.operations).toHaveLength(1);
+    expect(tx.operations[0]).toEqual({
+      type: "other",
+      address: "tz1Delegator",
+      asset: { type: "native", name: "XTZ" },
+      amount: 0n,
+      details: {
+        operationType: "DELEGATE",
+        stakedAmount: 0n,
+        delegate: "tz1Baker",
+        counter: 42,
+        gasLimit: 1000,
+        storageLimit: 257,
+        ledgerOpType: "DELEGATE",
+      },
+    });
+  });
+
+  it("creates a BlockTransaction for an UNDELEGATE operation with correct details", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({
+        sender: { address: "tz1Delegator" },
+        newDelegate: null,
+        prevDelegate: { address: "tz1PrevBaker" },
+        counter: 7,
+        gasLimit: 500,
+        storageLimit: 100,
+      }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.operations).toHaveLength(1);
+    expect(tx.operations[0]).toEqual({
+      type: "other",
+      address: "tz1Delegator",
+      asset: { type: "native", name: "XTZ" },
+      amount: 0n,
+      details: {
+        operationType: "UNDELEGATE",
+        stakedAmount: 0n,
+        delegate: "tz1PrevBaker",
+        counter: 7,
+        gasLimit: 500,
+        storageLimit: 100,
+        ledgerOpType: "UNDELEGATE",
+      },
+    });
+  });
+
+  it("computes delegation fees from bakerFee, storageFee, and allocationFee", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ bakerFee: 500, storageFee: 100, allocationFee: 50 }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions[0].fees).toBe(650n);
+  });
+
+  it("marks a delegation as failed when status is not 'applied'", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ status: "failed" })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions[0].failed).toBe(true);
+    expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("skips delegations without a hash", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: undefined as unknown as string }),
+      makeDelegation({ id: 201, hash: "opDelegation2" }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("opDelegation2");
+  });
+
+  it("creates delegation with empty operations when sender is missing", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ sender: null })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("merges delegation into existing transaction when they share the same hash", async () => {
+    // Given - transaction and delegation batched together (same hash)
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, bakerFee: 500 }),
+    ]);
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: "opSharedHash", bakerFee: 300 }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then - single BlockTransaction with both transfer and delegation operations, combined fees
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.operations.some(op => op.type === "transfer")).toBe(true);
+    expect(tx.operations.some(op => op.type === "other")).toBe(true);
+    expect(tx.fees).toBe(800n); // 500 + 300
+  });
+
+  it("marks merged transaction as failed and clears operations if delegation failed", async () => {
+    // Given - transaction succeeded but delegation in same batch failed
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, status: "applied", bakerFee: 500 }),
+    ]);
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: "opSharedHash", status: "failed", bakerFee: 300 }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then - the whole batch is marked as failed, operations cleared, fees accumulated
+    expect(result.transactions).toMatchObject([{ failed: true, operations: [], fees: 800n }]);
+  });
+
+  it("does not add delegation operations to failed transaction", async () => {
+    // Given - transaction failed, delegation would be backtracked anyway
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, status: "failed" }),
+    ]);
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: "opSharedHash", status: "applied" }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then - no operations (tx was failed), but fees still accumulated
+    expect(result.transactions).toMatchObject([{ failed: true, operations: [], fees: 1000n }]);
+  });
+
+  it("includes both transactions and delegations in the same block", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ hash: "opTx1", amount: 1_000_000 })]);
+    mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ hash: "opDelegation1" })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions).toHaveLength(2);
+    const hashes = result.transactions.map(t => t.hash);
+    expect(hashes).toContain("opTx1");
+    expect(hashes).toContain("opDelegation1");
+  });
+
+  it("treats delegations with no status field as succeeded", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ status: undefined })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions[0].failed).toBe(false);
+    expect(result.transactions[0].operations).toHaveLength(1);
+  });
+
+  it("omits feesPayer when sender is missing", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ sender: null })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    expect(result.transactions[0].feesPayer).toBeUndefined();
+  });
+
+  it("omits delegate field from details when neither newDelegate nor prevDelegate is present", async () => {
+    // Given - edge case: both delegates are null
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ newDelegate: null, prevDelegate: null }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then
+    const details = result.transactions[0].operations[0]?.details as Record<string, unknown>;
+    expect(details).not.toHaveProperty("delegate");
+    expect(details.operationType).toBe("UNDELEGATE");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 8. Network call contract
 // ---------------------------------------------------------------------------
 
 describe("network calls", () => {
-  it("issues all four network calls with the correct heights", async () => {
+  it("issues all five network calls with the correct heights", async () => {
     // Given
     const height = 6_000_000;
     mockGetBlockByLevel.mockResolvedValue(makeBlock(height));
@@ -734,6 +1011,8 @@ describe("network calls", () => {
     expect(mockFetchBlockTransactions).toHaveBeenCalledWith(height);
     expect(mockFetchBlockTokenTransfers).toHaveBeenCalledTimes(1);
     expect(mockFetchBlockTokenTransfers).toHaveBeenCalledWith(height);
+    expect(mockFetchBlockDelegations).toHaveBeenCalledTimes(1);
+    expect(mockFetchBlockDelegations).toHaveBeenCalledWith(height);
   });
 
   it("propagates errors from getBlockByLevel", async () => {
@@ -760,5 +1039,14 @@ describe("network calls", () => {
 
     // When / Then
     await expect(getBlock(1_000_000)).rejects.toThrow("token fetch failed");
+  });
+
+  it("propagates errors from fetchBlockDelegations", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockDelegations.mockRejectedValue(new Error("delegation fetch failed"));
+
+    // When / Then
+    await expect(getBlock(1_000_000)).rejects.toThrow("delegation fetch failed");
   });
 });

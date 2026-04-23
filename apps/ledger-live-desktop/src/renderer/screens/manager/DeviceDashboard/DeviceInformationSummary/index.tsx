@@ -92,7 +92,7 @@ const DeviceInformationSummary = ({
         <Box position="relative" flex="0 0 140px" mr={24}>
           <DeviceIllustration deviceModel={deviceModel} />
         </Box>
-        <Flex flexDirection="column" flex={1}>
+        <Flex flexDirection="column" flex={1} minWidth={0}>
           <div
             style={{
               flex: 1,

@@ -35,6 +35,7 @@ const DEFAULT_TIMEOUT = 60000;
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
   errorElementId?: string;
+  checkVisibility?: boolean;
 };
 
 export const NativeElementHelpers = {
@@ -44,7 +45,7 @@ export const NativeElementHelpers = {
   },
 
   /**
-   * Waits for a native element to become visible, with optional error checking.
+   * Waits for a native element to become visible (or to exist), with optional error checking.
    * When errorElementId is provided, polls for both the expected element and error elements,
    * providing fail-fast behavior if errors are detected.
    *
@@ -53,10 +54,13 @@ export const NativeElementHelpers = {
    * @param options - Optional configuration
    * @param options.errorCheckTimeout - Polling frequency for error checks (default: 500ms)
    * @param options.errorElementId - Test ID of error element to check for fail-fast behavior
+   * @param options.checkVisibility - If true (default), waits for toBeVisible; if false, waits for toExist.
+   *   Use false when the element may be present but Detox synchronization or main-thread contention
+   *   prevents the visibility check from completing (e.g. WebView screens under heavy load).
    * @throws {Error} If error element detected or timeout reached
    *
    * @example
-   * // Basic usage
+   * // Basic usage — waits for visibility
    * await waitForElement(myElement);
    *
    * @example
@@ -71,9 +75,12 @@ export const NativeElementHelpers = {
     options?: WaitForElementOptions,
   ) {
     const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
-
+    const checkVisibility = options?.checkVisibility ?? true;
+    const waitCondition = checkVisibility
+      ? waitFor(nativeElement).toBeVisible()
+      : waitFor(nativeElement).toExist();
     if (!options?.errorElementId) {
-      return waitFor(nativeElement).toBeVisible().withTimeout(timeout);
+      return waitCondition.withTimeout(timeout);
     }
 
     const startTime = Date.now();
@@ -81,7 +88,7 @@ export const NativeElementHelpers = {
 
     while (Date.now() - startTime < timeout) {
       try {
-        await waitFor(nativeElement).toBeVisible().withTimeout(errorCheckTimeout);
+        await waitCondition.withTimeout(errorCheckTimeout);
         return;
       } catch (error) {
         lastWaitError = error instanceof Error ? error : new Error(String(error));
@@ -207,6 +214,24 @@ export const NativeElementHelpers = {
 
   async tapByElement(elem: Detox.NativeElement) {
     await elem.tap();
+  },
+
+  async tapByIdAndExpectToDisappear(
+    id: string | RegExp,
+    opts: { index?: number; timeout?: number; disappearTimeout?: number } = {},
+  ) {
+    const { index = 0, timeout = 60000, disappearTimeout = 1000 } = opts;
+    let tapped = false;
+    await retryUntilTimeout(async () => {
+      if (tapped) {
+        const visible = await NativeElementHelpers.isIdVisible(id);
+        if (!visible) return;
+      }
+      await NativeElementHelpers.tapById(id, index);
+      tapped = true;
+      const stillVisible = await NativeElementHelpers.isIdVisible(id, disappearTimeout);
+      if (stillVisible) throw new Error(`Element "${id}" is still visible after tap`);
+    }, timeout);
   },
 
   async typeTextById(
@@ -342,6 +367,11 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
+  getWebElementByXpath(xpath: string, index = 0): WebElement {
+    const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
+    return index > 0 ? base.atIndex(index) : base;
+  },
+
   getWebElementsByIdAndText(id: string, text: string, index = 0): WebElement {
     const xpath = id
       ? `//span[@data-testid="${id}" and text()="${text}"]`
@@ -369,28 +399,43 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
+  async waitWebElement(
+    webElement: WebElement,
+    timeout = DEFAULT_TIMEOUT,
+    throwOnTimeout = true,
+  ): Promise<WebElement | undefined> {
+    try {
+      await retryUntilTimeout(() => webElement.runScript(el => el.innerText), timeout);
+      return webElement;
+    } catch (e) {
+      if (throwOnTimeout) {
+        throw e;
+      }
+      log.warn(
+        `Web element not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+  },
+
   async waitWebElementByTestId(
     id: string,
     timeout = DEFAULT_TIMEOUT,
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
-    const start = Date.now();
-    let lastErr: Error | undefined;
-    while (Date.now() - start < timeout) {
-      try {
-        const elem = WebElementHelpers.getWebElementByTestId(id);
-        await retryUntilTimeout(() => elem.runScript(el => el.innerText), timeout);
-        return elem;
-      } catch (e) {
-        lastErr = e instanceof Error ? e : new Error(String(e));
-        await delay(200);
+    const webElement = WebElementHelpers.getWebElementByTestId(id);
+    try {
+      return await WebElementHelpers.waitWebElement(webElement, timeout, true);
+    } catch (e) {
+      const message = `Web element '${id}' not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`;
+      if (throwOnTimeout) {
+        throw new Error(message);
       }
+      log.warn(message);
     }
-    if (throwOnTimeout) {
-      throw new Error(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
-    } else {
-      log.warn(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
-    }
+  },
+
+  async expectWebElementNotVisible(id: string, index = 0): Promise<void> {
+    await detoxExpect(WebElementHelpers.getWebElementByTestId(id, index)).not.toExist();
   },
 
   async tapWebElementByTestId(id: string, index = 0): Promise<void> {

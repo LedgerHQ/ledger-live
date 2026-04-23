@@ -1,4 +1,4 @@
-import { Block, BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import { Block, BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getBlock as sdkGetBlock, getBlockInfo as sdkGetBlockInfo } from "../network/sdk";
 
 /**
@@ -7,8 +7,8 @@ import { getBlock as sdkGetBlock, getBlockInfo as sdkGetBlockInfo } from "../net
  * @param height the checkpoint sequence number
  * @see {@link getBlock}
  */
-export async function getBlockInfo(height: number): Promise<BlockInfo> {
-  return sdkGetBlockInfo(height.toString());
+export async function getBlockInfo(height: number, currencyId?: string): Promise<BlockInfo> {
+  return sdkGetBlockInfo(height.toString(), currencyId);
 }
 
 /**
@@ -17,6 +17,6 @@ export async function getBlockInfo(height: number): Promise<BlockInfo> {
  * @param height the checkpoint sequence number
  * @see {@link getBlockInfo}
  */
-export async function getBlock(height: number): Promise<Block> {
-  return sdkGetBlock(height.toString());
+export async function getBlock(height: number, currencyId?: string): Promise<Block> {
+  return sdkGetBlock(height.toString(), currencyId);
 }

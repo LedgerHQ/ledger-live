@@ -8,11 +8,12 @@
     "types": ["node", "jest"],
     "skipLibCheck": true,
     "noEmit": true,
-    "baseUrl": ".",
     "typeRoots": ["./types", "./node_modules/@types"],
     "paths": {
+      "*": ["./*"],
       "LLM/*": ["../../apps/ledger-live-mobile/src/mvvm/*"],
       "~/*": ["../../apps/ledger-live-mobile/src/*"],
+      "@shared/feature-flags": ["../../shared/feature-flags/src"],
       "@ledgerhq/live-common/e2e/*": ["../../libs/ledger-live-common/src/e2e/*"],
       "@ledgerhq/live-common/lib/e2e/*": ["../../libs/ledger-live-common/src/e2e/*"],
       "@ledgerhq/live-common/hw/index": ["../../libs/ledger-live-common/src/hw/index"],

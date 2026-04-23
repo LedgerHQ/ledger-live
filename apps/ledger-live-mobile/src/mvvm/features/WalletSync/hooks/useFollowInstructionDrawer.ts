@@ -46,7 +46,7 @@ export function useFollowInstructionDrawer(
   const retry = useCallback(async () => {
     setScene({ kind: SceneKind.Loader });
     await run(setScene);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const goToDelete = useCallback(() => {
     setScene({ kind: SceneKind.ConfirmDeleteWrongSeedError });
@@ -63,7 +63,7 @@ export function useFollowInstructionDrawer(
 
   useEffect(() => {
     run(setScene);
-  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+  }, deps);
 
   return { scene, retry, goToDelete, backToWrongSeedError, confirmDeleteKey };
 }

@@ -1,7 +1,7 @@
 {
   "framework": null,
   "installCommand": "pnpm i -F \"@ledgerhq/web-tools...\" -F \"ledger-live\"",
-  "buildCommand": "cd ../.. && pnpm turbo run build --filter=\"@ledgerhq/web-tools\"",
+  "buildCommand": "cd ../.. && pnpm exec nx run @ledgerhq/web-tools:build",
   "outputDirectory": "dist",
   "routes": [
     { "handle": "filesystem" },

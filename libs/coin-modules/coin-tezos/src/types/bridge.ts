@@ -1,4 +1,4 @@
-import type { Stake } from "@ledgerhq/coin-framework/api/index";
+import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   Account,
   AccountRaw,
@@ -41,6 +41,10 @@ export type Transaction = TransactionCommon & {
   storageLimit: BigNumber | null | undefined;
   estimatedFees: BigNumber | null | undefined;
   taquitoError: string | null | undefined;
+  /** FA2 token contract (KT1…); set when `mode` is `send_token` */
+  contractAddress?: string;
+  /** FA2 token id; set when `mode` is `send_token` */
+  tokenId?: number;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -52,6 +56,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   storageLimit: string | null | undefined;
   estimatedFees: string | null | undefined;
   taquitoError: string | null | undefined;
+  contractAddress?: string;
+  tokenId?: number;
 };
 
 type CapacityStatus = "normal" | "full";

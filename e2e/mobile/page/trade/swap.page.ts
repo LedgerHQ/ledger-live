@@ -1,13 +1,18 @@
-import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import CommonPage from "../common.page";
+import { allure, Step } from "jest-allure2-reporter/api";
+import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { normalizeText } from "../../helpers/commonHelpers";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
+import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
+import { log } from "detox";
 
-export default class SwapPage {
+export default class SwapPage extends CommonPage {
   baseLink = "swap";
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
@@ -22,8 +27,12 @@ export default class SwapPage {
     baseToAmount: "swap-history-toAmount-",
   };
   historyButton = "navigation-header-swap-history";
+  topBarSwapHistoryButton = "topbar-swap-history";
   swapStatus = "swap-status";
-  exportOperationsButton = "export-swap-operations-link";
+  exportOperationsButton = "enabled-export-swap-operations-link";
+  swapHistoryFeedbackLink = "swap-history-feedback-link";
+  swapFormTabId = "swap-form-tab";
+  swapCloseButtonCompletedTestId = "NavigationHeaderCloseButtonCompleted";
 
   operationDetails = {
     fromAccount: "swap-operation-details-fromAccount",
@@ -37,7 +46,7 @@ export default class SwapPage {
     viewInExplorerButton: "operation-detail-view-in-explorer-button",
   };
 
-  swapFormTab = () => getElementById("swap-form-tab");
+  swapFormTab = () => getElementById(this.swapFormTabId);
   operationRows = () => getElementById(this.operationRow.rowRegexp);
   getSpecificOperation = (swapId: string) =>
     getElementById(`${this.operationRow.rowBaseId}${swapId}`);
@@ -57,13 +66,21 @@ export default class SwapPage {
 
   @Step("Expect swap page")
   async expectSwapPage() {
-    const tab = this.swapFormTab();
-    await detoxExpect(tab).toBeVisible();
+    if (await IsIdVisible(this.swapFormTabId, 5000)) {
+      await detoxExpect(this.swapFormTab()).toBeVisible();
+    } else {
+      // Wallet 4.0 swap screen does not expose `swap-form-tab`; rely on shared webview readiness.
+      await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
+    }
   }
 
   @Step("Go to swap history")
   async goToSwapHistory() {
-    await tapById(this.historyButton);
+    if (await IsIdVisible(this.topBarSwapHistoryButton, 5000)) {
+      await tapById(this.topBarSwapHistoryButton);
+    } else {
+      await tapById(this.historyButton);
+    }
   }
 
   @Step("Check swap operation row details")
@@ -129,6 +146,19 @@ export default class SwapPage {
     jestExpect(fileExists).toBeTruthy();
   }
 
+  @Step("Check swap history feedback form URL")
+  async checkSwapHistoryFeedbackFormUrl(expectedUrl: string) {
+    await scrollToId(this.swapHistoryFeedbackLink);
+    await detoxExpect(getElementById(this.swapHistoryFeedbackLink)).toBeVisible();
+    const { value, label } = await getAttributesOfElement(this.swapHistoryFeedbackLink);
+    // iOS: accessibilityValue: value; Android: accessibilityLabel: label
+    if (isIos()) {
+      jestExpect(value).toContain(expectedUrl);
+    } else {
+      jestExpect(label).toContain(expectedUrl);
+    }
+  }
+
   @Step("Check contents of exported operations file")
   async checkExportedFileContents(swap: SwapType, provider: Provider, id: string) {
     const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
@@ -170,5 +200,44 @@ export default class SwapPage {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);
+  }
+
+  @Step("Wait for swap navigation header title completed")
+  async waitForSwapHeaderCompleted() {
+    await waitForElementById(this.swapCloseButtonCompletedTestId);
+  }
+
+  @Step("Ensure token approval")
+  async ensureTokenApproval(
+    fromAccount: Account | TokenAccount,
+    provider: Provider,
+    minAmount: string,
+  ) {
+    if (!provider.contractAddress || !fromAccount.parentAccount) return;
+
+    const currentAllowance = await isTokenAllowanceSufficientCommand(
+      fromAccount,
+      provider.contractAddress,
+      minAmount,
+    );
+    log.warn("CLI result: Current Allowance: ", currentAllowance);
+    if (currentAllowance) return;
+
+    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
+    await registerSpeculos(speculos.port);
+    try {
+      const result = await approveTokenCommand(
+        fromAccount,
+        provider.contractAddress,
+        new BigNumber(minAmount).times(12).div(10).toFixed(),
+      );
+      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+    } finally {
+      await deleteSpeculos(speculos.id);
+      if (previousSpeculosPort > 0) {
+        await registerSpeculos(previousSpeculosPort);
+      }
+    }
   }
 }

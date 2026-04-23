@@ -1,0 +1,29 @@
+{
+  "name": "@domain/entity-currency",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Currency union types (Currency, CryptoOrTokenCurrency) and re-exports from all currency entity packages",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-currency-unit": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}

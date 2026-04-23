@@ -63,6 +63,7 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
@@ -103,8 +104,10 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
-const Cryptos = lazy(() => import("LLD/features/Cryptos"));
+const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
+const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
+const History = lazy(() => import("LLD/features/History"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -244,7 +247,17 @@ const MainAppContent = ({
           path="/cryptos"
           element={
             shouldDisplayAssetSection ? (
-              withSuspense(Cryptos)({})
+              withSuspense(CryptoAddresses)({})
+            ) : (
+              <Navigate to="/accounts" replace />
+            )
+          }
+        />
+        <Route
+          path="/assets"
+          element={
+            shouldDisplayAssetSection ? (
+              withSuspense(CryptoAssets)({})
             ) : (
               <Navigate to="/accounts" replace />
             )
@@ -270,6 +283,7 @@ const MainAppContent = ({
         />
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
+        <Route path="/history" element={withSuspense(History)({})} />
       </Routes>
     </Page>
     <Drawer />
@@ -372,6 +386,7 @@ export default function Default() {
   const themeConsoleActive = useEnv("DEBUG_THEME");
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
+  const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
 
   const dmk = useDeviceManagementKit();
   const checkAccountsWithFunds = useCheckAccountWithFunds();
@@ -398,12 +413,18 @@ export default function Default() {
   }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
+    if (typeof ldmkCosmosSignerFeatureFlag?.enabled === "boolean") {
+      setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
+    }
+  }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
     // WebHID is now always enabled, set provider if specified
     if (providerNumber) {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk]);
 
   useEffect(() => {
@@ -416,7 +437,7 @@ export default function Default() {
       dispatch(setShareAnalytics(false));
       dispatch(setSharePersonalizedRecommendations(false));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isLocked]);
 
   useEffect(() => {

@@ -294,6 +294,11 @@
       "title" : "Desculpe, falha de conexão",
       "description" : "Tente Novamente."
     },
+    "CounterfeitDevice" : {
+      "title" : "Esta {{productName}} foi reprovada na Verificação de Autenticidade",
+      "description" : "Não é seguro usar este dispositivo Ledger. Entre em contato com o Suporte Ledger.",
+      "contactSupportCTA" : "Fale com o Suporte Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Falha de conexão",
       "description" : "Tente Novamente."
@@ -415,8 +420,8 @@
       "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
     "AlreadySendingApduError" : {
-      "title" : "Erro de comunicação",
-      "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+      "title" : "Ação necessária no seu dispositivo Ledger",
+      "description" : "Finalize a ação em seu dispositivo."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Erro de comunicação",
@@ -953,6 +958,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Quantia muito baixa. Envie pelo menos {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Essa conta de token associada detém outro token"
     },
@@ -1302,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Você precisa de uma conta para acessar este aplicativo.",
-      "add" : "Adicionar Conta"
+      "select" : "Selecionar Conta"
     }
   },
   "location" : {
@@ -1595,7 +1603,7 @@
     "desc" : "Para aproveitar todo o potencial da sua Ledger Wallet, conecte sua Ledger.",
     "0" : {
       "title" : "Propriedade total",
-      "desc" : "Suas chaves privadas permanecem sempre no dispositivo."
+      "desc" : "Você tem o controle sobre suas chaves privadas."
     },
     "1" : {
       "title" : "Faça suas negociações com segurança",
@@ -2685,6 +2693,7 @@
     "accounts" : "Contas",
     "transfer" : "Transferir",
     "manager" : "Minha Ledger",
+    "myWallet" : "Minha carteira",
     "settings" : "Configurações",
     "platform" : "Live Apps",
     "discover" : "Explorar",
@@ -2747,7 +2756,17 @@
       "noAccounts" : "Comece depositando fundos\nna sua carteira"
     },
     "seeAllAssets" : "Ver todos os ativos",
+    "cryptoAddresses" : {
+      "title" : "Contas",
+      "count_one" : "{{count}} conta",
+      "count_other" : "{{count}} contas",
+      "noAccountsYet" : "Ainda nenhuma conta",
+      "add" : "Adicionar"
+    },
     "seeAllAccounts" : "Ver todas as contas",
+    "assetSection" : {
+      "connectionFailed" : "Falha de conexão"
+    },
     "marketPriceSection" : {
       "title" : "preço de mercado de {{currencyTicker}}",
       "currencyPrice" : "preço de 1 {{currencyTicker}}",
@@ -2773,6 +2792,8 @@
       "buy" : "Comprar",
       "connect" : "Conectar",
       "buyLedger" : "Comprar uma Ledger",
+      "receive" : "Receber",
+      "send" : "Enviar",
       "transferDrawer" : {
         "title" : "Transferir",
         "receiveCrypto" : "Receber via endereço cripto",
@@ -2795,7 +2816,8 @@
     "refreshStatus" : {
       "refreshing" : "Atualizando…",
       "upToDate" : "Portfolio atualizado",
-      "syncError" : "Não foi possível carregar alguns dados da conta"
+      "syncError" : "Não foi possível carregar alguns dados da conta",
+      "offline" : "Você está offline. Por favor, verifique sua conexão"
     }
   },
   "addAccountsModal" : {
@@ -2909,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Conta atualizada"
     }
   },
+  "operationsList" : {
+    "to" : "Para",
+    "from" : "De"
+  },
   "operationDetails" : {
     "title" : "Detalhes da transação",
     "account" : "Conta",
@@ -2985,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Sem operações",
+    "emptyTitle" : "Ainda nenhuma transação",
+    "emptySubtitle" : "Volte mais tarde para ver suas transações.",
     "noMoreTransactions" : "Sem mais transações"
   },
   "selectableAccountsList" : {
@@ -3185,6 +3213,18 @@
   "assets" : {
     "title" : "Ativos"
   },
+  "cryptoAddresses" : {
+    "title" : "Contas",
+    "addAccount" : "Adicionar conta",
+    "emptyState" : "Ainda nenhuma conta",
+    "errorState" : "Ocorreu um erro ao carregar suas contas"
+  },
+  "crypto" : {
+    "title" : "Cripto",
+    "stablecoinTitle" : "Stablecoin",
+    "errorState" : "Ocorreu um erro ao carregar seus ativos.",
+    "emptyState" : "Nenhum ativo para exibir"
+  },
   "accounts" : {
     "title" : "Contas",
     "cryptoAccountsTitle" : "contas {{currencyTicker}}",
@@ -3305,13 +3345,13 @@
       "reportErrorsDesc" : "Envie automaticamente relatórios para ajudar a Ledger a melhorar seus produtos.",
       "developerMode" : "Modo desenvolvedor",
       "developerModeDesc" : "Exiba os aplicativos de desenvolvedor em Minha Ledger e habilite os aplicativos de Testnet.",
-      "analytics" : "Métricas",
-      "analyticsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para ajudar a medir o desempenho da Ledger Wallet e aprimorar o aplicativo e a sua experiência.",
+      "analytics" : "Desempenho do aplicativo",
+      "analyticsDesc" : "Permitir que a Ledger colete o uso do aplicativo para aprimorar a experiência",
       "mevProtection" : "Proteção MEV",
       "mevProtectionDesc" : "Habilite a proteção MEV para realizar transações na Ethereum com mais confiança.",
       "mevProtectionLearnMore" : "Declaração de privacidade",
       "personalizedRecommendations" : "Experiência personalizada",
-      "personalizedRecommendationsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
+      "personalizedRecommendationsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer conteúdos personalizados",
       "analyticsModal" : {
         "title" : "Compartilhar métricas",
         "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso",
@@ -3420,6 +3460,14 @@
       "transactionsAlerts" : {
         "title" : "Alertas de Transações (Beta)",
         "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, BNB Chain, Avalanche e Ethereum Classic"
+      },
+      "totalMarketCap" : {
+        "title" : "Capitalização de mercado total",
+        "desc" : "Receba notificações quando a capitalização de mercado das criptomoedas tiver uma variação significativa"
+      },
+      "topGainersLosers" : {
+        "title" : "Maiores Altas e Baixas",
+        "desc" : "Receba um resumo semanal dos principais ganhos e perdas de tokens no mercado"
       },
       "price" : {
         "title" : "Alertas de preço",
@@ -3563,8 +3611,14 @@
         "description" : "Os cartões locais aparecem no Portfólio (e em outros locais) sem o Braze. Eles persistem até que você os descarte ou limpe aqui.",
         "addSampleBanner" : "Adicionar banner de amostra",
         "addSampleBannerDesc" : "Adicione um banner de exemplo ao Portfólio.",
-        "addSampleActionCarousel" : "Adicionar carrossel de ações de amostra",
-        "addSampleActionCarouselDesc" : "Adicione um carrossel de cards de ação (Comprar, Trocar, Fazer staking) no Portfólio.",
+        "addSampleActionCarouselIcon" : "Adicionar carrossel de ação (ícone)",
+        "addSampleActionCarouselIconDesc" : "Adiciona um cartão ContentBanner por toque. Na mesma linha da variante da imagem — combine cartões de ícone e imagem em um carrossel. Ciclos Comprar → Trocar → Staking. Requer o indicador de posicionamento Braze.",
+        "addSampleActionCarouselImageBackground" : "Adicionar carrossel de ação (imagem)",
+        "addSampleActionCarouselImageBackgroundDesc" : "Adiciona um cartão MediaBanner por toque. Mesma linha que a variante ícone — combine as duas em um único carrossel. Ciclos Comprar → Trocar → Staking. Requer o indicador de posicionamento Braze.",
+        "addSampleWalletCarouselPicto" : "Adicionar carrossel inferior da carteira (ícone)",
+        "addSampleWalletCarouselPictoDesc" : "Um cartão de simulação com ícone cripto (picto), título, imagem e link. Sem Braze.",
+        "addSampleWalletCarouselTag" : "Adicionar carrossel inferior da carteira (etiqueta)",
+        "addSampleWalletCarouselTagDesc" : "Um cartão de simulação com tag, título, imagem, link. Sem Braze.",
         "dismissAll" : "Descartar todos os cartões locais",
         "dismissAllDesc" : "Remover todos os cartões de conteúdo gerados localmente."
       }
@@ -3637,7 +3691,8 @@
         },
         "fiat" : {
           "title" : "Via transferência bancária",
-          "description" : "Receba stablecoin através da conta Cash-to-Stablecoin. Cadastro necessário."
+          "description" : "Receba stablecoin simplesmente enviando dinheiro.",
+          "description_legacy" : "Receba stablecoin através da conta Cash-to-Stablecoin. Cadastro necessário."
         }
       },
       "memoTag" : {
@@ -4304,7 +4359,23 @@
         "maxFeeBelowPriorityFee" : "A taxa máxima deve ser maior ou igual à taxa de prioridade máxima."
       },
       "coinControl" : {
-        "title" : "Controle de moedas"
+        "title" : "Controle de moedas",
+        "strategy" : "Estratégia",
+        "learnMore" : "Saiba mais",
+        "coinToSend" : "Moeda a enviar",
+        "changeToReturn" : "Alterar para retorno",
+        "enterAmount" : "Insira a quantidade",
+        "selectSufficientCoins" : "Selecione moedas suficientes",
+        "amountToSendInCurrency" : "Quantia a enviar em ({{ticker}})",
+        "amountInputLabel" : "Quantia a enviar",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Moedas mais antigas primeiro (FIFO)",
+            "OPTIMIZE_SIZE" : "Minimizar taxas (otimizar o tamanho)",
+            "MERGE_OUTPUTS" : "Minimizar taxas futuras (mesclar moedas)",
+            "CUSTOM" : "Seleção de moeda personalizada"
+          }
+        }
       }
     },
     "pendingTxWarning" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas.",
@@ -7781,6 +7852,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Cripto",
+      "stablecoins" : "Stablecoins",
       "market" : "Mercado"
     },
     "referralProgram" : "US$20"
@@ -8025,6 +8097,32 @@
           "link" : "Saiba mais sobre nossa Política de Monitoramento"
         }
       }
+    }
+  },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "Ajude-nos a melhorar a Ledger",
+      "description" : "Com o seu consentimento, coletaremos dados de uso para melhorar os recursos e personalizar sua experiência.",
+      "ctaAcceptAll" : "Aceitar todos",
+      "ctaRefuseAll" : "Recusar todos"
+    },
+    "reconfirm" : {
+      "title" : "Continuar melhorando a Ledger?",
+      "description" : "Gostaria de continuar compartilhando dados de uso para nos ajudar a melhorar a Ledger? Esses dados são usados para melhorar funcionalidades e personalizar a sua experiência.",
+      "ctaContinue" : "Sim, continue",
+      "ctaStop" : "Não, pare"
+    },
+    "privacy" : {
+      "title" : "Estamos atualizando nossa política de privacidade",
+      "descriptionLead" : "Consulte o nosso ",
+      "descriptionLinkLabel" : "Política de privacidade",
+      "descriptionTrail" : " para saber o que mudou. Você pode atualizar suas preferências a qualquer momento nas Configurações.",
+      "ctaGotIt" : "Entendi"
+    },
+    "setPreferences" : "Definir Preferências",
+    "footer" : {
+      "lead" : "Você pode revogar seu consentimento a qualquer momento nas configurações.",
+      "privacyLink" : "Política de privacidade"
     }
   },
   "walletSync" : {
@@ -8474,6 +8572,10 @@
       "title" : "Cotação Expirada",
       "description" : "A cotação expirou. Atualize e tente novamente."
     },
+    "details" : {
+      "code" : "Código do erro",
+      "correlationId" : "ID de referência"
+    },
     "default" : {
       "title" : "Algo deu errado",
       "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
@@ -8705,6 +8807,7 @@
     "bottomSheet" : {
       "title" : "Não foi possível carregar alguns dados da conta",
       "description" : "Seus ativos estão seguros. Este é um problema temporário de sincronização.\nContas afetadas: {{accounts}}",
+      "tryToRefresh" : "Tente atualizar",
       "close" : "Fechar"
     }
   },
@@ -8732,6 +8835,13 @@
     "error" : {
       "title" : "Falha ao instalar {{appName}}",
       "description" : "Algo deu errado durante a instalação. Tente novamente."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Ajuda",
+      "referral" : "Indicação"
     }
   }
 }

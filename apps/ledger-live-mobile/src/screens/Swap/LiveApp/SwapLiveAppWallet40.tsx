@@ -1,6 +1,7 @@
 import React, { RefObject, useCallback, useMemo } from "react";
-import { View } from "react-native";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { StyleSheet, View } from "react-native";
+import { Flex } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
@@ -14,6 +15,7 @@ import { useSwapWebviewProps } from "./hooks/useSwapWebviewProps";
 import { DefaultAccountSwapParamList } from "../types";
 import { useSwapWallet40HeaderStateUpdater } from "./navigationHandlers/wallet40/useSwapWallet40HeaderState";
 import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
+import { LiveAppBackground } from "LLM/components/LiveAppBackground";
 
 type SwapWebviewContentProps = {
   manifest: LiveAppManifest;
@@ -40,6 +42,10 @@ function SwapWebviewContent({
     />
   );
 }
+
+const styles = StyleSheet.create({
+  contentContainer: { flex: 1, zIndex: 1 },
+});
 
 /**
  * Wallet 4.0 variant of the Swap screen.
@@ -84,14 +90,17 @@ export function SwapLiveAppWallet40({
 
   return (
     <View style={containerStyle}>
-      {manifest && (
-        <SwapWebviewContent
-          manifest={manifest}
-          params={defaultParams}
-          webviewRef={webviewRef}
-          setWebviewState={handleWebviewStateChange}
-        />
-      )}
+      <LiveAppBackground type="swap" />
+      <View style={styles.contentContainer} pointerEvents="box-none">
+        {manifest && (
+          <SwapWebviewContent
+            manifest={manifest}
+            params={defaultParams}
+            webviewRef={webviewRef}
+            setWebviewState={handleWebviewStateChange}
+          />
+        )}
+      </View>
     </View>
   );
 }

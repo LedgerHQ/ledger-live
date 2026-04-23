@@ -20,7 +20,7 @@ import ExperimentalIcon from "~/icons/Experimental";
 import { rejections } from "~/logic/debugReject";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
-import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
+import { featureFlagsBannerVisibleSelector } from "@shared/feature-flags";
 
 export const HEIGHT = 30;
 export const PADDING = 8;
@@ -56,7 +56,7 @@ function ExperimentalHeader() {
 
     const targetState = shouldShowHeader ? OPENED_STATE : CLOSED_STATE;
     openState.value = withTiming(targetState, ANIMATION_CONFIG);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldShowHeader, openState]);
 
   const opacityStyle = useAnimatedStyle(

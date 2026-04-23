@@ -72,4 +72,12 @@ export class AppInfos {
   static readonly ZCASH = new AppInfos("Zcash");
 
   static readonly ALEO = new AppInfos("Aleo");
+
+  static readonly INTERNET_COMPUTER = new AppInfos("Internet Computer");
+
+  static readonly VELORA = new AppInfos("Velora");
+
+  static readonly ONE_INCH = new AppInfos("One Inch");
+
+  static readonly MINA = new AppInfos("Mina");
 }

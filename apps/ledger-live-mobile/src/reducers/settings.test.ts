@@ -1,18 +1,246 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { add } from "date-fns";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import reducer, {
+  analyticsConsentInfoSelector,
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
   resolvedThemeSelector,
   themeSelector,
+  trackingEnabledSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import { importSettings, setTheme } from "../actions/settings";
-
+import { importSettings, setAnalyticsConsentInfo, setTheme } from "../actions/settings";
+import { SettingsActionTypes } from "../actions/types";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
+
+const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
+  ...({} as State),
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
+    ...settingsPatch,
+    analyticsConsentInfo: {
+      ...SETTINGS_INITIAL_STATE.analyticsConsentInfo,
+      ...settingsPatch.analyticsConsentInfo,
+    },
+  },
+});
+
+/**
+ * `trackingEnabledSelector` runs consent / policy / rolling-window checks only when the
+ * `analyticsOptIn` feature is resolved as enabled; otherwise it only uses the toggles.
+ */
+const withAnalyticsOptInResolved = (
+  base: State,
+  params: Partial<{ policyVersion: number; consentValidityDays: number }> = {},
+): State =>
+  ({
+    ...base,
+    featureFlags: {
+      ...FEATURE_FLAGS_INITIAL_STATE,
+      ...base.featureFlags,
+      resolved: {
+        ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+        ...base.featureFlags?.resolved,
+        analyticsOptIn: {
+          ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
+          ...base.featureFlags?.resolved?.analyticsOptIn,
+          enabled: true,
+          params: {
+            ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn.params,
+            ...base.featureFlags?.resolved?.analyticsOptIn?.params,
+            ...params,
+          },
+        },
+      },
+    },
+  }) as State;
+
+describe("trackingEnabledSelector", () => {
+  /** Fixed clock so consent ages / one-year cutoff in `trackingEnabledSelector` do not depend on real time. */
+  const FIXED_NOW = new Date("2026-03-01T12:00:00.000Z");
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(FIXED_NOW);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("returns false when consentDate is null and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: 1 },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when analytics opt-in feature is off, consent is incomplete, and analytics is enabled", () => {
+    const state = stateWithSettings({
+      analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: null },
+      analyticsEnabled: true,
+    });
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns true when privacyPolicyVersion is null (legacy) but consent date is valid and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: FIXED_NOW.toISOString(),
+          privacyPolicyVersion: null,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns false when consentDate parses to NaN and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "not-a-valid-date",
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when privacy policy version is below current but consent is within one year and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2025-06-01T00:00:00.000Z",
+          privacyPolicyVersion: 0,
+        },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns false when consent is older than a 365-day rolling window and analytics opt-in feature is on", () => {
+    const expiredConsent = add(FIXED_NOW, { days: -366 }).toISOString();
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: expiredConsent,
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when consent is exactly on the 365-day cutoff and analytics opt-in feature is on", () => {
+    const now = new Date("2026-01-10T00:00:00.000Z");
+    jest.setSystemTime(now);
+
+    const consentOnCutoff = add(now, { days: -365 }).toISOString();
+
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: consentOnCutoff,
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("uses consentValidityDays from resolved flag params", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: add(FIXED_NOW, { days: -40 }).toISOString(),
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+      }),
+      { consentValidityDays: 30 },
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when consent is valid but analytics and personalized recommendations are off and analytics opt-in feature is on", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2026-02-01T00:00:00.000Z",
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when analytics opt-in feature is off and both toggles are off despite valid consent", () => {
+    const state = stateWithSettings({
+      analyticsConsentInfo: {
+        consentDate: "2026-02-01T00:00:00.000Z",
+        privacyPolicyVersion: 1,
+      },
+      analyticsEnabled: false,
+      personalizedRecommendationsEnabled: false,
+    });
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns true when consent is valid, analytics opt-in feature is on, and analytics is enabled", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2026-02-01T00:00:00.000Z",
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns true when consent is valid, analytics opt-in feature is on, and personalized recommendations are enabled", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: "2026-02-01T00:00:00.000Z",
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns true when analytics opt-in feature is off and only personalized recommendations are enabled", () => {
+    const state = stateWithSettings({
+      analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: null },
+      analyticsEnabled: false,
+      personalizedRecommendationsEnabled: true,
+    });
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+});
 
 describe("lastConnectedDeviceSelector", () => {
   it("should return the last connected device if the deviceModelId is valid", () => {
@@ -230,6 +458,69 @@ describe("filterValidSettings", () => {
     expect(filtered.language).toBe("en");
     expect("obsoleteField1" in filtered).toBe(false);
     expect("obsoleteField2" in filtered).toBe(false);
+  });
+});
+
+describe("analyticsConsentInfo initial state", () => {
+  it("should default consentDate and privacyPolicyVersion to null", () => {
+    expect(SETTINGS_INITIAL_STATE.analyticsConsentInfo).toEqual({
+      consentDate: null,
+      privacyPolicyVersion: null,
+    });
+  });
+
+  it("should set analyticsConsentInfo from action payload", () => {
+    const payload = {
+      consentDate: "2025-03-26T12:00:00.000Z",
+      privacyPolicyVersion: 1,
+    };
+    const action = setAnalyticsConsentInfo(payload);
+
+    expect(action.type).toBe(SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO);
+    expect(action.payload).toEqual(payload);
+
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+    expect(newState.analyticsConsentInfo).toEqual(payload);
+  });
+
+  it("should replace analyticsConsentInfo when dispatched again", () => {
+    const first = {
+      consentDate: "2025-01-01T00:00:00.000Z",
+      privacyPolicyVersion: 1,
+    };
+    const second = {
+      consentDate: "2025-06-01T00:00:00.000Z",
+      privacyPolicyVersion: 2,
+    };
+
+    const afterFirst = reducer(SETTINGS_INITIAL_STATE, setAnalyticsConsentInfo(first));
+    const afterSecond = reducer(afterFirst, setAnalyticsConsentInfo(second));
+
+    expect(afterSecond.analyticsConsentInfo).toEqual(second);
+  });
+
+  it("should expose stored value via analyticsConsentInfoSelector", () => {
+    const payload = {
+      consentDate: "2025-03-26T12:00:00.000Z",
+      privacyPolicyVersion: 3,
+    };
+    const settings = reducer(SETTINGS_INITIAL_STATE, setAnalyticsConsentInfo(payload));
+    const state = { ...({} as State), settings };
+
+    expect(analyticsConsentInfoSelector(state)).toEqual(payload);
+  });
+});
+
+describe("filterValidSettings for analyticsConsentInfo", () => {
+  it("should keep analyticsConsentInfo when importing partial settings", () => {
+    const importedSettings: Partial<SettingsState> = {
+      analyticsConsentInfo: {
+        consentDate: "2025-02-01T10:00:00.000Z",
+        privacyPolicyVersion: 2,
+      },
+    };
+
+    expect(filterValidSettings(importedSettings)).toEqual(importedSettings);
   });
 });
 

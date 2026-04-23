@@ -27,6 +27,8 @@ import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 type ItemShape = {
   key: string;
@@ -55,6 +57,8 @@ const AccountCrumb = () => {
       id: segments.slice(1).join("/"),
     };
   }, [splat]);
+
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
 
   const accounts = useSelector(accountsSelector);
 
@@ -196,7 +200,7 @@ const AccountCrumb = () => {
         <Button
           onClick={() => {
             setTrackingSource("account breadcrumb");
-            navigate("/accounts/");
+            navigate(getAccountsSidebarPath(shouldDisplayAssetSection));
           }}
         >
           {t("accounts.title")}
@@ -211,7 +215,7 @@ const AccountCrumb = () => {
         <Button
           onClick={() => {
             setTrackingSource("account breadcrumb");
-            navigate("/accounts/");
+            navigate(getAccountsSidebarPath(shouldDisplayAssetSection));
           }}
         >
           {t("accounts.title")}

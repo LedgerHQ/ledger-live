@@ -7,56 +7,24 @@ import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
 
-async function navigateToSubAccount(account: AccountType) {
-  const subAccountId = app.account.subAccountId(account);
-  await app.account.openViaDeeplink();
-  await app.account.goToAccountById(subAccountId);
-  await waitForElement(app.account.accountGraph(subAccountId));
-}
-
-async function checkOperationInfos(
-  transaction: TransactionType,
-  isSentTransaction: boolean = true,
-  operationType?: keyof typeof app.operationDetails.operationsType,
-) {
-  await app.operationDetails.waitForOperationDetails();
-  await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
-  await app.operationDetails.checkRecipientAddress(
-    isSentTransaction ? transaction.accountToCredit : transaction.accountToCredit.parentAccount!,
-  );
-  if (operationType) await app.operationDetails.checkTransactionType(operationType);
-}
-
 const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
   await app.init({
     userdata: "skip-onboarding",
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     cliCommands: [
-      (userDataPath?: string) => {
-        return CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          appjson: userDataPath,
-          add: true,
-        });
-      },
+      liveDataCommand(transaction.accountToDebit),
       ...(setAccountToCredit
         ? [
             async (userDataPath?: string) => {
-              await CLI.liveData({
-                currency: transaction.accountToCredit.currency.speculosApp.name,
-                index: transaction.accountToCredit.index,
-                appjson: userDataPath,
-                add: true,
-              });
+              await liveDataCommand(transaction.accountToCredit)(userDataPath);
 
               const parentAccountToCredit = transaction.accountToCredit.parentAccount;
               invariant(parentAccountToCredit, "Parent account to credit is required");
               const parentAccountToDebit = transaction.accountToDebit.parentAccount;
               invariant(parentAccountToDebit, "Parent account to debit is required");
 
-              parentAccountToCredit.address = await CLI.getAddressForAccount(parentAccountToCredit);
-              parentAccountToDebit.address = await CLI.getAddressForAccount(parentAccountToDebit);
+              parentAccountToCredit.address = await getAccountAddress(parentAccountToCredit);
+              parentAccountToDebit.address = await getAccountAddress(parentAccountToDebit);
             },
           ]
         : []),
@@ -76,7 +44,7 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
 
     it(`Send from ${transaction.accountToDebit.accountName} Account to ${transaction.accountToCredit.accountName} Account - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
-      await navigateToSubAccount(transaction.accountToDebit);
+      await app.account.navigateToSubAccount(transaction.accountToDebit);
       await app.account.tapSend();
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
@@ -96,14 +64,14 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       await device.disableSynchronization();
       await app.common.successViewDetails();
 
-      await checkOperationInfos(transaction, true, "OUT");
+      await app.operationDetails.checkOperationInfos(transaction, true, "OUT");
 
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         const subAccountId = app.account.subAccountId(transaction.accountToCredit);
-        await navigateToSubAccount(transaction.accountToCredit);
+        await app.account.navigateToSubAccount(transaction.accountToCredit);
         await app.account.expectAccountBalanceVisible(subAccountId);
         await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
-        await checkOperationInfos(transaction, false);
+        await app.operationDetails.checkOperationInfos(transaction, false);
       }
     });
   });

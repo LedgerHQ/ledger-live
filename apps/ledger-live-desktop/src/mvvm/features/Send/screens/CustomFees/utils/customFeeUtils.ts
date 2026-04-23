@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CustomFeeInputDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
+import type { CustomFeeInputDescriptor } from "@ledgerhq/live-common/bridge/descriptor/types";
 
 export function isValidNumberForInput(inputKey: string, value: string): boolean {
   if (!value.trim()) return false;

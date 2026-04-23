@@ -13,6 +13,8 @@ const minaConfig: CurrencyLiveConfigDefinition = {
       },
       infra: {
         API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
+        API_MINA_GRAPHQL_NODE: "https://mina.coin.ledger.com/node/graphql",
+        API_VALIDATORS_BASE_URL: "https://mina.coin.ledger.com/node/validators",
       },
     },
   },

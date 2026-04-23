@@ -3,6 +3,7 @@ import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
 import { validatePublicKey, ValidationResult, b58Encode, PrefixV2 } from "@taquito/utils";
 import coinConfig from "./config";
 import type { APIAccount } from "./network/types";
+import type { TezosOperationMode } from "./types/model";
 
 /**
  * Dust margin in mutez to prevent transaction failures on send max operations
@@ -39,6 +40,48 @@ export function mapIntentTypeToTezosMode(intentType: string): "send" | "delegate
     default:
       return "send";
   }
+}
+
+/** Minimal asset shape from `TransactionIntent` for FA2 detection */
+export type TezosAssetLike = {
+  type: string;
+  assetReference?: string;
+};
+
+/**
+ * Parse FA1.2 / FA2 token contract + token id from Alpaca `assetReference`
+ * (`KT1…` or `KT1…:tokenId` as produced by getBlock / listOperations).
+ */
+export function parseTezosTokenAsset(
+  asset: TezosAssetLike | undefined,
+): { contractAddress: string; tokenId: number } | null {
+  if (!asset || asset.type === "native") return null;
+  const ref = asset.assetReference?.trim();
+  if (!ref?.startsWith("KT1")) return null;
+
+  const colonIdx = ref.lastIndexOf(":");
+  if (colonIdx > 0) {
+    const contractAddress = ref.slice(0, colonIdx);
+    const tokenId = Number(ref.slice(colonIdx + 1));
+    if (!Number.isFinite(tokenId) || tokenId < 0) return null;
+    return { contractAddress, tokenId };
+  }
+
+  return { contractAddress: ref, tokenId: 0 };
+}
+
+/**
+ * Resolves Tezos operation mode from intent type and asset (native XTZ vs token).
+ */
+export function resolveTezosOperationMode(
+  intentType: string,
+  asset: TezosAssetLike | undefined,
+): TezosOperationMode {
+  const base = mapIntentTypeToTezosMode(intentType);
+  if (base === "send" && parseTezosTokenAsset(asset) !== null) {
+    return "send_token";
+  }
+  return base;
 }
 
 /**

@@ -18,6 +18,8 @@ export type CommonDeviceTransactionField =
       type: "text";
       label: string;
       value: string;
+      /** When set, `value` is treated as a plain display string and this key is used for i18n lookup instead. */
+      valueI18nKey?: string;
       tooltipI18nKey?: string;
       tooltipI18nArgs?: tooltipArgs;
     };

@@ -3,7 +3,7 @@ import {
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { RecentAddress } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -42,6 +42,7 @@ export function useRecipientScreenView({
     account,
     parentAccount,
     currentAccountId: mainAccount.id,
+    recipientSupportsDomain,
   });
 
   const allAccounts = useSelector(accountsSelector);
@@ -91,7 +92,7 @@ export function useRecipientScreenView({
       });
     // refreshKey is used to force recalculation when addresses are removed from the store
     // even though it's not directly used in the computation
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currency, refreshCounter, mainAccount.freshAddress, userAccountsForCurrency]);
 
   const hasSearchValue = recipientSearch.value.length > 0;

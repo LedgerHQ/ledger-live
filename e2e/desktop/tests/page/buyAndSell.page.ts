@@ -4,14 +4,13 @@ import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enu
 import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
-import { getModularSelectorFromInstances } from "../utils/modularSelectorUtils";
+import { getModularSelectorFromInstance } from "../utils/modularSelectorUtils";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -21,6 +20,8 @@ interface ProviderConfig {
 }
 
 export class BuyAndSellPage extends WebViewAppPage {
+  protected readonly webviewIdentifier = "buy";
+
   private navigationTabs = "navigation-tabs";
   private cryptoCurrencySelectorLabel = "account-details";
   private cryptoCurrencySelector = "crypto-amount-option-button";
@@ -42,7 +43,6 @@ export class BuyAndSellPage extends WebViewAppPage {
   private showMoreQuotes = "SHOW MORE QUOTES";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private modularDrawer = new ModularDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
 
   private standardSellParams: Record<string, (buySell: BuySell) => string | number> = {
@@ -52,7 +52,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   };
 
   private providerConfigs: Record<string, ProviderConfig> = {
-    [Provider.MOONPAY.uiName]: {
+    [BuySellProvider.MOONPAY.uiName]: {
       buyParams: {
         baseCurrencyAmount: buySell => buySell.amount,
         currencyCode: buySell => buySell.crypto.currency.ticker,
@@ -61,7 +61,7 @@ export class BuyAndSellPage extends WebViewAppPage {
       sellParams: this.standardSellParams,
       addressParam: "walletaddress",
     },
-    [Provider.TRANSAK.uiName]: {
+    [BuySellProvider.TRANSAK.uiName]: {
       buyParams: {
         fiatAmount: buySell => buySell.amount,
         cryptoCurrencyCode: buySell => buySell.crypto.currency.ticker,
@@ -70,7 +70,7 @@ export class BuyAndSellPage extends WebViewAppPage {
       sellParams: this.standardSellParams,
       addressParam: "walletaddress",
     },
-    [Provider.COINBASE.uiName]: {
+    [BuySellProvider.COINBASE.uiName]: {
       buyParams: {
         presetFiatAmount: buySell => buySell.amount,
         defaultAsset: buySell => buySell.crypto.currency.ticker,
@@ -108,6 +108,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     if (await this.isCorrectAssetAlreadySelected(account)) return;
+    await this.verifyElementTextNotContains(this.cryptoCurrencySelector, "loading");
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
   }
@@ -122,11 +123,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInDrawer(account: AccountType) {
-    const selector = await getModularSelectorFromInstances(
-      this.page,
-      this.modularDrawer,
-      this.modularDialog,
-    );
+    const selector = await getModularSelectorFromInstance(this.page, this.modularDialog);
     if (selector) {
       await this.selectAssetInModularSelector(account, selector);
     } else {
@@ -134,10 +131,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     }
   }
 
-  private async selectAssetInModularSelector(
-    account: AccountType,
-    selector: ModularDrawer | ModularDialog,
-  ) {
+  private async selectAssetInModularSelector(account: AccountType, selector: ModularDialog) {
     await selector.validateItems();
     await selector.selectAsset(account.currency);
     await selector.selectNetwork(account.currency);
@@ -197,10 +191,16 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementIsNotVisible(this.providersList);
   }
 
-  @step("Verify info box")
-  async verifyInfoBox() {
+  @step("Verify buy info box")
+  async verifyBuyInfoBox() {
     await this.verifyElementIsVisible(this.infoBox);
     await this.verifyElementText(this.infoBox, "Buy securely with Ledger");
+  }
+
+  @step("Verify sell info box")
+  async verifySellInfoBox() {
+    await this.verifyElementIsVisible(this.infoBox);
+    await this.verifyElementText(this.infoBox, "Sell securely with Ledger");
   }
 
   @step("Enter amount to pay $0")
@@ -244,15 +244,26 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async waitForGoToUrl(): Promise<string> {
+    let stableUrl: string | undefined;
+
     await waitFor(
-      async () => this.webviewUrlHistory.some(url => url.toLowerCase().includes("gotourl")),
+      async () => {
+        const goToUrls = this.webviewUrlHistory.filter(url =>
+          url.toLowerCase().includes("gotourl"),
+        );
+        const latest = goToUrls.at(-1);
+        if (latest !== undefined && latest === stableUrl) {
+          return true; // last gotourl unchanged since previous check → settled
+        }
+        stableUrl = latest;
+        return false;
+      },
       200,
       10_000,
     );
 
-    const url = this.webviewUrlHistory.find(url => url.toLowerCase().includes("gotourl"));
-    if (!url) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
-    return url;
+    if (!stableUrl) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
+    return stableUrl;
   }
 
   private verifyBaseUrl(url: URL, providerName: string, operation: OperationType) {

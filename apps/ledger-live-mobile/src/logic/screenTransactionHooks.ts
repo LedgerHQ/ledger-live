@@ -212,7 +212,7 @@ export const useSignWithDevice = ({
         subscription.current.unsubscribe();
       }
     }; // only this effect on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return [signing, signed];
 };

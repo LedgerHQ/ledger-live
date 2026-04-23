@@ -217,7 +217,9 @@ export const mapTxToOperations = (
   const inputs = new Set<`${string}-${number}`>(); // txid-outputIndex
 
   for (const input of tx.inputs) {
-    inputs.add(`${input.output_hash}-${input.output_index}`);
+    if (input.output_hash) {
+      inputs.add(`${input.output_hash}-${input.output_index}`);
+    }
     if (input.address) {
       senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
@@ -344,5 +346,5 @@ export const mapTxToOperations = (
 };
 
 export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
-  return "privateInfo" in a;
+  return "privateInfo" in a && a.currency.id === "zcash";
 }

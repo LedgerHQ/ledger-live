@@ -14,11 +14,10 @@ import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExch
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
-import {
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-} from "~/actions/types";
 import WebSocket from "ws";
+import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
+
+export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
 
 export type ServerData =
   | {
@@ -42,6 +41,7 @@ export type ServerData =
       payload: string;
     }
   | { type: "ACK"; id: string }
+  | { type: "swapSetupDone" }
   | { type: "swapLiveAppReady" }
   | { type: "earnLiveAppReady" };
 
@@ -71,10 +71,10 @@ export type MessageData =
       }[];
     }
   | { type: "importBle"; id: string; payload: BleState }
-  | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
-  | { type: "overrideFeatureFlag"; id: string; payload: SettingsSetOverriddenFeatureFlagPlayload }
+  | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
+  | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
-  | { type: "swapSetup"; id: string }
+  | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
   | { type: "ACK"; id: string };

@@ -1,18 +1,44 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { SignRawOperationArg0 } from "@ledgerhq/types-live";
 import { MinaCoinConfig } from "../config";
-import { MinaSigner } from "../types";
-import { createBridges } from ".";
+import { MinaAccount, MinaSigner } from "../types";
+import { createBridges, buildCurrencyBridge, buildAccountBridge, makeCliTools } from ".";
 
-describe("createBridges", () => {
-  let bridges: ReturnType<typeof createBridges>;
-  beforeEach(() => {
-    bridges = createBridges(
-      undefined as unknown as SignerContext<MinaSigner>,
-      {} as unknown as MinaCoinConfig,
-    );
+describe("buildCurrencyBridge", () => {
+  const currencyBridge = buildCurrencyBridge(jest.fn() as SignerContext<MinaSigner>);
+
+  it("preload resolves to empty object", async () => {
+    expect(await currencyBridge.preload({} as CryptoCurrency)).toEqual({});
   });
 
-  it("has a currency bridge and an account bridge with required methods", () => {
+  it("hydrate does not throw", () => {
+    expect(() => currencyBridge.hydrate({} as CryptoCurrency, {} as CryptoCurrency)).not.toThrow();
+  });
+});
+
+describe("buildAccountBridge", () => {
+  const accountBridge = buildAccountBridge(jest.fn() as SignerContext<MinaSigner>);
+
+  it("signRawOperation is not supported", () => {
+    expect(() => accountBridge.signRawOperation({} as SignRawOperationArg0<MinaAccount>)).toThrow(
+      "signRawOperation is not supported",
+    );
+  });
+});
+
+describe("makeCliTools", () => {
+  it("is a function", () => {
+    expect(typeof makeCliTools).toBe("function");
+  });
+});
+
+describe("createBridges", () => {
+  it("returns a currency bridge and an account bridge with all required methods", () => {
+    const bridges = createBridges(
+      jest.fn() as SignerContext<MinaSigner>,
+      jest.fn() as MinaCoinConfig,
+    );
     expect(bridges).toEqual({
       accountBridge: {
         broadcast: expect.any(Function),
@@ -27,6 +53,8 @@ describe("createBridges", () => {
         sync: expect.any(Function),
         updateTransaction: expect.any(Function),
         validateAddress: expect.any(Function),
+        assignFromAccountRaw: expect.any(Function),
+        assignToAccountRaw: expect.any(Function),
       },
       currencyBridge: {
         preload: expect.any(Function),

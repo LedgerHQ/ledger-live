@@ -1432,6 +1432,25 @@ describe("EVM Family", () => {
       );
     });
 
+    it("should return empty operations when API returns null result (e.g. Monad Testnet explorer)", async () => {
+      // Some explorers (e.g. Monad Testnet) return `{"status":"0","message":"No transactions found","result":null}`
+      // instead of `{"result":[]}` for empty internal transaction lists.
+      jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "0", message: "No transactions found", result: null },
+      });
+
+      const response = await ETHERSCAN_API.getInternalOperations({
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        sort: "asc",
+      });
+
+      expect(response.operations).toEqual([]);
+      expect(response.isDone).toBe(true);
+    });
+
     describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getInternalOperations);
 
@@ -2497,6 +2516,34 @@ describe("EVM Family", () => {
         },
       );
     };
+
+    it("always uses limit + 1 as probe", async () => {
+      const mockFetch = jest
+        .fn<Promise<ETHERSCAN_API.EndpointResult>, [ETHERSCAN_API.FetchOperationsParams]>()
+        .mockResolvedValue({
+          operations: createOps(Array.from({ length: 100 }, (_, i) => i + 1)),
+          isDone: true,
+          boundBlock: 100,
+          isPageFull: false,
+        });
+
+      await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        limit: 100,
+        sort: "desc",
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch.mock.calls[0]?.[0]).toEqual(
+        expect.objectContaining({
+          page: 1,
+          limit: 101,
+        }),
+      );
+    });
 
     it.each([
       {

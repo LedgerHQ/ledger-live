@@ -1,0 +1,1240 @@
+/**
+ * @jest-environment jsdom
+ */
+
+/**
+ * Tests for useDeviceIntentExecutor — the React hook that manages the
+ * device-intent executor state machine (SM) and derives render-ready state.
+ *
+ * ## Test strategy
+ *
+ * **Integration smoke tests (real StateMachine)**
+ * Drive the hook through its full lifecycle using the real SM, verifying
+ * end-to-end phase transitions and observable behavior at a smoke level:
+ *   - Phase transitions: connection → initialization → execution → idle
+ *   - Error / retry flows (connection and initialization errors)
+ *   - Job emission, completion, and the lastIntentSnapshot contract
+ *   - Device disconnection detection and re-connection
+ *   - Prop-change reactivity (intent, requiredDeviceContext, cancelIntentRequestId)
+ *   - enabled toggling (creates / destroys the SM)
+ *   - Callback identity stability across re-renders
+ *
+ * **Unit tests (mocked SM)**
+ * Replace the SM with a mock class to verify the hook's internal wiring
+ * in isolation from the SM logic:
+ *   - SM lifecycle: construction params, stop() on disable / unmount
+ *   - Hook callbacks → SM methods forwarding (each callback → correct method)
+ *   - SM listeners → internal state side-effects (jobState reset, live updates, snapshot tracking)
+ *   - SM listeners → prop callback forwarding (onExecutorStateChanged, onIntentJob*)
+ *   - Props → SM actions: change-detection, dispatch ordering (context before intent)
+ *   - cancelIntentRequestId edge cases (idempotency, re-trigger)
+ *   - Device session subscription lifecycle (create, swap, cleanup)
+ */
+
+import { act, renderHook } from "@testing-library/react";
+import { NEVER, Subject, of, throwError } from "rxjs";
+import type { DeviceConnectionResult, RequiredDeviceContext } from "./core";
+import type {
+  DeviceIntentExecutorStateMachine,
+  StateMachineListeners,
+} from "./DeviceIntentExecutorStateMachine";
+import type { DeviceIntentExecutorProps } from "./executor";
+import {
+  useDeviceIntentExecutor,
+  type DeviceIntentExecutorHookState,
+} from "./useDeviceIntentExecutor";
+import {
+  defaultRequiredContext,
+  makeExtractedContext,
+  makeConnectionResult as makeBaseConnectionResult,
+  makeIntent as makeBaseIntent,
+  flushMicrotasks,
+} from "./__tests__/test-utils";
+
+// ---- Mocks ----
+
+jest.mock("@ledgerhq/device-management-kit", () => ({
+  DeviceStatus: { NOT_CONNECTED: "not-connected" },
+}));
+
+// ---- Test helpers ----
+
+const intentComponent = ({ jobState }: { jobState: unknown }) => (
+  <div data-testid="intent-component">{String(jobState)}</div>
+);
+
+const makeIntent = (job: () => import("rxjs").Observable<unknown> = () => NEVER) =>
+  makeBaseIntent({ job, component: intentComponent });
+
+const makeConnectionResult = (
+  sessionId = "session-1",
+): DeviceConnectionResult & { _sessionStateSubject: Subject<{ deviceStatus: string }> } => {
+  const sessionStateSubject = new Subject<{ deviceStatus: string }>();
+  return {
+    ...makeBaseConnectionResult(sessionId),
+    dmk: {
+      getDeviceSessionState: jest.fn(() => sessionStateSubject.asObservable()),
+    } as unknown as DeviceConnectionResult["dmk"],
+    _sessionStateSubject: sessionStateSubject,
+  };
+};
+
+type TestProps = DeviceIntentExecutorProps<unknown, unknown, unknown>;
+
+function makeProps(overrides: Partial<TestProps> = {}): TestProps {
+  return {
+    deviceConnectionParams: { acceptedDeviceModelIds: [] },
+    requiredDeviceContext: defaultRequiredContext,
+    onExecutorStateChanged: jest.fn(),
+    intent: makeIntent(),
+    intentComponentExtraProps: undefined,
+    onIntentJobStateChanged: jest.fn(),
+    onIntentJobComplete: jest.fn(),
+    onIntentJobError: jest.fn(),
+    enabled: true,
+    cancellableUI: false,
+    onUserCancel: jest.fn(),
+    cancelIntentRequestId: undefined,
+    ...overrides,
+  };
+}
+
+type HookState = DeviceIntentExecutorHookState<unknown, unknown, unknown> | null;
+
+/**
+ * Narrow `result.current` to a specific phase, failing the test early if the
+ * phase doesn't match (safer than a bare `as` cast).
+ */
+function inPhase<P extends NonNullable<HookState>["phase"]>(
+  state: HookState,
+  phase: P,
+): Extract<NonNullable<HookState>, { phase: P }> {
+  expect(state).not.toBeNull();
+  expect((state as NonNullable<HookState>).phase).toBe(phase);
+  return state as Extract<NonNullable<HookState>, { phase: P }>;
+}
+
+function renderIntegration(overrides: Partial<TestProps> = {}) {
+  const props = makeProps(overrides);
+  return {
+    ...renderHook(({ p }: { p: TestProps }) => useDeviceIntentExecutor(p), {
+      initialProps: { p: props },
+    }),
+    props,
+  };
+}
+
+// ---- Tests ----
+
+describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => {
+  describe("GIVEN enabled is true", () => {
+    it("THEN the hook returns phase deviceConnection on mount", () => {
+      const { result } = renderIntegration();
+      expect(result.current).not.toBeNull();
+      expect(result.current!.phase).toBe("deviceConnection");
+    });
+
+    it("THEN onExecutorStateChanged is called with connectingDevice", () => {
+      const { props } = renderIntegration();
+      expect(props.onExecutorStateChanged).toHaveBeenCalledWith({ type: "connectingDevice" });
+    });
+  });
+
+  describe("GIVEN enabled is false", () => {
+    it("THEN the hook returns null", () => {
+      const { result } = renderIntegration({ enabled: false });
+      expect(result.current).toBeNull();
+    });
+  });
+
+  describe("GIVEN the hook is in deviceConnection phase", () => {
+    it("WHEN onConnected is called THEN it transitions to deviceInitialization", () => {
+      const { result } = renderIntegration();
+      const state = inPhase(result.current, "deviceConnection");
+
+      const connectionResult = makeConnectionResult();
+      act(() => state.onConnected(connectionResult));
+
+      inPhase(result.current, "deviceInitialization");
+    });
+
+    it("WHEN onError is called THEN it transitions to connectionError", () => {
+      const { result } = renderIntegration();
+      const state = inPhase(result.current, "deviceConnection");
+
+      const err = new Error("connection failed");
+      act(() => state.onError(err));
+
+      const updated = inPhase(result.current, "connectionError");
+      expect(updated.error).toBe(err);
+    });
+  });
+
+  describe("GIVEN the hook is in connectionError phase", () => {
+    it("WHEN onRetry is called THEN it transitions back to deviceConnection", () => {
+      const { result } = renderIntegration();
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onError(new Error("fail"));
+      });
+      inPhase(result.current, "connectionError");
+
+      act(() => {
+        inPhase(result.current, "connectionError").onRetry();
+      });
+      inPhase(result.current, "deviceConnection");
+    });
+  });
+
+  describe("GIVEN the hook is in deviceInitialization phase", () => {
+    it("WHEN onContextInitialized is called THEN it transitions to intentExecution", () => {
+      const { result } = renderIntegration({ intent: makeIntent(() => NEVER) });
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(makeConnectionResult());
+      });
+      inPhase(result.current, "deviceInitialization");
+
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "intentExecution");
+    });
+
+    it("WHEN onError is called THEN it transitions to initializationError", () => {
+      const { result } = renderIntegration();
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(makeConnectionResult());
+      });
+
+      const err = new Error("init failed");
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onError(err);
+      });
+
+      const updated = inPhase(result.current, "initializationError");
+      expect(updated.error).toBe(err);
+    });
+  });
+
+  describe("GIVEN the hook is in initializationError phase", () => {
+    it("WHEN onRetry is called THEN it transitions back to deviceInitialization", () => {
+      const { result } = renderIntegration();
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(makeConnectionResult());
+      });
+
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onError(new Error("init failed"));
+      });
+      inPhase(result.current, "initializationError");
+
+      act(() => {
+        inPhase(result.current, "initializationError").onRetry();
+      });
+      inPhase(result.current, "deviceInitialization");
+    });
+  });
+
+  describe("GIVEN the hook is in intentExecution phase", () => {
+    function driveToExecution(overrides: Partial<TestProps> = {}) {
+      const integration = renderIntegration(overrides);
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(integration.result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(integration.result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      return { ...integration, connectionResult };
+    }
+
+    it("THEN intentComponent and intentComponentExtraProps are provided", () => {
+      const intent = makeIntent(() => NEVER);
+      const { result } = driveToExecution({ intent, intentComponentExtraProps: { foo: "bar" } });
+
+      const state = inPhase(result.current, "intentExecution");
+      expect(state.intentComponent).toBe(intent.component);
+      expect(state.intentComponentExtraProps).toEqual({ foo: "bar" });
+    });
+
+    it("WHEN the job emits THEN jobState is updated and onIntentJobStateChanged is called", async () => {
+      const subject = new Subject<unknown>();
+      const { result, props } = driveToExecution({
+        intent: makeIntent(() => subject.asObservable()),
+      });
+
+      await act(async () => {
+        subject.next({ step: "running" });
+        await flushMicrotasks();
+      });
+
+      const state = inPhase(result.current, "intentExecution");
+      expect(state.jobState).toEqual({ step: "running" });
+      expect(props.onIntentJobStateChanged).toHaveBeenCalledWith({ step: "running" });
+    });
+
+    it("WHEN the job completes THEN it transitions to idle and onIntentJobComplete is called", async () => {
+      const { result, props } = driveToExecution({ intent: makeIntent(() => of("done")) });
+
+      await act(async () => {
+        await flushMicrotasks();
+      });
+
+      inPhase(result.current, "idle");
+      expect(props.onIntentJobComplete).toHaveBeenCalled();
+    });
+
+    it("WHEN the job completes THEN idle includes lastIntentSnapshot with the last job state", async () => {
+      const intent = makeIntent(() => of("final-state"));
+      const { result } = driveToExecution({ intent, intentComponentExtraProps: { extra: 42 } });
+
+      await act(async () => {
+        await flushMicrotasks();
+      });
+
+      const state = inPhase(result.current, "idle");
+      expect(state.lastIntentSnapshot).not.toBeNull();
+      expect(state.lastIntentSnapshot!.intentComponent).toBe(intent.component);
+      expect(state.lastIntentSnapshot!.jobState).toBe("final-state");
+      expect(state.lastIntentSnapshot!.intentComponentExtraProps).toEqual({ extra: 42 });
+    });
+
+    it("WHEN jobState is undefined before first emission THEN intentExecution reflects undefined", () => {
+      const { result } = driveToExecution({ intent: makeIntent(() => NEVER) });
+
+      const state = inPhase(result.current, "intentExecution");
+      expect(state.jobState).toBeUndefined();
+    });
+
+    it("WHEN the job errors THEN it transitions to intentError and onIntentJobError is called", () => {
+      const jobError = new Error("job failed");
+      const { result, props } = driveToExecution({
+        intent: makeIntent(() => throwError(() => jobError)),
+      });
+
+      const state = inPhase(result.current, "intentError");
+      expect(state.error).toBe(jobError);
+      expect(props.onIntentJobError).toHaveBeenCalledWith(jobError);
+    });
+
+    it("WHEN the device disconnects THEN it transitions to connectionError", () => {
+      const { result, connectionResult } = driveToExecution({
+        intent: makeIntent(() => NEVER),
+      });
+
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+
+      inPhase(result.current, "connectionError");
+    });
+  });
+
+  describe("GIVEN the hook is in intentError phase", () => {
+    it("WHEN onRetry is called THEN the job is re-invoked and it transitions to intentExecution", () => {
+      let callCount = 0;
+      const jobFn = () => {
+        callCount++;
+        if (callCount === 1) return throwError(() => new Error("first call fails"));
+        return NEVER;
+      };
+      const { result } = renderIntegration({ intent: makeIntent(jobFn) });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "intentError");
+
+      act(() => {
+        inPhase(result.current, "intentError").onRetry();
+      });
+      inPhase(result.current, "intentExecution");
+    });
+  });
+
+  describe("device disconnection monitoring", () => {
+    it("WHEN the device emits NOT_CONNECTED THEN the hook transitions to connectionError", () => {
+      const { result } = renderIntegration({ intent: makeIntent(() => NEVER) });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      inPhase(result.current, "deviceInitialization");
+
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+
+      inPhase(result.current, "connectionError");
+    });
+
+    it("WHEN the device disconnects and reconnects THEN a new subscription is made", () => {
+      const { result } = renderIntegration({ intent: makeIntent(() => NEVER) });
+
+      const connectionResult1 = makeConnectionResult("session-1");
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult1);
+      });
+      expect(connectionResult1.dmk.getDeviceSessionState).toHaveBeenCalledWith({
+        sessionId: "session-1",
+      });
+
+      act(() => {
+        connectionResult1._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+      inPhase(result.current, "connectionError");
+
+      act(() => {
+        inPhase(result.current, "connectionError").onRetry();
+      });
+
+      const connectionResult2 = makeConnectionResult("session-2");
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult2);
+      });
+      expect(connectionResult2.dmk.getDeviceSessionState).toHaveBeenCalledWith({
+        sessionId: "session-2",
+      });
+    });
+  });
+
+  describe("props -> SM actions (happy paths)", () => {
+    it("WHEN intent changes from idle THEN it transitions to intentExecution", () => {
+      const { result, rerender, props } = renderIntegration({
+        intent: makeIntent(() => of("done")),
+      });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "idle");
+
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, intent: newIntent } });
+
+      inPhase(result.current, "intentExecution");
+    });
+
+    it("WHEN intent changes from idle THEN jobState is reset to undefined (not stale from previous intent)", () => {
+      const { result, rerender, props } = renderIntegration({
+        intent: makeIntent(() => of("old-state")),
+      });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "idle");
+
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, intent: newIntent } });
+
+      const state = inPhase(result.current, "intentExecution");
+      expect(state.jobState).toBeUndefined();
+    });
+
+    it("WHEN requiredDeviceContext changes from idle THEN it transitions to deviceInitialization", () => {
+      const { result, rerender, props } = renderIntegration({
+        intent: makeIntent(() => of("done")),
+      });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "idle");
+
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      rerender({ p: { ...props, requiredDeviceContext: newContext } });
+
+      inPhase(result.current, "deviceInitialization");
+    });
+
+    it("WHEN both requiredDeviceContext and intent change simultaneously from idle THEN context is dispatched first (transitions to deviceInitialization, not intentError)", () => {
+      const { result, rerender, props } = renderIntegration({
+        intent: makeIntent(() => of("done")),
+      });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "idle");
+
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, requiredDeviceContext: newContext, intent: newIntent } });
+
+      // If context was dispatched first: idle -> deviceInitialization (via SET_REQUIRED_CONTEXT)
+      // then SET_INTENT is absorbed as a self-transition.
+      // If intent was dispatched first: idle -> intentExecution (wrong context!)
+      inPhase(result.current, "deviceInitialization");
+    });
+  });
+
+  describe("cancelIntentRequestId", () => {
+    it("WHEN cancelIntentRequestId changes to a new value THEN the intent is stopped", () => {
+      const subject = new Subject<unknown>();
+      const { result, rerender, props } = renderIntegration({
+        intent: makeIntent(() => subject.asObservable()),
+      });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      inPhase(result.current, "intentExecution");
+
+      rerender({ p: { ...props, cancelIntentRequestId: "cancel-1" } });
+
+      inPhase(result.current, "idle");
+    });
+
+    it("WHEN intent is cancelled THEN idle includes lastIntentSnapshot with the execution state at time of cancellation", async () => {
+      const subject = new Subject<unknown>();
+      const intent = makeIntent(() => subject.asObservable());
+      const { result, rerender, props } = renderIntegration({
+        intent,
+        intentComponentExtraProps: { x: 1 },
+      });
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+
+      await act(async () => {
+        subject.next("in-progress");
+        await flushMicrotasks();
+      });
+
+      rerender({ p: { ...props, cancelIntentRequestId: "cancel-1" } });
+
+      const state = inPhase(result.current, "idle");
+      expect(state.lastIntentSnapshot).not.toBeNull();
+      expect(state.lastIntentSnapshot!.intentComponent).toBe(intent.component);
+      expect(state.lastIntentSnapshot!.jobState).toBe("in-progress");
+      expect(state.lastIntentSnapshot!.intentComponentExtraProps).toEqual({ x: 1 });
+    });
+  });
+
+  describe("enabled toggling", () => {
+    it("WHEN enabled changes from true to false THEN the hook returns null", () => {
+      const { result, rerender, props } = renderIntegration();
+
+      expect(result.current).not.toBeNull();
+
+      rerender({ p: { ...props, enabled: false } });
+      expect(result.current).toBeNull();
+    });
+
+    it("WHEN enabled changes from false to true THEN a fresh SM is created starting at deviceConnection", () => {
+      const { result, rerender, props } = renderIntegration({ enabled: false });
+
+      expect(result.current).toBeNull();
+
+      rerender({ p: { ...props, enabled: true } });
+      expect(result.current).not.toBeNull();
+      inPhase(result.current, "deviceConnection");
+    });
+
+    it("WHEN enabled cycles true→false→true after reaching intentExecution THEN state resets to clean deviceConnection", async () => {
+      const subject = new Subject<unknown>();
+      const intent = makeIntent(() => subject.asObservable());
+      const { result, rerender, props } = renderIntegration({ intent });
+
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(makeConnectionResult());
+      });
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(
+          makeExtractedContext(),
+        );
+      });
+      await act(async () => {
+        subject.next("in-progress");
+        await flushMicrotasks();
+      });
+      inPhase(result.current, "intentExecution");
+
+      rerender({ p: { ...props, enabled: false } });
+      expect(result.current).toBeNull();
+
+      rerender({ p: { ...props, enabled: true } });
+      const state = inPhase(result.current, "deviceConnection");
+      expect(state).not.toHaveProperty("connectionResult");
+      expect(state).not.toHaveProperty("lastIntentSnapshot");
+    });
+  });
+
+  describe("callback forwarding", () => {
+    it("WHEN onExecutorStateChanged prop changes between renders THEN the latest callback is called", () => {
+      const firstCallback = jest.fn();
+      const secondCallback = jest.fn();
+      const { result, rerender, props } = renderIntegration({
+        onExecutorStateChanged: firstCallback,
+      });
+
+      // First callback should have been called on mount
+      expect(firstCallback).toHaveBeenCalledWith({ type: "connectingDevice" });
+
+      // Update the callback prop
+      rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
+
+      // Trigger a transition
+      act(() => {
+        inPhase(result.current, "deviceConnection").onError(new Error("fail"));
+      });
+
+      // The second (latest) callback should be called, not the first
+      expect(secondCallback).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "connectingDeviceError" }),
+      );
+    });
+  });
+});
+
+// ---- Unit tests (mocked SM) ---- //
+
+type MockSM = jest.Mocked<DeviceIntentExecutorStateMachine<unknown, unknown, unknown>>;
+
+type MockSMClass = jest.Mock & {
+  lastInstance: MockSM | null;
+  lastListeners: StateMachineListeners<unknown, unknown, unknown> | null;
+};
+
+function renderWithMockSM(overrides: Partial<TestProps> = {}) {
+  const SMClass: MockSMClass = jest.fn().mockImplementation(function (
+    this: DeviceIntentExecutorStateMachine<unknown, unknown, unknown>,
+    params: { listeners: StateMachineListeners<unknown, unknown, unknown> },
+  ) {
+    const mock: MockSM = {
+      deviceConnected: jest.fn(),
+      connectionError: jest.fn(),
+      deviceContextInitialized: jest.fn(),
+      initializationError: jest.fn(),
+      deviceDisconnected: jest.fn(),
+      retry: jest.fn(),
+      setIntent: jest.fn(),
+      setRequiredContext: jest.fn(),
+      stopIntent: jest.fn(),
+      stop: jest.fn(),
+    };
+    SMClass.lastInstance = mock;
+    SMClass.lastListeners = params.listeners;
+    Object.assign(this, mock);
+  }) as unknown as MockSMClass;
+  SMClass.lastInstance = null;
+  SMClass.lastListeners = null;
+
+  const props = makeProps(overrides);
+  const hookRef = renderHook(
+    ({ p }: { p: TestProps }) => useDeviceIntentExecutor(p, { StateMachineClass: SMClass }),
+    { initialProps: { p: props } },
+  );
+
+  return {
+    ...hookRef,
+    SMClass,
+    props,
+    get sm() {
+      return SMClass.lastInstance!;
+    },
+    get listeners() {
+      return SMClass.lastListeners!;
+    },
+  };
+}
+
+describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
+  describe("SM lifecycle", () => {
+    it("WHEN enabled is true THEN the SM is constructed with the correct params", () => {
+      const { SMClass, props } = renderWithMockSM();
+
+      expect(SMClass).toHaveBeenCalledTimes(1);
+      expect(SMClass).toHaveBeenCalledWith(
+        expect.objectContaining({
+          deviceConnectionParams: props.deviceConnectionParams,
+          requiredDeviceContext: props.requiredDeviceContext,
+          intent: props.intent,
+          listeners: expect.any(Object),
+        }),
+      );
+    });
+
+    it("WHEN enabled is false THEN no SM is constructed", () => {
+      const { SMClass } = renderWithMockSM({ enabled: false });
+
+      expect(SMClass).not.toHaveBeenCalled();
+    });
+
+    it("WHEN enabled transitions from true to false THEN sm.stop() is called", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      const instance = sm;
+      expect(instance.stop).not.toHaveBeenCalled();
+
+      rerender({ p: { ...props, enabled: false } });
+      expect(instance.stop).toHaveBeenCalled();
+    });
+
+    it("WHEN enabled transitions from false to true THEN a new SM is constructed", () => {
+      const { rerender, SMClass, props } = renderWithMockSM({ enabled: false });
+
+      expect(SMClass).not.toHaveBeenCalled();
+
+      rerender({ p: { ...props, enabled: true } });
+      expect(SMClass).toHaveBeenCalledTimes(1);
+    });
+
+    it("WHEN the hook unmounts THEN sm.stop() is called", () => {
+      const { unmount, sm } = renderWithMockSM();
+
+      const instance = sm;
+      expect(instance.stop).not.toHaveBeenCalled();
+
+      unmount();
+      expect(instance.stop).toHaveBeenCalled();
+    });
+  });
+
+  describe("callback forwarding to SM", () => {
+    it("WHEN onConnected is called THEN sm.deviceConnected is called with the connection result", () => {
+      const { result, sm } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+
+      expect(sm.deviceConnected).toHaveBeenCalledWith(connectionResult);
+    });
+
+    it("WHEN onError (connection) is called THEN sm.connectionError is called", () => {
+      const { result, sm } = renderWithMockSM();
+
+      const err = new Error("fail");
+      act(() => {
+        inPhase(result.current, "deviceConnection").onError(err);
+      });
+
+      expect(sm.connectionError).toHaveBeenCalledWith(err);
+    });
+
+    it("WHEN onContextInitialized is called THEN sm.deviceContextInitialized is called", () => {
+      const { result, sm, listeners } = renderWithMockSM();
+
+      act(() => {
+        const connectionResult = makeConnectionResult();
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+      });
+
+      const ctx = makeExtractedContext();
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onContextInitialized(ctx);
+      });
+
+      expect(sm.deviceContextInitialized).toHaveBeenCalledWith(ctx);
+    });
+
+    it("WHEN onError (initialization) is called THEN sm.initializationError is called", () => {
+      const { result, sm, listeners } = renderWithMockSM();
+
+      act(() => {
+        const connectionResult = makeConnectionResult();
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+      });
+
+      const err = new Error("init fail");
+      act(() => {
+        inPhase(result.current, "deviceInitialization").onError(err);
+      });
+
+      expect(sm.initializationError).toHaveBeenCalledWith(err);
+    });
+
+    it("WHEN onRetry is called THEN sm.retry is called", () => {
+      const { result, sm, listeners } = renderWithMockSM();
+
+      act(() => {
+        listeners.onExecutorStateChanged({
+          type: "connectingDeviceError",
+          error: new Error("fail"),
+        });
+      });
+
+      act(() => {
+        inPhase(result.current, "connectionError").onRetry();
+      });
+
+      expect(sm.retry).toHaveBeenCalled();
+    });
+  });
+
+  describe("SM listener -> internal state side effects", () => {
+    it("WHEN SM emits executingIntent THEN latestJobState is reset to undefined", () => {
+      const { result, listeners, props } = renderWithMockSM();
+
+      act(() => {
+        listeners.onIntentJobStateChanged(props.intent, "some-state");
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "executingIntent" });
+      });
+
+      const state = inPhase(result.current, "intentExecution");
+      expect(state.jobState).toBeUndefined();
+    });
+
+    it("WHEN SM emits executingIntent THEN lastIntentSnapshot is initialized with the current intent component", () => {
+      const intent = makeIntent(() => NEVER);
+      const { result, listeners } = renderWithMockSM({
+        intent,
+        intentComponentExtraProps: { x: 1 },
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "executingIntent" });
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "idle" });
+      });
+
+      const state = inPhase(result.current, "idle");
+      expect(state.lastIntentSnapshot).toEqual({
+        intentComponent: intent.component,
+        jobState: undefined,
+        intentComponentExtraProps: { x: 1 },
+      });
+    });
+
+    it("WHEN SM emits connectingDevice THEN connectionResult and latestJobState are reset", () => {
+      const { result, listeners } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+
+      inPhase(result.current, "deviceConnection");
+    });
+
+    it("WHEN SM emits connectingDeviceError THEN connectionResult and latestJobState are reset", () => {
+      const { result, listeners } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({
+          type: "connectingDeviceError",
+          error: new Error("disconnected"),
+        });
+      });
+
+      inPhase(result.current, "connectionError");
+    });
+
+    it("WHEN SM emits onIntentJobStateChanged THEN lastIntentSnapshot is updated with the latest jobState", () => {
+      const intent = makeIntent(() => NEVER);
+      const { result, listeners } = renderWithMockSM({
+        intent,
+        intentComponentExtraProps: { y: 2 },
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "executingIntent" });
+      });
+
+      act(() => {
+        listeners.onIntentJobStateChanged(intent, "step-1");
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "idle" });
+      });
+
+      const state = inPhase(result.current, "idle");
+      expect(state.lastIntentSnapshot).toEqual({
+        intentComponent: intent.component,
+        jobState: "step-1",
+        intentComponentExtraProps: { y: 2 },
+      });
+    });
+  });
+
+  describe("SM listener -> prop callback forwarding", () => {
+    it("WHEN SM emits onExecutorStateChanged THEN the prop callback is forwarded", () => {
+      const { listeners, props } = renderWithMockSM();
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+
+      expect(props.onExecutorStateChanged).toHaveBeenCalledWith({ type: "connectingDevice" });
+    });
+
+    it("WHEN SM emits onIntentJobStateChanged THEN the prop callback is forwarded", () => {
+      const { listeners, props } = renderWithMockSM();
+
+      act(() => {
+        listeners.onIntentJobStateChanged(props.intent, { step: "running" });
+      });
+
+      expect(props.onIntentJobStateChanged).toHaveBeenCalledWith({ step: "running" });
+    });
+
+    it("WHEN SM emits onIntentJobComplete THEN the prop callback is forwarded", () => {
+      const { listeners, props } = renderWithMockSM();
+
+      act(() => {
+        listeners.onIntentJobComplete(props.intent);
+      });
+
+      expect(props.onIntentJobComplete).toHaveBeenCalled();
+    });
+
+    it("WHEN SM emits onIntentJobError THEN the prop callback is forwarded", () => {
+      const { listeners, props } = renderWithMockSM();
+
+      const error = new Error("job failed");
+      act(() => {
+        listeners.onIntentJobError(props.intent, error);
+      });
+
+      expect(props.onIntentJobError).toHaveBeenCalledWith(error);
+    });
+
+    it("WHEN prop callback changes between renders THEN the latest callback is used", () => {
+      const firstCallback = jest.fn();
+      const secondCallback = jest.fn();
+      const { rerender, listeners, props } = renderWithMockSM({
+        onExecutorStateChanged: firstCallback,
+      });
+
+      rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
+
+      act(() => {
+        listeners.onExecutorStateChanged({
+          type: "connectingDeviceError",
+          error: new Error("fail"),
+        });
+      });
+
+      expect(secondCallback).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "connectingDeviceError" }),
+      );
+      expect(firstCallback).not.toHaveBeenCalledWith(
+        expect.objectContaining({ type: "connectingDeviceError" }),
+      );
+    });
+  });
+
+  describe("props -> SM actions", () => {
+    it("WHEN requiredDeviceContext changes THEN sm.setRequiredContext is called", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      rerender({ p: { ...props, requiredDeviceContext: newContext } });
+
+      expect(sm.setRequiredContext).toHaveBeenCalledWith(newContext);
+    });
+
+    it("WHEN intent changes THEN sm.setIntent is called", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, intent: newIntent } });
+
+      expect(sm.setIntent).toHaveBeenCalledWith(newIntent);
+    });
+
+    it("WHEN both context and intent change THEN setRequiredContext is called before setIntent", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      const callOrder: string[] = [];
+      sm.setRequiredContext.mockImplementation(() => {
+        callOrder.push("setRequiredContext");
+      });
+      sm.setIntent.mockImplementation(() => {
+        callOrder.push("setIntent");
+      });
+
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, requiredDeviceContext: newContext, intent: newIntent } });
+
+      expect(callOrder).toEqual(["setRequiredContext", "setIntent"]);
+    });
+
+    it("WHEN neither context nor intent change THEN no SM dispatch is made", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      sm.setRequiredContext.mockClear();
+      sm.setIntent.mockClear();
+
+      rerender({ p: props });
+
+      expect(sm.setRequiredContext).not.toHaveBeenCalled();
+      expect(sm.setIntent).not.toHaveBeenCalled();
+    });
+
+    it("WHEN only intent changes THEN only sm.setIntent is called (not setRequiredContext)", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      sm.setRequiredContext.mockClear();
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, intent: newIntent } });
+
+      expect(sm.setIntent).toHaveBeenCalledWith(newIntent);
+      expect(sm.setRequiredContext).not.toHaveBeenCalled();
+    });
+
+    it("WHEN only context changes THEN only sm.setRequiredContext is called (not setIntent)", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      sm.setIntent.mockClear();
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      rerender({ p: { ...props, requiredDeviceContext: newContext } });
+
+      expect(sm.setRequiredContext).toHaveBeenCalledWith(newContext);
+      expect(sm.setIntent).not.toHaveBeenCalled();
+    });
+
+    it("WHEN enabled is false THEN changing context or intent does not dispatch to SM", () => {
+      const { rerender, SMClass, props } = renderWithMockSM({ enabled: false });
+
+      expect(SMClass).not.toHaveBeenCalled();
+
+      const newContext: RequiredDeviceContext = { ...defaultRequiredContext, appName: "Bitcoin" };
+      const newIntent = makeIntent(() => NEVER);
+      rerender({ p: { ...props, requiredDeviceContext: newContext, intent: newIntent } });
+
+      expect(SMClass).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("cancelIntentRequestId", () => {
+    it("WHEN cancelIntentRequestId changes to a new value THEN sm.stopIntent is called", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      rerender({ p: { ...props, cancelIntentRequestId: "cancel-1" } });
+
+      expect(sm.stopIntent).toHaveBeenCalled();
+    });
+
+    it("WHEN cancelIntentRequestId stays the same THEN sm.stopIntent is NOT called again", () => {
+      const { rerender, sm, props } = renderWithMockSM({ cancelIntentRequestId: "cancel-1" });
+
+      sm.stopIntent.mockClear();
+      rerender({ p: { ...props, cancelIntentRequestId: "cancel-1" } });
+
+      expect(sm.stopIntent).not.toHaveBeenCalled();
+    });
+
+    it("WHEN cancelIntentRequestId is undefined from the start THEN sm.stopIntent is NOT called", () => {
+      const { sm } = renderWithMockSM({ cancelIntentRequestId: undefined });
+
+      expect(sm.stopIntent).not.toHaveBeenCalled();
+    });
+
+    it("WHEN cancelIntentRequestId changes from one value to a different value THEN sm.stopIntent is called again", () => {
+      const { rerender, sm, props } = renderWithMockSM();
+
+      rerender({ p: { ...props, cancelIntentRequestId: "cancel-1" } });
+      expect(sm.stopIntent).toHaveBeenCalledTimes(1);
+
+      rerender({ p: { ...props, cancelIntentRequestId: "cancel-2" } });
+      expect(sm.stopIntent).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("SM listener -> live jobState update during intentExecution", () => {
+    it("WHEN SM emits onIntentJobStateChanged THEN the hook returns the updated jobState in intentExecution phase", () => {
+      const intent = makeIntent(() => NEVER);
+      const { result, listeners } = renderWithMockSM({ intent });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "executingIntent" });
+      });
+
+      expect(inPhase(result.current, "intentExecution").jobState).toBeUndefined();
+
+      act(() => {
+        listeners.onIntentJobStateChanged(intent, "step-1");
+      });
+
+      const state = inPhase(result.current, "intentExecution");
+      expect(state.jobState).toBe("step-1");
+    });
+  });
+
+  describe("device disconnection monitoring", () => {
+    it("WHEN the device session emits NOT_CONNECTED THEN sm.deviceDisconnected is called", () => {
+      const { result, sm } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+
+      act(() => {
+        const subject = (connectionResult as unknown as { _sessionStateSubject: Subject<unknown> })
+          ._sessionStateSubject;
+        subject.next({ deviceStatus: "not-connected" });
+      });
+
+      expect(sm.deviceDisconnected).toHaveBeenCalled();
+    });
+
+    it("WHEN the device session emits a status other than NOT_CONNECTED THEN sm.deviceDisconnected is NOT called", () => {
+      const { result, sm } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+
+      act(() => {
+        const subject = connectionResult._sessionStateSubject;
+        subject.next({ deviceStatus: "connected" });
+      });
+
+      expect(sm.deviceDisconnected).not.toHaveBeenCalled();
+    });
+
+    it("WHEN connectionResult changes THEN the old subscription is cleaned up and a new one is created", () => {
+      const { result, sm, listeners } = renderWithMockSM();
+
+      const connectionResult1 = makeConnectionResult("session-1");
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult1);
+      });
+      expect(connectionResult1.dmk.getDeviceSessionState).toHaveBeenCalledWith({
+        sessionId: "session-1",
+      });
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+
+      const connectionResult2 = makeConnectionResult("session-2");
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult2);
+      });
+      expect(connectionResult2.dmk.getDeviceSessionState).toHaveBeenCalledWith({
+        sessionId: "session-2",
+      });
+
+      sm.deviceDisconnected.mockClear();
+      act(() => {
+        connectionResult1._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+      expect(sm.deviceDisconnected).not.toHaveBeenCalled();
+
+      act(() => {
+        connectionResult2._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+      expect(sm.deviceDisconnected).toHaveBeenCalled();
+    });
+
+    it("WHEN the hook unmounts with an active subscription THEN the subscription is cleaned up", () => {
+      const { result, unmount, sm } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+
+      const smInstance = sm;
+      unmount();
+
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+
+      expect(smInstance.deviceDisconnected).not.toHaveBeenCalled();
+    });
+
+    it("WHEN enabled goes false while a subscription is active THEN the subscription is cleaned up", () => {
+      const { result, rerender, sm, props } = renderWithMockSM();
+
+      const connectionResult = makeConnectionResult();
+      act(() => {
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+
+      expect(connectionResult._sessionStateSubject.observed).toBe(true);
+
+      const smInstance = sm;
+      smInstance.deviceDisconnected.mockClear();
+
+      rerender({ p: { ...props, enabled: false } });
+
+      expect(connectionResult._sessionStateSubject.observed).toBe(false);
+
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+
+      expect(smInstance.deviceDisconnected).not.toHaveBeenCalled();
+    });
+  });
+});

@@ -1,5 +1,5 @@
 import React from "react";
-import { renderWithReactQuery } from "@tests/test-renderer";
+import { renderWithReactQuery, withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { MockedAccounts } from "./mockedAccounts";
 import AccountsList from "../screens/AccountsList";
@@ -8,30 +8,32 @@ import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const INITIAL_STATE = {
-  overrideInitialState: (state: State) => ({
-    ...state,
-    accounts: MockedAccounts,
-    settings: {
-      ...state.settings,
-      readOnlyModeEnabled: false,
-      overriddenFeatureFlags: {
-        llmAccountListUI: {
-          enabled: true,
-        },
-        llmWalletSync: {
-          enabled: true,
-          params: {
-            environment: "STAGING",
-            watchConfig: {
-              pollingInterval: 10000,
-              initialTimeout: 5000,
-              userIntentDebounce: 1000,
-            },
+  overrideInitialState: withFlagOverrides(
+    {
+      llmAccountListUI: {
+        enabled: true,
+      },
+      llmWalletSync: {
+        enabled: true,
+        params: {
+          environment: "STAGING",
+          watchConfig: {
+            pollingInterval: 10000,
+            initialTimeout: 5000,
+            userIntentDebounce: 1000,
           },
         },
       },
     },
-  }),
+    state => ({
+      ...state,
+      accounts: MockedAccounts,
+      settings: {
+        ...state.settings,
+        readOnlyModeEnabled: false,
+      },
+    }),
+  ),
 };
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({

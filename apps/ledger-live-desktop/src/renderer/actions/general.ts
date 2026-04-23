@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { createSelector } from "reselect";
-// TODO make a generic way to implement this for each family
-import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
+import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -10,35 +9,49 @@ import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { useDistribution as useDistributionRaw } from "@ledgerhq/live-countervalues-react/portfolio";
 import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-wallet/ordering";
+import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
+import {
+  useAssetDistribution,
+  type DistributionOpts,
+  type DistributionResult,
+} from "@ledgerhq/live-common/portfolio/useAssetDistribution";
 import { reorderAccounts } from "~/renderer/actions/accounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
   counterValueCurrencySelector,
   getOrderAccounts,
-  selectedTimeRangeSelector,
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
 import { countervaluesActions } from "./countervalues";
-import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
+import { selectExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 
-export function useDistribution(
-  opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
-) {
+export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
-  return useDistributionRaw({
+  const { groupBy, ...displayOpts } = opts;
+  const isAssetMode = groupBy === "asset";
+
+  const legacy = useLegacyDistribution({ accounts, to, skip: isAssetMode, ...displayOpts });
+  const asset = useAssetDistribution({
     accounts,
     to,
-    ...opts,
+    product: "lld",
+    version: __APP_VERSION__,
+    skip: !isAssetMode,
+    ...displayOpts,
   });
+
+  if (isAssetMode) {
+    return { ...asset.distribution, isLoading: asset.isLoading };
+  }
+  return { ...legacy, isLoading: false };
 }
 export function useCalculateCountervalueCallback() {
   const to = useSelector(counterValueCurrencySelector);
@@ -108,14 +121,13 @@ export const themeSelector = createSelector(
 export function useCalculateCountervaluesUserSettings() {
   const dispatch = useDispatch();
   const countervalue = useSelector(counterValueCurrencySelector);
-  const selectedTimeRange = useSelector(selectedTimeRangeSelector);
 
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
 
   // countervalues for on demand session tracking pairs
-  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
+  const extraSessionTrackingPairs = useSelector(selectExtraTrackingPairs);
 
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
 
@@ -138,8 +150,7 @@ export function useCalculateCountervaluesUserSettings() {
           "config_countervalues_marketCapBatchingAfterRank",
         ),
         granularitiesRates,
-        selectedTimeRange,
       }),
     );
-  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs, selectedTimeRange]);
+  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
 }

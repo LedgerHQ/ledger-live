@@ -1,4 +1,5 @@
 import test from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
@@ -6,9 +7,9 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
-const app: AppInfos = AppInfos.EXCHANGE;
+const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 
 const swaps = [
   {
@@ -240,8 +241,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     });
 
     test.use({
+      teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: app,
+      speculosApp: exchangeApp,
 
       cliCommandsOnApp: [
         [
@@ -267,18 +269,33 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app, electronApp, speculos }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        await app.swap.selectExchangeWithoutKyc(electronApp, swap);
+        const provider = await app.swap.selectExchangeWithoutKyc(electronApp, swap);
+        swap.setProvider(provider);
+        await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
 
-        await app.swap.clickExchangeButton(electronApp);
-        await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
-        await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+        if (provider.app) {
+          if (provider.app !== exchangeApp) {
+            await speculos.relaunch(provider.app.name);
+          }
+          await app.swap.clickExchangeButton(electronApp);
+          await app.swap.clickExecuteSwapButton(electronApp);
+          await app.swap.clickContinueButton();
+          await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
+          await app.swap.expectTransactionSentToasterToBeVisible();
+        } else {
+          await app.swap.clickExchangeButton(electronApp);
+          await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
+          await app.swapDrawer.verifyExchangeCompletedTextContent(
+            swap.accountToCredit.currency.name,
+          );
+        }
       },
     );
   });

@@ -9,7 +9,7 @@ export const GenericError = ({ onClick, type }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <Container p={6} flexDirection="row">
+    <Container p={6} flexDirection="row" mx={16}>
       <Icons.DeleteCircleFill size="M" color={"error.c70"} />
       <Content ml={3}>
         <Title mb={2}>{t("modularDrawer.errors.title")}</Title>

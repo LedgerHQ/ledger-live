@@ -33,7 +33,7 @@ import {
 } from "~/components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
 import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
@@ -164,7 +164,7 @@ export function useListHeaderComponents({
 
   const isOperationStuck = Boolean(
     oldestEditableOperation &&
-      isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
+    isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
   );
 
   const disableDelegation =

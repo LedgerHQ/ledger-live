@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ensureContrast } from "~/colors";
 import CounterValue from "~/components/CounterValue";
 import CurrencyIcon from "~/components/CurrencyIcon";
@@ -14,12 +13,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { track } from "~/analytics";
 import { DETAILED_ALLOCATION_PAGE } from "../../../const";
-
-export type DistributionItem = Readonly<{
-  currency: CryptoCurrency | TokenCurrency;
-  amount: number;
-  distribution: number;
-}>;
+import type { DistributionItem } from "../../../types/distribution";
 
 type Props = Readonly<{
   item: DistributionItem;

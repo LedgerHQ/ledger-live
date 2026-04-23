@@ -33,39 +33,26 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
-          skip-turbo-cache: "false"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i -F "live-cli*..." -F "ledger-live"
       - name: build cli
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo build --filter=@ledgerhq/live-cli
+        run: pnpm exec nx run @ledgerhq/live-cli:build
       - name: lint cli
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo lint --filter="@ledgerhq/live-cli" -- --quiet
+        run: pnpm exec nx run @ledgerhq/live-cli:lint -- --quiet
       - name: typecheck cli
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo typecheck --filter="@ledgerhq/live-cli"
+        run: pnpm exec nx run @ledgerhq/live-cli:typecheck
       - name: test cli
         id: test
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo test --concurrency=1 --filter="@ledgerhq/live-cli"
+        run: pnpm exec nx run @ledgerhq/live-cli:test
       - name: get diff
         id: diff
         run: |

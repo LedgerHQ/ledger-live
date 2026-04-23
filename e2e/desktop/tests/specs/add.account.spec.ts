@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -9,7 +10,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 const currencies = [
   {
     currency: Currency.BTC,
-    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073",
+    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073, B2CQA-786",
   },
   { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
@@ -33,16 +34,17 @@ const currencies = [
 for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
+      teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
-      // TODO: this can be removed once Aleo is released on production
-      ...(currency.currency === Currency.ALEO && {
-        featureFlags: {
+      featureFlags: {
+        // TODO: this can be removed once Aleo is released on production
+        ...(currency.currency === Currency.ALEO && {
           currencyAleo: {
             enabled: true,
           },
-        },
-      }),
+        }),
+      },
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
@@ -68,7 +70,8 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
-        await app.portfolio.openAddAccountModal();
+        await app.portfolio.waitForPortfolioEmptyState();
+        await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {

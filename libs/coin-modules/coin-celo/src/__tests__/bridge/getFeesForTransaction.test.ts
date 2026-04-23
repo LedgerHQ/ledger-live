@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import { accountFixture, transactionFixture } from "../../bridge/fixtures";
+import {
+  accountFixture,
+  transactionFixture,
+  transactionWithUsdcFeeFixture,
+  tokenTransactionWithUsdcFeeFixture,
+} from "../../bridge/fixtures";
 import getFeesForTransaction from "../../bridge/getFeesForTransaction";
 
 const chainIdMock = jest.fn();
@@ -12,6 +17,7 @@ const voteMock = jest.fn(() => ({
 }));
 const revokeMock = jest.fn();
 const voteSignerToAccountMock = jest.fn();
+const gasPriceMock = jest.fn(async () => BigNumber(2));
 
 jest.mock("../../network/sdk", () => {
   return {
@@ -89,7 +95,7 @@ jest.mock("../../network/sdk", () => {
         chainId: chainIdMock,
         nonce: nonceMock,
         estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
-        gasPrice: jest.fn(async () => BigNumber(2)),
+        gasPrice: gasPriceMock,
         getMaxPriorityFeePerGas: jest.fn().mockResolvedValue(1),
       },
     })),
@@ -261,5 +267,57 @@ describe("getFeesForTransaction", () => {
     expect(fees).toBeInstanceOf(BigNumber);
     expect(fees.gt(0)).toBe(true);
     expect(fees.lt(pointOneCelo)).toBe(true);
+  });
+
+  it("should return the correct fees for a send transaction with USDC fee currency", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: transactionWithUsdcFeeFixture,
+    });
+
+    // Fees should still be calculated correctly when feeCurrency is provided
+    expect(fees).toBeInstanceOf(BigNumber);
+    expect(fees.gt(0)).toBe(true);
+  });
+
+  it("should return the correct fees for a token transaction with USDC fee currency", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: tokenTransactionWithUsdcFeeFixture,
+    });
+
+    // Fees should still be calculated correctly when feeCurrency is provided
+    expect(fees).toBeInstanceOf(BigNumber);
+    expect(fees.gt(0)).toBe(true);
+  });
+
+  it("should pass feeCurrency parameter to gasPrice when provided", async () => {
+    // Clear any previous calls
+    gasPriceMock.mockClear();
+
+    await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: transactionWithUsdcFeeFixture,
+    });
+
+    // Verify gasPrice was called with feeCurrency parameter
+    expect(gasPriceMock).toHaveBeenCalledWith(transactionWithUsdcFeeFixture.feeCurrency);
+  });
+
+  it("should call gasPrice with adapter feeCurrency when adapter/unwrapped differ", async () => {
+    gasPriceMock.mockClear();
+
+    const transaction = {
+      ...transactionWithUsdcFeeFixture,
+      feeCurrency: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B" as `0x${string}`,
+      feeCurrencyUnwrapped: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C" as `0x${string}`,
+    };
+
+    await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction,
+    });
+
+    expect(gasPriceMock).toHaveBeenCalledWith(transaction.feeCurrency);
   });
 });

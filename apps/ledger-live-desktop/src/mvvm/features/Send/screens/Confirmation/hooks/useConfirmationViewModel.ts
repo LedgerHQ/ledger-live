@@ -2,11 +2,12 @@ import { useCallback, useMemo } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { track, trackPage } from "~/renderer/analytics/segment";
 
 function getConfirmationStatus(
   operation: SendFlowOperationResult,
@@ -51,6 +52,11 @@ export function useConfirmationViewModel() {
   const onViewDetails = useCallback(() => {
     close();
     if (account && concernedOperation) {
+      track("send_modal", {
+        button: "view details",
+        page: "step confirmation",
+        flow: "send",
+      });
       setDrawer(OperationDetails, {
         operationId: concernedOperation.id,
         accountId: account.id,
@@ -66,6 +72,9 @@ export function useConfirmationViewModel() {
   }, [navigation, operation, statusActions]);
 
   const onClose = useCallback(() => {
+    trackPage("send_modal", "step confirmation", {
+      flow: "send",
+    });
     close();
   }, [close]);
 

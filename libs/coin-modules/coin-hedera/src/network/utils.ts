@@ -203,14 +203,26 @@ export function parseThirdwebTransactionParams(
 export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[]) => {
   const enrichedTransfers: EnrichedERC20Transfer[] = [];
 
-  for (const rawTransfer of erc20Transfers) {
-    const payerAddress = toEntityId({ num: rawTransfer.payer_account_id });
-    const hash = rawTransfer.transaction_hash;
-    const inaccurateConsensusTimestampNs = new BigNumber(rawTransfer.consensus_timestamp);
+  // with hgraph we can get two different transfers with the same transaction hash
+  const groupedByTxHash = new Map<string, [ERC20TokenTransfer, ...ERC20TokenTransfer[]]>();
+  for (const transfer of erc20Transfers) {
+    const group = groupedByTxHash.get(transfer.transaction_hash);
+
+    if (!group) {
+      groupedByTxHash.set(transfer.transaction_hash, [transfer]);
+      continue;
+    }
+
+    group.push(transfer);
+  }
+
+  for (const [txHash, transfers] of groupedByTxHash.entries()) {
+    const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
+    const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
     const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
 
     const [contractCallResult, mirrorTransaction] = await Promise.all([
-      apiClient.getContractCallResult(hash),
+      apiClient.getContractCallResult(txHash),
       apiClient.findTransactionByContractCallV2({
         payerAddress,
         timestamp: inaccurateConsensusTimestamp,
@@ -222,7 +234,7 @@ export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[])
     }
 
     enrichedTransfers.push({
-      transfer: rawTransfer,
+      transfers,
       contractCallResult,
       mirrorTransaction,
     });

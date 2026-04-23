@@ -101,7 +101,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const isDyDx = account.currency.id === "dydx";
 
-  const coinConfig = getCurrencyConfiguration(account.currency);
+  const coinConfig = getCurrencyConfiguration(account.currency.id);
   const disableDelegation =
     "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
 

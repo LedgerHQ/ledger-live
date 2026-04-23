@@ -1,9 +1,9 @@
 import React from "react";
-import { renderWithReactQuery, withReadOnlyDisabled } from "@tests/test-renderer";
+import { renderWithReactQuery, withReadOnlyDisabled, withFlagOverrides } from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
 import { track } from "~/analytics";
-import { ScreenName } from "~/const/navigation";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { useSyncIndicator } from "../hooks/useSyncIndicator";
 
 const mockNavigate = jest.fn();
@@ -94,6 +94,24 @@ describe("TopBar navigation", () => {
 
     expect(track).toHaveBeenCalledWith("menuentry_clicked", {
       button: "Settings",
+      page: ScreenName.Portfolio,
+    });
+  });
+
+  it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
+      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { operationsList: true } } }),
+    });
+
+    await user.press(getByTestId("topbar-transaction-history"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.OperationsHistory, {
+      screen: ScreenName.OperationsList,
+    });
+
+    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+      button: "operation_list",
+      page: ScreenName.Portfolio,
     });
   });
 });

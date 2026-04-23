@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";

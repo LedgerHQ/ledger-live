@@ -1,6 +1,12 @@
+// NOTE: Some etherscan-like explorers deviate from the standard field naming.
+// "timeStamp" (camelCase) is the canonical Etherscan format; others (e.g. chainscan.0g.ai
+// for zero_gravity) emit "timestamp" (lowercase) instead. Both fields are therefore optional
+// here, and the adapter's safeDate() helper resolves whichever is present.
+
 export type EtherscanOperation = {
   blockNumber: string;
-  timeStamp: string;
+  timeStamp?: string;
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -12,7 +18,6 @@ export type EtherscanOperation = {
   gasPrice: string;
   isError: string;
   txreceipt_status: string;
-  /** @deprecated do not use can be deprecated */
   input?: string;
   contractAddress: string;
   cumulativeGasUsed: string;
@@ -24,7 +29,8 @@ export type EtherscanOperation = {
 
 export type EtherscanERC20Event = {
   blockNumber: string;
-  timeStamp: string;
+  timeStamp?: string;
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -46,7 +52,8 @@ export type EtherscanERC20Event = {
 
 export type EtherscanERC721Event = {
   blockNumber: string;
-  timeStamp: string;
+  timeStamp?: string;
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -68,7 +75,8 @@ export type EtherscanERC721Event = {
 
 export type EtherscanERC1155Event = {
   blockNumber: string;
-  timeStamp: string;
+  timeStamp?: string;
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -90,7 +98,8 @@ export type EtherscanERC1155Event = {
 
 export type EtherscanInternalTransaction = {
   blockNumber: string;
-  timeStamp: string;
+  timeStamp?: string;
+  timestamp?: string;
   hash: string;
   // blockscout returns tx hash in transactionHash field
   // instead of hash field

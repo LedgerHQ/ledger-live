@@ -1,11 +1,12 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
+import { getBridgeApi } from "./bridge";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { GenericTransaction } from "./types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { GenericTransaction } from "./types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
@@ -43,16 +44,16 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
 }
 
 export function genericPrepareTransaction(
-  _network: string,
+  network: string,
   kind: string,
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
-    const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
-      account.currency.id,
-      kind,
-    );
-    const { assetReference, assetOwner } = getAssetFromToken
-      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+    const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+    const bridgeApi = getBridgeApi(account.currency, network);
+
+    const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
+    const { assetReference, assetOwner } = getAssetFromTokenForCurrency
+      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromTokenForCurrency)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
 
@@ -81,7 +82,7 @@ export function genericPrepareTransaction(
         assetReference,
         amount,
       },
-      computeIntentType,
+      bridgeApi.computeIntentType,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       gasPrice: transaction.gasPrice,
@@ -92,7 +93,7 @@ export function genericPrepareTransaction(
     });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
-      : await estimateFees(intent, customFeesParameters);
+      : await alpacaApi.estimateFees(intent, customFeesParameters);
     const fees = new BigNumber(estimation.value.toString());
 
     if (!bnEq(transaction.fees, fees)) {
@@ -124,10 +125,14 @@ export function genericPrepareTransaction(
         propagateField(estimation, field, next);
       }
 
-      // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
-      if (transaction.useAllAmount || ["stake", "unstake"].includes(transaction.mode ?? "")) {
+      if (
+        transaction.useAllAmount ||
+        ["stake", "unstake", "delegate", "undelegate", "redelegate"].includes(
+          transaction.mode ?? "",
+        )
+      ) {
         // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
-        const { amount } = await validateIntent(
+        const { amount } = await alpacaApi.validateIntent(
           transactionToIntent(
             account,
             {
@@ -135,9 +140,9 @@ export function genericPrepareTransaction(
               assetOwner,
               assetReference,
             },
-            computeIntentType,
+            bridgeApi.computeIntentType,
           ),
-          extractBalances(account, getAssetFromToken),
+          extractBalances(account, getAssetFromTokenForCurrency),
         );
         next.amount = new BigNumber(amount.toString());
       }

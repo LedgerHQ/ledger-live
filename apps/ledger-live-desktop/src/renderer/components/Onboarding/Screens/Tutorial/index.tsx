@@ -65,7 +65,7 @@ import {
   setOnboardingSyncFlow,
 } from "~/renderer/reducers/onboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/EnableSync";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -346,6 +346,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [genuineCheckPassed, setGenuineCheckPassed] = useState(false);
 
   const [onboardingDone, setOnboardingDone] = useState(false);
 
@@ -660,8 +661,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         props: {
           connectedDevice,
           setConnectedDevice,
+          onGenuineCheckPassed: () => setGenuineCheckPassed(true),
         },
-        canContinue: !!connectedDevice,
+        canContinue: !!connectedDevice && genuineCheckPassed,
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
             if (nanoOnboardingFundWalletFeature) {
@@ -781,6 +783,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     userChosePinCodeHimself,
     userUnderstandConsequences,
     hasSyncStep,
+    genuineCheckPassed,
   ]);
 
   const steps = useMemo(() => {

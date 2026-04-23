@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as Repack from "@callstack/repack";
+import rspack from "@rspack/core";
 import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
 import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
 import { createRequire } from "node:module";
@@ -117,7 +118,10 @@ const detoxAliases = isDetoxBuild
     }
   : {};
 
-const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
+const hermesNonCompatibleDependencies = [
+  "@polkadot/types-codec",
+  "@mysten/sui",
+];
 
 /**
  * Checks if the specified resource file is compatible with hermes-parser following
@@ -140,6 +144,9 @@ export default withRozeniteUrlFix(
         mode,
         context: __dirname,
         entry: "./index.js",
+        // Mobile uses a single Hermes bytecode bundle — async chunks are not supported
+        // and hurt performance with Hermes. Disable async chunk creation globally.
+        output: { asyncChunks: false },
         resolve: {
           ...Repack.getResolveOptions(platform, {
             enablePackageExports: true,
@@ -198,7 +205,12 @@ export default withRozeniteUrlFix(
               use: {
                 loader: "@callstack/repack/babel-swc-loader",
                 parallel: true,
-                options: {},
+                options: {
+                  lazyImports: true,
+                  module: {
+                    lazy: true,
+                  },
+                },
               },
               resolve: { fullySpecified: false },
             },
@@ -207,7 +219,9 @@ export default withRozeniteUrlFix(
               test: /\.lottie$/,
               use: {
                 loader: "@callstack/repack/assets-loader",
-                options: {},
+                options: {
+                  lazyImports: true,
+                },
               },
             },
           ],
@@ -220,6 +234,9 @@ export default withRozeniteUrlFix(
             unstable_disableTransform: true,
           }),
           new ExpoModulesPlugin(),
+          new rspack.ProvidePlugin({
+            TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
+          }),
         ],
         stats: "errors-warnings",
         infrastructureLogging: { level: "warn" },

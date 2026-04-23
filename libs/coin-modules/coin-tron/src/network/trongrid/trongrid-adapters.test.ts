@@ -1,10 +1,10 @@
-import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
+import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import BigNumber from "bignumber.js";
 import { TrongridTxInfo } from "../../types";
 import { fromTrongridTxInfoToOperation } from "./trongrid-adapters";
 
 // Mock fromBigNumberToBigInt
-jest.mock("@ledgerhq/coin-framework/utils", () => ({
+jest.mock("@ledgerhq/coin-module-framework/utils", () => ({
   fromBigNumberToBigInt: jest.fn(),
 }));
 
@@ -117,6 +117,19 @@ describe("fromTrongridTxInfoToOperation", () => {
     const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
     expect(result.type).toBe("UNKNOWN");
+  });
+
+  it("should use feesPayer over from when set (transferFrom case)", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      from: mockUserAddress, // TRC20 "from" — our address
+      feesPayer: "actualInitiator", // Tron owner_address — someone else called transferFrom
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
+
+    expect(result.tx.feesPayer).toBe("actualInitiator");
+    expect(result.type).toBe("OUT"); // direction still uses `from`
   });
 
   it("should handle missing fee or value gracefully", () => {

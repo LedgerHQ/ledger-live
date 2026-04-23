@@ -11,6 +11,7 @@ import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
   PROGRESS_VIEW_OFFSET_LEGACY_IOS,
@@ -25,12 +26,13 @@ import MarketBanner from "LLM/features/MarketBanner";
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
+  WalletAssetsView,
   PortfolioCarouselSection,
-  PortfolioCryptosSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
+  PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
@@ -64,6 +66,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     onBackFromUpdate,
     goToAnalyticsAllocations,
     shouldDisplayWallet40MainNav,
+    shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
@@ -121,18 +125,16 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     if (shouldDisplayMarketBanner) {
       sections.push(
-        <Box key="marketBanner" px={6} pt={6}>
+        <Box key="marketBanner" px={6}>
           <MarketBanner />
         </Box>,
       );
     }
 
+    sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
+
     if (shouldDisplayAssetSection) {
-      sections.push(
-        <Box key="cryptos" px={6}>
-          <PortfolioCryptosSection />
-        </Box>,
-      );
+      sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
       sections.push(
         <PortfolioAssetsSection
@@ -141,6 +143,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           hideEmptyTokenAccount={hideEmptyTokenAccount}
           openAddModal={openAddModal}
           onHeightChange={handleHeightChange}
+          shouldAddBottomPadding={shouldAddBottomPaddingForLegacyAssets}
         />,
       );
     }
@@ -159,7 +162,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(<PortfolioOperationsSection key="operations" />);
+    if (!shouldDisplayOperationsList) {
+      sections.push(<PortfolioOperationsSection key="operations" />);
+    }
 
     return sections;
   }, [
@@ -177,6 +182,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     backgroundColor,
     goToAnalyticsAllocations,
+    shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   ]);
 
   return (
@@ -208,6 +215,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         onSlideChange={onSlideChange}
         slides={slides}
       />
+      <AnalyticsConsentDrawer />
     </>
   );
 };

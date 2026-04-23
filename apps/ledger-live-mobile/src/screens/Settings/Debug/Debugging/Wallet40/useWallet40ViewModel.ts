@@ -7,6 +7,7 @@ export const WALLET_40_PARAMS = [
   { key: "marketBanner", label: "Market Banner" },
   { key: "graphRework", label: "Graph & Balance Rework" },
   { key: "quickActionCtas", label: "Quick Action CTAs" },
+  { key: "quickActionsCtasVariant", label: "Quick Action CTAs Variant" },
   { key: "tour", label: "Tour" },
   { key: "mainNavigation", label: "Main Navigation" },
   { key: "lazyOnboarding", label: "Lazy Onboarding" },
@@ -14,6 +15,9 @@ export const WALLET_40_PARAMS = [
   { key: "assetSection", label: "Asset Section" },
   { key: "onboardingWidget", label: "Post-onboarding Widget" },
   { key: "brazePlacement", label: "Braze Placement (ContentBanner)" },
+  { key: "operationsList", label: "TX History" },
+  { key: "aggregatedAssets", label: "Aggregated Assets" },
+  { key: "myWallet", label: "My Wallet" },
 ] as const;
 
 type WalletFeatureParamKey = (typeof WALLET_40_PARAMS)[number]["key"];

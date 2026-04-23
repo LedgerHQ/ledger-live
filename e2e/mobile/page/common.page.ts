@@ -8,7 +8,7 @@ import ErrorPage from "./error.page";
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
   searchBarId = "common-search-field";
-  successViewDetailsButtonId = "success-view-details-button";
+  successViewDetailsButtonId = "enabled-success-view-details-button";
   validateSuccessScreenId = "validate-success-screen";
   proceedButtonId = "proceed-button";
   accountCardPrefix = "account-card-";
@@ -45,7 +45,7 @@ export default class CommonPage {
   async selectAccount(account: Account) {
     const accountId = this.accountId(account);
     await waitForElementById(accountId);
-    await tapById(accountId);
+    await tapByIdAndExpectToDisappear(accountId);
   }
 
   @Step("Expect search")

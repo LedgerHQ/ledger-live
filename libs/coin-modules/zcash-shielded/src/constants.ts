@@ -1,8 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import { ZcashPrivateInfo } from "./types";
+import type { ZcashPrivateInfo } from "./types";
 
-export const LOG_TYPE = "zcash-shielded";
-export const JSON_RPC_SERVER =
+export const ZCASH_LOG_TYPE = "zcash-shielded";
+export const ZCASH_JSON_RPC_SERVER_TESTNET =
+  "https://explorers.api.vault.ledger-test.com/nodes/zec_testnet/zaino/jsonrpc";
+export const ZCASH_JSON_RPC_SERVER_MAINNET =
   "https://explorers.api.vault.ledger-test.com/nodes/zec_testnet/zaino/jsonrpc";
 export const ZCASH_ACTIVATION_DATE = new Date("2016-10-28");
 export const ZCASH_ACTIVATION_DATE_STRING = "2016-10-28";
@@ -12,7 +14,11 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   saplingBalance: new BigNumber(0),
   ufvk: null,
   syncState: "disabled",
+  progress: 0,
+  estimatedTimeRemaining: { hours: 0, minutes: 0 },
+  birthday: ZCASH_ACTIVATION_DATE_STRING,
   lastSyncTimestamp: null,
-  lastBlockProcessed: null,
+  lastProcessedBlock: null,
   transactions: [],
 };
+export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5000; // 5 seconds

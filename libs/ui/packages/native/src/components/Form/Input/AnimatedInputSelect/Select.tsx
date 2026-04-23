@@ -9,7 +9,7 @@ import { BaseStyledProps } from "src/components/styled";
 
 const Container = styled(Flex)<{ color: string }>`
   border-left-width: 1px;
-  border-left-color: ${(p) => p.color};
+  border-left-color: ${p => p.color};
   width: 50%;
 `;
 

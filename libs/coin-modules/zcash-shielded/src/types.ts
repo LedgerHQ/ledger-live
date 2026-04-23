@@ -1,4 +1,3 @@
-import type { DecryptedTransaction, DecryptedOutput } from "@ledgerhq/zcash-decrypt";
 import type { BigNumber } from "bignumber.js";
 
 export type * from "./jsonRpcClient";
@@ -7,33 +6,56 @@ export type * from "./ZCash";
 
 export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
 
+export type DecryptedOutputRaw = {
+  memo: string;
+  transfer_type: string;
+  amount: string; // zatoshis
+};
+
+export type DecryptedOutput = {
+  memo: string;
+  transfer_type: string;
+  amount: BigNumber; // zatoshis
+};
+
+export type DecryptedTransaction = {
+  orchard_outputs: DecryptedOutput[];
+  sapling_outputs: DecryptedOutput[];
+};
+
 export type ShieldedTransaction = {
   id: string;
   hex: string;
   blockHeight: number;
   blockHash: string;
   timestamp: number;
-  fee: number;
+  fee: BigNumber; // zatoshis
   decryptedData?: DecryptedTransaction;
 };
 
 export type ZcashPrivateInfo = {
   saplingBalance: BigNumber;
   orchardBalance: BigNumber;
-  ufvk: string | null;
   syncState: ZcashSyncState;
+  progress: number;
+  estimatedTimeRemaining: SyncEstimatedTime;
+  ufvk: string | null;
+  birthday: string | null;
   lastSyncTimestamp: number | null;
-  lastBlockProcessed: number | null;
+  lastProcessedBlock: number | null;
   transactions: ShieldedTransaction[];
 };
 
 export type ZcashPrivateInfoRaw = {
   orchardBalance: string;
   saplingBalance: string;
-  ufvk: string | null;
   syncState: string;
+  progress: number;
+  estimatedTimeRemaining: SyncEstimatedTime;
+  ufvk: string | null;
+  birthday: string | null;
   lastSyncTimestamp: number | null;
-  lastBlockProcessed: number | null;
+  lastProcessedBlock: number | null;
   transactions: ShieldedTransactionRaw[];
 };
 
@@ -43,16 +65,16 @@ export type ShieldedTransactionRaw = {
   blockHeight: number;
   blockHash: string;
   timestamp: number;
-  fee: number;
+  fee: string; // zatoshis
   decryptedData?: {
-    orchard_outputs: DecryptedOutput[];
-    sapling_outputs: DecryptedOutput[];
+    orchard_outputs: DecryptedOutputRaw[];
+    sapling_outputs: DecryptedOutputRaw[];
   };
 };
 
-export type ShieldedSyncResult = {
-  operations: ShieldedTransaction[];
-  latestBlockHeight: number;
+export type SyncEstimatedTime = {
+  hours: number;
+  minutes: number;
 };
 
 export const ZCASH_SHIELDED_TX_IN_TYPES = ["SHIELDED_TX_SAPLING_IN", "SHIELDED_TX_ORCHARD_IN"];

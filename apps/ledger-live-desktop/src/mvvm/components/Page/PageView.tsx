@@ -29,7 +29,7 @@ export const PageView = memo(function PageView({
   shouldRenderRightPanel,
 }: PageViewProps) {
   return (
-    <div className="relative flex flex-1 flex-col">
+    <div className="relative flex flex-1 flex-col min-w-0">
       {shouldDisplayWallet40MainNav ? <Wallet40TopBar /> : <ClassicTopBar />}
       {isWallet40Enabled ? (
         <Wallet40Layout

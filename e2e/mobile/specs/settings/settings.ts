@@ -1,15 +1,6 @@
-import { device } from "detox";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ApplicationOptions } from "page";
-import { delay, isAndroid, isWallet40 } from "../../helpers/commonHelpers";
-
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
+import { isWallet40 } from "../../helpers/commonHelpers";
 
 async function initApp(options: ApplicationOptions) {
   await app.init({
@@ -29,7 +20,7 @@ export function runUserClearApplicationCacheTest(
     beforeAll(async () => {
       await initApp({
         userdata: "skip-onboarding",
-        cliCommands: [liveDataCommand(account.currency, account.index)],
+        cliCommands: [liveDataCommand(account)],
         speculosApp: account.currency.speculosApp,
       });
     });
@@ -97,7 +88,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
       beforeAll(async () => {
         await initApp({
           userdata: "skip-onboarding",
-          cliCommands: [liveDataCommand(account.currency, account.index)],
+          cliCommands: [liveDataCommand(account)],
           speculosApp: account.currency.speculosApp,
         });
       });
@@ -138,34 +129,16 @@ async function initPasswordTest() {
   await app.portfolio.waitForPortfolioPageToLoad();
 }
 
-async function setupPasswordAndLock(password: string) {
-  await app.portfolio.navigateToSettings();
-  await app.settings.navigateToGeneralSettings();
-  await app.settingsGeneral.expectPasswordToggleValue("OFF");
-  await app.settingsGeneral.togglePassword();
-  await app.settingsGeneral.enterNewPassword(password);
-  await app.settingsGeneral.enterNewPassword(password);
-  await app.settingsGeneral.expectPasswordToggleValue("ON");
-  await device.sendToHome();
-  if (isAndroid()) {
-    /*
-     * delay for android due to state management workaround
-     * permalink: https://github.com/LedgerHQ/ledger-live/blob/9a9d649c1175ecf1a884a0ae615dba96b208c374/apps/ledger-live-mobile/src/context/AuthPass/auth.hooks.ts#L54-L61
-     * ticket reference: https://ledgerhq.atlassian.net/browse/LIVE-20822
-     */
-    await delay(2000);
-  }
-  await device.launchApp({ newInstance: false }); // bring back from background
-  await app.passwordEntry.expectLock();
-}
-
 export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
   const CORRECT_PASSWORD = "passWORD$123!";
 
   describe("Password Lock Screen - Unlock with correct password", () => {
     beforeAll(async () => {
       await initPasswordTest();
-      await setupPasswordAndLock(CORRECT_PASSWORD);
+      await app.portfolio.navigateToSettings();
+      await app.settings.navigateToGeneralSettings();
+      await app.settingsGeneral.setupPasswordAndLock(CORRECT_PASSWORD);
+      await app.passwordEntry.expectLock();
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -185,7 +158,10 @@ export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
   describe("Password Lock Screen - Stay locked with incorrect password", () => {
     beforeAll(async () => {
       await initPasswordTest();
-      await setupPasswordAndLock(CORRECT_PASSWORD);
+      await app.portfolio.navigateToSettings();
+      await app.settings.navigateToGeneralSettings();
+      await app.settingsGeneral.setupPasswordAndLock(CORRECT_PASSWORD);
+      await app.passwordEntry.expectLock();
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));

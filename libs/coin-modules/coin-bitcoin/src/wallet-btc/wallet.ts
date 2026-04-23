@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
+import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
@@ -161,6 +161,17 @@ class BitcoinLikeWallet {
 
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
+    const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
+    const fixedVBytes = utils.maxTxVBytesCeil(
+      0,
+      [],
+      false,
+      account.xpub.crypto,
+      account.xpub.derivationMode,
+    );
+    const oneInputVBytes =
+      utils.maxTxVBytesCeil(1, [], false, account.xpub.crypto, account.xpub.derivationMode) -
+      fixedVBytes;
     let usableUtxoCount = 0;
     successfulUtxos.forEach(utxo => {
       if (
@@ -172,6 +183,10 @@ class BitcoinLikeWallet {
         // we can use non-pending utxos or change utxo (whether pending or not)
         // NOTE: check ledger-live-common/src/families/bitcoin/docs/RBF.md for more details
         if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
+          const effectiveValue = Number(utxo.value) - safeFeePerByte * oneInputVBytes;
+          if (effectiveValue <= 0) {
+            return;
+          }
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }
@@ -186,7 +201,7 @@ class BitcoinLikeWallet {
 
     // fees if we use all utxo
     const fees =
-      feePerByte *
+      safeFeePerByte *
       utils.maxTxSizeCeil(
         usableUtxoCount,
         outputScripts,

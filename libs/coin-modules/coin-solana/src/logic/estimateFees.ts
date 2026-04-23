@@ -1,7 +1,13 @@
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type {
+  FeeEstimation,
+  MemoNotSupported,
+  StringMemo,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import { isSolanaStakingTransactionIntent } from "../logic";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import { getStakeAccountAddressWithSeed } from "../network/chain/web3";
@@ -30,7 +36,7 @@ const BASE_TRANSACTION: Transaction = {
  */
 export async function estimateFees(
   api: ChainAPI,
-  intent: TransactionIntent,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
   const kind = mapIntentToTxKind(intent);
@@ -341,14 +347,16 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
   throw new Error("next blockhash timeout");
 }
 
-function mapIntentToTxKind(intent: TransactionIntent): TransactionModel["kind"] {
-  if (intent.intentType === "transaction") {
-    if (intent.asset.type !== "native") {
-      return "token.transfer";
-    }
-    return "transfer";
+function mapIntentToTxKind(
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+): TransactionModel["kind"] {
+  if (isSolanaStakingTransactionIntent(intent)) {
+    return intent.type as TransactionModel["kind"];
   }
-  throw new Error(`Unsupported intent type: ${intent.intentType}`);
+  if (intent.asset.type !== "native") {
+    return "token.transfer";
+  }
+  return "transfer";
 }
 
 /**

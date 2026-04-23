@@ -1,5 +1,5 @@
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -10,7 +10,7 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
-import { Transaction } from "../../../generated/types";
+import { Transaction } from "../../../coin-modules/transaction-types";
 import {
   ExchangeRate,
   OnNoRatesCallback,

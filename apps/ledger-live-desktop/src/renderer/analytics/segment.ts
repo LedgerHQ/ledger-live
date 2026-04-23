@@ -22,6 +22,7 @@ import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
 import {
+  analyticsConsentInfoSelector,
   developerModeSelector,
   devicesModelListSelector,
   hasCompletedOnboardingSelector,
@@ -192,6 +193,7 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
   const devModeEnabled = developerModeSelector(state);
   const readOnlyMode = !hasOnboardedDeviceSelector(state);
+  const analyticsInfo = analyticsConsentInfoSelector(state);
 
   return {
     devModeEnabled,
@@ -199,6 +201,7 @@ const getMandatoryProperties = (store: ReduxStore) => {
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
+    analyticsInfo,
   };
 };
 
@@ -232,6 +235,9 @@ const extraProperties = (store: ReduxStore) => {
     : { enabled: false };
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
+  const ldmkCosmosSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkCosmosSigner")
     : { enabled: false };
   const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
@@ -318,6 +324,7 @@ const extraProperties = (store: ReduxStore) => {
       hasCompletedOnboarding,
     ),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
+    isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,

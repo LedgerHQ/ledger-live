@@ -7,7 +7,7 @@ import TrackDialogScreen from "../../analytics/TrackDialogScreen";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { GenericError } from "../../components/GenericError";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSearchedSelector } from "~/renderer/reducers/modularDialog";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { AssetSelectorContent } from "./components/AssetSelectorContent";
 import { ErrorInfo } from "@ledgerhq/live-common/dada-client/utils/errorUtils";
@@ -33,7 +33,7 @@ const AssetSelector = ({
   refetch,
   assetsSorted,
 }: Readonly<AssetSelectorProps>) => {
-  const searchedValue = useSelector(modularDrawerSearchedSelector);
+  const searchedValue = useSelector(modularDialogSearchedSelector);
 
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 

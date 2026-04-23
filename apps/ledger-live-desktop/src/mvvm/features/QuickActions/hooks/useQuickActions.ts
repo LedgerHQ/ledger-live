@@ -15,10 +15,12 @@ import { useTranslation } from "react-i18next";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "../../ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { track } from "~/renderer/analytics/segment";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
@@ -29,6 +31,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
   const { hasAccount, hasFunds } = useAccountStatus();
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
+  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -45,14 +49,15 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
   );
 
   const maybeRedirectToAccounts = useCallback(() => {
-    return location.pathname === "/manager" && push("/accounts");
-  }, [location.pathname, push]);
+    return location.pathname === "/manager" && push(accountsPath);
+  }, [accountsPath, location.pathname, push]);
 
   const onSend = useCallback(() => {
     track("button_clicked", {
       button: "send",
       buttonLocation: "quick_action",
       page: trackingPageName,
+      flow: "send",
     });
     maybeRedirectToAccounts();
     openSendFlow();
@@ -171,7 +176,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
         buttonAppearance: "transparent",
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [hasOnboardedDevice, hasFunds, hasAccount]);
 
   return { actionsList };

@@ -32,7 +32,7 @@ export const Overview = () => {
     <HorizontalScroll>
       <ScrollView>
         <Flex flexDirection="column" padding={7}>
-          {textVariants.map((variant) => {
+          {textVariants.map(variant => {
             const fontWeightsToShow: FontWeightTypes[] =
               isHeader(variant) && !isHeaderInter(variant)
                 ? ["medium"]
@@ -51,8 +51,8 @@ export const Overview = () => {
                     fontWeights: {JSON.stringify(fontWeightsToShow)}
                   </Text>
                 </Flex>
-                {fontWeightsToShow.flatMap((fontWeight) =>
-                  decorationsToShow.map((textDecorationLine) => (
+                {fontWeightsToShow.flatMap(fontWeight =>
+                  decorationsToShow.map(textDecorationLine => (
                     <Flex key={fontWeight + textDecorationLine} maxWidth={270} mx={4}>
                       <Text
                         variant={variant}

@@ -5,7 +5,6 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
-
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;

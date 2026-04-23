@@ -1,5 +1,33 @@
 # @ledgerhq/coin-tester
 
+## 0.20.0
+
+### Minor Changes
+
+- [#16215](https://github.com/LedgerHQ/ledger-live/pull/16215) [`253bdcf`](https://github.com/LedgerHQ/ledger-live/commit/253bdcf3cc90cfd00a6d75da773cd5e53c96def9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: migrate to oxlint/oxfmt on coin-tester modules
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#16215](https://github.com/LedgerHQ/ledger-live/pull/16215) [`253bdcf`](https://github.com/LedgerHQ/ledger-live/commit/253bdcf3cc90cfd00a6d75da773cd5e53c96def9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: migrate to oxlint/oxfmt on coin-tester modules
+
+## 0.19.0
+
+### Minor Changes
+
+- [#14154](https://github.com/LedgerHQ/ledger-live/pull/14154) [`0431655`](https://github.com/LedgerHQ/ledger-live/commit/043165591a3bd650b43a220b23bd952ff82d56a0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10510): fix wrong amounts on ERC-20 transfer operations
+
+- [#15610](https://github.com/LedgerHQ/ledger-live/pull/15610) [`d1b1f81`](https://github.com/LedgerHQ/ledger-live/commit/d1b1f816452e2195af8ad9032689ea500cad87ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tester-bitcoin): ensure no remote HTTP calls are possible
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#14154](https://github.com/LedgerHQ/ledger-live/pull/14154) [`0431655`](https://github.com/LedgerHQ/ledger-live/commit/043165591a3bd650b43a220b23bd952ff82d56a0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10510): fix wrong amounts on ERC-20 transfer operations
+
+- [#15610](https://github.com/LedgerHQ/ledger-live/pull/15610) [`d1b1f81`](https://github.com/LedgerHQ/ledger-live/commit/d1b1f816452e2195af8ad9032689ea500cad87ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tester-bitcoin): ensure no remote HTTP calls are possible
+
 ## 0.18.0
 
 ### Minor Changes

@@ -1,4 +1,7 @@
-import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
+  formatCurrencyUnit,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-module-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {

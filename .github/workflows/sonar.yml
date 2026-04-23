@@ -31,12 +31,15 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: caches
         with:
-          skip-turbo-cache: "false"
-          install-proto: false
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
         env:
@@ -45,12 +48,10 @@ jobs:
           pnpm i --filter="./libs/**" --filter="./features/**" --filter="live-mobile..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
 
       - name: Build dependencies
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
         run: |
-          pnpm turbo build --filter="./libs/**" --filter="ledger-live-desktop^..." --filter="live-mobile^..."
+          pnpm exec nx run-many -t build --projects=tag:scope:libs
+          pnpm exec nx run ledger-live-desktop:build
+          pnpm exec nx run live-mobile:build
 
       - name: Generate Unit test coverage for LLD & LLM
         run: |
@@ -63,7 +64,7 @@ jobs:
           touch libs/coverage/lcov.info
           touch libs/coverage/sonar-executionTests-report.xml
 
-          pnpm turbo run coverage --filter="./libs/**" --concurrency=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs --parallel=4 -- --runInBand=1
 
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
@@ -88,7 +89,7 @@ jobs:
           touch features/coverage/lcov.info
           touch features/coverage/sonar-executionTests-report.xml
 
-          pnpm turbo run coverage --filter="./features/**" --concurrency=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:features --parallel=4 -- --runInBand=1
 
           for package_json in $(find ./features -name "package.json" -not -path "*/node_modules/*"); do
             pkg=$(dirname "$package_json")
@@ -105,9 +106,26 @@ jobs:
             fi
           done
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Generate Unit test coverage for wallet-cli
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: |
+          pnpm i --filter="@ledgerhq/wallet-cli..." --no-frozen-lockfile --unsafe-perm
+          pnpm turbo build --filter="@ledgerhq/wallet-cli^..."
+          mkdir -p apps/wallet-cli/coverage
+          touch apps/wallet-cli/coverage/lcov.info
+          pnpm --filter="@ledgerhq/wallet-cli" coverage
+
       - name: Merge coverage files
         run: |
-          cat libs/coverage/lcov.info features/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
+          cat libs/coverage/lcov.info features/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info apps/wallet-cli/coverage/lcov.info > ./lcov.info
           cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - name: Sonarqube Scan

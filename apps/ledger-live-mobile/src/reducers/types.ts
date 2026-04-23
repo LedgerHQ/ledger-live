@@ -1,12 +1,7 @@
-import type {
-  Account,
-  DeviceInfo,
-  DeviceModelInfo,
-  Feature,
-  FeatureId,
-  PortfolioRange,
-} from "@ledgerhq/types-live";
+import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
@@ -39,6 +34,7 @@ import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
+import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
 
 // === ACCOUNT STATE ===
 
@@ -153,6 +149,8 @@ export type DynamicContentState = {
   localCategoriesCards: CategoryContentCard[];
   /** Local/debug mobile cards (merged in selectors, not from Braze) */
   localMobileCards: BrazeContentCard[];
+  /** Local/debug wallet carousel cards (bottom Portfolio carousel, merged in selector) */
+  localWalletCards: WalletContentCard[];
 };
 
 // === IN VIEW STATE ===
@@ -228,6 +226,7 @@ export type SettingsState = {
   orderAccounts: string;
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
+  onboardingCompletionDate: string | null;
   isOnboardingFlow: boolean;
   isOnboardingFlowReceiveSuccess: boolean;
   isPostOnboardingFlow: boolean;
@@ -271,8 +270,6 @@ export type SettingsState = {
   /** True if user never clicked on the AllowNotifications button in the notifications settings */
   neverClickedOnAllowNotificationsButton: boolean;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
-  overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
-  featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   /* NB: Protect is the former codename for Ledger Recover */
@@ -292,6 +289,12 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   deprecationDoNotRemind: string[];
+  analyticsConsentInfo: AnalyticsConsentInfo;
+};
+
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export type NotificationsSettings = {
@@ -299,6 +302,8 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
+  totalMarketCap: boolean;
+  topGainersLosers: boolean;
 };
 
 // === WALLET CONNECT STATE ===
@@ -317,11 +322,19 @@ export type EarnState = {
     messageTitle?: string;
     learnMoreLink?: string;
   };
+  infoBottomSheet?: {
+    message: string;
+    title: string;
+    linkText?: string;
+    linkHref?: string;
+  };
   menuModal?: {
     title?: string;
     options: { label: string; metadata: OptionMetadata }[];
   };
+  menuBottomSheet?: { icon: string; label: string; metadata: OptionMetadata }[];
   protocolInfoModal?: true;
+  actionDialog?: ActionDialogParams;
 };
 
 // === PROTECT STATE ===
@@ -389,6 +402,7 @@ export type State = LLMRTKApiState & {
   deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  featureFlags: FeatureFlagsState;
   identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
@@ -409,4 +423,5 @@ export type State = LLMRTKApiState & {
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
+  portfolioBalanceDisplay: PortfolioBalanceDisplayState;
 };

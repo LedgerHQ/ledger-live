@@ -1,67 +1,27 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
+import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommandWithRetry } from "./runCli";
 import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
+import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import {
-  registerTransportModule,
-  unregisterAllTransportModules,
-} from "@ledgerhq/live-common/hw/index";
-
-type LiveDataOpts = {
-  currency?: string;
-  index?: number;
-  scheme?: string;
-  appjson?: string;
-  add?: boolean;
-};
-
-type GetAddressOpts = {
-  currency?: string;
-  device?: string;
-  path?: string;
-  derivationMode?: string;
-  verify?: boolean;
-};
-
-type LedgerKeyRingProtocolOpts = {
-  initMemberCredentials?: boolean;
-  apiBaseUrl?: string;
-  applicationId?: number;
-  name?: string;
-  getKeyRingTree?: boolean;
-  pubKey?: string;
-  privateKey?: string;
-  device?: string;
-  destroyKeyRingTree?: boolean;
-  rootId?: string;
-  walletSyncEncryptionKey?: string;
-  applicationPath?: string;
-};
-
-type LedgerSyncOpts = {
-  applicationId?: number;
-  name?: string;
-  apiBaseUrl?: string;
-  pubKey: string;
-  privateKey: string;
-  rootId: string;
-  walletSyncEncryptionKey: string;
-  applicationPath: string;
-  push?: boolean;
-  pull?: boolean;
-  data?: string;
-  version?: number;
-  cloudSyncApiBaseUrl?: string;
-  deleteData?: boolean;
-};
+  runCliGetAddress,
+  runCliGetTokenAllowance,
+  runCliLiveData,
+  runCliTokenApproval,
+  type GetAddressOpts,
+  type GetTokenAllowanceOpts,
+  type LedgerKeyRingProtocolOpts,
+  type LedgerSyncOpts,
+  type LiveDataOpts,
+  type TokenApprovalOpts,
+} from "@ledgerhq/live-common/e2e/runCli";
 
 export const CLI = {
   ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
@@ -190,87 +150,25 @@ export const CLI = {
     }
   },
   liveData: function (opts: LiveDataOpts) {
-    const cliOpts = ["liveData"];
-
-    if (opts.currency) {
-      cliOpts.push(`--currency+${opts.currency}`);
-    }
-
-    if (opts.index !== undefined) {
-      cliOpts.push(`--index+${opts.index}`);
-    }
-
-    if (opts.appjson) {
-      cliOpts.push(`--appjson+${opts.appjson}`);
-    }
-
-    if (opts.scheme) {
-      cliOpts.push(`--scheme+${opts.scheme}`);
-    }
-
-    if (opts.add) {
-      cliOpts.push("--add");
-    }
-
-    return runCliCommandWithRetry(cliOpts.join("+"));
+    return runCliLiveData(opts);
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
-    unregisterAllTransportModules();
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,
       baseURL: speculosAddress,
     };
 
     registerTransportModule({
-      id: "speculos-http",
+      id: "speculos-http-" + apiPort,
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
   },
-  getAddress: async (opts: GetAddressOpts) => {
-    const cliOpts = ["getAddress"];
-
-    if (opts.currency) {
-      cliOpts.push(`--currency+${opts.currency}`);
-    }
-
-    if (opts.device) {
-      cliOpts.push(`--device+${opts.device}`);
-    }
-
-    if (opts.path) {
-      cliOpts.push(`--path+${opts.path}`);
-    }
-
-    if (opts.derivationMode) {
-      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
-    }
-
-    if (opts.verify) {
-      cliOpts.push("--verify");
-    }
-
-    const output = await runCliCommandWithRetry(cliOpts.join("+"));
-    const lines = output
-      .split("\n")
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
-
-    if (lines.length === 0) {
-      throw new Error("CLI getAddress returned empty output");
-    }
-
-    const jsonLine =
-      [...lines].reverse().find(line => line.startsWith("{") || line.startsWith("[")) ?? "";
-
-    if (!jsonLine) {
-      throw new Error("CLI getAddress output does not contain JSON");
-    }
-
-    try {
-      return JSON.parse(jsonLine);
-    } catch {
-      throw new Error("Failed to parse CLI getAddress output");
-    }
+  getAddress: (opts: GetAddressOpts) => runCliGetAddress(opts),
+  tokenApproval: function (opts: TokenApprovalOpts) {
+    return runCliTokenApproval(opts);
+  },
+  getTokenAllowance: function (opts: GetTokenAllowanceOpts) {
+    return runCliGetTokenAllowance(opts);
   },
 };

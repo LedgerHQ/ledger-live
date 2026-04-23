@@ -1,7 +1,7 @@
 import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { cardHandler, discoverHandler, walletConnectHandler } from "../discover.handler";
-import { DeeplinkHandlerContext } from "../../types";
+import { createMockContext } from "./test-utils";
 
 jest.mock("@ledgerhq/live-common/wallet-api/constants", () => ({
   CARD_APP_ID: "cl-card",
@@ -13,21 +13,6 @@ jest.mock("~/renderer/analytics/TrackPage", () => ({
 }));
 
 const mockSetTrackingSource = jest.mocked(setTrackingSource);
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  ...overrides,
-});
 
 describe("discover.handler", () => {
   beforeEach(() => {

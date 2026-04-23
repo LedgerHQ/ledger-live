@@ -3,7 +3,6 @@
   "compilerOptions": {
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "downlevelIteration": true,
     "rootDir": ".",
     "outDir": "lib", // if out path for a file is same as its src path, nothing will be emitted
     "jsx": "react",
@@ -13,11 +12,11 @@
     ],
     "composite": true, // required on the dependency project for references to work
     "isolatedModules": false,
-    "baseUrl": ".",
     "paths": {
+      "*": ["./*"],
       "react": ["../../node_modules/@types/react"],
       "@types/react": ["../../node_modules/@types/react"],
-      "@tests/*": ["src/__tests__/*"]
+      "@tests/*": ["./src/__tests__/*"]
     }
   },
   "files": [

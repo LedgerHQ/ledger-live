@@ -1,5 +1,53 @@
 # @ledgerhq/hw-app-canton
 
+## 0.12.0
+
+### Minor Changes
+
+- [#15765](https://github.com/LedgerHQ/ledger-live/pull/15765) [`6347738`](https://github.com/LedgerHQ/ledger-live/commit/6347738922a958ccefb25eb532a0001c512fefda) Thanks [@ishaba](https://github.com/ishaba)! - refactor(canton): hardware wallet integration & transaction encoding
+
+### Patch Changes
+
+- Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
+  - @ledgerhq/errors@6.34.0
+  - @ledgerhq/hw-transport@6.35.1
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#15765](https://github.com/LedgerHQ/ledger-live/pull/15765) [`6347738`](https://github.com/LedgerHQ/ledger-live/commit/6347738922a958ccefb25eb532a0001c512fefda) Thanks [@ishaba](https://github.com/ishaba)! - refactor(canton): hardware wallet integration & transaction encoding
+
+### Patch Changes
+
+- Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
+  - @ledgerhq/errors@6.34.0-next.0
+  - @ledgerhq/hw-transport@6.35.1-next.0
+
+## 0.11.0
+
+### Minor Changes
+
+- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
+
+### Patch Changes
+
+- Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/errors@6.33.0
+  - @ledgerhq/hw-transport@6.35.0
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
+
+### Patch Changes
+
+- Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
+  - @ledgerhq/errors@6.33.0-next.0
+  - @ledgerhq/hw-transport@6.35.0-next.0
+
 ## 0.10.1
 
 ### Patch Changes

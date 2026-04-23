@@ -1,9 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { compilerOptions } = require("./tsconfig.json");
 const {
   getDeviceFirmwareVersion,
   getSpeculosModel,
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
 } = require("@ledgerhq/live-common/e2e/speculosAppVersion");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
@@ -11,11 +9,13 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   if (!paths) return jestPaths;
 
   Object.keys(paths).forEach(pathKey => {
+    // tsconfig uses "*": ["./*"] instead of baseUrl; mapping (.*) -> $1 breaks every module in Jest
+    if (pathKey === "*") return;
     const pathEntry = paths[pathKey];
     const pathValues = Array.isArray(pathEntry) ? pathEntry : [pathEntry];
     pathValues.forEach(pathValue => {
       const jestKey = pathKey.replace(/\*$/, "(.*)");
-      const jestValue = pathValue.replace(/\*$/, "$1");
+      const jestValue = pathValue.replace(/\*/g, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
   });
@@ -40,6 +40,7 @@ const jestAllure2ReporterOptions = {
   environment: async ({ $ }) => ({
     SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
     SPECULOS_FIRMWARE_VERSION: await getDeviceFirmwareVersion(getSpeculosModel()),
+    MOBILE_DEVICE: process.env.DEVICE_INFO || "Unknown device",
     path: process.cwd(),
     "version.node": process.version,
     "version.jest": await $.manifest("jest", ["version"]),
@@ -50,7 +51,7 @@ const jestAllure2ReporterOptions = {
 
 // Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
 const detoxAllure2AdapterOptions = {
-  deviceLogs: false,
+  deviceLogs: true,
   deviceScreenshots: false,
   deviceVideos: false,
   deviceViewHierarchy: false,
@@ -61,6 +62,7 @@ const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
 
 const config = {
   rootDir: ".",
+  modulePaths: [compilerOptions.baseUrl ?? "."],
   maxWorkers: process.env.CI ? 3 : 1,
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",

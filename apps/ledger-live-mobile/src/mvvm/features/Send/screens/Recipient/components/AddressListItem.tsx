@@ -4,7 +4,7 @@ import {
   ListItemContent,
   ListItemDescription,
   ListItemLeading,
-  ListItemSpot,
+  Spot,
   ListItemTitle,
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -67,7 +67,7 @@ export function AddressListItem({
   return (
     <ListItem onPress={disabled ? undefined : onSelect} disabled={disabled}>
       <ListItemLeading>
-        <ListItemSpot appearance="icon" icon={icon} lx={{ marginRight: "s4" }} />
+        <Spot appearance="icon" icon={icon} lx={{ marginRight: "s4" }} />
         <ListItemContent>
           <ListItemTitle typography="body2SemiBold">{title}</ListItemTitle>
           <ListItemDescription typography="body3" ellipsizeMode="middle">

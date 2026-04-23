@@ -43,9 +43,13 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   const stakingUrl = useLocalizedUrl(urls.stakingTezos);
 
+  if (parentAccount) {
+    return null;
+  }
+
   // derive last stake op
   const ops =
-    (account as TezosAccount).operations ?? (parentAccount as TezosAccount)?.operations ?? [];
+    (account as TezosAccount).operations ?? [];
   const lastStake = ops.find(o => o?.type === "STAKE");
 
   return (

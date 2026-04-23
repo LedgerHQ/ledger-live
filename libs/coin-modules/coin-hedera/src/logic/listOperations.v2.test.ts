@@ -77,7 +77,7 @@ describe("listOperationsV2", () => {
     (utils.extractFeesPayer as jest.Mock).mockImplementation(input =>
       typeof input === "string"
         ? input.split("-")[0]
-        : input.transaction_id?.split("-")[0] ?? "0.0.0",
+        : (input.transaction_id?.split("-")[0] ?? "0.0.0"),
     );
     (utils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
     (networkUtils.enrichERC20Transfers as jest.Mock).mockReturnValue([]);
@@ -281,7 +281,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
@@ -371,7 +371,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
@@ -408,6 +408,65 @@ describe("listOperationsV2", () => {
         recipients: [mockERC20Transfer.receiver_evm_address],
       }),
     ]);
+  });
+
+  it("should skip ERC20 operations when sender evm address is null", async () => {
+    const mockTokenERC20 = getMockedERC20TokenCurrency();
+    const sharedHash = "erc20-null-sender-hash";
+    const sharedTimestamp = "1625097600.000000000";
+    const mockMirrorTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: sharedTimestamp,
+      transaction_hash: sharedHash,
+      name: "CONTRACTCALL",
+      transfers: [{ account: mockMirrorAccount.account, amount: -300000 }],
+    });
+    const mockERC20Transfer = getMockedERC20TokenTransfer({
+      transaction_hash: sharedHash,
+      consensus_timestamp: Number(sharedTimestamp.split(".")[0]) * 10 ** 9,
+      sender_account_id: null,
+      receiver_account_id: 67890,
+      sender_evm_address: null,
+      receiver_evm_address: "0xrecipient",
+      payer_account_id: 12345,
+      amount: 5000000,
+    });
+    const mockContractCallResult = getMockedMirrorContractCallResult();
+    const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
+      mirrorTransaction: mockMirrorTransaction,
+      contractCallResult: mockContractCallResult,
+      transfers: [mockERC20Transfer],
+    });
+
+    jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
+    (hgraphClient.getERC20Transfers as jest.Mock).mockResolvedValue([mockERC20Transfer]);
+    (hgraphClient.getLatestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
+      new BigNumber(sharedTimestamp),
+    );
+
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+    });
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      currency: mockCurrency,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      erc20Tokens: [{ token: mockTokenERC20, balance: new BigNumber(10000000) }],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.tokenOperations).toEqual([]);
+    expect(result.coinOperations).toEqual([]);
   });
 
   it("should parse token associate transactions correctly", async () => {
@@ -754,7 +813,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
@@ -993,7 +1052,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
@@ -1026,6 +1085,81 @@ describe("listOperationsV2", () => {
 
     expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toEqual([expect.objectContaining({ type: "IN" })]);
+  });
+
+  it("should produce two token operations for a swap with two different-token transfers", async () => {
+    const sharedHash = "erc20-in-transfer-hash";
+    const mockTokenA = getMockedERC20TokenCurrency({
+      id: "hedera/erc20/0xTokenA",
+      contractAddress: "0xTokenA",
+    });
+    const mockTokenB = getMockedERC20TokenCurrency({
+      id: "hedera/erc20/0xTokenB",
+      contractAddress: "0xTokenB",
+    });
+
+    const mockErc20TransferOut = getMockedERC20TokenTransfer({
+      token_evm_address: mockTokenA.contractAddress,
+      sender_evm_address: mockMirrorAccount.evm_address,
+      sender_account_id: 12345,
+      receiver_account_id: 99999,
+      transfer_type: "transfer",
+      amount: 1000,
+      transaction_hash: sharedHash,
+    });
+    const mockErc20TransferIn = getMockedERC20TokenTransfer({
+      token_evm_address: mockTokenB.contractAddress,
+      receiver_evm_address: mockMirrorAccount.evm_address,
+      sender_account_id: 99999,
+      receiver_account_id: 12345,
+      transfer_type: "transfer",
+      amount: 2000,
+      transaction_hash: sharedHash,
+    });
+
+    const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
+      transfers: [mockErc20TransferOut, mockErc20TransferIn],
+    });
+
+    jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
+    (hgraphClient.getERC20Transfers as jest.Mock).mockResolvedValue([]);
+    (hgraphClient.getLatestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
+      new BigNumber("1625097600.000000000"),
+    );
+
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: jest
+        .fn()
+        .mockResolvedValueOnce(mockTokenA) // for transfer out
+        .mockResolvedValueOnce(mockTokenB), // for transfer in
+    });
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      currency: mockCurrency,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      erc20Tokens: [
+        { token: mockTokenA, balance: new BigNumber(10000) },
+        { token: mockTokenB, balance: new BigNumber(20000) },
+      ],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toEqual([expect.objectContaining({ type: "FEES" })]);
+    expect(result.tokenOperations).toEqual([
+      expect.objectContaining({ type: "OUT" }),
+      expect.objectContaining({ type: "IN" }),
+    ]);
   });
 
   it("should skip FEES operations when skipFeesForTokenOperations is true", async () => {
@@ -1189,7 +1323,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
@@ -1257,7 +1391,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);
@@ -1391,7 +1525,7 @@ describe("listOperationsV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockERC20MirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     jest.spyOn(networkUtils, "enrichERC20Transfers").mockResolvedValue([mockEnrichedERC20Transfer]);

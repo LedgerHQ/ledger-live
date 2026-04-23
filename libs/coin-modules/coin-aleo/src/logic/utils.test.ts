@@ -1,20 +1,32 @@
 import BigNumber from "bignumber.js";
-import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import {
+  getMockedAccount,
+  mockAleoResources,
+  mockUnspentRecord1,
+  mockUnspentRecord2,
+} from "../__tests__/fixtures/account.fixture";
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
-import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
-import type { AleoOperationExtra, ProvableApi, AleoTransactionIntentData } from "../types";
+import {
+  getMockedTransaction,
+  mockTxIntentFeePrivate,
+  mockTxIntentFeePublic,
+  mockTxIntentSelfTransferToPrivate,
+  mockTxIntentSelfTransferToPublic,
+  mockTxIntentTransferPrivate,
+  mockTxIntentTransferPublic,
+} from "../__tests__/fixtures/transaction.fixture";
+import type { AleoOperationExtra, ProvableApi } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -23,7 +35,6 @@ import {
   toAlpacaOperation,
   toBridgeOperation,
   toPrivateBridgeOperation,
-  generateUniqueUsername,
   resolveConfig,
   getTransactionType,
   calculateAmount,
@@ -31,8 +42,8 @@ import {
   isRecordScannerReady,
   getOperationTransactionType,
   splitPrivateAndPublicOperations,
-  serializeTransaction,
-  deserializeTransaction,
+  toHex,
+  fromHex,
   mapTransactionIntentToSdkIntent,
   hasSpecificIntentData,
   getOperationDetailsExtraFields,
@@ -40,13 +51,18 @@ import {
   isSelfTransferTransaction,
   isPublicTransaction,
   isPrivateTransaction,
+  createTransactionIntent,
+  createFeeTransactionIntent,
+  getRecordByCommitment,
+  getFunctionNameFromTransactionType,
+  getNextSequenceNumber,
+  extractViewKey,
+  findBestRecordForFee,
 } from "./utils";
 
-jest.mock("@ledgerhq/cryptoassets/currencies");
 jest.mock("../config");
 
 const mockedAleoConfig = jest.mocked(aleoConfig);
-const mockedGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 
 const mockCurrency = getMockedCurrency();
 const mockConfig = getMockedConfig("mainnet");
@@ -74,7 +90,7 @@ describe("getNetworkConfig", () => {
     getNetworkConfig(mockCurrency);
 
     expect(aleoConfig.getCoinConfig).toHaveBeenCalledTimes(1);
-    expect(aleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency);
+    expect(aleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency.id);
   });
 });
 
@@ -364,27 +380,6 @@ describe("toBridgeOperation", () => {
   });
 });
 
-describe("generateUniqueUsername", () => {
-  it("should generate a SHA-256 hash from timestamp and address", () => {
-    const mockAddress = "aleo1test123";
-    const result = generateUniqueUsername(mockAddress);
-
-    expect(result).toMatch(/^[a-f0-9]{64}$/);
-  });
-
-  it("should generate unique hashes for different addresses", () => {
-    const address1 = "aleo1address1";
-    const address2 = "aleo1address2";
-
-    const result1 = generateUniqueUsername(address1);
-    const result2 = generateUniqueUsername(address2);
-
-    expect(result1).toMatch(/^[a-f0-9]{64}$/);
-    expect(result2).toMatch(/^[a-f0-9]{64}$/);
-    expect(result1).not.toBe(result2);
-  });
-});
-
 describe("resolveConfig", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -394,32 +389,19 @@ describe("resolveConfig", () => {
     const result = resolveConfig(mockConfig);
 
     expect(result).toBe(mockConfig);
-    expect(mockedGetCryptoCurrencyById).not.toHaveBeenCalled();
     expect(mockedAleoConfig.getCoinConfig).not.toHaveBeenCalled();
   });
 
-  it("should resolve config by currency id string using getCryptoCurrencyById and getCoinConfig", () => {
-    mockedGetCryptoCurrencyById.mockReturnValue(mockCurrency);
+  it("should resolve config by currency id string using getCoinConfig", () => {
     mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
 
     const result = resolveConfig("aleo");
 
-    expect(mockedGetCryptoCurrencyById).toHaveBeenCalledWith("aleo");
-    expect(mockedAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency);
+    expect(mockedAleoConfig.getCoinConfig).toHaveBeenCalledWith("aleo");
     expect(result).toBe(mockConfig);
   });
 
-  it("should propagate error when getCryptoCurrencyById throws for unknown currency id", () => {
-    mockedGetCryptoCurrencyById.mockImplementation(() => {
-      throw new Error("Currency not found: unknown_currency");
-    });
-
-    expect(() => resolveConfig("unknown_currency")).toThrow("Currency not found: unknown_currency");
-    expect(mockedAleoConfig.getCoinConfig).not.toHaveBeenCalled();
-  });
-
   it("should propagate error when getCoinConfig throws for currency without config", () => {
-    mockedGetCryptoCurrencyById.mockReturnValue(mockCurrency);
     mockedAleoConfig.getCoinConfig.mockImplementation(() => {
       throw new Error("No config for currency: aleo");
     });
@@ -513,17 +495,72 @@ describe("calculateAmount", () => {
       totalSpent: estimatedFees,
     });
   });
+
+  it("should use the full amount record for private transactions with useAllAmount", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        privateBalance: new BigNumber(1400000),
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(mockUnspentRecord1.microcredits),
+      totalSpent: new BigNumber(mockUnspentRecord1.microcredits).plus(estimatedFees),
+    });
+  });
+
+  it("should return zero for private transactions with useAllAmount when the amount record is missing", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(0),
+      totalSpent: estimatedFees,
+    });
+  });
 });
 
 describe("isProvableApiConfigured", () => {
   const validProvableApi: Required<ProvableApi> = {
-    apiKey: "test-api-key",
-    consumerId: "test-consumer-id",
     uuid: "test-uuid",
-    jwt: {
-      token: "test-token",
-      exp: 123456789,
-    },
     scannerStatus: {
       synced: true,
       percentage: 100,
@@ -543,32 +580,11 @@ describe("isProvableApiConfigured", () => {
 
     expect(isProvableApiConfigured(rest)).toBe(false);
   });
-
-  it("returns false when apiKey is missing", () => {
-    const { apiKey: _, ...rest } = validProvableApi;
-
-    expect(isProvableApiConfigured(rest)).toBe(false);
-  });
-
-  it("returns false when jwt is missing", () => {
-    const { jwt: _, ...rest } = validProvableApi;
-
-    expect(isProvableApiConfigured(rest)).toBe(false);
-  });
-
-  it("returns false when jwt.token is missing", () => {
-    const api: ProvableApi = { ...validProvableApi, jwt: { token: "", exp: 123456789 } };
-
-    expect(isProvableApiConfigured(api)).toBe(false);
-  });
 });
 
 describe("isRecordScannerReady", () => {
   const baseProvableApi: ProvableApi = {
-    apiKey: "test-api-key",
-    consumerId: "test-consumer-id",
     uuid: "test-uuid",
-    jwt: { token: "test-token", exp: 123456789 },
     scannerStatus: { synced: true, percentage: 100 },
   };
 
@@ -810,51 +826,27 @@ describe("splitPrivateAndPublicOperations", () => {
 
 describe("hasSpecificIntentData", () => {
   it("should return true when data.type matches expectedType", () => {
-    // @ts-expect-error - only intent.data is required for this test
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      data: {
-        type: "fee_public",
-        executionId: "exec123",
-        priorityFee: 5000,
-      },
-    };
+    const intent = mockTxIntentFeePublic;
 
     expect(hasSpecificIntentData(intent, "fee_public")).toBe(true);
   });
 
   it("should return false when data.type does not match expectedType", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      data: {
-        // @ts-expect-error - only intent.type is required for this test
-        type: "none",
-      },
-    };
+    const intent = mockTxIntentFeePrivate;
 
     expect(hasSpecificIntentData(intent, "fee_public")).toBe(false);
   });
 
   it("should return false when data property is absent", () => {
-    // @ts-expect-error - testing invalid intent
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {};
+    const intent = mockTxIntentTransferPublic;
 
     expect(hasSpecificIntentData(intent, "fee_public")).toBe(false);
   });
 });
 
 describe("mapTransactionIntentToSdkIntent", () => {
-  const baseIntent = {
-    intentType: "transaction" as const,
-    asset: { type: "native" as const },
-    amount: 1000000n,
-    sender: "aleo1sender",
-    recipient: "aleo1recipient",
-  };
-
   it("should map transfer_public intent to SDK intent with correct fields", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      ...baseIntent,
-      type: "transfer_public",
-    };
+    const intent = mockTxIntentTransferPublic;
 
     const result = mapTransactionIntentToSdkIntent(intent);
 
@@ -865,31 +857,23 @@ describe("mapTransactionIntentToSdkIntent", () => {
     });
   });
 
-  it("should map transfer_public_to_private intent to SDK intent with correct fields", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      ...baseIntent,
-      type: "transfer_public_to_private",
-    };
+  it("should map convert_public_to_private intent to SDK intent with correct fields", () => {
+    const intent = mockTxIntentSelfTransferToPrivate;
 
     const result = mapTransactionIntentToSdkIntent(intent);
 
     expect(result).toEqual({
-      type: intent.type,
+      type: "transfer_public_to_private",
       amount: intent.amount.toString(),
       to: intent.recipient,
     });
   });
 
   it("should map fee_public intent with priorityFee to SDK intent", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      ...baseIntent,
-      type: "fee_public",
-      data: {
-        type: "fee_public",
-        executionId: "exec123",
-        priorityFee: 5000,
-      },
-    };
+    const intent = mockTxIntentFeePublic;
+    if (!hasSpecificIntentData(intent, "fee_public")) {
+      throw new Error("guard: expected fee_public intent data");
+    }
 
     const result = mapTransactionIntentToSdkIntent(intent);
 
@@ -897,14 +881,56 @@ describe("mapTransactionIntentToSdkIntent", () => {
       type: intent.type,
       base_fee: intent.amount.toString(),
       execution_id: intent.data.executionId,
-      priority_fee: intent.data.priorityFee?.toString(),
+      priority_fee: "5000",
+    });
+  });
+
+  it("should map transfer_private intent to SDK intent with correct fields", () => {
+    const intent = mockTxIntentTransferPrivate;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_private",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      record: mockUnspentRecord1.decryptedData,
+    });
+  });
+
+  it("should map convert_private_to_public intent to SDK intent with correct fields", () => {
+    const intent = mockTxIntentSelfTransferToPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_private_to_public",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      record: mockUnspentRecord1.decryptedData,
+    });
+  });
+
+  it("should map fee_private intent to SDK intent with correct fields", () => {
+    const intent = mockTxIntentFeePrivate;
+    if (!hasSpecificIntentData(intent, "fee_private")) {
+      throw new Error("guard: expected fee_private intent data");
+    }
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "fee_private",
+      execution_id: intent.data.executionId,
+      base_fee: intent.amount.toString(),
+      priority_fee: "6000",
+      record: mockUnspentRecord2.decryptedData,
     });
   });
 
   it("should map fee_public intent without priorityFee defaulting priority_fee to '0'", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      ...baseIntent,
-      type: "fee_public",
+    const intent = {
+      ...mockTxIntentFeePublic,
       data: {
         type: "fee_public",
         executionId: "exec456",
@@ -922,8 +948,8 @@ describe("mapTransactionIntentToSdkIntent", () => {
   });
 
   it("should throw when fee_public intent has no matching data", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      ...baseIntent,
+    const intent = {
+      ...mockTxIntentTransferPublic,
       type: "fee_public",
     };
 
@@ -933,9 +959,9 @@ describe("mapTransactionIntentToSdkIntent", () => {
   });
 
   it("should throw for unsupported intent type", () => {
-    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-      ...baseIntent,
-      type: "custom_intent" as any,
+    const intent = {
+      ...mockTxIntentTransferPublic,
+      type: "custom_intent",
     };
 
     expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
@@ -944,11 +970,11 @@ describe("mapTransactionIntentToSdkIntent", () => {
   });
 });
 
-describe("serializeTransaction", () => {
+describe("toHex", () => {
   it("should produce a hex string that decodes back to the original JSON", () => {
     const tx = getMockedPreparedRequestResponse();
 
-    const result = serializeTransaction(tx);
+    const result = toHex(tx);
     const decoded = JSON.parse(Buffer.from(result, "hex").toString());
 
     expect(result).toMatch(/^[a-f0-9]+$/);
@@ -959,28 +985,28 @@ describe("serializeTransaction", () => {
     const tx1 = getMockedPreparedRequestResponse({ program_id: "custom.aleo" });
     const tx2 = getMockedPreparedRequestResponse({ program_id: "another.aleo" });
 
-    expect(serializeTransaction(tx1)).not.toBe(serializeTransaction(tx2));
+    expect(toHex(tx1)).not.toBe(toHex(tx2));
   });
 });
 
-describe("deserializeTransaction", () => {
+describe("fromHex", () => {
   it("should deserialize a hex string back to the original transaction", () => {
     const tx = getMockedPreparedRequestResponse();
-    const serialized = serializeTransaction(tx);
+    const serialized = toHex(tx);
 
-    const result = deserializeTransaction(serialized);
+    const result = fromHex(serialized);
 
     expect(result).toEqual(tx);
   });
 
   it("should throw when given an invalid hex string", () => {
-    expect(() => deserializeTransaction("not-valid-hex")).toThrow();
+    expect(() => fromHex("not-valid-hex")).toThrow();
   });
 
   it("should throw when given a hex string that is not valid JSON", () => {
     const invalidJsonHex = Buffer.from("not json").toString("hex");
 
-    expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
+    expect(() => fromHex(invalidJsonHex)).toThrow();
   });
 });
 
@@ -1075,5 +1101,393 @@ describe("isPrivateTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPrivateTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("createTransactionIntent", () => {
+  const mockAccount = getMockedAccount({
+    aleoResources: {
+      ...mockAleoResources,
+      unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+    },
+  });
+
+  it("should create a public transaction intent with base fields", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      amount: new BigNumber(500000),
+      recipient: "aleo1recipient",
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: {
+        type: "native",
+      },
+      type: transaction.mode,
+      amount: BigInt(transaction.amount.toString()),
+      recipient: transaction.recipient,
+      sender: mockAccount.freshAddress,
+    });
+  });
+
+  it("should include useAllAmount when set to true", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      useAllAmount: true,
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result.useAllAmount).toBe(true);
+  });
+
+  it("should include data with record for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: null,
+      },
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toMatchObject({
+      type: transaction.mode,
+      data: {
+        type: transaction.mode,
+        record: mockUnspentRecord1.decryptedData,
+      },
+    });
+  });
+
+  it("should throw when amountRecordCommitment is null for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: missing amount record commitment",
+    );
+  });
+
+  it("should throw when amountRecordCommitment does not match any unspent record", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: "non-existent-commitment",
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: no amount record found for commitment non-existent-commitment",
+    );
+  });
+});
+
+describe("createFeeTransactionIntent", () => {
+  const mockPublicAccount = getMockedAccount();
+  const mockPrivateAccount = getMockedAccount({
+    aleoResources: {
+      ...mockAleoResources,
+      unspentPrivateRecords: [mockUnspentRecord2],
+    },
+  });
+  const executionId = "auth-123";
+  const baseFee = new BigNumber(1000);
+  const priorityFee = new BigNumber(0);
+
+  it("should create a fee_public intent for a public transaction", () => {
+    const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC });
+
+    const result = createFeeTransactionIntent({
+      account: mockPublicAccount,
+      transaction,
+      executionId,
+      baseFee,
+      priorityFee,
+      isFeeSponsored: false,
+    });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: {
+        type: "native",
+      },
+      type: "fee_public",
+      amount: BigInt(1000),
+      recipient: transaction.recipient,
+      sender: mockPublicAccount.freshAddress,
+      data: {
+        type: "fee_public",
+        priorityFee: BigInt(0),
+        executionId,
+      },
+    });
+  });
+
+  it("should create a fee_private intent for a private transaction with a feeRecordCommitment", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+
+    const result = createFeeTransactionIntent({
+      account: mockPrivateAccount,
+      transaction,
+      executionId,
+      baseFee,
+      priorityFee,
+      isFeeSponsored: false,
+    });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: {
+        type: "native",
+      },
+      type: "fee_private",
+      amount: BigInt(1000),
+      recipient: transaction.recipient,
+      sender: mockPrivateAccount.freshAddress,
+      data: {
+        type: "fee_private",
+        priorityFee: BigInt(0),
+        executionId,
+        record: mockUnspentRecord2.decryptedData,
+      },
+    });
+  });
+
+  it("should throw when feeRecord is missing for a sponsored private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() =>
+      createFeeTransactionIntent({
+        account: mockPrivateAccount,
+        transaction,
+        executionId,
+        baseFee,
+        priorityFee,
+        isFeeSponsored: false,
+      }),
+    ).toThrow("aleo: missing fee record commitment");
+  });
+
+  it("should throw when feeRecord is missing for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() =>
+      createFeeTransactionIntent({
+        account: mockPrivateAccount,
+        transaction,
+        executionId,
+        baseFee,
+        priorityFee,
+        isFeeSponsored: false,
+      }),
+    ).toThrow("aleo: missing fee record commitment");
+  });
+});
+
+describe("getRecordByCommitment", () => {
+  it("should return the record matching the commitment", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord2.commitment,
+    });
+
+    expect(result).toEqual(mockUnspentRecord2);
+  });
+
+  it("should return null when no record matches the commitment", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: "non-existent-commitment",
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null from empty records array", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when unspentPrivateRecords is null", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: null,
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when aleoResources is undefined", () => {
+    const account = getMockedAccount();
+    delete account.aleoResources;
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
+  });
+});
+
+describe("getNextSequenceNumber", () => {
+  it.each([
+    [new BigNumber(0), undefined],
+    [new BigNumber(1), new BigNumber(0)],
+    [new BigNumber(6), new BigNumber(5)],
+    [new BigNumber(0), new BigNumber(NaN)],
+  ])("should return %i for transactionSequenceNumber '%s'", (expected, seq) => {
+    const op = getMockedOperation({ transactionSequenceNumber: seq });
+    const account = getMockedAccount({ pendingOperations: [op] });
+
+    expect(getNextSequenceNumber(account)).toEqual(expected);
+  });
+});
+
+describe("getFunctionNameFromTransactionType", () => {
+  it.each([
+    ["transfer_public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
+    ["transfer_private", TRANSACTION_TYPE.TRANSFER_PRIVATE],
+    ["transfer_public_to_private", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    ["transfer_private_to_public", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+  ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
+    expect(getFunctionNameFromTransactionType(transactionType)).toBe(expected);
+  });
+
+  it("should throw for an unsupported transaction type", () => {
+    // @ts-expect-error - testing unsupported transaction type
+    expect(() => getFunctionNameFromTransactionType("unknown_type")).toThrow(
+      "aleo: unsupported transaction type: unknown_type",
+    );
+  });
+});
+
+describe("extractViewKey", () => {
+  it("should return the view key extracted from the account id", () => {
+    const account = getMockedAccount({ id: "js:2:aleo:aleo1xyz::AViewKey123" });
+
+    expect(extractViewKey(account)).toBe("AViewKey123");
+  });
+
+  it("should throw when the account id has no view key", () => {
+    const account = getMockedAccount({ id: "js:2:aleo:aleo1test:" });
+
+    expect(() => extractViewKey(account)).toThrow(
+      `aleo: view key is missing in ${account.freshAddress} account`,
+    );
+  });
+});
+
+describe("findBestRecordForFee", () => {
+  it("should return the smallest record sufficient to cover the fee", () => {
+    const targetFee = new BigNumber(500000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+    });
+    // mockUnspentRecord2 (600000) is smaller than mockUnspentRecord1 (800000), both cover 500000
+    expect(result).toBe(mockUnspentRecord2);
+  });
+
+  it("should exclude the record used for the amount", () => {
+    const targetFee = new BigNumber(500000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: mockUnspentRecord2.commitment,
+    });
+    // mockUnspentRecord2 is excluded; only mockUnspentRecord1 (800000) remains
+    expect(result).toBe(mockUnspentRecord1);
+  });
+
+  it("should return null when no record is sufficient to cover the fee", () => {
+    const targetFee = new BigNumber(999999999);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+    });
+    expect(result).toBeNull();
+  });
+
+  it("should return null for an empty records array", () => {
+    const result = findBestRecordForFee({
+      unspentRecords: [],
+      targetFee: new BigNumber(1000),
+      selectedAmountRecordCommitment: null,
+    });
+    expect(result).toBeNull();
+  });
+
+  it("should return the only available record when it exactly meets the fee", () => {
+    const targetFee = new BigNumber(800000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+    });
+    expect(result).toBe(mockUnspentRecord1);
   });
 });

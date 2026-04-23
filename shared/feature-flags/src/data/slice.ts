@@ -52,66 +52,6 @@ const featureFlagsSlice = createSlice({
       return action.payload;
     },
   },
-
-  // We use extraReducers to handle legacy actions that are no longer used in the app.
-  // This is a temporary solution to avoid breaking changes. We will remove this once
-  // we have migrated to the new actions. Also RTK string-based addCase doesn't type
-  // payload so we are forced to cast actions.
-  extraReducers: builder => {
-    builder.addCase("SET_OVERRIDDEN_FEATURE_FLAG", (state, action) => {
-      const { key, id, value } =
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (action as PayloadAction<{ key?: FeatureId; id?: FeatureId; value: Feature<FeatureId> }>)
-          .payload;
-      const flagKey = key ?? id;
-      if (!flagKey) return;
-      if (value === undefined) {
-        delete state.overrides[flagKey];
-      } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-        (state.overrides as any)[flagKey] = value;
-      }
-      const config = getResolutionConfig();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-      (state.resolved as any)[flagKey] = resolveFeature(
-        flagKey,
-        state.overrides,
-        state.remote,
-        config,
-      );
-    });
-
-    builder.addCase("SET_OVERRIDDEN_FEATURE_FLAGS", (state, action) => {
-      const payload = // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (action as PayloadAction<{ overriddenFeatureFlags?: FeatureFlagsState["overrides"] }>)
-          .payload;
-      if (payload == undefined) return;
-      if ("overriddenFeatureFlags" in payload) {
-        const overrides = payload.overriddenFeatureFlags;
-        if (overrides === undefined) return;
-        state.overrides = overrides;
-        state.resolved = resolveAll(overrides, state.remote, getResolutionConfig());
-      } else {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const overrides = payload as FeatureFlagsState["overrides"];
-        state.overrides = overrides;
-        state.resolved = resolveAll(overrides, state.remote, getResolutionConfig());
-      }
-    });
-
-    builder.addCase("SET_FEATURE_FLAGS_BUTTON_VISIBLE", (state, action) => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const payload = (action as PayloadAction<{ featureFlagsButtonVisible?: boolean } | boolean>)
-        .payload;
-      state.bannerVisible =
-        typeof payload === "boolean" ? payload : payload.featureFlagsButtonVisible ?? false;
-    });
-
-    builder.addCase("SET_FEATURE_FLAGS_BANNER_VISIBLE", (state, action) => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      state.bannerVisible = (action as PayloadAction<boolean>).payload;
-    });
-  },
 });
 
 export const { setOverride, setAllOverrides, syncRemoteConfig, setBannerVisible, importState } =

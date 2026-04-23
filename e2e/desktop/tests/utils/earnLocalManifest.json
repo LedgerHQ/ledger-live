@@ -1,0 +1,43 @@
+{
+  "id": "earn-local-manifest",
+  "name": "Earn",
+  "url": "http://localhost:3000",
+  "homepageUrl": "http://localhost:3000",
+  "icon": "",
+  "platforms": ["ios", "android", "desktop"],
+  "apiVersion": "^2.0.0",
+  "manifestVersion": "1",
+  "branch": "stable",
+  "categories": ["earn"],
+  "currencies": "*",
+  "visibility": "complete",
+  "content": {
+    "shortDescription": { "en": "Earn dashboard" },
+    "description": { "en": "Earn dashboard" }
+  },
+  "permissions": [
+    "account.list",
+    "account.receive",
+    "account.request",
+    "currency.list",
+    "custom.getTransactionByHash",
+    "device.close",
+    "device.exchange",
+    "device.transport",
+    "message.sign",
+    "transaction.sign",
+    "transaction.signAndBroadcast",
+    "storage.set",
+    "storage.get",
+    "bitcoin.getXPub",
+    "wallet.capabilities",
+    "wallet.userId",
+    "wallet.info",
+    "custom.isReady",
+    "custom.earn.isReady",
+    "custom.getFunds",
+    "custom.navigate",
+    "custom.getAccountIdFormats"
+  ],
+  "domains": ["http://localhost:3000", "https://*"]
+}

@@ -1,6 +1,6 @@
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { bridgeHandler } from "../bridge.handler";
-import { DeeplinkHandlerContext } from "../../types";
+import { createMockContext } from "./test-utils";
 
 jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
@@ -9,21 +9,6 @@ jest.mock("~/renderer/actions/modals", () => ({
 
 const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
-
-const createMockContext = (
-  overrides: Partial<DeeplinkHandlerContext> = {},
-): DeeplinkHandlerContext => ({
-  dispatch: jest.fn(),
-  accounts: [],
-  navigate: jest.fn(),
-  openAddAccountFlow: jest.fn(),
-  openAssetFlow: jest.fn(),
-  openSendFlow: jest.fn(),
-  postOnboardingDeeplinkHandler: jest.fn(),
-  tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
-  currentPathname: "/",
-  ...overrides,
-});
 
 describe("bridge.handler", () => {
   beforeEach(() => {

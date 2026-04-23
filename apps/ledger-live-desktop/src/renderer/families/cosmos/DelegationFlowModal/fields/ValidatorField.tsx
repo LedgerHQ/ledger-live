@@ -37,15 +37,15 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     [setSearch],
   );
   //Check if the account is a Persistence or Quicksilver account
-  const isPerOrQuickAccount =
+  const shouldDisplayAllValidators =
     account.type === "Account" &&
-    (account.currency.id === "quicksilver" || account.currency.id === "persistence");
+    ["quicksilver", "persistence", "mantra", "axelar"].includes(account.currency.id);
 
   useEffect(() => {
-    if (isPerOrQuickAccount) {
+    if (shouldDisplayAllValidators) {
       setShowAll(true);
     }
-  }, [isPerOrQuickAccount]);
+  }, [shouldDisplayAllValidators]);
 
   useEffect(() => {
     if (validators.length > 0 || account.type !== "Account" || search !== "") return;
@@ -57,7 +57,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
 
-  if (chosenVoteAccAddr === "" && validators.length > 0 && !isPerOrQuickAccount) {
+  if (chosenVoteAccAddr === "" && validators.length > 0 && !shouldDisplayAllValidators) {
     onChangeValidator({ address: validators[0].validatorAddress });
   }
 

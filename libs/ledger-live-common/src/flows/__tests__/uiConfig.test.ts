@@ -1,10 +1,12 @@
 import { getSendUiConfig, DEFAULT_SEND_UI_CONFIG } from "../send/uiConfig";
-import { getSendDescriptor, sendFeatures } from "../../bridge/descriptor";
+import { getSendDescriptor } from "../../bridge/descriptor/registry";
+import { sendFeatures } from "../../bridge/descriptor/send/features";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-// Mock the bridge descriptor module
-jest.mock("../../bridge/descriptor", () => ({
+jest.mock("../../bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),
+}));
+jest.mock("../../bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemo: jest.fn(),
     getMemoMaxLength: jest.fn(),

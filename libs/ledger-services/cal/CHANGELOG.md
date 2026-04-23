@@ -1,5 +1,61 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.16.0
+
+### Minor Changes
+
+- [#16242](https://github.com/LedgerHQ/ledger-live/pull/16242) [`dce63b0`](https://github.com/LedgerHQ/ledger-live/commit/dce63b056a7ddb22745269a7c5a7004d99cb8eec) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: removed eslint, added oxlint/oxfmt
+
+### Patch Changes
+
+- Updated dependencies [[`78acbfa`](https://github.com/LedgerHQ/ledger-live/commit/78acbfae7319c5b3fb1453f8727e2210e895669c), [`1bd0cac`](https://github.com/LedgerHQ/ledger-live/commit/1bd0cac7957422fa06e18424e9e2706c39072078), [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9), [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440)]:
+  - @ledgerhq/live-env@2.33.0
+  - @ledgerhq/live-network@2.5.1
+
+## 1.16.0-next.0
+
+### Minor Changes
+
+- [#16242](https://github.com/LedgerHQ/ledger-live/pull/16242) [`dce63b0`](https://github.com/LedgerHQ/ledger-live/commit/dce63b056a7ddb22745269a7c5a7004d99cb8eec) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: removed eslint, added oxlint/oxfmt
+
+### Patch Changes
+
+- Updated dependencies [[`78acbfa`](https://github.com/LedgerHQ/ledger-live/commit/78acbfae7319c5b3fb1453f8727e2210e895669c), [`1bd0cac`](https://github.com/LedgerHQ/ledger-live/commit/1bd0cac7957422fa06e18424e9e2706c39072078), [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9), [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440)]:
+  - @ledgerhq/live-env@2.33.0-next.0
+  - @ledgerhq/live-network@2.5.1-next.0
+
+## 1.15.2
+
+### Patch Changes
+
+- Updated dependencies [[`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71), [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f)]:
+  - @ledgerhq/live-env@2.32.0
+  - @ledgerhq/live-network@2.5.0
+
+## 1.15.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`7ffc0c5`](https://github.com/LedgerHQ/ledger-live/commit/7ffc0c5a7623aea32cdff2e093c14fae87352e71), [`2ece647`](https://github.com/LedgerHQ/ledger-live/commit/2ece647f386e40f261662fc6e4e6624f302ee34f)]:
+  - @ledgerhq/live-env@2.32.0-next.0
+  - @ledgerhq/live-network@2.5.0-next.0
+
+## 1.15.1
+
+### Patch Changes
+
+- Updated dependencies [[`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20)]:
+  - @ledgerhq/live-env@2.31.0
+  - @ledgerhq/live-network@2.4.3
+
+## 1.15.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20)]:
+  - @ledgerhq/live-env@2.31.0-next.0
+  - @ledgerhq/live-network@2.4.3-next.0
+
 ## 1.15.0
 
 ### Minor Changes

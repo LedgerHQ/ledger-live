@@ -38,6 +38,6 @@ describe("Delegate flow", () => {
       `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Addresses.SANCTIONED_ETHEREUM}`,
     );
     await app.send.expectLearnMoreLink();
-    await app.send.expectContinueButtonDisabled();
+    await app.send.expectContinueButtonNotVisible();
   });
 });

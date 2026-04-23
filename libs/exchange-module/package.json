@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-exchange-module",
-  "version": "0.25.0",
+  "version": "0.27.0",
   "description": "Wallet-API Exchange Module for Ledger Live",
   "license": "Apache-2.0",
   "keywords": [
@@ -30,8 +30,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check"
   },
   "dependencies": {
     "@ledgerhq/wallet-api-client": "^1.14.0",
@@ -39,7 +41,9 @@
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

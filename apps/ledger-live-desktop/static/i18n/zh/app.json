@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "抱歉，请重试。",
       "description" : "服务器无法处理您的请求。请稍后再试或联系 Ledger 客服。",
-      "code" : "代码：{{errorCode}}"
+      "code" : "代码",
+      "correlationId" : "参考 ID "
     }
   },
   "swap" : {
@@ -825,8 +826,8 @@
     "spendYourCrypto" : "使用加密货币消费",
     "payDescription" : "使用加密货币卡进行线上或线下支付",
     "exploreCards" : "了解加密货币卡",
-    "iAlreadyHaveACard" : "我已经有一张卡",
-    "unlockLiquidity" : "释放流动性",
+    "iAlreadyHaveACard" : "我有一张卡",
+    "unlockLiquidity" : "在现实生活中使用加密货币",
     "exploreCryptoCardsDescription" : "探索我们的加密货币卡，找到最适合您的那一款"
   },
   "lend" : {
@@ -1255,8 +1256,8 @@
             "description" : "您必须先禁用“我的 Ledger 提供商 ({{providerNumber}})”设置。要禁用该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后关闭“我的 Ledger 提供商”。"
           },
           "deviceNotGenuineError" : {
-            "title" : "此 {{productName}} 不是正品",
-            "description" : "此 {{productName}} 不能安全使用。\n请联系 Ledger 客服。"
+            "title" : "{{productName}} 未通过正品检查",
+            "description" : "使用这个 Ledger 设备并不安全。\n请联系 Ledger 客服。"
           }
         },
         "whyPerformChecksLink" : "详细了解 Ledger 正品检查",
@@ -2178,7 +2179,7 @@
     "subtitle" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
     "0" : {
       "title" : "完全所有权",
-      "desc" : "您的私钥永远不会离开设备。"
+      "desc" : "您的私钥由您掌控。"
     },
     "1" : {
       "title" : "安全交易",
@@ -2273,11 +2274,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "银行转账",
-          "description" : "通过发送现金接收稳定币"
+          "title" : "通过银行转账",
+          "description" : "只需发送现金即可接收稳定币"
         },
         "fromCrypto" : {
-          "title" : "接收加密货币"
+          "title" : "通过加密货币地址"
         }
       }
     }
@@ -2513,6 +2514,7 @@
       "coinToSend" : "发送币种",
       "changeToReturn" : "要返还的零钱",
       "enterAmount" : "输入数额",
+      "selectSufficientCoins" : "选择足够的加密货币",
       "amountToSendInCurrency" : "发送数额为 ({{ticker}})",
       "amountInputLabel" : "发送数额"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "旧币优先（先入先出）",
       "OPTIMIZE_SIZE" : "令费用最小化（优化大小）",
-      "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）"
+      "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）",
+      "CUSTOM" : "自定义币种选择"
     }
   },
   "celo" : {
@@ -4603,6 +4606,27 @@
         "title" : "主题切换",
         "desc" : "显示可快速切换主题的浮动覆盖。"
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "分析数据使用同意 (QA)",
+        "rowDesc" : "检查已存储的隐私同意版本和同意日期；模拟资产组合分析同意弹窗的过期状态。",
+        "title" : "分析数据使用同意 —— QA",
+        "readSection" : "当前设置（只读）",
+        "storedPrivacyVersion" : "存储的隐私政策版本： {{version}}",
+        "currentPrivacyVersion" : "应用程序的当前隐私政策版本： {{version}}",
+        "consentDate" : "同意日期（原始）： {{value}}",
+        "inlineOutdatePrivacyVersion" : "过期版本",
+        "inlineRemoveConsentDate" : "删除日期",
+        "actionResetForConsentFresh" : "重置同意为初始状态（清除同意数据，关闭分析与个性化）",
+        "modalPreviewSection" : "资产组合（首页）预期弹窗",
+        "modalPreviewNoModalUserOk" : "无弹窗。隐私政策版本和同意日期均正常：无需更新或重新确认。",
+        "modalPreviewNoModalFeatureOff" : "无弹窗。分析数据使用同意功能标帜已关闭。",
+        "modalPreviewNoModalOnboarding" : "无弹窗。引导流程尚未完成。",
+        "modalPreviewFresh" : "首次同意弹窗（初始状态）。需要重新获取同意（同意日期缺失或无效），且“共享分析”已关闭——例如：未存储隐私确认 / 无同意日期且分析已禁用。",
+        "modalPreviewReconfirm" : "重新确认同意弹窗。需要重新获取同意且“共享分析”为开启状态——用户将看到重新确认（继续 / 停止）流程，而非首次同意文案。",
+        "modalPreviewPrivacy" : "隐私政策更新弹窗。已存储的隐私政策版本过期（低于当前应用版本），且同意续期不阻塞——用户将优先看到隐私政策更新步骤。",
+        "modalPreviewGoToHome" : "打开资产组合首页，在应出现时查看弹窗。",
+        "note" : "移除日期会将同意清空。过时的版本会将存储的隐私政策版本降低到低于应用程序的当前版本。重置将清除同意相关的元数据，并关闭分析和个性化功能，以重新触发初始的同意弹窗。当 live-common 中的 CONSENT_RENEWAL_INTERVAL_MS 为空时，基于时间的续期功能将保持关闭状态。"
+      },
       "brazeTools" : {
         "title" : "Braze 工具",
         "description" : "生成本地 Braze 卡",
@@ -4614,7 +4638,8 @@
           "fields" : {
             "notification" : "通知内容卡",
             "action" : "行动内容卡",
-            "portfolio" : "资产组合内容卡",
+            "portfolio" : "资产组合",
+            "bottomPortfolio" : "底部资产组合",
             "title" : "标题",
             "description" : "描述",
             "order" : "编号",
@@ -4624,10 +4649,31 @@
             "secondaryCta" : "次要号召性用语",
             "cta" : "号召性用语",
             "tag" : "标签",
+            "picto" : "图标 (ledger id)",
             "url" : "网址",
             "path" : "路径"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "加载 app.json",
+        "desc" : "拖放 app.json 文件以导入账户和设置。",
+        "dropOrBrowse" : "将 app.json 文件拖放到此处，或点击浏览。",
+        "importing" : "正在导入...",
+        "success" : "已成功导入 {{count}} 个账户。",
+        "success_other" : "已成功导入 {{count}} 个账户。",
+        "lastDeviceSeen" : "最近使用的设备：{{device}}",
+        "invalidFileType" : "无效的文件类型需要 .json 文件。",
+        "missingDataField" : "app.json 无效：缺少顶层数据字段。",
+        "encryptedAccounts" : "检测到已加密的账户。请先解密文件。",
+        "successLabel" : "成功",
+        "appJsonFile" : "App.json 文件",
+        "accountsImported" : "已导入账户",
+        "accountsFailed" : "失败的账户",
+        "importFailed" : "导入失败：{{message}}",
+        "unknownError" : "导入时发生未知错误。",
+        "failedCount" : "{{count}} 个账户无法加载。",
+        "failedCount_other" : "{{count}} 个账户无法加载。"
       },
       "mockAccounts" : {
         "title" : "生成 Mock（模拟）账户",
@@ -4643,6 +4689,10 @@
         "emptyGenerate" : {
           "title" : "空账户生成",
           "desc" : "生成空账户"
+        },
+        "stablecoinGenerate" : {
+          "title" : "稳定币预设",
+          "desc" : "使用主流稳定币生成 Ethereum、Arbitrum、Optimism、Base、Solana、Tron 和 Algorand 账户（每个网络最多 5 个）。"
         },
         "currencySelector" : {
           "placeholder" : "选择货币...",
@@ -4660,7 +4710,9 @@
           "generateAccounts" : "生成 {{count}} 个账户",
           "generateAccounts_other" : "生成 {{count}} 个账户",
           "generateAccountsQuick" : "生成 {{count}} 个账户",
-          "generateEmptyAccount" : "生成空账户"
+          "generateEmptyAccount" : "生成空账户",
+          "generateStablecoinAccounts" : "生成 {{count}} 个稳定币账户",
+          "generateStablecoinAccounts_other" : "生成 {{count}} 个稳定币账户"
         },
         "alerts" : {
           "selectCurrency" : "请至少选择一种货币",
@@ -5861,6 +5913,10 @@
     },
     "recipientWording" : {
       "send" : "接收方",
+      "transfer_public" : "公开接收方",
+      "transfer_private" : "私密接收者",
+      "convert_public_to_private" : "私密接收者",
+      "convert_private_to_public" : "公开接收方",
       "delegate" : "验证者",
       "redelegate" : "验证者",
       "undelegate" : "验证者",
@@ -5966,7 +6022,7 @@
         "auth" : {
           "title" : "授权",
           "validator" : "授权",
-          "hint" : "自动接收汇入该账户的资金。",
+          "hint" : "自动接收转入该账户的资金。",
           "reonboard" : {
             "hint" : "检测到发生拓扑变化。请重新授权 Ledger 验证者以继续自动接收资金。"
           },
@@ -6302,6 +6358,11 @@
     "DeviceSocketFail" : {
       "title" : "请重启您的 Ledger 设备并重试",
       "description" : "发生意外错误。请再次尝试。({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : "{{productName}} 未通过正品检查",
+      "description" : "使用这个 Ledger 设备并不安全。请联系 Ledger 客服。",
+      "contactSupportCTA" : "联系 Ledger 客服"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "连接失败",
@@ -6939,6 +7000,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "数额太低。发送至少 {{minimumAmount}}。"
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "该关联代币账户持有另一种代币"
     },
@@ -7016,6 +7080,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "抱歉，资金不足"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "配对已过期",
+      "description" : "连接 Concordium ID 应用程序已超时。请重试。"
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "会话已过期",
+      "description" : "Concordium ID 应用程序的会话不再活跃。请重新配对。"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
@@ -7202,6 +7274,22 @@
     "TonMinimumRequired" : {
       "title" : "资金不足。所需最低余额为 0.02 TON。"
     },
+    "AleoAmountRecordRequired" : {
+      "title" : "请为数额选择有效的私密记录。",
+      "description" : "选择一条可用私密记录，用于支付转账数额。"
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "需要另一条私密记录来支付网络费用。",
+      "description" : "如有需要，请充值您的余额。一条私密记录用于转账数额，您必须有另一条记录能够支付网络费用。"
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "私密发送需要至少两条记录。",
+      "description" : "您需要一条记录用于转账数额，另一条记录用于支付网络费用。"
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "没有私密记录可用于支付网络费用。",
+      "description" : "为转账数额选择其他记录，或者使用其他资金充值您的余额。"
+    },
     "BackupAppDataError" : {
       "title" : "应用程序数据备份过程中出错"
     },
@@ -7365,8 +7453,8 @@
       "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "AlreadySendingApduError" : {
-      "title" : "通信错误",
-      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+      "title" : "请在您的 Ledger 设备上完成操作",
+      "description" : "在您的设备上完成该操作，然后选择下面的“重试”。"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "通信错误",
@@ -7701,11 +7789,48 @@
     },
     "noAccounts" : {
       "title" : "您需要使用账户才能访问此应用程序。",
-      "add" : "添加账户"
+      "select" : "选择账户"
     }
   },
   "recoverRestore" : {
     "title" : "连接并解锁您的 Ledger 设备"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "帮助我们改进 Ledger",
+      "description" : "征得您的同意后，我们将收集使用数据，以改进功能并提供个性化体验。",
+      "ctaAcceptAll" : "全部接受",
+      "ctaRefuseAll" : "全部拒绝"
+    },
+    "reconfirm" : {
+      "title" : "继续改进 Ledger？",
+      "description" : "您想继续分享使用数据以帮助我们改进 Ledger 吗？这些数据用于改进功能并个性化您的体验。",
+      "ctaContinue" : "可以，继续",
+      "ctaStop" : "不想，停止"
+    },
+    "privacy" : {
+      "title" : "我们正在更新我们的隐私政策",
+      "descriptionLead" : "请查看我们的 ",
+      "descriptionLinkLabel" : "隐私政策",
+      "descriptionTrail" : " 了解发生了什么变化。您可以随时在设置中更新您的偏好。",
+      "ctaGotIt" : "知道了"
+    },
+    "setPreferences" : "设置偏好",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "应用性能",
+        "description" : "允许 Ledger 收集应用程序使用数据以优化用户体验"
+      },
+      "personalizedExperience" : {
+        "title" : "个性化体验",
+        "description" : "允许 Ledger 收集应用程序使用情况，以便提供个性化内容"
+      },
+      "ctaConfirm" : "确认"
+    },
+    "footer" : {
+      "lead" : "您可以随时在设置中撤回您的同意。",
+      "privacyLink" : "隐私政策"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -7761,9 +7886,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "个性化体验",
-      "analytics" : "数据分析",
-      "personalizedExpDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
-      "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Wallet 的性能，优化应用程序并提升您的体验。"
+      "analytics" : "应用性能",
+      "personalizedExpDesc" : "允许 Ledger 收集应用程序使用情况，以便提供个性化内容",
+      "analyticsDesc" : "允许 Ledger 收集应用程序使用数据以优化用户体验"
     }
   },
   "analytics" : {
@@ -7969,6 +8094,16 @@
       "cta" : "了解更多"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "升级您的 Ledger Nano S™",
+      "description" : "购买最新 Ledger 签署设备可享八折专属优惠。"
+    },
+    "opted_out" : {
+      "title" : "升级您的 Ledger Nano S™",
+      "description" : "由于 Ledger Nano S 的存储容量有限，您将无法全面体验最新功能、区块链升级及安全增强。"
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "选择您要添加的账户",
@@ -8065,14 +8200,17 @@
   "portfolio" : {
     "title" : "首页",
     "today" : "今天",
+    "carousel" : {
+      "title" : "为您而设"
+    },
     "addAccountCta" : "添加加密货币账户",
-    "noBalanceTitle" : "保护您的加密货币",
+    "noBalanceTitle" : "首先为您的钱包充值",
     "perpsEntry" : {
       "title" : "永续合约",
       "description" : "杠杆交易",
       "cta" : "探索"
     },
-    "noDeviceTitle" : "最安全的钱包"
+    "noDeviceTitle" : "您的安全加密货币钱包"
   },
   "marketBanner" : {
     "title" : "探索市场",
@@ -8086,15 +8224,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "恐惧+",
       "fear" : "恐惧",
+      "cautious" : "谨慎",
       "neutral" : "中立",
-      "greed" : "贪婪",
-      "extremeGreed" : "贪婪+"
+      "optimistic" : "乐观",
+      "greedy" : "贪婪"
     },
     "dialog" : {
       "title" : "情绪指数",
-      "content" : "情绪指数反映了市场的情绪状态。其数值范围为 0 至 100，数值越低表示越恐惧，数值越高表示越贪婪。",
+      "content" : "根据趋势和活动显示整体市场情绪（从 0 到 100）。以此了解市场表现：数值较低表示恐惧，数值较高表示贪婪。",
       "cta" : "知道了"
     }
   },
@@ -8120,8 +8258,38 @@
       "balance" : "余额",
       "value" : "价值",
       "trend" : "1 天趋势",
-      "trendTooltip" : "24 小时余额变更"
+      "trendTooltip" : "您的余额在过去 24 小时内的变化。"
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "账户",
+    "tableActions" : {
+      "searchAddress" : "按名称或地址搜索",
+      "addAddress" : "添加地址"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "名称",
+        "address" : "地址",
+        "value" : "价值"
+      },
+      "editName" : "编辑名称",
+      "emptyState" : "暂无加密地址",
+      "emptySearchState" : "没有与您的搜索相符的账户。"
+    },
+    "editName" : {
+      "title" : "编辑地址名称",
+      "input" : "地址名称",
+      "suggestions" : {
+        "trading" : "{{asset}} 交易",
+        "savings" : "{{asset}} 存款"
+      },
+      "cta" : "确认",
+      "syncingTooltip" : "正在同步，请稍候"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "加密资产"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
@@ -8131,11 +8299,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "历史记录",
+      "tooltip" : "历史记录"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "出现临时网络问题。您的资产安全无虞。\n 受影响的账户列表：{{accounts}}点按重试",
-      "emptyErrorToolTip" : "出现临时网络问题。您的资产安全无虞。\n 点按重试",
-      "upToDate" : "已同步至最新状态",
-      "lastSync" : "上次同步：{{timeAgo}}点按刷新"
+      "errorToolTip" : "您的资产安全无虞。出现临时同步问题。\n受影响的账户：{{accounts}}。点按重试",
+      "emptyErrorToolTip" : "您的资产安全无虞。出现临时同步问题。\n点按重试",
+      "upToDate" : "资产组合已更新",
+      "lastSync" : "上次同步：{{timeAgo}}点按刷新",
+      "refreshing" : "刷新中..."
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8172,8 +8345,9 @@
         "showBalance" : "显示余额",
         "startSync" : "开始同步",
         "stopSync" : "停止同步",
-        "lastProcessedBlock" : "最后处理的区块：{{block}}。缺少 {{missing}} 个区块。",
-        "lastSync" : "上次同步：{{date}}"
+        "upToDate" : "最新",
+        "lastSync" : "上次同步：{{date}}",
+        "estimatedTimeRemaining" : "预计剩余时间：{{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "起始高度",
@@ -8266,11 +8440,20 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "由 Provable 赞助",
       "balanceSelector" : {
         "private" : "私密余额",
         "public" : "公开余额",
-        "lastUpdate" : "最新更新",
+        "lastUpdate" : "最新更新：{{label}}",
+        "recently" : "最近",
         "switchBalance" : "切换余额来源"
+      },
+      "recordPicker" : {
+        "label" : "可用记录",
+        "noRecords" : "没有可用记录",
+        "noRecordsAlert" : "您没有任何记录。进行自转账或接收私人资金即可开始使用。",
+        "alert" : "最大可支出数额取决于您所选记录的最大值。费用由 Provable 为 Ledger 用户承担。",
+        "recordsLimit" : "最多显示 {{max}} 条记录"
       }
     },
     "account" : {
@@ -8279,12 +8462,31 @@
       "transparentBalance" : "公开余额",
       "transparentBalanceTooltip" : "公开可见的余额",
       "privateBalance" : "私密余额",
-      "privateBalanceTooltip" : "对外隐藏的余额"
+      "privateBalanceTooltip" : "对外隐藏的余额",
+      "syncButton" : {
+        "startSync" : "开始同步",
+        "stopSync" : "停止同步",
+        "syncAgain" : "再次同步",
+        "lastSync" : "上次同步：{{date}}"
+      }
     },
     "operations" : {
       "type" : {
         "public" : "公开",
         "private" : "私密"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "来自"
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "正在同步您的私密余额 ({{percentage}}%)",
+        "desc" : "请稍候",
+        "error" : "私密数据同步失败请稍后重试。"
       }
     }
   },
@@ -8312,6 +8514,43 @@
     "cta" : {
       "continue" : "继续",
       "explore" : "探索我的全新资产组合"
+    }
+  },
+  "history" : {
+    "title" : "交易",
+    "pending" : "待处理交易",
+    "pending_other" : "待处理交易",
+    "columns" : {
+      "type" : "类型",
+      "address" : "地址",
+      "amount" : "数额",
+      "value" : "价值"
+    },
+    "address" : {
+      "from" : "从",
+      "to" : "到"
+    },
+    "emptyState" : {
+      "title" : "暂无交易",
+      "description" : "请稍后再来查看您的交易。"
+    },
+    "actionsBar" : {
+      "csv" : "CSV"
+    },
+    "exportDialog" : {
+      "title" : "交易历史",
+      "description" : "选择要包含在导出中的账户",
+      "disclaimer" : "仅为估值。Kaiko 提供的对值仅供参考。请勿将这些数据用于税务、法律或会计目的。",
+      "accountsToInclude" : "要包括的账户",
+      "selectAll" : "全选 ({{count}})",
+      "deselectAll" : "取消全选 ({{count}})",
+      "export" : "导出历史记录",
+      "successTitle" : "交易历史已成功保存",
+      "successDescription" : "包含用户交易历史记录的 CSV 文件已经成功保存在所选文件夹中",
+      "done" : "完成",
+      "errorTitle" : "出错了",
+      "errorDescription" : "导出您的交易历史记录时出错。请重试。",
+      "tryAgain" : "请重试"
     }
   }
 }

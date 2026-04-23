@@ -11,6 +11,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { ImageSourcePropType } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useExperimental } from "~/experimental";
 
 const HEADER_HEIGHT = 48;
 
@@ -36,6 +38,8 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigation = useNavigation();
   const { bottomBarHeight } = useNavigationBarHeights();
+  const { top: safeAreaTop } = useSafeAreaInsets();
+  const hasExperimentalHeader = useExperimental();
 
   const onImageLoaded = useCallback(() => setImageLoaded(true), []);
 
@@ -95,7 +99,7 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     return require("~/images/portfolio/v4-light.webp");
   }, [isWallet40DarkMode]);
 
-  const topInset = HEADER_HEIGHT;
+  const topInset = hasExperimentalHeader ? safeAreaTop + HEADER_HEIGHT : HEADER_HEIGHT;
   const bottomInset = bottomBarHeight;
 
   return {

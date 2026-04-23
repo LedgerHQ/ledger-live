@@ -307,7 +307,7 @@
     "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
-    "perps" : "무기한 계약",
+    "perps" : "무기한 선물",
     "home" : "홈",
     "refer" : "친구 추천",
     "lend" : "대출",
@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "죄송하지만 다시 시도하세요.",
       "description" : "서버가 요청을 처리할 수 없습니다. 나중에 다시 시도하거나 Ledger 지원 부서에 연락하세요.",
-      "code" : "코드: {{errorCode}}"
+      "code" : "코드",
+      "correlationId" : "참조 ID"
     }
   },
   "swap" : {
@@ -823,11 +824,11 @@
     "title" : "카드",
     "imageAlt" : "카드 이미지",
     "spendYourCrypto" : "암호화폐로 결제하세요",
-    "payDescription" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요",
+    "payDescription" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요.",
     "exploreCards" : "카드 살펴보기",
-    "iAlreadyHaveACard" : "이미 카드가 있습니다",
-    "unlockLiquidity" : "유동성 활용하기",
-    "exploreCryptoCardsDescription" : "다양한 암호화폐 카드를 살펴보고 나에게 가장 적합한 카드를 찾아보세요."
+    "iAlreadyHaveACard" : "카드가 있습니다",
+    "unlockLiquidity" : "암호화폐를 실생활에서도 자유롭게",
+    "exploreCryptoCardsDescription" : "다양한 크립토 카드를 살펴보고 내 라이프스타일에 가장 적합한 카드를 선택하세요."
   },
   "lend" : {
     "title" : "암호화폐를 대출",
@@ -1255,8 +1256,8 @@
             "description" : "먼저 “My Ledger 서비스 제공업체({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 서비스 제공업체\"를 끕니다."
           },
           "deviceNotGenuineError" : {
-            "title" : "이 {{productName}} 장치는 정품입니다",
-            "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요"
+            "title" : " {{productName}}의 정품 확인에 실패했습니다.",
+            "description" : "이 Ledger 장치 사용은 위험할 수 있습니다.\nLedger 지원팀으로 문의해 주세요"
           }
         },
         "whyPerformChecksLink" : "Ledger 정품 확인에 대해 자세히 알아보기",
@@ -2178,7 +2179,7 @@
     "subtitle" : "Ledger 장치를 연결하여 Ledger Wallet의 모든 기능을 온전히 누려보세요.",
     "0" : {
       "title" : "완전한 소유권",
-      "desc" : "개인 키는 어떤 경우에도 장치 외부로 유출되지 않습니다."
+      "desc" : "사용자가 개인 키에 대한 온전한 소유권을 보유합니다."
     },
     "1" : {
       "title" : "안전한 거래",
@@ -2273,11 +2274,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "은행 이체",
-          "description" : "현금 이체로 스테이블 코인 받기"
+          "title" : "은행 이체로 받기",
+          "description" : "현금 입금으로 스테이블코인을 바로 받아보세요"
         },
         "fromCrypto" : {
-          "title" : "암호화폐 받기"
+          "title" : "암호화폐 주소로 받기"
         }
       }
     }
@@ -2513,6 +2514,7 @@
       "coinToSend" : "보낼 코인",
       "changeToReturn" : "변경하여 돌아가기",
       "enterAmount" : "금액 입력",
+      "selectSufficientCoins" : "충분한 코인을 선택하세요",
       "amountToSendInCurrency" : "보낼 수량({{ticker}})",
       "amountInputLabel" : "전송 금액"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",
       "OPTIMIZE_SIZE" : "수수료 최소화 (사이즈 최적화)",
-      "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)"
+      "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)",
+      "CUSTOM" : "코인 직접 선택"
     }
   },
   "celo" : {
@@ -4603,6 +4606,27 @@
         "title" : "테마 토글",
         "desc" : "테마를 빠르게 전환할 수 있도록 플로팅 오버레이를 표시합니다."
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "애널리틱스 옵트인 동의(QA)",
+        "rowDesc" : "저장된 개인정보 보호정책 동의 버전 및 동의 날짜를 확인합니다. 포트폴리오 애널리틱스 동의 모달의 구버전 상태를 시뮬레이션해 볼 수 있습니다.",
+        "title" : "애널리틱스 옵트인 동의 — QA",
+        "readSection" : "현재 설정(읽기 전용)",
+        "storedPrivacyVersion" : "저장된 개인 정보 보호 정책 버전: {{version}}",
+        "currentPrivacyVersion" : "앱의 현재 개인 정보 보호 정책 버전: {{version}}",
+        "consentDate" : "동의 날짜(원본): {{value}}",
+        "inlineOutdatePrivacyVersion" : "구버전",
+        "inlineRemoveConsentDate" : "날짜 제거",
+        "actionResetForConsentFresh" : "동의 데이터를 초기화(동의 데이터 삭제, 애널리틱스 및 개인화 기능 끄기)",
+        "modalPreviewSection" : "포트폴리오(홈) 진입 시 예상되는 모달",
+        "modalPreviewNoModalUserOk" : "모달 없음 개인정보 보호 정책 버전과 동의 날짜가 정상입니다: 갱신 또는 재확인할 항목이 없습니다.",
+        "modalPreviewNoModalFeatureOff" : "모달 없음 애널리틱스 옵트인 기능 플래그가 꺼져 있습니다.",
+        "modalPreviewNoModalOnboarding" : "모달 없음 온보딩이 아직 완료되지 않았습니다.",
+        "modalPreviewFresh" : "최초 동의 모달(신규 동의). 동의 갱신이 필요하며(동의 날짜가 누락되었거나 유효하지 않음) 애널리틱스 공유가 꺼져 있음 — 예: 저장된 개인정보 확인 내역 없음/애널리틱스 비활성화 및 동의 날짜 없음",
+        "modalPreviewReconfirm" : "동의 모달을 재확인합니다. 동의 갱신이 필요하며 애널리틱스 공유가 활성화되어 있습니다. 사용자에게 최초 동의 문구 대신 재확인 또는 계속/중지 플로우가 표시됩니다.",
+        "modalPreviewPrivacy" : "개인정보 보호 업데이트 모달. 저장된 개인정보 보호정책이 구버전이고(앱 버전보다 낮음), 동의 갱신이 블로킹(차단) 상태가 아닌 경우 — 사용자에게 개인정보 보호정책 업데이트 단계가 먼저 표시됩니다.",
+        "modalPreviewGoToHome" : "모달 노출 조건이 충족되었을 때 포트폴리오 홈 페이지를 열면 해당 모달을 확인할 수 있습니다.",
+        "note" : "날짜를 제거하면 동의 값이 null로 설정됩니다. 구버전을 실행하면 저장된 개인정보 보호 정책 버전이 앱의 현재 버전보다 낮아집니다. 초기화를 실행하면 동의 메타데이터가 삭제되고 애널리틱스 및 개인화 기능이 꺼지며, 이를 통해 신규 동의 모달이 노출되는 상황을 재현할 수 있습니다. live-common에서 CONSENT_RENEWAL_INTERVAL_MS가 null인 동안에는 시간 기반 갱신 기능이 비활성화 상태로 유지됩니다."
+      },
       "brazeTools" : {
         "title" : "브레이즈 도구",
         "description" : "로컬 브레이즈 카드 생성",
@@ -4614,7 +4638,8 @@
           "fields" : {
             "notification" : "알림 콘텐츠 카드",
             "action" : "액션 콘텐츠 카드",
-            "portfolio" : "포트폴리오 콘텐츠 카드",
+            "portfolio" : "포트폴리오",
+            "bottomPortfolio" : "Bottom Portfolio",
             "title" : "제목",
             "description" : "설명",
             "order" : "주문",
@@ -4624,10 +4649,31 @@
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
             "tag" : "태그",
+            "picto" : "Picto (ledger id)",
             "url" : "URL",
             "path" : "경로"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "앱.json 파일 불러오기",
+        "desc" : "앱.json 파일을 드래그 및 드롭하여 계정 및 설정 불러오기",
+        "dropOrBrowse" : "app.json 파일을 여기로 끌어오거나 클릭하여 선택하기",
+        "importing" : "가져오기 중...",
+        "success" : "{{count}}개 계정을 성공적으로 가져왔습니다.",
+        "success_other" : "{{count}}개 계정을 성공적으로 가져왔습니다.",
+        "lastDeviceSeen" : "마지막으로 확인된 장치: {{device}}",
+        "invalidFileType" : "잘못된 파일 형식 .json 파일이 필요합니다.",
+        "missingDataField" : "유효하지 않은 app.json: 최상위 데이터 필드가 누락되었습니다.",
+        "encryptedAccounts" : "암호화된 계정이 감지되었습니다. 먼저 파일 암호를 해제하세요.",
+        "successLabel" : "완료",
+        "appJsonFile" : "앱.json 파일",
+        "accountsImported" : "가져온 계정",
+        "accountsFailed" : "실패한 계정",
+        "importFailed" : "가져오기 실패: {{message}}",
+        "unknownError" : "가져오기 중 알 수 없는 오류가 발생했습니다.",
+        "failedCount" : "{{count}}개의 계정을 불러올 수 없습니다.",
+        "failedCount_other" : "{{count}}개의 계정을 불러올 수 없습니다."
       },
       "mockAccounts" : {
         "title" : "모의 계좌 생성",
@@ -4643,6 +4689,10 @@
         "emptyGenerate" : {
           "title" : "비어 있는 계정 생성",
           "desc" : "빈 계정 생성하기"
+        },
+        "stablecoinGenerate" : {
+          "title" : "스테이블코인 프리셋",
+          "desc" : "주요 스테이블코인이 포함된 Ethereum, Arbitrum, Optimism, Base, Solana, Tron, Algorand 계정을 생성합니다. (네트워크당 최대 5개)"
         },
         "currencySelector" : {
           "placeholder" : "통화 선택",
@@ -4660,7 +4710,9 @@
           "generateAccounts" : "계좌 {{count}}개 생성",
           "generateAccounts_other" : "계좌 {{count}}개 생성",
           "generateAccountsQuick" : "계좌 {{count}}개 생성",
-          "generateEmptyAccount" : "빈 계정 생성하기"
+          "generateEmptyAccount" : "빈 계정 생성하기",
+          "generateStablecoinAccounts" : "스테이블코인 계정 {{count}}개 생성",
+          "generateStablecoinAccounts_other" : "스테이블코인 계정 {{count}}개 생성"
         },
         "alerts" : {
           "selectCurrency" : "통화를 1개 이상 선택하세요.",
@@ -5861,6 +5913,10 @@
     },
     "recipientWording" : {
       "send" : "수령인",
+      "transfer_public" : "공개 수령인",
+      "transfer_private" : "비공개 수령인",
+      "convert_public_to_private" : "비공개 수령인",
+      "convert_private_to_public" : "공개 수령인",
       "delegate" : "검증인",
       "redelegate" : "검증인",
       "undelegate" : "검증인",
@@ -5966,7 +6022,7 @@
         "auth" : {
           "title" : "승인",
           "validator" : "승인",
-          "hint" : "이 계정으로 자금을 받으면 자동으로 승인합니다.",
+          "hint" : "이 계정으로 입금되는 자산을 자동으로 승인합니다.",
           "reonboard" : {
             "hint" : "토폴로지 변경이 감지되었습니다. 계속해서 자금을 자동 수신하려면 Ledger 검증인을 다시 승인하세요."
           },
@@ -6302,6 +6358,11 @@
     "DeviceSocketFail" : {
       "title" : "Ledger 장치를 재시작하고 다시 시도해 주세요",
       "description" : "예상하지 못한 오류가 발생했습니다. 다시 시도해주세요. ({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : " {{productName}}의 정품 확인에 실패했습니다.",
+      "description" : "이 Ledger 장치 사용은 위험할 수 있습니다.\n Ledger 지원팀으로 문의해 주세요",
+      "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "연결이 실패했습니다",
@@ -6939,6 +7000,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "이체 수량이 부족합니다. {{minimumAmount}} 이상을 전송하세요."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
     },
@@ -7016,6 +7080,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "죄송합니다. 자산이 부족합니다"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "페어링 만료",
+      "description" : "Concordium ID 앱과의 연결 시간이 초과되었습니다. 다시 시도해 주세요."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "세션 만료",
+      "description" : "Concordium ID 앱 세션이 만료되었습니다. 다시 페어링해 주세요."
     },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
@@ -7202,6 +7274,22 @@
     "TonMinimumRequired" : {
       "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
     },
+    "AleoAmountRecordRequired" : {
+      "title" : "전송에 사용할 유효한 프라이빗 레코드를 선택하세요.",
+      "description" : "보낼 수량에 맞춰 프라이빗 레코드를 하나 선택하세요."
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "네트워크 수수료에 사용할 또 다른 프라이빗 레코드가 필요합니다.",
+      "description" : "필요한 경우 잔액을 충전하세요. 프라이빗 레코드 1개는 보낼 수량으로 사용되며, 네트워크 수수료로 사용할 또 다른 레코드가 필요합니다."
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "프라이빗 전송에는 최소 2개의 레코드가 필요합니다.",
+      "description" : "보낼 수량에 사용할 레코드 1개와 네트워크 수수료에 사용할 레코드 1개가 필요합니다."
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "네트워크 수수료로 사용할 프라이빗 레코드가 없습니다.",
+      "description" : "보낼 수량에 맞게 다른 레코드를 선택하거나 잔액을 추가로 충전하세요."
+    },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
     },
@@ -7365,8 +7453,8 @@
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "AlreadySendingApduError" : {
-      "title" : "통신 오류",
-      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "title" : "Ledger 장치에서 확인이 필요합니다.",
+      "description" : "장치 화면에 표시된 작업을 완료한 후, 아래 '다시 시도'를 선택하세요."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
@@ -7701,11 +7789,48 @@
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
-      "add" : "계정 추가"
+      "select" : "계정 선택"
     }
   },
   "recoverRestore" : {
     "title" : "Ledger를 연결하고 잠금을 해제하세요"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "Ledger 개선에 참여해 주세요",
+      "description" : "동의해 주시면 사용 데이터를 수집하여 기능을 개선하고 맞춤형 환경을 제공합니다.",
+      "ctaAcceptAll" : "모두 수락",
+      "ctaRefuseAll" : "모두 거부"
+    },
+    "reconfirm" : {
+      "title" : "Ledger 개선에 계속 참여하시겠습니까?",
+      "description" : "Ledger 기능 향상을 위해 사용 데이터를 계속 공유하시겠습니까? 이 데이터는 기능을 개선하고 맞춤형 환경을 제공하는 데 사용됩니다.",
+      "ctaContinue" : "예, 계속합니다",
+      "ctaStop" : "아니요, 중단합니다"
+    },
+    "privacy" : {
+      "title" : "개인정보 처리방침이 업데이트됩니다",
+      "descriptionLead" : "변경 안내: ",
+      "descriptionLinkLabel" : "개인 정보 보호 정책",
+      "descriptionTrail" : " 변경 내역 확인하기. 설정에서 언제든지 기본 설정을 변경할 수 있습니다.",
+      "ctaGotIt" : "확인"
+    },
+    "setPreferences" : "설정 관리",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "앱 성능",
+        "description" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
+      },
+      "personalizedExperience" : {
+        "title" : "맞춤화된 경험",
+        "description" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
+      },
+      "ctaConfirm" : "확인"
+    },
+    "footer" : {
+      "lead" : "설정에서 언제든지 동의를 철회하실 수 있습니다.",
+      "privacyLink" : "개인 정보 보호 정책"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -7761,9 +7886,9 @@
     },
     "profileSettings" : {
       "personalizedExp" : "맞춤화된 경험",
-      "analytics" : "애널리틱스",
-      "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
-      "analyticsDesc" : "Ledger의 앱 사용 데이터를 수집을 허용하면 Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
+      "analytics" : "앱 성능",
+      "personalizedExpDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
+      "analyticsDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
     }
   },
   "analytics" : {
@@ -7969,6 +8094,16 @@
       "cta" : "자세히 알아보기"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Ledger Nano S™ 업그레이드 찬스",
+      "description" : "단독 기회! 최신 Ledger 사이너를 20% 할인된 가격에 만나보세요."
+    },
+    "opted_out" : {
+      "title" : "Ledger Nano S™ 업그레이드 찬스",
+      "description" : "Ledger Nano S의 메모리 용량 한계로 최신 기능, 블록체인 변경 사항 및 보안 업데이트 이용 및 액세스가 제한됩니다."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "추가하려는 계정을 선택하세요",
@@ -8065,17 +8200,20 @@
   "portfolio" : {
     "title" : "홈",
     "today" : "오늘",
+    "carousel" : {
+      "title" : "고객 맞춤 정보"
+    },
     "addAccountCta" : "암호화폐 계정 추가",
-    "noBalanceTitle" : "소중한 암호화폐를 안전하게",
+    "noBalanceTitle" : "자산을 입금하고 시작하세요",
     "perpsEntry" : {
-      "title" : "무기한 계약",
+      "title" : "무기한 선물",
       "description" : "레버리지로 거래하기",
       "cta" : "탐색"
     },
-    "noDeviceTitle" : "가장 안전한 지갑"
+    "noDeviceTitle" : "안전한 암호화폐 지갑"
   },
   "marketBanner" : {
-    "title" : "시장 탐색하기",
+    "title" : "시장 현황 살펴보기",
     "genericError" : "연결에 실패했습니다",
     "cta" : "모두 보기",
     "scrollLeft" : "왼쪽으로 스크롤",
@@ -8086,15 +8224,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "공포+",
       "fear" : "공포",
+      "cautious" : "신중",
       "neutral" : "중립",
-      "greed" : "탐욕",
-      "extremeGreed" : "탐욕+"
+      "optimistic" : "낙관",
+      "greedy" : "탐욕"
     },
     "dialog" : {
       "title" : "시장 심리 지수",
-      "content" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
+      "content" : "트렌드와 활동을 분석하여 전반적 마켓 분위기를 0부터 100 사이 수치로 표시합니다. 이 지수로 현재 시장 상황을 파악해 보세요. 수치가 낮을수록 공포에 가깝고, 높을수록 탐욕이 커짐을 의미합니다.",
       "cta" : "확인"
     }
   },
@@ -8120,8 +8258,38 @@
       "balance" : "잔액",
       "value" : "가치",
       "trend" : "1일 트렌드",
-      "trendTooltip" : "24시간 자산 변동"
+      "trendTooltip" : "지난 24시간 사이 잔액 변화를 표시합니다."
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "계정",
+    "tableActions" : {
+      "searchAddress" : "이름 또는 주소로 검색",
+      "addAddress" : "주소 추가"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "이름",
+        "address" : "주소",
+        "value" : "가치"
+      },
+      "editName" : "이름 편집",
+      "emptyState" : "아직 암호화폐 주소가 없습니다",
+      "emptySearchState" : "검색하신 조건에 맞는 계정을 찾을 수 없습니다"
+    },
+    "editName" : {
+      "title" : "주소 별칭 편집",
+      "input" : "주소 별칭",
+      "suggestions" : {
+        "trading" : "{{asset}} 트레이딩",
+        "savings" : "{{asset}} 세이빙"
+      },
+      "cta" : "확인",
+      "syncingTooltip" : "동기화 진행 중. 잠시만 기다려 주세요"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "암호화폐"
   },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
@@ -8131,11 +8299,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "내역",
+      "tooltip" : "내역"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "일시적인 네트워크 문제가 발생했습니다. 귀하의 자산은 안전하니 안심하세요.\n 영향을 받은 계정 목록: {{accounts}}. 탭하여 다시 시도하세요",
-      "emptyErrorToolTip" : "일시적인 네트워크 문제가 발생했습니다. 자산은 안전하니 안심하세요.\n 탭하여 다시 시도하세요",
-      "upToDate" : "최신 상태입니다",
-      "lastSync" : "마지막 동기화: {{timeAgo}} 탭하여 새로고침하세요"
+      "errorToolTip" : "자산은 안전하게 보호되고 있습니다. 일시적인 동기화 문제로, 일부 계정에만 영향을 미칩니다.\n 영향 받는 계정: {{accounts}} 탭하여 다시 시도",
+      "emptyErrorToolTip" : "자산은 안전하게 보호되고 있습니다. 일시적인 동기화 문제로, 일부 계정에만 영향을 미칩니다.\n 탭하여 다시 시도",
+      "upToDate" : "포트폴리오 업데이트 완료",
+      "lastSync" : "마지막 동기화: {{timeAgo}} 탭하여 새로고침하세요",
+      "refreshing" : "새로고침 중"
     },
     "notificationIndicator" : {
       "tooltip" : "알림"
@@ -8172,8 +8345,9 @@
         "showBalance" : "잔액 보기",
         "startSync" : "동기화 시작",
         "stopSync" : "동기화 중지",
-        "lastProcessedBlock" : "최근 처리된 블록: {{block}}, 누락된 블록: {{missing}}",
-        "lastSync" : "마지막 동기화: {{date}}"
+        "upToDate" : "최신",
+        "lastSync" : "마지막 동기화: {{date}}",
+        "estimatedTimeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}"
       },
       "datepicker" : {
         "label" : "시작 높이",
@@ -8266,11 +8440,20 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Provable 후원",
       "balanceSelector" : {
         "private" : "비공개 수량",
         "public" : "공개 수량",
-        "lastUpdate" : "마지막 업데이트",
+        "lastUpdate" : "마지막 업데이트: {{label}}",
+        "recently" : "최근",
         "switchBalance" : "잔액 출처 전환"
+      },
+      "recordPicker" : {
+        "label" : "사용 가능한 레코드",
+        "noRecords" : "사용 가능한 레코드가 없습니다",
+        "noRecordsAlert" : "사용 가능한 레코드가 없습니다. 시작하려면 셀프 전송을 진행하거나 프라이빗 자산을 수령하세요.",
+        "alert" : "최대 사용 가능 금액은 선택한 레코드의 최대 가치에 따라 달라집니다. Ledger 사용자의 수수료는 Provable에서 부담합니다.",
+        "recordsLimit" : "최대 {{max}} 레코드가 표시됩니다"
       }
     },
     "account" : {
@@ -8279,12 +8462,31 @@
       "transparentBalance" : "공개 수량",
       "transparentBalanceTooltip" : "누구나 볼 수 있는 수량",
       "privateBalance" : "비공개 수량",
-      "privateBalanceTooltip" : "타인에게 공개되지 않은 수량"
+      "privateBalanceTooltip" : "타인에게 공개되지 않은 수량",
+      "syncButton" : {
+        "startSync" : "동기화 시작",
+        "stopSync" : "동기화 중지",
+        "syncAgain" : "다시 동기화하기",
+        "lastSync" : "마지막 동기화: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
         "public" : "공개",
         "private" : "비공개"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "보내는 계정"
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Aleo 트랜잭션에는 증명 생성이 필요합니다. 이 작업은 시간이 다소 소요될 수 있습니다."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "비공개 수량 동기화 중({{percentage}}%)",
+        "desc" : "잠시만 기다려 주세요",
+        "error" : "비공개 수량 동기화에 실패했습니다. 나중에 다시 시도하세요."
       }
     }
   },
@@ -8312,6 +8514,43 @@
     "cta" : {
       "continue" : "계속",
       "explore" : "새로워진 포트폴리오 살펴보기"
+    }
+  },
+  "history" : {
+    "title" : "트랜잭션",
+    "pending" : "보류 중인 트랜잭션",
+    "pending_other" : "보류 중인 트랜잭션",
+    "columns" : {
+      "type" : "유형",
+      "address" : "주소",
+      "amount" : "수량",
+      "value" : "가치"
+    },
+    "address" : {
+      "from" : "출금 주소",
+      "to" : "입금 주소"
+    },
+    "emptyState" : {
+      "title" : "아직 트랜잭션 내역이 없습니다",
+      "description" : "트랜잭션 내역을 확인하려면 나중에 다시 방문하세요."
+    },
+    "actionsBar" : {
+      "csv" : "CSV"
+    },
+    "exportDialog" : {
+      "title" : "거래 내역",
+      "description" : "내보낼 계정을 선택하세요",
+      "disclaimer" : "표시된 값은 추정치에 불과합니다. 환산 금액은 Kaiko가 정보 제공 목적으로 제공하며, 세무, 법률 또는 회계 목적으로 사용할 수 없습니다.",
+      "accountsToInclude" : "포함할 계정",
+      "selectAll" : "모든 ({{count}}) 선택",
+      "deselectAll" : "모든 ({{count}}) 선택 해제",
+      "export" : "내역 내보내기",
+      "successTitle" : "트랜잭션 내역이 성공적으로 저장되었습니다",
+      "successDescription" : "트랜잭션 내역 CSV 파일이 선택된 폴더에 저장되었습니다",
+      "done" : "완료",
+      "errorTitle" : "문제가 발생했습니다",
+      "errorDescription" : "트랜잭션 내역 내보내기 중 오류가 발생했습니다. 다시 시도해 주세요.",
+      "tryAgain" : "다시 시도하세요"
     }
   }
 }

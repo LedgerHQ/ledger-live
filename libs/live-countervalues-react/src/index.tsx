@@ -23,9 +23,6 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { useMarketcapIds } from "./CountervaluesMarketcapProvider";
-
-export { CountervaluesMarketcapProvider, useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
 export interface PollingState {
   isPolling: boolean;
@@ -42,6 +39,7 @@ export interface CountervaluesBridge {
   setState(state: CounterValuesState): void;
   setStateError(error: Error): void;
   setStatePending(pending: boolean): void;
+  useMarketcapIds(): string[];
   usePollingIsPolling(): boolean;
   usePollingTriggerLoad(): boolean;
   useStateError(): Error | null;
@@ -117,7 +115,7 @@ function Effect({
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
 
-  const marketcapIds = useMarketcapIds();
+  const marketcapIds = bridge.useMarketcapIds();
 
   const batchStrategySolver = useMemo(
     () => ({
@@ -315,6 +313,6 @@ export function useTrackingPairForAccounts(
   }, [accounts, countervalue]);
   // we only want to return the pairs when the hash changes
   // to not recalculate pairs as fast as accounts resynchronizes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => c.pairs, [c.hash]);
 }

@@ -1,14 +1,104 @@
 import BigNumber from "bignumber.js";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
-import { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput, BitcoinOutputRaw } from "./types";
+import {
+  BitcoinAccount,
+  BitcoinAccountRaw,
+  BitcoinOutput,
+  BitcoinOutputRaw,
+  ZcashAccount,
+  ZcashAccountRaw,
+} from "./types";
+import {
+  DecryptedOutput,
+  DecryptedOutputRaw,
+  ShieldedTransaction,
+  ShieldedTransactionRaw,
+  ZcashPrivateInfo,
+  ZcashPrivateInfoRaw,
+} from "@ledgerhq/zcash-shielded/types";
+
+const privateInfoMock: ZcashPrivateInfo = {
+  saplingBalance: new BigNumber("2"),
+  orchardBalance: new BigNumber("4"),
+  ufvk: "uview123...",
+  syncState: "running",
+  birthday: "",
+  lastProcessedBlock: 1,
+  lastSyncTimestamp: 123,
+  transactions: [],
+  progress: 0,
+  estimatedTimeRemaining: { hours: 0, minutes: 0 },
+};
+
+const privateInfoRawMock: ZcashPrivateInfoRaw = {
+  saplingBalance: "2",
+  orchardBalance: "4",
+  ufvk: "uview123...",
+  syncState: "running",
+  birthday: "",
+  lastProcessedBlock: 1,
+  lastSyncTimestamp: 123,
+  transactions: [],
+  progress: 0,
+  estimatedTimeRemaining: { hours: 0, minutes: 0 },
+};
+
+const shieldedTransactionMock: ShieldedTransaction = {
+  id: "",
+  hex: "",
+  blockHeight: 1,
+  blockHash: "",
+  timestamp: 1,
+  fee: new BigNumber("2"),
+  decryptedData: {
+    orchard_outputs: [],
+    sapling_outputs: [],
+  },
+};
+
+const shieldedTransactionRawMock: ShieldedTransactionRaw = {
+  id: "",
+  hex: "",
+  blockHeight: 1,
+  blockHash: "",
+  timestamp: 1,
+  fee: "2",
+  decryptedData: {
+    orchard_outputs: [],
+    sapling_outputs: [],
+  },
+};
+
+const decryptedOutputMock: DecryptedOutput[] = [
+  {
+    memo: "",
+    transfer_type: "incoming",
+    amount: new BigNumber("7"),
+  },
+];
+
+const decryptedOutputRawMock: DecryptedOutputRaw[] = [
+  {
+    memo: "",
+    transfer_type: "incoming",
+    amount: "7",
+  },
+];
 
 describe("assignToAccountRaw", () => {
   let accountMock: BitcoinAccount = {} as BitcoinAccount;
   let accountRawMock: BitcoinAccountRaw = {} as BitcoinAccountRaw;
+  let accountZcashMock: ZcashAccount = {} as ZcashAccount;
+  let accountZcashRawMock: ZcashAccountRaw = {} as ZcashAccountRaw;
 
   beforeEach(() => {
     accountMock = {} as BitcoinAccount;
     accountRawMock = {} as BitcoinAccountRaw;
+  });
+
+  beforeEach(() => {
+    accountZcashMock = {} as ZcashAccount;
+    accountZcashRawMock = {} as ZcashAccountRaw;
   });
 
   describe("when bitcoinResources is defined", () => {
@@ -75,15 +165,84 @@ describe("assignToAccountRaw", () => {
       expect(accountRawMock.bitcoinResources).toEqual(undefined);
     });
   });
+
+  describe("when privateInfo is defined", () => {
+    it("should include privateInfo", () => {
+      accountZcashMock.privateInfo = privateInfoMock;
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+      expect(accountZcashRawMock.privateInfo).toBeDefined();
+    });
+
+    it("should include privateInfo, and convert shielded balances", () => {
+      accountZcashMock.privateInfo = privateInfoMock;
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+      expect(accountZcashRawMock.privateInfo).toEqual(privateInfoRawMock);
+    });
+
+    it("should shielded transactions, when present", () => {
+      accountZcashMock.privateInfo = {
+        ...privateInfoMock,
+        transactions: [shieldedTransactionMock],
+      };
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+      expect(accountZcashRawMock.privateInfo).toEqual({
+        ...privateInfoRawMock,
+        transactions: [shieldedTransactionRawMock],
+      });
+    });
+
+    it("should include decrypted actions, when present", () => {
+      accountZcashMock.privateInfo = {
+        ...privateInfoMock,
+        transactions: [
+          {
+            ...shieldedTransactionMock,
+            decryptedData: {
+              orchard_outputs: decryptedOutputMock,
+              sapling_outputs: decryptedOutputMock,
+            },
+          },
+        ],
+      };
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+      expect(accountZcashRawMock.privateInfo).toEqual({
+        ...privateInfoRawMock,
+        transactions: [
+          {
+            ...shieldedTransactionRawMock,
+            decryptedData: {
+              orchard_outputs: decryptedOutputRawMock,
+              sapling_outputs: decryptedOutputRawMock,
+            },
+          },
+        ],
+      });
+    });
+  });
+
+  describe("when privateInfo isn't defined", () => {
+    it("should not include privateInfo", () => {
+      delete accountZcashMock.privateInfo;
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+      expect(accountZcashRawMock.privateInfo).toBeUndefined();
+    });
+  });
 });
 
 describe("assignFromAccountRaw", () => {
   let accountMock: BitcoinAccount = {} as BitcoinAccount;
   let accountRawMock: BitcoinAccountRaw = {} as BitcoinAccountRaw;
+  let accountZcashMock: ZcashAccount = {} as ZcashAccount;
+  let accountZcashRawMock: ZcashAccountRaw = {} as ZcashAccountRaw;
 
   beforeEach(() => {
     accountMock = {} as BitcoinAccount;
     accountRawMock = {} as BitcoinAccountRaw;
+  });
+
+  beforeEach(() => {
+    accountZcashMock = {} as ZcashAccount;
+    accountZcashRawMock = {} as ZcashAccountRaw;
   });
 
   describe("when bitcoinResources is defined", () => {
@@ -138,6 +297,68 @@ describe("assignFromAccountRaw", () => {
     it("shouldn't edit raw account", () => {
       assignFromAccountRaw(accountRawMock, accountMock);
       expect(accountMock.bitcoinResources).toEqual(undefined);
+    });
+  });
+
+  describe("when privateInfo is defined", () => {
+    it("should include privateInfo", () => {
+      accountZcashRawMock.privateInfo = privateInfoRawMock;
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+      expect(accountZcashMock.privateInfo).toBeDefined();
+    });
+
+    it("should include privateInfo, and convert shielded balances", () => {
+      accountZcashRawMock.privateInfo = privateInfoRawMock;
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+      expect(accountZcashMock.privateInfo).toEqual(privateInfoMock);
+    });
+
+    it("should include shielded transactions, when present", () => {
+      accountZcashRawMock.privateInfo = {
+        ...privateInfoRawMock,
+        transactions: [shieldedTransactionRawMock],
+      };
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+      expect(accountZcashMock.privateInfo).toEqual({
+        ...privateInfoMock,
+        transactions: [shieldedTransactionMock],
+      });
+    });
+
+    it("should include decrypted actions, when present", () => {
+      accountZcashRawMock.privateInfo = {
+        ...privateInfoRawMock,
+        transactions: [
+          {
+            ...shieldedTransactionRawMock,
+            decryptedData: {
+              orchard_outputs: decryptedOutputRawMock,
+              sapling_outputs: decryptedOutputRawMock,
+            },
+          },
+        ],
+      };
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+      expect(accountZcashMock.privateInfo).toEqual({
+        ...privateInfoMock,
+        transactions: [
+          {
+            ...shieldedTransactionMock,
+            decryptedData: {
+              orchard_outputs: decryptedOutputMock,
+              sapling_outputs: decryptedOutputMock,
+            },
+          },
+        ],
+      });
+    });
+  });
+
+  describe("when privateInfo isn't defined", () => {
+    it("should not include privateInfo", () => {
+      delete accountZcashMock.privateInfo;
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+      expect(accountZcashMock.privateInfo).toBeUndefined();
     });
   });
 });

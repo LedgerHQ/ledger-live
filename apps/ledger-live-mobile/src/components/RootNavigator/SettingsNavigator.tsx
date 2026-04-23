@@ -11,6 +11,7 @@ import DebugConnectivity, {
 import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
+import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceIntentExecutor";
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
@@ -33,6 +34,7 @@ import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSen
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "~/screens/Settings/Debug";
+import DebugAnalyticsConsentQA from "~/screens/Settings/Debug/AnalyticsConsentQA";
 import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
 import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
@@ -44,6 +46,7 @@ import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
 import Resources from "~/screens/Settings/Resources";
 import GeneralSettings from "~/screens/Settings/General";
+import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreferencesSettings";
 import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
 import NotificationsSettings from "~/screens/Settings/Notifications";
 import HelpSettings from "~/screens/Settings/Help";
@@ -59,6 +62,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import HelpButton from "~/screens/Settings/HelpButton";
 import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
+import GenerateMockAccountsByType from "~/screens/Settings/Debug/Generators/GenerateMockAccountsByType";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
@@ -122,6 +126,16 @@ export default function SettingsNavigator() {
         layout={unmountOnBlur}
         options={{
           title: t("settings.display.title"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsPreferencesSettings}
+        component={AnalyticsPreferencesSettings}
+        options={{
+          title: "",
+          headerStyle: {
+            backgroundColor: colors.neutral.c00,
+          }
         }}
       />
       <Stack.Screen
@@ -225,6 +239,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugAnalyticsConsentQA}
+        component={DebugAnalyticsConsentQA}
+        options={{
+          title: "Analytics opt-in consent — QA",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugNetwork}
         component={DebugNetwork}
         options={{
@@ -279,6 +300,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutor}
+        component={DebugDeviceIntentExecutor}
+        options={{
+          title: "Device Intent Executor",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugFeatureFlags}
         component={DebugFeatureFlags}
         options={{
@@ -297,6 +325,13 @@ export default function SettingsNavigator() {
         component={GenerateMockAccountSelectScreen}
         options={{
           title: "Generate mock accounts",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugMockGenerateAccountsByType}
+        component={GenerateMockAccountsByType}
+        options={{
+          title: "Generate accounts by type",
         }}
       />
       <Stack.Screen

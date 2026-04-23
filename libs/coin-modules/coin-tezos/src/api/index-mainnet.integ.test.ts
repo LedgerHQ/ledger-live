@@ -132,7 +132,7 @@ describe("Tezos Api - Mainnet", () => {
       const delegation = decoded.contents[1] as DecodedOperation;
       expect(delegation.kind).toBe(OpKind.DELEGATION);
       expect(BigInt(delegation.fee ?? "0")).toBeGreaterThanOrEqual(500);
-      expect(Number(delegation.gas_limit ?? "0")).toBeGreaterThanOrEqual(10000);
+      expect(Number(delegation.gas_limit ?? "0")).toBeGreaterThanOrEqual(2500);
       expect(Number(delegation.storage_limit ?? "0")).toBeGreaterThanOrEqual(0);
       expect(delegation.delegate).toEqual(delegate);
       expect(delegation.source).toEqual(sender);

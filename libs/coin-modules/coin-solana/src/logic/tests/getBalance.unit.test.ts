@@ -1,14 +1,35 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import type { ChainAPI } from "../../network";
+import type { StakeAccount } from "../../network/chain/stake-activation/rpc";
 import { getBalance } from "../getBalance";
+import { getStakeAccounts, computeUnstakeReserve } from "../getStakes";
+
+jest.mock("../getStakes", () => ({
+  getStakeAccounts: jest.fn().mockResolvedValue([]),
+  computeUnstakeReserve: jest.fn().mockResolvedValue(0),
+}));
+
+const mockGetStakeAccounts = jest.mocked(getStakeAccounts);
+const mockComputeUnstakeReserve = jest.mocked(computeUnstakeReserve);
+
+function makeStakeAccountStub(lamports: number) {
+  return { account: { onChainAcc: { account: { lamports } } } };
+}
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 
 describe("getBalance", () => {
-  const mockGetBalance = jest.fn();
-  const mockGetMinimumBalanceForRentExemption = jest.fn();
-  const mockGetParsedTokenAccountsByOwner = jest.fn();
-  const mockGetParsedToken2022AccountsByOwner = jest.fn();
+  const mockGetBalance = jest.fn() as jest.MockedFunction<ChainAPI["getBalance"]>;
+  const mockGetMinimumBalanceForRentExemption = jest.fn() as jest.MockedFunction<
+    ChainAPI["getMinimumBalanceForRentExemption"]
+  >;
+  const mockGetParsedTokenAccountsByOwner = jest.fn() as jest.MockedFunction<
+    DeepPartialReturn<ChainAPI["getParsedTokenAccountsByOwner"]>
+  >;
+  const mockGetParsedToken2022AccountsByOwner = jest.fn() as jest.MockedFunction<
+    DeepPartialReturn<ChainAPI["getParsedTokenAccountsByOwner"]>
+  >;
 
   const api = {
     getBalance: mockGetBalance,
@@ -137,5 +158,81 @@ describe("getBalance", () => {
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
 
     await expect(getBalance(api, TEST_ADDRESS)).rejects.toThrow("RPC error");
+  });
+
+  describe("stakeAccounts", () => {
+    it("should include staked lamports in totalBalance", async () => {
+      mockGetBalance.mockResolvedValue(1_000_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      mockGetStakeAccounts.mockResolvedValue([
+        makeStakeAccountStub(2_000_000_000),
+      ] as StakeAccount[]);
+      mockComputeUnstakeReserve.mockResolvedValue(0);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      expect(result[0]).toEqual({
+        value: 3_000_000_000n,
+        asset: { type: "native" },
+        locked: 890880n + 2_000_000_000n,
+      });
+    });
+
+    it("should include unstakeReserve in locked", async () => {
+      mockGetBalance.mockResolvedValue(1_000_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      mockGetStakeAccounts.mockResolvedValue([
+        makeStakeAccountStub(2_000_000_000),
+      ] as StakeAccount[]);
+      mockComputeUnstakeReserve.mockResolvedValue(11000);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      // locked = rentExemptMin + stakedLamports + unstakeReserve
+      expect(result[0]).toEqual({
+        value: 3_000_000_000n,
+        asset: { type: "native" },
+        locked: 890880n + 2_000_000_000n + 11000n,
+      });
+    });
+
+    it("should clamp locked to totalBalance when rawLocked exceeds it", async () => {
+      mockGetBalance.mockResolvedValue(100);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      mockGetStakeAccounts.mockResolvedValue([makeStakeAccountStub(1000)] as StakeAccount[]);
+      mockComputeUnstakeReserve.mockResolvedValue(999_999);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      // totalBalance = 100 + 1000 = 1100
+      // rawLocked = 100 (balance < rentExemptMin) + 1000 + 999_999 = 1_001_099 > 1100
+      expect(result[0]).toEqual({
+        value: 1100n,
+        asset: { type: "native" },
+        locked: 1100n,
+      });
+    });
+
+    it("should sum lamports across multiple stake accounts", async () => {
+      mockGetBalance.mockResolvedValue(500_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      mockGetStakeAccounts.mockResolvedValue([
+        makeStakeAccountStub(1_000_000_000),
+        makeStakeAccountStub(3_000_000_000),
+      ] as StakeAccount[]);
+      mockComputeUnstakeReserve.mockResolvedValue(0);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      expect(result[0]).toEqual({
+        value: 4_500_000_000n,
+        asset: { type: "native" },
+        locked: 890880n + 4_000_000_000n,
+      });
+    });
   });
 });

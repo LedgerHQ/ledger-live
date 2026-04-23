@@ -2,7 +2,7 @@ import React from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import Alert from "~/renderer/components/Alert";

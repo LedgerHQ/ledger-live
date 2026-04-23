@@ -9,6 +9,7 @@ import {
   getPortfolio,
   getCurrencyPortfolio,
   getAssetsDistribution,
+  defaultAssetsDistribution,
   getPortfolioRangeConfig,
   getDates,
   getRanges,
@@ -136,7 +137,7 @@ describe("Portfolio", () => {
       const account2 = genAccountBitcoin("bitcoin_2");
       const { state, to } = await loadCV(account);
       const portfolio = getPortfolio([account, account2], range, state, to);
-      const { history: history } = getBalanceHistoryWithCountervalue(
+      const { history } = getBalanceHistoryWithCountervalue(
         account,
         range,
         count,
@@ -155,7 +156,7 @@ describe("Portfolio", () => {
     it("should recompose partial cache", async () => {
       const account = genAccountBitcoin("bitcoin_whatever");
       const { state, to } = await loadCV(account);
-      const { history: history } = getBalanceHistoryWithCountervalue(
+      const { history } = getBalanceHistoryWithCountervalue(
         account,
         "month",
         100,
@@ -209,7 +210,7 @@ describe("Portfolio", () => {
       const account2 = genAccountBitcoin("bitcoin_2");
       const { state, to } = await loadCV(account);
       const portfolio = getCurrencyPortfolio([account, account2], range, state, to);
-      const { history: history } = getBalanceHistoryWithCountervalue(
+      const { history } = getBalanceHistoryWithCountervalue(
         account,
         range,
         count,
@@ -246,7 +247,33 @@ describe("Portfolio", () => {
       const assets = getAssetsDistribution([account], state, to);
       expect(assets).toMatchSnapshot();
     });
+
+    it("should include an asset with a countervalue of 0 in the distribution", async () => {
+      const account = genAccountBitcoin();
+      const { state, to } = await loadCV(account);
+
+      const zeroBalance = account.balance.minus(account.balance);
+      const zeroBalanceAccount: Account = {
+        ...account,
+        balance: zeroBalance,
+        spendableBalance: zeroBalance,
+      };
+
+      const assets = getAssetsDistribution([zeroBalanceAccount], state, to, {
+        ...defaultAssetsDistribution,
+        showEmptyAccounts: true,
+      });
+
+      expect(assets.isAvailable).toBe(true);
+      expect(assets.list.length).toBeGreaterThan(0);
+
+      const btcEntry = assets.list.find(a => a.currency.id === "bitcoin");
+      expect(btcEntry).toBeDefined();
+      expect(btcEntry!.countervalue).toBe(0);
+      expect(assets.sum).toBe(0);
+    });
   });
+
   describe("range module", () => {
     test("getRanges", () => {
       const ranges = ["all", "year", "month", "week", "day"];

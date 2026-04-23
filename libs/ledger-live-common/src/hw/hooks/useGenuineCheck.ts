@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { UnresponsiveDeviceError, UserRefusedAllowManager } from "@ledgerhq/errors";
+import { isCounterfeitError } from "../isCounterfeitError";
 import type { DeviceId } from "@ledgerhq/types-live";
 import { getGenuineCheckFromDeviceId as defaultGetGenuineCheckFromDeviceId } from "../getGenuineCheckFromDeviceId";
 import type {
@@ -134,6 +135,8 @@ export const useGenuineCheck = ({
         clearTimeoutRef(timeoutRef);
         if (e instanceof UserRefusedAllowManager) {
           setDevicePermissionState("refused");
+        } else if (isCounterfeitError(e)) {
+          setGenuineState("non-genuine");
         } else if (e instanceof Error || isDmkDeviceDisconnectedError(e)) {
           // Probably an error of type DisconnectedDeviceDuringOperation or something else
           setError(e);

@@ -1,5 +1,5 @@
 import React from "react";
-import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
+import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
 import { MarketBannerTest, MOCK_MARKET_PERFORMERS } from "./shared";
 
@@ -55,15 +55,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: false, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: false, params: { marketBanner: true } } }),
       });
 
       expect(screen.queryByTestId("market-banner-container")).toBeNull();
@@ -77,15 +69,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: false } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: false } } }),
       });
 
       expect(screen.queryByTestId("market-banner-container")).toBeNull();
@@ -99,15 +83,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByTestId("market-banner-container")).toBeVisible();
@@ -124,15 +100,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByTestId("market-banner-skeleton-0")).toBeVisible();
@@ -147,15 +115,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByText(/Connection failed/i)).toBeVisible();
@@ -167,15 +127,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByText(/Connection failed/i)).toBeVisible();
@@ -193,15 +145,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
@@ -218,15 +162,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByTestId("market-banner-view-all")).toBeVisible();
@@ -241,15 +177,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByText(/Explore the market/i)).toBeVisible();
@@ -265,15 +193,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       const tile = await screen.findByTestId("market-banner-tile-0");
@@ -294,15 +214,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       const viewAllTile = await screen.findByTestId("market-banner-view-all");
@@ -321,15 +233,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       const sectionTitle = await screen.findByText(/Explore the market/i);
@@ -350,15 +254,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       const tile = await screen.findByTestId("market-banner-tile-0");
@@ -379,15 +275,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       const viewAllTile = await screen.findByTestId("market-banner-view-all");
@@ -423,15 +311,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.findByText(/neutral/i)).toBeVisible();
@@ -441,15 +321,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get(API_ENDPOINT, () => HttpResponse.json(null, { status: 500 })));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       expect(await screen.queryByText(/neutral/i)).toBeNull();

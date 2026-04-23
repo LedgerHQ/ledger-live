@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Subscription } from "rxjs";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 import * as RX from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -25,7 +24,6 @@ import {
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
-import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
@@ -55,7 +53,6 @@ export function useScanAccounts({
 }: UseScanAccountsProps) {
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
-  const device = useSelector(getCurrentDevice);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -163,12 +160,6 @@ export function useScanAccounts({
     selectedIds,
   ]);
 
-  const { hasCantonCreatableAccounts, selectedCantonCreatableAccounts } =
-    useCantonCreatableAccounts({
-      scannedAccounts,
-      selectedIds: filteredSelectedIds,
-    });
-
   const { hasConcordiumCreatableAccounts, selectedConcordiumAccounts } =
     useConcordiumCreatableAccounts({
       scannedAccounts,
@@ -181,22 +172,6 @@ export function useScanAccounts({
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-
-    if (hasCantonCreatableAccounts) {
-      setDrawer();
-
-      dispatch(
-        openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
-          currency,
-          device,
-          selectedAccounts: selectedCantonCreatableAccounts,
-          existingAccounts: existingAccounts,
-          editedNames: {},
-        }),
-      );
-
-      return;
-    }
 
     if (hasConcordiumCreatableAccounts) {
       setDrawer();
@@ -235,9 +210,6 @@ export function useScanAccounts({
     existingAccounts,
     onComplete,
     currency,
-    device,
-    hasCantonCreatableAccounts,
-    selectedCantonCreatableAccounts,
     hasConcordiumCreatableAccounts,
     selectedConcordiumAccounts,
     filteredSelectedIds,

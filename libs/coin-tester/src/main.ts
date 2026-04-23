@@ -10,6 +10,52 @@ import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 import { BridgeStrategy } from "./types";
 
+/**
+ * Shape of Jest's assertion error when a matcher fails.
+ * @see https://jestjs.io/docs/expect#matchers
+ */
+export type JestAssertionError = Error & {
+  matcherResult?: {
+    pass: boolean;
+    message?: string | (() => string);
+    expected?: unknown;
+    actual?: unknown;
+    name?: string;
+  };
+};
+
+function isJestAssertionError(err: unknown): err is JestAssertionError {
+  if (!(err instanceof Error) || !("matcherResult" in err)) return false;
+  const mr = Object.getOwnPropertyDescriptor(err, "matcherResult")?.value;
+  return typeof mr === "object" && mr !== null;
+}
+
+/** Build a short summary of the failed assertion for logging. */
+function formatAssertionFailureSummary(err: unknown): string {
+  function formatValue(v: unknown): string {
+    if (v === undefined) return "undefined";
+    if (v === null) return "null";
+    if (typeof v === "string") return v;
+    if (typeof v === "number" || typeof v === "boolean") return String(v);
+    try {
+      return JSON.stringify(v);
+    } catch {
+      return String(v);
+    }
+  }
+
+  if (!isJestAssertionError(err)) return err instanceof Error ? err.message : String(err);
+
+  const mr = err.matcherResult;
+  if (!mr) return err.message;
+
+  const message = typeof mr.message === "function" ? mr.message() : (mr.message ?? err.message);
+  const parts: string[] = [message];
+  if (mr.expected !== undefined) parts.push(`Expected: ${formatValue(mr.expected)}`);
+  if (mr.actual !== undefined) parts.push(`Received: ${formatValue(mr.actual)}`);
+  return parts.join("\n");
+}
+
 export type ScenarioTransaction<T extends TransactionCommon, A extends Account> = Partial<T> & {
   name: string;
   /**
@@ -44,11 +90,11 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
     strategy: BridgeStrategy,
   ) => Promise<ScenarioTransaction<T, A>[]>;
   beforeSync?: () => Promise<void> | void;
-  mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
-  beforeAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
-  afterAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
-  beforeEach?: (account: Account) => Promise<void> | void;
-  afterEach?: (account: Account) => Promise<void> | void;
+  mockIndexer?: (account: A, optimistic: Operation) => Promise<void>;
+  beforeAll?: (account: A, strategy: BridgeStrategy) => Promise<void> | void;
+  afterAll?: (account: A, strategy: BridgeStrategy) => Promise<void> | void;
+  beforeEach?: (account: A) => Promise<void> | void;
+  afterEach?: (account: A) => Promise<void> | void;
   teardown?: () => Promise<void> | void;
 };
 
@@ -199,8 +245,8 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
 
         try {
           testTransaction.expect?.(previousAccount, scenarioAccount);
-        } catch (err) {
-          if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
+        } catch (err: unknown) {
+          if (isJestAssertionError(err) && err.matcherResult?.pass === false) {
             if (retry === 0) {
               console.error(
                 chalk.red(
@@ -209,11 +255,10 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
                   )}`,
                 ),
               );
-
+              console.error(chalk.red("Assertion summary:\n"), formatAssertionFailureSummary(err));
               throw err;
             }
-
-            console.warn(chalk.magenta("Test asssertion failed. Retrying..."));
+            console.warn(chalk.magenta("Test assertion failed. Retrying..."));
             await new Promise(resolve => setTimeout(resolve, retryInterval ?? 3 * 1000));
             await expectHandler(retry - 1);
           } else {
@@ -259,11 +304,11 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
               .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
           );
 
-          if (!(await internalTestTransaction.expect)) {
+          if (!internalTestTransaction.expect) {
             console.warn(
               chalk.yellow(
                 `No expects in the transaction ${chalk.bold(
-                  await internalTestTransaction.name,
+                  internalTestTransaction.name,
                 )}. You might want to add tests in this transaction.`,
               ),
             );
@@ -272,22 +317,24 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
           }
 
           try {
-            await internalTestTransaction.expect?.(previousAccount, scenarioAccount);
-          } catch (err) {
-            if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
+            internalTestTransaction.expect?.(previousAccount, scenarioAccount);
+          } catch (err: unknown) {
+            if (isJestAssertionError(err) && err.matcherResult?.pass === false) {
               if (retry === 0) {
                 console.error(
                   chalk.red(
                     `Retried ${retry_limit} time(s) and could not assert all expects for transaction ${chalk.bold(
-                      await internalTestTransaction.name,
+                      internalTestTransaction.name,
                     )}`,
                   ),
                 );
-
+                console.error(
+                  chalk.red("Assertion summary:\n"),
+                  formatAssertionFailureSummary(err),
+                );
                 throw err;
               }
-
-              console.warn(chalk.magenta("Test asssertion failed. Retrying..."));
+              console.warn(chalk.magenta("Test assertion failed. Retrying..."));
               await new Promise(resolve => setTimeout(resolve, retryInterval ?? 3 * 1000));
               await expectHandler(retry - 1);
             } else {

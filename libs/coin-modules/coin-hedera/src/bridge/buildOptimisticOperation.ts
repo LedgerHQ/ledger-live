@@ -53,7 +53,7 @@ const buildOptimisticCoinOperation = async ({
   transactionType?: OperationType;
 }): Promise<Operation> => {
   const fee =
-    transactionType === "FEES" ? transaction.amount : transaction.maxFee ?? new BigNumber(0);
+    transactionType === "FEES" ? transaction.amount : (transaction.maxFee ?? new BigNumber(0));
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
   const [_, recipientAddress] = await safeParseAccountId(transaction.recipient);

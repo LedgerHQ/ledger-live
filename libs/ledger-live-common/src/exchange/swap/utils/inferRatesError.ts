@@ -6,7 +6,7 @@ import {
   SwapExchangeRateAmountTooLowOrTooHigh,
   SwapGenericAPIError,
 } from "../../../errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { ExchangeRateErrors } from "../types";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 

@@ -5,6 +5,7 @@
       "cache": false,
       "inputs": [
         "default",
+        "^default",
         "desktopEnv",
         "sharedEnv"
       ]
@@ -15,9 +16,16 @@
         "^build"
       ]
     },
+    "build-lib-deps": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "lint": {
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -29,6 +37,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }

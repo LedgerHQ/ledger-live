@@ -142,74 +142,92 @@ async function processERC20TokenTransfer({
   commonData: ReturnType<typeof getCommonMirrorOperationData>;
 }): Promise<{
   coinOperation: Operation<HederaOperationExtra> | undefined;
-  tokenOperation: Operation<HederaOperationExtra>;
-} | null> {
-  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-    enrichedERC20Transfer.transfer.token_evm_address,
-    "hedera",
-  );
-
-  if (!token) return null;
-
+  tokenOperations: Operation<HederaOperationExtra>[];
+}> {
   let coinOperation: Operation<HederaOperationExtra> | undefined;
+  const tokenOperations: Operation<HederaOperationExtra>[] = [];
 
-  const senderEvmAddress = enrichedERC20Transfer.transfer.sender_evm_address;
-  const senderAddress = enrichedERC20Transfer.transfer.sender_account_id
-    ? toEntityId({ num: enrichedERC20Transfer.transfer.sender_account_id })
-    : enrichedERC20Transfer.transfer.sender_evm_address;
-  const recipientAddress = enrichedERC20Transfer.transfer.receiver_account_id
-    ? toEntityId({ num: enrichedERC20Transfer.transfer.receiver_account_id })
-    : enrichedERC20Transfer.transfer.receiver_evm_address;
+  for (const transfer of enrichedERC20Transfer.transfers) {
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      transfer.token_evm_address,
+      "hedera",
+    );
 
-  const commonFields = {
-    ...commonData,
-    type: getOperationTypeFromERC20Details({
-      transferType: enrichedERC20Transfer.transfer.transfer_type,
-      senderEvmAddress,
-      evmAddress,
-    }),
-    contract: token.contractAddress,
-    standard: "erc20",
-    blockHeight: commonData.blockHeight,
-    blockHash: commonData.blockHash,
-    senders: [senderAddress],
-    recipients: [recipientAddress],
-    fee: new BigNumber(enrichedERC20Transfer.mirrorTransaction.charged_tx_fee),
-    value: new BigNumber(enrichedERC20Transfer.transfer.amount),
-    extra: {
-      ...commonData.extra,
-      gasConsumed: enrichedERC20Transfer.contractCallResult.gas_consumed,
-      gasLimit: enrichedERC20Transfer.contractCallResult.gas_limit,
-      gasUsed: enrichedERC20Transfer.contractCallResult.gas_used,
-    },
-  } satisfies Partial<Operation<HederaOperationExtra>>;
+    if (!token) continue;
 
-  const encodedTokenAccountId = encodeTokenAccountId(ledgerAccountId, token);
-  const encodedOperationId = encodeOperationId(
-    encodedTokenAccountId,
-    commonFields.hash,
-    commonFields.type,
-  );
+    const senderEvmAddress = transfer.sender_evm_address;
+    const senderAddress = transfer.sender_account_id
+      ? toEntityId({ num: transfer.sender_account_id })
+      : transfer.sender_evm_address;
+    const recipientAddress = transfer.receiver_account_id
+      ? toEntityId({ num: transfer.receiver_account_id })
+      : transfer.receiver_evm_address;
 
-  const tokenOperation = {
-    ...commonFields,
-    id: encodedOperationId,
-    accountId: encodedTokenAccountId,
-  } satisfies Operation<HederaOperationExtra>;
+    // meaningful operation cannot be created without correct addresses, so we skip it
+    if (!senderEvmAddress || !senderAddress || !recipientAddress) continue;
 
-  if (commonFields.type === "OUT") {
-    coinOperation = {
+    const commonFields = {
+      ...commonData,
+      type: getOperationTypeFromERC20Details({
+        transferType: transfer.transfer_type,
+        senderEvmAddress,
+        evmAddress,
+      }),
+      contract: token.contractAddress,
+      standard: "erc20",
+      blockHeight: commonData.blockHeight,
+      blockHash: commonData.blockHash,
+      senders: [senderAddress],
+      recipients: [recipientAddress],
+      fee: new BigNumber(enrichedERC20Transfer.mirrorTransaction.charged_tx_fee),
+      value: new BigNumber(transfer.amount),
+      extra: {
+        ...commonData.extra,
+        gasConsumed: enrichedERC20Transfer.contractCallResult.gas_consumed,
+        gasLimit: enrichedERC20Transfer.contractCallResult.gas_limit,
+        gasUsed: enrichedERC20Transfer.contractCallResult.gas_used,
+      },
+    } satisfies Partial<Operation<HederaOperationExtra>>;
+
+    const encodedTokenAccountId = encodeTokenAccountId(ledgerAccountId, token);
+    const encodedOperationId = encodeOperationId(
+      encodedTokenAccountId,
+      commonFields.hash,
+      commonFields.type,
+    );
+
+    const tokenOperation = {
       ...commonFields,
-      id: encodeOperationId(ledgerAccountId, commonFields.hash, "FEES"),
+      id: encodedOperationId,
+      accountId: encodedTokenAccountId,
+    } satisfies Operation<HederaOperationExtra>;
+
+    tokenOperations.push(tokenOperation);
+  }
+
+  // create FEES operation for outgoing ERC20 transfer
+  const outgoingTransfer = tokenOperations.find(transfer => transfer.type === "OUT");
+  if (outgoingTransfer) {
+    coinOperation = {
+      ...commonData,
+      id: encodeOperationId(ledgerAccountId, commonData.hash, "FEES"),
       accountId: ledgerAccountId,
       type: "FEES",
-      value: commonFields.fee,
+      ...(outgoingTransfer.contract && { contract: outgoingTransfer.contract }),
+      ...(outgoingTransfer.standard && { standard: outgoingTransfer.standard }),
+      blockHeight: outgoingTransfer.blockHeight,
+      blockHash: outgoingTransfer.blockHash,
+      senders: outgoingTransfer.senders,
+      recipients: outgoingTransfer.recipients,
+      fee: outgoingTransfer.fee,
+      value: outgoingTransfer.fee,
+      extra: outgoingTransfer.extra,
     } satisfies Operation<HederaOperationExtra>;
   }
 
   return {
     coinOperation,
-    tokenOperation,
+    tokenOperations,
   };
 }
 
@@ -435,8 +453,8 @@ async function processTransactionItem({
       commonData,
     });
 
-    if (erc20TokenResult?.tokenOperation) newTokenOperations.push(erc20TokenResult.tokenOperation);
-    if (erc20TokenResult?.coinOperation) newCoinOperations.push(erc20TokenResult.coinOperation);
+    if (erc20TokenResult.coinOperation) newCoinOperations.push(erc20TokenResult.coinOperation);
+    newTokenOperations.push(...erc20TokenResult.tokenOperations);
   }
 
   return { newCoinOperations, newTokenOperations };

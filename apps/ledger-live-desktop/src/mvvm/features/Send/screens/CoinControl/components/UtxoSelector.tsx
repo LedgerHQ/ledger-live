@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   ListItem,
   ListItemContent,
   ListItemDescription,
@@ -10,15 +11,22 @@ import {
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
 import { Check } from "@ledgerhq/lumen-ui-react/symbols";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 import React from "react";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
 
 type UtxoSelectorProps = Readonly<{
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   coinToSendLabel: string;
+  isCustomPickingStrategy: boolean;
+  onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
-export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorProps) => {
+export const UtxoSelector = ({
+  utxoDisplayData,
+  coinToSendLabel,
+  isCustomPickingStrategy,
+  onToggleUtxoExclusion,
+}: UtxoSelectorProps) => {
   const rows = utxoDisplayData?.utxoRows ?? [];
 
   return (
@@ -30,14 +38,33 @@ export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorP
       </Subheader>
       <div>
         {rows.map(row => (
-          <ListItem key={`${row.utxo.hash}-${row.utxo.outputIndex}`} disabled={row.disabled}>
+          <ListItem
+            key={row.rowKey}
+            disabled={row.disabled}
+            onClick={
+              isCustomPickingStrategy && !row.disabled
+                ? () => {
+                    onToggleUtxoExclusion?.(row.rowKey);
+                  }
+                : undefined
+            }
+          >
             <ListItemLeading>
-              <ListItemContent>
-                <ListItemTitle>{row.titleLabel}</ListItemTitle>
-                <ListItemDescription>{row.formattedValue}</ListItemDescription>
-              </ListItemContent>
+              <div className="flex items-center gap-12">
+                {isCustomPickingStrategy ? (
+                  <Checkbox
+                    name={`utxo-${row.rowKey}`}
+                    checked={!row.excluded}
+                    disabled={row.disabled}
+                  />
+                ) : null}
+                <ListItemContent>
+                  <ListItemTitle>{row.titleLabel}</ListItemTitle>
+                  <ListItemDescription>{row.formattedValue}</ListItemDescription>
+                </ListItemContent>
+              </div>
             </ListItemLeading>
-            {row.isUsedInTx && (
+            {row.isUsedInTx && !isCustomPickingStrategy && (
               <ListItemTrailing>
                 <Check />
               </ListItemTrailing>

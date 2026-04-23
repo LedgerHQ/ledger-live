@@ -7,7 +7,7 @@ import {
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TFunction } from "i18next";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -221,6 +221,21 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const walletState = useSelector(walletSelector);
   const routeToStakePlatformApp = getRouteToPlatformApp(account, walletState, parentAccount);
 
+  const [canSendResult, setCanSendResult] = useState(false);
+  useEffect(() => {
+    let active = true;
+    canSend(account, parentAccount)
+      .then(result => {
+        if (active) setCanSendResult(result);
+      })
+      .catch(() => {
+        if (active) setCanSendResult(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [account, parentAccount]);
+
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
   const availableOnSwap = currenciesAll.includes(currency.id);
@@ -302,6 +317,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "send",
       ...buttonSharedTrackingFields,
     });
+    track("button_clicked", {
+      button: "send",
+      page: "account",
+      flow: "send",
+    });
     openSendFlow({
       parentAccount,
       account,
@@ -352,7 +372,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}
-      {canSend(account, parentAccount) ? (
+      {canSendResult ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />

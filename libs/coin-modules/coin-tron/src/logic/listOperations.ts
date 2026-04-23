@@ -1,64 +1,91 @@
-import { Operation } from "@ledgerhq/coin-framework/api/index";
+import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import {
-  defaultFetchParams,
-  fetchTronAccountTxs,
-  FetchTxsStopPredicate as FetchTxsContinuePredicate,
-  getBlock,
-} from "../network";
+import uniqBy from "lodash/uniqBy";
+import { fetchTronAccountTxsPage, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { Block } from "../network/types";
+import {
+  compareTxsByTimestamp,
+  dropTxsAfterNextCursor,
+  dropTxsBeforeCursor,
+  parseCursor,
+} from "./cursor";
+import { TronEmptyPage } from "../types/errors";
 
-export type Options = {
-  // the soft limit is an indicative number of transactions to fetch
-  // it is "soft" because it is not guaranteed that the number of transactions
-  // returned will be less than this number, but it is guaranteed to be:
-  //  <= 2 * softLimit (2 times that number)
-  softLimit: number;
-  minHeight: number;
+// Pagination uses a SUI-style cursor approach to handle two separate endpoints
+// (native transactions and TRC20 transactions) while maintaining chronological order.
+//
+// The cursor format is "{timestamp}:{txHash}" which identifies the last transaction
+// returned. On the next page, we fetch from both endpoints starting at that timestamp,
+// then filter out transactions at or before the cursor position.
+//
+// To ensure no transactions are skipped when endpoints have different page boundaries,
+// we find the "boundary transaction" - the earliest (for asc) or latest (for desc) of
+// the last transactions from each endpoint - and only return transactions up to that
+// boundary. The next cursor points to this boundary transaction.
+
+export type ListOperationsOptions = {
+  limit: number;
+  minTimestamp: number;
   order: "asc" | "desc";
+  cursor?: string;
 };
-
-export const defaultOptions: Options = {
-  softLimit: 1000,
-  minHeight: 0,
-  order: "desc",
-} as const;
 
 export async function listOperations(
   address: string,
-  options: Options,
-): Promise<[Operation[], string]> {
-  // there is a possible optimisation here: when height is 0, set the minTimestamp to 0
-  const minHeight = options?.minHeight ?? defaultOptions.minHeight;
-  const order = options?.order ?? defaultOptions.order;
-  const softLimit = options?.softLimit ?? defaultOptions.softLimit;
+  options: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  const { limit, order, cursor } = options;
+  const parsedCursor = parseCursor(cursor);
 
-  const block = await getBlock(minHeight);
-  const minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
-  const fetchParams = {
-    ...defaultFetchParams,
-    minTimestamp: minTimestamp,
-    order: order,
-    hintGlobalLimit: softLimit,
-  };
+  // For asc: cursor timestamp is the new lower bound (we're moving forward in time)
+  // For desc: cursor timestamp is the new upper bound (we're moving backward in time)
+  //           minTimestamp remains the lower bound (the stopping point)
+  let fetchMinTimestamp: number;
+  let fetchMaxTimestamp: number | undefined;
+  if (order === "asc") {
+    fetchMinTimestamp = parsedCursor ? parsedCursor.timestamp : options.minTimestamp;
+    fetchMaxTimestamp = undefined;
+  } else {
+    fetchMinTimestamp = options.minTimestamp;
+    fetchMaxTimestamp = parsedCursor?.timestamp;
+  }
 
-  // under the hood, the network fetches native transactions and trc20 transactions separately
-  // that same predicate is used to stop fetching both calls
-  // that's why we have a "soft" limit, with the guarantee of total number of transactions to be less than 2 * softLimit
-  const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < softLimit;
+  // Fetch native and TRC20 transactions in parallel from TronGrid.
+  // Both endpoints are queried with the same timestamp bounds to ensure
+  // we can properly merge and sort them chronologically.
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(address, {
+    limit,
+    minTimestamp: fetchMinTimestamp,
+    maxTimestamp: fetchMaxTimestamp,
+    order,
+  });
 
-  const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
+  // TronGrid occasionally returns an empty page for a valid cursor (transient API failure).
+  // A cursor is only issued when TronGrid indicated hasNextPage=true, so 0 results here
+  // is never a legitimate end-of-stream — throw so the client can retry with the same cursor.
+  if (parsedCursor && nativeTxs.txs.length === 0 && trc20Txs.txs.length === 0) {
+    throw new TronEmptyPage(
+      `TronGrid returned empty page for cursor ${cursor} — transient failure, retry required`,
+    );
+  }
+
+  // Merge and dedupe: some transactions appear in both native and TRC20 results
+  const mergedTxs = uniqBy([...nativeTxs.txs, ...trc20Txs.txs], tx => tx.txID);
+  const sortedTxs = [...mergedTxs].sort(compareTxsByTimestamp(order));
+  const afterCursorTxs = dropTxsBeforeCursor({ txs: sortedTxs, order, cursor: parsedCursor });
+
+  const { txs: pageTxs, nextCursor } = dropTxsAfterNextCursor({
+    order,
+    cursor,
+    pageTxs: afterCursorTxs,
+    nativeResult: nativeTxs,
+    trc20Result: trc20Txs,
+  });
 
   const blocksByHeight = new Map<number, Block>();
-  blocksByHeight.set(minHeight, block);
-
   const uniqueHeights = Array.from(
-    new Set(
-      txs
-        .map(tx => tx.blockHeight)
-        .filter((h): h is number => typeof h === "number" && h !== minHeight),
-    ),
+    new Set(pageTxs.map(tx => tx.blockHeight).filter((h): h is number => typeof h === "number")),
   );
 
   await promiseAllBatched(5, uniqueHeights, async height => {
@@ -66,10 +93,17 @@ export async function listOperations(
     blocksByHeight.set(height, fetchedBlock);
   });
 
-  const operations = txs.map(tx => {
+  const operations = pageTxs.map(tx => {
     const height = tx.blockHeight;
-    const txBlock = typeof height === "number" ? blocksByHeight.get(height) ?? block : block;
+    if (typeof height !== "number") {
+      throw new Error(`Transaction ${tx.txID} has no block height`);
+    }
+    const txBlock = blocksByHeight.get(height);
+    if (!txBlock) {
+      throw new Error(`Block ${height} not found for transaction ${tx.txID}`);
+    }
     return fromTrongridTxInfoToOperation(tx, txBlock, address);
   });
-  return [operations, ""];
+
+  return { items: operations, next: nextCursor };
 }

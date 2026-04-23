@@ -10,6 +10,7 @@ export function getMockedPreparedRequestResponse(
     function_name: "transfer_public",
     inputs: ["aleo1recipient", "1000000u64"],
     input_types: ["address", "u64"],
+    tlv: "",
     ...overrides,
   };
 }

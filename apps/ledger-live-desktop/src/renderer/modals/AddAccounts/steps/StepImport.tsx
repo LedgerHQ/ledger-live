@@ -70,7 +70,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
     if (defaultSelected && rest.onSelectAll) {
       rest.onSelectAll(rest.accounts);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <AccountsList {...rest} />;
 };
@@ -382,11 +382,9 @@ export const StepImportFooter = ({
   onCloseModal,
   checkedAccountsIds,
   scannedAccounts,
-  existingAccounts,
   currency,
   t,
   editedNames,
-  device,
 }: StepProps) => {
   const dispatch = useDispatch();
   const willCreateAccount = checkedAccountsIds.some(id => {
@@ -400,6 +398,10 @@ export const StepImportFooter = ({
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
 
+  // TODO: Remove Canton onboarding branch when `lldModularDrawer` feature flag
+  // is permanently enabled and the legacy Add Accounts modal is removed.
+  // Canton onboarding is now handled inline by the MAD via
+  // ModularDrawerAddAccountFlowManager in families/canton/.
   const hasCantonCreatableAccounts = scannedAccounts.some(
     a =>
       checkedAccountsIds.includes(a.id) &&
@@ -422,11 +424,9 @@ export const StepImportFooter = ({
     dispatch(
       openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
         currency: mainCurrency,
-        device: device,
         selectedAccounts: checkedAccountsIds
           .map(id => scannedAccounts.find(a => a.id === id))
           .filter((account): account is Account => Boolean(account)),
-        existingAccounts,
         editedNames,
       }),
     );

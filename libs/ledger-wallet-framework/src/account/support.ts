@@ -1,8 +1,4 @@
-import {
-  AccountNotSupported,
-  CurrencyNotSupported,
-  UnavailableTezosOriginatedAccountReceive,
-} from "@ledgerhq/errors";
+import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
 import { isCurrencySupported } from "../currencies";
@@ -33,12 +29,10 @@ export const shouldShowNewAccount = (
 };
 
 export const getReceiveFlowError = (
-  account: AccountLike,
-  parentAccount: Account | null | undefined,
+  _account: AccountLike,
+  _parentAccount: Account | null | undefined,
 ): Error | undefined => {
-  if (parentAccount && parentAccount.currency.id === "tezos") {
-    return new UnavailableTezosOriginatedAccountReceive("");
-  }
+  return undefined;
 };
 
 export function checkAccountSupported(account: Account): Error | null | undefined {

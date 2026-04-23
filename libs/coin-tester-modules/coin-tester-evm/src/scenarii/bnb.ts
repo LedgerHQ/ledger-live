@@ -6,7 +6,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
-import { callMyDealer, getBridges, bnb, VITALIK } from "../helpers";
+import { callMyDealer, expectAddressInList, getBridges, bnb, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDT_ON_BNB } from "../tokenFixtures";
@@ -28,6 +28,8 @@ const makeScenarioTransactions = ({ address }: { address: string }): BnbScenario
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -48,6 +50,11 @@ const makeScenarioTransactions = ({ address }: { address: string }): BnbScenario
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
         ethers.parseUnits("20", USDT_ON_BNB.units[0].magnitude).toString(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, USDT_ON_BNB.contractAddress);
+      const subOp = latestOperation.subOperations?.[0];
+      expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+      expectAddressInList(subOp?.recipients, VITALIK);
     },
   };
 
@@ -62,6 +69,8 @@ const makeScenarioTransactions = ({ address }: { address: string }): BnbScenario
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -123,7 +132,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
         },
       },
     });
-    initMswHandlers(getCoinConfig(bnb).info);
+    initMswHandlers(getCoinConfig(bnb.id).info);
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
 
     const { address } = await getAddress("", {

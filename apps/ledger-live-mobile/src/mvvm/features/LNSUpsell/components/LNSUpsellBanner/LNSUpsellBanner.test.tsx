@@ -7,7 +7,7 @@ import { render, screen, fireEvent, renderHook } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import { LNSUpsellBanner } from ".";
 
-describe("LNSUpsellBanner ", () => {
+describe("LNSUpsellBanner", () => {
   let t: ReturnType<typeof useTranslation>["t"];
 
   beforeEach(() => {
@@ -60,6 +60,19 @@ describe("LNSUpsellBanner ", () => {
       });
     });
 
+    it("should render Lumen MediaBanner and track press when lwmWallet40 brazePlacement is on", () => {
+      renderBanner({ brazePlacement: true });
+      fireEvent.press(screen.getByTestId("lns-upsell-media-banner"));
+
+      expect(Linking.openURL).toHaveBeenCalledTimes(1);
+      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/optInCta");
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        link: "https://example.com/optInCta",
+        page,
+      });
+    });
+
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
@@ -94,6 +107,7 @@ describe("LNSUpsellBanner ", () => {
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
       targetedByHighTierUpsell = false,
+      brazePlacement = false,
     }) {
       const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
@@ -109,8 +123,18 @@ describe("LNSUpsellBanner ", () => {
               personalizedRecommendationsEnabled: isOptIn,
               knownDeviceModelIds: Object.fromEntries(devicesModelList.map(model => [model, true])),
               anonymousUserNotifications: {},
-              overriddenFeatureFlags: {
+            },
+            featureFlags: {
+              overrides: {
                 llmNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
+                ...(brazePlacement
+                  ? {
+                      lwmWallet40: {
+                        enabled: true,
+                        params: { brazePlacement: true },
+                      },
+                    }
+                  : {}),
               },
             },
             dynamicContent: {

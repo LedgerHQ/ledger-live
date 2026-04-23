@@ -50,7 +50,8 @@ const makeProposal = (overrides: Partial<TransferProposal> = {}): TransferPropos
     sender: overrides.sender ?? "sender",
     receiver: overrides.receiver ?? "receiver",
     memo: overrides.memo ?? "",
-    expires_at_micros: overrides.expires_at_micros ?? Date.now() + 1000,
+    expires_at_micros: overrides.expires_at_micros ?? 1_800_000_000_000_000,
+    update_id: overrides.update_id ?? "test-update-id",
   };
 };
 

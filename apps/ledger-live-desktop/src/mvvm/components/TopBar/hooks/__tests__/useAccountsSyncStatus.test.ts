@@ -86,33 +86,6 @@ describe("useAccountsSyncStatus", () => {
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
-  it("calls track SyncError once per unique ticker with sync error", () => {
-    const trackSpy = jest.spyOn(segment, "track");
-    const accounts = [
-      createAccountWithUpToDateCheck("a1", "BTC", false),
-      createAccountWithUpToDateCheck("a2", "ETH", false),
-    ];
-    mockUseAccountsSyncStatusCommon.mockReturnValue({
-      allAccounts: accounts.map(a => a.account),
-      accountsWithError: accounts.map(a => a.account),
-      areAllAccountsUpToDate: false,
-      lastSyncMs: Date.now(),
-    });
-
-    renderHook(() => useAccountsSyncStatus(accounts));
-
-    expect(trackSpy).toHaveBeenCalledTimes(2);
-    expect(trackSpy).toHaveBeenCalledWith(
-      "SyncError",
-      expect.objectContaining({ currency: "BTC", page: "/" }),
-    );
-    expect(trackSpy).toHaveBeenCalledWith(
-      "SyncError",
-      expect.objectContaining({ currency: "ETH", page: "/" }),
-    );
-    trackSpy.mockRestore();
-  });
-
   it("joins multiple error account tickers with /", () => {
     const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
@@ -147,29 +120,6 @@ describe("useAccountsSyncStatus", () => {
 
     expect(result.current.listOfErrorAccountNames).toBe("BTC");
     expect(result.current.areAllAccountsUpToDate).toBe(false);
-  });
-
-  it("calls track SyncError once per account even when they share the same currency", () => {
-    const trackSpy = jest.spyOn(segment, "track");
-    const accounts = [
-      createAccountWithUpToDateCheck("a1", "BTC", false),
-      createAccountWithUpToDateCheck("a2", "BTC", false),
-    ];
-    mockUseAccountsSyncStatusCommon.mockReturnValue({
-      allAccounts: accounts.map(a => a.account),
-      accountsWithError: accounts.map(a => a.account),
-      areAllAccountsUpToDate: false,
-      lastSyncMs: Date.now(),
-    });
-
-    renderHook(() => useAccountsSyncStatus(accounts));
-
-    expect(trackSpy).toHaveBeenCalledTimes(2);
-    expect(trackSpy).toHaveBeenCalledWith(
-      "SyncError",
-      expect.objectContaining({ currency: "BTC", page: "/" }),
-    );
-    trackSpy.mockRestore();
   });
 
   it("excludes accounts that are pending from sync problem list", () => {

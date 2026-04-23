@@ -33,7 +33,7 @@ export const buildTransferInstruction =
     const preparedTransaction = await prepareTransferInstruction(currency, partyId, {
       type,
       contract_id: contractId,
-      ...(reason && { reason }),
+      ...(reason ? { reason } : {}),
     });
 
     const { signature } = await signerContext(deviceId, async signer => {

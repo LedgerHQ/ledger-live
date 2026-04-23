@@ -158,7 +158,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       status: "active",
       node: {
         type: "external",
-        uri: "https://rpc.soniclabs.com",
+        uri: "https://sonic.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -173,7 +173,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       status: "active",
       node: {
         type: "external",
-        uri: "https://rpc.blaze.soniclabs.com",
+        uri: "https://sonic-blaze.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -421,7 +421,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.ankr.com/core",
+        uri: "https://core.coin.ledger.com",
       },
       explorer: {
         type: "none",
@@ -438,7 +438,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpcapi.fantom.network",
+        uri: "https://fantom.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -492,7 +492,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.api.moonbeam.network",
+        uri: "https://moonbeam.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -510,7 +510,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://public-node.rsk.co",
+        uri: "https://rsk.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -528,7 +528,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.bt.io",
+        uri: "https://bittorrent.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -546,7 +546,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://mainnet.optimism.io",
+        uri: "https://optimism.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -562,7 +562,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://sepolia.optimism.io" },
+      node: { type: "external", uri: "https://optimism-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://optimism-sepolia.blockscout.com/api" },
       showNfts: false,
     },
@@ -594,7 +594,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://evm.astar.network",
+        uri: "https://astar.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -612,11 +612,47 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://andromeda.metis.io/?owner=1088",
+        uri: "https://metis.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
         uri: "https://andromeda-explorer.metis.io/api",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_mantle: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.mantle.xyz",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.mantle.xyz/api",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_mantle_sepolia: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.sepolia.mantle.xyz",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.sepolia.mantle.xyz/api",
       },
       showNfts: false,
     },
@@ -630,7 +666,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://mainnet.boba.network",
+        uri: "https://boba.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -648,7 +684,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.api.moonriver.moonbeam.network",
+        uri: "https://moonriver.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -684,7 +720,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.syscoin.org",
+        uri: "https://syscoin.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -702,7 +738,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.telos.net",
+        uri: "https://telos-evm.coin.ledger.com",
       },
       explorer: {
         type: "teloscan",
@@ -720,7 +756,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://sei-evm-rpc.publicnode.com",
+        uri: "https://sei-evm.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -738,7 +774,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.berachain.com",
+        uri: "https://berachain.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -756,7 +792,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.hypurrscan.io",
+        uri: "https://hyperliquid.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -774,7 +810,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://zkevm-rpc.com",
+        uri: "https://polygon-zkevm.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -846,7 +882,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://neon-mainnet.everstake.one",
+        uri: "https://neon-evm.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -864,7 +900,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.mainnet.lukso.network",
+        uri: "https://lukso.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -882,7 +918,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.linea.build",
+        uri: "https://linea.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -935,7 +971,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     type: "object",
     default: {
       status: { type: "active" },
-      node: { type: "external", uri: "https://sepolia-rollup.arbitrum.io/rpc" },
+      node: { type: "external", uri: "https://arbitrum-sepolia.coin.ledger.com" },
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/421614",
@@ -965,7 +1001,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://sepolia.base.org" },
+      node: { type: "external", uri: "https://base-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://base-sepolia.blockscout.com/api" },
       showNfts: false,
     },
@@ -977,7 +1013,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.sepolia.linea.build" },
+      node: { type: "external", uri: "https://linea-sepolia.coin.ledger.com" },
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59141",
@@ -992,7 +1028,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.blast.io" },
+      node: { type: "external", uri: "https://blast.coin.ledger.com" },
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
@@ -1007,7 +1043,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://sepolia.blast.io" },
+      node: { type: "external", uri: "https://blast-sepolia.coin.ledger.com" },
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/168587773",
@@ -1022,7 +1058,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.scroll.io" },
+      node: { type: "external", uri: "https://scroll.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://scroll.blockscout.com/api" },
       showNfts: false,
     },
@@ -1034,7 +1070,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://sepolia-rpc.scroll.io" },
+      node: { type: "external", uri: "https://scroll-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://scroll-sepolia.blockscout.com/api" },
       showNfts: false,
     },
@@ -1058,7 +1094,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://mainnet.storyrpc.io" },
+      node: { type: "external", uri: "https://story.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://www.storyscan.io/api" },
       showNfts: false,
     },
@@ -1082,7 +1118,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://mainnet.era.zksync.io" },
+      node: { type: "external", uri: "https://zksync.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://zksync.blockscout.com/api" },
       showNfts: false,
     },
@@ -1094,7 +1130,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://sepolia.era.zksync.dev" },
+      node: { type: "external", uri: "https://zksync-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
       showNfts: false,
     },
@@ -1108,7 +1144,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://rpc.monad.xyz",
+        uri: "https://monad.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -1126,7 +1162,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://testnet-rpc.monad.xyz",
+        uri: "https://monad-testnet.coin.ledger.com",
       },
       explorer: {
         type: "etherscan",
@@ -1162,7 +1198,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://evmrpc.0g.ai",
+        uri: "https://zero-gravity.coin.ledger.com",
       },
       explorer: {
         type: "none",

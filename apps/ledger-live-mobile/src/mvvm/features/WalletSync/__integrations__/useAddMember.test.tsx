@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { useAddMember } from "../hooks/useAddMember";
 import { SceneKind } from "../hooks/useFollowInstructionDrawer";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -8,9 +8,16 @@ import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors"
 import { track } from "~/analytics";
 import { AnalyticsEvents } from "../Analytics/enums";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
-import { State } from "~/reducers/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+
+function deferredReject<T = never>() {
+  let reject!: (error: Error) => void;
+  const promise = new Promise<T>((_, rej) => {
+    reject = rej;
+  });
+  return { promise, reject };
+}
 
 const mockGetOrCreateTrustchain = jest.fn();
 jest.mock("../hooks/useTrustchainSdk", () => ({
@@ -35,30 +42,32 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-const INITIAL_STATE = (state: State) => ({
-  ...state,
-  settings: {
-    ...state.settings,
-    readOnlyModeEnabled: false,
-    hasCompletedOnboarding: true,
-    overriddenFeatureFlags: {
-      llmWalletSync: {
-        enabled: true,
-        params: {
-          environment: "STAGING",
-          watchConfig: {},
-        },
+const INITIAL_STATE = withFlagOverrides(
+  {
+    llmWalletSync: {
+      enabled: true,
+      params: {
+        environment: "STAGING",
+        watchConfig: {},
       },
     },
   },
-  trustchain: {
-    ...state.trustchain,
-    memberCredentials: {
-      privatekey: "mock-private-key",
-      pubkey: "mock-public-key",
+  state => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      readOnlyModeEnabled: false,
+      hasCompletedOnboarding: true,
     },
-  },
-});
+    trustchain: {
+      ...state.trustchain,
+      memberCredentials: {
+        privatekey: "mock-private-key",
+        pubkey: "mock-public-key",
+      },
+    },
+  }),
+);
 
 const MOCK_BLE_DEVICE = {
   deviceId: "test-device-id",
@@ -85,14 +94,15 @@ describe("useAddMember", () => {
   });
 
   it("should set GenericError scene when UserRefusedOnDevice is thrown", async () => {
-    mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+    const { promise, reject } = deferredReject();
+    mockGetOrCreateTrustchain.mockReturnValue(promise);
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
     });
 
-    await jest.advanceTimersByTimeAsync(100);
-    jest.runAllTimers();
+    await jest.advanceTimersByTimeAsync(0);
+    reject(new UserRefusedOnDevice());
     await jest.advanceTimersByTimeAsync(0);
 
     expect(screen.getByTestId("scene-kind").props.children).toBe("GenericError");
@@ -131,14 +141,15 @@ describe("useAddMember", () => {
   });
 
   it("should set KeyError scene without tracking on TrustchainNotAllowed", async () => {
-    mockGetOrCreateTrustchain.mockRejectedValue(new TrustchainNotAllowed());
+    const { promise, reject } = deferredReject();
+    mockGetOrCreateTrustchain.mockReturnValue(promise);
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
     });
 
-    await jest.advanceTimersByTimeAsync(100);
-    jest.runAllTimers();
+    await jest.advanceTimersByTimeAsync(0);
+    reject(new TrustchainNotAllowed());
     await jest.advanceTimersByTimeAsync(0);
 
     expect(screen.getByTestId("scene-kind").props.children).toBe("KeyError");

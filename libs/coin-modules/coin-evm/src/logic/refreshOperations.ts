@@ -27,7 +27,7 @@ async function getOperationStatus(
       blockHeight,
       date,
       fee,
-      value: new BigNumber(value).plus(fee),
+      value: new BigNumber(value.toString()).plus(fee),
       subOperations: op.subOperations?.map(subOp => ({
         ...subOp,
         transactionSequenceNumber: new BigNumber(nonce),

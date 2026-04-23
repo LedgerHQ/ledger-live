@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "10.20.1",
+  "version": "10.22.0-next.0",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -69,7 +69,7 @@
     "@noble/curves": "1.9.7",
     "@noble/hashes": "1.8.0",
     "bip32-path": "^0.4.2",
-    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-lib": "^6.1.7",
     "bs58": "catalog:",
     "bs58check": "catalog:",
     "invariant": "^2.2.4",
@@ -97,7 +97,7 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "unimported": "unimported"

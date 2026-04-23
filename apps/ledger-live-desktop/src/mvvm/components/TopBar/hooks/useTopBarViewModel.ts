@@ -1,4 +1,5 @@
 import { useLocation } from "react-router";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
@@ -6,8 +7,13 @@ import { useExperimentalFeatures } from "./useExperimentalFeatures";
 import { useFeatureFlags } from "./useFeatureFlags";
 import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
+import { useHistory } from "./useHistory";
+import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("desktop");
+  const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
+    useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
   const {
     hasAccounts,
@@ -19,6 +25,7 @@ const useTopBarViewModel = () => {
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
   const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
+  const { handleHistory, historyIcon, tooltip: historyTooltip, cta: historyCta } = useHistory();
   const {
     isVisible: isExperimentalVisible,
     handleExperimental,
@@ -31,6 +38,7 @@ const useTopBarViewModel = () => {
     icon: featureFlagsIcon,
     tooltip: featureFlagsTooltip,
   } = useFeatureFlags();
+
   const location = useLocation();
   const inManager = location.pathname === "/manager";
 
@@ -81,7 +89,7 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    { type: "notification" },
+    ...(shouldDisplayMyWallet ? [] : [{ type: "notification" as const }]),
     {
       type: "action",
       action: {
@@ -92,31 +100,52 @@ const useTopBarViewModel = () => {
         onClick: handleDiscreet,
       },
     },
-    {
-      type: "action",
-      action: {
-        label: "settings",
-        tooltip: settingsTooltip,
-        icon: settingsIcon,
-        isInteractive: true,
-        onClick: handleSettings,
-      },
-    },
-    {
-      type: "action",
-      action: {
-        label: "my ledger",
-        tooltip: myLedgerTooltip,
-        icon: myLedgerIcon,
-        isInteractive: true,
-        onClick: handleMyLedger,
-      },
-    },
+    ...(shouldDisplayOperationsList
+      ? [
+          {
+            type: "action" as const,
+            action: {
+              label: "history",
+              tooltip: historyTooltip,
+              icon: historyIcon,
+              isInteractive: true,
+              onClick: handleHistory,
+              cta: historyCta,
+            },
+          },
+        ]
+      : []),
+    ...(shouldDisplayMyWallet
+      ? []
+      : [
+          {
+            type: "action" as const,
+            action: {
+              label: "settings",
+              tooltip: settingsTooltip,
+              icon: settingsIcon,
+              isInteractive: true,
+              onClick: handleSettings,
+            },
+          },
+          {
+            type: "action" as const,
+            action: {
+              label: "my ledger",
+              tooltip: myLedgerTooltip,
+              icon: myLedgerIcon,
+              isInteractive: true,
+              onClick: handleMyLedger,
+            },
+          },
+        ]),
   ];
 
   return {
     topBarSlots,
     inManager,
+    isInformationCenterOpen,
+    onInformationCenterClose,
   };
 };
 

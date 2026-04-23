@@ -15,23 +15,26 @@ packages:
   - "domain/entity/*"
   - "domain/api/*"
   - "shared/*"
+  - "devtools/*"
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 1.15.0
+  "@ledgerhq/context-module": 1.16.0
   "@ledgerhq/crypto-icons": "1.4.0"
   "@ledgerhq/device-management-kit": 1.2.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.12.0
-  "@ledgerhq/device-signer-kit-hyperliquid": 1.0.1
-  "@ledgerhq/device-signer-kit-solana": 1.7.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.14.0
+  "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
+  "@ledgerhq/device-signer-kit-solana": 1.7.1
+  "@ledgerhq/device-signer-kit-cosmos": 1.0.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
   "@ledgerhq/device-transport-kit-speculos": 1.2.0
+  "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.1.5
-  "@ledgerhq/lumen-ui-react": 0.1.12
-  "@ledgerhq/lumen-ui-rnative": 0.1.11
+  "@ledgerhq/lumen-design-core": 0.1.11
+  "@ledgerhq/lumen-ui-react": 0.1.22
+  "@ledgerhq/lumen-ui-rnative": 0.1.23
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
@@ -109,7 +112,7 @@ catalog:
   "@types/jest": 30.0.0
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
-  typescript: 5.9.3
+  typescript: 6.0.2
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.2
@@ -119,6 +122,7 @@ catalog:
   clsx: 2.1.1
   electron: 40.6.0
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
+  eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@solana/spl-token": ^0.4.14
   "@solana/web3.js": ^1.98.4
@@ -156,6 +160,8 @@ catalog:
   "@types/react-dom": 19.0.0
   reselect: 5.1.1
   rxjs: 7.8.2
+  xstate: 5.19.2
+  "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
   ws: 8.18.3
@@ -167,10 +173,15 @@ catalog:
   "styled-system": 5.1.5
   "stylis": 4.0.0
   "@tanstack/react-virtual": 3.13.16
-  "@playwright/test": 1.51.1
-  playwright: 1.51.1
+  "@playwright/test": 1.53.0
+  playwright: 1.53.0
   allure-playwright: 3.2.1
   allure-js-commons: 3.2.1
+  oxlint: 1.51.0
+  oxfmt: 0.36.0
+  # Modules published by Alpaca
+  "@ledgerhq/coin-module-framework": 2.2.0
+  "@ledgerhq/coin-xrp": 7.21.4
 
 overrides:
   node-abi: ^4.9.0
@@ -183,3 +194,6 @@ minimumReleaseAgeExclude:
   # Oxc toolchain (ledger-live-desktop)
   - oxlint
   - oxfmt
+  # TypeScript / Node types: new releases are often younger than minimumReleaseAge
+  - typescript
+  - "@types/node"

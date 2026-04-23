@@ -127,7 +127,16 @@
     "lint": {
       "env": ["CI_OS"]
     },
+    "lint:ci": {
+      "env": ["CI_OS"]
+    },
     "lint:fix": {
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "format:check": {
       "outputs": []
     },
     "typecheck": {
@@ -210,6 +219,14 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "@ledgerhq/live-dmk-desktop#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["lib-es/**"]
+    },
+    "@ledgerhq/live-dmk-mobile#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["lib-es/**"]
+    },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
       "outputs": [
@@ -233,10 +250,29 @@
       "env": ["CI_OS"],
       "outputs": []
     },
+    "@ledgerhq/live-common#lint": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/live-common#lint:ci": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/live-common#lint:fix": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
     "live-mobile#lint": {
       "dependsOn": ["^build"],
-      "env": ["CI_OS"],
-      "outputs": ["lint.json"]
+      "env": ["CI_OS"]
+    },
+    "live-mobile#lint:ci": {
+      "dependsOn": ["^build"],
+      "env": ["CI_OS"]
+    },
+    "live-mobile#lint:i18n": {
+      "dependsOn": ["^build"],
+      "env": ["CI_OS"]
     },
     "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],
@@ -278,6 +314,31 @@
     "live-mobile#ios:local:ipa": {
       "dependsOn": ["^build"],
       "outputs": ["ios/build/**"]
+    },
+    "@ledgerhq/wallet-cli#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "cache": false
+    },
+    "@ledgerhq/wallet-cli#typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#lint": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#lint:ci": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/wallet-cli#lint:fix": {
+      "env": ["CI_OS"],
+      "outputs": []
     }
   }
 }

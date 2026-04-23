@@ -36,6 +36,24 @@ test("getAddress", async () => {
     address: "TWdnWBzFdBP1b8sqZ5RcFDbkV3sBmnxsYu",
     publicKey:
       "040357bda0e415396eab766d392d5b996eb4a0bec6ccbb166d581341ebb50ebb54c30b365823884d8169e4c784373f0d3b871f3d16bca0b33a292d98f6cf07855a",
+    chainCode: undefined,
+  });
+});
+
+test("getAddress with chain code", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e002000115058000002c800000c3800000000000000000000000
+    <= 41040357bda0e415396eab766d392d5b996eb4a0bec6ccbb166d581341ebb50ebb54c30b365823884d8169e4c784373f0d3b871f3d16bca0b33a292d98f6cf07855a225457646e57427a4664425031623873715a3552634644626b563373426d6e78735975040357bda0e415396eab766d392d5b996eb4a0bec6ccbb166d581341ebb50ebb9000
+    `)
+  );
+  const trx = new Trx(transport);
+  const result = await trx.getAddress("44'/195'/0'/0/0", false, true);
+  expect(result).toEqual({
+    address: "TWdnWBzFdBP1b8sqZ5RcFDbkV3sBmnxsYu",
+    publicKey:
+      "040357bda0e415396eab766d392d5b996eb4a0bec6ccbb166d581341ebb50ebb54c30b365823884d8169e4c784373f0d3b871f3d16bca0b33a292d98f6cf07855a",
+    chainCode: "040357bda0e415396eab766d392d5b996eb4a0bec6ccbb166d581341ebb50ebb",
   });
 });
 

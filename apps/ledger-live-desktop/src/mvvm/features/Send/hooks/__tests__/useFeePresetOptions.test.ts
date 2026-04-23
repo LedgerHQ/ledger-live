@@ -2,10 +2,10 @@
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useFeePresetOptions } from "../useFeePresetOptions";
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     getFeePresetOptions: jest.fn(() => []),
   },

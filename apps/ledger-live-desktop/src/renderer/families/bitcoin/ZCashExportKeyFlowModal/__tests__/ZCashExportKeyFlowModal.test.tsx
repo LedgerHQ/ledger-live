@@ -74,6 +74,7 @@ describe("ZCash Export UFVK Flow", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={jest.fn()}
         handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );
@@ -118,6 +119,7 @@ describe("ZCash Export UFVK Flow", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={jest.fn()}
         handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );
@@ -163,6 +165,7 @@ describe("ZCash Export UFVK Flow", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={jest.fn()}
         handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
       {
@@ -204,6 +207,7 @@ describe("ZCash Export UFVK Flow", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={jest.fn()}
         handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );

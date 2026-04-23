@@ -78,7 +78,7 @@ export function getButtonColorStyle(
       text: { color: disabled ? primaryColor : secondaryColor },
       button: {
         backgroundColor: "transparent",
-        borderColor: disabled ? primaryColor : tertiaryColor ?? secondaryColor,
+        borderColor: disabled ? primaryColor : (tertiaryColor ?? secondaryColor),
         borderWidth: 1,
         ...(pressedOutlineColor && { underlayColor: pressedOutlineColor }),
       },

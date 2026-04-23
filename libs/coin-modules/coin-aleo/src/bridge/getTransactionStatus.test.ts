@@ -6,13 +6,24 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import {
+  getMockedAccount,
+  mockAleoResources,
+  mockUnspentRecord1,
+  mockUnspentRecord2,
+} from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { estimateFees, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";
 import aleoCoinConfig from "../config";
 import { TRANSACTION_TYPE } from "../constants";
+import {
+  AleoAmountRecordRequired,
+  AleoFeeRecordInsufficientBalance,
+  AleoFeeRecordRequired,
+  AleoTwoRecordsRequired,
+} from "../errors";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../config");
@@ -147,6 +158,10 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         recipient: account.freshAddress,
         mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+        properties: {
+          amountRecordCommitment: null,
+          feeRecordCommitment: null,
+        },
       };
 
       const result = await getTransactionStatus(account, transaction);
@@ -251,6 +266,192 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(sufficientAccount, transaction);
 
       expect(result.errors.amount).toBeUndefined();
+    });
+  });
+
+  describe("private record validation", () => {
+    const privateAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        privateBalance: new BigNumber(2000000),
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const privateTransaction: Transaction = {
+      ...mockTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    };
+
+    it("adds error when private amount record commitment is missing", async () => {
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          ...privateTransaction.properties,
+          amountRecordCommitment: null,
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.amountRecord).toBeInstanceOf(AleoAmountRecordRequired);
+    });
+
+    it("adds error when private amount record cannot be resolved", async () => {
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          ...privateTransaction.properties,
+          amountRecordCommitment: "missing-amount-record",
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.amountRecord).toBeInstanceOf(AleoAmountRecordRequired);
+    });
+
+    it("adds error when private amount exceeds the selected record value", async () => {
+      const oversizedAmount = new BigNumber("900000");
+      mockCalculateAmount.mockReturnValue({
+        amount: oversizedAmount,
+        totalSpent: oversizedAmount.plus(mockFees),
+      });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        amount: oversizedAmount,
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("adds error when private fee record is missing and fee is not sponsored", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          ...privateTransaction.properties,
+          feeRecordCommitment: null,
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordRequired);
+    });
+
+    it("adds error when private fee record cannot be resolved and fee is not sponsored", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          ...privateTransaction.properties,
+          feeRecordCommitment: "missing-fee-record",
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordRequired);
+    });
+
+    it("adds error when private fee record matches the amount record and fee is not sponsored", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          ...privateTransaction.properties,
+          feeRecordCommitment: mockUnspentRecord1.commitment,
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordRequired);
+    });
+
+    it("adds a two-records error when only one non-zero private record is available", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+
+      const singleRecordAccount = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          privateBalance: new BigNumber(800000),
+          unspentPrivateRecords: [mockUnspentRecord1],
+        },
+      });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          amountRecordCommitment: mockUnspentRecord1.commitment,
+          feeRecordCommitment: null,
+        },
+      };
+
+      const result = await getTransactionStatus(singleRecordAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(AleoTwoRecordsRequired);
+    });
+
+    it("adds an insufficient-balance fee-record error when the selected fee record cannot cover fees", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+
+      const smallFeeRecord = {
+        ...mockUnspentRecord2,
+        commitment: "small-fee-record",
+        microcredits: "1000",
+        decryptedData: {
+          ...mockUnspentRecord2.decryptedData,
+          data: { microcredits: "1000u64.private" },
+        },
+      };
+
+      const limitedAccount = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          privateBalance: new BigNumber(801000),
+          unspentPrivateRecords: [mockUnspentRecord1, smallFeeRecord],
+        },
+      });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          amountRecordCommitment: mockUnspentRecord1.commitment,
+          feeRecordCommitment: smallFeeRecord.commitment,
+        },
+      };
+
+      const result = await getTransactionStatus(limitedAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordInsufficientBalance);
+    });
+
+    it("does not add fee-record error for sponsored private fees", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          ...privateTransaction.properties,
+          feeRecordCommitment: null,
+        },
+      };
+
+      const result = await getTransactionStatus(privateAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeUndefined();
     });
   });
 

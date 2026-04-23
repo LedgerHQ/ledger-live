@@ -16,7 +16,7 @@ import { Footer, type FooterProps } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
 import { useFormatAccount } from "./useFormatAccount";
 import { useScanAccounts, type UseScanAccountsProps } from "./useScanAccounts";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
@@ -34,7 +34,7 @@ const ScanAccounts = ({
   onRetry,
   FooterComponent = Footer,
 }: Props) => {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const { colors } = useTheme();
   const currentTheme = useSelector(themeSelector);
   const { t } = useTranslation();

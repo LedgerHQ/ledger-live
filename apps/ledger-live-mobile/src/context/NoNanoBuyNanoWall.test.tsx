@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
@@ -18,24 +18,25 @@ const overrideInitialState =
     readOnlyModeEnabled = true,
     lazyOnboarding = false,
   }: TestStateOverrides = {}) =>
-  (state: State): State => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      hasCompletedOnboarding,
-      hasOrderedNano,
-      readOnlyModeEnabled,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        lwmWallet40: {
-          enabled: true,
-          params: {
-            lazyOnboarding,
-          },
+  withFlagOverrides(
+    {
+      lwmWallet40: {
+        enabled: true,
+        params: {
+          lazyOnboarding,
         },
       },
     },
-  });
+    (state: State): State => ({
+      ...state,
+      settings: {
+        ...state.settings,
+        hasCompletedOnboarding,
+        hasOrderedNano,
+        readOnlyModeEnabled,
+      },
+    }),
+  );
 
 describe("useNoNanoBuyNanoWallScreenOptions", () => {
   it("should not gate when onboarding is not completed and read only mode is disabled", () => {

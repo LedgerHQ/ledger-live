@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import featureFlags, { type FeatureFlagsState } from "@shared/feature-flags";
 import accounts, { AccountsState } from "./accounts";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
@@ -16,14 +17,22 @@ import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
-import modularDrawer, { ModularDrawerState } from "./modularDrawer";
+import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
+import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
+import actionDialog, { ActionDialogState } from "./actionDialog";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
+import shieldedSyncSubscriptions, {
+  ShieldedSyncSubscriptionsState,
+} from "./shieldedSyncSubscriptions";
+import countervaluesExtraTracking, {
+  CountervaluesExtraTrackingState,
+} from "./countervaluesExtraTracking";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -31,10 +40,11 @@ export type State = LLDRTKApiState & {
   countervalues: CountervaluesState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
+  featureFlags: FeatureFlagsState;
   identities: IdentitiesState;
   market: MarketState;
   modals: ModalsState;
-  modularDrawer: ModularDrawerState;
+  modularDialog: ModularDialogState;
   sendFlow: SendFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
@@ -44,7 +54,11 @@ export type State = LLDRTKApiState & {
   wallet: WalletState;
   walletSync: WalletSyncState;
   dialogs: DialogsState;
+  ptxInfoDialog: PtxInfoDialogState;
+  actionDialog: ActionDialogState;
   syncRefresh: SyncRefreshState;
+  shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
+  countervaluesExtraTracking: CountervaluesExtraTrackingState;
 };
 
 const appReducer = combineReducers({
@@ -53,9 +67,10 @@ const appReducer = combineReducers({
   countervalues,
   devices,
   dynamicContent,
+  featureFlags,
   identities: identitiesSlice.reducer,
   modals,
-  modularDrawer,
+  modularDialog,
   sendFlow,
   settings,
   UI,
@@ -66,7 +81,11 @@ const appReducer = combineReducers({
   walletSync,
   trustchain,
   dialogs,
+  ptxInfoDialog,
+  actionDialog,
   syncRefresh,
+  shieldedSyncSubscriptions,
+  countervaluesExtraTracking,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

@@ -30,9 +30,9 @@ jest.mock("react-native-reanimated", () => {
 });
 
 import React from "react";
-import { render, screen, act } from "@tests/test-renderer";
+import { render, screen, act, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { UP_TO_DATE_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
+import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
 import { PortfolioRefreshStatus } from "../index";
 import { setRefreshCompleted } from "~/reducers/portfolioRefresh";
 import { State } from "~/reducers/types";
@@ -46,6 +46,8 @@ const makeAccount = (lastSyncDate: Date) => ({
   lastSyncDate,
 });
 
+const withBalanceRefreshRework = withFlagOverrides({ lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } } });
+
 const withRefreshing = (): ((state: State) => State) => state => ({
   ...state,
   portfolioRefresh: {
@@ -53,6 +55,7 @@ const withRefreshing = (): ((state: State) => State) => state => ({
     lastSyncTimestampSnapshot: null,
     hasCompletedInitialSync: false,
     lastUserSyncClickTimestamp: 0,
+    lastOfflineRefreshAttemptTimestamp: 0,
   },
 });
 
@@ -69,6 +72,19 @@ const withIdle =
       lastSyncTimestampSnapshot: null,
       hasCompletedInitialSync: false,
       lastUserSyncClickTimestamp: 0,
+      lastOfflineRefreshAttemptTimestamp: 0,
+    },
+  });
+
+const withOfflineAttempt = (): ((state: State) => State) => state =>
+  withBalanceRefreshRework({
+    ...state,
+    portfolioRefresh: {
+      isRefreshing: false,
+      lastSyncTimestampSnapshot: null,
+      hasCompletedInitialSync: false,
+      lastUserSyncClickTimestamp: 0,
+      lastOfflineRefreshAttemptTimestamp: FIXED_NOW,
     },
   });
 
@@ -115,6 +131,29 @@ describe("PortfolioRefreshStatus", () => {
     });
   });
 
+  describe("offline state", () => {
+    it("should show warning icon and offline message when a pull-to-refresh is attempted offline", () => {
+      render(<PortfolioRefreshStatus />, { overrideInitialState: withOfflineAttempt() });
+
+      const offlineEl = screen.getByTestId("portfolio-refresh-status-offline");
+      expect(offlineEl).toBeVisible();
+      expect(offlineEl).toHaveTextContent(/offline/i);
+      expect(screen.queryByTestId("portfolio-refresh-status-spinner")).toBeNull();
+    });
+
+    it("should hide the offline message after the visibility duration elapses", () => {
+      render(<PortfolioRefreshStatus />, { overrideInitialState: withOfflineAttempt() });
+
+      expect(screen.getByTestId("portfolio-refresh-status-offline")).toBeVisible();
+
+      act(() => {
+        jest.advanceTimersByTime(REFRESH_STATUS_VISIBLE_DURATION_MS);
+      });
+
+      expect(screen.queryByTestId("portfolio-refresh-status-offline")).toBeNull();
+    });
+  });
+
   describe("up-to-date state", () => {
     it("should show checkmark and 'You're up to date' without spinner right after refresh completes", () => {
       const { store } = renderRefreshing();
@@ -133,7 +172,7 @@ describe("PortfolioRefreshStatus", () => {
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
 
       act(() => {
-        jest.advanceTimersByTime(UP_TO_DATE_VISIBLE_DURATION_MS);
+        jest.advanceTimersByTime(REFRESH_STATUS_VISIBLE_DURATION_MS);
       });
 
       expect(screen.queryByTestId("portfolio-refresh-status-up-to-date")).toBeNull();

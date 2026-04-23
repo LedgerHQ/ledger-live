@@ -19,13 +19,24 @@ export function useRecipientSearchState({
   const showSearchResults = hasSearchValue && !isLoading;
   const isSanctioned = result.status === "sanctioned";
 
+  const bridgeRecipientError = result.bridgeErrors?.recipient;
+  const bridgeRecipientWarning = result.bridgeWarnings?.recipient;
+  const bridgeSenderError = result.bridgeErrors?.sender;
+
+  const isSelfTransferError =
+    bridgeRecipientError instanceof InvalidAddressBecauseDestinationIsAlsoSource;
+  const isBridgeInvalidAddress =
+    bridgeRecipientError instanceof InvalidAddress && !isSelfTransferError;
+
   const isAddressComplete = useMemo(() => {
+    if (isLoading) return false;
     return (
-      result.status === "valid" ||
-      result.status === "ens_resolved" ||
-      result.status === "sanctioned"
+      (result.status === "valid" ||
+        result.status === "ens_resolved" ||
+        result.status === "sanctioned") &&
+      !isBridgeInvalidAddress
     );
-  }, [result.status]);
+  }, [result.status, isBridgeInvalidAddress, isLoading]);
 
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
@@ -35,15 +46,6 @@ export function useRecipientSearchState({
     isSanctioned;
 
   const showSanctionedBanner = isSanctioned && hasSearchValue;
-
-  const bridgeRecipientError = result.bridgeErrors?.recipient;
-  const bridgeRecipientWarning = result.bridgeWarnings?.recipient;
-  const bridgeSenderError = result.bridgeErrors?.sender;
-
-  const isSelfTransferError =
-    bridgeRecipientError instanceof InvalidAddressBecauseDestinationIsAlsoSource;
-  const isBridgeInvalidAddress =
-    bridgeRecipientError instanceof InvalidAddress && !isSelfTransferError;
 
   const hasBridgeRecipientError =
     !!bridgeRecipientError && !isBridgeInvalidAddress && !showSanctionedBanner;

@@ -56,6 +56,8 @@ When working on deeplinks, please update the **Wiki** accordingly.
 - **_swap_** 🠒 Swap Crypto Flow
 
   `ledgerlive://swap` will redirect to swap page
+  `ledgerlive://swap?fromCurrency=ethereum&toCurrency=bitcoin` redirects to the swap page and pre-fills the asset selector.
+
 
 - **_add_account?currency_** 🠒 Add Account Crypto Flow
 

@@ -1,4 +1,5 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import expect from "expect";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
@@ -59,7 +60,7 @@ describe("operations", () => {
   };
 
   it("should return 0 operations for a valid account", async () => {
-    mockGetOperations.mockResolvedValue([[], ""]);
+    mockGetOperations.mockResolvedValue({ items: [], next: "" });
 
     // When
     const operations = await api.listOperations("addr", {
@@ -73,7 +74,7 @@ describe("operations", () => {
   });
 
   it("should return 1 operation for a valid account", async () => {
-    mockGetOperations.mockResolvedValue([[mockOperation], ""]);
+    mockGetOperations.mockResolvedValue({ items: [mockOperation], next: "" });
 
     // When
     const operations = await api.listOperations("addr", {
@@ -88,8 +89,8 @@ describe("operations", () => {
 
   it("should call multiple times listOperations", async () => {
     mockGetOperations
-      .mockResolvedValueOnce([[mockOperation], "10"])
-      .mockResolvedValueOnce([[mockOperation], ""]);
+      .mockResolvedValueOnce({ items: [mockOperation], next: "10" })
+      .mockResolvedValueOnce({ items: [mockOperation], next: "" });
 
     // When
     const operations = await api.listOperations("addr", {
@@ -153,6 +154,14 @@ describe("Testing transaction loading functions", () => {
       "Failed decoding transaction as an envelope (TypeError: XDR Read Error: attempt to read outside the boundary of" +
         " the buffer) or as a signature base: (TypeError: XDR Read Error: attempt to read outside the boundary of the" +
         " buffer)",
+    );
+  });
+});
+
+describe("getBalance", () => {
+  it("should throw an exception when options is provided", async () => {
+    await expect(api.getBalance("random address", {} as unknown as BalanceOptions)).rejects.toThrow(
+      InvalidParameterError,
     );
   });
 });

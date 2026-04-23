@@ -8,7 +8,7 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "@ledgerhq/live-env";
-import allSpecs from "../generated/specs";
+import allSpecs from "./allSpecs";
 import type {
   AppSpec,
   MutationReport,
@@ -30,7 +30,7 @@ import {
 import { getPortfolio } from "@ledgerhq/live-countervalues/portfolio";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "@ledgerhq/ledger-wallet-framework/bot/bot-test-context";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import { sha256 } from "../crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
@@ -59,26 +59,30 @@ function convertMutation<T extends Transaction>(
   };
 }
 
-function convertSpecReport<T extends Transaction>(
+async function convertSpecReport<T extends Transaction>(
   result: SpecReport<T>,
-): MinimalSerializedSpecReport {
-  const accounts = result.accountsAfter?.map(a => {
-    // remove the "expensive" data fields
-    const raw = toAccountRaw(a);
-    raw.operations = [];
-    delete raw.balanceHistoryCache;
-    if (raw.subAccounts) {
-      raw.subAccounts.forEach(a => {
-        a.operations = [];
-        delete a.balanceHistoryCache;
-      });
-    }
-    const unsafe = raw as any;
-    if (unsafe.bitcoinResources) {
-      delete unsafe.bitcoinResources.walletAccount;
-    }
-    return raw;
-  });
+): Promise<MinimalSerializedSpecReport> {
+  const accounts = result.accountsAfter
+    ? await Promise.all(
+        result.accountsAfter.map(async a => {
+          // remove the "expensive" data fields
+          const raw = await toAccountRaw(a);
+          raw.operations = [];
+          delete raw.balanceHistoryCache;
+          if (raw.subAccounts) {
+            raw.subAccounts.forEach(a => {
+              a.operations = [];
+              delete a.balanceHistoryCache;
+            });
+          }
+          const unsafe = raw as any;
+          if (unsafe.bitcoinResources) {
+            delete unsafe.bitcoinResources.walletAccount;
+          }
+          return raw;
+        }),
+      )
+    : undefined;
   const mutations = result.mutations?.map(convertMutation);
   return {
     specName: result.spec.name,
@@ -90,16 +94,18 @@ function convertSpecReport<T extends Transaction>(
   };
 }
 
-function makeAppJSON(accounts: Account[]) {
+async function makeAppJSON(accounts: Account[]) {
   const jsondata = {
     data: {
       settings: {
         hasCompletedOnboarding: true,
       },
-      accounts: accounts.map(account => ({
-        data: toAccountRaw(account),
-        version: 1,
-      })),
+      accounts: await Promise.all(
+        accounts.map(async account => ({
+          data: await toAccountRaw(account),
+          version: 1,
+        })),
+      ),
     },
   };
   return JSON.stringify(jsondata);
@@ -135,7 +141,7 @@ export function getSpecs({ disabled, filter }) {
       continue;
     }
 
-    const familySpecs = allSpecs[family];
+    const familySpecs = allSpecs[family as keyof typeof allSpecs];
 
     for (const key in familySpecs) {
       let spec: AppSpec<any> = familySpecs[key];
@@ -275,11 +281,11 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
 
   if (errorCases.length && process.env.CI) {
     console.error(`================== MUTATION ERRORS =====================\n`);
-    errorCases.forEach(c => {
-      console.error(formatReportForConsole(c));
+    for (const c of errorCases) {
+      console.error(await formatReportForConsole(c));
       console.error(c.error);
       console.error("");
-    });
+    }
     console.error(
       `/!\\ ${errorCases.length} failures out of ${mutationReports.length} mutations. Check above!\n`,
     );
@@ -451,9 +457,9 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   if (errorCases.length) {
     appendBody("<details>\n");
     appendBody(`<summary>❌ ${errorCases.length} mutation errors</summary>\n\n`);
-    errorCases.forEach(c => {
-      appendBody("```\n" + formatReportForConsole(c) + "\n```\n\n");
-    });
+    for (const c of errorCases) {
+      appendBody("```\n" + (await formatReportForConsole(c)) + "\n```\n\n");
+    }
     appendBody("</details>\n\n");
   }
 
@@ -476,7 +482,8 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   appendBodyFullOnly("<details>\n");
 
   appendBodyFullOnly(`<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`);
-  results.forEach((r, i) => {
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
     const spec = specs[i];
     const logs = specsLogs[i];
     appendBodyFullOnly(`#### Spec ${spec.name} (${r.mutations ? r.mutations.length : "failed"})\n`);
@@ -484,15 +491,15 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
     appendBodyFullOnly(logs.join("\n"));
 
     if (r.mutations) {
-      r.mutations.forEach(m => {
+      for (const m of r.mutations) {
         if (m.error || m.mutation) {
-          appendBodyFullOnly(formatReportForConsole(m) + "\n");
+          appendBodyFullOnly((await formatReportForConsole(m)) + "\n");
         }
-      });
+      }
     }
 
     appendBodyFullOnly("\n```\n");
-  });
+  }
   appendBodyFullOnly("</details>\n\n");
 
   if (uncoveredMutations.length > 0) {
@@ -712,7 +719,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
 
   if (BOT_REPORT_FOLDER) {
     const serializedReport: MinimalSerializedReport = {
-      results: results.map(convertSpecReport),
+      results: await Promise.all(results.map(convertSpecReport)),
       environment: BOT_ENVIRONMENT,
       seedHash: sha256(getEnv("SEED")).toString("hex"),
     };
@@ -727,7 +734,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
       ),
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "app.json"),
-        makeAppJSON(allAccountsAfter),
+        await makeAppJSON(allAccountsAfter),
         "utf-8",
       ),
       fs.promises.writeFile(

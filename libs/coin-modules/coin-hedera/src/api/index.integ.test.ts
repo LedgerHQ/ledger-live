@@ -9,7 +9,7 @@ import {
   ContractExecuteTransaction,
   ContractFunctionParameters,
 } from "@hashgraph/sdk";
-import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
@@ -772,6 +772,80 @@ describe("createApi", () => {
       // Note: lastBlock().time is the transaction timestamp, while getBlock().info.time is the block start time
       expect(block.info.time).toBeInstanceOf(Date);
       expect(block.transactions).toBeInstanceOf(Array);
+    });
+
+    it("returns single transaction for multiple erc20 transfers", async () => {
+      const data = await api.getBlock(177314999);
+
+      const erc20Asset = {
+        type: "erc20",
+        assetReference: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+      };
+      const erc20TxHash = "givnas3WAL3fiGeap+oSRIYOqUbqE0Ig2XIMTWgTDQzTMc8g7aOC1vxc8hQy7wZX";
+      const filteredTransactions = data.transactions.filter(tx => tx.hash === erc20TxHash);
+
+      expect(filteredTransactions).toEqual([
+        expect.objectContaining({
+          operations: [
+            {
+              type: "transfer",
+              address: "0.0.802",
+              asset: {
+                type: "native",
+              },
+              amount: 26596592n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.10067136",
+              asset: {
+                type: "native",
+              },
+              amount: 0n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.6145236",
+              asset: erc20Asset,
+              amount: 2863838n,
+            },
+            {
+              type: "transfer",
+              address: "0x0000000000000000000000000000000000000000",
+              asset: erc20Asset,
+              amount: -2863838n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.10067136",
+              asset: erc20Asset,
+              amount: 148440n,
+            },
+            {
+              type: "transfer",
+              address: "0x0000000000000000000000000000000000000000",
+              asset: erc20Asset,
+              amount: -148440n,
+            },
+          ],
+          fees: 26596592n,
+          feesPayer: "0.0.10067136",
+        }),
+      ]);
+    });
+
+    it("filters out ERC20 operations with null sender or recipient address", async () => {
+      const blockHeight = 177564534;
+      const txHashWithNullAddress =
+        "tSFV6McHlh0v6tZEZVGlwavk/QRoMabPIOtVbyJ1/j3gvTHMZP97URu4Vw6JbMmC";
+
+      const block = await api.getBlock(blockHeight);
+      const transaction = block.transactions.find(tx => tx.hash === txHashWithNullAddress);
+      const operationAddresses = transaction?.operations.map(op => op.address);
+
+      expect(transaction).not.toBeUndefined();
+      expect(transaction?.operations.length).toBeGreaterThan(0);
+      expect(operationAddresses).not.toContain(null);
     });
   });
 

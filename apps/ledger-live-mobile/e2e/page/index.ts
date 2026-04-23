@@ -30,7 +30,7 @@ import { DeviceLike } from "~/reducers/types";
 import { loadAccounts, loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
 import { initTestAccounts } from "../models/currencies";
 import { setupEnvironment } from "../helpers/commonHelpers";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 setupEnvironment();
 
@@ -38,7 +38,7 @@ type ApplicationOptions = {
   userdata?: string;
   knownDevices?: DeviceLike[];
   testedCurrencies?: string[];
-  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
+  featureFlags?: PartialFeatures;
 };
 
 const lazyInit = <T>(PageClass: new () => T) => {

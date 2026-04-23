@@ -124,19 +124,23 @@ const handlers: ReducerMap<AccountsState, Payload> = {
 
 // Selectors
 
-export function exportSelector(state: State): {
+export async function exportSelector(state: State): Promise<{
   active: {
     data: AccountRaw;
     version: number;
   }[];
-} {
-  const active = [];
-  for (const account of state.accounts.active) {
-    const accountUserData = accountUserDataExportSelector(state.wallet, { account });
-    if (accountUserData) {
-      active.push(accountModel.encode([account, accountUserData]));
-    }
-  }
+}> {
+  const active = await Promise.all(
+    state.accounts.active
+      .map(account => {
+        const accountUserData = accountUserDataExportSelector(state.wallet, { account });
+        if (!accountUserData) return null;
+        return accountModel.encode([account, accountUserData]);
+      })
+      .filter(
+        (p): p is Promise<{ data: AccountRaw; version: number }> => p !== null,
+      ),
+  );
   return { active };
 }
 
@@ -166,7 +170,10 @@ const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b):
     flattenAccounts(b as AccountLikeArray).map(accountHash),
   ),
 );
-export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a);
+export const shallowAccountsSelector = shallowAccountsSelectorCreator(
+  accountsSelector,
+  (accounts: Account[]) => accounts.slice(),
+);
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
 

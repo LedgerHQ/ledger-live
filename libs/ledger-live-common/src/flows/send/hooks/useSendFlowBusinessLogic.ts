@@ -52,6 +52,8 @@ type UseSendFlowBusinessLogicResult = Readonly<{
     clear: () => void;
   }>;
   recipient: RecipientData | null;
+  isRecipientAddressComplete: boolean;
+  setIsRecipientAddressComplete: (value: boolean) => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
 }>;
 
@@ -67,6 +69,7 @@ export function useSendFlowBusinessLogic({
 }: UseSendFlowBusinessLogicParams): UseSendFlowBusinessLogicResult {
   const [flowStatus, setFlowStatus] = useState<FlowStatus>(FLOW_STATUS.IDLE);
   const [recipientSearchValue, setRecipientSearchValue] = useState("");
+  const [isRecipientAddressComplete, setIsRecipientAddressComplete] = useState(false);
   const [recipient, setRecipient] = useState<RecipientData | null>(() => {
     if (!initParams?.recipient) return null;
     return { address: initParams.recipient };
@@ -156,6 +159,8 @@ export function useSendFlowBusinessLogic({
       uiConfig,
       recipientSearch,
       recipient,
+      isRecipientAddressComplete,
+      setIsRecipientAddressComplete,
       setAccountAndNavigate,
     }),
     [
@@ -166,6 +171,7 @@ export function useSendFlowBusinessLogic({
       uiConfig,
       recipientSearch,
       recipient,
+      isRecipientAddressComplete,
       setAccountAndNavigate,
     ],
   );

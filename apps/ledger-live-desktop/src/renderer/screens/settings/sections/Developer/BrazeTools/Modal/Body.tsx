@@ -5,7 +5,11 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { useGenerateLocalBraze } from "../Hooks/useGenerateLocalBraze";
 import { useTranslation } from "react-i18next";
 
-type TabKey = "NotificationContentCard" | "ActionContentCard" | "PortfolioContentCard";
+type TabKey =
+  | "NotificationContentCard"
+  | "ActionContentCard"
+  | "PortfolioContentCard"
+  | "BottomPortfolioContentCard";
 
 const FormRow = styled(Flex)`
   align-items: center;
@@ -25,11 +29,14 @@ interface FormState {
   title: string;
   description: string;
   image: string;
+  image_background: string;
+  icon: string;
   mainCta: string;
   link: string;
   secondaryCta: string;
   cta: string;
   tag?: string;
+  picto?: string;
   url: string;
   path: string;
   order?: number;
@@ -44,10 +51,13 @@ const initialState: FormState = {
   description: "Dummy Description",
   image:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQec1piP0de4iTT4LlWAg_SSU8DRv12XEfqwQ&s",
+  image_background: "",
+  icon: "Settings",
   mainCta: "Dummy Main CTA",
   link: "https://www.ledger.com/",
   secondaryCta: "Dummy Dismiss CTA",
   cta: "Dummy CTA",
+  picto: "",
   url: "https://www.ledger.com/",
   path: "https://www.ledger.com/",
   order: undefined,
@@ -68,16 +78,71 @@ export const ModalBody: React.FC = () => {
   const { t } = useTranslation();
   const [formData, dispatch] = useReducer(formReducer, initialState);
 
-  const { addLocalPortfolioCard, addLocalActionCard, addLocalNotificationCard, dismissLocalCards } =
-    useGenerateLocalBraze();
+  const {
+    addLocalPortfolioCard,
+    addLocalBottomPortfolioCard,
+    addLocalActionCard,
+    addLocalNotificationCard,
+    dismissLocalCards,
+  } = useGenerateLocalBraze();
 
   const handleAddCard = () => {
-    const { title, description, image, mainCta, link, secondaryCta, cta, tag, url, path, order } =
-      formData;
+    const {
+      title,
+      description,
+      image,
+      image_background,
+      icon,
+      mainCta,
+      link,
+      secondaryCta,
+      cta,
+      tag,
+      picto,
+      url,
+      path,
+      order,
+    } = formData;
     if (selectedTab === "PortfolioContentCard") {
-      addLocalPortfolioCard(title, description, image, order, url, cta, tag);
+      addLocalPortfolioCard(
+        title,
+        description,
+        image,
+        order,
+        url,
+        cta,
+        tag,
+        picto,
+        path,
+        icon,
+        image_background,
+      );
+    } else if (selectedTab === "BottomPortfolioContentCard") {
+      addLocalBottomPortfolioCard(
+        title,
+        description,
+        image,
+        order,
+        url,
+        cta,
+        tag,
+        picto,
+        path,
+        icon,
+        image_background,
+      );
     } else if (selectedTab === "ActionContentCard") {
-      addLocalActionCard(title, description, image, mainCta, link, secondaryCta, order);
+      addLocalActionCard(
+        title,
+        description,
+        image,
+        mainCta,
+        link,
+        secondaryCta,
+        order,
+        icon,
+        image_background,
+      );
     } else if (selectedTab === "NotificationContentCard") {
       addLocalNotificationCard(title, description, cta, false, url, path, order);
     }
@@ -111,6 +176,10 @@ export const ModalBody: React.FC = () => {
       key: "PortfolioContentCard",
       label: t("settings.developer.brazeTools.modal.fields.portfolio"),
     },
+    {
+      key: "BottomPortfolioContentCard",
+      label: t("settings.developer.brazeTools.modal.fields.bottomPortfolio"),
+    },
   ];
 
   const [selectedTab, setSelectedTab] = useReducer(
@@ -125,13 +194,28 @@ export const ModalBody: React.FC = () => {
     PortfolioContentCard: [
       {
         field: "image",
-        placeholder: "Image URL",
+        placeholder: "Image URL (carousel / ContentBanner fallback)",
         label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "image_background",
+        placeholder: "Image background URL (Lumen MediaBanner when brazePlacement on)",
+        label: "Image background",
+      },
+      {
+        field: "icon",
+        placeholder: "Icon name for ContentBanner variant (e.g. Settings, Wallet)",
+        label: "Icon",
       },
       {
         field: "url",
         placeholder: "URL",
         label: t("settings.developer.brazeTools.modal.fields.url"),
+      },
+      {
+        field: "path",
+        placeholder: "In-app path (deep link)",
+        label: t("settings.developer.brazeTools.modal.fields.path"),
       },
       {
         field: "cta",
@@ -143,12 +227,69 @@ export const ModalBody: React.FC = () => {
         placeholder: "TAG",
         label: t("settings.developer.brazeTools.modal.fields.tag"),
       },
+      {
+        field: "picto",
+        placeholder: "e.g. bitcoin",
+        label: t("settings.developer.brazeTools.modal.fields.picto"),
+      },
+    ],
+    BottomPortfolioContentCard: [
+      {
+        field: "image",
+        placeholder: "Image URL",
+        label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "image_background",
+        placeholder: "Image background URL (optional)",
+        label: "Image background",
+      },
+      {
+        field: "icon",
+        placeholder: "Icon name (optional)",
+        label: "Icon",
+      },
+      {
+        field: "url",
+        placeholder: "URL",
+        label: t("settings.developer.brazeTools.modal.fields.url"),
+      },
+      {
+        field: "path",
+        placeholder: "In-app path (deep link)",
+        label: t("settings.developer.brazeTools.modal.fields.path"),
+      },
+      {
+        field: "cta",
+        placeholder: "CTA",
+        label: t("settings.developer.brazeTools.modal.fields.cta"),
+      },
+      {
+        field: "tag",
+        placeholder: "TAG",
+        label: t("settings.developer.brazeTools.modal.fields.tag"),
+      },
+      {
+        field: "picto",
+        placeholder: "e.g. bitcoin",
+        label: t("settings.developer.brazeTools.modal.fields.picto"),
+      },
     ],
     ActionContentCard: [
       {
         field: "image",
         placeholder: "Image URL",
         label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "image_background",
+        placeholder: "Image background URL (MediaBanner variant)",
+        label: "Image background",
+      },
+      {
+        field: "icon",
+        placeholder: "Icon name (e.g. Settings, Wallet)",
+        label: "Icon",
       },
       {
         field: "mainCta",
@@ -187,7 +328,7 @@ export const ModalBody: React.FC = () => {
 
   return (
     <Flex flexDirection="column" rowGap={24}>
-      <Flex flexDirection="row" columnGap={24}>
+      <div className="flex gap-x-6 overflow-x-auto pb-1">
         {tabs.map(tab => (
           <Button
             appearance={selectedTab === tab.key ? "accent" : "transparent"}
@@ -197,7 +338,7 @@ export const ModalBody: React.FC = () => {
             {tab.label}
           </Button>
         ))}
-      </Flex>
+      </div>
       <Flex flexDirection="column" rowGap={12}>
         <FormRow>
           <Label> {t("settings.developer.brazeTools.modal.fields.title")}</Label>

@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
@@ -11,10 +11,12 @@ export async function craftTransaction(
     recipient,
     sender,
     type,
+    currencyId,
     ...extra
   }: TransactionIntent & {
     useAllAmount?: boolean;
     stakedSuiId?: string;
+    currencyId?: string;
   },
   withObjects: boolean = false,
   resolution?: Resolution,
@@ -34,5 +36,6 @@ export async function craftTransaction(
     },
     withObjects,
     resolution,
+    currencyId,
   );
 }

@@ -20,6 +20,7 @@ export const getWallet40Attributes = (
     marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
     graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
     quickActionCtas: wallet40FeatureFlag?.params?.quickActionCtas ?? false,
+    quickActionsCtasVariant: wallet40FeatureFlag?.params?.quickActionsCtasVariant ?? false,
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
     newReceiveDialog: wallet40FeatureFlag?.params?.newReceiveDialog ?? false,
@@ -27,5 +28,8 @@ export const getWallet40Attributes = (
     balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
+    operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,
+    myWallet: wallet40FeatureFlag?.params?.myWallet ?? false,
+    aggregatedAssets: wallet40FeatureFlag?.params?.aggregatedAssets ?? false,
   };
 };

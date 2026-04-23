@@ -11,30 +11,32 @@ import {
   TransactionStatus,
 } from "@ledgerhq/coin-cosmos/types/index";
 import { CosmosSigner } from "@ledgerhq/coin-cosmos/types/signer";
-import Cosmos from "@ledgerhq/hw-app-cosmos";
 import Transport from "@ledgerhq/hw-transport";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { DmkSignerCosmos, LegacySignerCosmos } from "@ledgerhq/live-signer-cosmos";
 import { Bridge } from "@ledgerhq/types-live";
-import { CosmosApp } from "@zondax/ledger-cosmos-js";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
+import { isDmkTransport } from "../../hw/dmkUtils";
 
-const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
-  const cosmos = new CosmosApp(transport);
-  const hwCosmos = new Cosmos(transport);
-  return {
-    getAddressAndPubKey: cosmos.getAddressAndPubKey.bind(cosmos),
-    sign: cosmos.sign.bind(cosmos),
-    getAddress: hwCosmos.getAddress.bind(hwCosmos),
-  };
+let _cosmosLdmkFFEnabled: boolean = false;
+
+export const setCosmosLdmkEnabled = (enabled: boolean): void => {
+  _cosmosLdmkFFEnabled = enabled;
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency) => {
-  if (!currency) {
+const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
+  if (isDmkTransport(transport) && _cosmosLdmkFFEnabled) {
+    return new DmkSignerCosmos(transport.dmk, transport.sessionId);
+  }
+  return new LegacySignerCosmos(transport);
+};
+
+const getCurrencyConfig = (currencyId?: string) => {
+  if (!currencyId) {
     throw new Error("No currency provided");
   }
-  return getCurrencyConfiguration<CosmosCoinConfig>(currency);
+  return getCurrencyConfiguration<CosmosCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> =

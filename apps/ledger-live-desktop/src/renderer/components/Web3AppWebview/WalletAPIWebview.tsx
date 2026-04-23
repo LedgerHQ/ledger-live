@@ -31,13 +31,14 @@ import { openModal } from "~/renderer/actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
-import { NoAccountOverlay } from "./NoAccountOverlay";
+import { DappAccountGate } from "./DappAccountGate";
 import { useWebviewState } from "./helpers";
-import { Loader } from "./styled";
+import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { useModularDrawerVisibility, ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -316,8 +317,12 @@ function useWebView(
     manifest,
     customHandlers,
     currentAccountHistDb,
+    setCurrentAccountHistDb,
     inputs,
-  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
+  }: Pick<
+    WebviewProps,
+    "manifest" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb" | "inputs"
+  >,
   webviewRef: RefObject<WebviewTag | null>,
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
@@ -350,7 +355,7 @@ function useWebView(
         }
       },
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const walletState = useSelector(walletSelector);
@@ -369,17 +374,19 @@ function useWebView(
   useEffect(() => {
     serverRef.current = server;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage, noAccounts } = useDappLogic({
+  const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     accounts,
     uiHook,
     postMessage: webviewHook.postMessage,
-    currentAccountHistDb,
+    currentAccountHistDb: currentAccountHistDb,
+    setCurrentAccountHistDb: setCurrentAccountHistDb,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
+    referrer: inputs?.referrer?.toString(),
     mevProtected,
   });
 
@@ -441,7 +448,7 @@ function useWebView(
     };
   }, [customWebviewStyle, widgetLoaded]);
 
-  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts };
+  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts, isLoadingAccounts };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
@@ -450,6 +457,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       manifest,
       inputs = {},
       currentAccountHistDb,
+      setCurrentAccountHistDb,
+      currentAccountHistDbLoaded,
       customHandlers,
       onStateChange,
       hideLoader,
@@ -501,11 +510,12 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
     }, [webviewState, onStateChange]);
 
-    const { webviewStyle, widgetLoaded, noAccounts } = useWebView(
+    const { webviewStyle, widgetLoaded, noAccounts, isLoadingAccounts } = useWebView(
       {
         manifest,
         customHandlers,
         currentAccountHistDb,
+        setCurrentAccountHistDb,
         inputs,
       },
       webviewRef,
@@ -518,8 +528,16 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const isDapp = !!manifest.dapp;
     const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
 
-    if (isDapp && noAccounts) {
-      return <NoAccountOverlay manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    if (isDapp && noAccounts && setCurrentAccountHistDb) {
+      return (
+        <DappAccountGate
+          manifest={manifest}
+          isLoadingAccounts={isLoadingAccounts}
+          currentAccountHistDbLoaded={currentAccountHistDbLoaded}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
+          Loader={Loader}
+        />
+      );
     }
 
     return (
@@ -562,9 +580,9 @@ function DefaultLoader({ isLoading }: { isLoading: boolean }) {
   if (!isLoading) return null;
 
   return (
-    <Loader>
+    <StyledLoader>
       <BigSpinner size={50} />
-    </Loader>
+    </StyledLoader>
   );
 }
 

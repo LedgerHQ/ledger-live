@@ -1,32 +1,27 @@
 import type {
+  AlpacaApi,
+  Balance,
   Block,
   BlockInfo,
-  Cursor,
-  Page,
-  Stake,
-  Reward,
-  Validator,
   CraftedTransaction,
-  Balance,
+  Cursor,
   FeeEstimation,
+  MemoNotSupported,
+  Page,
+  Reward,
+  Stake,
   TransactionIntent,
   TransactionValidation,
-  MemoNotSupported,
-  AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+  Validator,
+  BalanceOptions,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import invariant from "invariant";
 import coinConfig from "../config";
-import {
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  lastBlock,
-  listOperations,
-  validateAddress,
-} from "../logic";
+import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
-import type { AleoTransactionIntentData, AleoCoinConfig, AleoConfig } from "../types";
+import type { AleoCoinConfig, AleoConfig, AleoTransactionIntentData } from "../types";
 
 export function createApi(
   config: AleoConfig,
@@ -44,16 +39,10 @@ export function createApi(
       throw new Error("combine is not supported");
     },
     craftTransaction: async (
-      txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
-      customFees?: FeeEstimation,
+      _txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+      _customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => {
-      // Fees are permanently handled by txIntent of type fee_public(or later also fee_private) only.
-      // Custom fees are NOT planned to be supported in the Aleo implementation.
-      invariant(!customFees, "customFees are not supported");
-      // useAllAmount will be supported once private transaction logic is added.
-      invariant(!txIntent.useAllAmount, "useAllAmount is not supported yet");
-
-      return craftTransaction({ currency, txIntent });
+      throw new Error("craftTransaction is not supported");
     },
     craftRawTransaction: (
       _transaction: string,
@@ -67,8 +56,8 @@ export function createApi(
       const transactionType = getTransactionType(intent);
       return estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
     },
-    getBalance: (address: string): Promise<Balance[]> => {
-      return getBalance(currency, address);
+    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> => {
+      return rejectBalanceOptions(() => getBalance(currency, address), options);
     },
     lastBlock: async (): Promise<BlockInfo> => {
       return lastBlock(currency);
@@ -109,5 +98,6 @@ export function createApi(
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

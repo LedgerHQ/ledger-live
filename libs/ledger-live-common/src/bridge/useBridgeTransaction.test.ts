@@ -3,7 +3,7 @@
  */
 import "../__tests__/test-helpers/dom-polyfill";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor, act } from "@testing-library/react";
 import { genAccount } from "../mock/account";
 import { getAccountBridge } from ".";
 import useBridgeTransaction, {
@@ -140,6 +140,55 @@ describe("useBridgeTransaction", () => {
 
       const result = shouldSyncBeforeTx(mockCurrency);
       expect(result).toBe(false);
+    });
+  });
+
+  describe("updateAccount", () => {
+    test("updates account reference without resetting the transaction", async () => {
+      const mainAccount = genAccount("mocked-account-1", { currency: BTC });
+      const { result } = renderHook(() => useBridgeTransaction(() => ({ account: mainAccount })));
+
+      await waitFor(() => expect(result.current.transaction).not.toBeFalsy(), { timeout: 10000 });
+
+      const transactionBefore = result.current.transaction;
+
+      const updatedAccount = { ...mainAccount, blockHeight: (mainAccount.blockHeight ?? 0) + 1 };
+      act(() => {
+        result.current.updateAccount(updatedAccount);
+      });
+
+      expect(result.current.account).toBe(updatedAccount);
+      expect(result.current.account).not.toBe(mainAccount);
+      // transaction must not be reset
+      expect(result.current.transaction).toBe(transactionBefore);
+    });
+
+    test("is a no-op when the account id does not match", async () => {
+      const mainAccount = genAccount("mocked-account-1", { currency: BTC });
+      const { result } = renderHook(() => useBridgeTransaction(() => ({ account: mainAccount })));
+
+      await waitFor(() => expect(result.current.account).not.toBeFalsy(), { timeout: 10000 });
+
+      const differentAccount = genAccount("mocked-account-2", { currency: BTC });
+      act(() => {
+        result.current.updateAccount(differentAccount);
+      });
+
+      expect(result.current.account).toBe(mainAccount);
+    });
+
+    test("is a no-op when the account reference is identical", async () => {
+      const mainAccount = genAccount("mocked-account-1", { currency: BTC });
+      const { result } = renderHook(() => useBridgeTransaction(() => ({ account: mainAccount })));
+
+      await waitFor(() => expect(result.current.account).not.toBeFalsy(), { timeout: 10000 });
+
+      const accountBefore = result.current.account;
+      act(() => {
+        result.current.updateAccount(mainAccount);
+      });
+
+      expect(result.current.account).toBe(accountBefore);
     });
   });
 });

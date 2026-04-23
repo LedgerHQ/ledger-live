@@ -51,7 +51,6 @@ export default {
       )
       .pipe(
         tap(() => {
-          // eslint-disable-next-line no-console
           console.clear();
         }),
         map(acc => acc.map(o => `${(o.name || "(no name)").padEnd(40)} ${o.id}`).join("\n")),

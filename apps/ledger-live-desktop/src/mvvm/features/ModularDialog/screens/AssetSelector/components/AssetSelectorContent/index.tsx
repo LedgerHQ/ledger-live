@@ -11,11 +11,11 @@ import EmptyList from "../../../../components/EmptyList";
 import { balanceItem } from "../../../../components/Balance";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDialog";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { AssetVirtualList } from "../AssetVirtualList";
-import { ApyIndicator } from "LLD/features/ModularDrawer/components/ApyIndicator";
+import { ApyIndicator } from "LLD/features/ModularDialog/components/ApyIndicator";
 
 export type AssetSelectorContentProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -42,7 +42,7 @@ export const AssetSelectorContent = ({
 }: AssetSelectorContentProps) => {
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
-  const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
+  const isDebuggingDuplicates = useSelector(modularDialogIsDebuggingDuplicatesSelector);
 
   const assetsTransformed = useAssetConfiguration(assetsToDisplay, {
     ApyIndicator,

@@ -4,7 +4,7 @@ import {
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { Trans, useTranslation } from "react-i18next";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { AccountLike, Account, type TokenAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
 import { connect } from "react-redux";
@@ -232,6 +232,7 @@ type OwnProps = {
   withSubAccounts?: boolean;
   enforceHideEmptySubAccounts?: boolean;
   filter?: (a: Account) => boolean;
+  subAccountFilter?: (subAccount: TokenAccount) => boolean;
   onChange: (account?: AccountLike | null, tokenAccount?: Account | null) => void;
   value: AccountLike | undefined | null;
   renderValue?: typeof defaultRenderValue;
@@ -251,6 +252,7 @@ export const RawSelectAccount = ({
   withSubAccounts,
   enforceHideEmptySubAccounts,
   filter,
+  subAccountFilter,
   renderValue,
   renderOption,
   placeholder,
@@ -263,11 +265,21 @@ export const RawSelectAccount = ({
 
   const [searchInputValue, setSearchInputValue] = useState("");
   const filtered: Account[] = filter ? accounts.filter(filter) : accounts;
-  const all = withSubAccounts
-    ? flattenAccounts(filtered, {
-        enforceHideEmptySubAccounts,
-      })
-    : filtered;
+  const all = useMemo(() => {
+    if (!withSubAccounts) {
+      return filtered;
+    }
+
+    const flattened = flattenAccounts(filtered, {
+      enforceHideEmptySubAccounts,
+    });
+
+    if (!subAccountFilter) {
+      return flattened;
+    }
+
+    return flattened.filter(account => account.type === "Account" || subAccountFilter(account));
+  }, [filtered, withSubAccounts, enforceHideEmptySubAccounts, subAccountFilter]);
   const selectedOption = value
     ? {
         account: all.find(o => o.id === value.id),

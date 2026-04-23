@@ -17,11 +17,13 @@ describe("QueuedDrawer", () => {
     jest.useFakeTimers();
   });
 
-  const mainTestIds = testIds(TestIdPrefix.Main);
-  const inDrawer1TestIds = testIds(TestIdPrefix.InDrawer1);
-  const inDrawer4TestIds = testIds(TestIdPrefix.InDrawer4);
+  const withEnabledPrefix = <T extends Record<string, string>>(ids: T): T =>
+    Object.fromEntries(Object.entries(ids).map(([k, v]) => [k, `enabled-${v}`])) as T;
+  const mainTestIds = withEnabledPrefix(testIds(TestIdPrefix.Main));
+  const inDrawer1TestIds = withEnabledPrefix(testIds(TestIdPrefix.InDrawer1));
+  const inDrawer4TestIds = withEnabledPrefix(testIds(TestIdPrefix.InDrawer4));
   const modalCloseButtonId = "modal-close-button";
-  const navigateBackButtonId = "navigate-back-button";
+  const navigateBackButtonId = "enabled-navigate-back-button";
 
   const drawer1Text = "Drawer 1";
   const drawer2Text = "Drawer 2";
@@ -137,8 +139,8 @@ describe("QueuedDrawer", () => {
     await user.press(elements.inDrawer1Drawer2Button());
     expect(queryByText(drawer2Text)).toBeNull();
     await user.press(elements.closeButton());
-    expect(queryByText(drawer1Text)).toBeNull();
     expect(await findByText(drawer2Text)).toBeVisible();
+    expect(queryByText(drawer1Text)).toBeNull();
     await user.press(elements.closeButton());
     helpers.expectAllDrawersClosed();
     await helpers.openDrawer1();

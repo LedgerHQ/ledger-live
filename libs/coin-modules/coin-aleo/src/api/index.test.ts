@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type {
-  TransactionIntent,
-  FeeEstimation,
+  BalanceOptions,
   MemoNotSupported,
-} from "@ledgerhq/coin-framework/api/types";
-import type { AleoTransactionIntentData } from "../types";
-import coinConfig from "../config";
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAlpacaOperation } from "../__tests__/fixtures/operation.fixture";
+import coinConfig from "../config";
 import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
+import type { AleoTransactionIntentData } from "../types";
 import { createApi } from "./index";
 
 jest.mock("../logic");
@@ -48,7 +50,7 @@ describe("createApi", () => {
     amount: BigInt(1000),
     sender: "aleo1sender1234567890123456789012345678901234567",
     recipient: "aleo1recipient123456789012345678901234567890",
-    data: { type: "fee_public", priorityFee: 1040, executionId: "ex1test" },
+    data: { type: "fee_public", priorityFee: 1040n, executionId: "ex1test" },
   });
 
   it("should set the coin config value", () => {
@@ -72,6 +74,7 @@ describe("createApi", () => {
     expect(api.getBlockInfo).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
+    expect(api.craftTransactionData).toBeInstanceOf(Function);
   });
 
   describe("broadcast", () => {
@@ -93,39 +96,11 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should reject when customFees are provided", async () => {
+    it("should throw unsupported error", async () => {
       const api = createApi(mockConfig, "aleo");
-      const txIntent = createMockTransactionIntent();
-      const customFees: FeeEstimation = { value: BigInt(1000) };
 
-      await expect(api.craftTransaction(txIntent, customFees)).rejects.toThrow(
-        "customFees are not supported",
-      );
-    });
-
-    it("should reject when useAllAmount is true", async () => {
-      const api = createApi(mockConfig, "aleo");
-      const txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-        ...createMockTransactionIntent(),
-        useAllAmount: true,
-      };
-
-      await expect(api.craftTransaction(txIntent)).rejects.toThrow(
-        "useAllAmount is not supported yet",
-      );
-    });
-
-    it("should call craftTransaction logic when invariants pass", async () => {
-      const api = createApi(mockConfig, "aleo");
-      const txIntent = createMockTransactionIntent();
-      const result = await api.craftTransaction(txIntent);
-
-      expect(mockedCraftTransaction).toHaveBeenCalledTimes(1);
-      expect(mockedCraftTransaction).toHaveBeenCalledWith({
-        currency: expect.any(Object),
-        txIntent,
-      });
-      expect(result).toEqual({ transaction: "crafted_tx" });
+      // @ts-expect-error - it should throw no matter what the input is
+      await expect(api.craftTransaction({})).rejects.toThrow("craftTransaction is not supported");
     });
   });
 
@@ -164,6 +139,13 @@ describe("createApi", () => {
       expect(mockedGetBalance).toHaveBeenCalledTimes(1);
       expect(mockedGetBalance).toHaveBeenCalledWith(expect.any(Object), "aleo1test");
       expect(result).toEqual([{ value: BigInt(10), asset: { type: "native" } }]);
+    });
+
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(mockConfig, "aleo");
+      await expect(api.getBalance("", {} as unknown as BalanceOptions)).rejects.toThrow(
+        InvalidParameterError,
+      );
     });
   });
 

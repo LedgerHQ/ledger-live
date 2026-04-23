@@ -26,7 +26,7 @@ import {
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
-import getOrCreateUser from "../user";
+import { userIdSelector, isDummyUserId } from "@ledgerhq/client-ids/store";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -179,9 +179,10 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
-const getMandatoryProperties = async (store: AppStore) => {
+const getMandatoryProperties = (store: AppStore) => {
   const state: State = store.getState();
-  const { user } = await getOrCreateUser();
+  const userId = userIdSelector(state);
+  const userIdStr = isDummyUserId(userId) ? undefined : userId.exportUserIdForAnalytics();
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
@@ -189,8 +190,8 @@ const getMandatoryProperties = async (store: AppStore) => {
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
 
   return {
-    userId: user?.id,
-    braze_external_id: user?.id, // Needed for braze with this exact name
+    userId: userIdStr,
+    braze_external_id: userIdStr, // Needed for braze with this exact name
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
@@ -238,6 +239,7 @@ const getLdmkAndSyncFlags = () => ({
     enabled: false,
   },
   ldmkSolanaSigner: analyticsFeatureFlagMethod?.("ldmkSolanaSigner") ?? { enabled: false },
+  ldmkCosmosSigner: analyticsFeatureFlagMethod?.("ldmkCosmosSigner") ?? { enabled: false },
 });
 
 const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
@@ -274,7 +276,7 @@ const getFlowAndSatisfactionProps = (
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const madAttributes = getMADAttributes();
-  const mandatoryProperties = await getMandatoryProperties(store);
+  const mandatoryProperties = getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
   const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
@@ -286,8 +288,13 @@ const extraProperties = async (store: AppStore) => {
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const { ldmkTransport, ldmkConnectApp, llmSyncOnboardingIncr1, ldmkSolanaSigner } =
-    getLdmkAndSyncFlags();
+  const {
+    ldmkTransport,
+    ldmkConnectApp,
+    llmSyncOnboardingIncr1,
+    ldmkSolanaSigner,
+    ldmkCosmosSigner,
+  } = getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -312,6 +319,8 @@ const extraProperties = async (store: AppStore) => {
     optInAnnouncements: notifications.announcementsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
+    optInTotalMarketCap: notifications.totalMarketCap,
+    optInTopGainersLosers: notifications.topGainersLosers,
     hasEnabledOsNotifications,
   };
   const notificationsBlacklisted = Object.entries(notifications)
@@ -406,6 +415,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
+    isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
@@ -418,14 +428,17 @@ const extraProperties = async (store: AppStore) => {
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
-  const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
   const initialUrl = await Linking.getInitialURL();
   const isDeeplinkSession = !!initialUrl;
 
-  if (created && ANALYTICS_LOGS) {
-    console.log("analytics:identify", user.id);
+  if (ANALYTICS_LOGS) {
+    const state = store.getState();
+    const userId = userIdSelector(state);
+    if (!isDummyUserId(userId)) {
+      console.log("analytics:identify", userId.exportUserIdForAnalytics());
+    }
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
@@ -437,13 +450,10 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     // This allows us to not retrieve users ip addresses for privacy reasons
     segmentClient.add({ plugin: new AnonymousIpPlugin() });
     // This allows us to make sure we are adding the userId to the event
-    segmentClient.add({ plugin: new UserIdPlugin() });
+    segmentClient.add({ plugin: new UserIdPlugin(store) });
     // This allows us to debounce identify events for Braze and save data points
     segmentClient.add({ plugin: new BrazePlugin() });
 
-    if (created) {
-      segmentClient.reset();
-    }
     await updateIdentify();
   }
   await track("Start", { isDeeplinkSession });
@@ -459,7 +469,7 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
-  const mandatoryProperties = await getMandatoryProperties(storeInstance);
+  const mandatoryProperties = getMandatoryProperties(storeInstance);
   const baseProperties = mandatory ? mandatoryProperties : userExtraProperties;
   const allProperties = additionalProperties
     ? { ...baseProperties, ...additionalProperties }
@@ -512,7 +522,7 @@ export const track = async (
   const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
-  const mandatoryProperties = await getMandatoryProperties(storeInstance as AppStore);
+  const mandatoryProperties = getMandatoryProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
     page,
     ...eventProperties,
@@ -644,7 +654,7 @@ export const screen = async (
   const source = previousRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
-  const mandatoryProperties = await getMandatoryProperties(storeInstance as AppStore);
+  const mandatoryProperties = getMandatoryProperties(storeInstance as AppStore);
   const eventPropertiesWithoutExtra = properties ? { source, ...properties } : { source };
   const allProperties = {
     ...eventPropertiesWithoutExtra,

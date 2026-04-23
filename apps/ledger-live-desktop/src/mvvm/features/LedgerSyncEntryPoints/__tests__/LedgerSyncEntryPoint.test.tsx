@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { fireEvent, render, screen } from "tests/testSetup";
+import { fireEvent, render, screen, withFlagOverrides } from "tests/testSetup";
 import { INITIAL_STATE, LedgerSyncEntryPointShared } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
@@ -159,18 +159,10 @@ describe("LedgerSyncEntryPoint", () => {
       {
         initialState: {
           ...INITIAL_STATE,
-          settings: {
-            ...INITIAL_STATE.settings,
-            overriddenFeatureFlags: {
-              ...INITIAL_STATE.settings.overriddenFeatureFlags,
-              lldLedgerSyncEntryPoints: {
-                ...INITIAL_STATE.settings.overriddenFeatureFlags.lldLedgerSyncEntryPoints,
-                params: {
-                  postOnboarding: false,
-                },
-              },
-            },
-          },
+          ...withFlagOverrides({
+            lldWalletSync: { enabled: true, params: { environment: "STAGING" as const, watchConfig: {} } },
+            lldLedgerSyncEntryPoints: { enabled: true, params: { postOnboarding: false } },
+          }),
         },
       },
     );
@@ -201,15 +193,14 @@ describe("LedgerSyncEntryPoint", () => {
   describe("when lwdLedgerSyncOptimisation feature flag is enabled", () => {
     const OPTIMISATION_ENABLED_STATE = {
       ...INITIAL_STATE,
-      settings: {
-        ...INITIAL_STATE.settings,
-        overriddenFeatureFlags: {
-          ...INITIAL_STATE.settings.overriddenFeatureFlags,
-          lwdLedgerSyncOptimisation: {
-            enabled: true,
-          },
+      ...withFlagOverrides({
+        lldWalletSync: { enabled: true, params: { environment: "STAGING" as const, watchConfig: {} } },
+        lldLedgerSyncEntryPoints: {
+          enabled: true,
+          params: { onboarding: true, manager: true, accounts: true, settings: true, postOnboarding: true },
         },
-      },
+        lwdLedgerSyncOptimisation: { enabled: true },
+      }),
     };
 
     it("should display Manager entry point with LedgerSyncBanner when optimisation is enabled", async () => {

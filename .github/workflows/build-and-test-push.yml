@@ -59,10 +59,17 @@ jobs:
     name: "Build Web Tools"
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
+    with:
+      vercel-production: ${{ github.ref_name == 'develop' && 'true' || 'false' }}
 
   test-cli:
     name: "Test CLI"
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    secrets: inherit
+
+  build-wallet-cli:
+    name: "Build Wallet CLI"
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
     secrets: inherit
 
   # Final Check required
@@ -78,6 +85,7 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - build-wallet-cli
     runs-on: ubuntu-22.04
     if: always() && !cancelled()
     steps:

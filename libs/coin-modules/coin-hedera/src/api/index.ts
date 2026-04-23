@@ -1,9 +1,12 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
   AlpacaApi,
+  BalanceOptions,
   CraftedTransaction,
   Operation,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
@@ -17,29 +20,27 @@ import {
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import {
-  broadcast as logicBroadcast,
   combine,
   craftTransaction,
-  estimateFees as logicEstimateFees,
   getBalance,
   getBlock,
-  getBlockV2,
   getBlockInfo,
-  listOperations as logicListOperations,
-  listOperationsV2 as logicListOperationsV2,
-  getAssetFromToken,
-  getTokenFromAsset,
+  getBlockV2,
+  getRewards,
+  getStakes,
+  getValidators,
   lastBlock,
   lastBlockV2,
-  getValidators,
-  getStakes,
-  getRewards,
+  broadcast as logicBroadcast,
+  estimateFees as logicEstimateFees,
+  listOperations as logicListOperations,
+  listOperationsV2 as logicListOperationsV2,
 } from "../logic";
 import {
   extractInitiator,
-  mapIntentToSDKOperation,
-  getOperationValue,
   getBlockHash,
+  getOperationValue,
+  mapIntentToSDKOperation,
   toEVMAddress,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
@@ -92,7 +93,8 @@ export function createApi(
         value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
-    getBalance: address => getBalance(currency, address),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(currency, address), options),
     getBlock: height => {
       if (config.useHgraphForErc20) {
         return getBlockV2(height);
@@ -232,8 +234,6 @@ export function createApi(
 
       return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
     },
-    getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
-    getAssetFromToken,
     getValidators: cursor => getValidators(cursor),
     getStakes: async address => getStakes(address),
     getRewards: async (address, cursor) => getRewards(address, cursor),
@@ -248,5 +248,6 @@ export function createApi(
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

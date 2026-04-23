@@ -1,11 +1,13 @@
 import assert, { fail } from "assert";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import type {
+  BalanceChange,
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
   SuiObjectResponse,
-} from "@mysten/sui/client";
+} from "@mysten/sui/jsonRpc";
+import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import * as sdkOriginal from "./sdk";
@@ -76,59 +78,79 @@ const sdk = new Proxy(sdkOriginal, {
 });
 
 // Mock SUI client for tests
-jest.mock("@mysten/sui/client", () => {
-  return {
-    ...jest.requireActual("@mysten/sui/client"),
-    SuiClient: jest.fn().mockImplementation(() => ({
-      getAllBalances: jest.fn().mockResolvedValue([
-        { coinType: "0x2::sui::SUI", totalBalance: "1000000000" },
-        { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
-      ]),
-      queryTransactionBlocks: jest.fn().mockResolvedValue({
-        data: [],
-        hasNextPage: false,
-      }),
-      dryRunTransactionBlock: jest.fn().mockResolvedValue({
-        effects: {
-          gasUsed: {
-            computationCost: "1000000",
-            storageCost: "500000",
-            storageRebate: "450000",
-          },
-        },
-        input: {
-          gasData: {
-            budget: "4000000",
-          },
-        },
-      }),
-      getCoins: jest.fn().mockResolvedValue({
-        data: [{ coinObjectId: "0xtest_coin_object_id" }],
-      }),
-      executeTransactionBlock: jest.fn().mockResolvedValue({
-        digest: "transaction_digest_123",
-        effects: {
-          status: { status: "success" },
-        },
-      }),
-      getReferenceGasPrice: jest.fn().mockResolvedValue("1000"),
-      getTransactionBlock: jest.fn().mockResolvedValue({
+// Shared mock functions — all SuiJsonRpcClient instances share these references,
+// so tests can control behaviour via mockApi.getCoins.mockReset() etc.
+const sharedRpcMock = {
+  getAllBalances: jest.fn().mockResolvedValue([
+    {
+      coinType: "0x2::sui::SUI",
+      totalBalance: "1000000000",
+      fundsInAddressBalance: "400000000",
+    },
+    { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
+  ]),
+  queryTransactionBlocks: jest.fn().mockResolvedValue({
+    data: [],
+    hasNextPage: false,
+  }),
+  dryRunTransactionBlock: jest.fn().mockResolvedValue({
+    effects: {
+      gasUsed: {
+        computationCost: "1000000",
+        storageCost: "500000",
+        storageRebate: "450000",
+      },
+    },
+    input: {
+      gasData: {
+        budget: "4000000",
+      },
+    },
+  }),
+  getCoins: jest.fn().mockResolvedValue({
+    data: [
+      {
+        coinObjectId: "0xtest_coin_object_id",
+        balance: "1000000000",
+        coinType: "0x2::sui::SUI",
+        digest: "0xdigest",
+        version: "1",
+      },
+    ],
+    hasNextPage: false,
+  }),
+  executeTransactionBlock: jest.fn().mockResolvedValue({
+    digest: "transaction_digest_123",
+    effects: {
+      status: { status: "success" },
+    },
+  }),
+  getReferenceGasPrice: jest.fn().mockResolvedValue("1000"),
+  getTransactionBlock: jest.fn().mockResolvedValue({
+    transaction: {
+      data: {
         transaction: {
-          data: {
-            transaction: {
-              kind: "ProgrammableTransaction",
-              inputs: [],
-              transactions: [],
-            },
-          },
+          kind: "ProgrammableTransaction",
+          inputs: [],
+          transactions: [],
         },
-        effects: {
-          status: { status: "success" },
-        },
-      }),
-      multiGetObjects: jest.fn().mockResolvedValue([]),
-    })),
-    getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
+      },
+    },
+    effects: {
+      status: { status: "success" },
+    },
+  }),
+  multiGetObjects: jest.fn().mockResolvedValue([]),
+  core: {
+    getObjects: jest.fn().mockResolvedValue({ objects: [] }),
+  },
+};
+
+jest.mock("@mysten/sui/jsonRpc", () => {
+  return {
+    ...jest.requireActual("@mysten/sui/jsonRpc"),
+    SuiJsonRpcClient: jest.fn().mockImplementation(() => sharedRpcMock),
+    getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
   };
 });
 
@@ -145,10 +167,13 @@ jest.mock("@mysten/sui/transactions", () => {
       return {
         gas: "0xmock_gas_object_id",
         setSender: jest.fn(),
+        setGasPayment: jest.fn(),
         splitCoins: jest.fn().mockReturnValue(["0xmock_coin"]),
         transferObjects: jest.fn(),
         moveCall: jest.fn(),
         object: jest.fn(),
+        add: jest.fn().mockReturnValue("0xmock_intent_coin"),
+        addIntentResolver: jest.fn(),
         pure: {
           address: jest.fn(),
           u64: jest.fn(),
@@ -364,7 +389,10 @@ function mockUnstakingTx(address: string, amount: string) {
   } as unknown as SuiTransactionBlockResponse;
 }
 
-const mockApi = new SuiClient({ url: "mock" }) as jest.Mocked<SuiClient>;
+const mockApi = new SuiJsonRpcClient({
+  url: "mock",
+  network: "mainnet",
+}) as jest.Mocked<SuiJsonRpcClient>;
 
 // Add getTransactionBlock method to mockApi
 mockApi.getTransactionBlock = jest.fn();
@@ -390,30 +418,56 @@ beforeAll(() => {
   }));
 });
 
+const defaultGetCoinsResponse = {
+  data: [
+    {
+      coinObjectId: "0xtest_coin_object_id",
+      balance: "1000000000",
+      coinType: "0x2::sui::SUI",
+      digest: "0xdigest",
+      version: "1",
+      previousTransaction: "0xprevtx",
+    },
+  ],
+  hasNextPage: false,
+};
+
 beforeEach(() => {
   mockApi.queryTransactionBlocks.mockReset();
+  mockApi.getCoins.mockReset();
+  mockApi.getCoins.mockResolvedValue(defaultGetCoinsResponse);
 });
 
 describe("SDK Functions", () => {
   test("getAccountBalances should return array of account balances", async () => {
-    // The SuiClient mock already has getAllBalances mocked, so getAllBalancesCached should use it
-    // We just need to ensure the mock returns the expected structure
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     const balances = await sdk.getAccountBalances(address);
 
     expect(Array.isArray(balances)).toBe(true);
     expect(balances.length).toBeGreaterThan(0);
 
-    // Check structure of the first balance
     const firstBalance = balances[0];
     expect(firstBalance).toHaveProperty("coinType");
     expect(firstBalance).toHaveProperty("blockHeight");
     expect(firstBalance).toHaveProperty("balance");
+    expect(firstBalance).toHaveProperty("fundsInAddressBalance");
     expect(firstBalance.balance).toBeInstanceOf(BigNumber);
 
-    // Should include SUI and token balances
     const coinTypes = balances.map(b => b.coinType);
     expect(coinTypes).toContain(sdk.DEFAULT_COIN_TYPE);
+  });
+
+  test("getAccountBalances surfaces SIP-58 fundsInAddressBalance when present", async () => {
+    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const balances = await sdk.getAccountBalances(address);
+
+    const sui = balances.find(b => b.coinType === sdk.DEFAULT_COIN_TYPE)!;
+    expect(sui.balance).toEqual(BigNumber("1000000000"));
+    expect(sui.fundsInAddressBalance).toEqual(BigNumber("400000000"));
+
+    const token = balances.find(b => b.coinType === "0x123::test::TOKEN")!;
+    expect(token.balance).toEqual(BigNumber("500000"));
+    expect(token.fundsInAddressBalance).toEqual(BigNumber("0"));
   });
 
   test("getOperationType should return IN for incoming tx", () => {
@@ -679,6 +733,86 @@ describe("SDK Functions", () => {
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
+  test("createTransaction sets empty gas payment when sender has no coin objects", async () => {
+    mockApi.getCoins.mockReset();
+    mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "send" as const,
+      coinType: sdk.DEFAULT_COIN_TYPE,
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const tx = await sdk.createTransaction(address, transaction);
+    expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+    expect(mockApi.getCoins).toHaveBeenCalledWith(
+      expect.objectContaining({ coinType: sdk.DEFAULT_COIN_TYPE, limit: 1 }),
+    );
+    const MockTransaction = Transaction as unknown as jest.Mock;
+    const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+    expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
+  });
+
+  test("createTransaction uses coinWithBalance fallback for token with no coin objects", async () => {
+    mockApi.getCoins.mockReset();
+    mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "send" as const,
+      coinType: "0x123::test::TOKEN",
+      amount: new BigNumber(1000),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const tx = await sdk.createTransaction(address, transaction);
+    expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+  });
+
+  test("createTransaction uses coinWithBalance fallback when coins insufficient", async () => {
+    mockApi.getCoins.mockReset();
+    mockApi.getCoins
+      .mockResolvedValueOnce({
+        data: [
+          {
+            coinObjectId: "0xcoin1",
+            balance: "1000000000",
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            digest: "0xd",
+            version: "1",
+            previousTransaction: "0xprev1",
+          },
+        ],
+        hasNextPage: false,
+      })
+      .mockResolvedValueOnce({
+        data: [
+          {
+            coinObjectId: "0xcoin_token",
+            balance: "100",
+            coinType: "0x123::test::TOKEN",
+            digest: "0xd2",
+            version: "1",
+            previousTransaction: "0xprev2",
+          },
+        ],
+        hasNextPage: false,
+      });
+
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "send" as const,
+      coinType: "0x123::test::TOKEN",
+      amount: new BigNumber(5000),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const tx = await sdk.createTransaction(address, transaction);
+    expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+  });
+
   test("executeTransactionBlock should execute a transaction", async () => {
     const result = await sdk.executeTransactionBlock({
       transactionBlock: new Uint8Array(),
@@ -718,7 +852,7 @@ describe("Staking Operations", () => {
       }
     }
 
-    test("getOperationType should return UNDELEGATE when it's not the first MoveCall ", () => {
+    test("getOperationType should return UNDELEGATE when it's not the first MoveCall", () => {
       const tx = mockUnstakingTx(address, "1000");
       if (tx.transaction) {
         prependOtherMoveCall(tx.transaction.data.transaction);
@@ -728,7 +862,7 @@ describe("Staking Operations", () => {
       }
     });
 
-    test("getOperationType should return DELEGATE when it's not the first MoveCall ", () => {
+    test("getOperationType should return DELEGATE when it's not the first MoveCall", () => {
       const tx = mockStakingTx(address, "-1000");
       if (tx.transaction) {
         prependOtherMoveCall(tx.transaction.data.transaction);
@@ -847,6 +981,49 @@ describe("Staking Operations", () => {
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
+    test("createTransaction sets empty gas payment for delegate when no coin objects", async () => {
+      mockApi.getCoins.mockReset();
+      mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const transaction = {
+        mode: "delegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        amount: new BigNumber(1000000000),
+        recipient: "0xvalidator_address_123",
+      };
+
+      const tx = await sdk.createTransaction(address, transaction);
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+      expect(mockApi.getCoins).toHaveBeenCalledWith(
+        expect.objectContaining({ coinType: sdk.DEFAULT_COIN_TYPE, limit: 1 }),
+      );
+      const MockTransaction = Transaction as unknown as jest.Mock;
+      const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+      expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
+    });
+
+    test("createTransaction sets empty gas payment for undelegate when no coin objects", async () => {
+      mockApi.getCoins.mockReset();
+      mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const transaction = {
+        mode: "undelegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        amount: new BigNumber(500000000),
+        stakedSuiId: "0xstaked_sui_object_123",
+        useAllAmount: false,
+        recipient: "0xvalidator_address_123",
+      };
+
+      const tx = await sdk.createTransaction(address, transaction);
+      expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+      const MockTransaction = Transaction as unknown as jest.Mock;
+      const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+      expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
+    });
+
     test("createTransaction should build undelegate transaction with all amount", async () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       const transaction = {
@@ -896,6 +1073,42 @@ describe("Staking Operations", () => {
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
+    });
+
+    test("paymentInfo works when sender has no coin objects (SIP-58 address balance only)", async () => {
+      mockApi.getCoins.mockReset();
+      mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+
+      const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const fakeTransaction = {
+        mode: "send" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        family: "sui" as const,
+        amount: new BigNumber(1000000000),
+        recipient: "0xrecipient_address",
+        errors: {},
+      };
+      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      expect(info).toHaveProperty("gasBudget");
+      expect(info).toHaveProperty("totalGasUsed");
+      expect(info).toHaveProperty("fees");
+    });
+
+    test("paymentInfo does not call getInputObjects (dry run optimisation)", async () => {
+      const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const fakeTransaction = {
+        mode: "send" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        family: "sui" as const,
+        amount: new BigNumber(1000000000),
+        recipient: "0xrecipient_address",
+        errors: {},
+      };
+
+      mockApi.multiGetObjects.mockClear();
+      await sdk.paymentInfo(sender, fakeTransaction);
+
+      expect(mockApi.multiGetObjects).not.toHaveBeenCalled();
     });
   });
 
@@ -1665,13 +1878,13 @@ describe("getOperations filtering logic", () => {
 
 describe("listOperations", () => {
   const ADDRESS = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
-  type QueryBlocksParams = Parameters<SuiClient["queryTransactionBlocks"]>[0];
-  type QueryBlocksResult = Awaited<ReturnType<SuiClient["queryTransactionBlocks"]>>;
+  type QueryBlocksParams = Parameters<SuiJsonRpcClient["queryTransactionBlocks"]>[0];
+  type QueryBlocksResult = Awaited<ReturnType<SuiJsonRpcClient["queryTransactionBlocks"]>>;
 
   const tx = (digest: string, checkpoint: string, timestampMs: string) =>
     ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
 
-  const apiCall = async <T>(execute: (api: SuiClient) => Promise<T>) => execute(mockApi);
+  const apiCall = async <T>(execute: (api: SuiJsonRpcClient) => Promise<T>) => execute(mockApi);
 
   const setupListOperationsMocks = (
     handler: (params: QueryBlocksParams) => Promise<QueryBlocksResult> | QueryBlocksResult,
@@ -1769,7 +1982,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1818,7 +2031,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1843,7 +2056,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1876,7 +2089,7 @@ describe("listOperations", () => {
       const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
       const tx = (digest: string, checkpoint: string, timestampMs: string) =>
         ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-      const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+      const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
       mockApi.queryTransactionBlocks.mockReset();
       mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1900,7 +2113,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1936,7 +2149,7 @@ describe("listOperations", () => {
     const boundaryDigest = "HdJAXgAA94Q8njwnmX1YT6RDu6s3HvUrdTgDRGNNFwm";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -1987,7 +2200,7 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
 
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
       digest: `checkpoint-${id}`,
@@ -3000,14 +3213,14 @@ describe("getCoinsForAmount", () => {
       const sufficientCoins = createMockCoins(["1000"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: sufficientCoins, hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("1000");
 
       const insufficientCoins = createMockCoins(["500"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: insufficientCoins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("500");
     });
@@ -3016,7 +3229,7 @@ describe("getCoinsForAmount", () => {
       const exactMatchCoins = createMockCoins(["600", "400", "300"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: exactMatchCoins, hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("600");
       expect(result[1].balance).toBe("400");
@@ -3024,7 +3237,7 @@ describe("getCoinsForAmount", () => {
       const exceedCoins = createMockCoins(["800", "400", "200"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: exceedCoins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("400");
@@ -3033,13 +3246,13 @@ describe("getCoinsForAmount", () => {
     test("handles edge cases", async () => {
       mockApi.getCoins.mockResolvedValueOnce({ data: [], hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(0);
 
       const coins = createMockCoins(["1000"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: coins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 0);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 0n);
       expect(result).toHaveLength(0);
     });
   });
@@ -3052,7 +3265,7 @@ describe("getCoinsForAmount", () => {
 
       mockApi.getCoins.mockResolvedValueOnce({ data: mockCoins, hasNextPage: false });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("1000");
@@ -3063,7 +3276,7 @@ describe("getCoinsForAmount", () => {
       const unsortedCoins = createMockCoins(["100", "800", "300", "500"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: unsortedCoins, hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("500");
@@ -3074,7 +3287,7 @@ describe("getCoinsForAmount", () => {
 
       mockApi.getCoins.mockResolvedValueOnce({ data: mixedCoins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("400");
@@ -3085,7 +3298,7 @@ describe("getCoinsForAmount", () => {
       const mockCoins = createMockCoins(["0", "0", "0"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: mockCoins, hasNextPage: false });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(0);
       expect(result).toEqual([]);
@@ -3101,7 +3314,7 @@ describe("getCoinsForAmount", () => {
         nextCursor: "cursor1",
       });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
@@ -3124,7 +3337,7 @@ describe("getCoinsForAmount", () => {
           hasNextPage: false,
         });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(3);
       expect(result[0].balance).toBe("300");
@@ -3148,7 +3361,7 @@ describe("getCoinsForAmount", () => {
           hasNextPage: false,
         });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(4);
       expect(result[0].balance).toBe("300");
@@ -3157,6 +3370,78 @@ describe("getCoinsForAmount", () => {
       expect(result[3].balance).toBe("100");
       expect(mockApi.getCoins).toHaveBeenCalledTimes(2);
     });
+  });
+});
+
+describe("getCoinsForAmount – SIP-58 fake coins", () => {
+  const mockAddress = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+  const mockCoinType = "0x123::test::TOKEN";
+
+  beforeEach(() => {
+    mockApi.getCoins.mockReset();
+  });
+
+  test("selects a single fake coin representing address balance", async () => {
+    const fakeCoin = {
+      coinObjectId: "0xfake_address_balance_coin",
+      balance: "5000",
+      digest: "0xfakedigest",
+      version: "1",
+      coinType: mockCoinType,
+      previousTransaction: "0xfaketx",
+    };
+    mockApi.getCoins.mockResolvedValueOnce({ data: [fakeCoin], hasNextPage: false });
+
+    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 3000n);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].coinObjectId).toBe("0xfake_address_balance_coin");
+    expect(result[0].balance).toBe("5000");
+  });
+
+  test("selects a mix of real coins and fake address-balance coin", async () => {
+    const realCoin = {
+      coinObjectId: "0xreal_coin_1",
+      balance: "2000",
+      digest: "0xdigest1",
+      version: "1",
+      coinType: mockCoinType,
+      previousTransaction: "0xtx1",
+    };
+    const fakeCoin = {
+      coinObjectId: "0xfake_address_balance_coin",
+      balance: "3000",
+      digest: "0xfakedigest",
+      version: "1",
+      coinType: mockCoinType,
+      previousTransaction: "0xfaketx",
+    };
+    mockApi.getCoins.mockResolvedValueOnce({
+      data: [realCoin, fakeCoin],
+      hasNextPage: false,
+    });
+
+    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 4000n);
+
+    expect(result).toHaveLength(2);
+    expect(parseInt(result[0].balance) + parseInt(result[1].balance)).toBeGreaterThanOrEqual(4000);
+  });
+
+  test("handles account with address balance only (no real coin objects)", async () => {
+    const fakeCoin = {
+      coinObjectId: "0xfake_address_balance_coin",
+      balance: "10000",
+      digest: "0xfakedigest",
+      version: "1",
+      coinType: mockCoinType,
+      previousTransaction: "0xfaketx",
+    };
+    mockApi.getCoins.mockResolvedValueOnce({ data: [fakeCoin], hasNextPage: false });
+
+    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 8000n);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].balance).toBe("10000");
   });
 });
 
@@ -3179,7 +3464,7 @@ describe("withBatchedMultiGetObjects", () => {
         );
       },
     );
-    return { client: { multiGetObjects } as unknown as SuiClient, multiGetObjects };
+    return { client: { multiGetObjects } as unknown as SuiJsonRpcClient, multiGetObjects };
   };
 
   it("should pass through when <= 50 objects", async () => {
@@ -3250,5 +3535,453 @@ describe("withBatchedMultiGetObjects", () => {
     // THEN
     expect(multiGetObjects).toHaveBeenCalledTimes(2);
     expect(result).toHaveLength(51);
+  });
+});
+
+describe("isSettlementTransaction", () => {
+  const makeSettlementTx = (
+    overrides: Partial<SuiTransactionBlockResponse> = {},
+  ): SuiTransactionBlockResponse =>
+    ({
+      digest: "settlement-digest",
+      timestampMs: "1000",
+      checkpoint: "100",
+      transaction: {
+        data: {
+          messageVersion: "v1" as const,
+          transaction: {
+            kind: "ProgrammableTransaction" as const,
+            inputs: [
+              {
+                type: "object" as const,
+                objectType: "sharedObject" as const,
+                objectId: "0xacc",
+                initialSharedVersion: "1",
+                mutable: true,
+              },
+            ],
+            transactions: [],
+          },
+          sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
+          gasData: { payment: [], owner: "0x0", price: "0", budget: "0" },
+        },
+      },
+      effects: {
+        messageVersion: "v1" as const,
+        status: { status: "success" as const },
+        executedEpoch: "1",
+        gasUsed: {
+          computationCost: "0",
+          storageCost: "0",
+          storageRebate: "0",
+          nonRefundableStorageFee: "0",
+        },
+        transactionDigest: "settlement-digest",
+        dependencies: [],
+      },
+      balanceChanges: [],
+      ...overrides,
+    }) as SuiTransactionBlockResponse;
+
+  it("returns true for a transaction with 0xacc object input", () => {
+    expect(sdk.isSettlementTransaction(makeSettlementTx())).toBe(true);
+  });
+
+  it("returns false for a normal user transaction", () => {
+    expect(sdk.isSettlementTransaction(mockTransaction as SuiTransactionBlockResponse)).toBe(false);
+  });
+
+  it("returns false when transaction data is missing", () => {
+    expect(sdk.isSettlementTransaction({ digest: "no-data" } as SuiTransactionBlockResponse)).toBe(
+      false,
+    );
+  });
+
+  it("returns false for non-ProgrammableTransaction kinds", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).kind = "ChangeEpoch";
+    expect(sdk.isSettlementTransaction(tx)).toBe(false);
+  });
+
+  it("returns false when 0xacc appears as a pure input, not object", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).inputs = [
+      { type: "pure" as const, valueType: "address", value: "0xacc" },
+    ];
+    expect(sdk.isSettlementTransaction(tx)).toBe(false);
+  });
+});
+
+describe("getUnifiedBalanceChanges", () => {
+  const addr = "0xaaa";
+  const coinType = "0x2::sui::SUI";
+
+  const baseTx = {
+    digest: "test-digest",
+    effects: {
+      messageVersion: "v1" as const,
+      status: { status: "success" as const },
+      executedEpoch: "1",
+      gasUsed: {
+        computationCost: "0",
+        storageCost: "0",
+        storageRebate: "0",
+        nonRefundableStorageFee: "0",
+      },
+      transactionDigest: "test-digest",
+      dependencies: [],
+    },
+  };
+
+  it("returns balanceChanges as-is when no accumulator events", () => {
+    const changes: BalanceChange[] = [{ coinType, owner: { AddressOwner: addr }, amount: "-500" }];
+    const tx = { ...baseTx, balanceChanges: changes } as unknown as SuiTransactionBlockResponse;
+
+    expect(sdk.getUnifiedBalanceChanges(tx)).toEqual(changes);
+  });
+
+  it("returns empty array when neither balanceChanges nor accumulatorEvents exist", () => {
+    const tx = { ...baseTx, balanceChanges: null } as unknown as SuiTransactionBlockResponse;
+    expect(sdk.getUnifiedBalanceChanges(tx)).toEqual([]);
+  });
+
+  it("merges accumulator merge event as positive balance change", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [{ coinType, owner: { AddressOwner: "0xsender" }, amount: "-1000" }],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "1000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(2);
+    expect(result[1]).toEqual({
+      coinType,
+      owner: { AddressOwner: addr },
+      amount: "1000",
+    });
+  });
+
+  it("merges accumulator split event as negative balance change", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "split",
+            ty: coinType,
+            value: { integer: "500" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual({
+      coinType,
+      owner: { AddressOwner: addr },
+      amount: "-500",
+    });
+  });
+
+  it("skips accumulator event when balanceChanges already covers the address+coinType", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [{ coinType, owner: { AddressOwner: addr }, amount: "1000" }],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "1000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(1);
+    expect(result[0].amount).toBe("1000");
+  });
+
+  it("skips non-integer accumulator values", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: coinType,
+            value: { eventDigest: [["a", "b"]] },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(0);
+  });
+
+  it("merges multiple accumulator events for different addresses", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [{ coinType, owner: { AddressOwner: "0xsender" }, amount: "-2000" }],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: "0xrecip1",
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "800" },
+          },
+          {
+            accumulatorObj: "0xacc",
+            address: "0xrecip2",
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "1200" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(3);
+    expect(result[1]).toEqual({
+      coinType,
+      owner: { AddressOwner: "0xrecip1" },
+      amount: "800",
+    });
+    expect(result[2]).toEqual({
+      coinType,
+      owner: { AddressOwner: "0xrecip2" },
+      amount: "1200",
+    });
+  });
+});
+
+describe("accumulator events through modified functions", () => {
+  const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+  const recipient = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+  const coinType = "0x2::sui::SUI";
+
+  const baseTxWithAccumulator = {
+    digest: "acc-tx-digest",
+    timestampMs: "1742294454878",
+    checkpoint: "313024",
+    transaction: {
+      data: {
+        messageVersion: "v1" as const,
+        transaction: {
+          kind: "ProgrammableTransaction" as const,
+          inputs: [
+            {
+              type: "pure" as const,
+              valueType: "address",
+              value: recipient,
+            },
+          ],
+          transactions: [{ TransferObjects: [["GasCoin"], { Input: 0 }] }],
+        },
+        sender,
+        gasData: {
+          payment: [
+            {
+              objectId: "0x9d49c70b621b618c7918468a7ac286e71cffe6e30c4e4175a4385516b121cb0e",
+              version: "57",
+              digest: "2rPEonJQQUXmAmAegn3fVqBjpKrC5NadAZBetb5wJQm6",
+            },
+          ],
+          owner: sender,
+          price: "1000",
+          budget: "2988000",
+        },
+      },
+    },
+    effects: {
+      messageVersion: "v1" as const,
+      status: { status: "success" as const },
+      executedEpoch: "18",
+      gasUsed: {
+        computationCost: "1000000",
+        storageCost: "988000",
+        storageRebate: "978120",
+        nonRefundableStorageFee: "9880",
+      },
+      transactionDigest: "acc-tx-digest",
+      dependencies: [],
+      accumulatorEvents: [
+        {
+          accumulatorObj: "0xacc",
+          address: recipient,
+          operation: "merge",
+          ty: coinType,
+          value: { integer: "5000000000" },
+        },
+      ],
+    },
+    balanceChanges: [{ owner: { AddressOwner: sender }, coinType, amount: "-6000000000" }],
+  } as unknown as SuiTransactionBlockResponse;
+
+  test("getOperationAmount includes accumulator merge for recipient", () => {
+    const amount = sdk.getOperationAmount(recipient, baseTxWithAccumulator, coinType);
+    expect(amount).toEqual(new BigNumber("5000000000"));
+  });
+
+  test("getOperationAmount returns sender's balance change unaffected", () => {
+    const amount = sdk.getOperationAmount(sender, baseTxWithAccumulator, coinType);
+    expect(amount).toEqual(new BigNumber("6000000000"));
+  });
+
+  test("alpacaGetOperationAmount includes accumulator merge for recipient", () => {
+    const amount = sdk.alpacaGetOperationAmount(recipient, baseTxWithAccumulator, coinType);
+    expect(amount).toEqual(new BigNumber("5000000000"));
+  });
+
+  test("getOperationCoinType detects token from accumulator event", () => {
+    const tokenType = "0x123::test::TOKEN";
+    const tx = {
+      ...baseTxWithAccumulator,
+      balanceChanges: [{ owner: { AddressOwner: sender }, coinType, amount: "-1009880" }],
+      effects: {
+        ...baseTxWithAccumulator.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: recipient,
+            operation: "merge",
+            ty: tokenType,
+            value: { integer: "500000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    expect(sdk.getOperationCoinType(tx)).toBe(tokenType);
+  });
+
+  test("toBlockTransaction includes operations from accumulator events", () => {
+    const result = sdk.toBlockTransaction(baseTxWithAccumulator);
+    expect(result.operations).toHaveLength(2);
+    expect(result.operations[1]).toMatchObject({
+      type: "transfer",
+      address: recipient,
+      amount: 5000000000n,
+      asset: { type: "native" },
+    });
+  });
+});
+
+describe("settlement transaction filtering in operations", () => {
+  const userAddr = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+  const normalTx: SuiTransactionBlockResponse = {
+    ...mockTransaction,
+    digest: "normal-tx",
+    timestampMs: "2000",
+  } as SuiTransactionBlockResponse;
+
+  const settlementTx = {
+    digest: "settlement-tx",
+    timestampMs: "1000",
+    checkpoint: "50",
+    transaction: {
+      data: {
+        messageVersion: "v1" as const,
+        transaction: {
+          kind: "ProgrammableTransaction" as const,
+          inputs: [
+            {
+              type: "object" as const,
+              objectType: "sharedObject" as const,
+              objectId: "0xacc",
+              initialSharedVersion: "1",
+              mutable: true,
+            },
+          ],
+          transactions: [],
+        },
+        sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        gasData: { payment: [], owner: "0x0", price: "0", budget: "0" },
+      },
+    },
+    effects: {
+      messageVersion: "v1" as const,
+      status: { status: "success" as const },
+      executedEpoch: "1",
+      gasUsed: {
+        computationCost: "0",
+        storageCost: "0",
+        storageRebate: "0",
+        nonRefundableStorageFee: "0",
+      },
+      transactionDigest: "settlement-tx",
+      dependencies: [],
+    },
+    balanceChanges: [
+      {
+        owner: { AddressOwner: userAddr },
+        coinType: "0x2::sui::SUI",
+        amount: "500000000",
+      },
+    ],
+  } as unknown as SuiTransactionBlockResponse;
+
+  it("getOperations excludes settlement transactions", async () => {
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.queryTransactionBlocks.mockImplementation(async (params: any) => {
+      const isOut = params.filter && "FromAddress" in params.filter;
+      return {
+        data: isOut ? [normalTx, settlementTx] : [],
+        hasNextPage: false,
+        nextCursor: null,
+      };
+    });
+
+    const ops = await sdkOriginal.getOperations("account-1", userAddr);
+
+    expect(ops.map(o => o.hash)).toEqual(["normal-tx"]);
+  });
+
+  it("getListOperations excludes settlement transactions", async () => {
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.queryTransactionBlocks.mockResolvedValue({
+      data: [normalTx, settlementTx],
+      hasNextPage: false,
+      nextCursor: null,
+    });
+    (mockApi as any).getCheckpoint = jest.fn().mockResolvedValue({ digest: "cp-hash" });
+
+    const apiCall = async <T>(execute: (api: SuiJsonRpcClient) => Promise<T>) => execute(mockApi);
+
+    const page = await sdk.getListOperations(userAddr, "desc", apiCall);
+
+    const hashes = page.items.map(op => op.tx.hash);
+    expect(hashes).not.toContain("settlement-tx");
+    expect(hashes).toContain("normal-tx");
   });
 });

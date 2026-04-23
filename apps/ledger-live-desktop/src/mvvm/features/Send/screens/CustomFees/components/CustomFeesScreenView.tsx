@@ -1,6 +1,6 @@
 import React from "react";
 import { TextInput, Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor";
+import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import type { CustomFeeInputState } from "../hooks/useCustomFeesViewModel";
 import { FeeAssetSelector } from "./FeeAssetSelector";
 
@@ -39,7 +39,7 @@ export function CustomFeesScreenView({
 }: CustomFeesScreenViewProps) {
   return (
     <>
-      <DialogBody className="gap-32 -mt-12">
+      <DialogBody className="gap-32 -mt-12 pt-2">
         {hasCustomAssets && assetOptions.length > 0 && (
           <FeeAssetSelector
             options={assetOptions}

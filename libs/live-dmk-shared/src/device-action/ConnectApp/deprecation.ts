@@ -61,6 +61,6 @@ export function isDeviceDeprecated(
     rule => (data.clearSigningScreenRules = rule),
     "clearSigningScreenVisible",
   );
-  console.log("deprecation data", modelId, data);
+  console.warn("deprecation data", modelId, data);
   return data;
 }

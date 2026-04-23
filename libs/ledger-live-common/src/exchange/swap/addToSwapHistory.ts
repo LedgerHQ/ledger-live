@@ -1,4 +1,4 @@
-import type { Transaction } from "../../generated/types";
+import type { Transaction } from "../../coin-modules/transaction-types";
 import type { ExchangeSwap, ExchangeRate } from "./types";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import type { Account, Operation, TokenAccount, SwapOperation } from "@ledgerhq/types-live";

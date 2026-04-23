@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import i18next from "i18next";
@@ -22,6 +22,13 @@ const mockNavigate = jest.fn();
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
+}));
+
+// Prevent loading ESM-only @braze/web-sdk (pulled in by dynamic content hooks if imported)
+jest.mock("@braze/web-sdk", () => ({
+  getCachedContentCards: jest.fn(() => ({ cards: [] })),
+  logCardDismissal: jest.fn(),
+  logContentCardClick: jest.fn(),
 }));
 
 jest.mock("react-router", () => ({
@@ -83,12 +90,16 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
   }),
 }));
 
-jest.mock("~/renderer/hooks/usePrice", () => ({
-  usePrice: () => ({
-    counterValue: null,
-    counterValueCurrency: { units: [{ name: "USD", code: "USD", magnitude: 2 }] },
-  }),
-}));
+jest.mock("~/renderer/hooks/usePrice", () => {
+  const { getFiatCurrencyByTicker } = jest.requireActual("@ledgerhq/live-common/currencies/index");
+  const usd = getFiatCurrencyByTicker("USD");
+  return {
+    usePrice: () => ({
+      counterValue: null,
+      counterValueCurrency: usd,
+    }),
+  };
+});
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
@@ -124,6 +135,8 @@ describe("PortfolioView", () => {
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
+    shouldDisplayOperationsList: true,
+    shouldDisplayBrazePlacement: false,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],
@@ -277,14 +290,13 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ...AFTER_ONBOARDING_STATE.overriddenFeatureFlags,
-              lwdWallet40: {
-                enabled: true,
-                params: { balanceRefreshRework: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { balanceRefreshRework: true },
+            },
+          }),
         },
       });
 
@@ -303,14 +315,13 @@ describe("PortfolioView", () => {
           accounts: [BTC_ACCOUNT],
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ...AFTER_ONBOARDING_STATE.overriddenFeatureFlags,
-              lwdWallet40: {
-                enabled: true,
-                params: { balanceRefreshRework: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { balanceRefreshRework: true },
+            },
+          }),
         },
       });
 
@@ -391,7 +402,7 @@ describe("PortfolioView", () => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
       });
 
-      expect(screen.getByText("Explore market")).toBeVisible();
+      expect(screen.getByText("Explore the market")).toBeVisible();
     });
 
     it("should render MarketBanner skeleton while loading", () => {
@@ -423,7 +434,7 @@ describe("PortfolioView", () => {
 
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Explore market")).toBeNull();
+      expect(screen.queryByText("Explore the market")).toBeNull();
     });
   });
 
@@ -445,12 +456,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: true,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
         },
       });
 
@@ -462,12 +473,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: false,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: false,
+            },
+          }),
         },
       });
 
@@ -479,12 +490,12 @@ describe("PortfolioView", () => {
         initialState: {
           settings: {
             ...AFTER_ONBOARDING_STATE,
-            overriddenFeatureFlags: {
-              ptxPerpsLiveApp: {
-                enabled: true,
-              },
-            },
           },
+          ...withFlagOverrides({
+            ptxPerpsLiveApp: {
+              enabled: true,
+            },
+          }),
         },
       });
 
@@ -513,20 +524,27 @@ describe("PortfolioView", () => {
         expect(screen.getByText("Bitcoin")).toBeVisible();
       });
 
-      expect(screen.queryByText("Cryptos")).toBeVisible();
+      expect(screen.queryByText("Crypto")).toBeVisible();
       expect(screen.queryByText("Stablecoins")).toBeVisible();
     });
 
     it("should render AssetDistribution when shouldDisplayAssetSection is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
 
-      expect(screen.queryByText("Cryptos")).not.toBeInTheDocument();
+      expect(screen.queryByText("Crypto")).not.toBeInTheDocument();
     });
   });
 
   describe("AddAccount CTA", () => {
-    it("should render AddAccount CTA when user has zero accounts and Wallet 4.0 is enabled", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={true} />);
+    it("should render AddAccount CTA when user has zero accounts, Wallet 4.0 is enabled, and asset section is not displayed", () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={true}
+          shouldDisplayAssetSection={false}
+        />,
+      );
 
       expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
     });
@@ -538,7 +556,27 @@ describe("PortfolioView", () => {
     });
 
     it("should not render AddAccount CTA when Wallet 4.0 is disabled", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={false} />);
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={false}
+          shouldDisplayAssetSection={false}
+        />,
+      );
+
+      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
+    });
+
+    it("should not render AddAccount CTA when asset section is displayed", () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={true}
+          shouldDisplayAssetSection={true}
+        />,
+      );
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
@@ -561,12 +599,12 @@ describe("PortfolioView", () => {
   });
 });
 
-const walletV4TourFlags = {
+const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
     params: { tour: true, mainNavigation: true, marketBanner: true },
   },
-};
+});
 
 describe("Portfolio (Wallet V4 Tour)", () => {
   beforeEach(() => {
@@ -583,8 +621,8 @@ describe("Portfolio (Wallet V4 Tour)", () => {
         settings: {
           ...AFTER_ONBOARDING_STATE,
           hasSeenWalletV4Tour: false,
-          overriddenFeatureFlags: walletV4TourFlags,
         },
+        ...walletV4TourFlagOverrides,
       },
     });
 
@@ -603,8 +641,8 @@ describe("Portfolio (Wallet V4 Tour)", () => {
         settings: {
           ...AFTER_ONBOARDING_STATE,
           hasSeenWalletV4Tour: true,
-          overriddenFeatureFlags: walletV4TourFlags,
         },
+        ...walletV4TourFlagOverrides,
       },
     });
 

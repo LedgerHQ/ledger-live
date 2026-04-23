@@ -41,6 +41,7 @@ export async function verifyStakeOperationDetailsInfo(
   delegation: DelegateType,
   amount: string,
   fees?: string,
+  operationType?: "VOTE",
 ) {
   const currenciesForProvider = [Currency.ATOM, Currency.INJ, Currency.OSMO, Currency.MULTIVERS_X];
   const currenciesForRecipientAsProvider = [Currency.NEAR];
@@ -63,6 +64,7 @@ export async function verifyStakeOperationDetailsInfo(
   ];
   const currenciesForStakeType = [Currency.NEAR];
   const currenciesForLockType = [Currency.CELO];
+  const currenciesForVoteType = [Currency.CELO];
 
   const currency = delegation.account.currency;
   const provider = delegation.provider;
@@ -96,7 +98,10 @@ export async function verifyStakeOperationDetailsInfo(
   if (currenciesForStakeType.includes(currency)) {
     await app.operationDetails.checkTransactionType("STAKE");
   }
-  if (currenciesForLockType.includes(currency)) {
+  if (operationType === "VOTE" && currenciesForVoteType.includes(currency)) {
+    await app.operationDetails.checkTransactionType("VOTE");
+    await app.operationDetails.checkCeloValidatorGroup(provider);
+  } else if (currenciesForLockType.includes(currency)) {
     await app.operationDetails.checkTransactionType("LOCK");
   }
 }

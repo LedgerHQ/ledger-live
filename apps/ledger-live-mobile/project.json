@@ -1,25 +1,62 @@
 {
+  "name": "live-mobile",
   "targets": {
     "lint": {
-      "outputs": [
-        "{projectRoot}/lint.json"
-      ],
       "inputs": [
         "default",
+        "^default",
+        {
+          "env": "CI_OS"
+        }
+      ]
+    },
+    "lint:ci": {
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "env": "CI_OS"
+        }
+      ]
+    },
+    "lint:i18n": {
+      "inputs": [
+        "default",
+        "^default",
         {
           "env": "CI_OS"
         }
       ]
     },
     "e2e:ci": {
+      "dependsOn": [
+        "^build",
+        "@ledgerhq/dummy-live-app:build",
+        "@ledgerhq/dummy-wallet-app:build",
+        "@ledgerhq/dummy-ptx-app:build"
+      ],
+      "cache": true,
       "outputs": [
-        "{projectRoot}/artifacts/**"
+        "{projectRoot}/artifacts/**",
+        "{workspaceRoot}/e2e/mobile/artifacts/**",
+        "{projectRoot}/main.jsbundle",
+        "{projectRoot}/main.jsbundle.minified",
+        "{projectRoot}/build/**",
+        "{projectRoot}/ios/build/**",
+        "{projectRoot}/android/app/build/**"
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
-        "sharedEnv"
+        "sharedEnv",
+        {
+          "env": "RUNNER_OS"
+        }
       ]
+    },
+    "build": {
+      "executor": "nx:noop"
     },
     "android:apk": {
       "outputs": [
@@ -28,6 +65,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -38,6 +76,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -48,6 +87,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]

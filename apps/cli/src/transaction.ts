@@ -9,7 +9,10 @@ import type {
   AccountLikeArray,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
+import {
+  getRegisteredFamilies,
+  loadSetupForFamily,
+} from "@ledgerhq/live-common/coin-modules/registry";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -92,7 +95,7 @@ export const inferTransactionsOpts = uniqBy(
     },
   ].concat(
     flatMap(
-      Object.values(perFamily),
+      getRegisteredFamilies().map(family => loadSetupForFamily(family).cliTools),
       (m: unknown) =>
         (m && typeof m === "object" && "options" in m ? (m as any).options : []) || [],
     ),
@@ -104,7 +107,7 @@ export async function inferTransactions(
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = getAccountBridge(mainAccount, null);
-  const specific = perFamily[mainAccount.currency.family as keyof typeof perFamily];
+  const specific = loadSetupForFamily(mainAccount.currency.family).cliTools;
 
   const inferAccounts: (account: Account, opts: Record<string, unknown>) => AccountLikeArray =
     (specific && "inferAccounts" in specific && (specific.inferAccounts as any)) ||

@@ -306,7 +306,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       }
     },
     // Disabling exhaustive-deps because adding handleSellTransaction and handleSwapTransaction would make it change on every render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [
       swapId,
       toAccount,
@@ -330,12 +330,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   useEffect(() => {
     if (broadcastRef.current || !signedOperation) return;
-    broadcast(signedOperation)
-      .then(onBroadcastSuccess, error => {
-        setError(error);
-      })
-      .finally(() => (broadcastRef.current = true));
-  }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef, onCancel, onClose]);
+    // Guard must be set synchronously before the async call to prevent
+    // a second broadcast if deps change while the first is still in progress.
+    broadcastRef.current = true;
+    broadcast(signedOperation).then(onBroadcastSuccess, setError);
+  }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
 
   return (
     <Root>

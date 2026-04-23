@@ -2,7 +2,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 
 describe("buildSubAccounts", () => {
   it("builds sub accounts from asset operations and balances, preserving operations order", async () => {

@@ -121,6 +121,8 @@ export function usePortfolioBalance(options: UsePortfolioBalanceOptions = {}) {
     syncPhase,
     isBalanceLoading,
     isColdStart,
+    /** True while countervalues are being fetched within a user-triggered sync. */
+    isCvPending: syncPhase === "syncing" && syncSources.cvPending,
     allAccounts,
     listOfErrorAccountNames,
     areAllAccountsUpToDate,

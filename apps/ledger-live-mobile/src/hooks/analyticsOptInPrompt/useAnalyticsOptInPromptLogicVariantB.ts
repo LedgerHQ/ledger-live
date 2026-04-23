@@ -1,10 +1,16 @@
 import { useDispatch } from "~/context/hooks";
-import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
+import {
+  setAnalytics,
+  setAnalyticsConsentInfo,
+  setPersonalizedRecommendations,
+} from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 
 type Props = {
   entryPoint: EntryPoint;
@@ -13,6 +19,8 @@ type Props = {
 const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
   const variant = ABTestingVariants.variantB;
   const dispatch = useDispatch();
+  const analyticsOptInFeature = useFeature("analyticsOptIn");
+  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
   const { continueOnboarding, flow, shouldWeTrack, navigation, clickOnLearnMore } =
     useAnalyticsOptInPromptLogic({ entryPoint, variant });
 
@@ -25,8 +33,18 @@ const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
     });
   };
 
+  const updateAnalyticsConsentInfo = () => {
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: policyVersion,
+      }),
+    );
+  };
+
   const clickOnRefuseAnalytics = () => {
     dispatch(setAnalytics(false));
+    updateAnalyticsConsentInfo();
     goToPersonalizedRecommendationsStep();
     track(
       "button_clicked",
@@ -41,6 +59,7 @@ const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
   };
   const clickOnAllowAnalytics = () => {
     dispatch(setAnalytics(true));
+    updateAnalyticsConsentInfo();
     goToPersonalizedRecommendationsStep();
     track(
       "button_clicked",

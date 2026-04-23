@@ -3,7 +3,6 @@ min_version = '2026.3.1'
 [settings]
 experimental = true
 lockfile = true
-
 # Download the pre-compiled binaries
 ruby.compile = false
 
@@ -16,6 +15,10 @@ cocoapods = "mise-plugins/mise-cocoapods"
 node = '24.14.0'
 pnpm = '10.24.0'
 npm = '10.3.0'
+bun = '1.3.11'
+gitleaks = '8.30.1'
+hk = '1.40.0'
+pkl = '0.31.1'
 
 
 # Mobile dev ecosystem, this is only done on macos and linux. 
@@ -40,9 +43,24 @@ PROJECT_NAME = "{{ config_root | basename }}"
 BIN_PATH = "{{ config_root }}/node_modules/.bin"
 # NODE_ENV = "{{ env.NODE_ENV | default(value='development') }}"
 
+# Hooks
+HK_MISE = 1
+
+[hooks]
+# hk + Nx cache config: local only (skip in CI; CI uses setup-caches / configure-nx-remote-cache-profile).
+postinstall = [
+  """
+{% if env.CI is defined %}
+  # skip for CI
+{% else %}
+  hk install --mise
+  pnpm nx:write-cache-config
+{% endif %}
+""",
+]
 
 [task_config]
-includes = [".mise/tasks/nx.toml"]
+includes = [".mise/tasks/pnpm.toml", ".mise/tasks/nx.toml", ".mise/tasks"]
 
 [tasks.info]
 description = "Display installed tools, versions, and project name"
@@ -69,27 +87,17 @@ run = '''
 
 [tasks.setup]
 description = "Clean project and install all dependencies"
+alias = "s"
 run = [
   "mise install",
   "mise reshim",
   { task = "pnpm:install" },
   "pnpm build:llm:deps",
 ]
-alias = "s"
 depends = ["clean"]
 
 [tasks.clean]
 description = "Removes build artifacts, untracked files, and dependencies (ignored files are preserved)"
-depends = ['pnpm:clean', "pod:clean"]
-wait_for = []
+alias = "c"
+depends = ['pnpm:clean']
 run = "git clean -fd"
-
-[tasks."pnpm:install"]
-description = 'Installs dependencies with pnpm'
-run = 'pnpm install'
-sources = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml']
-outputs = ['node_modules/.pnpm/lock.yaml']
-
-[tasks."pnpm:clean"]
-description = "Removes packages installed with pnpm"
-run = "pnpm store prune"

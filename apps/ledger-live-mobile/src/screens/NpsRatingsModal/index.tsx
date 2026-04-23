@@ -11,7 +11,7 @@ import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { trackingEnabledSelector } from "~/reducers/settings";
-import getOrCreateUser from "~/user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 
 const eventNameByPage: Record<string, string> = {
   form: "NPS Step 1 Rating",
@@ -30,24 +30,14 @@ const RatingsModal = () => {
 
   useEffect(() => {
     initRatingsData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [step, setStep] = useState(ratingsInitialStep);
 
-  const [equipmentId, setEquipmentId] = useState<string | null>(null);
-
   const trackingEnabled = useSelector(trackingEnabledSelector);
-
-  useEffect(() => {
-    if (trackingEnabled) {
-      getOrCreateUser().then(({ user }) => {
-        setEquipmentId(user.id);
-      });
-    } else {
-      setEquipmentId(null);
-    }
-  }, [trackingEnabled]);
+  const userId = useSelector(userIdSelector);
+  const equipmentId = trackingEnabled ? userId.exportUserIdForUserLogs() : null;
 
   const sharedHeight = useSharedValue<DimensionValue>(0);
   const onLayout = useCallback(

@@ -48,21 +48,37 @@ export type TransportModule = {
   discovery?: Discovery;
 };
 
-const modules: TransportModule[] = [];
+declare global {
+  interface GlobalThis {
+    __ledgerTransportModules?: TransportModule[];
+  }
+}
+
+/**
+ * Uses globalThis to ensure a single shared registry across all module instances,
+ * which is critical when modules are lazy-loaded and may resolve to separate copies.
+ */
+function getModules(): TransportModule[] {
+  if (!globalThis.__ledgerTransportModules) {
+    globalThis.__ledgerTransportModules = [];
+  }
+  return globalThis.__ledgerTransportModules;
+}
 
 export const registerTransportModule = (module: TransportModule): void => {
-  modules.push(module);
+  getModules().push(module);
 };
 
 export const unregisterTransportModule = (moduleId: string): void => {
-  modules.splice(
-    modules.findIndex(m => m.id === moduleId),
-    1,
-  );
+  const modules = getModules();
+  const index = modules.findIndex(m => m.id === moduleId);
+  if (index !== -1) {
+    modules.splice(index, 1);
+  }
 };
 
 export const unregisterAllTransportModules = (): void => {
-  modules.length = 0;
+  getModules().length = 0;
 };
 
 export const discoverDevices = (
@@ -70,6 +86,7 @@ export const discoverDevices = (
 ): Discovery => {
   const all: Discovery[] = [];
 
+  const modules = getModules();
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
 
@@ -122,6 +139,7 @@ export const open = (
   // The first registered Transport (TransportModule) accepting the given device will be returned.
   // The open is not awaited, the check on the device is done synchronously.
   // A TransportModule can check the prefix of the device id to guess if it should use USB or not on LLM for ex.
+  const modules = getModules();
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
     const p = m.open(deviceId, options?.openTimeoutMs, context, options?.matchDeviceByName);
@@ -176,6 +194,7 @@ export const close = (
   trace({ type: LOG_TYPE, message: "Trying to close transport", context });
 
   // Tries to call close on the registered TransportModule implementation first
+  const modules = getModules();
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
     const p = m.close && m.close(transport, deviceId);
@@ -195,6 +214,7 @@ export const close = (
 };
 
 export const disconnect = (deviceId: string): Promise<void> => {
+  const modules = getModules();
   for (let i = 0; i < modules.length; i++) {
     const dis = modules[i].disconnect;
     const p = dis(deviceId);

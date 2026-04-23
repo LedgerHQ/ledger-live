@@ -2,7 +2,6 @@ import { stringify } from "querystring";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -24,7 +23,6 @@ import type {
   Transaction,
   TrongridTxInfo,
   TronResource,
-  TronTransactionInfo,
   UnDelegateResourceTransactionData,
   UnFreezeTransactionData,
   WithdrawExpireUnfreezeTransactionData,
@@ -40,7 +38,6 @@ import {
   AccountTronAPI,
   Block,
   BlockWithTransactionsAPI,
-  isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
   TransactionInfoByBlockNumAPI,
@@ -51,6 +48,16 @@ import {
 import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
+
+function isValidNativeTx(tx: TransactionTronAPI): boolean {
+  // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded.
+  // Transactions with internal_transactions are valid and should be included.
+  return !tx.tx_id;
+}
+
+function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
+  return tx.type === "TriggerSmartContract" && !tx.hasFailed;
+}
 
 export async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
   const { data } = await network<U, T>({
@@ -416,18 +423,6 @@ function toBlock(data: BlockWithTransactionsAPI): Block {
   return ret;
 }
 
-export async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
-  const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
-    `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
-  );
-  return {
-    fee,
-    blockNumber,
-    withdraw_amount,
-    unfreeze_amount,
-  };
-}
-
 export async function getTransactionInfoByBlockNum(
   blockNum: number,
 ): Promise<TransactionInfoByBlockNumAPI[]> {
@@ -456,40 +451,26 @@ async function getAllTransactions<T>(
   return all;
 }
 
-const getTransactions =
-  (cacheTransactionInfoById: Record<string, TronTransactionInfo>) =>
-  async (
-    url: string,
-  ): Promise<{
-    results: Array<
-      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
-    >;
-    nextUrl?: string;
-  }> => {
-    const transactions =
-      await fetchWithBaseUrl<
-        TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
-      >(url);
-    const nextUrl = transactions.meta.links?.next?.replace(
-      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-      getBaseApiUrl(),
-    );
-    const results = await promiseAllBatched(3, transactions.data || [], async tx => {
-      if (isMalformedTransactionTronAPI(tx)) {
-        return tx;
-      }
-      const txID = tx.txID;
-
-      const detail = cacheTransactionInfoById[txID] || (await fetchTronTxDetail(txID));
-      cacheTransactionInfoById[txID] = detail;
-      return { ...tx, detail };
-    });
-
-    return {
-      results,
-      nextUrl,
-    };
+const getTransactions = async (
+  url: string,
+): Promise<{
+  results: Array<TransactionTronAPI | MalformedTransactionTronAPI>;
+  nextUrl?: string;
+}> => {
+  const transactions =
+    await fetchWithBaseUrl<
+      TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
+    >(url);
+  const nextUrl = transactions.meta.links?.next?.replace(
+    /https:\/\/api(\.[a-z]*)?.trongrid.io/,
+    getBaseApiUrl(),
+  );
+  const results = transactions.data ?? [];
+  return {
+    results,
+    nextUrl,
   };
+};
 
 const getTrc20 = async (
   url: string,
@@ -527,41 +508,90 @@ export const defaultFetchParams: FetchParams = {
   order: "desc",
 } as const;
 
+export type TxPageResult = {
+  txs: TrongridTxInfo[];
+  hasNextPage: boolean;
+};
+
+export type FetchTxsPageParams = {
+  limit: number;
+  minTimestamp: number;
+  maxTimestamp?: number;
+  order: "asc" | "desc";
+};
+
+export type FetchTxsPageResult = {
+  nativeTxs: TxPageResult;
+  trc20Txs: TxPageResult;
+};
+
+async function fetchSinglePage<T>(
+  url: string,
+  getTxs: (url: string) => Promise<{ results: Array<T>; nextUrl?: string }>,
+): Promise<{ results: Array<T>; hasNextPage: boolean }> {
+  const { results, nextUrl } = await getTxs(url);
+  return { results, hasNextPage: !!nextUrl };
+}
+
+export async function fetchTronAccountTxsPage(
+  addr: string,
+  params: FetchTxsPageParams,
+): Promise<FetchTxsPageResult> {
+  const maxTimestampParam =
+    params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
+  const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
+
+  const [nativeResult, trc20Result] = await Promise.all([
+    fetchSinglePage<TransactionTronAPI | MalformedTransactionTronAPI>(
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
+      getTransactions,
+    ),
+    fetchSinglePage<Trc20API>(
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
+      getTrc20,
+    ),
+  ]);
+
+  const nativeTxsFormatted = await Promise.all(
+    nativeResult.results
+      .filter(isTransactionTronAPI)
+      .filter(isValidNativeTx)
+      .map(tx => formatTrongridTxResponse(tx, accountNamesCache)),
+  );
+
+  const trc20TxsFormatted = compact(trc20Result.results.map(formatTrongridTrc20TxResponse));
+  const trc20TxIds = new Set(trc20TxsFormatted.map(t => t.txID));
+  const nativeDeduped = compact(nativeTxsFormatted)
+    .filter(tx => !trc20TxIds.has(tx.txID))
+    .filter(tx => !isSuccessfulTriggerSmartContract(tx));
+
+  return {
+    nativeTxs: { txs: nativeDeduped, hasNextPage: nativeResult.hasNextPage },
+    trc20Txs: { txs: trc20TxsFormatted, hasNextPage: trc20Result.hasNextPage },
+  };
+}
+
 export async function fetchTronAccountTxs(
   addr: string,
   shouldFetchMoreTxs: FetchTxsStopPredicate,
-  cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
   const adjustedLimitPerCall = params.hintGlobalLimit
     ? Math.min(params.limitPerCall, params.hintGlobalLimit)
     : params.limitPerCall;
   const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
-  const nativeTxs = (
-    await getAllTransactions<
-      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
-    >(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
-      shouldFetchMoreTxs,
-      getTransactions(cacheTransactionInfoById),
+  const nativeTxs = await Promise.all(
+    (
+      await getAllTransactions<TransactionTronAPI | MalformedTransactionTronAPI>(
+        `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
+        shouldFetchMoreTxs,
+        getTransactions,
+      )
     )
-  )
-    .filter(isTransactionTronAPI)
-    .filter(tx => {
-      // custom smart contract tx has internal txs
-      const hasInternalTxs =
-        tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
-      // and also a duplicated malformed tx that we have to ignore
-      const isDuplicated = tx.tx_id;
-
-      if (hasInternalTxs) {
-        // log once
-        log("tron-error", `unsupported transaction ${tx.txID}`);
-      }
-
-      return !isDuplicated && !hasInternalTxs;
-    })
-    .map(tx => formatTrongridTxResponse(tx));
+      .filter(isTransactionTronAPI)
+      .filter(isValidNativeTx)
+      .map(tx => formatTrongridTxResponse(tx, accountNamesCache)),
+  );
 
   // we need to fetch and filter trc20 transactions from another endpoint
   // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
@@ -639,12 +669,8 @@ export async function fetchTronAccountTxs(
     (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse),
   );
   const trc20TxIds = new Set(trc20Txs.map(t => t.txID));
-  const isSuccessfulTriggerSmartContract = (tx: TrongridTxInfo) =>
-    tx.type === "TriggerSmartContract" && !tx.hasFailed;
   const nativeDeduped = compact(nativeTxs)
-    // remove any trc20 transaction from native
     .filter(tx => !trc20TxIds.has(tx.txID))
-    // remove any successful TriggerSmartContract from native; successful ones must come from TRC20
     .filter(tx => !isSuccessfulTriggerSmartContract(tx));
 
   const txInfos: TrongridTxInfo[] = nativeDeduped
@@ -712,15 +738,8 @@ export const validateAddress = async (address: string): Promise<boolean> => {
 };
 
 // cache for account names (name is unchanged over time)
-const accountNamesCache = makeLRUCache(
+export const accountNamesCache = makeLRUCache(
   async (addr: string): Promise<string | null | undefined> => getAccountName(addr),
-  (addr: string) => addr,
-  hours(3, 300),
-);
-
-// cache for super representative brokerages (brokerage is unchanged over time)
-const srBrokeragesCache = makeLRUCache(
-  async (addr: string): Promise<number> => getBrokerage(addr),
   (addr: string) => addr,
   hours(3, 300),
 );
@@ -733,13 +752,6 @@ export const getAccountName = async (addr: string): Promise<string | null | unde
   accountNamesCache.hydrate(addr, accountName); // put it in cache
 
   return accountName;
-};
-
-export const getBrokerage = async (addr: string): Promise<number> => {
-  const { brokerage } = await fetch(`/wallet/getBrokerage?address=${encodeURIComponent(addr)}`);
-  srBrokeragesCache.hydrate(addr, brokerage); // put it in cache
-
-  return brokerage;
 };
 
 const superRepresentativesCache = makeLRUCache(
@@ -765,21 +777,14 @@ export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
 };
 
 const fetchSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
-  const result = await fetch(`/wallet/listwitnesses`);
-  const sorted = result.witnesses.sort((a: any, b: any) => b.voteCount - a.voteCount);
-  const superRepresentatives = await promiseAllBatched(3, sorted, async (w: any) => {
-    const encodedAddress = encode58Check(w.address);
-    const accountName = await accountNamesCache(encodedAddress);
-    const brokerage = await srBrokeragesCache(encodedAddress);
-    return {
-      ...w,
-      address: encodedAddress,
-      name: accountName,
-      brokerage,
-      voteCount: w.voteCount || 0,
-      isJobs: w.isJobs || false,
-    };
-  });
+  const result = await fetch<{ witnesses: SuperRepresentative[] }>(`/wallet/listwitnesses`);
+  const sorted = result.witnesses.sort((a, b) => b.voteCount - a.voteCount);
+  const superRepresentatives = sorted.map(w => ({
+    ...w,
+    address: encode58Check(w.address),
+    voteCount: w.voteCount || 0,
+    isJobs: w.isJobs || false,
+  }));
   hydrateSuperRepresentatives(superRepresentatives); // put it in cache
 
   return superRepresentatives;

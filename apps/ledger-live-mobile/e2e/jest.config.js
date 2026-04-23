@@ -22,13 +22,21 @@ const jestAllure2ReporterOptions = {
   },
 };
 
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "@mysten+ledgerjs-hw-app-sui"];
+
+const detoxAllure2AdapterOptions = {
+  deviceLogs: false,
+  deviceScreenshots: true,
+  deviceVideos: false,
+  deviceViewHierarchy: false,
+  onError: "warn",
+};
 
 module.exports = async () => ({
   rootDir: "..",
   maxWorkers: process.env.JEST_MAX_WORKERS ? parseInt(process.env.JEST_MAX_WORKERS, 10) : 1,
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
+    "^.+\\.m?jsx?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
       {
@@ -63,7 +71,7 @@ module.exports = async () => ({
     eventListeners: [
       "jest-metadata/environment-listener",
       "jest-allure2-reporter/environment-listener",
-      "detox-allure2-adapter",
+      ["detox-allure2-adapter", detoxAllure2AdapterOptions],
     ],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],

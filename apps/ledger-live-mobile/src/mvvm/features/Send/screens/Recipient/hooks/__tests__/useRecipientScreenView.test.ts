@@ -8,7 +8,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { createMockAccount } from "./accounts";
 
@@ -16,7 +16,7 @@ jest.mock("~/context/hooks");
 jest.mock("../useAddressValidation");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);

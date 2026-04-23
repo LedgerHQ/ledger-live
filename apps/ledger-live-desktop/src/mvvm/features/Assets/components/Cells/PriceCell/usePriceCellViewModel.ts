@@ -16,14 +16,14 @@ export function usePriceCellViewModel(currency: Currency, placeholderPrice?: num
   const { counterValue, counterValueCurrency } = usePrice(currency);
   const unit = counterValueCurrency.units[0];
 
+  if (counterValue) {
+    return { formattedPrice: formatPrice(unit, counterValue) };
+  }
+
   if (placeholderPrice != null) {
     const value = new BigNumber(placeholderPrice).times(10 ** unit.magnitude);
     return { formattedPrice: formatPrice(unit, value) };
   }
 
-  if (!counterValue) {
-    return { formattedPrice: "-" };
-  }
-
-  return { formattedPrice: formatPrice(unit, counterValue) };
+  return { formattedPrice: "-" };
 }

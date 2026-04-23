@@ -12,7 +12,7 @@ const BASE_DEEPLINK = "ledgerlive://";
 
 export const currencyParam = "?currency=";
 
-export const isWallet40 = process.env.E2E_ENABLE_WALLET40 === "1";
+export const isWallet40 = process.env.E2E_ENABLE_WALLET40 !== "0";
 
 /**
  * Waits for a specified amount of time
@@ -66,6 +66,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*crypto-assets-service.api.ledger.com.*",
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
+    ".*optimism.*",
   ];
 
   return `\\("${patterns.join('","')}"\\)`;
@@ -135,6 +136,19 @@ export async function takeAppScreenshot(screenshotName: string) {
     }
   } catch (error) {
     log.error(`Error taking app screenshot: ${sanitizeError(error)}`);
+  }
+}
+
+export async function captureNativeViewHierarchy(
+  label = "Native View Hierarchy at failure",
+): Promise<void> {
+  try {
+    const xml = await device.generateViewHierarchyXml();
+    if (xml) {
+      await allure.attachment(label, xml, "text/xml");
+    }
+  } catch (error) {
+    log.warn(`Could not capture native view hierarchy: ${sanitizeError(error)}`);
   }
 }
 

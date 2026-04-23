@@ -7,7 +7,7 @@ let coinConfig: PolkadotCoinConfig | undefined;
 let api: ApiPromise | undefined;
 
 export default async function (currency?: CryptoCurrency) {
-  const config = polkadotCoinConfig.getCoinConfig(currency);
+  const config = polkadotCoinConfig.getCoinConfig(currency?.id);
   // Need to constantly check if a new config is setted
   if (!api || coinConfig !== config) {
     coinConfig = config;

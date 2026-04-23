@@ -49,7 +49,7 @@ const ReceiveSecurityModal = ({
   const sharedHeight = useSharedValue(0);
   const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     sharedHeight.value = withTiming(layout.height, { duration: 200 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const animatedStyle = useAnimatedStyle(
     () => ({

@@ -5,7 +5,7 @@ import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
 import { delay } from "../promise";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../generated/types";
+import type { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
@@ -28,6 +28,7 @@ export type Result<T extends Transaction = Transaction> = {
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
   setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => void;
+  updateAccount: (account: AccountLike) => void;
   status: TransactionStatus;
   bridgeError: Error | null | undefined;
   bridgePending: boolean;
@@ -65,6 +66,10 @@ type Actions<T extends Transaction = Transaction> =
     }
   | {
       type: "onSync";
+    }
+  | {
+      type: "updateAccount";
+      account: AccountLike;
     };
 
 type Reducer<T extends Transaction = Transaction> = (
@@ -143,7 +148,9 @@ const reducer = <T extends Transaction = Transaction>(
         const bridge = getAccountBridge(account, parentAccount) as AccountBridge<T>;
         const subAccountId = account.type !== "Account" && account.id;
         let t = bridge.createTransaction(mainAccount);
+
         if (
+          state.transaction?.family === t.family &&
           // @ts-expect-error transaction.mode is not available on all union types. type guard is required
           state.transaction?.mode &&
           // @ts-expect-error transaction.mode is not available on all union types. type guard is required
@@ -209,6 +216,14 @@ const reducer = <T extends Transaction = Transaction>(
     case "onSync":
       return { ...state, syncing: false, synced: true };
 
+    // Updates account data (e.g. after a coin-specific side-sync) without
+    // resetting the in-progress transaction.  Guards on id equality so this
+    // can never silently switch to a different account.
+    case "updateAccount":
+      if (state.account?.id !== action.account.id) return state;
+      if (state.account === action.account) return state;
+      return { ...state, account: action.account };
+
     default:
       return state;
   }
@@ -242,6 +257,11 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
         account,
         parentAccount,
       }),
+    [dispatch],
+  );
+
+  const updateAccount = useCallback(
+    (account: AccountLike) => dispatch({ type: "updateAccount", account }),
     [dispatch],
   );
 
@@ -385,6 +405,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     account,
     parentAccount,
     setAccount,
+    updateAccount,
     bridgeError,
     bridgePending: bridgePending && (shouldSync ? !synced : true),
   };

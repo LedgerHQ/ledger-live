@@ -10,7 +10,7 @@ import Animated from "react-native-reanimated";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
 const StyledFlatList = baseStyled.FlatList<BaseStyledProps>``;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const AnimatedFlatList: any = Animated.createAnimatedComponent(StyledFlatList);
 
 type ScrollListContainerProps = BaseStyledProps &

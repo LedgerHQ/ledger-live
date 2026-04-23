@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../../account";
@@ -15,15 +15,20 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getGasLimit } from "@ledgerhq/coin-evm/utils";
+import { getGasLimit, isEthAddress } from "@ledgerhq/coin-evm/utils";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "../../../config";
 import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
-const defaultGetFees = (_a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
+const defaultGetFees = (_a, t: any) => {
+  const gasLimit = getGasLimit(t);
+  if (t.type === 2 && t.maxFeePerGas) {
+    return t.maxFeePerGas.times(gasLimit);
+  }
+  return (t.gasPrice || new BigNumber(0)).times(gasLimit);
+};
 
 const createTransaction = (): Transaction => ({
   family: "evm",
@@ -94,6 +99,10 @@ const getTransactionStatus = (account, transaction) => {
   }
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
+  } else if (!isEthAddress(transaction.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   return Promise.resolve({
@@ -106,21 +115,38 @@ const getTransactionStatus = (account, transaction) => {
 };
 
 const prepareTransaction = async (_a, t) => {
-  const typedTransaction = getTypedTransaction(t, {
-    gasPrice: new BigNumber(50),
-    maxFeePerGas: new BigNumber(50),
-    maxPriorityFeePerGas: new BigNumber(50),
-    nextBaseFee: new BigNumber(50),
+  if (t.feesStrategy === "custom") {
+    return t;
+  }
+
+  let gasPrice: BigNumber;
+  switch (t.feesStrategy) {
+    case "slow":
+      gasPrice = new BigNumber(20000000000);
+      break;
+    case "fast":
+      gasPrice = new BigNumber(50000000000);
+      break;
+    default:
+      gasPrice = new BigNumber(30000000000);
+      break;
+  }
+  const nextBaseFee = gasPrice;
+  const maxPriorityFeePerGas = gasPrice.div(2);
+  return getTypedTransaction(t, {
+    gasPrice,
+    maxFeePerGas: nextBaseFee.plus(maxPriorityFeePerGas),
+    maxPriorityFeePerGas,
+    nextBaseFee,
   });
-  return typedTransaction;
 };
 
 let isConfigLoaded = false;
 const loadCoinConfig = () => {
   if (!isConfigLoaded) {
-    setCoinConfig((currency: CryptoCurrency) => {
+    setCoinConfig(currencyId => {
       isConfigLoaded = true;
-      return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
+      return { info: getCurrencyConfiguration<EvmConfigInfo>(currencyId) };
     });
   }
 };

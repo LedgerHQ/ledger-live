@@ -1,14 +1,17 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
+  AlpacaApi,
   Block,
+  CraftedTransaction,
   Cursor,
   Page,
-  Validator,
   Reward,
   Stake,
-  CraftedTransaction,
   TransactionIntent,
-  AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+  Validator,
+  BalanceOptions,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type AlgorandCoinConfig } from "../config";
 import {
   broadcast,
@@ -18,8 +21,8 @@ import {
   getBalance,
   getBlockInfo,
   lastBlock,
-  validateIntent,
   listOperations,
+  validateIntent,
 } from "../logic";
 import type { AlgorandMemo } from "../types";
 import { validateAddress } from "../validateAddress";
@@ -32,7 +35,8 @@ export function createApi(config: AlgorandCoinConfig): AlpacaApi<AlgorandMemo> {
     combine,
     craftTransaction: craftApiTransaction,
     estimateFees: (_transactionIntent: TransactionIntent<AlgorandMemo>) => estimateFees(),
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     getBlockInfo,
     lastBlock,
     listOperations,
@@ -61,5 +65,6 @@ export function createApi(config: AlgorandCoinConfig): AlpacaApi<AlgorandMemo> {
       throw new Error("craftRawTransaction is not supported for Algorand");
     },
     validateAddress,
+    craftTransactionData,
   };
 }

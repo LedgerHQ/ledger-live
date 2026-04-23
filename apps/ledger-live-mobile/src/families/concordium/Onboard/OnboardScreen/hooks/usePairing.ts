@@ -35,10 +35,17 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
     setPairStatus(PairStatus.CONNECTING);
     setWalletConnectUri(null);
 
-    startPairingInternal();
+    void startPairingInternal();
 
-    function startPairingInternal() {
-      const bridge = getConcordiumBridge(currency);
+    async function startPairingInternal() {
+      let bridge;
+      try {
+        bridge = await getConcordiumBridge(currency);
+      } catch {
+        unsubscribe();
+        setPairStatus(PairStatus.ERROR);
+        return;
+      }
       subscriptionRef.current = bridge.pairWalletConnect(currency.id, "").subscribe({
         next: (data: ConcordiumPairingProgress) => {
           switch (data.status) {
@@ -72,7 +79,7 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
             });
             setPairStatus(PairStatus.CONNECTING);
             setWalletConnectUri(null);
-            startPairingInternal();
+            void startPairingInternal();
             return;
           }
           unsubscribe();

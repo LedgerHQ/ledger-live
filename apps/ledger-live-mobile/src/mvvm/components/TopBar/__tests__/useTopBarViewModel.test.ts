@@ -30,9 +30,9 @@ const mockNavigation = { navigate: mockNavigate };
 
 const withWeb3Hub = (enabled: boolean) => (state: State) => ({
   ...state,
-  settings: {
-    ...state.settings,
-    overriddenFeatureFlags: {
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: {
       web3hub: { enabled },
     },
   },
@@ -115,6 +115,16 @@ describe("useTopBarViewModel", () => {
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.settings.name);
+  });
+
+  it("should call navigate with expected params when onTransactionHistoryPress is invoked", () => {
+    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+
+    act(() => {
+      result.current.onTransactionHistoryPress();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
   });
 
   describe("sync drawer", () => {

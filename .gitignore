@@ -8,7 +8,7 @@ node_modules
 /temp
 .idea
 .eslintcache
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 rce
 .env
 coverage
@@ -26,3 +26,5 @@ libs/ui/packages/react/rsbuild.config.js.map
 
 .nx/cache
 .nx/workspace-data
+.nx/key
+nx.cache-config.json

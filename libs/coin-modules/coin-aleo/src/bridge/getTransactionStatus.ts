@@ -10,16 +10,94 @@ import { BigNumber } from "bignumber.js";
 import type {
   AleoAccount,
   Transaction as AleoTransaction,
+  TransactionPrivate,
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
   TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
-import { calculateAmount, getAvailableBalance, isSelfTransferTransaction } from "../logic/utils";
+import {
+  calculateAmount,
+  getAvailableBalance,
+  getRecordByCommitment,
+  isPrivateTransaction,
+  isSelfTransferTransaction,
+} from "../logic/utils";
 import aleoCoinConfig from "../config";
+import {
+  AleoAmountRecordRequired,
+  AleoFeeRecordInsufficientBalance,
+  AleoFeeRecordRequired,
+  AleoTwoRecordsRequired,
+} from "../errors";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
+
+function getValidRecord({
+  account,
+  commitment,
+}: {
+  account: AleoAccount;
+  commitment: TransactionPrivate["properties"]["amountRecordCommitment"];
+}) {
+  if (!commitment) {
+    return null;
+  }
+
+  return getRecordByCommitment({ account, commitment });
+}
+
+/**
+ * Validation rules with fee sponsorship:
+ *  - amount record must be valid and have sufficient balance to cover amount
+ *  - fee record can be ignored as fees are not paid by the user
+ * Validation rules without fee sponsorship:
+ *  - amount record must be valid and have sufficient balance to cover amount
+ *  - fee record must be valid, different from the amount record and have sufficient balance to cover fees
+ */
+function validatePrivateTransaction({
+  account,
+  transaction,
+  amount,
+  estimatedFees,
+  isFeeSponsored,
+}: {
+  account: AleoAccount;
+  transaction: TransactionPrivate;
+  amount: BigNumber;
+  estimatedFees: BigNumber;
+  isFeeSponsored: boolean;
+}): Errors {
+  const errors: Errors = {};
+  const { amountRecordCommitment, feeRecordCommitment } = transaction.properties;
+  const amountRecord = getValidRecord({ account, commitment: amountRecordCommitment });
+
+  if (!amountRecord) {
+    errors.amountRecord = new AleoAmountRecordRequired();
+  } else if (amount.gt(new BigNumber(amountRecord.microcredits))) {
+    errors.amount = new NotEnoughBalance();
+  }
+
+  if (isFeeSponsored) {
+    return errors;
+  }
+
+  const feeRecord = getValidRecord({ account, commitment: feeRecordCommitment });
+  const availableRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(record =>
+    new BigNumber(record.microcredits).isGreaterThan(0),
+  );
+
+  if (availableRecords.length <= 1) {
+    errors.feeRecord = new AleoTwoRecordsRequired();
+  } else if (!feeRecord || feeRecord.commitment === amountRecordCommitment) {
+    errors.feeRecord = new AleoFeeRecordRequired();
+  } else if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
+    errors.feeRecord = new AleoFeeRecordInsufficientBalance();
+  }
+
+  return errors;
+}
 
 async function validateRecipient({
   account,
@@ -61,7 +139,7 @@ async function handleTransferTransaction({
   const warnings: Warnings = {};
 
   const availableBalance = getAvailableBalance(account, transaction);
-  const config = aleoCoinConfig.getCoinConfig(account.currency);
+  const config = aleoCoinConfig.getCoinConfig(account.currency.id);
   const feeEstimation = estimateFees({
     configOrCurrencyId: config,
     transactionType: transaction.mode,
@@ -85,6 +163,19 @@ async function handleTransferTransaction({
 
   if (transaction.amount.eq(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
+  }
+
+  if (isPrivateTransaction(transaction)) {
+    Object.assign(
+      errors,
+      validatePrivateTransaction({
+        account,
+        transaction,
+        amount: calculatedAmount.amount,
+        estimatedFees,
+        isFeeSponsored: config.isFeeSponsored,
+      }),
+    );
   }
 
   if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {

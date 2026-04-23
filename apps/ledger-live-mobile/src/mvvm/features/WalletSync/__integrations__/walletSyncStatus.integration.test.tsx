@@ -1,8 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { render, withFlagOverrides } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
-import { State } from "~/reducers/types";
 import { http, HttpResponse } from "msw";
 import { server } from "@tests/server";
 
@@ -16,34 +15,36 @@ jest.mock("../hooks/useLedgerSyncStatus", () => ({
 describe("WalletSyncStatus", () => {
   it("Should display warning banner when LedgerSync is down", async () => {
     const { user } = render(<WalletSyncSettingsNavigator />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          readOnlyModeEnabled: false,
-          overriddenFeatureFlags: {
-            llmWalletSync: {
-              enabled: true,
-              params: {
-                environment: "STAGING",
-                watchConfig: {
-                  pollingInterval: 10000,
-                  initialTimeout: 5000,
-                  userIntentDebounce: 1000,
-                },
+      overrideInitialState: withFlagOverrides(
+        {
+          llmWalletSync: {
+            enabled: true,
+            params: {
+              environment: "STAGING",
+              watchConfig: {
+                pollingInterval: 10000,
+                initialTimeout: 5000,
+                userIntentDebounce: 1000,
               },
             },
           },
         },
-        trustchain: {
-          ...state.trustchain,
-          trustchain: {
-            rootId: "rootId",
-            applicationPath: "applicationPath",
-            walletSyncEncryptionKey: "walletSyncEncryptionKey",
+        state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            readOnlyModeEnabled: false,
           },
-        },
-      }),
+          trustchain: {
+            ...state.trustchain,
+            trustchain: {
+              rootId: "rootId",
+              applicationPath: "applicationPath",
+              walletSyncEncryptionKey: "walletSyncEncryptionKey",
+            },
+          },
+        }),
+      ),
     });
 
     server.use(

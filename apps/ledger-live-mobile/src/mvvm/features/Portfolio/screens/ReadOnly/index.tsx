@@ -15,6 +15,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { ScreenName } from "~/const";
 import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
+import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 
 type NavigationProps = BaseComposite<
@@ -26,7 +27,6 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
     safeAreaTop,
     shouldDisplayGraphRework,
     shouldDisplayWallet40MainNav,
-    shouldDisplayAssetSection,
     isLNSUpsellBannerShown,
     source,
     onBackFromUpdate,
@@ -56,17 +56,10 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       <PortfolioNoSignerContent
         key="noSigner"
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        shouldDisplayAssetSection={shouldDisplayAssetSection}
-        isEmptyState
+        variant="readOnly"
       />,
     ],
-    [
-      shouldDisplayGraphRework,
-      shouldDisplayAssetSection,
-      isLNSUpsellBannerShown,
-      onBackFromUpdate,
-      safeAreaTop,
-    ],
+    [shouldDisplayGraphRework, isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (
@@ -88,6 +81,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         useSafeArea={!shouldDisplayWallet40MainNav}
         testID="PortfolioReadOnlyItems"
       />
+      <AnalyticsConsentDrawer />
     </>
   );
 }

@@ -110,8 +110,12 @@ jobs:
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -130,9 +134,9 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: Setup environment
-        uses: ./tools/actions/composites/setup-coin-tester-env
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
 
       - name: Run Coin Tester
-        uses: ./tools/actions/composites/run-coin-tester
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
         with:
           chain: ${{ matrix.chain }}

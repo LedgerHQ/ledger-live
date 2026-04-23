@@ -22,7 +22,7 @@ import {
   RegisterYieldBearingEthereumAddressParams,
   RegisterYieldBearingEthereumAddressResult,
 } from "@ledgerhq/wallet-api-acre-module";
-import { Transaction } from "../../generated/types";
+import { Transaction } from "../../coin-modules/transaction-types";
 import { AppManifest } from "../types";
 import { TrackingAPI } from "./tracking";
 import {
@@ -240,7 +240,7 @@ export const handlers = ({
       ? await getCryptoAssetsStore().findTokenById(tokenCurrency)
       : null;
     const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
-    const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
+    const { canEditFees, liveTx, hasFeesProvided } = await getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: transaction,
       account,
     });

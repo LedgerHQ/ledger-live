@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
@@ -30,7 +30,7 @@ TO ${recipient}`;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
-  return {
+  const transaction: Transaction = {
     ...common,
     family: tr.family,
     fees: {
@@ -41,12 +41,18 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     memo: tr.memo,
     nonce: tr.nonce,
   };
+
+  if (tr.txType) {
+    transaction.txType = tr.txType;
+  }
+
+  return transaction;
 };
 
 const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
 
-  return {
+  const transactionRaw: TransactionRaw = {
     ...common,
     family: t.family,
     amount: t.amount.toFixed(),
@@ -57,6 +63,12 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo ?? undefined,
     nonce: t.nonce,
   };
+
+  if (t.txType) {
+    transactionRaw.txType = t.txType;
+  }
+
+  return transactionRaw;
 };
 
 export default {

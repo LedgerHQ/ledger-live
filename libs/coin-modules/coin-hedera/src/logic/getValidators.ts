@@ -1,4 +1,4 @@
-import type { Cursor, Page, Validator } from "@ledgerhq/coin-framework/api/types";
+import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import { apiClient } from "../network/api";
 import { calculateAPY, extractCompanyFromNodeDescription } from "./utils";
 

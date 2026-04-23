@@ -29,6 +29,7 @@ function compile() {
   const allDiagnostics = ts.getPreEmitDiagnostics(program).filter(diag => {
     if (!diag.file) return true;
     const fileName = diag.file.fileName;
+    if (typeof fileName !== "string") return true;
     const isAppSource = appSourcePrefixes.some(prefix => fileName.startsWith(prefix));
     const pass =
       /\.tsx?/.test(fileName) && isAppSource && excluded.every(zone => !fileName.startsWith(zone));

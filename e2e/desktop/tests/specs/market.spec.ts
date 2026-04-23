@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -6,6 +7,7 @@ import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 test.describe("Market", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     //TODO: remove feature flag when market banner is enabled for all users
     userdata: "speculos-tests-app",
     featureFlags: LWD_WALLET_40_FF_ENABLED,
@@ -34,7 +36,7 @@ test.describe("Market", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-4315",
+        description: "B2CQA-4315, B2CQA-1879",
       },
     },
     async ({ app }) => {

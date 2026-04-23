@@ -10,7 +10,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
 
@@ -236,7 +236,7 @@ describe("Alpaca utils", () => {
           parentRecipient: "contract-address",
         },
       ],
-    ])("builds an optimistic %s operation with %s mode ", (_s, mode, params, expected) => {
+    ])("builds an optimistic %s operation with %s mode", (_s, mode, params, expected) => {
       const operation = buildOptimisticOperation(
         {
           id: "parent-account-id",

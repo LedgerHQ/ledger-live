@@ -168,7 +168,7 @@ export function RemoteLiveAppProvider({
         error: null,
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [allowDebugApps, allowExperimentalApps, providerURL, lang, isMounted]);
 
   const value: LiveAppContextType = useMemo(

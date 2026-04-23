@@ -23,7 +23,7 @@ export const AssetSection = ({
   );
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12" data-testid={`${sectionId}-section`}>
       <AssetsSectionHeader
         sectionId={sectionId}
         title={title}

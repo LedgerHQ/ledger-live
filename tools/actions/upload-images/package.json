@@ -1,14 +1,16 @@
 {
   "name": "@actions/upload-images",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Uploads images found in a folder to s3 and creates a json file for later reference",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "rslib build",
-    "lint": "eslint ./ --cache",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
   },
   "devDependencies": {
     "@actions/core": "1.10.1",

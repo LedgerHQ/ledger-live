@@ -1,18 +1,21 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
+  Balance,
+  CraftedTransaction,
   Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
   FeeEstimation,
+  ListOperationsOptions,
   Operation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
   TransactionValidation,
-  Balance,
-} from "@ledgerhq/coin-framework/api/index";
+  Validator,
+  BalanceOptions,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,
@@ -22,12 +25,14 @@ import {
   getBalance,
   getBlock,
   getBlockInfo,
-  listOperations as logicListOperations,
   lastBlock,
-  Options,
+  listOperations as listOperationsLogic,
   validateAddress,
 } from "../logic";
+import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo } from "../types";
+
+const MAX_TRONGRID_LIMIT = 200;
 
 export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -45,7 +50,8 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations,
     getBlock,
@@ -70,6 +76,7 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
       throw new Error("getNextSequence is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 
@@ -80,16 +87,24 @@ async function estimate(transactionIntent: TransactionIntent<TronMemo>): Promise
 
 async function listOperations(
   address: string,
-  { minHeight, order }: ListOperationsOptions,
+  { minHeight, order, cursor, limit }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  // FIXME ListOperationsOptions allows cursor and limit, but this wrapper ignores both (always using softLimit: 200
-  //  and not validating cursor). If cursor/limit are not supported, please explicitly throw when they are provided;
-  //  otherwise, plumb them through (e.g., map limit to softLimit).
-  const options: Options = {
-    softLimit: 200,
-    minHeight: minHeight,
-    order: order || "asc",
-  } as const;
-  const [items, next] = await logicListOperations(address, options);
-  return { items, next: next || undefined };
+  if (limit !== undefined && limit > MAX_TRONGRID_LIMIT) {
+    throw new Error(`limit must be <= ${MAX_TRONGRID_LIMIT} for Tron (TronGrid API restriction)`);
+  }
+  const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
+  const effectiveOrder = order ?? "asc";
+
+  let minTimestamp = defaultFetchParams.minTimestamp;
+  if (minHeight > 0) {
+    const block = await getBlockNetwork(minHeight);
+    minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
+  }
+
+  return listOperationsLogic(address, {
+    limit: effectiveLimit,
+    minTimestamp,
+    order: effectiveOrder,
+    cursor,
+  });
 }

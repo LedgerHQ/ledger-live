@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import userEvent from "@testing-library/user-event";
+import { getBrazeWebSdkJestMock as mockGetBrazeWebSdkJestMock } from "tests/mocks/brazeWebSdk";
 import TopBar from "../index";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
@@ -8,17 +9,7 @@ jest.mock("~/renderer/families", () => ({
   getLLDCoinFamily: () => ({}),
 }));
 
-jest.mock("@braze/web-sdk", () => ({
-  getCachedContentCards: () => ({ cards: [] }),
-  initialize: () => true,
-  changeUser: () => {},
-  requestContentCardsRefresh: () => {},
-  subscribeToContentCardsUpdates: () => () => {},
-  automaticallyShowInAppMessages: () => {},
-  openSession: () => {},
-  logCardDismissal: () => {},
-  logContentCardClick: () => {},
-}));
+jest.mock("@braze/web-sdk", () => mockGetBrazeWebSdkJestMock());
 
 describe("TopBar", () => {
   const getDefaultInitialState = (overrides = {}) => ({
@@ -28,6 +19,7 @@ describe("TopBar", () => {
     dynamicContent: {
       desktopCards: [],
       portfolioCards: [],
+      bottomPortfolioCards: [],
       actionCards: [],
       notificationsCards: [],
     },

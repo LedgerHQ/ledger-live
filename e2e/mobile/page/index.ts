@@ -30,6 +30,7 @@ import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
 import EarnDashboardPage from "./trade/earnDasboard.page";
+import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
 
 import path from "path";
@@ -83,10 +84,12 @@ export class Application {
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private earnDashboardPageInstance = lazyInit(EarnDashboardPage);
+  private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
+    this.modularDrawer.resetFlags();
     const userdataSpeculos = `temp-userdata-${randomUUID()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
@@ -219,6 +222,10 @@ export class Application {
 
   public get earnDashboard() {
     return this.earnDashboardPageInstance();
+  }
+
+  public get earnV2Dashboard() {
+    return this.earnV2DashboardPageInstance();
   }
 
   public get modularDrawer() {

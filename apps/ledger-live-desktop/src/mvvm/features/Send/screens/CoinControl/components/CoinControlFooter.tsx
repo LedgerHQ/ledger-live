@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 import { ChangeToReturn } from "./ChangeToReturn";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
@@ -7,9 +8,7 @@ import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 
 type AmountFooterProps = Readonly<{
-  changeToReturnFormatted: string;
-  changeToReturnLabel: string;
-  enterAmountPlaceholder: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -17,12 +16,11 @@ type AmountFooterProps = Readonly<{
   reviewLoading: boolean;
   onReview: () => void;
   onGetFunds: () => void;
+  onSelectCustomFees: () => void;
 }>;
 
 export function CoinControlFooter({
-  changeToReturnFormatted,
-  changeToReturnLabel,
-  enterAmountPlaceholder,
+  changeToReturn,
   networkFees,
   reviewLabel,
   reviewShowIcon,
@@ -30,6 +28,7 @@ export function CoinControlFooter({
   reviewLoading,
   onReview,
   onGetFunds,
+  onSelectCustomFees,
 }: AmountFooterProps) {
   const { state } = useSendFlowData();
   const { account } = state.account;
@@ -44,11 +43,7 @@ export function CoinControlFooter({
   return (
     <DialogFooter data-testid="send-coin-control-footer" className="flex flex-col">
       <div className="border-t border-muted-subtle" />
-      <ChangeToReturn
-        value={changeToReturnFormatted}
-        changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={enterAmountPlaceholder}
-      />
+      <ChangeToReturn changeToReturn={changeToReturn} />
       <NetworkFeesMenu
         display={{
           label: networkFees.feesRowLabel,
@@ -63,6 +58,9 @@ export function CoinControlFooter({
           options: networkFees.feePresetOptions,
           fiatByPreset: networkFees.fiatByPreset,
           legendByPreset: networkFees.legendByPreset,
+        }}
+        actions={{
+          onSelectCustomFees: onSelectCustomFees,
         }}
       />
       <Button

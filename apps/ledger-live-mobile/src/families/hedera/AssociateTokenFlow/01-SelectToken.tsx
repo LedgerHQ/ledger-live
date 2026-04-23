@@ -17,7 +17,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
-type Props = BaseComposite<
+export type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSelectToken>
 >;
 
@@ -69,6 +69,14 @@ export default function SelectToken({ navigation, route }: Props) {
             currency,
             accountId: subAccount.id,
             parentId: subAccount.parentId,
+          },
+        });
+      } else if (currency.tokenType !== "hts") {
+        navigation.navigate(NavigatorName.ReceiveFunds, {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            currency,
+            accountId: mainAccount.id,
           },
         });
       } else {

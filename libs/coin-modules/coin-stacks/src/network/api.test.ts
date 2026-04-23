@@ -1,5 +1,6 @@
 import * as env from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
+import { EstimatedFeesRequest } from "../types/api";
 import {
   fetchBalances,
   fetchTokenBalancesPage,
@@ -14,7 +15,6 @@ import {
   fetchFullMempoolTxs,
   fetchNonce,
 } from "./api";
-import { EstimatedFeesRequest } from "../types/api";
 
 jest.mock("@ledgerhq/live-env");
 jest.mock("@ledgerhq/live-network/network");

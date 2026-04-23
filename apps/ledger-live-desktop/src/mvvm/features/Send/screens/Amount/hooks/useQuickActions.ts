@@ -10,13 +10,19 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type UseQuickActionsParams = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
   transaction: Transaction;
-  maxAvailable: BigNumber;
+  /**
+   * Stable balance reference (spendableBalance or balance, without subtracting fees).
+   * Using the raw balance—not maxAvailable—ensures percentage buttons always compute
+   * against the same base regardless of how estimated fees fluctuate as the transaction
+   * amount changes (important for UTXO coins like Bitcoin where fees are amount-dependent).
+   */
+  availableBalance: BigNumber;
   onSetAmountFromRatio: (amount: BigNumber) => void;
   onSelectMax: () => void;
 }>;
@@ -35,7 +41,7 @@ export function useQuickActions({
   account,
   parentAccount,
   transaction,
-  maxAvailable,
+  availableBalance,
   onSetAmountFromRatio,
   onSelectMax,
 }: UseQuickActionsParams): AmountScreenQuickAction[] {
@@ -62,7 +68,7 @@ export function useQuickActions({
     const currentAmount = transaction.amount ?? new BigNumber(0);
 
     const actions = QUICK_ACTIONS_CONFIG.map(config => {
-      const targetAmount = maxAvailable
+      const targetAmount = availableBalance
         .multipliedBy(config.ratio)
         .integerValue(BigNumber.ROUND_DOWN);
 
@@ -109,7 +115,7 @@ export function useQuickActions({
     return actions;
   }, [
     lastSelection,
-    maxAvailable,
+    availableBalance,
     mainAccount.balance,
     onSelectMax,
     onSetAmountFromRatio,

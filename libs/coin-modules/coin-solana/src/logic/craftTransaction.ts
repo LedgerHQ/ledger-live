@@ -1,9 +1,12 @@
 import type {
   CraftedTransaction,
   FeeEstimation,
+  MemoNotSupported,
+  StakingTransactionIntent,
+  StringMemo,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
-import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { trace } from "@ledgerhq/logs";
 import {
   PublicKey,
@@ -36,10 +39,17 @@ import {
   getMaybeMintAccount,
   getMaybeTokenAccount,
   getMaybeTokenMintProgram,
+  getStakeAccountAddressWithSeed,
+  getStakeAccountMinimumBalanceForRentExemption,
 } from "../network/chain/web3";
 import { UserInputType } from "../signer";
+import { createStakeAccountSeed } from "../stakeAccountSeed";
 import type {
   Command,
+  StakeCreateAccountCommand,
+  StakeDelegateCommand,
+  StakeUndelegateCommand,
+  StakeWithdrawCommand,
   TokenTransferCommand,
   TransferCommand,
   TransferFeeCalculated,
@@ -54,30 +64,50 @@ import { assertUnreachable, DUMMY_SIGNATURE } from "../utils";
 
 export async function craftTransaction(
   api: ChainAPI,
-  intent: TransactionIntent,
+  intent: TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  if (!isSendTransactionIntent(intent)) {
-    throw new Error("Only send transaction intents are supported");
-  }
-
   if (!isValidBase58Address(intent.sender)) {
     throw new Error("Invalid sender address");
   }
-  if (!isValidBase58Address(intent.recipient)) {
-    throw new Error("Invalid recipient address");
-  }
-  if (intent.amount > BigInt(Number.MAX_SAFE_INTEGER)) {
-    throw new Error("Amount exceeds safe integer range");
+
+  if (intent.type === "stake.withdraw") {
+    return craftWithdrawTransaction(api, intent as StakingTransactionIntent, customFees);
   }
 
-  const recentBlockhash = await api.getLatestBlockhash();
+  if (intent.type === "stake.createAccount") {
+    return craftCreateStakeAccountFromIntent(api, intent as StakingTransactionIntent, customFees);
+  }
 
-  const memo = "memo" in intent ? intent.memo : undefined;
-  const memoValue = typeof memo === "string" ? memo : undefined;
+  if (intent.type === "stake.delegate") {
+    return craftDelegateFromIntent(
+      api,
+      intent as StakingTransactionIntent<StringMemo | MemoNotSupported>,
+      customFees,
+    );
+  }
 
-  const command = await resolveCommandFromIntent(api, intent, memoValue);
+  if (intent.type === "stake.undelegate") {
+    return craftUndelegateFromIntent(api, intent as StakingTransactionIntent, customFees);
+  }
+
+  return craftSendTransactionFromIntent(api, intent, customFees);
+}
+
+async function craftWithdrawTransaction(
+  api: ChainAPI,
+  intent: StakingTransactionIntent,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const command: StakeWithdrawCommand = {
+    kind: "stake.withdraw",
+    authorizedAccAddr: intent.sender,
+    stakeAccAddr: intent.recipient,
+    toAccAddr: intent.sender,
+    amount: Number(intent.amount),
+  };
   const instructions = await buildInstructionsForCommand(api, command);
+  const recentBlockhash = await api.getLatestBlockhash();
 
   const message = new TransactionMessage({
     payerKey: new PublicKey(intent.sender),
@@ -95,6 +125,141 @@ export async function craftTransaction(
     fee = BigInt(feeForMsg ?? 5000);
   }
 
+  return {
+    transaction: Buffer.from(transaction.serialize()).toString("base64"),
+    details: {
+      recentBlockhash: recentBlockhash.blockhash,
+      lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+      estimatedFee: fee.toString(),
+    },
+  };
+}
+
+async function craftCreateStakeAccountFromIntent(
+  api: ChainAPI,
+  intent: StakingTransactionIntent,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const seed = createStakeAccountSeed();
+  const stakeAccAddress = await getStakeAccountAddressWithSeed({
+    fromAddress: intent.sender,
+    seed,
+  });
+  const stakeAccRentExemptAmount = await getStakeAccountMinimumBalanceForRentExemption(api);
+  const delegationAmount = intent.useAllAmount
+    ? Math.max(0, Number(intent.amount) - stakeAccRentExemptAmount)
+    : Number(intent.amount);
+  const command: StakeCreateAccountCommand = {
+    kind: "stake.createAccount",
+    fromAccAddress: intent.sender,
+    stakeAccAddress,
+    seed,
+    amount: delegationAmount,
+    stakeAccRentExemptAmount,
+    delegate: { voteAccAddress: intent.recipient },
+  };
+  return craftCommandToTransaction(api, command, intent.sender, customFees);
+}
+
+async function craftDelegateFromIntent(
+  api: ChainAPI,
+  intent: StakingTransactionIntent<StringMemo | MemoNotSupported>,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const valAddress = "valAddress" in intent ? intent.valAddress : undefined;
+  const stakeAccAddr = "memo" in intent ? intent.memo.value : intent.recipient;
+  if (!stakeAccAddr) {
+    throw new Error("stake.delegate requires a stake account address (via recipient)");
+  }
+  const voteAccAddr = valAddress ?? intent.recipient;
+  const command: StakeDelegateCommand = {
+    kind: "stake.delegate",
+    authorizedAccAddr: intent.sender,
+    stakeAccAddr,
+    voteAccAddr,
+  };
+  return craftCommandToTransaction(api, command, intent.sender, customFees);
+}
+
+async function craftUndelegateFromIntent(
+  api: ChainAPI,
+  intent: StakingTransactionIntent,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const command: StakeUndelegateCommand = {
+    kind: "stake.undelegate",
+    authorizedAccAddr: intent.sender,
+    stakeAccAddr: intent.recipient,
+  };
+  return craftCommandToTransaction(api, command, intent.sender, customFees);
+}
+
+async function craftSendTransactionFromIntent(
+  api: ChainAPI,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  if (!isSendTransactionIntent(intent)) {
+    throw new Error(`Unsupported intent type: ${intent.intentType}`);
+  }
+  if (!isValidBase58Address(intent.recipient)) {
+    throw new Error("Invalid recipient address");
+  }
+  if (intent.amount > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new Error("Amount exceeds safe integer range");
+  }
+
+  const recentBlockhash = await api.getLatestBlockhash();
+  const memoValue = "memo" in intent ? (intent.memo as StringMemo).value : undefined;
+  const command = await resolveCommandFromIntent(api, intent, memoValue);
+  const instructions = await buildInstructionsForCommand(api, command);
+
+  const message = new TransactionMessage({
+    payerKey: new PublicKey(intent.sender),
+    recentBlockhash: recentBlockhash.blockhash,
+    instructions,
+  });
+  const transaction = new VersionedTransaction(message.compileToLegacyMessage());
+
+  let fee: bigint;
+  if (customFees) {
+    fee = customFees.value;
+  } else {
+    const feeForMsg = await api.getFeeForMessage(transaction.message);
+    fee = BigInt(feeForMsg ?? 5000);
+  }
+
+  return {
+    transaction: Buffer.from(transaction.serialize()).toString("base64"),
+    details: {
+      recentBlockhash: recentBlockhash.blockhash,
+      lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+      estimatedFee: fee.toString(),
+    },
+  };
+}
+
+async function craftCommandToTransaction(
+  api: ChainAPI,
+  command: Command,
+  payerKey: string,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const instructions = await buildInstructionsForCommand(api, command);
+  const recentBlockhash = await api.getLatestBlockhash();
+  const message = new TransactionMessage({
+    payerKey: new PublicKey(payerKey),
+    recentBlockhash: recentBlockhash.blockhash,
+    instructions,
+  });
+  const transaction = new VersionedTransaction(message.compileToLegacyMessage());
+  let fee: bigint;
+  if (customFees) {
+    fee = customFees.value;
+  } else {
+    const feeForMsg = await api.getFeeForMessage(transaction.message);
+    fee = BigInt(feeForMsg ?? 5000);
+  }
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
     details: {

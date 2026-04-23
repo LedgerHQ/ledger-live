@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
@@ -21,11 +22,14 @@ import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { isSwapDisableAppsInstall } from "@ledgerhq/live-common/exchange/swap/utils/isIntegrationTestEnv";
 
 export type SignTransactionConnectDeviceProps = StackNavigatorProps<
   SignTransactionNavigatorParamList,
   ScreenName.SignTransactionConnectDevice
 >;
+
+const NO_CONNECT_APP_DEPENDENCIES: AppRequest[] = [];
 
 function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps) {
   const action = useTransactionDeviceAction();
@@ -65,6 +69,15 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
     [onSuccess, navigation, route.params],
   );
 
+  const swapSpeculosBypass = isSwapDisableAppsInstall();
+  const connectAppDependencies = useMemo(
+    () =>
+      swapSpeculosBypass
+        ? NO_CONNECT_APP_DEPENDENCIES
+        : [{ currency: mainAccount.currency }, ...dependenciesToAppRequests(dependencies)],
+    [swapSpeculosBypass, mainAccount.currency, dependencies],
+  );
+
   const request = useMemo(
     () => ({
       account,
@@ -76,21 +89,18 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
       transaction: transaction!,
       status,
       tokenCurrency,
-      dependencies: [
-        { currency: mainAccount.currency },
-        ...dependenciesToAppRequests(dependencies),
-      ],
-      requireLatestFirmware: true,
+      dependencies: connectAppDependencies,
+      requireLatestFirmware: !swapSpeculosBypass,
       isACRE: route.params.isACRE,
     }),
     [
       account,
       appName,
-      dependencies,
-      mainAccount.currency,
+      connectAppDependencies,
       parentAccount,
       route.params.isACRE,
       status,
+      swapSpeculosBypass,
       tokenCurrency,
       transaction,
     ],

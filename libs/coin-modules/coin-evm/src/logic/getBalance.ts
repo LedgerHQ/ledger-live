@@ -1,4 +1,4 @@
-import type { Balance, AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import type { Balance, AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getExplorerApi } from "../network/explorer";
@@ -15,13 +15,17 @@ export const TOKEN_BALANCE_BATCH_SIZE = 8;
  * @param address - The user's address
  * @returns Promise<Balance[]> - Array of balances for all assets (first element will always be the native asset)
  */
-export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
+export async function getBalance(
+  currency: CryptoCurrency,
+  address: string,
+  options?: BalanceOptions,
+): Promise<Balance[]> {
   const nodeApi = getNodeApi(currency);
   const explorerApi = getExplorerApi(currency);
 
   const [nativeBalance, tokensBalances] = await Promise.all([
     getNativeBalance(currency, address, nodeApi),
-    getTokenBalances(currency, address, nodeApi, explorerApi),
+    getTokenBalances(currency, address, nodeApi, explorerApi, options),
   ]);
 
   return [nativeBalance].concat(tokensBalances);
@@ -46,6 +50,7 @@ async function getTokenBalances(
   address: string,
   nodeApi: NodeApi,
   explorerApi: ExplorerApi,
+  options?: BalanceOptions,
 ): Promise<Balance[]> {
   const balances: Balance[] = [];
 
@@ -86,12 +91,18 @@ async function getTokenBalances(
           assetType = "erc1155";
           break;
       }
-      contracts.add(operation.contract);
-      assets.set(operation.contract, {
+
+      const assetInfo: AssetInfo = {
         type: assetType,
         assetReference: operation.contract,
         assetOwner: address,
-      });
+      };
+
+      const includeAssets = !options?.includeAssets || (await options.includeAssets(assetInfo));
+      if (includeAssets) {
+        contracts.add(operation.contract);
+        assets.set(operation.contract, assetInfo);
+      }
     }
   }
 

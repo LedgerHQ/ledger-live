@@ -28,7 +28,6 @@
     "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/types-cryptoassets",
     "ripple-address-codec",
     "ripple-binary-codec"
   ]

@@ -1,6 +1,7 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
 import { AnalyticsPage } from "./analytics.page";
+import { AssetsPage } from "./assets.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetPage } from "./asset.page";
@@ -9,13 +10,13 @@ import { DelegateDrawer } from "./drawer/delegate.drawer";
 import { DelegateModal } from "./modal/delegate.modal";
 import { Drawer } from "tests/component/drawer.component";
 import { EarnPage } from "./earn.dashboard.page";
+import { EarnV2Page } from "./earn.v2.dashboard.page";
 import { Layout } from "tests/component/layout.component";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 import { LiveApp } from "./liveApp.page";
 import { LockscreenPage } from "./lockscreen.page";
 import { MarketPage } from "./market.page";
 import { Modal } from "tests/component/modal.component";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { OnboardingPage } from "./onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { PageHolder } from "./abstractClasses";
@@ -34,6 +35,7 @@ import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer
 import { ModularDialog } from "./dialog/modular.dialog";
 import { MarketBannerPage } from "./marketBanner.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
+import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { MainNavigationPage } from "./mainNavigation.page";
 
@@ -49,13 +51,13 @@ export class Application extends PageHolder {
   public delegateDrawer = new DelegateDrawer(this.page);
   public drawer = new Drawer(this.page);
   public earnDashboard = new EarnPage(this.page, this.electronApp);
+  public earnV2Dashboard = new EarnV2Page(this.page, this.electronApp);
   public layout = new Layout(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);
   public liveApp = new LiveApp(this.page);
   public LockscreenPage = new LockscreenPage(this.page);
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
-  public modularDrawer = new ModularDrawer(this.page);
   public modularDialog = new ModularDialog(this.page);
   public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public onboarding = new OnboardingPage(this.page);
@@ -66,13 +68,15 @@ export class Application extends PageHolder {
   public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
   public send = new SendModal(this.page);
+  public newSendFlow = new NewSendModal(this.page);
   public sendDrawer = new SendDrawer(this.page);
   public settings = new SettingsPage(this.page);
   public settingsModal = new SettingsModal(this.page);
   public speculos = new SpeculosPage(this.page);
-  public swap = new SwapPage(this.page);
+  public swap = new SwapPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
+  public assets = new AssetsPage(this.page);
 }

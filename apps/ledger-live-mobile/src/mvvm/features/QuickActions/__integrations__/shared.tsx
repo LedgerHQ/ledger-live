@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { screen, within } from "@tests/test-renderer";
+import { screen, within, withFlagOverrides } from "@tests/test-renderer";
 import { QuickActionsCtas } from "../components/QuickActionsCtas";
 import { TransferDrawer } from "../screens/TransferDrawer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -49,7 +49,10 @@ export const overrideStateWithFunds = (state: State): State => {
     settings: {
       ...state.settings,
       readOnlyModeEnabled: false,
-      overriddenFeatureFlags: {
+    },
+    featureFlags: {
+      ...state.featureFlags,
+      overrides: {
         ptxServiceCtaExchangeDrawer: { enabled: true },
         noah: { enabled: true },
       },
@@ -66,7 +69,10 @@ export const overrideStateWithoutFunds = (state: State): State => ({
   settings: {
     ...state.settings,
     readOnlyModeEnabled: false,
-    overriddenFeatureFlags: {
+  },
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: {
       ptxServiceCtaExchangeDrawer: { enabled: true },
       noah: { enabled: true },
     },
@@ -82,7 +88,10 @@ export const overrideStateNoSigner = (state: State): State => ({
   settings: {
     ...state.settings,
     readOnlyModeEnabled: true,
-    overriddenFeatureFlags: {
+  },
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: {
       ptxServiceCtaExchangeDrawer: { enabled: true },
       noah: { enabled: true },
     },
@@ -101,13 +110,26 @@ export const overrideStateReadOnly = (state: State): State => {
     settings: {
       ...state.settings,
       readOnlyModeEnabled: true,
-      overriddenFeatureFlags: {
+    },
+    featureFlags: {
+      ...state.featureFlags,
+      overrides: {
         ptxServiceCtaExchangeDrawer: { enabled: true },
         noah: { enabled: true },
       },
     },
   };
 };
+
+export const overrideStateWithFundsVariant = withFlagOverrides(
+  { lwmWallet40: { enabled: true, params: { quickActionCtas: true, quickActionsCtasVariant: true } } },
+  overrideStateWithFunds,
+);
+
+export const overrideStateWithoutFundsVariant = withFlagOverrides(
+  { lwmWallet40: { enabled: true, params: { quickActionCtas: true, quickActionsCtasVariant: true } } },
+  overrideStateWithoutFunds,
+);
 
 export const getCtaButtons = async () => {
   const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
@@ -116,6 +138,28 @@ export const getCtaButtons = async () => {
     transferButton: within(container).getByRole("button", { name: /transfer/i }),
     swapButton: within(container).getByRole("button", { name: /swap/i }),
     buyButton: within(container).getByRole("button", { name: /buy/i }),
+  };
+};
+
+export const getVariantCtaButtons = async () => {
+  const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+  return {
+    container,
+    receiveButton: within(container).getByRole("button", { name: /receive/i }),
+    sendButton: within(container).getByRole("button", { name: /send/i }),
+    swapButton: within(container).getByRole("button", { name: /swap/i }),
+    buyButton: within(container).getByRole("button", { name: /buy/i }),
+  };
+};
+
+export const getVariantNoFundsCtaButtons = async () => {
+  const container = await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
+  return {
+    container,
+    receiveButton: within(container).getByRole("button", { name: /receive/i }),
+    swapButton: within(container).getByRole("button", { name: /swap/i }),
+    buyButton: within(container).getByRole("button", { name: /buy/i }),
+    sendButton: within(container).getByRole("button", { name: /send/i }),
   };
 };
 

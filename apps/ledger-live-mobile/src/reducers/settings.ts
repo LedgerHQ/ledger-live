@@ -46,9 +46,6 @@ import type {
   SettingsShowTokenPayload,
   SettingsUpdateCurrencyPayload,
   SettingsSetDismissedDynamicCardsPayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
@@ -77,6 +74,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetAnalyticsConsentInfoPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -84,6 +82,10 @@ import {
 } from "../actions/types";
 import { ScreenName } from "~/const";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
+import {
+  needsConsentRenewal,
+  resolveAnalyticsOptInParams,
+} from "@ledgerhq/live-common/analyticsConsent/index";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -98,6 +100,7 @@ export const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedCustomImageFlow: false,
   hasCompletedOnboarding: false,
+  onboardingCompletionDate: null,
   hasInstalledAnyApp: true,
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
@@ -145,11 +148,11 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
+    totalMarketCap: true,
+    topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
-  overriddenFeatureFlags: {},
-  featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: true, // will be set to false at the end of an onboarding, not false by default to avoid upsell for existing users
@@ -172,6 +175,10 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   deprecationDoNotRemind: [],
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  },
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -203,16 +210,23 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
     const filteredPayload = filterValidSettings(payload);
-    const wallet40FF = getFeature({
-      key: LWM_WALLET_40,
-      localOverrides: filteredPayload.overriddenFeatureFlags,
-    });
+    const wallet40FF = getFeature({ key: LWM_WALLET_40 });
     const isWallet40Enabled = wallet40FF?.enabled === true;
     const isWallet40GraphReworkEnabled =
       wallet40FF?.params?.graphRework === true && isWallet40Enabled;
+    const analyticsConsentInfo =
+      filteredPayload.analyticsConsentInfo === undefined
+        ? state.analyticsConsentInfo
+        : { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo };
+
     return {
       ...state,
       ...filteredPayload,
+      notifications: {
+        ...state.notifications,
+        ...filteredPayload.notifications,
+      },
+      analyticsConsentInfo,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
@@ -324,6 +338,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       hasCompletedOnboarding: payload === false ? payload : true,
+      onboardingCompletionDate: payload === false ? null : new Date().toISOString(),
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_ADD_COMPLETION_DATE]: state => {
+    return {
+      ...state,
+      onboardingCompletionDate: new Date().toISOString(),
     };
   },
 
@@ -543,28 +565,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
-    const { id, value } = (action as Action<SettingsSetOverriddenFeatureFlagPlayload>).payload;
-    return {
-      ...state,
-      overriddenFeatureFlags: {
-        ...state.overriddenFeatureFlags,
-        [id]: value,
-      },
-    };
-  },
-
-  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => ({
-    ...state,
-    overriddenFeatureFlags: (action as Action<SettingsSetOverriddenFeatureFlagsPlayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => ({
-    ...state,
-    featureFlagsBannerVisible: (action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>)
-      .payload,
-  }),
-
   [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => ({
     ...state,
     debugAppLevelDrawerOpened: (action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>)
@@ -650,6 +650,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload as string],
+    };
+  },
+
+  [SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO]: (state: SettingsState, action) => {
+    return {
+      ...state,
+      analyticsConsentInfo: (action as Action<SettingsSetAnalyticsConsentInfoPayload>).payload,
     };
   },
 
@@ -739,10 +746,24 @@ export const personalizedRecommendationsEnabledSelector = createSelector(
   settingsStoreSelector,
   s => s.personalizedRecommendationsEnabled,
 );
-export const trackingEnabledSelector = createSelector(
-  settingsStoreSelector,
-  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
-);
+export const trackingEnabledSelector = (state: State) => {
+  const settings = state.settings;
+  const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
+  const analyticsOptInEnabled = analyticsOptIn?.enabled ?? false;
+  if (analyticsOptInEnabled) {
+    const { consentDate } = settings.analyticsConsentInfo;
+
+    if (consentDate == null) {
+      return false;
+    }
+
+    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
+    if (needsConsentRenewal(consentDate, consentValidityDays)) {
+      return false;
+    }
+  }
+  return settings.analyticsEnabled || settings.personalizedRecommendationsEnabled;
+};
 export const lastSeenCustomImageSelector = createSelector(
   settingsStoreSelector,
   s => s.lastSeenCustomImage,
@@ -778,6 +799,8 @@ export const hasCompletedCustomImageFlowSelector = (state: State) =>
   state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
+export const onboardingCompletionDateSelector = (state: State) =>
+  state.settings.onboardingCompletionDate;
 export const isOnboardingFlowSelector = (state: State) => state.settings.isOnboardingFlow;
 export const isOnboardingFlowReceiveSuccessSelector = (state: State) =>
   state.settings.isOnboardingFlowReceiveSuccess;
@@ -863,10 +886,6 @@ export const notificationsSelector = (state: State) => state.settings.notificati
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
-export const overriddenFeatureFlagsSelector = (state: State) =>
-  state.settings.overriddenFeatureFlags;
-export const featureFlagsBannerVisibleSelector = (state: State) =>
-  state.settings.featureFlagsBannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
 /* NB: Protect is the former codename for Ledger Recover */
@@ -890,3 +909,4 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;

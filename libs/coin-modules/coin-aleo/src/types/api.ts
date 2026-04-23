@@ -1,20 +1,24 @@
 export type AleoTransactionType = "public" | "private";
 
-interface AleoTransition {
+export type AleoTransitionValue =
+  | {
+      id: string;
+      type: "public" | "private" | "future";
+      value: string;
+    }
+  | {
+      id: string;
+      type: "record";
+      tag: string;
+    };
+
+export interface AleoTransition {
   id: string;
   scm: string;
   tcm: string;
   tpk: string;
-  inputs: Array<{
-    id: string;
-    type: AleoTransactionType;
-    value: string;
-  }>;
-  outputs: Array<{
-    id: string;
-    type: string;
-    value: string;
-  }>;
+  inputs: AleoTransitionValue[];
+  outputs: AleoTransitionValue[];
   program: string;
   function: string;
 }
@@ -53,7 +57,9 @@ export interface AleoPublicTransactionDetailsResponse {
   };
   global_state_root: string;
   proof: string;
-  fee: { transition: AleoTransition };
+  fee: {
+    transition: AleoTransition;
+  };
   fee_value: number;
   block_height: number;
   block_hash: string;
@@ -74,27 +80,16 @@ export interface AleoPublicTransactionsResponse {
   };
 }
 
-export interface AleoRegisterAccountResponse {
-  consumer: { id: string };
-  created_at: number;
-  id: string;
-  key: string;
-}
-
-export interface AleoAccountJWTResponse {
-  exp: number;
-}
-
-export interface AleoJWT {
-  token: string;
-  exp: number;
-}
-
 export interface AleoRegisterForRecordsResponse {
   uuid: string;
 }
 
-export interface AleoGetPublicKeyResponse {
+export interface AleoGetScannerPublicKeyResponse {
+  key_id: string;
+  public_key: string;
+}
+
+export interface AleoGetProvePublicKeyResponse {
   key_id: string;
   public_key: string;
 }

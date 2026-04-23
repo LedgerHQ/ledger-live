@@ -60,6 +60,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyKlaytnBaobab: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
+  currencyMantle: DEFAULT_FEATURE,
+  currencyMantleSepolia: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
@@ -98,6 +100,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
+  currencySuiTestnet: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
   currencySeiNetworkEvm: DEFAULT_FEATURE,
@@ -189,6 +192,11 @@ export const DEFAULT_FEATURES: Features = {
   editEvmTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
+  evmNativeStaking: {
+    enabled: false,
+    params: { supportedCurrencyIds: [] },
   },
 
   editBitcoinTx: {
@@ -534,6 +542,14 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  analyticsOptIn: {
+    enabled: false,
+    params: {
+      policyVersion: 1,
+      consentValidityDays: 365,
+    },
+  },
+
   lldAnalyticsOptInPrompt: {
     enabled: false,
     params: {
@@ -716,6 +732,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   ldmkSolanaSigner: DEFAULT_FEATURE,
+  ldmkCosmosSigner: DEFAULT_FEATURE,
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
@@ -776,7 +793,6 @@ export const DEFAULT_FEATURES: Features = {
       families: [],
     },
   },
-  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,
@@ -802,6 +818,7 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      quickActionsCtasVariant: false,
       tour: true,
       mainNavigation: true,
       lazyOnboarding: true,
@@ -809,6 +826,9 @@ export const DEFAULT_FEATURES: Features = {
       assetSection: true,
       onboardingWidget: true,
       brazePlacement: true,
+      operationsList: true,
+      aggregatedAssets: true,
+      myWallet: true,
     },
   },
   lwdWallet40: {
@@ -817,12 +837,18 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      quickActionsCtasVariant: false,
       mainNavigation: true,
       tour: true,
       lazyOnboarding: true,
       newReceiveDialog: true,
       balanceRefreshRework: true,
       assetSection: true,
+      operationsList: true,
+      brazePlacement: true,
+      aggregatedAssets: true,
+      myWallet: true,
+      finishOnboardingWidget: false,
     },
   },
   addressPoisoningOperationsFilter: {
@@ -840,6 +866,13 @@ export const DEFAULT_FEATURES: Features = {
         "cardano",
         "cosmos",
       ],
+    },
+  },
+  lldHideSmallValueTokenOperations: {
+    ...DEFAULT_FEATURE,
+    enabled: true,
+    params: {
+      thresholdUsd: 0.5,
     },
   },
 };

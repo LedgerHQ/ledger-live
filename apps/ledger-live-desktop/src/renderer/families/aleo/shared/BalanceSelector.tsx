@@ -1,7 +1,7 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Flex } from "@ledgerhq/react-ui";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { useTranslation } from "react-i18next";
 import {
   isPublicTransaction,
@@ -47,6 +47,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
       : PRIVATE_BALANCE_PLACEHOLDER;
   const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);
 
+  const publicSyncDate = t("aleo.shared.balanceSelector.recently");
   const privateSyncDate = mainAccount.aleoResources?.lastPrivateSyncDate
     ? formatDate(mainAccount.aleoResources.lastPrivateSyncDate)
     : undefined;
@@ -68,6 +69,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
         <BalanceOption
           isSelfTransfer={isSelfTransfer}
           label={t("aleo.shared.balanceSelector.public")}
+          lastSyncDate={publicSyncDate}
           balance={formattedTransparentBalance}
           checked={isPublicTransfer}
           onClick={() => onChange("public")}
@@ -96,6 +98,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
         <BalanceOption
           label={t("aleo.shared.balanceSelector.public")}
           balance={formattedTransparentBalance}
+          lastSyncDate={publicSyncDate}
           checked={isPublicTransfer}
           onClick={() => onChange("public")}
         />

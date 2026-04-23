@@ -294,6 +294,11 @@
       "title" : "Échec de la connexion",
       "description" : "Veuillez réessayer."
     },
+    "CounterfeitDevice" : {
+      "title" : "Ce {{productName}} a échoué la vérification de l’authenticité",
+      "description" : "Utiliser cet appareil Ledger n’est pas sécurisé.\n Veuillez contacter l’Assistance Ledger.",
+      "contactSupportCTA" : "Contacter l’Assistance Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Échec de la connexion",
       "description" : "Veuillez réessayer."
@@ -415,8 +420,8 @@
       "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
     },
     "AlreadySendingApduError" : {
-      "title" : "Erreur de communication",
-      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+      "title" : "Action requise sur votre appareil Ledger",
+      "description" : "Veuillez terminer l’action sur votre appareil."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Erreur de communication",
@@ -953,6 +958,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Compte vide"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Montant trop bas. Le minimum est {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Ce compte de tokens associé contient un autre token"
     },
@@ -1302,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Vous avez besoin d’un compte pour accéder à cette app.",
-      "add" : "Ajouter un compte"
+      "select" : "Sélectionnez un compte"
     }
   },
   "location" : {
@@ -1569,7 +1577,7 @@
     },
     "1" : {
       "title" : "Accédez à la DeFi et aux NFT",
-      "desc" : "Utilisez en toute sécurité des applications DeFi de confiance directement depuis Ledger Live."
+      "desc" : "Utilisez en toute sécurité des applications DeFi de confiance directement depuis Ledger Wallet."
     },
     "2" : {
       "title" : "Votre porte d’entrée vers le Web3",
@@ -1595,11 +1603,11 @@
     "desc" : "Libérez toute la puissance de Ledger Wallet en connectant un appareil Ledger.",
     "0" : {
       "title" : "Contrôle absolu",
-      "desc" : "Vos clés privées ne quittent jamais votre appareil."
+      "desc" : "Vous contrôlez vos clés privées."
     },
     "1" : {
       "title" : "Opérations sécurisées",
-      "desc" : "Vérifiez les détails de vos transactions sur un écran sécurisé."
+      "desc" : "Vérifiez vos transactions sur un écran sécurisé."
     },
     "2" : {
       "title" : "Wallet ultra-puissant",
@@ -1623,13 +1631,13 @@
       "continue" : "Continuer malgré les risques"
     },
     "info" : {
-      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
-      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Wallet™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Wallet et de bénéficier d’une expérience optimale.",
       "reminder" : "Ne plus me le rappeler"
     },
     "error" : {
       "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
-      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Wallet."
     },
     "update" : "Découvrir la gamme",
     "learnMore" : "En savoir plus",
@@ -1765,7 +1773,7 @@
         "subtitle" : "Explorez l’app et tous ses avantages. "
       },
       "desktopSync" : {
-        "title" : "Synchroniser avec Ledger Live pour l’ordinateur",
+        "title" : "Synchroniser avec Ledger Wallet pour ordinateur",
         "subtitle" : "Synchroniser vos actifs avec votre mobile à partir de Ledger Wallet pour ordinateur."
       }
     },
@@ -1840,7 +1848,7 @@
       "desktopSync" : {
         "title" : "Vous avez déjà une phrase de récupération ?",
         "label" : "Synchronisation avec un ordinateur",
-        "subTitle" : "Synchroniser vos cryptos à partir de Ledger Live pour l’ordinateur",
+        "subTitle" : "Synchroniser vos cryptos à partir de Ledger Wallet pour ordinateur",
         "desc" : "Vous utilisez déjà l’app Ledger Wallet pour ordinateur ? Synchronisez-la pour gérer vos cryptos depuis votre smartphone."
       },
       "restoreDevice" : {
@@ -2579,7 +2587,7 @@
       "skipCta" : "Plus tard",
       "skip" : {
         "title" : "Êtes-vous sûr(e) ?",
-        "description" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes, soldes et historiques si vous changez de téléphone ou d’ordinateur.",
+        "description" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes si vous changez de téléphone ou d’ordinateur.",
         "descriptionEmphasis" : "Vous pouvez toujours désactiver cette option dans les paramètres.",
         "skipCTA" : "Oui, ignorer",
         "syncCTA" : "Non, synchroniser"
@@ -2685,6 +2693,7 @@
     "accounts" : "Comptes",
     "transfer" : "Transfert",
     "manager" : "My Ledger",
+    "myWallet" : "Mon wallet",
     "settings" : "Paramètres",
     "platform" : "Apps",
     "discover" : "Discover",
@@ -2747,7 +2756,17 @@
       "noAccounts" : "Commencez par\ndéposer des actifs"
     },
     "seeAllAssets" : "Voir tous les actifs",
+    "cryptoAddresses" : {
+      "title" : "Comptes",
+      "count_one" : "{{count}} compte",
+      "count_other" : "{{count}} comptes",
+      "noAccountsYet" : "Pas encore de comptes",
+      "add" : "Ajouter"
+    },
     "seeAllAccounts" : "Voir tous les comptes",
+    "assetSection" : {
+      "connectionFailed" : "Échec de la connexion"
+    },
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
@@ -2773,6 +2792,8 @@
       "buy" : "Acheter",
       "connect" : "Connecter",
       "buyLedger" : "Acheter un Ledger",
+      "receive" : "Recevoir",
+      "send" : "Envoyer",
       "transferDrawer" : {
         "title" : "Transférer",
         "receiveCrypto" : "Recevoir via une adresse crypto",
@@ -2795,7 +2816,8 @@
     "refreshStatus" : {
       "refreshing" : "Actualisation...",
       "upToDate" : "Portefeuille à jour",
-      "syncError" : "Certaines données de compte n’ont pas pu être chargées"
+      "syncError" : "Certaines données de compte n’ont pas pu être chargées",
+      "offline" : "Vous êtes hors ligne. Veuillez vérifier votre connexion"
     }
   },
   "addAccountsModal" : {
@@ -2909,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Compte mis à jour"
     }
   },
+  "operationsList" : {
+    "to" : "À",
+    "from" : "De"
+  },
   "operationDetails" : {
     "title" : "Détails de la transaction",
     "account" : "Compte",
@@ -2985,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
+    "emptyTitle" : "Aucune transaction pour le moment",
+    "emptySubtitle" : "Revenez plus tard pour voir vos transactions.",
     "noMoreTransactions" : "Aucune autre transaction"
   },
   "selectableAccountsList" : {
@@ -3126,7 +3154,7 @@
         "noAccounts" : "Rien à importer",
         "unsupported" : "Non pris en charge",
         "settings" : "Paramètres de l’app",
-        "includeGeneralSettings" : "Importer les paramètres de Ledger Live pour l’ordinateur"
+        "includeGeneralSettings" : "Importer les paramètres de Ledger Wallet pour ordinateur"
       }
     },
     "availableBalance" : "Solde disponible",
@@ -3184,6 +3212,18 @@
   },
   "assets" : {
     "title" : "Actifs"
+  },
+  "cryptoAddresses" : {
+    "title" : "Comptes",
+    "addAccount" : "Ajouter un compte",
+    "emptyState" : "Pas encore de comptes",
+    "errorState" : "Une erreur est survenue lors du chargement de vos comptes"
+  },
+  "crypto" : {
+    "title" : "Cryptos",
+    "stablecoinTitle" : "Stablecoins",
+    "errorState" : "Une erreur est survenue lors du chargement de vos actifs",
+    "emptyState" : "Aucun actif à afficher"
   },
   "accounts" : {
     "title" : "Comptes",
@@ -3305,13 +3345,13 @@
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
       "developerMode" : "Mode développeur",
       "developerModeDesc" : "Afficher les apps développeur dans My Ledger et autoriser les apps testnet.",
-      "analytics" : "Statistiques",
-      "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Wallet, à améliorer l’application et votre expérience.",
+      "analytics" : "Performance de l’application",
+      "analyticsDesc" : "Autorisez Ledger à collecter des données relatives à l’utilisation de l’application, pour améliorer l’expérience.",
       "mevProtection" : "Protection MEV",
       "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
       "mevProtectionLearnMore" : "Avis de confidentialité",
       "personalizedRecommendations" : "Expérience personnalisée",
-      "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
+      "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter des données relatives à l’utilisation de l’application, pour fournir des contenus personnalisés.",
       "analyticsModal" : {
         "title" : "Partager les statistiques",
         "desc" : "Autorisez les statistiques pour aider Ledger à améliorer l’expérience utilisateur.",
@@ -3420,6 +3460,14 @@
       "transactionsAlerts" : {
         "title" : "Alertes transactionnelles (Bêta)",
         "desc" : "Recevez des notifications relatives à vos transactions sur Ethereum, Polygon, BNB Chain, Avalanche et Ethereum Classic."
+      },
+      "totalMarketCap" : {
+        "title" : "Capitalisation globale",
+        "desc" : "Recevez une notification lorsque la capitalisation globale du marché crypto évolue."
+      },
+      "topGainersLosers" : {
+        "title" : "Top des hausses et des baisses",
+        "desc" : "Recevez un récapitulatif hebdomadaire des cryptos les plus et moins performantes du marché."
       },
       "price" : {
         "title" : "Alertes sur les prix",
@@ -3563,8 +3611,14 @@
         "description" : "Les cartes locales apparaissent dans Portefeuille (et ailleurs), sans passer par Braze. Elles y restent jusqu’à ce que vous les fermiez ou les supprimiez.",
         "addSampleBanner" : "Ajouter une bannière test",
         "addSampleBannerDesc" : "Ajoutez une bannière hero test dans Portefeuille.",
-        "addSampleActionCarousel" : "Ajouter un carrousel test",
-        "addSampleActionCarouselDesc" : "Ajoutez un carrousel d’actions cards (Acheter, Échanger, Staker) dans Portefeuille.",
+        "addSampleActionCarouselIcon" : "Ajouter un carrousel (icône)",
+        "addSampleActionCarouselIconDesc" : "Ajoutez une carte ContentBanner par appui. Même ligne que la variante avec image : combinez des icônes et des cartes avec image dans un seul carrousel. Cycles : Acheter → Échanger → Staker. Nécessite un indicateur de placement pour Braze.",
+        "addSampleActionCarouselImageBackground" : "Ajouter un carrousel (image)",
+        "addSampleActionCarouselImageBackgroundDesc" : "Ajoutez une carte MediaBanner par appui. Même ligne que la variante avec icône : combinez les deux dans un seul carrousel. Cycles : Acheter → Échanger → Staker. Nécessite un indicateur de placement pour Braze.",
+        "addSampleWalletCarouselPicto" : "Ajouter un carrousel bas (wallet, avec picto)",
+        "addSampleWalletCarouselPictoDesc" : "Une carte test avec une icône crypto (picto), un titre, une image, un lien. Sans Braze.",
+        "addSampleWalletCarouselTag" : "Ajouter un carrousel bas (wallet, avec tag)",
+        "addSampleWalletCarouselTagDesc" : "Une carte test avec un tag, un titre, une image et un lien. Sans Braze.",
         "dismissAll" : "Fermer toutes les cartes locales",
         "dismissAllDesc" : "Supprimez toutes les content cards générées en local."
       }
@@ -3637,7 +3691,8 @@
         },
         "fiat" : {
           "title" : "Via un virement bancaire",
-          "description" : "Recevez des stablecoins grâce à un virement. Création de compte requise."
+          "description" : "Recevez des stablecoins en réalisant un virement depuis votre banque.",
+          "description_legacy" : "Recevez des stablecoins grâce à un virement. Création de compte requise."
         }
       },
       "memoTag" : {
@@ -4304,7 +4359,23 @@
         "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
       },
       "coinControl" : {
-        "title" : "Contrôle des coins"
+        "title" : "Sélection manuelle",
+        "strategy" : "La stratégie",
+        "learnMore" : "En savoir plus",
+        "coinToSend" : "Crypto à envoyer",
+        "changeToReturn" : "Crypto à rendre",
+        "enterAmount" : "Entrer le montant",
+        "selectSufficientCoins" : "Sélectionnez un montant suffisant",
+        "amountToSendInCurrency" : "Montant à envoyer en {{ticker}}",
+        "amountInputLabel" : "Montant à envoyer",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Coins plus anciens en premier (FIFO)",
+            "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
+            "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)",
+            "CUSTOM" : "Sélection personnalisée"
+          }
+        }
       }
     },
     "pendingTxWarning" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées.",
@@ -4365,7 +4436,7 @@
     "summary" : {
       "solanaRawTransaction" : {
         "title" : "Demande de signature aveugle",
-        "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+        "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site web."
       },
       "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
       "tag" : "Tag (Facultatif)",
@@ -4425,7 +4496,7 @@
       "slow" : "Lent",
       "custom" : "Personnalisé",
       "customFees" : "Modifier les frais",
-      "coinControl" : "Contrôle des coins",
+      "coinControl" : "Choisir",
       "edit" : {
         "title" : "Choisir une unité"
       },
@@ -7302,7 +7373,7 @@
         "debug" : "Débugger"
       },
       "banner" : {
-        "title" : "Découvrez le Catalogue Live",
+        "title" : "Découvrez le Catalogue Discover",
         "description" : "Embarquez vers un nouvel univers de cryptos. Bénéficiez d’un accès sécurisé à une multitude de services : la DeFi, les NFT et bien plus encore."
       },
       "twitterBanner" : {
@@ -7350,7 +7421,7 @@
         "debug" : "Débugger"
       },
       "banner" : {
-        "title" : "Découvrez le Catalogue Live",
+        "title" : "Découvrez le Catalogue Discover",
         "description" : "Embarquez vers un nouvel univers de cryptos. Bénéficiez d’un accès sécurisé à une multitude de services : la DeFi, les NFT et bien plus encore."
       },
       "twitterBanner" : {
@@ -7388,9 +7459,9 @@
       "view" : {
         "label" : "Voir",
         "all" : "Toutes les cryptos",
-        "liveCompatible" : "Compatible avec Live",
+        "liveCompatible" : "Compatible avec l’application",
         "all_label" : "Toutes les cryptomonnaies",
-        "liveCompatible_label" : "Compatible avec Live"
+        "liveCompatible_label" : "Compatible avec l’application"
       },
       "order" : {
         "topGainers" : "Top perf.",
@@ -7404,7 +7475,7 @@
       "apply" : "Appliquer"
     },
     "marketList" : {
-      "crypto" : "Crypto",
+      "crypto" : "Cryptos",
       "price" : "Cours",
       "change" : "Variation",
       "marketCap" : "Capitalisation",
@@ -7780,7 +7851,8 @@
   },
   "wallet" : {
     "tabs" : {
-      "crypto" : "Crypto",
+      "crypto" : "Cryptos",
+      "stablecoins" : "Stablecoins",
       "market" : "Marché"
     },
     "referralProgram" : "20 USD"
@@ -8025,6 +8097,32 @@
           "link" : "En savoir plus sur notre politique de suivi"
         }
       }
+    }
+  },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "Optimisons votre expérience",
+      "description" : "Avec votre consentement, nous collectons des données d’utilisation pour améliorer les fonctionnalités et personnaliser votre expérience.",
+      "ctaAcceptAll" : "Tout accepter",
+      "ctaRefuseAll" : "Tout refuser"
+    },
+    "reconfirm" : {
+      "title" : "Continuer à optimiser votre expérience ?",
+      "description" : "Souhaitez-vous continuer à partager des données d’utilisation pour aider à améliorer Ledger ? Ces données sont utilisées pour optimiser les fonctionnalités et personnaliser votre expérience.",
+      "ctaContinue" : "Oui, continuer",
+      "ctaStop" : "Non, arrêter"
+    },
+    "privacy" : {
+      "title" : "Nous mettons à jour notre Politique de confidentialité",
+      "descriptionLead" : "Veuillez consulter notre ",
+      "descriptionLinkLabel" : "Politique de confidentialité",
+      "descriptionTrail" : " pour découvrir ce qui a changé. Vous pouvez modifier vos préférences à tout moment depuis les Paramètres.",
+      "ctaGotIt" : "Compris"
+    },
+    "setPreferences" : "Définir les préférences",
+    "footer" : {
+      "lead" : "Vous pouvez retirer votre consentement à tout moment depuis les Paramètres.",
+      "privacyLink" : "Politique de confidentialité"
     }
   },
   "walletSync" : {
@@ -8381,7 +8479,7 @@
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount_one" : "{{count}} compte",
     "accountCount_other" : "{{count}} comptes",
-    "perpetualsBanner" : "Actuellement uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
+    "perpetualsBanner" : "Uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
     "errors" : {
       "title" : "Échec de la connexion",
       "backend" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
@@ -8473,6 +8571,10 @@
     "swapRateExpiredError" : {
       "title" : "Taux expiré",
       "description" : "Taux de change expiré. Veuillez actualiser et réessayer."
+    },
+    "details" : {
+      "code" : "Code d’erreur",
+      "correlationId" : "Référence (ID)"
     },
     "default" : {
       "title" : "Une erreur est survenue",
@@ -8705,6 +8807,7 @@
     "bottomSheet" : {
       "title" : "Certaines données de compte n’ont pas pu être chargées",
       "description" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\nComptes concernés : {{accounts}}",
+      "tryToRefresh" : "Essayer d’actualiser",
       "close" : "Fermer"
     }
   },
@@ -8732,6 +8835,13 @@
     "error" : {
       "title" : "Échec de l’installation : {{appName}}",
       "description" : "Une erreur est survenue pendant l’installation. Veuillez réessayer."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Aide",
+      "referral" : "Parrainage"
     }
   }
 }

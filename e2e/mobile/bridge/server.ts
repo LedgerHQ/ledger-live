@@ -5,12 +5,13 @@ import net from "net";
 import merge from "lodash/merge";
 
 import { NavigatorName } from "../../../apps/ledger-live-mobile/src/const";
-import { MessageData, ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
 import {
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-} from "../../../apps/ledger-live-mobile/src/actions/types";
-import { FeatureId } from "@ledgerhq/types-live";
+  MessageData,
+  OverrideFeatureFlagPayload,
+  ServerData,
+} from "../../../apps/ledger-live-mobile/e2e/bridge/types";
+import type { PartialFeatures, FeatureId } from "@shared/feature-flags";
+import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { v4 as uuid } from "uuid";
@@ -46,11 +47,8 @@ function uniqueId(): string {
   return uuid();
 }
 
-function isFeatureId(
-  key: string,
-  flags: SettingsSetOverriddenFeatureFlagsPlayload,
-): key is FeatureId {
-  return key in flags;
+function isFeatureId(key: string): key is FeatureId {
+  return FeatureIdSchema.safeParse(key).success;
 }
 
 export function init(port = 8099, onConnection?: () => void) {
@@ -60,7 +58,7 @@ export function init(port = 8099, onConnection?: () => void) {
 
   webSocket.wss.on("connection", ws => {
     log(`Client connected`);
-    onConnection && onConnection();
+    if (onConnection) onConnection();
     webSocket.ws?.close();
     webSocket.ws = ws;
     ws.on("message", onMessage);
@@ -119,17 +117,22 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   if (data.accounts?.length) {
     postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
-}
 
-export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
-  for (const id in flags) {
-    if (isFeatureId(id, flags)) {
-      await setFeatureFlag({ id, value: flags[id] });
-    }
+  if (data.featureFlags?.overrides) {
+    await setFeatureFlags(data.featureFlags.overrides);
   }
 }
 
-export async function setFeatureFlag(flag: SettingsSetOverriddenFeatureFlagPlayload) {
+export async function setFeatureFlags(flags: PartialFeatures) {
+  for (const id in flags) {
+    if (isFeatureId(id)) {
+      setFeatureFlag({ id, value: flags[id] });
+    }
+  }
+  await getFlags();
+}
+
+export async function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
   postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
 }
 
@@ -142,7 +145,10 @@ async function navigate(name: string) {
 }
 
 export async function swapSetup() {
-  postMessage({ type: "swapSetup", id: uniqueId() });
+  if (!process.env.SWAP_API_BASE) {
+    console.warn("[swapSetup] SWAP_API_BASE env var is not set, will use client-side default");
+  }
+  return fetchData({ type: "swapSetup", id: uniqueId(), swapApiBase: process.env.SWAP_API_BASE });
 }
 
 export async function waitSwapReady() {
@@ -229,6 +235,14 @@ function onMessage(messageStr: string) {
       if (pending) {
         global.pendingCallbacks.delete("getEnvs");
         pending.callback(msg.payload);
+      }
+      break;
+    }
+    case "swapSetupDone": {
+      const pending = global.pendingCallbacks?.get("swapSetup");
+      if (pending) {
+        global.pendingCallbacks.delete("swapSetup");
+        pending.callback("swapSetup done");
       }
       break;
     }

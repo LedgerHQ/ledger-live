@@ -1,7 +1,6 @@
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-
-import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 
 import type { Transaction } from "../types";
 

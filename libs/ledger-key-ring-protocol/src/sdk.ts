@@ -256,7 +256,7 @@ export class SDK implements TrustchainSDK {
 
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
-    // eslint-disable-next-line prefer-const
+    // oxlint-disable-next-line eslint/prefer-const -- reassigned below after resolution
     let { resolved, streamTree, applicationRootPath } = await withJwt(jwt =>
       this.fetchTrustchainAndResolve(jwt, trustchainId, applicationId),
     );

@@ -1,5 +1,5 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
 import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
 import { craftTransaction } from "./craftTransaction";
@@ -14,7 +14,7 @@ describe("craftTransaction", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getJsonRpcFullnodeUrl("mainnet"),
       },
     }));
   });

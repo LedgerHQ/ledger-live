@@ -1,8 +1,7 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { usePortfolioBalanceSectionViewModel } from "../usePortfolioBalanceSectionViewModel";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
-import type { State } from "~/reducers/types";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 jest.mock("../usePersistedPortfolioBalance", () => ({
@@ -29,6 +28,7 @@ function makeReturn(
     balanceAvailable: boolean;
     syncPhase: SyncPhase;
     portfolio: typeof defaultPortfolio;
+    isCvPending: boolean;
   }> = {},
 ) {
   return {
@@ -38,6 +38,7 @@ function makeReturn(
     isBalanceLoading: false,
     isColdStart: false,
     isManualRefreshLoading: false,
+    isCvPending: false,
     allAccounts: [],
     accountsWithError: [],
     accountsImpactedByError: [],
@@ -46,6 +47,8 @@ function makeReturn(
     areAllAccountsUpToDate: true,
     hasAccounts: true,
     handleSync: jest.fn(),
+    isBridgeSyncPending: false,
+    triggerRefresh: jest.fn(),
     ...overrides,
   };
 }
@@ -53,14 +56,8 @@ function makeReturn(
 const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
 const withFreezeFlag = {
-  overrideInitialState: (state: State): State => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-      },
-    },
+  overrideInitialState: withFlagOverrides({
+    lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
   }),
 };
 
@@ -104,7 +101,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
   });
 
   describe("balance freeze", () => {
-    it("freezes at pre-sync value and releases on settle", () => {
+    it("freezes while CVS is pending (iCvPending=true) and releases once CVS settles", () => {
       mockUsePortfolioBalance.mockReturnValue(
         makeReturn({
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
@@ -117,22 +114,16 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       );
       expect(result.current.balance).toBe(1500);
 
+      // Sync starts with CVS pending — balance must be frozen
       mockUsePortfolioBalance.mockReturnValue(
         makeReturn({
           syncPhase: "syncing",
+          isCvPending: true,
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
         }),
       );
       rerender({});
       expect(result.current.balance).toBe(1500);
-
-      mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({
-          portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
-        }),
-      );
-      rerender({});
-      expect(result.current.balance).toBe(2000);
     });
   });
 

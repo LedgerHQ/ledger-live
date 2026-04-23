@@ -32,6 +32,7 @@ export class DelegateModal extends Modal {
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
+  private lidoProvider = this.page.getByTestId("stake-provider-container-lido");
 
   @step("Get title provider on row $0")
   async getTitleProvider(row: number): Promise<string> {
@@ -111,6 +112,12 @@ export class DelegateModal extends Modal {
     expect(await this.getSelectedProviderName()).toContain(selectedfProvider);
   }
 
+  @step("Close provider list and verify provider $0 is selected")
+  async closeProviderListByName(providerName: string) {
+    await this.searchCloseButton.click();
+    expect(await this.getSelectedProviderName()).toContain(providerName);
+  }
+
   @step("Click on chosen stake provider $0")
   async goToProviderLiveApp(stakeProvider: string) {
     await this.stakeProvider(stakeProvider).click();
@@ -177,6 +184,11 @@ export class DelegateModal extends Modal {
   @step("Click on lock button for CELO")
   async clickCeloLockButton() {
     await this.celoLockButton.click();
+  }
+
+  @step("Click on Lido provider")
+  async clickLidoProvider() {
+    await this.lidoProvider.click();
   }
 
   @step("Check alert message is visible when locking CELO")

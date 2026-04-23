@@ -3,7 +3,7 @@ import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { renderHook, waitFor } from "@testing-library/react";
 import type { Operation } from "@ledgerhq/types-live";
@@ -23,7 +23,7 @@ jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
 jest.mock("../useFormattedAccountBalance");
 jest.mock("~/renderer/reducers/wallet");
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseDomain = jest.mocked(useDomain);
@@ -132,7 +132,7 @@ describe("useAddressValidation", () => {
     });
   });
 
-  it("resolves ENS names for Ethereum", async () => {
+  it("resolves ENS names when recipientSupportsDomain is true", async () => {
     const ensResolution = {
       domain: "vitalik.eth",
       address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -151,6 +151,7 @@ describe("useAddressValidation", () => {
         searchValue: "vitalik.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 
@@ -173,6 +174,7 @@ describe("useAddressValidation", () => {
         searchValue: "test.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 
@@ -465,6 +467,7 @@ describe("useAddressValidation", () => {
         searchValue: "test.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 

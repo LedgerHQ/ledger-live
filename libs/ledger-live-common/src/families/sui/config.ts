@@ -14,4 +14,16 @@ export const suiConfig: Record<string, ConfigInfo> = {
       },
     },
   },
+  config_currency_sui_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        url: getEnv("API_SUI_TESTNET_NODE_PROXY"),
+      },
+    },
+  },
 };

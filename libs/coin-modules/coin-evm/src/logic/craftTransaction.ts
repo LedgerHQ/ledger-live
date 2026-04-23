@@ -4,7 +4,7 @@ import {
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction, TransactionLike } from "ethers";
 import { getNodeApi } from "../network/node";

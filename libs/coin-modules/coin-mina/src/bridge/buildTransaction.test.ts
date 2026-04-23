@@ -1,10 +1,10 @@
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getAccountNumFromPath } from "../common-logic";
-import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "../consts";
-import { Transaction } from "../types";
+import { MINA_MAINNET_NETWORK_ID } from "../consts";
+import { getAccountNumFromPath } from "../logic/utils";
+import { Transaction, TxType } from "../types";
 import { buildTransaction } from "./buildTransaction";
-jest.mock("../common-logic");
+jest.mock("../logic/utils");
 
 describe("buildTransaction", () => {
   let getAccountNumSpy: jest.SpyInstance;
@@ -35,7 +35,7 @@ describe("buildTransaction", () => {
     const result = await buildTransaction(mockAccount as Account, mockTransaction);
 
     expect(result).toEqual({
-      txType: MINA_PAYMENT_TYPE_ID,
+      txType: TxType.PAYMENT,
       senderAccount: 42,
       senderAddress: mockAccount.freshAddress,
       receiverAddress: mockTransaction.recipient,
@@ -64,5 +64,19 @@ describe("buildTransaction", () => {
     getAccountNumSpy.mockReturnValue(undefined);
 
     await expect(buildTransaction(mockAccount as Account, mockTransaction)).rejects.toThrow();
+  });
+
+  it("should build DELEGATION transaction with amount 0 when txType is unstake", async () => {
+    const unstakeTx: Transaction = {
+      ...mockTransaction,
+      txType: "unstake",
+      recipient: mockAccount.freshAddress as string,
+    };
+
+    const result = await buildTransaction(mockAccount as Account, unstakeTx);
+
+    expect(result.txType).toBe(TxType.DELEGATION);
+    expect(result.amount).toBe(0);
+    expect(result.receiverAddress).toBe(mockAccount.freshAddress);
   });
 });

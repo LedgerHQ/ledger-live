@@ -3,7 +3,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled, { css } from "styled-components";
-import CounterValue, { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
+import CounterValue from "~/renderer/components/CounterValue";
 import { useNavigate } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -46,14 +46,18 @@ const Wrapper = styled.div`
     background: ${p => p.theme.colors.background.default};
   }
 `;
+
+const Icon = styled.div`
+  flex-shrink: 0;
+  margin-right: 10px;
+`;
 const Asset = styled.div`
   flex: 1;
   width: 20%;
-  > :first-child {
-    margin-right: 10px;
-  }
-  > :nth-child(2) {
-    margin-right: 8px;
+  min-width: 0;
+  overflow: hidden;
+  > * {
+    min-width: 0;
   }
 `;
 const PriceSection = styled.div`
@@ -141,7 +145,7 @@ const Row = ({
   return (
     <Wrapper onClick={onClick} data-testid={`asset-row-${currency.name.toLowerCase()}`}>
       <Asset>
-        {icon}
+        <Icon>{icon}</Icon>
         <Tooltip delay={1200} content={currency.name}>
           <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
             {currency.name}
@@ -149,24 +153,16 @@ const Row = ({
         </Tooltip>
       </Asset>
       <PriceSection>
-        {distribution ? (
-          <Price from={currency} color="neutral.c80" fontSize={3} />
-        ) : (
-          <NoCountervaluePlaceholder />
-        )}
+        <Price from={currency} color="neutral.c80" fontSize={3} />
       </PriceSection>
       <Distribution $isResponsiveLayout={isResponsiveLayout}>
-        {!!distribution && (
-          <>
-            <Text ff="Inter" color="neutral.c100" fontSize={3}>
-              {`${percentageWording}%`}
-            </Text>
-            <Bar
-              progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
-              progressColor={color}
-            />
-          </>
-        )}
+        <Text ff="Inter" color="neutral.c100" fontSize={3}>
+          {`${percentageWording}%`}
+        </Text>
+        <Bar
+          progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
+          progressColor={color}
+        />
       </Distribution>
       <Amount $isResponsiveLayout={isResponsiveLayout}>
         <Ellipsis>
@@ -181,17 +177,13 @@ const Row = ({
       </Amount>
       <Value $isResponsiveLayout={isResponsiveLayout}>
         <Ellipsis>
-          {distribution ? (
-            <CounterValue
-              currency={currency}
-              value={amount}
-              color="neutral.c100"
-              fontSize={3}
-              showCode
-            />
-          ) : (
-            <NoCountervaluePlaceholder />
-          )}
+          <CounterValue
+            currency={currency}
+            value={amount}
+            color="neutral.c100"
+            fontSize={3}
+            showCode
+          />
         </Ellipsis>
       </Value>
     </Wrapper>

@@ -200,6 +200,8 @@ export class Currency {
     Network.VECHAIN,
   ]);
 
+  static readonly MINA = new Currency("Mina", "MINA", "mina", AppInfos.MINA, [Network.MINA]);
+
   static readonly SUI_USDC = new Currency(
     "USD Coin",
     "USDC",
@@ -210,4 +212,12 @@ export class Currency {
   );
 
   static readonly ALEO = new Currency("Aleo", "ALEO", "aleo", AppInfos.ALEO, [Network.ALEO]);
+
+  static readonly ICP = new Currency(
+    "Internet Computer",
+    "ICP",
+    "internet_computer",
+    AppInfos.INTERNET_COMPUTER,
+    [Network.INTERNET_COMPUTER],
+  );
 }

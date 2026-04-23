@@ -1,4 +1,5 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
@@ -8,7 +9,7 @@ import { mapIntentToSDKOperation } from "../logic/utils";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
-import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { HederaMemo } from "../types";
 import { createApi } from "./index";
@@ -35,8 +36,6 @@ const mockGetBlockInfo = jest.mocked(logic.getBlockInfo);
 const mockGetValidators = jest.mocked(logic.getValidators);
 const mockGetStakes = jest.mocked(logic.getStakes);
 const mockGetRewards = jest.mocked(logic.getRewards);
-const mockGetTokenFromAsset = jest.mocked(logic.getTokenFromAsset);
-const mockGetAssetFromToken = jest.mocked(logic.getAssetFromToken);
 const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 
 describe("createApi", () => {
@@ -53,7 +52,7 @@ describe("createApi", () => {
     const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
 
     createApi(mockConfig, mockCurrency.id);
-    const config = coinConfig.getCoinConfig(mockCurrency);
+    const config = coinConfig.getCoinConfig(mockCurrency.id);
 
     expect(mockSetCoinConfig).toHaveBeenCalled();
     expect(config).toMatchObject({
@@ -66,11 +65,9 @@ describe("createApi", () => {
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
     expect(api.estimateFees).toBeInstanceOf(Function);
-    expect(api.getAssetFromToken).toBeInstanceOf(Function);
     expect(api.getBalance).toBeInstanceOf(Function);
     expect(api.getBlock).toBeInstanceOf(Function);
     expect(api.getBlockInfo).toBeInstanceOf(Function);
-    expect(api.getTokenFromAsset).toBeInstanceOf(Function);
     expect(api.getValidators).toBeInstanceOf(Function);
     expect(api.getStakes).toBeInstanceOf(Function);
     expect(api.getRewards).toBeInstanceOf(Function);
@@ -180,6 +177,12 @@ describe("createApi", () => {
       expect(mockGetBalance).toHaveBeenCalledTimes(1);
       expect(result).toEqual([{ value: 42n, asset: { type: "native" } }]);
     });
+
+    it("should throw an exception when options is provided", async () => {
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
+    });
   });
 
   describe("lastBlock", () => {
@@ -266,34 +269,6 @@ describe("createApi", () => {
 
       expect(mockGetRewards).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockRewards);
-    });
-  });
-
-  describe("getTokenFromAsset", () => {
-    it("should call getTokenFromAsset from logic", async () => {
-      const mockToken = getMockedHTSTokenCurrency();
-      const asset = { type: "token", assetReference: mockToken.id, assetOwner: "0.0.1234" };
-
-      mockGetTokenFromAsset.mockResolvedValue(mockToken);
-
-      const result = await api.getTokenFromAsset?.(asset);
-
-      expect(mockGetTokenFromAsset).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockToken);
-    });
-  });
-
-  describe("getAssetFromToken", () => {
-    it("should call getAssetFromToken from logic", async () => {
-      const token = getMockedHTSTokenCurrency();
-      const mockAsset = { type: "token", assetReference: token.id, assetOwner: "0.0.1234" };
-
-      mockGetAssetFromToken.mockReturnValue(mockAsset);
-
-      const result = await api.getAssetFromToken?.(token, mockAsset.assetOwner);
-
-      expect(mockGetAssetFromToken).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockAsset);
     });
   });
 

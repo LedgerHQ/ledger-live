@@ -3,7 +3,9 @@ import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
+import { isSwapDisableAppsInstall } from "@ledgerhq/live-common/exchange/swap/utils/isIntegrationTestEnv";
 import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -25,6 +27,8 @@ export type SignRawTransactionConnectDeviceProps = StackNavigatorProps<
   SignRawTransactionNavigatorParamList,
   ScreenName.SignRawTransactionConnectDevice
 >;
+
+const NO_CONNECT_APP_DEPENDENCIES: AppRequest[] = [];
 
 function ConnectDevice({ navigation, route }: SignRawTransactionConnectDeviceProps) {
   const action = useRawTransactionDeviceAction();
@@ -59,6 +63,15 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
     [onSuccess, navigation, route.params],
   );
 
+  const swapSpeculosBypass = isSwapDisableAppsInstall();
+  const connectAppDependencies = useMemo(
+    () =>
+      swapSpeculosBypass
+        ? NO_CONNECT_APP_DEPENDENCIES
+        : [{ currency: mainAccount.currency }, ...dependenciesToAppRequests(dependencies)],
+    [swapSpeculosBypass, mainAccount.currency, dependencies],
+  );
+
   const request = useMemo(
     () => ({
       account,
@@ -66,13 +79,10 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
       appName,
       transaction,
       broadcast,
-      dependencies: [
-        { currency: mainAccount.currency },
-        ...dependenciesToAppRequests(dependencies),
-      ],
-      requireLatestFirmware: true,
+      dependencies: connectAppDependencies,
+      requireLatestFirmware: !swapSpeculosBypass,
     }),
-    [account, appName, broadcast, dependencies, mainAccount.currency, parentAccount, transaction],
+    [account, appName, broadcast, connectAppDependencies, parentAccount, swapSpeculosBypass, transaction],
   );
 
   const onSelectDeviceLink = useCallback(() => {

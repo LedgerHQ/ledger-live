@@ -36,7 +36,7 @@ export const PortfolioBannersSection = ({
           <OnboardingWidget />
         </Box>
       ) : null}
-      {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mb={6} />}
+      {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mb={6} />}
       {!isLNSUpsellBannerShown && !shouldShowOnboardingWidget && showAssets ? (
         <ContentCardsLocation
           key="contentCardsLocationPortfolio"

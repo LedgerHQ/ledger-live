@@ -6,7 +6,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
-import { callMyDealer, getBridges, polygon, VITALIK } from "../helpers";
+import { callMyDealer, expectAddressInList, getBridges, polygon, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_POLYGON } from "../tokenFixtures";
@@ -30,9 +30,6 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
     },
   };
 
@@ -45,10 +42,16 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("FEES");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
       expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
         ethers.parseUnits("80", USDC_ON_POLYGON.units[0].magnitude).toString(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, USDC_ON_POLYGON.contractAddress);
+      const subOp = latestOperation.subOperations?.[0];
+      expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+      expectAddressInList(subOp?.recipients, VITALIK);
     },
   };
 
@@ -63,6 +66,8 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -128,7 +133,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
         },
       },
     });
-    initMswHandlers(getCoinConfig(polygon).info);
+    initMswHandlers(getCoinConfig(polygon.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

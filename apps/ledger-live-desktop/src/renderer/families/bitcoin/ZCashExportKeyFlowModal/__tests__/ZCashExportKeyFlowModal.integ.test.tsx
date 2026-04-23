@@ -4,9 +4,77 @@ import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fix
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { of } from "rxjs";
-import Body from "../Body";
+import ExportKeyModal from "../index";
 import { StepId } from "../types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+
+const mockDispatch = jest.fn();
+const mockSyncStateUpdater = jest.fn();
+
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: () => mockDispatch,
+  };
+});
+
+jest.mock("../sync", () => ({
+  syncStateUpdater: (...args: unknown[]) => mockSyncStateUpdater(...args),
+}));
+
+jest.mock("~/renderer/components/Modal", () => {
+  const actual = jest.requireActual("~/renderer/components/Modal");
+  const MockModal = ({
+    render: renderContent,
+  }: {
+    render?: (args: { onClose: () => void; data: unknown }) => React.ReactNode;
+  }) => (
+    <>
+      {renderContent?.({
+        onClose: jest.fn(),
+        data: {},
+      })}
+    </>
+  );
+
+  return {
+    ...actual,
+    __esModule: true,
+    default: MockModal,
+  };
+});
+
+jest.mock("../Body", () => {
+  return function MockBody({
+    onUfvkChanged,
+    handleBirthdayChange,
+    handleEnableShieldedBalance,
+  }: {
+    onUfvkChanged: (ufvk: string) => void;
+    handleBirthdayChange: (birthday: string) => void;
+    handleEnableShieldedBalance: (nextSyncState: "ready" | "running") => void;
+  }) {
+    return (
+      <div>
+        <button type="button" onClick={() => onUfvkChanged("test-ufvk")}>
+          set ufvk
+        </button>
+        <button type="button" onClick={() => handleBirthdayChange("2025-01-01")}>
+          set birthday
+        </button>
+        <button type="button" onClick={() => handleEnableShieldedBalance("ready")}>
+          Close
+        </button>
+        <button type="button" onClick={() => handleEnableShieldedBalance("running")}>
+          Start sync
+        </button>
+      </div>
+    );
+  };
+});
+
+const RealBody = jest.requireActual("../Body").default;
 
 // Mock useConnectAppAction to prevent actual device connection attempts
 jest.mock("~/renderer/hooks/useConnectAppAction", () => {
@@ -90,7 +158,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
     });
 
     const { rerender } = render(
-      <Body
+      <RealBody
         stepId={stepId}
         ufvk={ufvk}
         ufvkExportError={ufvkExportError}
@@ -103,6 +171,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={handleBirthdayChange}
         handleSyncFromZero={handleSyncFromZero}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
       {
@@ -147,7 +216,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
 
     // Rerender with updated birthday to simulate parent state update
     rerender(
-      <Body
+      <RealBody
         stepId={stepId}
         ufvk={ufvk}
         ufvkExportError={ufvkExportError}
@@ -160,6 +229,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={handleBirthdayChange}
         handleSyncFromZero={handleSyncFromZero}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );
@@ -176,7 +246,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
 
     // Rerender with updated stepId to simulate parent state update
     rerender(
-      <Body
+      <RealBody
         stepId={stepId}
         ufvk={ufvk}
         ufvkExportError={ufvkExportError}
@@ -189,6 +259,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={handleBirthdayChange}
         handleSyncFromZero={handleSyncFromZero}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );
@@ -209,7 +280,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
 
     // Rerender with updated stepId to simulate parent state update
     rerender(
-      <Body
+      <RealBody
         stepId={stepId}
         ufvk={ufvk}
         ufvkExportError={ufvkExportError}
@@ -222,6 +293,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={handleBirthdayChange}
         handleSyncFromZero={handleSyncFromZero}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );
@@ -239,7 +311,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
 
     // Rerender with updated stepId to simulate parent state update
     rerender(
-      <Body
+      <RealBody
         stepId={stepId}
         ufvk={ufvk}
         ufvkExportError={ufvkExportError}
@@ -252,6 +324,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         syncFromZero={syncFromZero}
         handleBirthdayChange={handleBirthdayChange}
         handleSyncFromZero={handleSyncFromZero}
+        handleEnableShieldedBalance={jest.fn()}
         params={{ account }}
       />,
     );
@@ -279,5 +352,54 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /start sync/i })).toBeVisible();
     });
+  });
+});
+
+describe("ZCash Export UFVK Flow - Persistence integration", () => {
+  const account = createFixtureAccount();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("persists ufvk and birthday when clicking Close", async () => {
+    mockSyncStateUpdater.mockReturnValue({ type: "TEST_SYNC_STATE_ACTION" });
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+    await userEvent.click(screen.getByRole("button", { name: /set birthday/i }));
+    await userEvent.click(screen.getByRole("button", { name: /close/i }));
+
+    await waitFor(() => {
+      expect(mockSyncStateUpdater).toHaveBeenCalledWith(
+        account,
+        expect.objectContaining({
+          syncState: "ready",
+          ufvk: "test-ufvk",
+          birthday: "2025-01-01",
+        }),
+      );
+    });
+    expect(mockDispatch).toHaveBeenCalledWith({ type: "TEST_SYNC_STATE_ACTION" });
+  });
+
+  it("persists ufvk and birthday when clicking Start sync", async () => {
+    mockSyncStateUpdater.mockReturnValue({ type: "TEST_SYNC_STATE_ACTION" });
+    render(<ExportKeyModal account={account} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+    await userEvent.click(screen.getByRole("button", { name: /set birthday/i }));
+    await userEvent.click(screen.getByRole("button", { name: /start sync/i }));
+
+    await waitFor(() => {
+      expect(mockSyncStateUpdater).toHaveBeenCalledWith(
+        account,
+        expect.objectContaining({
+          syncState: "running",
+          ufvk: "test-ufvk",
+          birthday: "2025-01-01",
+        }),
+      );
+    });
+    expect(mockDispatch).toHaveBeenCalledWith({ type: "TEST_SYNC_STATE_ACTION" });
   });
 });

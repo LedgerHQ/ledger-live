@@ -46,6 +46,7 @@ const Title = styled(Text).attrs({ variant: "h3" })`
 
 const SelectBarContainer = styled(Flex)`
   font-size: 13px;
+  flex-shrink: 0;
 `;
 
 export default function Market() {
@@ -75,7 +76,7 @@ export default function Market() {
    * */
   useEffect(() => {
     resetMarketPage(marketParams.page ?? 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**

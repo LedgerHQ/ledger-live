@@ -37,7 +37,7 @@ export function useSendHeaderModel({
   resetViewState,
 }: UseSendHeaderModelParams): UseSendHeaderModelResult {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
-  const { state, uiConfig, recipientSearch } = useSendFlowData();
+  const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -45,10 +45,12 @@ export function useSendHeaderModel({
 
   const { navigation, currentStep } = wizard;
   const currentStepConfig = wizard.currentStepConfig;
-
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
   const showMemoControls = Boolean(
-    showRecipientInput && uiConfig.hasMemo && recipientSearch.value.length > 0,
+    showRecipientInput &&
+      uiConfig.hasMemo &&
+      recipientSearch.value.length > 0 &&
+      isRecipientAddressComplete,
   );
 
   const backTarget = currentStepConfig?.backTarget;

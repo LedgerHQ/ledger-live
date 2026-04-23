@@ -55,6 +55,14 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         maxPriorityFeePerGas: new BigNumber(0),
       };
     }
+    case "solana":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        mode: "send",
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

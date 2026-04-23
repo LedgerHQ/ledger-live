@@ -98,7 +98,7 @@ const NetworkSelection = ({
         formatNetworkConfig
       />
       {useLumenBottomSheet && (
-        <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} appearance="expanded" />
+        <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} density="expanded" />
       )}
       <BottomSheetFlatList
         scrollEnabled={true}

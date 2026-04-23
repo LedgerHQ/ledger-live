@@ -11,15 +11,14 @@ import makeCliTools, { type CliTools } from "@ledgerhq/coin-sui/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const createSigner: CreateSigner<SuiSigner> = (transport: Transport) => {
   return new Sui(transport, "default_sui_scramble_key");
 };
 
-const sui = getCryptoCurrencyById("sui");
-const getCurrencyConfig = (): SuiCoinConfig => {
-  return getCurrencyConfiguration(sui);
+const getCurrencyConfig = (currencyId?: string): SuiCoinConfig => {
+  if (!currencyId) throw new Error("sui: currency not defined");
+  return getCurrencyConfiguration<SuiCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, SuiAccount, TransactionStatus> = createBridges(

@@ -3,8 +3,8 @@ import {
   TransactionIntent,
   FeeEstimation,
   Balance,
-} from "@ledgerhq/coin-framework/api/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+} from "@ledgerhq/coin-module-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   AmountRequired,
   InvalidAddress,
@@ -171,7 +171,7 @@ export const validateIntent = async (
     } else {
       // Native payment
       maxAmount = nativeAmountAvailable;
-      amount = useAllAmount ? maxAmount : transactionIntent.amount ?? 0n;
+      amount = useAllAmount ? maxAmount : (transactionIntent.amount ?? 0n);
 
       if (amount > maxAmount) {
         errors.amount = new NotEnoughBalance();

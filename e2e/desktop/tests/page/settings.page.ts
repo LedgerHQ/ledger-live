@@ -9,6 +9,7 @@ import { mkdir, rename } from "fs/promises";
 export class SettingsPage extends AppPage {
   private syncWalletSyncButton = this.page.getByTestId("button-sync-walletSync");
   private manageWalletSyncButton = this.page.getByTestId("button-manage-walletSync");
+  private readonly turnOnLedgerSyncButton = this.page.getByTestId("button-turn-on-ledger-sync");
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
@@ -26,10 +27,12 @@ export class SettingsPage extends AppPage {
   readonly languageSelector = this.page.locator(
     "[data-testid='setting-language-dropDown'] .select__value-container",
   );
-  readonly themeSelector = this.page.locator(
-    "[data-testid='setting-theme-dropDown'] .select__value-container",
-  );
-  private hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
+  readonly languageOptions = this.page.locator("div.select__option");
+  readonly generalTab = this.page.getByTestId("settings-display-tab");
+  readonly languageRow = this.page.getByTestId("setting-language-dropDown");
+  readonly counterValueRow = this.page.getByTestId("setting-countervalue-dropDown");
+  readonly themeRow = this.page.getByTestId("setting-theme-dropDown");
+  readonly hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
 
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
@@ -53,6 +56,42 @@ export class SettingsPage extends AppPage {
     await expect(this.counterValueSelector).toHaveText(currency);
   }
 
+  @step("Change language to $0")
+  async changeLanguage(languageLabel: string) {
+    await this.languageSelector.click();
+    await this.languageOptions.filter({ hasText: languageLabel }).click();
+  }
+
+  @step("Expect language to be selected: $0")
+  async expectLanguageSelected(languageLabel: string) {
+    await expect(this.languageSelector).toHaveText(languageLabel);
+  }
+
+  @step("Expect General settings tab to show $0")
+  async expectGeneralTabLabel(text: string) {
+    await expect(this.generalTab).toContainText(text);
+  }
+
+  @step("Expect language row title to be $0")
+  async expectLanguageRowTranslation(text: string) {
+    await expect(this.languageRow).toContainText(text);
+  }
+
+  @step("Expect counter value row title to be $0")
+  async expectCounterValueRowTranslation(text: string) {
+    await expect(this.counterValueRow).toContainText(text);
+  }
+
+  @step("Expect theme row title to be $0")
+  async expectThemeRowTranslation(text: string) {
+    await expect(this.themeRow).toContainText(text);
+  }
+
+  @step("Expect counter value row to contain characters matching $0")
+  async expectCounterValueRowCharacterSet(regex: RegExp) {
+    await expect(this.counterValueRow).toContainText(regex);
+  }
+
   @step("Click 'Hide Empty Token Accounts' toggle")
   async clickHideEmptyTokenAccountsToggle() {
     await this.hideEmptyTokenAccountsToggle.click();
@@ -63,14 +102,11 @@ export class SettingsPage extends AppPage {
     await this.manageWalletSyncButton.click();
   }
 
-  @step("Open Wallet Sync Manager")
-  async openWalletSyncManager() {
-    await this.syncWalletSyncButton.click();
-  }
-
   @step("Enable Wallet Sync")
   async enableWalletSync() {
-    if (await this.syncWalletSyncButton.isVisible()) {
+    if (await this.turnOnLedgerSyncButton.isVisible()) {
+      await this.turnOnLedgerSyncButton.click();
+    } else if (await this.syncWalletSyncButton.isVisible()) {
       await this.syncWalletSyncButton.click();
     } else {
       await this.manageWalletSyncButton.click();

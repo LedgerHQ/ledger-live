@@ -1,13 +1,7 @@
 import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type {
-  Account,
-  DeviceInfo,
-  DeviceModelInfo,
-  Feature,
-  FeatureId,
-} from "@ledgerhq/types-live";
+import type { Account, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
@@ -36,6 +30,11 @@ import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/imp
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { UnknownAction } from "redux";
+import type {
+  BrazeContentCard,
+  CategoryContentCard,
+  WalletContentCard,
+} from "../dynamicContent/types";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -126,9 +125,6 @@ export type BlePayload =
 // === COUNTERVALUES ACTIONS ===
 
 export enum CountervaluesActionTypes {
-  COUNTERVALUES_MARKETCAP_SET_IDS = "COUNTERVALUES_MARKETCAP_SET_IDS",
-  COUNTERVALUES_MARKETCAP_SET_LOADING = "COUNTERVALUES_MARKETCAP_SET_LOADING",
-  COUNTERVALUES_MARKETCAP_SET_ERROR = "COUNTERVALUES_MARKETCAP_SET_ERROR",
   COUNTERVALUES_POLLING_SET_IS_POLLING = "COUNTERVALUES_POLLING_SET_IS_POLLING",
   COUNTERVALUES_POLLING_SET_TRIGGER_LOAD = "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
   COUNTERVALUES_STATE_SET = "COUNTERVALUES_STATE_SET",
@@ -137,10 +133,6 @@ export enum CountervaluesActionTypes {
   COUNTERVALUES_WIPE = "COUNTERVALUES_WIPE_STATE",
 }
 
-export type CountervaluesMarketcapFetchIdsPayload = void;
-export type CountervaluesMarketcapSetIdsPayload = string[];
-export type CountervaluesMarketcapSetLoadingPayload = boolean;
-export type CountervaluesMarketcapSetErrorPayload = string | null;
 export type CountervaluesPollingSetIsPollingPayload = boolean;
 export type CountervaluesPollingSetTriggerLoadPayload = boolean;
 export type CountervaluesStateSetPayload = CounterValuesState;
@@ -148,10 +140,6 @@ export type CountervaluesStateSetPendingPayload = boolean;
 export type CountervaluesStateSetErrorPayload = Error;
 
 export type CountervaluesPayload =
-  | CountervaluesMarketcapFetchIdsPayload
-  | CountervaluesMarketcapSetIdsPayload
-  | CountervaluesMarketcapSetLoadingPayload
-  | CountervaluesMarketcapSetErrorPayload
   | CountervaluesPollingSetIsPollingPayload
   | CountervaluesPollingSetTriggerLoadPayload
   | CountervaluesStateSetPayload
@@ -193,8 +181,10 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
   DYNAMIC_CONTENT_IS_LOADING = "DYNAMIC_CONTENT_IS_LOADING",
   DYNAMIC_CONTENT_ADD_LOCAL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_CARDS",
+  DYNAMIC_CONTENT_APPEND_LOCAL_CARDS = "DYNAMIC_CONTENT_APPEND_LOCAL_CARDS",
   DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS = "DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS",
   DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
+  DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -210,11 +200,16 @@ export type DynamicContentSetLandingStickyCtaCardsPayload =
 export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
 
 export type DynamicContentAddLocalCardsPayload = {
-  category: import("../dynamicContent/types").CategoryContentCard;
-  cards: import("../dynamicContent/types").BrazeContentCard[];
+  category: CategoryContentCard;
+  cards: BrazeContentCard[];
 };
 
+/** Appends Braze-like cards to `localMobileCards` (same `extras.categoryId` as an existing local category). */
+export type DynamicContentAppendLocalCardsPayload = BrazeContentCard[];
+
 export type DynamicContentRemoveLocalCardPayload = string;
+
+export type DynamicContentAddLocalWalletCarouselPayload = WalletContentCard[];
 
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
@@ -224,7 +219,9 @@ export type DynamicContentPayload =
   | DynamicContentSetLandingStickyCtaCardsPayload
   | DynamicContentSetMobileCardsPayload
   | DynamicContentAddLocalCardsPayload
-  | DynamicContentRemoveLocalCardPayload;
+  | DynamicContentAppendLocalCardsPayload
+  | DynamicContentRemoveLocalCardPayload
+  | DynamicContentAddLocalWalletCarouselPayload;
 
 // === RATINGS ACTIONS ===
 
@@ -262,6 +259,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
+  SETTINGS_ADD_COMPLETION_DATE = "SETTINGS_ADD_COMPLETION_DATE",
   SETTINGS_SET_IS_ONBOARDING_FlOW = "SETTINGS_SET_IS_ONBOARDING_FlOW",
   SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS = "SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS",
   SETTINGS_SET_IS_POST_ONBOARDING_FlOW = "SETTINGS_SET_IS_POST_ONBOARDING_FlOW",
@@ -294,9 +292,6 @@ export enum SettingsActionTypes {
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
-  SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
-  SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
-  SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   /* NB: Protect is the former codename for Ledger Recover */
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
@@ -317,6 +312,7 @@ export enum SettingsActionTypes {
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
   DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
+  SET_ANALYTICS_CONSENT_INFO = "SET_ANALYTICS_CONSENT_INFO",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -378,13 +374,6 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type DangerouslyOverrideStatePayload = Partial<State>;
-export type SettingsSetOverriddenFeatureFlagPlayload = {
-  id: FeatureId;
-  value: Feature | undefined;
-};
-export type SettingsSetOverriddenFeatureFlagsPlayload = SettingsState["overriddenFeatureFlags"];
-export type SettingsSetFeatureFlagsBannerVisiblePayload =
-  SettingsState["featureFlagsBannerVisible"];
 export type SettingsSetDebugAppLevelDrawerOpenedPayload =
   SettingsState["debugAppLevelDrawerOpened"];
 
@@ -404,6 +393,7 @@ export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTerms
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
@@ -451,9 +441,6 @@ export type SettingsPayload =
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload
-  | SettingsSetOverriddenFeatureFlagPlayload
-  | SettingsSetOverriddenFeatureFlagsPlayload
-  | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
   | SettingsIsOnboardingFlowPayload
   | SettingsIsOnboardingFlowReceiveSuccessPayload
@@ -465,6 +452,7 @@ export type SettingsPayload =
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt
+  | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
@@ -493,20 +481,32 @@ export enum SwapActionTypes {
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
+  EARN_INFO_BOTTOM_SHEET = "EARN_INFO_BOTTOM_SHEET",
   EARN_MENU_MODAL = "EARN_MENU_MODAL",
+  EARN_MENU_BOTTOM_SHEET = "EARN_MENU_BOTTOM_SHEET",
   EARN_PROTOCOL_INFO_MODAL = "EARN_PROTOCOL_INFO_MODAL",
+  EARN_ACTION_DIALOG = "EARN_ACTION_DIALOG",
 }
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
 
+export type EarnSetInfoBottomSheetPayload = EarnState["infoBottomSheet"];
+
 export type EarnSetMenuModalPayload = EarnState["menuModal"] | undefined;
+
+export type EarnSetMenuBottomSheetPayload = EarnState["menuBottomSheet"];
 
 export type EarnSetProtocolInfoModalPayload = EarnState["protocolInfoModal"] | undefined;
 
+export type EarnSetActionDialogPayload = EarnState["actionDialog"];
+
 export type EarnPayload =
   | EarnSetInfoModalPayload
+  | EarnSetInfoBottomSheetPayload
   | EarnSetMenuModalPayload
-  | EarnSetProtocolInfoModalPayload;
+  | EarnSetMenuBottomSheetPayload
+  | EarnSetProtocolInfoModalPayload
+  | EarnSetActionDialogPayload;
 
 // === IN VIEW ACTIONS ===
 export enum InViewActionTypes {

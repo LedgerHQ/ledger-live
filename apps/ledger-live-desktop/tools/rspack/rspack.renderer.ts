@@ -134,6 +134,19 @@ export function createRendererConfig(
           "lib",
           "index.js",
         ),
+        // Deduplicate @scure/bip39: multiple versions (1.x from cosmos/casper/filecoin, 2.x from @mysten/sui)
+        // V2 is backward-compatible and shares @noble/hashes@2.x already in the bundle
+        "@scure/bip39": path.resolve(
+          rootFolder,
+          "..",
+          "..",
+          "node_modules",
+          ".pnpm",
+          "@scure+bip39@2.0.1",
+          "node_modules",
+          "@scure",
+          "bip39",
+        ),
       },
     },
     // Ignore specific warnings from polkadot packages
@@ -155,6 +168,7 @@ export function createRendererConfig(
             path.resolve(lldRoot, "tests"),
             path.resolve(lldRoot, "tools"),
             path.resolve(lldRoot, "..", "..", "features"),
+            path.resolve(lldRoot, "..", "..", "shared"),
           ],
           exclude: /node_modules/,
           loader: "builtin:swc-loader",

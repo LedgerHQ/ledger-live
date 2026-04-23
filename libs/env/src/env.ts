@@ -43,7 +43,7 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 
 const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
-    def: "evm,tron",
+    def: "evm,tron,stellar,hedera,algorand,cardano,cosmos,solana,xrp",
     parser: stringParser,
     desc: "List of families impacted by the address poisoning attack",
   },
@@ -177,11 +177,6 @@ const envDefinitions = {
     def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
-  API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS: {
-    parser: intParser,
-    def: 1000,
-    desc: "Limit of operation that Horizon will fetch on initial sync",
-  },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
     parser: boolParser,
@@ -217,10 +212,10 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
-  API_SUI_NODE_PROXY_TEST: {
+  API_SUI_TESTNET_NODE_PROXY: {
     parser: stringParser,
     def: "https://sui.coin.ledger-test.com",
-    desc: "reverse proxy url for sui node",
+    desc: "reverse proxy url for sui testnet node",
   },
   API_SUI_NODE_PROXY: {
     parser: stringParser,
@@ -293,22 +288,22 @@ const envDefinitions = {
     desc: "Thorest API for VeChain",
   },
   ALEO_MAINNET_NODE_ENDPOINT: {
-    def: "https://api.provable.com",
+    def: "https://aleo.coin.ledger-test.com",
     parser: stringParser,
     desc: "Aleo mainnet node URL",
   },
   ALEO_MAINNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger-test.com/network/mainnet",
+    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
   },
   ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://api.provable.com",
+    def: "https://aleo.coin.ledger-test.com",
     parser: stringParser,
     desc: "Aleo testnet node URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger-test.com/network/testnet",
+    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
     parser: stringParser,
     desc: "Aleo testnet SDK URL",
   },

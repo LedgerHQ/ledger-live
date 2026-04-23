@@ -1,14 +1,16 @@
 {
   "name": "@actions/generate-bot-super-report",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Gather many uploaded bot reports to generate a higher level bot report",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "rslib build",
     "build-cli-test": "rslib build --config rslib.config.cli-test.ts",
-    "lint": "eslint ./ --cache",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
   },
   "devDependencies": {
     "@actions/core": "1.10.1",

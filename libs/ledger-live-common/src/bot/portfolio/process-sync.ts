@@ -2,7 +2,7 @@
 import "../../__tests__/test-helpers/environment";
 // import path from "path";
 // import fs from "fs/promises";
-import allSpecs from "../../generated/specs";
+import allSpecs from "../allSpecs";
 import type { AppSpec } from "../types";
 import { Account } from "@ledgerhq/types-live";
 import { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
@@ -37,7 +37,7 @@ main().then(
 async function main(): Promise<Report> {
   const report: Report = {};
   const [family, key] = process.argv.slice(2);
-  const spec: AppSpec<any> = allSpecs[family][key];
+  const spec: AppSpec<any> = allSpecs[family as keyof typeof allSpecs][key as never];
 
   const { COINAPPS, SEED } = process.env;
 
@@ -117,7 +117,7 @@ async function main(): Promise<Report> {
 
     audit.end();
 
-    const accountsRaw = JSON.stringify(accounts.map(a => toAccountRaw(a)));
+    const accountsRaw = JSON.stringify(await Promise.all(accounts.map(a => toAccountRaw(a))));
     const preloadJSON = JSON.stringify(localCache);
     audit.setAccountsJSONSize(accountsRaw.length);
     audit.setPreloadJSONSize(preloadJSON.length);

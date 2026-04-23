@@ -126,7 +126,7 @@ describe("backupAppDataUseCase", () => {
     });
   });
 
-  it("should transfer the events when NoAppDataToBackup / Progress event received ", async () => {
+  it("should transfer the events when NoAppDataToBackup / Progress event received", async () => {
     const expectedEvents: BackupAppDataEvent[] = [
       {
         type: BackupAppDataEventType.Progress,

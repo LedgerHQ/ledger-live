@@ -1,14 +1,16 @@
 {
   "name": "@actions/turborepo-s3-cache",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Uses S3 API to cache turborepo outputs",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "rslib build",
-    "lint": "eslint ./ --cache",
-    "lint:fix": "pnpm lint --fix"
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
   },
   "devDependencies": {
     "@actions/cache": "3.2.4",

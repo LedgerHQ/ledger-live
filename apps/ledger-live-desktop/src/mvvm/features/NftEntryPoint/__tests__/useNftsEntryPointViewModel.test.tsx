@@ -1,6 +1,6 @@
 import useNftsEntryPointViewModel from "../useNftsEntryPointViewModel";
 import { AnalyticsPage, Entry } from "../types";
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 
 describe("useNftsEntryPointViewModel", () => {
   it("should return isFeatureNftEntryPointEnabled as false if feature is disabled", () => {
@@ -8,15 +8,11 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: false,
-              },
-            },
+        initialState: withFlagOverrides({
+          llNftEntryPoint: {
+            enabled: false,
           },
-        },
+        }),
       },
     );
 
@@ -28,19 +24,15 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: true,
-                params: {
-                  [Entry.magiceden]: true,
-                  [Entry.opensea]: true,
-                },
-              },
+        initialState: withFlagOverrides({
+          llNftEntryPoint: {
+            enabled: true,
+            params: {
+              [Entry.magiceden]: true,
+              [Entry.opensea]: true,
             },
           },
-        },
+        }),
       },
     );
 
@@ -52,19 +44,15 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: true,
-                params: {
-                  [Entry.magiceden]: true,
-                  [Entry.opensea]: true,
-                },
-              },
+        initialState: withFlagOverrides({
+          llNftEntryPoint: {
+            enabled: true,
+            params: {
+              [Entry.magiceden]: true,
+              [Entry.opensea]: true,
             },
           },
-        },
+        }),
       },
     );
     const magicedenEntry = result.current.entryPoints[Entry.magiceden];
@@ -78,19 +66,15 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        initialState: {
-          settings: {
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: true,
-                params: {
-                  [Entry.magiceden]: true,
-                  [Entry.opensea]: true,
-                },
-              },
+        initialState: withFlagOverrides({
+          llNftEntryPoint: {
+            enabled: true,
+            params: {
+              [Entry.magiceden]: true,
+              [Entry.opensea]: true,
             },
           },
-        },
+        }),
       },
     );
     const openseaEntry = result.current.entryPoints[Entry.opensea];

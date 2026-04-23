@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type {
+  StakingTransactionIntent,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
 
@@ -143,18 +146,19 @@ describe("estimateFees", () => {
     ).rejects.toThrow("RPC error");
   });
 
-  it("should throw for unsupported intent types", async () => {
+  it("should estimate fees for staking intent types", async () => {
     const api = createMockApi([5000]);
-    await expect(
-      estimateFees(api, {
-        intentType: "staking",
-        type: "delegate",
-        sender: TEST_ADDRESS,
-        recipient: TEST_RECIPIENT,
-        amount: 1000000n,
-        asset: { type: "native" },
-      } as unknown as TransactionIntent),
-    ).rejects.toThrow("Unsupported intent type: staking");
+    const result = await estimateFees(api, {
+      intentType: "staking",
+      type: "stake.createAccount",
+      mode: "delegate",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      valAddress: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+    } as StakingTransactionIntent);
+    expect(result.value).toBe(5000n);
   });
 });
 

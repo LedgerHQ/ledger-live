@@ -12,7 +12,8 @@ import {
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { useTheme } from "styled-components/native";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
 import { BackConfig, WebPTXPlayer } from "~/components/WebPTXPlayer";
@@ -100,7 +101,7 @@ export function PtxScreen({ route, config }: Props) {
         }
       })();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
   const { softExit, ...searchInput } = Object.fromEntries(searchParams.entries());

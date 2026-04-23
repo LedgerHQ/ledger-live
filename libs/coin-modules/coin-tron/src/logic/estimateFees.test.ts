@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { ACTIVATION_FEES_TRC_20, STANDARD_FEES_NATIVE } from "./constants";
 import { estimateFees } from "./estimateFees";
 

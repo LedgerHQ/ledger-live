@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { TronMemo } from "../types";
 import { ACTIVATION_FEES_TRC_20, STANDARD_FEES_NATIVE } from "./constants";
 

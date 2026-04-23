@@ -10,6 +10,10 @@ export type APIAccount =
       publicKey: string;
       revealed: boolean;
       balance: number;
+      stakedBalance?: number;
+      unstakedBalance?: number;
+      unstakedFinalizable?: number;
+      stakingUpdatesCount?: number;
       counter: number;
       delegate?: {
         alias: string;
@@ -42,25 +46,12 @@ type CommonOperationType = {
 export type APITransactionType = CommonOperationType & {
   type: "transaction";
   amount: number;
-  /**
-   * The account that initiated the whole operation group (i.e. the account that signed and paid fees).
-   *
-   * - For top-level transactions: `null` (the `sender` is the initiator).
-   * - For internal transactions (emitted by a smart contract): set to the original user account.
-   *   In that case `sender` is the contract that emitted the internal operation.
-   *
-   *
-   * Example (real mainnet tx opK5rnDgd4ipyeS3JnFrENMpeu7xY44AMcke9u9GDku7Udt8sYd):
-   *   initiator: { address: "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV" }  // user account, fee payer
-   *   sender:    { address: "KT1WPEis2WhAc2FciM2tZVn8qe6pCBe9HkDp" }  // smart contract "Vested funds 1"
-   *   target:    { address: "tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk" }  // recipient
-   *   bakerFee:  0  (fees are on the top-level operation, not on internal ones)
-   */
   initiator: { address: string } | undefined | null;
   sender: { address: string } | undefined | null;
   target: { address: string } | undefined | null;
   counter: number;
 };
+
 export function isAPITransactionType(op: APIOperation): op is APITransactionType {
   return op.type === "transaction";
 }
@@ -86,6 +77,16 @@ export function isAPIRevealType(op: APIOperation): op is APIRevealType {
   return op.type === "reveal";
 }
 
+export type APIStakingType = CommonOperationType & {
+  type: "staking";
+  kind: "stake" | "unstake" | "finalize";
+  amount: number;
+  sender: { address: string } | undefined | null;
+};
+export function isAPIStakingType(op: APIOperation): op is APIStakingType {
+  return op.type === "staking";
+}
+
 // https://api.tzkt.io/#operation/Accounts_GetOperations
 export type AccountsGetOperationsOptions = {
   lastId?: number; // used as a pagination cursor to fetch more transactions
@@ -97,9 +98,7 @@ export type AccountsGetOperationsOptions = {
 
 export type APIOperation =
   | APITransactionType
-  | (CommonOperationType & {
-      type: "reveal";
-    })
+  | APIRevealType
   | APIDelegationType
   | (CommonOperationType & {
       type: "activation";
@@ -116,6 +115,7 @@ export type APIOperation =
       type: "migration";
       balanceChange: number;
     })
+  | APIStakingType
   | (CommonOperationType & {
       type: ""; // this is to express fact we have others and we need to always filter out others
     });
@@ -166,6 +166,13 @@ export type APIBlock = {
   prevHash?: string;
 };
 
+export type TokenTransfersGetOptions = {
+  lastId?: number;
+  limit?: number;
+  sort?: "Descending" | "Ascending";
+  "level.ge"?: number;
+};
+
 /**
  * A FA1.2 / FA2 token transfer event returned by `GET /v1/tokens/transfers`.
  * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
@@ -199,4 +206,32 @@ export type APITokenTransfer = {
    * Undefined for implicit/protocol-level transfers.
    */
   transactionId?: number;
+};
+
+/**
+ * A FA1.2 / FA2 token balance event returned by `GET /v1/tokens/balances`.
+ * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
+ */
+export type APITokenBalance = {
+  id: number;
+  account: {
+    address: string;
+  };
+  token: {
+    id: number;
+    contract: { address: string; alias?: string };
+    tokenId: string;
+    standard: "fa1.2" | "fa2";
+    metadata?: {
+      name?: string;
+      symbol: string;
+      decimals: string;
+    };
+  };
+  balance: string;
+  transfersCount: number;
+  firstLevel: number;
+  firstTime: string;
+  lastLevel: number;
+  lastTime: string;
 };

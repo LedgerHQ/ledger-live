@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -12,12 +12,12 @@ import { BigNumber } from "bignumber.js";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
 import { Transaction } from "../types/common";
-import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "./errors";
+import { AccountCreationFeeWarning, AmountTooSmall, InvalidMemoMina } from "../types/errors";
 import getEstimatedFees from "./getEstimatedFees";
 import getTransactionStatus from "./getTransactionStatus";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/currencies", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies", () => ({
   formatCurrencyUnit: jest.fn().mockReturnValue("0.1 MINA"),
 }));
 jest.mock("./getEstimatedFees");
@@ -99,6 +99,18 @@ describe("getTransactionStatus", () => {
     const result = await getTransactionStatus(mockAccount, txWithSelfTransfer);
 
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+  });
+
+  it("should allow self-delegation for unstake txType", async () => {
+    const txUnstake = {
+      ...mockTransaction,
+      recipient: mockAccount.freshAddress,
+      txType: "unstake" as const,
+    };
+
+    const result = await getTransactionStatus(mockAccount, txUnstake);
+
+    expect(result.errors.recipient).toBeUndefined();
   });
 
   it("should handle invalid memo with InvalidMemoMina error", async () => {

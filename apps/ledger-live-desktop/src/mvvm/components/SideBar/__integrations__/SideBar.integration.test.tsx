@@ -90,6 +90,20 @@ describe("SideBar", () => {
       expect(screen.queryByText("[L] Recover")).not.toBeInTheDocument();
     });
 
+    it("should hide Recover and Refer a friend when My Wallet is enabled", () => {
+      renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { myWallet: true } },
+          protectServicesDesktop: { enabled: true },
+          referralProgramDesktopSidebar: { enabled: true, params: { path: "/refer" } },
+        }),
+      );
+
+      expect(screen.queryByText("[L] Recover")).not.toBeInTheDocument();
+      expect(screen.queryByText("Refer a friend")).not.toBeInTheDocument();
+    });
+
     it("should disable Card item when card manifest is unavailable", () => {
       renderSideBarWithRoute("/");
 
@@ -117,6 +131,19 @@ describe("SideBar", () => {
       await user.click(screen.getByText("Accounts"));
 
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
+    });
+
+    it("should navigate to cryptos when clicking Accounts item when asset section is enabled", async () => {
+      const { user } = renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
+
+      await user.click(screen.getByText("Accounts"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
     });
 
     it("should navigate to swap when clicking Swap item", async () => {
@@ -171,6 +198,18 @@ describe("SideBar", () => {
 
     it("should set accounts as active when on accounts path", () => {
       renderSideBarWithRoute("/accounts");
+
+      const accountsButton = screen.getByText("Accounts").closest("button");
+      expect(accountsButton).toHaveAttribute("aria-current", "page");
+    });
+
+    it("should set accounts as active when on cryptos path and asset section is enabled", () => {
+      renderSideBarWithRoute(
+        "/cryptos",
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
 
       const accountsButton = screen.getByText("Accounts").closest("button");
       expect(accountsButton).toHaveAttribute("aria-current", "page");

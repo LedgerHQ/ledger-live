@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { killAnvil, spawnAnvil } from "../anvil";
-import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
+import { callMyDealer, ethereum, expectAddressInList, getBridges, VITALIK } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_ETHEREUM } from "../tokenFixtures";
@@ -32,6 +32,8 @@ const makeScenarioTransactions = ({
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -52,6 +54,11 @@ const makeScenarioTransactions = ({
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
         ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, USDC_ON_ETHEREUM.contractAddress);
+      const subOp = latestOperation.subOperations?.[0];
+      expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+      expectAddressInList(subOp?.recipients, VITALIK);
     },
   };
 
@@ -66,6 +73,8 @@ const makeScenarioTransactions = ({
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -122,7 +131,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    initMswHandlers(getCoinConfig(ethereum).info);
+    initMswHandlers(getCoinConfig(ethereum.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

@@ -1,12 +1,11 @@
 import React from "react";
-import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
+import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
 import { useNetInfo, type NetInfoState } from "@react-native-community/netinfo";
 import MarketList from "../index";
 import { ScreenName } from "~/const";
-import { State } from "~/reducers/types";
 
 // Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization
 
@@ -40,15 +39,7 @@ describe("MarketList Layout based on Feature Flag", () => {
   describe("When marketBanner feature flag is enabled (standalone mode)", () => {
     it("should render MarketList with SafeAreaView for top edge", async () => {
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       await waitFor(() => {
@@ -60,15 +51,7 @@ describe("MarketList Layout based on Feature Flag", () => {
 
     it("should display market data correctly in standalone mode", async () => {
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       await waitFor(() => {
@@ -82,15 +65,7 @@ describe("MarketList Layout based on Feature Flag", () => {
   describe("When marketBanner feature flag is disabled (tabs mode)", () => {
     it("should render MarketList with WalletTabSafeAreaView", async () => {
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: false } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: false } } }),
       });
 
       await waitFor(() => {
@@ -103,15 +78,7 @@ describe("MarketList Layout based on Feature Flag", () => {
 
     it("should display market data correctly in tabs mode", async () => {
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: false, params: { marketBanner: false } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: false, params: { marketBanner: false } } }),
       });
 
       await waitFor(() => {
@@ -125,15 +92,7 @@ describe("MarketList Layout based on Feature Flag", () => {
   describe("Feature flag transitions", () => {
     it("should handle lwmWallet40 disabled state correctly", async () => {
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: false },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: false } }),
       });
 
       await waitFor(() => {
@@ -151,15 +110,7 @@ describe("MarketList Layout based on Feature Flag", () => {
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { marketBanner: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: true } } }),
       });
 
       await waitFor(() => {

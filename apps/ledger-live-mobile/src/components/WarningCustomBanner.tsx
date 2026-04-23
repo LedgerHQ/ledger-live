@@ -1,5 +1,5 @@
 import React from "react";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { View } from "react-native";
 import Alert from "~/components/Alert";
 

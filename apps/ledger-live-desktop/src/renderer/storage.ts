@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { ipcRenderer } from "electron";
 import { getEnv } from "@ledgerhq/live-env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
@@ -17,6 +18,7 @@ import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -49,6 +51,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   cryptoAssets: PersistedCAL;
+  featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   identities: PersistedIdentities;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
@@ -75,7 +78,7 @@ type Transform<R, M> = {
   ) => Promise<Awaited<ReturnType<DataModel<R, M>["decode"]>>[] | null>;
   set: (
     raws: Parameters<DataModel<R, M>["encode"]>[0][],
-  ) => ReturnType<DataModel<R, M>["encode"]>[];
+  ) => Promise<Awaited<ReturnType<DataModel<R, M>["encode"]>>[]>;
 };
 
 // A map of transformers.
@@ -100,7 +103,7 @@ const transforms: Transforms = {
       }
       return accounts;
     },
-    set: accounts => (accounts || []).map(accountModel.encode),
+    set: async accounts => Promise.all((accounts || []).map(accountModel.encode)),
   },
 };
 
@@ -137,15 +140,22 @@ if (getEnv("PLAYWRIGHT_RUN")) {
 
 const debouncedSetKey = memoize(
   <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
-    debounceToUse((value: V) => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const transform = transforms[keyPath as keyof Transforms];
-      ipcRenderer.invoke("setKey", {
-        ns,
-        keyPath,
+    debounceToUse(async (value: V) => {
+      try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        value: transform ? transform.set(value as Parameters<typeof transform.set>[0]) : value,
-      });
+        const transform = transforms[keyPath as keyof Transforms];
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        const transformedValue = transform
+          ? await transform.set(value as Parameters<typeof transform.set>[0])
+          : value;
+        await ipcRenderer.invoke("setKey", {
+          ns,
+          keyPath,
+          value: transformedValue,
+        });
+      } catch (e) {
+        logger.error("debouncedSetKey failed", { ns, keyPath }, e);
+      }
     }, 1000),
   (ns: string, keyPath: string) => `${ns}:${keyPath}`,
 );
@@ -180,6 +190,10 @@ export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
 
+function identitySelector<V>(state: V): V {
+  return state;
+}
+
 export function useDB<
   Selected,
   K extends keyof DatabaseValues,
@@ -190,13 +204,13 @@ export function useDB<
   keyPath: K,
   initialState: DV,
   // @ts-expect-error State !== Selected
-  selector: (state: V) => Selected = state => state,
+  selector: (state: V) => Selected = identitySelector,
 ) {
   return useDBRaw<V, Selected>({
     initialState,
-    getter: () => getKey(ns, keyPath, initialState),
+    getter: useCallback(() => getKey(ns, keyPath, initialState), [ns, keyPath, initialState]),
     // @ts-expect-error Todo: state doesn't fit
-    setter: state => setKey(ns, keyPath, state),
+    setter: useCallback(state => setKey(ns, keyPath, state), [ns, keyPath]),
     selector,
   });
 }

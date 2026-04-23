@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
-import Config from "react-native-config";
 import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
@@ -19,6 +18,7 @@ import {
   UnsupportedFeatureError,
   NanoSNotSupported,
 } from "@ledgerhq/errors";
+import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -27,17 +27,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import {
-  BoxedIcon,
-  Flex,
-  Icons,
-  IconsLegacy,
-  InfiniteLoader,
-  Link,
-  Log,
-  Tag,
-  Text,
-} from "@ledgerhq/native-ui";
+import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -58,6 +49,7 @@ import Circle from "../Circle";
 import DeviceActionProgress from "../DeviceActionProgress";
 import ExternalLink from "../ExternalLink";
 import GenericErrorView from "../GenericErrorView";
+import { GenericInformationBody } from "../GenericInformationBody";
 import ModalLock from "../ModalLock";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
@@ -525,6 +517,43 @@ export function renderLockedDeviceError({
   );
 }
 
+export function CounterfeitDeviceError({ device }: { device?: Device }) {
+  const { t } = useTranslation();
+  const contactSupportUrl = useLocalizedUrl(urls.contact);
+
+  const onContactSupport = useCallback(() => {
+    track("button_clicked", {
+      button: "Contacting support about non genuine device",
+    });
+
+    Linking.openURL(contactSupportUrl);
+  }, [contactSupportUrl]);
+
+  const productName = device ? getDeviceModel(device.modelId)?.productName : "Ledger device";
+
+  return (
+    <Wrapper>
+      <GenericInformationBody
+        Icon={Icons.WarningFill}
+        iconColor="warning.c70"
+        title={t("errors.CounterfeitDevice.title", { productName })}
+        description={t("errors.CounterfeitDevice.description")}
+      />
+      <Flex alignSelf="stretch" mt={6}>
+        <StyledButton
+          event="CounterfeitDeviceContactSupport"
+          type="main"
+          size="large"
+          outline={false}
+          title={t("errors.CounterfeitDevice.contactSupportCTA")}
+          IconRight={Icons.ExternalLink}
+          onPress={onContactSupport}
+        />
+      </Flex>
+    </Wrapper>
+  );
+}
+
 export function renderError({
   t,
   error,
@@ -557,6 +586,8 @@ export function renderError({
         <BleForgetDeviceIllustration productName={productName} onRetry={() => onRetry?.()} />
       </Flex>
     );
+  } else if (isCounterfeitError(error)) {
+    return <CounterfeitDeviceError device={device} />;
   } else if (error.message === "device-deprecation") {
     return (
       <DeviceDeprecationScreen
@@ -957,7 +988,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={!!Config.DETOX} testID="device-action-loading" />
+        <InfiniteLoader testID="device-action-loading" />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}

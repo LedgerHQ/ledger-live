@@ -8,7 +8,7 @@ import { balanceItem } from "../../../../components/Balance";
 import { useAccountData } from "../../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { NetworkVirtualList } from "../NetworkVirtualList";
-import { ApyIndicator } from "LLD/features/ModularDrawer/components/ApyIndicator";
+import { ApyIndicator } from "LLD/features/ModularDialog/components/ApyIndicator";
 import { accountsCount } from "../../../../components/Account/AccountCount";
 import { accountsCountAndApy } from "../../../../components/Account/AccountCountApy";
 

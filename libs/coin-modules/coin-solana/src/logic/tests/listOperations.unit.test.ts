@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
+import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
 import { listOperations } from "../listOperations";
@@ -49,6 +49,7 @@ describe("listOperations", () => {
               { pubkey: new PublicKey(TEST_RECIPIENT) },
             ],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -99,6 +100,7 @@ describe("listOperations", () => {
               { pubkey: new PublicKey(TEST_ADDRESS) },
             ],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -130,6 +132,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -177,6 +180,7 @@ describe("listOperations", () => {
         message: {
           accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
           recentBlockhash: TEST_BLOCKHASH,
+          instructions: [],
         },
       },
       meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -198,6 +202,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -222,6 +227,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -231,6 +237,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -258,6 +265,7 @@ describe("listOperations", () => {
         message: {
           accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
           recentBlockhash: TEST_BLOCKHASH,
+          instructions: [],
         },
       },
       meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -282,6 +290,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -308,6 +317,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -333,6 +343,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(OTHER_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -359,6 +370,7 @@ describe("listOperations", () => {
               { pubkey: new PublicKey(TEST_ADDRESS) },
             ],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -373,6 +385,7 @@ describe("listOperations", () => {
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].type).toBe("NONE");
+
     expect(result.items[0].value).toBe(0n);
   });
 
@@ -391,6 +404,7 @@ describe("listOperations", () => {
               { pubkey: new PublicKey(TEST_RECIPIENT) },
             ],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -425,6 +439,7 @@ describe("listOperations", () => {
               { pubkey: new PublicKey(TEST_ADDRESS) },
             ],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -459,6 +474,7 @@ describe("listOperations", () => {
               { pubkey: new PublicKey(OTHER) },
             ],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {
@@ -488,6 +504,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: { fee: 5000, preBalances: [1000000], postBalances: [995000] },
@@ -513,6 +530,232 @@ describe("listOperations", () => {
     );
   });
 
+  describe("staking operations", () => {
+    const VOTE_ACCOUNT = "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4";
+    const STAKE_ACCOUNT = "9ZNTfG4NyQgxy2SWjSiQoUyBPEvXT2xo7fKc5hPYYJ7b";
+
+    function makeParsedIx(program: string, type: string, info?: Record<string, unknown>) {
+      return { program, parsed: { type, info } };
+    }
+
+    function makeStakingTx(
+      instructions: object[],
+      { preBalance = 10_000_000_000, postBalance = 7_000_000_000, fee = 5000 } = {},
+    ) {
+      return {
+        transaction: {
+          message: {
+            accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions,
+          },
+        },
+        meta: {
+          fee,
+          preBalances: [preBalance],
+          postBalances: [postBalance],
+        },
+      };
+    }
+
+    it("should detect DELEGATE via create+delegate (3 instructions)", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-delegate-create", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([
+          makeParsedIx("system", "createAccountWithSeed"),
+          makeParsedIx("stake", "initialize"),
+          makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
+        ]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items).toHaveLength(1);
+      const op = result.items[0];
+      expect(op.type).toBe("DELEGATE");
+      expect(op.value).toBe(0n);
+      expect(op.details).toEqual({
+        stake: { address: VOTE_ACCOUNT, amount: 3_000_000_000n },
+      });
+    });
+
+    it("should detect DELEGATE via standalone delegate (1 instruction)", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-delegate-solo", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT })], {
+          preBalance: 5_000_000_000,
+          postBalance: 4_999_995_000,
+        }),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items).toHaveLength(1);
+      const op = result.items[0];
+      expect(op.type).toBe("DELEGATE");
+      expect(op.value).toBe(0n);
+      expect(op.details).toEqual({
+        stake: { address: VOTE_ACCOUNT, amount: 5000n },
+      });
+    });
+
+    it("should detect UNDELEGATE via deactivate", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-undelegate", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([makeParsedIx("stake", "deactivate")], {
+          preBalance: 5_000_000_000,
+          postBalance: 4_999_995_000,
+        }),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items).toHaveLength(1);
+      const op = result.items[0];
+      expect(op.type).toBe("UNDELEGATE");
+      expect(op.value).toBe(0n);
+      expect(op.details).toBeUndefined();
+    });
+
+    it("should detect WITHDRAW_UNBONDED via withdraw", async () => {
+      const blockTime = 1700000000;
+      const withdrawLamports = 2_000_000_000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-withdraw", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx(
+          [
+            makeParsedIx("stake", "withdraw", {
+              stakeAccount: STAKE_ACCOUNT,
+              lamports: withdrawLamports,
+            }),
+          ],
+          { preBalance: 5_000_000_000, postBalance: 6_999_995_000, fee: 5000 },
+        ),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items).toHaveLength(1);
+      const op = result.items[0];
+      expect(op.type).toBe("WITHDRAW_UNBONDED");
+      expect(op.value).toBe(5000n);
+      expect(op.details).toEqual({
+        stake: { address: STAKE_ACCOUNT, amount: BigInt(withdrawLamports) },
+      });
+    });
+
+    it("should detect DELEGATE via createAccount (not createAccountWithSeed)", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-delegate-create2", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([
+          makeParsedIx("system", "createAccount"),
+          makeParsedIx("stake", "initialize"),
+          makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
+        ]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].type).toBe("DELEGATE");
+    });
+
+    it("should not set feesPayer on DELEGATE operation", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-delegate", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT })]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("DELEGATE");
+      expect(result.items[0].tx.feesPayer).toBeUndefined();
+    });
+
+    it("should not set feesPayer on UNDELEGATE operation", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-undelegate", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([makeParsedIx("stake", "deactivate")]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("UNDELEGATE");
+      expect(result.items[0].tx.feesPayer).toBeUndefined();
+    });
+
+    it("should not set feesPayer on WITHDRAW_UNBONDED operation", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-withdraw", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeStakingTx([
+          makeParsedIx("stake", "withdraw", {
+            stakeAccount: STAKE_ACCOUNT,
+            lamports: 1_000_000_000,
+          }),
+        ]),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("WITHDRAW_UNBONDED");
+      expect(result.items[0].tx.feesPayer).toBeUndefined();
+    });
+
+    it("should set feesPayer on native OUT operation (non-staking)", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig-out", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            message: {
+              accountKeys: [
+                { pubkey: new PublicKey(TEST_ADDRESS) },
+                { pubkey: new PublicKey(TEST_RECIPIENT) },
+              ],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [],
+            },
+          },
+          meta: {
+            fee: 5000,
+            preBalances: [1_000_000_000, 0],
+            postBalances: [899_995_000, 100_000_000],
+          },
+        },
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0].type).toBe("OUT");
+      expect(result.items[0].tx.feesPayer).toBe(TEST_ADDRESS);
+    });
+  });
+
   describe("token operations", () => {
     const TOKEN_PROGRAM_ID_STR = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
     const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
@@ -528,6 +771,7 @@ describe("listOperations", () => {
           message: {
             accountKeys: accountKeys.map(k => ({ pubkey: new PublicKey(k) })),
             recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
           },
         },
         meta: {

@@ -1,11 +1,19 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
+  AddressValidationCurrencyParameters,
   AlpacaApi,
+  Balance,
+  BalanceOptions,
   BroadcastConfig,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
+  MemoNotSupported,
+  StakingTransactionIntent,
+  StringMemo,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
@@ -13,12 +21,18 @@ import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
+import { getNextSequence } from "../logic/getNextSequence";
+import { getStakes } from "../logic/getStakes";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateAddress } from "../logic/validateAddress";
+import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaApi {
+type SolanaAlpacaApi = AlpacaApi<StringMemo | MemoNotSupported>;
+
+export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaAlpacaApi {
   coinConfig.setCoinConfig(() => ({
     ...config,
     status: { type: "active" as const },
@@ -33,23 +47,29 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     combine: (tx: string, signature: string, _pubkey?: string) => {
       return combine(tx, signature);
     },
-    craftTransaction: (intent: TransactionIntent, customFees?: FeeEstimation) => {
+    craftTransaction: (
+      intent: TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent,
+      customFees?: FeeEstimation,
+    ) => {
       return craftTransaction(api, intent, customFees);
     },
     craftRawTransaction: (tx: string, sender: string, _publicKey: string, _sequence: bigint) => {
       return craftRawTransaction(tx, sender);
     },
     estimateFees: (
-      intent: TransactionIntent,
+      intent: TransactionIntent<StringMemo | MemoNotSupported>,
       customFeesParameters?: FeeEstimation["parameters"],
     ) => {
       return estimateFees(api, intent, customFeesParameters);
     },
-    getBalance: (address: string) => {
-      return getBalance(api, address, {
-        token2022Enabled: config.token2022Enabled,
-      });
-    },
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(
+        () =>
+          getBalance(api, address, {
+            token2022Enabled: config.token2022Enabled,
+          }),
+        options,
+      ),
     lastBlock: () => {
       return lastBlock(api);
     },
@@ -68,17 +88,25 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     getValidators: () => {
       throw new Error("getValidators is not supported");
     },
-    getStakes: (_address: string, _cursor?: Cursor) => {
-      throw new Error("getStakes is not supported");
+    getStakes: (address: string, cursor?: Cursor) => {
+      return getStakes(api, address, cursor);
     },
-    validateIntent: () => {
-      throw new Error("validateIntent is not supported");
+    validateIntent: (
+      intent: TransactionIntent<StringMemo | MemoNotSupported>,
+      balances: Balance[],
+      customFees?: FeeEstimation,
+    ) => {
+      return validateIntent(intent, balances, customFees);
     },
-    getNextSequence: () => {
-      throw new Error("getNextSequence is not supported");
+    getNextSequence: async (address: string) => {
+      return getNextSequence(address);
     },
-    validateAddress: () => {
-      throw new Error("validateAddress is not supported");
+    validateAddress: (
+      address: string,
+      parameters: Partial<AddressValidationCurrencyParameters>,
+    ) => {
+      return validateAddress(address, parameters);
     },
+    craftTransactionData,
   };
 }

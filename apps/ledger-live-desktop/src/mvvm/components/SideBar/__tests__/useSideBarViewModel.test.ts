@@ -36,7 +36,6 @@ const NAV_HANDLER_CASES: ReadonlyArray<{
   path: string;
   trackEntry: string;
 }> = [
-  { handler: "handleClickAccounts", path: SIDEBAR_VALUE_TO_PATH.accounts, trackEntry: "accounts" },
   { handler: "handleClickSwap", path: SIDEBAR_VALUE_TO_PATH.swap, trackEntry: "swap" },
   { handler: "handleClickEarn", path: SIDEBAR_VALUE_TO_PATH.earn, trackEntry: "earn" },
   { handler: "handleClickCatalog", path: SIDEBAR_VALUE_TO_PATH.discover, trackEntry: "platform" },
@@ -50,7 +49,7 @@ const NAV_HANDLER_CASES: ReadonlyArray<{
 
 const ACTIVE_CHANGE_NAV_CASES = Object.keys(SIDEBAR_VALUE_TO_PATH)
   .filter(isSideBarNavValue)
-  .filter(value => value !== "home")
+  .filter(value => value !== "home" && value !== "accounts")
   .map(value => ({
     value,
     path: SIDEBAR_VALUE_TO_PATH[value],
@@ -71,7 +70,18 @@ describe("useSideBarViewModel", () => {
       noAccounts: false,
       totalStarredAccounts: 0,
       active: "home",
+      isMyWalletEnabled: false,
     });
+  });
+
+  it("should expose My Wallet state when enabled", () => {
+    const { result } = renderViewModel(
+      withFeatureFlags({
+        lwdWallet40: { enabled: true, params: { myWallet: true } },
+      }),
+    );
+
+    expect(result.current.isMyWalletEnabled).toBe(true);
   });
 
   describe("collapse", () => {
@@ -94,6 +104,46 @@ describe("useSideBarViewModel", () => {
   });
 
   describe("navigation handlers", () => {
+    it("should navigate to /accounts via handleClickAccounts when asset section is off", () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel();
+
+      act(() => {
+        result.current.handleClickAccounts();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.accounts);
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
+    it("should navigate to /cryptos via handleClickAccounts when asset section is on", () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel(
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
+
+      act(() => {
+        result.current.handleClickAccounts();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
     it.each(NAV_HANDLER_CASES)(
       "should navigate to $path and track '$trackEntry' via $handler",
       ({ handler, path, trackEntry }) => {
@@ -184,6 +234,42 @@ describe("useSideBarViewModel", () => {
   });
 
   describe("handleActiveChange", () => {
+    it('should navigate to /accounts for value "accounts" when asset section is off', () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel();
+
+      act(() => result.current.handleActiveChange("accounts"));
+
+      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.accounts);
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
+    it('should navigate to /cryptos for value "accounts" when asset section is on', () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel(
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
+
+      act(() => result.current.handleActiveChange("accounts"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
     it.each(ACTIVE_CHANGE_NAV_CASES)(
       'should navigate to $path and track "$trackEntry" for value "$value"',
       ({ value, path, trackEntry }) => {

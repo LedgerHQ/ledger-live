@@ -16,6 +16,11 @@ on:
         type: boolean
         required: false
         default: false
+      skip_nx_cache:
+        description: "Skip Nx task cache when computing affected projects (e.g. external fork workflows)"
+        type: boolean
+        required: false
+        default: false
     outputs:
       packages:
         description: "Newline-separated list of affected packages"
@@ -88,9 +93,17 @@ jobs:
       - name: Install dev dependencies for root workspace
         run: pnpm i -D -F "ledger-live" --ignore-scripts
 
+      - name: Skip Nx cache for job
+        if: ${{ inputs.skip_nx_cache }}
+        shell: bash
+        run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
+
+      - name: Setup nx config
+        run: pnpm nx:write-cache-config
+
       - name: Get affected packages and paths
         id: nx-affected
-        uses: ./tools/actions/composites/nx-affected-packages
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD

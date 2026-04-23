@@ -160,4 +160,122 @@ describe("ValidateOnDevice", () => {
 
     expect(getByTestId("device-validation-scroll-view")).toBeTruthy();
   });
+
+  it("uses fee currency sub-account unit when feeCurrencyAccountId is set", () => {
+    const feeSubAccount = {
+      type: "TokenAccount",
+      id: "fee-sub-account",
+      token: { contractAddress: "0xabc" },
+      currency: { units: [{ code: "USDT", magnitude: 6 }] },
+      balance: new BigNumber(1000),
+      spendableBalance: new BigNumber(1000),
+    } as any;
+
+    const accountWithSub = {
+      ...mockAccount,
+      subAccounts: [feeSubAccount],
+    } as any;
+
+    const statusWithFeeAccount = {
+      ...mockStatus,
+      feeCurrencyAccountId: "fee-sub-account",
+    } as any;
+
+    mockUseDeviceTransactionConfig.mockReturnValue({
+      fields: [{ type: "fees", label: "Fees" }],
+      loading: false,
+    });
+
+    render(
+      <ValidateOnDevice
+        device={mockDevice}
+        account={accountWithSub}
+        parentAccount={null}
+        transaction={mockTransaction}
+        status={statusWithFeeAccount}
+      />,
+    );
+
+    expect(mockUseAccountUnit).toHaveBeenCalledWith(feeSubAccount);
+  });
+
+  it("falls back to feesCurrency unit when status does not include feeCurrencyAccountId", () => {
+    // feeCurrencyAccountId is on the transaction but NOT on status — the code
+    // reads from status, so this exercises the default (feesCurrency) path.
+    const feeSubAccount = {
+      type: "TokenAccount",
+      id: "fee-sub-account",
+      token: { contractAddress: "0xabc" },
+      currency: { units: [{ code: "USDT", magnitude: 6 }] },
+      balance: new BigNumber(1000),
+      spendableBalance: new BigNumber(1000),
+    } as any;
+
+    const accountWithSub = {
+      ...mockAccount,
+      subAccounts: [feeSubAccount],
+    } as any;
+
+    const txWithFeeAccount = {
+      ...mockTransaction,
+      feeCurrencyAccountId: "fee-sub-account",
+    } as any;
+
+    mockUseDeviceTransactionConfig.mockReturnValue({
+      fields: [{ type: "fees", label: "Fees" }],
+      loading: false,
+    });
+
+    render(
+      <ValidateOnDevice
+        device={mockDevice}
+        account={accountWithSub}
+        parentAccount={null}
+        transaction={txWithFeeAccount}
+        status={mockStatus}
+      />,
+    );
+
+    // The hook is still called unconditionally, but with mainAccount since
+    // feeCurrencyAccount is null when status.feeCurrencyAccountId is absent.
+    expect(mockUseAccountUnit).toHaveBeenCalledWith(accountWithSub);
+  });
+
+  it("uses feesCurrency unit for accounts with a native feesCurrency (e.g. VeChain → VTHO)", () => {
+    const vthoToken = {
+      id: "vechain/token/vtho",
+      units: [{ code: "VTHO", magnitude: 18 }],
+    } as any;
+
+    const vechainAccount = {
+      ...mockAccount,
+      currency: {
+        family: "vechain",
+        units: [{ code: "VET", magnitude: 18 }],
+      },
+      feesCurrency: vthoToken,
+    } as any;
+
+    mockUseDeviceTransactionConfig.mockReturnValue({
+      fields: [{ type: "fees", label: "Fees" }],
+      loading: false,
+    });
+
+    // No feeCurrencyAccountId on status → should use feesCurrency (VTHO), not VET.
+    const { getByTestId } = render(
+      <ValidateOnDevice
+        device={mockDevice}
+        account={vechainAccount}
+        parentAccount={null}
+        transaction={mockTransaction}
+        status={mockStatus}
+      />,
+    );
+
+    expect(getByTestId("device-validation-scroll-view")).toBeTruthy();
+    // useAccountUnit is called with mainAccount (hook must run unconditionally),
+    // but the displayed unit comes from getFeesUnit(getFeesCurrency(mainAccount))
+    // which resolves to VTHO — not from useAccountUnit's return value.
+    expect(mockUseAccountUnit).toHaveBeenCalledWith(vechainAccount);
+  });
 });

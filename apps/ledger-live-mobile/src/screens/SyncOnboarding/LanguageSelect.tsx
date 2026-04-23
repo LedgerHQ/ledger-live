@@ -143,7 +143,7 @@ const LanguageSelect = () => {
           <BottomSheetHeader
             spacing
             title={t("syncOnboarding.languageSelect.title")}
-            appearance="expanded"
+            density="expanded"
           />
           <LumenBottomSheetScrollView contentContainerStyle={{ paddingBottom: 24 }}>
             <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>

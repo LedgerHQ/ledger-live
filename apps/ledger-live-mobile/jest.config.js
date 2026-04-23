@@ -7,12 +7,14 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   if (!paths) return jestPaths;
 
   Object.keys(paths).forEach(pathKey => {
+    // tsconfig uses "*": ["./*"] instead of baseUrl; mapping (.*) -> $1 breaks every module in Jest
+    if (pathKey === "*") return;
     const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
     pathValues.forEach(pathValue => {
       // Convert TypeScript path pattern to Jest regex pattern
       // Use /\*$/ for key (wildcard at end) but /\*/ for value (wildcard can be anywhere)
       const jestKey = pathKey.replace(/\*$/, "(.*)");
-      const jestValue = pathValue.replace(/\*/, "$1");
+      const jestValue = pathValue.replace(/\*/g, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
   });
@@ -45,6 +47,9 @@ const transformIncludePatterns = [
   "immer",
   "@features/.*",
   "@sbaiahmed1/react-native-blur",
+  "@mysten",
+  "@scure",
+  "@noble",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
@@ -52,7 +57,7 @@ module.exports = {
   verbose: true,
   preset: "react-native",
   workerIdleMemoryLimit: "1GB",
-  modulePaths: [compilerOptions.baseUrl],
+  modulePaths: [compilerOptions.baseUrl ?? "."],
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
@@ -69,6 +74,14 @@ module.exports = {
               runtime: "automatic",
             },
           },
+        },
+      },
+    ],
+    "^.+\\.mjs$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
         },
       },
     ],

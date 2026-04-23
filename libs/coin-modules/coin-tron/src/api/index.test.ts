@@ -1,16 +1,20 @@
-import { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import coinConfig from "../config";
-import { TronConfig } from "../config";
+import {
+  AlpacaApi,
+  BalanceOptions,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
+import { createApi } from ".";
+import coinConfig, { TronConfig } from "../config";
 import {
   broadcast,
   combine,
   craftTransaction,
   estimateFees,
   getBalance,
-  listOperations,
   lastBlock,
+  listOperations,
 } from "../logic";
-import { createApi } from ".";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -22,13 +26,22 @@ jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
-  listOperations: jest.fn().mockResolvedValue([[], undefined]),
+  listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
   lastBlock: jest.fn(),
+}));
+
+jest.mock("../network", () => ({
+  defaultFetchParams: { minTimestamp: 0 },
+  getBlock: jest.fn().mockResolvedValue({ time: new Date(0) }),
 }));
 
 describe("createApi", () => {
   const mockTronConfig: TronConfig = { explorer: { url: "iamaurl" } } as TronConfig;
   let setCoinConfigSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should set the coin config value", () => {
     setCoinConfigSpy = jest.spyOn(coinConfig, "setCoinConfig");
@@ -78,9 +91,39 @@ describe("createApi", () => {
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {
-      minHeight: minHeight,
+      limit: 200,
+      minTimestamp: 0,
       order: "asc",
-      softLimit: 200,
+      cursor: undefined,
+    });
+  });
+
+  it("should throw when limit > 200", async () => {
+    const api: AlpacaApi = createApi(mockTronConfig);
+    await expect(api.listOperations("address", { minHeight: 0, limit: 201 })).rejects.toThrow(
+      "limit must be <= 200 for Tron (TronGrid API restriction)",
+    );
+    expect(listOperations).not.toHaveBeenCalled();
+  });
+
+  it("should not throw when limit is exactly 200", async () => {
+    const api: AlpacaApi = createApi(mockTronConfig);
+    await expect(api.listOperations("address", { minHeight: 0, limit: 200 })).resolves.toEqual({
+      items: [],
+      next: undefined,
+    });
+    expect(listOperations).toHaveBeenCalledWith(
+      "address",
+      expect.objectContaining({ limit: 200, minTimestamp: 0 }),
+    );
+  });
+
+  describe("getBalance", () => {
+    it("should throw an exception when options is provided", async () => {
+      const api = createApi(mockTronConfig);
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
     });
   });
 });

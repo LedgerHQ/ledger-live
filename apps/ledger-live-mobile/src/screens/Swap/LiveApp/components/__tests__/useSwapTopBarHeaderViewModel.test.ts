@@ -28,9 +28,13 @@ describe("useSwapTopBarHeaderViewModel", () => {
     mockedUseNavigation.mockImplementation(() => ({ navigate: mockNavigate }));
     mockedUseTopBarViewModel.mockImplementation(() => ({
       onMyLedgerPress: mockOnMyLedgerPress,
+      onMyWalletPress: noop,
+      shouldDisplayMyWallet: false,
+      shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
       onNotificationsPress: noop,
       onSettingsPress: noop,
+      onTransactionHistoryPress: noop,
       hasUnreadNotifications: false,
       hasAccounts: false,
       isSyncError: false,
@@ -40,6 +44,7 @@ describe("useSwapTopBarHeaderViewModel", () => {
       isSyncDrawerOpen: false,
       openSyncDrawer: noop,
       closeSyncDrawer: noop,
+      onTryRefresh: noop,
     }));
   });
 

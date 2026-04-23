@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SEND_FLOW_STEP,
   type SendFlowBusinessContext,
@@ -53,7 +53,8 @@ export function SendHeader() {
     memoType: uiConfig.memoType,
     memoTypeOptions,
     onMemoChange: memo => {
-      transaction.setRecipient({ ...state.recipient, memo });
+      const address = state.recipient?.address ?? recipientSearch.value;
+      transaction.setRecipient({ ...state.recipient, address, memo });
     },
     onMemoSkip: () => {
       navigation.goToNextStep();
@@ -85,7 +86,7 @@ export function SendHeader() {
       return (
         <div className="-mt-12 mb-24 px-24">
           <div className="relative">
-            <AddressInput className="w-full" defaultValue={addressInputValue} hideClearButton />
+            <AddressInput className="w-full" value={addressInputValue} hideClearButton />
             <button
               type="button"
               className="absolute inset-0"
@@ -101,7 +102,7 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="-mt-12 mb-12 px-24"
+          className="mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus
@@ -115,16 +116,16 @@ export function SendHeader() {
           }
         />
         {showMemoControls && currencyId ? (
-          <div className="mb-24 px-24">
+          <div className="px-24">
             <div className="flex flex-col gap-12">
-              {hasMemoTypeOptions ? (
+              {hasMemoTypeOptions && (
                 <MemoTypeSelect
                   currencyId={currencyId}
                   options={memoTypeOptions}
                   value={memo.type}
                   onChange={onMemoTypeChange}
                 />
-              ) : null}
+              )}
 
               {showMemoValueInput ? (
                 <MemoValueInput
@@ -140,7 +141,7 @@ export function SendHeader() {
               ) : null}
             </div>
 
-            {showSkipMemo ? (
+            {showSkipMemo && (
               <SkipMemoSection
                 currencyId={currencyId}
                 state={skipMemoState}
@@ -148,7 +149,7 @@ export function SendHeader() {
                 onCancelConfirm={onSkipMemoCancelConfirm}
                 onConfirm={onSkipMemoConfirm}
               />
-            ) : null}
+            )}
           </div>
         ) : null}
       </>
@@ -186,7 +187,7 @@ export function SendHeader() {
     <div className="flex flex-col">
       <div data-testid="send-dialog-header">
         <DialogHeader
-          appearance="compact"
+          density="compact"
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}

@@ -6,8 +6,8 @@ import type {
   RateMapRaw,
   CounterValuesStatus,
 } from "@ledgerhq/live-countervalues/types";
-import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
-import { Dispatch, SetStateAction } from "react";
+import { StateDB, useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
+import { useCallback } from "react";
 import storage from "LLM/storage";
 import type { User } from "./types/store";
 import type {
@@ -17,6 +17,7 @@ import type {
   ProtectState,
   SettingsState,
 } from "./reducers/types";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
@@ -28,17 +29,15 @@ const ACCOUNTS_DB_PREFIX = "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
 export async function clearDb() {
   const list = await storage.keys();
-  await storage.delete(list.filter(k => k !== "user"));
+  await storage.delete(list);
 }
+/** Used only at boot for migration from legacy "user" into identities. */
 export async function getUser(): Promise<User> {
   const user = (await storage.get("user")) as User;
   return user;
 }
-export async function setUser(user: User): Promise<void> {
-  await storage.update("user", user);
-}
-export async function updateUser(user: User): Promise<void> {
-  await storage.update("user", user);
+export async function deleteUser(): Promise<void> {
+  await storage.delete("user");
 }
 export async function getSettings(): Promise<Partial<SettingsState>> {
   const settings = (await storage.get("settings")) as Partial<SettingsState>;
@@ -273,16 +272,20 @@ export async function getProtect(): Promise<ProtectState> {
   return protect;
 }
 
+function identitySelector<V>(state: V): V {
+  return state;
+}
+
 export function useDB<State, Selected>(
   key: string,
   initialState: State,
   // @ts-expect-error State !== Selected
-  selector: (state: State) => Selected = state => state,
-): [Selected, Dispatch<SetStateAction<State>>] {
+  selector: (state: State) => Selected = identitySelector,
+): StateDB<State, Selected> {
   return useDBRaw<State, Selected>({
     initialState,
-    getter: () => storage.get(key) as Promise<State>,
-    setter: (state: State) => storage.save(key, state),
+    getter: useCallback(() => storage.get(key) as Promise<State>, [key]),
+    setter: useCallback((state: State) => storage.save(key, state), [key]),
     selector,
   });
 }
@@ -308,4 +311,20 @@ export function getIdentities(): Promise<PersistedIdentities | null> {
 }
 export async function saveIdentities(persistedData: PersistedIdentities): Promise<void> {
   await storage.save("identities", persistedData);
+}
+
+export function getFeatureFlagsState(): Promise<Pick<
+  FeatureFlagsState,
+  "overrides" | "bannerVisible"
+> | null> {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return storage.get("featureFlags") as Promise<Pick<
+    FeatureFlagsState,
+    "overrides" | "bannerVisible"
+  > | null>;
+}
+export async function saveFeatureFlagsState(
+  obj: Pick<FeatureFlagsState, "overrides" | "bannerVisible">,
+): Promise<void> {
+  await storage.save("featureFlags", obj);
 }

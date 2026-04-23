@@ -126,6 +126,9 @@ export function usePortfolioBalance() {
     isBalanceLoading,
     isColdStart,
     isManualRefreshLoading,
+    isBridgeSyncPending: syncSources.stablePending,
+    /** True while countervalues are being fetched within a user-triggered sync. */
+    isCvPending: syncPhase === "syncing" && syncSources.cvPending,
     allAccounts,
     accountsWithError,
     accountsImpactedByError,
@@ -134,5 +137,6 @@ export function usePortfolioBalance() {
     areAllAccountsUpToDate,
     hasAccounts,
     handleSync,
+    triggerRefresh,
   };
 }

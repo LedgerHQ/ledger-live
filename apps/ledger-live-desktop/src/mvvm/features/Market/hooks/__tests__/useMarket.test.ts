@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "tests/testSetup";
+import { act, renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useMarket } from "../useMarket";
 import { addStarredMarketCoins } from "~/renderer/actions/settings";
@@ -33,15 +33,13 @@ const createMarketState = (starred: string[] = []) => ({
 const createSettingsState = (starredMarketCoins: string[]) => ({
   ...SETTINGS_INITIAL_STATE,
   starredMarketCoins,
-  overriddenFeatureFlags: {
-    lldRefreshMarketData: { enabled: false },
-  },
 });
 
 describe("useMarket", () => {
   describe("starred filter", () => {
     it("uses starredMarketCoins when filter is active", () => {
       const initialState = {
+        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin", "ethereum"]),
         market: createMarketState(["bitcoin", "ethereum"]),
       };
@@ -56,6 +54,7 @@ describe("useMarket", () => {
 
     it("starFilterOn is false when marketParams.starred is empty", () => {
       const initialState = {
+        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin"]),
         market: createMarketState([]),
       };
@@ -69,6 +68,7 @@ describe("useMarket", () => {
 
     it("updates starredMarketCoins when a coin is added", async () => {
       const initialState = {
+        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin"]),
         market: createMarketState(["bitcoin"]),
       };
@@ -92,6 +92,7 @@ describe("useMarket", () => {
 
     it("toggles starred filter on and off correctly", async () => {
       const initialState = {
+        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin", "ethereum"]),
         market: createMarketState([]),
       };
@@ -125,6 +126,7 @@ describe("useMarket", () => {
 
     it("toggleStar adds and removes coins from starredMarketCoins", async () => {
       const initialState = {
+        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin"]),
         market: createMarketState([]),
       };

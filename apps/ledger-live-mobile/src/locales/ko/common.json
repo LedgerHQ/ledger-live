@@ -176,6 +176,21 @@
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다.",
       "description" : ""
     },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "죄송합니다. 자산이 부족합니다"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "메모가 최대 길이를 초과했습니다",
+      "description" : "입력하신 메모는 {{memoLength}}바이트입니다. 최대 {{maxLength}}바이트까지 입력할 수 있습니다. 메모 크기를 줄여주세요."
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "페어링 만료",
+      "description" : "Concordium ID 앱과의 연결 시간이 초과되었습니다. 다시 시도해 주세요."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "세션 만료",
+      "description" : "Concordium ID 앱 세션이 만료되었습니다. 다시 페어링해 주세요."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
       "description" : "아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -278,6 +293,11 @@
     "DeviceSocketFail" : {
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "다시 시도해 주세요."
+    },
+    "CounterfeitDevice" : {
+      "title" : " {{productName}}의 정품 확인에 실패했습니다.",
+      "description" : "이 Ledger 장치 사용은 위험할 수 있습니다.\n Ledger 지원팀으로 문의해 주세요",
+      "contactSupportCTA" : "문의하기"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "연결이 실패했습니다",
@@ -400,8 +420,8 @@
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "AlreadySendingApduError" : {
-      "title" : "통신 오류",
-      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "title" : "Ledger 장치에서 확인이 필요합니다.",
+      "description" : "장치 화면에 표시된 작업을 완료하세요."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
@@ -938,6 +958,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "이체 수량이 부족합니다. {{minimumAmount}} 이상을 전송하세요."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
     },
@@ -1287,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
-      "add" : "계정 추가"
+      "select" : "계정 선택"
     }
   },
   "location" : {
@@ -1580,7 +1603,7 @@
     "desc" : "Ledger 장치를 연결하여 Ledger Wallet의 모든 기능을 온전히 누려보세요.",
     "0" : {
       "title" : "완전한 소유권",
-      "desc" : "개인 키는 어떤 경우에도 장치 외부로 유출되지 않습니다."
+      "desc" : "사용자가 개인 키에 대한 온전한 소유권을 보유합니다."
     },
     "1" : {
       "title" : "안전한 거래",
@@ -2670,6 +2693,7 @@
     "accounts" : "계정",
     "transfer" : "전송",
     "manager" : "내 Ledger",
+    "myWallet" : "내 지갑",
     "settings" : "설정",
     "platform" : "라이브 앱",
     "discover" : "탐색",
@@ -2716,7 +2740,7 @@
       "title" : "고객 맞춤 정보"
     },
     "perpsEntry" : {
-      "title" : "무기한 계약",
+      "title" : "무기한 선물",
       "description" : "레버리지로 거래하기"
     },
     "recommended" : {
@@ -2728,11 +2752,21 @@
     },
     "walletBalance" : "지갑 잔액",
     "balance" : {
-      "noSigner" : "가장 안전한\n지갑",
-      "noAccounts" : "소중한 암호화폐를 안전하게"
+      "noSigner" : "믿을 수 있는\n암호화폐 지갑",
+      "noAccounts" : "자산을 입금하고\n시작하세요"
     },
     "seeAllAssets" : "모든 자산 보기",
+    "cryptoAddresses" : {
+      "title" : "계정",
+      "count_one" : "{{count}}개 계정",
+      "count_other" : "{{count}}개 계정",
+      "noAccountsYet" : "아직 계정이 없습니다",
+      "add" : "추가"
+    },
     "seeAllAccounts" : "모든 계정 보기",
+    "assetSection" : {
+      "connectionFailed" : "연결에 실패했습니다"
+    },
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
@@ -2758,12 +2792,14 @@
       "buy" : "매수",
       "connect" : "연결",
       "buyLedger" : "Ledger 구매하기",
+      "receive" : "수령",
+      "send" : "전송",
       "transferDrawer" : {
         "title" : "전송",
-        "receiveCrypto" : "암호화폐 받기",
+        "receiveCrypto" : "암호화폐 주소로 받기",
         "sendCrypto" : "암호화폐 보내기",
-        "bankTransfer" : "은행 이체",
-        "bankTransferDescription" : "현금 이체로 스테이블 코인 받기"
+        "bankTransfer" : "은행 이체로 받기",
+        "bankTransferDescription" : "현금 입금으로 스테이블코인을 바로 받아보세요."
       }
     },
     "recoverBanner" : {
@@ -2779,8 +2815,9 @@
     },
     "refreshStatus" : {
       "refreshing" : "새로고침 중",
-      "upToDate" : "최신 상태입니다",
-      "syncError" : "일부 계정이 동기화에 실패했습니다"
+      "upToDate" : "포트폴리오 업데이트 완료",
+      "syncError" : "일부 계정 데이터를 로드하지 못했습니다",
+      "offline" : "오프라인상태입니다. 인터넷 연결을 확인하세요."
     }
   },
   "addAccountsModal" : {
@@ -2894,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "업데이트된 계정"
     }
   },
+  "operationsList" : {
+    "to" : "입금 주소",
+    "from" : "출금 주소"
+  },
   "operationDetails" : {
     "title" : "트랜잭션 세부 사항",
     "account" : "계정",
@@ -2970,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "거래 없음",
+    "emptyTitle" : "아직 트랜잭션 내역이 없습니다",
+    "emptySubtitle" : "트랜잭션 내역을 확인하려면 나중에 다시 방문하세요.",
     "noMoreTransactions" : "다른 트랜잭션 없음"
   },
   "selectableAccountsList" : {
@@ -3170,6 +3213,18 @@
   "assets" : {
     "title" : "자산"
   },
+  "cryptoAddresses" : {
+    "title" : "계정",
+    "addAccount" : "계정 추가",
+    "emptyState" : "아직 계정이 없습니다",
+    "errorState" : "계정을 불러오는 동안 오류가 발생했습니다."
+  },
+  "crypto" : {
+    "title" : "암호화폐",
+    "stablecoinTitle" : "스테이블코인",
+    "errorState" : "자산을 불러오는 동안 오류가 발생했습니다.",
+    "emptyState" : "표시할 자산 없음"
+  },
   "accounts" : {
     "title" : "계정",
     "cryptoAccountsTitle" : "{{currencyTicker}} 계정",
@@ -3290,13 +3345,13 @@
       "reportErrorsDesc" : "Ledger의 제품 개선을 위해 자동으로 보고서를 보냅니다.",
       "developerMode" : "개발자 모드",
       "developerModeDesc" : "My Ledger에 개발자 앱을 표시하고 Testnet 앱을 활성화합니다.",
-      "analytics" : "애널리틱스",
-      "analyticsDesc" : "Ledger의 앱 사용 데이터를 수집을 허용하면 Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
+      "analytics" : "앱 성능",
+      "analyticsDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
       "personalizedRecommendations" : "맞춤화된 경험",
-      "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
+      "personalizedRecommendationsDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
       "analyticsModal" : {
         "title" : "애널리틱스 공유",
         "desc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요.",
@@ -3405,6 +3460,14 @@
       "transactionsAlerts" : {
         "title" : "트랜잭션 알림(베타)",
         "desc" : "이더리움, 이더리움 클래식, 폴리곤, BNB 체인, 아발란체 트랜잭션 알림을 받아보세요."
+      },
+      "totalMarketCap" : {
+        "title" : "전체 시가총액",
+        "desc" : "전체 암호화폐 시가총액에 큰 변동이 있을 때 알림을 받습니다"
+      },
+      "topGainersLosers" : {
+        "title" : "최고 상승 및 하락 종목",
+        "desc" : "시장에서 가장 많이 오르거나 내린 토큰에 대한 주간 요약을 받습니다"
       },
       "price" : {
         "title" : "가격 알림",
@@ -3548,8 +3611,14 @@
         "description" : "Braze 없이도 로컬 카드가 포트폴리오(및 기타 위치)에 표시되며, 사용자가 직접 종료하거나 삭제할 때까지 여기에서 유지됩니다.",
         "addSampleBanner" : "샘플 배너 추가",
         "addSampleBannerDesc" : "포트폴리오에 샘플 히어로 배너를 추가합니다.",
-        "addSampleActionCarousel" : "샘플 액션 캐러셀 추가",
-        "addSampleActionCarouselDesc" : "포트폴리오에 액션 카드(매수, 스왑, 스테이킹) 캐러셀을 추가합니다.",
+        "addSampleActionCarouselIcon" : "액션 캐러셀(아이콘) 추가",
+        "addSampleActionCarouselIconDesc" : "탭할 때마다 ContentBanner 카드가 하나씩 추가됩니다. 이미지 배리언트와 같은 행 — 아이콘 카드와 이미지 카드를 하나의 캐러셀에 혼합하여 표시합니다. 매수 → 스왑 → 스테이킹 순서로 반복됩니다. Braze 배치 플래그 필요.",
+        "addSampleActionCarouselImageBackground" : "액션 캐러셀 추가(이미지)",
+        "addSampleActionCarouselImageBackgroundDesc" : "탭할 때마다 미디어 배너 카드 하나를 추가합니다. 아이콘 배리언트와 같은 행 — 두 가지 형식을 하나의 캐러셀에 혼합하여 표시합니다. 매수 → 스왑 → 스테이킹 순서로 반복됩니다. Braze 배치 플래그 필요.",
+        "addSampleWalletCarouselPicto" : "하단 지갑 캐러셀(picto) 추가",
+        "addSampleWalletCarouselPictoDesc" : "암호화폐 아이콘(picto), 제목, 이미지, 링크가 포함된 모의 카드 하나를 생성합니다. Braze 없음.",
+        "addSampleWalletCarouselTag" : "하단 지갑 캐러셀(태그) 추가",
+        "addSampleWalletCarouselTagDesc" : "태그, 제목, 이미지, 링크가 포함된 모의 카드 하나를 생성합니다. Braze 없음.",
         "dismissAll" : "모든 로컬 카드 거부",
         "dismissAllDesc" : "로컬에서 생성된 콘텐츠 카드를 모두 제거합니다"
       }
@@ -3622,7 +3691,8 @@
         },
         "fiat" : {
           "title" : "은행 이체로 받기",
-          "description" : "Cash-to-Stablecoin 계정을 통해 스테이블코인을 받습니다. 등록이 필요합니다."
+          "description" : "현금 입금으로 스테이블코인을 바로 받아보세요.",
+          "description_legacy" : "Cash-to-Stablecoin 계정을 통해 스테이블코인을 받습니다. 등록이 필요합니다."
         }
       },
       "memoTag" : {
@@ -4289,7 +4359,23 @@
         "maxFeeBelowPriorityFee" : "최대 수수료는 최대 우선 수수료보다 크거나 같아야 합니다."
       },
       "coinControl" : {
-        "title" : "코인 컨트롤"
+        "title" : "코인 컨트롤",
+        "strategy" : "전략",
+        "learnMore" : "자세히 알아보기",
+        "coinToSend" : "보낼 코인",
+        "changeToReturn" : "변경하여 돌아가기",
+        "enterAmount" : "금액 입력",
+        "selectSufficientCoins" : "충분한 코인을 선택하세요",
+        "amountToSendInCurrency" : "보낼 수량({{ticker}})",
+        "amountInputLabel" : "전송 금액",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",
+            "OPTIMIZE_SIZE" : "수수료 최소화 (사이즈 최적화)",
+            "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)",
+            "CUSTOM" : "코인 직접 선택"
+          }
+        }
       }
     },
     "pendingTxWarning" : "대기 중인 수신 트랜잭션이 있습니다. 대기 중 트랜잭션은 취소될 수 있으니 주의하시기 바랍니다.",
@@ -7766,6 +7852,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "암호화폐",
+      "stablecoins" : "스테이블코인",
       "market" : "마켓"
     },
     "referralProgram" : "$20"
@@ -8010,6 +8097,32 @@
           "link" : "당사 추적 정책 자세히 살펴보기"
         }
       }
+    }
+  },
+  "analyticsConsentDrawer" : {
+    "fresh" : {
+      "title" : "Ledger 서비스 개선에 참여해 주세요",
+      "description" : "동의해 주시면 사용 데이터를 수집하여 기능을 개선하고 맞춤형 환경을 제공합니다.",
+      "ctaAcceptAll" : "모두 수락",
+      "ctaRefuseAll" : "모두 거부"
+    },
+    "reconfirm" : {
+      "title" : "Ledger 개선에 계속 참여하시겠습니까?",
+      "description" : "Ledger 기능 향상을 위해 사용 데이터를 계속 공유하시겠습니까? 이 데이터는 기능을 개선하고 고객님의 경험을 개인화하는 데 사용됩니다.",
+      "ctaContinue" : "예, 계속합니다",
+      "ctaStop" : "아니요, 중단합니다"
+    },
+    "privacy" : {
+      "title" : "개인정보 처리방침이 업데이트됩니다",
+      "descriptionLead" : "변경 안내: ",
+      "descriptionLinkLabel" : "개인 정보 보호 정책",
+      "descriptionTrail" : " 변경 내역 확인하기. 설정에서 언제든지 기본 설정을 변경할 수 있습니다.",
+      "ctaGotIt" : "확인"
+    },
+    "setPreferences" : "설정 관리",
+    "footer" : {
+      "lead" : "설정에서 언제든지 동의를 철회하실 수 있습니다.",
+      "privacyLink" : "개인 정보 보호 정책"
     }
   },
   "walletSync" : {
@@ -8297,7 +8410,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "시장 탐색하기",
+    "title" : "시장 현황 살펴보기",
     "viewAll" : "모두 보기",
     "viewAllAccessibilityHint" : "두 번 탭하면 모든 시장 자산이 표시됩니다",
     "connectionFailed" : "연결에 실패했습니다",
@@ -8459,6 +8572,10 @@
       "title" : "요율 만료",
       "description" : "거래소 요율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
     },
+    "details" : {
+      "code" : "오류 코드",
+      "correlationId" : "참조 ID"
+    },
     "default" : {
       "title" : "문제가 발생했습니다",
       "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
@@ -8579,11 +8696,24 @@
         "title" : "확인",
         "description" : "Concordium은 외부 신원 확인을 요구합니다. 다음의 보안 경고를 세심히 읽어 보세요.",
         "list" : {
-          "1" : "주소 확인 불가 – Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자산 수령에 앞서 주소를 직접 확인하세요.",
-          "2" : "Concordium ID 앱은 별도의 시드 문구를 사용합니다 – Concordium 앱에서 새로운 24개의 단어를 생성해야 합니다. 절대 기존 Ledger 시드 문구를 사용하지 마세요.",
-          "3" : "Ledger Wallet 외부로 리디렉션됩니다 – 신원 확인은 외부 Concordium Wallet 앱에서 진행되며, 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다.",
-          "4" : "트랜잭션 서명은 안전하게 관리됩니다 – 트랜잭션 서명과 계정 생성은 오직 Ledger 장치를 통해서만 가능합니다."
+          "1" : {
+            "title" : "주소 확인 불가",
+            "description" : "Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자금을 수령하기 전에 주소를 직접 확인하세요."
+          },
+          "2" : {
+            "title" : "Concordium ID 앱은 별도의 시드를 사용합니다.",
+            "description" : "Concordium 앱에서 새로운 24개 단어를 생성합니다. 절대 Ledger 시드 문구를 사용하지 마세요."
+          },
+          "3" : {
+            "title" : "Ledger Wallet 외부 페이지로 이동합니다.",
+            "description" : "신원 확인은 외부 Concordium Wallet 앱에서 진행됩니다. 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다."
+          },
+          "4" : {
+            "title" : "트랜잭션 서명은 안전하게 관리됩니다.",
+            "description" : "Ledger 장치에서만 거래 서명과 계정을 생성할 수 있습니다."
+          }
         },
+        "guide" : "계속 진행하기 전에 안내 사항을 읽어주세요.",
         "allow" : "허용"
       },
       "pair" : {
@@ -8591,26 +8721,33 @@
         "connecting" : "연결 중...",
         "scanQRCodeOrDownload" : "다른 기기로 QR 코드를 스캔하거나 Concordium ID 앱을 다운로드하여 계속 진행하세요.",
         "openIdApp" : "Concordium ID 앱 실행하기",
-        "success" : "Concordium ID 앱과 성공적으로 페어링되었습니다.",
-        "error" : "Concordium ID 앱과 페어링에 실패했습니다."
+        "success" : "Concordium ID 앱에 연결되었습니다.",
+        "continue" : "계속",
+        "error" : "Concordium ID 앱 연결에 실패했습니다. 다시 시도해 주세요."
       },
       "create" : {
-        "title" : "계정 생성하기",
+        "title" : "Concordium 계정 추가하기",
         "prepare" : {
-          "title" : "계정을 생성하려면 Concordium ID 앱에서 아래 코드를 입력하세요."
-        }
+          "title" : "계정을 생성하려면 Concordium ID 앱에서 아래 코드를 입력하세요.",
+          "resendButton" : "확인 재전송",
+          "resendDescription" : "{{count}}초 후 재전송 가능"
+        },
+        "submitting" : "계정 생성 중...",
+        "keepDeviceNearby" : "Ledger 장치에서 트랜잭션을 승인합니다. Ledger를 가까운 곳에 두세요.",
+        "success" : "Concordium 계정이 성공적으로 생성되었습니다.",
+        "error" : "계정 생성에 실패했습니다. 다시 시도해 주세요."
       }
     }
   },
   "fearAndGreed" : {
     "title" : "시장 심리 지수",
-    "description" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
+    "description" : "트렌드와 활동을 분석하여 전반적 마켓 분위기를 0부터 100 사이 수치로 표시합니다. 이 지수로 현재 시장 상황을 파악해 보세요. 수치가 낮을수록 공포에 가깝고, 높을수록 탐욕이 커짐을 의미합니다.",
     "levels" : {
-      "extremeFear" : "공포+",
       "fear" : "공포",
+      "cautious" : "신중",
       "neutral" : "중립",
-      "greed" : "탐욕",
-      "extremeGreed" : "탐욕+"
+      "optimistic" : "낙관",
+      "greedy" : "탐욕"
     },
     "tileTitle" : "시장 심리"
   },
@@ -8627,7 +8764,7 @@
   },
   "cardLanding" : {
     "title" : "암호화폐로\n결제하세요",
-    "subtitle" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요",
+    "subtitle" : "암호화폐 카드로 온·오프라인에서 자유롭게 결제하세요.",
     "ctas" : {
       "exploreCards" : "카드 살펴보기",
       "iHaveACard" : "카드가 있습니다"
@@ -8658,6 +8795,7 @@
     "home" : "홈",
     "swap" : "스왑",
     "earn" : "수익 창출",
+    "yield" : "이자",
     "card" : "카드"
   },
   "syncIndicator" : {
@@ -8667,8 +8805,9 @@
       "default" : "동기화"
     },
     "bottomSheet" : {
-      "title" : "일부 계정을 동기화할 수 없습니다.",
-      "description" : "일시적인 네트워크 문제가 발생했습니다. 자산은 안전하니 안심하세요. 영향을 받은 계정 목록: {{accounts}}.",
+      "title" : "일부 계정 데이터를 로드하지 못했습니다",
+      "description" : "자산은 안전하게 보호되고 있습니다. 일시적인 동기화 문제로, 일부 계정에만 영향을 미칩니다.\n영향 받는 계정: {{accounts}}",
+      "tryToRefresh" : "동기화 다시 시도",
       "close" : "닫기"
     }
   },
@@ -8696,6 +8835,13 @@
     "error" : {
       "title" : "{{appName}} 설치에 실패했습니다",
       "description" : "설치 중 문제가 발생했습니다. 다시 시도해 주세요."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "도움말",
+      "referral" : "친구 추천"
     }
   }
 }

@@ -9,21 +9,25 @@ const signResult = {
   rawMessage: "Sign raw results",
 };
 const signFunction = jest.fn(() => signResult);
-jest.mock("../../generated/hw-signMessage", () => {
-  return {
-    signExistFamily: {
-      prepareMessageToSign: function () {
-        return signFunction();
-      },
-    },
-    bitcoin: {
-      otherMethod: function () {},
-    },
-  };
-});
+jest.mock("../../coin-modules/registry", () => ({
+  loadSetupForFamily: (family: string) => {
+    switch (family) {
+      case "signExistFamily":
+        return {
+          messageSigner: {
+            prepareMessageToSign: () => signFunction(),
+          },
+        };
+      case "bitcoin":
+        return { messageSigner: { signMessage: () => {} } };
+      default:
+        return {};
+    }
+  },
+}));
 
 describe("prepareMessageToSign", () => {
-  it("calls the perFamily function if it's exist and returns this function results", () => {
+  it("calls the perFamily function if it exists and returns its result", async () => {
     // Given
     const crypto = createFixtureCryptoCurrency("signExistFamily");
     const account = createAccount(crypto);
@@ -33,7 +37,7 @@ describe("prepareMessageToSign", () => {
     let result: AnyMessage | undefined;
     let error: unknown = null;
     try {
-      result = prepareMessageToSign(account, message);
+      result = await prepareMessageToSign(account, message);
     } catch (err) {
       error = err;
     }
@@ -44,14 +48,14 @@ describe("prepareMessageToSign", () => {
     expect(result).toEqual(signResult);
   });
 
-  it("returns a default implementation if account is linked to a crypto able to sign but with no prepareMessageToSign function", () => {
+  it("returns a default implementation if account is linked to a crypto able to sign but with no prepareMessageToSign function", async () => {
     // Given
     const currency = createFixtureCryptoCurrency("bitcoin");
     const account = createAccount(currency);
     const message = "4d6573736167652064652074657374";
 
     // // When
-    const result = prepareMessageToSign(account, message);
+    const result = await prepareMessageToSign(account, message);
 
     // // Then
     expect(result).toEqual({
@@ -59,7 +63,7 @@ describe("prepareMessageToSign", () => {
     });
   });
 
-  it("returns an error if account is not linked to a crypto able to sign a message", () => {
+  it("returns an error if account is not linked to a crypto able to sign a message", async () => {
     // Given
     const crypto = createFixtureCryptoCurrency("mycoin");
     const account = createAccount(crypto);
@@ -69,7 +73,7 @@ describe("prepareMessageToSign", () => {
     let result: AnyMessage | undefined;
     let error: Error | null = null;
     try {
-      result = prepareMessageToSign(account, message);
+      result = await prepareMessageToSign(account, message);
     } catch (err) {
       error = err as Error;
     }

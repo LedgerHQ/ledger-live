@@ -1,21 +1,22 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
+  AlpacaApi,
+  BalanceOptions,
   Block,
   BlockInfo,
-  Cursor,
-  ListOperationsOptions,
-  Page,
-  Validator,
-  FeeEstimation,
-  Operation,
-  Stake,
-  Reward,
-  TransactionIntent,
   CraftedTransaction,
-  AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+  Cursor,
+  FeeEstimation,
+  ListOperationsOptions,
+  Operation,
+  Page,
+  Reward,
+  Stake,
+  TransactionIntent,
+  Validator,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
 import coinConfig, { type StellarConfig } from "../config";
@@ -25,18 +26,15 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  validateIntent,
   lastBlock,
   listOperations,
-  STELLAR_BURN_ADDRESS,
-  getTokenFromAsset,
-  getAssetFromToken,
+  validateIntent,
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
-import { StellarBurnAddressError, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 
-export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & BridgeApi {
+export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -52,10 +50,11 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & Bridg
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block> {
+    getBlock(_height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -72,23 +71,11 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & Bridg
       const sequence = await fetchSequence(address);
       return BigInt(sequence.plus(1).toFixed());
     },
-    getTokenFromAsset,
-    getAssetFromToken,
-    getChainSpecificRules: () => ({
-      getAccountShape: (address: string) => {
-        // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
-        if (address === STELLAR_BURN_ADDRESS) {
-          throw new StellarBurnAddressError();
-        }
-      },
-      getTransactionStatus: {
-        throwIfPendingOperation: true,
-      },
-    }),
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
     validateAddress,
+    craftTransactionData,
   };
 }
 
@@ -141,18 +128,9 @@ async function estimate(_transactionIntent: TransactionIntent): Promise<FeeEstim
 
 async function operations(
   address: string,
-  { minHeight, cursor }: ListOperationsOptions,
+  { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  if (minHeight) {
-    const [items, next] = await operationsFromHeight(address, minHeight);
-    return { items, next: next || undefined };
-  }
-  const isInitSync = !cursor || cursor === "";
-  // FIXME: why bother creating limit and pagingToken here, something is off?!
-  const newPagination = isInitSync
-    ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
-    : { pagingToken: cursor, minHeight: 0 };
-  const [items, next] = await operationsFromHeight(address, newPagination.minHeight);
+  const { items, next } = await operationsFromHeight(address, minHeight);
   return { items, next: next || undefined };
 }
 
@@ -164,10 +142,7 @@ type PaginationState = {
   accumulator: Operation[];
 };
 
-async function operationsFromHeight(
-  address: string,
-  minHeight: number,
-): Promise<[Operation[], string]> {
+async function operationsFromHeight(address: string, minHeight: number): Promise<Page<Operation>> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,
@@ -184,10 +159,10 @@ async function operationsFromHeight(
       options.cursor = state.apiNextCursor;
     }
     try {
-      const [operations, nextCursor] = await listOperations(address, options);
+      const { items: operations, next: nextCursor } = await listOperations(address, options);
       state.accumulator.push(...operations);
-      state.apiNextCursor = nextCursor;
-      state.continueIterations = nextCursor !== "";
+      state.apiNextCursor = nextCursor ?? "";
+      state.continueIterations = !!nextCursor;
     } catch (e: unknown) {
       if (e instanceof LedgerAPI4xx && (e as unknown as { status: number }).status === 429) {
         log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");
@@ -198,7 +173,7 @@ async function operationsFromHeight(
     }
   }
 
-  return [state.accumulator, state.apiNextCursor ? state.apiNextCursor : ""];
+  return { items: state.accumulator, next: state.apiNextCursor ? state.apiNextCursor : "" };
 }
 
 /**

@@ -1,6 +1,6 @@
 import { createAction } from "redux-actions";
 import {
-  WalletContentCard,
+  type WalletContentCard,
   AssetContentCard,
   NotificationContentCard,
   CategoryContentCard,
@@ -15,7 +15,9 @@ import {
   DynamicContentSetMobileCardsPayload,
   DynamicContentSetLandingStickyCtaCardsPayload,
   DynamicContentAddLocalCardsPayload,
+  DynamicContentAppendLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
+  DynamicContentAddLocalWalletCarouselPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -74,6 +76,13 @@ const addLocalContentCardsAction = createAction<DynamicContentAddLocalCardsPaylo
 export const addLocalContentCards = (payload: DynamicContentAddLocalCardsPayload) =>
   addLocalContentCardsAction(payload);
 
+const appendLocalContentCardsAction = createAction<DynamicContentAppendLocalCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_APPEND_LOCAL_CARDS,
+);
+
+export const appendLocalContentCards = (cards: DynamicContentAppendLocalCardsPayload) =>
+  appendLocalContentCardsAction(cards);
+
 const clearLocalContentCardsAction = createAction(
   DynamicContentActionTypes.DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS,
 );
@@ -85,3 +94,11 @@ const removeLocalCardAction = createAction<DynamicContentRemoveLocalCardPayload>
 );
 
 export const removeLocalCard = (cardId: string) => removeLocalCardAction(cardId);
+
+const addLocalWalletCarouselCardsAction =
+  createAction<DynamicContentAddLocalWalletCarouselPayload>(
+    DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS,
+  );
+
+export const addLocalWalletCarouselCards = (cards: DynamicContentAddLocalWalletCarouselPayload) =>
+  addLocalWalletCarouselCardsAction(cards);

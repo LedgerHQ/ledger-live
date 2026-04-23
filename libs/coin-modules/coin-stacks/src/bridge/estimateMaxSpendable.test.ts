@@ -4,10 +4,10 @@ import { estimateTransaction, estimateTransactionByteLength } from "@stacks/tran
 import BigNumber from "bignumber.js";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getAccountInfo } from "./utils/account";
 import { getAddress } from "./utils/misc";
 import { createTransaction as createStacksTransaction } from "./utils/transactions";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 jest.mock("@ledgerhq/cryptoassets/abandonseed");
 jest.mock("@stacks/transactions");

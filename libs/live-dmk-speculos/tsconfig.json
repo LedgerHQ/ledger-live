@@ -9,7 +9,6 @@
     "jsx": "react",
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

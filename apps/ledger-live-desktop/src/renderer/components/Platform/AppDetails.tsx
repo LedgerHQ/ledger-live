@@ -27,6 +27,7 @@ const HeaderContainer = styled(Box)`
 
 export const IconContainer = styled(Box).attrs({
   mr: 2,
+  noShrink: true,
 })`
   user-select: none;
   pointer-events: none;
@@ -34,6 +35,8 @@ export const IconContainer = styled(Box).attrs({
 
 const TitleContainer = styled.div`
   flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const AppName = styled(Box).attrs(p => ({

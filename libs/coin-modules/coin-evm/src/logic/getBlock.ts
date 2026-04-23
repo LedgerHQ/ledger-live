@@ -3,7 +3,7 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -18,12 +18,13 @@ import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
+import { buildSmartContractDetails } from "../utils";
 
 function internalTransactionsFetcher(
   nodeApi: NodeApi,
   currency: CryptoCurrency,
 ): (height: number) => Promise<Map<string, BlockOperation[]>> {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
 
   async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {
@@ -36,13 +37,7 @@ function internalTransactionsFetcher(
       });
       return new Map();
     } else {
-      return nodeApi
-        .traceBlock(currency, height)
-        .then(traceBlockItemsToOperationsByHash)
-        .catch(error => {
-          if (error instanceof UnsupportedRpcMethodError) return new Map();
-          throw error;
-        });
+      return nodeApi.traceBlock(currency, height).then(traceBlockItemsToOperationsByHash);
     }
   }
 
@@ -199,12 +194,15 @@ function prefetchedTransactionToBlockTransaction(
     erc20Transfers: receipt.erc20Transfers,
   });
 
+  const details = buildSmartContractDetails(tx.to, tx.input, receipt.contractAddress);
+
   return {
     hash: tx.hash,
     failed,
     operations,
     fees,
     feesPayer: tx.from,
+    ...(details ? { details } : {}),
   };
 }
 
@@ -220,11 +218,14 @@ async function getTransactionFromHash(
 
   const operations = rpcTransactionToBlockOperations(txInfo);
 
+  const details = buildSmartContractDetails(txInfo.to, txInfo.input, txInfo.contractAddress);
+
   return {
     hash: txHash,
     failed,
     operations,
     fees,
     feesPayer: txInfo.from,
+    ...(details ? { details } : {}),
   };
 }

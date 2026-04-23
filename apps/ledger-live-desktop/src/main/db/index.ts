@@ -3,6 +3,7 @@ import path from "path";
 import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
+import pick from "lodash/pick";
 import fs from "fs/promises";
 import { getEnv } from "@ledgerhq/live-env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
@@ -45,6 +46,45 @@ const save = debounce(saveToDisk, DEBOUNCE_MS);
 // Track which keyPaths triggered saves for each namespace
 const saveTriggers: Map<string, Set<string>> = new Map();
 
+/** Allow list for app namespace: only these + keepLegacy keys are loaded and can be persisted. */
+const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
+  "accounts",
+  "countervalues",
+  "postOnboarding",
+  "settings",
+  "trustchain",
+  "wallet",
+  "market",
+  "cryptoAssets",
+  "identities",
+  "featureFlags",
+  "discover",
+  "ptx",
+  "PLAYWRIGHT_RUN", // e2e fixtures: localStorage seed (e.g. acceptedTermsVersion) and env overrides
+]);
+
+/** Legacy keys we keep in memory and on disk until their replacement is written. */
+const APP_NAMESPACE_KEEP_LEGACY: Record<string, { replacedBy: string }> = {
+  user: { replacedBy: "identities" },
+};
+
+/** Top-level keys kept on load (`pick`) and accepted by `setKey` (allowed + legacy). */
+const APP_NAMESPACE_TOP_LEVEL_KEYS: readonly string[] = [
+  ...APP_NAMESPACE_ALLOWED_KEY_PATHS,
+  ...Object.keys(APP_NAMESPACE_KEEP_LEGACY),
+];
+const APP_NAMESPACE_SETTABLE_TOP_KEYS: ReadonlySet<string> = new Set(APP_NAMESPACE_TOP_LEVEL_KEYS);
+
+function assertAppNamespaceSetKeyAllowed(keyPath: string): void {
+  const top = keyPath.split(".")[0] ?? keyPath;
+  if (!APP_NAMESPACE_SETTABLE_TOP_KEYS.has(top)) {
+    throw new Error(
+      `[db] setKey("app", …): unknown key path "${keyPath}" (top-level "${top}"). ` +
+        `Add it to APP_NAMESPACE_ALLOWED_KEY_PATHS (and renderer DatabaseValues when applicable).`,
+    );
+  }
+}
+
 /**
  * Reset memory state, db path, encryption keys, transforms..
  */
@@ -57,6 +97,7 @@ function init(_DBPath: string) {
 
 /**
  * Load a namespace, using <file>.json
+ * For app: keep only allowed + keepLegacy keys (unknown keys are dropped).
  */
 async function load(ns: string): Promise<unknown> {
   try {
@@ -64,7 +105,13 @@ async function load(ns: string): Promise<unknown> {
     const filePath = path.resolve(DBPath, `${ns}.json`);
     const fileContent = await readFile(filePath);
     const { data } = JSON.parse(fileContent.toString());
-    memoryNamespaces[ns] = data;
+    const dataObj = data as Record<string, unknown>;
+
+    if (ns === "app") {
+      memoryNamespaces[ns] = pick(dataObj, APP_NAMESPACE_TOP_LEVEL_KEYS) as Record<string, unknown>;
+    } else {
+      memoryNamespaces[ns] = dataObj;
+    }
   } catch (err) {
     if ((err as { code?: string })?.code === "ENOENT") {
       memoryNamespaces[ns] = {};
@@ -161,6 +208,9 @@ async function removeEncryptionKey() {
  * Set a key in the given namespace
  */
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
+  if (ns === "app") {
+    assertAppNamespaceSetKeyAllowed(keyPath);
+  }
   await ensureNSLoaded(ns);
   set(memoryNamespaces[ns]!, keyPath, value);
   // Track keyPath to identify what triggered the save
@@ -204,6 +254,19 @@ async function hasBeenDecrypted(): Promise<boolean> {
 }
 
 /**
+ * Build payload for app namespace: allowed keys + keepLegacy keys only when replacement not written.
+ */
+function buildAppNamespacePayload(memory: Record<string, unknown>): Record<string, unknown> {
+  const payload = pick(memory, [...APP_NAMESPACE_ALLOWED_KEY_PATHS]) as Record<string, unknown>;
+  for (const [legacyKey, { replacedBy }] of Object.entries(APP_NAMESPACE_KEEP_LEGACY)) {
+    if (payload[replacedBy] === undefined && memory[legacyKey] !== undefined) {
+      payload[legacyKey] = memory[legacyKey];
+    }
+  }
+  return payload;
+}
+
+/**
  * Save given namespace to corresponding file, in atomic way
  */
 async function saveToDisk(ns: string) {
@@ -214,8 +277,11 @@ async function saveToDisk(ns: string) {
   const triggersSet = saveTriggers.get(ns);
   const triggers = triggersSet ? Array.from(triggersSet) : [];
 
-  // cloning because we are mutating the obj
-  const clone = cloneDeep(memoryNamespaces[ns]);
+  const raw =
+    ns === "app"
+      ? buildAppNamespacePayload(memoryNamespaces[ns] as Record<string, unknown>)
+      : memoryNamespaces[ns];
+  const clone = cloneDeep(raw);
 
   // encrypt fields
   const namespacedEncryptionKeys = encryptionKeys[ns];

@@ -5,7 +5,7 @@ import { useRecipientAddressModalViewModel } from "../useRecipientAddressModalVi
 import { useAddressValidation } from "../useAddressValidation";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
 import { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
@@ -13,7 +13,7 @@ import { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 jest.mock("../useAddressValidation");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
   useBatchMaybeAccountName: jest.fn(() => []),
@@ -53,6 +53,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: mockRecipientSearch,
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
     mockedUseAddressValidation.mockReturnValue({
       result: {
@@ -94,6 +95,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "some_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     const { result } = renderHook(() =>
@@ -131,6 +133,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "sanctioned_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({
@@ -171,6 +174,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "invalid_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({
@@ -211,6 +215,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "valid_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({
@@ -251,6 +256,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "source_address" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     const selfTransferError = new InvalidAddressBecauseDestinationIsAlsoSource();
@@ -292,6 +298,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "invalid.eth" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     const invalidAddressError = new InvalidAddress();
@@ -332,6 +339,7 @@ describe("useRecipientAddressModalViewModel", () => {
       recipientSearch: { ...mockRecipientSearch, value: "searching" },
       state: DEFAULT_STATE,
       uiConfig: {} as never,
+      isRecipientAddressComplete: false,
     });
 
     mockedUseAddressValidation.mockReturnValue({

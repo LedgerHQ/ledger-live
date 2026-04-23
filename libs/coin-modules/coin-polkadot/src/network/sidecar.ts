@@ -1,8 +1,8 @@
+import { makeLRUCache, hours } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
-import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { hexToBn } from "@polkadot/util";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { QueryableConsts } from "@polkadot/api/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
@@ -38,7 +38,7 @@ import type {
  * @returns {string}
  */
 const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
-  const config = coinConfig.getCoinConfig(currency);
+  const config = coinConfig.getCoinConfig(currency?.id);
   let sidecarUrl = config.sidecar.url;
 
   if (
@@ -58,11 +58,65 @@ const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
 };
 
 const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
-  return coinConfig.getCoinConfig(currency).staking?.electionStatusThreshold || 25;
+  return coinConfig.getCoinConfig(currency?.id).staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
 const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
+
+// Fallback values used when Sidecar const endpoints are unreachable.
+const DEFAULT_CONSTANTS = {
+  expectedBlockTime: 6000, // ms
+  epochDuration: 2400, // blocks
+  sessionsPerEra: 6,
+  maxNominatorRewardedPerValidator: 512,
+  bondingDuration: 28, // eras
+};
+
+type ChainConstants = typeof DEFAULT_CONSTANTS;
+
+type SidecarPalletConstsResponse = {
+  items: Array<{ name: string; value: string }>;
+};
+
+async function fetchPalletConsts(
+  palletId: string,
+  currency?: CryptoCurrency,
+): Promise<Map<string, number>> {
+  const result = new Map<string, number>();
+  try {
+    const { data } = await callSidecar<SidecarPalletConstsResponse>(
+      `/pallets/${palletId}/consts`,
+      currency,
+    );
+    for (const item of data.items) {
+      const parsed = hexToBn(item.value, { isLe: true }).toNumber();
+      if (Number.isFinite(parsed)) {
+        result.set(item.name, parsed);
+      }
+    }
+  } catch (e) {
+    log("polkadot/sidecar", `failed to fetch ${palletId} consts, using fallbacks`, { error: e });
+  }
+  return result;
+}
+
+const getChainConstants = makeLRUCache(
+  async (currency: CryptoCurrency | undefined): Promise<ChainConstants> => {
+    const stakingConsts = await fetchPalletConsts("staking", currency);
+    return {
+      expectedBlockTime: DEFAULT_CONSTANTS.expectedBlockTime,
+      epochDuration: DEFAULT_CONSTANTS.epochDuration,
+      sessionsPerEra: stakingConsts.get("SessionsPerEra") ?? DEFAULT_CONSTANTS.sessionsPerEra,
+      maxNominatorRewardedPerValidator:
+        stakingConsts.get("MaxExposurePageSize") ??
+        DEFAULT_CONSTANTS.maxNominatorRewardedPerValidator,
+      bondingDuration: stakingConsts.get("BondingDuration") ?? DEFAULT_CONSTANTS.bondingDuration,
+    };
+  },
+  currency => currency?.id || "polkadot",
+  hours(1, 1),
+);
 
 // blocks = 2 minutes 30
 
@@ -72,7 +126,7 @@ async function callSidecar<T>(
   method: "GET" | "POST" = "GET",
   data?: unknown,
 ) {
-  const credentials = coinConfig.getCoinConfig(currency).sidecar.credentials;
+  const credentials = coinConfig.getCoinConfig(currency?.id).sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
   return network<T>({
     headers,
@@ -151,17 +205,6 @@ const fetchStakingInfo = async (
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
   return node.fetchStakingInfo(addr, currency);
-};
-
-/**
- * Returns the blockchain's runtime constants.
- *
- * @async
- *
- * @returns {Promise<QueryableConsts<"promise">>}
- */
-const fetchConstants = async (currency?: CryptoCurrency): Promise<QueryableConsts<"promise">> => {
-  return node.fetchConstants(currency);
 };
 
 /**
@@ -391,17 +434,17 @@ export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => 
     };
   }
 
-  const [stakingInfo, activeEra, consts] = await Promise.all([
+  const [stakingInfo, activeEra, chainConsts] = await Promise.all([
     fetchStakingInfo(addr, currency),
     fetchActiveEra(currency),
-    getConstants(currency),
+    getChainConstants(currency),
   ]);
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
   const activeEraStart = Number(activeEra.value?.start || 0);
-  const blockTime = new BigNumber(consts?.babe?.expectedBlockTime?.toNumber() || 6000); // 6000 ms
-  const epochDuration = new BigNumber(consts?.babe?.epochDuration?.toNumber() || 2400); // 2400 blocks
-  const sessionsPerEra = new BigNumber(consts?.staking?.sessionsPerEra?.toNumber() || 6); // 6 sessions
+  const blockTime = new BigNumber(chainConsts.expectedBlockTime);
+  const epochDuration = new BigNumber(chainConsts.epochDuration);
+  const sessionsPerEra = new BigNumber(chainConsts.sessionsPerEra);
 
   const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
   const unlockings = stakingInfo?.staking.unlocking
@@ -579,9 +622,9 @@ export const getStakingProgress = async (
     };
   }
 
-  const [progress, consts] = await Promise.all([
+  const [progress, chainConsts] = await Promise.all([
     fetchStakingProgress(currency),
-    getConstants(currency),
+    getChainConstants(currency),
   ]);
 
   const activeEra = Number(progress.activeEra);
@@ -602,9 +645,8 @@ export const getStakingProgress = async (
   return {
     activeEra,
     electionClosed: optimisticElectionClosed,
-    maxNominatorRewardedPerValidator:
-      Number(consts?.staking?.maxNominatorRewardedPerValidator?.toString()) || 128,
-    bondingDuration: consts?.staking?.bondingDuration?.toNumber() || 28,
+    maxNominatorRewardedPerValidator: chainConsts.maxNominatorRewardedPerValidator,
+    bondingDuration: chainConsts.bondingDuration,
   };
 };
 
@@ -627,7 +669,6 @@ export const getRegistry = async (
   ]);
   return createRegistryAndExtrinsics(material, spec);
 };
-
 export const getMetadata = async (
   callData: string,
   includedInExtrinsic: string,
@@ -662,23 +703,6 @@ export const getLastBlock = async (
  * CACHED REQUESTS
  * NOTE: we don't use the cache from family's `cache.js` to avoid cyclic imports.
  */
-
-/**
- * Cache the fetchConstants to avoid too many calls
- *
- * @async
- *
- * @returns {Promise<QueryableConsts<"promise">>} consts
- */
-const getConstants = makeLRUCache(
-  async (currency: CryptoCurrency | undefined): Promise<QueryableConsts<"promise">> => {
-    return fetchConstants(currency);
-  },
-  currency => currency?.id || "polkadot",
-  // Store only one constants object since we only have polkadot.
-  hours(1, 1),
-);
-
 /**
  * Cache the fetchTransactionMaterial(true) to avoid too many calls
  *

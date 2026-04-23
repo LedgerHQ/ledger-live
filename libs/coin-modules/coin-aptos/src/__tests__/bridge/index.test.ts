@@ -10,7 +10,7 @@ import { createBridges } from "../../bridge";
 const signer = jest.fn();
 const bridge = createBridges(signer);
 
-describe("Aptos bridge interface ", () => {
+describe("Aptos bridge interface", () => {
   describe("currencyBridge", () => {
     it("should have a preload method that returns a promise", async () => {
       const cryptoCurrency = getCryptoCurrencyById("aptos");

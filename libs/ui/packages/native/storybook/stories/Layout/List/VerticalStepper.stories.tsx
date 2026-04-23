@@ -95,7 +95,7 @@ export const VerticalStepperStory = () => {
     return () => {
       timeout && clearTimeout(timeout);
     };
-    // eslint-disable-next-line
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [animate, currentIndex]);
 
   return (

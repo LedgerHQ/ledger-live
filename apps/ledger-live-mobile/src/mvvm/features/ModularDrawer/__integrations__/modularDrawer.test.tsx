@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor, act, screen, withReadOnlyDisabled } from "@tests/test-renderer";
+import { render, waitFor, act, screen, withReadOnlyDisabled, withFlagOverrides } from "@tests/test-renderer";
 import {
   ModularDrawerSharedNavigator,
   WITHOUT_ACCOUNT_SELECTION,
@@ -92,19 +92,8 @@ const DRAWER_VARIANTS: DrawerVariant[] = [
     label: "Lumen BottomSheet (lwmWallet40)",
     backButtonTestId: "bottom-sheet-header-back-button",
     renderOptions: {
-      overrideInitialState: (state: State) => {
-        const base = withReadOnlyDisabled(state);
-        return {
-          ...base,
-          settings: {
-            ...base.settings,
-            overriddenFeatureFlags: {
-              ...mockedFF,
-              lwmWallet40: { enabled: true },
-            },
-          },
-        };
-      },
+      overrideInitialState: (state: State) =>
+        withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(withReadOnlyDisabled(state)),
     },
   },
 ];
@@ -238,26 +227,20 @@ describe.each(DRAWER_VARIANTS)(
     it("should allow full navigation: asset → network → account", async () => {
       const { getByText, user } = render(<ModularDrawerSharedNavigator />, {
         ...INITIAL_STATE,
-        overrideInitialState: (state: State) => {
-          const base = withReadOnlyDisabled(state);
-          return {
-            ...base,
+        overrideInitialState: (state: State) =>
+          withFlagOverrides({
+            ...mockedFF,
+            ...(renderOptions?.overrideInitialState
+              ? { lwmWallet40: { enabled: true } }
+              : undefined),
+          })({
+            ...withReadOnlyDisabled(state),
             accounts: { active: mockedAccounts },
-            settings: {
-              ...base.settings,
-              overriddenFeatureFlags: {
-                ...mockedFF,
-                ...(renderOptions?.overrideInitialState
-                  ? { lwmWallet40: { enabled: true } }
-                  : undefined),
-              },
-            },
             wallet: {
               ...state.wallet,
               accountNames: new Map([[ARB_ACCOUNT.id, "Arbitrum One"]]),
             },
-          };
-        },
+          }),
       });
 
       await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -316,16 +299,8 @@ describe.each(DRAWER_VARIANTS)(
 
 describe("ModularDrawer — Lumen BottomSheet specific", () => {
   const lumenOverride = {
-    overrideInitialState: (state: State) => {
-      const base = withReadOnlyDisabled(state);
-      return {
-        ...base,
-        settings: {
-          ...base.settings,
-          overriddenFeatureFlags: { ...mockedFF, lwmWallet40: { enabled: true } },
-        },
-      };
-    },
+    overrideInitialState: (state: State) =>
+      withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(withReadOnlyDisabled(state)),
   };
 
   beforeEach(() => {

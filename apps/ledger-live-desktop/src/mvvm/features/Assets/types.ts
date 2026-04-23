@@ -4,6 +4,7 @@ export type AssetTableItem = CategorizedAssetItem & {
   isPlaceholder: boolean;
   placeholderPrice?: number;
   marketId?: string;
+  trend?: number | null;
 };
 
 export type AssetsViewProps = {

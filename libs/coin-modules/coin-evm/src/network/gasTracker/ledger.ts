@@ -38,7 +38,7 @@ export const getGasOptions = async ({
     overrideGasTracker?: EvmConfigInfo["gasTracker"];
   };
 }): Promise<GasOptions> => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
 
   const gasTracker =
     options?.overrideGasTracker ||

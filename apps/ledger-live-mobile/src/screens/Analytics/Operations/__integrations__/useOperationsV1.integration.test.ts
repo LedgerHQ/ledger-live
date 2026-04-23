@@ -76,8 +76,11 @@ const initialStateWithFilterEnabled = (state: State): State => ({
   settings: {
     ...state.settings,
     filterTokenOperationsZeroAmount: true,
-    overriddenFeatureFlags: {
-      ...state.settings.overriddenFeatureFlags,
+  },
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: {
+      ...state.featureFlags.overrides,
       addressPoisoningOperationsFilter: {
         enabled: true,
         params: { families: ["evm"] },
@@ -91,8 +94,11 @@ const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
   settings: {
     ...state.settings,
     filterTokenOperationsZeroAmount: true,
-    overriddenFeatureFlags: {
-      ...state.settings.overriddenFeatureFlags,
+  },
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: {
+      ...state.featureFlags.overrides,
       addressPoisoningOperationsFilter: {
         enabled: true,
         params: { families: ["algorand"] },

@@ -1,5 +1,5 @@
 import { isCurrencySupported } from "../../currencies";
-import allSpecs from "../../generated/specs";
+import allSpecs from "../allSpecs";
 import { AppSpec } from "../types";
 import { SpecPerBot } from "./types";
 
@@ -26,7 +26,7 @@ export function getSpecsPerBots(
   const specs: Array<{ spec: AppSpec<any>; family: string; key: string }> = [];
   for (const family in allSpecs) {
     if (filterFamilies.length > 0 && !filterFamilies.includes(family)) continue;
-    const familySpecs = allSpecs[family];
+    const familySpecs = allSpecs[family as keyof typeof allSpecs];
     for (const key in familySpecs) {
       const spec: AppSpec<any> = familySpecs[key];
       if (!isCurrencySupported(spec.currency) || spec.disabled) {

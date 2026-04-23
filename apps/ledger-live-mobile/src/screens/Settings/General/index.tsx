@@ -1,4 +1,5 @@
 import React from "react";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { TrackScreen } from "~/analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import ThemeSettingsRow from "./ThemeSettingsRow";
@@ -10,10 +11,14 @@ import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import DateFormatRow from "./DateFormatRow";
 import PersonalizedRecommendationsRow from "./PersonalizedRecommendationsRow";
 import WalletSyncRow from "./WalletSyncRow";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import MevProtection from "./MevProtection";
 
 export default function GeneralSettings() {
+  const llmAnalyticsOptInPrompt = useFeature("llmAnalyticsOptInPrompt");
+  const analyticsOptInFeature = useFeature("analyticsOptIn");
+  const showPersonalizedRecommendationsRow =
+    llmAnalyticsOptInPrompt?.enabled || analyticsOptInFeature?.enabled;
+
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="General" />
@@ -28,9 +33,7 @@ export default function GeneralSettings() {
       <MevProtection />
       <ReportErrorsRow />
       <AnalyticsRow />
-      <FeatureToggle featureId="llmAnalyticsOptInPrompt">
-        <PersonalizedRecommendationsRow />
-      </FeatureToggle>
+      {showPersonalizedRecommendationsRow ? <PersonalizedRecommendationsRow /> : null}
     </SettingsNavigationScrollView>
   );
 }

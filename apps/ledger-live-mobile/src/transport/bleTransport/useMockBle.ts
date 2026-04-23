@@ -37,7 +37,7 @@ const mapDescriptorToScannedDevice = ({
 }: MockBleDescriptor): ScannedDevice => {
   const resolvedServiceUUID = serviceUUID ?? serviceUUIDs?.[0];
   const modelId = resolvedServiceUUID
-    ? getInfosForServiceUuid(resolvedServiceUUID)?.deviceModel.id ?? DeviceModelId.nanoX
+    ? (getInfosForServiceUuid(resolvedServiceUUID)?.deviceModel.id ?? DeviceModelId.nanoX)
     : DeviceModelId.nanoX;
 
   return mapDeviceToScannedDevice({

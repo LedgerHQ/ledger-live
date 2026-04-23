@@ -1,21 +1,24 @@
-import { renderHook, act } from "@tests/test-renderer";
+import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
 import { useTabBarVisibility, useHideTabBar } from "../useTabBarVisibility";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 
 // Helper to create state with lwmWallet40 feature flag
-const withFeatureFlag = (enabled: boolean, params?: Record<string, unknown>) => (state: State) => ({
-  ...state,
-  settings: {
-    ...SETTINGS_INITIAL_STATE,
-    overriddenFeatureFlags: {
+const withFeatureFlag = (enabled: boolean, params?: Record<string, unknown>) =>
+  withFlagOverrides(
+    {
       lwmWallet40: {
         enabled,
         ...(params && { params }),
       },
     },
-  },
-});
+    (state: State) => ({
+      ...state,
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+      },
+    }),
+  );
 
 describe("useTabBarVisibility", () => {
   describe("when lwmWallet40 feature flag is disabled", () => {

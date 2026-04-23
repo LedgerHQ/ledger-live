@@ -1,5 +1,12 @@
+import {
+  FEATURE_FLAGS_DEFAULTS,
+  FEATURE_FLAGS_INITIAL_STATE,
+  Feature,
+  FeatureId,
+  Features,
+  PartialFeatures,
+} from "@shared/feature-flags";
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
-import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -15,7 +22,6 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
-import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import type { ReduxStore } from "~/state-manager/configureStore";
@@ -51,6 +57,7 @@ interface RenderReturn {
   container: HTMLElement;
   i18n: typeof i18n;
   rerender: (ui: React.ReactElement) => void;
+  unmount: () => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type DeepPartial<T> = T extends Function
@@ -61,7 +68,36 @@ type DeepPartial<T> = T extends Function
       ? { [P in keyof T]?: DeepPartial<T[P]> }
       : T;
 
-config.disabled = true;
+type LooseFlagOverrides = {
+  [K in FeatureId]?: {
+    enabled?: boolean;
+    params?: Features[K] extends { params?: infer P } ? Partial<NonNullable<P>> : never;
+  };
+};
+
+export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State> {
+  const merged: Record<string, Feature> = {};
+  for (const key of Object.keys(flags) as FeatureId[]) {
+    const override = flags[key];
+    const def = FEATURE_FLAGS_DEFAULTS[key] ?? { enabled: false };
+    merged[key] = {
+      ...def,
+      ...(override?.enabled !== undefined && { enabled: override.enabled }),
+      ...(override?.params !== undefined && {
+        params: {
+          ...((def as Record<string, unknown>)["params"] as Record<string, unknown> | undefined),
+          ...override.params,
+        },
+      }),
+    };
+  }
+  return {
+    featureFlags: {
+      ...FEATURE_FLAGS_INITIAL_STATE,
+      overrides: merged as unknown as PartialFeatures,
+    },
+  };
+}
 
 function CountervaluesProviders({
   children,
@@ -70,15 +106,12 @@ function CountervaluesProviders({
   children: React.ReactNode;
   savedState?: CounterValuesStateRaw | undefined;
 }) {
-  const marketcapBridge = useCountervaluesMarketcapBridge();
   const bridge = useCountervaluesBridge();
 
   return (
-    <CountervaluesMarketcapProvider bridge={marketcapBridge}>
-      <CountervaluesProvider bridge={bridge} savedState={savedState}>
-        {children}
-      </CountervaluesProvider>
-    </CountervaluesMarketcapProvider>
+    <CountervaluesProvider bridge={bridge} savedState={savedState}>
+      {children}
+    </CountervaluesProvider>
   );
 }
 

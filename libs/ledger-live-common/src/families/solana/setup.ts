@@ -11,7 +11,6 @@ import { createMessageSigner, createResolver, executeWithSigner } from "../../br
 import type { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
 import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
-import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
 import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
@@ -48,8 +47,7 @@ export function getSolanaSignerInstance(
   }
 }
 
-const getCurrencyConfig = () =>
-  getCurrencyConfiguration<SolanaCoinConfig>(getCryptoCurrencyById("solana"));
+const getCurrencyConfig = () => getCurrencyConfiguration<SolanaCoinConfig>("solana");
 
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(getSolanaSignerInstance),

@@ -7,7 +7,7 @@ const discoverApps = [
   { name: "Ramp", url: "https://rampnetwork.com/buy-crypto" },
   { name: "Kiln", url: "https://kiln.fi" },
   { name: "Lido", url: "https://lido.fi/" },
-  // { name: "1inch", url: "https://1inch.com/" }, // QAA-997
+  { name: "1inch", url: "https://1inch.com" },
   { name: "Zerion", url: "https://zerion.io/" },
   { name: "Transak", url: "https://transak.com" },
 ] as const;

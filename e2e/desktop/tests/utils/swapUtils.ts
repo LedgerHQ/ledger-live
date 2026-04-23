@@ -6,7 +6,8 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getModularSelector, ModularSelector } from "./modularSelectorUtils";
+import { ModularDialog } from "tests/page/dialog/modular.dialog";
+import { getModularSelector } from "./modularSelectorUtils";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   let originalBroadcastValue: string | undefined;
@@ -46,40 +47,38 @@ export async function performSwapUntilQuoteSelectionStep(
   );
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
-    electronApp,
   );
   if (!isAssetFromSelected) {
-    await selectAccountFrom(app, electronApp, swap);
+    await selectAccountFrom(app, swap);
   }
   const isAssetToSelected = await app.swap.checkIfToAssetIsAlreadySelected(
     swap.accountToCredit.currency.ticker,
-    electronApp,
   );
   if (!isAssetToSelected) {
-    await selectAccountTo(app, electronApp, swap);
+    await selectAccountTo(app, swap);
   }
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
 
-async function selectAccountFrom(app: Application, electronApp: ElectronApplication, swap: Swap) {
-  await app.swap.selectFromAccountCoinSelector(electronApp);
+async function selectAccountFrom(app: Application, swap: Swap) {
+  await app.swap.selectFromAccountCoinSelector();
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToDebit);
-    await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
+    await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
   }
 }
 
-async function selectAccountTo(app: Application, electronApp: ElectronApplication, swap: Swap) {
-  await app.swap.selectToAccountCoinSelector(electronApp);
+async function selectAccountTo(app: Application, swap: Swap) {
+  await app.swap.selectToAccountCoinSelector();
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToCredit);
-    await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+    await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
   }
 }
 
-export async function selectAccountMAD(selector: ModularSelector, account: Account) {
+export async function selectAccountMAD(selector: ModularDialog, account: Account) {
   await selector.selectAsset(account.currency);
   await selector.selectNetwork(account.currency);
   await selector.selectAccountByName(account);

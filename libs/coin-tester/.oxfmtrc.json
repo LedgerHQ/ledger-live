@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "trailingComma": "all",
+  "arrowParens": "avoid",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/lib/**",
+    "**/lib-es/**",
+    "**/__snapshots__/**",
+    "**/*.snap",
+    "coverage/**",
+    "**/fixtures/**/*.json",
+    "**/*.fixture.json"
+  ]
+}

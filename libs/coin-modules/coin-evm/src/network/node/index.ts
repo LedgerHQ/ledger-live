@@ -14,24 +14,20 @@ import { NodeApi } from "./types";
  */
 const nodeApiCache = new Map<string, NodeApi>();
 
-function cacheKey(
-  currencyId: string,
-  type: string,
-  node: { type: string; [key: string]: unknown },
-): string {
-  return `${currencyId}:${type}:${JSON.stringify(node)}`;
+function cacheKey(currencyId: string, node: { type: string; [key: string]: unknown }): string {
+  return `${currencyId}:${JSON.stringify(node)}`;
 }
 
 export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const node = config?.node;
   const type = node?.type;
 
   if (type !== "ledger" && type !== "external") {
-    throw new UnknownNode(`Unknown node for currency: ${currency.id}`);
+    throw new UnknownNode(`Unknown node "${type}" for currency: ${currency.id}`);
   }
 
-  const key = cacheKey(currency.id, type, node);
+  const key = cacheKey(currency.id, node);
   let api = nodeApiCache.get(key);
   if (api === undefined) {
     api = type === "ledger" ? createLedgerNodeApi(node) : createNodeApi(node);

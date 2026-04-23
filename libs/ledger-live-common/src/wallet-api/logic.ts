@@ -20,7 +20,7 @@ import {
   makeEmptyTokenAccount,
   getParentAccount,
 } from "../account/index";
-import { Transaction } from "../generated/types";
+import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
@@ -121,7 +121,7 @@ export async function signTransactionLogic(
   const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
-  const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
+  const { canEditFees, liveTx, hasFeesProvided } = await getWalletAPITransactionSignFlowInfos({
     walletApiTransaction: transaction,
     account: mainAccount,
   });
@@ -210,7 +210,7 @@ export async function broadcastTransactionLogic(
   return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
-export function signMessageLogic(
+export async function signMessageLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   message: string,
@@ -233,7 +233,7 @@ export function signMessageLogic(
   let formattedMessage: AnyMessage;
   try {
     if (isAccount(account)) {
-      formattedMessage = prepareMessageToSign(account, message);
+      formattedMessage = await prepareMessageToSign(account, message);
     } else {
       throw new Error("account provided should be the main one");
     }
@@ -593,7 +593,7 @@ export async function completeExchangeLogic(
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  const { liveTx } = getWalletAPITransactionSignFlowInfos({
+  const { liveTx } = await getWalletAPITransactionSignFlowInfos({
     walletApiTransaction: transaction,
     account: fromAccount,
   });

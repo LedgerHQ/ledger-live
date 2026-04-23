@@ -18,38 +18,37 @@ All build and test commands below are run from the **repo root** (`ledger-live/`
 ### 1. Prerequisites
 
 - Ledger Live repository (as mentioned in the full wiki)
+- Read the e2e environment [guide](https://ledgerhq.atlassian.net/wiki/spaces/QA/pages/6945013939/Ledger+Wallet+E2E+Environment)❗
 - Docker Desktop installed and running (Speculos runs in Docker)
-- Clone the CoinApps repository:
-
-```bash
-# HTTPS
-git clone https://github.com/LedgerHQ/coin-apps.git
-
-# OR SSH
-git clone git@github.com:LedgerHQ/coin-apps.git
-```
-
-- Pull Speculos Docker image:
+- Pull the Speculos Docker image:
 
 ```bash
 docker pull ghcr.io/ledgerhq/speculos:latest
 ```
 
-> ⚠️ Adjust repository paths according to your local setup.
+- Enable Proto for version management:
+
+```bash
+proto use
+```
+
+- Install [mise](https://mise.jdx.dev/getting-started.html#installing-mise-cli) then run:
+
+```bash
+mise install
+```
 
 ### 2. Environment Variables
 
-Set the following environment variables before running tests:
+Set these environment variables before you run tests and change the values as per your testing needs:
 
 ```bash
 export MOCK=0
-export COINAPPS="/path/to/coin-apps"
-export SEED="your 24 word ledger recovery phrase here"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 export SPECULOS_DEVICE=nanoSP       # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
 ```
 
-> ⚠️ Replace placeholders with your local paths and credentials.
+Consider adding these exports to your profile so they persist.
 
 ### 3. Build
 
@@ -89,15 +88,46 @@ pnpm e2e:desktop test:playwright <testFileName>
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
-### 5. Wallet 4.0
+### 6. Wallet 4.0
 
-To reduce noise in test reports the Wallet 4.0 feature is OFF by default (regardless of Firebase).
-You can force Wallet 4.0 ON by setting the E2E environment variable:
+The Wallet 4.0 feature is ON by default (regardless of Firebase).
+You can force Wallet 4.0 OFF (legacy) by setting the E2E environment variable:
 
 ```bash
-export E2E_ENABLE_WALLET40=1
+export E2E_ENABLE_WALLET40=0
 ```
 
-Individual tests can still switch the feature ON explicitly passing the flag and parameters.
+Individual tests can still switch Wallet 4.0 OFF by explicitly passing the `LWD_WALLET_40_FF_DISABLED` FF.
 
-To switch Wallet 4.0 on for all tests please use the checkbox on the Workflow.
+To switch Wallet 4.0 OFF on CI please untick the checkbox on the Github Workflow.
+
+### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+
+You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
+
+Example shape:
+
+```json
+{
+  "myFeature": {
+    "enabled": true,
+    "params": {
+      "foo": "bar"
+    }
+  }
+}
+```
+
+Usage examples:
+
+```bash
+# Enable one feature with params
+export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar"}}}'
+
+```
+
+Notes:
+
+- Arrays, scalars, or invalid JSON are rejected.
+- `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
+- Per-test `featureFlags` fixture values still override env-provided values when both set the same key.

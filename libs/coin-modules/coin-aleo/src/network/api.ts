@@ -5,12 +5,10 @@ import type {
   AleoLatestBlockResponse,
   AleoPublicTransactionDetailsResponse,
   AleoPublicTransactionsResponse,
-  AleoAccountJWTResponse,
-  AleoJWT,
   AleoRecordScannerStatusResponse,
-  AleoRegisterAccountResponse,
   AleoRegisterForRecordsResponse,
-  AleoGetPublicKeyResponse,
+  AleoGetScannerPublicKeyResponse,
+  AleoGetProvePublicKeyResponse,
   AleoPrivateRecord,
   DelegatedProvingResponse,
 } from "../types/api";
@@ -88,54 +86,14 @@ async function getAccountPublicTransactions({
   return res.data;
 }
 
-async function registerNewAccount(
+async function getScannerPublicKey(
   currency: CryptoCurrency,
-  username: string,
-): Promise<AleoRegisterAccountResponse> {
-  const { nodeUrl } = getNetworkConfig(currency);
+): Promise<AleoGetScannerPublicKeyResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
 
-  const res = await network<AleoRegisterAccountResponse>({
-    method: "POST",
-    url: `${nodeUrl}/consumers`,
-    data: { username },
-  });
-
-  return res.data;
-}
-
-async function getAccountJWT(
-  currency: CryptoCurrency,
-  apiKey: string,
-  consumerId: string,
-): Promise<AleoJWT> {
-  const res = await network<AleoAccountJWTResponse>({
-    method: "POST",
-    url: `https://api.provable.com/jwts/${consumerId}`,
-    headers: {
-      "X-Provable-API-Key": apiKey,
-    },
-  });
-
-  const data = {
-    token: res.headers?.["authorization"] ?? "",
-    exp: res.data.exp,
-  };
-
-  return data;
-}
-
-async function getPublicKey(
-  currency: CryptoCurrency,
-  jwt: string,
-): Promise<AleoGetPublicKeyResponse> {
-  const { networkType } = getNetworkConfig(currency);
-
-  const res = await network<AleoGetPublicKeyResponse>({
+  const res = await network<AleoGetScannerPublicKeyResponse>({
     method: "GET",
-    url: `https://api.provable.com/scanner/${networkType}/pubkey`,
-    headers: {
-      Authorization: jwt,
-    },
+    url: `${nodeUrl}/scanner/${networkType}/pubkey`,
   });
 
   return res.data;
@@ -143,12 +101,10 @@ async function getPublicKey(
 
 async function registerForScanningAccountRecordsEncrypted({
   currency,
-  jwt,
   encryptedData,
   keyId,
 }: {
   currency: CryptoCurrency;
-  jwt: string;
   encryptedData: string;
   keyId: string;
 }): Promise<AleoRegisterForRecordsResponse> {
@@ -157,9 +113,6 @@ async function registerForScanningAccountRecordsEncrypted({
   const res = await network<AleoRegisterForRecordsResponse>({
     method: "POST",
     url: `${nodeUrl}/scanner/${networkType}/register/encrypted`,
-    headers: {
-      Authorization: jwt,
-    },
     data: {
       key_id: keyId,
       ciphertext: encryptedData,
@@ -169,9 +122,8 @@ async function registerForScanningAccountRecordsEncrypted({
   return res.data;
 }
 
-export const getRecordScannerStatus = async (
+const getRecordScannerStatus = async (
   currency: CryptoCurrency,
-  accessToken: string,
   uuid: string,
 ): Promise<AleoRecordScannerStatusResponse> => {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
@@ -180,7 +132,6 @@ export const getRecordScannerStatus = async (
     method: "POST",
     url: `${nodeUrl}/scanner/${networkType}/status`,
     headers: {
-      Authorization: accessToken,
       "Content-Type": "application/json",
     },
     data: `"${uuid.toString()}"`,
@@ -191,31 +142,33 @@ export const getRecordScannerStatus = async (
 
 async function getAccountOwnedRecords({
   currency,
-  jwtToken,
-  apiKey,
   uuid,
   unspent,
   start,
+  resultsPerPage,
+  page,
 }: {
   currency: CryptoCurrency;
-  jwtToken: string;
-  apiKey: string;
   uuid: string;
   unspent?: boolean;
   start?: number;
+  resultsPerPage?: number;
+  page?: number;
 }): Promise<AleoPrivateRecord[]> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const filter = {
+    ...(typeof start === "number" && { start }),
+    ...(typeof resultsPerPage === "number" && { results_per_page: resultsPerPage }),
+    ...(typeof page === "number" && { page }),
+  };
 
   const res = await network<AleoPrivateRecord[]>({
     method: "POST",
     url: `${nodeUrl}/scanner/${networkType}/records/owned`,
-    headers: {
-      Authorization: jwtToken,
-      "X-Provable-API-Key": apiKey,
-    },
     data: {
       ...(typeof unspent === "boolean" && { unspent }),
-      ...(typeof start === "number" && { filter: { start } }),
+      ...(Object.keys(filter).length > 0 && { filter }),
       uuid,
     },
   });
@@ -228,25 +181,57 @@ async function submitDelegatedProvingRequest({
   authorization,
   feeAuthorization,
   broadcast,
-  jwt,
 }: {
   currency: CryptoCurrency;
   authorization: Record<string, unknown>;
   feeAuthorization?: Record<string, unknown>;
   broadcast: boolean;
-  jwt: string;
 }): Promise<DelegatedProvingResponse> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
   const res = await network<DelegatedProvingResponse>({
     method: "POST",
     url: `${nodeUrl}/prove/${networkType}/prove`,
-    headers: {
-      Authorization: jwt,
-    },
     data: {
       authorization,
       ...(feeAuthorization ? { fee_authorization: feeAuthorization } : {}),
       broadcast,
+    },
+  });
+
+  return res.data;
+}
+
+async function getProvePublicKey({
+  currency,
+}: {
+  currency: CryptoCurrency;
+}): Promise<AleoGetProvePublicKeyResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<AleoGetProvePublicKeyResponse>({
+    method: "GET",
+    url: `${nodeUrl}/prove/${networkType}/pubkey`,
+  });
+
+  return res.data;
+}
+
+async function submitEncryptedDelegatedProvingRequest({
+  currency,
+  keyId,
+  encryptedData,
+}: {
+  currency: CryptoCurrency;
+  keyId: string;
+  encryptedData: string;
+}): Promise<DelegatedProvingResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const res = await network<DelegatedProvingResponse>({
+    method: "POST",
+    url: `${nodeUrl}/prove/${networkType}/prove/encrypted`,
+    data: {
+      key_id: keyId,
+      ciphertext: encryptedData,
     },
   });
 
@@ -258,11 +243,11 @@ export const apiClient = {
   getAccountBalance,
   getTransactionById,
   getAccountPublicTransactions,
-  getAccountJWT,
-  registerNewAccount,
   getRecordScannerStatus,
-  getPublicKey,
+  getScannerPublicKey,
+  getProvePublicKey,
   getAccountOwnedRecords,
   registerForScanningAccountRecordsEncrypted,
   submitDelegatedProvingRequest,
+  submitEncryptedDelegatedProvingRequest,
 };

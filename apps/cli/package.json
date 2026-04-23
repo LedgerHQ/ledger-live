@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.36.0",
+  "version": "24.40.0-next.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -22,13 +22,13 @@
     "prepublishOnly": "zx ./scripts/build.mjs",
     "watch": "rslib build --watch",
     "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
-    "lint": "eslint src --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxfmt . && oxlint . --fix",
     "test": "zx ./scripts/test.mjs"
   },
   "dependencies": {
     "@ledgerhq/coin-bitcoin": "workspace:^",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
@@ -50,7 +50,9 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
     "asciichart": "1.5.25",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
@@ -74,11 +76,9 @@
     "usb": "*",
     "winston": "3.13.0",
     "ws": "catalog:",
-    "@zondax/ledger-live-icp": "1.4.1"
+    "@zondax/ledger-live-icp": "1.4.2"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
     "@pnpm/exportable-manifest": "1000.0.7",
     "@pnpm/read-project-manifest": "1000.0.6",
     "@types/asciichart": "1.5.8",
@@ -94,7 +94,15 @@
     "@types/ws": "8.5.10",
     "ts-node": "10.9.2",
     "@rslib/core": "catalog:",
-    "yaml": "2.8.1"
+    "yaml": "2.8.1",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "publishConfig": {
     "directory": "dist"

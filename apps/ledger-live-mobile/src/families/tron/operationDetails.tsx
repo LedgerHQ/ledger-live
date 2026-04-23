@@ -126,11 +126,11 @@ function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) 
       })}
     >
       {formattedVotes &&
-        formattedVotes.map(({ address, voteCount, validator }, i) => (
+        formattedVotes.map(({ address, voteCount, name }, i) => (
           <DelegationInfo
             key={address + i}
             address={address}
-            name={validator?.name ?? address}
+            name={name ?? address}
             formattedAmount={voteCount.toLocaleString(locale)}
             onPress={redirectAddressCreator(address)}
           />

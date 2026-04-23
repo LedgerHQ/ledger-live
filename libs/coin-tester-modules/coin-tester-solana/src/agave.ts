@@ -7,6 +7,7 @@ export async function spawnAgave() {
     cwd: __dirname,
     log: Boolean(process.env.DEBUG),
     env: process.env,
+    commandOptions: ["--wait"],
   });
 
   console.log(chalk.bgBlueBright(" -  AGAVE READY ✅  - "));
@@ -18,7 +19,7 @@ export async function killAgave() {
     cwd: __dirname,
     log: Boolean(process.env.DEBUG),
     env: process.env,
-    commandOptions: ["--remove-orphans"],
+    commandOptions: ["--remove-orphans", "--volumes"],
   });
 }
 

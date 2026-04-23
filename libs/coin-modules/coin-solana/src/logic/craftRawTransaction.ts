@@ -1,4 +1,4 @@
-import type { CraftedTransaction } from "@ledgerhq/coin-framework/api/index";
+import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/index";
 import { VersionedTransaction } from "@solana/web3.js";
 
 export async function craftRawTransaction(

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { from } from "rxjs";
 import { mergeMap, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

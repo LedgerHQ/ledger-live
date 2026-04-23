@@ -14,8 +14,8 @@ import Config from "react-native-config";
 import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
 
 const GRADIENT_STOPS = [
-  { color: "base", offset: 0, opacity: 0.8 },
-  { color: "base", offset: 0.75, opacity: 0.4 },
+  { color: "base", offset: 0, opacity: 1 },
+  { color: "base", offset: 0.75, opacity: 0.7 },
   { color: "base", offset: 1, opacity: 0 },
 ];
 

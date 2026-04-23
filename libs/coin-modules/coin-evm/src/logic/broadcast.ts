@@ -1,4 +1,4 @@
-import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
+import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNodeApi } from "../network/node/index";
 

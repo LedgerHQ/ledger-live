@@ -1,4 +1,4 @@
-import { startDummyServer, stopDummyServer as stopDummyServer } from "@ledgerhq/test-utils";
+import { startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 
 export async function startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
   try {

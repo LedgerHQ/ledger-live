@@ -4,6 +4,9 @@ import { Drawer } from "../../component/drawer.component";
 
 export class LedgerSyncDrawer extends Drawer {
   private continueButton = this.page.getByRole("button", { name: "continue" });
+  private readonly alreadyTurnedOnButton = this.page.getByRole("button", {
+    name: "I already turned it on",
+  });
   private walletSyncConnectDeviceButton = this.page.getByTestId(
     "walletSync-synchronize-connectDevice",
   );
@@ -22,8 +25,21 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Synchronize accounts")
   async syncAccounts() {
-    await expect(this.continueButton).toBeVisible();
-    await this.continueButton.click();
+    await this.expectSyncAccountsButtonExist();
+
+    if (await this.walletSyncConnectDeviceButton.isVisible()) {
+      await this.walletSyncConnectDeviceButton.click();
+      return;
+    }
+
+    if (await this.continueButton.isVisible()) {
+      await this.continueButton.click();
+    } else if (await this.alreadyTurnedOnButton.isVisible()) {
+      await this.alreadyTurnedOnButton.click();
+    } else {
+      throw new Error("No Ledger Sync entry-point button is visible.");
+    }
+
     await expect(this.walletSyncConnectDeviceButton).toBeVisible();
     await this.walletSyncConnectDeviceButton.click();
   }
@@ -56,9 +72,19 @@ export class LedgerSyncDrawer extends Drawer {
     await this.confirmBackupDeletion();
   }
 
-  @step("Check if sync entry point exists")
+  /** Entry-step controls only; connect-device appears after advancing past these. */
+  @step("Check if Ledger Sync entry controls exist")
   async expectSyncAccountsButtonExist() {
-    await expect(this.continueButton).toBeVisible();
+    await expect
+      .poll(
+        async () => {
+          const hasContinue = await this.continueButton.isVisible();
+          const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton.isVisible();
+          return hasContinue || hasAlreadyTurnedOn;
+        },
+        { timeout: 30000 },
+      )
+      .toBe(true);
   }
 
   @step("Check if synchronization was successful")

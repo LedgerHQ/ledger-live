@@ -3,10 +3,12 @@
   "compilerOptions": {
     "lib": ["es2020", "dom"],
     "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types", "../../../../node_modules/@types"],
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
     "sourceMap": true,
     "resolveJsonModule": true
   },

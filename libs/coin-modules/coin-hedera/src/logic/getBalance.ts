@@ -1,4 +1,4 @@
-import type { Balance } from "@ledgerhq/coin-framework/api/types";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -11,7 +11,7 @@ import { getERC20BalancesForAccountV2 } from "../network/utils";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
   try {
-    const coinConfig = hederaCoinConfig.getCoinConfig(currency);
+    const coinConfig = hederaCoinConfig.getCoinConfig(currency.id);
     const [mirrorAccount, mirrorTokens, mirrorNodes, erc20TokenBalances] = await Promise.all([
       apiClient.getAccount(address),
       apiClient.getAccountTokens(address),

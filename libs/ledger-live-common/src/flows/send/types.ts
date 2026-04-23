@@ -1,6 +1,6 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Transaction, TransactionStatus } from "../../generated/types";
+import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "../wizard/types";
 
 export const SEND_FLOW_STEP = {
@@ -19,7 +19,7 @@ export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
   Readonly<{
     addressInput?: boolean;
     showTitle?: boolean;
-    height?: "fixed" | "hug";
+    height?: "fixed" | "fit";
   }>;
 
 export type BaseSendFlowConfig = FlowConfig<SendFlowStep, BaseSendStepConfig>;
@@ -107,6 +107,8 @@ export type SendFlowBusinessContext = Readonly<{
     setValue: (value: string) => void;
     clear: () => void;
   }>;
+  isRecipientAddressComplete: boolean;
+  setIsRecipientAddressComplete: (value: boolean) => void;
   close: () => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
 }>;

@@ -1,18 +1,21 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
+  Balance,
   Block,
   BlockInfo,
+  CraftedTransaction,
   Cursor,
-  Page,
-  Validator,
   FeeEstimation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
-  Balance,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/index";
+  Validator,
+  BalanceOptions,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
@@ -42,7 +45,8 @@ export function createApi(config: BoilerplateConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations,
     getBlock(_height): Promise<Block> {
@@ -73,6 +77,7 @@ export function createApi(config: BoilerplateConfig): AlpacaApi {
     validateAddress: async (_address: string) => {
       throw new Error("validateAddress is not supported");
     },
+    craftTransactionData,
   };
 }
 

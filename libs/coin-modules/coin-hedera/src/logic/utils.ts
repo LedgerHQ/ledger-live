@@ -5,7 +5,7 @@ import {
   Transaction as HederaSDKTransaction,
   TransactionId,
 } from "@hashgraph/sdk";
-import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
 import { InvalidAddress } from "@ledgerhq/errors";
@@ -218,7 +218,7 @@ export const isTokenAssociationRequired = (
     return false;
   }
 
-  const subAccounts = !!account && "subAccounts" in account ? account.subAccounts ?? [] : [];
+  const subAccounts = !!account && "subAccounts" in account ? (account.subAccounts ?? []) : [];
   const isTokenAssociated = subAccounts.some(item => item.token.id === token?.id);
 
   return !!token && !isTokenAssociated && !isAutoTokenAssociationEnabled(account);

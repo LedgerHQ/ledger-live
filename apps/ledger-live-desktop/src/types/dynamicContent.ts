@@ -1,5 +1,8 @@
 export enum LocationContentCard {
+  /** Top carousel on portfolio page (placement "portfolio") */
   Portfolio = "portfolio",
+  /** Bottom carousel on portfolio page (placement "bottom_portfolio") */
+  BottomPortfolio = "bottom_portfolio",
   Action = "action",
   NotificationCenter = "notification_center",
 }
@@ -16,10 +19,13 @@ export type ContentCard = {
   order?: number;
   created: Date | null;
   isMock?: boolean;
+  extras?: Record<string, string>;
 };
 
 export type ActionContentCard = ContentCard & {
   image?: string;
+  image_background?: string;
+  icon?: string;
   mainCta?: string;
   link?: string;
   secondaryCta?: string;
@@ -36,6 +42,9 @@ export type PortfolioContentCard = ContentCard & {
   url?: string;
   path?: string;
   image?: string;
+  image_background?: string;
+  icon?: string;
   cta?: string;
   tag?: string;
+  picto?: string;
 };

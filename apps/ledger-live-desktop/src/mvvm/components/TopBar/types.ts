@@ -1,6 +1,7 @@
 import {
   Bell,
   BellNotification,
+  Clock,
   Eye,
   EyeCross,
   Experiment,
@@ -13,6 +14,7 @@ import { ActivityIndicatorIcon } from "./utils/getActivityIndicatorIcon";
 type IconComponent =
   | typeof Bell
   | typeof BellNotification
+  | typeof Clock
   | typeof Eye
   | typeof EyeCross
   | typeof Experiment
@@ -35,6 +37,8 @@ type TopBarAction = {
   tooltipClassName?: string;
   /** Called when the tooltip is shown (e.g. on hover). Used for analytics when showing error tooltip. */
   onTooltipShow?: () => void;
+  /** When set, renders a Button (icon + text label) instead of an IconButton. */
+  cta?: string;
 };
 
 /** A slot is either a generic action (button) or the notification indicator (button + drawer). */
@@ -43,6 +47,8 @@ type TopBarSlot = { type: "action"; action: TopBarAction } | { type: "notificati
 type TopBarViewProps = {
   slots: TopBarSlot[];
   shouldShowFirmwareUpdateBanner: boolean;
+  isInformationCenterOpen: boolean;
+  onInformationCenterClose: () => void;
 };
 
 export type { TopBarAction, TopBarActionAppearance, TopBarSlot, TopBarViewProps };

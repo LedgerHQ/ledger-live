@@ -73,6 +73,10 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
   },
+  tezosSecp256k1: {
+    tag: "tz2",
+    overridesDerivation: "44'/1729'/<account>'",
+  },
   galleonL: {
     tag: "legacy",
     startsAt: 1,
@@ -186,6 +190,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   },
   sui: {
     overridesDerivation: "44'/784'/<account>'/0'/0'",
+    tag: "sui",
   },
   canton: {
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
@@ -206,7 +211,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/60'/<account>'/0'/0'",
   },
   aleo: {
-    overridesDerivation: "44'/683'/<account>",
+    overridesDerivation: "44'/683'/<account>'/0'",
   },
   concordium: {
     overridesDerivation: "44'/919'/404'/404'/<account>'",
@@ -227,7 +232,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
+  tezos: ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   westend: ["polkadotbip44"],
@@ -236,6 +241,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   hedera: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
+  mina: ["minabip44"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
@@ -251,6 +257,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   solana_devnet: ["solanaMain", "solanaSub"],
   solana_testnet: ["solanaMain", "solanaSub"],
   sui: ["sui"],
+  sui_testnet: ["sui"],
   aptos: ["aptos"],
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
@@ -396,10 +403,12 @@ const disableBIP44: Record<string, boolean> = {
   icon_berlin_testnet: true,
   vechain: true,
   internet_computer: true,
+  mina: true,
   casper: true,
   filecoin: true,
   ton: true,
   sui: true,
+  sui_testnet: true,
   canton_network: true,
   canton_network_devnet: true,
   canton_network_testnet: true,
@@ -434,6 +443,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     case "ton":
     case "sui":
+    case "sui_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`;
     case "canton_network":
     case "canton_network_devnet":
@@ -441,7 +451,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     case "aleo":
     case "aleo_testnet":
-      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0`;
+      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'`;
     case "concordium":
     case "concordium_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;

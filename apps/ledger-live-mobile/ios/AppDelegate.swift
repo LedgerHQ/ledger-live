@@ -22,12 +22,28 @@ import ExpoModulesCore
 @main
 class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
 
+  private var launchedFromPush = false
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     self.moduleName = "ledgerlivemobile"
     self.dependencyProvider = RCTAppDependencyProvider()
+
+    // Increase max concurrent HTTP connections per host (iOS default is 6) to reduce boot-time
+    // request queuing. See: https://developer.apple.com/documentation/foundation/urlsessionconfiguration/httpmaximumconnectionsperhost
+    RCTSetCustomNSURLSessionConfigurationProvider {
+      let config = URLSessionConfiguration.default
+      config.httpMaximumConnectionsPerHost = 16
+      if let useWifiOnly = Bundle.main.infoDictionary?["ReactNetworkForceWifiOnly"] as? Bool, useWifiOnly {
+        config.allowsCellularAccess = false
+      }
+      config.httpShouldSetCookies = true
+      config.httpCookieAcceptPolicy = .always
+      config.httpCookieStorage = HTTPCookieStorage.shared
+      return config
+    }
 
     FirebaseConfigurator.configure()
 
@@ -47,6 +63,8 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       )
     }
 
+    UNUserNotificationCenter.current().delegate = self
+
     BrazeManager.shared.configure(
       pushAutoEnabled: pushAutoEnabled
     )
@@ -63,6 +81,8 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       .populateInitialPayload(
         fromLaunchOptions: launchOptions
       )
+
+    launchedFromPush = launchOptions?[.remoteNotification] != nil
 
     let appLaunched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
@@ -134,11 +154,19 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     didReceive response: UNNotificationResponse,
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
-    BrazeReactUtils
-      .sharedInstance()
-      .populateInitialPayload(
-        fromLaunchOptions: response.notification.request.content.userInfo
+    let userInfo = response.notification.request.content.userInfo
+
+    if launchedFromPush {
+      launchedFromPush = false
+    } else if let urlString = userInfo["ab_uri"] as? String,
+              let url = URL(string: urlString) {
+      RCTLinkingManager.application(
+        UIApplication.shared,
+        open: url,
+        options: [:]
       )
+    }
+
     let processedByBraze = BrazeManager.shared.handleUserNotification(
       response: response,
       completion: completionHandler

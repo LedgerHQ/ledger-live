@@ -1,7 +1,10 @@
-import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
+import type {
+  TransactionIntent,
+  MemoNotSupported,
+} from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { StakingOperation } from "../types/staking";
-import { isStakingIntent } from "../utils";
+import { isStakingIntent, seiEvmAmountToUsei } from "../utils";
 import { isPayable } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 import { isStakingOperation } from "./detectOperationType";
@@ -16,11 +19,16 @@ type OperationFn = (
 
 const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
   sei_evm: {
+    // `delegate` is payable: the amount is carried by msg.value (wei, 18 decimals)
+    // and converted by the precompile, so no amount goes into the calldata.
     delegate: valAddress => [valAddress],
-    undelegate: (valAddress, amount) => [valAddress, amount],
+    // `undelegate` and `redelegate` take the amount in usei (6 decimals) in the
+    // calldata. The intent's `amount` is expressed in the 18-decimal EVM unit,
+    // so we scale it down here. See `seiEvmAmountToUsei` for details.
+    undelegate: (valAddress, amount) => [valAddress, seiEvmAmountToUsei(amount)],
     redelegate: (valAddress, amount, dstValAddress) => {
       if (!dstValAddress) throw new Error("SEI redelegate requires dstValAddress");
-      return [valAddress, dstValAddress, amount];
+      return [valAddress, dstValAddress, seiEvmAmountToUsei(amount)];
     },
     getStakedBalance: (_recipient, _amount, dstValAddress, delegator) => {
       if (!delegator || !dstValAddress) {

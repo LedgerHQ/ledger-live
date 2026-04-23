@@ -1,15 +1,19 @@
 import React, { useCallback, useState } from "react";
-import Modal from "~/renderer/components/Modal";
-import logger from "~/renderer/logger";
-import Body from "./Body";
-import { StepId } from "./types";
+import { useDispatch } from "LLD/hooks/redux";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   ZCASH_ACTIVATION_DATE,
   ZCASH_ACTIVATION_DATE_STRING,
 } from "@ledgerhq/zcash-shielded/constants";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import type { ZcashSyncState, ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
+import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import Modal from "~/renderer/components/Modal";
+import logger from "~/renderer/logger";
+import Body from "./Body";
+import { StepId } from "./types";
+import { syncStateUpdater } from "./sync";
 
-const ExportKeyModal = () => {
+const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const [stepId, setStepId] = useState<StepId>("birthday");
   const [ufvk, setUfvk] = useState<string>("");
   const [ufvkExportError, setUfvkExportError] = useState<Error | undefined | null>(null);
@@ -18,6 +22,16 @@ const ExportKeyModal = () => {
   const [birthday, setBirthday] = useState(today);
   const [invalidBirthday, setInvalidBirthday] = useState(false);
   const [syncFromZero, setSyncFromZero] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const saveSyncState = (info: Partial<ZcashPrivateInfo>) => {
+    dispatch(
+      syncStateUpdater(account, {
+        ...info,
+      }),
+    );
+  };
 
   const handleBirthdayChange = useCallback((value: string) => {
     setBirthday(value);
@@ -52,6 +66,14 @@ const ExportKeyModal = () => {
     setUfvk(ufvk);
   };
 
+  const handleEnableShieldedBalance = (nextSyncState: ZcashSyncState) => {
+    saveSyncState({
+      syncState: nextSyncState,
+      ufvk,
+      birthday,
+    });
+  };
+
   const isModalLocked = ["device", "confirmation"].includes(stepId);
 
   return (
@@ -76,6 +98,7 @@ const ExportKeyModal = () => {
           syncFromZero={syncFromZero}
           handleBirthdayChange={handleBirthdayChange}
           handleSyncFromZero={handleSyncFromZero}
+          handleEnableShieldedBalance={handleEnableShieldedBalance}
         />
       )}
     />

@@ -16,13 +16,13 @@ type AnimatedSeparatorProps = {
 const Separator = styled.View<SpaceProps>`
   flex: 1;
   height: 1px;
-  background-color: ${(p) => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.neutral.c40};
   ${space}
 `;
 
 const SeparatorFilling = Animated.createAnimatedComponent(styled.View`
   height: 100%;
-  background-color: ${(p) => p.theme.colors.neutral.c100};
+  background-color: ${p => p.theme.colors.neutral.c100};
 `);
 
 const AnimatedSeparator = ({
@@ -62,30 +62,30 @@ const StepIcon = {
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    width: ${(p) => p.theme.space[5]}px;
-    height: ${(p) => {
+    width: ${p => p.theme.space[5]}px;
+    height: ${p => {
       /* the height of the background has to be odd, so we can correctly predict where the center pixel is
         and align the separators accordingly */
       const baseSpace = p.theme.space[5];
       return baseSpace % 2 === 0 ? baseSpace + 1 : baseSpace;
     }}px;
-    border-radius: ${(p) => p.theme.radii[2]}px;
+    border-radius: ${p => p.theme.radii[2]}px;
     overflow: hidden;
-    margin-right: ${(p) => p.theme.space[1]}px;
-    margin-left: ${(p) => p.theme.space[1]}px;
+    margin-right: ${p => p.theme.space[1]}px;
+    margin-left: ${p => p.theme.space[1]}px;
     ${color}
   `,
   Current: styled.View`
-    width: ${(p) => p.theme.space[2]}px;
-    height: ${(p) => p.theme.space[2]}px;
-    border-radius: ${(p) => p.theme.radii[2]}px;
-    background-color: ${(p) => p.theme.colors.primary.c90};
+    width: ${p => p.theme.space[2]}px;
+    height: ${p => p.theme.space[2]}px;
+    border-radius: ${p => p.theme.radii[2]}px;
+    background-color: ${p => p.theme.colors.primary.c90};
   `,
   Pending: styled.View`
-    width: ${(p) => p.theme.space[1]}px;
-    height: ${(p) => p.theme.space[1]}px;
-    border-radius: ${(p) => p.theme.space[1]}px;
-    background-color: ${(p) => p.theme.colors.neutral.c70};
+    width: ${p => p.theme.space[1]}px;
+    height: ${p => p.theme.space[1]}px;
+    border-radius: ${p => p.theme.space[1]}px;
+    background-color: ${p => p.theme.colors.neutral.c70};
   `,
   Completed: ({ color }: { color: string }): JSX.Element => <CheckAlone size={16} color={color} />,
   Errored: ({ color }: { color: string }): JSX.Element => <CloseMedium size={16} color={color} />,
@@ -99,15 +99,15 @@ const StepView = styled.View`
 `;
 
 const ActiveText = styled(Text)`
-  color: ${(p) => p.theme.colors.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c100};
 `;
 
 const PendingText = styled(Text)`
-  color: ${(p) => p.theme.colors.neutral.c70};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 
 const ErroredText = styled(Text)`
-  color: ${(p) => p.theme.colors.error.c50};
+  color: ${p => p.theme.colors.error.c50};
 `;
 
 type StepState = "CURRENT" | "PENDING" | "COMPLETED" | "ERRORED";

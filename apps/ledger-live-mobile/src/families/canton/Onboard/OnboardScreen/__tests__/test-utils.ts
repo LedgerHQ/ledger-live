@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
@@ -116,12 +116,10 @@ export const createMockNavigation = () => ({
 
 export const createMockStatus = (overrides?: {
   onboarding?: OnboardStatus;
-  authorize?: AuthorizeStatus;
   isProcessing?: boolean;
   hasResult?: boolean;
 }) => ({
   onboarding: OnboardStatus.INIT,
-  authorize: AuthorizeStatus.INIT,
   isProcessing: false,
   hasResult: false,
   ...overrides,

@@ -72,7 +72,7 @@ describe("getDeviceRunningMode", () => {
     });
 
     describe("but for now it is restarting and/or in a unknown state", () => {
-      it("it should wait and retry until the device is in bootloader", done => {
+      it("should wait and retry until the device is in bootloader", done => {
         const aDeviceInfo = aDeviceInfoBuilder({ isBootloader: true });
 
         const nbAcceptedErrors = 3;

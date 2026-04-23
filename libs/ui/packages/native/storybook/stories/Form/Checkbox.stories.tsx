@@ -9,7 +9,7 @@ export default {
 export const CheckboxStory = (args: typeof CheckboxStoryArgs) => {
   const [checked, setChecked] = useState(false);
 
-  const handleChange = () => setChecked((prev) => !prev);
+  const handleChange = () => setChecked(prev => !prev);
 
   return (
     <Checkbox

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Alert, Flex, Text } from "@ledgerhq/react-ui";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { AppRequest, AppResult, AppState } from "@ledgerhq/live-common/hw/actions/app";
+import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "react-i18next";
@@ -10,6 +11,7 @@ import AllowManagerModal from "./AllowManagerModal";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 
 type Props = {
+  actionDependencyInjection?: Action<AppRequest, AppState, AppResult>;
   device: Device;
   dependencies: string[];
   setHeaderLoader: (hasLoader: boolean) => void;
@@ -19,6 +21,7 @@ type Props = {
 };
 
 const InstallSetOfApps = ({
+  actionDependencyInjection,
   device,
   dependencies,
   setHeaderLoader,
@@ -38,7 +41,8 @@ const InstallSetOfApps = ({
     }),
     [dependencies],
   );
-  const action = useConnectAppAction();
+  const defaultAction = useConnectAppAction();
+  const action = actionDependencyInjection ?? defaultAction;
 
   const status = action.useHook(device, commandRequest);
 
@@ -48,7 +52,6 @@ const InstallSetOfApps = ({
     listedApps,
     error,
     currentAppOp,
-    itemProgress,
     progress,
     opened,
     allowManagerGranted,
@@ -115,7 +118,7 @@ const InstallSetOfApps = ({
                 appName={appName}
                 state={state}
                 productName={productName}
-                itemProgress={itemProgress}
+                progress={progress ?? 0}
               />
             );
           })}

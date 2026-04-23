@@ -5,18 +5,23 @@
     "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
     "lib": [
       "es2022",
       "dom"
     ],
     "outDir": "lib",
+    "rootDir": "src",
+    "types": [
+      "node",
+      "jest"
+    ],
     "typeRoots": [
       "./node_modules/@types",
       "./types/@taquito"
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "types/**/*.d.ts"
   ]
 }

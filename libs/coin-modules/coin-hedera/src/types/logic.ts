@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
@@ -59,7 +59,7 @@ export interface StakingAnalysis {
 }
 
 export interface EnrichedERC20Transfer {
-  transfer: ERC20TokenTransfer;
+  transfers: ERC20TokenTransfer[];
   contractCallResult: HederaMirrorContractCallResult;
   mirrorTransaction: HederaMirrorTransaction;
 }

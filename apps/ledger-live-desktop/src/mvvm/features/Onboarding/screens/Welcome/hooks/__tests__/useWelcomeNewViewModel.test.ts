@@ -1,7 +1,7 @@
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useWelcomeViewModel } from "../useWelcomeViewModel";
-import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { AFTER_ONBOARDING_STATE, INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
 
@@ -43,23 +43,43 @@ describe("useWelcomeViewModel", () => {
   });
 
   describe("navigation effect when onboarding is completed", () => {
-    it('should navigate to "/" when shouldUseLazyOnboarding is true and onboarding completed', () => {
+    it('should navigate to "/" when lazy onboarding and no onboarded/seen device', () => {
       renderHook(() => useWelcomeViewModel(), {
         initialState: {
           settings: {
             ...INITIAL_STATE,
             hasCompletedOnboarding: true,
-            overriddenFeatureFlags: {
-              lwdWallet40: {
-                enabled: true,
-                params: { lazyOnboarding: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { lazyOnboarding: true },
+            },
+          }),
         },
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/");
+    });
+
+    it('should navigate to "/onboarding/select-device" when lazy onboarding but user has a seen device', () => {
+      renderHook(() => useWelcomeViewModel(), {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+            lastSeenDevice: AFTER_ONBOARDING_STATE.lastSeenDevice,
+          },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { lazyOnboarding: true },
+            },
+          }),
+        },
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith("/onboarding/select-device");
     });
 
     it('should navigate to "/onboarding/select-device" when shouldUseLazyOnboarding is false and onboarding completed', () => {
@@ -83,13 +103,13 @@ describe("useWelcomeViewModel", () => {
           settings: {
             ...INITIAL_STATE,
             hasCompletedOnboarding: false,
-            overriddenFeatureFlags: {
-              lwdWallet40: {
-                enabled: true,
-                params: { lazyOnboarding: true },
-              },
-            },
           },
+          ...withFlagOverrides({
+            lwdWallet40: {
+              enabled: true,
+              params: { lazyOnboarding: true },
+            },
+          }),
         },
       });
 

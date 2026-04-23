@@ -26,7 +26,6 @@ import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import sentry, { setTags } from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
-import type { User } from "~/renderer/storage";
 import {
   installExtension,
   REDUX_DEVTOOLS,
@@ -119,9 +118,10 @@ app.on("ready", async () => {
   // Measure database initialization and first reads
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
-  const user: User = (await db.getKey("app", "user")) as User;
+  const identities = (await db.getKey("app", "identities")) as { userId?: string } | undefined;
+  const user = (await db.getKey("app", "user")) as { id?: string } | undefined;
   console.timeEnd("T-db");
-  const userId = user?.id;
+  const userId = identities?.userId ?? user?.id;
   if (userId) {
     sentry(() => settings?.sentryLogs, userId);
   }

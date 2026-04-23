@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
@@ -27,6 +27,9 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     ...common,
     family: tr.family,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
+    feeCurrency: tr.feeCurrency,
+    feeCurrencyUnwrapped: tr.feeCurrencyUnwrapped,
+    feeCurrencyAccountId: tr.feeCurrencyAccountId,
     mode: tr.mode,
     index: tr.index,
   };
@@ -38,6 +41,9 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     fees: t.fees?.toString() || null,
+    feeCurrency: t.feeCurrency,
+    feeCurrencyUnwrapped: t.feeCurrencyUnwrapped,
+    feeCurrencyAccountId: t.feeCurrencyAccountId,
     mode: t.mode,
     index: t.index,
   };

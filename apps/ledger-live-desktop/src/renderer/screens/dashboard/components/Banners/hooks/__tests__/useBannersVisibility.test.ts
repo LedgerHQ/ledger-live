@@ -1,12 +1,14 @@
-import { renderHook } from "tests/testSetup";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import BigNumber from "bignumber.js";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
+import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useBannersVisibility } from "../useBannersVisibility";
 import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
 
-jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/postOnboarding/hooks/index"),
+jest.mock("@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet", () => ({
   usePostOnboardingEntryPointVisibleOnWallet: jest.fn(),
 }));
 jest.mock("LLD/features/LNSUpsell", () => ({
@@ -33,15 +35,28 @@ const createMockActionCard = (overrides: Partial<ActionContentCard> = {}): Actio
   ...overrides,
 });
 
+const basePostOnboarding = {
+  walletEntryPointDismissed: false,
+  entryPointFirstDisplayedDate: null,
+  actionsToComplete: [] as never[],
+  actionsCompleted: {},
+  lastActionCompleted: null,
+  postOnboardingInProgress: false,
+};
+
+const wallet40WithFinishWidget = withFlagOverrides({
+  lldActionCarousel: { enabled: false },
+  lwdWallet40: { enabled: true, params: { finishOnboardingWidget: true } },
+});
+
 const defaultInitialState = {
+  ...wallet40WithFinishWidget,
   settings: {
     showClearCacheBanner: false,
-    overriddenFeatureFlags: {
-      lldActionCarousel: { enabled: false },
-    },
   },
   dynamicContent: {
     portfolioCards: [],
+    bottomPortfolioCards: [],
   },
 };
 
@@ -68,6 +83,7 @@ describe("useBannersVisibility", () => {
 
     expect(result.current.isClearCacheBannerVisible).toBe(false);
     expect(result.current.isPostOnboardingBannerVisible).toBe(false);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.isActionCardsVisible).toBe(false);
     expect(result.current.isLNSUpsellBannerVisible).toBe(false);
     expect(result.current.isPortfolioContentCardsVisible).toBe(false);
@@ -80,18 +96,17 @@ describe("useBannersVisibility", () => {
         ...defaultInitialState,
         settings: {
           showClearCacheBanner: true,
-          overriddenFeatureFlags: {
-            lldActionCarousel: { enabled: false },
-          },
         },
       },
     });
 
     expect(result.current.isClearCacheBannerVisible).toBe(true);
+    expect(result.current.isPostOnboardingBannerVisible).toBe(false);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.hasAnyContentBannerVisible).toBe(false);
   });
 
-  it("should return true for isPostOnboardingBannerVisible when post-onboarding is visible", () => {
+  it("should return true for isFinishOnboardingWidgetVisible when post-onboarding is visible and flag is on", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
 
     const { result } = renderHook(() => useBannersVisibility(), {
@@ -99,6 +114,88 @@ describe("useBannersVisibility", () => {
     });
 
     expect(result.current.isPostOnboardingBannerVisible).toBe(true);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
+  });
+
+  it("should hide finish onboarding widget when finishOnboardingWidget param is off", () => {
+    mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
+
+    const { result } = renderHook(() => useBannersVisibility(), {
+      initialState: {
+        ...defaultInitialState,
+        ...withFlagOverrides({
+          lldActionCarousel: { enabled: false },
+          lwdWallet40: { enabled: true, params: { finishOnboardingWidget: false } },
+        }),
+      },
+    });
+
+    expect(result.current.isPostOnboardingBannerVisible).toBe(true);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
+  });
+
+  it("should hide finish onboarding widget for Ledger Nano S", () => {
+    mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
+
+    const { result } = renderHook(() => useBannersVisibility(), {
+      initialState: {
+        ...defaultInitialState,
+        postOnboarding: {
+          ...basePostOnboarding,
+          deviceModelId: DeviceModelId.nanoS,
+          walletEntryPointEligibleForPortfolio: true,
+        },
+      },
+    });
+
+    expect(result.current.isPostOnboardingBannerVisible).toBe(true);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
+  });
+
+  it("should hide finish onboarding widget when portfolio eligibility is persisted as false", () => {
+    mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
+
+    const { result } = renderHook(() => useBannersVisibility(), {
+      initialState: {
+        ...defaultInitialState,
+        postOnboarding: {
+          ...basePostOnboarding,
+          deviceModelId: DeviceModelId.stax,
+          walletEntryPointEligibleForPortfolio: false,
+        },
+      },
+    });
+
+    expect(result.current.isPostOnboardingBannerVisible).toBe(true);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
+  });
+
+  it("should hide finish onboarding widget when user has accounts with funds (eligibility not yet persisted)", () => {
+    mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
+
+    const accountWithFunds = {
+      ...BTC_ACCOUNT,
+      balance: new BigNumber(1000),
+    };
+
+    const { result } = renderHook(() => useBannersVisibility(), {
+      initialState: {
+        ...defaultInitialState,
+        accounts: [accountWithFunds],
+        postOnboarding: {
+          ...basePostOnboarding,
+          deviceModelId: DeviceModelId.stax,
+          walletEntryPointEligibleForPortfolio: null,
+        },
+      },
+    });
+
+    expect(result.current.isPostOnboardingBannerVisible).toBe(true);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
@@ -112,15 +209,12 @@ describe("useBannersVisibility", () => {
     const { result } = renderHook(() => useBannersVisibility(), {
       initialState: {
         ...defaultInitialState,
-        settings: {
-          showClearCacheBanner: false,
-          overriddenFeatureFlags: {
-            lldActionCarousel: { enabled: true },
-          },
-        },
+        ...withFlagOverrides({ lldActionCarousel: { enabled: true } }),
       },
     });
 
+    expect(result.current.isPostOnboardingBannerVisible).toBe(false);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.isActionCardsVisible).toBe(true);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
@@ -136,6 +230,8 @@ describe("useBannersVisibility", () => {
       initialState: defaultInitialState,
     });
 
+    expect(result.current.isPostOnboardingBannerVisible).toBe(false);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.isActionCardsVisible).toBe(false);
     expect(result.current.hasAnyContentBannerVisible).toBe(false);
   });
@@ -151,6 +247,8 @@ describe("useBannersVisibility", () => {
       initialState: defaultInitialState,
     });
 
+    expect(result.current.isPostOnboardingBannerVisible).toBe(false);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.isLNSUpsellBannerVisible).toBe(true);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
@@ -160,6 +258,7 @@ describe("useBannersVisibility", () => {
       initialState: {
         ...defaultInitialState,
         dynamicContent: {
+          ...defaultInitialState.dynamicContent,
           portfolioCards: [
             { id: "card-1", title: "Test", location: LocationContentCard.Portfolio },
           ],
@@ -167,6 +266,8 @@ describe("useBannersVisibility", () => {
       },
     });
 
+    expect(result.current.isPostOnboardingBannerVisible).toBe(false);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
     expect(result.current.isPortfolioContentCardsVisible).toBe(true);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
@@ -184,15 +285,13 @@ describe("useBannersVisibility", () => {
         ...defaultInitialState,
         settings: {
           showClearCacheBanner: true,
-          overriddenFeatureFlags: {
-            lldActionCarousel: { enabled: false },
-          },
         },
       },
     });
 
     expect(result.current.isClearCacheBannerVisible).toBe(true);
     expect(result.current.isPostOnboardingBannerVisible).toBe(true);
+    expect(result.current.isFinishOnboardingWidgetVisible).toBe(true);
     expect(result.current.isLNSUpsellBannerVisible).toBe(true);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });

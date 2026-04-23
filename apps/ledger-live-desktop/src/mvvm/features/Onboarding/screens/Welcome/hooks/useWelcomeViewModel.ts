@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
 import { saveSettings } from "~/renderer/actions/settings";
 import { openURL } from "~/renderer/linking";
-import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import {
+  hasCompletedOnboardingSelector,
+  hasOnboardedDeviceSelector,
+} from "~/renderer/reducers/settings";
 import { acceptTerms } from "~/renderer/terms";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
@@ -35,19 +38,19 @@ export function useWelcomeViewModel() {
 
   // Redux selectors
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const trustchain = useSelector(trustchainSelector);
   const shouldInitiallySelectDevice = useRef(hasCompletedOnboarding && !trustchain);
 
   // Navigation effect
   useEffect(() => {
-    if (shouldInitiallySelectDevice.current) {
-      if (shouldUseLazyOnboarding) {
-        navigate("/");
-      } else {
-        navigate("/onboarding/select-device");
-      }
+    if (!shouldInitiallySelectDevice.current) return;
+    if (shouldUseLazyOnboarding && !hasOnboardedDevice) {
+      navigate("/");
+    } else {
+      navigate("/onboarding/select-device");
     }
-  }, [navigate, shouldUseLazyOnboarding]);
+  }, [navigate, shouldUseLazyOnboarding, hasOnboardedDevice]);
 
   // Feature flags easter egg state
   const countRef1 = useRef(0);

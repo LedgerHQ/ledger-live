@@ -1,8 +1,18 @@
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { isStakingTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { PublicKey } from "@solana/web3.js";
 import { StakeMeta } from "./network/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
+
+export function isSolanaStakingTransactionIntent(intent: TransactionIntent): boolean {
+  return (
+    isStakingTransactionIntent(intent) ||
+    intent.type === "stake.createAccount" ||
+    intent.type === "stake.withdraw"
+  );
+}
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 

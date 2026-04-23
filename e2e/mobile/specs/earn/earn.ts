@@ -9,20 +9,29 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 let earnReady: Promise<string>;
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
+const stakeProgramOverride = {
+  // TODO: sync Firebase environments and remove this override when final variant is chosen
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["ethereum"],
+      redirects: {
+        "ethereum/erc20/usd__coin": {
+          platform: "earn" as const,
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum/erc20/usd__coin",
+            intent: "deposit",
+            deposit: "stablecoin",
+          },
+        },
+      },
+    },
+  },
+};
 
 async function beforeAllFunction(options: ApplicationOptions) {
-  await app.init({
-    userdata: options.userdata,
-    speculosApp: options.speculosApp,
-    cliCommands: options.cliCommands,
-  });
+  await app.init(options);
 
   await app.portfolio.waitForPortfolioPageToLoad();
   earnReady = waitEarnReady();
@@ -38,6 +47,7 @@ export async function runInlineAddAccountTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
+        featureFlags: stakeProgramOverride,
       });
     });
 
@@ -85,23 +95,16 @@ export async function runStartETHStakingFromEarnDashboardTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Start ETH staking flow from Earn Dashboard", () => {
+  describe("Start ETH staking flow from Earn Dashboard v1", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [
-          async (userdataPath?: string) => {
-            await CLI.liveData({
-              currency: account.currency.speculosApp.name,
-              index: account.index,
-              add: true,
-              appjson: userdataPath,
-            });
-            account.address = await CLI.getAddressForAccount(account);
-            return account.address;
-          },
-        ],
+        featureFlags: {
+          ptxEarnUi: { enabled: false, params: { value: "v1" } },
+          ...stakeProgramOverride,
+        },
+        cliCommands: [liveDataWithAddressCommand(account)],
       });
     });
 
@@ -113,7 +116,7 @@ export async function runStartETHStakingFromEarnDashboardTest(
 
       await earnReady;
       await app.earnDashboard.goToTab("Earn Opportunities");
-      await app.earnDashboard.clickEarnCurrencyButton();
+      await app.earnDashboard.clickEarnCurrencyButton(account);
       await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
       await app.earnDashboard.goToProviderLiveApp(provider);
       await app.earnDashboard.verifyProviderURL(provider, account);
@@ -132,7 +135,7 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        cliCommands: [liveDataCommand(account)],
       });
     });
 

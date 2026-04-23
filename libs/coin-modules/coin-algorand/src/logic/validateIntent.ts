@@ -3,7 +3,7 @@ import {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import {
   InvalidAddress,
   RecipientRequired,

@@ -6,8 +6,8 @@ import type {
   MemoNotSupported,
   TransactionIntent,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+} from "@ledgerhq/coin-module-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -22,20 +22,24 @@ import {
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
   RecipientRequired,
+  RedelegateDstValAddressRequired,
+  ValAddressRequired,
 } from "@ledgerhq/errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
-import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
+import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
 import {
+  getCallData,
   getTransactionType,
   isApiGasOptions,
   isEip1559FeeEstimation,
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
+import { computeEIP7623GasLimit } from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -67,7 +71,8 @@ async function validateAmount(
     return { errors: { amount: new AmountRequired() }, warnings: {} };
   }
 
-  if (totalSpent > balance.value) {
+  const available = balance.value - (balance.locked ?? 0n);
+  if (totalSpent > available) {
     return { errors: { amount: new NotEnoughBalance() }, warnings: {} };
   }
 
@@ -124,7 +129,7 @@ function validateRecipient(
  */
 async function validateGas(
   currency: CryptoCurrency,
-  intent: TransactionIntent,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   estimatedFees: FeeEstimation,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
@@ -132,6 +137,11 @@ async function validateGas(
   const warnings: Record<string, Error> = {};
 
   const nativeBalance = findBalance({ type: "native" }, balances);
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
 
   const gasLimit =
     typeof estimatedFees.parameters?.gasLimit === "bigint" ? estimatedFees.parameters.gasLimit : 0n;
@@ -139,17 +149,20 @@ async function validateGas(
     typeof estimatedFees.parameters?.customGasLimit === "bigint" &&
     estimatedFees.parameters.customGasLimit;
 
+  const callData = getCallData(intent);
+  const eip7623GasLimit = computeEIP7623GasLimit(BigInt(DEFAULT_GAS_LIMIT.toFixed(0)), callData);
+
   // Gas Limit
   if (typeof customGasLimit === "bigint") {
     if (customGasLimit === 0n) {
       errors.gasLimit = new FeeNotLoaded();
-    } else if (customGasLimit < BigInt(DEFAULT_GAS_LIMIT.toFixed(0))) {
+    } else if (customGasLimit < eip7623GasLimit) {
       errors.gasLimit = new GasLessThanEstimate();
     }
   } else {
     if (gasLimit === 0n) {
       errors.gasLimit = new FeeNotLoaded();
-    } else if (gasLimit < BigInt(DEFAULT_GAS_LIMIT.toFixed(0))) {
+    } else if (gasLimit < eip7623GasLimit) {
       errors.gasLimit = new GasLessThanEstimate();
     }
   }
@@ -167,13 +180,14 @@ async function validateGas(
   // Gas Price
   if (!(hasLegacyGasPrice || hasEip1559GasPrice)) {
     errors.gasPrice = new FeeNotLoaded();
-  } else if (intent.recipient && estimatedFees.value > nativeBalance.value && !intent.sponsored) {
+  } else if (
+    intent.recipient &&
+    totalFees > nativeBalance.value - (nativeBalance.locked ?? 0n) &&
+    !intent.sponsored
+  ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
-      fees: formatCurrencyUnit(
-        getFeesUnit(currency),
-        new BigNumber(estimatedFees.value.toString()),
-      ),
+      fees: formatCurrencyUnit(getFeesUnit(currency), new BigNumber(totalFees.toString())),
       ticker: currency.ticker,
       cryptoName: currency.name,
       links: ["ledgerlive://buy"],
@@ -238,12 +252,48 @@ async function validateGas(
   return { errors, warnings };
 }
 
+function validateStaking(
+  intent: TransactionIntent,
+  balances: Balance[],
+  estimatedFees: FeeEstimation,
+): Pick<TransactionValidation, "errors" | "warnings"> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
+
+  if (!isStakingIntent(intent) || !["delegate", "redelegate", "undelegate"].includes(intent.mode)) {
+    return { errors: {}, warnings: {} };
+  }
+
+  if (!intent.valAddress) {
+    errors.valAddress = new ValAddressRequired();
+  }
+  if (intent.mode === "redelegate" && !intent.dstValAddress) {
+    errors.dstValAddress = new RedelegateDstValAddressRequired();
+  }
+  const nativeBalance = balances.find(b => b.asset.type === "native");
+  const spendable = (nativeBalance?.value ?? 0n) - (nativeBalance?.locked ?? 0n);
+  if (totalFees > spendable) {
+    errors.fees = new NotEnoughBalance();
+  }
+  if (intent.mode === "delegate" && intent.amount + totalFees > spendable) {
+    errors.amount = new NotEnoughBalance();
+  }
+  return { errors, warnings };
+}
+
 function computeAmount(
   intent: TransactionIntent,
   estimatedFees: FeeEstimation,
   balance: Balance,
 ): bigint {
   if (!intent.useAllAmount) return intent.amount;
+
+  const available = balance.value - (balance.locked ?? 0n);
 
   if (isNative(intent.asset)) {
     const additionalFees =
@@ -252,10 +302,10 @@ function computeAmount(
         : 0n;
     const totalFees = estimatedFees.value + additionalFees;
 
-    return balance.value > totalFees ? balance.value - totalFees : 0n;
+    return available > totalFees ? available - totalFees : 0n;
   }
 
-  return balance.value;
+  return available;
 }
 
 function refreshEstimationValue(
@@ -298,7 +348,12 @@ export async function validateIntent(
       ? estimatedFees.parameters.additionalFees
       : 0n;
   const totalFees = estimatedFees.value + additionalFees;
-  const totalSpent = isNative(intent.asset) && !intent.sponsored ? amount + totalFees : amount;
+  const amountSpentFromSpendableBalance =
+    isStakingIntent(intent) && intent.mode !== "delegate" ? 0n : amount;
+  const totalSpent =
+    isNative(intent.asset) && !intent.sponsored
+      ? amountSpentFromSpendableBalance + totalFees
+      : amountSpentFromSpendableBalance;
 
   const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
@@ -318,18 +373,25 @@ export async function validateIntent(
     amount,
     estimatedFees,
   );
+  const { errors: stakingErr, warnings: stakingWarn } = validateStaking(
+    intent,
+    balances,
+    estimatedFees,
+  );
 
   const errors = {
     ...recipientErr,
     ...amountErr,
     ...gasErr,
     ...feeRatioErr,
+    ...stakingErr,
   };
   const warnings = {
     ...recipientWarn,
     ...amountWarn,
     ...gasWarn,
     ...feeRatioWarn,
+    ...stakingWarn,
   };
 
   return {

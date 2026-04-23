@@ -41,8 +41,9 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
-import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
@@ -216,9 +217,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   account,
                   parentAccount,
                   location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
-                  onResult: (signedOperation: SignedOperation) => {
+                  onResult: async (signedOperation: SignedOperation) => {
                     tracking.platformSignTransactionSuccess(manifest);
-                    resolve(serializePlatformSignedTransaction(signedOperation));
+                    resolve(await serializePlatformSignedTransaction(signedOperation));
                   },
                   onCancel: (error: Error) => {
                     tracking.platformSignTransactionFail(manifest);
@@ -379,7 +380,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
 
       return Promise.resolve();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const [receive] = useJSONRPCServer(handlers, handleSend);
@@ -405,7 +406,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           webview.removeEventListener("ipc-message", handleMessage);
         }
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, [manifest, handleMessage]);
 
     const handleLoad = useCallback(() => {
@@ -443,7 +444,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           webview.removeEventListener("dom-ready", handleDomReady);
         }
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, [handleLoad, handleDomReady]);
 
     const webviewStyle = useMemo(() => {

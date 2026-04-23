@@ -5,11 +5,10 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 import type { Dispatch } from "redux";
+import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { openAssetAndAccountDrawer, openAssetAndAccountDrawerPromise } from "../../ModularDrawer";
-import { openDialog, closeDialog as closeDialogAction } from "~/renderer/reducers/modularDrawer";
+import { openDialog, closeDialog as closeDialogAction } from "~/renderer/reducers/modularDialog";
 
 export type AssetAndAccountResult = {
   account: AccountLike;
@@ -80,25 +79,19 @@ function openAssetAndAccountDialogPromise(
   );
 }
 
-export const useOpenAssetAndAccount = (overrideFf = false) => {
-  // Interim hook to switch between dialog and modular drawer implementation
-  // To be removed when dialog implementation is fully deprecated LIVE-23773
-
-  const featureModularDrawer = useFeature("lldModularDrawer");
-
+export const useOpenAssetAndAccount = () => {
   const dispatch = useDispatch();
 
-  if (featureModularDrawer?.params?.enableDialogDesktop || overrideFf) {
-    return {
-      openAssetAndAccount: (params: DrawerParams) =>
-        openAssetAndAccountDialog({ ...params }, dispatch),
-      openAssetAndAccountPromise: (params: Omit<DrawerParams, "onSuccess" | "onCancel">) =>
-        openAssetAndAccountDialogPromise({ ...params }, dispatch),
-    };
-  }
+  const openAssetAndAccount = useCallback(
+    (params: DrawerParams) => openAssetAndAccountDialog({ ...params }, dispatch),
+    [dispatch],
+  );
 
-  return {
-    openAssetAndAccountPromise: openAssetAndAccountDrawerPromise,
-    openAssetAndAccount: openAssetAndAccountDrawer,
-  };
+  const openAssetAndAccountPromise = useCallback(
+    (params: Omit<DrawerParams, "onSuccess" | "onCancel">) =>
+      openAssetAndAccountDialogPromise({ ...params }, dispatch),
+    [dispatch],
+  );
+
+  return { openAssetAndAccount, openAssetAndAccountPromise };
 };

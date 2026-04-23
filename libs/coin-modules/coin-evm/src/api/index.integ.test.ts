@@ -5,7 +5,7 @@ import {
   MemoNotSupported,
   Operation,
   StakingTransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
@@ -529,6 +529,187 @@ describe.each([
         }
       });
     });
+
+    describe("transactions non-regression", () => {
+      const opsForTx = (items: Operation[], txHash: string) =>
+        items.filter(op => op.tx.hash.toLowerCase() === txHash.toLowerCase());
+
+      const expectAddressEq = (actual: string, expected: string) =>
+        expect(actual.toLowerCase()).toBe(expected.toLowerCase());
+
+      it("simple native transfer between EOAs", async () => {
+        const txHash = "0x9f555da0bb8d9ff99ced6db6e5f966699f8df849f4887c80ed44ffb101f7d252";
+        const blockHeight = 24600494;
+        const sender = "0x12644b85A2F20F39Ade7543FBA1C0C9DFE289580";
+        const recipient = "0xD017e1a34648521E7959F0AfDb5d359c979f5E2f";
+
+        const { items: senderOps } = await module.listOperations(sender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const { items: recipientOps } = await module.listOperations(recipient, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+
+        const senderTxOps = opsForTx(senderOps, txHash);
+        const recipientTxOps = opsForTx(recipientOps, txHash);
+
+        expect(senderTxOps).toHaveLength(1);
+        expect(senderTxOps[0]).toMatchObject({
+          type: "OUT",
+          asset: { type: "native" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        expectAddressEq(senderTxOps[0].senders[0], sender);
+        expectAddressEq(senderTxOps[0].recipients[0], recipient);
+        expectAddressEq(senderTxOps[0].tx.feesPayer!, sender);
+        expect(senderTxOps[0].value).toBeGreaterThan(0n);
+        expect(senderTxOps[0].tx.fees).toBeGreaterThan(0n);
+
+        expect(recipientTxOps).toHaveLength(1);
+        expect(recipientTxOps[0]).toMatchObject({
+          type: "IN",
+          asset: { type: "native" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        expectAddressEq(recipientTxOps[0].senders[0], sender);
+        expectAddressEq(recipientTxOps[0].recipients[0], recipient);
+        expectAddressEq(recipientTxOps[0].tx.feesPayer!, sender);
+        expect(recipientTxOps[0].value).toBe(senderTxOps[0].value);
+      });
+
+      it("simple ERC20 transfer between EOAs", async () => {
+        const txHash = "0xbbe8faac0666fb9741c536a1fcb184dc81884c95a38dcff899328a3c6c7c05b9";
+        const blockHeight = 24676233;
+        const sender = "0xf764Af5afc8dbfa0e698aBB8Eeb3E5a79c0cE4B5";
+        const recipient = "0x1f2F2d487C79822dc59550d87Bd5B32234F6F387";
+        const contract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+
+        const { items: senderOps } = await module.listOperations(sender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const { items: recipientOps } = await module.listOperations(recipient, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+
+        const senderTxOps = opsForTx(senderOps, txHash);
+        const recipientTxOps = opsForTx(recipientOps, txHash);
+
+        expect(senderTxOps).toHaveLength(1);
+        expect(senderTxOps[0]).toMatchObject({
+          type: "OUT",
+          asset: { type: "erc20" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        const senderAsset = senderTxOps[0].asset as {
+          assetReference?: string;
+          assetOwner?: string;
+        };
+        expect(senderAsset.assetReference?.toLowerCase()).toBe(contract.toLowerCase());
+        expectAddressEq(senderTxOps[0].senders[0], sender);
+        expectAddressEq(senderTxOps[0].recipients[0], recipient);
+        expectAddressEq(senderAsset.assetOwner!, sender);
+        expectAddressEq(senderTxOps[0].tx.feesPayer!, sender);
+        expect(senderTxOps[0].value).toBeGreaterThan(0n);
+
+        expect(recipientTxOps).toHaveLength(1);
+        expect(recipientTxOps[0]).toMatchObject({
+          type: "IN",
+          asset: { type: "erc20" },
+        });
+        const recipientAsset = recipientTxOps[0].asset as {
+          assetReference?: string;
+          assetOwner?: string;
+        };
+        expect(recipientAsset.assetReference?.toLowerCase()).toBe(contract.toLowerCase());
+        expectAddressEq(recipientTxOps[0].senders[0], sender);
+        expectAddressEq(recipientTxOps[0].recipients[0], recipient);
+        expectAddressEq(recipientAsset.assetOwner!, recipient);
+        expect(recipientTxOps[0].value).toBe(senderTxOps[0].value);
+      });
+
+      it("Lido deposit (ETH to contract + STETH mint to sender)", async () => {
+        const txHash = "0x5b4fc90367ca30d5c790ae394d9d177db4f91cfb52d627e8fa94379c16ac5724";
+        const blockHeight = 24535189;
+        const sender = "0xf88e9863b2c157cdeaab3e3401be6b2d583bdfbd";
+        const lidoContract = "0xae7ab96520de3a18e5e111b5eaab095312d7fe84";
+        const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+        const { items } = await module.listOperations(sender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOps = opsForTx(items, txHash);
+
+        expect(txOps.length).toBeGreaterThanOrEqual(2);
+        const nativeOp = txOps.find(op => op.asset.type === "native");
+        const tokenOp = txOps.find(
+          op =>
+            op.asset.type === "erc20" &&
+            op.asset.assetReference?.toLowerCase() === lidoContract.toLowerCase(),
+        );
+
+        expect(nativeOp).toMatchObject({
+          type: "OUT",
+          asset: { type: "native" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        expectAddressEq(nativeOp!.senders[0], sender);
+        expectAddressEq(nativeOp!.recipients[0], lidoContract);
+        expectAddressEq(nativeOp!.tx.feesPayer!, sender);
+        expect(nativeOp!.value).toBeGreaterThan(0n);
+
+        expect(tokenOp).toMatchObject({
+          type: "IN",
+          asset: { type: "erc20", assetOwner: expect.any(String) },
+          tx: { feesPayer: expect.any(String) },
+        });
+        const tokenOpAsset = tokenOp!.asset as { assetReference?: string; assetOwner?: string };
+        expect(tokenOpAsset.assetReference?.toLowerCase()).toBe(lidoContract.toLowerCase());
+        expectAddressEq(tokenOpAsset.assetOwner!, sender);
+        expect(tokenOp!.senders[0].toLowerCase()).toBe(zeroAddress.toLowerCase());
+        expectAddressEq(tokenOp!.recipients[0], sender);
+        expectAddressEq(tokenOp!.tx.feesPayer!, sender);
+        expect(tokenOp!.value).toBeGreaterThan(0n);
+      });
+
+      it("Spoofed NFT transfer through smart contract", async () => {
+        const txHash = "0x61adea29cbf2e50f9ab975636af9a624620589c2cca9b8dc82ccccaefeb9c6ad";
+        const blockHeight = 21348730;
+        const caller = "0x6b2ae7cc19eda092476f32cced9311da568a823c";
+        const spoofedSender = "0x7d75Acd9B52e01B149557ed230717ECd088b898a";
+
+        const { items: spoofedSenderOps } = await module.listOperations(spoofedSender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOpsSpoofedSender = opsForTx(spoofedSenderOps, txHash);
+
+        expect(txOpsSpoofedSender).toHaveLength(1);
+        expect(txOpsSpoofedSender[0]).toMatchObject({
+          type: "NFT_OUT",
+          senders: expect.any(Array),
+          recipients: expect.any(Array),
+          asset: { type: "erc1155" },
+        });
+        expectAddressEq(txOpsSpoofedSender[0].senders[0], spoofedSender);
+        // feesPayer is caller when the explorer returns the parent coin op; undefined when it does not (e.g. Ledger when querying by spoofed sender).
+        const feesPayer = txOpsSpoofedSender[0].tx.feesPayer;
+        if (feesPayer !== undefined) {
+          expectAddressEq(feesPayer, caller);
+        }
+        expect(txOpsSpoofedSender[0].value).toBeGreaterThan(0n);
+      });
+    });
   });
 
   describe.each([
@@ -602,6 +783,142 @@ describe.each([
       });
 
       expectEstimationForMode(result);
+    });
+  });
+});
+
+describe("EVM Api: external node and explorer ONLY", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    module = createApi(
+      {
+        node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
+        },
+        showNfts: true,
+      } as EvmConfig,
+      "ethereum",
+    );
+  });
+
+  describe("getBlock", () => {
+    it("returns details for a smart contract creation tx in block 24883766", async () => {
+      const txHash = "0xd66967e32c71db2f1ecaed67d710efc3fa97f498d25499cc5817563e4c2ae863";
+      const result = await module.getBlock(24883766);
+      const tx = result.transactions.find(t => t.hash.toLowerCase() === txHash);
+
+      expect(tx!.details).toMatchObject({
+        contractInteraction: "SmartContractDeployment",
+        contractAddress: expect.stringMatching(/^0x2d9fc5315307e7bab64bc175dffdb54ffecbe25f$/i),
+        contractPayload: expect.stringMatching(/0x60a080604052346100c2/i),
+      });
+    });
+
+    it("returns details for a smart contract interaction tx in block 24883766", async () => {
+      const txHash = "0xa669162b91ea2ebc5133148fb946360e51226b0252bec88768761eb065afea93";
+      const result = await module.getBlock(24883766);
+      const tx = result.transactions.find(t => t.hash.toLowerCase() === txHash);
+
+      expect(tx!.details).toMatchObject({
+        contractInteraction: "SmartContractInteraction",
+        contractAddress: expect.stringMatching(/^0x0de8bf93da2f7eecb3d9169422413a9bef4ef628$/i),
+        contractPayload: expect.stringMatching(/59635f6f/i),
+      });
+    });
+  });
+
+  describe("listOperations", () => {
+    describe("transactions non-regression", () => {
+      const opsForTx = (items: Operation[], txHash: string) =>
+        items.filter(op => op.tx.hash.toLowerCase() === txHash.toLowerCase());
+
+      it("smart contract creation tx", async () => {
+        const txHash = "0xd66967e32c71db2f1ecaed67d710efc3fa97f498d25499cc5817563e4c2ae863";
+        const blockHeight = 24883766;
+        const deployer = "0x2463BF4cf17c040ea7beB1F46847c91D45e34608";
+
+        const { items } = await module.listOperations(deployer, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOps = opsForTx(items, txHash);
+
+        expect(txOps.length).toBeGreaterThan(0);
+        expect(txOps[0].details).toMatchObject({
+          contractInteraction: "SmartContractDeployment",
+          contractAddress: expect.stringMatching(/^0x2d9fc5315307e7bab64bc175dffdb54ffecbe25f$/i),
+          contractPayload: expect.stringMatching(/0x60a080604052346100c2/i),
+        });
+      });
+
+      it("smart contract interaction tx", async () => {
+        const txHash = "0xa669162b91ea2ebc5133148fb946360e51226b0252bec88768761eb065afea93";
+        const blockHeight = 24883766;
+        const caller = "0x11f84552D846325385eCB2242e2887e3f5B535Ea";
+        const { items } = await module.listOperations(caller, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOps = opsForTx(items, txHash);
+
+        expect(txOps.length).toBeGreaterThan(0);
+        expect(txOps[0].details).toMatchObject({
+          contractInteraction: "SmartContractInteraction",
+          contractAddress: expect.stringMatching(/^0x0de8bf93da2f7eecb3d9169422413a9bef4ef628$/i),
+          contractPayload: expect.stringMatching(/59635f6f/i),
+        });
+      });
+    });
+  });
+});
+
+describe("EVM Api (Moonbeam Network)", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    module = createApi(
+      {
+        node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
+        },
+        showNfts: false,
+      } as EvmConfig,
+      "moonbeam",
+    );
+  });
+
+  describe("listOperations", () => {
+    /**
+     * Non-regression: some Moonbeam transactions (e.g. contract creations) have
+     * an empty `to` field in the Etherscan API response. The adapter used to emit
+     * `recipients: [""]` (array with one empty string) instead of `recipients: []`.
+     * @see https://alpaca.api.ledger.com/v1/moonbeam/account/0x2a9c55b6dc56da178f9f9a566f1161237b73ba66/operations?limit=100
+     */
+    it("returns no operations with empty string recipients or senders", async () => {
+      const { items } = await module.listOperations("0x2a9c55b6dc56da178f9f9a566f1161237b73ba66", {
+        minHeight: 0,
+        order: "desc",
+        limit: 100,
+      });
+
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach(op => {
+        op.recipients.forEach(r => {
+          expect(r).not.toBe("");
+        });
+        op.senders.forEach(s => {
+          expect(s).not.toBe("");
+        });
+      });
     });
   });
 });
@@ -727,5 +1044,94 @@ describe("EVM Api (SEI Network)", () => {
 
       expectEstimationForMode(result);
     });
+  });
+});
+
+describe("EVM Api (Zero Gravity)", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    const config = {
+      node: {
+        type: "external",
+        uri: "https://evmrpc.0g.ai",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://chainscan.0g.ai/open/api",
+        maxLimit: 99, // use 99 so internal `limit + 1` probing stays within the explorer's hard max of 100
+      },
+    };
+    module = createApi(config as EvmConfig, "zero_gravity");
+  });
+
+  describe("listOperations", () => {
+    it("returns consistent results for limits below/at/above 100", async () => {
+      const address = "0x70793181A947C4034B0F9E547e5a8D1a21B9bD60";
+      const commonParams = {
+        minHeight: 0,
+        order: "desc" as const,
+      };
+
+      const [limit99, limit100, limit101] = await Promise.all([
+        module.listOperations(address, { ...commonParams, limit: 99 }),
+        module.listOperations(address, { ...commonParams, limit: 100 }),
+        module.listOperations(address, { ...commonParams, limit: 101 }),
+      ]);
+
+      const allResults = [limit99, limit100, limit101];
+
+      allResults.forEach(result => {
+        expect(result).toEqual(
+          expect.objectContaining({
+            items: expect.any(Array),
+            next: expect.any(String),
+          }),
+        );
+
+        // Ensure basic operation structure remains valid across limits.
+        result.items.forEach(op => {
+          expect(op.tx.date).toBeInstanceOf(Date);
+        });
+      });
+
+      // Larger limits should not return fewer operations.
+      expect(limit99.items.length).toBeLessThanOrEqual(limit100.items.length);
+      expect(limit100.items.length).toBeLessThanOrEqual(limit101.items.length);
+
+      // Results should be consistent when increasing limits.
+      const atCapIds = new Set(limit100.items.map(op => op.id));
+      expect(limit99.items.every(op => atCapIds.has(op.id))).toBe(true);
+
+      const aboveCapIds = new Set(limit101.items.map(op => op.id));
+      expect(limit100.items.every(op => aboveCapIds.has(op.id))).toBe(true);
+    }, 60000);
+
+    it("returns operations with valid dates", async () => {
+      // Regression test: chainscan.0g.ai returns "timestamp" (lowercase) instead of the
+      // standard etherscan "timeStamp" (camelCase), causing op.tx.date to be an Invalid Date.
+      const address = "0xa86a063a764f96cdb64dac0e5e780d5ade6bdbd5";
+      const result = await module.listOperations(address, {
+        minHeight: 0,
+        order: "desc",
+        limit: 10,
+      });
+
+      const cutoff = new Date("2015-01-01T00:00:00Z").getTime();
+
+      expect(result.items.length).toBeGreaterThan(0);
+      result.items.forEach(op => {
+        expect(op.tx.date).toBeInstanceOf(Date);
+        const txTime = op.tx.date.getTime();
+        expect(txTime).not.toBeNaN();
+        expect(txTime).toBeGreaterThan(cutoff);
+
+        expect(op.tx.block.time).toBeInstanceOf(Date);
+        const blockTime = op.tx.block.time!.getTime();
+        expect(blockTime).not.toBeNaN();
+        expect(blockTime).toBeGreaterThan(cutoff);
+      });
+    }, 60000);
   });
 });

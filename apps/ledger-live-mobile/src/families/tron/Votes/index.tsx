@@ -122,10 +122,10 @@ const Delegation = ({ account }: Props) => {
             <Header count={formattedVotes.length} onPress={onManageVotesPress} />
             <View style={[styles.container, styles.noPadding]}>
               <Box mb={5}>
-                {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (
+                {formattedVotes.map(({ name, address, voteCount, isSR }, index) => (
                   <Row
                     key={index}
-                    validator={validator}
+                    name={name}
                     address={address}
                     amount={voteCount}
                     duration={lastDate}

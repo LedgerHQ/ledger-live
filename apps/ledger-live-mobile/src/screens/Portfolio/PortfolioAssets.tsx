@@ -87,12 +87,28 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
 
+  const {
+    isEnabled: isWallet40Enabled,
+    shouldDisplayQuickActionCtas,
+    shouldDisplayMarketBanner,
+    shouldDisplayAssetSection,
+  } = useWalletFeaturesConfig("mobile");
+
   const onPressButton = useCallback(
     (_uiEvent: GestureResponderEvent) => {
       track("button_clicked", {
         button: showAssets ? "See all assets" : "See all accounts",
         page: "Wallet",
       });
+      if (!showAssets && shouldDisplayAssetSection) {
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.CryptoAddresses,
+          params: {
+            sourceScreenName: ScreenName.Portfolio,
+          },
+        });
+        return;
+      }
       if (!showAssets && isAccountListUIEnabled) {
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.AccountsList,
@@ -120,14 +136,8 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         });
       }
     },
-    [showAssets, isAccountListUIEnabled, navigation],
+    [showAssets, shouldDisplayAssetSection, isAccountListUIEnabled, navigation],
   );
-
-  const {
-    isEnabled: isWallet40Enabled,
-    shouldDisplayQuickActionCtas,
-    shouldDisplayMarketBanner,
-  } = useWalletFeaturesConfig("mobile");
 
   return (
     <>
@@ -144,8 +154,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       )}
 
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
-
-      {isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
       {shouldDisplayMarketBanner && __DEV__ && (
         <Box my={24}>

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor";
+import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";

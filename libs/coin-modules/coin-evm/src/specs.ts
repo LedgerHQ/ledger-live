@@ -1,6 +1,6 @@
 /* istanbul ignore file: don't test the test. */
 
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";

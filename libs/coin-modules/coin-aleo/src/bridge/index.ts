@@ -5,7 +5,7 @@ import {
   makeScanAccounts,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { CoinConfig } from "@ledgerhq/coin-framework/config";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import type {
   AccountBridge,
   Bridge,
@@ -21,17 +21,18 @@ import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";
 import { broadcast } from "./broadcast";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { getAccountShape, sync } from "./sync";
+import { makeGetAccountShape, sync } from "./sync";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { buildSignOperation } from "./signOperation";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape,
+    getAccountShape: makeGetAccountShape(),
     getAddressFn: getAddress,
   });
 
@@ -47,6 +48,7 @@ export function buildAccountBridge(
 ): AccountBridge<AleoTransaction, AleoAccount> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
 
   return {
     createTransaction,
@@ -55,9 +57,7 @@ export function buildAccountBridge(
     getTransactionStatus,
     sync,
     receive,
-    signOperation: () => {
-      throw new Error("signOperation is not supported");
-    },
+    signOperation,
     signRawOperation: (): Observable<SignOperationEvent> => {
       throw new Error("signRawOperation is not supported");
     },

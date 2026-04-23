@@ -1,12 +1,11 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { step } from "tests/misc/reporters/step";
-import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
+import { EarnBasePage } from "./earn.base.page";
 
-export class EarnPage extends WebViewAppPage {
+export class EarnPage extends EarnBasePage {
   private earnMoreRewardTabButton = "tab-earn-more";
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
   private potentialRewardsBalanceCard = "Rewards you could earn-balance-card";
@@ -21,22 +20,7 @@ export class EarnPage extends WebViewAppPage {
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private modularDrawer = new ModularDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
-
-  @step("Go and wait for Earn app to be ready")
-  async goAndWaitForEarnToBeReady(earnFunction: () => Promise<void>) {
-    const appReadyPromise = new Promise<void>(resolve => {
-      this.page.on("console", msg => {
-        if (msg.type() === "info" && msg.text().includes("Earn Live App Loaded")) {
-          resolve();
-        }
-      });
-    });
-
-    await earnFunction();
-    await appReadyPromise;
-  }
 
   @step("Go to assets tab")
   async goToAssetsTab() {
@@ -49,9 +33,7 @@ export class EarnPage extends WebViewAppPage {
   async goToEarnMoreTab() {
     const webview = await this.getWebView();
     const buttonLocator = webview.locator(`[data-test-id="${this.earnMoreRewardTabButton}"]`);
-    if (await buttonLocator.isVisible()) {
-      await buttonLocator.click();
-    }
+    await buttonLocator.click();
   }
 
   @step("Click on stake button")
@@ -112,47 +94,9 @@ export class EarnPage extends WebViewAppPage {
     }
   }
 
-  /**
-   * Returns the visible modular selector (Dialog or Drawer), or null if legacy UI.
-   */
   private async getModularSelector() {
     if (await this.modularDialog.isVisible()) return this.modularDialog;
-    if (await this.modularDrawer.isVisible()) return this.modularDrawer;
     return null;
-  }
-
-  @step("Verify provider URL")
-  async verifyProviderURL(selectedProvider: string, account: Account) {
-    const newWindow = await this.waitForNewWindow();
-    const url = newWindow.url();
-
-    switch (selectedProvider) {
-      case "Lido": {
-        await this.expectUrlToContainAll(url, [account.currency.id, "stake.lido.fi"]);
-        break;
-      }
-      case "Stader Labs": {
-        const expectedStringArray = [
-          account.currency.id,
-          `staderlabs.com/${account.currency.ticker}`,
-          // defensive optional spread as account address might not be set
-          ...(account.address ? [account.address] : []),
-        ];
-        await this.expectUrlToContainAll(url, expectedStringArray);
-        break;
-      }
-      case "Kiln staking Pool": {
-        await this.expectUrlToContainAll(url, [
-          account.currency.id,
-          "ledger-staking.widget.kiln.fi/earn",
-          "focus=pooled",
-          account.address!,
-        ]);
-        break;
-      }
-      default:
-        throw new Error(`Unknown provider: ${selectedProvider}`);
-    }
   }
 
   @step("Click on learn more button for $0")

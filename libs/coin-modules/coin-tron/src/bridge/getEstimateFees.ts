@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateFees, getAccount } from "../logic";
@@ -39,7 +39,7 @@ const getFeesFromAccountActivation = async (
 
   const hasTRC20 = Boolean(
     tokenAccount &&
-      recipientAccount?.trc20?.some(trc20 => tokenAccount.token.contractAddress in trc20),
+    recipientAccount?.trc20?.some(trc20 => tokenAccount.token.contractAddress in trc20),
   );
 
   if (!recipientAccount && !hasTRC20 && available.lt(estimatedBandwidthCost)) {

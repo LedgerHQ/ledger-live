@@ -13,9 +13,6 @@ const REACT_TRANSITIONAL_ELEMENT_TYPE = Symbol.for("react.transitional.element")
 export const isValidReactElement = (value: unknown): value is React.ReactElement =>
   !!value &&
   typeof value === "object" &&
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   "$$typeof" in (value as Record<string, unknown>) &&
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   ((value as { $$typeof?: unknown }).$$typeof === REACT_ELEMENT_TYPE ||
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (value as { $$typeof?: unknown }).$$typeof === REACT_TRANSITIONAL_ELEMENT_TYPE);

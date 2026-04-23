@@ -5,13 +5,13 @@ import type {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import { fromOperationRaw, toOperationRaw } from "../account";
-export const fromSignedOperationRaw = (
+export const fromSignedOperationRaw = async (
   signedOp: SignedOperationRaw,
   accountId: string,
-): SignedOperation => {
+): Promise<SignedOperation> => {
   const { operation, signature, expirationDate, rawData } = signedOp;
   const out: SignedOperation = {
-    operation: fromOperationRaw(operation, accountId),
+    operation: await fromOperationRaw(operation, accountId),
     signature,
   };
 
@@ -45,15 +45,15 @@ export const toSignedOperationRaw = (
 
   return out;
 };
-export const fromSignOperationEventRaw = (
+export const fromSignOperationEventRaw = async (
   e: SignOperationEventRaw,
   accountId: string,
-): SignOperationEvent => {
+): Promise<SignOperationEvent> => {
   switch (e.type) {
     case "signed":
       return {
         type: "signed",
-        signedOperation: fromSignedOperationRaw(e.signedOperation, accountId),
+        signedOperation: await fromSignedOperationRaw(e.signedOperation, accountId),
       };
 
     default:

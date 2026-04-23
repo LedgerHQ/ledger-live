@@ -1,4 +1,4 @@
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
 import { validateAddress as networkValidateAddress } from "../network/addresses";
 
 export async function validateAddress(

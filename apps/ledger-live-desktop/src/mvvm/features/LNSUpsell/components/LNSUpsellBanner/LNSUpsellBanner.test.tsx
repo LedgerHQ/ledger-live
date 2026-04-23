@@ -5,7 +5,7 @@
 import { t } from "i18next";
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { render, screen, fireEvent } from "tests/testSetup";
+import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import { LNSUpsellBanner } from ".";
@@ -68,6 +68,19 @@ describe("LNSUpsellBanner", () => {
       });
     });
 
+    it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
+      renderBanner({ brazePlacement: true });
+      fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
+
+      expect(openURL).toHaveBeenCalledTimes(1);
+      expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        link: "https://example.com/optInCta",
+        page,
+      });
+    });
+
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
       fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
@@ -102,6 +115,7 @@ describe("LNSUpsellBanner", () => {
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
       targetedByHighTierUpsell = false,
+      brazePlacement = false,
     }) {
       const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
@@ -111,14 +125,16 @@ describe("LNSUpsellBanner", () => {
 
       render(<LNSUpsellBanner location={location} />, {
         initialState: {
+          ...withFlagOverrides({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams as any },
+            ...(brazePlacement ? { lwdWallet40: { enabled: true, params: { brazePlacement: true } } } : {}),
+          }),
           settings: {
             shareAnalytics: true,
             sharePersonalizedRecommandations: isOptIn,
             devicesModelList,
             anonymousUserNotifications: {},
-            overriddenFeatureFlags: {
-              lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
-            },
           },
           dynamicContent: {
             desktopCards: [

@@ -5,7 +5,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as networkModule from "../network";
@@ -45,7 +45,7 @@ describe("getAccountShape", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
-      node: { url: getFullnodeUrl("mainnet") },
+      node: { url: getJsonRpcFullnodeUrl("mainnet") },
     }));
   });
 
@@ -109,6 +109,64 @@ describe("getAccountShape", () => {
       subAccounts: [],
       syncHash: undefined,
     });
+  });
+
+  it("handles balance entirely from address balance (SIP-58, no coin objects)", async () => {
+    // GIVEN — all funds are in address balance, coinObjectCount = 0
+    const initialAccount = undefined;
+    const accountBalance = createAccountBalance({
+      balance: new BigNumber("5000000000"),
+      fundsInAddressBalance: new BigNumber("5000000000"),
+    });
+    mockGetAccountBalances.mockResolvedValue([accountBalance]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    // WHEN
+    const shape = await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN — balance and spendableBalance reflect the full amount
+    expect(shape.balance).toEqual(new BigNumber("5000000000"));
+    expect(shape.spendableBalance).toEqual(new BigNumber("5000000000"));
+  });
+
+  it("handles mixed balance (coin objects + address balance)", async () => {
+    // GIVEN — 6 SUI total: 4 in address balance, 2 in coin objects
+    const initialAccount = undefined;
+    const accountBalance = createAccountBalance({
+      balance: new BigNumber("6000000000"),
+      fundsInAddressBalance: new BigNumber("4000000000"),
+    });
+    mockGetAccountBalances.mockResolvedValue([accountBalance]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    // WHEN
+    const shape = await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN — totalBalance is the aggregated amount
+    expect(shape.balance).toEqual(new BigNumber("6000000000"));
+    expect(shape.spendableBalance).toEqual(new BigNumber("6000000000"));
   });
 
   it("returns an AccountShapeInfo with operations from initialAccount", async () => {
@@ -325,7 +383,7 @@ describe("getAccountShape", () => {
 
       // THEN
       expect(mockGetStakesRaw).toHaveBeenCalledTimes(1);
-      expect(mockGetStakesRaw).toHaveBeenCalledWith(address);
+      expect(mockGetStakesRaw).toHaveBeenCalledWith(address, "sui");
     });
 
     it("includes empty stakes in suiResources when no stakes are returned", async () => {
@@ -662,6 +720,7 @@ function createAccountBalance(overrides = {}) {
     coinType: DEFAULT_COIN_TYPE,
     blockHeight: 10,
     balance: new BigNumber(faker.string.numeric()),
+    fundsInAddressBalance: new BigNumber(0),
     ...overrides,
   };
 }

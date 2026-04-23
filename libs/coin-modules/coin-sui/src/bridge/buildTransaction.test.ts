@@ -79,6 +79,7 @@ describe("buildTransaction", () => {
           asset: { type: "native" },
           useAllAmount: false,
           stakedSuiId: "",
+          currencyId: "sui",
         },
         undefined,
         undefined,
@@ -120,6 +121,7 @@ describe("buildTransaction", () => {
           stakedSuiId: "",
           amount: BigInt(mockTransaction.amount!.toString()),
           asset: { type: "token", assetReference: "0x3::usdt::USDT" },
+          currencyId: "sui",
         },
         undefined,
         undefined,
@@ -163,6 +165,7 @@ describe("buildTransaction", () => {
           stakedSuiId: "",
           amount: BigInt(mockTransaction.amount!.toString()),
           asset: { type: "token", assetReference: "0x3::usdt::USDT" },
+          currencyId: "sui",
         },
         undefined,
         {

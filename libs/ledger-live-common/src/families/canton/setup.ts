@@ -14,17 +14,16 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import cantonBridgeMock from "./bridge/mock";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const createSigner: CreateSigner<CantonSigner> = (transport: Transport) => {
   return new LegacySignerCanton(transport);
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency) => {
-  if (!currency) {
+const getCurrencyConfig = (currencyId?: string) => {
+  if (!currencyId) {
     throw new Error("currency not defined");
   }
-  return getCurrencyConfiguration<CantonCoinConfig>(currency);
+  return getCurrencyConfiguration<CantonCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MOCK")

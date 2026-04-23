@@ -12,7 +12,7 @@ import {
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/reducers/wallet";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { createMockAccount, createMockCurrency } from "./accounts";
 
 jest.mock("~/context/hooks");
@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
 jest.mock("../useFormattedAccountBalance");
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseDomain = jest.mocked(useDomain);
@@ -127,7 +127,7 @@ describe("useAddressValidation", () => {
     });
   });
 
-  it("resolves ENS names for Ethereum", async () => {
+  it("resolves ENS names when recipientSupportsDomain is true", async () => {
     const ensResolution = {
       domain: "vitalik.eth",
       address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -146,6 +146,7 @@ describe("useAddressValidation", () => {
         searchValue: "vitalik.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 
@@ -168,6 +169,7 @@ describe("useAddressValidation", () => {
         searchValue: "test.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 
@@ -475,6 +477,7 @@ describe("useAddressValidation", () => {
         searchValue: "test.eth",
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
+        recipientSupportsDomain: true,
       }),
     );
 

@@ -1,5 +1,5 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
 import { estimateFees } from "./estimateFees";
 
@@ -13,7 +13,7 @@ describe("estimateFees", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getJsonRpcFullnodeUrl("mainnet"),
       },
     }));
   });

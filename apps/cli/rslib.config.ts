@@ -13,6 +13,7 @@ export default defineConfig({
     },
     cleanDistPath: true,
     externals: [
+      "@ledgerhq/hw-transport-node-hid",
       "bigint-buffer",
       "usb",
       "node-hid",

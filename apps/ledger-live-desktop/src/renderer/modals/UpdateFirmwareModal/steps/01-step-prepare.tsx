@@ -236,7 +236,7 @@ const StepPrepare = ({
     return () => {
       if (sub) sub.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasHash = !!firmware?.osu?.hash;

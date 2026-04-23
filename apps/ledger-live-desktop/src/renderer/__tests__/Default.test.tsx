@@ -44,7 +44,6 @@ describe("Default", () => {
           vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
           devicesModelList: [],
           anonymousUserNotifications: {},
-          overriddenFeatureFlags: {},
           orderAccounts: "balance|desc",
           latestFirmware: { final: { name: "2.3.0" } },
         },

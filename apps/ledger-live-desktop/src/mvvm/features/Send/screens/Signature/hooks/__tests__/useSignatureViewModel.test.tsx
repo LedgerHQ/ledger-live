@@ -27,6 +27,7 @@ const mockStatus = {
   setError: jest.fn(),
   setSuccess: jest.fn(),
 };
+const mockClose = jest.fn();
 
 type TokenCurrency = { id: string };
 type AccountLike = { id: string; type: "Account" | "TokenAccount"; token?: TokenCurrency };
@@ -62,7 +63,11 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
 }));
 
 jest.mock("../../../../context/SendFlowContext", () => ({
-  useSendFlowActions: jest.fn(() => ({ operation: mockOperation, status: mockStatus })),
+  useSendFlowActions: jest.fn(() => ({
+    operation: mockOperation,
+    status: mockStatus,
+    close: mockClose,
+  })),
   useSendFlowData: jest.fn(() => ({ state: mockState })),
 }));
 
@@ -72,7 +77,7 @@ jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
 }));
 
 // eslint-disable-next-line
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => {
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   global.__isUserRefusedTransactionErrorMock = jest.fn(() => false);
   return {
     sendFeatures: {
@@ -100,6 +105,7 @@ describe("useSignatureViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     reduxDispatchMock.mockReset();
+    mockClose.mockReset();
     mockState = {
       account: {
         account: { id: "acc", type: "Account" },

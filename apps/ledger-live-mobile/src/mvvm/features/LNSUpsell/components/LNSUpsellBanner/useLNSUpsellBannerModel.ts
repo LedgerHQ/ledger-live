@@ -1,13 +1,22 @@
-import { Linking } from "react-native";
+import { Image, Linking } from "react-native";
 import { track } from "~/analytics";
-import type { LNSBannerLocation, LNSBannerModel } from "./types";
+import type { LNSBannerLocation, LNSBannerModel } from "../../types";
 import { useLNSUpsellBannerState } from "../../hooks/useLNSUpsellBannerState";
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const lnsUpsellFallbackImageUri = Image.resolveAssetSource(
+  require("~/images/lns-upsell-banner.webp"),
+).uri;
 
 export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel {
   const { isShown, params, tracking } = useLNSUpsellBannerState(location);
 
-  const { "%": discount, link: ctaLink } = params ?? {};
+  const discount = params?.["%"];
+  const ctaLink = params?.link;
+  const img = params?.img;
   const analyticsPage = AnalyticsPageMap[location];
+
+  const imageUrl = typeof img === "string" && img.length > 0 ? img : lnsUpsellFallbackImageUri;
 
   const handleCTAPress = () => {
     track("button_clicked", {
@@ -18,7 +27,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
     if (ctaLink) Linking.openURL(ctaLink);
   };
 
-  return { isShown, discount, tracking, handleCTAPress };
+  return { location, isShown, discount, tracking, handleCTAPress, imageUrl };
 }
 
 const AnalyticsPageMap = {

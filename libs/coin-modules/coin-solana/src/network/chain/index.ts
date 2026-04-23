@@ -21,6 +21,7 @@ import {
   BlockhashWithExpiryBlockHeight,
   Commitment,
   GetLatestBlockhashConfig,
+  SolanaJSONRPCError,
 } from "@solana/web3.js";
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
@@ -141,6 +142,9 @@ const kyNoTimeout = ky.create({
   },
 });
 
+// https://github.com/anza-xyz/agave/blob/abfc33086c3eda73f89c0105e329a31c6b147ed0/rpc-client-api/src/custom_error.rs#L31
+const JSON_RPC_SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND = -32020;
+
 export function getChainAPI(
   config: Config,
   logger?: (url: string, options: any) => void,
@@ -224,7 +228,15 @@ export function getChainAPI(
 
     getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) => {
       const callback = () => {
-        return connection.getSignaturesForAddress(new PublicKey(address), opts);
+        return connection.getSignaturesForAddress(new PublicKey(address), opts).catch(err => {
+          if (
+            err instanceof SolanaJSONRPCError &&
+            err.code === JSON_RPC_SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND
+          ) {
+            return [];
+          }
+          throw err;
+        });
       };
       return callback().catch(remapErrorsWithRetry(callback));
     },

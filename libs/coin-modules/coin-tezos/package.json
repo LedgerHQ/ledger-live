@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "6.20.0",
+  "version": "7.0.0-next.0",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -34,7 +34,6 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
       ]
@@ -72,7 +71,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
@@ -90,18 +89,22 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/disable-network-setup": "workspace:^",
-    "@types/node": "catalog:",
     "@faker-js/faker": "^8.4.1",
-    "@taquito/local-forging": "^23.0.0-RC.0",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@taquito/local-forging": "^23.0.0-RC.0",
+    "@taquito/signer": "^23.0.0-RC.0",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.17.4",
+    "@types/node": "catalog:",
+    "bn.js": "^5.1.0",
     "jest": "catalog:",
     "msw": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   },
   "scripts": {
@@ -112,14 +115,16 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "overrides": {
     "@taquito/ledger-signer": {

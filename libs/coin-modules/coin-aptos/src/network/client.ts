@@ -26,7 +26,7 @@ import {
   Operation,
   Page,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";

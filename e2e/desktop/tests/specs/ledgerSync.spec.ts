@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -7,7 +8,6 @@ import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 const app: AppInfos = AppInfos.LS;
 const firstAccountId = accounts[0].id;
@@ -47,9 +47,14 @@ function initializeTrustchain() {
 test.describe(`[${app.name}] Sync Accounts`, () => {
   setupSeed();
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
+    featureFlags: {
+      lldWalletSync: { enabled: true },
+      lldLedgerSyncEntryPoints: { enabled: true },
+    },
   });
 
   test(
@@ -64,11 +69,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      if (!(await isWallet40Enabled(app.getPage()))) {
-        // you can only go to empty accounts list on legacy
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.expectAccountsCount(0);
-      }
+      await app.portfolio.checkAddAccountButtonVisibility();
 
       await app.mainNavigation.openSettings();
       await app.settings.enableWalletSync();
@@ -88,7 +89,11 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.accounts.navigateToAccountByName(secondAccountName);
       await app.account.expectAccountVisibility(secondAccountName);
       await app.account.renameAccount(secondAccountName + "_renamed");
-      await app.layout.syncAccounts();
+
+      if (await app.layout.topbarSynchronizeButton.isEnabled()) {
+        // trigger sync if not triggered automatically
+        await app.layout.syncAccounts();
+      }
 
       expect(await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app)).toBeDefined();
 

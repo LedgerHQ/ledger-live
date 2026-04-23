@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { from } from "rxjs";

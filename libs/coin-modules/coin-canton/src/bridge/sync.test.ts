@@ -50,7 +50,7 @@ const sampleCurrency = createMockCantonCurrency();
 type CantonBalance = {
   value: bigint;
   locked: bigint;
-  asset: { type: "native" } | { type: "token"; assetReference: string };
+  asset: { type: "Amulet" } | { type: "token"; assetReference: string };
   utxoCount: number;
   instrumentId: string;
   adminId: string;
@@ -59,7 +59,7 @@ type CantonBalance = {
 const createMockNativeBalance = (amount: string, locked = false): CantonBalance => ({
   value: BigInt(amount),
   locked: locked ? BigInt(amount) : BigInt(0),
-  asset: { type: "native" },
+  asset: { type: "Amulet" },
   utxoCount: 1,
   instrumentId: "Amulet",
   adminId: "native-admin",
@@ -84,8 +84,9 @@ const createMockOperationView = (
     fee: {
       value: "5",
       asset: {
-        type: "native",
-        issuer: null,
+        type: "native" as const,
+        instrumentAdmin: "AmuletAdmin",
+        instrumentId: "Amulet",
       },
       details: {
         type: "fee",
@@ -114,8 +115,9 @@ const createMockOperationView = (
       hash: "blockhash1",
     },
     asset: {
+      type: "native",
       instrumentId: overrides.instrumentId ?? "Amulet",
-      instrumentAdmin: overrides.instrumentAdmin ?? null,
+      instrumentAdmin: overrides.instrumentAdmin ?? "AmuletAdmin",
     },
     details: {
       operationType: overrides.operationType ?? "transfer",

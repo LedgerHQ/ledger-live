@@ -1,15 +1,16 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import {
   getAccountAddress,
   liveDataWithRecipientAddressCommand,
-} from "tests/utils/cliCommandsUtils";
+  liveDataCommand,
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -167,6 +168,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
+    bugTicket: "LIVE-28070",
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
@@ -237,6 +239,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
     xrayTicket: "B2CQA-4225",
+    bugTicket: "LIVE-28070",
   },
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
@@ -250,6 +253,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-4284",
   },
+  {
+    transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
+    xrayTicket: "B2CQA-4742",
+  },
 ];
 
 const LNS_UNSUPPORTED_CURRENCIES = new Set([Currency.SUI.id, Currency.VET.id, Currency.HBAR.id]);
@@ -262,6 +269,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
+        teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
@@ -320,6 +328,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionsAmountInvalid) {
     test.describe("Check invalid amount input error", () => {
       test.use({
+        teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
@@ -370,6 +379,7 @@ test.describe("Send flows", () => {
     );
 
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionInputValid)],
@@ -416,6 +426,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionAddressValid) {
     test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
       test.use({
+        teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
@@ -457,7 +468,7 @@ test.describe("Send flows", () => {
           transaction.transaction.accountToCredit.address =
             transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
               ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
-              : transaction.transaction.accountToCredit.address ?? "";
+              : (transaction.transaction.accountToCredit.address ?? "");
 
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
@@ -470,16 +481,12 @@ test.describe("Send flows", () => {
   for (const transaction of transactionsAddressInvalid) {
     test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
       test.use({
+        teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          async (appjsonPath: string) => {
-            await CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
+          async (userdataPath?: string) => {
+            await liveDataCommand(transaction.transaction.accountToDebit)(userdataPath);
 
             if (
               transaction.transaction.accountToCredit !== Account.EMPTY &&
@@ -552,6 +559,7 @@ test.describe("Send flows", () => {
     });
 
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],

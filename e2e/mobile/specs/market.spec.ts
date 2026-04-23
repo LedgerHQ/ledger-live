@@ -29,17 +29,12 @@ describe("Market page for user with no device", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  $TmsLink("B2CQA-1880");
-  tags.forEach(tag => $Tag(tag));
-  it("should find the researched crypto", async () => {
-    await app.walletTabNavigator.navigateToMarket();
-    await app.market.searchAsset("eth");
-    await app.market.expectMarketRowTitle(ticker);
-  });
-
   $TmsLink("B2CQA-1879");
   tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {
+    await app.walletTabNavigator.navigateToMarket();
+    await app.market.searchAsset(ticker);
+    await app.market.expectMarketRowTitle(ticker);
     await app.market.openAssetPage(ticker);
     await app.market.starFavoriteCoin();
     await app.market.backToAssetList();

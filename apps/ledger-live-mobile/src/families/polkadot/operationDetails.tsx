@@ -175,7 +175,7 @@ export const OperationDetailsRewardFrom = ({
   return (
     <Section
       title={t("operationDetails.extra.rewardFrom")}
-      value={validator ? validator.identity ?? validator.address : validatorStash}
+      value={validator ? (validator.identity ?? validator.address) : validatorStash}
       onPress={redirectAddressCreator(validatorStash)}
     />
   );

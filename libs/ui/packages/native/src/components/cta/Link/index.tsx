@@ -27,8 +27,7 @@ const IconContainer = styled.View<{
   iconPosition: "right" | "left";
   iconLink?: boolean;
 }>`
-  ${(p) =>
-    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 4px;` : `margin-left: 4px;`}
+  ${p => (p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 4px;` : `margin-left: 4px;`)}
 `;
 
 export const Base = styled(Pressable)`
@@ -88,7 +87,6 @@ const Link = (props: LinkProps): React.ReactElement => {
   const { type = "main", size = "medium" } = props;
 
   function style(state: PressableStateCallbackType): StyleProp<ViewStyle> {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return [props.style, state.pressed ? { opacity: 0.5 } : {}] as StyleProp<ViewStyle>;
   }
 

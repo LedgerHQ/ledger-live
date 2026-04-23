@@ -1,3 +1,5 @@
+const esmPackages = ["@mysten", "@scure", "@noble"];
+
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
@@ -15,5 +17,14 @@ module.exports = {
         },
       },
     ],
+    [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
 };

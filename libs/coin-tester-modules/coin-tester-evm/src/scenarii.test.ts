@@ -4,6 +4,7 @@ import { scenarioEthereum } from "./scenarii/ethereum";
 import { scenarioPolygon } from "./scenarii/polygon";
 import { scenarioScroll } from "./scenarii/scroll";
 import { scenarioBlast } from "./scenarii/blast";
+import { scenarioBase } from "./scenarii/base";
 import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
 import { scenarioBnb } from "./scenarii/bnb";
@@ -11,10 +12,7 @@ import { scenarioBnb } from "./scenarii/bnb";
 import "./tokenFixtures";
 
 global.console = require("console");
-jest.setTimeout(100_000);
-
-// Note this config runs with NanoX
-// https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
+jest.setTimeout(300_000);
 
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {
@@ -75,6 +73,17 @@ describe("EVM Deterministic Tester", () => {
   it("scenario Blast", async () => {
     try {
       await executeScenario(scenarioBlast);
+    } catch (e) {
+      if (e != "done") {
+        await killAnvil();
+        throw e;
+      }
+    }
+  });
+
+  it("scenario Base", async () => {
+    try {
+      await executeScenario(scenarioBase);
     } catch (e) {
       if (e != "done") {
         await killAnvil();

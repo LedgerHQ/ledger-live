@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { from } from "rxjs";
 import type { ScanCommonOpts } from "../../scan";
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";

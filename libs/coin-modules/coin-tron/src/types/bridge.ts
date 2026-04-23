@@ -87,6 +87,7 @@ export type TrongridTxInfo = {
   blockHeight?: number;
   extra?: TrongridExtraTxInfo;
   hasFailed: boolean;
+  feesPayer?: string;
 };
 
 export type TronOperation = Operation<TrongridExtraTxInfo>;
@@ -181,10 +182,8 @@ export type SuperRepresentativeData = {
 };
 export type SuperRepresentative = {
   address: string;
-  name: string | null | undefined;
   url: string | null | undefined;
   isJobs: boolean;
-  brokerage: number;
   voteCount: number;
   totalProduced: number | null | undefined;
   totalMissed: number | null | undefined;
@@ -215,7 +214,6 @@ export type TronResources = {
   unwithdrawnReward: BigNumber;
   lastWithdrawnRewardDate: Date | null | undefined;
   lastVotedDate: Date | null | undefined;
-  cacheTransactionInfoById: Record<string, TronTransactionInfo> | undefined;
 };
 export type TronResourcesRaw = {
   frozen: {
@@ -241,9 +239,9 @@ export type TronResourcesRaw = {
   unwithdrawnReward: string;
   lastWithdrawnRewardDate: string | null | undefined;
   lastVotedDate: string | null | undefined;
-  cacheTransactionInfoById: Record<string, TronTransactionInfoRaw> | undefined;
 };
 export type Vote = {
+  name: string | null | undefined;
   address: string;
   voteCount: number;
 };
@@ -295,13 +293,6 @@ export type BandwidthInfoRaw = {
   gainedUsed: string;
   gainedLimit: string;
 };
-export type TronTransactionInfo = {
-  fee: number;
-  blockNumber: number;
-  withdraw_amount?: number;
-  unfreeze_amount?: number;
-};
-export type TronTransactionInfoRaw = [number, number, number?, number?];
 export function isTronAccount(account: Account): account is TronAccount {
   return "tronResources" in account;
 }

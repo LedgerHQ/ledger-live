@@ -206,9 +206,9 @@ export default function useScanDeviceAccountsViewModel({
       });
 
       if (accountsNeedingOnboarding.length > 0) {
-        navigation.replace(NavigatorName.CantonOnboard, {
-          screen: ScreenName.CantonOnboardAccount,
-          params: { accountsToAdd: accountsToAdd, currency },
+        navigation.replace(ScreenName.CantonOnboardAccount, {
+          accountsToAdd: accountsToAdd,
+          currency,
         });
         return;
       }

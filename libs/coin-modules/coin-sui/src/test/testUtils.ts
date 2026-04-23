@@ -1,4 +1,4 @@
-import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+import { SuiJsonRpcClient, getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 
 export async function extractCoinTypeFromUnsignedTx(
@@ -16,7 +16,10 @@ export async function extractCoinTypeFromUnsignedTx(
     })
     .filter((objectId): objectId is string => !!objectId);
 
-  const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
+  const suiClient = new SuiJsonRpcClient({
+    url: getJsonRpcFullnodeUrl("mainnet"),
+    network: "mainnet",
+  });
   const objects = await suiClient.multiGetObjects({
     ids: [...gasObjectIds, ...inputObjectIds],
     options: {
