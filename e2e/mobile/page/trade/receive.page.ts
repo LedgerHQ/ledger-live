@@ -1,5 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
@@ -25,9 +24,6 @@ export default class ReceivePage {
   receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   receiveNetworkWarningId = "receive-network-warning";
-
-  sendAssetWarningMessage = (account: AccountType) =>
-    `Send only tokens from ${account.currency.name} network. Sending from another network may result in permanent loss of your tokens.`;
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -115,6 +111,19 @@ export default class ReceivePage {
     await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
   }
 
+  @Step("Expect receive warning page is displayed")
+  async expectReceiveWarningPageIsDisplayed(
+    tickerName: string,
+    accountName: string,
+  ): Promise<void> {
+    const titleID = this.titleReceiveConfirmationPageId(tickerName);
+    const accountNameID = this.accountNameReceiveId(accountName);
+    await waitForElementById(this.accountAddress);
+    await waitForElementById(titleID);
+    await detoxExpect(getElementById(titleID)).toBeVisible();
+    await detoxExpect(getElementById(accountNameID)).toBeVisible();
+  }
+
   @Step("Verify address")
   async verifyAddress(address: string): Promise<void> {
     await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
@@ -139,11 +148,11 @@ export default class ReceivePage {
   }
 
   @Step("Expect receive network warning message for $0")
-  async expectSendCurrencyTokensWarningMessage(account: AccountType): Promise<void> {
+  async expectSendCurrencyTokensWarningMessage(expectedWarningMessage: string): Promise<void> {
     await scrollToId(this.receiveNetworkWarningId, this.receivePageScrollViewId);
     await detoxExpect(getElementById(this.receiveNetworkWarningId)).toBeVisible();
     await detoxExpect(getElementById(this.receiveNetworkWarningId)).toHaveText(
-      this.sendAssetWarningMessage(account),
+      expectedWarningMessage,
     );
   }
 

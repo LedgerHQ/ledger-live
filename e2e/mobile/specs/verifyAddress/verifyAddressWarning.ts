@@ -6,6 +6,7 @@ type VerifyAddressWarningOptions = {
 
 export function runVerifyAddressWarningTest(
   account: AccountType,
+  expectedWarningMessage: string,
   tmsLinks: string[],
   tags: string[],
   options: VerifyAddressWarningOptions = {},
@@ -28,8 +29,11 @@ export function runVerifyAddressWarningTest(
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();
       await app.receive.doNotVerifyAddress();
-      await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
-      await app.receive.expectSendCurrencyTokensWarningMessage(account);
+      await app.receive.expectReceiveWarningPageIsDisplayed(
+        account.currency.ticker,
+        account.accountName,
+      );
+      await app.receive.expectSendCurrencyTokensWarningMessage(expectedWarningMessage);
     });
   });
 }
