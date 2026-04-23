@@ -1,9 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-  parseShortAccountDescriptor,
-  parseAccountDescriptor,
-  resolveAccountArg,
-} from "./models";
+import { parseShortAccountDescriptor, parseAccountDescriptor, resolveAccountArg } from "./models";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
@@ -31,9 +27,9 @@ describe("parseShortAccountDescriptor", () => {
   });
 
   it("throws when index is not a number", () => {
-    expect(() =>
-      parseShortAccountDescriptor(`js:2:bitcoin:${XPUB}:native_segwit:abc`),
-    ).toThrow(/Invalid short account descriptor/);
+    expect(() => parseShortAccountDescriptor(`js:2:bitcoin:${XPUB}:native_segwit:abc`)).toThrow(
+      /Invalid short account descriptor/,
+    );
   });
 });
 

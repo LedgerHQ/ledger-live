@@ -33,7 +33,11 @@ export type MockAppResults = Record<string, Record<string, unknown>>;
 const FAKE_DEVICE: DiscoveredDevice = {
   id: "mock-device-id",
   name: "Ledger Nano S Plus (mock)",
-  deviceModel: new DeviceModel({ id: "mock-device-id", model: DeviceModelId.NANO_SP, name: "Ledger Nano S Plus" }),
+  deviceModel: new DeviceModel({
+    id: "mock-device-id",
+    model: DeviceModelId.NANO_SP,
+    name: "Ledger Nano S Plus",
+  }),
   transport: "mock-transport",
 };
 
@@ -75,8 +79,7 @@ export class MockDeviceManagementKit {
   }
 
   getDeviceSessionState(_args: unknown): Observable<DeviceSessionState> {
-    const deviceStatus =
-      this._state === "locked" ? DeviceStatus.LOCKED : DeviceStatus.CONNECTED;
+    const deviceStatus = this._state === "locked" ? DeviceStatus.LOCKED : DeviceStatus.CONNECTED;
     const state: DeviceSessionState = {
       sessionStateType: DeviceSessionStateType.Connected,
       deviceStatus,
@@ -102,9 +105,17 @@ export class MockDeviceManagementKit {
 
   // ── DMK interface (used by connect-ledger-app.ts and DmkSignerEth) ─────────
 
-  executeDeviceAction<Output, Error extends DmkError, IntermediateValue extends DeviceActionIntermediateValue, Input>(
-    { deviceAction }: { sessionId: string; deviceAction: DeviceAction<Output, Input, Error, IntermediateValue> },
-  ): ExecuteDeviceActionReturnType<Output, Error, IntermediateValue> {
+  executeDeviceAction<
+    Output,
+    Error extends DmkError,
+    IntermediateValue extends DeviceActionIntermediateValue,
+    Input,
+  >({
+    deviceAction,
+  }: {
+    sessionId: string;
+    deviceAction: DeviceAction<Output, Input, Error, IntermediateValue>;
+  }): ExecuteDeviceActionReturnType<Output, Error, IntermediateValue> {
     if (this._state === "locked") {
       return this._lockedAction<Output, Error, IntermediateValue>();
     }
@@ -129,7 +140,11 @@ export class MockDeviceManagementKit {
 
   // ── DMK interface (used by WalletCliDmkTransport.exchange — fallback path) ─
 
-  sendApdu(_args: { sessionId?: string; apdu: Uint8Array; abortTimeout?: number }): Promise<ApduResponse> {
+  sendApdu(_args: {
+    sessionId?: string;
+    apdu: Uint8Array;
+    abortTimeout?: number;
+  }): Promise<ApduResponse> {
     if (this._state === "locked") {
       return Promise.resolve(
         new ApduResponse({ statusCode: new Uint8Array([0x55, 0x15]), data: new Uint8Array(0) }),
@@ -146,10 +161,12 @@ export class MockDeviceManagementKit {
   private _completedAction<Output, Error, IntermediateValue>(
     output: Output,
   ): ExecuteDeviceActionReturnType<Output, Error, IntermediateValue> {
-    const observable = new Observable<DeviceActionState<Output, Error, IntermediateValue>>(subscriber => {
-      subscriber.next({ status: DeviceActionStatus.Completed, output });
-      subscriber.complete();
-    });
+    const observable = new Observable<DeviceActionState<Output, Error, IntermediateValue>>(
+      subscriber => {
+        subscriber.next({ status: DeviceActionStatus.Completed, output });
+        subscriber.complete();
+      },
+    );
     return { observable, cancel: () => {} };
   }
 
@@ -158,15 +175,17 @@ export class MockDeviceManagementKit {
     Error,
     IntermediateValue
   > {
-    const observable = new Observable<DeviceActionState<Output, Error, IntermediateValue>>(subscriber => {
-      subscriber.next({
-        status: DeviceActionStatus.Error,
-        // Note: DmkSignerEth._mapError will produce new Error(undefined) = empty message.
-        // A future improvement would emit a proper DmkError with errorCode "5515".
-        error: { _tag: "LockedDevice" } as unknown as Error,
-      });
-      subscriber.complete();
-    });
+    const observable = new Observable<DeviceActionState<Output, Error, IntermediateValue>>(
+      subscriber => {
+        subscriber.next({
+          status: DeviceActionStatus.Error,
+          // Note: DmkSignerEth._mapError will produce new Error(undefined) = empty message.
+          // A future improvement would emit a proper DmkError with errorCode "5515".
+          error: { _tag: "LockedDevice" } as unknown as Error,
+        });
+        subscriber.complete();
+      },
+    );
     return { observable, cancel: () => {} };
   }
 }

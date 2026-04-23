@@ -26,7 +26,11 @@ export default defineCommand({
     const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
     const network = networkStringFromCurrencyId(descriptor.currencyId);
     const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, { command: "receive", network, account: descriptor.id });
+    const out = createCommandOutput(flags.output, {
+      command: "receive",
+      network,
+      account: descriptor.id,
+    });
 
     await out.run(async () => {
       if (flags.verify) {

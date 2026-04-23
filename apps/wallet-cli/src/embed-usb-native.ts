@@ -15,11 +15,19 @@
  */
 
 if (process.platform === "darwin") {
-  (globalThis as Record<string, unknown>).__usbNativeAddon = require("../node_modules/usb/prebuilds/darwin-x64+arm64/node.napi.node");
+  (
+    globalThis as Record<string, unknown>
+  ).__usbNativeAddon = require("../node_modules/usb/prebuilds/darwin-x64+arm64/node.napi.node");
 } else if (process.platform === "linux" && process.arch === "x64") {
-  (globalThis as Record<string, unknown>).__usbNativeAddon = require("../node_modules/usb/prebuilds/linux-x64/node.napi.glibc.node");
+  (
+    globalThis as Record<string, unknown>
+  ).__usbNativeAddon = require("../node_modules/usb/prebuilds/linux-x64/node.napi.glibc.node");
 } else if (process.platform === "linux" && process.arch === "arm64") {
-  (globalThis as Record<string, unknown>).__usbNativeAddon = require("../node_modules/usb/prebuilds/linux-arm64/node.napi.armv8.node");
+  (
+    globalThis as Record<string, unknown>
+  ).__usbNativeAddon = require("../node_modules/usb/prebuilds/linux-arm64/node.napi.armv8.node");
 } else if (process.platform === "win32") {
-  (globalThis as Record<string, unknown>).__usbNativeAddon = require("../node_modules/usb/prebuilds/win32-x64/node.napi.node");
+  (
+    globalThis as Record<string, unknown>
+  ).__usbNativeAddon = require("../node_modules/usb/prebuilds/win32-x64/node.napi.node");
 }

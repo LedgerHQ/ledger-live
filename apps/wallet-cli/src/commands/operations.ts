@@ -30,7 +30,11 @@ export default defineCommand({
       `operations: account=${descriptor.id}, limit=${flags.limit ?? "default"}, output=${flags.output}`,
     );
     const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, { command: "operations", network, account: descriptorV1Str });
+    const out = createCommandOutput(flags.output, {
+      command: "operations",
+      network,
+      account: descriptorV1Str,
+    });
 
     await out.run(async () => {
       const page = await out.withActivity(

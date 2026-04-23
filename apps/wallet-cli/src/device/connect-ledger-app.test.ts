@@ -8,7 +8,9 @@ import { Observable } from "rxjs";
 import * as log from "../shared/log";
 import { connectLedgerApp } from "./connect-ledger-app";
 
-function makeDmk(executeDeviceAction: () => { observable: Observable<unknown>; cancel: () => void }) {
+function makeDmk(
+  executeDeviceAction: () => { observable: Observable<unknown>; cancel: () => void },
+) {
   return {
     _unsafeBypassIntentQueue: (): void => {},
     executeDeviceAction,

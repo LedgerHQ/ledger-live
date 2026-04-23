@@ -33,7 +33,10 @@ export default defineCommand({
     const networkStr = `${network.name}:${network.env}`;
     walletCliDebug(`account discover: network=${networkStr}, output=${flags.output}`);
 
-    const out = createCommandOutput(flags.output, { command: "account discover", network: networkStr });
+    const out = createCommandOutput(flags.output, {
+      command: "account discover",
+      network: networkStr,
+    });
 
     await out.run(async () => {
       const spin = out.spin(`Connect device and open ${colors.bold(network.name)} app…`);

@@ -48,7 +48,14 @@ describe("withSpinner", () => {
 
   it("propagates errors (humanMode=false)", async () => {
     await expect(
-      withSpinner("loading", "done", async () => { throw new Error("fail"); }, false),
+      withSpinner(
+        "loading",
+        "done",
+        async () => {
+          throw new Error("fail");
+        },
+        false,
+      ),
     ).rejects.toThrow("fail");
   });
 

@@ -9,10 +9,7 @@ export type RunResult = {
   exitCode: number;
 };
 
-export async function runCli(
-  args: string[],
-  env: Record<string, string> = {},
-): Promise<RunResult> {
+export async function runCli(args: string[], env: Record<string, string> = {}): Promise<RunResult> {
   // --cwd (NOT the cwd: subprocess option) makes Bun resolve tsconfig and workspace packages from the wallet-cli root.
   const proc = Bun.spawn(["bun", "--cwd", ROOT, WRAPPER, ...args], {
     env: {

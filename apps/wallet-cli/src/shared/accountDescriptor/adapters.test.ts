@@ -53,7 +53,11 @@ describe("toV1 (V0 → V1)", () => {
   });
 
   it("maps bitcoin_testnet currencyId to testnet env", () => {
-    const v1 = toV1({ ...BTC_V0, currencyId: "bitcoin_testnet", id: `js:2:bitcoin_testnet:${XPUB}:native_segwit` });
+    const v1 = toV1({
+      ...BTC_V0,
+      currencyId: "bitcoin_testnet",
+      id: `js:2:bitcoin_testnet:${XPUB}:native_segwit`,
+    });
     expect(v1.network).toEqual({ name: "bitcoin", env: "testnet" });
   });
 });
