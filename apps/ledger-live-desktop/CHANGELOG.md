@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.2.1
+
+### Patch Changes
+
+- [#16742](https://github.com/LedgerHQ/ledger-live/pull/16742) [`2541ae6`](https://github.com/LedgerHQ/ledger-live/commit/2541ae627bf663c3feba1ec6d2c12fa44c75dcd0) Thanks [@thesan](https://github.com/thesan)! - Revert autoupdate block
+
 ## 4.2.1-hotfix.0
 
 ### Patch Changes
