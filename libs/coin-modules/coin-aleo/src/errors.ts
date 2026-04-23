@@ -6,3 +6,6 @@ export const AleoTwoRecordsRequired = createCustomErrorClass("AleoTwoRecordsRequ
 export const AleoFeeRecordInsufficientBalance = createCustomErrorClass(
   "AleoFeeRecordInsufficientBalance",
 );
+export const AleoApiConfigurationResetError = createCustomErrorClass(
+  "AleoApiConfigurationResetError",
+);

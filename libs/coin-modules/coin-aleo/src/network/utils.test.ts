@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
+import { AleoApiConfigurationResetError } from "../errors";
 import { EXPLORER_TRANSFER_TYPES, DEFAULT_RECORDS_PAGE_SIZE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
@@ -416,7 +417,7 @@ describe("network/utils", () => {
         expect(result?.scannerStatus).toEqual({ synced: true, percentage: 100 });
       });
 
-      it("should return null when getRecordScannerStatus fails with a 422 error", async () => {
+      it("should throw AleoApiConfigurationResetError when getRecordScannerStatus fails with a 422 error", async () => {
         const existingProvableApi: ProvableApi = {
           uuid: mockUUID,
           scannerStatus: { synced: false, percentage: 50 },
@@ -429,13 +430,14 @@ describe("network/utils", () => {
         });
         mockGetRecordScannerStatus.mockRejectedValue(error422);
 
-        const result = await accessProvableApi({
-          currency: mockCurrency,
-          viewKey: mockViewKey,
-          provableApi: existingProvableApi,
-        });
+        await expect(
+          accessProvableApi({
+            currency: mockCurrency,
+            viewKey: mockViewKey,
+            provableApi: existingProvableApi,
+          }),
+        ).rejects.toThrow(AleoApiConfigurationResetError);
 
-        expect(result).toBeNull();
         expect(mockGetRecordScannerStatus).toHaveBeenCalledTimes(1);
       });
 

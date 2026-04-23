@@ -7369,6 +7369,9 @@
       "title": "No private record can cover the network fee.",
       "description": "Select a different record for the transfer amount or top up your balance with additional funds."
     },
+    "AleoApiConfigurationResetError": {
+      "title": "Record scanner configuration was reset, please sync your account again."
+    },
     "BackupAppDataError": {
       "title": "Error during app data backup"
     },
@@ -8574,7 +8577,8 @@
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",
-        "error": "Private sync failed. Please try again later."
+        "error": "Private sync failed",
+        "retry": "Retry"
       }
     }
   },
