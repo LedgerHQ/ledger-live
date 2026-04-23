@@ -4,8 +4,9 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet, Linking, TouchableOpacity, SafeAreaView } from "react-native";
 import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -49,7 +50,7 @@ export default function StellarFeeRow({
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<StellarTransaction>(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(mainAccount);
   const fees = transaction.family === "stellar" ? transaction.fees : null;
@@ -59,10 +60,10 @@ export default function StellarFeeRow({
     if (transaction.family === "stellar" && unit) {
       const fetchEstimatedFees = async () => {
         const preparedTransaction = await bridge.prepareTransaction(account as Account, {
-          ...transaction,
-          customFees: { parameters: { fees: null } },
+          ...(transaction as StellarTransaction),
+          customFees: undefined,
         });
-        setEstimatedFees(preparedTransaction.fees);
+        setEstimatedFees(preparedTransaction.fees ?? null);
       };
 
       fetchEstimatedFees();
@@ -87,7 +88,7 @@ export default function StellarFeeRow({
       setTransaction(
         bridge.updateTransaction(transaction, {
           fees: estimatedFees,
-          customFees: { parameters: { fees: estimatedFees } },
+          customFees: { value: BigInt(estimatedFees?.toFixed(0) ?? 0), parameters: { fees: estimatedFees } },
         }),
       );
     }

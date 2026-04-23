@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import {
@@ -23,7 +23,7 @@ const MemoField = ({
 }) => {
   invariant(transaction.family === "internet_computer", "Memo: Internet Computer family expected");
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const onMemoFieldChange = useCallback(
     (value: string) => {

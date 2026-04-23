@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stacks/types";
@@ -16,7 +16,7 @@ type Props = {
 const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: Props) => {
   invariant(transaction.family === "stacks", "MemoField: stacks family expected");
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const onMemoValueChange = useCallback(
     (memoValue: string) => {

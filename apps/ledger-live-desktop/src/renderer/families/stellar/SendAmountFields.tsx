@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
 import SendFeeMode from "./SendFeeMode";
 import FeeField from "./FeeField";
@@ -19,16 +19,16 @@ type Props = {
 const Root = (props: Props) => {
   const { transaction, trackProperties } = props;
   const { fees } = transaction;
-  const bridge = getAccountBridge(props.account);
+  const bridge = useAccountBridge<Transaction>(props.account);
   const [estimatedFees, setEstimatedFees] = useState(fees || null);
 
   React.useEffect(() => {
     const fetchEstimatedFees = async () => {
       const preparedTransaction = await bridge.prepareTransaction(props.account, {
         ...transaction,
-        customFees: { parameters: { fees: null } },
+        customFees: { value: 0n, parameters: { fees: null } },
       });
-      setEstimatedFees(preparedTransaction.fees);
+      setEstimatedFees(preparedTransaction.fees ?? null);
     };
 
     fetchEstimatedFees();
@@ -49,7 +49,7 @@ const Root = (props: Props) => {
       props.updateTransaction(t =>
         bridge.updateTransaction(t, {
           fees: estimatedFees,
-          customFees: { parameters: { fees: estimatedFees } },
+          customFees: { value: 0n, parameters: { fees: estimatedFees } },
         }),
       );
     }

@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import type { TFunction } from "i18next";
@@ -32,7 +32,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   initValue,
   resetInitValue,
 }: Props<T, TS>) => {
-  const bridge = getAccountBridge(account, null);
+  const bridge = useAccountBridge<T>(account, null);
   const [value, setValue] = useState(
     initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
@@ -43,7 +43,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value }));
+      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value } as Partial<T>));
       resetInitValue?.();
     }
   }, [account]); // oxlint-disable-line react-hooks/exhaustive-deps
@@ -56,7 +56,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: invalidRecipient ? "" : recipient,
-        }),
+        } as Partial<T>),
       );
     },
     [account.currency.scheme, bridge, onChangeTransaction, transaction],

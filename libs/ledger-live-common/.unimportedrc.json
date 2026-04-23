@@ -28,6 +28,7 @@
     "src/bridge/impl.ts",
     "src/bridge/index.ts",
     "src/bridge/react/index.ts",
+    "src/bridge/useAccountBridge.ts",
     "src/bridge/useBridgeTransaction.ts",
     "src/counterValues/state-manager/api.ts",
     "src/counterValues/state-manager/onSchemaFailure.ts",

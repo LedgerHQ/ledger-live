@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, Fragment } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { BigNumber } from "bignumber.js";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -15,14 +15,14 @@ import { Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps } from "../types";
 
-const StepAmount = (props: StepProps) => {
+const StepAmountContent = (props: StepProps) => {
   const { account, onUpdateTransaction, status, error, contract, amount, delegations } = props;
   const [initialAmount, setInitialAmount] = useState(BigNumber(amount));
   const [value, setValue] = useState(BigNumber(amount));
-  const bridge = account && getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const updateValidator = useCallback(
     (payload: Partial<Transaction>) => {
-      onUpdateTransaction(transaction => bridge?.updateTransaction(transaction, payload));
+      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, payload));
     },
     [onUpdateTransaction, bridge],
   );
@@ -52,12 +52,11 @@ const StepAmount = (props: StepProps) => {
       if (transaction.amount.isEqualTo(value)) {
         return transaction;
       }
-      return bridge?.updateTransaction(transaction, {
+      return bridge.updateTransaction(transaction, {
         amount: value,
       });
     });
   }, [bridge, onUpdateTransaction, value]);
-  if (!account) return null;
   return (
     <Box flow={1}>
       <TrackPage
@@ -97,6 +96,10 @@ const StepAmount = (props: StepProps) => {
       </Alert>
     </Box>
   );
+};
+const StepAmount = (props: StepProps) => {
+  if (!props.account) return null;
+  return <StepAmountContent {...props} />;
 };
 const StepAmountFooter = (props: StepProps) => {
   const { transitionTo, account, onClose, status, bridgePending } = props;

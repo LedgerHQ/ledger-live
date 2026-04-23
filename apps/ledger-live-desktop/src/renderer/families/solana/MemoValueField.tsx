@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import {
@@ -25,7 +25,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
   const lldMemoTag = useFeature("lldMemoTag");
 
   invariant(transaction.family === "solana", "Memo: solana family expected");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onMemoValueChange = useCallback(
     (memo: string) => {
       onChange(
@@ -36,7 +36,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
               ...transaction.model.uiState,
               memo,
             },
-          },
+          } as Transaction["model"],
         }),
       );
     },

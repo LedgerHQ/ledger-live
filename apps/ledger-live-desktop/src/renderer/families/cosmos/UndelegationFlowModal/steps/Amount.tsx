@@ -2,11 +2,12 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
 import {
   CosmosDelegationInfo,
   CosmosMappedDelegation,
+  Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -29,7 +30,7 @@ export default function StepAmount({
   onClose,
 }: StepProps) {
   invariant(account && transaction && transaction.validators, "account and transaction required");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const updateValidator = useCallback(
     (validatorFields: Partial<CosmosDelegationInfo>) => {
       onUpdateTransaction(tx =>
@@ -43,7 +44,7 @@ export default function StepAmount({
                     ...validatorFields,
                   },
                 ]
-              : [validatorFields],
+              : [validatorFields as CosmosDelegationInfo],
         }),
       );
     },
