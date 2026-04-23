@@ -3,3 +3,4 @@
 [test]
 coverageReporter = ["lcov"]
 coverageDir = "coverage"
+# test: bun available via mise (no explicit setup-bun step)
