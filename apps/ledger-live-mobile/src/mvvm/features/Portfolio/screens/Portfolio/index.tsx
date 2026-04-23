@@ -12,6 +12,7 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
+import { usePortfolioBorrowSectionViewModel } from "../../components/PortfolioBorrowSection/usePortfolioBorrowSectionViewModel";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
   PROGRESS_VIEW_OFFSET_LEGACY_IOS,
@@ -75,6 +76,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
 
   const { handleFlatListRef } = useScrollToTop();
+  const { onPress: onPortfolioBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
@@ -165,7 +167,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     }
 
     if (shouldDisplayBorrowSection) {
-      sections.push(<PortfolioBorrowSection key="borrow" />);
+      sections.push(<PortfolioBorrowSection key="borrow" onPress={onPortfolioBorrowPress} />);
     }
 
     if (!shouldDisplayOperationsList) {
@@ -191,6 +193,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    onPortfolioBorrowPress,
   ]);
 
   return (
