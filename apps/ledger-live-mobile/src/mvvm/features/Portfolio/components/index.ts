@@ -11,3 +11,4 @@ export { PortfolioHeaderSection } from "./PortfolioHeaderSection";
 export { PortfolioOperationsSection } from "./PortfolioOperationsSection";
 export { PortfolioBannersSection } from "./PortfolioBannersSection";
 export { PortfolioPerpsEntryPoint } from "./PortfolioPerpsEntryPoint";
+export { PortfolioBorrowSection } from "./PortfolioBorrowSection";
