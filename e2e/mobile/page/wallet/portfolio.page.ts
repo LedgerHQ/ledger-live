@@ -16,6 +16,7 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsButtonId = "topbar-settings";
+  portfolioListIdRegex = /PortfolioAccountsList|PortfolioEmptyList/;
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
@@ -85,7 +86,7 @@ export default class PortfolioPage {
 
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad(timeout = 120000) {
-    await waitForElementById(this.portfolioSettingsButtonId, timeout);
+    await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
   }
 
   @Step("Expect Portfolio read only")
