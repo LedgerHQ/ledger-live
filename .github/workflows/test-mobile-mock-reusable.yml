@@ -89,6 +89,9 @@ env:
   AVD_RAM_SIZE: 5120
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  MOBILE_ARTIFACTS_ROOT: apps/ledger-live-mobile/artifacts
+  E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
+  E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
 jobs:
   determine-builds:
@@ -135,8 +138,8 @@ jobs:
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
           echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
@@ -396,7 +399,7 @@ jobs:
         timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload test artifacts
@@ -404,15 +407,15 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "ios-test-artifacts-${{ matrix.shard }}"
-          path: apps/ledger-live-mobile/artifacts
+          name: ios-test-artifacts-${{ matrix.shard }}
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}
 
       - name: Record Flake
         if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
@@ -566,7 +569,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           PRODUCTION: ${{ inputs.production_firebase }}
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=android --test $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=android --test $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload test artifacts
@@ -574,15 +577,15 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "android-test-artifacts-${{ matrix.shard }}"
-          path: apps/ledger-live-mobile/artifacts/
+          name: android-test-artifacts-${{ matrix.shard }}
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}
 
       - name: Record Flake
         if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/android.**') != '' }}
@@ -632,17 +635,10 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
           platform: ios
-          artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -653,6 +649,9 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}
 
   merge-android-timings:
     name: Merge Android Timing Files
@@ -660,17 +659,10 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
           platform: android
-          artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -681,6 +673,9 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
