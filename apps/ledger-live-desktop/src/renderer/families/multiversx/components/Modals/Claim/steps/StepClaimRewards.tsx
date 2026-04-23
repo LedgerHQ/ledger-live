@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import invariant from "invariant";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -32,7 +32,7 @@ const StepClaimRewards = (props: StepProps) => {
     contract,
   } = props;
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const updateClaimRewards = useCallback(
     (newTransaction: Partial<Transaction>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));

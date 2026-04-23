@@ -3,7 +3,8 @@ import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
@@ -15,7 +16,6 @@ import {
   useStakingPositions,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Icons } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
@@ -109,6 +109,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
   const [defaultBaker] = useBakers(whitelist);
+  const bridge = useAccountBridge<TezosTransaction>(account as AccountLike, parentAccount);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
@@ -127,10 +128,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     invariant(transaction.family === "tezos", "tezos tx");
 
     // make sure the mode is in sync (an account changes can reset it)
-    const patch: {
-      mode: string;
-      recipient?: string;
-    } = {
+    const patch: Partial<TezosTransaction> & { mode: string; recipient?: string } = {
       mode: route.params?.mode ?? "delegate",
     };
 
@@ -142,10 +140,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
       setTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
+        bridge.updateTransaction(transaction, patch),
       );
     }
-  }, [account, defaultBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
+  }, [account, bridge, defaultBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {

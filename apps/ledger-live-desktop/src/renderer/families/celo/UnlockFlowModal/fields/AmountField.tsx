@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   CeloAccount,
   Transaction,
@@ -35,7 +35,7 @@ const AmountField = ({
   status,
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StellarMemoType, Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import Select from "~/renderer/components/Select";
 import { Account } from "@ledgerhq/types-live";
@@ -19,7 +19,7 @@ const MemoTypeField = ({
   account: Account;
   transaction: Transaction;
 }) => {
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const selectedMemoType =
     options.find(option => option.value === transaction.memoType) || options[0];
   const onMemoTypeChange = useCallback(

@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { SuiAccount, Transaction as SuiTransaction } from "@ledgerhq/live-common/families/sui/types";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import Button from "~/components/Button";
@@ -46,7 +46,7 @@ function StakingAmount({ navigation, route }: Props) {
     account?.suiResources && route.params.transaction,
     "account and sui transaction required",
   );
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<SuiTransaction>(account, undefined);
   const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);

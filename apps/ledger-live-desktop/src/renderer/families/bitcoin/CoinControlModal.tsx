@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
@@ -26,7 +26,7 @@ type Props = {
   onClose: () => void;
   account: Account;
   transaction: Transaction;
-  onChange: (a: (t: Transaction, p: Partial<Transaction>) => void) => void;
+  onChange: (a: Transaction) => void;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   status: TransactionStatus;
 };
@@ -48,13 +48,13 @@ const CoinControlModal = ({
   const onClickLink = useCallback(() => openURL(urls.coinControl), []);
 
   const unit = useAccountUnit(account);
+  const bridge = useAccountBridge<Transaction>(account);
   if (!account.bitcoinResources) return null;
   const { bitcoinResources } = account;
   const { utxoStrategy } = transaction;
   const totalExcludedUTXOS = account.bitcoinResources?.utxos
     .map(u => getUTXOStatus(u, utxoStrategy))
     .filter(({ excluded }) => excluded).length;
-  const bridge = getAccountBridge(account);
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
   const returning = (status.txOutputs || []).find(output => !!output.isChange);

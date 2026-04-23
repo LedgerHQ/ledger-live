@@ -7,7 +7,7 @@ import { Icons, Text } from "@ledgerhq/native-ui";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import LText from "~/components/LText";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { findSubAccountById, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   FEE_CURRENCY_BY_CONTRACT,
@@ -37,6 +37,7 @@ export function SendRecipientFields({
   const { colors } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const bridge = useAccountBridge<CeloTransaction>(account, parentAccount);
   const celoTransaction = transaction as CeloTransaction;
   const mainAccount = getMainAccount(account, parentAccount) as CeloAccount;
 
@@ -64,26 +65,24 @@ export function SendRecipientFields({
     }));
 
   const onSelectNative = useCallback(() => {
-    const bridge = getAccountBridge(account, parentAccount);
     setTransaction(
-      bridge.updateTransaction(transaction, {
+      bridge.updateTransaction(celoTransaction, {
         feeCurrency: null,
         feeCurrencyUnwrapped: null,
         feeCurrencyAccountId: null,
       }),
     );
     setDrawerOpen(false);
-  }, [account, parentAccount, transaction, setTransaction]);
+  }, [bridge, celoTransaction, setTransaction]);
 
   const onSelectToken = useCallback(
     (tokenAccount: AccountLike) => {
       if (tokenAccount.type !== "TokenAccount") return;
-      const bridge = getAccountBridge(account, parentAccount);
       const contractAddress = tokenAccount.token.contractAddress;
       const matchedOption = FEE_CURRENCY_BY_CONTRACT.get(contractAddress.toLowerCase());
       if (!matchedOption) {
         setTransaction(
-          bridge.updateTransaction(transaction, {
+          bridge.updateTransaction(celoTransaction, {
             feeCurrency: null,
             feeCurrencyUnwrapped: null,
             feeCurrencyAccountId: null,
@@ -97,7 +96,7 @@ export function SendRecipientFields({
       const feeCurrencyUnwrapped = matchedOption?.contractAddress ?? null;
 
       setTransaction(
-        bridge.updateTransaction(transaction, {
+        bridge.updateTransaction(celoTransaction, {
           feeCurrency,
           feeCurrencyUnwrapped,
           feeCurrencyAccountId: tokenAccount.id,
@@ -105,7 +104,7 @@ export function SendRecipientFields({
       );
       setDrawerOpen(false);
     },
-    [account, parentAccount, transaction, setTransaction],
+    [bridge, celoTransaction, setTransaction],
   );
 
   return (

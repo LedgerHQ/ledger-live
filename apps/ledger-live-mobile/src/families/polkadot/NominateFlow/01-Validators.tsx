@@ -17,7 +17,7 @@ import type {
   PolkadotValidator,
   PolkadotAccount,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -68,7 +68,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { locale } = useSettings();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const [drawerValidator, setDrawerValidator] = useState<PolkadotValidator | null | undefined>();
   const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");

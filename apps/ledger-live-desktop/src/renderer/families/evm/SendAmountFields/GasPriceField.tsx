@@ -1,4 +1,5 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
 import invariant from "invariant";
 import React, { memo, useCallback } from "react";
@@ -15,7 +16,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   updateTransaction,
 }) => {
   invariant(transaction.family === "evm", "GasPriceField: evm family expected");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onGasPriceChange = useCallback(
     (gasPrice: BigNumber) => {
       updateTransaction(transaction =>

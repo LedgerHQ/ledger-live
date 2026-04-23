@@ -1,4 +1,5 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/celo/types";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
@@ -57,7 +58,7 @@ const StepVote = ({
     "celo account, resources and transaction required",
   );
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const onChange = useCallback(
     (recipient: string, index: number) => {
       onChangeTransaction(
