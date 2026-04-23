@@ -11,10 +11,10 @@ export class Provider {
     public readonly app?: AppInfos,
   ) {}
   // Swap providers
-  static readonly CHANGELLY = new Provider("changelly", "Changelly", false, true, true);
+  static readonly CHANGELLY = new Provider("changelly_v2", "Changelly", false, true, true);
   static readonly EXODUS = new Provider("exodus", "Exodus", false, true, true);
   static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false, true);
-  static readonly CIC = new Provider("cic", "CIC", false, true, true);
+  static readonly CIC = new Provider("cic_v2", "CIC", false, true, true);
   static readonly NEAR_INTENTS = new Provider("nearintents", "NEAR Intents", false, true, true);
   static readonly SWAPSXYZ = new Provider("swapsxyz", "Swaps.xyz", false, true, true);
 
