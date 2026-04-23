@@ -8,6 +8,7 @@ export const LanguageIds = [
   "fr",
   "de",
   "ru",
+  "ro",
   "es",
   "ja",
   "tr",
@@ -22,6 +23,7 @@ export const LanguageIdsNotFeatureFlagged = [
   "fr",
   "de",
   "ru",
+  "ro",
   "es",
   "ja",
   "tr",
@@ -59,6 +61,7 @@ export const LanguageLocaleIds = {
   ja: ["ja-JP"],
   ko: ["ko-KR"],
   pt: ["pt-BR"],
+  ro: ["ro-RO"],
   ru: ["ru-RU"],
   tr: ["tr-TR"],
   zh: ["zh-CN"],
@@ -159,6 +162,13 @@ export const Languages = {
     locales: buildLocales(LanguageLocaleIds.ru),
 
     deviceSupport: { label: "russian", id: languageIds.russian },
+  },
+  ro: {
+    id: "ro",
+    label: "Română",
+    locales: buildLocales(LanguageLocaleIds.ro),
+
+    deviceSupport: undefined,
   },
   tr: {
     id: "tr",

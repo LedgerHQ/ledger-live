@@ -18,7 +18,7 @@ describe("useSupportedLocales", () => {
       }),
     });
 
-    expect(result.current).toEqual(["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"]);
+    expect(result.current).toEqual(["en", "fr", "es", "ru", "ro", "zh", "de", "tr", "ja", "ko", "pt"]);
   });
 
   it("useSupportedLocales should return thai locale when llmThai FF is on", async () => {
@@ -41,6 +41,7 @@ describe("useSupportedLocales", () => {
       "fr",
       "es",
       "ru",
+      "ro",
       "zh",
       "de",
       "tr",

@@ -7,6 +7,7 @@ import fr from "../../../static/i18n/fr/app.json";
 import ja from "../../../static/i18n/ja/app.json";
 import ko from "../../../static/i18n/ko/app.json";
 import pt from "../../../static/i18n/pt-BR/app.json";
+import ro from "../../../static/i18n/ro/app.json";
 import ru from "../../../static/i18n/ru/app.json";
 import tr from "../../../static/i18n/tr/app.json";
 import zh from "../../../static/i18n/zh/app.json";
@@ -22,6 +23,7 @@ const LanguageToAppLanguageFile: LanguageMap<object> = {
   ja,
   ko,
   pt,
+  ro,
   ru,
   tr,
   zh,

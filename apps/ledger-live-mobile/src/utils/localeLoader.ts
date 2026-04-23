@@ -51,6 +51,10 @@ export const loadLocaleData = (language: string): void => {
         require("@formatjs/intl-pluralrules/locale-data/pt");
         require("@formatjs/intl-relativetimeformat/locale-data/pt");
         break;
+      case "ro":
+        require("@formatjs/intl-pluralrules/locale-data/ro");
+        require("@formatjs/intl-relativetimeformat/locale-data/ro");
+        break;
       case "th":
         require("@formatjs/intl-pluralrules/locale-data/th");
         require("@formatjs/intl-relativetimeformat/locale-data/th");

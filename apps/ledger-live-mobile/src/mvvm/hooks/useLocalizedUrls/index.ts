@@ -9,6 +9,7 @@ const languages: LanguageMap = {
   es: "es",
   de: "de",
   ru: "ru",
+  ro: "ro",
   zh: "zh-hans",
   tr: "tr",
   pt: "pt-br",

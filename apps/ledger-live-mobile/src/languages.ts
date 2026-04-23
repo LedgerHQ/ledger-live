@@ -19,6 +19,7 @@ export const languages = {
   no: "Norsk",
   pl: "Polski",
   pt: "Português (Brasil)",
+  ro: "Română",
   ru: "Русский",
   sr: "Cрпски",
   sv: "Svenska",
@@ -37,7 +38,7 @@ export const localeIds = Object.keys(allLocales) as LocaleKeys[];
  */
 export const supportedLocales: LocaleKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "th"];
+  : ["en", "fr", "es", "ru", "ro", "zh", "de", "tr", "ja", "ko", "pt", "th"];
 
 export type LanguageId = (typeof supportedLocales)[number];
 
@@ -75,6 +76,7 @@ export const fullySupportedLocales: Locale[] = [
   "fr",
   "es",
   "ru",
+  "ro",
   "zh",
   "de",
   "tr",
@@ -114,6 +116,7 @@ const languageLocaleToDefaultLocaleMap: {
   no: "no-NO",
   pl: "pl-PL",
   pt: "pt-BR",
+  ro: "ro-RO",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",

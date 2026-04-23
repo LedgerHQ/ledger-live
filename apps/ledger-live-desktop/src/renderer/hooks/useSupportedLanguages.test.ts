@@ -13,6 +13,7 @@ describe("useSupportedLocales", () => {
       "fr",
       "de",
       "ru",
+      "ro",
       "es",
       "ja",
       "tr",
@@ -32,6 +33,7 @@ describe("useSupportedLocales", () => {
       "fr",
       "de",
       "ru",
+      "ro",
       "es",
       "ja",
       "tr",
@@ -47,6 +49,6 @@ describe("useSupportedLocales", () => {
       initialState: withFlagOverrides({ lldThai: { enabled: false } }),
     });
 
-    expect(result.current.locales).toEqual(["fr", "de", "ru", "es", "ja", "tr", "ko", "zh", "pt"]);
+    expect(result.current.locales).toEqual(["fr", "de", "ru", "ro", "es", "ja", "tr", "ko", "zh", "pt"]);
   });
 });
