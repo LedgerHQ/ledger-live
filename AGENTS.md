@@ -3,7 +3,7 @@
 ## Overview
 
 - "Ledger Wallet" (formerly "ledger-live") is a crypto wallet
-- This pnpm and turborepo monorepo provides frontend apps
+- This pnpm and nx monorepo provides frontend apps
 
 ## Common Commands
 
