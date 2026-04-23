@@ -223,10 +223,7 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
 }
 
 async function blockTransactionForHash(hash: string, ops: RawOperation[]): Promise<BlockTransaction | null> {
-  const tx = await ops[0].transaction();
   const failed = !ops[0].transaction_successful;
-  const fees = BigInt(tx.fee_charged || "0");
-  const feesPayer = tx.fee_account || tx.source_account;
 
   let blockOperations: BlockOperation[] = [];
   if (!failed) {
@@ -240,6 +237,10 @@ async function blockTransactionForHash(hash: string, ops: RawOperation[]): Promi
   if (!failed && blockOperations.length === 0) {
     return null;
   }
+
+  const tx = await ops[0].transaction();
+  const fees = BigInt(tx.fee_charged || "0");
+  const feesPayer = tx.fee_account || tx.source_account;
 
   return {
     hash,
@@ -282,19 +283,27 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [ledger, parentLedger, rawOps] = await Promise.all([
+  const [ledger, rawOps] = await Promise.all([
     fetchLedgerRecord(height),
-    height > 1 ? fetchLedgerRecord(height - 1) : Promise.resolve(null),
     fetchAllLedgerOperations(height),
   ]);
+
+  let parent: BlockInfo["parent"];
+  if (height > 1) {
+    const prevHash = (ledger as { prev_hash?: string }).prev_hash;
+    if (prevHash) {
+      parent = { height: height - 1, hash: prevHash };
+    } else {
+      const parentLedger = await fetchLedgerRecord(height - 1);
+      parent = { height: parentLedger.sequence, hash: parentLedger.hash };
+    }
+  }
 
   const info: BlockInfo = {
     height: ledger.sequence,
     hash: ledger.hash,
     time: new Date(ledger.closed_at),
-    ...(parentLedger && {
-      parent: { height: parentLedger.sequence, hash: parentLedger.hash },
-    }),
+    ...(parent && { parent }),
   };
 
   const transactions = await buildBlockTransactions(rawOps);

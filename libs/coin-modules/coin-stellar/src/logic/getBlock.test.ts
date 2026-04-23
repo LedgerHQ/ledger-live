@@ -59,6 +59,7 @@ describe("getBlock", () => {
         sequence: seq,
         hash: `LEDGER-HASH-${seq}`,
         closed_at: "2018-09-15T15:40:05Z",
+        ...(seq > 1 && { prev_hash: `LEDGER-HASH-${seq - 1}` }),
       }) as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
     );
   });

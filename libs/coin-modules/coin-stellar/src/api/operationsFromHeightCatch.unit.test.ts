@@ -13,7 +13,6 @@ describe("createApi listOperations / operationsFromHeight (no listOperations moc
   afterEach(() => {
     nock.cleanAll();
     nock.enableNetConnect();
-    jest.restoreAllMocks();
   });
 
   it("rethrows non-429 errors from the operations pagination loop", async () => {

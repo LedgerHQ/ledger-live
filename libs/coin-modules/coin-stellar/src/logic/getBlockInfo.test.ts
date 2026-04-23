@@ -15,7 +15,29 @@ describe("getBlockInfo", () => {
     jest.clearAllMocks();
   });
 
-  it("returns block info with parent when height > 1", async () => {
+  it("returns block info with parent when height > 1 (uses ledger prev_hash)", async () => {
+    fetchLedgerRecordMock.mockImplementation(async (seq: number) =>
+      ({
+        sequence: seq,
+        hash: `hash-${seq}`,
+        closed_at: `2020-01-0${seq}T00:00:00Z`,
+        ...(seq > 1 && { prev_hash: `hash-${seq - 1}` }),
+      }) as unknown as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
+    );
+
+    const result = await getBlockInfo(5);
+
+    expect(fetchLedgerRecordMock).toHaveBeenCalledTimes(1);
+    expect(fetchLedgerRecordMock).toHaveBeenCalledWith(5);
+    expect(result).toEqual({
+      height: 5,
+      hash: "hash-5",
+      time: new Date("2020-01-05T00:00:00Z"),
+      parent: { height: 4, hash: "hash-4" },
+    });
+  });
+
+  it("falls back to fetching parent ledger when prev_hash is missing", async () => {
     fetchLedgerRecordMock.mockImplementation(async (seq: number) =>
       ({
         sequence: seq,
@@ -28,6 +50,7 @@ describe("getBlockInfo", () => {
 
     expect(fetchLedgerRecordMock).toHaveBeenCalledWith(5);
     expect(fetchLedgerRecordMock).toHaveBeenCalledWith(4);
+    expect(fetchLedgerRecordMock).toHaveBeenCalledTimes(2);
     expect(result).toEqual({
       height: 5,
       hash: "hash-5",
