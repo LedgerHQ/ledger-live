@@ -8442,6 +8442,28 @@
         "daily": "Daily rewards",
         "eigenlayer_points": "Eigenlayer points",
         "validator": "Validator rewards"
+      },
+      "info": {
+        "available": {
+          "title": "{{currencyTicker}} available",
+          "description": "This amount is disposable."
+        },
+        "delegated": {
+          "title": "Delegated assets",
+          "description": "Delegated assets are used for {{currencyName}} voting. This is your total number of votes."
+        },
+        "undelegating": {
+          "title": "Undelegating",
+          "description": "Undelegated assets are in a timelock of {{numberOfDays}} days, before being available."
+        },
+        "delegationUnavailable": {
+          "title": "Delegation unavailable",
+          "description": "Not enough available balance in your account to start a new delegation."
+        },
+        "claimable": {
+          "title": "Claimable Rewards",
+          "description": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose."
+        }
       }
     },
     "noFundsModal": {
@@ -8466,6 +8488,13 @@
     "getFundsModal": {
       "text": "Get {{coin}} to stake",
       "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Wallet."
+    },
+    "default": {
+      "info": {
+        "undelegating": {
+          "description": "This is the amount currently leaving staking. It will appear in your available balance once the withdrawal has finished."
+        }
+      }
     }
   },
   "analyticsOptIn": {
