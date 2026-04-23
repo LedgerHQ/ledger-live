@@ -5299,7 +5299,7 @@
     "updateAvailableFromLLM": {
       "title": "Firmware update required",
       "description": "To perform this action, you first need to update the firmware of your {{ deviceName }}.",
-      "cta": "Go to My Ledger"
+      "cta": "Go to OS Update"
     },
     "updateNotAvailableFromLLM": {
       "title": "Firmware update required on computer",

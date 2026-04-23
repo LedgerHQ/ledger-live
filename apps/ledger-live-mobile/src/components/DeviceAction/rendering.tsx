@@ -775,44 +775,16 @@ export function RequiredFirmwareUpdate({
 
   const usbFwUpdateActivated = !!lastSeenDevice;
   const deviceName = getDeviceModel(device.modelId).productName;
-  const isDeviceConnectedViaUSB = device.wired;
 
-  // Goes to the manager if a firmware update is available, but only automatically
-  // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
     track("button_clicked", {
-      button: "OpenMyLedger",
+      button: "GoToOSUpdate",
       page: "Update_OS_To_Continue",
     });
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: NavigatorName.Base,
-          state: {
-            routes: [
-              {
-                name: NavigatorName.Main,
-                state: {
-                  routes: [
-                    {
-                      name: NavigatorName.MyLedger,
-                      state: {
-                        routes: [
-                          {
-                            name: ScreenName.MyLedgerChooseDevice,
-                            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        },
-      ],
+    navigation.navigate(ScreenName.FirmwareUpdate, {
+      device,
+      deviceInfo: lastSeenDevice?.deviceInfo,
+      onBackFromUpdate: () => {},
     });
   };
 
