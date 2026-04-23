@@ -39,7 +39,6 @@ export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
 
 type WebUsbDiscoveredInternal = TransportDiscoveredDevice & {
   webUsbDevice: WebUSBDevice;
-  nativeDevice: NativeUsbDevice;
   interfaceNumber: number;
 };
 
@@ -56,11 +55,7 @@ function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
   return null;
 }
 
-type ScannedWebUsbDevice = {
-  device: WebUSBDevice;
-  nativeDevice: NativeUsbDevice;
-  interfaceNumber: number;
-};
+type ScannedWebUsbDevice = { device: WebUSBDevice; interfaceNumber: number };
 
 /** Uses serialNumber when available so two same-model devices are distinguishable. */
 function deviceIdentityKey(device: WebUSBDevice): string {
@@ -163,14 +158,13 @@ export class NodeWebUsbTransport implements Transport {
       if (interfaceNumber === null) {
         continue;
       }
-      collected.push({ device, nativeDevice: native, interfaceNumber });
+      collected.push({ device, interfaceNumber });
     }
     return dedupeLedgerWebUsbDevices(collected);
   }
 
   private mapWebUsbToDiscovered(
     web: WebUSBDevice,
-    nativeDevice: NativeUsbDevice,
     interfaceNumber: number,
   ): WebUsbDiscoveredInternal {
     const key = deviceIdentityKey(web);
@@ -188,7 +182,6 @@ export class NodeWebUsbTransport implements Transport {
           id,
           deviceModel,
           webUsbDevice: web,
-          nativeDevice,
           interfaceNumber,
           transport: this.identifier,
         };
@@ -209,9 +202,7 @@ export class NodeWebUsbTransport implements Transport {
   listenToAvailableDevices() {
     void this.updateTransportDiscoveredDevices();
     return this._transportDiscoveredDevices.pipe(
-      map(list =>
-        list.map(({ webUsbDevice: _w, nativeDevice: _n, interfaceNumber: _i, ...rest }) => rest),
-      ),
+      map(list => list.map(({ webUsbDevice: _w, interfaceNumber: _i, ...rest }) => rest)),
     );
   }
 
@@ -219,9 +210,9 @@ export class NodeWebUsbTransport implements Transport {
     try {
       const scanned = await this.scanLedgerWebUsbDevices();
       const next: WebUsbDiscoveredInternal[] = [];
-      for (const { device, nativeDevice, interfaceNumber } of scanned) {
+      for (const { device, interfaceNumber } of scanned) {
         try {
-          next.push(this.mapWebUsbToDiscovered(device, nativeDevice, interfaceNumber));
+          next.push(this.mapWebUsbToDiscovered(device, interfaceNumber));
         } catch (e) {
           if (e instanceof DeviceNotRecognizedError) {
             continue;
@@ -256,8 +247,8 @@ export class NodeWebUsbTransport implements Transport {
     return from(this.promptDeviceAccess()).pipe(
       switchMap(scanned =>
         from(
-          scanned.map(({ device, nativeDevice, interfaceNumber }) =>
-            this.mapWebUsbToDiscovered(device, nativeDevice, interfaceNumber),
+          scanned.map(({ device, interfaceNumber }) =>
+            this.mapWebUsbToDiscovered(device, interfaceNumber),
           ),
         ),
       ),
@@ -328,11 +319,7 @@ export class NodeWebUsbTransport implements Transport {
     }
 
     const apduSender = this._deviceApduSenderFactory({
-      dependencies: {
-        device: row.webUsbDevice,
-        nativeDevice: row.nativeDevice,
-        interfaceNumber: row.interfaceNumber,
-      },
+      dependencies: { device: row.webUsbDevice, interfaceNumber: row.interfaceNumber },
       apduSenderFactory: this._apduSenderFactory,
       apduReceiverFactory: this._apduReceiverFactory,
       loggerFactory: this._loggerServiceFactory,
@@ -434,12 +421,11 @@ export class NodeWebUsbTransport implements Transport {
   async handleDeviceReconnection(
     machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
     web: WebUSBDevice,
-    nativeDevice: NativeUsbDevice,
     interfaceNumber: number,
   ): Promise<void> {
     try {
       this._deviceConnectionsPendingReconnection.delete(machine);
-      machine.setDependencies({ device: web, nativeDevice, interfaceNumber });
+      machine.setDependencies({ device: web, interfaceNumber });
       await machine.setupConnection();
       this._deviceConnectionsByWebUsbDevice.set(web, machine);
       machine.eventDeviceConnected();
@@ -477,7 +463,7 @@ export class NodeWebUsbTransport implements Transport {
       });
 
       if (pending) {
-        await this.handleDeviceReconnection(pending, web, native, iface);
+        await this.handleDeviceReconnection(pending, web, iface);
       }
       await this.updateTransportDiscoveredDevices();
     } catch (e) {
