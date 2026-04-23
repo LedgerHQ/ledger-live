@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { interval, Observable, of } from "rxjs";
 import { scan, debounce, tap, takeWhile } from "rxjs/operators";
-import { useEffect, useCallback, useState, useMemo, useRef } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { log } from "@ledgerhq/logs";
 import {
   getDerivationScheme,
@@ -384,7 +384,7 @@ const reducer = (state: State, e: Event): State => {
  * specify an account or a currency without resolving manually the actual
  * applications we depend on in order to access the flow.
  */
-function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
+async function inferCommandParams(appRequest: AppRequest): Promise<ConnectAppRequest> {
   let derivationMode;
   let derivationPath;
 
@@ -408,7 +408,9 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
 
   let dependencies: string[] | undefined = undefined;
   if (appDependencies) {
-    dependencies = appDependencies.map(d => inferCommandParams(d).appName);
+    dependencies = (await Promise.all(appDependencies.map(d => inferCommandParams(d)))).map(
+      p => p.appName,
+    );
   }
 
   if (!currency) {
@@ -425,7 +427,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
   if (account) {
     derivationMode = account.derivationMode;
     derivationPath = account.freshAddressPath;
-    const m = loadAccountModuleForFamily(account.currency.family);
+    const m = await loadAccountModuleForFamily(account.currency.family);
 
     if (m && m.injectGetAddressParams) {
       extra = m.injectGetAddressParams(account);
@@ -470,16 +472,16 @@ export const createAction = (
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion | undefined>(undefined);
 
-    const request = useMemo(
-      () => inferCommandParams(appRequest), // for now i don't have better
-      // oxlint-disable-next-line react-hooks/exhaustive-deps
-      [
-        appRequest.appName,
-        appRequest.account?.id,
-        appRequest.currency?.id,
-        appRequest.dependencies,
-      ],
-    );
+    const [request, setRequest] = useState<ConnectAppRequest | null>(null);
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+      inferCommandParams(appRequest).then(setRequest);
+    }, [
+      appRequest.appName,
+      appRequest.account?.id,
+      appRequest.currency?.id,
+      appRequest.dependencies,
+    ]);
 
     const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> = useCallback(
       ({ deviceId, deviceName, request }: ConnectAppInput) => {
@@ -517,7 +519,7 @@ export const createAction = (
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
-      if (state.opened) return;
+      if (state.opened || !request) return;
 
       const impl = getImplementation(currentMode)<ConnectAppEvent, ConnectAppRequest>({
         deviceSubject,
