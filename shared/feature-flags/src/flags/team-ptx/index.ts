@@ -6,6 +6,7 @@ export * from "./ethStakingProviders";
 export * from "./lifiSolana";
 export * from "./noah";
 export * from "./portfolioExchangeBanner";
+export * from "./ptxBorrowLiveApp";
 export * from "./ptxCard";
 export * from "./ptxEarnDrawerConfiguration";
 export * from "./ptxEarnLiveApp";
