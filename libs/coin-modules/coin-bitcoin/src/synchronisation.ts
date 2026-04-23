@@ -520,7 +520,7 @@ export function reduceShieldedSyncResult(
     orchardBalance,
     syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
     progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-    estimatedTimeRemaining: existingPrivateInfo?.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
+    estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
     ufvk: existingPrivateInfo?.ufvk ?? null,
     birthday: existingPrivateInfo?.birthday ?? null,
     lastSyncTimestamp: Date.now(),
@@ -706,6 +706,7 @@ export function buildSyncObservables(
     isZcash &&
     !!zcashInitialAccount &&
     (zcashInitialAccount.privateInfo?.syncState === "ready" ||
+      zcashInitialAccount.privateInfo?.syncState === "running" ||
       zcashInitialAccount.privateInfo?.syncState === "stopped" ||
       zcashInitialAccount.privateInfo?.syncState === "outdated");
   const shieldedEnabled = ufvkIsPresent && syncStateIsEnabled;
