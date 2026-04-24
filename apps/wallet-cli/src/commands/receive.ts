@@ -1,13 +1,12 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
-import { accountOption, outputOption } from "./shared-options";
+import { accountOption, outputOption, resolveAccountArg, resolveAccountDescriptor } from "./inputs";
 
 export default defineCommand({
   name: "receive",
@@ -23,16 +22,15 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
-    const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
+    const ctx = { command: "receive", network: "", account: "" };
+    const out = createCommandOutput(flags.output, ctx);
     const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, {
-      command: "receive",
-      network,
-      account: descriptor.id,
-    });
+
 
     await out.run(async () => {
+      const descriptor = await resolveAccountDescriptor(resolveAccountArg(flags.account, positional));
+      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
+      ctx.account = descriptor.id;
       if (flags.verify) {
         const spin = out.spin(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`);
         await withCurrencyDeviceSession(descriptor.currencyId, async () => {

@@ -1,9 +1,8 @@
 import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../../wallet";
-import { parseV1, toV0, serializeNetwork } from "../../shared/accountDescriptor";
-import { resolveAccountArg } from "../../wallet/models";
+import { toV0, serializeNetwork, serializeV1 } from "../../shared/accountDescriptor";
 import { createCommandOutput } from "../../output";
-import { accountOption, outputOption } from "../shared-options";
+import { accountOption, outputOption, resolveAccountArg, resolveAccountDescriptorV1 } from "../inputs";
 
 export default defineCommand({
   name: "fresh-address",
@@ -13,17 +12,16 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
-    const input = resolveAccountArg(flags.account, positional);
-    const v1 = parseV1(input);
-    const network = serializeNetwork(v1.network);
+    const ctx = { command: "account fresh-address", network: "", account: "" };
+    const out = createCommandOutput(flags.output, ctx);
     const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, {
-      command: "account fresh-address",
-      network,
-      account: input,
-    });
+
 
     await out.run(async () => {
+      const v1 = await resolveAccountDescriptorV1(resolveAccountArg(flags.account, positional));
+      ctx.network = serializeNetwork(v1.network);
+      ctx.account = serializeV1(v1);
+
       // address-based (EVM, Solana…): no sync needed, address is in the descriptor
       // utxo (Bitcoin…): next unused address requires a blockchain scan
       const address =
