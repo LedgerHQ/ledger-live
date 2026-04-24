@@ -113,7 +113,7 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   const liveFamily =
     FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
 
-  const familyModule = loadWalletApiAdapterForFamily(liveFamily);
+  const familyModule = await loadWalletApiAdapterForFamily(liveFamily);
 
   if (familyModule) {
     return familyModule.getWalletAPITransactionSignFlowInfos({ walletApiTransaction, account });
