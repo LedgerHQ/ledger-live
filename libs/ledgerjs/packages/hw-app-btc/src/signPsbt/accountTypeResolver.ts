@@ -7,13 +7,13 @@ import type { ScriptType } from "./types";
 function descrTemplFrom(addressFormat: AddressFormat): DefaultDescriptorTemplate {
   switch (addressFormat) {
     case "legacy":
-      return "pkh(@0)";
+      return "pkh(@0/**)";
     case "p2sh":
-      return "sh(wpkh(@0))";
+      return "sh(wpkh(@0/**))";
     case "bech32":
-      return "wpkh(@0)";
+      return "wpkh(@0/**)";
     case "bech32m":
-      return "tr(@0)";
+      return "tr(@0/**)";
     default:
       throw new Error("Unsupported address format " + addressFormat);
   }
@@ -63,13 +63,13 @@ export function createAccountTypeFromAddressFormat(
   const descrTemplate = descrTemplFrom(addressFormat);
 
   switch (descrTemplate) {
-    case "pkh(@0)":
+    case "pkh(@0/**)":
       return new p2pkh(psbt, masterFp);
-    case "wpkh(@0)":
+    case "wpkh(@0/**)":
       return new p2wpkh(psbt, masterFp);
-    case "sh(wpkh(@0))":
+    case "sh(wpkh(@0/**))":
       return new p2wpkhWrapped(psbt, masterFp);
-    case "tr(@0)":
+    case "tr(@0/**)":
       return new p2tr(psbt, masterFp);
     default:
       throw new Error(`Unsupported descriptor template: ${descrTemplate}`);

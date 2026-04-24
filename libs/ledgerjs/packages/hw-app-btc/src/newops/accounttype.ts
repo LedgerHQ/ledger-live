@@ -195,7 +195,7 @@ export class p2pkh extends SingleKeyAccount {
   }
 
   getDescriptorTemplate(): DefaultDescriptorTemplate {
-    return "pkh(@0)";
+    return "pkh(@0/**)";
   }
 }
 
@@ -227,7 +227,7 @@ export class p2tr extends SingleKeyAccount {
   }
 
   getDescriptorTemplate(): DefaultDescriptorTemplate {
-    return "tr(@0)";
+    return "tr(@0/**)";
   }
 
   /**
@@ -284,7 +284,7 @@ export class p2wpkhWrapped extends SingleKeyAccount {
   }
 
   getDescriptorTemplate(): DefaultDescriptorTemplate {
-    return "sh(wpkh(@0))";
+    return "sh(wpkh(@0/**))";
   }
 
   private createRedeemScript(pubkey: Buffer): Buffer {
@@ -322,6 +322,6 @@ export class p2wpkh extends SingleKeyAccount {
   }
 
   getDescriptorTemplate(): DefaultDescriptorTemplate {
-    return "wpkh(@0)";
+    return "wpkh(@0/**)";
   }
 }
