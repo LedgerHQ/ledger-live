@@ -1,8 +1,8 @@
 ---
 "@ledgerhq/live-common": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/live-cli": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-cli": minor
 ---
 
 chore(live-common): async prep — account serialization & sign chain (LIVE-29184)

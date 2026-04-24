@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-cli
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#16470](https://github.com/LedgerHQ/ledger-live/pull/16470) [`e671ee0`](https://github.com/LedgerHQ/ledger-live/commit/e671ee0781983bbddfc3dffbbf386e680d3888ac) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove direct runtime imports of `@ledgerhq/coin-*` packages from shared live-common code (`account/helpers`, `operation`, `bridge/generic-alpaca/validateAddress`); all coin-specific behaviour is now deferred via the `coinModuleLoaders` registry. wallet-cli no longer needs the tronweb proto polyfill as a side effect.
+
+- [#16507](https://github.com/LedgerHQ/ledger-live/pull/16507) [`070336d`](https://github.com/LedgerHQ/ledger-live/commit/070336d7156850df82ab16ca3d09d6afd6398c91) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix bare boolean flags (`--dry-run`, `--rbf`, `--verify`) being silently ignored. Previously `--dry-run` without an explicit value routed the send command to the full sign-and-broadcast path; now it correctly activates the dry-run path. Root cause: missing `argumentKind: "flag"` on all boolean options.
+
+- [#16428](https://github.com/LedgerHQ/ledger-live/pull/16428) [`20a622b`](https://github.com/LedgerHQ/ledger-live/commit/20a622b84b69ceffda6451fced071d759424532d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix JSON mode error output: route error envelopes to stdout (not stderr) so they are captured reliably on all platforms, use correct `{ ok: false, error: { command, message } }` envelope shape, and ensure invalid descriptor errors are caught by the error boundary
+
+- [#16386](https://github.com/LedgerHQ/ledger-live/pull/16386) [`542fa64`](https://github.com/LedgerHQ/ledger-live/commit/542fa64145d67864c080459577577dcfeb2cf5d4) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add optional `data` (0x-prefixed hex calldata) field to `EvmTransactionIntentSchema`, enabling arbitrary EVM contract interactions. The bridge adapter propagates it to the live-common EVM transaction's `data: Buffer` field.
+
+- [#16392](https://github.com/LedgerHQ/ledger-live/pull/16392) [`e39bb03`](https://github.com/LedgerHQ/ledger-live/commit/e39bb0304c12cd32389e005e1ce02254f86b72ee) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `account fresh-address` command: resolves the fresh receive address from a V1 descriptor without requiring a device. For address-based chains (EVM, Solana) the address is extracted directly — no sync. For UTXO chains (Bitcoin) the bridge sync finds the next unused address.
+
+- [#16416](https://github.com/LedgerHQ/ledger-live/pull/16416) [`24915a2`](https://github.com/LedgerHQ/ledger-live/commit/24915a29c6b1bb4c8b0b435dabf889443721cc33) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Refactor: shared option definitions and unified CommandOutput abstraction across all commands
+
+### Patch Changes
+
+- Updated dependencies [[`292828a`](https://github.com/LedgerHQ/ledger-live/commit/292828a9797e39f6524f84a0f1064381013e2c77), [`c764fc7`](https://github.com/LedgerHQ/ledger-live/commit/c764fc74b2a0d28a6cd1ec1892968b5eb9845b14), [`e671ee0`](https://github.com/LedgerHQ/ledger-live/commit/e671ee0781983bbddfc3dffbbf386e680d3888ac), [`12eb67a`](https://github.com/LedgerHQ/ledger-live/commit/12eb67ae64f08b589c2009c977895a557d1c156f), [`fbff5f4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5f407027cb2b24834fea53ef21a3ef93bf95), [`b7cdf0e`](https://github.com/LedgerHQ/ledger-live/commit/b7cdf0e7c6faca170af3bfed9042165c74517ae4), [`317c479`](https://github.com/LedgerHQ/ledger-live/commit/317c479353be58645e9581175081619d76a9b5c3), [`2374fcf`](https://github.com/LedgerHQ/ledger-live/commit/2374fcf74a240431baab4f2c73bbb1c913a0f7d5), [`b661cd9`](https://github.com/LedgerHQ/ledger-live/commit/b661cd965e9634840e2ebafb2fbbd1b1328ce98f), [`c51170a`](https://github.com/LedgerHQ/ledger-live/commit/c51170a8d615d5eb3b10b0572d4960e0d36ebc6b), [`8ade8bd`](https://github.com/LedgerHQ/ledger-live/commit/8ade8bdfb0826dc1dbea50a3aa4682cab52ee7b6), [`178bda8`](https://github.com/LedgerHQ/ledger-live/commit/178bda8455ef6aca48eaa00ccc0c37adf582d86f), [`093017c`](https://github.com/LedgerHQ/ledger-live/commit/093017c2743cc634dfe328f5d28c35df1eae6429), [`025b4ae`](https://github.com/LedgerHQ/ledger-live/commit/025b4aececb5752ec6a0b4e29562716597308a54), [`e377079`](https://github.com/LedgerHQ/ledger-live/commit/e3770793670b73d4409bd5be2081ca922e8679ac), [`e23ca29`](https://github.com/LedgerHQ/ledger-live/commit/e23ca29bb4fd553ff7612d1ea4d9f0e70f7fe0c7), [`45e134c`](https://github.com/LedgerHQ/ledger-live/commit/45e134c63f204444a5997109f4807447f51469ee), [`c619afb`](https://github.com/LedgerHQ/ledger-live/commit/c619afb939fb32c6c669fc700493fce8f2bde49d), [`9099298`](https://github.com/LedgerHQ/ledger-live/commit/9099298c0fed96aea636b4c31f5d36d7d1f57f85), [`1e47a25`](https://github.com/LedgerHQ/ledger-live/commit/1e47a25b02490fef7896d31c41c8609765939f97), [`5c4efa6`](https://github.com/LedgerHQ/ledger-live/commit/5c4efa6c748a7fab0e14bd8b8c975e71ed77756a), [`4afb1f9`](https://github.com/LedgerHQ/ledger-live/commit/4afb1f982d535c6fc8166281ff4fa1ed03569265), [`8dbf2f3`](https://github.com/LedgerHQ/ledger-live/commit/8dbf2f3808af7a5f1ffe279fc99d0b64350779ef)]:
+  - @ledgerhq/live-common@34.70.0-next.0
+  - @ledgerhq/coin-evm@3.5.0-next.0
+  - @ledgerhq/types-live@6.106.0-next.0
+  - @ledgerhq/coin-bitcoin@0.39.0-next.0
+  - @ledgerhq/coin-solana@0.51.1-next.0
+  - @ledgerhq/ledger-wallet-framework@1.3.1-next.0
+  - @ledgerhq/cryptoassets@13.46.1-next.0
+  - @ledgerhq/live-wallet@0.25.2-next.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-sui
 
+## 1.10.0-next.0
+
+### Minor Changes
+
+- [#15591](https://github.com/LedgerHQ/ledger-live/pull/15591) [`c591323`](https://github.com/LedgerHQ/ledger-live/commit/c591323bd9c746ddee1df5f36070c0c442dd5c44) Thanks [@ishaba](https://github.com/ishaba)! - feat: update hw-app-sui
+
 ## 1.9.0
 
 ### Minor Changes

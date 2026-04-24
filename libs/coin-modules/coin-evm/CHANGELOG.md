@@ -1,5 +1,25 @@
 # @ledgerhq/coin-evm
 
+## 3.5.0-next.0
+
+### Minor Changes
+
+- [#16495](https://github.com/LedgerHQ/ledger-live/pull/16495) [`292828a`](https://github.com/LedgerHQ/ledger-live/commit/292828a9797e39f6524f84a0f1064381013e2c77) Thanks [@dilaouid](https://github.com/dilaouid)! - Fix balance semantics in generic-alpaca extractBalances: expose total balance as `value` and non-spendable part as `locked`, restoring staking flows (e.g. Solana stake withdraw fee covered by the unstake reserve). Update coin-evm `computeAmount`/`validateAmount` to compute spendable funds as `value - locked`, preserving the existing EVM send-all behavior for staking-enabled accounts.
+
+- [#16073](https://github.com/LedgerHQ/ledger-live/pull/16073) [`178bda8`](https://github.com/LedgerHQ/ledger-live/commit/178bda8455ef6aca48eaa00ccc0c37adf582d86f) Thanks [@qperrot](https://github.com/qperrot)! - feat(coin-evm): delegation table UI
+
+- [#16604](https://github.com/LedgerHQ/ledger-live/pull/16604) [`025b4ae`](https://github.com/LedgerHQ/ledger-live/commit/025b4aececb5752ec6a0b4e29562716597308a54) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(coin-evm): fix difference decimals sei-evm
+
+- [#16349](https://github.com/LedgerHQ/ledger-live/pull/16349) [`4afb1f9`](https://github.com/LedgerHQ/ledger-live/commit/4afb1f982d535c6fc8166281ff4fa1ed03569265) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: return contract interaction details
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/domain-service@1.8.1-next.0
+  - @ledgerhq/evm-tools@1.12.4
+  - @ledgerhq/ledger-wallet-framework@1.3.1-next.0
+  - @ledgerhq/cryptoassets@13.46.1-next.0
+
 ## 3.4.0
 
 ### Minor Changes
