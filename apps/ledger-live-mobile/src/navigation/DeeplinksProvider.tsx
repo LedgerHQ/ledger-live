@@ -47,6 +47,7 @@ import {
   validateMarketCurrencyId,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
+import { appendRecoverDeeplinkReloadIfNeeded } from "./deeplinks/appendRecoverDeeplinkReloadIfNeeded";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -599,7 +600,9 @@ export const DeeplinksProvider = ({
               return;
             }
 
-            listener(getProxyURL(url, buySellUiManifestId));
+            listener(
+              appendRecoverDeeplinkReloadIfNeeded(getProxyURL(url, buySellUiManifestId)),
+            );
           });
           // Clean up the event listeners
           return () => {
