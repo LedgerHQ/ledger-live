@@ -142,6 +142,8 @@ export type BaseNavigatorStackParamList = {
     redirectTo?: string;
     callback?: string;
     date?: string; // used to reload the webview in case of multiple restore in a row
+    /** Bumped when the same Recover deeplink is opened while already on Recover (webview remount). */
+    recoverDeeplinkAt?: string;
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
