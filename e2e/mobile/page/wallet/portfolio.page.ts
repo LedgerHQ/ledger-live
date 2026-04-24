@@ -15,7 +15,10 @@ export default class PortfolioPage {
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
-  portfolioSettingsButtonId = "topbar-settings";
+  portfolioSettingsId = "topbar-settings";
+  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
+  topBarMyWalletId = "topbar-mywallet";
+  portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
@@ -56,7 +59,7 @@ export default class PortfolioPage {
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
 
-  portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
+  portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
@@ -80,12 +83,17 @@ export default class PortfolioPage {
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
-    await tapByElement(await this.portfolioSettingsButton());
+    if (isWallet40) {
+      await tapById(this.topBarMyWalletId);
+      await tapById(this.myWalletHeaderSettingsButtonId);
+    } else {
+      await tapByElement(await this.portfolioSettingsButton());
+    }
   }
 
   @Step("Wait for portfolio page to load")
-  async waitForPortfolioPageToLoad() {
-    await waitForElementById(this.portfolioSettingsButtonId, 120000);
+  async waitForPortfolioPageToLoad(timeout = 120000) {
+    await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
   }
 
   @Step("Expect Portfolio read only")
@@ -146,9 +154,9 @@ export default class PortfolioPage {
   }
 
   @Step("Open Portfolio via deeplink")
-  async openViaDeeplink() {
+  async openViaDeeplink(timeout = 120000) {
     await openDeeplink(this.baseLink);
-    await waitForElementById(this.portfolioSettingsButtonId); // Issue with RN75 : QAA-370
+    await this.waitForPortfolioPageToLoad(timeout); // Issue with RN75 : QAA-370
   }
 
   @Step("Click on Add account button in portfolio")

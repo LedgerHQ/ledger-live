@@ -32,6 +32,9 @@ export type NodeWebUsbApduSenderConstructorArgs = {
 };
 
 async function gracefullyResetDevice(device: WebUSBDevice): Promise<void> {
+  if (process.platform === "win32") {
+    return;
+  }
   try {
     await device.reset();
   } catch {

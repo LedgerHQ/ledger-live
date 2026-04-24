@@ -1,5 +1,11 @@
 {
-  "entry": ["src/ZCash.ts"],
+  "entry": [
+    "src/ZCash.ts",
+    "src/ZCashNative.ts",
+    "src/ZCashNativeIPC.ts",
+    "src/ipc/main-host.ts",
+    "src/ipc/utility-entry.ts"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/*.fixture.ts",
@@ -9,7 +15,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"
+    "jest-util",
+    "electron"
   ],
   "ignoreUnused": [
     "@ledgerhq/coin-bitcoin",
@@ -18,6 +25,8 @@
   "ignoreUnimported": [
     "src/ZCash.ts",
     "src/constants.ts",
-    "src/types.ts"
+    "src/types.ts",
+    "src/stubs/ZCashNative.native.ts",
+    "src/stubs/ZCash.native.ts"
   ]
 }

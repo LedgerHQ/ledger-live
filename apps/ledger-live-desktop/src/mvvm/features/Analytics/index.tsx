@@ -25,7 +25,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-32">
+    <div className="flex flex-col gap-32 pb-32">
       <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 

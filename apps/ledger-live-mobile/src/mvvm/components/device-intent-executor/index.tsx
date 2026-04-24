@@ -10,14 +10,19 @@ import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM from "./DeviceContextInitializerComponentLWM";
 import ErrorComponentLWM from "./ErrorComponentLWM";
 import InvalidOperationComponentLWM from "./InvalidOperationComponentLWM";
+import type { ConnectAppDeviceInitializationInput } from "./types";
 
-type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<JobState, Input, ExtraProps>;
+type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
+  JobState,
+  Input,
+  ExtraProps,
+  ConnectAppDeviceInitializationInput
+>;
 
-const platformConfig: ExecutorPlatformConfiguration = {
+const platformConfig: ExecutorPlatformConfiguration<ConnectAppDeviceInitializationInput> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
   ConnectionErrorComponent: ErrorComponentLWM,
-  InitializationErrorComponent: ErrorComponentLWM,
   IntentErrorComponent: ErrorComponentLWM,
   InvalidOperationComponent: InvalidOperationComponentLWM,
 };

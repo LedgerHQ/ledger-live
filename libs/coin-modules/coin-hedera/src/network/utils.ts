@@ -1,11 +1,12 @@
-import { AccountId } from "@hashgraph/sdk";
+import { AccountId, TransactionId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import type { HederaConfig } from "../config";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
-import { nanosToSeconds, toEntityId } from "../logic/utils";
+import { nanosToSeconds, toEntityId, toTimestamp } from "../logic/utils";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
@@ -18,6 +19,24 @@ import type {
 } from "../types";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
+
+export async function createTransactionId(
+  accountId: string,
+  config: HederaConfig,
+): Promise<TransactionId> {
+  if (!config.useNetworkTimestamp) {
+    return TransactionId.generate(accountId);
+  }
+
+  try {
+    const lastBlock = await apiClient.getLatestBlock();
+    const validStart = toTimestamp(lastBlock.timestamp.to ?? lastBlock.timestamp.from);
+
+    return TransactionId.withValidStart(AccountId.fromString(accountId), validStart);
+  } catch {
+    return TransactionId.generate(accountId);
+  }
+}
 
 function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
   if (accountId.shard.eq(0) && accountId.realm.eq(0)) {

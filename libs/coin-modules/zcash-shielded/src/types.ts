@@ -1,8 +1,33 @@
 import type { BigNumber } from "bignumber.js";
+import type { Observable } from "rxjs";
 
 export type * from "./jsonRpcClient";
 export type * from "./shieldedTransaction";
-export type * from "./ZCash";
+
+export type SyncShieldedArgs = {
+  startBlockHeight: number;
+  viewingKey: string;
+  maxBatchSize: number;
+};
+
+/**
+ * Public surface shared by the two native-engine clients
+ * ({@link ../ZCashNative.ZCashNative} — in-process, and
+ * {@link ../ZCashNativeIPC.ZCashNativeIPC} — Electron renderer bridge).
+ *
+ * Both implementations MUST stay signature-compatible so the renderer bundle
+ * can alias one to the other (see `rspack.renderer.ts`). Declaring
+ * `implements ZCashNativeClient` on each class lets the compiler enforce that
+ * symmetry — if a method is added or renamed on one side without the other,
+ * `tsc` fails.
+ */
+export interface ZCashNativeClient {
+  readonly grpcUrl: string;
+  readonly network: string;
+  getChainTip(): Promise<number>;
+  estimatedSyncTime(totalBlocks: number): Promise<(processedBlocks: number) => SyncEstimatedTime>;
+  syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult>;
+}
 
 export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
 
@@ -70,6 +95,28 @@ export type ShieldedTransactionRaw = {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
   };
+};
+
+export type ShieldedSyncResult = {
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessedBlock?: number;
+  transactions: ShieldedTransaction[];
+};
+
+/**
+ * IPC-safe variant of {@link ShieldedSyncResult}.
+ *
+ * `BigNumber` does not survive `structuredClone` (used by Electron IPC and
+ * UtilityProcess `parentPort.postMessage`), so the native engine emits this
+ * raw shape; the renderer client rehydrates it into {@link ShieldedSyncResult}
+ * with real `BigNumber` instances.
+ */
+export type ShieldedSyncResultRaw = {
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessedBlock?: number;
+  transactions: ShieldedTransactionRaw[];
 };
 
 export type SyncEstimatedTime = {

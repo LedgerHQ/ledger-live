@@ -1,15 +1,21 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { TileButtonProps } from "@ledgerhq/lumen-ui-rnative";
-import { ShieldCheckNotification, LifeRing, Gift } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  ShieldCheck,
+  ShieldCheckNotification,
+  LifeRing,
+  Gift,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useSelector } from "~/context/hooks";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { lastConnectedDeviceSelector, hasClickedRecoverSelector } from "~/reducers/settings";
+import { setHasClickedRecover } from "~/actions/settings";
 import { track } from "~/analytics";
 
 export interface QuickActionRowItem {
@@ -26,25 +32,31 @@ interface QuickActionsRowViewModel {
 
 export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  const hasClickedRecover = useSelector(hasClickedRecoverSelector);
   const recoverFeature = useFeature("protectServicesMobile");
   const protectId = recoverFeature?.params?.protectId ?? "protect-prod";
 
   const hasDevice = lastConnectedDevice !== null;
+  const recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
 
   const recoverLabel = hasDevice
     ? t("myWallet.quickActions.recover")
     : t("myWallet.quickActions.backup");
 
   const handleRecoverPress = useCallback(() => {
+    if (!hasClickedRecover) {
+      dispatch(setHasClickedRecover(true));
+    }
     track("button_clicked", { button: "Recover", page: ScreenName.MyWallet });
     navigation.navigate(ScreenName.Recover, {
       platform: protectId,
       device: lastConnectedDevice ?? undefined,
     });
-  }, [navigation, protectId, lastConnectedDevice]);
+  }, [navigation, protectId, lastConnectedDevice, hasClickedRecover, dispatch]);
 
   const handleHelpPress = useCallback(() => {
     track("button_clicked", { button: "Help", page: ScreenName.MyWallet });
@@ -61,7 +73,7 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
       {
         id: "recover",
         label: recoverLabel,
-        icon: ShieldCheckNotification,
+        icon: recoverIcon,
         onPress: handleRecoverPress,
         testID: "my-wallet-quick-action-recover",
       },
@@ -80,7 +92,7 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
         testID: "my-wallet-quick-action-referral",
       },
     ],
-    [t, recoverLabel, handleRecoverPress, handleHelpPress, handleReferralPress],
+    [t, recoverLabel, recoverIcon, handleRecoverPress, handleHelpPress, handleReferralPress],
   );
 
   return { actions };

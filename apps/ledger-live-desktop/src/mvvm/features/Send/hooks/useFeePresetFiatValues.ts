@@ -202,10 +202,9 @@ export function useFeePresetFiatValues({
     requestIdRef.current += 1;
     const requestId = requestIdRef.current;
 
-    const bridge = getAccountBridge(account, parentAccount ?? undefined);
-
-    queueMicrotask(() => {
-      estimateFiatValuesForPresets({
+    queueMicrotask(async () => {
+      const bridge = await getAccountBridge(account, parentAccount ?? undefined);
+      await estimateFiatValuesForPresets({
         bridge,
         mainAccount,
         transaction,

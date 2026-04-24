@@ -24,7 +24,7 @@ catalog:
   "@ledgerhq/device-management-kit": 1.2.0
   "@ledgerhq/device-signer-kit-ethereum": 1.14.0
   "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
-  "@ledgerhq/device-signer-kit-solana": 1.7.1
+  "@ledgerhq/device-signer-kit-solana": 1.8.0
   "@ledgerhq/device-signer-kit-cosmos": 1.0.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
@@ -33,8 +33,9 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
   "@ledgerhq/lumen-design-core": 0.1.11
-  "@ledgerhq/lumen-ui-react": 0.1.22
-  "@ledgerhq/lumen-ui-rnative": 0.1.23
+  "@ledgerhq/lumen-ui-react": 0.1.24
+  "@ledgerhq/lumen-ui-rnative": 0.1.25
+  "@ledgerhq/zcash-utils": 0.1.5
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7

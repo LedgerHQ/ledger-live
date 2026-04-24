@@ -234,13 +234,15 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Verify provider URL for $0")
   async verifyProviderUrl(providerName: string, buySell: BuySell, userdataDestinationPath: string) {
+    const addresses = await getAccountAddressesFromAppJson(userdataDestinationPath);
+
     const rawUrl = await this.waitForGoToUrl();
     const decodedUrl = decodeGoToUrl(rawUrl);
     const url = new URL(decodedUrl);
 
     this.verifyBaseUrl(url, providerName, buySell.operation);
     this.verifyQueryParams(url, providerName, buySell);
-    await this.verifyDestinationAddress(url, providerName, buySell, userdataDestinationPath);
+    await this.verifyDestinationAddress(url, providerName, buySell, addresses);
   }
 
   private async waitForGoToUrl(): Promise<string> {
@@ -281,20 +283,18 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   private verifyQueryParams(url: URL, providerName: string, buySell: BuySell) {
     const expectations = this.getExpectedQueryParams(providerName, buySell);
+    const params = Object.fromEntries(
+      Array.from(url.searchParams).map(([k, v]) => [k.toLowerCase(), v]),
+    );
 
     for (const [expectedKey, expectedValue] of Object.entries(expectations)) {
-      const actualKey = Array.from(url.searchParams.keys()).find(
-        key => key.toLowerCase() === expectedKey.toLowerCase(),
-      );
-
-      if (!actualKey) {
+      const actualValue = params[expectedKey];
+      if (actualValue === undefined) {
         throw new Error(`Query param "${expectedKey}" not found in URL`);
       }
-
-      const actualValue = url.searchParams.get(actualKey) ?? "";
       expect(
         actualValue.toLowerCase(),
-        `Query param "${actualKey}" should include "${expectedValue}"`,
+        `Query param "${expectedKey}" should include "${expectedValue}"`,
       ).toContain(expectedValue);
     }
   }
@@ -317,11 +317,10 @@ export class BuyAndSellPage extends WebViewAppPage {
     url: URL,
     providerName: string,
     buySell: BuySell,
-    userDataDir: string,
+    addresses: string[],
   ) {
     const config = this.providerConfigs[providerName];
     if (!config) throw new Error(`Unsupported provider: ${providerName}`);
-    const addresses = await getAccountAddressesFromAppJson(userDataDir);
     const normalizedAddresses = addresses.map(a => a.toLowerCase());
 
     const expectedParam = buySell.operation === OperationType.Buy ? config.addressParam : "address";

@@ -2,6 +2,7 @@ import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useTranslation } from "~/context/Locale";
 import RingChart from "./RingChart";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
@@ -34,7 +35,11 @@ const AssetWrapperContainer = styled(Flex).attrs({
 const size = normalize(200);
 
 function Allocation() {
-  const list = useNonBlacklistedDistribution();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
+  const list = useNonBlacklistedDistribution({
+    showEmptyAccounts: true,
+    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
+  });
   const { colors } = useTheme();
   const { t } = useTranslation();
 

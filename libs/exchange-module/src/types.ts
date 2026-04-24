@@ -10,8 +10,7 @@ export enum ExchangeType {
 export type ExchangeStartParams =
   | ExchangeStartFundParams
   | ExchangeStartSellParams
-  | ExchangeStartSwapParams
-  | ExchangeStartFundParams;
+  | ExchangeStartSwapParams;
 
 export type ExchangeStartFundParams = {
   exchangeType: "FUND";
@@ -109,4 +108,204 @@ export type SwapLiveError = {
       };
     };
   };
+};
+
+// Swap quotes (`custom.exchange.getQuotes`). Internal HTTP shapes live in ledger-live-common only.
+
+export type UniswapOrderType = "classic" | "uniswapxv2" | "all";
+
+export type QuotesInput = {
+  amount: string;
+  sendAccountId: string;
+  receiveAccountId: string;
+  sendAddress: string;
+  receiveAddress: string;
+  sendCurrencyId: string;
+  receiveCurrencyId: string;
+  counterValueCurrency: string;
+  networkFeesCurrencyId?: string;
+  slippage?: number;
+  uniswapOrderType?: UniswapOrderType;
+};
+
+export type GetQuotesArgs = {
+  providers: string[];
+  data: QuotesInput;
+  headers?: Array<[string, string]>;
+  signal?: AbortSignal;
+};
+
+export type GetQuotesWireArgs = Omit<GetQuotesArgs, "signal">;
+
+export type TradeMethod = "fixed" | "float";
+
+export type ProviderTypes = "DEX" | "CEX";
+
+/**
+ * Non-fatal signals attached to a quote.
+ *
+ * - `highSpread`: quote's exchange rate is suspiciously high.
+ * - `unrealisticQuote`: expected fiat output exceeds fiat input by `gainPercent`.
+ */
+export type QuoteWarning =
+  | { code: "highSpread" }
+  | { code: "unrealisticQuote"; gainPercent: number };
+
+export type QuoteError = "notEnoughBalanceForFees";
+
+export type ProviderDetails = {
+  name: string;
+  type: ProviderTypes;
+  url?: string;
+  isUniswapX: boolean;
+  requiresKYC: boolean;
+  continuesInProviderLiveApp: boolean;
+};
+
+export type QuoteNetworkFees = {
+  currencyId: string;
+  gasLimit?: string;
+};
+
+/** Quote liquidity source; surfaced so consumers can render or sort on it. */
+export type QuoteLiquiditySource = "RFQ" | "AMM";
+
+/** Payout-chain network fee (fee paid on the destination chain, when applicable). */
+export type QuotePayoutNetworkFees = {
+  value: number;
+  currencyId: string;
+};
+
+/** Flags advertised by the provider that affect the swap flow. */
+export type QuoteTags = {
+  isRegistrationRequired: boolean;
+  isTokenApprovalRequired: boolean;
+};
+
+/** EVM token-approval transaction blob the swap SDK may need to broadcast. */
+export type QuoteApprovalTransaction = {
+  calldata: string;
+  from: string;
+  gasLimit: number;
+  gasPrice: number;
+  to: string;
+  value: string;
+};
+
+/** Current token-allowance state for the send account / spender pair. */
+export type QuoteTokenAllowance = {
+  isApproved: boolean;
+  approvedAmount?: string;
+  approvalTransaction?: QuoteApprovalTransaction;
+};
+
+/**
+ * EIP-712 Permit2 domain descriptor.
+ * See https://eips.ethereum.org/EIPS/eip-712 and Uniswap's Permit2 contracts.
+ */
+export type QuotePermit2Domain = {
+  name: string;
+  chainId: number;
+  verifyingContract: string;
+};
+
+/** Permit2 details: token + amount + expiration + nonce. */
+export type QuotePermit2Details = {
+  token: string;
+  amount: string;
+  expiration: string;
+  nonce: string;
+};
+
+/** Permit2 single-permit payload. */
+export type QuotePermit2Single = {
+  details: QuotePermit2Details;
+  spender: string;
+  sigDeadline: string;
+};
+
+/** EIP-712 type descriptors for a Permit2 payload. */
+export type QuotePermit2Types = {
+  EIP712Domain: Array<{ name: string; type: string }>;
+  PermitSingle: Array<{ name: string; type: string }>;
+  PermitDetails: Array<{ name: string; type: string }>;
+};
+
+/**
+ * Partial Permit2 typed-data payload. UniswapX populates `values`; 1inch-fusion
+ * populates `message`. Consumers must tolerate missing fields.
+ */
+export type QuotePermit2Message = {
+  values?: QuotePermit2Single;
+  message?: QuotePermit2Single;
+  domain?: QuotePermit2Domain;
+  types?: QuotePermit2Types;
+  primaryType?: "PermitSingle";
+};
+
+/**
+ * Provider-specific execution-time payload for quote submission. Only the
+ * matching provider integration (UniswapX, 1inch-fusion, Velora) consumes it;
+ * each subfield is populated only for its provider.
+ */
+export type QuotePermitData = {
+  /** EIP-712 Permit2 typed-data payload (UniswapX, 1inch-fusion). */
+  typedData?: QuotePermit2Message;
+  /** 1inch-fusion order hash. */
+  orderHash?: string;
+  /** Velora price-route payload; opaque to this contract. */
+  priceRoute?: unknown;
+  /** Raw provider tag e.g. `"UniswapDutchCustomFields"`. */
+  providerTag?: string;
+};
+
+/**
+ * Wallet-computed network-fee estimate for the default fee strategy.
+ * `amount` is in atomic units as a decimal string to preserve precision for
+ * chains whose fees exceed `Number.MAX_SAFE_INTEGER`.
+ */
+export type QuoteEstimatedNetworkFee = {
+  amount: string;
+  currencyId: string;
+};
+
+export type QuoteDetails = {
+  type: TradeMethod;
+  sendAmount: number;
+  receiveAmount: number;
+  gasLess: boolean;
+  networkFees: QuoteNetworkFees;
+  slippage: number;
+  exchangeRate: number;
+  /** Additive optional fields; not every producer populates them. */
+  liquiditySource?: QuoteLiquiditySource;
+  payoutNetworkFees?: QuotePayoutNetworkFees;
+  tokenAllowance?: QuoteTokenAllowance;
+  tags?: QuoteTags;
+  permitData?: QuotePermitData;
+  estimatedNetworkFee?: QuoteEstimatedNetworkFee;
+};
+
+export type Quote = {
+  id?: string;
+  key: string;
+  provider: string;
+  providerDetails: ProviderDetails;
+  quoteDetails: QuoteDetails;
+  warning: QuoteWarning | null;
+  error: QuoteError | null;
+};
+
+/** Error rows returned next to quotes (swap API error objects). */
+export type QuoteProviderError = {
+  code: string;
+  type: TradeMethod;
+  provider: string;
+  message: string;
+  parameter: { [key: string]: string };
+};
+
+export type GetQuotesResponse = {
+  quotes: Quote[];
+  errors: QuoteProviderError[];
 };

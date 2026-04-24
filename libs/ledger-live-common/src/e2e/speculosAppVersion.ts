@@ -63,6 +63,12 @@ export async function getNanoAppCatalog(
 const firmwareVersionCache: Map<DeviceModelId, string> = new Map();
 
 export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const configuredFirmwareVersion = process.env.SPECULOS_FIRMWARE_VERSION;
+  if (configuredFirmwareVersion) {
+    firmwareVersionCache.set(device, configuredFirmwareVersion);
+    return configuredFirmwareVersion;
+  }
+
   const cached = firmwareVersionCache.get(device);
   if (cached) return cached;
 

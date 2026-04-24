@@ -8,11 +8,18 @@ type AccountAddressCellProps = {
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
 };
 
+/** Fresh address used for display and table sorting (token rows use the parent account). */
+export function getCryptoTableRowFreshAddress(
+  account: AccountLike,
+  lookupParentAccount: (id: string) => Account | undefined | null,
+): string {
+  return account.type === "Account"
+    ? account.freshAddress
+    : lookupParentAccount(account.parentId)?.freshAddress ?? "";
+}
+
 export function AccountAddressCell({ account, lookupParentAccount }: AccountAddressCellProps) {
-  const address =
-    account.type === "Account"
-      ? account.freshAddress
-      : (lookupParentAccount(account.parentId)?.freshAddress ?? "");
+  const address = getCryptoTableRowFreshAddress(account, lookupParentAccount);
   const formatted = formatAddress(address, { prefixLength: 5, suffixLength: 5 });
   return <TableCellContent title={formatted} />;
 }

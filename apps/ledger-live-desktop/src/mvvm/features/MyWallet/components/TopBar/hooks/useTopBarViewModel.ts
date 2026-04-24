@@ -1,9 +1,11 @@
 import { useSettings } from "LLD/components/TopBar/hooks/useSettings";
 import { useNotificationIndicator } from "LLD/components/TopBar/hooks/useNotificationIndicator";
 import type { TopBarAction } from "LLD/components/TopBar/types";
+import { useTranslation } from "react-i18next";
 import { useContextMenuClose } from "../../ContextMenuContext";
 
 const useTopBarViewModel = () => {
+  const { t } = useTranslation();
   const close = useContextMenuClose();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings("mywallet");
   const {
@@ -39,7 +41,7 @@ const useTopBarViewModel = () => {
     onClick: onNotificationClick,
   };
 
-  return { settingsAction, notificationAction };
+  return { title: t("myWallet.title"), settingsAction, notificationAction };
 };
 
 export default useTopBarViewModel;

@@ -214,7 +214,7 @@ describe("ACRE Server Handlers", () => {
 
     // Mock the bridge
     const { getAccountBridge } = jest.requireMock("../../bridge");
-    getAccountBridge.mockReturnValue({
+    getAccountBridge.mockResolvedValue({
       broadcast: jest.fn().mockResolvedValue({ hash: "0x1234567890abcdef" }),
     });
 

@@ -744,7 +744,7 @@ export function useWalletAPIServer({
           accountId,
           signedOperation,
           async (account, parentAccount, signedOperation) => {
-            const bridge = getAccountBridge(account, parentAccount);
+            const bridge = await getAccountBridge(account, parentAccount);
             const mainAccount = getMainAccount(account, parentAccount);
 
             let optimisticOperation: Operation = signedOperation.operation;
@@ -878,7 +878,7 @@ export function useWalletAPIServer({
             accountId,
             signedOperation,
             async (account, parentAccount, signedOperation) => {
-              const bridge = getAccountBridge(account, parentAccount);
+              const bridge = await getAccountBridge(account, parentAccount);
               const mainAccount = getMainAccount(account, parentAccount);
 
               const networkId =
@@ -974,7 +974,7 @@ export function useWalletAPIServer({
           accountId,
           signedTransaction,
           async (account, parentAccount, signedOperation) => {
-            const bridge = getAccountBridge(account, parentAccount);
+            const bridge = await getAccountBridge(account, parentAccount);
             const mainAccount = getMainAccount(account, parentAccount);
 
             const networkId =

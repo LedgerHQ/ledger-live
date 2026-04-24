@@ -4,6 +4,18 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceSectionView } from "../DeviceSectionView";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 
+jest.mock("~/components/DeviceActionModal", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock("~/hooks/deviceActions", () => ({
+  useManagerDeviceAction: () => ({
+    useHook: jest.fn(),
+    mapResult: jest.fn(),
+  }),
+}));
+
 const mockDevices: DeviceSectionDevice[] = [
   { id: "device-1", name: "Flex Pro", modelId: DeviceModelId.europa, available: false },
   { id: "device-2", name: "Flex Perso", modelId: DeviceModelId.europa, available: false },
@@ -12,20 +24,57 @@ const mockDevices: DeviceSectionDevice[] = [
 
 const mockOnAddDevice = jest.fn();
 const mockOnExploreDevices = jest.fn();
+const mockOnDevicePress = jest.fn();
+const mockOnOpenMenu = jest.fn();
+const mockOnCloseRemoveMenu = jest.fn();
+const mockOnRemoveDevice = jest.fn();
+const mockOnDeviceActionResult = jest.fn();
+const mockOnDeviceActionClose = jest.fn();
+const mockOnDeviceActionError = jest.fn();
 
-const renderView = (devices: readonly DeviceSectionDevice[]) =>
+const mockManagerAction = { useHook: jest.fn(), mapResult: jest.fn() } as const;
+
+const renderView = (
+  devices: readonly DeviceSectionDevice[],
+  overrides: Partial<{
+    deviceToRemove: DeviceSectionDevice | null;
+    isRemoveDrawerOpen: boolean;
+  }> = {},
+) =>
   render(
     <DeviceSectionView
       devices={devices}
       hasDevices={devices.length > 0}
       onAddDevice={mockOnAddDevice}
       onExploreDevices={mockOnExploreDevices}
+      onDevicePress={mockOnDevicePress}
+      onOpenMenu={mockOnOpenMenu}
+      deviceToRemove={overrides.deviceToRemove ?? null}
+      isRemoveDrawerOpen={overrides.isRemoveDrawerOpen ?? false}
+      onCloseRemoveMenu={mockOnCloseRemoveMenu}
+      onRemoveDevice={mockOnRemoveDevice}
+      selectedDevice={null}
+      managerAction={mockManagerAction}
+      onDeviceActionResult={mockOnDeviceActionResult}
+      onDeviceActionClose={mockOnDeviceActionClose}
+      onDeviceActionError={mockOnDeviceActionError}
     />,
   );
 
 describe("DeviceSection", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("device card press", () => {
+    beforeEach(() => {
+      renderView([mockDevices[0]]);
+    });
+
+    it("calls onDevicePress with the device when tapped", async () => {
+      fireEvent.press(screen.getByTestId("my-wallet-device-item-device-1"));
+      await waitFor(() => expect(mockOnDevicePress).toHaveBeenCalledWith(mockDevices[0]));
+    });
   });
 
   describe("with no devices", () => {
@@ -87,6 +136,11 @@ describe("DeviceSection", () => {
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
     });
+
+    it("calls onOpenMenu with the device when the 3-dot menu icon is pressed", async () => {
+      fireEvent.press(screen.getByTestId("my-wallet-device-item-device-1-menu"));
+      await waitFor(() => expect(mockOnOpenMenu).toHaveBeenCalledWith(mockDevices[0]));
+    });
   });
 
   describe("with an available device", () => {
@@ -122,6 +176,12 @@ describe("DeviceSection", () => {
 
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    });
+
+    it("renders a menu icon for each device", () => {
+      expect(screen.getByTestId("my-wallet-device-item-device-1-menu")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-item-device-2-menu")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-item-device-3-menu")).toBeVisible();
     });
   });
 });

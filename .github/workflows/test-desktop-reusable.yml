@@ -32,6 +32,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  SMOKE_SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
+  SMOKE_SPECULOS_FIRMWARE_VERSION: 1.6.0
+
 jobs:
   codechecks:
     name: "Desktop Code Check"
@@ -132,7 +136,8 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
+      SPECULOS_IMAGE_TAG: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
+      SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}
       SPECULOS_DEVICE: nanoSP
     runs-on: [ledger-live-4xlarge]
     steps:
@@ -498,7 +503,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `🍪 Speculos NanoSP 1.5.0: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
+                    "text": `🍪 Speculos NanoSP ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
                   }
                 },
                 {

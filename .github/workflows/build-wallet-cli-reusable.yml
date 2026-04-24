@@ -52,24 +52,13 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
-        with:
-          bun-version: "1.3.11"
-
       - name: Install dependencies
         run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 
-      - name: Check wallet-cli generated commands
-        run: pnpm exec nx run "@ledgerhq/wallet-cli:generate:check"
-
-      - name: Build wallet-cli
-        run: pnpm exec nx run @ledgerhq/wallet-cli:build
-
-      - name: Generate unit test coverage for wallet-cli
+      - name: Build, lint, typecheck and test wallet-cli
         run: |
           mkdir -p apps/wallet-cli/coverage
-          pnpm exec nx run @ledgerhq/wallet-cli:coverage
+          pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate:check,lint:ci,typecheck,build,coverage
 
       - name: Upload wallet-cli unit test coverage
         id: generate_coverage

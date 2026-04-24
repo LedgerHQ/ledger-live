@@ -1,15 +1,16 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { lastValueFrom } from "rxjs";
+import { tap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
-import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
 import { TransactionIntentSchema } from "../wallet/intents";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
-import { accountOption, outputOption } from "./shared-options";
+import { accountOption, outputOption, resolveAccountArg, resolveAccountDescriptor } from "./inputs";
 
 type SendFlags = {
   account?: string;
@@ -91,7 +92,10 @@ export default defineCommand({
     data: option(
       z
         .string()
-        .regex(/^0x([0-9a-fA-F]{2})*$/, "data must be 0x-prefixed hex with an even number of digits")
+        .regex(
+          /^0x([0-9a-fA-F]{2})*$/,
+          "data must be 0x-prefixed hex with an even number of digits",
+        )
         .optional(),
       {
         description: "EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)",
@@ -104,23 +108,26 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
-    const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
+    const ctx = { command: "send", network: "", account: "" };
+    const out = createCommandOutput(flags.output, ctx);
     const wallet = new WalletAdapter();
     const dryRun = flags["dry-run"];
-    const out = createCommandOutput(flags.output, { command: "send", network, account: descriptor.id });
-
-    // Build the TransactionIntent based on the currency family
-    const { family } = getCryptoCurrencyById(descriptor.currencyId);
-    const builder = INTENT_BUILDERS[family];
-    if (!builder) {
-      throw new Error(
-        `Unsupported family: ${family}. Supported: ${Object.keys(INTENT_BUILDERS).join(", ")}`,
-      );
-    }
-    const intentData = builder(flags as SendFlags);
 
     await out.run(async () => {
+      const descriptor = await resolveAccountDescriptor(resolveAccountArg(flags.account, positional));
+      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
+      ctx.account = descriptor.id;
+
+      // Build the TransactionIntent based on the currency family
+      const { family } = getCryptoCurrencyById(descriptor.currencyId);
+      const builder = INTENT_BUILDERS[family];
+      if (!builder) {
+        throw new Error(
+          `Unsupported family: ${family}. Supported: ${Object.keys(INTENT_BUILDERS).join(", ")}`,
+        );
+      }
+      const intentData = builder(flags as SendFlags);
+
       // Intent schema parse may throw (ZodError) — out.run catches it in json mode
       const intent = TransactionIntentSchema.parse(intentData);
 
@@ -138,13 +145,11 @@ export default defineCommand({
         spin?.success("Device session established");
         out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
 
-        await new Promise<void>((resolve, reject) => {
-          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).subscribe({
-            next: event => out.sendEvent(event),
-            error: (e: unknown) => reject(e),
-            complete: resolve,
-          });
-        });
+        await lastValueFrom(
+          wallet
+            .send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun)
+            .pipe(tap(event => out.sendEvent(event))),
+        );
 
         out.sendComplete();
       });

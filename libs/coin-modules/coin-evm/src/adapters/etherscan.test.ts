@@ -1701,6 +1701,62 @@ describe("EVM Family", () => {
           expect(result).toHaveLength(1);
           expect(result[0].recipients).toEqual([]);
         });
+
+        // Blockscout reports `delegatecall`/`staticcall`/`callcode` internal frames with an
+        // inherited `msg.value`, but those opcodes cannot move native ETH. Emitting operations
+        // for them would surface phantom IN/OUT ops in the user's history.
+        const accountIdForCallType = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: "ethereum",
+          xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          derivationMode: "",
+        });
+        const makeInternalTx = (overrides: {
+          type?: string;
+          callType?: string;
+        }): EtherscanInternalTransaction => ({
+          blockNumber: "14878012",
+          timeStamp: "1653990239",
+          hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+          value: "66616263350003",
+          contractAddress: "",
+          input: "",
+          type: overrides.type ?? "call",
+          gas: "129878",
+          gasUsed: "0",
+          traceId: "0_1",
+          isError: "0",
+          errCode: "",
+          ...(overrides.callType !== undefined ? { callType: overrides.callType } : {}),
+        });
+
+        it.each([
+          { callType: "delegatecall" },
+          { callType: "staticcall" },
+          { callType: "callcode" },
+          { type: "delegatecall" },
+          { type: "staticcall" },
+          { type: "callcode" },
+        ])("returns no operations for non-value-transferring call type %o", overrides => {
+          expect(
+            etherscanInternalTransactionToOperations(
+              accountIdForCallType,
+              makeInternalTx(overrides),
+            ),
+          ).toEqual([]);
+        });
+
+        it("is case-insensitive on the call type discriminator", () => {
+          expect(
+            etherscanInternalTransactionToOperations(
+              accountIdForCallType,
+              makeInternalTx({ callType: "DelegateCall" }),
+            ),
+          ).toEqual([]);
+        });
       });
       describe("etherscanStakingToOperations", () => {
         it("should convert an etherscan-like staking smart contract delegate operation (from their API) to a Ledger Live Operation", () => {
@@ -1995,6 +2051,24 @@ describe("EVM Family", () => {
           expect(byHash.size).toBe(1);
           expect(byHash.get("0xtx1")!.length).toBe(4); // 2 internal txs × 2 ops each
         });
+
+        it.each(["delegatecall", "staticcall", "callcode"])(
+          "skips internal txs whose Blockscout callType is %s (no native value moves)",
+          callType => {
+            const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", callType }];
+            const byHash = internalTxsToOperationsByHash(internalTxs);
+            expect(byHash.size).toBe(0);
+          },
+        );
+
+        it.each(["delegatecall", "staticcall", "callcode"])(
+          "skips internal txs whose Etherscan type is %s (no native value moves)",
+          type => {
+            const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", type }];
+            const byHash = internalTxsToOperationsByHash(internalTxs);
+            expect(byHash.size).toBe(0);
+          },
+        );
       });
     });
 

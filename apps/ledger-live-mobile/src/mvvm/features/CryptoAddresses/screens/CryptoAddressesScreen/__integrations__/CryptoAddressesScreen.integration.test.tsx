@@ -1,8 +1,10 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
+import type { AggregatedAccountEntry } from "@ledgerhq/asset-aggregation/index";
 
 jest.mock("../useCryptoAddressesViewModel", () => jest.fn());
 
@@ -37,6 +39,7 @@ const mockAccount = { type: "Account", id: "account-1" } as Account;
 
 const baseViewModel: ReturnType<typeof useCryptoAddressesViewModel> = {
   accounts: [],
+  aggregatedAccountsData: new Map<string, AggregatedAccountEntry>(),
   hasNoAccount: true,
   isLoading: false,
   error: null,
@@ -84,6 +87,9 @@ describe("CryptoAddressesScreen", () => {
     it("should render account items when accounts exist", () => {
       renderScreen({
         accounts: [mockAccount],
+        aggregatedAccountsData: new Map([
+          ["account-1", { countervalue: new BigNumber(1000), subAccountsCount: 0 }],
+        ]),
         hasNoAccount: false,
       });
 

@@ -1,11 +1,10 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
 import { toV1, serializeV1, networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
 import { createCommandOutput } from "../output";
-import { accountOption, outputOption } from "./shared-options";
+import { accountOption, outputOption, resolveAccountArg, resolveAccountDescriptor } from "./inputs";
 
 export default defineCommand({
   name: "operations",
@@ -22,19 +21,21 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
-    const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
-    // accountId remapped to V1 descriptor — internal live-common id is intentionally dropped
-    const descriptorV1Str = serializeV1(toV1(descriptor));
-    walletCliDebug(
-      `operations: account=${descriptor.id}, limit=${flags.limit ?? "default"}, output=${flags.output}`,
-    );
+    const ctx = { command: "operations", network: "", account: "" };
+    const out = createCommandOutput(flags.output, ctx);
     const wallet = new WalletAdapter();
-    const out = createCommandOutput(flags.output, { command: "operations", network, account: descriptorV1Str });
+
 
     await out.run(async () => {
+      const descriptor = await resolveAccountDescriptor(resolveAccountArg(flags.account, positional));
+      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
+      // accountId remapped to V1 descriptor — internal live-common id is intentionally dropped
+      ctx.account = serializeV1(toV1(descriptor));
+      walletCliDebug(
+        `operations: account=${descriptor.id}, limit=${flags.limit ?? "default"}, output=${flags.output}`,
+      );
       const page = await out.withActivity(
-        `Fetching operations for ${network}…`,
+        `Fetching operations for ${ctx.network}…`,
         "Operations fetched",
         () => wallet.getAccountOperations(descriptor, { limit: flags.limit, cursor: flags.cursor }),
       );

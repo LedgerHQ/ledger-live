@@ -5,14 +5,15 @@ import { hidePostOnboardingWalletEntryPoint } from "../actions";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "./usePostOnboardingEntryPointVisibleOnWallet";
 
 const millisecondsInADay = 1000 * 60 * 60 * 24;
+const autoDismissAfterDays = 15;
 
-const isMoreThanSevenDaysAgo = (date: Date | null) => {
-  if (!date) return false;
+const isFirstDisplayedPastAutoDismissWindow = (firstDisplayed: Date | null) => {
+  if (!firstDisplayed) return false;
 
-  const datePlusSevenDays = new Date(date).getTime() + 7 * millisecondsInADay;
-  const today = new Date().getTime();
+  const windowEndMs =
+    new Date(firstDisplayed).getTime() + autoDismissAfterDays * millisecondsInADay;
 
-  return datePlusSevenDays < today;
+  return windowEndMs < Date.now();
 };
 
 export function useAutoDismissPostOnboardingEntryPoint() {
@@ -22,7 +23,10 @@ export function useAutoDismissPostOnboardingEntryPoint() {
   const isPostOnboardingEntryPointVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
   useEffect(() => {
-    if (isPostOnboardingEntryPointVisible && isMoreThanSevenDaysAgo(entryPointFirstDisplayedDate)) {
+    if (
+      isPostOnboardingEntryPointVisible &&
+      isFirstDisplayedPastAutoDismissWindow(entryPointFirstDisplayedDate)
+    ) {
       dispatch(hidePostOnboardingWalletEntryPoint());
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps

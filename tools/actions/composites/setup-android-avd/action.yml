@@ -82,6 +82,7 @@ runs:
         disable-linux-hw-accel: false
         emulator-options: ${{ inputs.avd_options }}
         heap-size: ${{ inputs.avd_heap_size }}
+        pre-emulator-launch-script: bash "./tools/scripts/patch-avd-config.sh" "${{ inputs.avd_name }}"
         script: ${{ inputs.wait_script_path }}
 
     - name: Cache android emulator

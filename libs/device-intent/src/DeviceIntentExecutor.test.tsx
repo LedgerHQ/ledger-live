@@ -35,10 +35,11 @@ import type { DeviceIntentExecutorProps, ExecutorPlatformConfiguration } from ".
 import type { DeviceIntentExecutorHookState } from "./useDeviceIntentExecutor";
 import { DeviceIntentExecutor } from "./DeviceIntentExecutor";
 import {
-  defaultRequiredContext,
+  defaultDeviceInitializationInput,
   flushMicrotasks,
   makeConnectionResult as makeBaseConnectionResult,
   makeIntent as makeBaseIntent,
+  type MockDeviceInitializationInput,
 } from "./__tests__/test-utils";
 
 // ---- Mocks ----
@@ -103,12 +104,6 @@ const ConnectionErrorComponent: React.FC<{ error: unknown; onRetry: () => void }
   </button>
 );
 
-const InitErrorComponent: React.FC<{ error: unknown; onRetry: () => void }> = ({ onRetry }) => (
-  <button data-testid="init-error" onClick={onRetry}>
-    Retry Init
-  </button>
-);
-
 const IntentErrorComponent: React.FC<{ error: unknown; onRetry: () => void }> = ({ onRetry }) => (
   <button data-testid="intent-error" onClick={onRetry}>
     Retry Intent
@@ -123,23 +118,22 @@ const InvalidOperationComponent: React.FC<{ error: unknown; onClose: () => void 
   </button>
 );
 
-const platformConfig: ExecutorPlatformConfiguration = {
+const platformConfig: ExecutorPlatformConfiguration<MockDeviceInitializationInput> = {
   DeviceConnectionComponent: ConnectionComponent,
   DeviceContextInitializerComponent: InitializerComponent,
   ConnectionErrorComponent,
-  InitializationErrorComponent: InitErrorComponent,
   IntentErrorComponent,
   InvalidOperationComponent,
 };
 
-type TestProps = DeviceIntentExecutorProps<unknown, unknown, unknown> & {
-  platformConfig: ExecutorPlatformConfiguration;
+type TestProps = DeviceIntentExecutorProps<unknown, unknown, unknown, MockDeviceInitializationInput> & {
+  platformConfig: ExecutorPlatformConfiguration<MockDeviceInitializationInput>;
 };
 
 function makeProps(overrides: Partial<TestProps> = {}): TestProps {
   return {
     deviceConnectionParams: { acceptedDeviceModelIds: [] },
-    requiredDeviceContext: defaultRequiredContext,
+    deviceInitializationInput: defaultDeviceInitializationInput,
     onExecutorStateChanged: jest.fn(),
     intent: makeIntent(),
     intentComponentExtraProps: undefined,
@@ -204,8 +198,13 @@ describe("DeviceIntentExecutor (integration)", () => {
 
 // ---- Unit tests (mocked hook) ----
 
-type UnitTestProps = DeviceIntentExecutorProps<unknown, unknown, unknown> & {
-  platformConfig: ExecutorPlatformConfiguration;
+type UnitTestProps = DeviceIntentExecutorProps<
+  unknown,
+  unknown,
+  unknown,
+  MockDeviceInitializationInput
+> & {
+  platformConfig: ExecutorPlatformConfiguration<MockDeviceInitializationInput>;
   useExecutorHook: jest.Mock;
 };
 
@@ -214,19 +213,20 @@ function makeMockPlatformConfig() {
     DeviceConnectionComponent: jest.fn(() => <div data-testid="connection" />),
     DeviceContextInitializerComponent: jest.fn(() => <div data-testid="initializer" />),
     ConnectionErrorComponent: jest.fn(() => <div data-testid="connection-error" />),
-    InitializationErrorComponent: jest.fn(() => <div data-testid="init-error" />),
     IntentErrorComponent: jest.fn(() => <div data-testid="intent-error" />),
     InvalidOperationComponent: jest.fn(() => <div data-testid="invalid-operation" />),
-  };
+  } satisfies ExecutorPlatformConfiguration<MockDeviceInitializationInput>;
 }
 
 function makeUnitProps(
-  hookReturn: DeviceIntentExecutorHookState<unknown, unknown, unknown> | null,
+  hookReturn:
+    | DeviceIntentExecutorHookState<unknown, unknown, unknown, MockDeviceInitializationInput>
+    | null,
   overrides: Partial<UnitTestProps> = {},
 ): UnitTestProps {
   return {
     deviceConnectionParams: { acceptedDeviceModelIds: [] },
-    requiredDeviceContext: defaultRequiredContext,
+    deviceInitializationInput: defaultDeviceInitializationInput,
     onExecutorStateChanged: jest.fn(),
     intent: makeIntent(),
     intentComponentExtraProps: undefined,
@@ -256,7 +256,7 @@ describe("DeviceIntentExecutor (unit)", () => {
     render(
       <DeviceIntentExecutor
         deviceConnectionParams={deviceConnectionParams}
-        requiredDeviceContext={defaultRequiredContext}
+        deviceInitializationInput={defaultDeviceInitializationInput}
         onExecutorStateChanged={onExecutorStateChanged}
         intent={intent}
         intentComponentExtraProps={{ extra: 1 }}
@@ -275,7 +275,7 @@ describe("DeviceIntentExecutor (unit)", () => {
     expect(mockHook).toHaveBeenCalledTimes(1);
     expect(mockHook).toHaveBeenCalledWith({
       deviceConnectionParams,
-      requiredDeviceContext: defaultRequiredContext,
+      deviceInitializationInput: defaultDeviceInitializationInput,
       onExecutorStateChanged,
       intent,
       intentComponentExtraProps: { extra: 1 },
@@ -344,14 +344,12 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const connectionResult = makeConnectionResult();
       const onContextInitialized = jest.fn();
-      const onError = jest.fn();
       const props = makeUnitProps(
         {
           phase: "deviceInitialization",
           connectionResult,
-          requiredDeviceContext: defaultRequiredContext,
+          deviceInitializationInput: defaultDeviceInitializationInput,
           onContextInitialized,
-          onError,
         },
         { platformConfig: mockConfig },
       );
@@ -361,29 +359,9 @@ describe("DeviceIntentExecutor (unit)", () => {
       expect(mockConfig.DeviceContextInitializerComponent).toHaveBeenCalledWith(
         {
           connectionResult,
-          requiredDeviceContext: defaultRequiredContext,
+          deviceInitializationInput: defaultDeviceInitializationInput,
           onContextInitialized,
-          onError,
         },
-        undefined,
-      );
-    });
-  });
-
-  describe("initializationError phase", () => {
-    it("renders InitializationErrorComponent with the correct props", () => {
-      const mockConfig = makeMockPlatformConfig();
-      const error = new Error("init fail");
-      const onRetry = jest.fn();
-      const props = makeUnitProps(
-        { phase: "initializationError", error, onRetry },
-        { platformConfig: mockConfig },
-      );
-      render(<DeviceIntentExecutor {...props} />);
-
-      expect(screen.getByTestId("init-error")).toBeTruthy();
-      expect(mockConfig.InitializationErrorComponent).toHaveBeenCalledWith(
-        { error, onRetry },
         undefined,
       );
     });

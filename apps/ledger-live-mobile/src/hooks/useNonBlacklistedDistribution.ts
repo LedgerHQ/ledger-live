@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { useDistribution } from "~/actions/general";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
-import { DistributionOptions } from "~/types/distributionOptions";
+import type { DistributionOpts } from "@ledgerhq/live-common/portfolio/index";
 
 export function useNonBlacklistedDistribution(
-  opts: DistributionOptions = { showEmptyAccounts: true },
+  opts: DistributionOpts = { showEmptyAccounts: true },
 ) {
   const distribution = useDistribution(opts);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);

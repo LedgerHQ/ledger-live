@@ -31,9 +31,9 @@ export const prepareMessageToSign = async (account: Account, message: string): P
   return { message: utf8Message };
 };
 
-const signMessage: SignMessage = (transport, account, opts) => {
+const signMessage: SignMessage = async (transport, account, opts) => {
   const { currency } = account;
-  const setup = loadSetupForFamily(currency.family);
+  const setup = await loadSetupForFamily(currency.family);
   let signMessage = setup.messageSigner?.signMessage;
   if ("type" in opts) {
     switch (opts.type) {

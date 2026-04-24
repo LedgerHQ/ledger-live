@@ -4,9 +4,9 @@ import { log } from "@ledgerhq/logs";
 import { Resolver } from "./types";
 import { loadSetupForFamily } from "../../coin-modules/registry";
 
-const dispatch: Resolver = (transport, opts) => {
+const dispatch: Resolver = async (transport, opts) => {
   const { currency, verify } = opts;
-  const setup = loadSetupForFamily(currency.family);
+  const setup = await loadSetupForFamily(currency.family);
   const getAddress = setup.resolver;
   invariant(getAddress, `getAddress is not implemented for ${currency.id}`);
   return getAddress(transport, opts)
