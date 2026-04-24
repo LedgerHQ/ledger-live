@@ -92,6 +92,12 @@ runs:
         region: ${{ inputs.aws_region }}
         use-fallback: false
 
+    - name: Upload pre-merged timing file to artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: "PreMerged-${{ inputs.test_results_prefix }}"
+        path: ${{ inputs.artifacts_dir }}
+
     - name: Merge timing files
       shell: bash
       run: |
