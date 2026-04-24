@@ -322,7 +322,7 @@ export type Features = CurrencyFeatures & {
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
-  transferButtonCopyVariant: Feature_TransferButtonCopyVariant;
+  llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
 };
 
 /**
@@ -384,8 +384,8 @@ export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
 
 export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
   ? {
-    yieldId: string;
-  }
+      yieldId: string;
+    }
   : unknown;
 
 export type Redirect<M extends PlatformManifestId> = {
@@ -813,7 +813,7 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
-export type Feature_TransferButtonCopyVariant = Feature<{
+export type Feature_LlmTransferButtonCopyVariant = Feature<{
   variantId: string;
   buttonLabel?: string;
   modalTitle?: string;

@@ -13,22 +13,35 @@ describe("getRemoteABTestingAttributes", () => {
     expect(getRemoteABTestingAttributes(null)).toEqual({});
   });
 
-  it("returns empty object when transferButtonCopyVariant is disabled", () => {
+  it("returns enabled false and variant when llmTransferButtonCopyVariant is disabled", () => {
     const method = mockMethod({ enabled: false, params: { variantId: "control" } });
-    expect(getRemoteABTestingAttributes(method)).toEqual({});
-  });
-
-  it("returns variantId when transferButtonCopyVariant is enabled", () => {
-    const method = mockMethod({ enabled: true, params: { variantId: "variant_a" } });
     expect(getRemoteABTestingAttributes(method)).toEqual({
-      transferButtonCopyVariant: "variant_a",
+      llmTransferButtonCopyVariantEnabled: false,
+      llmTransferButtonCopyVariant: "control",
     });
   });
 
-  it("returns undefined variantId when params are missing", () => {
+  it("returns enabled true and variantId when llmTransferButtonCopyVariant is enabled", () => {
+    const method = mockMethod({ enabled: true, params: { variantId: "variant_a" } });
+    expect(getRemoteABTestingAttributes(method)).toEqual({
+      llmTransferButtonCopyVariantEnabled: true,
+      llmTransferButtonCopyVariant: "variant_a",
+    });
+  });
+
+  it("returns enabled true and undefined variantId when params are missing", () => {
     const method = mockMethod({ enabled: true });
     expect(getRemoteABTestingAttributes(method)).toEqual({
-      transferButtonCopyVariant: undefined,
+      llmTransferButtonCopyVariantEnabled: true,
+      llmTransferButtonCopyVariant: undefined,
+    });
+  });
+
+  it("returns enabled false and undefined variant when flag is missing", () => {
+    const method = mockMethod(null);
+    expect(getRemoteABTestingAttributes(method)).toEqual({
+      llmTransferButtonCopyVariantEnabled: false,
+      llmTransferButtonCopyVariant: undefined,
     });
   });
 });

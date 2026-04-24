@@ -57,7 +57,7 @@ export const useQuickActionsCtasViewModel = ({
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isExchangeEnabled = ptxServiceCtaExchangeDrawer?.enabled ?? true;
 
-  const transferCopyFlag = useFeature("transferButtonCopyVariant");
+  const transferCopyFlag = useFeature("llmTransferButtonCopyVariant");
   const language = useSelector(languageSelector);
   const isEN = language === "en";
 

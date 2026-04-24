@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { flagWith } from "../../define";
 
-export const transferButtonCopyVariant = flagWith(
+export const llmTransferButtonCopyVariant = flagWith(
   {
     variantId: z.string(),
     buttonLabel: z.string().optional(),

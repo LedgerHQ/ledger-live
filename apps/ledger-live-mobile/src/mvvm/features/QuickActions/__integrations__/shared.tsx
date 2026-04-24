@@ -148,7 +148,7 @@ const overrideStateWithFundsEN = (state: State): State => ({
 
 export const overrideStateWithTransferCopyVariant = withFlagOverrides(
   {
-    transferButtonCopyVariant: {
+    llmTransferButtonCopyVariant: {
       enabled: true,
       params: {
         variantId: "variant_a",
@@ -166,7 +166,7 @@ export const overrideStateWithTransferCopyVariant = withFlagOverrides(
 
 export const overrideStateWithTransferCopyDisabled = withFlagOverrides(
   {
-    transferButtonCopyVariant: {
+    llmTransferButtonCopyVariant: {
       enabled: false,
       params: { variantId: "control" },
     },
