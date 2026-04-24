@@ -72,7 +72,7 @@ export type GetTokenAllowanceOpts = {
   ownerAddress: string;
 };
 
-function parseGetAddressCliOutput(output: string): unknown {
+function parseGetAddressCliOutput(output: string): GetAddressResult {
   const lines = output
     .split("\n")
     .map(line => line.trim())
@@ -89,11 +89,25 @@ function parseGetAddressCliOutput(output: string): unknown {
     throw new Error("CLI getAddress output does not contain JSON");
   }
 
+  let parsed: unknown;
   try {
-    return JSON.parse(jsonLine);
+    parsed = JSON.parse(jsonLine);
   } catch {
     throw new Error("Failed to parse CLI getAddress output");
   }
+
+  if (typeof parsed !== "object" || parsed === null) {
+    throw new Error(`CLI getAddress output is not an object. Raw output:\n${output}`);
+  }
+
+  const { address, path, publicKey } = parsed as Record<string, unknown>;
+  if (typeof address !== "string" || typeof path !== "string" || typeof publicKey !== "string") {
+    throw new Error(
+      `CLI getAddress output missing address/path/publicKey. Raw output:\n${output}`,
+    );
+  }
+
+  return parsed as GetAddressResult;
 }
 
 function parseCliFlag(command: string, flag: string): string | undefined {
@@ -217,7 +231,7 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddress
   if (opts.derivationMode) cliOpts.push(`--derivationMode+${opts.derivationMode}`);
   if (opts.verify) cliOpts.push("--verify");
   const output = await runCliCommandWithRetry(cliOpts.join("+"));
-  return parseGetAddressCliOutput(output) as GetAddressResult;
+  return parseGetAddressCliOutput(output);
 }
 
 export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {
