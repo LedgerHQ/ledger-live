@@ -1,8 +1,6 @@
 import { defineCommand } from "@bunli/core";
 import { Session } from "../../session/session-store";
 import { outputOption } from "../inputs";
-import { colors, writeStdout } from "../../shared/ui";
-import { makeEnvelope } from "../../shared/response";
 import { createCommandOutput } from "../../output";
 
 export default defineCommand({
@@ -24,18 +22,7 @@ export default defineCommand({
       }
       const count = session.clear();
       await session.write(); // always write: fixes corrupt files too
-
-      if (flags.output === "json") {
-        writeStdout(JSON.stringify(makeEnvelope("session reset", "all", { removed: count }), null, 2));
-        return;
-      }
-
-      const suffix = count === 1 ? "" : "s";
-      writeStdout(
-        count === 0
-          ? colors.dim("Session was already empty.")
-          : `Removed ${colors.bold(String(count))} account${suffix} from session.`,
-      );
+      out.sessionReset(count);
     });
   },
 });
