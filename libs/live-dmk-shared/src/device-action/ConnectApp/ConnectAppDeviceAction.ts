@@ -191,6 +191,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             requiredUserInteraction: UserInteractionRequired.None,
             installPlan: null,
             deviceDeprecation: undefined,
+            deviceMetadata: undefined,
           },
           _internalState: {
             error: null,
@@ -379,6 +380,19 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             onDone: {
               target: "GetDeviceMetadataCheck",
               actions: assign({
+                intermediateValue: _ =>
+                  _.event.output.caseOf<ConnectAppDAIntermediateValue>({
+                    Right: data => ({
+                      ..._.context.intermediateValue,
+                      /**
+                       * Exposing the device metadata to the caller as soon as it's available,
+                       * as relying on the output would not be as reliable as the ConnectAppDeviceAction can
+                       * go in an error state later on, and not output the device metadata.
+                       * */
+                      deviceMetadata: data,
+                    }),
+                    Left: () => _.context.intermediateValue,
+                  }),
                 _internalState: _ =>
                   _.event.output.caseOf<ConnectAppMachineInternalState>({
                     Right: data => ({
