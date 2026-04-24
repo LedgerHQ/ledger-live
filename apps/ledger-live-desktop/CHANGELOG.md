@@ -88,6 +88,14 @@
   - @ledgerhq/live-countervalues-react@0.14.1-next.0
   - @ledgerhq/live-wallet@0.25.2-next.0
 
+## 4.2.1
+
+### Patch Changes
+
+- [#16742](https://github.com/LedgerHQ/ledger-live/pull/16742) [`2541ae6`](https://github.com/LedgerHQ/ledger-live/commit/2541ae627bf663c3feba1ec6d2c12fa44c75dcd0) Thanks [@thesan](https://github.com/thesan)! - Revert autoupdate block
+
+- [#16742](https://github.com/LedgerHQ/ledger-live/pull/16742) [`2541ae6`](https://github.com/LedgerHQ/ledger-live/commit/2541ae627bf663c3feba1ec6d2c12fa44c75dcd0) Thanks [@thesan](https://github.com/thesan)! - Revert autoupdate block
+
 ## 4.2.0
 
 ### Minor Changes
