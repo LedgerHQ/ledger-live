@@ -187,6 +187,8 @@
     "@jest/globals": "catalog:",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
+    "@ledgerhq/live-signer-canton": "workspace:^",
+    "@ledgerhq/live-signer-concordium": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@playwright/test": "catalog:",

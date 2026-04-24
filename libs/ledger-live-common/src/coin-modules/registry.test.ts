@@ -68,22 +68,22 @@ const allLoaders: LoaderEntry[] = [
 ];
 
 describe.each(allLoaders)("$fn.name", ({ loaderKey, fn, required }) => {
-  it("returns module when loader has it", () => {
+  it("returns module when loader has it", async () => {
     const stub = jest.fn();
     registerCoinModules([makeLoader("__test__", { [loaderKey]: () => stub })]);
-    expect(fn("__test__")).toBe(stub);
+    expect(await Promise.resolve(fn("__test__"))).toBe(stub);
   });
   if (required) {
     it("throws CurrencyNotSupported for unknown family", () => {
       expect(() => fn("__none__")).toThrow(CurrencyNotSupported);
     });
   } else {
-    it("returns undefined for unknown family", () => {
-      expect(fn("__none__")).toBeUndefined();
+    it("returns undefined for unknown family", async () => {
+      expect(await Promise.resolve(fn("__none__"))).toBeUndefined();
     });
-    it("returns undefined when loader exists but method is absent", () => {
+    it("returns undefined when loader exists but method is absent", async () => {
       registerCoinModules([makeLoader("__bare__")]);
-      expect(fn("__bare__")).toBeUndefined();
+      expect(await Promise.resolve(fn("__bare__"))).toBeUndefined();
     });
   }
 });

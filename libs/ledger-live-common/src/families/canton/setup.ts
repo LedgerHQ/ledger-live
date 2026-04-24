@@ -9,14 +9,14 @@ import type { Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-canton/test/cli";
 import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
 import { TransactionStatus, Transaction, CantonAccount } from "@ledgerhq/coin-canton/types";
-import { LegacySignerCanton } from "@ledgerhq/live-signer-canton";
+import * as liveSignerCanton from "@ledgerhq/live-signer-canton";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import cantonBridgeMock from "./bridge/mock";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
 
 const createSigner: CreateSigner<CantonSigner> = (transport: Transport) => {
-  return new LegacySignerCanton(transport);
+  return new liveSignerCanton.LegacySignerCanton(transport);
 };
 
 const getCurrencyConfig = (currencyId?: string) => {

@@ -4,7 +4,7 @@ import concordiumResolver from "@ledgerhq/coin-concordium/signer";
 import type { ConcordiumCoinConfig } from "@ledgerhq/coin-concordium/config";
 import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-concordium/types";
 import makeCliTools from "@ledgerhq/coin-concordium/test/cli";
-import { DmkSignerConcordium } from "@ledgerhq/live-signer-concordium";
+import * as liveSignerConcordium from "@ledgerhq/live-signer-concordium";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
@@ -16,7 +16,7 @@ const createSigner: CreateSigner<ConcordiumSigner> = (transport: Transport): Con
   if (!isDmkTransport(transport)) {
     throw new Error("Concordium requires DMK transport");
   }
-  return new DmkSignerConcordium(transport.dmk, transport.sessionId);
+  return new liveSignerConcordium.DmkSignerConcordium(transport.dmk, transport.sessionId);
 };
 
 const getCurrencyConfig = (currencyId?: string) => {

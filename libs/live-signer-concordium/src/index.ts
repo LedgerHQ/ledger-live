@@ -1,1 +1,1 @@
-export * from "./DmkSignerConcordium";
+export { DmkSignerConcordium } from "./DmkSignerConcordium";

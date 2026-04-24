@@ -19,6 +19,17 @@ import type { Account } from "@ledgerhq/types-live";
 
 const loaders = new Map<string, CoinModuleLoader>();
 
+// Dynamic imports in NodeNext/CJS mode may wrap the value under `.default` once or twice.
+// At runtime (ESM), the value arrives directly or single-wrapped; this handles all cases.
+function unwrapModuleDefault<T>(m: T | { default: T | { default: T } }): T {
+  if (typeof m !== "object" || m === null || !("default" in (m as object))) return m as T;
+  const inner = (m as { default: T | { default: T } }).default;
+  if (typeof inner !== "object" || inner === null || !("default" in (inner as object))) {
+    return inner as T;
+  }
+  return (inner as { default: T }).default;
+}
+
 function getLoader(family: string): CoinModuleLoader {
   const loader = loaders.get(family);
   if (!loader) throw new CurrencyNotSupported(`No coin module registered for family "${family}"`);
@@ -48,38 +59,33 @@ export const loadSetupForFamily = (family: string): FamilySetup =>
 export const loadTransactionForFamily = (family: string): TransactionModule =>
   getLoader(family).loadTransaction();
 
-export const loadDeviceTxConfigForFamily = (
+export const loadDeviceTxConfigForFamily = async (
   family: string,
-): DeviceTransactionConfigFn | undefined => loaders.get(family)?.loadDeviceTxConfig?.();
+): Promise<DeviceTransactionConfigFn | undefined> => {
+  const m = await loaders.get(family)?.loadDeviceTxConfig?.();
+  return m !== undefined ? unwrapModuleDefault(m) : undefined;
+};
 
-/**
- * Loads the Wallet API adapter module for the given coin family.
- *
- * @remarks
- * This function is currently synchronous but will become `async` in a future
- * migration step (part of the async loader series — LIVE-28411).
- * Callers should already `await` this call so that no further changes are
- * needed once the function signature is updated.
- */
-export const loadWalletApiAdapterForFamily = (
+export const loadWalletApiAdapterForFamily = async (
   family: string,
-): WalletApiAdapterModule | undefined => loaders.get(family)?.loadWalletApiAdapter?.();
+): Promise<WalletApiAdapterModule | undefined> => {
+  const m = await loaders.get(family)?.loadWalletApiAdapter?.();
+  return m !== undefined ? unwrapModuleDefault(m) : undefined;
+};
 
-/**
- * Loads the platform adapter module for the given coin family.
- *
- * @remarks
- * This function is currently synchronous but will become `async` in a future
- * migration step (part of the async loader series — LIVE-28411).
- * Callers should already `await` this call so that no further changes are
- * needed once the function signature is updated.
- */
-export const loadPlatformAdapterForFamily = (
+export const loadPlatformAdapterForFamily = async (
   family: string,
-): PlatformAdapterModule | undefined => loaders.get(family)?.loadPlatformAdapter?.();
+): Promise<PlatformAdapterModule | undefined> => {
+  const m = await loaders.get(family)?.loadPlatformAdapter?.();
+  return m !== undefined ? unwrapModuleDefault(m) : undefined;
+};
 
-export const loadAccountModuleForFamily = (family: string): AccountModule | undefined =>
-  loaders.get(family)?.loadAccount?.();
+export const loadAccountModuleForFamily = async (
+  family: string,
+): Promise<AccountModule | undefined> => {
+  const m = await loaders.get(family)?.loadAccount?.();
+  return m !== undefined ? unwrapModuleDefault(m) : undefined;
+};
 
 export const loadMockBridgeForFamily = (family: string): MockBridgeModule | undefined =>
   loaders.get(family)?.loadMockBridge?.();

@@ -15,6 +15,8 @@ import {
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "@ledgerhq/coin-canton/config";
+import * as liveSignerCanton from "@ledgerhq/live-signer-canton";
+import * as deviceAccess from "@ledgerhq/live-common/hw/deviceAccess";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import OnboardModal from "../index";
 import {
@@ -22,12 +24,6 @@ import {
   generateOnboardModalProps,
   generateOnboardModalState,
 } from "../__tests__/testUtils";
-
-jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
-  withDevice: jest.fn(
-    () => (job: (transport: unknown) => unknown) => job({ decorateAppAPIMethods: jest.fn() }),
-  ),
-}));
 
 jest.mock("~/renderer/extra/Snow", () => ({
   __esModule: true,
@@ -54,27 +50,6 @@ jest.mock("@ledgerhq/coin-canton/common-logic/transaction/sign", () => ({
     signature: "cc".repeat(66),
   }),
 }));
-
-jest.mock(
-  "@ledgerhq/hw-app-canton",
-  () => ({
-    __esModule: true,
-    default: jest.fn(() => ({
-      getAppConfiguration: jest.fn().mockResolvedValue({ version: "3.0.0" }),
-      getAddress: jest.fn().mockImplementation((path: string) =>
-        Promise.resolve({
-          publicKey: MOCK_CANTON_PUBLIC_KEY_HEX,
-          address: "canton_mock_address_integ",
-          path,
-        }),
-      ),
-      signTransaction: jest.fn().mockResolvedValue({
-        signature: "cc".repeat(66),
-      }),
-    })),
-  }),
-  { virtual: true },
-);
 
 function cantonDevnetCurrency(): CryptoCurrency {
   const currency = getCryptoCurrencyById("canton_network_devnet");
@@ -107,6 +82,28 @@ describe("OnboardModal Integration", () => {
   let previousCantonNodeIdOverride: string;
 
   beforeAll(() => {
+    jest
+      .spyOn(deviceAccess, "withDevice")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .mockImplementation((() => (job: (t: unknown) => unknown) => job({ decorateAppAPIMethods: jest.fn() })) as any);
+
+    jest.spyOn(liveSignerCanton, 'LegacySignerCanton').mockImplementation(
+      jest.fn(() => ({
+        getAppConfiguration: jest.fn().mockResolvedValue({ version: "3.0.0" }),
+        getAddress: jest.fn().mockImplementation((path: string) =>
+          Promise.resolve({
+            publicKey: MOCK_CANTON_PUBLIC_KEY_HEX,
+            address: "canton_mock_address_integ",
+            path,
+          }),
+        ),
+        signTransaction: jest.fn().mockResolvedValue({
+          signature: "cc".repeat(66),
+        }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any,
+    );
+
     previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
     setEnv("CANTON_NODE_ID_OVERRIDE", "");
 
@@ -124,6 +121,7 @@ describe("OnboardModal Integration", () => {
   afterAll(() => {
     setEnv("CANTON_NODE_ID_OVERRIDE", previousCantonNodeIdOverride);
     setSupportedCurrencies([]);
+    jest.restoreAllMocks();
   });
 
   beforeEach(() => {

@@ -1264,6 +1264,12 @@ importers:
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../cli/dist
+      '@ledgerhq/live-signer-canton':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-canton
+      '@ledgerhq/live-signer-concordium':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-concordium
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport

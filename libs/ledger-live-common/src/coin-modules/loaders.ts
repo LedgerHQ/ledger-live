@@ -1,242 +1,358 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-import type { CoinModuleLoader } from "./types";
+import type { CoinModuleLoader, FamilySetup } from "./types";
 
-// Hand-maintained: one entry per coin family. See FUTURE.md for the async evolution plan.
+import * as aleoSetup from "../families/aleo/setup";
+import aleoTransaction from "@ledgerhq/coin-aleo/transaction";
+
+import * as algorandSetup from "../families/algorand/setup";
+import algorandTransaction from "@ledgerhq/coin-algorand/transaction";
+import algorandMockAccount from "@ledgerhq/coin-algorand/mock";
+
+import * as aptosSetup from "../families/aptos/setup";
+import aptosTransaction from "@ledgerhq/coin-aptos/transaction";
+
+import * as bitcoinSetup from "../families/bitcoin/setup";
+import bitcoinTransaction from "@ledgerhq/coin-bitcoin/transaction";
+import * as bitcoinWalletApiAdapter from "../families/bitcoin/walletApiAdapter";
+import * as bitcoinPlatformAdapter from "../families/bitcoin/platformAdapter";
+import { clearAccount as bitcoinClearAccount } from "../families/bitcoin/clearAccount";
+import {
+  isEditableOperation as bitcoinIsEditableOperation,
+  isStuckOperation as bitcoinIsStuckOperation,
+  getStuckAccountAndOperation as bitcoinGetStuckAccountAndOperation,
+} from "../families/bitcoin/operations";
+
+import * as cantonSetup from "../families/canton/setup";
+import cantonTransaction from "@ledgerhq/coin-canton/transaction";
+import { isAccountEmpty as cantonIsAccountEmpty } from "@ledgerhq/coin-canton";
+
+import * as cardanoSetup from "../families/cardano/setup";
+import cardanoTransaction from "@ledgerhq/coin-cardano/transaction";
+
+import casperTransaction from "@ledgerhq/coin-casper/transaction";
+
+import celoTransaction from "@ledgerhq/coin-celo/transaction";
+
+import * as concordiumSetup from "../families/concordium/setup";
+import concordiumTransaction from "@ledgerhq/coin-concordium/transaction";
+
+import * as cosmosSetup from "../families/cosmos/setup";
+import cosmosTransaction from "@ledgerhq/coin-cosmos/transaction";
+import * as cosmosWalletApiAdapter from "../families/cosmos/walletApiAdapter";
+import cosmosMockAccount from "@ledgerhq/coin-cosmos/mock";
+import { isAccountEmpty as cosmosIsAccountEmpty } from "@ledgerhq/coin-cosmos/helpers";
+import { getVotesCount as cosmosGetVotesCount } from "../families/cosmos/getVotesCount";
+
+import * as evmSetup from "../families/evm/setup";
+import evmTransaction from "@ledgerhq/coin-evm/transaction";
+import * as evmWalletApiAdapter from "../families/evm/walletApiAdapter";
+import * as evmPlatformAdapter from "../families/evm/platformAdapter";
+import { validateAddress as evmValidateAddress } from "@ledgerhq/coin-evm/logic/validateAddress";
+import evmAlpacaSigner from "../bridge/generic-alpaca/families/evm/signer";
+import {
+  isEditableOperation as evmIsEditableOperation,
+  isStuckOperation as evmIsStuckOperation,
+  getStuckAccountAndOperation as evmGetStuckAccountAndOperation,
+} from "../families/evm/operations";
+
+import * as filecoinSetup from "../families/filecoin/setup";
+import filecoinTransaction from "@ledgerhq/coin-filecoin/transaction";
+
+import * as hederaSetup from "../families/hedera/setup";
+import hederaTransaction from "@ledgerhq/coin-hedera/transaction";
+
+import * as iconSetup from "../families/icon/setup";
+import iconTransaction from "@ledgerhq/coin-icon/transaction";
+
+import * as icSetup from "../families/internet_computer/setup";
+import icTransaction from "@ledgerhq/coin-internet_computer/transaction";
+
+import * as minaSetup from "../families/mina/setup";
+import minaTransaction from "@ledgerhq/coin-mina/transaction";
+
+import * as multiversxSetup from "../families/multiversx/setup";
+import multiversxTransaction from "@ledgerhq/coin-multiversx/transaction";
+
+import * as nearSetup from "../families/near/setup";
+import nearTransaction from "@ledgerhq/coin-near/transaction";
+
+import * as polkadotSetup from "../families/polkadot/setup";
+import polkadotTransaction from "@ledgerhq/coin-polkadot/transaction";
+import * as polkadotWalletApiAdapter from "../families/polkadot/walletApiAdapter";
+import * as polkadotPlatformAdapter from "../families/polkadot/platformAdapter";
+
+import solanaAlpacaSigner from "../bridge/generic-alpaca/families/solana/signer";
+import * as solanaSetup from "../families/solana/setup";
+import solanaTransaction from "@ledgerhq/coin-solana/transaction";
+import * as solanaWalletApiAdapter from "../families/solana/walletApiAdapter";
+import { validateAddress as solanaValidateAddress } from "@ledgerhq/coin-solana/logic/validateAddress";
+
+import * as stacksSetup from "../families/stacks/setup";
+import stacksTransaction from "@ledgerhq/coin-stacks/transaction";
+
+import stellarAlpacaSigner from "../bridge/generic-alpaca/families/stellar/signer";
+import * as stellarSetup from "../families/stellar/setup";
+import stellarTransaction from "../families/stellar/transaction";
+import * as stellarDeviceTxConfig from "../families/stellar/deviceTransactionConfig";
+import { validateAddress as stellarValidateAddress } from "@ledgerhq/coin-stellar/logic/validateAddress";
+
+// sui/setup is require()'d lazily because @mysten/ledgerjs-hw-app-sui is ESM-only
+import suiTransaction from "@ledgerhq/coin-sui/transaction";
+
+import tezosAlpacaSigner from "../bridge/generic-alpaca/families/tezos/signer";
+import * as tezosSetup from "../families/tezos/setup";
+import tezosTransaction from "@ledgerhq/coin-tezos/transaction";
+import { getVotesCount as tezosGetVotesCount } from "../families/tezos/getVotesCount";
+import { validateAddress as tezosValidateAddress } from "@ledgerhq/coin-tezos/logic/validateAddress";
+
+import * as tonSetup from "../families/ton/setup";
+import tonTransaction from "@ledgerhq/coin-ton/transaction";
+
+import * as tronSetup from "../families/tron/setup";
+import tronTransaction from "@ledgerhq/coin-tron/transaction";
+import { isAccountEmpty as tronIsAccountEmpty } from "@ledgerhq/coin-tron/index";
+import { getVotesCount as tronGetVotesCount } from "../families/tron/getVotesCount";
+
+import * as vechainSetup from "../families/vechain/setup";
+import vechainTransaction from "@ledgerhq/coin-vechain/transaction";
+import vechainMockAccount from "@ledgerhq/coin-vechain/mock";
+import { isAccountEmpty as vechainIsAccountEmpty } from "@ledgerhq/coin-vechain";
+
+import xrpAlpacaSigner from "../bridge/generic-alpaca/families/xrp/signer";
+import * as xrpSetup from "../families/xrp/setup";
+import xrpTransaction from "../families/xrp/transaction";
+import * as xrpDeviceTxConfig from "../families/xrp/deviceTransactionConfig";
+import * as xrpWalletApiAdapter from "../families/xrp/walletApiAdapter";
+import * as xrpPlatformAdapter from "../families/xrp/platformAdapter";
+import { validateAddress as xrpValidateAddress } from "@ledgerhq/coin-xrp/logic/validateAddress";
+
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
-    loadSetup: () => require("../families/aleo/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-aleo/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-aleo/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => aleoSetup,
+    loadTransaction: () => aleoTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-aleo/deviceTransactionConfig"),
   },
   {
     family: "algorand",
-    loadSetup: () => require("../families/algorand/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-algorand/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-algorand/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => algorandSetup,
+    loadTransaction: () => algorandTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-algorand/deviceTransactionConfig"),
     loadMockBridge: () => require("../families/algorand/bridge/mock").default,
-    loadMockAccount: () => require("@ledgerhq/coin-algorand/mock").default,
+    loadMockAccount: () => algorandMockAccount,
   },
   {
     family: "aptos",
-    loadSetup: () => require("../families/aptos/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-aptos/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-aptos/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => aptosSetup,
+    loadTransaction: () => aptosTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-aptos/deviceTransactionConfig"),
   },
   {
     family: "bitcoin",
-    loadSetup: () => require("../families/bitcoin/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-bitcoin/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-bitcoin/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/bitcoin/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/bitcoin/platformAdapter").default,
-    loadAccount: () => require("@ledgerhq/coin-bitcoin/account").default,
+    loadSetup: (): FamilySetup => bitcoinSetup,
+    loadTransaction: () => bitcoinTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-bitcoin/deviceTransactionConfig"),
+    loadWalletApiAdapter: () => Promise.resolve(bitcoinWalletApiAdapter),
+    loadPlatformAdapter: () => Promise.resolve(bitcoinPlatformAdapter),
+    loadAccount: () => import("@ledgerhq/coin-bitcoin/account"),
     loadMockBridge: () => require("../families/bitcoin/bridge/mock").default,
-    loadClearAccount: () => require("../families/bitcoin/clearAccount").clearAccount,
-    loadIsEditableOperation: () => require("../families/bitcoin/operations").isEditableOperation,
-    loadIsStuckOperation: () => require("../families/bitcoin/operations").isStuckOperation,
-    loadGetStuckAccountAndOperation: () => require("../families/bitcoin/operations").getStuckAccountAndOperation,
+    loadClearAccount: () => bitcoinClearAccount,
+    loadIsEditableOperation: () => bitcoinIsEditableOperation,
+    loadIsStuckOperation: () => bitcoinIsStuckOperation,
+    loadGetStuckAccountAndOperation: () => bitcoinGetStuckAccountAndOperation,
   },
   {
     family: "canton",
-    loadSetup: () => require("../families/canton/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-canton/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-canton/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => cantonSetup,
+    loadTransaction: () => cantonTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-canton/deviceTransactionConfig"),
     loadMockBridge: () => require("../families/canton/bridge/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-canton").isAccountEmpty,
+    loadIsAccountEmpty: () => cantonIsAccountEmpty,
   },
   {
     family: "cardano",
-    loadSetup: () => require("../families/cardano/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-cardano/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-cardano/deviceTransactionConfig").default,
-    loadAccount: () => require("@ledgerhq/coin-cardano/account").default,
+    loadSetup: (): FamilySetup => cardanoSetup,
+    loadTransaction: () => cardanoTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-cardano/deviceTransactionConfig"),
+    loadAccount: () => import("@ledgerhq/coin-cardano/account"),
     loadMockBridge: () => require("../families/cardano/bridge/mock").default,
   },
   {
     family: "casper",
     loadSetup: () => require("../families/casper/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-casper/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-casper/deviceTransactionConfig").default,
+    loadTransaction: () => casperTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-casper/deviceTransactionConfig"),
     loadMockBridge: () => require("../families/casper/bridge/mock").default,
   },
   {
     family: "celo",
-    loadSetup: () => require("../families/celo/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-celo/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-celo/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => require("../families/celo/setup"),
+    loadTransaction: () => celoTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-celo/deviceTransactionConfig"),
   },
   {
     family: "concordium",
-    loadSetup: () => require("../families/concordium/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-concordium/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-concordium/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => concordiumSetup,
+    loadTransaction: () => concordiumTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-concordium/deviceTransactionConfig"),
   },
   {
     family: "cosmos",
-    loadSetup: () => require("../families/cosmos/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-cosmos/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-cosmos/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/cosmos/walletApiAdapter").default,
+    loadSetup: (): FamilySetup => cosmosSetup,
+    loadTransaction: () => cosmosTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-cosmos/deviceTransactionConfig"),
+    loadWalletApiAdapter: () => Promise.resolve(cosmosWalletApiAdapter),
     loadMockBridge: () => require("../families/cosmos/bridge/mock").default,
-    loadMockAccount: () => require("@ledgerhq/coin-cosmos/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-cosmos/helpers").isAccountEmpty,
-    loadGetVotesCount: () => require("../families/cosmos/getVotesCount").getVotesCount,
+    loadMockAccount: () => cosmosMockAccount,
+    loadIsAccountEmpty: () => cosmosIsAccountEmpty,
+    loadGetVotesCount: () => cosmosGetVotesCount,
   },
   {
     family: "evm",
-    loadSetup: () => require("../families/evm/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-evm/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-evm/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/evm/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/evm/platformAdapter").default,
+    loadSetup: (): FamilySetup => evmSetup,
+    loadTransaction: () => evmTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-evm/deviceTransactionConfig"),
+    loadWalletApiAdapter: () => Promise.resolve(evmWalletApiAdapter),
+    loadPlatformAdapter: () => Promise.resolve(evmPlatformAdapter),
     loadMockBridge: () => require("../families/evm/bridge/mock").default,
-    loadValidateAddress: () => require("@ledgerhq/coin-evm/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/evm/signer").default,
-    loadIsEditableOperation: () => require("../families/evm/operations").isEditableOperation,
-    loadIsStuckOperation: () => require("../families/evm/operations").isStuckOperation,
-    loadGetStuckAccountAndOperation: () => require("../families/evm/operations").getStuckAccountAndOperation,
+    loadValidateAddress: () => evmValidateAddress,
+    loadSigner: () => evmAlpacaSigner,
+    loadIsEditableOperation: () => evmIsEditableOperation,
+    loadIsStuckOperation: () => evmIsStuckOperation,
+    loadGetStuckAccountAndOperation: () => evmGetStuckAccountAndOperation,
   },
   {
     family: "filecoin",
-    loadSetup: () => require("../families/filecoin/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-filecoin/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-filecoin/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => filecoinSetup,
+    loadTransaction: () => filecoinTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-filecoin/deviceTransactionConfig"),
   },
   {
     family: "hedera",
-    loadSetup: () => require("../families/hedera/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-hedera/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-hedera/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => hederaSetup,
+    loadTransaction: () => hederaTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-hedera/deviceTransactionConfig"),
   },
   {
     family: "icon",
-    loadSetup: () => require("../families/icon/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-icon/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-icon/deviceTransactionConfig").default,
-    loadAccount: () => require("@ledgerhq/coin-icon/account").default,
+    loadSetup: (): FamilySetup => iconSetup,
+    loadTransaction: () => iconTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-icon/deviceTransactionConfig"),
+    loadAccount: () => import("@ledgerhq/coin-icon/account"),
     loadMockBridge: () => require("../families/icon/bridge/mock").default,
   },
   {
     family: "internet_computer",
-    loadSetup: () => require("../families/internet_computer/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-internet_computer/transaction").default,
-    loadDeviceTxConfig: () =>
-      require("@ledgerhq/coin-internet_computer/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => icSetup,
+    loadTransaction: () => icTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-internet_computer/deviceTransactionConfig"),
   },
   {
     family: "kaspa",
-    loadSetup: () => require("../families/kaspa/setup"),
+    loadSetup: (): FamilySetup => require("../families/kaspa/setup"),
     loadTransaction: () => require("@ledgerhq/coin-kaspa/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-kaspa/deviceTransactionConfig").default,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-kaspa/deviceTransactionConfig"),
   },
   {
     family: "mina",
-    loadSetup: () => require("../families/mina/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-mina/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-mina/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => minaSetup,
+    loadTransaction: () => minaTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-mina/deviceTransactionConfig"),
   },
   {
     family: "multiversx",
-    loadSetup: () => require("../families/multiversx/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-multiversx/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-multiversx/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => multiversxSetup,
+    loadTransaction: () => multiversxTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-multiversx/deviceTransactionConfig"),
     loadMockBridge: () => require("../families/multiversx/bridge/mock").default,
   },
   {
     family: "near",
-    loadSetup: () => require("../families/near/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-near/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-near/deviceTransactionConfig").default,
-    loadAccount: () => require("@ledgerhq/coin-near/account").default,
+    loadSetup: (): FamilySetup => nearSetup,
+    loadTransaction: () => nearTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-near/deviceTransactionConfig"),
+    loadAccount: () => import("@ledgerhq/coin-near/account"),
   },
   {
     family: "polkadot",
-    loadSetup: () => require("../families/polkadot/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-polkadot/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-polkadot/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/polkadot/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/polkadot/platformAdapter").default,
+    loadSetup: (): FamilySetup => polkadotSetup,
+    loadTransaction: () => polkadotTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-polkadot/deviceTransactionConfig"),
+    loadWalletApiAdapter: () => Promise.resolve(polkadotWalletApiAdapter),
+    loadPlatformAdapter: () => Promise.resolve(polkadotPlatformAdapter),
     loadMockBridge: () => require("../families/polkadot/bridge/mock").default,
   },
   {
     family: "solana",
-    loadSetup: () => require("../families/solana/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-solana/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-solana/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/solana/walletApiAdapter").default,
+    loadSetup: (): FamilySetup => solanaSetup,
+    loadTransaction: () => solanaTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-solana/deviceTransactionConfig"),
+    loadWalletApiAdapter: () => Promise.resolve(solanaWalletApiAdapter),
     loadMockBridge: () => require("../families/solana/bridge/mock").default,
-    loadValidateAddress: () =>
-      require("@ledgerhq/coin-solana/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/solana/signer").default,
+    loadValidateAddress: () => solanaValidateAddress,
+    loadSigner: () => solanaAlpacaSigner,
   },
   {
     family: "stacks",
-    loadSetup: () => require("../families/stacks/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-stacks/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-stacks/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => stacksSetup,
+    loadTransaction: () => stacksTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-stacks/deviceTransactionConfig"),
   },
   {
     family: "stellar",
-    loadSetup: () => require("../families/stellar/setup"),
-    loadTransaction: () => require("../families/stellar/transaction").default,
-    loadDeviceTxConfig: () => require("../families/stellar/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => stellarSetup,
+    loadTransaction: () => stellarTransaction,
+    loadDeviceTxConfig: () => Promise.resolve(stellarDeviceTxConfig),
     loadMockBridge: () => require("../families/stellar/bridge/mock").default,
-    loadValidateAddress: () =>
-      require("@ledgerhq/coin-stellar/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/stellar/signer").default,
+    loadValidateAddress: () => stellarValidateAddress,
+    loadSigner: () => stellarAlpacaSigner,
   },
   {
     family: "sui",
-    loadSetup: () => require("../families/sui/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-sui/transaction").default,
-    // No loadDeviceTxConfig: sui has no deviceTransactionConfig
+    loadSetup: (): FamilySetup => require("../families/sui/setup"),
+    loadTransaction: () => suiTransaction,
   },
   {
     family: "tezos",
-    loadSetup: () => require("../families/tezos/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-tezos/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-tezos/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => tezosSetup,
+    loadTransaction: () => tezosTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-tezos/deviceTransactionConfig"),
     loadMockBridge: () => require("../families/tezos/bridge/mock").default,
-    loadGetVotesCount: () => require("../families/tezos/getVotesCount").getVotesCount,
-    loadValidateAddress: () =>
-      require("@ledgerhq/coin-tezos/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/tezos/signer").default,
+    loadGetVotesCount: () => tezosGetVotesCount,
+    loadValidateAddress: () => tezosValidateAddress,
+    loadSigner: () => tezosAlpacaSigner,
   },
   {
     family: "ton",
-    loadSetup: () => require("../families/ton/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-ton/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-ton/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => tonSetup,
+    loadTransaction: () => tonTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-ton/deviceTransactionConfig"),
   },
   {
     family: "tron",
-    loadSetup: () => require("../families/tron/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-tron/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-tron/deviceTransactionConfig").default,
+    loadSetup: (): FamilySetup => tronSetup,
+    loadTransaction: () => tronTransaction,
+    loadDeviceTxConfig: () => import("@ledgerhq/coin-tron/deviceTransactionConfig"),
     loadMockBridge: () => require("../families/tron/bridge/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-tron/index").isAccountEmpty,
-    loadGetVotesCount: () => require("../families/tron/getVotesCount").getVotesCount,
+    loadIsAccountEmpty: () => tronIsAccountEmpty,
+    loadGetVotesCount: () => tronGetVotesCount,
   },
   {
     family: "vechain",
-    loadSetup: () => require("../families/vechain/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-vechain/transaction").default,
-    // No loadDeviceTxConfig: vechain has no deviceTransactionConfig
-    loadAccount: () => require("@ledgerhq/coin-vechain/account").default,
-    loadMockAccount: () => require("@ledgerhq/coin-vechain/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-vechain").isAccountEmpty,
+    loadSetup: (): FamilySetup => vechainSetup,
+    loadTransaction: () => vechainTransaction,
+    loadAccount: () => import("@ledgerhq/coin-vechain/account"),
+    loadMockAccount: () => vechainMockAccount,
+    loadIsAccountEmpty: () => vechainIsAccountEmpty,
   },
   {
     family: "xrp",
-    loadSetup: () => require("../families/xrp/setup"),
-    loadTransaction: () => require("../families/xrp/transaction").default,
-    loadDeviceTxConfig: () => require("../families/xrp/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/xrp/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/xrp/platformAdapter").default,
+    loadSetup: (): FamilySetup => xrpSetup,
+    loadTransaction: () => xrpTransaction,
+    loadDeviceTxConfig: () => Promise.resolve(xrpDeviceTxConfig),
+    loadWalletApiAdapter: () => Promise.resolve(xrpWalletApiAdapter),
+    loadPlatformAdapter: () => Promise.resolve(xrpPlatformAdapter),
     loadMockBridge: () => require("../families/xrp/bridge/mock").default,
-    loadValidateAddress: () =>
-      require("@ledgerhq/coin-xrp/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/xrp/signer").default,
+    loadValidateAddress: () => xrpValidateAddress,
+    loadSigner: () => xrpAlpacaSigner,
   },
 ];

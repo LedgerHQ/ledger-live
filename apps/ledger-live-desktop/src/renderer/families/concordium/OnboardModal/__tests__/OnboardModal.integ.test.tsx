@@ -10,6 +10,8 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import coinConfig from "@ledgerhq/coin-concordium/config";
+import * as liveSignerConcordium from "@ledgerhq/live-signer-concordium";
+import * as deviceAccess from "@ledgerhq/live-common/hw/deviceAccess";
 import OnboardModal from "../index";
 import {
   createConcordiumAccount,
@@ -35,10 +37,6 @@ const {
   __mockPairingDelete: mockPairingDelete,
 } = require("@walletconnect/sign-client");
 
-jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
-  withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
-}));
-
 const mockGetPublicKey = jest.fn();
 const mockSignCredentialDeployment = jest.fn();
 
@@ -48,24 +46,6 @@ jest.mock("@ledgerhq/coin-concordium/signer", () => ({
   signCredentialDeployment: (...args: unknown[]) => mockSignCredentialDeployment(...args),
   default: jest.fn(),
 }));
-
-jest.mock(
-  "@ledgerhq/live-signer-concordium",
-  () => ({
-    __esModule: true,
-    DmkSignerConcordium: jest.fn(() => ({
-      getPublicKey: jest.fn().mockResolvedValue("aa".repeat(32)),
-      signCredentialDeployment: jest.fn(
-        () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), T + 200)),
-      ),
-      getAddress: jest.fn().mockResolvedValue({
-        publicKey: "aa".repeat(32),
-        address: "test",
-      }),
-    })),
-  }),
-  { virtual: true },
-);
 
 // Test data — matches bridge fixture structure for deserializeCredentialDeploymentTransaction
 const TEST_SERIALIZED_CDT = {
@@ -160,6 +140,27 @@ describe("OnboardModal Integration", () => {
   const initialState = createInitialState(mockDevice);
 
   beforeAll(() => {
+    jest
+      .spyOn(deviceAccess, "withDevice")
+      .mockImplementation(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (() => (job: (t: unknown) => unknown) => job({ dmk: {}, sessionId: "mock-session" })) as any,
+      );
+
+    jest.spyOn(liveSignerConcordium, 'DmkSignerConcordium').mockImplementation(
+      jest.fn(() => ({
+        getPublicKey: jest.fn().mockResolvedValue("aa".repeat(32)),
+        signCredentialDeployment: jest.fn(
+          () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), T + 200)),
+        ),
+        getAddress: jest.fn().mockResolvedValue({
+          publicKey: "aa".repeat(32),
+          address: "test",
+        }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any,
+    );
+
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
       networkType: "mainnet",
@@ -168,6 +169,10 @@ describe("OnboardModal Integration", () => {
       proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
       minReserve: 0,
     }));
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   beforeEach(() => {
