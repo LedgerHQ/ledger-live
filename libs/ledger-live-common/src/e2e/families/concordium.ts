@@ -1,23 +1,26 @@
 import { Account, TokenAccount } from "../enum/Account";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { runCliGetAddress } from "../runCli";
-import { pressUntilTextFound } from "../speculos";
+import { getSendEvents } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
+import { Transaction } from "../models/Transaction";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 
-export const sendConcordium = withDeviceController(({ getButtonsController }) => async () => {
-  const buttons = getButtonsController();
+export const sendConcordium = withDeviceController(
+  ({ getButtonsController }) =>
+    async (tx: Transaction) => {
+      const buttons = getButtonsController();
 
-  if (isTouchDevice()) {
-    await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-    await longPressAndRelease(DeviceLabels.SIGN_TRANSACTION, 3);
-  } else {
-    // Concordium screen flow: Transaction Type → Amount → Fee → Destination → Account → Accept → Sign transaction
-    await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-    await buttons.both();
-  }
-});
+      await getSendEvents(tx);
+
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await buttons.both();
+      }
+    },
+);
 
 const CCD_TESTNET_WALLET_PROXY_URL = "https://ccd-wallet-proxy-testnet.coin.ledger-test.com";
 const CCD_WALLET_PROXY_TIMEOUT_MS = 10_000;

@@ -959,7 +959,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendInternetComputer(tx);
       break;
     case Currency.CCD_TESTNET.id:
-      await sendConcordium();
+      await sendConcordium(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
