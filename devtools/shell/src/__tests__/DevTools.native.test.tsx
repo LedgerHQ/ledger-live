@@ -2,46 +2,40 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import { DevTools } from "../DevTools.native";
 
 describe("DevTools (native)", () => {
-  it("renders the shell with nav and content area", () => {
+  it("renders the shell", () => {
     render(<DevTools />);
     expect(screen.getByTestId("devtools")).toBeOnTheScreen();
-    expect(screen.getByTestId("devtools-nav")).toBeOnTheScreen();
   });
 
-  it("shows categories in the sidebar", () => {
+  it("shows category list on the home screen", () => {
     render(<DevTools />);
-    expect(screen.getByRole("button", { name: "Dev Tools" })).toBeOnTheScreen();
+    expect(screen.getByTestId("devtools-home")).toBeOnTheScreen();
+    expect(screen.getByRole("button", { name: "Configuration" })).toBeOnTheScreen();
   });
 
-  it("collapses all categories by default", () => {
+  it("shows no tool screen when on home", () => {
     render(<DevTools />);
-    expect(screen.queryByRole("button", { name: "Feature Flags" })).toBeNull();
+    expect(screen.queryByTestId("devtools-content")).toBeNull();
   });
 
-  it("shows empty state when no tool is selected", () => {
+  it("tapping a category shows its tools", () => {
     render(<DevTools />);
-    expect(screen.getByTestId("devtools-empty")).toBeOnTheScreen();
-  });
-
-  it("expands a category when pressed", () => {
-    render(<DevTools />);
-    fireEvent.press(screen.getByRole("button", { name: "Dev Tools" }));
+    fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
     expect(screen.getByRole("button", { name: "Feature Flags" })).toBeOnTheScreen();
   });
 
-  it("collapses an expanded category on second press", () => {
+  it("tapping back from category returns to home", () => {
     render(<DevTools />);
-    const categoryButton = screen.getByRole("button", { name: "Dev Tools" });
-    fireEvent.press(categoryButton);
-    fireEvent.press(categoryButton);
-    expect(screen.queryByRole("button", { name: "Feature Flags" })).toBeNull();
+    fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
+    fireEvent.press(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByTestId("devtools-home")).toBeOnTheScreen();
   });
 
-  it("navigates to a tool after expanding its category", () => {
+  it("tapping a tool shows the tool screen", () => {
     render(<DevTools />);
-    fireEvent.press(screen.getByRole("button", { name: "Dev Tools" }));
+    fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
     fireEvent.press(screen.getByRole("button", { name: "Feature Flags" }));
-    expect(screen.queryByTestId("devtools-empty")).toBeNull();
+    expect(screen.getByTestId("devtools-content")).toBeOnTheScreen();
     expect(screen.getByTestId("devtools-content")).toHaveTextContent(/Feature Flags/);
   });
 });

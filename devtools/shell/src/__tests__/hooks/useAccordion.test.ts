@@ -20,20 +20,32 @@ describe("useAccordion", () => {
     expect(result.current.isExpanded("a")).toBe(false);
   });
 
-  it("expands multiple keys independently", () => {
-    const { result } = renderHook(() => useAccordion<string>());
-    act(() => result.current.toggle("a"));
-    act(() => result.current.toggle("b"));
-    expect(result.current.isExpanded("a")).toBe(true);
-    expect(result.current.isExpanded("b")).toBe(true);
+  describe("single mode (default)", () => {
+    it("collapses the previous key when a new key is expanded", () => {
+      const { result } = renderHook(() => useAccordion<string>());
+      act(() => result.current.toggle("a"));
+      act(() => result.current.toggle("b"));
+      expect(result.current.isExpanded("a")).toBe(false);
+      expect(result.current.isExpanded("b")).toBe(true);
+    });
   });
 
-  it("collapses one key without affecting others", () => {
-    const { result } = renderHook(() => useAccordion<string>());
-    act(() => result.current.toggle("a"));
-    act(() => result.current.toggle("b"));
-    act(() => result.current.toggle("a"));
-    expect(result.current.isExpanded("a")).toBe(false);
-    expect(result.current.isExpanded("b")).toBe(true);
+  describe("multi mode", () => {
+    it("expands multiple keys independently", () => {
+      const { result } = renderHook(() => useAccordion<string>({ mode: "multi" }));
+      act(() => result.current.toggle("a"));
+      act(() => result.current.toggle("b"));
+      expect(result.current.isExpanded("a")).toBe(true);
+      expect(result.current.isExpanded("b")).toBe(true);
+    });
+
+    it("collapses one key without affecting others", () => {
+      const { result } = renderHook(() => useAccordion<string>({ mode: "multi" }));
+      act(() => result.current.toggle("a"));
+      act(() => result.current.toggle("b"));
+      act(() => result.current.toggle("a"));
+      expect(result.current.isExpanded("a")).toBe(false);
+      expect(result.current.isExpanded("b")).toBe(true);
+    });
   });
 });

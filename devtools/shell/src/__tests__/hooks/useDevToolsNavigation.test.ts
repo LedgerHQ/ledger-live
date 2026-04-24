@@ -3,9 +3,9 @@ import { useDevToolsNavigation } from "../../hooks/useDevToolsNavigation";
 import { Category, type Tool } from "../../types";
 
 const tools: Tool[] = [
-  { id: "feature-flags", label: "Feature Flags", category: Category.DEV_TOOLS },
-  { id: "another-dev-tool", label: "Another Dev Tool", category: Category.DEV_TOOLS },
-  { id: "network-inspector", label: "Network Inspector", category: Category.NETWORK },
+  { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION },
+  { id: "another-tool", label: "Another Tool", category: Category.CONFIGURATION },
+  { id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY },
 ];
 
 describe("useDevToolsNavigation", () => {
@@ -17,15 +17,15 @@ describe("useDevToolsNavigation", () => {
 
   it("groups tools under the correct category", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
-    const devTools = result.current.categories.find(c => c.category === Category.DEV_TOOLS);
-    expect(devTools?.tools).toHaveLength(2);
-    expect(devTools?.tools.map(t => t.label)).toEqual(["Feature Flags", "Another Dev Tool"]);
+    const config = result.current.categories.find(c => c.category === Category.CONFIGURATION);
+    expect(config?.tools).toHaveLength(2);
+    expect(config?.tools.map(t => t.label)).toEqual(["Feature Flags", "Another Tool"]);
   });
 
   it("returns an empty tools array for categories with no tools", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
-    const device = result.current.categories.find(c => c.category === Category.DEVICE);
-    expect(device?.tools).toHaveLength(0);
+    const generators = result.current.categories.find(c => c.category === Category.GENERATORS);
+    expect(generators?.tools).toHaveLength(0);
   });
 
   it("starts with no active tool", () => {
