@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
@@ -16,6 +16,26 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
   bottomOffset,
   gradientColors,
 }) => {
+  // Stabilize the children array passed to Lumen's <TabBar>. Its internal
+  // pill-animation effect depends on `children` via a useCallback, and a fresh
+  // array on every render cancels the in-flight withTiming before it can
+  // progress — leaving the pill stuck (visible on Android 16 / RN 0.81).
+  // Remove once @ledgerhq/lumen-ui-rnative ships the TabBar effect fix.
+  const tabBarChildren = useMemo(
+    () =>
+      tabItems.map(item => (
+        <TabBarItem
+          key={item.value}
+          value={item.value}
+          label={item.label}
+          icon={item.icon}
+          activeIcon={item.activeIcon}
+          testID={item.testID}
+        />
+      )),
+    [tabItems],
+  );
+
   if (hideTabBar) {
     return null;
   }
@@ -44,16 +64,7 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
       />
 
       <TabBar active={activeRouteName} onTabPress={onTabPress} lx={{ marginHorizontal: "s24" }}>
-        {tabItems.map(item => (
-          <TabBarItem
-            key={item.value}
-            value={item.value}
-            label={item.label}
-            icon={item.icon}
-            activeIcon={item.activeIcon}
-            testID={item.testID}
-          />
-        ))}
+        {tabBarChildren}
       </TabBar>
     </Animated.View>
   );
