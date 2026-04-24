@@ -1,3 +1,4 @@
+import type { QuoteLiquiditySource } from "../types";
 import type { RawQuote } from "../service/types";
 
 export function resolveQuoteId(quote: RawQuote): string | undefined {
@@ -17,5 +18,28 @@ export function isUniswapXQuote(quote: RawQuote): boolean {
 }
 
 export function isGasLess(quote: RawQuote): boolean {
-  return quote.liquiditySource === "RFQ";
+  return computeLiquiditySource(quote) === "RFQ";
+}
+
+/**
+ * Classify a quote's liquidity source from the provider id and
+ * `customFields["@type"]` tag. The raw `liquiditySource` API field is
+ * unreliable for `oneinchfusion` and UniswapDutch-tagged rows.
+ */
+export function computeLiquiditySource(quote: RawQuote): QuoteLiquiditySource {
+  if (quote.provider === "oneinchfusion" || isUniswapXQuote(quote)) {
+    return "RFQ";
+  }
+  return "AMM";
+}
+
+/**
+ * Round fractional slippage to one decimal place; safe-integer presets
+ * (0, 1, 2...) pass through untouched.
+ */
+export function normalizeSlippage(slippage: number): number {
+  if (Number.isSafeInteger(slippage)) {
+    return slippage;
+  }
+  return parseFloat(slippage.toFixed(1));
 }

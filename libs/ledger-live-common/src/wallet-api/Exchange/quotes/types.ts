@@ -14,4 +14,5 @@ export type {
   QuoteError,
   ProviderDetails,
   QuoteProviderError,
+  QuoteLiquiditySource,
 } from "@ledgerhq/wallet-api-exchange-module";
