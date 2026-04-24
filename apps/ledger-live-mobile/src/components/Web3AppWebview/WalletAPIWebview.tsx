@@ -81,7 +81,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
         showsVerticalScrollIndicator={false}
         renderLoading={Loader}
-        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+        originWhitelist={manifestDomainCheckEnabled ? manifest.domains : undefined}
         onShouldStartLoadWithRequest={
           manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
         }

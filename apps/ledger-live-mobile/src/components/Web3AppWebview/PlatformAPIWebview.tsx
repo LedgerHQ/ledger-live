@@ -498,7 +498,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
-        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+        originWhitelist={manifestDomainCheckEnabled ? manifest.domains : undefined}
         onShouldStartLoadWithRequest={
           manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
         }
