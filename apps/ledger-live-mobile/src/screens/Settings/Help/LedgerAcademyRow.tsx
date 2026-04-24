@@ -12,10 +12,10 @@ function LedgerAcademyRow() {
   return (
     <SettingsRow
       event="LedgerAcademyRow"
-      title={<Trans i18nKey="settings.help.ledgerAcademy" />}
-      desc={<Trans i18nKey="settings.help.ledgerAcademyDesc" />}
+      title={<Trans i18nKey="help.ledgerAcademy.title" />}
+      desc={<Trans i18nKey="help.ledgerAcademy.desc" />}
       onPress={() => Linking.openURL(ledgerAcademyUrl)}
-      testID={`ledger-academy-row-${ledgerAcademyUrl}`}
+      testID="ledger-academy-row"
     >
       <ExternalLinkMedium size={20} color={"neutral.c100"} />
     </SettingsRow>
