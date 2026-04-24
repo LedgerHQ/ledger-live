@@ -54,6 +54,8 @@ const transformIncludePatterns = [
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
 module.exports = {
+  /** CI sets `JEST_MAX_WORKERS` (e.g. `100%`); local default leaves laptops headroom. */
+  maxWorkers: process.env.JEST_MAX_WORKERS || "50%",
   verbose: true,
   preset: "react-native",
   workerIdleMemoryLimit: "1GB",
