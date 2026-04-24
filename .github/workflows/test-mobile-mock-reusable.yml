@@ -637,7 +637,6 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: ios
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -661,7 +660,6 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: android
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
