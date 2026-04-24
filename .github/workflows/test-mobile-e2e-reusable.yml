@@ -153,6 +153,7 @@ env:
   AVD_RAM_SIZE: 3072
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  DD_GIT_BRANCH: "test"
 
 jobs:
   determine-builds:
@@ -626,6 +627,7 @@ jobs:
     if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
+      DD_GIT_BRANCH: "test3"
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
@@ -650,8 +652,14 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_android) }}
     steps:
+      - name: Tag dry run test
+        run: npx @datadog/datadog-ci tag --level pipeline --tags "custom.branch:test" --dry-run
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_SITE: datadoghq.eu
       - name: Tag with github event
-        run: npx @datadog/datadog-ci tag --level pipeline --tags "github.node_group:node_group"
+        run: npx @datadog/datadog-ci tag --level pipeline --tags "custom.branch:test"
         env:
           DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
           DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
