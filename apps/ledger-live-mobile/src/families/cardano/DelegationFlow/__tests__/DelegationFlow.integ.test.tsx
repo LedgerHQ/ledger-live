@@ -171,7 +171,7 @@ describe("DelegationFlow Integration", () => {
     expect(validatorName).toBeVisible();
 
     // Continue is pressed
-    const continueButton = await screen.findByTestId("cardano-summary-continue-button");
+    const continueButton = await screen.findByTestId("enabled-cardano-summary-continue-button");
     expect(continueButton).toBeVisible();
   });
 
