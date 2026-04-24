@@ -48,7 +48,7 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const { showNoahMenu: showNoahOption } = useReceiveNoahEntry();
 
-  const transferCopyFlag = useFeature("transferButtonCopyVariant");
+  const transferCopyFlag = useFeature("llmTransferButtonCopyVariant");
   const language = useSelector(languageSelector);
   const isEN = language === "en";
   const flagParams = transferCopyFlag?.params;

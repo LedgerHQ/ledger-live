@@ -178,7 +178,7 @@ describe("QuickActionsCtas Integration Tests", () => {
     });
   });
 
-  describe("Remote copy A/B test (transferButtonCopyVariant)", () => {
+  describe("Remote copy A/B test (llmTransferButtonCopyVariant)", () => {
     const cases = [
       {
         name: "enabled — shows remote copy",
