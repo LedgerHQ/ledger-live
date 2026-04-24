@@ -35,7 +35,14 @@ const pollingPeriodMs = 1000;
 
 export function RecoverPlayer({ navigation, route }: Props) {
   const { theme } = useTheme();
-  const { platform: appId, device, fromOnboarding, ...params } = route.params || {};
+  const {
+    platform: appId,
+    device,
+    fromOnboarding,
+    recoverDeeplinkAt,
+    date: recoverReloadDate,
+    ...params
+  } = route.params || {};
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
@@ -92,6 +99,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
     <>
       <TrackScreen category="Platform" name="App" />
       <WebRecoverPlayer
+        key={`${manifest.id}-${recoverDeeplinkAt ?? ""}-${recoverReloadDate ?? ""}`}
         manifest={manifest}
         inputs={{
           devModeEnabled,
