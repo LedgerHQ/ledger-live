@@ -87,6 +87,10 @@ function makeTokenWithTxId(id: number, transactionId?: number): APITokenTransfer
   return { ...makeTokenItem(id), transactionId } as APITokenTransfer;
 }
 
+function makeTokenWithOrigId(id: number, originationId?: number): APITokenTransfer {
+  return { ...makeTokenItem(id), originationId } as APITokenTransfer;
+}
+
 const localSpies: jest.SpyInstance[] = [];
 
 function spyOnApi<K extends keyof typeof api>(method: K) {
@@ -258,6 +262,49 @@ describe("tzkt network API", () => {
   });
 
   // -------------------------------------------------------------------------
+  // api.getOperationsOrigination
+  // -------------------------------------------------------------------------
+
+  describe("api.getOperationsOrigination", () => {
+    it("fetches without cursor and strips undefined extra args", async () => {
+      const originations: (APITransactionType & { block: string; hash: string })[] = [
+        { id: 1, hash: "h1", block: "b1" } as APITransactionType & { hash: string; block: string },
+      ];
+      mockedNetwork.mockReturnValue(networkResponse(originations) as ReturnType<typeof network>);
+
+      const result = await api.getOperationsOrigination(100, undefined, {
+        foo: undefined,
+        bar: "x",
+      });
+
+      expect(result).toEqual(originations);
+      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
+      expect(params).toMatchObject({
+        "level.gte": 100,
+        limit: 1000,
+        "sort.asc": "id",
+        bar: "x",
+      });
+      expect(params).not.toHaveProperty("foo");
+      expect(params).not.toHaveProperty("offset.cr");
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("/v1/operations/originations"),
+        }),
+      );
+    });
+
+    it("includes offset.cr when cursor is set", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      await api.getOperationsOrigination(5, 999);
+
+      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
+      expect(params["offset.cr"]).toBe(999);
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // api.getTokenTransfers
   // -------------------------------------------------------------------------
 
@@ -308,16 +355,15 @@ describe("tzkt network API", () => {
         makeTokenWithTxId(2, undefined),
       ]);
       const spyTx = spyOnApi("getOperationsTransactions");
+      const spyOrig = spyOnApi("getOperationsOrigination");
 
       const result = await api.getAccountTokenTransfers("tz1x", {
         "level.ge": 10,
       });
 
       expect(spyTx).not.toHaveBeenCalled();
-      expect(result).toEqual([
-        expect.objectContaining({ id: 1, hash: "" }),
-        expect.objectContaining({ id: 2, hash: "" }),
-      ]);
+      expect(spyOrig).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
       expect(spyToken).toHaveBeenCalledWith(
         10,
         undefined,
@@ -335,8 +381,12 @@ describe("tzkt network API", () => {
         makeTokenWithTxId(2, 200),
       ]);
       spyOnApi("getOperationsTransactions").mockResolvedValue([
-        { id: 100, hash: "h100" } as APITransactionType,
+        { id: 100, hash: "h100", block: "BLK100" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
       ]);
+      const spyOrig = spyOnApi("getOperationsOrigination");
 
       const result = await api.getAccountTokenTransfers("tz1y", {
         "level.ge": 0,
@@ -344,12 +394,148 @@ describe("tzkt network API", () => {
       });
 
       expect(result).toEqual([
-        expect.objectContaining({ id: 1, hash: "h100" }),
-        expect.objectContaining({ id: 2, hash: "" }),
+        expect.objectContaining({ id: 1, hash: "h100", block: "BLK100" }),
+        expect.objectContaining({ id: 2, hash: "", block: "" }),
       ]);
       expect(api.getOperationsTransactions).toHaveBeenCalledWith(0, undefined, {
         "id.in": "100,200",
       });
+      expect(spyOrig).not.toHaveBeenCalled();
+    });
+
+    it("attaches parent hash and block from originations when only originationIds are present", async () => {
+      jest
+        .spyOn(api, "getTokenTransfers")
+        .mockResolvedValue([makeTokenWithOrigId(1, 100), makeTokenWithOrigId(2, 200)]);
+      const spyTx = jest.spyOn(api, "getOperationsTransactions");
+      jest.spyOn(api, "getOperationsOrigination").mockResolvedValue([
+        { id: 100, hash: "h100", block: "BLK100" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+        { id: 200, hash: "h200", block: "BLK200" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+      ]);
+
+      const result = await api.getAccountTokenTransfers("tz1o", {
+        "level.ge": 0,
+      });
+
+      expect(spyTx).not.toHaveBeenCalled();
+      expect(api.getOperationsOrigination).toHaveBeenCalledWith(0, undefined, {
+        "id.in": "100,200",
+      });
+      expect(result).toEqual([
+        expect.objectContaining({ id: 1, hash: "h100", block: "BLK100" }),
+        expect.objectContaining({ id: 2, hash: "h200", block: "BLK200" }),
+      ]);
+    });
+
+    it("joins both transactions and originations when both ids are present", async () => {
+      jest
+        .spyOn(api, "getTokenTransfers")
+        .mockResolvedValue([makeTokenWithTxId(1, 100), makeTokenWithOrigId(2, 500)]);
+      jest.spyOn(api, "getOperationsTransactions").mockResolvedValue([
+        { id: 100, hash: "hTx", block: "BLK_TX" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+      ]);
+      jest.spyOn(api, "getOperationsOrigination").mockResolvedValue([
+        { id: 500, hash: "hOrig", block: "BLK_ORIG" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+      ]);
+
+      const result = await api.getAccountTokenTransfers("tz1mix", {
+        "level.ge": 0,
+      });
+
+      expect(api.getOperationsTransactions).toHaveBeenCalledWith(0, undefined, {
+        "id.in": "100",
+      });
+      expect(api.getOperationsOrigination).toHaveBeenCalledWith(0, undefined, {
+        "id.in": "500",
+      });
+      expect(result).toEqual([
+        expect.objectContaining({ id: 1, hash: "hTx", block: "BLK_TX" }),
+        expect.objectContaining({ id: 2, hash: "hOrig", block: "BLK_ORIG" }),
+      ]);
+    });
+
+    it("keeps partial hash/block from the parent transaction without dropping transfers", async () => {
+      jest
+        .spyOn(api, "getTokenTransfers")
+        .mockResolvedValue([
+          makeTokenWithTxId(1, 100),
+          makeTokenWithTxId(2, 200),
+          makeTokenWithTxId(3, 300),
+        ]);
+      jest.spyOn(api, "getOperationsTransactions").mockResolvedValue([
+        { id: 100, hash: "h100", block: "" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+        { id: 200, hash: "", block: "BLK200" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+        { id: 300, hash: "h300", block: "BLK300" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+      ]);
+      const spyOrig = jest.spyOn(api, "getOperationsOrigination");
+
+      const result = await api.getAccountTokenTransfers("tz1z", {
+        "level.ge": 0,
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({ id: 1, hash: "h100", block: "" }),
+        expect.objectContaining({ id: 2, hash: "", block: "BLK200" }),
+        expect.objectContaining({ id: 3, hash: "h300", block: "BLK300" }),
+      ]);
+      expect(spyOrig).not.toHaveBeenCalled();
+    });
+
+    it("keeps partial hash/block from the parent origination without dropping transfers", async () => {
+      jest
+        .spyOn(api, "getTokenTransfers")
+        .mockResolvedValue([
+          makeTokenWithOrigId(1, 100),
+          makeTokenWithOrigId(2, 200),
+          makeTokenWithOrigId(3, 300),
+        ]);
+      const spyTx = jest.spyOn(api, "getOperationsTransactions");
+      jest.spyOn(api, "getOperationsOrigination").mockResolvedValue([
+        { id: 100, hash: "h100", block: "" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+        { id: 200, hash: "", block: "BLK200" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+        { id: 300, hash: "h300", block: "BLK300" } as APITransactionType & {
+          hash: string;
+          block: string;
+        },
+      ]);
+
+      const result = await api.getAccountTokenTransfers("tz1origZ", {
+        "level.ge": 0,
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({ id: 1, hash: "h100", block: "" }),
+        expect.objectContaining({ id: 2, hash: "", block: "BLK200" }),
+        expect.objectContaining({ id: 3, hash: "h300", block: "BLK300" }),
+      ]);
+      expect(spyTx).not.toHaveBeenCalled();
     });
   });
 
