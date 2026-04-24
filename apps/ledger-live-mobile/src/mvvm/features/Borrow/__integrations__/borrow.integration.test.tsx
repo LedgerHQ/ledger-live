@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, act } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import { useNetInfo } from "@react-native-community/netinfo";
 import type { NetInfoState } from "@react-native-community/netinfo";
 import {
@@ -114,10 +114,6 @@ describe("Borrow integration (mobile)", () => {
         onActionHandled={onActionHandled}
       />,
     );
-
-    act(() => {
-      jest.runAllTimers();
-    });
 
     expect(onNativeGoBack).toHaveBeenCalledTimes(1);
     expect(onActionHandled).toHaveBeenCalledTimes(1);
