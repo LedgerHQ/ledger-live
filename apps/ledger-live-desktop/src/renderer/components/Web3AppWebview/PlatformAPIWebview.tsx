@@ -217,9 +217,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   account,
                   parentAccount,
                   location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
-                  onResult: (signedOperation: SignedOperation) => {
+                  onResult: async (signedOperation: SignedOperation) => {
                     tracking.platformSignTransactionSuccess(manifest);
-                    resolve(serializePlatformSignedTransaction(signedOperation));
+                    resolve(await serializePlatformSignedTransaction(signedOperation));
                   },
                   onCancel: (error: Error) => {
                     tracking.platformSignTransactionFail(manifest);

@@ -1,6 +1,7 @@
 import { withFlagOverrides } from "@tests/test-renderer";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { State } from "~/reducers/types";
+
+const DEFAULT_POLICY_VERSION = 1;
 
 export type ConsentDrawerTestOptions = {
   hasCompletedOnboarding?: boolean;
@@ -9,6 +10,7 @@ export type ConsentDrawerTestOptions = {
   privacyPolicyVersion?: number | null;
   analyticsEnabled?: boolean;
   personalizedRecommendationsEnabled?: boolean;
+  analyticsOptInParams?: Partial<{ policyVersion: number; consentValidityDays: number }>;
 };
 
 /**
@@ -18,7 +20,7 @@ export type ConsentDrawerTestOptions = {
 export function withConsentDrawerOpeningFresh(options: ConsentDrawerTestOptions = {}) {
   return withConsentDrawerState({
     consentDate: null,
-    privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+    privacyPolicyVersion: DEFAULT_POLICY_VERSION,
     analyticsEnabled: false,
     personalizedRecommendationsEnabled: false,
     ...options,
@@ -34,13 +36,23 @@ export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
     hasCompletedOnboarding = true,
     analyticsOptInEnabled = true,
     consentDate = null,
-    privacyPolicyVersion = CURRENT_PRIVACY_POLICY_VERSION,
+    privacyPolicyVersion = DEFAULT_POLICY_VERSION,
     analyticsEnabled = true,
     personalizedRecommendationsEnabled = true,
+    analyticsOptInParams = {},
   } = options;
 
   return (state: State): State =>
-    withFlagOverrides({ analyticsOptIn: { enabled: analyticsOptInEnabled } })({
+    withFlagOverrides({
+      analyticsOptIn: {
+        enabled: analyticsOptInEnabled,
+        params: {
+          policyVersion: DEFAULT_POLICY_VERSION,
+          consentValidityDays: 365,
+          ...analyticsOptInParams,
+        },
+      },
+    })({
       ...state,
       settings: {
         ...state.settings,

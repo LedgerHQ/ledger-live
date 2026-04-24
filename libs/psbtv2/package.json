@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/psbtv2",
-  "version": "0.4.0",
+  "version": "0.5.0-next.0",
   "description": "Partially Signed Bitcoin Transaction version 2 (BIP370) implementation",
   "keywords": [
     "Ledger",
@@ -53,10 +53,12 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-lib": "^6.1.7",
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@bitcoinerlab/secp256k1": "1.2.0",
+    "ecpair": "3.0.1",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@swc/core": "catalog:",

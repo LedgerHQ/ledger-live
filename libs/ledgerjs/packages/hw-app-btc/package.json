@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "10.21.1",
+  "version": "10.22.0-next.0",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -69,7 +69,7 @@
     "@noble/curves": "1.9.7",
     "@noble/hashes": "1.8.0",
     "bip32-path": "^0.4.2",
-    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-lib": "^6.1.7",
     "bs58": "catalog:",
     "bs58check": "catalog:",
     "invariant": "^2.2.4",

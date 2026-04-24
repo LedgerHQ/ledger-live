@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.38.0",
+  "version": "0.39.0-next.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -16,6 +16,10 @@
     "typecheck": "tsc --noEmit --customConditions node"
   },
   "dependencies": {
+    "@devtools/shell": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:*",
+    "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
     "@ledgerhq/coin-module-framework": "catalog:",

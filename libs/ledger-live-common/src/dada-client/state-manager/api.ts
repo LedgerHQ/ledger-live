@@ -5,7 +5,7 @@ import {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import { convertApiAssets } from "@ledgerhq/cryptoassets";
+import { convertApiAssets, legacyIdToApiId } from "@ledgerhq/cryptoassets";
 import { RawApiResponse, AssetsData } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -56,7 +56,7 @@ function emptyAssetsData(): AssetsData {
   };
 }
 
-function buildAssetsQueryParams(
+export function buildAssetsQueryParams(
   queryArg: GetAssetsDataParams,
   opts?: { pageSize?: number; cursor?: string },
 ): Record<string, unknown> {
@@ -65,7 +65,10 @@ function buildAssetsQueryParams(
     ...(opts?.cursor && { cursor: opts.cursor }),
     ...(queryArg.useCase && { transaction: queryArg.useCase }),
     ...(queryArg.currencyIds &&
-      queryArg.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
+      queryArg.currencyIds.length > 0 && {
+        // FIXME: Transform legacy ID to API format before querying
+        currencyIds: queryArg.currencyIds.map(legacyIdToApiId),
+      }),
     ...(queryArg.search && { search: queryArg.search }),
     product: queryArg.product,
     minVersion: queryArg.version,

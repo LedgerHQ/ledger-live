@@ -21,7 +21,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import invariant from "invariant";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -42,7 +42,11 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const transactionToEdit = useMemo<BtcTransaction>(() => {
+  const [transactionToEdit, setTransactionToEdit] = useState<BtcTransaction | undefined>(
+    undefined,
+  );
+  useEffect(() => {
+    let cancelled = false;
     const transactionRaw = {
       family: "bitcoin" as const,
       amount: "0",
@@ -53,11 +57,13 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       feePerByte: null,
       networkInfo: null,
     };
-
-    return {
-      ...fromTransactionRaw(transactionRaw as TransactionRaw),
-      replaceTxId: operation.hash,
-    } as BtcTransaction;
+    fromTransactionRaw(transactionRaw as TransactionRaw).then(tx => {
+      if (!cancelled)
+        setTransactionToEdit({ ...tx, replaceTxId: operation.hash } as BtcTransaction);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [operation.hash, mainAccount.freshAddress]);
 
   const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(() => ({
@@ -66,12 +72,13 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     transaction: transactionToEdit,
   }));
 
-  invariant(
-    transaction,
-    "[useBridgeTransaction - MethodSelection] could not find transaction from bridge.",
-  );
+  // Sync bridge transaction once transactionToEdit resolves from the async fromTransactionRaw call
+  useEffect(() => {
+    if (transactionToEdit) setTransaction(transactionToEdit);
+  }, [transactionToEdit, setTransaction]);
 
   useEffect(() => {
+    if (!transactionToEdit) return;
     let cancelled = false;
     const run = async () => {
       const [cancel, speedup] = await Promise.all([
@@ -97,6 +104,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const onSelect = useCallback(
     async (option: EditType) => {
+      if (!transactionToEdit || !transaction) return;
       const patch = await getEditTransactionPatch({
         account: mainAccount,
         transaction: transactionToEdit,
@@ -139,7 +147,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   }
 
   useEffect(() => {
-    if (!selectedMethod) {
+    if (!selectedMethod || !transaction) {
       return;
     }
     const transactionRaw = {
@@ -155,7 +163,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     navigation.navigate(ScreenName.EditTransactionSummary, {
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction: transaction,
+      transaction,
       transactionRaw: transactionRaw as TransactionRaw,
       currentNavigation: ScreenName.EditTransactionSummary,
       nextNavigation: ScreenName.SendSelectDevice,
@@ -171,7 +179,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     navigation,
   ]);
 
-  if (!transaction) {
+  if (!transaction || !transactionToEdit) {
     return null;
   }
 

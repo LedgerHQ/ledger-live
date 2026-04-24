@@ -103,7 +103,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: ./tools/actions/composites/nx-affected-packages
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD

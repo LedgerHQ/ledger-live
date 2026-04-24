@@ -102,7 +102,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     mina: {
       accounts: {
-        pristine: { address: "B62qoBXNhc6YqTa86zzniBjNTyshkM7NjGf1Z1uBJJXjSTdYK1qyKr6" },
+        pristine: { address: "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD" },
         average: { address: "B62qmPDHpwUumEyYbEt7UGc5uDQGdaV9MSkq7b93tbMwmXstjcWeXnx" },
         big: { address: "B62qoErNk7pK8BPtbx1eKoa4GURxvyB65hJNXmeRyk56TeB26zqosvw" },
       },

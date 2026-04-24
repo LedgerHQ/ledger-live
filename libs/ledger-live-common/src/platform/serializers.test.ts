@@ -50,14 +50,14 @@ const RAW_SIGNED_TRANSACTION: SignedOperationRaw = {
 
 const ACCOUNT_ID = "js:2:ethereum:0x3f87926741ecaXXXXXXXXXXXXXXXXXXXXXXXXXXX:";
 
-test("should serialize a platform signed transaction", () => {
-  const serializedSignedTransaction = serializePlatformSignedTransaction(SIGNED_TRANSACTION);
+test("should serialize a platform signed transaction", async () => {
+  const serializedSignedTransaction = await serializePlatformSignedTransaction(SIGNED_TRANSACTION);
 
   expect(serializedSignedTransaction).toEqual(RAW_SIGNED_TRANSACTION);
 });
 
-test("should deserialize a raw platform signed transaction", () => {
-  const signedTransaction = deserializePlatformSignedTransaction(
+test("should deserialize a raw platform signed transaction", async () => {
+  const signedTransaction = await deserializePlatformSignedTransaction(
     RAW_SIGNED_TRANSACTION,
     ACCOUNT_ID,
   );
@@ -66,19 +66,19 @@ test("should deserialize a raw platform signed transaction", () => {
 });
 
 describe("Serialize -> Deserialize flow", () => {
-  test("should not alter signedTransaction", () => {
-    const serializedSignedTransaction = serializePlatformSignedTransaction(SIGNED_TRANSACTION);
+  test("should not alter signedTransaction", async () => {
+    const serializedSignedTransaction = await serializePlatformSignedTransaction(SIGNED_TRANSACTION);
 
     const stringifiedSignedTransaction = JSON.stringify(serializedSignedTransaction);
 
     const parsedSignedTransaction = JSON.parse(stringifiedSignedTransaction) as SignedOperationRaw;
 
-    const expectedSignedTransaction = deserializePlatformSignedTransaction(
+    const expectedSignedTransaction = await deserializePlatformSignedTransaction(
       parsedSignedTransaction,
       ACCOUNT_ID,
     );
 
-    const signedTransaction = deserializePlatformSignedTransaction(
+    const signedTransaction = await deserializePlatformSignedTransaction(
       RAW_SIGNED_TRANSACTION,
       ACCOUNT_ID,
     );

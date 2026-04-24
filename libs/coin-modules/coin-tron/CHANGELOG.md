@@ -1,5 +1,22 @@
 # @ledgerhq/coin-tron
 
+## 6.0.0-next.0
+
+### Major Changes
+
+- [#16282](https://github.com/LedgerHQ/ledger-live/pull/16282) [`1695648`](https://github.com/LedgerHQ/ledger-live/commit/169564886cca0c934bf6ec9a9bb704d53a3a58c6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): remove `cacheTransactionInfoById` and calls to `/gettransactioninfobyid`
+
+### Minor Changes
+
+- [#15627](https://github.com/LedgerHQ/ledger-live/pull/15627) [`5499e7a`](https://github.com/LedgerHQ/ledger-live/commit/5499e7a799b2510b2dc6a08d6038e651b3e03bfe) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Fix Tron: include internal transactions in listOperations responses
+
+### Patch Changes
+
+- Updated dependencies [[`fbff5f4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5f407027cb2b24834fea53ef21a3ef93bf95), [`e377079`](https://github.com/LedgerHQ/ledger-live/commit/e3770793670b73d4409bd5be2081ca922e8679ac), [`45e134c`](https://github.com/LedgerHQ/ledger-live/commit/45e134c63f204444a5997109f4807447f51469ee)]:
+  - @ledgerhq/types-live@6.106.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.3.1-next.0
+  - @ledgerhq/cryptoassets@13.46.1-next.0
+
 ## 5.19.0
 
 ### Minor Changes

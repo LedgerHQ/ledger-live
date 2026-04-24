@@ -1,5 +1,20 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.15.0-next.0
+
+### Minor Changes
+
+- [#16450](https://github.com/LedgerHQ/ledger-live/pull/16450) [`de3566a`](https://github.com/LedgerHQ/ledger-live/commit/de3566a676681c852a7a03b6027baffdad3c1050) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-testers): add and wait for healthchecks
+
+### Patch Changes
+
+- Updated dependencies [[`fbff5f4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5f407027cb2b24834fea53ef21a3ef93bf95), [`e377079`](https://github.com/LedgerHQ/ledger-live/commit/e3770793670b73d4409bd5be2081ca922e8679ac), [`e23ca29`](https://github.com/LedgerHQ/ledger-live/commit/e23ca29bb4fd553ff7612d1ea4d9f0e70f7fe0c7), [`45e134c`](https://github.com/LedgerHQ/ledger-live/commit/45e134c63f204444a5997109f4807447f51469ee)]:
+  - @ledgerhq/types-live@6.106.0-next.0
+  - @ledgerhq/coin-polkadot@6.24.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+  - @ledgerhq/ledger-wallet-framework@1.3.1-next.0
+  - @ledgerhq/cryptoassets@13.46.1-next.0
+
 ## 1.14.0
 
 ### Minor Changes

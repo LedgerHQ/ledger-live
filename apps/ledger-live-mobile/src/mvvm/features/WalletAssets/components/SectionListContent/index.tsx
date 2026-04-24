@@ -3,6 +3,7 @@ import { Asset } from "~/types/asset";
 import AssetListItem from "LLM/components/AssetListItem";
 import { ListItemSkeleton } from "../ListItemSkeleton";
 import { SectionErrorState } from "../SectionErrorState";
+import { useSectionListContentViewModel } from "./useSectionListContentViewModel";
 
 export type SectionListContentProps = {
   isLoading: boolean;
@@ -23,6 +24,8 @@ export const SectionListContent = ({
   skeletonCount,
   errorMessage,
 }: SectionListContentProps) => {
+  const { precomputedData } = useSectionListContentViewModel(assetsToDisplay, isLoading || isError);
+
   if (isLoading) {
     return Array.from({ length: skeletonCount }, (_, i) => <ListItemSkeleton key={i} />);
   }
@@ -34,7 +37,9 @@ export const SectionListContent = ({
       key={item.currency.id}
       asset={item}
       onPress={onItemPress}
+      precomputed={precomputedData.get(item.currency.id)!}
       lx={NEGATIVE_MARGIN_OFFSET}
+      hideNetwork
     />
   ));
 };

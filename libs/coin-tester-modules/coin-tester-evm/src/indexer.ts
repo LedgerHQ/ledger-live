@@ -167,7 +167,7 @@ const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider)
     gasUsed: receipt?.gasUsed?.toString() || "0",
     input: tx?.data || "0x",
     confirmations: tx ? (await tx.confirmations()).toString() : "0",
-    contractAddress: tx?.to!.toLowerCase() || "",
+    contractAddress: log.address.toLowerCase(),
   };
 
   if (!explorerEtherscanERC20EventsByAddress[from]) {
@@ -490,8 +490,7 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
       isError: receipt?.status === 1 ? "0" : "1",
       txreceipt_status: receipt?.status!.toString() || "0",
       input: tx?.data,
-      contractAddress:
-        code === "0x" ? "" : (tx?.to ?? "0x0000000000000000000000000000000000000000"),
+      contractAddress: code === "0x" ? "" : tx?.to ?? "0x0000000000000000000000000000000000000000",
       cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
       gasUsed: receipt?.gasUsed?.toString() || "0",
       confirmations: tx?.confirmations.toString() || "0",

@@ -29,5 +29,7 @@ export const getWallet40Attributes = (
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
     operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,
+    myWallet: wallet40FeatureFlag?.params?.myWallet ?? false,
+    aggregatedAssets: wallet40FeatureFlag?.params?.aggregatedAssets ?? false,
   };
 };

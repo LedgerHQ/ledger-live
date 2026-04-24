@@ -286,7 +286,7 @@ export const handlers = ({
 
         const transaction = deserializeTransaction(params.rawTransaction);
 
-        const { liveTx } = getWalletAPITransactionSignFlowInfos({
+        const { liveTx } = await getWalletAPITransactionSignFlowInfos({
           walletApiTransaction: transaction,
           account: fromAccount,
         });

@@ -1,5 +1,20 @@
 # @ledgerhq/coin-tezos
 
+## 7.0.0-next.0
+
+### Major Changes
+
+- [#16500](https://github.com/LedgerHQ/ledger-live/pull/16500) [`9b05536`](https://github.com/LedgerHQ/ledger-live/commit/9b05536cbd86ab15f4a54536bc273cfe9ea6875a) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - extend TzKT network types with staking account and operation fields
+
+- [#16537](https://github.com/LedgerHQ/ledger-live/pull/16537) [`53a5fb1`](https://github.com/LedgerHQ/ledger-live/commit/53a5fb111b6a6ec4b2c9faa031ff034321b1e7a7) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - feat(coin-tezos): add new operation modes (stake, unstake, finalize_unstake)
+
+### Patch Changes
+
+- Updated dependencies [[`fbff5f4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5f407027cb2b24834fea53ef21a3ef93bf95), [`e377079`](https://github.com/LedgerHQ/ledger-live/commit/e3770793670b73d4409bd5be2081ca922e8679ac), [`45e134c`](https://github.com/LedgerHQ/ledger-live/commit/45e134c63f204444a5997109f4807447f51469ee)]:
+  - @ledgerhq/types-live@6.106.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.3.1-next.0
+  - @ledgerhq/cryptoassets@13.46.1-next.0
+
 ## 6.22.0
 
 ### Minor Changes

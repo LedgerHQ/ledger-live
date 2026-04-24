@@ -3,7 +3,7 @@ import { expect } from "detox";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
-  acceptAnalyticsButtonId = "accept-analytics-button";
+  acceptAnalyticsButtonId = "enabled-accept-analytics-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);

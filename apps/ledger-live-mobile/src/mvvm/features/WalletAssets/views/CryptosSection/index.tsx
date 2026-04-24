@@ -31,7 +31,7 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
         <SubheaderRow
           onPress={hasMore ? onPressShowAll : undefined}
           accessibilityRole={hasMore ? "button" : undefined}
-          lx={{ marginBottom: "s12" }}
+          lx={{ marginBottom: "s4" }}
         >
           <SubheaderTitle>{t("wallet.tabs.crypto")}</SubheaderTitle>
           {hasMore && (

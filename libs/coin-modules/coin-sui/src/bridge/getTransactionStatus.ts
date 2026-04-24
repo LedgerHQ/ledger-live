@@ -83,7 +83,7 @@ export const getTransactionStatus: AccountBridge<
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
-    if (totalSpent.eq(0) && transaction.useAllAmount) {
+    if (totalSpent.eq(0) && transaction.useAllAmount && !errors.amount) {
       errors.amount = new NotEnoughBalance();
     }
 
@@ -91,7 +91,7 @@ export const getTransactionStatus: AccountBridge<
       errors.amount = new NotEnoughBalanceInParentAccount();
     }
 
-    if (totalSpent.gt(accountBalance)) {
+    if (totalSpent.gt(accountBalance) && !errors.amount) {
       errors.amount = new NotEnoughBalance();
     }
   }

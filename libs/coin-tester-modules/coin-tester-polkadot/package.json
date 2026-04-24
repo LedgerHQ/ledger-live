@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.14.0",
+  "version": "1.15.0-next.0",
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -54,7 +54,7 @@
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
-    "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
@@ -69,7 +69,6 @@
     "bignumber.js": "^9.1.2",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",
-    "dotenv": "^16.4.5",
     "expect": "catalog:",
     "msw": "catalog:"
   },

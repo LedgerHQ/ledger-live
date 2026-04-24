@@ -67,7 +67,7 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useRef(getInitialURL(inputs, manifest)).current;
+  const [initialURL] = useState(() => getInitialURL(inputs, manifest));
 
   // Mirror mobile's originWhitelist: if the feature flag is on, only load URLs that pass
   // the manifest.domains whitelist. Fall back to manifest.url if initialURL is rejected,

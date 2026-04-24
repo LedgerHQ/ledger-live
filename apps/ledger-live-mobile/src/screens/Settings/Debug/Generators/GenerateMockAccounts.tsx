@@ -7,8 +7,10 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useStore } from "~/context/hooks";
 import { replaceAccounts } from "~/actions/accounts";
+import { exportSelector } from "~/reducers/accounts";
+import { saveAccounts } from "~/db";
 
 const generateMockAccounts = (count: number) =>
   Array(count)
@@ -29,6 +31,7 @@ export default function GenerateMockAccountsButton({
   count: number;
 }) {
   const dispatch = useDispatch();
+  const store = useStore();
 
   return (
     <SettingsRow
@@ -46,10 +49,10 @@ export default function GenerateMockAccountsButton({
             },
             {
               text: "Ok",
-              onPress: () => {
+              onPress: async () => {
                 const mockAccounts = generateMockAccounts(count);
-
                 dispatch(replaceAccounts(mockAccounts));
+                await saveAccounts(await exportSelector(store.getState()));
                 dispatch(reboot());
               },
             },

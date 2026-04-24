@@ -56,8 +56,8 @@ describe("useWebviewState", () => {
     });
 
     it("remains stable when inputs gets a new object reference after mount", () => {
-      // Regression test: when a parent re-renders (e.g. due to a Redux update like
-      // lastSeenDevice), inputs may get a new object reference
+      // Regression test: getInitialURL is called once via useState initialiser so
+      // re-renders with a new inputs object reference do not re-invoke it.
       mockGetInitialURL
         .mockReturnValueOnce("https://example.com/?theme=dark&lang=en")
         .mockReturnValue("https://example.com/?theme=light&lang=fr"); // returned on subsequent calls

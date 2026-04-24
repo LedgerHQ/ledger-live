@@ -206,7 +206,7 @@ describe("ACRE Server Handlers", () => {
     getAccountIdFromWalletAccountId.mockReturnValue(
       "js:2:ethereum:0x1234567890123456789012345678901234567890:ethereum",
     );
-    getWalletAPITransactionSignFlowInfos.mockReturnValue({
+    getWalletAPITransactionSignFlowInfos.mockResolvedValue({
       canEditFees: true,
       liveTx: { family: "evm" },
       hasFeesProvided: true,

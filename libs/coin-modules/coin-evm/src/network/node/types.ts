@@ -134,15 +134,22 @@ export type TransactionInfo = {
   status: number | null;
   from: string;
   to: string | undefined;
+  /** Calldata / init code (hex), when available from the node */
+  input?: string;
+  /** Created contract address (contract-creation txs), when known from the receipt or explorer */
+  contractAddress?: string;
   /** ERC20 Transfer events extracted from receipt logs */
   erc20Transfers: ERC20Transfer[];
 };
 
-export type PrefetchedBlockTransaction = Pick<TransactionInfo, "hash" | "value" | "from" | "to">;
+export type PrefetchedBlockTransaction = Pick<
+  TransactionInfo,
+  "hash" | "value" | "from" | "to" | "input"
+>;
 
 export type BlockReceiptInfo = Pick<
   TransactionInfo,
-  "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers"
+  "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers" | "contractAddress"
 >;
 
 export type BlockByHeightResult = {

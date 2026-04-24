@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.106.0-next.0
+
+### Minor Changes
+
+- [#16358](https://github.com/LedgerHQ/ledger-live/pull/16358) [`fbff5f4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5f407027cb2b24834fea53ef21a3ef93bf95) Thanks [@sarneijim](https://github.com/sarneijim)! - Add finish onboarding widget flag (lwdWallet40), shared post-onboarding portfolio visibility hook, and desktop portfolio banner priority with slot for the new widget UI.
+
+- [#16520](https://github.com/LedgerHQ/ledger-live/pull/16520) [`e377079`](https://github.com/LedgerHQ/ledger-live/commit/e3770793670b73d4409bd5be2081ca922e8679ac) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new post-onboarding widget card
+
+- [#15326](https://github.com/LedgerHQ/ledger-live/pull/15326) [`45e134c`](https://github.com/LedgerHQ/ledger-live/commit/45e134c63f204444a5997109f4807447f51469ee) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Adds support for paying transaction fees in non-native Celo tokens (e.g. cUSD, cEUR) on the Desktop send flow. Users can now select which token to use for transaction fees, mirroring Celo's native fee abstraction feature.
+
 ## 6.105.0
 
 ### Minor Changes

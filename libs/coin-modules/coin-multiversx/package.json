@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "0.16.0",
+  "version": "0.16.1-next.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
@@ -88,6 +88,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
+    "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

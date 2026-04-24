@@ -40,9 +40,13 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import {
+  makeSetEarnInfoBottomSheetAction,
+  makeSetEarnMenuBottomSheetAction,
+} from "~/actions/earn";
+import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -292,6 +296,7 @@ export function useCustomExchangeHandlers({
       },
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
+      "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
     };
 
     return {
@@ -513,6 +518,7 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
     dispatch(makeSetEarnInfoBottomSheetAction(validated));
   };
 }
+
 
 export function createOpenMenuBottomSheetHandler(dispatch: Dispatch) {
   return async (request: {

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.69.0",
+  "version": "34.70.0-next.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -299,7 +299,7 @@
     "axios": "catalog:",
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",
-    "bip32": "^2.0.6",
+    "bip32": "^4.0.0",
     "bip39": "^3.0.4",
     "bs58": "catalog:",
     "date-fns": "^2.23.0",
@@ -358,6 +358,7 @@
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
+    "esbuild": "0.25.5",
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
     "jest": "catalog:",

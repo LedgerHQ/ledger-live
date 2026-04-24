@@ -78,7 +78,7 @@ type Transform<R, M> = {
   ) => Promise<Awaited<ReturnType<DataModel<R, M>["decode"]>>[] | null>;
   set: (
     raws: Parameters<DataModel<R, M>["encode"]>[0][],
-  ) => ReturnType<DataModel<R, M>["encode"]>[];
+  ) => Promise<Awaited<ReturnType<DataModel<R, M>["encode"]>>[]>;
 };
 
 // A map of transformers.
@@ -103,7 +103,7 @@ const transforms: Transforms = {
       }
       return accounts;
     },
-    set: accounts => (accounts || []).map(accountModel.encode),
+    set: async accounts => Promise.all((accounts || []).map(accountModel.encode)),
   },
 };
 
@@ -140,15 +140,22 @@ if (getEnv("PLAYWRIGHT_RUN")) {
 
 const debouncedSetKey = memoize(
   <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
-    debounceToUse((value: V) => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const transform = transforms[keyPath as keyof Transforms];
-      ipcRenderer.invoke("setKey", {
-        ns,
-        keyPath,
+    debounceToUse(async (value: V) => {
+      try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        value: transform ? transform.set(value as Parameters<typeof transform.set>[0]) : value,
-      });
+        const transform = transforms[keyPath as keyof Transforms];
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        const transformedValue = transform
+          ? await transform.set(value as Parameters<typeof transform.set>[0])
+          : value;
+        await ipcRenderer.invoke("setKey", {
+          ns,
+          keyPath,
+          value: transformedValue,
+        });
+      } catch (e) {
+        logger.error("debouncedSetKey failed", { ns, keyPath }, e);
+      }
     }, 1000),
   (ns: string, keyPath: string) => `${ns}:${keyPath}`,
 );

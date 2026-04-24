@@ -4,6 +4,7 @@
     "lint": {
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -12,6 +13,7 @@
     "lint:ci": {
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -20,6 +22,7 @@
     "lint:i18n": {
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -32,7 +35,7 @@
         "@ledgerhq/dummy-wallet-app:build",
         "@ledgerhq/dummy-ptx-app:build"
       ],
-      "cache": false,
+      "cache": true,
       "outputs": [
         "{projectRoot}/artifacts/**",
         "{workspaceRoot}/e2e/mobile/artifacts/**",
@@ -44,6 +47,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv",
         {
@@ -61,6 +65,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -71,6 +76,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -81,6 +87,7 @@
       ],
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]

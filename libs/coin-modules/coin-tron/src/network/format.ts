@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import bs58check from "bs58check";
 import get from "lodash/get";
-import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType, TronTransactionInfo } from "../types";
+import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType } from "../types";
 import { TransactionTronAPI, Trc20API } from "./types";
 
 export const decode58Check = (base58: string): string =>
@@ -64,11 +64,11 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
 };
 
 export const formatTrongridTxResponse = async (
-  tx: TransactionTronAPI & { detail?: TronTransactionInfo },
+  tx: TransactionTronAPI,
   getValidatorName: (address: string) => Promise<string | null | undefined>,
 ): Promise<TrongridTxInfo | null | undefined> => {
   try {
-    const { txID, block_timestamp, detail, blockNumber, unfreeze_amount, withdraw_amount } = tx;
+    const { txID, block_timestamp, blockNumber, unfreeze_amount, withdraw_amount } = tx;
     const date = new Date(block_timestamp);
     const type = tx.raw_data.contract[0].type;
     const {
@@ -97,7 +97,7 @@ export const formatTrongridTxResponse = async (
     const getValue = (): BigNumber => {
       switch (type) {
         case "WithdrawBalanceContract":
-          return new BigNumber(withdraw_amount || detail?.withdraw_amount || 0);
+          return new BigNumber(withdraw_amount || 0);
 
         case "ExchangeTransactionContract":
           return new BigNumber(quant || 0);
@@ -108,8 +108,8 @@ export const formatTrongridTxResponse = async (
     };
 
     const value = getValue();
-    const fee = get(tx, "ret[0].fee", detail && detail.fee ? detail.fee : undefined);
-    const blockHeight = blockNumber || detail?.blockNumber;
+    const fee = get(tx, "ret[0].fee", undefined);
+    const blockHeight = blockNumber;
     const isTrc20 = type === "TriggerSmartContract" && contract_address;
     const isTrc10 = type === "TransferAssetContract";
     const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
@@ -164,7 +164,7 @@ export const formatTrongridTxResponse = async (
 
         case "UnfreezeBalanceContract":
           return {
-            unfreezeAmount: new BigNumber(unfreeze_amount || detail!.unfreeze_amount!),
+            unfreezeAmount: new BigNumber(unfreeze_amount || 0),
           };
 
         default:

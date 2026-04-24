@@ -12,7 +12,7 @@ interface TransferDrawerViewProps {
 export const TransferDrawerView = ({ actions, title, bottomInset }: TransferDrawerViewProps) => {
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24, paddingHorizontal: 16 }}>
-      <BottomSheetHeader title={title} appearance="expanded" />
+      <BottomSheetHeader title={title} density="expanded" />
       <Box
         style={{ marginHorizontal: -8 }}
         testID={QUICK_ACTIONS_TEST_IDS.transferDrawer.container}

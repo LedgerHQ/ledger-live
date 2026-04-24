@@ -137,7 +137,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
 
       <BottomSheet ref={infoBottomSheetRef} snapPoints="small">
         <BottomSheetView>
-          <BottomSheetHeader title={viewModel.label} appearance="compact" />
+          <BottomSheetHeader title={viewModel.label} density="compact" />
           <View style={styles.infoContent}>
             <Text typography="body2" lx={{ color: "muted" }} style={styles.infoDescription}>
               {t("send.newSendFlow.feesPaid")}
@@ -151,7 +151,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
 
       <BottomSheet ref={selectorBottomSheetRef} snapPoints="medium">
         <BottomSheetView>
-          <BottomSheetHeader title={viewModel.label} appearance="compact" />
+          <BottomSheetHeader title={viewModel.label} density="compact" />
 
           {viewModel.feePresetLabelsOptions.map(option => {
             const isSelected = viewModel.selectedFeeStrategy === option.id;

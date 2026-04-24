@@ -17,10 +17,10 @@ export default class EarnV2DashboardPage {
   stakingProvider = (providerId: string) => `staking-provider-${providerId}-title`;
   earnMenuOption = (label: string) =>
     `earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`;
-  private static readonly stakingFlowTestIds: Record<string, string> = {
+  private static readonly stakingFlowTestIds: Record<string, string | RegExp> = {
     ETH: "staking-provider-modal-title",
-    ATOM: "cosmos-delegation-start-button",
-    SOL: "solana-delegation-start-button",
+    ATOM: /^(enabled-|disabled-)?cosmos-delegation-start-button$/,
+    SOL: /^(enabled-|disabled-)?solana-delegation-start-button$/,
   };
 
   // --- Ice Cold Start ---

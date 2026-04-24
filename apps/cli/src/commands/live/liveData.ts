@@ -1,4 +1,3 @@
-import { of, throwError } from "rxjs";
 import { reduce, mergeMap } from "rxjs/operators";
 import fs from "fs";
 import { scan, scanCommonOpts } from "../../scan";
@@ -38,7 +37,7 @@ export default {
   job: (opts: LiveDataJobOpts) =>
     scan(opts).pipe(
       reduce<Account, Account[]>((accounts, account) => accounts.concat(account), []),
-      mergeMap(accounts => {
+      mergeMap(async accounts => {
         const appjsondata = opts.appjson
           ? JSON.parse(fs.readFileSync(opts.appjson, "utf-8"))
           : {
@@ -48,18 +47,20 @@ export default {
             };
 
         if (typeof appjsondata.data.accounts === "string") {
-          return throwError(() => new Error("encrypted ledger live data is not supported"));
+          throw new Error("encrypted ledger live data is not supported");
         }
 
         const existingIds = appjsondata.data.accounts.map(
           (a: { data: { id: string } }) => a.data.id,
         );
-        const append = accounts
-          .filter(a => !existingIds.includes(a.id))
-          .map(account => ({
-            data: toAccountRaw(account),
-            version: 1,
-          }));
+        const append = await Promise.all(
+          accounts
+            .filter(a => !existingIds.includes(a.id))
+            .map(async account => ({
+              data: await toAccountRaw(account),
+              version: 1,
+            })),
+        );
         appjsondata.data.accounts = appjsondata.data.accounts.concat(append);
 
         // Extract persisted tokens from the RTK Query cache
@@ -71,9 +72,9 @@ export default {
 
         if (opts.appjson) {
           fs.writeFileSync(opts.appjson, JSON.stringify(appjsondata), "utf-8");
-          return of(append.length + " accounts added.");
+          return append.length + " accounts added.";
         } else {
-          return of(JSON.stringify(appjsondata));
+          return JSON.stringify(appjsondata);
         }
       }),
     ),

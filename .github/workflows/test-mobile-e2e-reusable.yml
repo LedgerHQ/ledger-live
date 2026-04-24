@@ -11,8 +11,7 @@ concurrency:
 
 on:
   schedule:
-    - cron: "0 3 * * 1,3,5" # Mon, Wed, Fri → Wallet 4.0
-    - cron: "0 3 * * 2,4"   # Tue, Thu → Legacy
+    - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
   workflow_dispatch:
     inputs:
       ref:
@@ -75,7 +74,7 @@ on:
         description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
-        default: false
+        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
@@ -120,7 +119,7 @@ on:
         description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
-        default: false
+        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
@@ -141,7 +140,7 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_ENABLE_WALLET40: ${{ ((github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5') || inputs.enable_wallet40 == true) && '1' || '0' }}
+  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -250,10 +249,14 @@ jobs:
       - name: Determine cache keys
         id: cache-keys
         run: |
-          echo "ios_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
+          PREFIX=""
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT

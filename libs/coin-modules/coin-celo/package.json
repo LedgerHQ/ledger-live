@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "2.0.0",
+  "version": "2.1.0-next.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -138,6 +138,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@celo/wallet-local": "^8.0.0",
     "@faker-js/faker": "^9.9.0",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

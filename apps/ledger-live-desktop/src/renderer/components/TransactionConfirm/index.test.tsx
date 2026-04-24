@@ -5,9 +5,9 @@ import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDevic
 import { getLLDCoinFamily } from "~/renderer/families";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, findSubAccountById } from "@ledgerhq/live-common/account/index";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/deviceTransactionConfig";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { BigNumber } from "bignumber.js";
 import { getDeviceAnimation } from "../DeviceAction/animations";
@@ -287,5 +287,69 @@ describe("TransactionConfirm", () => {
       />,
     );
     expect(screen.getByText("Custom Title")).toBeInTheDocument();
+  });
+
+  describe("FeesField with feeCurrencyAccountId", () => {
+    const mockFeeCurrencyAccount = {
+      type: "TokenAccount" as const,
+      id: "fee-sub-account-1",
+      parentId: "account-1",
+    } as unknown as TokenAccount;
+
+    const mockFeeCurrencyUnit = { code: "USDT", magnitude: 6, name: "USDT" };
+
+    it("uses fee currency sub-account unit when feeCurrencyAccountId is set in status", () => {
+      const feesField: DeviceTransactionField = { type: "fees", label: "Fees" };
+      const statusWithFeeCurrencyId = {
+        ...mockStatus,
+        feeCurrencyAccountId: "fee-sub-account-1",
+      } as TransactionStatus;
+
+      (useDeviceTransactionConfig as jest.Mock).mockReturnValue({
+        fields: [feesField],
+        loading: false,
+      });
+      (findSubAccountById as jest.Mock).mockReturnValue(mockFeeCurrencyAccount);
+      (useAccountUnit as jest.Mock).mockImplementation(account =>
+        account === mockFeeCurrencyAccount ? mockFeeCurrencyUnit : mockUnit,
+      );
+
+      render(
+        <TransactionConfirm
+          device={mockDevice}
+          account={mockAccount}
+          parentAccount={null}
+          transaction={mockTransaction}
+          status={statusWithFeeCurrencyId}
+        />,
+      );
+
+      expect(findSubAccountById).toHaveBeenCalledWith(mockAccount, "fee-sub-account-1");
+      expect(screen.getByText("Fees")).toBeInTheDocument();
+    });
+
+    it("falls back to main account unit when feeCurrencyAccountId is absent", () => {
+      const feesField: DeviceTransactionField = { type: "fees", label: "Fees" };
+
+      (useDeviceTransactionConfig as jest.Mock).mockReturnValue({
+        fields: [feesField],
+        loading: false,
+      });
+      (findSubAccountById as jest.Mock).mockReturnValue(undefined);
+
+      render(
+        <TransactionConfirm
+          device={mockDevice}
+          account={mockAccount}
+          parentAccount={null}
+          transaction={mockTransaction}
+          status={mockStatus}
+        />,
+      );
+
+      // findSubAccountById should not be called when feeCurrencyAccountId is absent
+      expect(findSubAccountById).not.toHaveBeenCalled();
+      expect(screen.getByText("Fees")).toBeInTheDocument();
+    });
   });
 });
