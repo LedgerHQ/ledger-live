@@ -182,7 +182,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_zenrock: {
     type: "object",
     default: {
-      lcd: "https://api.diamond.zenrocklabs.io",
+      lcd: "https://zenrock.api.m.stavr.tech",
       minGasPrice: 2.5,
       status: {
         type: "active",
