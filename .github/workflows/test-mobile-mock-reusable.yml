@@ -635,7 +635,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/fix_timing_file_upload_test
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
@@ -658,7 +658,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/fix_timing_file_upload_test
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
