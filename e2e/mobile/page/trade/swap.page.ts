@@ -11,6 +11,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
 import { log } from "detox";
+import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -164,14 +165,29 @@ export default class SwapPage extends CommonPage {
     const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
+    // If sender or receiver is a ERC20 token, the csv export takes the parent name
+    let accountToDebitNameInCsv: string;
+    let accountToCreditNameInCsv: string;
+
+    if (swap.accountToDebit.tokenType === TokenType.ERC20 && swap.accountToDebit.parentAccount) {
+      accountToDebitNameInCsv = swap.accountToDebit.parentAccount.accountName;
+    } else {
+      accountToDebitNameInCsv = swap.accountToDebit.accountName;
+    }
+    if (swap.accountToCredit.tokenType === TokenType.ERC20 && swap.accountToCredit.parentAccount) {
+      accountToCreditNameInCsv = swap.accountToCredit.parentAccount.accountName;
+    } else {
+      accountToCreditNameInCsv = swap.accountToCredit.accountName;
+    }
+
     jestExpect(fileContents).toContain(provider.name);
     jestExpect(fileContents).toContain(id);
     jestExpect(fileContents).toContain(swap.accountToDebit.currency.ticker);
     jestExpect(fileContents).toContain(swap.accountToCredit.currency.ticker);
     jestExpect(fileContents).toContain(swap.amount);
-    jestExpect(fileContents).toContain(swap.accountToDebit.accountName);
+    jestExpect(fileContents).toContain(accountToDebitNameInCsv);
     jestExpect(fileContents).toContain(swap.accountToDebit.address);
-    jestExpect(fileContents).toContain(swap.accountToCredit.accountName);
+    jestExpect(fileContents).toContain(accountToCreditNameInCsv);
     jestExpect(fileContents).toContain(swap.accountToCredit.address);
   }
 
