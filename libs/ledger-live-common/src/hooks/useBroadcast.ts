@@ -23,7 +23,7 @@ export const useBroadcast = ({ account, parentAccount, broadcastConfig }: SignTr
     async (signedOperation: SignedOperation): Promise<Operation> => {
       if (!account) throw new Error("account not present");
       const mainAccount = getMainAccount(account, parentAccount);
-      const bridge = getAccountBridge(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
 
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         return Promise.resolve(signedOperation.operation);

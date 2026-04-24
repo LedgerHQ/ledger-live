@@ -26,7 +26,6 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
     isReonboarding,
     transitionTo,
     onAddAccounts,
-    onAddMore,
     onOnboardAccount,
     onRetryOnboardAccount,
   } = viewModel;
@@ -73,7 +72,6 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
     error,
     isReonboarding,
     onAddAccounts,
-    onAddMore,
     onOnboardAccount,
     onRetryOnboardAccount,
   };

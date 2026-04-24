@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactNode, useCallback } from "react";
+import React, { useEffect, useState, ReactNode, useCallback, useRef } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -9,6 +9,7 @@ import {
   listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
+import type { WaitForAppReadyProps } from "LLM/contexts/WaitForAppReady";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
@@ -28,6 +29,7 @@ import {
   getWalletExportState,
   getLargeMoverState,
   getIdentities,
+  getUser,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -44,16 +46,17 @@ import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
+import { initIdentities } from "../helpers/identities";
 
 interface Props {
   onInitFinished: () => void;
-  children: (props: {
-    ready: boolean;
-    initialCountervalues?: CounterValuesStateRaw;
-    currencyInitialized: boolean;
-  }) => ReactNode;
+  children: (
+    props: {
+      ready: boolean;
+      initialCountervalues?: CounterValuesStateRaw;
+    } & WaitForAppReadyProps,
+  ) => ReactNode;
   store: Store;
 }
 
@@ -74,6 +77,9 @@ async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): P
 }
 
 const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store }) => {
+  // Defer the accounts import until WaitForAppReady as it blocks the js thread too early during the app startup
+  const importAccounts = useRef(async () => {});
+
   const [ready, setReady] = useState(false);
   const [initialCountervalues, setInitialCountervalues] = useState<
     CounterValuesStateRaw | undefined
@@ -98,6 +104,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         cryptoAssetsCache,
         persistedIdentities,
         persistedFeatureFlags,
+        legacyUser,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -112,6 +119,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
         retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
+        retry(getUser, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
         logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
           readTime: Date.now() - readStorageStart,
@@ -123,30 +131,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       store.dispatch(importSettings(settingsData));
 
-      // Hydrate persisted crypto assets tokens BEFORE importing accounts
-      // This ensures tokens are available when decoding accounts (which now uses findTokenById)
-      // Cross-caching is automatic: tokens are cached under both ID and address lookups
-      if (cryptoAssetsCache?.tokens) {
-        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
-          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
-        } else {
-          // eslint-disable-next-line no-console
-          console.warn(
-            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
-          );
-        }
-      }
-
-      // Handle account import with error recovery for async issues
-      try {
-        store.dispatch(await importAccountsRaw(accountsData));
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to import accounts during initialization:", error);
-        // Continue with app initialization even if account import fails
-        // This prevents blocking deeplink navigation
-      }
+      importAccounts.current = getImportAccounts(hydrateCryptoAssets());
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
@@ -173,10 +158,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importLargeMoverState(largeMoverState));
       }
 
-      // Load persisted identities
-      if (persistedIdentities) {
-        store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
-      }
+      // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only
+      await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
@@ -229,6 +212,40 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         hydrateCurrencies(),
         updateSupportedCountervalues(store, settingsData),
       ]).finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+
+      // Hydrate persisted crypto assets tokens BEFORE importing accounts
+      // This ensures tokens are available when decoding accounts (which now uses findTokenById)
+      // Cross-caching is automatic: tokens are cached under both ID and address lookups
+      async function hydrateCryptoAssets(): Promise<void> {
+        if (!cryptoAssetsCache?.tokens) return;
+        if (cryptoAssetsCache.version !== PERSISTENCE_VERSION) {
+          return console.warn(
+            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
+          );
+        }
+        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+        return restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL).catch(
+          error => console.error("Failed to restore crypto assets cache", error),
+        );
+      }
+
+      // Handle account import with error recovery for async issues
+      function getImportAccounts(cryptoAssetHydration: Promise<void>) {
+        let accountsImportAttempted = false;
+        return async (): Promise<void> => {
+          if (accountsImportAttempted) return;
+          accountsImportAttempted = true;
+          try {
+            await cryptoAssetHydration; // Ensure crypto assets are hydrated before importing accounts
+            store.dispatch(await importAccountsRaw(accountsData));
+            if (walletStore) store.dispatch(importWalletState(walletStore)); // TODO: fix the double source of truth for accounts names
+          } catch (error) {
+            console.error("Failed to import accounts during initialization:", error);
+            // Continue with app initialization even if account import fails
+            // This prevents blocking deeplink navigation
+          }
+        };
+      }
     } catch (error) {
       console.error(
         error instanceof Error
@@ -245,7 +262,12 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
   return (
     <Provider store={store}>
       <InitialQueriesProvider>
-        {children({ ready, initialCountervalues, currencyInitialized })}
+        {children({
+          ready,
+          initialCountervalues,
+          currencyInitialized,
+          importAccounts: importAccounts.current,
+        })}
       </InitialQueriesProvider>
     </Provider>
   );

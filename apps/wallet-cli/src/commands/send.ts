@@ -1,5 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { lastValueFrom } from "rxjs";
+import { tap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
 import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
@@ -21,6 +23,7 @@ type SendFlags = {
   validator?: string;
   "stake-account"?: string;
   memo?: string;
+  data?: string;
   "dry-run": boolean;
   output: "human" | "json";
 };
@@ -39,6 +42,7 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
     family: "evm",
     recipient: flags.to,
     amount: flags.amount,
+    data: flags.data,
   }),
   solana: flags => ({
     family: "solana",
@@ -71,6 +75,7 @@ export default defineCommand({
     }),
     rbf: option(z.boolean().optional(), {
       description: "Enable Replace-By-Fee (Bitcoin only)",
+      argumentKind: "flag",
     }),
     mode: option(z.string().min(1).optional(), {
       description:
@@ -85,8 +90,18 @@ export default defineCommand({
     memo: option(z.string().min(1).optional(), {
       description: "Memo/tag (Solana only)",
     }),
+    data: option(
+      z
+        .string()
+        .regex(/^0x([0-9a-fA-F]{2})*$/, "data must be 0x-prefixed hex with an even number of digits")
+        .optional(),
+      {
+        description: "EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)",
+      },
+    ),
     "dry-run": option(z.boolean().default(false), {
       description: "Prepare and validate transaction but do not sign or broadcast",
+      argumentKind: "flag",
     }),
     output: outputOption,
   },
@@ -125,13 +140,11 @@ export default defineCommand({
         spin?.success("Device session established");
         out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
 
-        await new Promise<void>((resolve, reject) => {
-          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).subscribe({
-            next: event => out.sendEvent(event),
-            error: (e: unknown) => reject(e),
-            complete: resolve,
-          });
-        });
+        await lastValueFrom(
+          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).pipe(
+            tap(event => out.sendEvent(event)),
+          ),
+        );
 
         out.sendComplete();
       });

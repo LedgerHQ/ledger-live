@@ -16,8 +16,9 @@ export default defineCommand({
     account: accountOption,
     verify: option(z.boolean().default(true), {
       description:
-        "Verify address on device screen (default: true). Use --no-verify to skip device.",
+        "Verify address on device screen (default: true). Use --verify=false to skip device.",
       short: "v",
+      argumentKind: "flag",
     }),
     output: outputOption,
   },

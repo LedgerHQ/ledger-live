@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding": {
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
@@ -4228,6 +4232,8 @@
         "activeTooltip": "Delegated amounts generate rewards",
         "inactiveTooltip": "Undelegated amounts do not generate rewards",
         "minSafeWarning": "Not enough funds",
+        "commission": "Commission",
+        "totalStake": "Total stake",
         "flow": {
           "title": "Delegate",
           "steps": {
@@ -4246,7 +4252,8 @@
               "title": "Amount"
             },
             "validator": {
-              "title": "Validators"
+              "title": "Validators",
+              "noResults": "No validators match your search"
             },
             "connectDevice": {
               "title": "Device"
@@ -4268,7 +4275,35 @@
       },
       "undelegation": {
         "header": "Undelegation(s)",
-        "inactiveTooltip": "Undelegated amounts do not generate rewards."
+        "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "flow": {
+          "title": "Stop staking",
+          "steps": {
+            "amount": {
+              "title": "Amount",
+              "subtitle": "The undelegation process takes <0>{{numberOfDays}} days</0> to finalize.",
+              "warningWithTimelock": "Rewards will be automatically claimed. The undelegated amount will be back in the available balance after the <0>{{numberOfDays}}-day timelock</0>.",
+              "warningInstant": "Rewards will be automatically claimed. The undelegated amount will be immediately available in your balance.",
+              "fields": {
+                "validator": "Validator",
+                "amount": "Amount to undelegate"
+              }
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully undelegated your assets.",
+                "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
       }
     }
   },
@@ -7898,7 +7933,7 @@
       },
       "personalizedExperience": {
         "title": "Personalized experience",
-        "description": "Enable Ledger to collect app usage to provide personalized contents"
+        "description": "Enable Ledger to collect app usage to provide personalized content"
       },
       "ctaConfirm": "Confirm"
     },
@@ -8636,5 +8671,23 @@
       "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
       "tryAgain": "Try again"
     }
+  },
+  "myWallet": {
+    "title": "My Wallet",
+    "avatar": {
+      "label": "Avatar",
+      "labelWithNotifications_one": "Avatar, {{count}} unseen notification",
+      "labelWithNotifications_other": "Avatar, {{count}} unseen notifications"
+    },
+    "actionsList": {
+      "help": "Help",
+      "recover": "[L] Recover",
+      "refer": "Referral"
+    },
+    "myLedger": {
+      "title": "My Ledger",
+      "description": "Manage your Ledger device"
+    },
+    "explore": "Explore all Ledger devices"
   }
 }

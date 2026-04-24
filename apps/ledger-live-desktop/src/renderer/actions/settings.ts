@@ -403,3 +403,8 @@ export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
 });
+
+export const setHasClickedRecover = (hasClickedRecover: boolean) => ({
+  type: "SET_HAS_CLICKED_RECOVER",
+  payload: hasClickedRecover,
+});

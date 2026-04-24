@@ -31,6 +31,8 @@ export type RecoverState = {
   fromOnboarding?: boolean;
   deviceId?: string;
   seedConfiguration?: SeedOriginType;
+  /** Bumped on repeated same-URL Recover deeplinks so the webview remounts with a fresh load. */
+  recoverDeeplinkAt?: string;
 };
 
 const FullscreenWrapper = styled.div`
@@ -125,7 +127,12 @@ export default function RecoverPlayer() {
 
   return manifest ? (
     <FullscreenWrapper>
-      <WebRecoverPlayer manifest={manifest} inputs={inputs} onClose={onClose} />
+      <WebRecoverPlayer
+        key={`${manifest.id}-${search}-${state?.recoverDeeplinkAt ?? ""}`}
+        manifest={manifest}
+        inputs={inputs}
+        onClose={onClose}
+      />
     </FullscreenWrapper>
   ) : null; // TODO: display an error component instead of `null`
 }

@@ -15,6 +15,7 @@ packages:
   - "domain/entity/*"
   - "domain/api/*"
   - "shared/*"
+  - "devtools/*"
 
 catalog:
   "@jest/globals": 30.2.0
@@ -31,9 +32,9 @@ catalog:
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.1.10
-  "@ledgerhq/lumen-ui-react": 0.1.21
-  "@ledgerhq/lumen-ui-rnative": 0.1.22
+  "@ledgerhq/lumen-design-core": 0.1.11
+  "@ledgerhq/lumen-ui-react": 0.1.22
+  "@ledgerhq/lumen-ui-rnative": 0.1.23
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7

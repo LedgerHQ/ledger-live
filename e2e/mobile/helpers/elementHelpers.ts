@@ -31,6 +31,7 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
 const scroller = new PageScroller();
 
 const DEFAULT_TIMEOUT = 60000;
+const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
@@ -316,10 +317,17 @@ export const NativeElementHelpers = {
 };
 
 export const WebElementHelpers = {
-  getWebElementByTestId(id: string, index = 0, testIdAttribute = "data-testid"): WebElement {
-    const base = web.element(
-      by.web.cssSelector(`[${testIdAttribute}="${id}"]`),
-    ) as IndexedWebElement;
+  getWebElementByTestId(
+    id: string,
+    options?: { testIdAttribute?: string; testIdSuffix?: string; index?: number },
+  ): WebElement {
+    const testIdAttribute = options?.testIdAttribute ?? "data-testid";
+    const index = options?.index ?? 0;
+    let cssSelector = `[${testIdAttribute}^="${id}"]`;
+    if (options?.testIdSuffix) {
+      cssSelector += `[${testIdAttribute}$="${options.testIdSuffix}"]`;
+    }
+    const base = web.element(by.web.cssSelector(cssSelector)) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
   },
 
@@ -328,8 +336,8 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementText(id: string, index = 0) {
-    const elem = WebElementHelpers.getWebElementByTestId(id, index);
+  async getWebElementText(id: string, options?: { index?: number }) {
+    const elem = WebElementHelpers.getWebElementByTestId(id, options);
     await detoxExpect(elem).toExist();
     return await elem.runScript(el => (el.innerText || el.textContent || "").trim());
   },
@@ -344,17 +352,14 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsByCssSelector(selector: string): Promise<string[]> {
+  async getWebElementsText(selector: string): Promise<string[]> {
     const texts: string[] = [];
     let i = 0;
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        const element = web
-          .element(by.web.cssSelector(selector))
-          .atIndex(i) as unknown as IndexedWebElement;
-        const text: string = await element.runScript((node: HTMLElement) =>
+        const el = WebElementHelpers.getWebElementByCssSelector(selector, i);
+        const text: string = await el.runScript((node: HTMLElement) =>
           (node.innerText || node.textContent || "").trim(),
         );
         texts.push(text);
@@ -380,32 +385,17 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsText(cssSelector: string): Promise<string[]> {
-    const texts: string[] = [];
-    let i = 0;
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        const element = getWebElementByCssSelector(cssSelector, i);
-        const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
-        texts.push(text);
-        i++;
-      } catch {
-        break;
-      }
-    }
-
-    return texts.filter(Boolean);
-  },
-
   async waitWebElement(
     webElement: WebElement,
     timeout = DEFAULT_TIMEOUT,
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
     try {
-      await retryUntilTimeout(() => webElement.runScript(el => el.innerText), timeout);
+      await retryUntilTimeout(
+        () => webElement.runScript(el => el.innerText),
+        timeout,
+        DEFAULT_WEB_ELEMENT_INTERVAL,
+      );
       return webElement;
     } catch (e) {
       if (throwOnTimeout) {
@@ -419,27 +409,33 @@ export const WebElementHelpers = {
 
   async waitWebElementByTestId(
     id: string,
-    timeout = DEFAULT_TIMEOUT,
-    throwOnTimeout = true,
+    options?: { timeout?: number; throwOnTimeout?: boolean; index?: number; testIdSuffix?: string },
   ): Promise<WebElement | undefined> {
-    const webElement = WebElementHelpers.getWebElementByTestId(id);
+    const timeout = options?.timeout ?? DEFAULT_TIMEOUT;
+    const webElement = WebElementHelpers.getWebElementByTestId(id, {
+      testIdSuffix: options?.testIdSuffix,
+      index: options?.index,
+    });
     try {
       return await WebElementHelpers.waitWebElement(webElement, timeout, true);
     } catch (e) {
       const message = `Web element '${id}' not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`;
-      if (throwOnTimeout) {
+      if (options?.throwOnTimeout ?? true) {
         throw new Error(message);
       }
       log.warn(message);
     }
   },
 
-  async expectWebElementNotVisible(id: string, index = 0): Promise<void> {
-    await detoxExpect(WebElementHelpers.getWebElementByTestId(id, index)).not.toExist();
+  async expectWebElementNotVisible(id: string, options?: { index?: number }): Promise<void> {
+    await detoxExpect(WebElementHelpers.getWebElementByTestId(id, options)).not.toExist();
   },
 
-  async tapWebElementByTestId(id: string, index = 0): Promise<void> {
-    await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
+  async tapWebElementByTestId(
+    id: string,
+    options?: { index?: number; testIdSuffix?: string },
+  ): Promise<void> {
+    await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, options).tap());
   },
 
   async tapWebElementByElement(element: WebElement, timeout = DEFAULT_TIMEOUT / 10): Promise<void> {
@@ -447,25 +443,31 @@ export const WebElementHelpers = {
   },
 
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
-    await retryUntilTimeout(async () =>
-      WebElementHelpers.getWebElementByTestId(id).runScript(
-        (el: HTMLInputElement, val: string) => {
-          const setValue = Object.getOwnPropertyDescriptor(
-            HTMLInputElement.prototype,
-            "value",
-          )?.set;
-          if (setValue) setValue.call(el, val);
-          else el.value = val;
-          el.dispatchEvent(new Event("input", { bubbles: true }));
-        },
-        [text],
-      ),
+    await retryUntilTimeout(
+      async () =>
+        WebElementHelpers.getWebElementByTestId(id).runScript(
+          (el: HTMLInputElement, val: string) => {
+            const setValue = Object.getOwnPropertyDescriptor(
+              HTMLInputElement.prototype,
+              "value",
+            )?.set;
+            if (setValue) setValue.call(el, val);
+            else el.value = val;
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+          },
+          [text],
+        ),
+      DEFAULT_TIMEOUT,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
     );
   },
 
   async getValueByWebTestId(id: string): Promise<string> {
-    const raw = await retryUntilTimeout(() =>
-      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+    const raw = await retryUntilTimeout(
+      () =>
+        WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+      DEFAULT_TIMEOUT,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
     );
 
     if (raw != null && typeof raw === "object" && "result" in raw) {
@@ -504,13 +506,17 @@ export const WebElementHelpers = {
 
   async waitForCurrentWebviewUrlToContain(substring: string, timeout = 10000): Promise<string> {
     let currentUrl = "";
-    await retryUntilTimeout(async () => {
-      currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
-      if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
-        return currentUrl;
-      }
-      throw new Error(`URL ${currentUrl} does not contain the expected substring: ${substring}`);
-    }, timeout);
+    await retryUntilTimeout(
+      async () => {
+        currentUrl = await WebElementHelpers.getCurrentWebviewUrl();
+        if (currentUrl.toLowerCase().includes(substring.toLowerCase())) {
+          return currentUrl;
+        }
+        throw new Error(`URL ${currentUrl} does not contain the expected substring: ${substring}`);
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+    );
     return currentUrl;
   },
 
@@ -520,15 +526,19 @@ export const WebElementHelpers = {
     timeout = 10000,
   ): Promise<string> {
     let webElementText = "";
-    await retryUntilTimeout(async () => {
-      webElementText = await WebElementHelpers.getWebElementText(webElementId);
-      if (new RegExp(regexPattern).test(webElementText)) {
-        return webElementText;
-      }
-      throw new Error(
-        `Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`,
-      );
-    }, timeout);
+    await retryUntilTimeout(
+      async () => {
+        webElementText = await WebElementHelpers.getWebElementText(webElementId);
+        if (new RegExp(regexPattern).test(webElementText)) {
+          return webElementText;
+        }
+        throw new Error(
+          `Web Element "${webElementId}" with text "${webElementText}" does not contain the expected regex: ${regexPattern}`,
+        );
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+    );
     return webElementText;
   },
 
@@ -545,14 +555,14 @@ export const WebElementHelpers = {
   async waitForWebElementToBeEnabled(
     id: string,
     timeout = DEFAULT_TIMEOUT,
-    index = 0,
+    options?: { index?: number },
   ): Promise<void> {
     const start = Date.now();
     let lastErr: Error | undefined;
 
     while (Date.now() - start < timeout) {
       try {
-        const element = WebElementHelpers.getWebElementByTestId(id, index);
+        const element = WebElementHelpers.getWebElementByTestId(id, options);
         const isEnabled = await WebElementHelpers.isWebElementEnabled(element);
         if (isEnabled) {
           return;
@@ -560,7 +570,7 @@ export const WebElementHelpers = {
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
       }
-      await delay(100);
+      await delay(1000);
     }
 
     throw new Error(

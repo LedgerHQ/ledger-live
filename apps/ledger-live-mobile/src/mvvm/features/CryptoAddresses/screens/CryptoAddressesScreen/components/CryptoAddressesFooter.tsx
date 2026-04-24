@@ -9,7 +9,7 @@ type Props = Readonly<{
   onPress: () => void;
 }>;
 
-const PADDING_BOTTOM = 32;
+const PADDING_BOTTOM = 16;
 
 export const FOOTER_HEIGHT = 80;
 

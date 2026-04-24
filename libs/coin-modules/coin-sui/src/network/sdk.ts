@@ -34,7 +34,7 @@ import {
   TransactionBlockData,
   TransactionEffects,
 } from "@mysten/sui/jsonRpc";
-import { Transaction } from "@mysten/sui/transactions";
+import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
@@ -142,6 +142,14 @@ export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpc
   });
 }
 
+/**
+ * Cached wrapper around `suix_getAllBalances`.
+ *
+ * Post SIP-58 the response includes `fundsInAddressBalance` for each coin type,
+ * allowing callers to distinguish between coin-object balances and address-level
+ * balances. The RPC returns "fake coin" objects for backward compatibility so
+ * existing `getCoins` callers continue to work transparently.
+ */
 export const getAllBalancesCached = makeLRUCache(
   async (owner: string, currencyId?: string) =>
     withApi(
@@ -183,24 +191,103 @@ function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTran
   return hasMoveCallWithFunction("request_withdraw_stake", block);
 }
 
+/**
+ * SIP-58 settlement transactions are system-generated transactions that update
+ * accumulator state at checkpoint boundaries.  They can be identified by a
+ * mutable reference to the root accumulator object `0xacc` in their inputs.
+ *
+ * These are internal bookkeeping transactions and should be excluded from the
+ * user-facing operations history.
+ */
+const ACCUMULATOR_ROOT_OBJECT_ID = "0xacc";
+
+export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolean {
+  const block = tx.transaction?.data?.transaction;
+  if (block?.kind !== "ProgrammableTransaction") return false;
+
+  return block.inputs.some(
+    input =>
+      input.type === "object" &&
+      "objectType" in input &&
+      input.objectType === "sharedObject" &&
+      input.mutable === true &&
+      input.objectId === ACCUMULATOR_ROOT_OBJECT_ID,
+  );
+}
+
+/**
+ * SIP-58: Merge accumulator events from `effects.accumulatorEvents` into the
+ * standard `balanceChanges` array so that deposits to address balances (which
+ * may not appear in coin-object-level balance changes) are visible in the
+ * operations history.
+ *
+ * For each accumulator event we check whether `balanceChanges` already has an
+ * entry for the same (address, coinType) pair.  If it does, the RPC already
+ * accounted for the accumulator; otherwise we synthesise a new BalanceChange.
+ */
+export function getUnifiedBalanceChanges(tx: SuiTransactionBlockResponse): BalanceChange[] {
+  const base = tx.balanceChanges ?? [];
+  const accEvents = tx.effects?.accumulatorEvents;
+  if (!accEvents || accEvents.length === 0) return base;
+
+  const extra: BalanceChange[] = [];
+
+  for (const evt of accEvents) {
+    if (!("integer" in evt.value)) continue;
+
+    const amount = evt.operation === "merge" ? evt.value.integer : `-${evt.value.integer}`;
+    const alreadyCovered = base.some(
+      bc =>
+        bc.coinType === evt.ty &&
+        typeof bc.owner !== "string" &&
+        "AddressOwner" in bc.owner &&
+        bc.owner.AddressOwner === evt.address,
+    );
+
+    if (!alreadyCovered) {
+      extra.push({
+        coinType: evt.ty,
+        owner: { AddressOwner: evt.address },
+        amount,
+      });
+    }
+  }
+
+  return extra.length > 0 ? [...base, ...extra] : base;
+}
+
 export type AccountBalance = {
   coinType: string;
   blockHeight: number;
   balance: BigNumber;
+  /**
+   * SIP-58 address balance portion (if any).
+   * When non-zero, part of `balance` is held directly at the address level
+   * rather than in coin objects. The RPC's `suix_getAllBalances` aggregates both
+   * sources into `totalBalance`; this field surfaces the split for coin selection.
+   */
+  fundsInAddressBalance: BigNumber;
 };
 
 /**
- * Get account balance (native and tokens)
+ * Get account balance (native and tokens).
+ *
+ * Post SIP-58 the JSON-RPC `suix_getAllBalances` automatically aggregates
+ * traditional coin-object balances **and** address-level balances into
+ * `totalBalance`. The optional `fundsInAddressBalance` field indicates
+ * how much of that total comes from the address balance (used by
+ * coin-selection logic in transaction building).
  */
 export const getAccountBalances = async (
   addr: string,
   currencyId?: string,
 ): Promise<AccountBalance[]> => {
   const balances = await getAllBalancesCached(addr, currencyId);
-  return balances.map(({ coinType, totalBalance }) => ({
+  return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
     balance: BigNumber(totalBalance),
+    fundsInAddressBalance: BigNumber(fundsInAddressBalance ?? "0"),
   }));
 };
 
@@ -276,17 +363,18 @@ export const getOperationAmount = (
   transaction: SuiTransactionBlockResponse,
   coinType: string,
 ): BigNumber => {
+  const changes = getUnifiedBalanceChanges(transaction);
   let amount = new BigNumber(0);
-  if (!transaction?.balanceChanges) return amount;
+  if (changes.length === 0) return amount;
   if (
     isStaking(transaction.transaction?.data.transaction) ||
     isUnstaking(transaction.transaction?.data.transaction)
   ) {
-    const balanceChange = transaction.balanceChanges[0];
+    const balanceChange = changes[0];
     return amount.minus(balanceChange?.amount || 0);
   }
 
-  for (const balanceChange of transaction.balanceChanges) {
+  for (const balanceChange of changes) {
     if (
       typeof balanceChange.owner !== "string" &&
       "AddressOwner" in balanceChange.owner &&
@@ -374,12 +462,11 @@ export const getStakesRaw = (owner: string, currencyId?: string) =>
  * Extract operation coin type from transaction
  */
 export const getOperationCoinType = (transaction: SuiTransactionBlockResponse): string => {
-  if (!transaction.balanceChanges) {
+  const changes = getUnifiedBalanceChanges(transaction);
+  if (changes.length === 0) {
     return DEFAULT_COIN_TYPE;
   }
-  const tokenBalanceChanges = transaction.balanceChanges.filter(
-    ({ coinType }) => coinType !== DEFAULT_COIN_TYPE,
-  );
+  const tokenBalanceChanges = changes.filter(({ coinType }) => coinType !== DEFAULT_COIN_TYPE);
   if (tokenBalanceChanges.length > 0) {
     return tokenBalanceChanges[0].coinType;
   }
@@ -430,27 +517,26 @@ export const alpacaGetOperationAmount = (
   const zero = BigNumber(0);
 
   const tx = transaction.transaction?.data.transaction;
-  const change = transaction.balanceChanges;
+  const changes = getUnifiedBalanceChanges(transaction);
   if (isStaking(tx) || isUnstaking(tx)) {
-    if (change) return removeFeesFromAmountForNative(change[0], getOperationFee(transaction)).abs();
+    if (changes.length > 0)
+      return removeFeesFromAmountForNative(changes[0], getOperationFee(transaction)).abs();
     return BigNumber(0);
   } else {
-    return (
-      change
-        ?.filter(
-          balanceChange =>
-            typeof balanceChange.owner !== "string" &&
-            "AddressOwner" in balanceChange.owner &&
-            balanceChange.owner.AddressOwner === address &&
-            balanceChange.coinType === coinType,
-        )
-        .map(change => {
-          if (isSender(address, transaction.transaction?.data))
-            return removeFeesFromAmountForNative(change, getOperationFee(transaction)).abs();
-          else return BigNumber(change.amount).abs();
-        })
-        .reduce((acc, curr) => acc.plus(curr), zero) || zero
-    );
+    return changes
+      .filter(
+        balanceChange =>
+          typeof balanceChange.owner !== "string" &&
+          "AddressOwner" in balanceChange.owner &&
+          balanceChange.owner.AddressOwner === address &&
+          balanceChange.coinType === coinType,
+      )
+      .map(change => {
+        if (isSender(address, transaction.transaction?.data))
+          return removeFeesFromAmountForNative(change, getOperationFee(transaction)).abs();
+        else return BigNumber(change.amount).abs();
+      })
+      .reduce((acc, curr) => acc.plus(curr), zero);
   }
 };
 
@@ -586,13 +672,11 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   const operationFee = getOperationFee(transaction);
   const feesPayer = getFeesPayer(transaction);
+  const changes = getUnifiedBalanceChanges(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
-    operations:
-      transaction.balanceChanges?.flatMap(change =>
-        toBlockOperation(transaction, change, operationFee),
-      ) || [],
+    operations: changes.flatMap(change => toBlockOperation(transaction, change, operationFee)),
     fees: BigInt(operationFee.toString()),
     ...(feesPayer ? { feesPayer } : {}),
   };
@@ -724,9 +808,9 @@ export const getOperations = async (
     // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
     const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
-    return rawTransactions.operations.map(transaction =>
-      transactionToOperation(accountId, addr, transaction),
-    );
+    return rawTransactions.operations
+      .filter(tx => !isSettlementTransaction(tx))
+      .map(transaction => transactionToOperation(accountId, addr, transaction));
   }, currencyId);
 
 export const filterOperations = (
@@ -936,7 +1020,10 @@ export const getListOperations = async (
 
     // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
     // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
-    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest);
+    // SIP-58 settlement transactions (bookkeeping for accumulator state) are excluded.
+    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest).filter(
+      tx => !isSettlementTransaction(tx),
+    );
 
     // restore order
     const sortedOps = [...mergedOps].sort(compareOperations(order));
@@ -1023,7 +1110,7 @@ export const getBlock = async (id: string, currencyId?: string): Promise<Block> 
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
     return {
       info: toBlockInfo(checkpoint),
-      transactions: rawTxs.map(toBlockTransaction),
+      transactions: rawTxs.filter(tx => !isSettlementTransaction(tx)).map(toBlockTransaction),
     };
   }, currencyId);
 
@@ -1040,17 +1127,23 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
 /**
  * Get coins for a given address and coin type, stopping when we have enough to cover the amount.
  * Returns the minimum coins needed to cover the required amount.
+ *
+ * Post SIP-58 the RPC `suix_getCoins` returns "fake coin" objects that represent
+ * the address-level balance. These synthetic coins are indistinguishable from
+ * real coin objects at the API level (`CoinStruct` shape) and can be used in
+ * `mergeCoins` / `splitCoins` just like real ones. The transaction builder
+ * transparently converts them into `FundsWithdrawal` operations.
  */
 export const getCoinsForAmount = async (
   api: SuiJsonRpcClient,
   address: string,
   coinType: string,
-  requiredAmount: number,
+  requiredAmount: bigint,
 ) => {
   const coins = [];
   let cursor = null;
   let hasNextPage = true;
-  let totalBalance = 0;
+  let totalBalance = 0n;
 
   while (hasNextPage && totalBalance < requiredAmount) {
     const response = await api.getCoins({
@@ -1059,17 +1152,19 @@ export const getCoinsForAmount = async (
       cursor,
     });
 
-    // Filter out zero-balance coins and sort by balance (largest first)
     const validCoins = response.data
-      .filter(coin => parseInt(coin.balance) > 0)
-      .sort((a, b) => parseInt(b.balance) - parseInt(a.balance));
+      .filter(coin => BigInt(coin.balance) > 0n)
+      .sort((a, b) => {
+        const diff = BigInt(b.balance) - BigInt(a.balance);
+        return diff > 0n ? 1 : diff < 0n ? -1 : 0;
+      });
 
     let currentBalance = totalBalance;
     let i = 0;
     while (i < validCoins.length && currentBalance < requiredAmount) {
       const coin = validCoins[i];
       coins.push(coin);
-      currentBalance += parseInt(coin.balance);
+      currentBalance += BigInt(coin.balance);
       i++;
     }
     totalBalance = currentBalance;
@@ -1080,6 +1175,20 @@ export const getCoinsForAmount = async (
 
   return coins;
 };
+
+/**
+ * Check whether the sender has any real SUI coin objects to use as gas payment.
+ * When no coin objects exist (all funds are in address balance), the caller
+ * should set `tx.setGasPayment([])` so the network uses the address balance.
+ */
+async function hasGasCoinObjects(api: SuiJsonRpcClient, address: string): Promise<boolean> {
+  const response = await api.getCoins({
+    owner: address,
+    coinType: DEFAULT_COIN_TYPE,
+    limit: 1,
+  });
+  return response.data.length > 0;
+}
 
 /**
  * Creates a Sui transaction block for transferring coins.
@@ -1101,6 +1210,7 @@ export const createTransaction = async (
   const { serialized, bcsObjects } = await createTransactionFromMode(
     address,
     transaction,
+    withObjects,
     currencyId,
   );
 
@@ -1114,31 +1224,41 @@ export const createTransaction = async (
 const createTransactionFromMode = (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) => {
   const { mode } = transaction;
   switch (mode) {
     case "delegate":
-      return createTransactionForDelegate(address, transaction, currencyId);
+      return createTransactionForDelegate(address, transaction, withObjects, currencyId);
     case "undelegate":
-      return createTransactionForUndelegate(address, transaction, currencyId);
+      return createTransactionForUndelegate(address, transaction, withObjects, currencyId);
     default:
-      return createTransactionForOthers(address, transaction, currencyId);
+      return createTransactionForOthers(address, transaction, withObjects, currencyId);
   }
 };
 
+/**
+ * SIP-58: when no coin objects exist, `setGasPayment([])` tells the network
+ * to source gas from the address balance via FundsWithdrawal.
+ */
 const createTransactionForDelegate = async (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) =>
   withApi(async api => {
     const tx = new Transaction();
+    const sender = ensureAddressFormat(address);
+    tx.setSender(sender);
 
-    tx.setSender(ensureAddressFormat(address));
+    if (!(await hasGasCoinObjects(api, sender))) {
+      tx.setGasPayment([]);
+    }
 
     const { amount } = transaction;
-    const coins = tx.splitCoins(tx.gas, [amount.toNumber()]);
+    const coins = tx.splitCoins(tx.gas, [BigInt(amount.toFixed())]);
 
     tx.moveCall({
       target: "0x3::sui_system::request_add_stake",
@@ -1152,7 +1272,9 @@ const createTransactionForDelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    const bcsObjects = withObjects
+      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
+      : [];
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1160,12 +1282,18 @@ const createTransactionForDelegate = async (
 const createTransactionForUndelegate = async (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) =>
   withApi(async api => {
     const tx = new Transaction();
+    const sender = ensureAddressFormat(address);
+    tx.setSender(sender);
 
-    tx.setSender(ensureAddressFormat(address));
+    if (!(await hasGasCoinObjects(api, sender))) {
+      tx.setGasPayment([]);
+    }
+
     const { useAllAmount, amount } = transaction;
 
     if (useAllAmount) {
@@ -1187,51 +1315,82 @@ const createTransactionForUndelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
-
-    return { serialized, bcsObjects };
-  }, currencyId);
-
-const createTransactionForOthers = async (
-  address: string,
-  transaction: CreateExtrinsicArg,
-  currencyId?: string,
-) =>
-  withApi(async api => {
-    const tx = new Transaction();
-
-    tx.setSender(ensureAddressFormat(address));
-
-    if (transaction.coinType !== DEFAULT_COIN_TYPE) {
-      const requiredAmount = transaction.amount.toNumber();
-
-      const coins = await getCoinsForAmount(api, address, transaction.coinType, requiredAmount);
-
-      if (coins.length === 0) {
-        throw new Error(`No coins found for type ${transaction.coinType}`);
-      }
-
-      const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
-
-      if (coinObjects.length > 1) {
-        tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
-      }
-
-      const [coin] = tx.splitCoins(coinObjects[0], [transaction.amount.toNumber()]);
-      tx.transferObjects([coin], transaction.recipient);
-    } else {
-      const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
-      tx.transferObjects([coin], transaction.recipient);
-    }
-
-    const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    const bcsObjects = withObjects
+      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
+      : [];
 
     return { serialized, bcsObjects };
   }, currencyId);
 
 /**
- * Performs a dry run of a transaction to estimate gas costs and fees
+ * SIP-58 transfer builder:
+ *
+ * - **Native SUI**: uses `tx.gas` for the transfer. When the sender has no coin
+ *   objects `setGasPayment([])` lets the network source gas from address balance.
+ *
+ * - **Non-SUI tokens**: first tries `getCoinsForAmount` (which may return fake
+ *   coins).  If no coin objects are available at all, falls back to
+ *   `coinWithBalance` which resolves the funds from the address balance
+ *   automatically (including FundsWithdrawal).
+ */
+const createTransactionForOthers = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  withObjects: boolean,
+  currencyId?: string,
+) =>
+  withApi(async api => {
+    const tx = new Transaction();
+    const sender = ensureAddressFormat(address);
+    tx.setSender(sender);
+
+    const senderHasGasCoins = await hasGasCoinObjects(api, sender);
+    if (!senderHasGasCoins) {
+      tx.setGasPayment([]);
+    }
+
+    if (transaction.coinType !== DEFAULT_COIN_TYPE) {
+      const requiredAmount = BigInt(transaction.amount.toFixed());
+      const coins = await getCoinsForAmount(api, sender, transaction.coinType, requiredAmount);
+      const collectedBalance = coins.reduce((sum, c) => sum + BigInt(c.balance), 0n);
+
+      if (coins.length > 0 && collectedBalance >= requiredAmount) {
+        const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
+
+        if (coinObjects.length > 1) {
+          tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
+        }
+
+        const [coin] = tx.splitCoins(coinObjects[0], [BigInt(transaction.amount.toFixed())]);
+        tx.transferObjects([coin], transaction.recipient);
+      } else {
+        const coin = coinWithBalance({
+          type: transaction.coinType,
+          balance: BigInt(transaction.amount.toFixed()),
+        })(tx);
+        tx.transferObjects([coin], transaction.recipient);
+      }
+    } else {
+      const [coin] = tx.splitCoins(tx.gas, [BigInt(transaction.amount.toFixed())]);
+      tx.transferObjects([coin], transaction.recipient);
+    }
+
+    const serialized = await tx.build({ client: api });
+    const bcsObjects = withObjects
+      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
+      : [];
+
+    return { serialized, bcsObjects };
+  }, currencyId);
+
+/**
+ * Performs a dry run of a transaction to estimate gas costs and fees.
+ *
+ * Post SIP-58: when the sender has no SUI coin objects (only address-level
+ * balance), `createTransaction` sets `gasPayment` to `[]`, signalling the
+ * network to source gas via `FundsWithdrawal`.  The dry-run endpoint handles
+ * this transparently, so fee estimation works for both coin-object and
+ * address-balance funding models.
  */
 export const paymentInfo = async (
   sender: string,

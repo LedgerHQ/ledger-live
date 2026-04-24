@@ -80,7 +80,7 @@ export default {
           device = r.device;
           await cache.prepareCurrency(currency);
           const maybeAddress = await firstValueFrom(
-            getCurrencyBridge(currency)
+            (await getCurrencyBridge(currency))
               .scanAccounts({
                 currency,
                 deviceId: device.id,
@@ -124,7 +124,7 @@ export default {
           if (!r) return;
           device = r.device;
           await firstValueFrom(
-            getCurrencyBridge(currency)
+            (await getCurrencyBridge(currency))
               .scanAccounts({
                 currency,
                 deviceId: r.device.id,
@@ -184,7 +184,7 @@ export default {
           console.log("no recipient to empty account " + account.id);
           return;
         }
-        const accountBridge = getAccountBridge(account);
+        const accountBridge = await getAccountBridge(account);
 
         // TODO in case of cosmos & other funds that can be delegated, we need to also schedule these txs first..
         const plannedTransactions: TransactionCommon[] = [];

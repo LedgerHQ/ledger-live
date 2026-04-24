@@ -314,7 +314,6 @@ export type Features = CurrencyFeatures & {
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
-  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwmWallet40: Feature_LwmWallet40;
@@ -382,8 +381,8 @@ export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
 
 export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
   ? {
-      yieldId: string;
-    }
+    yieldId: string;
+  }
   : unknown;
 
 export type Redirect<M extends PlatformManifestId> = {
@@ -814,8 +813,6 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
 
-export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
-
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
   touchscreens: boolean;
@@ -850,6 +847,7 @@ type Feature_Wallet40_Params = {
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;
+  finishOnboardingWidget?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;

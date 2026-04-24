@@ -16,8 +16,8 @@ type Props = {
       action: () => void;
       dataTestId?: string;
     };
-    dismiss: {
-      label?: string;
+    dismiss?: {
+      label: string;
       action: () => void;
       dataTestId?: string;
     };
@@ -25,6 +25,8 @@ type Props = {
 };
 
 const ActionCard = ({ img, leftContent, title, description, actions }: Props) => {
+  const dismiss = actions.dismiss;
+
   return (
     <CardContainer>
       {(img && <Header src={img} />) || leftContent}
@@ -33,13 +35,15 @@ const ActionCard = ({ img, leftContent, title, description, actions }: Props) =>
         <Description>{description}</Description>
       </Body>
       <Actions>
-        <Link
-          size="small"
-          onClick={() => actions.dismiss.action()}
-          data-testid={actions.dismiss.dataTestId}
-        >
-          {actions.dismiss.label}
-        </Link>
+        {dismiss && dismiss.label ? (
+          <Link
+            size="small"
+            onClick={() => dismiss.action()}
+            data-testid={dismiss.dataTestId}
+          >
+            {dismiss.label}
+          </Link>
+        ) : null}
 
         {actions.primary.label && (
           <ButtonV3

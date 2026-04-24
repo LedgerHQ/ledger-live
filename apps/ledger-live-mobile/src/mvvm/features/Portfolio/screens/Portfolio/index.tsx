@@ -125,7 +125,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     if (shouldDisplayMarketBanner) {
       sections.push(
-        <Box key="marketBanner" px={6} pt={6}>
+        <Box key="marketBanner" px={6}>
           <MarketBanner />
         </Box>,
       );

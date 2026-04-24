@@ -1256,8 +1256,8 @@
             "description" : "Primeiro, você deve desativar a configuração “Provedor da Minha Ledger ({{providerNumber}})”. Para desativá-la, abra as “Configurações” da Ledger Wallet, selecione “Recursos experimentais” e, em seguida, desative o “Provedor da Minha Ledger”."
           },
           "deviceNotGenuineError" : {
-            "title" : "Esta {{productName}} não é autêntica",
-            "description" : "Esta {{productName}} não é segura para usar.\nEntre em contato com o Suporte Ledger."
+            "title" : "Esta {{productName}} foi reprovada na Verificação de Autenticidade",
+            "description" : "Não é seguro usar este dispositivo Ledger.\nEntre em contato com o Suporte Ledger."
           }
         },
         "whyPerformChecksLink" : "Saiba mais sobre a Verificação de Genuinidade da Ledger",
@@ -4606,6 +4606,27 @@
         "title" : "Alternar tema",
         "desc" : "Exibir botão flutuante para alternar temas rapidamente."
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "Consentimento de Adesão às Métricas (QA)",
+        "rowDesc" : "Inspecionar a versão de consentimento de privacidade armazenada; simular estados desatualizados para o modal de consentimento da análise do portfolio.",
+        "title" : "Consentimento de Adesão às Métricas — QA",
+        "readSection" : "Configurações Atuais (somente leitura)",
+        "storedPrivacyVersion" : "Versão armazenada da política de privacidade: {{version}}",
+        "currentPrivacyVersion" : "Versão atual da política de privacidade do aplicativo: {{version}}",
+        "consentDate" : "Data de consentimento (raw): {{value}}",
+        "inlineOutdatePrivacyVersion" : "Versão desatualizada",
+        "inlineRemoveConsentDate" : "Remover data",
+        "actionResetForConsentFresh" : "Redefinir para consentimento renovado (limpar dados de consentimento, desativar análise e personalização)",
+        "modalPreviewSection" : "Modal esperado no portfólio (página inicial)",
+        "modalPreviewNoModalUserOk" : "Sem modal. A versão da política de privacidade e a data de consentimento estão corretas: nada a renovar ou reconhecer novamente.",
+        "modalPreviewNoModalFeatureOff" : "Sem modal. O marcador do recurso de adesão às métricas está desativado.",
+        "modalPreviewNoModalOnboarding" : "Sem modal. O onboarding ainda não foi concluído.",
+        "modalPreviewFresh" : "Modal de consentimento pela primeira vez (consentimento inicial). A renovação do consentimento é necessária (data de consentimento ausente ou inválida) e o Compartilhar métricas está desligado — por exemplo sem confirmação de privacidade armazenada / sem data de consentimento às métricas desativado.",
+        "modalPreviewReconfirm" : "Reconfirme o modal de consentimento. A renovação do consentimento é necessária e a análise de compartilhamento está ativada — o usuário recebe o fluxo de reconfirmação / “continuar ou parar” ao invés da cópia inicial.",
+        "modalPreviewPrivacy" : "Modal de atualização de privacidade. A versão armazenada da política de privacidade está desatualizada (inferior à do aplicativo), e a renovação do consentimento não está bloqueada — o usuário vê primeiro a etapa de atualização da política de privacidade.",
+        "modalPreviewGoToHome" : "Abra a página inicial do portfólio para ver o modal quando ele aparecer.",
+        "note" : "A data de remoção define o consentimento como nulo. A versão desatualizada reduz a versão da política de privacidade armazenada para abaixo da versão atual do aplicativo. A redefinição limpa os metadados de consentimento e desativa a análise e a personalização para reproduzir o modal de consentimento atual. A renovação baseada em tempo fica desativada enquanto CONSENT_RENEWAL_INTERVAL_MS é nulo no live-common."
+      },
       "brazeTools" : {
         "title" : "Ferramentas Braze",
         "description" : "Gerar cards Braze locais",
@@ -4633,6 +4654,26 @@
             "path" : "Path"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "Carregar app.json",
+        "desc" : "Arraste e solte um arquivo app.json para importar contas e configurações",
+        "dropOrBrowse" : "Solte o arquivo app.json aqui ou clique para navegar",
+        "importing" : "Importando…",
+        "success" : "{{count}} conta importada com sucesso.",
+        "success_other" : "{{count}} contas importadas com sucesso.",
+        "lastDeviceSeen" : "Último dispositivo visto: {{device}}",
+        "invalidFileType" : "Tipo de arquivo inválido. Esperava-se um arquivo .json .",
+        "missingDataField" : "App.json inválido: faltam campos de dados de nível superior.",
+        "encryptedAccounts" : "Contas criptografadas detectadas. Descriptografe o arquivo primeiro.",
+        "successLabel" : "Sucesso",
+        "appJsonFile" : "Arquivo App.json",
+        "accountsImported" : "Contas importadas",
+        "accountsFailed" : "Falha em contas",
+        "importFailed" : "Falha na importação: {{message}}",
+        "unknownError" : "Erro desconhecido durante a importação.",
+        "failedCount" : "{{count}} conta não pôde ser carregada.",
+        "failedCount_other" : "{{count}} contas não puderam ser carregadas."
       },
       "mockAccounts" : {
         "title" : "Gerar contas simuladas",
@@ -5872,6 +5913,10 @@
     },
     "recipientWording" : {
       "send" : "destinatário",
+      "transfer_public" : "destinatário público",
+      "transfer_private" : "destinatário privado",
+      "convert_public_to_private" : "destinatário privado",
+      "convert_private_to_public" : "destinatário público",
       "delegate" : "validador",
       "redelegate" : "validador",
       "undelegate" : "validador",
@@ -6313,6 +6358,11 @@
     "DeviceSocketFail" : {
       "title" : "Reinicie seu dispositivo Ledger e tente novamente",
       "description" : "Ocorreu um erro inesperado. Tente Novamente. ({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : "Esta {{productName}} foi reprovada na Verificação de Autenticidade",
+      "description" : "Não é seguro usar este dispositivo Ledger. Entre em contato com o Suporte Ledger.",
+      "contactSupportCTA" : "Fale com o Suporte Ledger"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Falha de conexão",
@@ -7225,10 +7275,20 @@
       "title" : "Fundos insuficientes. O saldo mínimo exigido é de 0,02 TON."
     },
     "AleoAmountRecordRequired" : {
-      "title" : "Selecione um registro privado válido para a quantia."
+      "title" : "Selecione um registro privado válido para a quantia.",
+      "description" : "Escolha um de seus registros privados disponíveis para financiar a quantia da transferência."
     },
     "AleoFeeRecordRequired" : {
-      "title" : "Selecione um registro privado válido para a taxa."
+      "title" : "Outro registro privado é necessário para cobrir a taxa de rede.",
+      "description" : "Recarregue seu saldo se necessário. Um registro privado é usado para a quantia da transferência, e é necessário outro registro que possa cobrir a taxa de rede."
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "O envio privado requer pelo menos dois registros",
+      "description" : "Você precisa de um registro para o valor da transferência e outro para cobrir a taxa de rede."
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "Nenhum registro privado consegue cobrir a taxa de rede",
+      "description" : "Selecione um registro diferente para a quantia da transferência ou recarregue seu saldo com fundos adicionais."
     },
     "BackupAppDataError" : {
       "title" : "Erro durante o backup dos dados do aplicativo"
@@ -7393,8 +7453,8 @@
       "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
     "AlreadySendingApduError" : {
-      "title" : "Erro de comunicação",
-      "description" : "Ocorreu um problema ao trocar informações com o seu dispositivo. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+      "title" : "Ação necessária no seu dispositivo Ledger",
+      "description" : "Finalize a ação em seu dispositivo e, depois, selecione “Tentar novamente” abaixo."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Erro de comunicação",
@@ -7729,11 +7789,48 @@
     },
     "noAccounts" : {
       "title" : "Você precisa de uma conta para acessar este aplicativo.",
-      "add" : "Adicionar Conta"
+      "select" : "Selecionar Conta"
     }
   },
   "recoverRestore" : {
     "title" : "Conectar e desbloquear sua Ledger"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "Ajude-nos a melhorar a Ledger",
+      "description" : "Com o seu consentimento, coletaremos dados de uso para melhorar os recursos e personalizar sua experiência.",
+      "ctaAcceptAll" : "Aceitar todos",
+      "ctaRefuseAll" : "Recusar todos"
+    },
+    "reconfirm" : {
+      "title" : "Continuar melhorando a Ledger?",
+      "description" : "Gostaria de continuar compartilhando dados de uso para nos ajudar a melhorar a Ledger? Esses dados são usados para melhorar funcionalidades e personalizar a sua experiência.",
+      "ctaContinue" : "Sim, continue",
+      "ctaStop" : "Não, pare"
+    },
+    "privacy" : {
+      "title" : "Estamos atualizando nossa política de privacidade",
+      "descriptionLead" : "Consulte o nosso ",
+      "descriptionLinkLabel" : "Política de privacidade",
+      "descriptionTrail" : " para saber o que mudou. Você pode atualizar suas preferências a qualquer momento nas Configurações.",
+      "ctaGotIt" : "Entendi"
+    },
+    "setPreferences" : "Definir Preferências",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "Desempenho do aplicativo",
+        "description" : "Permitir que a Ledger colete dados de uso do aplicativo para aprimorar a experiência"
+      },
+      "personalizedExperience" : {
+        "title" : "Experiência personalizada",
+        "description" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer conteúdo personalizado"
+      },
+      "ctaConfirm" : "Confirmar"
+    },
+    "footer" : {
+      "lead" : "Você pode revogar seu consentimento a qualquer momento nas configurações.",
+      "privacyLink" : "Política de privacidade"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -8248,7 +8345,7 @@
         "showBalance" : "Mostrar saldo",
         "startSync" : "Iniciar sincronização",
         "stopSync" : "Parar sincronização",
-        "lastProcessedBlock" : "Bloco mais recente processado: {{block}}. {{missing}} blocos ainda não processados.",
+        "upToDate" : "Atualizado",
         "lastSync" : "Última sincronização: {{date}}",
         "estimatedTimeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}"
       },

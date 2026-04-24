@@ -1,19 +1,42 @@
-import React from "react";
-import { Popover, PopoverTrigger, PopoverContent, IconButton } from "@ledgerhq/lumen-ui-react";
-import { Airplane } from "@ledgerhq/lumen-ui-react/symbols";
+import React, { useCallback, useMemo, useState } from "react";
+import { Popover, PopoverTrigger, PopoverContent } from "@ledgerhq/lumen-ui-react";
+import { Explore } from "./Explore";
+import TopBar from "./TopBar";
+import { ActionsList } from "./ActionsList";
+import { MyLedger } from "./MyLedger";
+import ContextMenuContext from "./ContextMenuContext";
+import { UserAvatar } from "./UserAvatar";
 
 const side = "bottom";
 const align = "end";
 
 export function ContextMenu() {
-  return (
-    <Popover>
-      <PopoverTrigger render={<IconButton icon={Airplane} aria-label="Airplane" size="sm" />} />
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
+  const contextValue = useMemo(() => ({ close }), [close]);
 
-      <PopoverContent width="fixed" side={side} align={align}>
-        <p className="body-2 text-base">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
-        </p>
+  return (
+    <Popover overlay open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        render={
+          <button
+            aria-label="My wallet"
+            className="cursor-pointer items-center justify-center rounded-full hover:bg-muted-hover"
+          >
+            <UserAvatar showNotification />
+          </button>
+        }
+      />
+
+      <PopoverContent width="fixed" side={side} align={align} className="flex flex-col gap-24">
+        <ContextMenuContext.Provider value={contextValue}>
+          <TopBar />
+          <ActionsList />
+          <div className="flex flex-col gap-12">
+            <MyLedger />
+            <Explore />
+          </div>
+        </ContextMenuContext.Provider>
       </PopoverContent>
     </Popover>
   );

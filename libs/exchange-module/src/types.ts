@@ -10,8 +10,7 @@ export enum ExchangeType {
 export type ExchangeStartParams =
   | ExchangeStartFundParams
   | ExchangeStartSellParams
-  | ExchangeStartSwapParams
-  | ExchangeStartFundParams;
+  | ExchangeStartSwapParams;
 
 export type ExchangeStartFundParams = {
   exchangeType: "FUND";
@@ -109,4 +108,87 @@ export type SwapLiveError = {
       };
     };
   };
+};
+
+// --- Swap quotes (`custom.exchange.getQuotes` wire) — keep internal HTTP shapes in ledger-live-common only ---
+
+export type UniswapOrderType = "classic" | "uniswapxv2" | "all";
+
+export type QuotesInput = {
+  amount: string;
+  sendAccountId: string;
+  receiveAccountId: string;
+  sendAddress: string;
+  receiveAddress: string;
+  sendCurrencyId: string;
+  receiveCurrencyId: string;
+  counterValueCurrency: string;
+  networkFeesCurrencyId?: string;
+  slippage?: number;
+  uniswapOrderType?: UniswapOrderType;
+};
+
+export type GetQuotesArgs = {
+  providers: string[];
+  data: QuotesInput;
+  headers?: Array<[string, string]>;
+  signal?: AbortSignal;
+};
+
+export type GetQuotesWireArgs = Omit<GetQuotesArgs, "signal">;
+
+export type TradeMethod = "fixed" | "float";
+
+export type ProviderTypes = "DEX" | "CEX";
+
+export type QuoteWarning = "highSpread";
+
+export type QuoteError = "notEnoughBalanceForFees";
+
+export type ProviderDetails = {
+  name: string;
+  type: ProviderTypes;
+  url?: string;
+  isUniswapX: boolean;
+  requiresKYC: boolean;
+  continuesInProviderLiveApp: boolean;
+};
+
+export type QuoteNetworkFees = {
+  currencyId: string;
+  gasLimit?: string;
+};
+
+export type QuoteDetails = {
+  type: TradeMethod;
+  sendAmount: number;
+  receiveAmount: number;
+  gasLess: boolean;
+  networkFees: QuoteNetworkFees;
+  slippage: number;
+  exchangeRate: number;
+};
+
+export type Quote = {
+  id?: string;
+  key: string;
+  provider: string;
+  providerDetails: ProviderDetails;
+  quoteDetails: QuoteDetails;
+  warning: QuoteWarning | null;
+  error: QuoteError | null;
+};
+
+/** Error rows returned next to quotes (swap API error objects). */
+export type QuoteProviderError = {
+  code: string;
+  type: TradeMethod;
+  provider: string;
+  message: string;
+  parameter: { [key: string]: string };
+};
+
+export type GetQuotesResponse = {
+  quotes: Quote[];
+  errors: QuoteProviderError[];
 };

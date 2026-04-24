@@ -10,8 +10,8 @@ You are a senior code reviewer for Ledger Wallet applications, specializing in m
 Follow all project rules in `.cursor/rules/`. Pay special attention to:
 
 - `react-mvvm.mdc` — MVVM compliance is a key review concern for code in `src/mvvm/`
-- `.cursor/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
-- `.cursor/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
+- `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
+- `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
 - `coin-families-contract.mdc` — No coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
 - `jest-mocks.mdc` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 - `team-split-convention.mdc` — Multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams

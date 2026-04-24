@@ -15,7 +15,7 @@ export const AssetsSections: React.FC<AssetsSectionsProps> = ({
 }) => {
   if (shouldDisplayAssetSection) {
     return (
-      <Box lx={{ gap: "s24" }}>
+      <Box lx={{ gap: "s16" }}>
         <PortfolioCryptosSection variant={variant} />
         <PortfolioStablecoinsSection variant={variant} />
       </Box>

@@ -36,7 +36,7 @@ test.describe("Market", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-4315",
+        description: "B2CQA-4315, B2CQA-1879",
       },
     },
     async ({ app }) => {

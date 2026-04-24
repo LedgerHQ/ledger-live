@@ -149,7 +149,10 @@ export default class BuySellPage {
   @Step("Get available providers")
   async getAvailableProviders(): Promise<string[]> {
     await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
+      timeout: 2000,
+      throwOnTimeout: false,
+    });
     if (expandButton) {
       await tapWebElementByTestId(this.expandButtonId);
     }
@@ -183,7 +186,10 @@ export default class BuySellPage {
   @Step("Select provider")
   async selectProvider(provider: string) {
     await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
+      timeout: 2000,
+      throwOnTimeout: false,
+    });
     if (expandButton) {
       await tapWebElementByTestId(this.expandButtonId);
     }
@@ -203,10 +209,12 @@ export default class BuySellPage {
   }
 
   @Step("Handle buy flow")
-  async handleBuyFlow(buySell: BuySell, paymentMethod: string) {
+  async handleBuyFlow(buySell: BuySell, paymentMethod: string, skipQuickAmountVerify?: boolean) {
     await this.expectBuyScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
-    await this.verifyQuickAmountButtonsFunctionality();
+    if (!skipQuickAmountVerify) {
+      await this.verifyQuickAmountButtonsFunctionality();
+    }
     await this.setAmountToPay(buySell.amount);
     await this.chooseCountryIfNotSelected(buySell.fiat);
     await this.tapSeeQuotes();
@@ -220,7 +228,7 @@ export default class BuySellPage {
   async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: BuySellProvider) {
     await this.expectSellScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
-    await this.tapSellPercentageButton("50%");
+    await this.tapSellPercentageButton("75%");
     await this.chooseCountryIfNotSelected(buySell.fiat);
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);

@@ -80,14 +80,11 @@ const sui: CurrenciesData<Transaction> = {
             family: "sui",
             mode: "send",
             coinType: "0x2::sui::SUI",
-            fees: "0",
           }),
           expectedStatus: {
             errors: {},
             warnings: {},
-            estimatedFees: BigNumber("0"),
             amount: BigNumber("2000000"),
-            totalSpent: BigNumber("2000000"),
           },
         },
         {
