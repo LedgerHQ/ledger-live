@@ -1,5 +1,21 @@
 # @ledgerhq/coin-sui
 
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#15592](https://github.com/LedgerHQ/ledger-live/pull/15592) [`948e9aa`](https://github.com/LedgerHQ/ledger-live/commit/948e9aa0621705e0f367e3e66a22d9cb240ac7a3) Thanks [@ishaba](https://github.com/ishaba)! - feat: sui SIP-58 address balances support
+
+- [#15591](https://github.com/LedgerHQ/ledger-live/pull/15591) [`c591323`](https://github.com/LedgerHQ/ledger-live/commit/c591323bd9c746ddee1df5f36070c0c442dd5c44) Thanks [@ishaba](https://github.com/ishaba)! - feat: update hw-app-sui
+
+### Patch Changes
+
+- Updated dependencies [[`fbff5f4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5f407027cb2b24834fea53ef21a3ef93bf95), [`c591323`](https://github.com/LedgerHQ/ledger-live/commit/c591323bd9c746ddee1df5f36070c0c442dd5c44), [`e377079`](https://github.com/LedgerHQ/ledger-live/commit/e3770793670b73d4409bd5be2081ca922e8679ac), [`45e134c`](https://github.com/LedgerHQ/ledger-live/commit/45e134c63f204444a5997109f4807447f51469ee)]:
+  - @ledgerhq/types-live@6.106.0-next.0
+  - @ledgerhq/hw-app-sui@1.10.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.3.1-next.0
+  - @ledgerhq/cryptoassets@13.46.1-next.0
+
 ## 0.31.0
 
 ### Minor Changes

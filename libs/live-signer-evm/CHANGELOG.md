@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-evm
 
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#16439](https://github.com/LedgerHQ/ledger-live/pull/16439) [`3bb2bac`](https://github.com/LedgerHQ/ledger-live/commit/3bb2bac74cdd6c70c890e92514150664f56b04e0) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Configure EVM signer context module with `ledger-wallet` app source
+
+### Patch Changes
+
+- Updated dependencies [[`292828a`](https://github.com/LedgerHQ/ledger-live/commit/292828a9797e39f6524f84a0f1064381013e2c77), [`178bda8`](https://github.com/LedgerHQ/ledger-live/commit/178bda8455ef6aca48eaa00ccc0c37adf582d86f), [`025b4ae`](https://github.com/LedgerHQ/ledger-live/commit/025b4aececb5752ec6a0b4e29562716597308a54), [`4afb1f9`](https://github.com/LedgerHQ/ledger-live/commit/4afb1f982d535c6fc8166281ff4fa1ed03569265)]:
+  - @ledgerhq/coin-evm@3.5.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.1-next.0
+
 ## 0.16.1
 
 ### Patch Changes
