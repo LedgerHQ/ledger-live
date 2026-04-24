@@ -165,7 +165,7 @@ export default class SwapPage extends CommonPage {
     const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
-    // If sender or receiver is an ERC20 token, the csv export takes the parent name
+    // If sender or receiver is a token account, the csv export takes the main account name
     const accountToDebitNameInCsv: string = swap.accountToDebit.parentAccount
       ? swap.accountToDebit.parentAccount.accountName
       : swap.accountToDebit.accountName;
