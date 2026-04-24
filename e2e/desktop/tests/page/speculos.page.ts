@@ -13,9 +13,9 @@ import {
   removeMemberLedgerSync,
   providePublicKey,
   exportUfvk,
-  shareViewKey,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { shareViewKey } from "@ledgerhq/live-common/e2e/families/aleo";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 

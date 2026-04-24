@@ -9,6 +9,7 @@ import generateTestScanAccounts from "./commands/blockchain/generateTestScanAcco
 import generateTestTransaction from "./commands/blockchain/generateTestTransaction";
 import getAddress from "./commands/blockchain/getAddress";
 import getTransactionStatus from "./commands/blockchain/getTransactionStatus";
+import getAleoViewKey from "./commands/blockchain/getAleoViewKey";
 import receive from "./commands/blockchain/receive";
 import send from "./commands/blockchain/send";
 import signMessage from "./commands/blockchain/signMessage";
@@ -70,6 +71,7 @@ export default {
   generateTestScanAccounts,
   generateTestTransaction,
   getAddress,
+  getAleoViewKey,
   getTransactionStatus,
   receive,
   send,
