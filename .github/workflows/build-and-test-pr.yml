@@ -123,7 +123,7 @@ jobs:
     name: "Build Wallet CLI"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@test/wallet-cli-bun-via-mise
     secrets: inherit
 
   test-additional:
