@@ -1,18 +1,45 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Box, Text, Switch, Button, Tag, Divider } from "@ledgerhq/lumen-ui-rnative";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import SettingsRow from "~/components/SettingsRow";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { setProductTourCompleted } from "~/actions/settings";
+import { productTourCompletedSelector } from "~/reducers/settings";
 import { useWallet40ViewModel, WALLET_40_PARAMS } from "./useWallet40ViewModel";
 
 export default function DebugWallet40() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const dispatch = useDispatch();
+  const lwmProductTour = useFeature("lwmProductTour");
+  const productTourCompleted = useSelector(productTourCompletedSelector);
   const { isEnabled, params, allEnabled, handleToggleEnabled, handleToggleParam, handleToggleAll } =
     useWallet40ViewModel();
+
+  const lwmProductTourSummary = useMemo(
+    () =>
+      JSON.stringify(
+        {
+          enabled: lwmProductTour?.enabled ?? false,
+          params: lwmProductTour?.params ?? null,
+        },
+        null,
+        2,
+      ),
+    [lwmProductTour?.enabled, lwmProductTour?.params],
+  );
+
+  const handleToggleProductTourCompleted = useCallback(
+    (value: boolean) => {
+      dispatch(setProductTourCompleted(value));
+    },
+    [dispatch],
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -113,6 +140,57 @@ export default function DebugWallet40() {
             FEATURES
           </Text>
           <Divider />
+        </Box>
+
+        <Box lx={{ marginBottom: "s24" }}>
+          <Text typography="body2SemiBold" lx={{ color: "muted", marginBottom: "s8" }}>
+            PRODUCT TOUR — QA (Settings → Debug → Wallet V4 features)
+          </Text>
+          <Box lx={{ marginBottom: "s12" }}>
+            <Divider />
+          </Box>
+          <Box
+            lx={{
+              backgroundColor: "surface",
+              borderRadius: "md",
+              padding: "s16",
+            }}
+          >
+            <Text typography="body3" lx={{ color: "muted", marginBottom: "s12" }}>
+              Inspect the lwmProductTour feature flag and the persisted Redux flag
+              productTourCompleted. This is not the carousel tour (hasSeenWalletV4Tour); use
+              &quot;Wallet V4 Tour&quot; below for that.
+            </Text>
+            <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s8" }}>
+              Feature flag: useFeature(&quot;lwmProductTour&quot;) — enabled + params
+            </Text>
+            <Text typography="body3" lx={{ color: "base", marginBottom: "s16" }}>
+              {lwmProductTourSummary}
+            </Text>
+            <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s8" }}>
+              Product Tour — completed (persisted)
+            </Text>
+            <Text typography="body3" lx={{ color: "muted", marginBottom: "s12" }}>
+              Current productTourCompleted (Redux): {productTourCompleted ? "Yes" : "No"}
+            </Text>
+            <Box
+              lx={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingVertical: "s8",
+              }}
+            >
+              <Text typography="body2" lx={{ color: "base", flexShrink: 1, paddingRight: "s12" }}>
+                QA: Toggle dispatches setProductTourCompleted (persisted in mobile settings)
+              </Text>
+              <Switch
+                testID="debug-product-tour-completed-switch"
+                checked={productTourCompleted}
+                onCheckedChange={handleToggleProductTourCompleted}
+              />
+            </Box>
+          </Box>
         </Box>
 
         <SettingsRow
