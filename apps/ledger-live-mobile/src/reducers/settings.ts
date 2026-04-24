@@ -76,6 +76,7 @@ import type {
   SettingsSetHasSeenWalletV4TourPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
+  SettingsSetHasClickedRecoverPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -176,6 +177,7 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   productTourCompleted: false,
+  hasClickedRecover: false,
   deprecationDoNotRemind: [],
   analyticsConsentInfo: {
     consentDate: null,
@@ -677,6 +679,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     productTourCompleted: (action as Action<SettingsSetProductTourCompletedPayload>).payload,
   }),
+
+  [SettingsActionTypes.SET_HAS_CLICKED_RECOVER]: (state, action) => ({
+    ...state,
+    hasClickedRecover: (action as Action<SettingsSetHasClickedRecoverPayload>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -918,3 +925,4 @@ export const selectedTabPortfolioAssetsSelector = (state: State) =>
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
 export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;
+export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;

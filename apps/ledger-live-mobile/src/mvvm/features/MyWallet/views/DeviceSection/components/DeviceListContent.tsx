@@ -26,9 +26,14 @@ export function DeviceListContent({
 
   return (
     <>
-      <Box lx={{ backgroundColor: "surface", borderRadius: "md" }}>
+      <Box lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}>
         {devices.map(device => (
-          <DeviceListItem key={device.id} device={device} onPress={onDevicePress} onOpenMenu={onOpenMenu} />
+          <DeviceListItem
+            key={device.id}
+            device={device}
+            onPress={onDevicePress}
+            onOpenMenu={onOpenMenu}
+          />
         ))}
       </Box>
       <ExploreDevicesItem onPress={onExploreDevices} />
