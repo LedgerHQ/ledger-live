@@ -8650,6 +8650,11 @@
       "explore": "Explore my new portfolio"
     }
   },
+  "productTour": {
+    "cta": {
+      "continue": "Continue"
+    }
+  },
   "history": {
     "title": "Transactions",
     "pending": "Pending transaction",
