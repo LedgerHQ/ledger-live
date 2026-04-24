@@ -27,6 +27,7 @@ import {
 import { ConnectAppDeviceAction } from "./ConnectAppDeviceAction";
 import {
   UserInteractionRequiredLL,
+  type ConnectAppDAIntermediateValue,
   type ConnectAppDAState,
   type DeviceDeprecationConfigs,
   type DeviceDeprecationConfig,
@@ -93,6 +94,24 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     step: "os.openAppWithDependencies.steps.installOrUpdateApps",
   };
 
+  const DEFAULT_INTERMEDIATE_VALUE: ConnectAppDAIntermediateValue = {
+    requiredUserInteraction: UserInteractionRequired.None,
+    installPlan: null,
+    deviceDeprecation: undefined,
+    deviceMetadata: undefined,
+  };
+
+  const DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA: ConnectAppDAIntermediateValue = {
+    ...DEFAULT_INTERMEDIATE_VALUE,
+    deviceMetadata: DEVICE_METADATA,
+  };
+
+  const INSTALL_INTERMEDIATE_VALUE_WITH_METADATA: ConnectAppDAIntermediateValue = {
+    ...INSTALL_INTERMEDIATE_VALUE,
+    deviceDeprecation: undefined,
+    deviceMetadata: DEVICE_METADATA,
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     apiMock.getDeviceSessionState.mockReturnValue({
@@ -118,49 +137,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // OpenAppWithDependencies
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -176,6 +175,57 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         testDeviceActionStates(deviceAction, expectedStates, apiMock, {
           onDone: resolve,
           onError: reject,
+        });
+      }));
+
+    it("exposes device metadata in the intermediate value after fetching it", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [{ name: "Uniswap" }, { name: "1inch" }],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+          },
+        });
+
+        const observedStates: Array<ConnectAppDAState> = [];
+        const { observable } = deviceAction._execute(apiMock);
+
+        observable.subscribe({
+          next: state => {
+            observedStates.push(state);
+          },
+          error: reject,
+          complete: () => {
+            try {
+              expect(observedStates).toContainEqual(
+                expect.objectContaining({
+                  status: DeviceActionStatus.Pending,
+                  intermediateValue: expect.objectContaining({
+                    installPlan: null,
+                    deviceMetadata: DEVICE_METADATA,
+                  }),
+                }),
+              );
+              expect(observedStates).toContainEqual(
+                expect.objectContaining({
+                  status: DeviceActionStatus.Pending,
+                  intermediateValue: expect.objectContaining({
+                    installPlan: INSTALL_INTERMEDIATE_VALUE.installPlan,
+                    deviceMetadata: DEVICE_METADATA,
+                  }),
+                }),
+              );
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          },
         });
       }));
 
@@ -196,49 +246,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -275,54 +305,34 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -357,19 +367,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -401,28 +403,16 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -457,49 +447,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -536,19 +506,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -580,36 +542,20 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -643,49 +589,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -719,49 +645,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // OpenAppWithDependencies
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -798,54 +704,34 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // OpenAppWithDependencies
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -1018,11 +904,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     const PENDING_NONE: ConnectAppDAState = {
       status: DeviceActionStatus.Pending,
-      intermediateValue: {
-        requiredUserInteraction: UserInteractionRequired.None,
-        installPlan: null,
-        deviceDeprecation: undefined,
-      },
+      intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
     };
 
     beforeEach(() => {
