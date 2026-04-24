@@ -18,6 +18,25 @@ export class Account {
   static readonly ADA_1 = new Account(Currency.ADA, "Cardano 1", 0, "1852'/1815'/0'/0/3");
   static readonly ADA_2 = new Account(Currency.ADA, "Cardano 2", 1, "1852'/1815'/1'/0/2");
 
+  static readonly ALEO_1 = new Account(
+    Currency.ALEO,
+    "Aleo 1",
+    0,
+    "44'/683'/0'/0'",
+    undefined,
+    undefined,
+    "aleo",
+  );
+  static readonly ALEO_2 = new Account(
+    Currency.ALEO,
+    "Aleo 2",
+    1,
+    "44'/683'/1'/0'",
+    undefined,
+    undefined,
+    "aleo",
+  );
+
   static readonly ALGO_1 = new Account(Currency.ALGO, "Algorand 1", 0, "44'/283'/0'/0/0");
   static readonly ALGO_2 = new Account(Currency.ALGO, "Algorand 2", 1, "44'/283'/1'/0/0");
 

@@ -11,6 +11,7 @@ import {
   liveDataWithRecipientAddressCommand,
   liveDataCommand,
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataWithRecipientAddressCommand as aleoLiveDataCommand } from "@ledgerhq/live-common/e2e/families/aleo";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -252,9 +253,18 @@ const transactionE2E = [
     transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
     xrayTicket: "B2CQA-4742",
   },
+  {
+    transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
+    xrayTicket: "B2CQA-4731",
+  },
 ];
 
-const LNS_UNSUPPORTED_CURRENCIES = new Set([Currency.SUI.id, Currency.VET.id, Currency.HBAR.id]);
+const LNS_UNSUPPORTED_CURRENCIES = new Set([
+  Currency.SUI.id,
+  Currency.VET.id,
+  Currency.HBAR.id,
+  Currency.ALEO.id,
+]);
 
 function shouldSkipLNSTag(currencyId: string): boolean {
   return LNS_UNSUPPORTED_CURRENCIES.has(currencyId);
@@ -267,7 +277,11 @@ test.describe("Send flows", () => {
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        cliCommands: [
+          transaction.transaction.accountToDebit.currency.id === Currency.ALEO.id
+            ? aleoLiveDataCommand(transaction.transaction)
+            : liveDataWithRecipientAddressCommand(transaction.transaction),
+        ],
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -463,7 +477,7 @@ test.describe("Send flows", () => {
           transaction.transaction.accountToCredit.address =
             transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
               ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
-              : transaction.transaction.accountToCredit.address ?? "";
+              : (transaction.transaction.accountToCredit.address ?? "");
 
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);

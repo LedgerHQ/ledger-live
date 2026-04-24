@@ -53,6 +53,12 @@ export type GetAddressOpts = {
   verify?: boolean;
 };
 
+export type GetViewKeyOpts = {
+  currency?: string;
+  device?: string;
+  path?: string;
+};
+
 export type TokenApprovalOpts = {
   currency: string;
   index: number;
@@ -72,28 +78,28 @@ export type GetTokenAllowanceOpts = {
   ownerAddress: string;
 };
 
-function parseGetAddressCliOutput(output: string): GetAddressResult {
+function parseJsonCliOutput(commandName: string, output: string): unknown {
   const lines = output
     .split("\n")
     .map(line => line.trim())
     .filter(line => line.length > 0);
 
   if (lines.length === 0) {
-    throw new Error("CLI getAddress returned empty output");
+    throw new Error(`CLI ${commandName} returned empty output`);
   }
 
   const jsonLine =
     [...lines].reverse().find(line => line.startsWith("{") || line.startsWith("[")) ?? "";
 
   if (!jsonLine) {
-    throw new Error("CLI getAddress output does not contain JSON");
+    throw new Error(`CLI ${commandName} output does not contain JSON`);
   }
 
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonLine);
   } catch {
-    throw new Error("Failed to parse CLI getAddress output");
+    throw new Error(`Failed to parse CLI ${commandName} output`);
   }
 
   if (typeof parsed !== "object" || parsed === null) {
@@ -102,12 +108,10 @@ function parseGetAddressCliOutput(output: string): GetAddressResult {
 
   const { address, path, publicKey } = parsed as Record<string, unknown>;
   if (typeof address !== "string" || typeof path !== "string" || typeof publicKey !== "string") {
-    throw new Error(
-      `CLI getAddress output missing address/path/publicKey. Raw output:\n${output}`,
-    );
+    throw new Error(`CLI getAddress output missing address/path/publicKey. Raw output:\n${output}`);
   }
 
-  return parsed as GetAddressResult;
+  return parsed;
 }
 
 function parseCliFlag(command: string, flag: string): string | undefined {
@@ -231,7 +235,16 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddress
   if (opts.derivationMode) cliOpts.push(`--derivationMode+${opts.derivationMode}`);
   if (opts.verify) cliOpts.push("--verify");
   const output = await runCliCommandWithRetry(cliOpts.join("+"));
-  return parseGetAddressCliOutput(output);
+  return parseJsonCliOutput("getAddress", output) as GetAddressResult;
+}
+
+export async function runCliGetViewKey(opts: GetViewKeyOpts): Promise<{ viewKey: string }> {
+  const cliOpts = ["getAleoViewKey"];
+  if (opts.currency) cliOpts.push(`--currency+${opts.currency}`);
+  if (opts.device) cliOpts.push(`--device+${opts.device}`);
+  if (opts.path) cliOpts.push(`--path+${opts.path}`);
+  const output = await runCliCommandWithRetry(cliOpts.join("+"));
+  return parseJsonCliOutput("getAleoViewKey", output) as { viewKey: string };
 }
 
 export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {

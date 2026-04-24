@@ -56,6 +56,7 @@ import { getDeviceCoordinates } from "./deviceCoordinates";
 import { sendInternetComputer } from "./families/internet_computer";
 import { sleep } from "./index";
 import { delegateMina } from "./families/mina";
+import { sendAleo } from "./families/aleo";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -961,6 +962,9 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.CCD_TESTNET.id:
       await sendConcordium(tx);
       break;
+    case Currency.ALEO.id:
+      await sendAleo(tx);
+      break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
   }
@@ -1133,14 +1137,3 @@ export const exportUfvk = withDeviceController(
       }
     },
 );
-
-export const shareViewKey = withDeviceController(({ getButtonsController }) => async () => {
-  const buttons = getButtonsController();
-  await pressUntilTextFound(DeviceLabels.CONFIRM);
-
-  if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.CONFIRM);
-  } else {
-    await buttons.both();
-  }
-});
