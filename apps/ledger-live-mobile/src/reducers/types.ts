@@ -291,6 +291,7 @@ export type SettingsState = {
   productTourCompleted: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;
+  hasClickedRecover: boolean;
 };
 
 export type AnalyticsConsentInfo = {

@@ -18,7 +18,7 @@ export function AddDeviceItem({ onPress }: AddDeviceItemProps) {
 
   return (
     <ListItem
-      lx={{ backgroundColor: "surface", borderRadius: "md" }}
+      lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}
       testID="my-wallet-device-section-add-device"
       onPress={onPress}
     >
