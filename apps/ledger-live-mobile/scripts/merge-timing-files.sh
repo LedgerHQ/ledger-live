@@ -28,10 +28,10 @@ while [[ $# -gt 0 ]]; do
     --help|-h)
       echo "Usage: $0 [OPTIONS]"
       echo "Options:"
-      echo "  --platform PLATFORM     Platform (ios or android, default: android)"
-      echo "  --artifacts-dir DIR     Artifacts directory (default: current directory)"
-      echo "  --verbose, -v           Enable verbose output"
-      echo "  --help, -h              Show this help message"
+      echo "  --file-prefix FILE_PREFIX     File prefix (default: e2e-test-results-android)"
+      echo "  --artifacts-dir DIR           Artifacts directory (default: current directory)"
+      echo "  --verbose, -v                 Enable verbose output"
+      echo "  --help, -h                    Show this help message"
       exit 0
       ;;
     *)
