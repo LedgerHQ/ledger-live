@@ -90,7 +90,6 @@ jobs:
   test-features:
     name: "Test Features"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets: inherit
 
@@ -164,7 +163,7 @@ jobs:
       - test-features
       - build-wallet-cli
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@support/test-image-changes
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
