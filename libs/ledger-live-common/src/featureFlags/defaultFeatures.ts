@@ -870,7 +870,7 @@ export const DEFAULT_FEATURES: Features = {
       thresholdUsd: 0.5,
     },
   },
-  transferButtonCopyVariant: {
+  llmTransferButtonCopyVariant: {
     enabled: false,
     params: { variantId: "control" },
   },

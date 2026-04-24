@@ -5,9 +5,11 @@ export const getRemoteABTestingAttributes = (
 ) => {
   if (!analyticsFeatureFlagMethod) return {};
 
-  const transferFlag = analyticsFeatureFlagMethod("transferButtonCopyVariant");
+  const transferFlag = analyticsFeatureFlagMethod("llmTransferButtonCopyVariant");
+  const llmTransferButtonCopyVariantEnabled = transferFlag?.enabled ?? false;
 
   return {
-    ...(transferFlag?.enabled ? { transferButtonCopyVariant: transferFlag.params?.variantId } : {}),
+    llmTransferButtonCopyVariantEnabled,
+    llmTransferButtonCopyVariant: transferFlag?.params?.variantId,
   };
 };
