@@ -452,6 +452,6 @@ describe("listPrivateOperations", () => {
         privateRecords: [record],
         signal: controller.signal,
       }),
-    ).rejects.toThrow();
+    ).rejects.toMatchObject({ name: "AbortError" });
   });
 });

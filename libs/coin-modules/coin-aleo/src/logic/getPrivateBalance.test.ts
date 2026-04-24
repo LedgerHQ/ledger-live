@@ -283,6 +283,6 @@ describe("getPrivateBalance", () => {
         oldUnspentRecords: [],
         signal: controller.signal,
       }),
-    ).rejects.toThrow();
+    ).rejects.toMatchObject({ name: "AbortError" });
   });
 });

@@ -1690,7 +1690,7 @@ describe("network/utils", () => {
           uuid: mockUUID,
           signal: controller.signal,
         }),
-      ).rejects.toThrow();
+      ).rejects.toMatchObject({ name: "AbortError" });
 
       expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
     });
