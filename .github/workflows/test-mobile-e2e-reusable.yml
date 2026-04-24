@@ -651,10 +651,25 @@ jobs:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_android) }}
     steps:
       - name: Tag with github event
-        run: npx @datadog/datadog-ci tag --level pipeline --tags "github.test:${{ github.event_name }}"
+        run: npx @datadog/datadog-ci tag --level pipeline --tags "github.node_group:node_group"
         env:
           DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-          DATADOG_SITE: ledgerstg.datadoghq.eu
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_SITE: datadoghq.eu
+
+      - name: Tag with github event
+        run: npx @datadog/datadog-ci tag --level pipeline --tags "git.branch:test2"
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_SITE: datadoghq.eu
+
+      - name: Tag with github event
+        run: npx @datadog/datadog-ci tag --level job --tags "git.branch:test"
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_SITE: datadoghq.eu
 
       - name: Fail on purpose
         run: |
