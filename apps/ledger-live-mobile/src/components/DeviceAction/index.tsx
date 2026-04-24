@@ -648,7 +648,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (error instanceof LatestFirmwareVersionRequired) {
-      return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
+      return (
+        <RequiredFirmwareUpdate
+          navigation={navigation}
+          device={selectedDevice}
+          onClose={onClose}
+        />
+      );
     }
 
     if (error instanceof UnsupportedFeatureError) {

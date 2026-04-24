@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import { useSelector } from "~/context/hooks";
@@ -20,6 +20,10 @@ import {
 } from "@ledgerhq/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  getLatestFirmwareForDeviceUseCase,
+  type FirmwareUpdateContextEntity,
+} from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -765,9 +769,11 @@ export function NanoSNotSupportedComponent() {
 export function RequiredFirmwareUpdate({
   device,
   navigation,
+  onClose,
 }: Omit<RawProps, "t"> & {
   navigation: NativeStackNavigationProp<ParamListBase>;
   device: Device;
+  onClose?: () => void;
 }) {
   const { t } = useTranslation();
   const track = useTrack();
@@ -776,16 +782,40 @@ export function RequiredFirmwareUpdate({
   const usbFwUpdateActivated = !!lastSeenDevice;
   const deviceName = getDeviceModel(device.modelId).productName;
 
-  const onPress = () => {
+  const latestFirmwarePromiseRef = useRef<Promise<FirmwareUpdateContextEntity | null> | null>(null);
+  const fetchLatestFirmware = useCallback(() => {
+    const deviceInfo = lastSeenDevice?.deviceInfo;
+    if (!deviceInfo) return null;
+    if (!latestFirmwarePromiseRef.current) {
+      latestFirmwarePromiseRef.current = getLatestFirmwareForDeviceUseCase(deviceInfo).catch(
+        () => null,
+      );
+    }
+    return latestFirmwarePromiseRef.current;
+  }, [lastSeenDevice?.deviceInfo]);
+  useEffect(() => {
+    fetchLatestFirmware();
+  }, [fetchLatestFirmware]);
+
+  const onPress = async () => {
     track("button_clicked", {
       button: "GoToOSUpdate",
       page: "Update_OS_To_Continue",
     });
-    navigation.navigate(ScreenName.FirmwareUpdate, {
+    const firmwareUpdateContext = (await fetchLatestFirmware()) ?? undefined;
+    let targetNav: NativeStackNavigationProp<ParamListBase> = navigation;
+    while (!targetNav.getState()?.routeNames?.includes(ScreenName.FirmwareUpdate)) {
+      const parent = targetNav.getParent();
+      if (!parent) break;
+      targetNav = parent as NativeStackNavigationProp<ParamListBase>;
+    }
+    targetNav.navigate(ScreenName.FirmwareUpdate, {
       device,
       deviceInfo: lastSeenDevice?.deviceInfo,
-      onBackFromUpdate: () => {},
+      firmwareUpdateContext,
+      onBackFromUpdate: () => targetNav.goBack(),
     });
+    onClose?.();
   };
 
   return (
