@@ -235,7 +235,7 @@ function convertOperation(
 
 function convertTokenOperation(
   address: string,
-  transfer: APITokenTransfer & { hash: string },
+  transfer: APITokenTransfer & { hash: string; block?: string },
   parent?: APITransactionType,
 ): Operation {
   const isOut = transfer.from?.address === address;
@@ -277,7 +277,7 @@ function convertTokenOperation(
       fees: fee,
       ...(feesPayer ? { feesPayer } : {}),
       block: {
-        hash: parent?.block ?? "",
+        hash: transfer.block ?? parent?.block ?? "",
         height: transfer.level,
         time: new Date(transfer.timestamp),
       },

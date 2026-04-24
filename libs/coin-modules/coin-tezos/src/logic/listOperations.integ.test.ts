@@ -81,6 +81,7 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     expect(["IN", "OUT", "FEES"]).toContain(tokenOp.type);
     expect(tokenOp.value).toBeGreaterThanOrEqual(0n);
     expect(tokenOp.tx.hash).toMatch(/^o[1-9A-HJ-NP-Za-km-z]+/);
+    expect(tokenOp.tx.block.hash).toMatch(/^B[1-9A-HJ-NP-Za-km-z]+/);
     expect(tokenOp.tx.block.height).toBeGreaterThan(0);
     expect(tokenOp.tx.date).toBeInstanceOf(Date);
     const idParts = tokenOp.id.match(/^(.+)-token-(\d+)$/);
