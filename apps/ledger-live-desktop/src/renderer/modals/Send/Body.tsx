@@ -16,6 +16,7 @@ import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
@@ -157,6 +158,7 @@ const Body = ({
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
 
+  const bridge = useAccountBridge<Transaction>(params?.account || accounts[0], params?.parentAccount);
   const {
     transaction,
     setTransaction,
@@ -168,7 +170,7 @@ const Body = ({
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const parentAccount = params?.parentAccount;
     const account = params?.account || accounts[0];
     return {
@@ -190,7 +192,6 @@ const Body = ({
   useEffect(() => {
     if (!transaction) return;
 
-    const bridge = getAccountBridge(account, parentAccount);
     let updatedTransaction = transaction;
     let hasChanges = false;
 
@@ -215,8 +216,7 @@ const Body = ({
     maybeRecipient,
     maybeAmount,
     transaction,
-    account,
-    parentAccount,
+    bridge,
     setTransaction,
     onResetMaybeRecipient,
     onResetMaybeAmount,
@@ -245,7 +245,7 @@ const Body = ({
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount?: Account | null) => {
       if (account !== nextAccount) {
-        setAccount(nextAccount, nextParentAccount);
+        setAccount(nextAccount, nextParentAccount, getAccountBridge(nextAccount, nextParentAccount));
       }
     },
     [account, setAccount],

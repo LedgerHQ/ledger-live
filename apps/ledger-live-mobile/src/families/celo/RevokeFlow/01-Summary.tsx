@@ -3,7 +3,11 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import type { CeloValidatorGroup, CeloAccount, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
+import type {
+  CeloValidatorGroup,
+  CeloAccount,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import { revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -69,7 +73,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
   }, [vote, votes]);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(bridge, () => {
       const tx = route.params.transaction;
 
       if (!tx) {
@@ -79,7 +83,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "revoke",
-            amount: route.params.amount ?? new BigNumber(0),
+            amount: new BigNumber(route.params.amount ?? 0),
           }),
         };
       }

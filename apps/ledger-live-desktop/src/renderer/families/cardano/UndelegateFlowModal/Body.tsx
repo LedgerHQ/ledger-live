@@ -8,8 +8,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps, St, StepId } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -21,7 +21,7 @@ import Stepper from "~/renderer/components/Stepper";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
+import { CardanoAccount, Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/types-devices";
 
@@ -86,6 +86,7 @@ const Body = ({
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<CardanoTransaction>(params.account, undefined);
   const {
     transaction,
     setTransaction,
@@ -94,13 +95,12 @@ const Body = ({
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const { account } = params;
     invariant(
       account && account.cardanoResources,
       "cardano: account and cardano resources required",
     );
-    const bridge = getAccountBridge(account, undefined);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       mode: "undelegate",

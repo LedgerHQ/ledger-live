@@ -9,8 +9,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -24,7 +24,7 @@ import StepNomination, { StepNominationFooter } from "./steps/StepNomination";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { PolkadotAccount, Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 
 export type Data = {
   account: PolkadotAccount;
@@ -77,6 +77,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<PolkadotTransaction>(params.account, undefined);
   const {
     transaction,
     setTransaction,
@@ -86,13 +87,12 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const { account } = params;
     invariant(
       account && account.polkadotResources,
       "polkadot: account and polkadot resources required",
     );
-    const bridge = getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const initialValidators = (account?.polkadotResources?.nominations || [])
       .filter(nomination => !!nomination.status)

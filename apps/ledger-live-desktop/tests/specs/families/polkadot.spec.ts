@@ -13,7 +13,7 @@ test("Nomination flow", async ({ page }) => {
     await page.locator('[data-testid="account-component-Polkadot 1"]').click();
     await page.getByRole("button", { name: "Nominate" }).scrollIntoViewIfNeeded();
     await page.getByRole("button", { name: "Nominate" }).click();
-    expect(await page.getByText("Validators (8)").isVisible()).toBeTruthy();
+    await expect(page.getByText("Validators (8)")).toBeVisible();
     await expect
       .soft(page.locator('[data-testid="modal-content"]'))
       .toHaveScreenshot("nominate-modal-dot-nominator-row.png");

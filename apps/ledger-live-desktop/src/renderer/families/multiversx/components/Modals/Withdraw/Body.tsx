@@ -7,8 +7,8 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -20,11 +20,12 @@ import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { StepProps, St, StepId } from "./types";
 import {
   MultiversXAccount,
   MultiversXProvider,
+  Transaction as MultiversxTransaction,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Device } from "@ledgerhq/types-devices";
 import { UnbondingType } from "../../../types";
@@ -82,6 +83,7 @@ const Body = (props: Props) => {
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<MultiversxTransaction>(params.account, undefined);
   const {
     account,
     transaction,
@@ -91,8 +93,7 @@ const Body = (props: Props) => {
     bridgePending,
     status,
     parentAccount,
-  } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(params.account, undefined);
+  } = useBridgeTransaction(bridge, () => {
     const transaction: Transaction = bridge.createTransaction(params.account);
     return {
       account: params.account,

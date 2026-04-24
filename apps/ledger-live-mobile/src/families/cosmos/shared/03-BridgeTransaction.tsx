@@ -3,9 +3,12 @@ import invariant from "invariant";
 import { Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type {
+  CosmosAccount,
+  Transaction as CosmosTransaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
@@ -28,10 +31,10 @@ export default function CosmosBridgeTransaction({ navigation, route }: Props) {
   invariant(account, "account required");
 
   const mainAccount = getMainAccount(account) as CosmosAccount;
-  const bridge = useAccountBridge<CosmosTransaction>(account);
   const { transaction: initialTx, mode } = route.params;
+  const bridge = useAccountBridge<CosmosTransaction>(account);
 
-  const { transaction, bridgePending, status } = useBridgeTransaction(() => {
+  const { transaction, bridgePending, status } = useBridgeTransaction(bridge, () => {
     if (!initialTx) {
       const t = bridge.createTransaction(mainAccount);
 

@@ -10,12 +10,14 @@ import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import Stepper from "~/renderer/components/Stepper";
 import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
@@ -102,6 +104,11 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const openedFromAccount = !!params.account;
   const [defaultBaker] = useBakers(whitelist);
   const steps = createSteps(params);
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  // useAccountBridge requires a non-null AccountLike; fall back to the first known account
+  // when the flow starts without a pre-selected account (user picks one in StepAccount).
+  const accountForBridge = params.account ?? flattenedAccounts[0];
+  const bridge = useAccountBridge<Transaction>(accountForBridge, params.parentAccount);
 
   const {
     transaction,
@@ -112,7 +119,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction<Transaction>(() => {
+  } = useBridgeTransaction<Transaction>(bridge, () => {
     const account = params.account;
     const parentAccount = params.parentAccount;
 
@@ -145,11 +152,9 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
 
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
-      setTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
-      );
+      setTransaction(bridge.updateTransaction(transaction, patch));
     }
-  }, [account, defaultBaker, stepId, params, parentAccount, setTransaction, transaction]);
+  }, [account, bridge, defaultBaker, stepId, params, setTransaction, transaction]);
 
   // make sure step id is in sync
   useEffect(() => {
@@ -163,7 +168,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount?: Account | null) => {
       if (account !== nextAccount) {
-        setAccount(nextAccount, nextParentAccount);
+        setAccount(nextAccount, nextParentAccount, getAccountBridge(nextAccount, nextParentAccount));
       }
     },
     [account, setAccount],

@@ -3,7 +3,12 @@ import React, { useCallback, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "~/context/Locale";
-import type { CosmosAccount, CosmosOperationMode, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type {
+  CosmosAccount,
+  CosmosOperationMode,
+  Transaction,
+  Transaction as CosmosTransaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -56,11 +61,11 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useAccountScreen(route).account as CosmosAccount;
   invariant(account && account.cosmosResources, "account and cosmos transaction required");
-  const bridge = useAccountBridge<Transaction>(account, undefined);
+  const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const unit = useAccountUnit(mainAccount);
   const currency = getAccountCurrency(mainAccount);
-  const bridgeTransaction = useBridgeTransaction(() => {
+  const bridgeTransaction = useBridgeTransaction(bridge, () => {
     const tx = route.params.transaction;
 
     if (!tx) {

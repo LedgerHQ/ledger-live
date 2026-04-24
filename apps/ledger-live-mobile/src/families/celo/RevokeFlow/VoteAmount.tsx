@@ -45,7 +45,7 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const bridge = useAccountBridge<CeloTransaction>(account);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => {
     return {
       account,
       transaction: {

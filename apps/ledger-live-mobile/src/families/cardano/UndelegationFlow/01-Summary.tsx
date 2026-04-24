@@ -5,14 +5,14 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { Trans, useTranslation } from "~/context/Locale";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
-  Transaction as CardanoTransaction,
   TransactionStatus,
+  Transaction as CardanoTransaction,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { Text, Box } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -51,6 +51,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const bridge = useAccountBridge<CardanoTransaction>(account, undefined);
 
   const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
+    bridge,
     () => {
       const tx = route.params.transaction;
 

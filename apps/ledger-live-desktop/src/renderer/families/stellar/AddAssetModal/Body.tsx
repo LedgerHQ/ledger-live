@@ -9,8 +9,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps, StepId, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -24,6 +24,7 @@ import StepAsset, { StepAssetFooter } from "./steps/StepAsset";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 
 export type Data = {
   account: Account;
@@ -74,6 +75,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<StellarTransaction>(params.account, undefined);
   const {
     transaction,
     setTransaction,
@@ -83,10 +85,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const { account } = params;
     invariant(account, "stellar: account required");
-    const bridge = getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "changeTrust",

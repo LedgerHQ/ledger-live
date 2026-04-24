@@ -8,7 +8,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { OpenModal } from "~/renderer/actions/modals";
-export type Mode = "withdrawUnbonded" | "chill" | "claimRewards" | "setController";
+export type Mode = "withdrawUnbonded" | "chill" | "claimReward" | "setController";
 export type StepId = "info" | "connectDevice" | "confirmation";
 
 export type StepProps = {

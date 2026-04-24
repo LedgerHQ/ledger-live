@@ -3,6 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useState } from "react";
 import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
+import { getAccountBridge } from "../../../bridge";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
 import BigNumber from "bignumber.js";
@@ -43,7 +44,11 @@ export const useFromState = ({
         account?.type !== "Account" ? accounts?.find(a => a.id === account?.parentId) : undefined;
       const currency = getAccountCurrency(account as AccountLike);
 
-      bridgeTransaction.setAccount(account as AccountLike, parentAccount);
+      bridgeTransaction.setAccount(
+        account as AccountLike,
+        parentAccount,
+        getAccountBridge(account as AccountLike, parentAccount),
+      );
       setFromState({
         ...selectorStateDefaultValues,
         currency,

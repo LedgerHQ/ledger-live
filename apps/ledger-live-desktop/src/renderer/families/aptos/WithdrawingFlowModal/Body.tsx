@@ -8,10 +8,10 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/staking";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { St, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
@@ -21,7 +21,7 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount, Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 
 export type Data = {
@@ -69,6 +69,7 @@ function Body({
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
 
+  const bridge = useAccountBridge<AptosTransaction>(accountProp, undefined);
   const {
     account,
     transaction,
@@ -77,10 +78,9 @@ function Body({
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     invariant(accountProp.aptosResources, "aptos: account and aptos resources required");
 
-    const bridge = getAccountBridge(accountProp, undefined);
     const initTx = bridge.createTransaction(accountProp);
     const mode = "withdraw";
     const recipient = validatorAddress;

@@ -127,7 +127,7 @@ export const useSwapTransaction = ({
   isEnabled,
   sponsored,
 }: UseSwapTransactionProps): SwapTransactionType => {
-  const bridgeTransaction = useBridgeTransaction(() => ({
+  const bridgeTransaction = useBridgeTransaction(null, () => ({
     account: defaultAccount,
     parentAccount: defaultParentAccount,
   }));

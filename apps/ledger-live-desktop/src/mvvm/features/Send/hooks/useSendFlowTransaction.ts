@@ -8,7 +8,7 @@ import type {
   SendFlowTransactionActions,
   RecipientData,
 } from "@ledgerhq/live-common/flows/send/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 
 type UseSendFlowTransactionParams = Readonly<{
   account: AccountLike | null;
@@ -24,6 +24,13 @@ export function useSendFlowTransaction({
   account,
   parentAccount,
 }: UseSendFlowTransactionParams): UseSendFlowTransactionResult {
+  // Use getAccountBridge directly (synchronous) so we can handle the null account case.
+  // useAccountBridge cannot be called conditionally and requires a non-null AccountLike.
+  const bridge = useMemo<AccountBridge<Transaction> | null>(
+    () => (account ? (getAccountBridge(account, parentAccount) as AccountBridge<Transaction>) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [account?.id, parentAccount?.id],
+  );
   const {
     transaction,
     setTransaction: bridgeSetTransaction,
@@ -32,7 +39,7 @@ export function useSendFlowTransaction({
     bridgeError,
     bridgePending,
     setAccount,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
     return { account, parentAccount: parentAccount ?? undefined };
   });
@@ -49,9 +56,8 @@ export function useSendFlowTransaction({
 
   const setRecipient = useCallback(
     (recipient: RecipientData) => {
-      if (!account || !transaction) return;
+      if (!bridge || !transaction) return;
 
-      const bridge = getAccountBridge(account, parentAccount);
       const updates: Partial<Transaction> = { recipient: recipient.address };
 
       if (recipient.memo !== undefined) {
@@ -78,12 +84,12 @@ export function useSendFlowTransaction({
 
       bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
     },
-    [account, parentAccount, transaction, bridgeSetTransaction],
+    [bridge, transaction, bridgeSetTransaction],
   );
 
   const setAccountForTransaction = useCallback(
     (newAccount: AccountLike, newParentAccount?: Account | null) => {
-      setAccount(newAccount, newParentAccount ?? undefined);
+      setAccount(newAccount, newParentAccount ?? undefined, getAccountBridge(newAccount, newParentAccount ?? undefined));
     },
     [setAccount],
   );

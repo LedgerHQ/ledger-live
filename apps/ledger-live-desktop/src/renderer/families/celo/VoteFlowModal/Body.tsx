@@ -1,8 +1,8 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -24,7 +24,7 @@ import StepValidatorGroup, { StepValidatorGroupFooter } from "./steps/StepValida
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { AccountBridge, Operation, Account, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, Account, TokenAccount } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -87,6 +87,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, source } = params;
+  const bridge = useAccountBridge<Transaction>(account, undefined);
   const validatorGroups = useValidatorGroups();
   const {
     transaction,
@@ -96,8 +97,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
+  } = useBridgeTransaction(bridge, () => {
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "vote",
       recipient: validatorGroups[0]?.address ?? defaultValidatorGroupAddress(),
@@ -114,12 +114,11 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   useEffect(() => {
     if (!transaction || !validatorGroups.length) return;
     if (!validatorGroups.find(vg => vg.address === transaction.recipient)) {
-      const bridge = getAccountBridge(account, undefined);
       setTransaction(
         bridge.updateTransaction(transaction, { recipient: validatorGroups[0].address }),
       );
     }
-  }, [validatorGroups, transaction, account, setTransaction]);
+  }, [validatorGroups, transaction, account, setTransaction, bridge]);
 
   const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
