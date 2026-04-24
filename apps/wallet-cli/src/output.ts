@@ -16,6 +16,7 @@ import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
 import { spinner, colors, writeStdout } from "./shared/ui";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
+import type { SessionEntry } from "./session/session-store";
 
 // ---------------------------------------------------------------------------
 // Context & interface
@@ -66,6 +67,11 @@ export interface CommandOutput {
   flushDiscovery(): void;
   /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
   sessionSaved(added: number): void;
+
+  /** Output the result of a session reset (human: colored message; json: envelope with removed count). */
+  sessionReset(count: number): void;
+  /** Output session accounts (human: table or empty message; json: envelope with accounts array). */
+  sessionView(accounts: readonly SessionEntry[]): void;
 
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
@@ -147,6 +153,25 @@ class HumanCommandOutput implements CommandOutput {
 
   sessionSaved(added: number): void {
     writeStdout(colors.dim(`  session: ${added} new account${added === 1 ? "" : "s"} saved`));
+  }
+
+  sessionReset(count: number): void {
+    writeStdout(
+      count === 0
+        ? colors.dim("Session was already empty.")
+        : `Removed ${colors.bold(String(count))} account${count === 1 ? "" : "s"} from session.`,
+    );
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    if (accounts.length === 0) {
+      writeStdout(colors.dim("No accounts in session. Run `account discover` first."));
+      return;
+    }
+    const maxLabel = Math.max(...accounts.map(e => e.label.length));
+    for (const entry of accounts) {
+      writeStdout(`${colors.bold(entry.label.padEnd(maxLabel))}  ${colors.dim(entry.descriptor)}`);
+    }
   }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
@@ -270,6 +295,14 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   sessionSaved(_added: number): void { /* noop */ }
+
+  sessionReset(count: number): void {
+    writeStdout(this._envelope({ removed: count }));
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    writeStdout(this._envelope({ accounts }));
+  }
 
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(
