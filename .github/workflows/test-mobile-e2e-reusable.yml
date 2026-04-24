@@ -179,6 +179,18 @@ jobs:
       avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
       avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
     steps:
+      - name: Tag dry run test
+        run: npx @datadog/datadog-ci tag --level pipeline --tags "custom.branch:test" --dry-run
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_SITE: datadoghq.eu
+      - name: Tag with github event
+        run: npx @datadog/datadog-ci tag --level pipeline --tags "custom.branch:test"
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_SITE: datadoghq.eu
       - name: generate token
         id: generate-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
