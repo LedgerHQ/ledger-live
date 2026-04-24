@@ -183,7 +183,7 @@ describe("UndelegationFlow Integration", () => {
     await screen.findByTestId("Cardano-Undelegation-Summary");
 
     expect(screen.getByTestId("undelegation-message")).toBeVisible();
-    expect(screen.getByTestId("delegation-undelegate-continue")).toBeEnabled();
+    expect(screen.getByTestId("enabled-delegation-undelegate-continue")).toBeEnabled();
   });
 
   it("should show self-transaction info drawer when rewards are present with no DRep", async () => {
