@@ -8,7 +8,8 @@ import { useTopBarViewModel } from "LLM/components/TopBar/useTopBarViewModel";
 export function useSwapTopBarHeaderViewModel() {
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
-  const { onMyLedgerPress } = useTopBarViewModel(navigation, ScreenName.SwapTab);
+  const { onMyLedgerPress, onMyWalletPress, shouldDisplayMyWallet, hasUnreadNotifications } =
+    useTopBarViewModel(navigation, ScreenName.SwapTab);
 
   const onSwapHistoryPress = useCallback(() => {
     track("button_clicked", { button: "SwapHistory", page: "Swap" });
@@ -19,6 +20,9 @@ export function useSwapTopBarHeaderViewModel() {
 
   return {
     onMyLedgerPress,
+    onMyWalletPress,
+    shouldDisplayMyWallet,
+    hasUnreadNotifications,
     onSwapHistoryPress,
   };
 }
