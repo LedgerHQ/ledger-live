@@ -314,6 +314,7 @@ export enum SettingsActionTypes {
   SET_PRODUCT_TOUR_COMPLETED = "SET_PRODUCT_TOUR_COMPLETED",
   DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
   SET_ANALYTICS_CONSENT_INFO = "SET_ANALYTICS_CONSENT_INFO",
+  SET_HAS_CLICKED_RECOVER = "SET_HAS_CLICKED_RECOVER",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -406,6 +407,7 @@ export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starr
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetSelectedTabPortfolioAssetsPayload =
   SettingsState["selectedTabPortfolioAssets"];
+export type SettingsSetHasClickedRecoverPayload = SettingsState["hasClickedRecover"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -463,7 +465,8 @@ export type SettingsPayload =
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetHasSeenWalletV4TourPayload
-  | SettingsSetProductTourCompletedPayload;
+  | SettingsSetProductTourCompletedPayload
+  | SettingsSetHasClickedRecoverPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

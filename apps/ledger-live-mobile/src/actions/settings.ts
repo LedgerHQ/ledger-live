@@ -66,6 +66,7 @@ import {
   SettingsSetHasSeenWalletV4TourPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
+  SettingsSetHasClickedRecoverPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -290,6 +291,10 @@ export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4Tou
 
 export const setProductTourCompleted = createAction<SettingsSetProductTourCompletedPayload>(
   SettingsActionTypes.SET_PRODUCT_TOUR_COMPLETED,
+);
+
+export const setHasClickedRecover = createAction<SettingsSetHasClickedRecoverPayload>(
+  SettingsActionTypes.SET_HAS_CLICKED_RECOVER,
 );
 
 type PortfolioRangeOption = {
