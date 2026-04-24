@@ -48,7 +48,7 @@ import {
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
-import { useProductTourEligibility } from "LLM/features/ProductTour/useProductTourEligibility";
+import { useProductTourEligibility } from "LLM/features/ProductTour";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
