@@ -19,6 +19,7 @@
   "scripts": {
     "nx:write-cache-config": "node tools/nx/write-nx-cache-config.mjs",
     "postinstall": "pnpm run nx:write-cache-config",
+    "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
     "bump": "changeset version",
     "clean": "git clean -fdX",
     "changelog": "changeset add",
