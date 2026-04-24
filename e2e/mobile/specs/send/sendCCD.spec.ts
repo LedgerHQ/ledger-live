@@ -5,7 +5,7 @@ const transaction = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2
 runSendTest(
   transaction,
   [],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@concordium", "@family-concordium"],
+  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@concordium", "@family-concordium"],
   {
     featureFlags: { currencyConcordiumTestnet: { enabled: true } },
     userdata: "concordium-account",
