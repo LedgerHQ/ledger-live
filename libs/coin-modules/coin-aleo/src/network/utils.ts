@@ -152,6 +152,12 @@ export async function fetchAllOwnedRecords({
       ...(typeof start === "number" && { start }),
       resultsPerPage,
       page,
+      programs: [PROGRAM_ID.CREDITS],
+      functions: [
+        EXPLORER_TRANSFER_TYPES.PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+      ],
     });
 
     allRecords.push(...records);

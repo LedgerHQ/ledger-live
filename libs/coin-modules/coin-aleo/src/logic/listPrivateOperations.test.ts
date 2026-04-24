@@ -37,30 +37,13 @@ describe("listPrivateOperations", () => {
     expect(result.consumedRecordTags).toEqual(new Set());
   });
 
-  it("should filter out records from non-credits programs", async () => {
+  it("should pass non-credits program records to enrichPrivateRecord (filtering is done by the caller)", async () => {
     const record = getMockedRecord({
       program_name: "custom_token.aleo",
       function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
     });
 
-    const result = await listPrivateOperations({
-      currency: mockCurrency,
-      viewKey: mockViewKey,
-      address: mockAddress,
-      ledgerAccountId: mockLedgerAccountId,
-      privateRecords: [record],
-    });
-
-    expect(mockEnrichPrivateRecord).not.toHaveBeenCalled();
-    expect(result.operations).toEqual([]);
-    expect(result.consumedRecordTags).toEqual(new Set());
-  });
-
-  it("should filter out transfer_public records as they are not private operations", async () => {
-    const record = getMockedRecord({
-      program_name: PROGRAM_ID.CREDITS,
-      function_name: EXPLORER_TRANSFER_TYPES.PUBLIC,
-    });
+    mockEnrichPrivateRecord.mockResolvedValue(null);
 
     const result = await listPrivateOperations({
       currency: mockCurrency,
@@ -70,7 +53,13 @@ describe("listPrivateOperations", () => {
       privateRecords: [record],
     });
 
-    expect(mockEnrichPrivateRecord).not.toHaveBeenCalled();
+    expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
+    expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
+      currency: mockCurrency,
+      rawRecord: record,
+      viewKey: mockViewKey,
+      address: mockAddress,
+    });
     expect(result.operations).toEqual([]);
     expect(result.consumedRecordTags).toEqual(new Set());
   });
@@ -261,20 +250,20 @@ describe("listPrivateOperations", () => {
     expect(result.operations).toEqual(expect.arrayContaining(ops));
   });
 
-  it("should skip non-native records while still processing valid ones", async () => {
-    const invalidRecord = getMockedRecord({
-      transaction_id: "tx-invalid",
+  it("should call enrichPrivateRecord for all records and only produce operations for non-null results", async () => {
+    const record1 = getMockedRecord({
+      transaction_id: "tx-non-credits",
       program_name: "custom_token.aleo",
       function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
     });
-    const validRecord = getMockedRecord({
+    const record2 = getMockedRecord({
       transaction_id: "tx-valid",
       program_name: PROGRAM_ID.CREDITS,
       function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
     });
-    const mockEnriched = getMockedEnrichedPrivateRecord({ rawRecord: validRecord });
+    const mockEnriched = getMockedEnrichedPrivateRecord({ rawRecord: record2 });
 
-    mockEnrichPrivateRecord.mockResolvedValue(mockEnriched);
+    mockEnrichPrivateRecord.mockResolvedValueOnce(null).mockResolvedValueOnce(mockEnriched);
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
@@ -282,12 +271,17 @@ describe("listPrivateOperations", () => {
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
-      privateRecords: [invalidRecord, validRecord],
+      privateRecords: [record1, record2],
     });
 
-    expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
-    expect(mockEnrichPrivateRecord).toHaveBeenCalledWith(
-      expect.objectContaining({ rawRecord: validRecord }),
+    expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(2);
+    expect(mockEnrichPrivateRecord).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ rawRecord: record1 }),
+    );
+    expect(mockEnrichPrivateRecord).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ rawRecord: record2 }),
     );
     expect(result.operations).toEqual([mockOp]);
   });
