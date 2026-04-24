@@ -83,6 +83,7 @@ export function genericPrepareTransaction(
         amount,
       },
       bridgeApi.computeIntentType,
+      alpacaApi.craftTransactionData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       gasPrice: transaction.gasPrice,
@@ -141,6 +142,7 @@ export function genericPrepareTransaction(
               assetReference,
             },
             bridgeApi.computeIntentType,
+            alpacaApi.craftTransactionData,
           ),
           extractBalances(account, getAssetFromTokenForCurrency),
         );
