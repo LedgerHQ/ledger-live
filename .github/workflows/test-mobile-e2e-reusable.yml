@@ -160,7 +160,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds & Generate Shards"
-    runs-on: ledger-live-medium
+    runs-on: ubuntu-24.04
     outputs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
@@ -1205,7 +1205,6 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: ios
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -1235,7 +1234,6 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: android
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
