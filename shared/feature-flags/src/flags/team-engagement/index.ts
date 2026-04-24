@@ -5,6 +5,7 @@ export * from "./lldActionCarousel";
 export * from "./lldAnalyticsOptInPrompt";
 export * from "./lldNanoSUpsellBanners";
 export * from "./lldOnboardingEnableSync";
+export * from "./lwdProductTour";
 export * from "./lldRebornABtest";
 export * from "./lldSyncOnboardingIncr1";
 export * from "./llmAnalyticsOptInPrompt";
