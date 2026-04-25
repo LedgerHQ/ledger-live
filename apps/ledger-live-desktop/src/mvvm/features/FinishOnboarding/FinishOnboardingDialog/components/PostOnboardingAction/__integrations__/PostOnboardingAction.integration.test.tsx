@@ -11,7 +11,6 @@ describe("PostOnboardingAction integration", () => {
         title="Transfer assets"
         description="Move funds from an exchange"
         completed={false}
-        onAction={jest.fn()}
         testId="my-action"
         postOnboardingActionId={PostOnboardingActionId.assetsTransfer}
         lumenSymbol={getLumenSymbolForActionId(PostOnboardingActionId.assetsTransfer)}
@@ -21,12 +20,16 @@ describe("PostOnboardingAction integration", () => {
         startAction={() => {}}
         buttonLabelForAnalyticsEvent=""
         shouldCompleteOnStart={false}
+        getIsAlreadyCompletedByState={() => false}
       />,
     );
     expect(screen.getByText("Transfer assets")).toBeVisible();
     expect(screen.getByText("Move funds from an exchange")).toBeVisible();
     const row = screen.getByTestId("my-action");
     expect(row).toBeVisible();
-    expect(row).toHaveAttribute("data-post-onboarding-action-id", PostOnboardingActionId.assetsTransfer);
+    expect(row).toHaveAttribute(
+      "data-post-onboarding-action-id",
+      PostOnboardingActionId.assetsTransfer,
+    );
   });
 });

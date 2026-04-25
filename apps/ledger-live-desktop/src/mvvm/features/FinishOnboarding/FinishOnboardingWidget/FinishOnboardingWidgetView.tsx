@@ -26,7 +26,7 @@ const FinishOnboardingWidgetView = memo(function FinishOnboardingWidgetView({
       type="button"
       data-testid="finish-onboarding-widget"
       onClick={handleOpenFinishOnboardingDialog}
-      className="cursor-pointer border-none bg-transparent p-0 text-left w-1/2"
+      className="min-w-0 cursor-pointer border-none bg-transparent p-0 text-left w-1/2"
     >
       <ContentBanner>
         <Stepper

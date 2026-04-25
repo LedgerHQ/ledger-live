@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { type PostOnboardingAction, type PostOnboardingActionState } from "@ledgerhq/types-live";
 import {
   EXCLUDED_FROM_FINISH_FLOW_ID,
@@ -19,13 +19,14 @@ import {
 export function usePostOnboardingFinishProgress(
   actionsState: (PostOnboardingAction & PostOnboardingActionState)[],
 ) {
-  const { allActionsCompleted, completedActionsAmount, actionList, totalActionsAmount } = useMemo(
-    () => {
+  const { allActionsCompleted, completedActionsAmount, actionList, totalActionsAmount } =
+    useMemo(() => {
       // 1. Drop buyCrypto. 2. Map to view-ready list items (see ./utils).
       // Stepper values add IMPLICIT_DEVICE_STEP_OFFSET for the view’s first hardcoded device row.
       const actionList: FinishPostOnboardingListItem[] = actionsState
         .filter(action => action.id !== EXCLUDED_FROM_FINISH_FLOW_ID)
         .map(toFinishPostOnboardingListItem);
+
       const completedInList = actionList.filter(a => a.completed).length;
       const totalInList = actionList.length;
 
@@ -37,9 +38,7 @@ export function usePostOnboardingFinishProgress(
         actionList,
         totalActionsAmount: totalInList + IMPLICIT_DEVICE_STEP_OFFSET,
       };
-    },
-    [actionsState],
-  );
+    }, [actionsState]);
 
   return {
     allActionsCompleted,

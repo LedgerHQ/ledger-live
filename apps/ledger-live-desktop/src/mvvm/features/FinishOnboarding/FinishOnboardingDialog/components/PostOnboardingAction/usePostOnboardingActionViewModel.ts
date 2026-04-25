@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useDispatch } from "LLD/hooks/redux";
@@ -10,6 +10,7 @@ import { track } from "~/renderer/analytics/segment";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { AllModalNames } from "~/renderer/modals/types";
 import type { PostOnboardingActionProps, PostOnboardingActionViewProps } from "./types";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 const DEFAULT_TEST_ID = "post-onboarding-action";
 
@@ -22,9 +23,11 @@ export function usePostOnboardingActionViewModel(
     description,
     deviceModelId,
     lumenSymbol,
-    onAction,
     postOnboardingActionId,
     shouldCompleteOnStart,
+    getIsAlreadyCompletedByState,
+    isLedgerSyncActive,
+    accounts,
     startAction,
     testId = DEFAULT_TEST_ID,
     title,
@@ -34,12 +37,20 @@ export function usePostOnboardingActionViewModel(
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
-
   const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.postOnboarding,
     needEligibleDevice: true,
   });
 
+  const [isActionCompleted, setIsActionCompleted] = useState(false);
+  const initIsActionCompleted = useCallback(async () => {
+    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
+    setIsActionCompleted(completed || !!isAlreadyCompleted);
+  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
+
+  useEffect(() => {
+    initIsActionCompleted();
+  }, [initIsActionCompleted]);
   const completeAction = useCompleteActionCallback();
 
   const handleStartAction = useCallback(() => {
@@ -49,7 +60,6 @@ export function usePostOnboardingActionViewModel(
     const navigationCallback = (location: Record<string, unknown> | string) => {
       navigate(location);
     };
-
     if (deviceModelId !== null) {
       startAction({
         openModalCallback,
@@ -66,7 +76,7 @@ export function usePostOnboardingActionViewModel(
         });
       }
     }
-    if (shouldCompleteOnStart) completeAction(postOnboardingActionId);
+    if (shouldCompleteOnStart) { completeAction(postOnboardingActionId); }
   }, [
     buttonLabelForAnalyticsEvent,
     completeAction,
@@ -82,17 +92,13 @@ export function usePostOnboardingActionViewModel(
 
   const onRowActivate = useCallback(() => {
     if (completed) return;
+    handleStartAction();
     dispatch(closeFinishPostOnboarding());
-    if (onAction) {
-      onAction();
-    } else {
-      handleStartAction();
-    }
-  }, [completed, dispatch, onAction, handleStartAction]);
+  }, [completed, dispatch, handleStartAction]);
 
   return useMemo(
     () => ({
-      completed,
+      completed: isActionCompleted,
       description,
       lumenSymbol,
       onRowActivate,
@@ -101,7 +107,7 @@ export function usePostOnboardingActionViewModel(
       title,
     }),
     [
-      completed,
+      isActionCompleted,
       description,
       lumenSymbol,
       onRowActivate,

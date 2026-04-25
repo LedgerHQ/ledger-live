@@ -28,10 +28,13 @@ export type PostOnboardingActionProps = PostOnboardingActionI18nKeys & {
   readonly isLedgerSyncActive: boolean;
   /** Lumen symbol for the list row leading visual when the action is not completed. */
   readonly lumenSymbol: FinishFlowLumenSymbol;
-  readonly onAction?: () => void;
   readonly postOnboardingActionId: PostOnboardingActionId;
   readonly shouldCompleteOnStart: boolean;
   readonly startAction: (args: StartActionArgs) => void;
+  readonly getIsAlreadyCompletedByState: (args: {
+    isLedgerSyncActive: boolean;
+    accounts: Account[];
+  }) => boolean;
   readonly testId?: string;
 };
 
