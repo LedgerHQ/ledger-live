@@ -66,6 +66,7 @@ const FinishOnboardingDialogView = ({
             completed
             description=""
             deviceModelId={deviceModelId}
+            getIsAlreadyCompletedByState={() => true}
             isLedgerSyncActive={isLedgerSyncActive}
             lumenSymbol={LedgerDevices}
             postOnboardingActionId={PostOnboardingActionId.deviceOnboarded}
@@ -81,6 +82,7 @@ const FinishOnboardingDialogView = ({
               completed={action.completed}
               description={action.description ?? ""}
               deviceModelId={deviceModelId}
+              getIsAlreadyCompletedByState={action.getIsAlreadyCompletedByState ?? (() => false)}
               isLedgerSyncActive={isLedgerSyncActive}
               lumenSymbol={action.lumenSymbol}
               postOnboardingActionId={action.id}

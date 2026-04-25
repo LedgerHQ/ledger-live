@@ -1,5 +1,9 @@
 import { renderHook } from "tests/testSetup";
-import { PostOnboardingActionId, type PostOnboardingHubState, type StartActionArgs } from "@ledgerhq/types-live";
+import {
+  PostOnboardingActionId,
+  type PostOnboardingHubState,
+  type StartActionArgs,
+} from "@ledgerhq/types-live";
 import { usePostOnboardingFinishProgress } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/usePostOnboardingFinishProgress";
 import {
   type FinishPostOnboardingListItem,
