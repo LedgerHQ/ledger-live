@@ -27,6 +27,7 @@ import {
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { getEnv } from "@ledgerhq/live-env";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -251,15 +252,6 @@ export const broadcastSignedTx = async (
       }),
   );
 };
-
-// TODO move to live-common
-function useBroadcast({ account, parentAccount, broadcastConfig }: SignTransactionArgs) {
-  return useCallback(
-    async (signedOperation: SignedOperation): Promise<Operation> =>
-      broadcastSignedTx(account, parentAccount, signedOperation, broadcastConfig),
-    [account, parentAccount, broadcastConfig],
-  );
-}
 
 export function useSignedTxHandler({
   account,
