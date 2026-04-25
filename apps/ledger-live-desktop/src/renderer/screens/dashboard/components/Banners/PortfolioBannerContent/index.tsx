@@ -7,6 +7,7 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { useBannersVisibility } from "../hooks/useBannersVisibility";
+import RecoverWidget from "LLD/features/FinishOnboarding/RecoverWidget";
 
 /**
  * Renders the portfolio banner block. Order of evaluation (first match wins):
@@ -35,7 +36,12 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
   }
 
   if (isFinishOnboardingWidgetVisible) {
-    return <FinishOnboardingWidget />;
+    return (
+      <div className="flex w-full gap-12">
+        <FinishOnboardingWidget />
+        <RecoverWidget />
+      </div>
+    );
   }
 
   return (
