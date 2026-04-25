@@ -14,6 +14,7 @@ import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import type { ModalData } from "~/renderer/modals/types";
+import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 
 const Result = (
   props:
@@ -60,12 +61,14 @@ export default function StepConnectDevice({
 }) {
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
+  const newSendFlowFeature = useNewSendFlowFeature();
+  const newSendFlow = newSendFlowFeature.isEnabledForFamily(parentAccount?.currency.family);
   const broadcastConfig = useMemo(
     () => ({
       mevProtected,
-      source: { type: "coin-module" as const, name: "ledger-live-desktop" },
+      source: { type: "coin-module" as const, name: "ledger-live-desktop", flags: { newSendFlow } },
     }),
-    [mevProtected],
+    [mevProtected, newSendFlow],
   );
   const broadcast = useBroadcast({
     account,

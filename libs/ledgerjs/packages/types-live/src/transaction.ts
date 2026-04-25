@@ -11,6 +11,8 @@ export type TransactionSource = {
   type: "dApp" | "live-app" | "coin-module" | "swap";
   // Name/identifier of the source (e.g., manifestId, provider name)
   name: string;
+  // Feature flags enabled at broadcast
+  flags?: Record<string, boolean>;
 };
 
 /**
