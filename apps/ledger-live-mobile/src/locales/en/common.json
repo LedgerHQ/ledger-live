@@ -889,6 +889,9 @@
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
     },
+    "MustDelegateBeforeStaking": {
+      "title": "Please delegate your account before staking"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
