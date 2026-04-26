@@ -233,27 +233,23 @@ export function registerHorizonInterceptors(): void {
     // (https://github.com/stellar/js-stellar-sdk/issues/637)
     const next_href = response?.data?._links?.next?.href;
     if (next_href) {
-      response.data._links.next.href = useConfigHost(next_href);
+      response.data._links.next.href = useConfigHostAndProtocol(next_href);
     }
     response?.data?._embedded?.records?.forEach((r: any) => {
       const href = r.transaction?._links?.ledger?.href;
-      if (href) r.transaction._links.ledger.href = useConfigHost(href);
+      if (href) r.transaction._links.ledger.href = useConfigHostAndProtocol(href);
     });
 
     return response;
   });
 }
 
-// This function allows to fix the URL, because the url returned by the Stellar SDK is not the correct one.
-// It replaces the host of the URL returned with the host of the explorer.
-function useConfigHost(url: string): string {
-  const u = new URL(url);
-  try {
-    u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
-  } catch {
-    return url;
-  }
-  return u.toString();
+// It replaces the host and the protocol of the URL returned with the original ones.
+export function useConfigHostAndProtocol(url: string): string {
+  const originalUrl = new URL(coinConfig.getCoinConfig().explorer.url);
+  // URL.protocol setter silently fails when changing between special (https://) and
+  // non-special (injected://) schemes, so reconstruct via string replacement instead.
+  return url.replace(/^[^:]+:\/\/[^/]+/, `${originalUrl.protocol}//${originalUrl.host}`);
 }
 
 const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
