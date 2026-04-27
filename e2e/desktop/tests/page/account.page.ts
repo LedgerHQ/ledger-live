@@ -153,6 +153,14 @@ export class AccountPage extends AppPage {
     await expect(this.operationList).not.toBeEmpty();
   }
 
+  @step("Expect funded account details for $0")
+  async expectFundedAccountDetails(accountName: string): Promise<string> {
+    await this.expectAccountVisibility(accountName);
+    await this.expectAccountBalance();
+    await this.expectLastOperationsVisibility();
+    return this.clickOnLastOperationAndReturnStatus();
+  }
+
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
     const tokenButton = this.accountButton(account.currency.name).or(
