@@ -14,12 +14,12 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { CardanoUndelegationFlowParamList } from "../types";
 import * as useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { http, HttpResponse } from "msw";
+import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
 let mockRewardsValue = new BigNumber("0");
 let mockDepositValue = "2000000";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockAccount: any = getCardanoAccountFixture({
+const mockAccount: CardanoAccount = getCardanoAccountFixture({
   delegation: {
     rewards: mockRewardsValue,
     status: true,
@@ -42,6 +42,9 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
       family: "cardano",
       mode: "undelegate",
       protocolParams: mockAccount.cardanoResources?.protocolParams,
+      amount: new BigNumber(0),
+      recipient: "",
+      poolId: undefined,
     },
     setTransaction: jest.fn(),
     updateTransaction: jest.fn(),
@@ -214,46 +217,56 @@ describe("UndelegationFlow Integration", () => {
   });
 
   it("should display a network error on summary screen if bridging fails", async () => {
-    jest.spyOn(useBridgeTransaction, "default").mockReturnValue({
+    const spy = jest.spyOn(useBridgeTransaction, "default").mockReturnValue({
       transaction: {
         family: "cardano",
         mode: "undelegate",
         protocolParams: mockAccount.cardanoResources?.protocolParams,
+        amount: new BigNumber(0),
+        recipient: "",
+        poolId: undefined,
       },
       setTransaction: jest.fn(),
       updateTransaction: jest.fn(),
+      updateAccount: jest.fn(),
       account: mockAccount,
+      parentAccount: null,
+      setAccount: jest.fn(),
       status: {
         errors: {},
         warnings: {},
         estimatedFees: new BigNumber("200000"),
         amount: new BigNumber("0"),
+        totalSpent: new BigNumber("0"),
       },
       bridgeError: new Error("Undelegation network error"),
       bridgePending: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    });
 
-    mockRewardsValue = new BigNumber("0");
-    mockDepositValue = "2000000";
-    mockAccount.cardanoResources.delegation = {
-      rewards: mockRewardsValue,
-      status: true,
-      poolId: "00000000000000000000000000000000000000000000000000000001",
-      dRepHex: "drep1",
-      deposit: mockDepositValue,
-      ticker: undefined,
-      name: "Test Pool",
-    };
+    try {
+      mockRewardsValue = new BigNumber("0");
+      mockDepositValue = "2000000";
+      mockAccount.cardanoResources.delegation = {
+        rewards: mockRewardsValue,
+        status: true,
+        poolId: "00000000000000000000000000000000000000000000000000000001",
+        dRepHex: "drep1",
+        deposit: mockDepositValue,
+        ticker: undefined,
+        name: "Test Pool",
+      };
 
-    const { user } = render(<TestNavigator />, { ...INITIAL_STATE });
+      const { user } = render(<TestNavigator />, { ...INITIAL_STATE });
 
-    const row = await screen.findByTestId("cardano-delegation-row");
-    await user.press(row);
-    const stopDelegationBtn = await screen.findByText("Undelegate");
-    await user.press(stopDelegationBtn);
+      const row = await screen.findByTestId("cardano-delegation-row");
+      await user.press(row);
+      const stopDelegationBtn = await screen.findByText("Undelegate");
+      await user.press(stopDelegationBtn);
 
-    const errorText = await screen.findByText(/Undelegation network error/i);
-    expect(errorText).toBeVisible();
+      const errorText = await screen.findByText(/Undelegation network error/i);
+      expect(errorText).toBeVisible();
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
