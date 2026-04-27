@@ -7,7 +7,10 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import getBLETransport from "~/transport/bleTransport";
-import { DeviceManagementKitHIDTransport } from "@ledgerhq/live-dmk-mobile";
+import {
+  DeviceManagementKitHIDTransport,
+  DeviceManagementKitHTTPProxyTransport,
+} from "@ledgerhq/live-dmk-mobile";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
 
@@ -46,37 +49,40 @@ export const registerTransports = () => {
     });
   }
 
-  // Add dev mode support of an http proxy
-  let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
-  const httpdebug: TransportModule = {
-    id: "httpdebug",
-    open: id => (id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null),
-    disconnect: id =>
-      id.startsWith("httpdebug|")
-        ? Promise.resolve() // nothing to do
-        : null,
-  };
-
-  if (__DEV__ && Config.DEVICE_PROXY_URL) {
-    DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
-    httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
-      DebugHttpProxy.listen(o),
-    ).pipe(
-      map(({ type, descriptor }) => ({
-        type,
-        id: `httpdebug|${descriptor}`,
-        deviceModel: getDeviceModel(
-          (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || DeviceModelId.nanoX,
-        ),
-        wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
-        name: descriptor,
-      })),
-    );
-  } else {
-    DebugHttpProxy = withStaticURLs([]);
+  // Dev-only HTTP proxy transport. Gated on __DEV__ so production builds don't expose
+  // an `open` path that would accept arbitrary URLs. The module is registered for the
+  // whole __DEV__ build so the runtime "Settings > Debug > Connectivity > HTTP transport"
+  // flow can supply a URL at runtime; build-time URL polling is opt-in via DEVICE_PROXY_URL.
+  if (__DEV__) {
+    const httpdebug: TransportModule = {
+      id: "httpdebug",
+      open: id =>
+        id.startsWith("httpdebug|")
+          ? DeviceManagementKitHTTPProxyTransport.open(id.slice("httpdebug|".length))
+          : null,
+      disconnect: id =>
+        id.startsWith("httpdebug|")
+          ? Promise.resolve() // nothing to do
+          : null,
+    };
+    if (Config.DEVICE_PROXY_URL) {
+      const DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
+      httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
+        DebugHttpProxy.listen(o),
+      ).pipe(
+        map(({ type, descriptor }) => ({
+          type,
+          id: `httpdebug|${descriptor}`,
+          deviceModel: getDeviceModel(
+            (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || DeviceModelId.nanoX,
+          ),
+          wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
+          name: descriptor,
+        })),
+      );
+    }
+    registerTransportModule(httpdebug);
   }
-
-  registerTransportModule(httpdebug);
 
   // BLE is always the fallback choice because we always keep raw id in it
   registerTransportModule({

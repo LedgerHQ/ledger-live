@@ -209,16 +209,14 @@ const job = ({
 
       pending = false;
       const result = {
-        data,
-        error,
+        data: data?.toString("hex") ?? null,
+        error: error?.message ?? null,
       };
 
       if (data) {
-        //  @ts-expect-error 3 args only, we give 5
-        log("proxy", "HTTP:", req.body.apduHex, "=>", data.toString("hex"));
+        log("proxy", `HTTP: ${req.body.apduHex} => ${data.toString("hex")}`);
       } else {
-        //  @ts-expect-error 3 args only, we give 5
-        log("proxy", "HTTP:", req.body.apduHex, "=>", error);
+        log("proxy", `HTTP: ${req.body.apduHex} =>`, error);
       }
 
       res.json(result);

@@ -39,7 +39,8 @@
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^"
+    "@ledgerhq/types-devices": "workspace:^",
+    "purify-ts": "^2.1.0"
   },
   "devDependencies": {
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
