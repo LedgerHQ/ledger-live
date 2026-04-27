@@ -1,5 +1,5 @@
 import { LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
-import type { PostOnboardingActionId, Account, StartActionArgs } from "@ledgerhq/types-live";
+import type { PostOnboardingActionId, StartActionArgs } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { ComponentProps, ComponentType } from "react";
 
@@ -21,20 +21,14 @@ export type PostOnboardingActionI18nKeys = {
  * matches the live-common `PostOnboardingAction` model where applicable.
  */
 export type PostOnboardingActionProps = PostOnboardingActionI18nKeys & {
-  readonly accounts: Account[];
   readonly buttonLabelForAnalyticsEvent: string;
   readonly completed: boolean;
   readonly deviceModelId: DeviceModelId | null;
-  readonly isLedgerSyncActive: boolean;
   /** Lumen symbol for the list row leading visual when the action is not completed. */
   readonly lumenSymbol: FinishFlowLumenSymbol;
   readonly postOnboardingActionId: PostOnboardingActionId;
   readonly shouldCompleteOnStart: boolean;
   readonly startAction: (args: StartActionArgs) => void;
-  readonly getIsAlreadyCompletedByState: (args: {
-    isLedgerSyncActive: boolean;
-    accounts: Account[];
-  }) => boolean;
   readonly testId?: string;
 };
 

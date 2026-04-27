@@ -14,12 +14,10 @@ import { cn } from "LLD/utils/cn";
 import type { FinishOnboardingDialogViewProps } from "./hooks/useFinishOnboardingDialogViewModel";
 
 const FinishOnboardingDialogView = ({
-  accounts,
   actions,
   allActionsCompleted,
   completedActionsAmount,
   deviceModelId,
-  isLedgerSyncActive,
   isOpen,
   onClose,
   onGotIt,
@@ -61,13 +59,10 @@ const FinishOnboardingDialogView = ({
           */}
           <PostOnboardingAction
             key={PostOnboardingActionId.deviceOnboarded}
-            accounts={accounts}
             buttonLabelForAnalyticsEvent=""
             completed
             description=""
             deviceModelId={deviceModelId}
-            getIsAlreadyCompletedByState={() => true}
-            isLedgerSyncActive={isLedgerSyncActive}
             lumenSymbol={LedgerDevices}
             postOnboardingActionId={PostOnboardingActionId.deviceOnboarded}
             shouldCompleteOnStart={false}
@@ -77,13 +72,10 @@ const FinishOnboardingDialogView = ({
           {actions.map(action => (
             <PostOnboardingAction
               key={action.id}
-              accounts={accounts}
               buttonLabelForAnalyticsEvent={action.buttonLabelForAnalyticsEvent ?? ""}
               completed={action.completed}
               description={action.description ?? ""}
               deviceModelId={deviceModelId}
-              getIsAlreadyCompletedByState={action.getIsAlreadyCompletedByState ?? (() => false)}
-              isLedgerSyncActive={isLedgerSyncActive}
               lumenSymbol={action.lumenSymbol}
               postOnboardingActionId={action.id}
               shouldCompleteOnStart={action.shouldCompleteOnStart ?? false}

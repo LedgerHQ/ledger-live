@@ -15,12 +15,9 @@ describe("PostOnboardingAction integration", () => {
         postOnboardingActionId={PostOnboardingActionId.assetsTransfer}
         lumenSymbol={getLumenSymbolForActionId(PostOnboardingActionId.assetsTransfer)}
         deviceModelId={null}
-        isLedgerSyncActive={false}
-        accounts={[]}
         startAction={() => {}}
         buttonLabelForAnalyticsEvent=""
         shouldCompleteOnStart={false}
-        getIsAlreadyCompletedByState={() => false}
       />,
     );
     expect(screen.getByText("Transfer assets")).toBeVisible();

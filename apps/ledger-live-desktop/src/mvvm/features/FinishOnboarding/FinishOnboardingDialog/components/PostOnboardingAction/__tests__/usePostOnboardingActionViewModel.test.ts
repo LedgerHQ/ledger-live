@@ -1,4 +1,4 @@
-import { PostOnboardingActionId, type Account } from "@ledgerhq/types-live";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook } from "tests/testSetup";
 import { getLumenSymbolForActionId } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/utils";
@@ -21,12 +21,9 @@ jest.mock("LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel",
 
 const requiredPostOnboardingActionProps = {
   deviceModelId: null as DeviceModelId | null,
-  isLedgerSyncActive: false,
-  accounts: [] as Account[],
   startAction: () => {},
   buttonLabelForAnalyticsEvent: "",
   shouldCompleteOnStart: false,
-  getIsAlreadyCompletedByState: () => false,
 };
 
 const defaultActionProps = {
@@ -90,23 +87,6 @@ describe("usePostOnboardingActionViewModel", () => {
         completed: true,
         deviceModelId: DeviceModelId.nanoX,
         startAction,
-      }),
-    );
-    act(() => {
-      result.current.onRowActivate();
-    });
-    expect(startAction).not.toHaveBeenCalled();
-  });
-
-  it("should not call startAction when completion comes from getIsAlreadyCompletedByState", () => {
-    const startAction = jest.fn();
-    const { result } = renderHook(() =>
-      usePostOnboardingActionViewModel({
-        ...defaultActionProps,
-        completed: false,
-        deviceModelId: DeviceModelId.nanoX,
-        startAction,
-        getIsAlreadyCompletedByState: () => true,
       }),
     );
     act(() => {
