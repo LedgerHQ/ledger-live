@@ -3,7 +3,7 @@ import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { TOOLS } from "./tools.config";
 import { useDevToolsNavigation } from "./hooks";
 import { useDevToolsStorage } from "./hooks/useDevToolsStorage.web";
-import { Sidebar, ToolShell, EmptyState } from "./components";
+import { Sidebar, ToolShell, Overview } from "./components";
 
 type ColorScheme = "light" | "dark" | "system";
 
@@ -12,9 +12,8 @@ interface DevToolsProps {
 }
 
 export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
-  const { activeTool, setActiveToolId, categories } = useDevToolsNavigation(TOOLS);
-
-  useDevToolsStorage(activeTool?.id, setActiveToolId);
+  const { activeTool, setActiveToolId, clearActiveTool, categories } = useDevToolsNavigation(TOOLS);
+  const { recentToolIds } = useDevToolsStorage(activeTool?.id, setActiveToolId);
 
   return (
     <ThemeProvider themes={ledgerLiveThemes} colorScheme={colorScheme}>
@@ -29,6 +28,7 @@ export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
             categories={categories}
             activeToolId={activeTool?.id}
             onSelectTool={setActiveToolId}
+            onHome={clearActiveTool}
           />
 
           <Divider orientation="vertical" />
@@ -38,10 +38,11 @@ export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
             className="flex flex-col flex-1 min-w-0 overflow-auto bg-canvas"
           >
             {activeTool ? (
-              <ToolShell tool={activeTool} />
+              <ToolShell tool={activeTool} onBack={clearActiveTool} />
             ) : (
-              <EmptyState
+              <Overview
                 categories={categories}
+                recentToolIds={recentToolIds}
                 onSelect={setActiveToolId}
                 data-testid="devtools-empty"
               />
