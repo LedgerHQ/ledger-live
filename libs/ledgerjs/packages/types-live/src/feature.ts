@@ -318,6 +318,8 @@ export type Features = CurrencyFeatures & {
   lifiSolana: DefaultFeature;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lwdGenericAwarenessModal: DefaultFeature;
+  lwmGenericAwarenessModal: DefaultFeature;
   lwmProductTour: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
