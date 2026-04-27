@@ -55,7 +55,6 @@ export interface SideBarViewModel {
   readonly handleClickEarn: () => void;
   readonly handleClickSwap: () => void;
   readonly handleClickPerps: () => void;
-  readonly handleClickBorrow: () => void;
   readonly handleClickCard: () => void;
   readonly handleClickCardWallet: () => void;
   readonly handleClickRefer: () => void;
