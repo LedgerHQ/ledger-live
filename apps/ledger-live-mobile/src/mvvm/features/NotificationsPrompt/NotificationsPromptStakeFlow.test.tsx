@@ -321,6 +321,17 @@ const stakePromptCases: StakePromptCase[] = [
     params: { validatorName: "evm-validator", source: stakePromptSource },
   },
   {
+    label: "EVM undelegation",
+    bucket: "undelegation/unstaking",
+    flowName: NavigatorName.EvmUndelegationFlow,
+    familyExportKey: "EvmUndelegationFlow",
+    successScreenName: ScreenName.EvmUndelegationValidationSuccess,
+    errorScreenName: ScreenName.EvmUndelegationValidationError,
+    accountKey: "ethereum",
+    operationType: "UNDELEGATE",
+    transaction: { family: "evm", mode: "undelegate" },
+  },
+  {
     label: "Hedera claim rewards",
     bucket: "revoke/claim/lifecycle",
     flowName: NavigatorName.HederaClaimRewardsFlow,
