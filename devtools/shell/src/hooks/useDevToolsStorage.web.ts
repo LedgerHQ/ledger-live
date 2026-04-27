@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { STORAGE_KEY, serialize, deserialize, addToRecent } from "./devToolsStorageUtils";
+import { STORAGE_KEY, serialize, deserialize, addToRecent } from "../utils/devToolsStorageUtils";
 
 export function useDevToolsStorage(
   activeToolId: string | undefined,
