@@ -130,6 +130,12 @@ export interface Transaction {
   type: TransactionType;
   /** Type-safe payload (structure depends on type field) */
   payload: TransactionPayload;
+  /**
+   * Max fee to display on device (microCCD). Display-only; not part of the
+   * signed/hashed transaction. When set and device firmware supports it,
+   * hw-app appends 8 big-endian bytes to the sign APDU with P2=0x01.
+   */
+  displayFeeMicroCcd?: bigint;
 }
 
 /**

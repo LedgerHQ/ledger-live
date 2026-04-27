@@ -26,6 +26,31 @@ function createMockTransport(responses: Buffer | Buffer[]) {
   return { send, decorateAppAPIMethods: jest.fn() };
 }
 
+// Build a BOLOS getAppAndVersion response (CLA=0xB0, INS=0x01):
+// [format:1][name_len:1][name:N][version_len:1][version:V][flags_len:1][SW:2]
+function buildVersionResponse(appName: string, version: string): Buffer {
+  const nameBytes = Buffer.from(appName, "ascii");
+  const versionBytes = Buffer.from(version, "ascii");
+  return Buffer.concat([
+    Buffer.from([0x01]),
+    Buffer.from([nameBytes.length]),
+    nameBytes,
+    Buffer.from([versionBytes.length]),
+    versionBytes,
+    Buffer.from([0x00]),
+    Buffer.from([0x90, 0x00]),
+  ]);
+}
+
+function createMockTransportWithVersion(versionResponse: Buffer, signResponses: Buffer[]) {
+  const remaining = [...signResponses];
+  const send = jest.fn().mockImplementation((cla: number, ins: number) => {
+    if (cla === 0xb0 && ins === 0x01) return Promise.resolve(versionResponse);
+    return Promise.resolve(remaining.shift() ?? Buffer.from([0x90, 0x00]));
+  });
+  return { send, decorateAppAPIMethods: jest.fn() };
+}
+
 describe("Concordium", () => {
   describe("decorateAppAPIMethods", () => {
     it("should properly decorate transport methods", async () => {
@@ -362,6 +387,176 @@ describe("Concordium", () => {
       await expect(concordium.signTransaction(tx, PATH)).rejects.toThrow(
         "Transaction type must be Transfer",
       );
+    });
+
+    it("should append fee bytes with P2=0x01 when firmware supports it (Transfer)", async () => {
+      // GIVEN firmware 5.5.2 reports support
+      const mockTransport = createMockTransportWithVersion(
+        buildVersionResponse("Concordium", "5.5.2"),
+        [sigResponse],
+      );
+      const concordium = new Concordium(mockTransport as any);
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+        },
+        displayFeeMicroCcd: 0x0102030405060708n,
+      };
+
+      // WHEN
+      await concordium.signTransaction(tx, PATH);
+
+      // THEN – last call is the single sign APDU (dashboard probe came first)
+      const calls = mockTransport.send.mock.calls;
+      const signCall = calls.find(c => c[0] === 0xe0 && c[1] === 0x02);
+      expect(signCall).toBeDefined();
+      expect(signCall[3]).toBe(0x01); // P2 = FEE_DISPLAY
+      const cdata: Buffer = signCall[4];
+      expect(cdata.subarray(cdata.length - 8)).toEqual(
+        Buffer.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]),
+      );
+    });
+
+    it("should fall back to legacy P2=0x00 on older firmware even when fee is set", async () => {
+      // GIVEN firmware 5.5.1 (below minimum)
+      const mockTransport = createMockTransportWithVersion(
+        buildVersionResponse("Concordium", "5.5.1"),
+        [sigResponse],
+      );
+      const concordium = new Concordium(mockTransport as any);
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+        },
+        displayFeeMicroCcd: 0x0102030405060708n,
+      };
+
+      // WHEN
+      await concordium.signTransaction(tx, PATH);
+
+      // THEN – P2=0x00 and CDATA does not contain the fee suffix
+      const calls = mockTransport.send.mock.calls;
+      const signCall = calls.find(c => c[0] === 0xe0 && c[1] === 0x02);
+      expect(signCall).toBeDefined();
+      expect(signCall[3]).toBe(0x00);
+      const cdata: Buffer = signCall[4];
+      expect(cdata.subarray(cdata.length - 8)).not.toEqual(
+        Buffer.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]),
+      );
+    });
+
+    it("should not probe app version when displayFeeMicroCcd is unset", async () => {
+      // GIVEN no fee, no version response queued – version probe must not happen
+      const mockTransport = createMockTransport(sigResponse);
+      const concordium = new Concordium(mockTransport as any);
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+        },
+      };
+
+      // WHEN
+      await concordium.signTransaction(tx, PATH);
+
+      // THEN – no dashboard probe, only the single sign APDU
+      const calls = mockTransport.send.mock.calls;
+      expect(calls.some(c => c[0] === 0xb0)).toBe(false);
+      expect(calls.filter(c => c[0] === 0xe0 && c[1] === 0x02)).toHaveLength(1);
+    });
+
+    it("should probe version once per sign call when fee is set", async () => {
+      // Caching is intentionally not done at the instance level because Ledger Live
+      // constructs a fresh Concordium instance per sign operation. We document the
+      // expected behavior: one probe per sign when displayFeeMicroCcd is provided.
+      const mockTransport = createMockTransportWithVersion(
+        buildVersionResponse("Concordium", "5.5.2"),
+        [sigResponse, sigResponse],
+      );
+      const concordium = new Concordium(mockTransport as any);
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.Transfer,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+        },
+        displayFeeMicroCcd: 1n,
+      };
+
+      await concordium.signTransaction(tx, PATH);
+      await concordium.signTransaction(tx, PATH);
+
+      const dashboardCalls = mockTransport.send.mock.calls.filter(c => c[0] === 0xb0);
+      expect(dashboardCalls).toHaveLength(2);
+    });
+
+    it("should append fee bytes to INITIAL_WITH_MEMO APDU only (TransferWithMemo)", async () => {
+      // GIVEN
+      const mockTransport = createMockTransportWithVersion(
+        buildVersionResponse("Concordium", "5.6.0"),
+        [okResponse, okResponse, sigResponse],
+      );
+      const concordium = new Concordium(mockTransport as any);
+      const tx: Transaction = {
+        header: {
+          sender: AccountAddress.fromBuffer(Buffer.alloc(32, 0x01)),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 500n,
+        },
+        type: TransactionType.TransferWithMemo,
+        payload: {
+          toAddress: AccountAddress.fromBuffer(Buffer.alloc(32, 0x02)),
+          amount: 1000n,
+          memo: Buffer.from("Hello"),
+        },
+        displayFeeMicroCcd: 0xaabbccddeeff0011n,
+      };
+
+      // WHEN
+      await concordium.signTransaction(tx, PATH);
+
+      // THEN – initial APDU (P1=0x01) carries P2=0x01 and trailing fee; memo+amount stay P2=0x00
+      const memoCalls = mockTransport.send.mock.calls.filter(c => c[0] === 0xe0 && c[1] === 0x32);
+      expect(memoCalls).toHaveLength(3);
+      const [initial, memoApdu, amountApdu] = memoCalls;
+      expect(initial[2]).toBe(0x01); // P1.INITIAL_WITH_MEMO
+      expect(initial[3]).toBe(0x01); // P2.FEE_DISPLAY
+      const initialData: Buffer = initial[4];
+      expect(initialData.subarray(initialData.length - 8)).toEqual(
+        Buffer.from([0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11]),
+      );
+      expect(memoApdu[3]).toBe(0x00);
+      expect(amountApdu[3]).toBe(0x00);
     });
 
     it("should sign a TransferWithMemo transaction and return signature", async () => {

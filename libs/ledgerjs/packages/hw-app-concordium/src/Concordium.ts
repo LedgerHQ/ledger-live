@@ -64,6 +64,27 @@ const P2 = {
   NONE: 0x00,
   MORE: 0x80,
   LAST: 0x00,
+  FEE_DISPLAY: 0x01,
+};
+
+const APP_NAME = "Concordium";
+// Firmware ≥5.5.2 accepts P2=FEE_DISPLAY with 8-byte µCCD fee appended to the sign APDU.
+const MIN_FEE_DISPLAY_VERSION = { major: 5, minor: 5, patch: 2 } as const;
+
+const compareVersion = (
+  version: string,
+  min: { major: number; minor: number; patch: number },
+): boolean => {
+  const [major = 0, minor = 0, patch = 0] = version.split(".").map(n => parseInt(n, 10) || 0);
+  if (major !== min.major) return major > min.major;
+  if (minor !== min.minor) return minor > min.minor;
+  return patch >= min.patch;
+};
+
+const encodeDisplayFee = (fee: bigint): Buffer => {
+  const buf = Buffer.alloc(8);
+  buf.writeBigUInt64BE(fee, 0);
+  return buf;
 };
 
 /**
@@ -99,6 +120,38 @@ export default class Concordium {
    */
   private async send(ins: number, p1: number, p2: number, data: Buffer): Promise<Buffer> {
     return this.transport.send(LEDGER_CLA, ins, p1, p2, data);
+  }
+
+  /**
+   * Check whether the on-device Concordium app supports the fee-display
+   * APDU extension (firmware ≥5.5.2).
+   *
+   * Uses the BOLOS dashboard call `getAppAndVersion` (CLA=0xB0, INS=0x01)
+   * because the Concordium app itself doesn't expose a GET_VERSION INS.
+   * Falls back to false on any error (or if the device is on the dashboard,
+   * not the Concordium app), so signing uses the legacy P2=0x00 path.
+   *
+   * Not cached: Ledger Live constructs a fresh Concordium instance on a
+   * fresh transport per signing operation, so any instance-level cache is
+   * discarded immediately. The probe happens once per sign call.
+   */
+  private async isFeeDisplaySupported(): Promise<boolean> {
+    try {
+      // Response: [format:1][name_len:1][name:N][version_len:1][version:V][...][SW:2]
+      const response = await this.transport.send(0xb0, 0x01, 0x00, 0x00);
+      if (response.length < 2 || response[0] !== 0x01) return false;
+      const nameLength = response[1];
+      const name = response.subarray(2, 2 + nameLength).toString("ascii");
+      if (name !== APP_NAME) return false;
+      const versionLenOffset = 2 + nameLength;
+      const versionLength = response[versionLenOffset];
+      const version = response
+        .subarray(versionLenOffset + 1, versionLenOffset + 1 + versionLength)
+        .toString("ascii");
+      return compareVersion(version, MIN_FEE_DISPLAY_VERSION);
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -250,13 +303,22 @@ export default class Concordium {
 
     const serialized = serializeTransfer(tx);
 
-    // Prepare APDU payloads for device (chunked)
-    const payloads = prepareTransferAPDU(serialized, path);
+    const useFeeDisplay =
+      tx.displayFeeMicroCcd !== undefined && (await this.isFeeDisplaySupported());
+
+    // Fee bytes are displayed on device but NOT part of the hashed transaction,
+    // so append them only to the APDU payload, not to the returned `serialized`.
+    const apduBytes = useFeeDisplay
+      ? Buffer.concat([serialized, encodeDisplayFee(tx.displayFeeMicroCcd!)])
+      : serialized;
+
+    const payloads = prepareTransferAPDU(apduBytes, path);
 
     // Send all chunks; only the last response carries the signature
     let response: Buffer = Buffer.alloc(0);
     for (let i = 0; i < payloads.length; i++) {
-      const p2 = i === payloads.length - 1 ? P2.LAST : P2.MORE;
+      const isLast = i === payloads.length - 1;
+      const p2 = isLast ? (useFeeDisplay ? P2.FEE_DISPLAY : P2.LAST) : P2.MORE;
       response = await this.send(INS.SIGN_TRANSFER, P1.INITIAL, p2, payloads[i]);
     }
 
@@ -283,8 +345,17 @@ export default class Concordium {
       path,
     );
 
+    const useFeeDisplay =
+      tx.displayFeeMicroCcd !== undefined && (await this.isFeeDisplaySupported());
+
+    // Fee bytes are appended to the initial APDU only; memo and amount APDUs stay legacy.
+    const initialPayload = useFeeDisplay
+      ? Buffer.concat([headerPayload, encodeDisplayFee(tx.displayFeeMicroCcd!)])
+      : headerPayload;
+    const initialP2 = useFeeDisplay ? P2.FEE_DISPLAY : P2.NONE;
+
     // Send APDU commands (special 3-step sequence for TransferWithMemo)
-    await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.INITIAL_WITH_MEMO, P2.NONE, headerPayload);
+    await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.INITIAL_WITH_MEMO, initialP2, initialPayload);
 
     for (const memoPayload of memoPayloads) {
       await this.send(INS.SIGN_TRANSFER_WITH_MEMO, P1.MEMO, P2.NONE, memoPayload);

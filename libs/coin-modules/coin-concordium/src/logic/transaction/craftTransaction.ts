@@ -43,6 +43,7 @@ export async function craftTransaction(
       toAddress: AccountAddress.fromBase58(transaction.recipient || ""),
       ...(transaction.memo ? { memo: encodeMemoToCbor(transaction.memo) } : {}),
     },
+    ...(transaction.fee ? { displayFeeMicroCcd: BigInt(transaction.fee.toFixed(0)) } : {}),
   };
 
   return structuredTransaction;

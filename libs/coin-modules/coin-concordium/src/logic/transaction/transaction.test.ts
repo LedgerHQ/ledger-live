@@ -161,6 +161,31 @@ describe("logic/transaction", () => {
       expect(result.payload.amount).toBe(BigInt("10000000000000"));
     });
 
+    it("should set displayFeeMicroCcd when fee is provided", async () => {
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+        fee: new BigNumber(4200),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.displayFeeMicroCcd).toBe(BigInt(4200));
+    });
+
+    it("should omit displayFeeMicroCcd when fee is not provided", async () => {
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.displayFeeMicroCcd).toBeUndefined();
+    });
+
     it("should set expiry to 1 hour from now", async () => {
       const beforeTime = Math.floor(Date.now() / 1000);
 

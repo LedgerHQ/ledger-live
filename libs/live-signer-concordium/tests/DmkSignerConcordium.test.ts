@@ -184,7 +184,26 @@ describe("DmkSignerConcordium", () => {
       expect(mockSignerConcordium.signTransaction).toHaveBeenCalledWith(
         mockPath,
         expect.any(Uint8Array),
-        { skipOpenApp: true },
+        { skipOpenApp: true, displayFeeMicroCcd: undefined },
+      );
+    });
+
+    it("should forward displayFeeMicroCcd to the DMK signer when set on the tx", async () => {
+      const signatureBytes = new Uint8Array(64).fill(0xcc);
+      mockSignerConcordium.signTransaction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: signatureBytes,
+        }),
+      });
+
+      const txWithFee: Transaction = { ...mockTx, displayFeeMicroCcd: 123456n };
+      await signer.signTransaction(txWithFee, mockPath);
+
+      expect(mockSignerConcordium.signTransaction).toHaveBeenCalledWith(
+        mockPath,
+        expect.any(Uint8Array),
+        { skipOpenApp: true, displayFeeMicroCcd: 123456n },
       );
     });
 

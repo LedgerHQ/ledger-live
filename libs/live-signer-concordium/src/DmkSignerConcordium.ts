@@ -67,8 +67,12 @@ export class DmkSignerConcordium implements ConcordiumSigner {
   async signTransaction(tx: Transaction, path: string): Promise<SigningResult> {
     const serialized = serializeTransaction(tx);
 
+    // Forward the optional fee so the Concordium app (≥ 5.5.2) can display
+    // it to the user before signing. Older firmwares ignore the field and
+    // fall back to the legacy APDU flow inside the DMK signer.
     const { observable } = this.signer.signTransaction(path, new Uint8Array(serialized), {
       skipOpenApp: true,
+      displayFeeMicroCcd: tx.displayFeeMicroCcd,
     });
 
     const result = this.mapResult(await lastValueFrom(observable));
