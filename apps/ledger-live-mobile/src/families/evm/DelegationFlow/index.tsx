@@ -12,6 +12,7 @@ import SelectValidator from "./01-SelectValidator";
 import SelectAmount from "./02-SelectAmount";
 import ValidationError from "./03-ValidationError";
 import ValidationSuccess from "./03-ValidationSuccess";
+import DelegationStarted from "./01-Started";
 import type { EvmDelegationFlowParamList } from "./types";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
@@ -65,6 +66,13 @@ function DelegationFlow() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationStarted}
+        component={DelegationStarted}
+        options={{
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.EvmDelegationSelectDevice}
