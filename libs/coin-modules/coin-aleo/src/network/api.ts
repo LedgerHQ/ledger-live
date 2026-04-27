@@ -11,6 +11,10 @@ import type {
   AleoGetProvePublicKeyResponse,
   AleoPrivateRecord,
   DelegatedProvingResponse,
+  AleoCreateTransferIntentRequest,
+  AleoTransferIntentResponse,
+  AleoCreateAuthorizationRequest,
+  AleoAuthorizationResponse,
 } from "../types/api";
 import { getNetworkConfig } from "../logic/utils";
 import { PROGRAM_ID } from "../constants";
@@ -244,6 +248,53 @@ async function submitEncryptedDelegatedProvingRequest({
   return res.data;
 }
 
+async function createTransferIntent({
+  intent,
+  viewKey,
+  fee,
+}: {
+  intent: AleoCreateTransferIntentRequest["intent"];
+  viewKey: string;
+  fee: AleoCreateTransferIntentRequest["fee"];
+}): Promise<AleoTransferIntentResponse> {
+  const res = await network<AleoTransferIntentResponse>({
+    method: "POST",
+    url: `http://10.3.19.130/network/testnet/transactions/request`,
+    data: {
+      intent,
+      view_key: viewKey,
+      fee,
+    },
+  });
+
+  return res.data;
+}
+
+async function createAuthorization({
+  request,
+  signatures,
+  viewKey,
+  tlvVersion,
+}: {
+  request: AleoCreateAuthorizationRequest["request"];
+  signatures: string;
+  viewKey: string;
+  tlvVersion: number;
+}): Promise<AleoAuthorizationResponse> {
+  const res = await network<AleoAuthorizationResponse>({
+    method: "POST",
+    url: `http://10.3.19.130/network/testnet/transactions/authorization`,
+    data: {
+      request,
+      signatures,
+      view_key: viewKey,
+      tlv_version: tlvVersion,
+    },
+  });
+
+  return res.data;
+}
+
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
@@ -256,4 +307,6 @@ export const apiClient = {
   registerForScanningAccountRecordsEncrypted,
   submitDelegatedProvingRequest,
   submitEncryptedDelegatedProvingRequest,
+  createTransferIntent,
+  createAuthorization,
 };

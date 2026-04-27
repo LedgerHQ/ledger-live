@@ -156,3 +156,54 @@ export interface DelegatedProvingResponse {
     };
   };
 }
+
+export interface AleoRecordInput {
+  owner: string;
+  data: Record<string, string>;
+  nonce: string;
+  version: number;
+}
+
+export interface AleoTransferIntentFee {
+  max_base_fee: string;
+  max_priority_fee: string;
+  function_name: string;
+}
+
+export interface AleoCreateTransferIntentRequest {
+  intent: {
+    type: string;
+    amount: string;
+    to: string;
+    record1: AleoRecordInput;
+    record2?: AleoRecordInput;
+  };
+  view_key: string;
+  fee: AleoTransferIntentFee;
+}
+
+export interface AleoTransferIntentResponse {
+  is_root: boolean;
+  network_id: number;
+  program_id: string;
+  function_name: string;
+  inputs: string[];
+  input_types: string[];
+  record_commitments: string[];
+  tlv: string;
+}
+
+export interface AleoCreateAuthorizationRequest {
+  request: AleoTransferIntentResponse;
+  signatures: string;
+  view_key: string;
+  tlv_version: number;
+}
+
+export interface AleoAuthorizationResponse {
+  authorization: {
+    requests: Record<string, unknown>[];
+    transitions: Record<string, unknown>[];
+  };
+  execution_id: string;
+}

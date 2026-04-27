@@ -29,6 +29,10 @@ export const prepareTransaction: AccountBridge<
       unspentRecords: unspentPrivateRecords,
       targetAmount: transaction.useAllAmount ? null : transaction.amount,
     });
+    // MOCKED LOGIC, SHOLD BE REPLACED WITH PROPER ALGORITHM TO SELECT BEST RECORDS BASED ON THE TRANSACTION CONTEXT
+    // const selectedAmountRecords = [...unspentPrivateRecords]
+    //   .sort((a, b) => new BigNumber(b.microcredits).minus(new BigNumber(a.microcredits)).toNumber())
+    //   .slice(0, 2);
 
     const selectedAmountRecordCommitments = selectedAmountRecords.map(record => record.commitment);
 
@@ -53,6 +57,9 @@ export const prepareTransaction: AccountBridge<
       account,
       estimatedFees,
     });
+
+    console.log("DEBUG", transactionWithAutoSelectedRecords);
+    console.log("DEBUG", selectedAmountRecords);
 
     return updateTransaction(transactionWithAutoSelectedRecords, {
       amount: calculatedAmount.amount,

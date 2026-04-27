@@ -11,10 +11,10 @@ import {
   PreparedRequestResponse,
 } from "../types";
 import { sdkClient } from "../network/sdk";
+import { apiClient } from "../network/api";
 import { craftTransaction } from "../logic";
 import {
   createFeeTransactionIntent,
-  createTransactionIntent,
   extractViewKey,
   fromHex,
   isPrivateTransaction,
@@ -88,7 +88,7 @@ async function buildFeeAuthorization(
   return result.authorization;
 }
 
-async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
+async function _executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
   const { account, request, config, viewKey } = params;
 
   const authorization = await buildRootAuthorization(signer, account, request, viewKey);
@@ -107,9 +107,9 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
 
 export const buildSignOperation =
   (
-    signerContext: SignerContext<AleoSigner>,
+    _signerContext: SignerContext<AleoSigner>,
   ): AccountBridge<Transaction, AleoAccount>["signOperation"] =>
-  ({ account, transaction, deviceId }) =>
+  ({ account, transaction, deviceId: _deviceId }) =>
     new Observable(o => {
       void (async function () {
         try {
@@ -118,55 +118,97 @@ export const buildSignOperation =
           });
 
           const viewKey = extractViewKey(account);
-          const config = resolveConfig(account.currency.id);
+          const _config = resolveConfig(account.currency.id);
           const baseFee = transaction.fees;
           const priorityFee = new BigNumber(0);
 
-          const feeConfiguration: FeeConfiguration = {
+          const _feeConfiguration: FeeConfiguration = {
             function_name: isPrivateTransaction(transaction) ? "fee_private" : "fee_public",
             max_base_fee: baseFee.toString(),
             max_priority_fee: priorityFee.toString(),
           };
 
-          const craftedRequest = await craftTransaction({
-            currency: account.currency,
-            viewKey,
-            feeConfiguration,
-            txIntent: createTransactionIntent({ account, transaction }),
-          });
+          console.log("DEBUG2", transaction);
 
-          const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
+          // const craftedRequest = await craftTransaction({
+          //   currency: account.currency,
+          //   viewKey,
+          //   feeConfiguration,
+          //   txIntent: createTransactionIntent({ account, transaction }),
+          // });
 
-          const signedTx = await signerContext(deviceId, signer =>
-            executeSigningFlow(signer, {
-              account,
-              transaction,
-              request,
-              config,
-              baseFee,
-              priorityFee,
+          if (transaction.properties?.amountRecordCommitments?.length === 2) {
+            console.log("DEBUG2", "Transaction with 2 amount record commitments");
+
+            const unspentRecords = account.aleoResources?.unspentPrivateRecords ?? [];
+            const [commitment1, commitment2] = transaction.properties.amountRecordCommitments;
+            const record1 = unspentRecords.find(r => r.commitment === commitment1);
+            const record2 = unspentRecords.find(r => r.commitment === commitment2);
+
+            if (!record1 || !record2) {
+              throw new Error("Could not find records for multi-record transfer");
+            }
+
+            const intentResponse = await apiClient.createTransferIntent({
+              intent: {
+                type: "transfer_private2",
+                amount: transaction.amount.toString(),
+                to: transaction.recipient,
+                record1: record1.decryptedData,
+                record2: record2.decryptedData,
+              },
               viewKey,
-            }),
-          );
+              fee: {
+                max_base_fee: baseFee.toString(),
+                max_priority_fee: priorityFee.toString(),
+                function_name: "fee_private",
+              },
+            });
 
-          o.next({
-            type: "device-signature-granted",
-          });
+            console.log("DEBUG2 intentResponse", intentResponse);
 
-          const operation = buildOptimisticOperation({
-            account,
-            transaction,
-          });
+            const authorizationResponse = await apiClient.createAuthorization({
+              request: intentResponse,
+              signatures: "",
+              viewKey,
+              tlvVersion: 1,
+            });
 
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              signature: signedTx,
-            },
-          });
+            console.log("DEBUG2 authorizationResponse", authorizationResponse);
 
-          o.complete();
+            const signedTx = toHex({
+              authorization: JSON.stringify(authorizationResponse.authorization),
+              feeAuthorization: null,
+            } satisfies SignedAleoTransaction);
+
+            o.next({ type: "device-signature-granted" });
+
+            const operation = buildOptimisticOperation({ account, transaction });
+
+            o.next({
+              type: "signed",
+              signedOperation: { operation, signature: signedTx },
+            });
+
+            o.complete();
+            return;
+          }
+
+          // const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
+
+          // const signedTx = await signerContext(deviceId, signer =>
+          //   executeSigningFlow(signer, {
+          //     account,
+          //     transaction,
+          //     request,
+          //     config,
+          //     baseFee,
+          //     priorityFee,
+          //     viewKey,
+          //   }),
+          // );
+
+          throw new Error("Standard signing flow not yet enabled — only multi-record path active");
         } catch (err) {
           o.error(err);
         }

@@ -35,10 +35,13 @@ export async function broadcast({
     currency: account.currency,
   });
 
+  console.log("DEBUG3", authorization);
+  console.log("DEBUG3", JSON.parse(authorization as unknown as string));
+
   const encryptedData = await sdkClient.encryptProvingRequest({
     publicKey: publicKeyResponse.public_key,
     currency: account.currency,
-    authorization,
+    authorization: JSON.parse(authorization as unknown as string),
     ...(feeAuthorization && { feeAuthorization }),
     broadcast: true,
   });
