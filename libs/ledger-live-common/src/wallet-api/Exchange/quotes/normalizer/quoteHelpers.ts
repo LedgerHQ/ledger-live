@@ -41,5 +41,5 @@ export function normalizeSlippage(slippage: number): number {
   if (Number.isSafeInteger(slippage)) {
     return slippage;
   }
-  return parseFloat(slippage.toFixed(1));
+  return Number.parseFloat(slippage.toFixed(1));
 }

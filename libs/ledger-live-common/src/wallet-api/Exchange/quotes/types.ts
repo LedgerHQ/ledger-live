@@ -15,4 +15,9 @@ export type {
   ProviderDetails,
   QuoteProviderError,
   QuoteLiquiditySource,
+  QuotePayoutNetworkFees,
+  QuotePermit2Message,
+  QuotePermitData,
+  QuoteTags,
+  QuoteTokenAllowance,
 } from "@ledgerhq/wallet-api-exchange-module";
