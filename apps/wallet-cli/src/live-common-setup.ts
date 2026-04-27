@@ -52,7 +52,16 @@ const walletCliLoaders: CoinModuleLoader[] = [
   },
   {
     family: "solana",
-    loadSetup: () => require("@ledgerhq/live-common/families/solana/setup"),
+    loadSetup: () => {
+      const setup = require("@ledgerhq/live-common/families/solana/setup");
+      // Set on the CJS instance here (lazily) rather than eagerly at startup.
+      // The ESM import resolves to a different module instance than this require();
+      // calling it inside loadSetup ensures the flag is set on the exact instance
+      // that registerCoinModules will use, without paying the ~700ms require cost
+      // on every subprocess that never runs a Solana command.
+      setup.setSolanaLdmkEnabled(true);
+      return setup;
+    },
     loadTransaction: () => require("@ledgerhq/coin-solana/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-solana/deviceTransactionConfig").default,
     loadWalletApiAdapter: () =>
@@ -76,9 +85,6 @@ require("@ledgerhq/live-config/LiveConfig").LiveConfig.setConfig(walletCliConfig
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
 setupCalClientStore();
-// Also require() — the ESM import would set the flag on a different module instance
-// than the CJS setup.ts loaded by the lazy loaders above.
-require("@ledgerhq/live-common/families/solana/setup").setSolanaLdmkEnabled(true);
 registerWalletCliDmkTransport();
 
 setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");
