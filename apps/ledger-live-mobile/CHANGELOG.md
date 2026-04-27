@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.3.0-next.1
+
+### Minor Changes
+
+- [#16842](https://github.com/LedgerHQ/ledger-live/pull/16842) [`3fb8512`](https://github.com/LedgerHQ/ledger-live/commit/3fb85121ea4aeae49190c753063477b6d059f2bd) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix endless loading spinner when navigating from the Buy/Sell live app to a provider widget.
+
 ## 4.3.0-next.0
 
 ### Minor Changes
