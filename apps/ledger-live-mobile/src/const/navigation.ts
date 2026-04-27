@@ -227,6 +227,14 @@ export enum ScreenName {
   CeloWithdrawConnectDevice = "CeloWithdrawConnectDevice",
   CeloWithdrawAmount = "CeloWithdrawAmount",
 
+  // evm staking
+  EvmDelegationStarted = "EvmDelegationStarted",
+  EvmDelegationValidatorSelect = "EvmDelegationValidatorSelect",
+  EvmDelegationSelectDevice = "EvmDelegationSelectDevice",
+  EvmDelegationConnectDevice = "EvmDelegationConnectDevice",
+  EvmDelegationValidationError = "EvmDelegationValidationError",
+  EvmDelegationValidationSuccess = "EvmDelegationValidationSuccess",
+
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",
   CosmosDelegationStarted = "CosmosDelegationStarted",
@@ -596,6 +604,7 @@ export enum NavigatorName {
   Base = "Base",
   BaseOnboarding = "BaseOnboarding",
   BuyDevice = "BuyDevice",
+  EvmDelegationFlow = "EvmDelegationFlow",
   CosmosClaimRewardsFlow = "CosmosClaimRewardsFlow",
   CosmosDelegationFlow = "CosmosDelegationFlow",
   CosmosRedelegationFlow = "CosmosRedelegationFlow",

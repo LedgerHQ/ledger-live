@@ -6255,6 +6255,207 @@
       "addCustomValidator": "+ Add custom validator"
     }
   },
+  "evm": {
+    "info": {
+      "available": {
+        "title": "{{currencyTicker}} available",
+        "description": "This amount is disposable."
+      },
+      "delegated": {
+        "title": "Delegated assets",
+        "description": "Delegated assets are used for {{currencyName}} voting. This is your total number of votes."
+      },
+      "undelegating": {
+        "title": "Undelegating",
+        "description": "Undelegated assets are in a timelock of {{numberOfDays}} days, before being available."
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
+      }
+    },
+    "delegation": {
+      "delegationEarn": "You can earn {{ticker}} rewards by delegating your assets.",
+      "info": "How Delegation works",
+      "claimRewards": "Claim rewards",
+      "claimAvailableRewards": "Claim {{amount}}",
+      "header": "Delegation(s)",
+      "Amount": "Amount",
+      "noRewards": "No rewards available",
+      "delegate": "Delegate",
+      "undelegate": "Undelegate",
+      "redelegate": "Redelegate",
+      "reward": "Claim rewards",
+      "totalStake": "Total Stake",
+      "stepperHeader": {
+        "starter": "Earn rewards",
+        "validator": "Delegate assets",
+        "amountSubTitle": "Amount to delegate",
+        "summary": "Summary",
+        "verification": "Verification",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your {{ticker}} to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "0": "Delegated assets remain yours.",
+              "1": "You will have to wait {{numberOfDays}} days for the undelegation to complete.",
+              "2": "Delegate securely with your Ledger device."
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
+          },
+          "validator": {
+            "validators": "Validators",
+            "myDelegations": "My delegations",
+            "cta": "Continue",
+            "estYield": "Est. yield: {{amount}}",
+            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "noResultsFound": "No validator found for <0>{{search}}</0>",
+            "currentAmount": "(+ <0>{{amount}}</0>)"
+          },
+          "amount": {
+            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "minAmount": "Minimum amount: <0>{{min}}</0>",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      },
+      "drawer": {
+        "status": "Status",
+        "rewards": "Rewards",
+        "active": "Active",
+        "inactive": "Inactive",
+        "completionDate": "Completion date",
+        "redelegatedFrom": "Redelegated from"
+      }
+    },
+    "redelegation": {
+      "estYield": "est. yield",
+      "stepperHeader": {
+        "validator": "Choose new validator",
+        "amountSubTitle": "Amount to redelegate",
+        "amountTitle": "{{from}} → {{to}}",
+        "summary": "Summary",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "validator": {
+            "validators": "Validators",
+            "myDelegations": "My delegations",
+            "cta": "Continue",
+            "estYield": "Est. yield: {{amount}}",
+            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "noResultsFound": "No validator found for <0>{{search}}</0>"
+          },
+          "amount": {
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully redelegated your assets",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to undelegate",
+        "summary": "Summary",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "allAssetsUsed": "All assets undelegated"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully undelegated your assets",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "stepperHeader": {
+        "validator": "Select reward to collect",
+        "method": "Claim rewards",
+        "summary": "Summary",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "method": {
+            "youEarned": "You earned",
+            "byDelegationAssetsTo": "by delegating assets to",
+            "claimReward": "Cash in",
+            "claimRewardCompound": "Compound",
+            "claimRewardInfo": "They will be claimed now and added to your available balance.",
+            "claimRewardCompoundInfo": "They will be claimed now and automatically delegated to the same validator.",
+            "compoundOrCashIn": "Compound or Cash in?",
+            "claimRewardTooltip": "Rewards will be added to the available balance",
+            "claimRewardCompoundTooltip": "Rewards will be added to the delegated amount",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully claimed your rewards. They were added to your available balance.",
+              "titleCompound": "Your rewards were delegated to the same validator.",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "tron": {
     "voting": {
       "earnRewars": "Earn rewards",
@@ -7229,6 +7430,11 @@
       "withdrawExpireUnfreeze": "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
       "unDelegateResource": "Cancel the delegation of {{resource}}",
       "cosmos": {
+        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
+        "redelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance."
+      },
+      "evm": {
         "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
         "redelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance.",
         "undelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance."
