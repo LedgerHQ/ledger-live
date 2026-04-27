@@ -48,13 +48,7 @@ const AccountSelectionContent = ({
 
   const renderItem = useCallback(
     ({ item }: { item: RawDetailedAccount }) => {
-      return (
-        <AccountItem
-          account={item}
-          onClick={() => handleAccountSelected(item)}
-          cryptoIconBackgroundColor="transparent"
-        />
-      );
+      return <AccountItem account={item} onClick={() => handleAccountSelected(item)} />;
     },
     [handleAccountSelected],
   );

@@ -26,7 +26,7 @@ function AppIcon({ size = 38, app, icon: defaultIcon = "" }: Readonly<Props>) {
     const ticker = currency.ticker;
     const validSize = getValidCryptoIconSizeNative(size);
 
-    return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} overridesRadius={12} />;
+    return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} shape="square" />;
   }
 
   // Fallback to manager icon for non-crypto apps

@@ -37,6 +37,7 @@ const mockAccount = {
   currency: {
     type: "CryptoCurrency" as const,
     id: "concordium",
+    ticker: "CCD",
     name: "Concordium",
     family: "concordium",
   },
