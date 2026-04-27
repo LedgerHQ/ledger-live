@@ -16,7 +16,7 @@ export default class Sui extends SuiUpstream {
     resolution?: Resolution,
   ): Promise<SignTransactionResult> {
     if (resolution?.deviceModelId && resolution.deviceModelId !== DeviceModelId.nanoS) {
-      const { major, minor, patch } = await this.getVersion();
+      const { major, minor, patch } = await super.getVersion();
       if (semver.lt(`${major}.${minor}.${patch}`, MIN_VERSION)) {
         throw new UpdateYourApp(undefined, { managerAppName: MANAGER_APP_NAME });
       }
