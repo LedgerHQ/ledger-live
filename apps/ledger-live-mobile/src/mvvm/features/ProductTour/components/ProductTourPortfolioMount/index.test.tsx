@@ -1,6 +1,6 @@
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
-import { ProductTourPortfolioMount } from "./ProductTourPortfolioMount";
+import { ProductTourPortfolioMount } from ".";
 
 const withOnboarding = (completed: boolean) => (state: State) => ({
   ...state,

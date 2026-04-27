@@ -1,2 +1,2 @@
-export { ProductTourPortfolioMount } from "./ProductTourPortfolioMount";
+export { ProductTourPortfolioMount } from "./components/ProductTourPortfolioMount";
 export { useProductTourEligibility } from "./hooks/useProductTourEligibility";

@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
-import { ProductTourControlsProvider } from "./context/ProductTourControlsContext";
-import { ProductTourDrawer, useProductTourDrawerViewModel } from "./Drawer";
-import { useProductTourEligibility } from "./hooks/useProductTourEligibility";
+import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
+import { ProductTourDrawer, useProductTourDrawerViewModel } from "../../Drawer";
+import { useProductTourEligibility } from "../../hooks/useProductTourEligibility";
 
 const ProductTourPortfolioMountWhenEnabled = () => {
   const { openProductTour, closeProductTour, isDrawerOpen } = useProductTourDrawerViewModel();
