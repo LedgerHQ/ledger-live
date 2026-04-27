@@ -13,8 +13,44 @@ jest.mock("../getStakes", () => ({
 const mockGetStakeAccounts = jest.mocked(getStakeAccounts);
 const mockComputeUnstakeReserve = jest.mocked(computeUnstakeReserve);
 
-function makeStakeAccountStub(lamports: number) {
-  return { account: { onChainAcc: { account: { lamports } } } };
+const DEFAULT_RENT_EXEMPT_RESERVE = 2_282_880;
+
+function makeStakeAccountStub(
+  lamports: number,
+  options?: {
+    pubkey?: string;
+    state?: string;
+    voter?: string;
+    stake?: string;
+    rentExemptReserve?: number;
+  },
+) {
+  const pubkey = options?.pubkey ?? "StakeAddr1111111111111111111111111111111111";
+  const state = options?.state ?? "active";
+  const voter = options?.voter ?? "Validator111111111111111111111111111111111111";
+  const rentExemptReserve = options?.rentExemptReserve ?? DEFAULT_RENT_EXEMPT_RESERVE;
+  // On Solana delegation.stake includes the rent-exempt reserve (full amount deposited).
+  const delegatedStake = options?.stake ?? String(lamports);
+  return {
+    account: {
+      onChainAcc: {
+        pubkey: { toBase58: () => pubkey },
+        account: { lamports },
+      },
+      info: {
+        meta: { rentExemptReserve: { toString: () => String(rentExemptReserve) } },
+        stake: {
+          delegation: {
+            voter: { toBase58: () => voter },
+            activationEpoch: { toString: () => "100" },
+            deactivationEpoch: { toString: () => "9999999999999999" },
+            stake: { toString: () => delegatedStake },
+          },
+        },
+      },
+    },
+    activation: { state, active: lamports, inactive: 0 },
+  };
 }
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
@@ -177,6 +213,55 @@ describe("getBalance", () => {
         asset: { type: "native" },
         locked: 890880n + 2_000_000_000n,
       });
+      expect(result[1]).toMatchObject({
+        value: 2_000_000_000n,
+        asset: { type: "native" },
+        stake: expect.objectContaining({ amount: 2_000_000_000n, state: "active" }),
+      });
+      const stake = result[1].stake!;
+      // Invariant: total stake amount equals deposited principal plus accrued rewards.
+      expect(stake.amount).toBe((stake.amountDeposited ?? 0n) + (stake.amountRewarded ?? 0n));
+    });
+
+    it("should report zero rewards for a freshly delegated stake with no accrued rewards", async () => {
+      mockGetBalance.mockResolvedValue(1_000_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      const lamports = 2_000_000_000;
+      // No-rewards case: delegated stake equals the full account lamports
+      // (e.g. just after delegation, before any epoch reward has accrued).
+      mockGetStakeAccounts.mockResolvedValue([
+        makeStakeAccountStub(lamports, { stake: String(lamports) }),
+      ] as StakeAccount[]);
+      mockComputeUnstakeReserve.mockResolvedValue(0);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      const stake = result[1].stake!;
+      expect(stake.amount).toBe(BigInt(lamports));
+      expect(stake.amountDeposited).toBe(BigInt(lamports));
+      expect(stake.amountRewarded).toBe(0n);
+      expect(stake.amount).toBe((stake.amountDeposited ?? 0n) + (stake.amountRewarded ?? 0n));
+    });
+
+    it("should compute amountRewarded as the delta between lamports and delegated stake", async () => {
+      mockGetBalance.mockResolvedValue(1_000_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      const lamports = 2_050_000_000;
+      const delegated = lamports - DEFAULT_RENT_EXEMPT_RESERVE - 10_000_000;
+      mockGetStakeAccounts.mockResolvedValue([
+        makeStakeAccountStub(lamports, { stake: String(delegated) }),
+      ] as StakeAccount[]);
+      mockComputeUnstakeReserve.mockResolvedValue(0);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      const stake = result[1].stake!;
+      expect(stake.amount).toBe(BigInt(lamports));
+      expect(stake.amountDeposited).toBe(BigInt(delegated));
+      expect(stake.amountRewarded).toBe(BigInt(lamports - delegated));
+      expect(stake.amount).toBe((stake.amountDeposited ?? 0n) + (stake.amountRewarded ?? 0n));
     });
 
     it("should include unstakeReserve in locked", async () => {
@@ -221,8 +306,8 @@ describe("getBalance", () => {
       mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
       mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
       mockGetStakeAccounts.mockResolvedValue([
-        makeStakeAccountStub(1_000_000_000),
-        makeStakeAccountStub(3_000_000_000),
+        makeStakeAccountStub(1_000_000_000, { pubkey: "Stake1" }),
+        makeStakeAccountStub(3_000_000_000, { pubkey: "Stake2" }),
       ] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(0);
 
@@ -233,6 +318,10 @@ describe("getBalance", () => {
         asset: { type: "native" },
         locked: 890880n + 4_000_000_000n,
       });
+      // two stake balance entries
+      expect(result).toHaveLength(3);
+      expect(result[1]).toMatchObject({ value: 1_000_000_000n, stake: { uid: "Stake1" } });
+      expect(result[2]).toMatchObject({ value: 3_000_000_000n, stake: { uid: "Stake2" } });
     });
   });
 });
