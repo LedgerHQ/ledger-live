@@ -3,9 +3,9 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import invariant from "invariant";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { verifyAddedFundedAccount } from "tests/utils/addAccountUtils";
 
 const currencies = [
   {
@@ -28,7 +28,6 @@ const currencies = [
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
-  { currency: Currency.ALEO, xrayTicket: "B2CQA-4450, B2CQA-4451, B2CQA-4452" },
 ];
 
 for (const currency of currencies) {
@@ -37,14 +36,6 @@ for (const currency of currencies) {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
-      featureFlags: {
-        // TODO: this can be removed once Aleo is released on production
-        ...(currency.currency === Currency.ALEO && {
-          currencyAleo: {
-            enabled: true,
-          },
-        }),
-      },
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
@@ -53,10 +44,12 @@ for (const currency of currencies) {
       `[${currency.currency.name}] Add account`,
       {
         tag: [
-          // TODO: this can be removed once Aleo app is released on all devices (still in development, available only on NanoSP and Flex for now)
-          ...(currency.currency === Currency.ALEO
-            ? ["@NanoSP", "@Flex"]
-            : ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"]),
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
           `@${currency.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
@@ -78,17 +71,7 @@ for (const currency of currencies) {
           await selector.validateItems();
           await selector.selectAssetByTicker(currency.currency);
           await selector.selectNetwork(currency.currency);
-
-          if (currency.currency === Currency.ALEO) {
-            await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
-            await app.scanAccountsDrawer.clickAllowButton();
-            await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
-            await app.speculos.shareViewKey();
-            await app.scanAccountsDrawer.expectSuccessStepVisibility();
-          } else {
-            await app.scanAccountsDrawer.selectFirstAccount();
-          }
-
+          await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();
         } else {
           await app.addAccount.expectModalVisibility();
@@ -97,22 +80,72 @@ for (const currency of currencies) {
           await app.addAccount.done();
         }
 
-        await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
-        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
-
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(firstAccountName);
-        await app.account.expectAccountVisibility(firstAccountName);
-        await app.account.expectAccountBalance();
-        await app.account.expectLastOperationsVisibility();
-        const operationStatus = await app.account.clickOnLastOperationAndReturnStatus();
-        invariant(operationStatus, "Expected operationStatus to be defined");
-        await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
-        await app.operationDrawer.closeDrawer();
-        await app.account.expectAddressIndex(0);
-        await app.account.expectShowMoreButton();
+        await verifyAddedFundedAccount(app, userdataFile, firstAccountName);
       },
     );
   });
 }
+
+test.describe("Add Accounts - Aleo", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: Currency.ALEO.speculosApp,
+    featureFlags: {
+      // TODO: this can be removed once Aleo is released on production
+      currencyAleo: {
+        enabled: true,
+      },
+    },
+  });
+
+  const family = getFamilyByCurrencyId(Currency.ALEO.id);
+
+  test(
+    `[${Currency.ALEO.name}] Add account`,
+    {
+      tag: [
+        "@NanoSP",
+        "@Flex",
+        "@NanoGen5",
+        "@NanoX",
+        "@Stax",
+        `@${Currency.ALEO.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-4450, B2CQA-4451, B2CQA-4452",
+      },
+    },
+    async ({ app, userdataFile }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      const firstAccountName = `${Currency.ALEO.name} 1`;
+
+      await app.portfolio.waitForPortfolioEmptyState();
+      await app.portfolio.clickAddAccountButton();
+
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.validateItems();
+        await selector.selectAssetByTicker(Currency.ALEO);
+        await selector.selectNetwork(Currency.ALEO);
+        await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
+        await app.scanAccountsDrawer.clickAllowButton();
+        await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
+        await app.speculos.shareViewKey();
+        await app.scanAccountsDrawer.expectSuccessStepVisibility();
+        await app.scanAccountsDrawer.clickCloseButton();
+      } else {
+        await app.addAccount.expectModalVisibility();
+        await app.addAccount.selectCurrency(Currency.ALEO);
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+      }
+
+      await app.portfolio.checkOperationHistory();
+      await verifyAddedFundedAccount(app, userdataFile, firstAccountName);
+    },
+  );
+});
