@@ -163,7 +163,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTicket: "LIVE-28070",
+    bugTickets: ["LIVE-28070"],
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
@@ -192,8 +192,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
-    bugTicket: "LIVE-24214",
-    bugTickets: ["LIVE-29554"],
+    bugTickets: ["LIVE-24214", "LIVE-29554"],
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
@@ -235,7 +234,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
     xrayTicket: "B2CQA-4225",
-    bugTicket: "LIVE-28070",
+    bugTickets: ["LIVE-28070"],
   },
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
@@ -295,12 +294,8 @@ test.describe("Send flows", () => {
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          const bugTickets = [
-            ...(transaction.bugTicket ? [transaction.bugTicket] : []),
-            ...(transaction.bugTickets ?? []),
-          ];
-          if (bugTickets.length) {
-            await addBugLink(bugTickets);
+          if (transaction.bugTickets) {
+            await addBugLink(transaction.bugTickets);
           }
 
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
