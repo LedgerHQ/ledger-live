@@ -15,6 +15,11 @@ import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
 import { spinner, colors, writeStdout } from "./shared/ui";
+import {
+  formatSwapQuoteHuman,
+  type SwapQuoteLine,
+  type SwapQuoteProviderError,
+} from "./commands/swap/quote-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
 
@@ -79,6 +84,15 @@ export interface CommandOutput {
   sendEvent(event: SendEvent): void;
   /** Signal send stream complete. Json: write result envelope (account from ctx). Human: noop. */
   sendComplete(): void;
+
+  /** Print swap quotes (human: formatted blocks; json: success envelope with `quotes`). */
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void;
+
+  /**
+   * No quotes returned while providers reported errors. Json: error envelope + exit 1.
+   * Human: error lines + exit 1.
+   */
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never;
 }
 
 // ---------------------------------------------------------------------------
@@ -213,6 +227,28 @@ class HumanCommandOutput implements CommandOutput {
   sendComplete(): void {
     /* noop */
   }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    for (const q of args.quotes) {
+      writeStdout(`${formatSwapQuoteHuman(q)}\n`);
+    }
+    if (args.partialErrors.length > 0) {
+      const s = spinner("");
+      s.error(colors.dim(`${args.partialErrors.length} provider(s) returned errors:`));
+      for (const e of args.partialErrors) {
+        s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
+      }
+    }
+  }
+
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
+    const s = spinner("");
+    s.error(message);
+    for (const e of errors) {
+      s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
+    }
+    process.exit(1);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -324,6 +360,15 @@ class JsonCommandOutput implements CommandOutput {
 
   sendComplete(): void {
     writeStdout(this._envelope(this._sendResult));
+  }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    writeStdout(this._envelope({ quotes: args.quotes }));
+  }
+
+  swapQuotesUnavailable(message: string, _errors: SwapQuoteProviderError[]): never {
+    writeStdout(JSON.stringify(this._errorEnvelope(message), null, 2));
+    process.exit(1);
   }
 }
 
