@@ -14,6 +14,10 @@ import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./transactionData";
 import { getValidators } from "./validators";
+import { log } from "@ledgerhq/logs";
+import { getErrorCode, getErrorMessage, isExpectedSeiNoDelegationError } from "../utils";
+
+const LOG_TYPE = "evm/staking";
 
 /**
  * Generic staking fetcher that adapts to different blockchain requirements
@@ -95,6 +99,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           config,
           params,
         });
+
         const result = await rpcProvider.call({
           to: config.contractAddress,
           data: encodedData,
@@ -123,7 +128,18 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           },
         };
       } catch (error) {
-        console.error("Staking fetch failed", error);
+        const message = isExpectedSeiNoDelegationError(currencyId, error)
+          ? "getStakedBalance: no delegation"
+          : "getStakedBalance: failed";
+
+        log(LOG_TYPE, message, {
+          currencyId,
+          validatorAddress,
+          delegator: address,
+          errorCode: getErrorCode(error),
+          errorMessage: getErrorMessage(error),
+        });
+
         return null;
       }
     },

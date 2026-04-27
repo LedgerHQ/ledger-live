@@ -353,3 +353,27 @@ export const getCeloAmount = (decoded: unknown): bigint => {
 export function isStakingIntent(intent: TransactionIntent): intent is StakingTransactionIntent {
   return intent.intentType === "staking";
 }
+
+export function getErrorCode(error: unknown): string | undefined {
+  if (typeof error === "object" && error !== null && "code" in error) {
+    return String(error.code);
+  }
+  return undefined;
+}
+
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+export function isExpectedSeiNoDelegationError(currencyId: string, error: unknown): boolean {
+  if (currencyId !== "sei_evm") {
+    return false;
+  }
+
+  const message = getErrorMessage(error);
+  const code = getErrorCode(error);
+  return (
+    code === "CALL_EXCEPTION" &&
+    (message.includes("missing revert data") || message.includes("execution reverted"))
+  );
+}
