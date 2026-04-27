@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
-import { outputOption } from "../shared-options";
+import { outputOption } from "../inputs";
 import { mapSwapQuoteLine } from "./quote-shared";
 
 const DEFAULT_PROVIDERS = ["changelly_v2", "oneinch", "paraswap", "exodus", "swapsxyz"];

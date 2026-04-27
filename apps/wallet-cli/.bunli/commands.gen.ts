@@ -9,14 +9,16 @@ import Balances from '../src/commands/balances.js'
 import Discover from '../src/commands/account/discover.js'
 import FreshAddress from '../src/commands/account/fresh-address.js'
 import Operations from '../src/commands/operations.js'
+import Quote from '../src/commands/swap/quote.js'
 import Receive from '../src/commands/receive.js'
 import Reset from '../src/commands/session/reset.js'
 import Send from '../src/commands/send.js'
 import Session from '../src/commands/session/index.js'
+import Swap from '../src/commands/swap/index.js'
 import View from '../src/commands/session/view.js'
 
 // Narrow list of command names to avoid typeof-cycles in types
-const names = ['account', 'balances', 'discover', 'fresh-address', 'operations', 'receive', 'reset', 'send', 'session', 'view'] as const
+const names = ['account', 'balances', 'discover', 'fresh-address', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
 type GeneratedNames = typeof names[number]
 
 const modules: Record<GeneratedNames, Command<any>> = {
@@ -25,10 +27,12 @@ const modules: Record<GeneratedNames, Command<any>> = {
   'discover': Discover,
   'fresh-address': FreshAddress,
   'operations': Operations,
+  'quote': Quote,
   'receive': Receive,
   'reset': Reset,
   'send': Send,
   'session': Session,
+  'swap': Swap,
   'view': View
 } as const
 
@@ -96,6 +100,18 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       },
       path: './src/commands/operations'
     },
+  'quote': {
+      name: 'quote',
+      description: 'Fetch swap quotes',
+      options: {
+        'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":579,"end":580,"loc":{"start":{"line":15,"column":32,"index":579},"end":{"line":15,"column":33,"index":580}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
+        'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":713,"end":714,"loc":{"start":{"line":19,"column":30,"index":713},"end":{"line":19,"column":31,"index":714}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
+        'from-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":875,"end":876,"loc":{"start":{"line":23,"column":48,"index":875},"end":{"line":23,"column":49,"index":876}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+        'to-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1006,"end":1007,"loc":{"start":{"line":26,"column":46,"index":1006},"end":{"line":26,"column":47,"index":1007}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1130,"end":1131,"loc":{"start":{"line":29,"column":34,"index":1130},"end":{"line":29,"column":35,"index":1131}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' }
+      },
+      path: './src/commands/swap/quote'
+    },
   'receive': {
       name: 'receive',
       description: 'Get receive address for an account (optionally verify on device)',
@@ -155,6 +171,25 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         }
       ],
       path: './src/commands/session/index'
+    },
+  'swap': {
+      name: 'swap',
+      description: 'Swap-related commands',
+      commands: [
+        {
+          name: 'quote',
+          description: 'Fetch swap quotes',
+          options: {
+            'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":579,"end":580,"loc":{"start":{"line":15,"column":32,"index":579},"end":{"line":15,"column":33,"index":580}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
+            'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":713,"end":714,"loc":{"start":{"line":19,"column":30,"index":713},"end":{"line":19,"column":31,"index":714}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
+            'from-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":875,"end":876,"loc":{"start":{"line":23,"column":48,"index":875},"end":{"line":23,"column":49,"index":876}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+            'to-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1006,"end":1007,"loc":{"start":{"line":26,"column":46,"index":1006},"end":{"line":26,"column":47,"index":1007}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+            'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1130,"end":1131,"loc":{"start":{"line":29,"column":34,"index":1130},"end":{"line":29,"column":35,"index":1131}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' }
+          },
+          path: './src/commands/swap/quote'
+        }
+      ],
+      path: './src/commands/swap/index'
     },
   'view': {
       name: 'view',
