@@ -47,6 +47,8 @@ const walletCliLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () =>
       require("@ledgerhq/live-common/families/evm/platformAdapter").default,
     loadValidateAddress: () => require("@ledgerhq/coin-evm/logic/validateAddress").validateAddress,
+    loadSigner: () =>
+      require("@ledgerhq/live-common/bridge/generic-alpaca/families/evm/signer").default,
   },
   {
     family: "solana",
@@ -55,6 +57,8 @@ const walletCliLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () => require("@ledgerhq/coin-solana/deviceTransactionConfig").default,
     loadWalletApiAdapter: () =>
       require("@ledgerhq/live-common/families/solana/walletApiAdapter").default,
+    loadSigner: () =>
+      require("@ledgerhq/live-common/bridge/generic-alpaca/families/solana/signer").default,
   },
 ];
 
