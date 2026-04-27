@@ -38,6 +38,6 @@ describe("ProductTourPortfolioMount", () => {
       ),
     });
 
-    expect(screen.getByTestId("lwm-product-tour-portfolio-mount")).toBeTruthy();
+    expect(screen.getByTestId("product-tour-portfolio-mount")).toBeVisible();
   });
 });

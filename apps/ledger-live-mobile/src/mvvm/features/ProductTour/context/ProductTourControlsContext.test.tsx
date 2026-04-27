@@ -12,7 +12,7 @@ describe("ProductTourControlsContext", () => {
   it("should return null from useProductTourControls when rendered outside the provider", () => {
     render(<ContextProbe />);
 
-    expect(screen.getByText("outside")).toBeTruthy();
+    expect(screen.getByText("outside")).toBeVisible();
   });
 
   it("should expose openProductTour and closeProductTour inside the provider", () => {
@@ -27,6 +27,6 @@ describe("ProductTourControlsContext", () => {
       </ProductTourControlsProvider>,
     );
 
-    expect(screen.getByText("inside")).toBeTruthy();
+    expect(screen.getByText("inside")).toBeVisible();
   });
 });

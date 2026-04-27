@@ -8,7 +8,7 @@ const ProductTourPortfolioMountWhenEnabled = () => {
   const { openProductTour, closeProductTour, isDrawerOpen } = useProductTourDrawerViewModel();
 
   return (
-    <View testID="lwm-product-tour-portfolio-mount" collapsable={false}>
+    <View testID="product-tour-portfolio-mount" collapsable={false}>
       <ProductTourControlsProvider
         value={{
           openProductTour,

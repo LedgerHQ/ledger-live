@@ -45,8 +45,8 @@ describe("ProductTour on Portfolio (integration)", () => {
       overrideInitialState: eligiblePortfolioState,
     });
 
-    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeTruthy();
-    expect(screen.getByTestId("lwm-product-tour-portfolio-mount")).toBeTruthy();
+    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
+    expect(screen.getByTestId("product-tour-portfolio-mount")).toBeVisible();
   });
 
   it("should not mount the Product Tour subtree when lwmProductTour is off", async () => {
@@ -57,8 +57,8 @@ describe("ProductTour on Portfolio (integration)", () => {
       ),
     });
 
-    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeTruthy();
-    expect(screen.queryByTestId("lwm-product-tour-portfolio-mount")).toBeNull();
+    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
+    expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
   });
 
   it("should not mount the Product Tour subtree when onboarding is not complete", async () => {
@@ -69,8 +69,8 @@ describe("ProductTour on Portfolio (integration)", () => {
       ),
     });
 
-    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeTruthy();
-    expect(screen.queryByTestId("lwm-product-tour-portfolio-mount")).toBeNull();
+    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
+    expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
   });
 
   it("should increment productTourDeeplinkNonce when tick dispatches while the subtree is mounted", async () => {
@@ -78,13 +78,13 @@ describe("ProductTour on Portfolio (integration)", () => {
       overrideInitialState: eligiblePortfolioState,
     });
 
-    await screen.findByTestId("lwm-product-tour-portfolio-mount");
+    await screen.findByTestId("product-tour-portfolio-mount");
 
     act(() => {
       store.dispatch(tickProductTourDeeplink());
     });
 
     expect(productTourDeeplinkNonceSelector(store.getState())).toBe(1);
-    expect(screen.getByTestId("lwm-product-tour-portfolio-mount")).toBeTruthy();
+    expect(screen.getByTestId("product-tour-portfolio-mount")).toBeVisible();
   });
 });
