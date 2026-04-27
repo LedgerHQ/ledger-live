@@ -12,9 +12,9 @@ import {
 import type { LumenViewStyle, LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
-import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
+import TransactionalIcon from "LLM/components/TransactionalIcon";
 import { useOperationsListItemViewModel } from "./useOperationsListItemViewModel";
 
 type Props = {
@@ -68,7 +68,12 @@ function OperationsListItem({
       testID="operations-list-item"
     >
       <ListItemLeading>
-        <CurrencyIcon currency={currency} size={48} hideNetwork />
+        <TransactionalIcon
+          operationType={operationType}
+          isOptimistic={isOptimistic}
+          currency={currency}
+          mediaSize={48}
+        />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>{subtitle}</ListItemDescription>
