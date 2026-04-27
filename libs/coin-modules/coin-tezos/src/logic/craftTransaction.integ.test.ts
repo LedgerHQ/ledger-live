@@ -103,6 +103,37 @@ describe("Tezos Api", () => {
     );
   });
 
+  it("should craft a stake transaction", async () => {
+    // When
+    const result = await craftTransaction(
+      { address },
+      {
+        type: "stake",
+        recipient: "",
+        amount: BigInt(1000),
+        fee: { fees: BigInt(1).toString(), gasLimit: "200", storageLimit: "0" },
+      },
+    );
+
+    // Then
+    expect(result.type).toBe("STAKE");
+    expect(result.contents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: OpKind.TRANSACTION,
+          amount: "1000",
+          destination: address,
+          source: address,
+          counter: expect.any(String),
+          fee: "1",
+          gas_limit: "200",
+          storage_limit: "0",
+          parameters: { entrypoint: "stake", value: { prim: "Unit" } },
+        }),
+      ]),
+    );
+  });
+
   it("should craft a send_token (FA2) transaction", async () => {
     const contractAddress = "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o";
 
