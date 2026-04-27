@@ -1,11 +1,7 @@
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Tool } from "../types";
 import { ToolRow } from "./ToolRow";
-
-// IconProps and IconSize are not exported from @ledgerhq/lumen-ui-react.
-// ChevronDown is already imported and shares the same props shape as all lumen symbols,
-// so we derive the icon component type from it to stay in sync with the package.
-type IconComponent = typeof ChevronDown;
+import type { IconComponent } from "../categoryConfig";
 
 interface CategoryRowProps {
   category: string;
@@ -51,6 +47,7 @@ export function CategoryRow({
                 title={tool.label}
                 isActive={activeToolId === tool.id}
                 onClick={() => onSelectTool(tool.id)}
+                owner={tool.owner}
               />
             </li>
           ))}

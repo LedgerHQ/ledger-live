@@ -108,11 +108,7 @@ export const DevTools = () => {
 
         {screen === "category" && activeCategory && (
           <Box testID="devtools-category-screen" lx={{ flex: 1, flexDirection: "column" }}>
-            <Pressable
-              accessibilityLabel="Back"
-              accessibilityRole="button"
-              onPress={goBack}
-            >
+            <Pressable accessibilityLabel="Back" accessibilityRole="button" onPress={goBack}>
               <Box
                 lx={{
                   paddingHorizontal: "s16",
@@ -163,11 +159,7 @@ export const DevTools = () => {
 
         {screen === "tool" && activeTool && (
           <Box testID="devtools-content" lx={{ flex: 1, flexDirection: "column" }}>
-            <Pressable
-              accessibilityLabel="Back"
-              accessibilityRole="button"
-              onPress={goBack}
-            >
+            <Pressable accessibilityLabel="Back" accessibilityRole="button" onPress={goBack}>
               <Box
                 lx={{
                   paddingHorizontal: "s16",

@@ -1,42 +1,32 @@
 import { SearchInput } from "@ledgerhq/lumen-ui-react";
-import {
-  Settings,
-  Experiment2,
-  Bluetooth,
-  DocumentCode,
-  Bug,
-  Information,
-  SpeedFast,
-  Planet,
-} from "@ledgerhq/lumen-ui-react/symbols";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Category } from "../types";
 import type { Tool } from "../types";
 import { useAccordion } from "../hooks";
+import { CATEGORY_ICONS } from "../categoryConfig";
 import { CategoryRow } from "./CategoryRow";
-
-const CATEGORY_ICONS = {
-  [Category.CONFIGURATION]: Settings,
-  [Category.FEATURES_AND_FLOWS]: Experiment2,
-  [Category.CONNECTIVITY]: Bluetooth,
-  [Category.GENERATORS]: DocumentCode,
-  [Category.DEBUGGING]: Bug,
-  [Category.INFORMATION]: Information,
-  [Category.PERFORMANCE]: SpeedFast,
-  [Category.PLAYGROUND]: Planet,
-};
+import { IconSquare } from "./IconSquare";
 
 interface SidebarProps {
   categories: Array<{ category: Category; tools: Tool[] }>;
   activeToolId: string | undefined;
   onSelectTool: (id: string) => void;
+  onHome: () => void;
 }
 
-export function Sidebar({ categories, activeToolId, onSelectTool }: SidebarProps) {
-  const { isExpanded, toggle } = useAccordion<Category>({ mode: "single" });
+export function Sidebar({ categories, activeToolId, onSelectTool, onHome }: SidebarProps) {
+  const { isExpanded, toggle, expand } = useAccordion<Category>({ mode: "single" });
   const [query, setQuery] = useState("");
 
+  // Expand a category if the tool id changes somewhere else
+  useEffect(() => {
+    if (!activeToolId) return;
+    const match = categories.find(({ tools }) => tools.some(t => t.id === activeToolId));
+    if (match) expand(match.category);
+  }, [activeToolId, categories, expand]);
+
   const q = query.trim().toLowerCase();
+  const isSearchActive = q.length > 0;
 
   const filteredCategories = useMemo(
     () =>
@@ -45,10 +35,7 @@ export function Sidebar({ categories, activeToolId, onSelectTool }: SidebarProps
           category,
           tools: q
             ? tools.filter(
-                t =>
-                  t.label.toLowerCase().includes(q) ||
-                  t.category.toLowerCase().includes(q) ||
-                  (t.owner ?? "").toLowerCase().includes(q),
+                t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
               )
             : tools,
         }))
@@ -61,6 +48,14 @@ export function Sidebar({ categories, activeToolId, onSelectTool }: SidebarProps
       data-testid="devtools-nav"
       className="w-[240px] shrink-0 bg-surface border-r border-muted flex flex-col"
     >
+      <button
+        onClick={onHome}
+        className="flex items-center gap-12 px-16 pt-16 w-full text-left bg-transparent border-none cursor-pointer hover:opacity-80"
+      >
+        <IconSquare category={Category.CONFIGURATION} variant="inverted" />
+        <span className="body-1 font-semibold">DevTools</span>
+      </button>
+
       <div className="p-12">
         <SearchInput
           value={query}
@@ -80,7 +75,7 @@ export function Sidebar({ categories, activeToolId, onSelectTool }: SidebarProps
             category={category}
             tools={tools}
             icon={CATEGORY_ICONS[category]}
-            isExpanded={isExpanded(category)}
+            isExpanded={isSearchActive || isExpanded(category)}
             onToggle={() => toggle(category)}
             activeToolId={activeToolId}
             onSelectTool={onSelectTool}
