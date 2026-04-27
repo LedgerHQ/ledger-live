@@ -14,7 +14,7 @@ export type CardanoUndelegateSelfTxInfoModalProps = {
   account: CardanoAccount;
 };
 
-// used for internal transaction
+// It is to cover minimum utxo amount for internal transaction
 const DEFAULT_TX_AMOUNT = 2000000;
 
 export default function CardanoUndelegateSelfTxInfoModal({

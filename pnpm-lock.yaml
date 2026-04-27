@@ -1547,9 +1547,6 @@ importers:
       '@ledgerhq/coin-canton':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-canton
-      '@ledgerhq/coin-cardano':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-cardano
       '@ledgerhq/coin-casper':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-casper
@@ -2052,6 +2049,9 @@ importers:
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../../libs/asset-aggregation
+      '@ledgerhq/coin-cardano':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-cardano
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
