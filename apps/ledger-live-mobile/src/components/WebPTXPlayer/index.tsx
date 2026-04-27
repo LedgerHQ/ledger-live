@@ -174,6 +174,7 @@ export const WebPTXPlayer = ({
   return (
     <SafeAreaView edges={isInternalApp ? ["left", "right", "top"] : ["left", "right"]} isFlex>
       <Web3AppWebview
+        key={manifest.id}
         ref={webviewAPIRef}
         manifest={manifest}
         inputs={inputs}
