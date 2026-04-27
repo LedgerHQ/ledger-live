@@ -1,13 +1,16 @@
-import { getAddress } from "ethers";
+import { getAddress, isValidName } from "ethers";
 import { validateAddress } from "./validateAddress";
 
 jest.mock("ethers");
 
 describe("validateAddress", () => {
   const mockedGetAddress = jest.mocked(getAddress);
+  const mockedIsValidName = jest.mocked(isValidName);
 
   beforeEach(() => {
     mockedGetAddress.mockClear();
+    mockedIsValidName.mockClear();
+    mockedIsValidName.mockReturnValue(false);
   });
 
   it.each([
@@ -19,9 +22,9 @@ describe("validateAddress", () => {
     "random domain on.sui",
     "near domain",
     "algo_domain",
-    "short.x", // TLD too short
+    "short.x",
     "nodot",
-    ".eth", // no label before dot
+    ".eth",
   ])(
     "should return false for invalid address: %s",
     async (address: string) => {
@@ -45,23 +48,30 @@ describe("validateAddress", () => {
 
     expect(mockedGetAddress).toHaveBeenCalledTimes(1);
     expect(mockedGetAddress).toHaveBeenCalledWith(address);
+    expect(mockedIsValidName).not.toHaveBeenCalled();
   });
 
   it("should return true for .eth ENS domain", async () => {
+    mockedIsValidName.mockReturnValueOnce(true);
+
     const address = "zombqa-test.eth";
     const result = await validateAddress(address, {});
     expect(result).toEqual(true);
 
-    expect(mockedGetAddress).toHaveBeenCalledTimes(0);
+    expect(mockedGetAddress).not.toHaveBeenCalled();
+    expect(mockedIsValidName).toHaveBeenCalledWith(address);
   });
 
   it.each(["ensfairy.xyz", "mydomain.com", "sub.domain.org", "random-domain.sol"])(
     "should return true for DNS names importable into ENS v2 (%s)",
     async (address: string) => {
+      mockedIsValidName.mockReturnValueOnce(true);
+
       const result = await validateAddress(address, {});
       expect(result).toEqual(true);
 
-      expect(mockedGetAddress).toHaveBeenCalledTimes(0);
+      expect(mockedGetAddress).not.toHaveBeenCalled();
+      expect(mockedIsValidName).toHaveBeenCalledWith(address);
     },
   );
 
@@ -74,5 +84,6 @@ describe("validateAddress", () => {
 
     expect(mockedGetAddress).toHaveBeenCalledTimes(1);
     expect(mockedGetAddress).toHaveBeenCalledWith(address);
+    expect(mockedIsValidName).not.toHaveBeenCalled();
   });
 });
