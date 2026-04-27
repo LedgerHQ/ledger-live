@@ -101,8 +101,12 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickOnLastOperationAndReturnStatus() {
+  async clickOnLastOperationAndReturnStatus(): Promise<string> {
     const status = await this.operationStatus.first().textContent();
+    if (!status) {
+      throw new Error("Expected operation status to be defined");
+    }
+
     await this.operationRows.first().click();
     return status;
   }
