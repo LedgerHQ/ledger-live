@@ -6,12 +6,15 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  getParentAccountName,
+  TokenAccount,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
 import { log } from "detox";
-import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -165,23 +168,14 @@ export default class SwapPage extends CommonPage {
     const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
-    // If sender or receiver is a token account, the csv export takes the main account name
-    const accountToDebitNameInCsv: string = swap.accountToDebit.parentAccount
-      ? swap.accountToDebit.parentAccount.accountName
-      : swap.accountToDebit.accountName;
-
-    const accountToCreditNameInCsv: string = swap.accountToCredit.parentAccount
-      ? swap.accountToCredit.parentAccount.accountName
-      : swap.accountToCredit.accountName;
-
     jestExpect(fileContents).toContain(provider.name);
     jestExpect(fileContents).toContain(id);
     jestExpect(fileContents).toContain(swap.accountToDebit.currency.ticker);
     jestExpect(fileContents).toContain(swap.accountToCredit.currency.ticker);
     jestExpect(fileContents).toContain(swap.amount);
-    jestExpect(fileContents).toContain(accountToDebitNameInCsv);
+    jestExpect(fileContents).toContain(getParentAccountName(swap.accountToDebit));
     jestExpect(fileContents).toContain(swap.accountToDebit.address);
-    jestExpect(fileContents).toContain(accountToCreditNameInCsv);
+    jestExpect(fileContents).toContain(getParentAccountName(swap.accountToCredit));
     jestExpect(fileContents).toContain(swap.accountToCredit.address);
   }
 
