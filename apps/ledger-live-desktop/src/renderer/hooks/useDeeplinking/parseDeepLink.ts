@@ -19,6 +19,7 @@ import {
   WalletConnectRoute,
   MarketRoute,
   AssetRoute,
+  PerpsRoute,
   RecoverRoute,
   RecoverRestoreFlowRoute,
   PostOnboardingRoute,
@@ -247,6 +248,13 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
       const route: AssetRoute = {
         type: "asset",
         path,
+      };
+      return route;
+    }
+
+    case "perps": {
+      const route: PerpsRoute = {
+        type: "perps",
       };
       return route;
     }

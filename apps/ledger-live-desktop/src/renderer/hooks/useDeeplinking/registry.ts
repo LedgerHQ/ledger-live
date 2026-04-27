@@ -12,6 +12,7 @@ import { settingsHandler } from "./handlers/settings.handler";
 import { cardHandler, discoverHandler, walletConnectHandler } from "./handlers/discover.handler";
 import { marketHandler, assetHandler } from "./handlers/market.handler";
 import { recoverHandler, recoverRestoreFlowHandler } from "./handlers/recover.handler";
+import { perpsHandler } from "./handlers/perps.handler";
 import { postOnboardingHandler } from "./handlers/postOnboarding.handler";
 import { ledgerSyncHandler } from "./handlers/ledgerSync.handler";
 import { defaultHandler } from "./handlers/default.handler";
@@ -34,6 +35,7 @@ export const deeplinkRegistry: DeeplinkHandlerRegistry = {
   wc: walletConnectHandler,
   market: marketHandler,
   asset: assetHandler,
+  perps: perpsHandler,
   recover: recoverHandler,
   "recover-restore-flow": recoverRestoreFlowHandler,
   "post-onboarding": postOnboardingHandler,

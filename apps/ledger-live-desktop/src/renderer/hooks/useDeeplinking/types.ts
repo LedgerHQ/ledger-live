@@ -193,6 +193,10 @@ export interface PostOnboardingRoute {
   device?: string;
 }
 
+export interface PerpsRoute {
+  type: "perps";
+}
+
 export interface LedgerSyncRoute {
   type: "ledgersync";
 }
@@ -221,6 +225,7 @@ export type DeeplinkRoute =
   | AssetRoute
   | RecoverRoute
   | RecoverRestoreFlowRoute
+  | PerpsRoute
   | PostOnboardingRoute
   | LedgerSyncRoute
   | DefaultRoute;
