@@ -20,6 +20,7 @@ import { BigNumber } from "bignumber.js";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { ModularDrawer, useModularDrawerController } from "..";
 import ReceiveFundsNavigator from "~/components/RootNavigator/ReceiveFundsNavigator";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 export const WITH_ACCOUNT_SELECTION = "Open Drawer (with account selection)";
 export const WITHOUT_ACCOUNT_SELECTION = "Open Drawer (without account selection)";
@@ -133,7 +134,9 @@ const ModularDrawerWithDeviceSelectionStore = (props: MockModularDrawerComponent
   const store = useMemo(() => createStore({ overrideInitialState: withReadOnlyDisabled }), []);
   return (
     <Provider store={store}>
-      <StackNavigatorContent {...props} />
+      <NotificationsPromptProvider>
+        <StackNavigatorContent {...props} />
+      </NotificationsPromptProvider>
     </Provider>
   );
 };
@@ -145,5 +148,9 @@ export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentPr
     return <ModularDrawerWithDeviceSelectionStore {...props} />;
   }
 
-  return <StackNavigatorContent {...props} />;
+  return (
+    <NotificationsPromptProvider>
+      <StackNavigatorContent {...props} />
+    </NotificationsPromptProvider>
+  );
 };
