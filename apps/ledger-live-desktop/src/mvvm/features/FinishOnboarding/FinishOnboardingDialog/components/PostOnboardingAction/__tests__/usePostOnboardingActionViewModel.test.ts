@@ -8,14 +8,6 @@ import { track } from "~/renderer/analytics/segment";
 const completeActionMock = jest.fn();
 const openActivationDrawerMock = jest.fn();
 
-jest.mock("~/renderer/analytics/segment", () => {
-  const actual = jest.requireActual("~/renderer/analytics/segment");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
-
 jest.mock("~/renderer/components/PostOnboardingHub/logic/useCompleteAction", () => ({
   useCompleteActionCallback: () => completeActionMock,
 }));
@@ -98,6 +90,23 @@ describe("usePostOnboardingActionViewModel", () => {
         completed: true,
         deviceModelId: DeviceModelId.nanoX,
         startAction,
+      }),
+    );
+    act(() => {
+      result.current.onRowActivate();
+    });
+    expect(startAction).not.toHaveBeenCalled();
+  });
+
+  it("should not call startAction when completion comes from getIsAlreadyCompletedByState", () => {
+    const startAction = jest.fn();
+    const { result } = renderHook(() =>
+      usePostOnboardingActionViewModel({
+        ...defaultActionProps,
+        completed: false,
+        deviceModelId: DeviceModelId.nanoX,
+        startAction,
+        getIsAlreadyCompletedByState: () => true,
       }),
     );
     act(() => {

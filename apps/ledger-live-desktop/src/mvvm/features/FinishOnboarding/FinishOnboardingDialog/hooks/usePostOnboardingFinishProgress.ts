@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { type PostOnboardingAction, type PostOnboardingActionState } from "@ledgerhq/types-live";
 import {
   EXCLUDED_FROM_FINISH_FLOW_ID,
