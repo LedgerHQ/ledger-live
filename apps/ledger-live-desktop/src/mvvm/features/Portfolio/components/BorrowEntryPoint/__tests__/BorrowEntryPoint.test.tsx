@@ -1,42 +1,35 @@
 import React from "react";
+import { t } from "i18next";
 import { render, screen } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { useBorrowEntryPointViewModel } from "../../../hooks/useBorrowEntryPointViewModel";
 import { BorrowEntryPoint } from "../index";
 
-const mockNavigate = jest.fn();
+jest.mock("../../../hooks/useBorrowEntryPointViewModel");
 
-jest.mock("react-router", () => ({
-  ...jest.requireActual("react-router"),
-  useNavigate: () => mockNavigate,
-}));
+const mockedUseBorrowEntryPointViewModel = jest.mocked(useBorrowEntryPointViewModel);
 
 describe("BorrowEntryPoint", () => {
-  beforeEach(() => jest.clearAllMocks());
+  const handleClick = jest.fn();
 
-  it("should render the borrow entry point card", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedUseBorrowEntryPointViewModel.mockReturnValue({ handleClick });
+  });
+
+  it("should render the borrow entry point card with translated content", () => {
     render(<BorrowEntryPoint />);
+
     expect(screen.getByTestId("portfolio-borrow-entry-point")).toBeVisible();
+    expect(screen.getByText(t("portfolio.borrowEntry.title"))).toBeVisible();
+    expect(screen.getByText(t("portfolio.borrowEntry.cardTitle"))).toBeVisible();
+    expect(screen.getByText(t("portfolio.borrowEntry.cardDescription"))).toBeVisible();
   });
 
-  it("should navigate to /borrow with returnTo state when clicked", async () => {
+  it("should call the view model handleClick when the CTA is clicked", async () => {
     const { user } = render(<BorrowEntryPoint />);
 
-    await user.click(screen.getByText("Explore"));
+    await user.click(screen.getByText(t("portfolio.borrowEntry.cta")));
 
-    expect(mockNavigate).toHaveBeenCalledWith("/borrow", {
-      state: { returnTo: "/" },
-    });
-  });
-
-  it("should track button_clicked event when clicked", async () => {
-    const { user } = render(<BorrowEntryPoint />);
-
-    await user.click(screen.getByText("Explore"));
-
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "borrow_entry_point",
-      flow: "borrow",
-      page: "Portfolio",
-    });
+    expect(handleClick).toHaveBeenCalledTimes(1);
   });
 });
