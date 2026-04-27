@@ -198,3 +198,5 @@ minimumReleaseAgeExclude:
   # TypeScript / Node types: new releases are often younger than minimumReleaseAge
   - typescript
   - "@types/node"
+  # hw-app-sui 0.8.0 fixes the mega-bundle issue (published same day)
+  - "@mysten/ledgerjs-hw-app-sui"

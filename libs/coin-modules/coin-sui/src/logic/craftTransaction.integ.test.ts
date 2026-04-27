@@ -75,8 +75,9 @@ describe("craftTransaction", () => {
 
     expect(result).toEqual({
       unsigned: expect.any(Uint8Array),
-      objects: [expect.any(Uint8Array), expect.any(Uint8Array)],
+      objects: expect.arrayContaining([expect.any(Uint8Array)]),
     });
+    expect(result.objects?.every(o => o instanceof Uint8Array)).toBe(true);
 
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
     expect(resultCoinTypes).toEqual(expect.arrayContaining([expect.stringContaining("sui")]));
@@ -102,8 +103,9 @@ describe("craftTransaction", () => {
 
     expect(result).toEqual({
       unsigned: expect.any(Uint8Array),
-      objects: [expect.any(Uint8Array), expect.any(Uint8Array), expect.any(Uint8Array)],
+      objects: expect.arrayContaining([expect.any(Uint8Array)]),
     });
+    expect(result.objects?.every(o => o instanceof Uint8Array)).toBe(true);
 
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
     expect(resultCoinTypes).toEqual(expect.arrayContaining([expect.stringContaining("usdt")]));

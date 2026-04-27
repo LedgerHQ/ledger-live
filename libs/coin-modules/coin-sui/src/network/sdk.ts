@@ -47,7 +47,7 @@ import type {
   SuiValidator,
   Transaction as TransactionType,
 } from "../types";
-import { ensureAddressFormat } from "../utils";
+import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
@@ -363,6 +363,7 @@ export const getOperationAmount = (
   transaction: SuiTransactionBlockResponse,
   coinType: string,
 ): BigNumber => {
+  const normalizedAddress = normalizeSuiAddressForComparison(address);
   const changes = getUnifiedBalanceChanges(transaction);
   let amount = new BigNumber(0);
   if (changes.length === 0) return amount;
@@ -378,7 +379,7 @@ export const getOperationAmount = (
     if (
       typeof balanceChange.owner !== "string" &&
       "AddressOwner" in balanceChange.owner &&
-      balanceChange.owner.AddressOwner === address
+      normalizeSuiAddressForComparison(balanceChange.owner.AddressOwner) === normalizedAddress
     ) {
       if (balanceChange.amount[0] === "-") {
         amount = balanceChange.coinType === coinType ? amount.minus(balanceChange.amount) : amount;
@@ -443,7 +444,7 @@ export const getOperationExtra = (
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
-  return new Date(parseInt(transaction.timestampMs!));
+  return new Date(Number(transaction.timestampMs ?? 0));
 };
 
 /**
