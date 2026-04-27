@@ -101,6 +101,12 @@ export interface EarnRoute {
   search: string;
 }
 
+export interface BorrowRoute {
+  type: "borrow";
+  path: string;
+  search: string;
+}
+
 export interface ManagerRoute {
   type: "myledger";
   installApp?: string;
@@ -207,6 +213,7 @@ export type DeeplinkRoute =
   | AddAccountRoute
   | BuyRoute
   | EarnRoute
+  | BorrowRoute
   | ManagerRoute
   | SwapRoute
   | BridgeRoute

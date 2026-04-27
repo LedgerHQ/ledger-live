@@ -308,6 +308,7 @@
     "exchange": "Buy / Sell",
     "swap": "Swap",
     "perps": "Perpetuals",
+    "borrow": "Borrow",
     "home": "Home",
     "refer": "Refer a friend",
     "lend": "Lend",
@@ -785,6 +786,9 @@
         }
       }
     }
+  },
+  "borrow": {
+    "pageHeader": "Borrow"
   },
   "exchange": {
     "pageHeader": "Buy or sell",
@@ -8360,6 +8364,12 @@
       "title": "Perpetuals",
       "description": "Trade with leverage",
       "cta": "Discover"
+    },
+    "borrowEntry": {
+      "title": "Loans",
+      "cardTitle": "Borrow Stablecoin",
+      "cardDescription": "Unlock liquidity",
+      "cta": "Explore"
     },
     "noDeviceTitle": "Your secure crypto wallet"
   },

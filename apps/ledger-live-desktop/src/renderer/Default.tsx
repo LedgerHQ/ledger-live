@@ -87,6 +87,7 @@ const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
+const Borrow = lazy(() => import("LLD/features/Borrow"));
 const Market40 = lazy(() => import("LLD/features/Market"));
 const Market = lazy(() => import("~/renderer/screens/market"));
 
@@ -270,6 +271,7 @@ const MainAppContent = ({
         <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
         <Route path="/platform/:appId" element={<LiveApp />} />
         <Route path="/earn/*" element={withSuspense(Earn)({})} />
+        <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
         <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
         <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
         <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
