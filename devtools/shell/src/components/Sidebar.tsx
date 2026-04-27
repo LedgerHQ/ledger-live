@@ -18,12 +18,18 @@ export function Sidebar({ categories, activeToolId, onSelectTool, onHome }: Side
   const { isExpanded, toggle, expand } = useAccordion<Category>({ mode: "single" });
   const [query, setQuery] = useState("");
 
-  // Expand a category if the tool id changes somewhere else
+  const activeCategory = useMemo(
+    () =>
+      activeToolId
+        ? (categories.find(({ tools }) => tools.some(t => t.id === activeToolId))?.category ?? null)
+        : null,
+    [activeToolId, categories],
+  );
+
+  // Tools can be activated from the Overview without going through the accordion, keep it in sync.
   useEffect(() => {
-    if (!activeToolId) return;
-    const match = categories.find(({ tools }) => tools.some(t => t.id === activeToolId));
-    if (match) expand(match.category);
-  }, [activeToolId, categories, expand]);
+    if (activeCategory) expand(activeCategory);
+  }, [activeCategory, expand]);
 
   const q = query.trim().toLowerCase();
   const isSearchActive = q.length > 0;
