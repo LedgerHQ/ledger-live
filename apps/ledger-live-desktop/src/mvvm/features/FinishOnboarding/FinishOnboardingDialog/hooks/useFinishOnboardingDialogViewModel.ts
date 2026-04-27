@@ -7,6 +7,7 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Account, type StartActionArgs } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { track } from "~/renderer/analytics/segment";
 import {
   closeFinishPostOnboarding,
   selectIsFinishPostOnboardingOpen,
@@ -61,13 +62,23 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
     usePostOnboardingFinishProgress(actionsState);
 
   const onGotIt = useCallback(() => {
+    track("button_clicked2", {
+      button: "Got it",
+      deviceModelId,
+      flow: "post-onboarding",
+    });
     dispatch(closeFinishPostOnboarding());
     dispatch(hidePostOnboardingWalletEntryPoint());
-  }, [dispatch]);
+  }, [deviceModelId, dispatch]);
 
   const onClose = useCallback(() => {
+    track("button_clicked2", {
+      button: "Close",
+      deviceModelId,
+      flow: "post-onboarding",
+    });
     dispatch(closeFinishPostOnboarding());
-  }, [dispatch]);
+  }, [deviceModelId, dispatch]);
 
   return useMemo(
     () => ({

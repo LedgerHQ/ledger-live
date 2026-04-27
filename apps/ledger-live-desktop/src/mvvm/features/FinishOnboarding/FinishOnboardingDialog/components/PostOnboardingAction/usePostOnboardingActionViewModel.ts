@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useDispatch } from "LLD/hooks/redux";
@@ -10,7 +10,6 @@ import { track } from "~/renderer/analytics/segment";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { AllModalNames } from "~/renderer/modals/types";
 import type { PostOnboardingActionProps, PostOnboardingActionViewProps } from "./types";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 const DEFAULT_TEST_ID = "post-onboarding-action";
 
@@ -42,15 +41,10 @@ export function usePostOnboardingActionViewModel(
     needEligibleDevice: true,
   });
 
-  const [isActionCompleted, setIsActionCompleted] = useState(false);
-  const initIsActionCompleted = useCallback(async () => {
+  const isActionCompleted = useMemo(() => {
     const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
-    setIsActionCompleted(completed || !!isAlreadyCompleted);
-  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
-
-  useEffect(() => {
-    initIsActionCompleted();
-  }, [initIsActionCompleted]);
+    return completed || !!isAlreadyCompleted;
+  }, [completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
   const completeAction = useCompleteActionCallback();
 
   const handleStartAction = useCallback(() => {
@@ -91,10 +85,10 @@ export function usePostOnboardingActionViewModel(
   ]);
 
   const onRowActivate = useCallback(() => {
-    if (completed) return;
+    if (isActionCompleted) return;
     handleStartAction();
     dispatch(closeFinishPostOnboarding());
-  }, [completed, dispatch, handleStartAction]);
+  }, [dispatch, handleStartAction, isActionCompleted]);
 
   return useMemo(
     () => ({

@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Update completion detectio rules
+Update completion detection rules
