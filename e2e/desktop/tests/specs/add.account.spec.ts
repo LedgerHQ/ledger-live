@@ -5,7 +5,6 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { verifyAddedFundedAccount } from "tests/utils/addAccountUtils";
 
 const currencies = [
   {
@@ -81,7 +80,16 @@ for (const currency of currencies) {
         }
 
         await app.portfolio.checkOperationHistory();
-        await verifyAddedFundedAccount(app, userdataFile, firstAccountName);
+        await app.portfolio.expectBalanceVisibility();
+        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(firstAccountName);
+        const operationStatus = await app.account.expectFundedAccountDetails(firstAccountName);
+        await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
+        await app.operationDrawer.closeDrawer();
+        await app.account.expectAddressIndex(0);
+        await app.account.expectShowMoreButton();
       },
     );
   });
@@ -127,25 +135,31 @@ test.describe("Add Accounts - Aleo", () => {
       await app.portfolio.clickAddAccountButton();
 
       const selector = await getModularSelector(app, "ASSET");
-      if (selector) {
-        await selector.validateItems();
-        await selector.selectAssetByTicker(Currency.ALEO);
-        await selector.selectNetwork(Currency.ALEO);
-        await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
-        await app.scanAccountsDrawer.clickAllowButton();
-        await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
-        await app.speculos.shareViewKey();
-        await app.scanAccountsDrawer.expectSuccessStepVisibility();
-        await app.scanAccountsDrawer.clickCloseButton();
-      } else {
-        await app.addAccount.expectModalVisibility();
-        await app.addAccount.selectCurrency(Currency.ALEO);
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
+      if (!selector) {
+        throw new Error("Expected modular selector for Aleo add-account flow");
       }
 
+      await selector.validateItems();
+      await selector.selectAssetByTicker(Currency.ALEO);
+      await selector.selectNetwork(Currency.ALEO);
+      await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
+      await app.scanAccountsDrawer.clickAllowButton();
+      await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
+      await app.speculos.shareViewKey();
+      await app.scanAccountsDrawer.expectSuccessStepVisibility();
+      await app.scanAccountsDrawer.clickCloseButton();
+
       await app.portfolio.checkOperationHistory();
-      await verifyAddedFundedAccount(app, userdataFile, firstAccountName);
+      await app.portfolio.expectBalanceVisibility();
+      await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(firstAccountName);
+      const operationStatus = await app.account.expectFundedAccountDetails(firstAccountName);
+      await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
+      await app.operationDrawer.closeDrawer();
+      await app.account.expectAddressIndex(0);
+      await app.account.expectShowMoreButton();
     },
   );
 });
