@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
-import { View } from "react-native";
 import { EventArg, NavigationState, useNavigation } from "@react-navigation/native";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { NotificationsPromptDrawer } from "LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawer";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";
 import useRatings from "~/logic/ratings";
@@ -63,11 +61,6 @@ const Modals = () => {
 
   return (
     <>
-      <FeatureToggle featureId="brazePushNotifications">
-        <View>
-          <NotificationsPromptDrawer />
-        </View>
-      </FeatureToggle>
       {activeRatings === "no-nps" && <RatingsModal />}
       {activeRatings === "nps" && <NpsRatingsModal />}
       <DebugAppLevelDrawer />

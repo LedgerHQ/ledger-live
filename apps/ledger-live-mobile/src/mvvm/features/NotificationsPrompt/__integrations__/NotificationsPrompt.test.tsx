@@ -1,17 +1,20 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { useNotifications } from "../hooks/useNotifications";
+import {
+  NotificationsPromptProvider,
+  NotificationsPromptWrapper,
+  setPushNotificationsDataOfUserInStorage,
+  useNotifications,
+} from "LLM/features/NotificationsPrompt";
 
 import storage from "LLM/storage";
 import { add, sub, type Duration } from "date-fns";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { NotificationsPromptDrawer } from "../screens/NotificationsPromptDrawer";
-import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 import { NotificationsState } from "~/reducers/types";
 
 // Mock QueuedDrawer to bypass animation issues with Reanimated 4 in tests
-jest.mock("~/components/QueuedDrawer", () => {
+jest.mock("LLM/components/QueuedDrawer", () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require("react");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -134,10 +137,10 @@ describe("NotificationsPrompt Integration", () => {
     }
 
     const rendered = render(
-      <>
-        <NotificationsPromptDrawer />
+      <NotificationsPromptProvider>
         <SetupComponent />
-      </>,
+        <NotificationsPromptWrapper />
+      </NotificationsPromptProvider>,
       {
         overrideInitialState: withFlagOverrides(
           {
@@ -176,34 +179,40 @@ describe("NotificationsPrompt Integration", () => {
                     timer: 0,
                   },
                 },
-                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({ months: 0, hours: 0, minutes: 0, seconds: 0, days: "days" in s ? s.days : 0 })),
+                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({
+                  months: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                  days: "days" in s ? s.days : 0,
+                })),
 
-                  notificationsCategories: [
-                    {
-                      displayed: true,
-                      category: "announcementsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "recommendationsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "largeMoverCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "transactionsAlertsCategory",
-                    },
-                    {
-                      displayed: true,
-                      category: "totalMarketCap",
-                    },
-                    {
-                      displayed: true,
-                      category: "topGainersLosers",
-                    },
-                  ],
+                notificationsCategories: [
+                  {
+                    displayed: true,
+                    category: "announcementsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "recommendationsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "largeMoverCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "transactionsAlertsCategory",
+                  },
+                  {
+                    displayed: true,
+                    category: "totalMarketCap",
+                  },
+                  {
+                    displayed: true,
+                    category: "topGainersLosers",
+                  },
+                ],
 
                 inactivity_enabled: true,
                 inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },

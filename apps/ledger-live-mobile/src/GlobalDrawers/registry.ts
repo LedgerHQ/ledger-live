@@ -2,6 +2,7 @@ import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 import ReceiveDrawerWrapper from "LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer";
 import RebornBuyDeviceDrawer from "LLM/features/Reborn/drawers/RebornBuyDeviceDrawer";
 import { DeeplinkInstallAppDrawer } from "LLM/features/DeeplinkInstallApp";
+import { NotificationsPromptWrapper } from "LLM/features/NotificationsPrompt";
 
 /**
  * Registry of all global drawers in the application.
@@ -24,6 +25,9 @@ export const DRAWER_REGISTRY = {
   },
   deeplinkInstallApp: {
     component: DeeplinkInstallAppDrawer,
+  },
+  notificationsPrompt: {
+    component: NotificationsPromptWrapper,
   },
 } as const satisfies Record<string, DrawerRegistryEntry>;
 

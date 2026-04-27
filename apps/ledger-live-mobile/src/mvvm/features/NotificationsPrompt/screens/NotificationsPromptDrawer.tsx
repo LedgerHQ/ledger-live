@@ -2,9 +2,9 @@ import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
-import QueuedDrawer from "~/components/QueuedDrawer";
-import { NotificationsDrawerIllustration } from "../components/NotificationsDrawerIllustration";
-import { NotificationsPromptContent } from "../components/NotificationsPromptContent";
+import QueuedDrawer from "LLM/components/QueuedDrawer";
+import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
+import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 

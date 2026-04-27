@@ -1,3 +1,5 @@
+import type { AuthorizationStatus } from "@react-native-firebase/messaging";
+
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
   dismissedOptInDrawerAtList?: number[];
@@ -11,3 +13,15 @@ export type DataOfUser = {
   /** Whether or not the user clicked on the "Maybe later" cta */
   alreadyDelayedToLater?: boolean;
 };
+
+export type InitPushNotificationsDataResult =
+  | {
+      status: "success";
+      storedUserData: DataOfUser | null;
+      osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+      areAppNotificationsEnabled: boolean;
+    }
+  | {
+      status: "error";
+      reason: string;
+    };

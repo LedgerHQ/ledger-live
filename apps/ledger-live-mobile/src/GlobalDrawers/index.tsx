@@ -1,5 +1,6 @@
 import React from "react";
 import { DRAWER_ENTRIES } from "./registry";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 type GlobalDrawersProps = Readonly<{
   children: React.JSX.Element;
@@ -37,12 +38,12 @@ type GlobalDrawersProps = Readonly<{
 
 function GlobalDrawers({ children }: GlobalDrawersProps) {
   return (
-    <>
+    <NotificationsPromptProvider>
       {children}
       {DRAWER_ENTRIES.map(({ key, component: DrawerWrapper }) => (
         <DrawerWrapper key={key} />
       ))}
-    </>
+    </NotificationsPromptProvider>
   );
 }
 
