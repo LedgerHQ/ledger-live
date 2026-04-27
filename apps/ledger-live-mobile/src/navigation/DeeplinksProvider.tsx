@@ -822,10 +822,7 @@ export const DeeplinksProvider = ({
             return getStateFromPath(pathWithParams, config);
           }
 
-          if (hostname === "product-tour") {
-            if (!isProductTourEligible) {
-              return undefined;
-            }
+          if (hostname === "product-tour" && isProductTourEligible) {
             dispatch(tickProductTourDeeplink());
             return getStateFromPath("portfolio", config);
           }

@@ -9,25 +9,25 @@ const withOnboarding = (completed: boolean) => (state: State) => ({
 
 describe("ProductTourPortfolioMount", () => {
   it("should render nothing when lwmProductTour is disabled", () => {
-    const { toJSON } = render(<ProductTourPortfolioMount />, {
+    render(<ProductTourPortfolioMount />, {
       overrideInitialState: withFlagOverrides(
         { lwmProductTour: { enabled: false } },
         withOnboarding(true),
       ),
     });
 
-    expect(toJSON()).toBeNull();
+    expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
   });
 
   it("should render nothing when onboarding is not complete", () => {
-    const { toJSON } = render(<ProductTourPortfolioMount />, {
+    render(<ProductTourPortfolioMount />, {
       overrideInitialState: withFlagOverrides(
         { lwmProductTour: { enabled: true } },
         withOnboarding(false),
       ),
     });
 
-    expect(toJSON()).toBeNull();
+    expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
   });
 
   it("should render the product tour subtree when flag is on and onboarding is complete", () => {

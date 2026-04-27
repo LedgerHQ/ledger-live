@@ -21,7 +21,7 @@ import reducer, {
 } from "../appstate";
 import type { State } from "../types";
 
-describe("appstate reducer smoke", () => {
+describe("appstate reducer", () => {
   it("should set debugMenuVisible when openDebugMenu is dispatched", () => {
     expect(reducer(INITIAL_STATE, openDebugMenu()).debugMenuVisible).toBe(true);
   });
