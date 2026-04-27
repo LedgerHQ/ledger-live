@@ -39,7 +39,6 @@ export function RecoverPlayer({ navigation, route }: Props) {
     platform: appId,
     device,
     fromOnboarding,
-    recoverDeeplinkAt,
     date: recoverReloadDate,
     ...params
   } = route.params || {};
@@ -99,7 +98,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
     <>
       <TrackScreen category="Platform" name="App" />
       <WebRecoverPlayer
-        key={`${manifest.id}-${recoverDeeplinkAt ?? ""}-${recoverReloadDate ?? ""}`}
+        key={`${manifest.id}-${recoverReloadDate ?? ""}`}
         manifest={manifest}
         inputs={{
           devModeEnabled,
