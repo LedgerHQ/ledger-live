@@ -1,0 +1,33 @@
+import { fireEvent, render, screen } from "@testing-library/react";
+import { ToolShell } from "../../components/ToolShell";
+import { Category } from "../../types";
+
+const baseTool = {
+  id: "feature-flags",
+  label: "Feature Flags",
+  category: Category.CONFIGURATION,
+};
+
+describe("ToolShell", () => {
+  it("renders the tool label", () => {
+    render(<ToolShell tool={baseTool} onBack={jest.fn()} />);
+    expect(screen.getByRole("heading", { name: "Feature Flags" })).toBeInTheDocument();
+  });
+
+  it("calls onBack when the breadcrumb is clicked", () => {
+    const onBack = jest.fn();
+    render(<ToolShell tool={baseTool} onBack={onBack} />);
+    fireEvent.click(screen.getByRole("button", { name: "Configuration / feature-flags" }));
+    expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders the description when provided", () => {
+    render(<ToolShell tool={{ ...baseTool, desc: "Manage feature flags" }} onBack={jest.fn()} />);
+    expect(screen.getByText("Manage feature flags")).toBeInTheDocument();
+  });
+
+  it("renders the owner tag when provided", () => {
+    render(<ToolShell tool={{ ...baseTool, owner: "wallet-api" }} onBack={jest.fn()} />);
+    expect(screen.getByText("wallet-api")).toBeInTheDocument();
+  });
+});
