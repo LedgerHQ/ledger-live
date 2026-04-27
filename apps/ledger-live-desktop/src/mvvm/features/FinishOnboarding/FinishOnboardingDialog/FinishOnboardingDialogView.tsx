@@ -59,7 +59,6 @@ const FinishOnboardingDialogView = ({
           */}
           <PostOnboardingAction
             key={PostOnboardingActionId.deviceOnboarded}
-            buttonLabelForAnalyticsEvent=""
             completed
             description=""
             deviceModelId={deviceModelId}
@@ -72,7 +71,7 @@ const FinishOnboardingDialogView = ({
           {actions.map(action => (
             <PostOnboardingAction
               key={action.id}
-              buttonLabelForAnalyticsEvent={action.buttonLabelForAnalyticsEvent ?? ""}
+              buttonLabelForAnalyticsEvent={action.buttonLabelForAnalyticsEvent}
               completed={action.completed}
               description={action.description ?? ""}
               deviceModelId={deviceModelId}

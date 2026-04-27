@@ -16,7 +16,6 @@ describe("PostOnboardingAction integration", () => {
         lumenSymbol={getLumenSymbolForActionId(PostOnboardingActionId.assetsTransfer)}
         deviceModelId={null}
         startAction={() => {}}
-        buttonLabelForAnalyticsEvent=""
         shouldCompleteOnStart={false}
       />,
     );
