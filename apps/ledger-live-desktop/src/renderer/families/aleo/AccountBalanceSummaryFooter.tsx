@@ -123,7 +123,11 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     progress: hookProgress,
     start: handleStart,
     stop: handleStop,
-  } = useAleoPrivateSync({ account });
+  } = useAleoPrivateSync({
+    account,
+    autoStart: account.type === "Account" && !account.aleoResources?.lastPrivateSyncDate,
+    keepAliveOnUnmount: true,
+  });
 
   const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
