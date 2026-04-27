@@ -112,10 +112,8 @@ export const WebPTXPlayer = ({
   }, [config.screen, isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    if (webviewState.canGoBack) {
-      webview.goBack();
+    if (webviewState.canGoBack && webviewAPIRef?.current) {
+      webviewAPIRef.current.goBack();
       return true; // prevent default behavior (native navigation)
     }
 
