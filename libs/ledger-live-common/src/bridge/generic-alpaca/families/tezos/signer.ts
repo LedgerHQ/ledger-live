@@ -1,9 +1,25 @@
-import Tezos from "@ledgerhq/hw-app-tezos";
+import Tezos, { type Curve, TezosCurves } from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";
-import { DerivationType, LedgerSigner as TaquitoLedgerSigner } from "@taquito/ledger-signer";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import type { AlpacaSigner } from "../../types";
 import { CreateSigner, executeWithSigner } from "../../../setup";
-import resolver from "../../../../families/tezos/getAddress";
+
+type TezosDerivationMode = GetAddressOptions["derivationMode"] | undefined;
+
+type TezosAlpacaSigner = Tezos & {
+  signTransaction(
+    path: string,
+    rawTxHex: string,
+    options?: { derivationMode?: TezosDerivationMode },
+  ): Promise<string>;
+  getAddress(
+    path: string,
+    options?: { verify?: boolean; derivationMode?: TezosDerivationMode },
+  ): ReturnType<Tezos["getAddress"]>;
+};
 
 /**
  * Converts a DER-encoded secp256k1 ECDSA signature (returned by the Tezos Ledger app)
@@ -34,47 +50,65 @@ export function normalizeTo32Bytes(bytes: Buffer): Buffer {
   return bytes;
 }
 
-function curveForDerivationMode(derivationMode?: string): DerivationType {
-  return derivationMode === "tezosSecp256k1" ? DerivationType.SECP256K1 : DerivationType.ED25519;
+function curveForDerivationMode(derivationMode?: TezosDerivationMode): Curve {
+  switch (derivationMode) {
+    case undefined:
+    case "":
+    case "galleonL":
+    case "tezbox":
+    case "tezboxL":
+    case "tezosbip44h":
+      return TezosCurves.ED25519;
+    case "tezosSecp256k1":
+      return TezosCurves.SECP256K1;
+    default:
+      throw new Error(`Unsupported Tezos derivation mode: ${derivationMode}`);
+  }
 }
 
-const createSignerTezos: CreateSigner<
-  Tezos & {
-    createLedgerSigner: (
-      path: string,
-      prompt: boolean,
-      derivationType: number,
-    ) => TaquitoLedgerSigner;
-  }
-> = (transport: Transport) => {
+export const createSignerTezos: CreateSigner<TezosAlpacaSigner> = (transport: Transport) => {
   const tezos = new Tezos(transport);
+  const getLedgerAddress = tezos.getAddress.bind(tezos);
+  const signLedgerOperation = tezos.signOperation.bind(tezos);
   // align with genericSignOperation that calls signer.signTransaction
   return Object.assign(tezos, {
-    async signTransaction(path: string, rawTxHex: string, options?: { derivationMode?: string }) {
+    async signTransaction(
+      path: string,
+      rawTxHex: string,
+      options?: { derivationMode?: TezosDerivationMode },
+    ) {
       const curve = curveForDerivationMode(options?.derivationMode);
-      const { signature } = await tezos.signOperation(path, rawTxHex, { curve });
+      const { signature } = await signLedgerOperation(path, rawTxHex, { curve });
       return convertSecp256k1DERToRaw(signature);
     },
-    async getAddress(path: string, options: { verify?: boolean; derivationMode?: string } = {}) {
+    async getAddress(
+      path: string,
+      options: { verify?: boolean; derivationMode?: TezosDerivationMode } = {},
+    ) {
       const curve = curveForDerivationMode(options.derivationMode);
-      const ledgerSigner = new TaquitoLedgerSigner(transport, path, !!options.verify, curve);
-      const address = await ledgerSigner.publicKeyHash();
-      const publicKey = await ledgerSigner.publicKey();
-      return { path, address, publicKey };
-    },
-    createLedgerSigner(path: string, prompt: boolean, derivationType: number) {
-      // Map 0 -> ED25519, 1 -> SECP256K1, 2 -> P256 by convention
-      let dt: DerivationType = DerivationType.ED25519;
-      if (derivationType === 1) dt = DerivationType.SECP256K1;
-      else if (derivationType === 2) dt = DerivationType.P256;
-      return new TaquitoLedgerSigner(transport, path, prompt, dt);
+      const result = await getLedgerAddress(path, { verify: !!options.verify, curve });
+      return {
+        ...result,
+        publicKey:
+          normalizePublicKeyForAddress(result.publicKey, result.address) || result.publicKey,
+      };
     },
   });
 };
 
 export const context = executeWithSigner(createSignerTezos);
 
+const getAddress = (signerContext: SignerContext<TezosAlpacaSigner>): GetAddressFn => {
+  return async (deviceId: string, { path, verify, derivationMode }: GetAddressOptions) => {
+    const result = await signerContext(deviceId, signer =>
+      signer.getAddress(path, { verify, derivationMode }),
+    );
+
+    return { ...result, path };
+  };
+};
+
 export default {
   context,
-  getAddress: resolver(context),
+  getAddress: getAddress(context),
 } satisfies AlpacaSigner;

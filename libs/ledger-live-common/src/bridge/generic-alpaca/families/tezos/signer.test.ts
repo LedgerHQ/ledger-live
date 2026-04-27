@@ -1,4 +1,19 @@
-import { convertSecp256k1DERToRaw, normalizeTo32Bytes } from "./signer";
+import Tezos from "@ledgerhq/hw-app-tezos";
+import type Transport from "@ledgerhq/hw-transport";
+import { convertSecp256k1DERToRaw, createSignerTezos, normalizeTo32Bytes } from "./signer";
+
+jest.mock("@ledgerhq/hw-app-tezos", () => ({
+  __esModule: true,
+  default: jest.fn(),
+  TezosCurves: {
+    ED25519: 0,
+    SECP256K1: 1,
+    SECP256R1: 2,
+  },
+}));
+
+const MockedTezos = jest.mocked(Tezos);
+const mockTransport: Transport = Object.create(null);
 
 // DER encoding helpers
 function buildDer(r: Buffer, s: Buffer): string {
@@ -18,8 +33,6 @@ describe("normalizeTo32Bytes", () => {
     const payload = Buffer.alloc(31, 0xab);
     const input = Buffer.concat([Buffer.from([0x00]), payload]);
     expect(input.length).toBe(32);
-    // 33-byte with 0x00 prefix
-    const with0x00 = Buffer.concat([Buffer.from([0x00]), payload]);
     const padded33 = Buffer.concat([Buffer.from([0x00]), Buffer.alloc(32, 0xab)]);
     const result = normalizeTo32Bytes(padded33);
     expect(result.length).toBe(32);
@@ -95,5 +108,82 @@ describe("convertSecp256k1DERToRaw", () => {
     sShort.copy(expectedS, 31);
     expect(result).toBe(r32.toString("hex") + expectedS.toString("hex"));
     expect(result.length).toBe(128);
+  });
+});
+
+describe("createSignerTezos", () => {
+  let mockGetAddress: jest.Mock;
+  let mockSignOperation: jest.Mock;
+
+  beforeEach(() => {
+    mockGetAddress = jest.fn().mockResolvedValue({
+      address: "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL",
+      publicKey: "edpkuidtssPLLHKZCo9uKDGy4nnXKeBn1Kv5h4DdWZ3d8G5tcUBy4B",
+    });
+    mockSignOperation = jest.fn().mockResolvedValue({
+      signature: Buffer.alloc(64, 0xcc).toString("hex"),
+    });
+    MockedTezos.mockImplementation(() => {
+      const tezos = Object.create(Tezos.prototype);
+      tezos.getAddress = mockGetAddress;
+      tezos.signOperation = mockSignOperation;
+      return tezos;
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("gets an ED25519 address from hw-app-tezos by default", async () => {
+    const signer = createSignerTezos(mockTransport);
+
+    await expect(signer.getAddress("44'/1729'/0'/0'")).resolves.toEqual({
+      address: "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL",
+      publicKey: "edpkuidtssPLLHKZCo9uKDGy4nnXKeBn1Kv5h4DdWZ3d8G5tcUBy4B",
+    });
+
+    expect(mockGetAddress).toHaveBeenCalledWith("44'/1729'/0'/0'", { verify: false, curve: 0 });
+  });
+
+  it("forwards verify and SECP256K1 curve for tezosSecp256k1 derivation", async () => {
+    const signer = createSignerTezos(mockTransport);
+
+    await signer.getAddress("44'/1729'/0'", { verify: true, derivationMode: "tezosSecp256k1" });
+
+    expect(mockGetAddress).toHaveBeenCalledWith("44'/1729'/0'", { verify: true, curve: 1 });
+  });
+
+  it("should normalize hex public keys returned by hw-app-tezos", async () => {
+    mockGetAddress.mockResolvedValueOnce({
+      address: "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3",
+      publicKey: "03576c19462a7d0cc3d121b1b00e92258b5f71d643c99a599fc1683f03abb7a1c2",
+    });
+    const signer = createSignerTezos(mockTransport);
+
+    await expect(
+      signer.getAddress("44'/1729'/0'", { derivationMode: "tezosSecp256k1" }),
+    ).resolves.toEqual({
+      address: "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3",
+      publicKey: "sppk7but7h93Ws1XhAPvdBcttVmoBDGHxdpaU8dPy5549f3eLJFAjag",
+    });
+  });
+
+  it("should reject unsupported derivation modes instead of falling back to ED25519", async () => {
+    const signer = createSignerTezos(mockTransport);
+
+    await expect(signer.getAddress("44'/1729'/0'", { derivationMode: "ethM" })).rejects.toThrow(
+      "Unsupported Tezos derivation mode: ethM",
+    );
+  });
+
+  it("signs operations with the matching Tezos curve", async () => {
+    const signer = createSignerTezos(mockTransport);
+
+    await expect(
+      signer.signTransaction("44'/1729'/0'", "deadbeef", { derivationMode: "tezosSecp256k1" }),
+    ).resolves.toBe(Buffer.alloc(64, 0xcc).toString("hex"));
+
+    expect(mockSignOperation).toHaveBeenCalledWith("44'/1729'/0'", "deadbeef", { curve: 1 });
   });
 });
