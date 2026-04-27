@@ -77,6 +77,11 @@ export const ListItemDescription = ({ children }: { children?: React.ReactNode }
 
 export const ListItemTrailing = ({ children }: { children?: React.ReactNode }) => <>{children}</>;
 
-export const Tag = ({ label }: { label: string; appearance?: string; size?: string; className?: string }) => (
-  <span>{label}</span>
-);
+export const Tag = ({
+  label,
+}: {
+  label: string;
+  appearance?: string;
+  size?: string;
+  className?: string;
+}) => <span>{label}</span>;

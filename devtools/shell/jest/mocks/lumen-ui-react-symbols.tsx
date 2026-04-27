@@ -14,3 +14,5 @@ export const Bug = MockIcon;
 export const Information = MockIcon;
 export const SpeedFast = MockIcon;
 export const Planet = MockIcon;
+export const Star = MockIcon;
+export const Clock = MockIcon;

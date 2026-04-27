@@ -25,7 +25,7 @@ export function ToolRow({ title, description, owner, trailing, onClick, isActive
         density="compact"
         onClick={onClick}
         aria-current={isActive ? "page" : undefined}
-        className={isActive ? "bg-active/10 rounded-md" : "rounded-md"}
+        className={`rounded-md ${isActive ? "bg-active/10" : ""}`}
       >
         {isActive && (
           <ListItemLeading className="absolute left-2 top-2 bottom-2" aria-hidden="true">
