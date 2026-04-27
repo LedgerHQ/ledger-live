@@ -1321,6 +1321,13 @@
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
   },
+  "borrow": {
+    "title": "Borrow",
+    "appNotFound": "Borrow app not found",
+    "infoModal": {
+      "close": "Close"
+    }
+  },
   "earn": {
     "deposit": {
       "protocolInfoModal": {
@@ -2742,6 +2749,12 @@
     "perpsEntry": {
       "title": "Perpetuals",
       "description": "Trade with leverage"
+    },
+    "borrowEntry": {
+      "title": "Loans",
+      "cardTitle": "Borrow Stablecoin",
+      "cardDescription": "Unlock liquidity",
+      "cta": "Explore"
     },
     "recommended": {
       "title": "Recommended"
