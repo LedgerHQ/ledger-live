@@ -340,6 +340,9 @@
     "lint:fix": {
       "cache": false
     },
+    "check-export-rules": {
+      "cache": false
+    },
     "typecheck": {
       "dependsOn": [
         "^build"
