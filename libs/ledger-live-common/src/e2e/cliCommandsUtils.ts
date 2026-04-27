@@ -200,6 +200,26 @@ export const approveTokenCommand = async (
   return await result;
 };
 
+export const revokeTokenCommand = async (account: TokenAccount, spender: string) => {
+  const original = setDisableTransactionBroadcastEnv("0");
+
+  const result = runCliTokenApproval({
+    currency: account.currency.speculosApp.name,
+    index: account.index,
+    spender,
+    token: account.currency.id,
+    mode: "revokeApproval",
+    waitConfirmation: true,
+  });
+
+  try {
+    await approveToken();
+  } finally {
+    setDisableTransactionBroadcastEnv(original);
+  }
+  return await result;
+};
+
 const ENV_KEY = "DISABLE_TRANSACTION_BROADCAST";
 
 export function setDisableTransactionBroadcastEnv(value: string | undefined): string | undefined {

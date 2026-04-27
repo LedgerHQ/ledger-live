@@ -15,6 +15,7 @@ import BigNumber from "bignumber.js";
 import {
   approveTokenCommand,
   isTokenAllowanceSufficientCommand,
+  revokeTokenCommand,
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getEnv } from "@ledgerhq/live-env";
@@ -581,6 +582,20 @@ export class SwapPage extends WebViewAppPage {
         new BigNumber(minAmount).times(12).div(10).toFixed(),
       );
       await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+    } finally {
+      await cleanSpeculos(speculos, previousSpeculosPort);
+    }
+  }
+
+  @step("Ensure token approval")
+  async revokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
+    if (!provider.contractAddress || !fromAccount.parentAccount) return;
+
+    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
+    try {
+      const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
+      await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
     } finally {
       await cleanSpeculos(speculos, previousSpeculosPort);
     }

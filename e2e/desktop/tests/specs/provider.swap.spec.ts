@@ -75,7 +75,8 @@ for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-        await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
+        //await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
+        await app.swap.revokeTokenApproval(fromAccount, provider);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
