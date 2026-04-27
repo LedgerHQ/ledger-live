@@ -16,6 +16,7 @@ module.exports = {
       },
     ],
   },
+  moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   testPathIgnorePatterns: ["\\.native\\.test\\."],
   moduleNameMapper: {
     "^@ledgerhq/lumen-ui-react$": "<rootDir>/jest/mocks/lumen-ui-react.tsx",
