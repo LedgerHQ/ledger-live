@@ -21,7 +21,7 @@ export function Sidebar({ categories, activeToolId, onSelectTool, onHome }: Side
   const activeCategory = useMemo(
     () =>
       activeToolId
-        ? (categories.find(({ tools }) => tools.some(t => t.id === activeToolId))?.category ?? null)
+        ? categories.find(({ tools }) => tools.some(t => t.id === activeToolId))?.category ?? null
         : null,
     [activeToolId, categories],
   );

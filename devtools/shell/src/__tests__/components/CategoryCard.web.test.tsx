@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { CategoryCard } from "../../components/CategoryCard";
+import { CategoryCard } from "../../components/CategoryCard.web";
 import { Category } from "../../types";
 
 const tool = { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION };

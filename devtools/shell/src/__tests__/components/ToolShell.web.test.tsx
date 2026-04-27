@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { ToolShell } from "../../components/ToolShell";
+import { ToolShell } from "../../components/ToolShell.web";
 import { Category } from "../../types";
 
 const baseTool = {

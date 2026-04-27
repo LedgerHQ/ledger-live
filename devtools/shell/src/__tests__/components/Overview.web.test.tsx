@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { Overview } from "../../components/Overview";
+import { Overview } from "../../components/Overview.web";
 import { Category } from "../../types";
 
 const categories = [

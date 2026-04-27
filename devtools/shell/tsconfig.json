@@ -5,7 +5,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "customConditions": [],
+    "moduleSuffixes": [".web", ""],
     "jsx": "react-jsx",
     "noEmit": true,
     "types": ["jest"]
