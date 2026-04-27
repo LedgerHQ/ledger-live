@@ -12,6 +12,7 @@ import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
@@ -366,6 +367,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
+  [NavigatorName.AssetDetail]?: NavigatorScreenParams<AssetDetailNavigatorParamsList>;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
   [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;

@@ -95,6 +95,7 @@ import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
+import AssetDetailNavigator from "LLM/features/AssetDetail/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
@@ -709,6 +710,12 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
+
+        <Stack.Screen
+          name={NavigatorName.AssetDetail}
+          component={AssetDetailNavigator}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={NavigatorName.Analytics}

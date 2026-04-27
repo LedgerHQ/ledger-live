@@ -4,8 +4,8 @@ import { Box, Text, Switch, Button, Tag, Divider } from "@ledgerhq/lumen-ui-rnat
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { ScreenName } from "~/const";
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
+import { BaseNavigation, StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import SettingsRow from "~/components/SettingsRow";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -15,6 +15,7 @@ import { useWallet40ViewModel, WALLET_40_PARAMS } from "./useWallet40ViewModel";
 
 export default function DebugWallet40() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const rootNavigation = useNavigation<BaseNavigation>();
   const dispatch = useDispatch();
   const lwmProductTour = useFeature("lwmProductTour");
   const productTourCompleted = useSelector(productTourCompletedSelector);
@@ -192,6 +193,19 @@ export default function DebugWallet40() {
             </Box>
           </Box>
         </Box>
+
+        <SettingsRow
+          title="Asset Detail"
+          desc="Open asset detail screen with Bitcoin"
+          iconLeft={<IconsLegacy.CoinsMedium size={24} color="black" />}
+          arrowRight
+          onPress={() =>
+            rootNavigation.navigate(NavigatorName.AssetDetail, {
+              screen: ScreenName.AssetDetail,
+              params: { currencyId: "bitcoin" },
+            })
+          }
+        />
 
         <SettingsRow
           title="Wallet V4 Tour"
