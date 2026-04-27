@@ -8,6 +8,10 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
 import { useTranslation } from "~/context/Locale";
+import DelegationStarted from "./01-Started";
+import SelectValidator from "./SelectValidator";
+import DelegationValidationError from "./04-ValidationError";
+import DelegationValidationSuccess from "./04-ValidationSuccess";
 import type { EvmDelegationFlowParamList } from "./types";
 
 const Stack = createNativeStackNavigator<EvmDelegationFlowParamList>();
@@ -26,6 +30,21 @@ function DelegationFlow() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
+      <Stack.Screen
+        name={ScreenName.EvmDelegationStarted}
+        component={DelegationStarted}
+        options={{
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationValidatorSelect}
+        component={SelectValidator}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
+        }}
+      />
       <Stack.Screen
         name={ScreenName.EvmDelegationSelectDevice}
         component={SelectDevice}
@@ -56,6 +75,24 @@ function DelegationFlow() {
               })}
             />
           ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationValidationError}
+        component={DelegationValidationError}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationValidationSuccess}
+        component={DelegationValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
+          gestureEnabled: false,
         }}
       />
     </Stack.Navigator>
