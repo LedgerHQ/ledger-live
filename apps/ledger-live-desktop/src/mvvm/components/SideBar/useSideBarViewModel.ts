@@ -44,7 +44,6 @@ const SIDEBAR_NAV_REGISTRY = {
   handleClickManager: { path: "/manager", trackEntry: "manager" },
   handleClickExchange: { path: "/exchange", trackEntry: "exchange" },
   handleClickPerps: { path: "/perps", trackEntry: "perps" },
-  handleClickBorrow: { path: "/borrow", trackEntry: "borrow" },
   handleClickCard: { path: "/card", trackEntry: "card" },
 } as const;
 
