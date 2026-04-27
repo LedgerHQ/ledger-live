@@ -144,6 +144,8 @@ android {
             // Needed for Braze
             force 'androidx.fragment:fragment:1.3.6'
         }
+        // Keep Robolectric off app/androidTest classpaths: causes crashe on Detox debug mode.
+        exclude group: 'org.robolectric'
     }
 
     splits {
