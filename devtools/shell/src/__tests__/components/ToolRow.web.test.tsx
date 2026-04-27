@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { ToolRow } from "../../components/ToolRow";
+import { ToolRow } from "../../components/ToolRow.web";
 
 describe("ToolRow", () => {
   it("renders the title", () => {
