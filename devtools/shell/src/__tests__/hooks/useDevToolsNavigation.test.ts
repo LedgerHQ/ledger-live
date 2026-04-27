@@ -9,10 +9,10 @@ const tools: Tool[] = [
 ];
 
 describe("useDevToolsNavigation", () => {
-  it("includes all Category enum values, even empty ones", () => {
+  it("only includes categories that have at least one tool", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
     const categories = result.current.categories.map(c => c.category);
-    expect(categories).toEqual(Object.values(Category));
+    expect(categories).toEqual([Category.CONFIGURATION, Category.CONNECTIVITY]);
   });
 
   it("groups tools under the correct category", () => {
@@ -22,10 +22,10 @@ describe("useDevToolsNavigation", () => {
     expect(config?.tools.map(t => t.label)).toEqual(["Feature Flags", "Another Tool"]);
   });
 
-  it("returns an empty tools array for categories with no tools", () => {
+  it("excludes categories with no tools", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
     const generators = result.current.categories.find(c => c.category === Category.GENERATORS);
-    expect(generators?.tools).toHaveLength(0);
+    expect(generators).toBeUndefined();
   });
 
   it("starts with no active tool", () => {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Category } from "../types";
 import type { Tool } from "../types";
 
@@ -7,10 +7,12 @@ export const useDevToolsNavigation = (tools: Tool[]) => {
 
   const categories = useMemo(
     () =>
-      Object.values(Category).map(category => ({
-        category,
-        tools: tools.filter(t => t.category === category),
-      })),
+      Object.values(Category)
+        .map(category => ({
+          category,
+          tools: tools.filter(t => t.category === category),
+        }))
+        .filter(({ tools }) => tools.length > 0),
     [tools],
   );
 
@@ -19,5 +21,7 @@ export const useDevToolsNavigation = (tools: Tool[]) => {
     [tools, activeToolId],
   );
 
-  return { activeToolId, setActiveToolId, activeTool, categories };
+  const clearActiveTool = useCallback(() => setActiveToolId(null), []);
+
+  return { activeToolId, setActiveToolId, clearActiveTool, activeTool, categories };
 };

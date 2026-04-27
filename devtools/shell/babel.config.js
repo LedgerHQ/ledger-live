@@ -1,4 +1,2 @@
-module.exports = {
-  presets: ["module:@react-native/babel-preset"],
-  plugins: ["@babel/plugin-transform-export-namespace-from"],
-};
+export const presets = ["module:@react-native/babel-preset"];
+export const plugins = ["@babel/plugin-transform-export-namespace-from"];
