@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { CategoryRow } from "../../components/CategoryRow";
+import { CategoryRow } from "../../components/CategoryRow.web";
 import { Category } from "../../types";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
 

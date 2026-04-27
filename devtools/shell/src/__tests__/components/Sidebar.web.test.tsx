@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { Sidebar } from "../../components/Sidebar";
+import { Sidebar } from "../../components/Sidebar.web";
 import { Category } from "../../types";
 
 const categories = [
@@ -9,7 +9,9 @@ const categories = [
   },
   {
     category: Category.CONNECTIVITY,
-    tools: [{ id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY }],
+    tools: [
+      { id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY },
+    ],
   },
 ];
 
