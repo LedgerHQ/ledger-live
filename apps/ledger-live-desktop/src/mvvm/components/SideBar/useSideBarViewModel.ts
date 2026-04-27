@@ -96,10 +96,6 @@ function createNavHandlers(
       push(registry.handleClickPerps.path);
       trackEntry(registry.handleClickPerps.trackEntry);
     },
-    handleClickBorrow: () => {
-      push(registry.handleClickBorrow.path);
-      trackEntry(registry.handleClickBorrow.trackEntry);
-    },
     handleClickCard: () => {
       push(registry.handleClickCard.path);
       trackEntry(registry.handleClickCard.trackEntry);

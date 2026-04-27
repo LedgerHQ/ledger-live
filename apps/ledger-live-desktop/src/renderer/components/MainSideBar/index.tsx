@@ -231,7 +231,6 @@ const MainSideBar = () => {
     handleClickEarn,
     handleClickSwap,
     handleClickPerps,
-    handleClickBorrow,
     handleClickCard,
     handleClickCardWallet,
     handleClickRefer,
@@ -346,18 +345,6 @@ const MainSideBar = () => {
                         {t("common.new")}
                       </CustomTag>
                     }
-                  />
-                </FeatureToggle>
-                <FeatureToggle featureId="ptxBorrowLiveApp">
-                  <SideBarListItem
-                    id={"borrow"}
-                    label={t("sidebar.borrow")}
-                    icon={Icons.Bank}
-                    iconActiveColor="wallet"
-                    onClick={handleClickBorrow}
-                    isActive={locationPathname.startsWith("/borrow")}
-                    disabled={noAccounts}
-                    collapsed={secondAnim}
                   />
                 </FeatureToggle>
                 <SideBarListItem

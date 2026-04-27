@@ -44,7 +44,6 @@ const NAV_HANDLER_CASES: ReadonlyArray<{
   { handler: "handleClickManager", path: "/manager", trackEntry: "manager" },
   { handler: "handleClickExchange", path: "/exchange", trackEntry: "exchange" },
   { handler: "handleClickPerps", path: "/perps", trackEntry: "perps" },
-  { handler: "handleClickBorrow", path: "/borrow", trackEntry: "borrow" },
   { handler: "handleClickCard", path: "/card", trackEntry: "card" },
 ];
 
