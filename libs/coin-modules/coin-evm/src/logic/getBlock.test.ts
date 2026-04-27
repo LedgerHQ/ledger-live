@@ -54,6 +54,7 @@ describe("getBlock", () => {
       value: "1000",
       from: address1,
       to: address2,
+      gasPrice: "20000000000",
       ...overrides,
     };
   }
@@ -942,6 +943,67 @@ describe("getBlock", () => {
 
     expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(expect.anything(), 12345);
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
+  });
+
+  it("uses prefetched tx gasPrice as fallback when Cronos receipt omits effectiveGasPrice and gasPrice", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: { node: { type: "external" as const, retries: 0 } },
+        }) as unknown as EvmCoinConfig,
+    );
+    const gasUsed = 21000n;
+    const txGasPrice = "568125000000";
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValueOnce(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", gasPrice: txGasPrice })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValueOnce([
+        makeNodeBlockReceipt({
+          hash: "0xtx1",
+          gasUsed: gasUsed.toString(),
+          gasPrice: "0", // what getBlockReceipts returns for a Cronos receipt
+          erc20Transfers: [],
+        }),
+      ]),
+      getTransaction: jest.fn(),
+    } as any);
+    const result = await getBlock({} as CryptoCurrency, 12345);
+    expect(result.transactions[0].fees).toEqual(21000n * 568125000000n);
+  });
+
+  it("uses receipt effectiveGasPrice over prefetched tx gasPrice on mainnet-shaped receipts", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: { node: { type: "external" as const, retries: 0 } },
+        }) as unknown as EvmCoinConfig,
+    );
+    const gasUsed = 21000n;
+    const receiptEffectiveGasPrice = "1000000000"; // 1 Gwei — resolved from effectiveGasPrice by getBlockReceipts
+    const txGasPrice = "568125000000"; // higher value in the prefetched tx — must NOT win
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValueOnce(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", gasPrice: txGasPrice })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValueOnce([
+        makeNodeBlockReceipt({
+          hash: "0xtx1",
+          gasUsed: gasUsed.toString(),
+          gasPrice: receiptEffectiveGasPrice, // non-zero → receipt wins over tx.gasPrice
+          erc20Transfers: [],
+        }),
+      ]),
+      getTransaction: jest.fn(),
+    } as any);
+    const result = await getBlock({} as CryptoCurrency, 12345);
+    expect(result.transactions[0].fees).toEqual(21000n * 1000000000n);
   });
 });
 
