@@ -38,7 +38,7 @@ import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
   languageSelector,
   sentryLogsSelector,
-  shareAnalyticsSelector,
+  trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
@@ -175,7 +175,7 @@ async function init() {
   const initialSettings = (await getKey("app", "settings")) || {};
   startAnalytics(store);
 
-  liveBlindSigningReporter.setConsentSource(() => shareAnalyticsSelector(store.getState()));
+  liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
 
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
