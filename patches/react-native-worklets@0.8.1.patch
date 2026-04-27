@@ -1,10 +1,11 @@
 diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java b/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
+index b8f77c550e06cffc8ee67833422ae7b66ac71bd8..6f865c2c80746e2e06c32afcf664a7b62e968012 100644
 --- a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
 +++ b/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
-@@ -7,21 +7,48 @@ import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
-
+@@ -7,21 +7,51 @@ import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
+ 
  public class JSCallInvokerResolver {
-
+ 
 +  private static final int MAX_ATTEMPTS = 10;
 +  private static final long RETRY_SLEEP_MS = 20;
 +
@@ -40,11 +41,14 @@ diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.
 +      }
 +      try {
 +        var catalystInstance = context.getClass().getMethod("getCatalystInstance").invoke(context);
-+        assert catalystInstance != null;
-+        var method = catalystInstance.getClass().getMethod("getJSCallInvokerHolder");
-+        var holder = (CallInvokerHolderImpl) method.invoke(catalystInstance);
-+        if (holder != null) {
-+          return holder;
++        if (catalystInstance == null) {
++          lastException = new NullPointerException("getCatalystInstance() returned null");
++        } else {
++          var method = catalystInstance.getClass().getMethod("getJSCallInvokerHolder");
++          var holder = (CallInvokerHolderImpl) method.invoke(catalystInstance);
++          if (holder != null) {
++            return holder;
++          }
 +        }
 +      } catch (Exception e) {
 +        lastException = e;
