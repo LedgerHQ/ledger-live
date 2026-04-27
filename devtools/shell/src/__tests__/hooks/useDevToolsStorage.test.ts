@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { useDevToolsStorage } from "../../hooks/useDevToolsStorage.web";
-import { MAX_RECENT_TOOLS, STORAGE_KEY, serialize } from "../../hooks/devToolsStorageUtils";
+import { MAX_RECENT_TOOLS, STORAGE_KEY, serialize } from "../../utils/devToolsStorageUtils";
 
 beforeEach(() => {
   localStorage.clear();

@@ -4,6 +4,7 @@ import { Category } from "../types";
 import type { Tool } from "../types";
 import { useAccordion } from "../hooks";
 import { CATEGORY_ICONS } from "../categoryConfig";
+import { filterToolsByQuery, findCategoryForToolId } from "../utils/toolsUtils";
 import { CategoryRow } from "./CategoryRow";
 import { IconSquare } from "./IconSquare";
 
@@ -19,10 +20,7 @@ export function Sidebar({ categories, activeToolId, onSelectTool, onHome }: Side
   const [query, setQuery] = useState("");
 
   const activeCategory = useMemo(
-    () =>
-      activeToolId
-        ? categories.find(({ tools }) => tools.some(t => t.id === activeToolId))?.category ?? null
-        : null,
+    () => findCategoryForToolId(categories, activeToolId),
     [activeToolId, categories],
   );
 
@@ -31,22 +29,10 @@ export function Sidebar({ categories, activeToolId, onSelectTool, onHome }: Side
     if (activeCategory) expand(activeCategory);
   }, [activeCategory, expand]);
 
-  const q = query.trim().toLowerCase();
-  const isSearchActive = q.length > 0;
-
+  const isSearchActive = query.trim().length > 0;
   const filteredCategories = useMemo(
-    () =>
-      categories
-        .map(({ category, tools }) => ({
-          category,
-          tools: q
-            ? tools.filter(
-                t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
-              )
-            : tools,
-        }))
-        .filter(({ tools }) => tools.length > 0),
-    [categories, q],
+    () => filterToolsByQuery(categories, query),
+    [categories, query],
   );
 
   return (
