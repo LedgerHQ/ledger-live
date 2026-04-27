@@ -4,7 +4,7 @@ import { runSendTest } from "./send";
 const transaction = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
 runSendTest(
   transaction,
-  [],
+  ["B2CQA-2949"],
   ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@concordium", "@family-concordium"],
   {
     featureFlags: { currencyConcordiumTestnet: { enabled: true } },
