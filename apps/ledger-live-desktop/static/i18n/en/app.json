@@ -2875,7 +2875,7 @@
         "steps": {
           "starter": {
             "description": [
-              "To close your staking account and reclaim your 2 ADA deposit:",
+              "To close your staking account and reclaim your ADA deposit:",
               "Cardano’s governance now requires you to define your voting status before you can undelegate.",
               "This step involves a send transaction to your own Ledger address that simply serves to register your choice to abstain from voting. It will cost only the standard network fee and your ADA stays in your wallet.",
               "Once this preference is recorded, you will be able to undelegate as usual."

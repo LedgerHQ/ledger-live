@@ -13,7 +13,7 @@ import Button from "~/components/wrappedUi/Button";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import BigNumber from "bignumber.js";
 
-// used for internal transaction
+// It is to cover minimum utxo amount for internal transaction
 const DEFAULT_TX_AMOUNT = 2000000;
 
 export default function DRepDelegationSelfTransactionInfoDrawer({
@@ -35,6 +35,8 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
       amount: new BigNumber(DEFAULT_TX_AMOUNT),
     });
 
+    onClose();
+
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendSelectRecipient,
       params: {
@@ -42,7 +44,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
         transaction: updatedTransaction,
       },
     });
-  }, [account, navigation]);
+  }, [account, navigation, onClose]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>

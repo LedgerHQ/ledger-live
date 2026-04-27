@@ -15,6 +15,8 @@ import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { CardanoDelegationFlowParamList } from "../types";
 import { http, HttpResponse } from "msw";
+import { ScreenName } from "~/const";
+import * as useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 const mockAccount: CardanoAccount = getCardanoAccountFixture({
   delegation: {
@@ -38,15 +40,21 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
       mode: "delegate",
       poolId: "00000000000000000000000000000000000000000000000000000001",
       protocolParams: mockAccount.cardanoResources?.protocolParams,
+      amount: new BigNumber(0),
+      recipient: "",
     },
     setTransaction: jest.fn(),
     updateTransaction: jest.fn(),
+    updateAccount: jest.fn(),
     account: mockAccount,
+    parentAccount: null,
+    setAccount: jest.fn(),
     status: {
       errors: {},
       warnings: {},
       estimatedFees: new BigNumber("200000"),
       amount: new BigNumber("0"),
+      totalSpent: new BigNumber("0"),
     },
     bridgeError: null,
     bridgePending: false,
@@ -67,8 +75,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     ),
   })),
 }));
-
-import { ScreenName } from "~/const";
 
 type RootStackParamList = {
   Dummy: undefined;
@@ -176,36 +182,44 @@ describe("DelegationFlow Integration", () => {
   });
 
   it("should display a bridge error if transaction preparation fails", async () => {
-    jest
-      .spyOn(require("@ledgerhq/live-common/bridge/useBridgeTransaction"), "default")
-      .mockReturnValue({
-        transaction: {
-          family: "cardano",
-          mode: "delegate",
-          poolId: "00000000000000000000000000000000000000000000000000000001",
-          protocolParams: mockAccount.cardanoResources?.protocolParams,
-        },
-        setTransaction: jest.fn(),
-        updateTransaction: jest.fn(),
-        account: mockAccount,
-        status: {
-          errors: {},
-          warnings: {},
-          estimatedFees: new BigNumber("200000"),
-          amount: new BigNumber("0"),
-        },
-        bridgeError: new Error("Bridge network error"),
-        bridgePending: false,
-      });
+    const spy = jest.spyOn(useBridgeTransaction, "default").mockReturnValue({
+      transaction: {
+        family: "cardano",
+        mode: "delegate",
+        poolId: "00000000000000000000000000000000000000000000000000000001",
+        protocolParams: mockAccount.cardanoResources?.protocolParams,
+        amount: new BigNumber(0),
+        recipient: "",
+      },
+      setTransaction: jest.fn(),
+      updateTransaction: jest.fn(),
+      updateAccount: jest.fn(),
+      account: mockAccount,
+      parentAccount: null,
+      setAccount: jest.fn(),
+      status: {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber("200000"),
+        amount: new BigNumber("0"),
+        totalSpent: new BigNumber("0"),
+      },
+      bridgeError: new Error("Bridge network error"),
+      bridgePending: false,
+    });
 
-    const { user } = render(<TestNavigator />, { ...INITIAL_STATE });
+    try {
+      const { user } = render(<TestNavigator />, { ...INITIAL_STATE });
 
-    // Step 1: Starter Screen -> Start delegation
-    const startButton = await screen.findByTestId("cardano-delegation-start-button");
-    await user.press(startButton);
+      // Step 1: Starter Screen -> Start delegation
+      const startButton = await screen.findByTestId("cardano-delegation-start-button");
+      await user.press(startButton);
 
-    // Check if error boundary or alert shows up containing the error text
-    const errorText = await screen.findByText(/Bridge network error/i);
-    expect(errorText).toBeVisible();
+      // Check if error boundary or alert shows up containing the error text
+      const errorText = await screen.findByText(/Bridge network error/i);
+      expect(errorText).toBeVisible();
+    } finally {
+      spy.mockRestore();
+    }
   });
 });

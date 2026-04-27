@@ -298,12 +298,12 @@ describe("Cardano Undelegate Flow Integration", () => {
 
   describe("when bridge network error occurs", () => {
     it("should display a bridge error if transaction preparation fails", async () => {
-      jest.spyOn(useBridgeTransaction, "default").mockReturnValue({
+      const spy = jest.spyOn(useBridgeTransaction, "default").mockReturnValue({
         transaction: mockTransaction,
         setTransaction: jest.fn(),
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         updateTransaction: jest.fn(),
         updateAccount: jest.fn(),
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         account: getMockAccountData({ dRepHex: "dRepHex1" }) as CardanoAccount,
         parentAccount: null,
         setAccount: jest.fn(),
@@ -318,17 +318,21 @@ describe("Cardano Undelegate Flow Integration", () => {
         bridgePending: false,
       });
 
-      const { mockAccountData, initialState } = setup();
-      render(<UndelegateFlowModal account={mockAccountData} />, {
-        initialState: {
-          ...initialState,
-          modals: {
-            MODAL_CARDANO_UNDELEGATE: { isOpened: true, data: { account: mockAccountData } },
+      try {
+        const { mockAccountData, initialState } = setup();
+        render(<UndelegateFlowModal account={mockAccountData} />, {
+          initialState: {
+            ...initialState,
+            modals: {
+              MODAL_CARDANO_UNDELEGATE: { isOpened: true, data: { account: mockAccountData } },
+            },
           },
-        },
-      });
+        });
 
-      expect(await screen.findByText(/Bridge network error/i)).toBeInTheDocument();
+        expect(await screen.findByText(/Bridge network error/i)).toBeInTheDocument();
+      } finally {
+        spy.mockRestore();
+      }
     });
   });
 });
