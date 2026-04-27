@@ -24,9 +24,6 @@ export function usePostOnboardingActionViewModel(
     lumenSymbol,
     postOnboardingActionId,
     shouldCompleteOnStart,
-    getIsAlreadyCompletedByState,
-    isLedgerSyncActive,
-    accounts,
     startAction,
     testId = DEFAULT_TEST_ID,
     title,
@@ -41,10 +38,7 @@ export function usePostOnboardingActionViewModel(
     needEligibleDevice: true,
   });
 
-  const isActionCompleted = useMemo(() => {
-    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
-    return completed || !!isAlreadyCompleted;
-  }, [completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
+  const isActionCompleted = completed;
   const completeAction = useCompleteActionCallback();
 
   const handleStartAction = useCallback(() => {
