@@ -21,7 +21,7 @@ export type PostOnboardingActionI18nKeys = {
  * matches the live-common `PostOnboardingAction` model where applicable.
  */
 export type PostOnboardingActionProps = PostOnboardingActionI18nKeys & {
-  readonly buttonLabelForAnalyticsEvent: string;
+  readonly buttonLabelForAnalyticsEvent?: string;
   readonly completed: boolean;
   readonly deviceModelId: DeviceModelId | null;
   /** Lumen symbol for the list row leading visual when the action is not completed. */

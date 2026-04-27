@@ -22,7 +22,6 @@ jest.mock("LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel",
 const requiredPostOnboardingActionProps = {
   deviceModelId: null as DeviceModelId | null,
   startAction: () => {},
-  buttonLabelForAnalyticsEvent: "",
   shouldCompleteOnStart: false,
 };
 
