@@ -7,10 +7,12 @@ export const useDevToolsNavigation = (tools: Tool[]) => {
 
   const categories = useMemo(
     () =>
-      Object.values(Category).map(category => ({
-        category,
-        tools: tools.filter(t => t.category === category),
-      })),
+      Object.values(Category)
+        .map(category => ({
+          category,
+          tools: tools.filter(t => t.category === category),
+        }))
+        .filter(({ tools }) => tools.length > 0),
     [tools],
   );
 
