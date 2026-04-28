@@ -1,5 +1,5 @@
 import React from "react";
-import BigSpinner from "~/renderer/components/BigSpinner";
+import { Spinner } from '@ledgerhq/lumen-ui-react';
 
 interface BorrowLoaderProps {
   isLoading: boolean;
@@ -10,7 +10,7 @@ export function BorrowLoader({ isLoading }: Readonly<BorrowLoaderProps>) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
-      <BigSpinner size={50} />
+      <Spinner size={48} />
     </div>
   );
 }

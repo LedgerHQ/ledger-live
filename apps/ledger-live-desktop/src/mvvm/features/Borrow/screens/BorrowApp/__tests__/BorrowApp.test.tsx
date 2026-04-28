@@ -20,18 +20,26 @@ jest.mock("LLD/features/Borrow/screens/BorrowWebView", () => ({
   BorrowWebView: () => <div data-testid="borrow-webview" />,
 }));
 
+type BorrowAppViewModel = ReturnType<typeof useBorrowAppViewModel>;
+
+const baseViewModel: BorrowAppViewModel = {
+  manifest: { id: "borrow", url: "https://borrow.example" } as LiveAppManifest,
+  refreshManifests: jest.fn(),
+  inputs: {} as BorrowAppViewModel["inputs"],
+  enablePlatformDevTools: true,
+  webviewAPIRef: { current: null },
+  webviewState: {} as BorrowAppViewModel["webviewState"],
+  onStateChange: jest.fn(),
+  onBack: jest.fn(),
+};
+
+const mockViewModel = (overrides: Partial<BorrowAppViewModel> = {}) => {
+  jest.mocked(useBorrowAppViewModel).mockReturnValue({ ...baseViewModel, ...overrides });
+};
+
 describe("BorrowApp", () => {
   it("renders network error when manifest is missing", () => {
-    jest.mocked(useBorrowAppViewModel).mockReturnValue({
-      manifest: undefined,
-      refreshManifests: jest.fn(),
-      inputs: {} as ReturnType<typeof useBorrowAppViewModel>["inputs"],
-      enablePlatformDevTools: false,
-      webviewAPIRef: { current: null },
-      webviewState: {} as ReturnType<typeof useBorrowAppViewModel>["webviewState"],
-      onStateChange: jest.fn(),
-      onBack: jest.fn(),
-    });
+    mockViewModel({ manifest: undefined, enablePlatformDevTools: false });
 
     render(<BorrowApp />);
 
@@ -41,16 +49,7 @@ describe("BorrowApp", () => {
   });
 
   it("renders borrow webview and page header when manifest is available", () => {
-    jest.mocked(useBorrowAppViewModel).mockReturnValue({
-      manifest: { id: "borrow", url: "https://borrow.example" } as LiveAppManifest,
-      refreshManifests: jest.fn(),
-      inputs: {} as ReturnType<typeof useBorrowAppViewModel>["inputs"],
-      enablePlatformDevTools: true,
-      webviewAPIRef: { current: null },
-      webviewState: {} as ReturnType<typeof useBorrowAppViewModel>["webviewState"],
-      onStateChange: jest.fn(),
-      onBack: jest.fn(),
-    });
+    mockViewModel();
 
     render(<BorrowApp />);
 
@@ -61,16 +60,7 @@ describe("BorrowApp", () => {
 
   it("invokes onBack from view model when the back button is clicked", async () => {
     const onBack = jest.fn();
-    jest.mocked(useBorrowAppViewModel).mockReturnValue({
-      manifest: { id: "borrow", url: "https://borrow.example" } as LiveAppManifest,
-      refreshManifests: jest.fn(),
-      inputs: {} as ReturnType<typeof useBorrowAppViewModel>["inputs"],
-      enablePlatformDevTools: true,
-      webviewAPIRef: { current: null },
-      webviewState: {} as ReturnType<typeof useBorrowAppViewModel>["webviewState"],
-      onStateChange: jest.fn(),
-      onBack,
-    });
+    mockViewModel({ onBack });
 
     const { user } = render(<BorrowApp />);
 

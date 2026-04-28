@@ -33,11 +33,6 @@ jest.mock("LLD/features/Borrow/hooks/useBorrowLiveConfig", () => ({
   useBorrowLiveConfig: jest.fn(),
 }));
 
-jest.mock("~/renderer/hooks/useTheme", () => ({
-  __esModule: true,
-  default: jest.fn(() => ({ theme: "dark" })),
-}));
-
 jest.mock("~/renderer/components/Web3AppWebview", () => ({
   Web3AppWebview: () => <div data-testid="borrow-web3-webview" />,
 }));
