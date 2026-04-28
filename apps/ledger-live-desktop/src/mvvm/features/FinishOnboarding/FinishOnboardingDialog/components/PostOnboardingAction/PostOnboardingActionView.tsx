@@ -46,7 +46,9 @@ const PostOnboardingActionView = memo(function PostOnboardingActionView({
         )}
         <ListItemContent>
           <ListItemTitle>{t(title)}</ListItemTitle>
-          <ListItemDescription>{completed ? t("postOnboarding.dialog.actionCompletedLabel") : t(description)}</ListItemDescription>
+          <ListItemDescription>
+            {completed ? t("postOnboarding.dialog.actionCompletedLabel") : t(description)}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
