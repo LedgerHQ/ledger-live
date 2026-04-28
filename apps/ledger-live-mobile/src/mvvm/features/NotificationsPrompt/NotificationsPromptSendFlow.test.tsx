@@ -1,44 +1,23 @@
 import React from "react";
 import { View } from "react-native";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor, withFlagOverrides, act } from "@tests/test-renderer";
+import {
+  renderWithReactQuery,
+  screen,
+  waitFor,
+  withFlagOverrides,
+  act,
+} from "@tests/test-renderer";
 import storage from "LLM/storage";
-import ReceiveFundsNavigator from "~/components/RootNavigator/ReceiveFundsNavigator";
+import SendFundsNavigator from "~/components/RootNavigator/SendFundsNavigator";
 import { NavigatorName, ScreenName } from "~/const";
-import { BTC_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
 import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
-import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 
-type AuthorizationStatusType = (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
-
-const mockRequestPermission = jest.fn<Promise<AuthorizationStatusType>, []>(() =>
-  Promise.resolve(AuthorizationStatus.NOT_DETERMINED),
-);
-const mockHasPermission = jest.fn<Promise<AuthorizationStatusType>, []>(() =>
-  Promise.resolve(AuthorizationStatus.NOT_DETERMINED),
-);
-
-jest.mock("@react-native-firebase/messaging", () => {
-  const AuthorizationStatus = {
-    NOT_DETERMINED: -1,
-    DENIED: 0,
-    AUTHORIZED: 1,
-    PROVISIONAL: 2,
-    EPHEMERAL: 3,
-  } as const;
-
-  return {
-    AuthorizationStatus,
-    getMessaging: jest.fn(() => ({
-      requestPermission: mockRequestPermission,
-      hasPermission: mockHasPermission,
-    })),
-  };
-});
-
-const featureFlagsForReceivePrompt = {
+const featureFlagsForSendPrompt = {
   brazePushNotifications: {
     enabled: true,
     params: {
@@ -85,15 +64,13 @@ const featureFlagsForReceivePrompt = {
   },
 };
 
-describe("NotificationsPrompt receive flow", () => {
+describe("NotificationsPrompt send flow", () => {
   beforeAll(() => {
     jest.useFakeTimers();
   });
 
   beforeEach(async () => {
     jest.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
-    mockRequestPermission.mockResolvedValue(AuthorizationStatus.NOT_DETERMINED);
-    mockHasPermission.mockResolvedValue(AuthorizationStatus.NOT_DETERMINED);
     await storage.deleteAll();
   });
 
@@ -113,21 +90,30 @@ describe("NotificationsPrompt receive flow", () => {
     return <View />;
   }
 
-  const receiveFlowNavigationState = {
+  const MOCK_ACCOUNT = MockedAccounts.active[0];
+  const sendFlowNavigationState = {
     index: 1,
     routes: [
       {
         name: HOME_SCREEN,
       },
       {
-        name: NavigatorName.ReceiveFunds,
+        name: NavigatorName.SendFunds,
         state: {
           index: 0,
           routes: [
             {
-              name: ScreenName.ReceiveConnectDevice,
+              name: ScreenName.SendValidationSuccess,
               params: {
-                accountId: BTC_ACCOUNT.id,
+                accountId: MOCK_ACCOUNT.id,
+                deviceId: "device-id",
+                result: {
+                  id: "op-123",
+                  hash: "0x123abc",
+                  type: "OUT",
+                  accountId: MOCK_ACCOUNT.id,
+                },
+                transaction: { family: MOCK_ACCOUNT.currency.family },
               },
             },
           ],
@@ -136,33 +122,30 @@ describe("NotificationsPrompt receive flow", () => {
     ],
   };
 
-  function ReceiveFlowTestApp() {
+  function SendFlowTestApp() {
     return (
       <GlobalDrawers>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name={HOME_SCREEN} component={HomeScreen} />
-          <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsNavigator} />
+          <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsNavigator} />
         </Stack.Navigator>
       </GlobalDrawers>
     );
   }
 
-  it("should prompt the notifications drawer when leaving the receive flow", async () => {
-    const { user } = render(<ReceiveFlowTestApp />, {
-      navigationInitialState: receiveFlowNavigationState,
-      overrideInitialState: withFlagOverrides(featureFlagsForReceivePrompt, state => ({
+  it("should prompt the notifications drawer when leaving the send success screen", async () => {
+    const { user } = renderWithReactQuery(<SendFlowTestApp />, {
+      navigationInitialState: sendFlowNavigationState,
+      overrideInitialState: withFlagOverrides(featureFlagsForSendPrompt, state => ({
         ...state,
-        accounts: {
-          ...state.accounts,
-          active: [BTC_ACCOUNT],
-        },
+        accounts: MockedAccounts,
         notifications: {
           ...state.notifications,
           permissionStatus: AuthorizationStatus.NOT_DETERMINED,
         },
         settings: {
           ...state.settings,
-          readOnlyModeEnabled: true,
+          readOnlyModeEnabled: false,
           notifications: {
             ...state.settings.notifications,
             areNotificationsAllowed: true,
@@ -171,33 +154,35 @@ describe("NotificationsPrompt receive flow", () => {
       })),
     });
 
-    await user.press(await screen.findByText(/^continue$/i));
-    await waitFor(() => expect(screen.getByTestId("button-receive-confirmation")).toBeVisible());
+    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+    const closeButton = screen.getByTestId("enabled-success-close-button");
+    expect(track).not.toHaveBeenCalledWith(
+      "attempt_to_trigger_push_notification_drawer_after_action",
+    );
 
-    const backButtons = screen.getAllByTestId("navigation-header-back-button");
-    await user.press(backButtons[backButtons.length - 1]);
-    await act(async () => {
-      await jest.runOnlyPendingTimersAsync();
-    });
+    await user.press(closeButton);
+    act(() => jest.runOnlyPendingTimers());
 
     await waitFor(() => {
-      expect(screen.getByText(/maybe later/i)).toBeVisible();
+      expect(screen.getByText(/allow notifications/i)).toBeVisible();
     });
     expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_action", {
-      action: "receive",
+      action: "send",
       shouldPrompt: true,
       variant: ABTestingVariants.variantB,
       repromptDelay: null,
       dismissedCount: 0,
       skipReason: undefined,
     });
-    const allowNotificationsButton = screen.getByText(/allow notifications/i);
-    expect(allowNotificationsButton).toBeVisible();
-    await user.press(allowNotificationsButton);
+
+    const maybeLaterButton = screen.getByText(/maybe later/i);
+    expect(maybeLaterButton).toBeVisible();
+    await user.press(maybeLaterButton);
+
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "allow notifications",
+      button: "maybe later",
       page: "Drawer push notification opt-in",
-      source: "receive",
+      source: "send",
       repromptDelay: null,
       dismissedCount: 0,
       variant: ABTestingVariants.variantB,
