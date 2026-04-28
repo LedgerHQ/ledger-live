@@ -37,20 +37,23 @@ export default defineCommand({
 
     await out.run(async () => {
       const s = out.spin("Fetching swap quotes…");
-      const result = await getQuotes({
-        providers: DEFAULT_PROVIDERS,
-        data: {
-          amount: flags.amount,
-          counterValueCurrency: "USD",
-          uniswapOrderType: "classic",
-          sendCurrencyId: flags.from,
-          receiveCurrencyId: flags.to,
-          sendAddress: flags["from-fresh-address"],
-          receiveAddress: flags["to-fresh-address"],
-          sendAccountId: "",
-          receiveAccountId: "",
+      const result = await getQuotes(
+        {
+          providers: DEFAULT_PROVIDERS,
+          data: {
+            amount: flags.amount,
+            counterValueCurrency: "USD",
+            uniswapOrderType: "classic",
+            sendCurrencyId: flags.from,
+            receiveCurrencyId: flags.to,
+            sendAddress: flags["from-fresh-address"],
+            receiveAddress: flags["to-fresh-address"],
+            sendAccountId: "",
+            receiveAccountId: "",
+          },
         },
-      });
+        { accounts: [], spotPrices: {} },
+      );
 
       if (result.quotes.length === 0 && result.errors.length > 0) {
         out.swapQuotesUnavailable("No quotes available", result.errors);
