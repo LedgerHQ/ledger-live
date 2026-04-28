@@ -10,10 +10,10 @@ export function ToolShell({ tool, onBack }: ToolShellProps) {
   return (
     <>
       <div className="px-32 pt-20 pb-16 border-b border-muted flex items-start gap-16 shrink-0">
-        <div className="flex-1 min-w-0 gap-6">
+        <div className="flex-1 min-w-0">
           <button
             onClick={onBack}
-            className="body-3 text-muted mb-4 hover:text-base cursor-pointer bg-transparent border-none p-0 hover:underline"
+            className="body-3 text-muted mb-4 hover:text-base cursor-pointer bg-transparent border-none hover:underline"
           >
             {tool.category} / {tool.id}
           </button>
