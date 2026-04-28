@@ -21,7 +21,8 @@ export const TRANSACTION_TYPE = {
 export const RECIPIENT_ARG_INDEX = 1;
 export const AMOUNT_ARG_INDEX = 2;
 
-// The maximum amount of records to fetch in a single API call when fetching owned records. This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.
+// The maximum amount of records to fetch in a single API call when fetching owned records.
+// This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.
 export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
 
 /**
