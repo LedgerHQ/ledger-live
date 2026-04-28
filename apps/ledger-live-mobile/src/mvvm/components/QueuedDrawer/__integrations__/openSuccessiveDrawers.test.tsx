@@ -4,6 +4,8 @@ import { TestPages } from "./shared";
 import { TestIdPrefix, testIds } from "../TestScreens";
 
 describe("QueuedDrawer", () => {
+  // this test is really slow to cold start, so we need to increase the timeout
+  // we need to find out why and fix it
   jest.setTimeout(LONG_TIMEOUT * 3);
 
   beforeEach(() => {
