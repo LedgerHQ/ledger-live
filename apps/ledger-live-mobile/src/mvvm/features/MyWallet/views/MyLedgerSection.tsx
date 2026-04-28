@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -16,12 +17,20 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
+import type { MyWalletNavigatorStackParamList } from "../types";
 import { ExploreDevicesItem } from "./DeviceSection/components/ExploreDevicesItem";
 import { MyWalletHeaderTrailing } from "./Header";
 
 function MyLedgerSectionContent() {
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device>();
+  const { params } =
+    useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
+
+  // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
+  useEffect(() => {
+    setDevice(params?.device);
+  }, [params?.device]);
   // TODO(wallet40-myWallet): enable ExploreDevicesItem when ready
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
