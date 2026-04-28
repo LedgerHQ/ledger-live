@@ -550,6 +550,8 @@
     "src/hooks/useAppVersionBlockCheck.ts",
     "src/hooks/useHtmlLinkSegments.ts",
     "src/hw/actions/uninstallAllApps.ts",
+    "src/hw/deviceInitialization/buildConnectAppInitializationInput.ts",
+    "src/hw/deviceInitialization/deprecationPresentation.ts",
     "src/hw/getBitcoinLikeInfo.ts",
     "src/jest.d.ts",
     "src/market/api/countervalues.ts",
