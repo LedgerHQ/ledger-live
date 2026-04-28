@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -14,7 +14,6 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import Config from "react-native-config";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendValidationSuccess>,
@@ -24,21 +23,8 @@ type Props = CompositeScreenProps<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const currency = account ? getAccountCurrency(account) : null;
-  useEffect(() => {
-    if (!account) return;
-    let result = route.params?.result;
-    if (!result) return;
-    result = result.subOperations && result.subOperations[0] ? result.subOperations[0] : result;
-
-    tryTriggerPushNotificationDrawerAfterAction("send");
-
-    // FIXME: IT LOOKS LIKE A COMPONENT DID MOUNT BUT NOT SURE AT ALL IF
-    // IT NEEDS TO BE RERUN WHEN DEPS CHANGE
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);

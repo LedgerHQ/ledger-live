@@ -16,6 +16,7 @@ import SendValidationError from "~/screens/SendFunds/07-ValidationError";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "5";
 
@@ -24,6 +25,7 @@ const Stack = createNativeStackNavigator<SendFundsNavigatorStackParamList>();
 export default function SendFundsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
@@ -141,6 +143,11 @@ export default function SendFundsNavigator() {
             headerShown: false,
             headerRight: undefined,
             gestureEnabled: false,
+          }}
+          listeners={{
+            beforeRemove: () => {
+              notifyFlowCompleted("send");
+            },
           }}
         />
         <Stack.Screen
