@@ -13,6 +13,7 @@ import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevic
 import { track } from "~/analytics";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -26,6 +27,8 @@ function MyLedgerSectionContent() {
   const [device, setDevice] = useState<Device>();
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
+
+  useAutoRedirectToPostOnboarding();
 
   // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
   useEffect(() => {
@@ -58,7 +61,11 @@ function MyLedgerSectionContent() {
     if (result && "result" in result) {
       navigation.navigate(NavigatorName.MyLedger, {
         screen: ScreenName.MyLedgerDevice,
-        params: { ...result },
+        params: {
+          ...result,
+          firmwareUpdate: params?.firmwareUpdate,
+          searchQuery: params?.searchQuery || params?.installApp,
+        },
       });
     }
   };
