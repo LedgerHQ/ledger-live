@@ -1,7 +1,6 @@
 import { Star, Clock } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category } from "../types";
 import type { Tool } from "../types";
-import { TOOLS } from "../tools.config";
 import { SectionHeader } from "./SectionHeader";
 import { CategoryCard } from "./CategoryCard";
 import { ToolCard } from "./ToolCard";
@@ -19,8 +18,8 @@ export function Overview({
   onSelect,
   "data-testid": testId,
 }: OverviewProps) {
-  const recentTools: Tool[] = recentToolIds.flatMap(id => TOOLS.filter(t => t.id === id));
-
+  const allTools = categories.flatMap(c => c.tools);
+  const recentTools: Tool[] = recentToolIds.flatMap(id => allTools.filter(t => t.id === id));
   return (
     <div data-testid={testId} className="flex-1 p-32 overflow-y-auto">
       <p className="body-1 text-muted uppercase tracking-wider">DevTools</p>

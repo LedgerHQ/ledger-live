@@ -1,10 +1,10 @@
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Tool } from "../types";
+import type { Category, Tool } from "../types";
 import { ToolRow } from "./ToolRow";
 import type { IconComponent } from "../categoryConfig";
 
 interface CategoryRowProps {
-  category: string;
+  category: Category;
   tools: Tool[];
   icon: IconComponent;
   isExpanded: boolean;
