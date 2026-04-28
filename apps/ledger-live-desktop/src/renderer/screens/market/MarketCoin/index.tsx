@@ -94,7 +94,7 @@ export default function MarketCoinScreen() {
                 <InfiniteLoader />
               </Flex>
             ) : ledgerIds && ledgerIds.length > 0 && ticker ? (
-              <CryptoIcon ledgerId={ledgerIds[0]} ticker={ticker} size="56px" />
+              <CryptoIcon ledgerId={ledgerIds[0]} ticker={ticker} size={56} />
             ) : (
               <img width="56px" height="56px" src={currency?.image} alt={"currency logo"} />
             )}
