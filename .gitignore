@@ -22,6 +22,8 @@ libs/ui/packages/react/rsbuild.config.js
 libs/ui/packages/react/rsbuild.config.js.map
 .zed
 
+.claude/settings.json
+.claude/worktrees/
 .cursor/rules/trial/*
 
 .nx/cache
