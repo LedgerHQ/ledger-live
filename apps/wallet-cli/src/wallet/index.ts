@@ -5,6 +5,7 @@
 import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccount } from "./models";
 // BridgeAdapter and AlpacaAdapter are loaded lazily via dynamic import() inside getters
 // to avoid pulling in live-common/bridge/index (~328ms) and alpaca/local/evm (~105ms)
@@ -112,11 +113,10 @@ export class WalletAdapter {
   send(
     descriptor: AccountDescriptor,
     intent: TransactionIntent,
-    deviceId: string,
-    dryRun = false,
+    options: { deviceId: string; deviceModelId: DeviceModelId },
   ): Observable<SendEvent> {
     return from(this.getBridge()).pipe(
-      switchMap(bridge => bridge.send(descriptor, intent, deviceId, dryRun)),
+      switchMap(bridge => bridge.send(descriptor, intent, options)),
     );
   }
 }

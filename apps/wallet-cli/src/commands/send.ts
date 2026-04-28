@@ -5,7 +5,7 @@ import { tap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
 import { TransactionIntentSchema } from "../wallet/intents";
-import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
+import { WALLET_CLI_DMK_DEVICE_ID, getWalletCliDeviceModelId } from "../device/register-dmk-transport";
 import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { colors } from "../shared/ui";
@@ -145,9 +145,15 @@ export default defineCommand({
         spin?.success("Device session established");
         out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
 
+        const deviceModelId = await getWalletCliDeviceModelId();
+        if (deviceModelId === undefined) {
+          throw new Error(
+            "Could not determine device model from the active session. Disconnect and reconnect the device.",
+          );
+        }
         await lastValueFrom(
           wallet
-            .send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun)
+            .send(descriptor, intent, { deviceId: WALLET_CLI_DMK_DEVICE_ID, deviceModelId })
             .pipe(tap(event => out.sendEvent(event))),
         );
 
