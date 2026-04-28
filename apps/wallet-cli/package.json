@@ -14,7 +14,7 @@
     "generate:check": "bunli generate && git diff --exit-code -- .bunli/commands.gen.ts",
     "write:build-channel": "bun run ./scripts/write-build-channel.ts",
     "build": "pnpm run write:build-channel && bunli build",
-    "build:production": "pnpm run build",
+    "build:production": "bun run ./scripts/write-build-channel.ts --production && bunli build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
     "coverage": "bun test src/ --coverage",

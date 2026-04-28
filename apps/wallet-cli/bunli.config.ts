@@ -1,9 +1,13 @@
 import { defineConfig } from "@bunli/core";
-import { WALLET_CLI_VERSION } from "./src/generated/build-channel";
+import { readFileSync } from "node:fs";
+
+const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")) as {
+  version: string;
+};
 
 export default defineConfig({
   name: "wallet-cli",
-  version: WALLET_CLI_VERSION,
+  version: packageJson.version,
   description: "Ledger Wallet CLI",
   commands: {
     directory: "./src/commands",

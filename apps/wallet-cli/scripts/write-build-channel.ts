@@ -6,6 +6,7 @@ type WalletCliReleaseChannel = "stable" | "prerelease";
 const packageJsonPath = resolve(import.meta.dir, "../package.json");
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const pkg = JSON.parse(packageJson) as { version?: string };
+const isProductionBuild = process.argv.includes("--production");
 
 if (!pkg.version) {
   throw new Error(
@@ -16,7 +17,8 @@ if (!pkg.version) {
 const version = pkg.version;
 const prereleasePart = version.split("-")[1] ?? null;
 const prereleaseTag = prereleasePart ? prereleasePart.split(".")[0] : null;
-const releaseChannel: WalletCliReleaseChannel = prereleasePart ? "prerelease" : "stable";
+const prereleaseTagLiteral = prereleaseTag ? `"${prereleaseTag}"` : "null";
+const releaseChannel: WalletCliReleaseChannel = isProductionBuild ? "stable" : "prerelease";
 
 const outputPath = resolve(import.meta.dir, "../src/generated/build-channel.ts");
 
@@ -26,7 +28,7 @@ writeFileSync(
   [
     `export const WALLET_CLI_VERSION = "${version}";`,
     `export const WALLET_CLI_RELEASE_CHANNEL: "stable" | "prerelease" = "${releaseChannel}";`,
-    `export const WALLET_CLI_PRERELEASE_TAG: string | null = ${prereleaseTag ? `"${prereleaseTag}"` : "null"};`,
+    `export const WALLET_CLI_PRERELEASE_TAG: string | null = ${prereleaseTagLiteral};`,
     "",
   ].join("\n"),
 );
