@@ -26,6 +26,7 @@ module.exports = {
     "node_modules/(?!(@walletconnect)/)",
   ],
   workerThreads: true,
+  coverageProvider: "babel",
   reporters: [
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
