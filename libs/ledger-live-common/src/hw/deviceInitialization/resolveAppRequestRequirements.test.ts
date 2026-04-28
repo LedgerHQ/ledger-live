@@ -37,7 +37,7 @@ describe("deviceInitialization requirements", () => {
     mockGetDerivationModesForCurrency.mockReturnValue(["ethM", ""]);
     mockGetDerivationScheme.mockReturnValue("mock-scheme");
     mockRunDerivationScheme.mockReturnValue("44'/60'/0'/0/0");
-    mockLoadAccountModuleForFamily.mockReturnValue(undefined);
+    mockLoadAccountModuleForFamily.mockResolvedValue(undefined);
   });
 
   it("resolves account-only input from account data", async () => {
@@ -128,7 +128,7 @@ describe("deviceInitialization requirements", () => {
   });
 
   it("includes family-specific injected address params", async () => {
-    mockLoadAccountModuleForFamily.mockReturnValue({
+    mockLoadAccountModuleForFamily.mockResolvedValue({
       injectGetAddressParams: jest.fn(() => ({ forceFormat: "cashaddr" })),
     });
 
