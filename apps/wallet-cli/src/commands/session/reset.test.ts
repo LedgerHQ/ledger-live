@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "bun:test";
 import { join } from "node:path";
 import { YAML } from "bun";
-import { runLocalCli } from "../../test/helpers/cli-runner";
+import { runCli } from "../../test/helpers/cli-runner";
 import { makeSessionDir } from "../../test/helpers/session-fixture";
 
 const SAMPLE_ENTRIES = [
@@ -28,7 +28,7 @@ describe("session reset — human", () => {
   it("reports empty when accounts list is already empty", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(["session", "reset"], fixture.env);
+    const { stdout, exitCode } = await runCli(["session", "reset"], fixture.env);
     expect(exitCode).toBe(0);
     expect(stdout).toMatch(/already empty/i);
   });
@@ -36,7 +36,7 @@ describe("session reset — human", () => {
   it("prints the count of removed accounts", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(["session", "reset"], fixture.env);
+    const { stdout, exitCode } = await runCli(["session", "reset"], fixture.env);
     expect(exitCode).toBe(0);
     expect(stdout).toContain("2");
     expect(stdout).toMatch(/removed/i);
@@ -45,7 +45,7 @@ describe("session reset — human", () => {
   it("wipes accounts from the session file", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    await runLocalCli(["session", "reset"], fixture.env);
+    await runCli(["session", "reset"], fixture.env);
     const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
     expect(session).toEqual({ accounts: [] });
   });
@@ -53,8 +53,8 @@ describe("session reset — human", () => {
   it("subsequent view shows empty session", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    await runLocalCli(["session", "reset"], fixture.env);
-    const { stdout, exitCode } = await runLocalCli(["session", "view"], fixture.env);
+    await runCli(["session", "reset"], fixture.env);
+    const { stdout, exitCode } = await runCli(["session", "view"], fixture.env);
     expect(exitCode).toBe(0);
     expect(stdout).toMatch(/no accounts/i);
   });
@@ -64,7 +64,7 @@ describe("session reset — json", () => {
   it("returns removed count of 0 when session is empty", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(
+    const { stdout, exitCode } = await runCli(
       ["session", "reset", "--output", "json"],
       fixture.env,
     );
@@ -77,7 +77,7 @@ describe("session reset — json", () => {
   it("returns correct removed count in envelope", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(
+    const { stdout, exitCode } = await runCli(
       ["session", "reset", "--output", "json"],
       fixture.env,
     );
@@ -91,7 +91,7 @@ describe("session reset — json", () => {
   it("wipes accounts from the session file", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    await runLocalCli(["session", "reset", "--output", "json"], fixture.env);
+    await runCli(["session", "reset", "--output", "json"], fixture.env);
     const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
     expect(session).toEqual({ accounts: [] });
   });

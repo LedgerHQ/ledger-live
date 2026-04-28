@@ -9,12 +9,12 @@
  */
 
 import type { Spinner } from "yocto-spinner";
-import { writeSync } from "node:fs";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
+import { CliProcessExitError } from "./cli-process-exit-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
-import { spinner, colors, writeStdout } from "./shared/ui";
+import { spinner, colors, writeStdout, writeStderr } from "./shared/ui";
 import {
   formatSwapQuoteHuman,
   type SwapQuoteLine,
@@ -148,7 +148,7 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(op.parentId ? `  ${line}` : line);
     }
     if (nextCursor) {
-      process.stderr.write("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
+      writeStderr("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
     }
   }
 
@@ -247,7 +247,7 @@ class HumanCommandOutput implements CommandOutput {
     for (const e of errors) {
       s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
     }
-    process.exit(1);
+    throw new CliProcessExitError(1);
   }
 }
 
@@ -295,16 +295,17 @@ class JsonCommandOutput implements CommandOutput {
     try {
       await fn();
     } catch (e) {
-      // Bun.spawn on Linux does not reliably capture fd 2 (stderr) from subprocesses.
-      // writeSync(1, ...) is a synchronous POSIX syscall — immune to process.exit() buffer drain.
-      writeSync(1, this._errorEnvelope(e) + "\n");
-      process.exit(1);
+      // Re-throw CliProcessExitError so the exit code propagates cleanly to runMain()
+      // without being double-printed. All other errors are written as a JSON envelope.
+      if (e instanceof CliProcessExitError) throw e;
+      writeStdout(this._errorEnvelope(e));
+      throw new CliProcessExitError(1);
     }
   }
 
   fail(e: unknown): never {
-    writeSync(1, this._errorEnvelope(e) + "\n");
-    process.exit(1);
+    writeStdout(this._errorEnvelope(e));
+    throw new CliProcessExitError(1);
   }
 
   async balances(items: Balance[]): Promise<void> {
@@ -367,8 +368,8 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   swapQuotesUnavailable(message: string, _errors: SwapQuoteProviderError[]): never {
-    writeStdout(JSON.stringify(this._errorEnvelope(message), null, 2));
-    process.exit(1);
+    writeStdout(this._errorEnvelope(message));
+    throw new CliProcessExitError(1);
   }
 }
 

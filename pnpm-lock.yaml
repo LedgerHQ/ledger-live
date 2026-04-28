@@ -461,7 +461,7 @@ pnpmfileChecksum: sha256-WizsKK+XY4tzYGFYz2IjQ3NcaxUnMgMAxQXmfGYtEqA=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
-    hash: 07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb
+    hash: fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565
     path: patches/@bunli__core@0.9.1.patch
   '@callstack/repack@5.2.3':
     hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
@@ -2255,7 +2255,7 @@ importers:
     dependencies:
       '@bunli/core':
         specifier: 0.9.1
-        version: 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
+        version: 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
@@ -40946,7 +40946,7 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@bunli/core@0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)':
+  '@bunli/core@0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@bunli/runtime': 0.3.2(react@19.0.0)(typescript@6.0.2)
       '@bunli/utils': 0.6.0
@@ -40971,7 +40971,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.2
       '@babel/traverse': 7.29.0
-      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
       debug: 4.4.3
       zod: 4.3.6
@@ -40987,7 +40987,7 @@ snapshots:
 
   '@bunli/plugin-completions@0.3.5(react@19.0.0)(typescript@6.0.2)':
     dependencies:
-      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(react@19.0.0)(typescript@6.0.2)
       better-result: 2.8.2
     transitivePeerDependencies:
       - bun
@@ -56016,7 +56016,7 @@ snapshots:
 
   bunli@0.9.1(react@19.0.0)(typescript@6.0.2):
     dependencies:
-      '@bunli/core': 0.9.1(patch_hash=07715a95550a81e4e26c6d4049f662a3b2fe5443f6da6adc97d0f5e344f94feb)(react@19.0.0)(typescript@6.0.2)
+      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(react@19.0.0)(typescript@6.0.2)
       '@bunli/generator': 0.6.5(react@19.0.0)(typescript@6.0.2)
       '@bunli/plugin-completions': 0.3.5(react@19.0.0)(typescript@6.0.2)
       '@bunli/tui': 0.6.0(react@19.0.0)(typescript@6.0.2)
