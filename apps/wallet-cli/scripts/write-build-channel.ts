@@ -15,9 +15,6 @@ if (!pkg.version) {
 }
 
 const version = pkg.version;
-const prereleasePart = version.split("-")[1] ?? null;
-const prereleaseTag = prereleasePart ? prereleasePart.split(".")[0] : null;
-const prereleaseTagLiteral = prereleaseTag ? `"${prereleaseTag}"` : "null";
 const releaseChannel: WalletCliReleaseChannel = isProductionBuild ? "stable" : "prerelease";
 
 const outputPath = resolve(import.meta.dir, "../src/generated/build-channel.ts");
@@ -26,9 +23,9 @@ mkdirSync(dirname(outputPath), { recursive: true });
 writeFileSync(
   outputPath,
   [
+    // Keep generated build metadata minimal: only fields consumed at runtime.
     `export const WALLET_CLI_VERSION = "${version}";`,
     `export const WALLET_CLI_RELEASE_CHANNEL: "stable" | "prerelease" = "${releaseChannel}";`,
-    `export const WALLET_CLI_PRERELEASE_TAG: string | null = ${prereleaseTagLiteral};`,
     "",
   ].join("\n"),
 );
