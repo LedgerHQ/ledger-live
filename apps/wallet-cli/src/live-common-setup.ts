@@ -8,6 +8,7 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
+import { WALLET_CLI_VERSION } from "./generated/build-channel";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -87,4 +88,4 @@ require("@ledgerhq/live-config/LiveConfig").LiveConfig.setConfig(walletCliConfig
 setupCalClientStore();
 registerWalletCliDmkTransport();
 
-setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");
+setEnv("LEDGER_CLIENT_VERSION", `wallet-cli/${WALLET_CLI_VERSION}`);

@@ -9,6 +9,19 @@ import "./live-common-setup";
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import { WALLET_CLI_RELEASE_CHANNEL } from "./generated/build-channel";
+
+if (WALLET_CLI_RELEASE_CHANNEL === "prerelease") {
+  process.stderr.write(
+    [
+      "+----------------------------------------+",
+      "|              TESTING BUILD             |",
+      "|     This build is not for production   |",
+      "+----------------------------------------+",
+      "",
+    ].join("\n"),
+  );
+}
 
 // Pass config explicitly so the compiled binary does not depend on cwd for bunli.config.* discovery.
 const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);

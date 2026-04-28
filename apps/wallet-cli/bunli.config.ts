@@ -1,8 +1,9 @@
 import { defineConfig } from "@bunli/core";
+import { WALLET_CLI_VERSION } from "./src/generated/build-channel";
 
 export default defineConfig({
   name: "wallet-cli",
-  version: "0.1.0",
+  version: WALLET_CLI_VERSION,
   description: "Ledger Wallet CLI",
   commands: {
     directory: "./src/commands",
