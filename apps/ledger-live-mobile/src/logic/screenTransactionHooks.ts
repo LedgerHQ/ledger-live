@@ -45,6 +45,7 @@ import type { SignTransactionNavigatorParamList } from "../components/RootNaviga
 import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { mevProtectionSelector } from "~/reducers/settings";
+import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -263,12 +264,14 @@ export function useSignedTxHandler({
   const mevProtected = useSelector(mevProtectionSelector);
   const navigation = useNavigation();
   const route = useRoute();
+  const newSendFlowFeature = useNewSendFlowFeature();
+  const newSendFlow = newSendFlowFeature.isEnabledForFamily(parentAccount?.currency.family);
   const broadcast = useBroadcast({
     account,
     parentAccount,
     broadcastConfig: {
       mevProtected,
-      source: { type: "coin-module", name: "ledger-live-mobile" },
+      source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow } },
     },
   });
   const dispatch = useDispatch();

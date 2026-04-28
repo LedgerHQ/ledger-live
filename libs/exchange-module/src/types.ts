@@ -141,15 +141,7 @@ export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";
 
-/**
- * Non-fatal signals attached to a quote.
- *
- * - `highSpread`: quote's exchange rate is suspiciously high.
- * - `unrealisticQuote`: expected fiat output exceeds fiat input by `gainPercent`.
- */
-export type QuoteWarning =
-  | { code: "highSpread" }
-  | { code: "unrealisticQuote"; gainPercent: number };
+export type QuoteWarning = { code: "unrealisticQuote"; gainPercent: number };
 
 export type QuoteError = "notEnoughBalanceForFees";
 
