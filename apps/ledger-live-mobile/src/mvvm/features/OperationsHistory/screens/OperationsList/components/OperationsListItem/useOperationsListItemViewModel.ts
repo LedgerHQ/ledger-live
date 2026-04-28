@@ -49,7 +49,9 @@ export function useOperationsListItemViewModel({
     ? formatAddress(address, { prefixLength: 6, suffixLength: 4 })
     : "";
 
-  const counterpartyAccount = address ? accountByAddress.get(address) : undefined;
+  const counterpartyAccount = address
+    ? accountByAddress.get(`${mainAccount.currency.id}:${address}`)
+    : undefined;
   const counterpartyAccountName = useMaybeAccountName(counterpartyAccount);
   // For send/receive: prefer the counterparty's account name, fall back to the raw address
   const counterpartyLabel = counterpartyAccountName ?? formattedAddress;

@@ -3,6 +3,7 @@ import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
@@ -19,7 +20,8 @@ export function useOperationsListViewModel() {
     for (const account of accounts) {
       const { freshAddress } = account;
       if (freshAddress) {
-        map.set(freshAddress, account);
+        const currencyId = getAccountCurrency(account).id;
+        map.set(`${currencyId}:${freshAddress}`, account);
       }
     }
     return map;
