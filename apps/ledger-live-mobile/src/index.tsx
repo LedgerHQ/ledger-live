@@ -104,6 +104,8 @@ import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
+import appsFlyer from "react-native-appsflyer";
+
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
@@ -124,6 +126,16 @@ const styles = StyleSheet.create({
 });
 
 function App() {
+  useEffect(() => {
+    appsFlyer.onDeepLink(deeplinkUrl => {
+      console.log("Deep link:", deeplinkUrl);
+    });
+    appsFlyer.initSdk({
+      devKey: "YOUR_DEV_KEY",
+      appId: "YOUR_APP_ID",
+      onDeepLinkListener: true,
+    });
+  }, []);
   logStartupEvent("App render");
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");

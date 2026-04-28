@@ -87,9 +87,14 @@ target 'ledgerlivemobile' do
     # Disable signing for pods
     installer.generated_projects.each do |project|
       project.targets.each do |target|
-          target.build_configurations.each do |config|
-              config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+        target.build_configurations.each do |config|
+          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+          # fmt 11.0.2 fails to compile its FMT_STRING consteval path with the
+          # current Xcode toolchain when CocoaPods' podspec forces C++20.
+          if target.name == 'fmt'
+            config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
           end
+        end
       end
     end
   end
