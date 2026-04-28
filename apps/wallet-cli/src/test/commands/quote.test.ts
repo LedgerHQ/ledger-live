@@ -20,8 +20,28 @@ const MOCK_QUOTE_ROW = {
   liquiditySource: "AMM" as const,
 };
 
+const MOCK_PROVIDER_ROW = {
+  name: "ParaSwap",
+  partner_id: "paraswap",
+  public_key: "1234567890abcdef",
+  public_key_curve: "secp256k1" as const,
+  service_app_version: 2,
+  descriptor: {
+    data: "09abcd",
+    signatures: {
+      prod: "a1b2c3",
+      test: "d1e2f3",
+    },
+  },
+};
+
 describe("quote command", () => {
   const server = new MockServer([
+    {
+      method: "GET",
+      match: /\/v1\/partners(\?|$)/,
+      response: [MOCK_PROVIDER_ROW],
+    },
     {
       method: "GET",
       match: /\/quote(\?|$)/,

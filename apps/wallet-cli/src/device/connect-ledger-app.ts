@@ -10,6 +10,7 @@ import {
 import { EmptyError, lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";
 import { walletCliDebug } from "../shared/log";
+import { writeStderr } from "../shared/ui";
 import { toWalletCliDeviceError } from "./wallet-cli-device-error";
 
 type ConnectAppState = DeviceActionState<
@@ -156,11 +157,11 @@ async function connectLedgerAppOnce(
 
           // Write user-visible messages to stderr
           if (r === UserInteractionRequired.UnlockDevice) {
-            process.stderr.write(
+            writeStderr(
               `[~] Waiting: Ledger detected but locked. Enter your PIN on the device.\n`,
             );
           } else if (r === UserInteractionRequired.ConfirmOpenApp) {
-            process.stderr.write(
+            writeStderr(
               `[i] Opening ${managerAppName} app on your Ledger... ACTION REQUIRED: Confirm on device screen.\n`,
             );
           }

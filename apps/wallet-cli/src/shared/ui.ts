@@ -3,7 +3,43 @@
 
 import yoctoSpinner from "yocto-spinner";
 import type { Spinner } from "yocto-spinner";
-export { colors, writeStdout } from "@bunli/utils";
+import { colors, writeStdout as bunliWriteStdout } from "@bunli/utils";
+export { colors };
+
+type Writer = (chunk: string) => void;
+
+let stdoutWriter: Writer | null = null;
+let stderrWriter: Writer | null = null;
+
+export function installOutputCapture(writers: {
+  stdout?: Writer;
+  stderr?: Writer;
+}): () => void {
+  const previousStdout = stdoutWriter;
+  const previousStderr = stderrWriter;
+  stdoutWriter = writers.stdout ?? null;
+  stderrWriter = writers.stderr ?? null;
+  return () => {
+    stdoutWriter = previousStdout;
+    stderrWriter = previousStderr;
+  };
+}
+
+export function writeStdout(message: string): void {
+  if (stdoutWriter) {
+    stdoutWriter(message.endsWith("\n") ? message : `${message}\n`);
+    return;
+  }
+  bunliWriteStdout(message);
+}
+
+export function writeStderr(message: string): void {
+  if (stderrWriter) {
+    stderrWriter(message);
+    return;
+  }
+  process.stderr.write(message);
+}
 
 /**
  * Returns true when running in an interactive terminal.

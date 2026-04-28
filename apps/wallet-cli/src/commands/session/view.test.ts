@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { runLocalCli } from "../../test/helpers/cli-runner";
+import { runCli } from "../../test/helpers/cli-runner";
 import { makeSessionDir } from "../../test/helpers/session-fixture";
 
 const SAMPLE_ENTRIES = [
@@ -21,7 +21,7 @@ describe("session view — human", () => {
   it("shows empty message when accounts list is empty", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(["session", "view"], fixture.env);
+    const { stdout, exitCode } = await runCli(["session", "view"], fixture.env);
     expect(exitCode).toBe(0);
     expect(stdout).toMatch(/no accounts/i);
   });
@@ -29,7 +29,7 @@ describe("session view — human", () => {
   it("prints label and descriptor for each entry", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(["session", "view"], fixture.env);
+    const { stdout, exitCode } = await runCli(["session", "view"], fixture.env);
     expect(exitCode).toBe(0);
     expect(stdout).toContain("bitcoin-native-1");
     expect(stdout).toContain("ethereum-1");
@@ -40,7 +40,7 @@ describe("session view — human", () => {
   it("shows all entries on separate lines", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(["session", "view"], fixture.env);
+    const { stdout, exitCode } = await runCli(["session", "view"], fixture.env);
     expect(exitCode).toBe(0);
     const lines = stdout.split("\n").filter(Boolean);
     expect(lines).toHaveLength(SAMPLE_ENTRIES.length);
@@ -51,7 +51,7 @@ describe("session view — json", () => {
   it("returns empty accounts array when session is empty", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(
+    const { stdout, exitCode } = await runCli(
       ["session", "view", "--output", "json"],
       fixture.env,
     );
@@ -64,7 +64,7 @@ describe("session view — json", () => {
   it("returns envelope with all account entries", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runLocalCli(
+    const { stdout, exitCode } = await runCli(
       ["session", "view", "--output", "json"],
       fixture.env,
     );
@@ -79,7 +79,7 @@ describe("session view — json", () => {
   it("includes timestamp in envelope", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout } = await runLocalCli(
+    const { stdout } = await runCli(
       ["session", "view", "--output", "json"],
       fixture.env,
     );
