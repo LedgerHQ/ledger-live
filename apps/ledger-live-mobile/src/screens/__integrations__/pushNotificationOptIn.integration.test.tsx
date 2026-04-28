@@ -14,7 +14,6 @@ jest.mock("LLM/features/NotificationsPrompt/hooks/useNotifications", () => ({
   }),
 }));
 
-import { PendingOperation as SwapPendingOperation } from "~/screens/Swap/SubScreens/PendingOperation";
 import CosmosValidationSuccess from "~/families/cosmos/DelegationFlow/04-ValidationSuccess";
 
 const Stack = createNativeStackNavigator();
@@ -35,32 +34,6 @@ const INITIAL_STATE = {
 describe("Push Notification Opt-In on Success Screens", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("should trigger notification drawer with 'swap' after SWAP success", async () => {
-    const swapParams = {
-      swapOperation: {
-        swapId: "swap-123",
-        provider: "changelly",
-        toCurrency: { id: "ethereum", name: "Ethereum" },
-        fromCurrency: { id: "bitcoin", name: "Bitcoin" },
-      },
-    };
-
-    render(
-      <Stack.Navigator>
-        <Stack.Screen name={ScreenName.SwapPendingOperation}>
-          {props => <SwapPendingOperation {...props} route={{ params: swapParams } as never} />}
-        </Stack.Screen>
-      </Stack.Navigator>,
-      INITIAL_STATE,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("swap-success-title")).toBeOnTheScreen();
-    });
-
-    expect(mockTryTriggerPushNotificationDrawerAfterAction).toHaveBeenCalledWith("swap");
   });
 
   it("should trigger notification drawer with 'stake' after STAKE success (Cosmos)", async () => {

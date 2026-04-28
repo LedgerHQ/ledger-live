@@ -13,7 +13,6 @@ import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -24,7 +23,6 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { isEmbeddedSwap, sponsored } = route.params;
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const syncAccounts = useSyncAllAccounts();
   const supportsSwapTabRoute = hasSwapTabRoute(navigation.getState());
 
@@ -49,7 +47,6 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
 
   useEffect(() => {
     syncAccounts();
-    tryTriggerPushNotificationDrawerAfterAction("swap");
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
