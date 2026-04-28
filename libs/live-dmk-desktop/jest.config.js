@@ -17,4 +17,5 @@ module.exports = {
       "<rootDir>/tests/__mocks__/device-transport-kit-web-hid.ts",
   },
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };

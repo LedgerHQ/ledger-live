@@ -16,4 +16,5 @@ module.exports = {
       },
     ],
   },
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };
