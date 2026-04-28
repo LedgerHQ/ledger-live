@@ -3,7 +3,7 @@ import { test } from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { EARN_V2_DESKTOP_FLAGS, useLocalEarnManifest } from "tests/utils/featureFlagUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
@@ -307,6 +307,7 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app, page }) => {
         await navigateToEarn(app);
+        await addBugLink(["LIVE-29872"]);
         await app.earnV2Dashboard.verifyHotStartPage();
         await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
         await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);

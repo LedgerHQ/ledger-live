@@ -206,6 +206,7 @@ export type APITokenTransfer = {
    * Undefined for implicit/protocol-level transfers.
    */
   transactionId?: number;
+  originationId?: number;
 };
 
 /**

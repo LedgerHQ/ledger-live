@@ -12,6 +12,7 @@ module.exports = defineConfig({
   resolve: {
     alias: {
       "expo-font": path.resolve(__dirname, ".storybook-web/expoFontStub.js"),
+      "@ledgerhq/lumen-ui-rnative": path.resolve(__dirname, ".storybook-web/lumenUiRnativeStub.js"),
       "@storybook/jest": path.resolve(__dirname, ".storybook-web/jestStub.js"),
       "@storybook/addon-actions": path.resolve(__dirname, ".storybook-web/addonActionsStub.js"),
       "expo-asset": require.resolve("expo-asset"),

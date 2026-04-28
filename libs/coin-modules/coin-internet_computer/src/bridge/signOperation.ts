@@ -1,7 +1,7 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge, DeviceId } from "@ledgerhq/types-live";
-import { Cbor } from "@zondax/ledger-live-icp/agent";
+import { Cbor, requestIdOf } from "@zondax/ledger-live-icp/agent";
 import {
   UnsignedTransaction,
   createUnsignedSendTransaction,
@@ -75,6 +75,7 @@ export const buildSignOperation =
         signature = res.signature;
         encodedSignedCallBlob = Buffer.from(Cbor.encode(res.callBody)).toString("hex");
         invariant(signature, "[ICP](signOperation) Signature not found");
+        const transferRequestIdHex = Buffer.from(requestIdOf(unsignedTransaction)).toString("hex");
 
         o.next({
           type: "device-signature-granted",
@@ -97,6 +98,7 @@ export const buildSignOperation =
             signature,
             rawData: {
               encodedSignedCallBlob,
+              transferRequestIdHex,
             },
           },
         });

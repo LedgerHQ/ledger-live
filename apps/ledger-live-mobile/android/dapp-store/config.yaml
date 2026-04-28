@@ -13,7 +13,7 @@ app:
   urls:
     license_url: https://shop.ledger.com/pages/ledger-live-terms-of-use
     copyright_url: https://shop.ledger.com/pages/ledger-live-terms-of-use
-    privacy_policy_url: https://www.ledger.com/privacy-policy
+    privacy_policy_url: https://shop.ledger.com/pages/privacy-policy
     website: https://ledger.com
   media:
     - purpose: icon

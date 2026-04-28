@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BackHandler, Platform } from "react-native";
 import type { RefObject } from "react";
 import { useSelector } from "~/context/hooks";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import type { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
@@ -42,10 +41,8 @@ export default function useWeb3PlayerViewModel({
     useCurrentAccountHistDB();
 
   const handleHardwareBackPress = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    if (webviewState.canGoBack) {
-      webview.goBack();
+    if (webviewState.canGoBack && webviewAPIRef?.current) {
+      webviewAPIRef.current.goBack();
       return true;
     }
 

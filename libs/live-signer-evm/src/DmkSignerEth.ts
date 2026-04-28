@@ -25,6 +25,10 @@ import {
 } from "@ledgerhq/errors";
 import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
+import {
+  buildDefaultHttpBlindSigningReporter,
+  liveBlindSigningReporter,
+} from "@ledgerhq/live-dmk-shared";
 
 export type DAError =
   | GetAddressDAError
@@ -39,8 +43,13 @@ export class DmkSignerEth implements EvmSigner {
     readonly sessionId: string,
   ) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
+    liveBlindSigningReporter.setInner(
+      buildDefaultHttpBlindSigningReporter(originToken, "ledger-wallet"),
+    );
+    liveBlindSigningReporter.setContext({ sessionId });
     const contextModule = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
+      .setBlindSigningReporter(liveBlindSigningReporter)
       .build();
     this.signer = new SignerEthBuilder({
       dmk,

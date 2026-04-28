@@ -11,7 +11,7 @@
  *
  *   # Or use the combined shortcut
  *   pnpm coin:coverage:report
- * 
+ *
  *   # Or use the summary shortcut
  *   pnpm coin:coverage:summary
  */

@@ -73,16 +73,6 @@ describe("PortfolioBannerContent", () => {
     expect(screen.getByTestId("postonboarding-banner-entry-point")).toBeInTheDocument();
   });
 
-  it("renders nothing when finish onboarding widget is visible (after LNS branch)", () => {
-    setVisibility({
-      isFinishOnboardingWidgetVisible: true,
-      isActionCardsVisible: true,
-      hasAnyContentBannerVisible: true,
-    });
-    const { container } = render(<PortfolioBannerContent />);
-    expect(container.firstChild).toBeNull();
-  });
-
   it("renders FinishOnboardingWidget branch when post-onboarding is visible and finish widget is visible", () => {
     setVisibility({
       isPostOnboardingBannerVisible: true,

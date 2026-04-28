@@ -33,6 +33,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "rxjs": "catalog:"
   },
   "scripts": {

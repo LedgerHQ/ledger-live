@@ -38,9 +38,11 @@ import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
   languageSelector,
   sentryLogsSelector,
+  trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
@@ -172,6 +174,8 @@ async function init() {
   });
   const initialSettings = (await getKey("app", "settings")) || {};
   startAnalytics(store);
+
+  liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
 
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };

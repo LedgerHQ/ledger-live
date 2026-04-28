@@ -26,3 +26,9 @@ export {
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
 } from "./logic";
+export {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromStakingResourcesRaw,
+  toStakingResourcesRaw,
+} from "./serialization";

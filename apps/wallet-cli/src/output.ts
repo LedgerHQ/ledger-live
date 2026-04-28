@@ -15,7 +15,13 @@ import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
 import { spinner, colors, writeStdout } from "./shared/ui";
+import {
+  formatSwapQuoteHuman,
+  type SwapQuoteLine,
+  type SwapQuoteProviderError,
+} from "./commands/swap/quote-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
+import type { SessionEntry } from "./session/session-store";
 
 // ---------------------------------------------------------------------------
 // Context & interface
@@ -67,12 +73,26 @@ export interface CommandOutput {
   /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
   sessionSaved(added: number): void;
 
+  /** Output the result of a session reset (human: colored message; json: envelope with removed count). */
+  sessionReset(count: number): void;
+  /** Output session accounts (human: table or empty message; json: envelope with accounts array). */
+  sessionView(accounts: readonly SessionEntry[]): void;
+
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
   /** Handle one send observable event (human: update active spinner; json: accumulate data). */
   sendEvent(event: SendEvent): void;
   /** Signal send stream complete. Json: write result envelope (account from ctx). Human: noop. */
   sendComplete(): void;
+
+  /** Print swap quotes (human: formatted blocks; json: success envelope with `quotes`). */
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void;
+
+  /**
+   * No quotes returned while providers reported errors. Json: error envelope + exit 1.
+   * Human: error lines + exit 1.
+   */
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never;
 }
 
 // ---------------------------------------------------------------------------
@@ -149,6 +169,25 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(colors.dim(`  session: ${added} new account${added === 1 ? "" : "s"} saved`));
   }
 
+  sessionReset(count: number): void {
+    writeStdout(
+      count === 0
+        ? colors.dim("Session was already empty.")
+        : `Removed ${colors.bold(String(count))} account${count === 1 ? "" : "s"} from session.`,
+    );
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    if (accounts.length === 0) {
+      writeStdout(colors.dim("No accounts in session. Run `account discover` first."));
+      return;
+    }
+    const maxLabel = Math.max(...accounts.map(e => e.label.length));
+    for (const entry of accounts) {
+      writeStdout(`${colors.bold(entry.label.padEnd(maxLabel))}  ${colors.dim(entry.descriptor)}`);
+    }
+  }
+
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(`  To:     ${p.recipient}`);
     writeStdout(`  Amount: ${colors.bold(colors.green(p.amount))}`);
@@ -187,6 +226,28 @@ class HumanCommandOutput implements CommandOutput {
 
   sendComplete(): void {
     /* noop */
+  }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    for (const q of args.quotes) {
+      writeStdout(`${formatSwapQuoteHuman(q)}\n`);
+    }
+    if (args.partialErrors.length > 0) {
+      const s = spinner("");
+      s.error(colors.dim(`${args.partialErrors.length} provider(s) returned errors:`));
+      for (const e of args.partialErrors) {
+        s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
+      }
+    }
+  }
+
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
+    const s = spinner("");
+    s.error(message);
+    for (const e of errors) {
+      s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
+    }
+    process.exit(1);
   }
 }
 
@@ -271,6 +332,14 @@ class JsonCommandOutput implements CommandOutput {
 
   sessionSaved(_added: number): void { /* noop */ }
 
+  sessionReset(count: number): void {
+    writeStdout(this._envelope({ removed: count }));
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    writeStdout(this._envelope({ accounts }));
+  }
+
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(
       this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }),
@@ -291,6 +360,15 @@ class JsonCommandOutput implements CommandOutput {
 
   sendComplete(): void {
     writeStdout(this._envelope(this._sendResult));
+  }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    writeStdout(this._envelope({ quotes: args.quotes }));
+  }
+
+  swapQuotesUnavailable(message: string, _errors: SwapQuoteProviderError[]): never {
+    writeStdout(JSON.stringify(this._errorEnvelope(message), null, 2));
+    process.exit(1);
   }
 }
 

@@ -136,8 +136,6 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      SPECULOS_IMAGE_TAG: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
-      SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}
       SPECULOS_DEVICE: nanoSP
     runs-on: [ledger-live-4xlarge]
     steps:
@@ -167,7 +165,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: coin-apps
-          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          speculos_tag: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Set test environment variables
@@ -194,6 +192,8 @@ jobs:
           TEST_EXECUTION: ""
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          SPECULOS_IMAGE_TAG: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
+          SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

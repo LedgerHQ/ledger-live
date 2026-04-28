@@ -52,7 +52,17 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     speculosApp: app,
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
     featureFlags: {
-      lldWalletSync: { enabled: true },
+      lldWalletSync: {
+        enabled: true,
+        params: {
+          environment: "STAGING",
+          watchConfig: {
+            pollingInterval: 2_000,
+            initialTimeout: 500,
+          },
+          learnMoreLink: "",
+        },
+      },
       lldLedgerSyncEntryPoints: { enabled: true },
     },
   });
@@ -80,8 +90,11 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectSynchronizationSuccess();
       await app.ledgerSync.closeLedgerSync();
 
+      // Success copy can appear before the watch loop finishes importing every descriptor (retries use backoff).
+      await app.accounts.expectReduxAccountsLength(2);
+
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCount(2);
+      await app.accounts.expectAccountsCount(2, 60_000);
 
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
@@ -98,7 +111,8 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       expect(await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app)).toBeDefined();
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCount(1);
+      await app.accounts.expectReduxAccountsLength(1);
+      await app.accounts.expectAccountsCount(1, 60_000);
 
       const pulledData = await CLI.ledgerSync({
         ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,

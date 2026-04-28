@@ -85,6 +85,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

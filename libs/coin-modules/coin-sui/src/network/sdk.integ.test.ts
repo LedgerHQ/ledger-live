@@ -3,6 +3,7 @@ import type { Operation } from "@ledgerhq/types-live";
 import type { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { normalizeSuiAddressForComparison } from "../utils";
 import {
   createTransaction,
   DEFAULT_COIN_TYPE,
@@ -10,6 +11,7 @@ import {
   getListOperations,
   getOperations,
   getCheckpoint,
+  getOperationAmount,
   isSettlementTransaction,
   paymentInfo,
   getBlock,
@@ -100,6 +102,50 @@ describe("SUI SDK Integration tests", () => {
               senders: [testingAccount],
               extra: { coinType: "0x2::sui::SUI" },
             });
+          });
+
+          it("live RPC: balance change amounts are strings; unprefixed address needs normalized match for getOperationAmount", async () => {
+            const txHash = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
+            const tx = await withApi(async api =>
+              api.getTransactionBlock({
+                digest: txHash,
+                options: {
+                  showBalanceChanges: true,
+                  showInput: true,
+                  showEffects: true,
+                },
+              }),
+            );
+
+            const changes = tx.balanceChanges ?? [];
+            expect(changes.length).toBeGreaterThan(0);
+
+            const unprefixed = testingAccount.replace(/^0x/i, "");
+            expect(
+              changes.some(
+                c =>
+                  typeof c.owner !== "string" &&
+                  "AddressOwner" in c.owner &&
+                  c.owner.AddressOwner === unprefixed,
+              ),
+            ).toBe(false);
+
+            const normalizedTarget = normalizeSuiAddressForComparison(unprefixed);
+            const accountRows = changes.filter(
+              c =>
+                typeof c.owner !== "string" &&
+                "AddressOwner" in c.owner &&
+                normalizeSuiAddressForComparison(c.owner.AddressOwner) === normalizedTarget &&
+                c.coinType === DEFAULT_COIN_TYPE,
+            );
+            expect(accountRows.length).toBeGreaterThanOrEqual(1);
+            for (const row of accountRows) {
+              expect(typeof row.amount).toBe("string");
+            }
+
+            expect(getOperationAmount(unprefixed, tx, DEFAULT_COIN_TYPE).toString()).toBe(
+              "150000000",
+            );
           });
         });
 

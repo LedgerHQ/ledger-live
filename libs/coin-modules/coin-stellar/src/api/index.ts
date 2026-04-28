@@ -31,11 +31,12 @@ import {
   validateIntent,
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
-import { fetchSequence } from "../network";
+import { fetchSequence, registerHorizonInterceptors } from "../network";
 import { StellarMemo } from "../types";
 
 export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  registerHorizonInterceptors();
 
   return {
     broadcast,
