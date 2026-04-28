@@ -72,7 +72,7 @@ describe("RecoverWidget integration", () => {
     jest.clearAllMocks();
     mockUseNavigate.mockReturnValue(mockNavigate);
     mockUseUpsellPath.mockReturnValue("/protect/upsell");
-    mockGetStoreValue.mockImplementation(async () => "NO_SUBSCRIPTION");
+    mockGetStoreValue.mockReturnValue("NO_SUBSCRIPTION");
     mockUseFeature.mockImplementation((id: string) =>
       id === "protectServicesDesktop"
         ? {

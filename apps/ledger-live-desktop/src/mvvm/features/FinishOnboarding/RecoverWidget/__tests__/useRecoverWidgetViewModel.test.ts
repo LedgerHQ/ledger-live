@@ -14,10 +14,6 @@ jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
 
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { useNavigate } from "react-router";
@@ -66,9 +62,7 @@ describe("useRecoverWidgetViewModel", () => {
     mockIsRecoverDisplayed.mockReturnValue(true);
     setHub({});
 
-    mockGetStoreValue.mockImplementation(
-      async () => LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
-    );
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
   });
 
   it("returns isVisible true after subscription loads when the recover offer is available", async () => {
@@ -100,9 +94,7 @@ describe("useRecoverWidgetViewModel", () => {
   });
 
   it("returns isVisible false when backup is already done", async () => {
-    mockGetStoreValue.mockImplementation(
-      async () => LedgerRecoverSubscriptionStateEnum.BACKUP_DONE,
-    );
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE);
     const { result } = renderHook(() => useRecoverWidgetViewModel());
 
     await waitFor(() => {
