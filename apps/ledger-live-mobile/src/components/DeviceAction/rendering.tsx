@@ -38,6 +38,7 @@ import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";
@@ -772,6 +773,7 @@ export function RequiredFirmwareUpdate({
   const { t } = useTranslation();
   const track = useTrack();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const usbFwUpdateActivated = !!lastSeenDevice;
   const deviceName = getDeviceModel(device.modelId).productName;
@@ -784,36 +786,35 @@ export function RequiredFirmwareUpdate({
       button: "OpenMyLedger",
       page: "Update_OS_To_Continue",
     });
-    navigation.reset({
-      index: 0,
+    const myLedgerState = {
       routes: [
         {
-          name: NavigatorName.Base,
-          state: {
-            routes: [
-              {
-                name: NavigatorName.Main,
-                state: {
-                  routes: [
-                    {
-                      name: NavigatorName.MyLedger,
-                      state: {
-                        routes: [
-                          {
-                            name: ScreenName.MyLedgerChooseDevice,
-                            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
+          name: ScreenName.MyLedgerChooseDevice,
+          params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
         },
       ],
-    });
+    };
+    if (shouldDisplayWallet40MainNav) {
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: NavigatorName.Main },
+          { name: NavigatorName.MyLedger, state: myLedgerState },
+        ],
+      });
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Main,
+            state: {
+              routes: [{ name: NavigatorName.MyLedger, state: myLedgerState }],
+            },
+          },
+        ],
+      });
+    }
   };
 
   return (
