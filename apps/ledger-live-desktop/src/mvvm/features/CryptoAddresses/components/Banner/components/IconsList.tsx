@@ -3,7 +3,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import useTheme from "~/renderer/hooks/useTheme";
 
-const ICON_SIZE = "16px";
+const ICON_SIZE = 16;
 const LEFT_STEP_PX = 14.5;
 
 export const IconsList = memo(function IconsList({

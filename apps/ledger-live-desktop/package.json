@@ -72,7 +72,7 @@
     "@ledgerhq/zcash-shielded": "workspace:^",
     "@ledgerhq/zcash-utils": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/crypto-icons": "2.0.1",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",

@@ -18,7 +18,7 @@ export function AggregatedAccountNameCell({
         <SquaredCryptoIcon
           ledgerId={account.currency.id}
           ticker={account.currency.ticker}
-          size="32px"
+          size={32}
         />
       }
       title={displayName}

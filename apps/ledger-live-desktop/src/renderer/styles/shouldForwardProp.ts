@@ -188,7 +188,6 @@ const INVALID_DOM_PROPS = new Set([
   "short",
   "separator",
   "focused",
-  "overridesRadius",
   "lighterPrimary",
   "loading",
   "currentRef",

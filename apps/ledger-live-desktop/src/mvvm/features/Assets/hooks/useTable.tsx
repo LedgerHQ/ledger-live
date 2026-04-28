@@ -52,22 +52,22 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
           );
           return (
             <div data-testid={`w40-asset-row-${assetTestId}`}>
-            <TableCellContent
-              leadingContent={
-                row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
-                  <CryptoIcon
-                    ledgerId={row.original.currency.id}
-                    ticker={row.original.currency.ticker}
-                    size={getValidCryptoIconSize(32)}
-                  />
-                ) : (
-                  <CryptoCurrencyIcon currency={row.original.currency} size={32} />
-                )
-              }
-              title={row.original.currency.name}
-              description={row.original.currency.ticker}
-            />
-          </div>
+              <TableCellContent
+                leadingContent={
+                  row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
+                    <CryptoIcon
+                      ledgerId={row.original.currency.id}
+                      ticker={row.original.currency.ticker}
+                      size={getValidCryptoIconSize(32)}
+                    />
+                  ) : (
+                    <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+                  )
+                }
+                title={row.original.currency.name}
+                description={row.original.currency.ticker}
+              />
+            </div>
           );
         },
       },

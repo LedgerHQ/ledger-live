@@ -55,7 +55,7 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
           <TableCell>
             <CryptoCurrencyIconWrapper>
               {currency.ledgerIds && currency.ledgerIds.length > 0 ? (
-                <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size="32px" />
+                <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size={32} />
               ) : (
                 <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
               )}

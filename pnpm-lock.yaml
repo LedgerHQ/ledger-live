@@ -919,8 +919,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/crypto-icons':
-        specifier: 'catalog:'
-        version: 1.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
+        specifier: 2.0.1
+        version: 2.0.1(@ledgerhq/lumen-design-core@0.1.11)(@ledgerhq/lumen-ui-react@0.1.24(1685647331cab8b81ae5bae9e8b32b81))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
@@ -16812,6 +16812,27 @@ packages:
       react-native:
         optional: true
       styled-components:
+        optional: true
+
+  '@ledgerhq/crypto-icons@2.0.1':
+    resolution: {integrity: sha512-nGw1ENrkpLDiKUMjxzHeO3w5FZLD9dJLu+Gvbl7EfrLg7wQU0cOCokbvxEUXeWI8B3iAbUyBWW51JeqnbYO8JA==}
+    peerDependencies:
+      '@ledgerhq/lumen-design-core': '>=0.1.11'
+      '@ledgerhq/lumen-ui-react': '>=0.1.24'
+      '@ledgerhq/lumen-ui-rnative': '>=0.1.25'
+      react: 19.0.0
+      react-dom: 19.0.0
+      react-native: '>=0.70'
+    peerDependenciesMeta:
+      '@ledgerhq/lumen-design-core':
+        optional: true
+      '@ledgerhq/lumen-ui-react':
+        optional: true
+      '@ledgerhq/lumen-ui-rnative':
+        optional: true
+      react-dom:
+        optional: true
+      react-native:
         optional: true
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
@@ -45134,6 +45155,14 @@ snapshots:
     optionalDependencies:
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
       styled-components: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react@19.0.0)
+
+  '@ledgerhq/crypto-icons@2.0.1(@ledgerhq/lumen-design-core@0.1.11)(@ledgerhq/lumen-ui-react@0.1.24(1685647331cab8b81ae5bae9e8b32b81))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      react: 19.0.0
+    optionalDependencies:
+      '@ledgerhq/lumen-design-core': 0.1.11
+      '@ledgerhq/lumen-ui-react': 0.1.24(1685647331cab8b81ae5bae9e8b32b81)
+      react-dom: 19.0.0(react@19.0.0)
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     dependencies:

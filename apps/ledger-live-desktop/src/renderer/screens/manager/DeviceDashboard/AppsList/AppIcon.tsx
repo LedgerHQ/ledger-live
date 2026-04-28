@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import manager from "@ledgerhq/live-common/manager/index";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";

@@ -24,7 +24,7 @@ export function ExportAccountListItem({ account, checked, onToggle }: ExportAcco
     <ListItem onClick={onToggle}>
       <ListItemLeading>
         <Checkbox checked={checked} />
-        <CryptoIcon ledgerId={account.currency.id} ticker={account.currency.ticker} size="48px" />
+        <CryptoIcon ledgerId={account.currency.id} ticker={account.currency.ticker} size={48} />
         <ListItemContent>
           <ListItemTitle>{account.name}</ListItemTitle>
         </ListItemContent>

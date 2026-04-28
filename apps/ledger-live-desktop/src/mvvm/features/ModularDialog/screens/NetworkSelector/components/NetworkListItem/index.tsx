@@ -36,7 +36,7 @@ export const NetworkListItem = ({
       className="-outline-offset-2"
     >
       <ListItemLeading>
-        <SquaredCryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />
+        <SquaredCryptoIcon size={48} ledgerId={currency.id} ticker={currency.ticker} />
         <ListItemContent>
           <ListItemTitle>{currency.name}</ListItemTitle>
           <ListItemDescription className="flex gap-6">
