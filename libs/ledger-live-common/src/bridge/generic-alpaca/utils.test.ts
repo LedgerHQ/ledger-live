@@ -418,24 +418,33 @@ describe("Alpaca utils", () => {
     });
 
     describe("craftTransactionData", () => {
-      it("should use provided craftTransactionData", () => {
+      it.each([
+        { title: "undefined", data: undefined },
+        { title: "empty", data: Buffer.from("") },
+      ])("should use provided craftTransactionData when data is $title", ({ data }) => {
         const defaultCraftTransactionDataSpy = jest.spyOn(
           craftTransactionDataModule,
           "craftTransactionData",
         );
-        const craftTransactionDataMock = jest.fn();
+        const expectedData = {
+          type: "buffer",
+          value: Buffer.from("data from craft transaction mock"),
+        };
+        const craftTransactionDataMock = jest.fn().mockReturnValueOnce(expectedData);
 
-        transactionToIntent(
+        const intent = transactionToIntent(
           {
             currency: {
               name: "ethereum",
               units: ["wei"],
             },
           } as unknown as Account,
-          {} as unknown as GenericTransaction,
+          { data } as unknown as GenericTransaction,
           undefined,
           craftTransactionDataMock,
         );
+
+        expect(intent).toMatchObject({ data: expectedData });
 
         expect(craftTransactionDataMock).toHaveBeenCalledTimes(1);
         expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
@@ -460,6 +469,32 @@ describe("Alpaca utils", () => {
         );
 
         expect(defaultCraftTransactionDataSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it("should set data from transaction when non empty and not call no craftTransactionData", () => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+        const craftTransactionDataMock = jest.fn();
+        const expectedData = Buffer.from("some random data");
+
+        const intent = transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          { data: expectedData } as unknown as GenericTransaction,
+          undefined,
+          craftTransactionDataMock,
+        );
+
+        expect(intent).toMatchObject({ data: { type: "buffer", value: expectedData } });
+
+        expect(craftTransactionDataMock).not.toHaveBeenCalled();
+        expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
       });
     });
   });
