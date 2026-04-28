@@ -168,7 +168,7 @@ const getLogsWithPagination = async (
 
       if (
         error.status === NET_ERROR_LOG_TRANSFERS_LIMIT.status &&
-        error.message.match(NET_ERROR_LOG_TRANSFERS_LIMIT.msgPattern)
+        NET_ERROR_LOG_TRANSFERS_LIMIT.msgPattern.exec(error.message)
       ) {
         const nextTo = from + Math.floor((to - from) / 2);
 
