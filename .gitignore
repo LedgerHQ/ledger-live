@@ -22,7 +22,7 @@ libs/ui/packages/react/rsbuild.config.js
 libs/ui/packages/react/rsbuild.config.js.map
 .zed
 
-.claude/settings.json
+.claude/settings.local.json
 .claude/worktrees/
 .cursor/rules/trial/*
 
