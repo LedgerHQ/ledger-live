@@ -5,7 +5,7 @@ import {
   type DeviceConnectionParams,
   type ExecutorState,
 } from "@ledgerhq/device-intent";
-import type { ConnectAppDeviceInitializationInput } from "LLM/components/device-intent-executor/types";
+import type { ConnectAppDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor/types";
 import type {
   AnyDemoJobState,
   AnyDemoInput,
