@@ -1,11 +1,27 @@
 import { getInitialURL } from "./helpers";
 
 describe("wallet-api helpers", () => {
+  let consoleSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleSpy.mockRestore();
+  });
+
   describe("isWhitelistedDomain (via getInitialURL)", () => {
     const mockManifest = {
       url: "https://default.example.com/",
       domains: ["ledger.com", "*.subdomain.ledger.com", "approved.io"],
     };
+
+    const DOMAIN_ERROR =
+      "#isWhitelistedDomain:: invalid URL: not on the same domain as manifest URL";
+    const schemeError = (scheme: string) =>
+      `#isWhitelistedDomain:: invalid URL: non-HTTPS scheme '${scheme}' is not allowed`;
+    const FORMAT_ERROR = expect.stringContaining("#isWhitelistedDomain:: invalid URL format:");
 
     describe("malicious URL bypass attempts", () => {
       it("should reject URL with whitelisted domain in query parameter", () => {
@@ -16,6 +32,7 @@ describe("wallet-api helpers", () => {
         const result = getInitialURL(inputs, mockManifest);
         // Should fall back to manifest.url, not use goToURL
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject URL with whitelisted domain in hash fragment", () => {
@@ -25,6 +42,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject URL with whitelisted domain in path", () => {
@@ -34,6 +52,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject URL with whitelisted domain as subdomain of malicious domain", () => {
@@ -43,6 +62,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject URL with similar but different domain", () => {
@@ -52,6 +72,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
     });
 
@@ -63,6 +84,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(schemeError("http:"));
       });
 
       it("should reject javascript: URLs", () => {
@@ -72,6 +94,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(schemeError("javascript:"));
       });
 
       it("should reject data: URLs", () => {
@@ -81,6 +104,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(schemeError("data:"));
       });
 
       it("should reject file: URLs", () => {
@@ -90,6 +114,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(schemeError("file:"));
       });
 
       it("should reject ftp: URLs", () => {
@@ -99,6 +124,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(schemeError("ftp:"));
       });
     });
 
@@ -110,6 +136,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject URL with different domain even with path", () => {
@@ -119,6 +146,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject URL on different domain", () => {
@@ -128,6 +156,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should allow URL on same domain as manifest URL", () => {
@@ -137,6 +166,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should allow URL on same domain as manifest URL with different path and params", () => {
@@ -146,6 +176,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should be case-insensitive for domain matching", () => {
@@ -155,6 +186,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should allow URL on same domain with different case", () => {
@@ -168,6 +200,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithUppercase);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -179,6 +212,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject nested subdomain not matching manifest domain", () => {
@@ -188,6 +222,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject domain not matching manifest domain", () => {
@@ -197,6 +232,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject subdomain not matching wildcard pattern", () => {
@@ -206,6 +242,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should reject when wildcard pattern should not match", () => {
@@ -215,6 +252,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
     });
 
@@ -230,6 +268,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithIDN);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should handle IDN domains in unicode form on same domain", () => {
@@ -243,6 +282,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithIDN);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -254,6 +294,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(FORMAT_ERROR);
       });
 
       it("should reject empty URL", () => {
@@ -263,6 +304,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(FORMAT_ERROR);
       });
 
       it("should handle URL with port on same domain", () => {
@@ -272,6 +314,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should handle URL with authentication on same domain", () => {
@@ -281,6 +324,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should work when goToURL is not provided", () => {
@@ -288,12 +332,14 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should work when inputs is undefined", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(undefined, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
 
       it("should handle URL with only scheme separator", () => {
@@ -303,6 +349,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
+        expect(consoleSpy).toHaveBeenCalledWith(FORMAT_ERROR);
       });
     });
 
@@ -316,6 +363,7 @@ describe("wallet-api helpers", () => {
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
         expect(result).not.toContain("evil.example");
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it("should allow deeplink with goToURL on same domain", () => {
@@ -327,6 +375,7 @@ describe("wallet-api helpers", () => {
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
         expect(result).toContain("default.example.com");
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -343,6 +392,7 @@ describe("wallet-api helpers", () => {
         const result = getInitialURL(inputs, manifestWithGenericPattern);
         // Should reject because "https://" is not a valid hostname pattern
         expect(result).toBe(manifestWithGenericPattern.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
 
       it('should reject "*" pattern with non-HTTPS scheme', () => {
@@ -356,6 +406,7 @@ describe("wallet-api helpers", () => {
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithHttpPattern);
         expect(result).toBe(manifestWithHttpPattern.url);
+        expect(consoleSpy).toHaveBeenCalledWith(schemeError("http:"));
       });
 
       it('should reject "*" wildcard (all domains not allowed)', () => {
@@ -370,6 +421,7 @@ describe("wallet-api helpers", () => {
         const result = getInitialURL(inputs, manifestWithWildcard);
         // "*" alone should not match any domain for security reasons
         expect(result).toBe(manifestWithWildcard.url);
+        expect(consoleSpy).toHaveBeenCalledWith(DOMAIN_ERROR);
       });
     });
   });
@@ -388,6 +440,7 @@ describe("wallet-api helpers", () => {
       expect(result).toContain("example.com");
       expect(result).toContain("customParam=value");
       expect(result).toContain("params=%7B%22foo%22%3A%22bar%22%7D"); // JSON.stringify({foo: "bar"}) encoded
+      expect(consoleSpy).not.toHaveBeenCalled();
     });
 
     it("should use goToURL as-is when on same domain (without adding params)", () => {
@@ -406,6 +459,7 @@ describe("wallet-api helpers", () => {
       expect(result).toBe("https://example.com/page");
       expect(result).not.toContain("customParam");
       expect(result).not.toContain("params");
+      expect(consoleSpy).not.toHaveBeenCalled();
     });
   });
 });
