@@ -94,6 +94,10 @@ export type AccountsGetOperationsOptions = {
   sort?: "Descending" | "Ascending";
   // the minimum height of the block the operation is in
   "level.ge": number;
+  /** Exclusive upper bound on block level (pagination window). */
+  "level.lt"?: number;
+  /** Exclusive lower bound on block level (pagination window). */
+  "level.gt"?: number;
 };
 
 export type APIOperation =
@@ -171,6 +175,8 @@ export type TokenTransfersGetOptions = {
   limit?: number;
   sort?: "Descending" | "Ascending";
   "level.ge"?: number;
+  "level.lt"?: number;
+  "level.gt"?: number;
 };
 
 /**

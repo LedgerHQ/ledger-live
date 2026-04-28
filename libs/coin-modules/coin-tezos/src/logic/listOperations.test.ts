@@ -18,7 +18,11 @@ jest.mock("../network", () => ({
   },
 }));
 
-const options: { sort: "Ascending" | "Descending"; minHeight: number } = {
+const options: {
+  sort: "Ascending" | "Descending";
+  minHeight: number;
+  limit?: number;
+} = {
   sort: "Ascending",
   minHeight: 0,
 };
@@ -34,42 +38,67 @@ describe("listOperations", () => {
     mockGetAccountTokenTransfers.mockResolvedValue([]);
   });
 
-  it("forwards tokenLastId from pagination cursor as lastId to getAccountTokenTransfers", async () => {
+  it("forwards level.lt from cursor on both streams when sort is Descending", async () => {
     await listOperations("tz1PaginationAddr", {
       ...options,
-      token: JSON.stringify({ nativeLastId: 111, tokenLastId: 222 }),
+      sort: "Descending",
+      token: JSON.stringify({ lastLevel: 5_000_000 }),
     });
 
     expect(mockGetAccountOperations).toHaveBeenCalledWith(
       "tz1PaginationAddr",
       expect.objectContaining({
-        lastId: 111,
-        sort: options.sort,
+        "level.lt": 5_000_000,
+        sort: "Descending",
         "level.ge": options.minHeight,
       }),
     );
     expect(mockGetAccountTokenTransfers).toHaveBeenCalledWith(
       "tz1PaginationAddr",
       expect.objectContaining({
-        lastId: 222,
-        sort: options.sort,
+        "level.lt": 5_000_000,
+        sort: "Descending",
         "level.ge": options.minHeight,
       }),
     );
   });
 
-  it("parses legacy numeric pagination cursor as native lastId only", async () => {
-    await listOperations("tz1Legacy", {
+  it("forwards level.ge continuation when sort is Ascending and cursor has lastLevel", async () => {
+    await listOperations("tz1AscPage2", {
       ...options,
-      token: JSON.stringify(99_999),
+      sort: "Ascending",
+      minHeight: 0,
+      token: JSON.stringify({ lastLevel: 100 }),
     });
 
     expect(mockGetAccountOperations).toHaveBeenCalledWith(
-      "tz1Legacy",
-      expect.objectContaining({ lastId: 99_999 }),
+      "tz1AscPage2",
+      expect.objectContaining({
+        "level.ge": 101,
+        sort: "Ascending",
+      }),
     );
-    const [, legacyTokenOpts] = mockGetAccountTokenTransfers.mock.calls[0];
-    expect(legacyTokenOpts).not.toHaveProperty("lastId");
+    expect(mockGetAccountTokenTransfers).toHaveBeenCalledWith(
+      "tz1AscPage2",
+      expect.objectContaining({
+        "level.ge": 101,
+        sort: "Ascending",
+      }),
+    );
+  });
+
+  it("ignores legacy id-based pagination cursor (fresh level window)", async () => {
+    await listOperations("tz1Legacy", {
+      ...options,
+      token: JSON.stringify({ nativeLastId: 111, tokenLastId: 222 }),
+    });
+
+    const [, nativeOpts] = mockGetAccountOperations.mock.calls[0];
+    const [, tokenOpts] = mockGetAccountTokenTransfers.mock.calls[0];
+    expect(nativeOpts).not.toHaveProperty("level.lt");
+    expect(nativeOpts).not.toHaveProperty("lastId");
+    expect(tokenOpts).not.toHaveProperty("level.lt");
+    expect(tokenOpts).not.toHaveProperty("lastId");
   });
 
   it("ignores invalid pagination cursor JSON", async () => {
@@ -80,8 +109,8 @@ describe("listOperations", () => {
 
     const [, nativeOpts] = mockGetAccountOperations.mock.calls[0];
     const [, tokenOpts] = mockGetAccountTokenTransfers.mock.calls[0];
-    expect(nativeOpts).not.toHaveProperty("lastId");
-    expect(tokenOpts).not.toHaveProperty("lastId");
+    expect(nativeOpts).not.toHaveProperty("level.lt");
+    expect(tokenOpts).not.toHaveProperty("level.lt");
   });
 
   it("should return no operations", async () => {
@@ -198,15 +227,19 @@ describe("listOperations", () => {
     ["transfer", transfer],
     ["reveal", reveal],
   ])(
-    "should return %s operation with pagination equal to operation id",
+    "should return %s operation with pagination cursor lastLevel when page is full",
     async (_label, operation) => {
       // Given
       mockGetAccountOperations.mockResolvedValue([operation]);
       // When
-      const [results, token] = await listOperations("any address", options);
+      const [results, token] = await listOperations("any address", {
+        ...options,
+        limit: 1,
+        sort: "Descending",
+      });
       // Then
       expect(results.length).toEqual(1);
-      expect(token).toEqual(JSON.stringify({ nativeLastId: operation.id }));
+      expect(token).toEqual(JSON.stringify({ lastLevel: operation.level }));
     },
   );
 
@@ -244,7 +277,7 @@ describe("listOperations", () => {
     // Then
     expect(results.length).toEqual(1);
     expect(results[0].recipients).toEqual([]);
-    expect(token).toEqual(JSON.stringify({ nativeLastId: operation.id }));
+    expect(token).toEqual("");
   });
 
   it.each([
@@ -270,7 +303,7 @@ describe("listOperations", () => {
     // Then
     expect(results.length).toEqual(1);
     expect(results[0].senders).toEqual([]);
-    expect(token).toEqual(JSON.stringify({ nativeLastId: operation.id }));
+    expect(token).toEqual("");
   });
 
   it("should order the results in descending order even if the sort option is set to ascending", async () => {
@@ -362,15 +395,18 @@ describe("listOperations", () => {
       transactionId: transfer.id,
       hash: someHash,
     };
-    const appliedTransfer = { ...transfer, status: "applied" as const };
+    const appliedTransfer = { ...transfer, status: "applied" as const, level: 100 };
     mockGetAccountOperations.mockResolvedValue([appliedTransfer]);
     mockGetAccountTokenTransfers.mockResolvedValue([fa2]);
-    const [results, next] = await listOperations(someDestinationAddress, options);
+    const [results, next] = await listOperations(someDestinationAddress, {
+      ...options,
+      limit: 1,
+      sort: "Descending",
+    });
     const tokenOp = results.find(o => o.asset.type === "fa2");
 
     expect(JSON.parse(next)).toEqual({
-      nativeLastId: appliedTransfer.id,
-      tokenLastId: fa2.id,
+      lastLevel: 100,
     });
 
     expect(tokenOp).toMatchObject({
@@ -628,5 +664,78 @@ describe("listOperations", () => {
     const noBlock = results.find(o => o.asset.type === "fa2");
     expect(noBlock).toBeDefined();
     expect(noBlock!.tx.block.hash).toBe("");
+  });
+
+  it("trims partial bottom block on full page (descending) so levels are not split across pages", async () => {
+    const opHigh: APITransactionType = {
+      ...transfer,
+      id: 80010,
+      level: 2000,
+      status: "applied" as const,
+    };
+    const opLow: APITransactionType = {
+      ...transfer,
+      id: 80011,
+      level: 1999,
+      status: "applied" as const,
+    };
+    mockGetAccountOperations.mockResolvedValue([opHigh, opLow]);
+    mockGetAccountTokenTransfers.mockResolvedValue([]);
+    const [results] = await listOperations(someSenderAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+    });
+    expect(results).toHaveLength(1);
+    expect(results[0]?.tx.block.height).toBe(2000);
+  });
+
+  it("aligns native and token streams to the same boundary level (descending)", async () => {
+    const parentTx: APITransactionType = {
+      ...transfer,
+      id: 80020,
+      level: 1000,
+      status: "applied" as const,
+    };
+    const opOlder: APITransactionType = {
+      ...transfer,
+      id: 80021,
+      level: 500,
+      status: "applied" as const,
+    };
+    const fa2At1000: APITokenTransfer & { hash: string } = {
+      id: 80030,
+      level: 1000,
+      timestamp: "2023-06-01T12:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: "KT1TokenContract" },
+        tokenId: "0",
+        standard: "fa2",
+        metadata: { decimals: "6" },
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1",
+      transactionId: parentTx.id,
+      hash: someHash,
+    };
+    const fa2Old: APITokenTransfer & { hash: string } = {
+      ...fa2At1000,
+      id: 80031,
+      level: 400,
+      hash: "ooOldTok",
+    };
+    mockGetAccountOperations.mockResolvedValue([parentTx, opOlder]);
+    mockGetAccountTokenTransfers.mockResolvedValue([fa2At1000, fa2Old]);
+    const [results] = await listOperations(someDestinationAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+    });
+    expect(results.some(o => o.tx.hash === "ooOldTok")).toBe(false);
+    expect(results.filter(o => o.asset.type === "native")).toHaveLength(1);
+    expect(results.filter(o => o.asset.type === "fa2")).toHaveLength(1);
+    expect(results.find(o => o.asset.type === "fa2")?.tx.hash).toBe(someHash);
   });
 });
