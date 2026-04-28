@@ -38,9 +38,6 @@
     "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
-    "@celo/utils",
-    "@celo/wallet-base",
-    "@celo/wallet-ledger",
     "@ledgerhq/coin-evm",
     "@ledgerhq/cryptoassets",
     "@ledgerhq/devices",
@@ -50,8 +47,6 @@
     "@ledgerhq/logs",
     "invariant",
     "lodash",
-    "numeral",
-    "rlp",
     "rxjs"
   ]
 }

@@ -14,7 +14,6 @@ describe("LegacySignerCelo", () => {
     signEIP712HashedMessage: jest.fn(),
     clearSignTransaction: jest.fn(),
     setLoadConfig: jest.fn(),
-    rlpEncodedTxForLedger: jest.fn(),
   };
 
   let signer: LegacySignerCelo;
@@ -214,19 +213,4 @@ describe("LegacySignerCelo", () => {
     });
   });
 
-  describe("rlpEncodedTxForLedger", () => {
-    it("should encode the transaction for ledger", async () => {
-      // GIVEN
-      const txParams = { from: "0x123", to: "0x456", value: "0x0" } as any;
-      const encoded = { rlpEncode: "0xabcdef", type: "cip42" } as any;
-      celoMock.rlpEncodedTxForLedger.mockResolvedValue(encoded);
-
-      // WHEN
-      const result = await signer.rlpEncodedTxForLedger(txParams);
-
-      // THEN
-      expect(celoMock.rlpEncodedTxForLedger).toHaveBeenCalledWith(txParams);
-      expect(result).toEqual(encoded);
-    });
-  });
 });

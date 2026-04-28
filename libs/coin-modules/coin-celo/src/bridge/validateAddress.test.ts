@@ -1,27 +1,18 @@
-import { isValidAddress } from "@celo/utils/lib/address";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("@celo/utils/lib/address");
-
 describe("validateAddress", () => {
-  const mockedIsValidAddress = jest.mocked(isValidAddress);
-
-  beforeEach(() => {
-    mockedIsValidAddress.mockClear();
+  it("returns true for a valid EVM address", async () => {
+    const result = await validateAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", {});
+    expect(result).toBe(true);
   });
 
-  it.each([true, false])(
-    "should call isValidAddress and return the correct result (%s)",
-    async (expectedValue: boolean) => {
-      mockedIsValidAddress.mockReturnValueOnce(expectedValue);
+  it("returns false for an invalid address", async () => {
+    const result = await validateAddress("some random address", {});
+    expect(result).toBe(false);
+  });
 
-      const address = "some random address";
-      const parameters = {};
-      const result = await validateAddress(address, parameters);
-      expect(result).toEqual(expectedValue);
-
-      expect(mockedIsValidAddress).toHaveBeenCalledTimes(1);
-      expect(mockedIsValidAddress).toHaveBeenCalledWith(address);
-    },
-  );
+  it("returns false for an empty string", async () => {
+    const result = await validateAddress("", {});
+    expect(result).toBe(false);
+  });
 });

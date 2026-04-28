@@ -1,4 +1,4 @@
-import { isValidAddress } from "@celo/utils/lib/address";
+import { isAddress } from "viem";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -12,11 +12,11 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { CeloAllFundsWarning } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { celoKit } from "../network/sdk";
+import { getCeloClient } from "../network/client";
+import { LOCKED_GOLD_ABI } from "../network/abis";
+import { getRegistryAddressFor } from "../network/registry";
 import { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { isSameTokenAsFee, convertNumberDecimals, normalizeAndSubtract } from "./utils";
-
-const kit = celoKit();
 
 // Arbitrary buffer for paying fees of next transactions. 0.05 Celo for ~100 transactions
 const FEES_SAFETY_BUFFER = new BigNumber(5000000000000000);
@@ -39,9 +39,17 @@ export const getTransactionStatus: AccountBridge<
   }
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
-  const lockedGold = await kit.contracts.getLockedGold();
-  const nonvotingLockedGoldBalance = await lockedGold.getAccountNonvotingLockedGold(
-    account.freshAddress,
+  const client = getCeloClient();
+  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const nonvotingLockedGoldBalance = new BigNumber(
+    (
+      await client.readContract({
+        address: lockedGoldAddress,
+        abi: LOCKED_GOLD_ABI,
+        functionName: "getAccountNonvotingLockedGold",
+        args: [account.freshAddress as `0x${string}`],
+      })
+    ).toString(),
   );
   // Deduct pending vote operations from the non-voting locked balance
   const totalNonVotingLockedBalance = nonvotingLockedGoldBalance.minus(
@@ -148,7 +156,7 @@ export const getTransactionStatus: AccountBridge<
   if (transaction.mode === "send") {
     if (!transaction.recipient && !errors.recipient) {
       errors.recipient = new RecipientRequired();
-    } else if (!isValidAddress(transaction.recipient) && !errors.recipient) {
+    } else if (!isAddress(transaction.recipient) && !errors.recipient) {
       errors.recipient = new InvalidAddress("", {
         currencyName: account.currency.name,
       });

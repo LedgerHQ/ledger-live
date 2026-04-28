@@ -1,29 +1,27 @@
-import { LocalWallet } from "@celo/wallet-local";
-import { randomBytes } from "crypto";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { serializeTransaction } from "viem";
 import broadcast from "./broadcast";
 
 describe("Broadcast", () => {
   it("throws on insufficient funds", async () => {
-    const wallet = new LocalWallet();
-    const pk = "0x" + randomBytes(32).toString("hex");
-    wallet.addAccount(pk);
+    const privateKey = generatePrivateKey();
+    const account = privateKeyToAccount(privateKey);
 
-    const [from] = wallet.getAccounts();
     const tx = {
-      from,
-      to: from,
-      value: "1",
-      gas: 21000,
-      maxFeePerGas: "1000000000000000",
-      maxPriorityFeePerGas: "100000000000",
       chainId: 42220,
       nonce: 0,
+      gas: 21000n,
+      maxFeePerGas: 1000000000000000n,
+      maxPriorityFeePerGas: 100000000000n,
+      to: account.address,
+      value: 1n,
+      type: "eip1559" as const,
     };
 
-    const signed = await wallet.signTransaction(tx);
+    const signed = await account.signTransaction(tx, { serializer: serializeTransaction });
 
-    await expect(broadcast({ signedOperation: { signature: signed.raw } } as any)).rejects.toThrow(
-      /insufficient funds for gas \* price \+ value/,
-    );
+    await expect(
+      broadcast({ signedOperation: { signature: signed } } as any),
+    ).rejects.toThrow(/insufficient funds for gas \* price \+ value/);
   });
 });
