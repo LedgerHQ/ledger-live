@@ -8608,6 +8608,16 @@
         "recently": "Recently",
         "switchBalance": "Switch balance source"
       },
+      "quickAmountSelector": {
+        "strategies": {
+          "fast": "Fast",
+          "balanced": "Balanced",
+          "full": "Full"
+        },
+        "recordCount_one": "{{count}} record",
+        "recordCount_other": "{{count}} records",
+        "unavailable": "Unavailable"
+      },
       "recordPicker": {
         "label": "Available records",
         "noRecords": "No records available",
