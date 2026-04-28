@@ -1028,6 +1028,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable logs for drawers",
   },
+  LW_ICONS_AVATARS_CDN_BASE_URL: {
+    def: "https://lw-icons.ledger.com/icons/cdn/Avatars/v1/64x64",
+    parser: stringParser,
+    desc: "Base URL for Ledger Wallet icons CDN",
+  },
   SANCTIONED_ADDRESSES_URL: {
     def: "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json",
     parser: stringParser,
