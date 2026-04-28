@@ -732,7 +732,7 @@ export const handlers = ({
         if (!params) {
           throw new ServerError(createUnknownError({ message: "params is undefined" }));
         }
-        return getQuotes(params);
+        return getQuotes(params, { accounts, spotPrices: {} });
       },
     ),
   }) as const satisfies Handlers;
