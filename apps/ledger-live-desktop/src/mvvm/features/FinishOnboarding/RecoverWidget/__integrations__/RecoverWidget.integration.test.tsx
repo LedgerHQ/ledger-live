@@ -31,6 +31,7 @@ import dbMiddleware from "~/renderer/middlewares/db";
 import type { State } from "~/renderer/reducers";
 import createStore from "~/state-manager/configureStore";
 import RecoverWidget from "LLD/features/FinishOnboarding/RecoverWidget";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 const mockNavigate = jest.fn();
 const mockUseNavigate = jest.mocked(useNavigate);
@@ -72,7 +73,7 @@ describe("RecoverWidget integration", () => {
     jest.clearAllMocks();
     mockUseNavigate.mockReturnValue(mockNavigate);
     mockUseUpsellPath.mockReturnValue("/protect/upsell");
-    mockGetStoreValue.mockReturnValue("NO_SUBSCRIPTION");
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE);
     mockUseFeature.mockImplementation((id: string) =>
       id === "protectServicesDesktop"
         ? {
@@ -101,6 +102,15 @@ describe("RecoverWidget integration", () => {
 
   it("renders nothing for the recover widget when the upsell is unavailable", async () => {
     mockUseUpsellPath.mockReturnValue(undefined);
+    const { container } = renderWithProvider(postOnboardingActive());
+    await waitFor(() => {
+      expect(mockGetStoreValue).toHaveBeenCalled();
+    });
+    expect(container.querySelector('[data-testid="recover-finish-onboarding-widget"]')).toBeNull();
+  });
+
+  it("renders nothing when recover was never started (NO_SUBSCRIPTION)", async () => {
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
     const { container } = renderWithProvider(postOnboardingActive());
     await waitFor(() => {
       expect(mockGetStoreValue).toHaveBeenCalled();
