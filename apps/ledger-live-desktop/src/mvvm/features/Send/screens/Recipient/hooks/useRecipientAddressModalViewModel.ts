@@ -7,6 +7,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { track } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -26,6 +27,10 @@ export function useRecipientAddressModalViewModel({
   const { recipientSearch, state } = useSendFlowData();
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount),
+    [account, parentAccount],
+  );
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,
@@ -63,11 +68,11 @@ export function useRecipientAddressModalViewModel({
       track("button_clicked", {
         button: "address matched",
         page: "step recipient",
-        flow: "send",
+        ...sendFlowTrackingProperties,
       });
       onAddressSelected(address, ensName, true);
     },
-    [onAddressSelected],
+    [onAddressSelected, sendFlowTrackingProperties],
   );
 
   const searchState = useRecipientSearchState({

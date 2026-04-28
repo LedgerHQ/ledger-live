@@ -10,12 +10,16 @@ import {
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
+import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
 import type { Transaction } from "@ledgerhq/coin-solana/types";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import type { Signers } from "./signer";
 import BigNumber from "bignumber.js";
+
+registerCoinModules(coinModuleLoaders);
 
 export const solana = getCryptoCurrencyById("solana");
 

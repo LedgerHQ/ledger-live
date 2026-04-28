@@ -27,6 +27,33 @@ const clearUndefined = (obj: Record<string, unknown>) => {
   return newObj;
 };
 
+/**
+ * Internal helper shared by `getOperationsTransactions` and `getOperationsOrigination`.
+ * Both endpoints accept the same query shape; only the URL path differs.
+ */
+async function getOperationsByType(
+  type: "transactions" | "originations",
+  level: number,
+  cursor?: number,
+  apiQueryParams: Record<string, unknown> = {},
+): Promise<(APITransactionType & { block: string; hash: string })[]> {
+  // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
+  // Without an explicit sort the API default may be descending, which would cause the
+  // cursor to go backwards and produce duplicates or an infinite loop.
+  const params: Record<string, unknown> = {
+    "level.gte": level,
+    limit: BLOCK_PAGE_SIZE,
+    "sort.asc": "id",
+    ...clearUndefined(apiQueryParams),
+  };
+  if (cursor !== undefined) params["offset.cr"] = cursor;
+  const { data } = await network<(APITransactionType & { block: string; hash: string })[]>({
+    url: `${getExplorerUrl()}/v1/operations/${type}`,
+    params,
+  });
+  return data;
+}
+
 const api = {
   async getBlockCount(): Promise<number> {
     const { data } = await network<number>({
@@ -106,22 +133,20 @@ const api = {
     level: number,
     cursor?: number,
     apiQueryParams: Record<string, unknown> = {},
-  ): Promise<APITransactionType[]> {
-    // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
-    // Without an explicit sort the API default may be descending, which would cause the
-    // cursor to go backwards and produce duplicates or an infinite loop.
-    const params: Record<string, unknown> = {
-      "level.gte": level,
-      limit: BLOCK_PAGE_SIZE,
-      "sort.asc": "id",
-      ...clearUndefined(apiQueryParams),
-    };
-    if (cursor !== undefined) params["offset.cr"] = cursor;
-    const { data } = await network<APITransactionType[]>({
-      url: `${getExplorerUrl()}/v1/operations/transactions`,
-      params,
-    });
-    return data;
+  ): Promise<(APITransactionType & { block: string; hash: string })[]> {
+    return getOperationsByType("transactions", level, cursor, apiQueryParams);
+  },
+
+  /**
+   * Fetches a list of `originations` operations after the given level.
+   * https://api.tzkt.io/#operation/Operations_GetOriginations
+   */
+  async getOperationsOrigination(
+    level: number,
+    cursor?: number,
+    apiQueryParams: Record<string, unknown> = {},
+  ): Promise<(APITransactionType & { block: string; hash: string })[]> {
+    return getOperationsByType("originations", level, cursor, apiQueryParams);
   },
 
   /**
@@ -204,7 +229,7 @@ const api = {
   async getAccountTokenTransfers(
     address: string,
     query: TokenTransfersGetOptions,
-  ): Promise<(APITokenTransfer & { hash: string })[]> {
+  ): Promise<(APITokenTransfer & { hash: string; block: string })[]> {
     const params: Record<string, unknown> = {
       "anyof.from.to": address,
       "token.tokenId": "0",
@@ -217,21 +242,46 @@ const api = {
       .map(t => t.transactionId)
       .filter((id): id is number => typeof id === "number");
 
-    if (transactionIds.length === 0) {
-      return data.map(token => ({
-        ...token,
-        hash: "",
-      }));
+    const originationIds = data
+      .map(t => t.originationId)
+      .filter((id): id is number => typeof id === "number");
+
+    if (transactionIds.length === 0 && originationIds.length === 0) {
+      return [];
     }
 
-    const transactions = await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
-      "id.in": transactionIds.join(","),
-    });
+    const transactions = transactionIds.length
+      ? await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
+          "id.in": transactionIds.join(","),
+        })
+      : [];
 
-    return data.map(token => ({
-      ...token,
-      hash: transactions.find(t => t.id === token.transactionId)?.hash ?? "",
-    }));
+    const originations = originationIds.length
+      ? await api.getOperationsOrigination(query["level.ge"] || 0, undefined, {
+          "id.in": originationIds.join(","),
+        })
+      : [];
+
+    // Build id -> operation maps once so per-transfer lookups are O(1) instead of O(n).
+    // Keys are widened to `number | undefined` so lookups with a missing id naturally
+    // return `undefined` (no entry is ever stored under the `undefined` key).
+    const transactionsById = new Map<number | undefined, (typeof transactions)[number]>(
+      transactions.map(t => [t.id, t]),
+    );
+    const originationsById = new Map<number | undefined, (typeof originations)[number]>(
+      originations.map(o => [o.id, o]),
+    );
+
+    return data.map(token => {
+      const transaction = transactionsById.get(token.transactionId);
+      const origination = originationsById.get(token.originationId);
+
+      return {
+        ...token,
+        hash: transaction?.hash ?? origination?.hash ?? "",
+        block: transaction?.block ?? origination?.block ?? "",
+      };
+    });
   },
 
   /**

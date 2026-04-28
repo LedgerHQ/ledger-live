@@ -68,7 +68,10 @@ export class PortfolioPage extends AppPage {
 
   @step("Check add account button visibility")
   async checkAddAccountButtonVisibility() {
-    await this.checkVisibility(this.addAccountCta);
+    // Wallet 4.0 + asset section: CTA lives under the Assets block and may need scroll / extra settle time.
+    await this.addAccountCta.waitFor({ state: "attached" });
+    await this.addAccountCta.scrollIntoViewIfNeeded();
+    await expect(this.addAccountCta).toBeVisible();
   }
 
   @step("Click add account button")
@@ -154,7 +157,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect balance diff to display the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
-    await expect(this.portfolioTrendPercentage).toBeVisible({ timeout: 30000 });
+    await expect(this.portfolioTrendPercentage).toBeVisible();
 
     // W40 trend percentage can be hidden in discreet mode and displayed as "***".
     if (counterValue === "%") {

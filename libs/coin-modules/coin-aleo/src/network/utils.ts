@@ -133,18 +133,21 @@ export async function fetchAllOwnedRecords({
   unspent,
   start,
   resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
+  signal,
 }: {
   currency: CryptoCurrency;
   uuid: string;
   unspent?: boolean;
   start?: number;
   resultsPerPage?: number;
+  signal?: AbortSignal;
 }): Promise<AleoPrivateRecord[]> {
   const allRecords: AleoPrivateRecord[] = [];
   let page = 0;
   let hasMore = true;
 
   while (hasMore) {
+    signal?.throwIfAborted();
     const records = await apiClient.getAccountOwnedRecords({
       currency,
       uuid,

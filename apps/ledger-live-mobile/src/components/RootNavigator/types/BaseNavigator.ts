@@ -12,6 +12,7 @@ import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
@@ -60,6 +61,7 @@ import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import type { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
+import type { BorrowLiveAppNavigatorParamList } from "./BorrowLiveAppNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { FeesNavigatorParamsList } from "./FeesNavigator";
@@ -225,6 +227,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
   [NavigatorName.Perps]?: NavigatorScreenParams<PerpsNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
+  [NavigatorName.Borrow]?: NavigatorScreenParams<BorrowLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
@@ -364,6 +367,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
+  [NavigatorName.AssetDetail]?: NavigatorScreenParams<AssetDetailNavigatorParamsList>;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
   [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;

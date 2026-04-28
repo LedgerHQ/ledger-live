@@ -3,6 +3,12 @@ export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
 export { UserHashService } from "./services/UserHashService";
+export {
+  LiveBlindSigningReporter,
+  liveBlindSigningReporter,
+  buildDefaultHttpBlindSigningReporter,
+} from "./services/LiveBlindSigningReporter";
+export type { LiveBlindSigningContext } from "./services/LiveBlindSigningReporter";
 
 export { ConnectAppDeviceAction } from "./device-action/ConnectApp/ConnectAppDeviceAction";
 export type {

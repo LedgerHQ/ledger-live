@@ -401,6 +401,39 @@ describe("listOperations", () => {
     expect(results.length).toBe(2);
   });
 
+  it("FA2 uses transfer.block as tx.block.hash even when a parent native transaction is joined", async () => {
+    const fa2WithBlock: APITokenTransfer & { hash: string; block: string } = {
+      id: 9002,
+      level: 100,
+      timestamp: "2023-06-01T12:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: "KT1TokenContract" },
+        tokenId: "0",
+        standard: "fa2",
+        metadata: { decimals: "6" },
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1",
+      transactionId: transfer.id,
+      hash: someHash,
+      block: "BLK_FROM_TRANSFER",
+    };
+    const appliedTransfer = {
+      ...transfer,
+      status: "applied" as const,
+      block: "BLK_FROM_PARENT",
+    };
+    mockGetAccountOperations.mockResolvedValue([appliedTransfer]);
+    mockGetAccountTokenTransfers.mockResolvedValue([fa2WithBlock]);
+    const [results] = await listOperations(someDestinationAddress, options);
+    const tokenOp = results.find(o => o.asset.type === "fa2");
+
+    expect(tokenOp).toBeDefined();
+    expect(tokenOp!.tx.block.hash).toBe("BLK_FROM_TRANSFER");
+  });
+
   it("drops failed incoming native transactions (target is the listed account)", async () => {
     const failedIn: APITransactionType = {
       ...transfer,
@@ -545,8 +578,8 @@ describe("listOperations", () => {
     expect(tokenSelf!.details.ledgerOpType).toBe("FEES");
   });
 
-  it("FA2 transfer without parent transaction omits fees and uses empty block hash", async () => {
-    const fa2Orphan: APITokenTransfer & { hash: string } = {
+  it("FA2 transfer without parent transaction omits fees and falls back to transfer.block hash", async () => {
+    const fa2Orphan: APITokenTransfer & { hash: string; block: string } = {
       id: 9103,
       level: 103,
       timestamp: "2023-06-01T15:00:00Z",
@@ -560,6 +593,7 @@ describe("listOperations", () => {
       to: { address: someDestinationAddress },
       amount: "10",
       hash: "ooOrphanHash",
+      block: "BLK_ORPHAN",
     };
     mockGetAccountOperations.mockResolvedValue([]);
     mockGetAccountTokenTransfers.mockResolvedValue([fa2Orphan]);
@@ -568,7 +602,31 @@ describe("listOperations", () => {
     expect(orphan).toBeDefined();
     expect(orphan!.tx.fees).toBe(0n);
     expect(orphan!.tx.feesPayer).toBeUndefined();
-    expect(orphan!.tx.block.hash).toBe("");
+    expect(orphan!.tx.block.hash).toBe("BLK_ORPHAN");
     expect(orphan!.tx.failed).toBe(false);
+  });
+
+  it("FA2 transfer without parent and without transfer.block falls back to empty block hash", async () => {
+    const fa2NoBlock: APITokenTransfer & { hash: string } = {
+      id: 9104,
+      level: 104,
+      timestamp: "2023-06-01T16:00:00Z",
+      token: {
+        id: 5,
+        contract: { address: "KT1NoBlock" },
+        tokenId: "0",
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "10",
+      hash: "ooNoBlockHash",
+    };
+    mockGetAccountOperations.mockResolvedValue([]);
+    mockGetAccountTokenTransfers.mockResolvedValue([fa2NoBlock]);
+    const [results] = await listOperations(someDestinationAddress, options);
+    const noBlock = results.find(o => o.asset.type === "fa2");
+    expect(noBlock).toBeDefined();
+    expect(noBlock!.tx.block.hash).toBe("");
   });
 });

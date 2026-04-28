@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
@@ -9,6 +9,7 @@ import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
 import { AmountPluginsHost } from "./AmountPluginsHost";
 import { track } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
 type AmountScreenInnerProps = Readonly<{
   account: AccountLike;
@@ -37,14 +38,19 @@ export function AmountScreenInner({
   onGetFunds,
   onSelectCoinControl,
 }: AmountScreenInnerProps) {
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount),
+    [account, parentAccount],
+  );
+
   const handleReview = useCallback(() => {
     track("button_clicked", {
       button: "review",
       page: "step amount",
-      flow: "send",
+      ...sendFlowTrackingProperties,
     });
     onReview();
-  }, [onReview]);
+  }, [onReview, sendFlowTrackingProperties]);
 
   const viewModel = useAmountScreenViewModel({
     account,

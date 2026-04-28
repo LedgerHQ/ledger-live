@@ -429,7 +429,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 {t("transfer.receive.receiveConfirmation.utxoWarning")}
               </Text>
             )}
-            <Text variant="small" fontWeight="medium" color="neutral.c70" mb={4} textAlign="center">
+            <Text
+              variant="small"
+              fontWeight="medium"
+              color="neutral.c70"
+              mb={4}
+              textAlign="center"
+              testID="receive-network-warning"
+            >
               {t("transfer.receive.receiveConfirmation.sendWarning", {
                 network: network || currency.name,
               })}

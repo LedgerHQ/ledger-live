@@ -505,6 +505,14 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
+                          [NavigatorName.Borrow]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://borrow" will open the borrow screen
+                               */
+                              [ScreenName.Borrow]: "borrow",
+                            },
+                          },
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**

@@ -30,15 +30,16 @@ export function useGetExtraDetails(account: SuiAccount, type: OperationType, dig
   }
   const cache = account.suiResources.cachedOps;
   const [data, setData] = useState(cache[digest]);
+  const currencyId = getAccountCurrency(account).id;
 
   useEffect(() => {
     if (type !== "DELEGATE" && type !== "UNDELEGATE") return;
     if (data) return;
-    getOperationExtra(digest).then(result => {
+    getOperationExtra(digest, currencyId).then(result => {
       setData(result);
       cache[digest] = result;
     });
-  }, [data, digest, cache, type]);
+  }, [data, digest, cache, type, currencyId]);
 
   return data;
 }

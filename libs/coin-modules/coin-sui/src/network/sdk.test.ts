@@ -637,6 +637,39 @@ describe("SDK Functions", () => {
     expect(operation.value).toEqual(new BigNumber("500000"));
   });
 
+  test("transactionToOperation resolves amount when account address omits 0x or casing differs from RPC", () => {
+    const accountId = "mockAccountId";
+    const addressNoPrefix = "6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+
+    const suiTx = {
+      ...mockTransaction,
+      balanceChanges: [
+        {
+          owner: {
+            AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        },
+        {
+          owner: {
+            AddressOwner:
+              "0x6E143FE0A8CA010A86580DAFAC44298E5B1B7D73EFC345356A59A15F0D7824F0",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "9998990120",
+        },
+      ],
+    };
+
+    const op = sdk.transactionToOperation(
+      accountId,
+      addressNoPrefix,
+      suiTx as SuiTransactionBlockResponse,
+    );
+    expect(op.value.toString()).toBe("9998990120");
+  });
+
   test("transactionToOp should map token transaction to operation", () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
 

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import {
   Gift,
   LifeRing,
@@ -16,6 +16,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { hasClickedRecoverSelector } from "~/renderer/reducers/settings";
 import { setHasClickedRecover } from "~/renderer/actions/settings";
 import { useContextMenuClose } from "../ContextMenuContext";
+import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 
 export type ActionsListViewModel = {
   actions: Action[];
@@ -25,7 +26,6 @@ export function useActionsListViewModel(): ActionsListViewModel {
   const close = useContextMenuClose();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const recoverFeature = useFeature("protectServicesDesktop");
@@ -36,13 +36,12 @@ export function useActionsListViewModel(): ActionsListViewModel {
 
   const openHelp = useCallback(() => {
     track("button_clicked", {
-      button: "Help",
-      page: location.pathname,
-      entry: "my_wallet_actions_list",
+      button: MY_WALLET_TRACKING_BUTTON.help,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
     navigate("/settings/help");
     close();
-  }, [location.pathname, navigate, close]);
+  }, [navigate, close]);
 
   const handleClickRecover = useCallback(() => {
     const enabled = recoverFeature?.enabled;
@@ -59,9 +58,8 @@ export function useActionsListViewModel(): ActionsListViewModel {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
     track("button_clicked", {
-      button: "Recover",
-      page: location.pathname,
-      entry: "my_wallet_actions_list",
+      button: MY_WALLET_TRACKING_BUTTON.recover,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
     close();
   }, [
@@ -72,7 +70,6 @@ export function useActionsListViewModel(): ActionsListViewModel {
     hasClickedRecover,
     navigate,
     dispatch,
-    location.pathname,
     close,
   ]);
 
@@ -80,13 +77,11 @@ export function useActionsListViewModel(): ActionsListViewModel {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       navigate(referralProgramConfig.params.path);
       track("button_clicked", {
-        button: "Refer",
-        page: location.pathname,
-        entry: "my_wallet_actions_list",
+        button: MY_WALLET_TRACKING_BUTTON.referral,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     }
-    close();
-  }, [referralProgramConfig, navigate, location.pathname, close]);
+  }, [referralProgramConfig, navigate]);
 
   const actions: Action[] = [
     ...(recoverFeature?.enabled

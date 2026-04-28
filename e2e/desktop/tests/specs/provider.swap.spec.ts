@@ -4,7 +4,7 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
@@ -18,16 +18,18 @@ const providerFlowTests = [
     toAccount: TokenAccount.ETH_USDC_1,
     provider: Provider.ONE_INCH,
     xrayTicket: "B2CQA-3120",
+    bugTickets: ["LIVE-29454", "LIVE-29858"],
   },
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.ETH_1,
     provider: Provider.OKX,
     xrayTicket: "B2CQA-4728",
+    bugTickets: ["LIVE-29858"],
   },
 ];
 
-for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests) {
+for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of providerFlowTests) {
   test.describe(`Swap - ${provider.uiName} flow`, () => {
     setupEnv(true);
 
@@ -73,6 +75,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await addBugLink(bugTickets);
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);

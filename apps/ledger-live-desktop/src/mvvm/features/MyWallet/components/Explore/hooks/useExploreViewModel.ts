@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
+import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 
 export type ExploreViewModel = {
   title: string;
@@ -15,7 +16,8 @@ export function useExploreViewModel(): ExploreViewModel {
 
   const handleClick = useCallback(() => {
     openURL(url, "button_clicked", {
-      button: "explore all",
+      button: MY_WALLET_TRACKING_BUTTON.exploreAllLedger,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
   }, [url]);
 

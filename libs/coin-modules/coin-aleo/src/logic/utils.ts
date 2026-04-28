@@ -279,7 +279,7 @@ export function calculateAmount({
 
 export const isProvableApiConfigured = (
   provableApi: ProvableApi | null,
-): provableApi is Required<Pick<ProvableApi, "uuid">> => {
+): provableApi is ProvableApi & { uuid: string } => {
   return !!provableApi?.uuid;
 };
 

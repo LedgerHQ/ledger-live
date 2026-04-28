@@ -24,6 +24,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
+import { isDeviceNotOnboardedError } from "@ledgerhq/live-common/device-action/utils";
 
 /**
  * This hook creates an action for connecting to an app on a Ledger device.
@@ -109,6 +110,8 @@ export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, Ma
       connectManager({ isLdmkConnectAppEnabled })(input).pipe(
         catchError(error => {
           if (isCounterfeitError(error)) return throwError(() => error);
+          if (isDeviceNotOnboardedError(error)) return throwError(() => error);
+
           return throwError(() => new GenuineCheckFailed("", undefined, { cause: error }));
         }),
       );

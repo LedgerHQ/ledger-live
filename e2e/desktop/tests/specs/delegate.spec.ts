@@ -45,6 +45,7 @@ const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment"),
     xrayTicket: "B2CQA-3022",
+    bugTicket: "NAPPS-1357",
   },
 ];
 
@@ -83,6 +84,7 @@ const validators = [
   {
     delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-2768",
+    bugTicket: "NAPPS-1357",
   },
 ];
 
@@ -130,6 +132,9 @@ for (const account of e2eDelegationAccounts) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        if (account.bugTicket) {
+          await addBugLink([account.bugTicket]);
+        }
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
@@ -393,6 +398,9 @@ for (const validator of validators) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        if (validator.bugTicket) {
+          await addBugLink([validator.bugTicket]);
+        }
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
