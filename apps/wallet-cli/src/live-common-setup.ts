@@ -8,7 +8,7 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
-import { WALLET_CLI_VERSION } from "./generated/build-channel";
+import { WALLET_CLI_VERSION } from "./build-metadata";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.

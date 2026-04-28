@@ -1,3 +1,2 @@
 dist/
 *.bun-build
-src/generated/build-channel.ts

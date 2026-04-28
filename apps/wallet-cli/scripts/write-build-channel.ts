@@ -23,7 +23,6 @@ mkdirSync(dirname(outputPath), { recursive: true });
 writeFileSync(
   outputPath,
   [
-    // Keep generated build metadata minimal: only fields consumed at runtime.
     `export const WALLET_CLI_VERSION = "${version}";`,
     `export const WALLET_CLI_RELEASE_CHANNEL: "stable" | "prerelease" = "${releaseChannel}";`,
     "",

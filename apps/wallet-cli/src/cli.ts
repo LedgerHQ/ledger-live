@@ -9,7 +9,7 @@ import "./live-common-setup";
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
-import { WALLET_CLI_RELEASE_CHANNEL } from "./generated/build-channel";
+import { WALLET_CLI_RELEASE_CHANNEL } from "./build-metadata";
 
 if (WALLET_CLI_RELEASE_CHANNEL === "prerelease") {
   process.stderr.write(
