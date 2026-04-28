@@ -23,4 +23,5 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };

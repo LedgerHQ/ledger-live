@@ -22,6 +22,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts"],

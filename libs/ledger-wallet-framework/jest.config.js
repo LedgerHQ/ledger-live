@@ -12,6 +12,7 @@ module.exports = {
   passWithNoTests: true,
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setup.ts"],
