@@ -80,6 +80,18 @@ describe("useDevToolsStorage", () => {
       expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     });
 
+    it("does not restore a cleared tool on the next mount", () => {
+      const { rerender } = renderHook(({ id }) => useDevToolsStorage(id, jest.fn()), {
+        initialProps,
+      });
+      rerender({ id: "feature-flags" });
+      rerender({ id: undefined });
+
+      const setActiveToolId = jest.fn();
+      renderHook(() => useDevToolsStorage(undefined, setActiveToolId));
+      expect(setActiveToolId).not.toHaveBeenCalled();
+    });
+
     it("caps recentToolIds at MAX_RECENT_TOOLS", () => {
       const ids = Array.from({ length: MAX_RECENT_TOOLS }, (_, i) => `tool-${i}`);
       localStorage.setItem(STORAGE_KEY, serialize({ recentToolIds: ids }));
