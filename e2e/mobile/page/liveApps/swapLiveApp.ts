@@ -26,6 +26,8 @@ export default class SwapLiveAppPage {
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
+  lnsUnsupportedBannerPattern =
+    /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
 
@@ -229,6 +231,7 @@ export default class SwapLiveAppPage {
       jestExpect(bestOffer?.quote).toContain("Best Offer");
     } catch (error) {
       console.error("Error checking Best offer:", sanitizeError(error));
+      throw error;
     }
   }
 
@@ -243,15 +246,15 @@ export default class SwapLiveAppPage {
   async extractQuotesAndFees(quoteContainers: string[]) {
     const quotePattern = /\$(\d+\.\d+)[\s\S]*?Network Fees[\s\S]*?\$(\d+\.\d+)/;
 
-    const quotes = quoteContainers
-      .map(q => {
+    const quotes: Array<{ rate: number; fees: number; quote: string }> = quoteContainers.flatMap(
+      q => {
         const match = q.match(quotePattern);
         if (match) {
-          return { rate: parseFloat(match[1]), fees: parseFloat(match[2]), quote: q };
+          return [{ rate: parseFloat(match[1]), fees: parseFloat(match[2]), quote: q }];
         }
-        return undefined;
-      })
-      .filter(Boolean) as Array<{ rate: number; fees: number; quote: string }>;
+        return [];
+      },
+    );
 
     if (quotes.length === 0) {
       throw new Error("No quotes found");
@@ -310,6 +313,12 @@ export default class SwapLiveAppPage {
     jestExpect(amountToSend).toEqual(amount);
   }
 
+  @Step("Check currency to swap from contains $0")
+  async checkAssetFromContains(currency: string) {
+    const fromAccount: string = await getWebElementText(this.fromSelector);
+    jestExpect(fromAccount).toContain(currency);
+  }
+
   @Step("Check currency to swap to is $0 with amount $1")
   async checkAssetTo(currency: string, amount: string) {
     const assetTo: string = await getWebElementText(this.toSelector);
@@ -320,6 +329,24 @@ export default class SwapLiveAppPage {
     }
     const amountToReceive = await app.swapLiveApp.getAmountToReceive();
     jestExpect(amountToReceive).toEqual(amount);
+  }
+
+  @Step("Check currency to swap to contains $0")
+  async checkAssetToContains(currency: string) {
+    const assetTo: string = await getWebElementText(this.toSelector);
+    if (currency === "") {
+      jestExpect(assetTo).toContain("Choose asset");
+    } else {
+      jestExpect(assetTo).toContain(currency);
+    }
+  }
+
+  @Step("Check Ledger Nano S not supported banner")
+  async checkLnsNotSupportedBanner() {
+    await retryUntilTimeout(async () => {
+      const bodyText = (await getWebElementsText("body")).join("\n");
+      jestExpect(bodyText).toMatch(this.lnsUnsupportedBannerPattern);
+    }, 20000);
   }
 
   @Step("Select specific provider $0")
