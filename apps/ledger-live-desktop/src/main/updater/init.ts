@@ -55,6 +55,12 @@ const init = () => {
   });
   autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.autoDownload = true;
+  if (__PRERELEASE__ && process.env.UPDATE_FEED_URL) {
+    autoUpdater.setFeedURL({
+      provider: "generic",
+      url: process.env.UPDATE_FEED_URL,
+    });
+  }
   autoUpdater.checkForUpdates();
   if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
     autoUpdater.channel = __CHANNEL__;
