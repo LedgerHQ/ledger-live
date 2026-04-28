@@ -19,7 +19,7 @@ import type {
   LoggerPublisherService,
 } from "@ledgerhq/device-management-kit";
 
-export type MockDeviceState = "connected" | "locked";
+export type MockDeviceState = "connected" | "locked" | "no-device-model";
 
 /**
  * Per-app result map: appName → object returned as the CallTaskInApp action output.
@@ -79,6 +79,9 @@ export class MockDeviceManagementKit {
   }
 
   getDeviceSessionState(_args: unknown): Observable<DeviceSessionState> {
+    if (this._state === "no-device-model") {
+      return new Observable(subscriber => subscriber.error(new Error("no device model")));
+    }
     const deviceStatus = this._state === "locked" ? DeviceStatus.LOCKED : DeviceStatus.CONNECTED;
     const state: DeviceSessionState = {
       sessionStateType: DeviceSessionStateType.Connected,

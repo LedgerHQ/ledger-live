@@ -2307,6 +2307,9 @@ importers:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-devices':
+        specifier: workspace:*
+        version: link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
