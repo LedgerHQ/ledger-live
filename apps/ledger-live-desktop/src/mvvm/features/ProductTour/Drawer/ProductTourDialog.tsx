@@ -1,19 +1,27 @@
 import React, { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
+import { ProductTourFooter } from "./components/ProductTourFooter";
 import { ProductTourProgressIndicator } from "./components/ProductTourProgressIndicator";
-import { ProductTourSlideFooterButton } from "./components/ProductTourSlideFooterButton";
 import { ProductTourSlideItem } from "./components/ProductTourSlideItem";
-
-const PRODUCT_TOUR_SLIDE_COUNT = 4;
+import { PRODUCT_TOUR_SLIDE_COUNT } from "./const";
+import type { ProductTourPrimaryAction } from "./const";
 
 interface ProductTourDialogProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onComplete: () => void;
+  readonly onPrimaryAction: (action: ProductTourPrimaryAction) => void;
   readonly onSlideChange?: (index: number) => void;
 }
 
-export const ProductTourDialog = ({ isOpen, onClose, onSlideChange }: ProductTourDialogProps) => {
+export const ProductTourDialog = ({
+  isOpen,
+  onClose,
+  onComplete,
+  onPrimaryAction,
+  onSlideChange,
+}: ProductTourDialogProps) => {
   const slideItems = useMemo(
     () =>
       Array.from({ length: PRODUCT_TOUR_SLIDE_COUNT }, (_, index) => (
@@ -49,7 +57,7 @@ export const ProductTourDialog = ({ isOpen, onClose, onSlideChange }: ProductTou
           </Slides.ProgressIndicator>
 
           <Slides.Footer>
-            <ProductTourSlideFooterButton />
+            <ProductTourFooter onPrimaryAction={onPrimaryAction} onComplete={onComplete} />
           </Slides.Footer>
         </Slides>
       </DialogContent>
