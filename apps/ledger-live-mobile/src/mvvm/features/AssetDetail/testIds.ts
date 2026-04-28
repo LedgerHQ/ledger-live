@@ -1,6 +1,9 @@
 export const ASSET_DETAIL_TEST_IDS = {
   screen: "asset-detail-screen",
   balanceGraph: "asset-detail-balance-graph",
+  marketPrice: "asset-detail-market-price",
+  chartPlaceholder: "asset-detail-chart-placeholder",
+  receiveButton: "asset-detail-receive-button",
   balanceDetails: "asset-detail-balance-details",
   addresses: "asset-detail-addresses",
   marketStats: "asset-detail-market-stats",

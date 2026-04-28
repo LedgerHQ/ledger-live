@@ -7,6 +7,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackScreen } from "~/analytics";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { SectionPlaceholder } from "./components/SectionPlaceholder";
+import { BalanceGraph } from "./components/BalanceGraph";
 import { Footer } from "./components/Footer";
 import { CTAS_HEIGHT, SECTION_HEIGHT, PLACEHOLDER_COLORS } from "./utils/constants";
 
@@ -29,11 +30,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Box lx={contentStyle}>
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.balanceGraph}
-            backgroundColor={PLACEHOLDER_COLORS.balanceGraph}
-            height={SECTION_HEIGHT}
-          />
+          <BalanceGraph currency={currency} />
           <SectionPlaceholder
             testID={ASSET_DETAIL_TEST_IDS.balanceDetails}
             backgroundColor={PLACEHOLDER_COLORS.balanceDetails}
