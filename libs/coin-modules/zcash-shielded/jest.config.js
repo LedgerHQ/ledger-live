@@ -14,6 +14,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s", ".*\\.integ\\.test\\.[tj]s"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   transformIgnorePatterns: ["node_modules/(?!cipherscan)/"],

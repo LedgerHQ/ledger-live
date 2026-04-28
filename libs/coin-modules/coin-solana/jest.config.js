@@ -33,6 +33,7 @@ module.exports = {
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],

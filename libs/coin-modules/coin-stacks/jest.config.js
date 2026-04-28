@@ -21,6 +21,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", ".integ.test.ts"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],

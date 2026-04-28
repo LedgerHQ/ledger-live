@@ -14,6 +14,7 @@ const config: Config = {
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };
 
 export default config;

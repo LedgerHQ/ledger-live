@@ -25,6 +25,7 @@ const config: Config = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmDeps.join("|")}))`],
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };
 
 export default config;

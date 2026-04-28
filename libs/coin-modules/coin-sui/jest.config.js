@@ -26,4 +26,5 @@ module.exports = {
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };
