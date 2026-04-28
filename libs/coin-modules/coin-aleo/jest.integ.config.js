@@ -12,6 +12,13 @@ module.exports = {
         jsc: {
           target: "esnext",
         },
+        module: {
+          type: "commonjs",
+          // Keep dynamic import() as native so Node.js loads
+          // ESM-only packages (e.g. @provablehq/sdk) without going
+          // through Jest's require()-based module registry.
+          ignoreDynamic: true,
+        },
       },
     ],
   },

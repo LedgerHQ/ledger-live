@@ -1,6 +1,6 @@
 import { apiClient } from "../network/api";
-import type { AleoAccount, AleoCoinConfig } from "../types";
 import { sdkClient } from "../network/sdk";
+import type { AleoAccount, AleoCoinConfig } from "../types";
 import { fromHex, resolveConfig } from "./utils";
 
 export async function broadcast({
@@ -48,6 +48,10 @@ export async function broadcast({
     keyId: publicKeyResponse.key_id,
     encryptedData,
   });
+
+  if (res.broadcast_result && res.broadcast_result.status_code === 422) {
+    throw new Error(`aleo: ${res.broadcast_result?.message ?? "Unknown error"}`);
+  }
 
   return res.transaction.id;
 }
