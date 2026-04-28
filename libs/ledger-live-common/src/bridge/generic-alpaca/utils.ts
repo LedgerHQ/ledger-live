@@ -346,8 +346,13 @@ export function transactionToIntent(
     res.memo = { type: "NO_MEMO" };
   }
 
-  const resolvedCraftTransactionData = craftTransactionData ?? defaultCraftTransactionData;
-  res.data = resolvedCraftTransactionData(res);
+  if (!transaction.data || transaction.data.length === 0) {
+    const resolvedCraftTransactionData = craftTransactionData ?? defaultCraftTransactionData;
+    res.data = resolvedCraftTransactionData(res);
+  } else {
+    // We assume that if the transaction data is a buffer, the intent expect a buffer too
+    res.data = { type: "buffer", value: transaction.data };
+  }
 
   return res;
 }
