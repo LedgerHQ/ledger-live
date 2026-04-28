@@ -20,6 +20,8 @@ describe("Page utils", () => {
       expect(isWallet40Page("/swap/bridge")).toBe(true);
       expect(isWallet40Page("/exchange")).toBe(true);
       expect(isWallet40Page("/exchange/foo")).toBe(true);
+      expect(isWallet40Page("/account/js:2:ethereum:0x1234:")).toBe(true);
+      expect(isWallet40Page("/asset/bitcoin")).toBe(true);
     });
 
     it("returns false for routes outside wallet 4.0", () => {

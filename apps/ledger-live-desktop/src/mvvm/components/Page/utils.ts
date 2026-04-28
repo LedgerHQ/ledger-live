@@ -15,7 +15,7 @@ const WALLET_40_PAGES = new Set([
   "/history",
 ]);
 
-const WALLET_40_PREFIXES = ["/card", "/swap", "/exchange"];
+const WALLET_40_PREFIXES = ["/card", "/swap", "/exchange", "/account/", "/asset/"];
 
 /**
  * Pages that display the right panel (swap sidebar)
