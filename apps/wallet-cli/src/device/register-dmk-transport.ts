@@ -1,5 +1,7 @@
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { firstValueFrom } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
@@ -113,6 +115,20 @@ export async function resetWalletCliDmkSession(): Promise<void> {
   }
   singleton = null;
   await held.dmk.disconnect({ sessionId: held.transport.sessionId }).catch(() => {});
+}
+
+/**
+ * Returns the live-common DeviceModelId for the active DMK session, or undefined if unavailable.
+ * Must be called while a session is active (inside a withCurrencyDeviceSession callback).
+ */
+export async function getWalletCliDeviceModelId(): Promise<DeviceModelId | undefined> {
+  if (!singleton) return undefined;
+  const { dmk, transport } = singleton;
+  const state = await firstValueFrom(
+    dmk.getDeviceSessionState({ sessionId: transport.sessionId }),
+  ).catch(() => null);
+  if (!state?.deviceModelId) return undefined;
+  return dmkToLedgerDeviceIdMap[state.deviceModelId];
 }
 
 /** Disconnect any live session and `dmk.close()` the persistent kit (USB hotplug listeners). */

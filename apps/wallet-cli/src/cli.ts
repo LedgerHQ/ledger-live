@@ -8,13 +8,34 @@ import "./live-common-setup";
 // This side-effect import registers commands in the standalone binary.
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
+import { CliProcessExitError } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 
-// Pass config explicitly so the compiled binary does not depend on cwd for bunli.config.* discovery.
-const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
-await cli.run();
+/**
+ * Runs the CLI in-process. Called by the test runner directly (no subprocess).
+ *
+ * Using noExit:true on bunli's run() means bunli returns a numeric exit code
+ * instead of calling process.exit(). Any CliProcessExitError thrown by output.ts
+ * is caught here so the caller gets a clean numeric code back.
+ */
+export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
+  const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
+  const code = await cli.run(argv, { noExit: true });
+  return code ?? 0;
+}
 
-// Release the process-wide DMK + node-usb hotplug listeners (see persistentDmk in register-dmk-transport).
-// Error paths already call process.exit(1) inside bunli, so this only runs on success.
-await disposeWalletCliDmkTransportFully();
-process.exit(0);
+if (import.meta.main) {
+  let exitCode = 0;
+  try {
+    exitCode = await runMain();
+  } catch (e) {
+    if (e instanceof CliProcessExitError && e.isCliProcessExitError) {
+      exitCode = e.code;
+    } else {
+      throw e;
+    }
+  } finally {
+    await disposeWalletCliDmkTransportFully();
+  }
+  process.exit(exitCode);
+}

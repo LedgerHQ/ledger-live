@@ -21,7 +21,7 @@ index daf223be1df9d24b805ce6bd4ca381dec0f07d57..6e284cf826dda9fb7139fe77680d985b
      getTerminalInfo?: () => TerminalInfo;
  }
 diff --git a/dist/index.js b/dist/index.js
-index 3b26c90cfe3304c8607b8a02612ebc11bc6b7e54..38bce8d106d688c75767e9773182d8a15ca33817 100644
+index 3b26c90cfe3304c8607b8a02612ebc11bc6b7e54..b2582c99343574e01533847d410147629b14d6cc 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -90140,13 +90140,9 @@ async function createCLI(configOverride, runtimeDeps = {}) {
@@ -41,11 +41,115 @@ index 3b26c90cfe3304c8607b8a02612ebc11bc6b7e54..38bce8d106d688c75767e9773182d8a1
    const commands = new Map;
    function getTerminalInfo() {
      const isInteractive = process.stdout.isTTY || false;
+@@ -90672,6 +90668,9 @@ async function createCLI(configOverride, runtimeDeps = {}) {
+       await runAfterCommandOnce(0);
+       return Result.ok(undefined);
+     } catch (error48) {
++      // Re-throw CliProcessExitError sentinel so run() can handle the exit code
++      // without wrapping it in CommandExecutionError (which would corrupt stderr output).
++      if (error48?.isCliProcessExitError) throw error48;
+       if (error48 instanceof PromptCancelledError) {
+         interruptLogger.debug("PromptCancelledError command=%s -> graceful-cancel", command.name);
+         process.exitCode = 0;
+@@ -90734,11 +90733,13 @@ async function createCLI(configOverride, runtimeDeps = {}) {
+       registerCommand(cmd);
+     },
+     async init() {},
+-    async run(argv = process.argv.slice(2)) {
++    // noExit: when true, returns the exit code (0 | 1) instead of calling process.exit().
++    // Used by runMain() for in-process test invocations.
++    async run(argv = process.argv.slice(2), { noExit = false } = {}) {
+       const terminalInfo = cliDeps.getTerminalInfo();
+       if (argv.length === 0) {
+         printHelpOutput(resolveOutputContext(terminalInfo), terminalInfo);
+-        return;
++        return 0;
+       }
+       const separatorIndex = argv.indexOf("--");
+       const commandArgs = separatorIndex >= 0 ? argv.slice(0, separatorIndex) : argv;
+@@ -90751,20 +90752,20 @@ async function createCLI(configOverride, runtimeDeps = {}) {
+         globalParsed = await parseArgs(commandArgs, getGlobalFlagsForCommand(command), "__global__");
+       } catch (error48) {
+         await printRunCommandError(error48, resolveOutputContext(terminalInfo, explicitOutputFormat));
+-        process.exit(1);
++        if (noExit) return 1; else { process.exit(1); return; }
+       }
+       const outputContext = resolveOutputContext(terminalInfo, globalParsed.flags["format"] ?? explicitOutputFormat);
+       if (globalParsed.flags.version) {
+         printVersion(outputContext);
+-        return;
++        return 0;
+       }
+       if (globalParsed.flags["llms-full"]) {
+         printManifestOutput(outputContext, "full", renderFull(fullConfig.name, commands, fullConfig.description));
+-        return;
++        return 0;
+       }
+       if (globalParsed.flags.llms) {
+         printManifestOutput(outputContext, "compact", renderIndex(fullConfig.name, commands, fullConfig.description));
+-        return;
++        return 0;
+       }
+       if (globalParsed.flags.help) {
+         const cmdArgs = stripRecognizedGlobalFlags(commandArgs).args;
+@@ -90782,10 +90783,10 @@ async function createCLI(configOverride, runtimeDeps = {}) {
+               available: getAvailableCommandNames()
+             });
+             await printRunCommandError(unknownCommandError, outputContext);
+-            process.exit(1);
++            if (noExit) return 1; else { process.exit(1); return; }
+           }
+         }
+-        return;
++        return 0;
+       }
+       if (!command) {
+         const available = getAvailableCommandNames();
+@@ -90798,12 +90799,12 @@ async function createCLI(configOverride, runtimeDeps = {}) {
+           suggestion
+         });
+         await printRunCommandError(error48, outputContext);
+-        process.exit(1);
++        if (noExit) return 1; else { process.exit(1); return; }
+       }
+       const commandOutputContext = resolveOutputContext(terminalInfo, globalParsed.flags["format"] ?? explicitOutputFormat, command.defaultFormat);
+       if (!command.handler && !command.render && command.commands) {
+         printHelpOutput(commandOutputContext, terminalInfo, command, commandLookup.args.slice(0, commandLookup.args.length - remainingArgs.length - 1));
+-        return;
++        return 0;
+       }
+       const matchedCommandLength = commandLookup.args.length - remainingArgs.length;
+       const matchedCommandIndexes = new Set(commandLookup.originalIndexes.slice(0, matchedCommandLength));
+@@ -90812,11 +90813,22 @@ async function createCLI(configOverride, runtimeDeps = {}) {
+         ...passthroughArgs
+       ];
+       const invokedCommandName = commandLookup.args.slice(0, matchedCommandLength).join(" ");
+-      const runResult = await runCommandInternal(command, allArgs, undefined, invokedCommandName || command.name);
++      let runResult;
++      try {
++        runResult = await runCommandInternal(command, allArgs, undefined, invokedCommandName || command.name);
++      } catch (e) {
++        // CliProcessExitError re-thrown from runCommandInternal — carry its exit code directly.
++        if (e?.isCliProcessExitError) {
++          if (noExit) return e.code;
++          process.exit(e.code);
++        }
++        throw e;
++      }
+       if (runResult.isErr()) {
+         await printRunCommandError(runResult.error, commandOutputContext);
+-        process.exit(1);
++        if (noExit) return 1; else { process.exit(1); return; }
+       }
++      return 0;
+     },
+     async execute(commandName, argsOrOptions, options) {
+       const commandPath = commandName.replace(/\//g, " ").split(" ");
 diff --git a/dist/types.d.ts b/dist/types.d.ts
-index 3054087a83ce728c80b085a2d8f3e6b5d2db204d..0a3521dabcbc4b52f2a250894832738930ac9b7d 100644
+index 3054087a83ce728c80b085a2d8f3e6b5d2db204d..931c92b44791e1de4fecc835104712ffa318a51a 100644
 --- a/dist/types.d.ts
 +++ b/dist/types.d.ts
-@@ -55,8 +55,11 @@ export interface RenderArgs<TFlags = Record<string, unknown>, TStore = {}> exten
+@@ -55,8 +55,14 @@ export interface RenderArgs<TFlags = Record<string, unknown>, TStore = {}> exten
      rendererOptions?: TuiRenderOptions;
  }
  export type RenderFunction<TFlags = Record<string, unknown>, TStore = {}> = (args: RenderArgs<TFlags, TStore>) => RenderResult;
@@ -56,9 +160,23 @@ index 3054087a83ce728c80b085a2d8f3e6b5d2db204d..0a3521dabcbc4b52f2a2508948327389
 +    [key: string]: (...args: unknown[]) => PromptSpinnerHandle;
 +};
 +export type PromptSpinnerFactory = (...args: unknown[]) => PromptSpinnerHandle;
++export type CLIRunOptions = {
++    noExit?: boolean;
++};
  /**
   * CLI instance with plugin type information
   */
+@@ -73,6 +79,10 @@ export interface CLI<TStore = {}> {
+      * Run the CLI with given arguments
+      */
+     run(argv?: string[]): Promise<void>;
++    run(argv: string[] | undefined, options: {
++        noExit: true;
++    }): Promise<number>;
++    run(argv?: string[], options?: CLIRunOptions): Promise<number | void>;
+     /**
+      * Execute a command programmatically
+      *
 diff --git a/package.json b/package.json
 index 14add7be587a90e3bda39cbc3fdfd28d078d4d92..e22d1d6f9a0a3655be07f33e519fcc5b9aae313f 100644
 --- a/package.json
@@ -72,7 +190,7 @@ index 14add7be587a90e3bda39cbc3fdfd28d078d4d92..e22d1d6f9a0a3655be07f33e519fcc5b
      "@standard-schema/spec": "^1.1.0",
      "@standard-schema/utils": "^0.3.0",
 diff --git a/src/cli.ts b/src/cli.ts
-index 737c262f174bbef5b3cc9ced1b2392485a24c548..fcafb3c3c77baa99cef7eb2880e148c85904835f 100644
+index 737c262f17..122cddb67d 100644
 --- a/src/cli.ts
 +++ b/src/cli.ts
 @@ -1,5 +1,3 @@
@@ -135,6 +253,140 @@ index 737c262f174bbef5b3cc9ced1b2392485a24c548..fcafb3c3c77baa99cef7eb2880e148c8
  
  function resolveRendererOptions(
    configured: Record<string, unknown> | undefined,
+@@ -924,6 +962,11 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+       await runAfterCommandOnce(0);
+       return Result.ok(undefined);
+     } catch (error) {
++      // Re-throw CliProcessExitError sentinel so run() can carry the exit code
++      // without wrapping it in CommandExecutionError (which would corrupt JSON/stderr output).
++      if ((error as { isCliProcessExitError?: boolean })?.isCliProcessExitError) {
++        throw error;
++      }
+       if (error instanceof PromptCancelledError) {
+         interruptLogger.debug("PromptCancelledError command=%s -> graceful-cancel", command.name);
+         process.exitCode = 0;
+@@ -1015,12 +1058,13 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+       // Kept for lifecycle symmetry; no-op since commands are registered explicitly.
+     },
+ 
+-    async run(argv = process.argv.slice(2)) {
++    // noExit: when true, returns the exit code instead of calling process.exit().
++    async run(argv = process.argv.slice(2), { noExit = false } = {}) {
+       const terminalInfo = cliDeps.getTerminalInfo();
+ 
+       if (argv.length === 0) {
+         printHelpOutput(resolveOutputContext(terminalInfo), terminalInfo);
+-        return;
++        return 0;
+       }
+ 
+       // Handle -- separator: split args before and after --
+@@ -1043,7 +1087,9 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+           error as RunCommandError,
+           resolveOutputContext(terminalInfo, explicitOutputFormat),
+         );
++        if (noExit) return 1;
+         process.exit(1);
++        return;
+       }
+ 
+       const outputContext = resolveOutputContext(
+@@ -1054,7 +1100,7 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+       // Handle version flag (only check before -- separator)
+       if (globalParsed.flags.version) {
+         printVersion(outputContext);
+-        return;
++        return 0;
+       }
+ 
+       // Handle --llms and --llms-full manifest flags
+@@ -1064,7 +1110,7 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+           "full",
+           renderManifestFull(fullConfig.name, commands, fullConfig.description),
+         );
+-        return;
++        return 0;
+       }
+       if (globalParsed.flags.llms) {
+         printManifestOutput(
+@@ -1072,7 +1118,7 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+           "compact",
+           renderManifestIndex(fullConfig.name, commands, fullConfig.description),
+         );
+-        return;
++        return 0;
+       }
+ 
+       // Handle help flags (only check before -- separator)
+@@ -1093,10 +1139,12 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+               available: getAvailableCommandNames(),
+             });
+             await printRunCommandError(unknownCommandError, outputContext);
++            if (noExit) return 1;
+             process.exit(1);
++            return;
+           }
+         }
+-        return;
++        return 0;
+       }
+ 
+       // Find and execute command
+@@ -1113,7 +1161,9 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+           suggestion,
+         });
+         await printRunCommandError(error, outputContext);
++        if (noExit) return 1;
+         process.exit(1);
++        return;
+       }
+ 
+       const commandOutputContext = resolveOutputContext(
+@@ -1130,7 +1180,7 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+           command,
+           commandLookup.args.slice(0, commandLookup.args.length - remainingArgs.length - 1),
+         );
+-        return;
++        return 0;
+       }
+ 
+       // Combine remaining args from command parsing with passthrough args
+@@ -1143,16 +1193,29 @@ export async function createCLI<TPlugins extends readonly BunliPlugin[] = []>(
+         ...passthroughArgs,
+       ];
+       const invokedCommandName = commandLookup.args.slice(0, matchedCommandLength).join(" ");
+-      const runResult = await runCommandInternal(
+-        command as Command<any, TStore>,
+-        allArgs,
+-        undefined,
+-        invokedCommandName || command.name,
+-      );
++      let runResult: Awaited<ReturnType<typeof runCommandInternal>>;
++      try {
++        runResult = await runCommandInternal(
++          command as Command<any, TStore>,
++          allArgs,
++          undefined,
++          invokedCommandName || command.name,
++        );
++      } catch (error) {
++        if ((error as { isCliProcessExitError?: boolean; code?: number })?.isCliProcessExitError) {
++          if (noExit) return error.code ?? 1;
++          process.exit(error.code ?? 1);
++          return;
++        }
++        throw error;
++      }
+       if (runResult.isErr()) {
+         await printRunCommandError(runResult.error, commandOutputContext);
++        if (noExit) return 1;
+         process.exit(1);
++        return;
+       }
++      return 0;
+     },
+ 
+     async execute(
 diff --git a/src/runtime/interrupt-controller.ts b/src/runtime/interrupt-controller.ts
 index 6aa16bf1171d3c6d67ebcb90e9e0117293230184..a3d8d20c71b2f66a3104935844cc80844477ec18 100644
 --- a/src/runtime/interrupt-controller.ts
@@ -173,10 +425,10 @@ index 9dd191e8283315e6ff8ce132ae9fe55bb06ba218..0db8b54543f1498edec1710a593a4868
 +  );
  }
 diff --git a/src/types.ts b/src/types.ts
-index 0796f8d90c2b0da3142db0b9fa2587b58e38eeed..695fb050314c0ead57dd7c88cac0ec200498baf5 100644
+index 0796f8d90c2b0da3142db0b9fa2587b58e38eeed..367bd416b730f867b3908c890c0408b7d55e80ff 100644
 --- a/src/types.ts
 +++ b/src/types.ts
-@@ -70,8 +70,11 @@ export type RenderFunction<TFlags = Record<string, unknown>, TStore = {}> = (
+@@ -70,8 +70,12 @@ export type RenderFunction<TFlags = Record<string, unknown>, TStore = {}> = (
    args: RenderArgs<TFlags, TStore>,
  ) => RenderResult;
  
@@ -187,6 +439,16 @@ index 0796f8d90c2b0da3142db0b9fa2587b58e38eeed..695fb050314c0ead57dd7c88cac0ec20
 +  [key: string]: (...args: unknown[]) => PromptSpinnerHandle;
 +};
 +export type PromptSpinnerFactory = (...args: unknown[]) => PromptSpinnerHandle;
++export type CLIRunOptions = { noExit?: boolean };
  
  // Core Bunli types
  /**
+@@ -92,6 +96,8 @@ export interface CLI<TStore = {}> {
+    * Run the CLI with given arguments
+    */
+   run(argv?: string[]): Promise<void>;
++  run(argv: string[] | undefined, options: { noExit: true }): Promise<number>;
++  run(argv?: string[], options?: CLIRunOptions): Promise<number | void>;
+ 
+   /**
+    * Execute a command programmatically

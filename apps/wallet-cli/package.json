@@ -41,6 +41,7 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/schema-primitives": "workspace:^",
     "bignumber.js": "catalog:",

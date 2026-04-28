@@ -8,6 +8,7 @@ import {
   runCliLiveData,
   runCliTokenApproval,
 } from "./runCli";
+import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { parseCurrencyUnit } from "../currencies/index";
 
@@ -20,6 +21,12 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
   if (account.currency.id === Currency.HBAR.id) {
     invariant(account.address, "hedera: account address must be pre-set");
     return account.address;
+  }
+
+  if (account.currency.id === Currency.CCD_TESTNET.id) {
+    const address = await getCcdAccountAddress(account);
+    account.address = address;
+    return address;
   }
 
   const { address } = await runCliGetAddress({
