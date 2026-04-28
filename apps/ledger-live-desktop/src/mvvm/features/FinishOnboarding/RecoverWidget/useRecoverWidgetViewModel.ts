@@ -6,6 +6,7 @@ import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/
 import { getStoreValue } from "~/renderer/store";
 import { track } from "~/renderer/analytics/segment";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { shouldShowRecoverPortfolioWidget } from "./recoverPortfolioWidgetVisibility";
 
 const TRACK = {
   button: "Post onboarding recover widget",
@@ -59,7 +60,7 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
     if (!isRecoverOfferAvailable) {
       return false;
     }
-    if (subscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE) {
+    if (!shouldShowRecoverPortfolioWidget(subscriptionState)) {
       return false;
     }
     if (!upsellPath) {
