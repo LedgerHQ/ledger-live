@@ -30,36 +30,29 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
   const { postOnboardingInProgress, deviceModelId } = usePostOnboardingHubState();
 
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
-  const [subscriptionState, setSubscriptionState] = useState<
-    LedgerRecoverSubscriptionStateEnum | undefined | null
-  >(null);
+  const [subscriptionState, setSubscriptionState] = useState<LedgerRecoverSubscriptionStateEnum | undefined>(
+    () => {
+      try {
+        return getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId);
+      } catch {
+        return undefined;
+      }
+    },
+  );
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const value = await getStoreValue("SUBSCRIPTION_STATE", protectId);
-        if (!cancelled) {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          setSubscriptionState(value as LedgerRecoverSubscriptionStateEnum);
-        }
-      } catch {
-        if (!cancelled) {
-          setSubscriptionState(undefined);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    try {
+      setSubscriptionState(
+        getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId),
+      );
+    } catch {
+      setSubscriptionState(undefined);
+    }
   }, [protectId]);
 
   const isRecoverOfferAvailable = isRecoverDisplayed(recoverServices, deviceModelId ?? undefined);
 
   const isVisible = useMemo(() => {
-    if (subscriptionState === null) {
-      return false;
-    }
     if (!postOnboardingInProgress) {
       return false;
     }

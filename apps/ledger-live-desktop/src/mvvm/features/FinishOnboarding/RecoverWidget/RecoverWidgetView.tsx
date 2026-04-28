@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ContentBanner,
@@ -9,12 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import type { RecoverWidgetViewProps } from "./useRecoverWidgetViewModel";
 import { ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
-
-// TODO: I did not find a way to change the Spot appearance color
-const WARNING_SPOT_STYLE = {
-  backgroundColor: "#FFBD4226",
-  color: "#FFD373",
-} as const;
+import useTheme from "~/renderer/hooks/useTheme";
 
 const RecoverWidgetView = memo(function RecoverWidgetView({
   isVisible,
@@ -23,6 +18,14 @@ const RecoverWidgetView = memo(function RecoverWidgetView({
   onOpenRecover,
 }: RecoverWidgetViewProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const warningSpotStyle = useMemo(
+    () => ({
+      backgroundColor: colors.warning.c10,
+      color: colors.warning.c70,
+    }),
+    [colors],
+  );
 
   if (!isVisible) {
     return null;
@@ -36,7 +39,7 @@ const RecoverWidgetView = memo(function RecoverWidgetView({
       className="min-w-0 w-1/2 cursor-pointer border-none bg-transparent p-0 text-left"
     >
       <ContentBanner>
-        <Spot appearance="icon" icon={ShieldCheck} size={48} style={WARNING_SPOT_STYLE} />
+        <Spot appearance="icon" icon={ShieldCheck} size={48} style={warningSpotStyle} />
         <ContentBannerContent>
           <ContentBannerTitle>{t(titleKey)}</ContentBannerTitle>
           <ContentBannerDescription>{t(descriptionKey)}</ContentBannerDescription>
