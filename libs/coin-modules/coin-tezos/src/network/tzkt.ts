@@ -224,19 +224,33 @@ const api = {
   /**
    * Fetches FA2 token transfers (tokenId = 0 only) for a given account.
    * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * Respects `query.sort` (unlike the lower-level `getTokenTransfers` helper which is
+   * fixed to ascending id for offset-based block pagination).
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getAccountTokenTransfers(
     address: string,
     query: TokenTransfersGetOptions,
   ): Promise<(APITokenTransfer & { hash: string; block: string })[]> {
+    const sortKey = query.sort === "Descending" ? "sort.desc" : "sort.asc";
     const params: Record<string, unknown> = {
       "anyof.from.to": address,
       "token.tokenId": "0",
       "token.standard": "fa2",
+      [sortKey]: "id",
+      limit: query.limit,
+      "level.ge": query["level.ge"],
+      "level.lt": query["level.lt"],
+      "level.gt": query["level.gt"],
     };
+    Object.entries(params).forEach(
+      ([key, value]) => value === undefined && delete params[key as keyof typeof params],
+    );
 
-    const data = await api.getTokenTransfers(query["level.ge"] as number, query["lastId"], params);
+    const { data } = await network<APITokenTransfer[]>({
+      url: `${getExplorerUrl()}/v1/tokens/transfers`,
+      params,
+    });
 
     const transactionIds = data
       .map(t => t.transactionId)
