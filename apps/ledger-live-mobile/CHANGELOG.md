@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.3.0-next.2
+
+### Minor Changes
+
+- [#16895](https://github.com/LedgerHQ/ledger-live/pull/16895) [`a8f7452`](https://github.com/LedgerHQ/ledger-live/commit/a8f74520f4bb51bd0a21cefdc939d21e663cf724) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch redirection to My Ledger upon FW update request
+
 ## 4.3.0-next.1
 
 ### Minor Changes
