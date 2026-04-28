@@ -38,4 +38,5 @@ export enum Network {
   ALEO = "Aleo",
   INTERNET_COMPUTER = "Internet Computer",
   MINA = "Mina",
+  CONCORDIUM = "Concordium",
 }

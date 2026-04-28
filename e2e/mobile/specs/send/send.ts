@@ -5,16 +5,29 @@ import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import type { LiveDataCommandOptions } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import type { InitOptions } from "../../utils/initUtil";
 
-const beforeAllFunction = async (transaction: TransactionType) => {
+export type SendTestOptions = {
+  featureFlags?: InitOptions["featureFlags"];
+  userdata?: InitOptions["userdata"];
+  liveDataOptions?: LiveDataCommandOptions;
+};
+
+const beforeAllFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
+    ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
     featureFlags: {
       llmAccountListUI: { enabled: true },
+      ...options?.featureFlags,
     },
     cliCommands: [
       async (userdataPath?: string) => {
-        await liveDataWithAddressCommand(transaction.accountToDebit)(userdataPath);
+        await liveDataWithAddressCommand(
+          transaction.accountToDebit,
+          options?.liveDataOptions,
+        )(userdataPath);
         transaction.accountToCredit.address = await getAccountAddress(transaction.accountToCredit);
         transaction.recipientAddress = transaction.accountToCredit.address;
       },
@@ -59,12 +72,40 @@ const beforeAllInvalidAddressFunction = async (
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export function runSendTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+export async function verifySendAndOperationDetails(
+  transaction: TransactionType,
+  amountWithCode: string,
+) {
+  await app.send.expectSummaryAmount(amountWithCode);
+  await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
+  await app.send.expectSummaryMemoTag(transaction.memoTag);
+  await app.send.chooseFeeStrategy(transaction.speed);
+  await app.send.summaryContinue();
+  await app.send.dismissHighFeeModal();
+
+  await verifyAppValidationSendInfo(transaction, amountWithCode);
+
+  await device.disableSynchronization();
+  await app.speculos.signSendTransaction(transaction);
+  await app.common.successViewDetails();
+
+  await app.operationDetails.waitForOperationDetails();
+  await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
+  await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
+  await app.operationDetails.checkTransactionType("OUT");
+}
+
+export function runSendTest(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[],
+  options?: SendTestOptions,
+) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send from 1 account to another", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllFunction(transaction, options);
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
@@ -74,23 +115,7 @@ export function runSendTest(transaction: TransactionType, tmsLinks: string[], ta
       await app.send.setAmountAndContinue(transaction.amount);
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
-      await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecipient(addressToCredit);
-      await app.send.expectSummaryMemoTag(transaction.memoTag);
-      await app.send.chooseFeeStrategy(transaction.speed);
-      await app.send.summaryContinue();
-      await app.send.dismissHighFeeModal();
-
-      await verifyAppValidationSendInfo(transaction, amountWithCode);
-
-      await device.disableSynchronization();
-      await app.speculos.signSendTransaction(transaction);
-      await app.common.successViewDetails();
-
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
-      await app.operationDetails.checkTransactionType("OUT");
+      await verifySendAndOperationDetails(transaction, amountWithCode);
     });
   });
 }
