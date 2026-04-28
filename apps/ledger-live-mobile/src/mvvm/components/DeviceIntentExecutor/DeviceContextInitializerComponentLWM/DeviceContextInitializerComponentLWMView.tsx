@@ -59,6 +59,7 @@ function getEnsureAppReadyStateCategory(state: EnsureAppReadyState): string {
     case BlockingStateType.DeviceDeprecatedBlocking:
     case BlockingStateType.WrongDeviceForAccount:
     case BlockingStateType.DeviceOutOfStorageSpace:
+    case BlockingStateType.DeviceNotOnboarded:
       return "Blocking";
 
     case FinalStateType.Error:
@@ -173,6 +174,9 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
           Device out of storage space: {state.appNames.join(", ")}
         </StateLine>
       );
+
+    case BlockingStateType.DeviceNotOnboarded:
+      return <StateLine state={state}>Device not onboarded</StateLine>;
 
     case FinalStateType.Error:
       return <StateLine state={state}>Error: {String(state.error)}</StateLine>;

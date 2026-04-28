@@ -5,12 +5,10 @@ import type {
   InternalApi,
 } from "@ledgerhq/device-management-kit";
 import {
-  CommandResultStatus,
   DeviceActionStatus,
   DeviceModelId as DmkDeviceModelId,
   DeviceSessionStateType,
   UnknownDAError,
-  UnknownDeviceExchangeError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import type {
@@ -19,12 +17,7 @@ import type {
   ConnectAppDAState,
 } from "../ConnectApp/types";
 import { Subject } from "rxjs";
-import {
-  AppInteractionRequiredStateType,
-  DeviceInteractionRequiredType,
-  FinalStateType,
-  type EnsureAppReadyState,
-} from "./state";
+import { AppInteractionRequiredStateType, FinalStateType, type EnsureAppReadyState } from "./state";
 import type { ConnectAppDASnapshotHandler, DeprecationPresentationInput } from "./types";
 import {
   EnsureAppReadyDeviceAction,
@@ -148,12 +141,18 @@ function makePending(
   } as unknown as ConnectAppDAState;
 }
 
-function makeCompleted(): ConnectAppDAState {
+function makeCompleted(
+  overrides: Partial<
+    Extract<ConnectAppDAState, { status: DeviceActionStatus.Completed }>["output"]
+  > = {},
+): ConnectAppDAState {
   return {
     status: DeviceActionStatus.Completed,
     output: {
       derivation: "0xderived",
       deviceMetadata,
+      currentApp,
+      ...overrides,
     },
   };
 }
@@ -199,7 +198,6 @@ function createHarness(params: {
   appName?: string;
   deprecation?: DeprecationPresentationInput;
   dependencies?: Partial<EnsureAppReadyDeviceActionDependencies>;
-  getAppAndVersion?: jest.Mock<Promise<GetAppAndVersionResponse>>;
 }) {
   const internalApi = makeInternalApiMock();
   const sessionState = makeSessionState();
@@ -215,9 +213,7 @@ function createHarness(params: {
   };
   const buildFinalState = jest.fn(() => successState);
   const shouldUpgrade = jest.fn(() => false);
-  const remapGetAppAndVersionError = jest.fn(() => undefined);
   const getCurrentDeviceState = jest.fn(() => sessionState);
-  const getAppAndVersion = params.getAppAndVersion ?? jest.fn().mockResolvedValue(currentApp);
   const connectAppDeviceAction = makeConnectAppDeviceActionMock({
     failure: params.connectAppFailure,
     states: params.connectAppStates ?? [makePending(UserInteractionRequired.None), makeCompleted()],
@@ -238,13 +234,11 @@ function createHarness(params: {
       dependencies: {
         buildFinalState,
         shouldUpgrade,
-        remapGetAppAndVersionError,
         ...params.dependencies,
       },
     },
     {
       getCurrentDeviceState,
-      getAppAndVersion,
     },
   );
 
@@ -265,21 +259,17 @@ function createHarness(params: {
     completed: () => completed,
     completion,
     execution,
-    getAppAndVersion,
     getCurrentDeviceState,
     internalApi,
     actionStates,
     emittedStates,
     observer,
-    remapGetAppAndVersionError,
     shouldUpgrade,
     snapshotHandler,
   };
 }
 
-function makeActionInput(
-  overrides: Partial<EnsureAppReadyDAInput> = {},
-): EnsureAppReadyDAInput {
+function makeActionInput(overrides: Partial<EnsureAppReadyDAInput> = {}): EnsureAppReadyDAInput {
   const connectAppDeviceAction = makeConnectAppDeviceActionMock({
     states: [makeCompleted()],
   });
@@ -303,22 +293,17 @@ function makeActionDependencies(
   return {
     buildFinalState: jest.fn(() => successState),
     shouldUpgrade: jest.fn(() => false),
-    remapGetAppAndVersionError: jest.fn(() => undefined),
     ...overrides,
   };
 }
 
 describe("EnsureAppReadyDeviceAction", () => {
   describe("GIVEN production dependencies are extracted", () => {
-    it("WHEN getAppAndVersion succeeds THEN it resolves the command data", async () => {
+    it("WHEN dependencies are extracted THEN it exposes the current device state getter", () => {
       // GIVEN
       const internalApi = makeInternalApiMock();
       const sessionState = makeSessionState();
       internalApi.getDeviceSessionState.mockReturnValue(sessionState);
-      internalApi.sendCommand.mockResolvedValue({
-        status: CommandResultStatus.Success,
-        data: currentApp,
-      });
       const action = new EnsureAppReadyDeviceAction({
         input: makeActionInput(),
         dependencies: makeActionDependencies(),
@@ -329,28 +314,7 @@ describe("EnsureAppReadyDeviceAction", () => {
 
       // THEN
       expect(dependencies.getCurrentDeviceState()).toBe(sessionState);
-      await expect(dependencies.getAppAndVersion()).resolves.toBe(currentApp);
-      expect(internalApi.sendCommand).toHaveBeenCalledTimes(1);
-    });
-
-    it("WHEN getAppAndVersion fails THEN it rejects with the command error", async () => {
-      // GIVEN
-      const error = new UnknownDeviceExchangeError(new Error("command-error"));
-      const internalApi = makeInternalApiMock();
-      internalApi.sendCommand.mockResolvedValue({
-        status: CommandResultStatus.Error,
-        error,
-      });
-      const action = new EnsureAppReadyDeviceAction({
-        input: makeActionInput(),
-        dependencies: makeActionDependencies(),
-      });
-
-      // WHEN
-      const dependencies = action.extractDependencies(internalApi);
-
-      // THEN
-      await expect(dependencies.getAppAndVersion()).rejects.toBe(error);
+      expect(internalApi.sendCommand).not.toHaveBeenCalled();
     });
   });
 
@@ -364,7 +328,6 @@ describe("EnsureAppReadyDeviceAction", () => {
       await harness.completion;
 
       // THEN
-      expect(harness.getAppAndVersion).toHaveBeenCalledTimes(1);
       expect(harness.buildFinalState).toHaveBeenCalledWith({
         deviceMetadata,
         currentApp,
@@ -429,10 +392,15 @@ describe("EnsureAppReadyDeviceAction", () => {
       // GIVEN
       const shouldUpgrade = jest.fn(() => true);
       const harness = createHarness({
-        getAppAndVersion: jest.fn().mockResolvedValue({
-          ...currentApp,
-          name: undefined,
-        }),
+        connectAppStates: [
+          makePending(UserInteractionRequired.None),
+          makeCompleted({
+            currentApp: {
+              ...currentApp,
+              name: undefined,
+            } as unknown as GetAppAndVersionResponse,
+          }),
+        ],
         dependencies: {
           shouldUpgrade,
         },
@@ -479,7 +447,6 @@ describe("EnsureAppReadyDeviceAction", () => {
       await harness.completion;
 
       // THEN
-      expect(harness.getAppAndVersion).not.toHaveBeenCalled();
       expect(harness.actionStates[harness.actionStates.length - 1]).toEqual({
         status: DeviceActionStatus.Completed,
         output: undefined,
@@ -497,7 +464,6 @@ describe("EnsureAppReadyDeviceAction", () => {
       await harness.completion;
 
       // THEN
-      expect(harness.getAppAndVersion).not.toHaveBeenCalled();
       expect(harness.actionStates[harness.actionStates.length - 1]).toMatchObject({
         status: DeviceActionStatus.Error,
         error: expect.objectContaining({
@@ -531,55 +497,14 @@ describe("EnsureAppReadyDeviceAction", () => {
     });
   });
 
-  describe("GIVEN getAppAndVersion fails", () => {
-    it("WHEN the error is mapped THEN it emits the mapped job state", async () => {
-      // GIVEN
-      const error = new Error("mapped-error");
-      const mappedState: EnsureAppReadyState = {
-        type: DeviceInteractionRequiredType.UnlockDevice,
-      };
-      const remapGetAppAndVersionError = jest.fn(() => mappedState);
-      const harness = createHarness({
-        getAppAndVersion: jest.fn().mockRejectedValue(error),
-        dependencies: {
-          remapGetAppAndVersionError,
-        },
-      });
-
-      // WHEN
-      await harness.completion;
-
-      // THEN
-      expect(remapGetAppAndVersionError).toHaveBeenCalledWith(error);
-      expect(harness.emittedStates).toEqual([mappedState]);
-    });
-
-    it("WHEN the error is not mapped THEN it emits the fallback error job state", async () => {
-      // GIVEN
-      const error = new Error("fallback-error");
-      const harness = createHarness({
-        getAppAndVersion: jest.fn().mockRejectedValue(error),
-      });
-
-      // WHEN
-      await harness.completion;
-
-      // THEN
-      expect(harness.remapGetAppAndVersionError).toHaveBeenCalledWith(error);
-      expect(harness.emittedStates).toEqual([
-        {
-          type: FinalStateType.Error,
-          error,
-        },
-      ]);
-    });
-  });
-
-  describe("GIVEN getAppAndVersion returns no current app", () => {
+  describe("GIVEN connect app returns no current app", () => {
     it("WHEN finalization runs THEN it terminates with the missing-current-app invariant error", async () => {
       // GIVEN
       const harness = createHarness({
-        getAppAndVersion: jest.fn().mockResolvedValue(undefined),
+        connectAppStates: [
+          makePending(UserInteractionRequired.None),
+          makeCompleted({ currentApp: undefined }),
+        ],
       });
 
       // WHEN
@@ -609,7 +534,6 @@ describe("EnsureAppReadyDeviceAction", () => {
       await harness.completion;
 
       // THEN
-      expect(harness.getAppAndVersion).not.toHaveBeenCalled();
       expect(harness.actionStates[harness.actionStates.length - 1]).toMatchObject({
         status: DeviceActionStatus.Error,
         error: expect.objectContaining({

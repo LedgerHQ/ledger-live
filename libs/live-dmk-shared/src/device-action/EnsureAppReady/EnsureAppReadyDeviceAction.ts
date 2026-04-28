@@ -4,18 +4,16 @@ import type {
   StateMachineTypes,
 } from "@ledgerhq/device-management-kit";
 import {
-  CommandResultStatus,
   DeviceActionStatus,
-  GetAppAndVersionCommand,
   UnknownDAError,
   UserInteractionRequired,
   XStateDeviceAction,
 } from "@ledgerhq/device-management-kit";
 import { Left, Right } from "purify-ts";
-import { assign, fromObservable, fromPromise, setup } from "xstate";
+import { assign, fromObservable, setup } from "xstate";
 import { ConnectAppCompletionCapturer } from "./ConnectAppCompletionCapturer";
 import { EnsureAppReadyStateEmitter } from "./EnsureAppReadyStateEmitter";
-import { AppInteractionRequiredStateType, FinalStateType } from "./state";
+import { AppInteractionRequiredStateType } from "./state";
 import type {
   EnsureAppReadyDAError,
   EnsureAppReadyDAInput,
@@ -58,15 +56,6 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
   extractDependencies(internalApi: InternalApi): EnsureAppReadyMachineDependencies {
     return {
       getCurrentDeviceState: () => internalApi.getDeviceSessionState(),
-      getAppAndVersion: async () => {
-        const result = await internalApi.sendCommand(new GetAppAndVersionCommand());
-
-        if (result.status !== CommandResultStatus.Success) {
-          throw result.error;
-        }
-
-        return result.data;
-      },
     };
   }
 
@@ -120,7 +109,6 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
       },
       actors: {
         connectApp: fromObservable(() => connectAppDeviceAction._execute(internalApi).observable),
-        getAppAndVersion: fromPromise(async () => machineDependencies.getAppAndVersion()),
       },
       actions: {
         assignLatestConnectAppState: assign({
@@ -141,10 +129,20 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
         },
 
         assignConnectAppCompletionCapture: assign({
-          _internalState: ({ context }) => ({
-            ...context._internalState,
-            ...(connectAppCompletionCapturer.getCompletionCapture() ?? {}),
-          }),
+          _internalState: ({ context }) => {
+            const completionCapture = connectAppCompletionCapturer.getCompletionCapture();
+
+            if (!completionCapture) {
+              return context._internalState;
+            }
+
+            return {
+              ...context._internalState,
+              deviceMetadata: completionCapture.deviceMetadata,
+              derivation: completionCapture.derivation,
+              currentApp: completionCapture.currentApp,
+            };
+          },
         }),
 
         assignUnexpectedError: assign({
@@ -171,20 +169,6 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
             ),
           }),
         }),
-        assignCurrentApp: assign({
-          _internalState: ({ context, event }) => ({
-            ...context._internalState,
-            currentApp: event.output,
-          }),
-        }),
-        emitHandledGetAppAndVersionError: ({ event }) => {
-          this.input.observer.next(
-            actionDependencies.remapGetAppAndVersionError?.(event.error) ?? {
-              type: FinalStateType.Error,
-              error: event.error,
-            },
-          );
-        },
         emitOutdatedAppWarning: ({ context, self }) => {
           const currentAppName = context._internalState.currentApp?.name ?? context.input.appName;
 
@@ -218,7 +202,7 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
           ),
       },
     }).createMachine({
-      /** @xstate-layout N4IgpgJg5mDOIC5QFEB2sCuAnMBBADvgEpgCGEAngCJgBuAlgMZ6MAu9A9qgHQDCXqMGwL4AxBC5hu9VLQ4BrKYwFDWIgNoAGALqJQ+DrHrsuekAA9EAZisBWbgCYAjLYBsV169sOrAdk1uADQgFIgOmgCc3JqavgAcDgAs7k6JPr4OAL6ZwWiYOCIk5NR0TCwmPPyogsKEomBYWBxY3PgANqSsAGbNALbcytWqGjpmBkYVZpYINvbObh5e6QGuwaEIcU7REX5WcW5Jsb6J2bno2HiERZQ0DMy4bJw8uF2sDVU1anVaukgg48YnlNEAkog44ok0p5wk5fE4ImtrBFNI5YglEporElbHFTiA8hdCmQbqV7o8uNwXm8sB9ht8nL99IZAaY-tMElZuF5Er5bC5fBE4hEIolEQhfK5EtFDk4HK4nJ5NA5fHiCQUrsSSndyk9Ka93ipamJ1A5Gf9mZM2SCnCjbIk9k47FYIq45b4xXFndxYfDfFjNHFuarzuriJrbmUHhVuABxMBffC4VAQABqDSMXHEkmksgUUhgCaTqfTTx+YwtQKtCBckO9vICtgF8rifrFdgc3FsfJxSoczl5TmD+UuYeKEbJ0bjheTaawGdQ9UazVaHW6fW4BZERdn87LfwBltA0xrUthtgbTacLasYtcIu4AudVntXnPWKHhI1Y9JOopVIaU5bjOJaZnuTITJWR5hLErjeskIqurYNgQm2njcBiViOsKDhIQcJw5PiIYjtcWqRuSzz6lggGENuIELuoDLlhBrJQQg4QSnBd7JDhyGiiEiDnnE3AIcicI7JhwofqGJHjr+FHUtRibAXOTyiCaZoHpBFjQRxqRcYhvFil2UreJsETKvCsSwlJxHhj+Ua6gA8hgrAQJ0kAiAA6qQWCoDIUCiLwjkAHIACoAJLBQAqsgAD6jlRaFVC4KFyBULFnm4EQwWRTGYHmsxqDAmxnhbH6EqxE6-ixKhp5IVhMSVX4NlEt+2oORSABiMikG09AAF5gGpoz7hWLHaTMV72F27gRN4V5Nm2cQop4vhwsqFlyrieKoBwEBwGYaq2W1ZGHgVLJFVWAC0qz8QgV32MKwpIRiQoiqktgtV+JLteRfCGgmTEXcVaRijs6Eui2vLPokgaSl9o4-adur-jSAMiEDZ3TO4vjRJisLKn68qw2KPi2nKjbOKksqbAjMn2X9im0Sp42aeNx6wiiHg4WkfZxPzzi1cJdr+DsrgBrKAR03Zv3RqjTPKfOmNacenr2OLmHxPENrPnEbbHNE-h2Datg7JoaTSydE5OS5blvBAXk+X5qBQMr7NhH4sF+pCribHp8RtokWwuDENbhFtViW0j1tdT1fWDW7l2sQ4ET+MJmI8Z4EI4m2bjepK4uJOec1CnaUekTHPChQ0vQ9fbifFTYMSOLKnhYkH-MSktWyJMK9q97EdrOPh2RAA */
+      /** @xstate-layout N4IgpgJg5mDOIC5QFEB2sCuAnMBBADvgEpgCGEAngCJgBuAlgMZ6MAu9A9qgHQDCXqMGwL4AxBC5hu9VLQ4BrKYwFDWIgNoAGALqJQ+DrHrsuekAA9EAZisBWbgCYAjLYBsTgBybbDzU4Ds-q4ANCAUiA4ALFbcHh6RPpFeDg4AnLZWDgC+WaFomDgiJOTUdEwsJjz8qILChKJgWFgcWNz4ADakrABmLQC23Mo1qho6ZgZGlWaWCDb2zm6e3r4BQaHhCB5O3JqpVoHOkU4OHra7OXno2HiExZQ0DMy4bJw8uN2sjdW1avVaukgQBNjK9pogPGlHPEbIEnFZUgknOsIrZ-Nx-FZXJo0rZUlErE4LiB8tcimR7mUni8uNx3p8sN8Rn8nAD9IYQaZATMIakodF9v44QjbEiwohcbzUv4Ia4MbYRU4kkSSYVbuTSo8Kq9aR8vio6mJ1A5WUD2VMueDISd+bD4YjkQhXAluPKEZFImknC4rB5lVdVcR1Q9ys9Kjr6QBxMC-fC4VAQABqjSMXFE-3GZtBFoQiqcmm4qU0WKxiWtDgdUQ83C9DixXpsLkFkT9BRugZKwapYbpjSjMbjieTrzTLIzkyzoBmufzheLyw98XLYtmhe4rjcdlOHmlqUVLdJao7lK1NJ7WD7IgHSawKdQaeNY45qDBOaOM6LH9Li4d0Vcjn2GTyg48JWJo0T7gGdwaiG1I8AA8hgrAQF0kAiAA6qQWCoDIUCiLwcEAHIACoAJIEQAqsgAD6cHkURVC4ERyBUFRaG4EQBFkRG6aAsC5qTogTipKkf6RCJrh4rYHjrj4S4bFE9jSQ4uJRK40lwoEEFtlBnYnjwABiMikO09AAF5gGmYy8ZmnICQgym+NwBK2Ecu5iT4tgVq4DhOUEwmFhi3jSrYOS5CAqAcBAcBmCq2lBseoYTqa462RYiAALQhMumU7JoeX5QV+X+FpZJHpqiU0oyBqPvxaUIB6Dp7NwYkSQ4gpBO4ImpCVh4UuVsHhnqwzVdZKXPtmrj7LlBJ2FY7qgccXn2JEmgEh4Il+AEso9e2fUwd2urntGl7xtet41UlU4BPmmLKRp0RnHYFbyui-hSu4uaFtaO06QlA0IUhKEQOhmHYagUAXalU6CtsYn7HYynrQFFYpLEuLRIcToeiFYWxaVe1dtqhmoMZZlgJD412cB3hrt5mLif4Rw2BWU3bkceYuOuRaErj-pxWV+3akRjR9EZnwQBTL61lEBaCpNvhvUEVg-i9-jo5ojNFpk6ShVkQA */
       id: "EnsureAppReadyDeviceAction",
       initial: "ConnectApp",
       context: ({ input }) => ({
@@ -256,7 +240,7 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
           always: [
             {
               guard: "latestConnectAppStateCompleted",
-              target: "GetAppAndVersion",
+              target: "AfterGetAppAndVersion",
             },
             {
               guard: "latestConnectAppStateErrored",
@@ -267,20 +251,6 @@ export class EnsureAppReadyDeviceAction extends XStateDeviceAction<
               actions: "assignMissingConnectAppTerminalStateError",
             },
           ],
-        },
-        GetAppAndVersion: {
-          invoke: {
-            id: "getAppAndVersion",
-            src: "getAppAndVersion",
-            onDone: {
-              target: "AfterGetAppAndVersion",
-              actions: "assignCurrentApp",
-            },
-            onError: {
-              target: "Terminated",
-              actions: "emitHandledGetAppAndVersionError",
-            },
-          },
         },
         AfterGetAppAndVersion: {
           always: [

@@ -55,14 +55,10 @@ export type EnsureAppReadyDeviceActionDependencies = {
     currentApp: GetAppAndVersionResponse;
     derivation: string | undefined;
   }) => EnsureAppReadyState;
-  readonly remapGetAppAndVersionError?: (
-    error: unknown,
-  ) => EnsureAppReadyState | null | undefined;
 };
 
 export type EnsureAppReadyMachineDependencies = {
   readonly getCurrentDeviceState: () => DeviceSessionState;
-  readonly getAppAndVersion: () => Promise<GetAppAndVersionResponse>;
 };
 
 type LoggerFactory = NonNullable<InternalApi["loggerFactory"]>;
