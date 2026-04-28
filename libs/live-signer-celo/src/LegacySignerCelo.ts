@@ -1,7 +1,6 @@
 import Celo from "@ledgerhq/hw-app-celo";
 import type Transport from "@ledgerhq/hw-transport";
 import { CeloSigner } from "@ledgerhq/coin-celo/signer";
-import type { CeloTx, RLPEncodedTx, LegacyEncodedTx } from "@ledgerhq/coin-celo/types";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { EIP712Message } from "@ledgerhq/types-live";
 
@@ -43,9 +42,5 @@ export class LegacySignerCelo implements CeloSigner {
     throwOnError: boolean,
   ) {
     return this.signer.clearSignTransaction(path, rawTxHex, resolutionConfig, throwOnError);
-  }
-
-  rlpEncodedTxForLedger(txParams: CeloTx): Promise<RLPEncodedTx | LegacyEncodedTx> {
-    return this.signer.rlpEncodedTxForLedger(txParams);
   }
 }

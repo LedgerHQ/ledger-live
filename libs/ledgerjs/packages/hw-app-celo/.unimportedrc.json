@@ -5,18 +5,13 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util"
+  ],
   "ignoreUnused": [
-    "@celo/connect",
-    "@celo/contractkit",
-    "@celo/utils",
-    "@celo/wallet-base",
-    "@celo/wallet-ledger",
     "@ledgerhq/errors",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport",
     "bip32-path",
-    "rlp",
     "semver"
   ]
 }

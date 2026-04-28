@@ -1,5 +1,3 @@
-import { CeloTx } from "@celo/connect";
-import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
 import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -7,7 +5,15 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { determineFees } from "../network/sdk";
+import {
+  keccak256,
+  recoverAddress,
+  type Signature,
+  type TransactionSerializableEIP1559,
+} from "viem";
+import { serializeTransaction } from "viem/celo";
+import type { TransactionSerializableCIP64 } from "viem/celo";
+import { getFeeMarketGasParams } from "../network/sdk";
 import { CeloSigner } from "../signer";
 import type { Transaction, CeloAccount } from "../types/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
@@ -33,59 +39,88 @@ export const buildSignOperation =
       async function main() {
         const { fees } = transaction;
         if (!fees) throw new FeeNotLoaded();
-        const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
 
-        const { chainId, to } = unsignedTransaction;
+        const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
+        const { chainId, nonce, feeCurrency } = unsignedTransaction;
 
         const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
         const isTokenTransaction = subAccount?.type === "TokenAccount";
 
-        const finalTransaction: CeloTx = {
-          ...unsignedTransaction,
-          to: isTokenTransaction ? subAccount.token.contractAddress : to!,
-          value: isTokenTransaction ? 0 : unsignedTransaction.value!,
+        const to = isTokenTransaction ? subAccount.token.contractAddress : unsignedTransaction.to;
+        const value = isTokenTransaction ? "0x0" : (unsignedTransaction.value ?? "0x0");
+
+        const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(
+          feeCurrency ?? undefined,
+        );
+
+        const baseFields = {
+          chainId: chainId!,
+          nonce: nonce!,
+          to: to as `0x${string}`,
+          value: BigInt(value),
+          gas: BigInt(unsignedTransaction.gas ?? 0),
+          maxFeePerGas,
+          maxPriorityFeePerGas,
+          data: unsignedTransaction.data,
         };
 
-        const { address } = await signerContext(deviceId, signer => {
-          return signer.getAddress(account.freshAddressPath);
-        });
-        await determineFees(finalTransaction);
+        const txToSerialize: TransactionSerializableCIP64 | TransactionSerializableEIP1559 =
+          feeCurrency
+            ? { ...baseFields, type: "cip64", feeCurrency }
+            : { ...baseFields, type: "eip1559" };
 
-        const rlpEncodedTransaction = await signerContext(deviceId, signer => {
-          return signer.rlpEncodedTxForLedger(finalTransaction);
-        });
+        const { address } = await signerContext(deviceId, signer =>
+          signer.getAddress(account.freshAddressPath),
+        );
+
+        // Serialize unsigned tx — this is the raw hex sent to the Ledger
+        const serializedUnsigned = serializeTransaction(txToSerialize);
+        const rawTxHex = serializedUnsigned.startsWith("0x")
+          ? serializedUnsigned.slice(2)
+          : serializedUnsigned;
+
         o.next({ type: "device-signature-requested" });
 
-        const response = (await signerContext(deviceId, signer => {
-          return signer.signTransaction(
-            account.freshAddressPath,
-            trimLeading0x(rlpEncodedTransaction.rlpEncode),
-          );
-        })) as EvmSignature;
+        const response = (await signerContext(deviceId, signer =>
+          signer.signTransaction(account.freshAddressPath, rawTxHex),
+        )) as EvmSignature;
 
-        const convertedResponse = { ...response, v: response.v.toString() };
         if (cancelled) return;
 
-        const signature = parseSigningResponse(convertedResponse, chainId!);
-
         o.next({ type: "device-signature-granted" });
-        const encodedTransaction = await encodeTransaction(rlpEncodedTransaction, signature);
-        const [_, recoveredAddress] = recoverTransaction(encodedTransaction.raw);
-        if (recoveredAddress !== address) {
+
+        const v = BigInt("0x" + response.v);
+        const signature: Signature = {
+          r: ("0x" + response.r) as `0x${string}`,
+          s: ("0x" + response.s) as `0x${string}`,
+          v,
+          yParity: v % BigInt(2) === BigInt(0) ? 0 : 1,
+        };
+
+        // Serialize the signed transaction
+        const signedRaw = serializeTransaction(txToSerialize, signature);
+
+        // Verify the recovered address matches
+        const txHash = keccak256(serializedUnsigned);
+        const recoveredAddress = await recoverAddress({ hash: txHash, signature });
+
+        if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
           throw new Error(
-            "celo: there was a signing error, the recovered address doesn't match the your ledger address, the operation was cancelled",
+            "celo: there was a signing error, the recovered address doesn't match your ledger address, the operation was cancelled",
           );
         }
+
         const operation = buildOptimisticOperation(
           account as CeloAccount,
           transaction,
           transaction.fees ?? new BigNumber(0),
         );
+
         o.next({
           type: "signed",
           signedOperation: {
             operation,
-            signature: encodedTransaction.raw,
+            signature: signedRaw,
           },
         });
       }
@@ -98,32 +133,5 @@ export const buildSignOperation =
         cancelled = true;
       };
     });
-
-const trimLeading0x = (input: string) => (input.startsWith("0x") ? input.slice(2) : input);
-
-const parseSigningResponse = (
-  response: {
-    s: string;
-    v: string;
-    r: string;
-  },
-  chainId: number,
-): {
-  s: Buffer;
-  v: number;
-  r: Buffer;
-} => {
-  // EIP155
-  const sigV = parseInt(response.v, 16);
-  let eip155V = chainId * 2 + 35;
-
-  eip155V = sigV;
-
-  return {
-    s: Buffer.from(response.s, "hex"),
-    v: eip155V,
-    r: Buffer.from(response.r, "hex"),
-  };
-};
 
 export default buildSignOperation;
