@@ -159,6 +159,12 @@ export function mapConnectAppDAErrorStatus(params: {
     };
   }
 
+  if (hasTag(error, "DeviceNotOnboardedError")) {
+    return {
+      type: BlockingStateType.DeviceNotOnboarded,
+    };
+  }
+
   const deviceState = getCurrentDeviceState();
 
   if (error instanceof UnsupportedFirmwareDAError) {

@@ -109,12 +109,12 @@ function makeErrored(
   };
 }
 
-function makeDeviceExchangeError(errorCode: string, message: string): ConnectAppDAError {
+function makeDeviceExchangeError(errorCode: string, message: string): DeviceExchangeError {
   return Object.assign(Object.create(DeviceExchangeError.prototype), {
     _tag: "DeviceExchangeError",
     errorCode,
     originalError: new Error(message),
-  }) as ConnectAppDAError;
+  }) as DeviceExchangeError;
 }
 
 function makeSessionState(
@@ -537,6 +537,25 @@ describe("mapConnectAppDAErrorStatus", () => {
 
     // THEN
     expect(result).toBeNull();
+  });
+
+  it("GIVEN a device-not-onboarded error WHEN it is mapped THEN it returns a blocking not-onboarded state", () => {
+    // GIVEN
+    const getCurrentDeviceState = jest.fn(() => makeSessionState());
+
+    // WHEN
+    const result = mapConnectAppDAErrorStatus({
+      state: makeErrored({ _tag: "DeviceNotOnboardedError" } as ConnectAppDAError),
+      appName,
+      getCurrentDeviceState,
+      latestInstallPlan: null,
+    });
+
+    // THEN
+    expect(result).toEqual({
+      type: BlockingStateType.DeviceNotOnboarded,
+    });
+    expect(getCurrentDeviceState).not.toHaveBeenCalled();
   });
 
   it("GIVEN a locked device error WHEN it is mapped THEN it returns a retryable locked state", () => {

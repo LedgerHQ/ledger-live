@@ -34,6 +34,8 @@ export enum BlockingStateType {
   UnsupportedFeature,
   /** To map to wording of error.WrongDeviceForAccount */
   WrongDeviceForAccount,
+  /** To map to wording of error.DeviceNotOnboarded */
+  DeviceNotOnboarded,
 }
 
 /** For all recoverable errors (job retry will fix) */
@@ -104,6 +106,9 @@ export type EnsureAppReadyState =
   | {
       type: BlockingStateType.DeviceOutOfStorageSpace;
       appNames: string[];
+    }
+  | {
+      type: BlockingStateType.DeviceNotOnboarded;
     }
   | { type: FinalStateType.Error; error: unknown }
   | { type: FinalStateType.Success; extractedContext: DeviceExtractedContext };
