@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
+import useTheme from "~/renderer/hooks/useTheme";
 import { useBorrowAppViewModel } from "../useBorrowAppViewModel";
 
 const mockNavigate = jest.fn();
@@ -31,6 +32,8 @@ jest.mock("~/helpers/systemLocale", () => ({
   getParsedSystemDeviceLocale: jest.fn(),
 }));
 
+jest.mock("~/renderer/hooks/useTheme");
+
 const remoteManifest = { id: "borrow-remote", url: "https://remote.example" } as LiveAppManifest;
 const localManifest = { id: "borrow-local", url: "https://local.example" } as LiveAppManifest;
 
@@ -49,6 +52,7 @@ describe("useBorrowAppViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    jest.mocked(useTheme).mockReturnValue({ theme: "dark" } as unknown as ReturnType<typeof useTheme>);
     jest.mocked(useRemoteLiveAppContext).mockReturnValue({
       updateManifests: jest.fn(),
     } as unknown as ReturnType<typeof useRemoteLiveAppContext>);
