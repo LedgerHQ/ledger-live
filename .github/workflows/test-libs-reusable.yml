@@ -109,6 +109,52 @@ jobs:
           fi
         shell: bash
 
+      - name: Summarize test failures
+        if: always()
+        run: |
+          node - << 'EOF'
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+          const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+          if (!summaryFile) process.exit(0);
+
+          let xmlFiles;
+          try {
+            xmlFiles = execSync('find libs -name "sonar-executionTests-report.xml" 2>/dev/null')
+              .toString().trim().split('\n').filter(Boolean);
+          } catch (e) { process.exit(0); }
+
+          const unescape = s => s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"');
+          const failures = [];
+          for (const file of xmlFiles) {
+            let content;
+            try { content = fs.readFileSync(file, 'utf8'); } catch (e) { continue; }
+            const matches = [...content.matchAll(
+              /<testCase name="([^"]+)"[^>]*>[\s\S]*?<failure message="([^"]*)">([\s\S]*?)<\/failure>[\s\S]*?<\/testCase>/g
+            )];
+            if (matches.length) {
+              const lib = file.replace('/sonar-executionTests-report.xml', '').replace(/^\.\//, '');
+              failures.push(...matches.map(m => ({ lib, name: unescape(m[1]), msg: unescape(m[2]) })));
+            }
+          }
+
+          if (!failures.length) {
+            fs.appendFileSync(summaryFile, '## ✅ All tests passed\n');
+            process.exit(0);
+          }
+
+          const byLib = {};
+          for (const f of failures) (byLib[f.lib] ??= []).push(f);
+
+          let md = `## ❌ ${failures.length} test failure(s)\n\n`;
+          for (const [lib, tests] of Object.entries(byLib)) {
+            md += `### \`${lib}\`\n`;
+            for (const t of tests)
+              md += `<details><summary>❌ ${t.name}</summary>\n\n\`\`\`\n${t.msg.slice(0, 800)}\n\`\`\`\n</details>\n\n`;
+          }
+          fs.appendFileSync(summaryFile, md);
+          EOF
+
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
