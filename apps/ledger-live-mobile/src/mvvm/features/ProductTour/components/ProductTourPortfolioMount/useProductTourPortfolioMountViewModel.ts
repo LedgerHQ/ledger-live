@@ -1,4 +1,4 @@
-import { useProductTourDrawerViewModel } from "../../Drawer";
+import { useProductTourDrawerViewModel } from "../../Drawer/hooks/useProductTourDrawerViewModel";
 import type { ProductTourDrawerViewModel } from "../../Drawer/types";
 import { useProductTourEligibility } from "../../hooks/useProductTourEligibility";
 
@@ -9,12 +9,14 @@ export type UseProductTourPortfolioMountViewModelResult = ProductTourDrawerViewM
 export const useProductTourPortfolioMountViewModel =
   (): UseProductTourPortfolioMountViewModelResult => {
     const { isProductTourEligible } = useProductTourEligibility();
-    const { openProductTour, closeProductTour, isDrawerOpen } = useProductTourDrawerViewModel();
+    const { openProductTour, closeProductTour, onSlideChange, isDrawerOpen } =
+      useProductTourDrawerViewModel();
 
     return {
       isProductTourEligible,
       openProductTour,
       closeProductTour,
+      onSlideChange,
       isDrawerOpen,
     };
   };

@@ -5,6 +5,7 @@ import { Text, Button } from "@ledgerhq/lumen-ui-rnative";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setProductTourCompleted } from "~/actions/settings";
 import { productTourCompletedSelector } from "~/reducers/settings";
+import { ProductTourControlsProvider } from "../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../Drawer";
 import { SectionCard, ToggleRow } from "./components";
 
@@ -12,7 +13,7 @@ function ProductTourScreenDebug() {
   const dispatch = useDispatch();
 
   const productTourCompleted = useSelector(productTourCompletedSelector);
-  const { isDrawerOpen, openDrawer, closeDrawer, onSlideChange } = useProductTourDrawer();
+  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange } = useProductTourDrawer();
 
   const handleToggleProductTourCompleted = useCallback(() => {
     dispatch(setProductTourCompleted(!productTourCompleted));
@@ -48,16 +49,21 @@ function ProductTourScreenDebug() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button size="lg" appearance="accent" onPress={openDrawer}>
+        <Button size="lg" appearance="accent" onPress={openProductTour}>
           {"Open Drawer"}
         </Button>
       </View>
 
-      <ProductTourDrawer
-        isDrawerOpen={isDrawerOpen}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-      />
+      <ProductTourControlsProvider
+        value={{
+          openProductTour,
+          closeProductTour,
+          onSlideChange,
+          isDrawerOpen,
+        }}
+      >
+        <ProductTourDrawer />
+      </ProductTourControlsProvider>
     </View>
   );
 }

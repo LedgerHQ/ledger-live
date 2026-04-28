@@ -18,10 +18,16 @@ describe("ProductTourControlsContext", () => {
   it("should expose openProductTour and closeProductTour inside the provider", () => {
     const openProductTour = jest.fn();
     const closeProductTour = jest.fn();
+    const onSlideChange = jest.fn();
 
     render(
       <ProductTourControlsProvider
-        value={{ openProductTour, closeProductTour }}
+        value={{
+          openProductTour,
+          closeProductTour,
+          onSlideChange,
+          isDrawerOpen: false,
+        }}
       >
         <ContextProbe />
       </ProductTourControlsProvider>,

@@ -1,17 +1,29 @@
 import { act, renderHook } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { tickProductTourDeeplink } from "~/actions/appstate";
-import { useProductTourDrawerViewModel } from "./useProductTourDrawerViewModel";
+import { useProductTourDrawerViewModel } from "./hooks/useProductTourDrawerViewModel";
 
 const withNonce = (nonce: number) => (state: State) => ({
   ...state,
   appstate: { ...state.appstate, productTourDeeplinkNonce: nonce },
+  settings: { ...state.settings, productTourCompleted: false },
+  featureFlags: {
+    ...state.featureFlags,
+    overrides: { ...state.featureFlags.overrides, lwmProductTour: { enabled: true } },
+  },
 });
 
 describe("useProductTourDrawerViewModel", () => {
   it("should open the drawer when openProductTour is called", () => {
-    const { result } = renderHook(() => useProductTourDrawerViewModel());
+    const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+      overrideInitialState: withNonce(0),
+    });
 
+    expect(result.current.isDrawerOpen).toBe(true);
+
+    act(() => {
+      result.current.closeProductTour();
+    });
     expect(result.current.isDrawerOpen).toBe(false);
 
     act(() => {
@@ -22,10 +34,8 @@ describe("useProductTourDrawerViewModel", () => {
   });
 
   it("should close the drawer when closeProductTour is called", () => {
-    const { result } = renderHook(() => useProductTourDrawerViewModel());
-
-    act(() => {
-      result.current.openProductTour();
+    const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+      overrideInitialState: withNonce(0),
     });
     act(() => {
       result.current.closeProductTour();
@@ -39,6 +49,9 @@ describe("useProductTourDrawerViewModel", () => {
       overrideInitialState: withNonce(0),
     });
 
+    act(() => {
+      result.current.closeProductTour();
+    });
     expect(result.current.isDrawerOpen).toBe(false);
 
     act(() => {
@@ -53,6 +66,9 @@ describe("useProductTourDrawerViewModel", () => {
       overrideInitialState: withNonce(0),
     });
 
+    act(() => {
+      result.current.closeProductTour();
+    });
     expect(result.current.isDrawerOpen).toBe(false);
   });
 

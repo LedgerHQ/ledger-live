@@ -3,6 +3,8 @@ import React, { createContext, useContext, useMemo } from "react";
 export type ProductTourControls = {
   readonly openProductTour: () => void;
   readonly closeProductTour: () => void;
+  readonly onSlideChange: (index: number) => void;
+  readonly isDrawerOpen: boolean;
 };
 
 const ProductTourControlsContext = createContext<ProductTourControls | null>(null);
@@ -17,8 +19,10 @@ export const ProductTourControlsProvider = ({ value, children }: ProductTourCont
     () => ({
       openProductTour: value.openProductTour,
       closeProductTour: value.closeProductTour,
+      onSlideChange: value.onSlideChange,
+      isDrawerOpen: value.isDrawerOpen,
     }),
-    [value.openProductTour, value.closeProductTour],
+    [value.openProductTour, value.closeProductTour, value.onSlideChange, value.isDrawerOpen],
   );
 
   return (
