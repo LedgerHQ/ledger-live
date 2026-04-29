@@ -2,6 +2,7 @@ import {
   ArrowDown,
   ArrowUp,
   Clock,
+  Close,
   Invoice,
   Link,
   Mailbox,
@@ -39,5 +40,19 @@ describe("getTransactionalDotConfig", () => {
 
   it("returns null for operation types without a transactional dot", () => {
     expect(getTransactionalDotConfig("NONE", false)).toBeNull();
+  });
+
+  it("returns close icon with error appearance when hasFailed", () => {
+    expect(getTransactionalDotConfig("OUT", false, true)).toEqual({
+      icon: Close,
+      appearance: "error",
+    });
+  });
+
+  it("hasFailed takes priority over isOptimistic", () => {
+    expect(getTransactionalDotConfig("OUT", true, true)).toEqual({
+      icon: Close,
+      appearance: "error",
+    });
   });
 });
