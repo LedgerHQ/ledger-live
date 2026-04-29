@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -6,6 +6,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { setProductTourCompleted } from "~/renderer/actions/settings";
 import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 import { PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";
+import { closeProductTour, openProductTour, selectIsProductTourOpen } from "../productTourDialog";
 import type { ProductTourPrimaryAction } from "../const";
 
 export interface ProductTourDialogViewModel {
@@ -22,19 +23,19 @@ export const useProductTourDialogViewModel = (): ProductTourDialogViewModel => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const productTourCompleted = useSelector(productTourCompletedSelector);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const isDialogOpen = useSelector(selectIsProductTourOpen);
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "product_tour",
   );
 
-  const openDialog = () => {
-    setIsDialogOpen(true);
-  };
+  const openDialog = useCallback(() => {
+    dispatch(openProductTour());
+  }, [dispatch]);
 
   const closeDialog = useCallback(() => {
-    setIsDialogOpen(false);
-  }, []);
+    dispatch(closeProductTour());
+  }, [dispatch]);
 
   const completeProductTour = useCallback(() => {
     dispatch(setProductTourCompleted(true));

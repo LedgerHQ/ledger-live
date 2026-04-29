@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
-import { ProductTourDialog } from "../ProductTourDialog";
+import { ProductTourDialog } from "../ProductTourDialogView";
 import { useProductTourDialogViewModel } from "../hooks/useProductTourDialogViewModel";
 
 const CONTINUE_LABEL = "Continue";
@@ -138,6 +138,28 @@ describe("ProductTour dialog from debug (view model)", () => {
     await waitFor(() => {
       expect(screen.getByRole("dialog")).toBeVisible();
     });
+  });
+
+  it("should reset to first slide on each open", async () => {
+    const { user } = render(<TestHarness />, {
+      initialState: getProductTourTestInitialState(),
+    });
+
+    await user.click(screen.getByRole("button", { name: /open/i }));
+    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+
+    expect(await screen.findByRole("button", { name: SWAP_LABEL })).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: /close/i }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: /open/i }));
+
+    expect(await screen.findByRole("button", { name: FUND_LABEL })).toBeVisible();
+    expect(screen.getByTestId("product-tour-slide-0")).toBeVisible();
   });
 
   it("should mark product tour completed when reaching the fifth slide", async () => {

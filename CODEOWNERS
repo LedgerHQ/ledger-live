@@ -299,6 +299,8 @@ apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                
 apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/postOnboarding.handler.ts  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/productTour.handler.ts      @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/__tests__/productTour.handler.test.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
