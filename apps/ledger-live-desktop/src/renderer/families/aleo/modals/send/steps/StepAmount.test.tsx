@@ -27,10 +27,6 @@ jest.mock("~/renderer/modals/Send/fields/AmountField", () => ({
   __esModule: true,
   default: () => null,
 }));
-jest.mock("~/renderer/components/LowGasAlertBuyMore", () => ({
-  __esModule: true,
-  default: () => null,
-}));
 jest.mock("~/renderer/actions/modals", () => ({ closeAllModal: jest.fn() }));
 
 describe("StepAmount (Aleo)", () => {
