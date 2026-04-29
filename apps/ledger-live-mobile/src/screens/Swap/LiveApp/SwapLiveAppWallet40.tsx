@@ -77,8 +77,14 @@ export function SwapLiveAppWallet40({
   useFocusEffect(
     useCallback(() => {
       const url = webviewUrlRef.current;
-      if (url && new URL(url).pathname !== "/") {
-        setWebviewMountKey(key => key + 1);
+      if (!url) return;
+
+      try {
+        if (new URL(url).pathname !== "/") {
+          setWebviewMountKey(key => key + 1);
+        }
+      } catch {
+        // Ignore transient/unparseable webview URLs.
       }
     }, []),
   );
