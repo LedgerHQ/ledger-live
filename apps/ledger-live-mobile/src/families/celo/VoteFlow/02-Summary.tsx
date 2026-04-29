@@ -66,7 +66,7 @@ export default function VoteSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "vote",
-            recipient: defaultValidatorGroupAddress(),
+            recipient: validators[0]?.address ?? defaultValidatorGroupAddress(),
             amount: route.params.amount ?? 0,
           }),
         };
@@ -198,15 +198,18 @@ export default function VoteSummary({ navigation, route }: Props) {
           />
         </View>
       </View>
-      {status.errors.sender && (
+      {(status.errors.sender || status.errors.recipient) && (
         <>
           <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
-            <TranslatedError error={status.errors.sender} />
+            <TranslatedError error={status.errors.sender || status.errors.recipient} />
           </LText>
           <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
-            <TranslatedError error={status.errors.sender} field="description" />
+            <TranslatedError
+              error={status.errors.sender || status.errors.recipient}
+              field="description"
+            />
           </LText>
-          <SupportLinkError error={status.errors.sender} type="alert" />
+          <SupportLinkError error={status.errors.sender || status.errors.recipient} type="alert" />
         </>
       )}
       <View style={styles.footer}>
