@@ -15,20 +15,24 @@ import type { ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
 // We mock that module so no Rust addon or live gRPC endpoint is needed.
 
 const mockSyncShielded = jest.fn<Observable<ShieldedSyncResult>, [unknown]>();
+const mockFindBlockHeight = jest.fn<Promise<number>, [number]>();
 
 jest.mock("@ledgerhq/zcash-shielded/ZCashNative", () => ({
   ZCashNative: jest.fn().mockImplementation(() => ({
     syncShielded: mockSyncShielded,
+    findBlockHeight: mockFindBlockHeight,
   })),
 }));
 
 // ─── Mock ZCash (JSON-RPC fallback) ──────────────────────────────────────────
 
 const mockJsonRpcSyncShielded = jest.fn<Observable<ShieldedSyncResult>, [unknown]>();
+const mockJsonRpcFindBlockHeight = jest.fn<Promise<number | undefined>, [number]>();
 
 jest.mock("@ledgerhq/zcash-shielded/ZCash", () => ({
   ZCash: jest.fn().mockImplementation(() => ({
     syncShielded: mockJsonRpcSyncShielded,
+    findBlockHeight: mockJsonRpcFindBlockHeight,
   })),
   ZCASH_JSON_RPC_SERVER_MAINNET: "https://default-json-rpc.example.com",
 }));
@@ -182,7 +186,7 @@ describe("findFamilyConfigById", () => {
       );
     });
 
-    test("starts at block 0 when lastProcessedBlock is null (first sync)", async () => {
+    test("starts at block 0 when lastProcessedBlock is null and birthday is null (first sync)", async () => {
       mockSyncShielded.mockReturnValue(of(makeSyncResult()));
       const familyConfig = findFamilyConfigById("zcash")!;
 
@@ -195,7 +199,7 @@ describe("findFamilyConfigById", () => {
           derivationMode: "",
           initialAccount: {
             ...createFixtureAccount(),
-            privateInfo: makePrivateInfo({ lastProcessedBlock: null }),
+            privateInfo: makePrivateInfo({ lastProcessedBlock: null, birthday: null }),
           },
         },
         defaultSyncConfig,
@@ -203,8 +207,65 @@ describe("findFamilyConfigById", () => {
 
       await firstValueFrom(obs);
 
+      expect(mockFindBlockHeight).not.toHaveBeenCalled();
       expect(mockSyncShielded).toHaveBeenCalledWith(
         expect.objectContaining({ startBlockHeight: 0 }),
+      );
+    });
+
+    test("calls findBlockHeight with birthday timestamp when lastProcessedBlock is null", async () => {
+      mockFindBlockHeight.mockResolvedValue(1_800_000);
+      mockSyncShielded.mockReturnValue(of(makeSyncResult()));
+      const familyConfig = findFamilyConfigById("zcash")!;
+
+      const obs = familyConfig.sync!(
+        {
+          currency,
+          address: "",
+          index: 0,
+          derivationPath: "",
+          derivationMode: "",
+          initialAccount: {
+            ...createFixtureAccount(),
+            privateInfo: makePrivateInfo({ lastProcessedBlock: null, birthday: "2024-01-01" }),
+          },
+        },
+        defaultSyncConfig,
+      );
+
+      await firstValueFrom(obs);
+
+      const expectedTs = Math.floor(new Date("2024-01-01").getTime() / 1000);
+      expect(mockFindBlockHeight).toHaveBeenCalledWith(expectedTs);
+      expect(mockSyncShielded).toHaveBeenCalledWith(
+        expect.objectContaining({ startBlockHeight: 1_800_000 }),
+      );
+    });
+
+    test("lastProcessedBlock takes priority over birthday when both are set", async () => {
+      mockSyncShielded.mockReturnValue(of(makeSyncResult()));
+      const familyConfig = findFamilyConfigById("zcash")!;
+
+      const obs = familyConfig.sync!(
+        {
+          currency,
+          address: "",
+          index: 0,
+          derivationPath: "",
+          derivationMode: "",
+          initialAccount: {
+            ...createFixtureAccount(),
+            privateInfo: makePrivateInfo({ lastProcessedBlock: 500, birthday: "2024-01-01" }),
+          },
+        },
+        defaultSyncConfig,
+      );
+
+      await firstValueFrom(obs);
+
+      expect(mockFindBlockHeight).not.toHaveBeenCalled();
+      expect(mockSyncShielded).toHaveBeenCalledWith(
+        expect.objectContaining({ startBlockHeight: 501 }),
       );
     });
 
@@ -473,6 +534,89 @@ describe("findFamilyConfigById", () => {
 
       expect(mockJsonRpcSyncShielded).toHaveBeenCalledWith(
         expect.objectContaining({ startBlockHeight: 201 }),
+      );
+    });
+
+    test("calls findBlockHeight with birthday timestamp when lastProcessedBlock is null", async () => {
+      mockJsonRpcFindBlockHeight.mockResolvedValue(2_000_000);
+      mockJsonRpcSyncShielded.mockReturnValue(of(makeSyncResult()));
+      const familyConfig = findFamilyConfigById("zcash")!;
+
+      const obs = familyConfig.sync!(
+        {
+          currency,
+          address: "",
+          index: 0,
+          derivationPath: "",
+          derivationMode: "",
+          initialAccount: {
+            ...createFixtureAccount(),
+            privateInfo: makePrivateInfo({ lastProcessedBlock: null, birthday: "2024-06-01" }),
+          },
+        },
+        defaultSyncConfig,
+      );
+
+      await firstValueFrom(obs);
+
+      const expectedTs = Math.floor(new Date("2024-06-01").getTime() / 1000);
+      expect(mockJsonRpcFindBlockHeight).toHaveBeenCalledWith(expectedTs);
+      expect(mockJsonRpcSyncShielded).toHaveBeenCalledWith(
+        expect.objectContaining({ startBlockHeight: 2_000_000 }),
+      );
+    });
+
+    test("falls back to 0 when findBlockHeight returns undefined", async () => {
+      mockJsonRpcFindBlockHeight.mockResolvedValue(undefined);
+      mockJsonRpcSyncShielded.mockReturnValue(of(makeSyncResult()));
+      const familyConfig = findFamilyConfigById("zcash")!;
+
+      const obs = familyConfig.sync!(
+        {
+          currency,
+          address: "",
+          index: 0,
+          derivationPath: "",
+          derivationMode: "",
+          initialAccount: {
+            ...createFixtureAccount(),
+            privateInfo: makePrivateInfo({ lastProcessedBlock: null, birthday: "2024-06-01" }),
+          },
+        },
+        defaultSyncConfig,
+      );
+
+      await firstValueFrom(obs);
+
+      expect(mockJsonRpcSyncShielded).toHaveBeenCalledWith(
+        expect.objectContaining({ startBlockHeight: 0 }),
+      );
+    });
+
+    test("lastProcessedBlock takes priority over birthday when both are set", async () => {
+      mockJsonRpcSyncShielded.mockReturnValue(of(makeSyncResult()));
+      const familyConfig = findFamilyConfigById("zcash")!;
+
+      const obs = familyConfig.sync!(
+        {
+          currency,
+          address: "",
+          index: 0,
+          derivationPath: "",
+          derivationMode: "",
+          initialAccount: {
+            ...createFixtureAccount(),
+            privateInfo: makePrivateInfo({ lastProcessedBlock: 300, birthday: "2024-06-01" }),
+          },
+        },
+        defaultSyncConfig,
+      );
+
+      await firstValueFrom(obs);
+
+      expect(mockJsonRpcFindBlockHeight).not.toHaveBeenCalled();
+      expect(mockJsonRpcSyncShielded).toHaveBeenCalledWith(
+        expect.objectContaining({ startBlockHeight: 301 }),
       );
     });
 

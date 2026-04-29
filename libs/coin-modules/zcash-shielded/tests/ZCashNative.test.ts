@@ -14,11 +14,13 @@ import { BigNumber } from "bignumber.js";
 import { makeRawChunk } from "./helpers/fixtures";
 
 const getChainTipJobMock = jest.fn();
+const findBlockHeightJobMock = jest.fn();
 const startSyncJobMock = jest.fn();
 const validateStartSyncArgsMock = jest.fn();
 
 jest.mock("../src/native-engine/engine", () => ({
   getChainTipJob: (...args: unknown[]) => getChainTipJobMock(...args),
+  findBlockHeightJob: (...args: unknown[]) => findBlockHeightJobMock(...args),
   startSyncJob: (...args: unknown[]) => startSyncJobMock(...args),
   validateStartSyncArgs: (...args: unknown[]) => validateStartSyncArgsMock(...args),
 }));
@@ -30,6 +32,7 @@ import { ZCashNative } from "../src/ZCashNative";
 
 beforeEach(() => {
   getChainTipJobMock.mockReset();
+  findBlockHeightJobMock.mockReset();
   startSyncJobMock.mockReset();
   validateStartSyncArgsMock.mockReset().mockReturnValue(null);
 });
@@ -42,6 +45,15 @@ describe("ZCashNative (in-process wrapper)", () => {
 
     expect(height).toBe(2_700_000);
     expect(getChainTipJobMock).toHaveBeenCalledWith("grpc://node");
+  });
+
+  it("findBlockHeight delegates to findBlockHeightJob with the configured grpcUrl and timestamp", async () => {
+    findBlockHeightJobMock.mockResolvedValueOnce(1_800_000);
+
+    const height = await new ZCashNative({ grpcUrl: "grpc://node" }).findBlockHeight(1_700_000_000);
+
+    expect(height).toBe(1_800_000);
+    expect(findBlockHeightJobMock).toHaveBeenCalledWith("grpc://node", 1_700_000_000);
   });
 
   it("syncShielded rehydrates BigNumber amounts for every engine chunk", async () => {
