@@ -21,7 +21,8 @@ export const StepValidatorGroupFooter = ({
   status,
 }: StepProps) => {
   invariant(account, "account required");
-  const canNext = !bridgePending && transaction?.recipient && !status.errors.sender;
+  const canNext =
+    !bridgePending && transaction?.recipient && !status.errors.sender && !status.errors.recipient;
   const displayTC = isDefaultValidatorGroupAddress(transaction.recipient);
   return (
     <>
@@ -74,6 +75,7 @@ const StepValidatorGroup = ({
       />
       {error && <ErrorBanner error={error} />}
       {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
+      {status.errors.recipient && <ErrorBanner error={status.errors.recipient} />}
       <ValidatorGroupsField
         account={account}
         chosenValidatorGroupAddress={chosenValidatorGroupAddress}
