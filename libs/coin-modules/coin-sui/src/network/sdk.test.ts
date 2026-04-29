@@ -1244,7 +1244,7 @@ describe("Staking Operations", () => {
         asset: { type: "native" },
         tx: { block: expect.any(Object), feesPayer: address },
         details: {
-          stakedAmount: 1000000000n,
+          stakedAmount: "1000000000",
           validatorAddress: "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
           stakedObjectId: "0xstaked_object_id_123",
         },
@@ -1268,10 +1268,10 @@ describe("Staking Operations", () => {
         asset: { type: "native" },
         tx: { block: expect.any(Object), feesPayer: address },
         details: {
-          stakedAmount: 1000000000n,
+          stakedAmount: "1000000000",
           validatorAddress: "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
-          rewardAmount: 50000000n,
-          withdrawnAmount: 1200000000n,
+          rewardAmount: "50000000",
+          withdrawnAmount: "1200000000",
         },
       });
     });
@@ -1283,7 +1283,7 @@ describe("Staking Operations", () => {
 
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
-      expect(operation.details).toEqual({ stakedAmount: 1000000000n });
+      expect(operation.details).toEqual({ stakedAmount: "1000000000" });
     });
 
     test("transactionToOp should return unstaking details without events", () => {
@@ -1293,7 +1293,7 @@ describe("Staking Operations", () => {
 
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
-      expect(operation.details).toEqual({ stakedAmount: 1000000000n });
+      expect(operation.details).toEqual({ stakedAmount: "1000000000" });
     });
 
     test("transactionToOp should handle partial staking event fields", () => {
@@ -1309,7 +1309,7 @@ describe("Staking Operations", () => {
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({
-        stakedAmount: 1000000000n,
+        stakedAmount: "1000000000",
         validatorAddress: "0xabc",
       });
     });
@@ -1327,7 +1327,7 @@ describe("Staking Operations", () => {
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({
-        stakedAmount: 1000000000n,
+        stakedAmount: "1000000000",
         validatorAddress: "0xdef",
       });
     });
@@ -1392,8 +1392,8 @@ describe("getStakingEventDetails", () => {
     ]);
     expect(sdk.getStakingEventDetails(tx)).toEqual({
       validatorAddress: "0xdef",
-      rewardAmount: 50000000n,
-      withdrawnAmount: 1200000000n,
+      rewardAmount: "50000000",
+      withdrawnAmount: "1200000000",
     });
   });
 

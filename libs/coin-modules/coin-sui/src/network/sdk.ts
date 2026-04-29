@@ -578,13 +578,9 @@ export function getStakingEventDetails(
   if (unstakingDetails) {
     return Object.fromEntries(
       Object.entries({
-        rewardAmount: unstakingDetails.reward_amount
-          ? BigInt(unstakingDetails.reward_amount)
-          : undefined,
+        rewardAmount: unstakingDetails.reward_amount ?? undefined,
         validatorAddress: unstakingDetails.validator_address,
-        withdrawnAmount: unstakingDetails.principal_amount
-          ? BigInt(unstakingDetails.principal_amount)
-          : undefined,
+        withdrawnAmount: unstakingDetails.principal_amount ?? undefined,
       }).filter(([, v]) => v !== undefined),
     );
   }
@@ -636,7 +632,7 @@ export function alpacaTransactionToOp(
 
   if (type === "DELEGATE" || type === "UNDELEGATE") {
     op.details = {
-      stakedAmount: op.value,
+      stakedAmount: op.value.toString(),
       ...getStakingEventDetails(transaction),
     };
     // for staking, the amount is stored in the details
