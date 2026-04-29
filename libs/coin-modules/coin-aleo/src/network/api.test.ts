@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
+import { EXPLORER_TRANSFER_TYPES } from "../constants";
 import {
   testnetPrivateRecord,
   getMockedTransactionDetails,
@@ -810,6 +811,155 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { filter: { page: 0 }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should include `filter.programs` when programs is a non-empty array", async () => {
+      const programs = ["credits.aleo", "custom.aleo"];
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        programs,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { programs }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should omit `filter.programs` when programs is an empty array", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        programs: [],
+      });
+
+      const callData = jest.mocked(network).mock.calls[0][0].data as Record<string, unknown>;
+      expect(callData).not.toHaveProperty("filter");
+    });
+
+    it("should omit `filter.programs` when programs is not provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+      });
+
+      const callData = jest.mocked(network).mock.calls[0][0].data as Record<string, unknown>;
+      expect(callData).not.toHaveProperty("filter");
+    });
+
+    it("should combine programs with other filter fields and unspent flag", async () => {
+      const programs = ["credits.aleo"];
+      const mockStart = 14192648;
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        unspent: true,
+        start: mockStart,
+        resultsPerPage: 100,
+        page: 1,
+        programs,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            unspent: true,
+            filter: { start: mockStart, results_per_page: 100, page: 1, programs },
+            uuid: mockUuid,
+          },
+        }),
+      );
+    });
+
+    it("should include `filter.functions` when functions is a non-empty array", async () => {
+      const functions = [
+        EXPLORER_TRANSFER_TYPES.PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+      ];
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        functions,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { functions }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should omit `filter.functions` when functions is an empty array", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        functions: [],
+      });
+
+      const callData = jest.mocked(network).mock.calls[0][0].data as Record<string, unknown>;
+      expect(callData).not.toHaveProperty("filter");
+    });
+
+    it("should omit `filter.functions` when functions is not provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+      });
+
+      const callData = jest.mocked(network).mock.calls[0][0].data as Record<string, unknown>;
+      expect(callData).not.toHaveProperty("filter");
+    });
+
+    it("should combine functions with programs and other filter fields", async () => {
+      const programs = ["credits.aleo"];
+      const functions = [
+        EXPLORER_TRANSFER_TYPES.PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+      ];
+      const mockStart = 14192648;
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUuid,
+        unspent: true,
+        start: mockStart,
+        resultsPerPage: 100,
+        page: 1,
+        programs,
+        functions,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            unspent: true,
+            filter: { start: mockStart, results_per_page: 100, page: 1, programs, functions },
+            uuid: mockUuid,
+          },
         }),
       );
     });

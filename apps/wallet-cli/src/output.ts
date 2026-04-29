@@ -9,13 +9,19 @@
  */
 
 import type { Spinner } from "yocto-spinner";
-import { writeSync } from "node:fs";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
+import { CliProcessExitError } from "./cli-process-exit-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
-import { spinner, colors, writeStdout } from "./shared/ui";
+import { spinner, colors, writeStdout, writeStderr } from "./shared/ui";
+import {
+  formatSwapQuoteHuman,
+  type SwapQuoteLine,
+  type SwapQuoteProviderError,
+} from "./commands/swap/quote-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
+import type { SessionEntry } from "./session/session-store";
 
 // ---------------------------------------------------------------------------
 // Context & interface
@@ -64,6 +70,13 @@ export interface CommandOutput {
   discoveredAccount(d: DiscoveredAccount): void;
   /** Signal end of discovery stream. Json: flush buffered accounts as envelope. Human: noop. */
   flushDiscovery(): void;
+  /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
+  sessionSaved(added: number): void;
+
+  /** Output the result of a session reset (human: colored message; json: envelope with removed count). */
+  sessionReset(count: number): void;
+  /** Output session accounts (human: table or empty message; json: envelope with accounts array). */
+  sessionView(accounts: readonly SessionEntry[]): void;
 
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
@@ -71,6 +84,15 @@ export interface CommandOutput {
   sendEvent(event: SendEvent): void;
   /** Signal send stream complete. Json: write result envelope (account from ctx). Human: noop. */
   sendComplete(): void;
+
+  /** Print swap quotes (human: formatted blocks; json: success envelope with `quotes`). */
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void;
+
+  /**
+   * No quotes returned while providers reported errors. Json: error envelope + exit 1.
+   * Human: error lines + exit 1.
+   */
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,7 +148,7 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(op.parentId ? `  ${line}` : line);
     }
     if (nextCursor) {
-      process.stderr.write("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
+      writeStderr("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
     }
   }
 
@@ -139,7 +161,32 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(this._fmt.formatDiscoveredAccount(d));
   }
 
-  flushDiscovery(): void { /* noop */ }
+  flushDiscovery(): void {
+    /* noop */
+  }
+
+  sessionSaved(added: number): void {
+    writeStdout(colors.dim(`  session: ${added} new account${added === 1 ? "" : "s"} saved`));
+  }
+
+  sessionReset(count: number): void {
+    writeStdout(
+      count === 0
+        ? colors.dim("Session was already empty.")
+        : `Removed ${colors.bold(String(count))} account${count === 1 ? "" : "s"} from session.`,
+    );
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    if (accounts.length === 0) {
+      writeStdout(colors.dim("No accounts in session. Run `account discover` first."));
+      return;
+    }
+    const maxLabel = Math.max(...accounts.map(e => e.label.length));
+    for (const entry of accounts) {
+      writeStdout(`${colors.bold(entry.label.padEnd(maxLabel))}  ${colors.dim(entry.descriptor)}`);
+    }
+  }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(`  To:     ${p.recipient}`);
@@ -177,7 +224,31 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  sendComplete(): void { /* noop */ }
+  sendComplete(): void {
+    /* noop */
+  }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    for (const q of args.quotes) {
+      writeStdout(`${formatSwapQuoteHuman(q)}\n`);
+    }
+    if (args.partialErrors.length > 0) {
+      const s = spinner("");
+      s.error(colors.dim(`${args.partialErrors.length} provider(s) returned errors:`));
+      for (const e of args.partialErrors) {
+        s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
+      }
+    }
+  }
+
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
+    const s = spinner("");
+    s.error(message);
+    for (const e of errors) {
+      s.error(colors.dim(`  ${e.provider} (${e.type}): ${e.code} — ${e.message}`));
+    }
+    throw new CliProcessExitError(1);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -197,7 +268,11 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   private _envelope(data: Record<string, unknown>): string {
-    return JSON.stringify(makeEnvelope(this._ctx.command, this._ctx.network, data, this._ctx.account), null, 2);
+    return JSON.stringify(
+      makeEnvelope(this._ctx.command, this._ctx.network, data, this._ctx.account),
+      null,
+      2,
+    );
   }
 
   private _errorEnvelope(e: unknown): string {
@@ -220,16 +295,17 @@ class JsonCommandOutput implements CommandOutput {
     try {
       await fn();
     } catch (e) {
-      // Bun.spawn on Linux does not reliably capture fd 2 (stderr) from subprocesses.
-      // writeSync(1, ...) is a synchronous POSIX syscall — immune to process.exit() buffer drain.
-      writeSync(1, this._errorEnvelope(e) + "\n");
-      process.exit(1);
+      // Re-throw CliProcessExitError so the exit code propagates cleanly to runMain()
+      // without being double-printed. All other errors are written as a JSON envelope.
+      if (e instanceof CliProcessExitError) throw e;
+      writeStdout(this._errorEnvelope(e));
+      throw new CliProcessExitError(1);
     }
   }
 
   fail(e: unknown): never {
-    writeSync(1, this._errorEnvelope(e) + "\n");
-    process.exit(1);
+    writeStdout(this._errorEnvelope(e));
+    throw new CliProcessExitError(1);
   }
 
   async balances(items: Balance[]): Promise<void> {
@@ -255,8 +331,20 @@ class JsonCommandOutput implements CommandOutput {
     writeStdout(this._envelope({ accounts }));
   }
 
+  sessionSaved(_added: number): void { /* noop */ }
+
+  sessionReset(count: number): void {
+    writeStdout(this._envelope({ removed: count }));
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    writeStdout(this._envelope({ accounts }));
+  }
+
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
-    writeStdout(this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }));
+    writeStdout(
+      this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }),
+    );
   }
 
   sendEvent(event: SendEvent): void {
@@ -274,18 +362,23 @@ class JsonCommandOutput implements CommandOutput {
   sendComplete(): void {
     writeStdout(this._envelope(this._sendResult));
   }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    writeStdout(this._envelope({ quotes: args.quotes }));
+  }
+
+  swapQuotesUnavailable(message: string, _errors: SwapQuoteProviderError[]): never {
+    writeStdout(this._errorEnvelope(message));
+    throw new CliProcessExitError(1);
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Factory
 // ---------------------------------------------------------------------------
 
-export function createCommandOutput(
-  format: "human" | "json",
-  ctx: OutputContext,
-): CommandOutput {
+export function createCommandOutput(format: "human" | "json", ctx: OutputContext): CommandOutput {
   const humanFmt = new HumanFormatter(getCryptoAssetsStore());
   if (format === "json") return new JsonCommandOutput(ctx, humanFmt);
   return new HumanCommandOutput(humanFmt);
 }
-

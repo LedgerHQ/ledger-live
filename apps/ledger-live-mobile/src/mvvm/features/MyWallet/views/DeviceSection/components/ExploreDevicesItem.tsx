@@ -7,26 +7,31 @@ import {
   ListItemTitle,
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import allDevicesImage from "@assets/images/devices/AllDevices.webp";
 
-export function ExploreDevicesItem() {
+type ExploreDevicesItemProps = {
+  readonly onPress: () => void;
+};
+
+export function ExploreDevicesItem({ onPress }: ExploreDevicesItemProps) {
   const { t } = useTranslation();
 
   return (
     <ListItem
-      lx={{ backgroundColor: "surface", borderRadius: "md" }}
+      lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}
       testID="my-wallet-device-section-explore"
+      onPress={onPress}
     >
       <ListItemLeading>
-        <Image source={allDevicesImage} style={{ width: 40, height: 40 }} resizeMode="contain" />
+        <Image source={allDevicesImage} style={{ width: 48, height: 48 }} resizeMode="contain" />
         <ListItemContent>
           <ListItemTitle>{t("myWallet.deviceSection.exploreAllDevices")}</ListItemTitle>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <ChevronRight size={24} />
+        <ExternalLink size={24} />
       </ListItemTrailing>
     </ListItem>
   );

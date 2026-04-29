@@ -1,4 +1,5 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import {
   Box,
   Button,
@@ -39,7 +40,9 @@ export const CryptoAddressesButton: React.FC = () => {
           <CardLeading>
             <Spot appearance="icon" icon={Wallet} />
             <CardContent>
-              <CardContentTitle>{t("portfolio.cryptoAddresses.title")}</CardContentTitle>
+              <CardContentTitle style={styles.cardContentTitle}>
+                {t("portfolio.cryptoAddresses.title")}
+              </CardContentTitle>
               <CardContentRow>
                 {hasAccounts ? (
                   <>
@@ -105,3 +108,16 @@ export const CryptoAddressesButton: React.FC = () => {
     </>
   );
 };
+
+/*
+ * CardContentDescription uses body typography (~16px line height) while IconStack
+ * is 20px tall, so the row is visually taller than the text alone. A small
+ * negative margin on the title nudges it toward the row so vertical rhythm
+ * matches design. This is sensitive to font scaling (Dynamic Type): if the
+ * description grows, re-check alignment.
+ */
+const styles = StyleSheet.create({
+  cardContentTitle: {
+    marginBottom: -4,
+  },
+});

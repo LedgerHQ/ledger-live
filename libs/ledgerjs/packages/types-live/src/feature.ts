@@ -220,6 +220,7 @@ export type Features = CurrencyFeatures & {
   ptxPerpsLiveAppMobile: Feature_PtxPerpsLiveApp;
   ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
+  ptxBorrowLiveApp: Feature_PtxBorrowLiveApp;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
   ptxEarnUi: Feature_PtxEarnUi;
@@ -250,6 +251,7 @@ export type Features = CurrencyFeatures & {
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
+  lwdProductTour: DefaultFeature;
   lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
@@ -314,13 +316,16 @@ export type Features = CurrencyFeatures & {
   lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
-  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lwdGenericAwarenessModal: DefaultFeature;
+  lwmGenericAwarenessModal: DefaultFeature;
+  lwmProductTour: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
+  llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
 };
 
 /**
@@ -652,6 +657,10 @@ export type Feature_PtxPerpsLiveApp = Feature<{
   manifest_id: string;
 }>;
 
+export type Feature_PtxBorrowLiveApp = Feature<{
+  manifest_id: string;
+}>;
+
 export type Feature_PtxEarnLiveApp = Feature<{
   manifest_id: string;
 }>;
@@ -811,10 +820,18 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
+export type Feature_LlmTransferButtonCopyVariant = Feature<{
+  variantId: string;
+  buttonLabel?: string;
+  modalTitle?: string;
+  rowReceiveTitle?: string;
+  rowSendTitle?: string;
+  rowCashToStableTitle?: string;
+  rowCashToStableDescription?: string;
+}>;
+
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
-
-export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
 
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
@@ -850,6 +867,7 @@ type Feature_Wallet40_Params = {
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;
+  finishOnboardingWidget?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;

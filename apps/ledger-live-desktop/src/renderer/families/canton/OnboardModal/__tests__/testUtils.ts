@@ -52,7 +52,6 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     onboardingStatus: OnboardStatus.INIT,
     error: null,
     onAddAccounts: jest.fn(),
-    onAddMore: jest.fn(),
     onOnboardAccount: jest.fn(),
     onRetryOnboardAccount: jest.fn(),
     transitionTo: jest.fn(),

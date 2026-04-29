@@ -160,7 +160,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
 
-    it("should navigate to General settings and close when onSetPreferences is called", async () => {
+    it("should navigate to analytics preferences and close when onSetPreferences is called", async () => {
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerOpeningFresh(),
       });
@@ -174,7 +174,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
 
       expect(result.current.phase).toBe("closed");
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Settings, {
-        screen: ScreenName.GeneralSettings,
+        screen: ScreenName.AnalyticsPreferencesSettings,
+        params: { initialTogglesOff: true },
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "analytics_consent_set_preferences",

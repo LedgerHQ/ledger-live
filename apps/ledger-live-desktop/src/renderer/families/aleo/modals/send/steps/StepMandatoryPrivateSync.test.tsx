@@ -51,6 +51,26 @@ describe("StepMandatoryPrivateSync", () => {
     });
 
     expect(screen.getByText(/Private sync failed/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Retry/i })).toBeInTheDocument();
+  });
+
+  it("should restart sync when retry button is clicked after error", async () => {
+    const { user } = render(<StepMandatoryPrivateSync {...makeStepProps()} />);
+
+    await act(async () => {
+      syncSubject.error(new Error("Sync failed"));
+    });
+
+    expect(screen.getByText(/Private sync failed/)).toBeInTheDocument();
+
+    // Prepare a new subject for the retry attempt
+    syncSubject = new Subject();
+    mockSync.mockReturnValue(syncSubject.asObservable());
+
+    await user.click(screen.getByRole("button", { name: /retry/i }));
+
+    expect(mockSync).toHaveBeenCalledTimes(2);
+    expect(screen.getByText(/Syncing your private balance/)).toBeInTheDocument();
   });
 
   it("should not call sync when account is not an AleoAccount", () => {
@@ -142,7 +162,7 @@ describe("StepMandatoryPrivateSync", () => {
       });
 
       // No crash — updateAccount being optional is handled gracefully
-      expect(screen.getByText(/30%/)).toBeInTheDocument();
+      expect(screen.getByText(/Syncing your private balance/)).toBeInTheDocument();
     });
   });
 });

@@ -43,10 +43,10 @@ function StakingIcon({ icon }: { icon?: string }) {
     if (currency) {
       const ledgerId = currency.id;
       const ticker = currency.ticker;
-      return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size="56px" />;
+      return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={56} />;
     }
     // Fallback: if currency not found, just use the ticker (library will handle fallback)
-    return <CryptoIcon ledgerId={iconName.toLowerCase()} ticker={iconName} size="56px" />;
+    return <CryptoIcon ledgerId={iconName.toLowerCase()} ticker={iconName} size={56} />;
   }
   if (iconType === "provider") {
     return (

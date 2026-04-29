@@ -22,14 +22,14 @@ test.describe.skip("Portfolio - legacy", () => {
         description: "B2CQA-927, B2CQA-928, B2CQA-3038",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
-      await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/, electronApp);
+      await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/);
       await app.portfolio.checkChartVisibility();
       await app.portfolio.checkAssetAllocationSection();
     },

@@ -100,6 +100,7 @@ export type StakingContractConfig = {
   explorerConfig?: {
     validatorUrl: string;
   };
+  unbondingPeriodDays?: number;
 };
 
 export type StakeCreate = {

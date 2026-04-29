@@ -147,6 +147,8 @@ async function getAccountOwnedRecords({
   start,
   resultsPerPage,
   page,
+  programs,
+  functions,
 }: {
   currency: CryptoCurrency;
   uuid: string;
@@ -154,6 +156,8 @@ async function getAccountOwnedRecords({
   start?: number;
   resultsPerPage?: number;
   page?: number;
+  programs?: string[];
+  functions?: string[];
 }): Promise<AleoPrivateRecord[]> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
 
@@ -161,6 +165,8 @@ async function getAccountOwnedRecords({
     ...(typeof start === "number" && { start }),
     ...(typeof resultsPerPage === "number" && { results_per_page: resultsPerPage }),
     ...(typeof page === "number" && { page }),
+    ...(programs && programs.length > 0 && { programs }),
+    ...(functions && functions.length > 0 && { functions }),
   };
 
   const res = await network<AleoPrivateRecord[]>({

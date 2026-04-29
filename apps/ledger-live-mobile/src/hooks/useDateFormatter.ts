@@ -43,7 +43,6 @@ export function useFormatDaySection() {
     (day: Date): string => {
       const dayDiff = differenceInCalendarDays(Date.now(), day);
       if (dayDiff === 0) return t("common.today");
-      if (dayDiff === 1) return t("common.yesterday");
       return longDateFormatter.format(day);
     },
     [t, longDateFormatter],

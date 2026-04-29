@@ -2,10 +2,13 @@ import * as sdk from "@hashgraph/sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import type { HederaMemo, HederaTxData } from "../types";
 import { craftTransaction } from "./craftTransaction";
 
 describe("craftTransaction", () => {
+  const defaultConfig = getMockedConfig();
+
   it("should accept account id or long zero EVM address when crafting ERC20 token transfer transaction", async () => {
     // recipient account has no EVM alias, long-zero EVM address is used
 
@@ -42,8 +45,14 @@ describe("craftTransaction", () => {
       recipient: "0x0000000000000000000000000000000000003039",
     } satisfies TransactionIntent<HederaMemo, HederaTxData>;
 
-    const resultAccountId = await craftTransaction(txIntentAccountId);
-    const resultEVMAddress = await craftTransaction(txIntentEVMAddress);
+    const resultAccountId = await craftTransaction({
+      txIntent: txIntentAccountId,
+      config: defaultConfig,
+    });
+    const resultEVMAddress = await craftTransaction({
+      txIntent: txIntentEVMAddress,
+      config: defaultConfig,
+    });
 
     expect(resultAccountId.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
     expect(resultEVMAddress.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
@@ -95,8 +104,14 @@ describe("craftTransaction", () => {
       recipient: "0xcf15538fa293ab04cdd7ce45bcdac8b6e2dc7ebc",
     } satisfies TransactionIntent<HederaMemo, HederaTxData>;
 
-    const resultAccountId = await craftTransaction(txIntentAccountId);
-    const resultEVMAddress = await craftTransaction(txIntentEVMAddress);
+    const resultAccountId = await craftTransaction({
+      txIntent: txIntentAccountId,
+      config: defaultConfig,
+    });
+    const resultEVMAddress = await craftTransaction({
+      txIntent: txIntentEVMAddress,
+      config: defaultConfig,
+    });
 
     expect(resultAccountId.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
     expect(resultEVMAddress.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);

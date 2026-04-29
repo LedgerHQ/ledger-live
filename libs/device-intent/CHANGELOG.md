@@ -1,5 +1,31 @@
 # @ledgerhq/device-intent
 
+## 1.1.0
+
+### Minor Changes
+
+- [#15952](https://github.com/LedgerHQ/ledger-live/pull/15952) [`9569bdc`](https://github.com/LedgerHQ/ledger-live/commit/9569bdc8f6987f77e4d68118a69536544de2845a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a mobile Device Intent Executor debug playground and improve intent lifecycle handling
+
+- [#16023](https://github.com/LedgerHQ/ledger-live/pull/16023) [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: remove eslint and prettier, replace with with oxlint and oxfmt
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.8.3
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#15952](https://github.com/LedgerHQ/ledger-live/pull/15952) [`9569bdc`](https://github.com/LedgerHQ/ledger-live/commit/9569bdc8f6987f77e4d68118a69536544de2845a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a mobile Device Intent Executor debug playground and improve intent lifecycle handling
+
+- [#16023](https://github.com/LedgerHQ/ledger-live/pull/16023) [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: remove eslint and prettier, replace with with oxlint and oxfmt
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.8.3-next.0
+
 ## 1.0.0
 
 ### Patch Changes

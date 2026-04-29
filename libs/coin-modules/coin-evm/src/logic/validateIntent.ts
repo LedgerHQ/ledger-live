@@ -32,7 +32,6 @@ import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
 import {
-  getCallData,
   getTransactionType,
   isApiGasOptions,
   isEip1559FeeEstimation,
@@ -149,8 +148,10 @@ async function validateGas(
     typeof estimatedFees.parameters?.customGasLimit === "bigint" &&
     estimatedFees.parameters.customGasLimit;
 
-  const callData = getCallData(intent);
-  const eip7623GasLimit = computeEIP7623GasLimit(BigInt(DEFAULT_GAS_LIMIT.toFixed(0)), callData);
+  const eip7623GasLimit = computeEIP7623GasLimit(
+    BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
+    intent.data.value,
+  );
 
   // Gas Limit
   if (typeof customGasLimit === "bigint") {

@@ -1,6 +1,7 @@
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
@@ -25,6 +26,11 @@ const mockDevice: Device = {
 const withDevice = (state: State): State => ({
   ...state,
   settings: { ...state.settings, lastConnectedDevice: mockDevice },
+});
+
+const withHasClickedRecover = (state: State): State => ({
+  ...state,
+  settings: { ...state.settings, hasClickedRecover: true },
 });
 
 describe("useQuickActionsRowViewModel", () => {
@@ -101,6 +107,53 @@ describe("useQuickActionsRowViewModel", () => {
       const recoverAction = result.current.actions.find(a => a.id === "recover")!;
 
       expect(recoverAction.label).toBe("[L] Recover");
+    });
+
+    it("should show notification icon when recover has not been clicked yet", () => {
+      const { result } = renderHook(() => useQuickActionsRowViewModel());
+      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+
+      expect(recoverAction.icon).toBe(ShieldCheckNotification);
+    });
+
+    it("should show plain icon when recover has already been clicked", () => {
+      const { result } = renderHook(() => useQuickActionsRowViewModel(), {
+        overrideInitialState: withHasClickedRecover,
+      });
+      const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+
+      expect(recoverAction.icon).toBe(ShieldCheck);
+    });
+
+    it("should persist hasClickedRecover in the store after the first press", () => {
+      const { result, store } = renderHook(() => useQuickActionsRowViewModel());
+
+      expect(store.getState().settings.hasClickedRecover).toBe(false);
+
+      act(() => {
+        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+        recoverAction.onPress();
+      });
+
+      expect(store.getState().settings.hasClickedRecover).toBe(true);
+    });
+
+    it("should not dispatch again when recover has already been clicked", () => {
+      const { result, store } = renderHook(() => useQuickActionsRowViewModel(), {
+        overrideInitialState: withHasClickedRecover,
+      });
+
+      const dispatchSpy = jest.spyOn(store, "dispatch");
+
+      act(() => {
+        const recoverAction = result.current.actions.find(a => a.id === "recover")!;
+        recoverAction.onPress();
+      });
+
+      const hasClickedRecoverDispatches = dispatchSpy.mock.calls.filter(
+        ([action]) => action.type === "SET_HAS_CLICKED_RECOVER",
+      );
+      expect(hasClickedRecoverDispatches).toHaveLength(0);
     });
   });
 });

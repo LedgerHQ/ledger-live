@@ -331,12 +331,16 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
       ]
     },
     "lint:fix": {
+      "cache": false
+    },
+    "check-export-rules": {
       "cache": false
     },
     "typecheck": {
@@ -346,6 +350,7 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -358,6 +363,7 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         {
           "env": "CI_OS"
         }
@@ -404,6 +410,7 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -415,6 +422,7 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -426,6 +434,7 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -437,6 +446,7 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         "mobileEnv",
         "sharedEnv"
       ]
@@ -448,6 +458,7 @@
       "cache": false,
       "inputs": [
         "default",
+        "^default",
         "desktopEnv",
         "sharedEnv"
       ]
@@ -459,6 +470,7 @@
       "cache": false,
       "inputs": [
         "default",
+        "^default",
         "desktopEnv",
         "sharedEnv"
       ]
@@ -470,6 +482,7 @@
       "cache": false,
       "inputs": [
         "default",
+        "^default",
         "desktopEnv",
         "sharedEnv"
       ]

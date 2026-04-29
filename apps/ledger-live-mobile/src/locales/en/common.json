@@ -1321,6 +1321,13 @@
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
   },
+  "borrow": {
+    "title": "Borrow",
+    "appNotFound": "Borrow app not found",
+    "infoModal": {
+      "close": "Close"
+    }
+  },
   "earn": {
     "deposit": {
       "protocolInfoModal": {
@@ -2743,6 +2750,12 @@
       "title": "Perpetuals",
       "description": "Trade with leverage"
     },
+    "borrowEntry": {
+      "title": "Loans",
+      "cardTitle": "Borrow Stablecoin",
+      "cardDescription": "Unlock liquidity",
+      "cta": "Explore"
+    },
     "recommended": {
       "title": "Recommended"
     },
@@ -2933,7 +2946,8 @@
   },
   "operationsList": {
     "to": "To",
-    "from": "From"
+    "from": "From",
+    "pending": "Pending"
   },
   "operationDetails": {
     "title": "Transaction details",
@@ -3218,7 +3232,9 @@
     "title": "Accounts",
     "addAccount": "Add account",
     "emptyState": "No accounts yet",
-    "errorState": "An error occurred while loading your accounts"
+    "errorState": "An error occurred while loading your accounts",
+    "assetsCount": "{{count}} assets",
+    "assetsCount_one": "{{count}} asset"
   },
   "crypto": {
     "title": "Crypto",
@@ -3349,7 +3365,7 @@
       "analytics": "App performance",
       "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions.",
       "mevProtectionLearnMore": "Privacy notice",
       "personalizedRecommendations": "Personalized experience",
       "personalizedRecommendationsDesc": "Enable Ledger to collect app usage to provide personalized contents",
@@ -8141,6 +8157,18 @@
       "privacyLink": "Privacy policy"
     }
   },
+  "analyticsPreferencesSettings": {
+    "screenTitle": "Set preferences",
+    "appPerformance": {
+      "title": "App performance",
+      "description": "Enable Ledger to collect app usage to enhance the experience."
+    },
+    "personalizedExperience": {
+      "title": "Personalized experience",
+      "description": "Enable Ledger to collect app usage to provide personalized content."
+    },
+    "confirmCta": "Confirm"
+  },
   "walletSync": {
     "title": "Ledger Sync",
     "banner": {
@@ -8393,6 +8421,19 @@
           "name": "Add an account"
         }
       }
+    }
+  },
+  "assetDetail": {
+    "balanceGraph": {
+      "marketPrice": "Market price",
+      "timeframeSelector": "Timeframe",
+      "timeLabel": {
+        "24h": "1 day",
+        "7d": "1 week",
+        "30d": "1 month",
+        "1y": "1 year"
+      },
+      "chartPlaceholder": "Graphic"
     }
   },
   "assetSelection": {
@@ -8865,14 +8906,38 @@
       "sections": {
         "supportAndLearning": "Support and learning",
         "more": "More"
+      },
+      "rows": {
+        "ledgerSupport": {
+          "title": "Ledger Support",
+          "description": "Get help with our FAQs or chat"
+        },
+        "ledgerAcademy": {
+          "title": "Ledger Academy",
+          "description": "Learn crypto"
+        },
+        "saveLogs": {
+          "title": "Save logs",
+          "description": "Save Ledger Wallet logs for troubleshooting"
+        },
+        "ledgerStatus": {
+          "title": "Ledger Status",
+          "description": "Check our system status"
+        },
+        "clearCache": {
+          "title": "Clear cache",
+          "description": "Scan transactions and recalculate balances"
+        }
       }
     },
     "deviceSection": {
       "title": "My devices",
       "add": "Add",
+      "addDevice": "Add a Ledger device",
       "exploreAllDevices": "Explore all Ledger devices",
       "available": "Available",
-      "unavailable": "Not connected"
+      "unavailable": "Not connected",
+      "menuAccessibilityLabel": "Device options"
     }
   }
 }

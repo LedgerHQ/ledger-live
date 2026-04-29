@@ -2,6 +2,11 @@ import { useState, useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
+import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useOperationsSections } from "./hooks/useOperationsSections";
+
+export type { OperationsListSection } from "./hooks/useOperationsSections";
 
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
@@ -11,21 +16,21 @@ export function useOperationsListViewModel() {
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
 
-  const { sections, completed } = useOperationsV1(accounts, opCount);
+  const { sections: rawSections, completed } = useOperationsV1(accounts, opCount);
 
-  const deduplicatedSections = useMemo(() => {
-    const seenIds = new Set<string>();
-    return sections
-      .map(section => ({
-        ...section,
-        data: section.data.filter(op => {
-          if (seenIds.has(op.id)) return false;
-          seenIds.add(op.id);
-          return true;
-        }),
-      }))
-      .filter(section => section.data.length > 0);
-  }, [sections]);
+  const accountByAddress = useMemo(() => {
+    const map = new Map<string, AccountLike>();
+    for (const account of accounts) {
+      const { freshAddress } = account;
+      if (freshAddress) {
+        const currencyId = getAccountCurrency(account).id;
+        map.set(`${currencyId}:${freshAddress}`, account);
+      }
+    }
+    return map;
+  }, [accounts]);
+
+  const sections = useOperationsSections(rawSections);
 
   const onEndReached = useCallback(() => {
     if (!completed) {
@@ -38,7 +43,8 @@ export function useOperationsListViewModel() {
   return {
     accounts,
     flattenedAccounts,
-    sections: deduplicatedSections,
+    accountByAddress,
+    sections,
     completed,
     isEmpty,
     onEndReached,

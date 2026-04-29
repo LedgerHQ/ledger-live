@@ -294,6 +294,11 @@
       "title" : "La conexión ha fallado",
       "description" : "Inténtalo de nuevo."
     },
+    "CounterfeitDevice" : {
+      "title" : "Este {{productName}} no ha superado la Verificación de Autenticidad",
+      "description" : "No es seguro utilizar este dispositivo Ledger. Ponte en contacto con el Soporte de Ledger.",
+      "contactSupportCTA" : "Ponte en contacto con el Soporte de Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "La conexión falló",
       "description" : "Inténtalo de nuevo."
@@ -415,8 +420,8 @@
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
     "AlreadySendingApduError" : {
-      "title" : "Error de comunicación",
-      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+      "title" : "Se requiere acción en tu dispositivo Ledger",
+      "description" : "Finaliza la acción en tu dispositivo."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Necesitas una cuenta para poder acceder a esta aplicación.",
-      "add" : "Agregar cuenta"
+      "select" : "Seleccionar cuenta"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Cuentas",
     "transfer" : "Transferir",
     "manager" : "Mi Ledger",
+    "myWallet" : "Mi wallet",
     "settings" : "Ajustes",
     "platform" : "Aplicaciones de Live",
     "discover" : "Discover",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Cuenta actualizada"
     }
   },
+  "operationsList" : {
+    "to" : "A",
+    "from" : "De"
+  },
   "operationDetails" : {
     "title" : "Detalles de las transacciones",
     "account" : "Cuenta",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
+    "emptyTitle" : "Aún no hay transacciones",
+    "emptySubtitle" : "Intenta más tarde para ver tus transacciones.",
     "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "No se ha podido instalar {{appName}}",
       "description" : "Algo salió mal durante la instalación. Inténtalo de nuevo."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "Ayuda",
+      "referral" : "Recomendación"
     }
   }
 }

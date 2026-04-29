@@ -37,7 +37,7 @@ describe("useMyWalletHeaderViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenter,
     });
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Notifications",
       page: ScreenName.MyWallet,
     });
@@ -47,7 +47,7 @@ describe("useMyWalletHeaderViewModel", () => {
     const { result } = renderHook(() => useMyWalletHeaderViewModel());
     act(() => result.current.onSettingsPress());
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Settings);
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Settings",
       page: ScreenName.MyWallet,
     });

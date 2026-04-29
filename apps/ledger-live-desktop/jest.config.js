@@ -57,6 +57,8 @@ const moduleNameMapper = {
 const transformIncludePatterns = [
   "ky",
   "@ledgerhq\\+lumen-ui-react",
+  "@ledgerhq\\+lumen-design-core",
+  "@ledgerhq\\+crypto-icons",
   "@mysten\\+",
   "@scure\\+",
   "@noble\\+",

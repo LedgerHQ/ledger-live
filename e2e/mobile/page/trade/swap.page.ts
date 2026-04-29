@@ -6,7 +6,11 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  getParentAccountName,
+  TokenAccount,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
@@ -169,9 +173,9 @@ export default class SwapPage extends CommonPage {
     jestExpect(fileContents).toContain(swap.accountToDebit.currency.ticker);
     jestExpect(fileContents).toContain(swap.accountToCredit.currency.ticker);
     jestExpect(fileContents).toContain(swap.amount);
-    jestExpect(fileContents).toContain(swap.accountToDebit.accountName);
+    jestExpect(fileContents).toContain(getParentAccountName(swap.accountToDebit));
     jestExpect(fileContents).toContain(swap.accountToDebit.address);
-    jestExpect(fileContents).toContain(swap.accountToCredit.accountName);
+    jestExpect(fileContents).toContain(getParentAccountName(swap.accountToCredit));
     jestExpect(fileContents).toContain(swap.accountToCredit.address);
   }
 

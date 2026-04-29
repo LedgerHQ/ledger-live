@@ -33,7 +33,7 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   }),
 }));
 
-let triggerNext: (accounts: Account[]) => void = () => null;
+let triggerNext: (account: Account) => void = () => null;
 let triggerComplete: () => void = () => null;
 
 const mockAccountBridge = {
@@ -42,31 +42,34 @@ const mockAccountBridge = {
   toOperationExtraRaw: (extra: unknown) => extra,
 };
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  __esModule: true,
-  getCurrencyBridge: () => ({
-    scanAccounts: () => ({
-      pipe: () => ({
-        subscribe: ({
-          next,
-          complete,
-        }: {
-          next: (accounts: Account[]) => void;
-          complete: () => void;
-        }) => {
-          triggerNext = accounts => next(accounts);
-          triggerComplete = () => complete();
-        },
-      }),
-    }),
-    preload: () => true,
-    hydrate: () => true,
-  }),
-  getAccountBridge: () => mockAccountBridge,
+jest.mock("~/renderer/bridge/cache", () => ({
+  prepareCurrency: jest.fn().mockResolvedValue(null),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const { Observable } = require("rxjs");
+  return {
+    __esModule: true,
+    getCurrencyBridge: () => ({
+      scanAccounts: () =>
+        new Observable((subscriber: any) => {
+          triggerNext = (account: Account) => subscriber.next({ account });
+          triggerComplete = () => subscriber.complete();
+          return () => {};
+        }),
+      preload: () => Promise.resolve(true),
+      hydrate: () => true,
+    }),
+    getAccountBridge: () => mockAccountBridge,
+  };
+});
+
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
+  // flush the prepareCurrency promise so concat subscribes to scanAccounts and triggerNext is set
+  await act(async () => {});
+  for (const account of accounts) {
+    await act(() => triggerNext(account));
+  }
   await act(() => triggerComplete());
 };
 

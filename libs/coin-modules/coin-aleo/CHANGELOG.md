@@ -1,5 +1,109 @@
 # @ledgerhq/coin-aleo
 
+## 1.10.0
+
+### Minor Changes
+
+- [#16297](https://github.com/LedgerHQ/ledger-live/pull/16297) [`edffff8`](https://github.com/LedgerHQ/ledger-live/commit/edffff80b500e50cd30311a79ac7590f81546c59) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: add missing log for invalid aleo raw tx details
+
+- [#15887](https://github.com/LedgerHQ/ledger-live/pull/15887) [`5fefc2e`](https://github.com/LedgerHQ/ledger-live/commit/5fefc2e6a4c6e4fdcaae0139f2f8d6f9011b33c8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Remove @ledgerhq/types-cryptoassets dependency from coin-framework by replacing CryptoCurrency parameters with currencyId strings in CoinConfig and getCurrencyConfiguration
+
+- [#16045](https://github.com/LedgerHQ/ledger-live/pull/16045) [`f9d1e38`](https://github.com/LedgerHQ/ledger-live/commit/f9d1e389082a3e13a4988cfc342e86f7c592bbc3) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - changes to aleo self transfer flow
+
+- [#16307](https://github.com/LedgerHQ/ledger-live/pull/16307) [`8733fc5`](https://github.com/LedgerHQ/ledger-live/commit/8733fc55b61d0c76776674f80b9899344da38508) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore: remove unused nodeUrl from coin-aleo config
+  fix: optimize private balance calculation in coin-aleo
+  fix: aleo pending operation is removed too early
+
+- [#16273](https://github.com/LedgerHQ/ledger-live/pull/16273) [`a95484e`](https://github.com/LedgerHQ/ledger-live/commit/a95484ef0a49cfdfae610a7e734899389cd236b8) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: temporary workaround for missing config in deviceTransactionConfig.ts
+
+- [#15823](https://github.com/LedgerHQ/ledger-live/pull/15823) [`24656de`](https://github.com/LedgerHQ/ledger-live/commit/24656dea461d4d99dcb5f5e2e4b4e949b0823eeb) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Reduce redundant eth_call calls to node by implementing includeAssets from BalanceOptions
+
+- [#16149](https://github.com/LedgerHQ/ledger-live/pull/16149) [`750e564`](https://github.com/LedgerHQ/ledger-live/commit/750e564d8b0fa25608dc3a3766159c2dca892d2c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo provable api status endpoint error handling
+
+- [#16043](https://github.com/LedgerHQ/ledger-live/pull/16043) [`7baf75d`](https://github.com/LedgerHQ/ledger-live/commit/7baf75d216d420c8bdfecd587a299a60814edffc) Thanks [@0xMM-L](https://github.com/0xMM-L)! - Handle fee sponsoring for private transfers
+
+- [#15679](https://github.com/LedgerHQ/ledger-live/pull/15679) [`c353f29`](https://github.com/LedgerHQ/ledger-live/commit/c353f29b9174c20c708662c160f55c597020ee58) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(coin-modules): add oxfmt with shared config (Prettier parity)
+
+  - Add libs/coin-modules/.oxfmtrc.json aligned with root .prettierrc and desktop/mobile oxfmt
+  - Add format, format:check, and run oxfmt before oxlint in lint:fix; add oxfmt devDependency
+  - Remove coin-ton prettier script; turbo format/format:check tasks
+  - Initial oxfmt pass on src
+
+- [#16233](https://github.com/LedgerHQ/ledger-live/pull/16233) [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: enable aleo encrypted prove + remove jwt management
+
+- [#16184](https://github.com/LedgerHQ/ledger-live/pull/16184) [`f9c30a8`](https://github.com/LedgerHQ/ledger-live/commit/f9c30a86fcc8b1cc75149c7c8df2a5e166754226) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add fee records errors in cases when fee record is insufficient and only one record present
+
+- [#16112](https://github.com/LedgerHQ/ledger-live/pull/16112) [`02bc6dc`](https://github.com/LedgerHQ/ledger-live/commit/02bc6dc47314be74eba9f4855d7f6c3a54f29ad7) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Fix for private transaction send amount validation
+
+- [#15798](https://github.com/LedgerHQ/ledger-live/pull/15798) [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: use `coin-module-framework` from npmjs and remove the now migrated `coin-framework`
+
+- [#16287](https://github.com/LedgerHQ/ledger-live/pull/16287) [`9bc46de`](https://github.com/LedgerHQ/ledger-live/commit/9bc46de7716aa3a942b6c27593639db40b04277d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: avoid unnecessary aleo syncs with postSync clean up
+
+- [#16285](https://github.com/LedgerHQ/ledger-live/pull/16285) [`3929c6e`](https://github.com/LedgerHQ/ledger-live/commit/3929c6e5dce8affbb433fb4ef7158a9af297d9ee) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - added missing record pagination for aleo
+
+### Patch Changes
+
+- Updated dependencies [[`ad5a37d`](https://github.com/LedgerHQ/ledger-live/commit/ad5a37d077dced734defcd464f120825e7bbf5e9), [`2d5c7e0`](https://github.com/LedgerHQ/ledger-live/commit/2d5c7e0cc27f45babe247b39b513d4e848707b01), [`78acbfa`](https://github.com/LedgerHQ/ledger-live/commit/78acbfae7319c5b3fb1453f8727e2210e895669c), [`1bd0cac`](https://github.com/LedgerHQ/ledger-live/commit/1bd0cac7957422fa06e18424e9e2706c39072078), [`7aa0706`](https://github.com/LedgerHQ/ledger-live/commit/7aa070618866e7a4c70876e674f07fde9630ccfb), [`3b83607`](https://github.com/LedgerHQ/ledger-live/commit/3b83607a045142a8408784c92b57d8bde01445df), [`24656de`](https://github.com/LedgerHQ/ledger-live/commit/24656dea461d4d99dcb5f5e2e4b4e949b0823eeb), [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9), [`139cdbf`](https://github.com/LedgerHQ/ledger-live/commit/139cdbfd48120247ff54f5f7863ce866a6a755d0), [`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d), [`97d7278`](https://github.com/LedgerHQ/ledger-live/commit/97d727824cef6a5b5a2d034d9b029e4f977f1754), [`63b5b9a`](https://github.com/LedgerHQ/ledger-live/commit/63b5b9a3f3b88fa41f02983350cdb6e73a887839), [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440), [`46e78cf`](https://github.com/LedgerHQ/ledger-live/commit/46e78cf3a057a9de39a5abbb49fe779655db6507), [`cd59c95`](https://github.com/LedgerHQ/ledger-live/commit/cd59c95d04bd886114802ca887e1209d2191eaee), [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21)]:
+  - @ledgerhq/cryptoassets@13.46.0
+  - @ledgerhq/types-live@6.105.0
+  - @ledgerhq/live-env@2.33.0
+  - @ledgerhq/ledger-wallet-framework@1.3.0
+  - @ledgerhq/errors@6.34.0
+  - @ledgerhq/live-network@2.5.1
+  - @ledgerhq/devices@8.14.1
+
+## 1.10.0-next.0
+
+### Minor Changes
+
+- [#16297](https://github.com/LedgerHQ/ledger-live/pull/16297) [`edffff8`](https://github.com/LedgerHQ/ledger-live/commit/edffff80b500e50cd30311a79ac7590f81546c59) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: add missing log for invalid aleo raw tx details
+
+- [#15887](https://github.com/LedgerHQ/ledger-live/pull/15887) [`5fefc2e`](https://github.com/LedgerHQ/ledger-live/commit/5fefc2e6a4c6e4fdcaae0139f2f8d6f9011b33c8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Remove @ledgerhq/types-cryptoassets dependency from coin-framework by replacing CryptoCurrency parameters with currencyId strings in CoinConfig and getCurrencyConfiguration
+
+- [#16045](https://github.com/LedgerHQ/ledger-live/pull/16045) [`f9d1e38`](https://github.com/LedgerHQ/ledger-live/commit/f9d1e389082a3e13a4988cfc342e86f7c592bbc3) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - changes to aleo self transfer flow
+
+- [#16307](https://github.com/LedgerHQ/ledger-live/pull/16307) [`8733fc5`](https://github.com/LedgerHQ/ledger-live/commit/8733fc55b61d0c76776674f80b9899344da38508) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore: remove unused nodeUrl from coin-aleo config
+  fix: optimize private balance calculation in coin-aleo
+  fix: aleo pending operation is removed too early
+
+- [#16273](https://github.com/LedgerHQ/ledger-live/pull/16273) [`a95484e`](https://github.com/LedgerHQ/ledger-live/commit/a95484ef0a49cfdfae610a7e734899389cd236b8) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: temporary workaround for missing config in deviceTransactionConfig.ts
+
+- [#15823](https://github.com/LedgerHQ/ledger-live/pull/15823) [`24656de`](https://github.com/LedgerHQ/ledger-live/commit/24656dea461d4d99dcb5f5e2e4b4e949b0823eeb) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Reduce redundant eth_call calls to node by implementing includeAssets from BalanceOptions
+
+- [#16149](https://github.com/LedgerHQ/ledger-live/pull/16149) [`750e564`](https://github.com/LedgerHQ/ledger-live/commit/750e564d8b0fa25608dc3a3766159c2dca892d2c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo provable api status endpoint error handling
+
+- [#16043](https://github.com/LedgerHQ/ledger-live/pull/16043) [`7baf75d`](https://github.com/LedgerHQ/ledger-live/commit/7baf75d216d420c8bdfecd587a299a60814edffc) Thanks [@0xMM-L](https://github.com/0xMM-L)! - Handle fee sponsoring for private transfers
+
+- [#15679](https://github.com/LedgerHQ/ledger-live/pull/15679) [`c353f29`](https://github.com/LedgerHQ/ledger-live/commit/c353f29b9174c20c708662c160f55c597020ee58) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(coin-modules): add oxfmt with shared config (Prettier parity)
+
+  - Add libs/coin-modules/.oxfmtrc.json aligned with root .prettierrc and desktop/mobile oxfmt
+  - Add format, format:check, and run oxfmt before oxlint in lint:fix; add oxfmt devDependency
+  - Remove coin-ton prettier script; turbo format/format:check tasks
+  - Initial oxfmt pass on src
+
+- [#16233](https://github.com/LedgerHQ/ledger-live/pull/16233) [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: enable aleo encrypted prove + remove jwt management
+
+- [#16184](https://github.com/LedgerHQ/ledger-live/pull/16184) [`f9c30a8`](https://github.com/LedgerHQ/ledger-live/commit/f9c30a86fcc8b1cc75149c7c8df2a5e166754226) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add fee records errors in cases when fee record is insufficient and only one record present
+
+- [#16112](https://github.com/LedgerHQ/ledger-live/pull/16112) [`02bc6dc`](https://github.com/LedgerHQ/ledger-live/commit/02bc6dc47314be74eba9f4855d7f6c3a54f29ad7) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Fix for private transaction send amount validation
+
+- [#15798](https://github.com/LedgerHQ/ledger-live/pull/15798) [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: use `coin-module-framework` from npmjs and remove the now migrated `coin-framework`
+
+- [#16287](https://github.com/LedgerHQ/ledger-live/pull/16287) [`9bc46de`](https://github.com/LedgerHQ/ledger-live/commit/9bc46de7716aa3a942b6c27593639db40b04277d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: avoid unnecessary aleo syncs with postSync clean up
+
+- [#16285](https://github.com/LedgerHQ/ledger-live/pull/16285) [`3929c6e`](https://github.com/LedgerHQ/ledger-live/commit/3929c6e5dce8affbb433fb4ef7158a9af297d9ee) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - added missing record pagination for aleo
+
+### Patch Changes
+
+- Updated dependencies [[`ad5a37d`](https://github.com/LedgerHQ/ledger-live/commit/ad5a37d077dced734defcd464f120825e7bbf5e9), [`2d5c7e0`](https://github.com/LedgerHQ/ledger-live/commit/2d5c7e0cc27f45babe247b39b513d4e848707b01), [`78acbfa`](https://github.com/LedgerHQ/ledger-live/commit/78acbfae7319c5b3fb1453f8727e2210e895669c), [`1bd0cac`](https://github.com/LedgerHQ/ledger-live/commit/1bd0cac7957422fa06e18424e9e2706c39072078), [`7aa0706`](https://github.com/LedgerHQ/ledger-live/commit/7aa070618866e7a4c70876e674f07fde9630ccfb), [`3b83607`](https://github.com/LedgerHQ/ledger-live/commit/3b83607a045142a8408784c92b57d8bde01445df), [`24656de`](https://github.com/LedgerHQ/ledger-live/commit/24656dea461d4d99dcb5f5e2e4b4e949b0823eeb), [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9), [`139cdbf`](https://github.com/LedgerHQ/ledger-live/commit/139cdbfd48120247ff54f5f7863ce866a6a755d0), [`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d), [`97d7278`](https://github.com/LedgerHQ/ledger-live/commit/97d727824cef6a5b5a2d034d9b029e4f977f1754), [`63b5b9a`](https://github.com/LedgerHQ/ledger-live/commit/63b5b9a3f3b88fa41f02983350cdb6e73a887839), [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440), [`46e78cf`](https://github.com/LedgerHQ/ledger-live/commit/46e78cf3a057a9de39a5abbb49fe779655db6507), [`cd59c95`](https://github.com/LedgerHQ/ledger-live/commit/cd59c95d04bd886114802ca887e1209d2191eaee), [`fd2311d`](https://github.com/LedgerHQ/ledger-live/commit/fd2311d643f4002c1441bfa4fe79d7288df04c21)]:
+  - @ledgerhq/cryptoassets@13.46.0-next.0
+  - @ledgerhq/types-live@6.105.0-next.0
+  - @ledgerhq/live-env@2.33.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.3.0-next.0
+  - @ledgerhq/errors@6.34.0-next.0
+  - @ledgerhq/live-network@2.5.1-next.0
+  - @ledgerhq/devices@8.14.1-next.0
+
 ## 1.9.0
 
 ### Minor Changes

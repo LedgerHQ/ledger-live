@@ -14,7 +14,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
-import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
+import {
+  EXPLORER_TRANSFER_TYPES,
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  PROGRAM_ID,
+  TRANSACTION_TYPE,
+} from "../constants";
 import type {
   AleoOperation,
   AleoTransactionType,
@@ -279,7 +284,7 @@ export function calculateAmount({
 
 export const isProvableApiConfigured = (
   provableApi: ProvableApi | null,
-): provableApi is Required<Pick<ProvableApi, "uuid">> => {
+): provableApi is ProvableApi & { uuid: string } => {
   return !!provableApi?.uuid;
 };
 
@@ -614,4 +619,70 @@ export function extractViewKey(account: AleoAccount): string {
   const viewKey = decodeAccountId(account.id).customData;
   invariant(viewKey, `aleo: view key is missing in ${account.freshAddress} account`);
   return viewKey;
+}
+
+/**
+ * Selects the minimum set of private records needed to cover `targetAmount` using a greedy largest-first strategy.
+ *
+ * - If `targetAmount` is `null`, returns the top `MAX_PRIVATE_RECORDS_PER_TRANSACTION` records by value (useAllAmount mode).
+ * - If `targetAmount` is provided and positive:
+ *   1. Prefer the **smallest single record** that alone covers the target (fewest records, least overshoot).
+ *   2. Otherwise accumulate the **largest records first** until the running total meets the target or
+ *      `MAX_PRIVATE_RECORDS_PER_TRANSACTION` is exhausted.
+ *
+ * Returns `[]` when the target cannot be covered — either because total funds are insufficient
+ * or the record cap is exhausted before the running total reaches the target.
+ */
+export function selectPrivateRecordsForAmount({
+  unspentRecords,
+  targetAmount,
+}: {
+  unspentRecords: AleoUnspentRecord[];
+  targetAmount: BigNumber | null;
+}): AleoUnspentRecord[] {
+  const rankedRecords = unspentRecords
+    .map(record => ({ record, value: new BigNumber(record.microcredits) }))
+    .filter(({ value }) => value.isGreaterThan(0))
+    .sort((a, b) => b.value.comparedTo(a.value));
+
+  if (rankedRecords.length === 0) {
+    return [];
+  }
+
+  // no target amount supplied -> useAllAmount mode, return top N records.
+  if (targetAmount === null) {
+    return rankedRecords.slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION).map(({ record }) => record);
+  }
+
+  if (targetAmount.lte(0)) {
+    return [];
+  }
+
+  // Step 1: Find the smallest single record that covers the target (least overshoot).
+  // Scanning from the end of the descending array gives us the smallest candidate first.
+  for (let i = rankedRecords.length - 1; i >= 0; i--) {
+    if (rankedRecords[i].value.gte(targetAmount)) {
+      return [rankedRecords[i].record];
+    }
+  }
+
+  // Step 2: No single record is sufficient - accumulate largest-first.
+  const selected: AleoUnspentRecord[] = [];
+  let runningTotal = new BigNumber(0);
+
+  for (const { record, value } of rankedRecords) {
+    if (selected.length >= MAX_PRIVATE_RECORDS_PER_TRANSACTION) {
+      break;
+    }
+
+    selected.push(record);
+    runningTotal = runningTotal.plus(value);
+
+    if (runningTotal.gte(targetAmount)) {
+      return selected;
+    }
+  }
+
+  // Target could not be covered within the record cap or with the available funds.
+  return [];
 }

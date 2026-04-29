@@ -86,8 +86,7 @@ export function useOnboardModalViewModel({
     onOnboardingComplete,
   });
 
-  const { handleAddAccounts, handleAddMore } = useOnboardingNavigation({
-    currency,
+  const { handleAddAccounts } = useOnboardingNavigation({
     selectedAccounts,
     existingAccounts,
     editedNames,
@@ -130,7 +129,6 @@ export function useOnboardModalViewModel({
 
     transitionTo,
     onAddAccounts: handleAddAccounts,
-    onAddMore: handleAddMore,
     onOnboardAccount: handleOnboardAccount,
     onRetryOnboardAccount: handleRetryOnboardAccount,
   };

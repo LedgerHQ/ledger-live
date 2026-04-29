@@ -63,7 +63,11 @@ export function createApi(
     combine,
     craftTransaction: async (txIntent, customFees) => {
       invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
-      const { serializedTx } = await craftTransaction(txIntent, customFees);
+      const { serializedTx } = await craftTransaction({
+        txIntent,
+        ...(customFees && { customFees }),
+        config,
+      });
 
       return {
         transaction: serializedTx,

@@ -9,11 +9,14 @@ import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { accountDataToAccount } from "@ledgerhq/live-wallet/liveqr/cross";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { BigNumber } from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
+
+type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
 
 export class BridgeAdapter {
   private static readonly SYNC_CONFIG: { paginationConfig: object; blacklistedTokenIds: string[] } =
@@ -107,7 +110,7 @@ export class BridgeAdapter {
 
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {
     const account = await this.sync(descriptor);
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const result = await firstValueFrom(bridge.receive(account, { deviceId, verify: true }));
     return result.address;
   }
@@ -124,11 +127,10 @@ export class BridgeAdapter {
   send(
     descriptor: AccountDescriptor,
     intent: TransactionIntent,
-    deviceId: string,
-    dryRun = false,
+    options: SendOptions,
   ): Observable<SendEvent> {
     return new Observable(subscriber => {
-      this.executeSend(descriptor, intent, deviceId, dryRun, subscriber).catch(err =>
+      this.executeSend(descriptor, intent, options, subscriber).catch(err =>
         subscriber.error(err),
       );
     });
@@ -137,8 +139,7 @@ export class BridgeAdapter {
   private async executeSend(
     descriptor: AccountDescriptor,
     intent: TransactionIntent,
-    deviceId: string,
-    dryRun: boolean,
+    { deviceId, deviceModelId }: SendOptions,
     subscriber: Subscriber<SendEvent>,
   ): Promise<void> {
     const account = await this.sync(descriptor);
@@ -148,7 +149,7 @@ export class BridgeAdapter {
 
     let signedOperation: SignedOperation | undefined;
     await new Promise<void>((resolve, reject) => {
-      bridge.signOperation({ account, transaction: tx, deviceId }).subscribe({
+      bridge.signOperation({ account, transaction: tx, deviceId, deviceModelId }).subscribe({
         next: event => {
           if (event.type === "device-streaming") {
             subscriber.next({
@@ -170,15 +171,11 @@ export class BridgeAdapter {
       });
     });
 
-    if (signedOperation === undefined) throw new Error("signOperation completed without a signed event");
+    if (signedOperation === undefined)
+      throw new Error("signOperation completed without a signed event");
 
-    if (dryRun) {
-      subscriber.next({ type: "dry-run" });
-    } else {
-      const op = await bridge.broadcast({ account, signedOperation });
-      subscriber.next({ type: "broadcasted", txHash: op.hash });
-    }
-
+    const op = await bridge.broadcast({ account, signedOperation });
+    subscriber.next({ type: "broadcasted", txHash: op.hash });
     subscriber.complete();
   }
 
@@ -207,7 +204,7 @@ export class BridgeAdapter {
   }
 
   private async buildValidatedTx(account: Account, intent: TransactionIntent) {
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const nativeUnit = account.currency.units[0];
     const parsed = parseAmountWithTicker(intent.amount, account);
     const tokenAccount =
@@ -242,7 +239,7 @@ export class BridgeAdapter {
 
   private async sync(descriptor: AccountDescriptor): Promise<Account> {
     const account = this.buildAccount(descriptor);
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     await BridgeAdapter.cache.prepareCurrency(account.currency);
     return lastValueFrom(
       bridge

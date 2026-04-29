@@ -1,13 +1,16 @@
 import React from "react";
 import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import { overrideInitialStateWithFeatureFlag } from "LLM/features/Portfolio/__integrations__/shared";
+import * as analytics from "~/analytics";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import subDays from "date-fns/subDays";
+import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreferencesSettings";
 
 const consentIsoOlderThanValidityWindow = () => subDays(new Date(), 366).toISOString();
 
@@ -20,9 +23,20 @@ function GeneralSettingsStub() {
 
 function SettingsNavigator() {
   return (
-    <SettingsStack.Navigator screenOptions={{ headerShown: false }}>
-      <SettingsStack.Screen name={ScreenName.GeneralSettings} component={GeneralSettingsStub} />
-    </SettingsStack.Navigator>
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { x: 0, y: 0, width: 375, height: 812 },
+        insets: { top: 0, left: 0, right: 0, bottom: 0 },
+      }}
+    >
+      <SettingsStack.Navigator screenOptions={{ headerShown: false }}>
+        <SettingsStack.Screen name={ScreenName.GeneralSettings} component={GeneralSettingsStub} />
+        <SettingsStack.Screen
+          name={ScreenName.AnalyticsPreferencesSettings}
+          component={AnalyticsPreferencesSettings}
+        />
+      </SettingsStack.Navigator>
+    </SafeAreaProvider>
   );
 }
 
@@ -118,7 +132,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
     });
 
-    it("should close the drawer when the user taps Set preferences", async () => {
+    it("should close the drawer and open analytics preferences when the user taps Set preferences", async () => {
       const { user } = renderWithReactQuery(<IntegrationNavigator />, {
         overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
       });
@@ -131,6 +145,36 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       await waitFor(() => {
         expect(screen.queryByText("Help us improve Ledger")).toBeNull();
       });
+      expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+    });
+
+    it("should return to Portfolio after Set preferences and Confirm with toggles left off", async () => {
+      const updateIdentifySpy = jest.spyOn(analytics, "updateIdentify").mockResolvedValue(undefined);
+      try {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
+        });
+
+        await screen.findByTestId("PortfolioEmptyList");
+        await screen.findByText("Help us improve Ledger");
+
+        await user.press(screen.getByText("Set preferences"));
+
+        expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+
+        await user.press(screen.getByRole("button", { name: "Confirm" }));
+
+        await waitFor(() => {
+          expect(screen.queryByTestId("analytics-preferences-screen-title")).toBeNull();
+        });
+        expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
+
+        expect(store.getState().settings.analyticsEnabled).toBe(false);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+      } finally {
+        updateIdentifySpy.mockRestore();
+      }
     });
   });
 

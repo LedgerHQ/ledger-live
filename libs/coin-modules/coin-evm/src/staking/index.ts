@@ -4,7 +4,15 @@ export { buildTransactionParams, buildStakingTransactionParams } from "./transac
 export { isStakingOperation, detectEvmStakingOperationType } from "./detectOperationType";
 export type { StakingFetcher, StakingStrategy } from "../types/staking";
 export { encodeStakingData } from "./encoder";
-export { getValidators, getValidatorExplorerUrl } from "./validators";
+export {
+  getValidators,
+  getValidatorExplorerUrl,
+  getUnbondingPeriodDays,
+  hasUnbondingPeriod,
+  getCachedValidators,
+  prefetchValidators,
+  clearValidatorsCache,
+} from "./validators";
 export {
   mapDelegations,
   mapUnbondings,
@@ -18,3 +26,9 @@ export {
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
 } from "./logic";
+export {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromStakingResourcesRaw,
+  toStakingResourcesRaw,
+} from "./serialization";

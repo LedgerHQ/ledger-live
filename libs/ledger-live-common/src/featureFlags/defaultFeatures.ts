@@ -500,6 +500,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxBorrowLiveApp: {
+    enabled: false,
+    params: {
+      manifest_id: "borrow",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {
@@ -641,6 +648,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
+  lwdProductTour: DEFAULT_FEATURE,
   lwmNewWordingOptInNotificationsDrawer: {
     ...DEFAULT_FEATURE,
     params: { variant: ABTestingVariants.variantA },
@@ -798,13 +806,6 @@ export const DEFAULT_FEATURES: Features = {
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
   lifiSolana: DEFAULT_FEATURE,
-  llmAnimatedSplashScreen: {
-    enabled: true,
-    params: {
-      ios: true,
-      android: true,
-    },
-  },
   llmOnboardingEnableSync: initFeature({
     enabled: false,
     params: {
@@ -812,6 +813,9 @@ export const DEFAULT_FEATURES: Features = {
       touchscreens: false,
     },
   }),
+  lwdGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmProductTour: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,
     params: {
@@ -874,6 +878,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       thresholdUsd: 0.5,
     },
+  },
+  llmTransferButtonCopyVariant: {
+    enabled: false,
+    params: { variantId: "control" },
   },
 };
 

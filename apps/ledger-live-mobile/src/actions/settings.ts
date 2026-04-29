@@ -64,7 +64,9 @@ import {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
+  SettingsSetHasClickedRecoverPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -285,6 +287,14 @@ export const setSelectedTabPortfolioAssets =
 
 export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
   SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
+);
+
+export const setProductTourCompleted = createAction<SettingsSetProductTourCompletedPayload>(
+  SettingsActionTypes.SET_PRODUCT_TOUR_COMPLETED,
+);
+
+export const setHasClickedRecover = createAction<SettingsSetHasClickedRecoverPayload>(
+  SettingsActionTypes.SET_HAS_CLICKED_RECOVER,
 );
 
 type PortfolioRangeOption = {

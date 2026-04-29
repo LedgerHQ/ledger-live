@@ -199,6 +199,27 @@ const getTransactions = () => {
     },
   };
 
+  const sendAllDotTransaction: PolkadotScenarioTransaction = {
+    name: "Send all DOT that isn't bound",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    amount: parseCurrencyUnit(assethub.units[0], "0"),
+    mode: "send",
+    useAllAmount: true,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.extra).toMatchObject({
+        palletMethod: "balances.transferAll",
+      });
+      expect(latestOperation.senders).toStrictEqual([previousAccount.freshAddress]);
+      expect(latestOperation.recipients).toStrictEqual([
+        "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+      ]);
+      expect(currentAccount.balance.toFixed()).toBe("4500100000000");
+    },
+  };
+
   return [
     send1DotTransaction,
     send100DotTransaction,
@@ -209,6 +230,7 @@ const getTransactions = () => {
     chillTransaction,
     withdraw250DotTransaction,
     claimRewardTransaction,
+    sendAllDotTransaction,
   ];
 };
 
@@ -268,10 +290,7 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     const alice = keyring.addFromUri("//Alice");
 
     const unsub = await api.tx.balances
-      .transferAllowDeath(
-        polkadotScenarioAccountPair.address,
-        parseCurrencyUnit(assethub.units[0], "50000").toNumber(),
-      )
+      .transferAll(polkadotScenarioAccountPair.address, false)
       .signAndSend(alice, result => {
         if (result.status.isFinalized) {
           unsub();
@@ -314,6 +333,7 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       switch (polkadotExtra.palletMethod) {
         case "balances.transfer":
         case "balances.transferAllowDeath":
+        case "balances.transferAll":
         case "balances.transferKeepAlive":
           amount = new BigNumber(polkadotExtra.transferAmount!);
           break;
@@ -378,7 +398,7 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
   },
   beforeAll: async account => {
     expect(formatCurrencyUnit(assethub.units[0], account.balance, { useGrouping: false })).toBe(
-      "50000",
+      "99999.9",
     );
   },
   beforeSync: async () => {

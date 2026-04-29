@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
+import Button from "~/renderer/components/Button";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
+import { Flex, IconsLegacy, InfiniteLoader } from "@ledgerhq/react-ui";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { useAleoPrivateSync } from "../../../hooks/useAleoPrivateSync";
 
@@ -19,12 +21,17 @@ const DescText = styled.p`
   font-weight: 400;
 `;
 
+const ErrorIcon = ({ size }: { size?: number }) => (
+  <IconsLegacy.WarningMedium size={size} color="error.c60" />
+);
+
 const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: StepProps) => {
   const { t } = useTranslation();
   const {
     progress,
     isSyncing,
     error: privateSyncError,
+    start,
   } = useAleoPrivateSync({
     account,
     autoStart: true,
@@ -40,7 +47,16 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
   if (privateSyncError) {
     return (
       <Box alignItems="center" justifyContent="center" p={4} style={{ minHeight: 120 }}>
-        <TitleText>{t("aleo.send.mandatoryPrivateSync.error")}</TitleText>
+        <ErrorBody
+          Icon={ErrorIcon}
+          title={t("aleo.send.mandatoryPrivateSync.errorTitle")}
+          description={t("aleo.send.mandatoryPrivateSync.errorDesc")}
+          buttons={
+            <Button primary px="20px" py="10px" onClick={start}>
+              {t("common.retry")}
+            </Button>
+          }
+        />
       </Box>
     );
   }
@@ -57,7 +73,6 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
       <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
         <InfiniteLoader size={58} />
       </Flex>
-
       <TitleText>{t("aleo.send.mandatoryPrivateSync.title", { percentage: progress })}</TitleText>
       <DescText>{t("aleo.send.mandatoryPrivateSync.desc")}</DescText>
     </Flex>

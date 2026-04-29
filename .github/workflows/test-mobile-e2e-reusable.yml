@@ -144,15 +144,15 @@ env:
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
-  AVD_API: 35
+  AVD_API: 36
   AVD_ARCH: x86_64
-  AVD_PROFILE: pixel_7_pro
+  AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 4
-  AVD_RAM_SIZE: 5120M
-  AVD_HEAP_SIZE: 1023M
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  AVD_CORES: 2
+  AVD_RAM_SIZE: 3072
+  AVD_HEAP_SIZE: 1024
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
 
 jobs:
   determine-builds:
@@ -197,6 +197,7 @@ jobs:
             e2e/mobile
             .pnpmfile.cjs
             tools
+            .mise/tasks
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
@@ -257,9 +258,9 @@ jobs:
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Prepare test filter
         id: test-filter
@@ -424,12 +425,7 @@ jobs:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on:
-      [
-        "qaa",
-        macOS,
-        ARM64,
-      ]
+    runs-on: ["qaa", macOS, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
@@ -476,7 +472,6 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-
 
       - name: Set shard test files from pre-computed matrix
         run: |
@@ -627,8 +622,8 @@ jobs:
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
-    needs: [build-android, determine-builds]
-    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    needs: [build-android, determine-builds, setup-android-avd]
+    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -768,28 +763,9 @@ jobs:
         run: |
           LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
           mkdir -p e2e/mobile/artifacts
-          nohup bash -c '
-            log() { echo "[$(date +%H:%M:%S)] $1"; }
-            ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
-
-            log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU3" &
-
-            log "⏳ Waiting for 3 emulators to connect..."
-            while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
-            log "✅ 3 emulators connected"
-            log "⏳ Waiting for all emulators to finish booting..."
-            adb -s emulator-5554 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5554 booted"
-            adb -s emulator-5556 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5556 booted"
-            adb -s emulator-5558 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5558 booted"
-
-            log "✅ All 3 emulators are fully booted"
-          ' > "$LOG_FILE" 2>&1 &
+          export AVD_NAME="${{ env.AVD_NAME }}"
+          export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
+          nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
@@ -1265,4 +1241,3 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-

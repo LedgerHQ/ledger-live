@@ -71,7 +71,7 @@ function inferAccount(id: string): Account {
 
 async function syncAccount(id: string) {
   const account = inferAccount(id);
-  const bridge = getAccountBridge(account);
+  const bridge = await getAccountBridge(account);
   await bridgeCache.prepareCurrency(account.currency);
   const syncConfig = {
     paginationConfig: {},

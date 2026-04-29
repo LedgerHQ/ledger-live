@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "1.23.0",
+  "version": "1.24.0",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
@@ -147,6 +147,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
+    "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

@@ -1,5 +1,13 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.test.ts"
+  ],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"
+  ],
   "entry": [
     "src/account.ts",
     "src/bridge/js.ts",

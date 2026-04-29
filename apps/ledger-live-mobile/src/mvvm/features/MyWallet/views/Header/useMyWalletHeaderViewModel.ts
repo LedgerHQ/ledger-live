@@ -20,14 +20,14 @@ export function useMyWalletHeaderViewModel() {
   }, [navigation]);
 
   const onNotificationsPress = useCallback(() => {
-    track("menuentry_clicked", { button: "Notifications", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "Notifications", page: ScreenName.MyWallet });
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenter,
     });
   }, [navigation]);
 
   const onSettingsPress = useCallback(() => {
-    track("menuentry_clicked", { button: "Settings", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "Settings", page: ScreenName.MyWallet });
     navigation.navigate(NavigatorName.Settings);
   }, [navigation]);
 

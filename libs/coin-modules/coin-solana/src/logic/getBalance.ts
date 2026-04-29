@@ -1,9 +1,9 @@
-import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { Balance, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { ParsedOnChainTokenAccount } from "../network/chain/web3";
 import type { SolanaTokenProgram } from "../types";
-import { computeUnstakeReserve, getStakeAccounts } from "./getStakes";
+import { computeUnstakeReserve, getStakeAccounts, type StakeAccount } from "./getStakes";
 
 export async function getBalance(
   api: ChainAPI,
@@ -43,6 +43,8 @@ export async function getBalance(
     locked: rawLocked > totalBalance ? totalBalance : rawLocked,
   };
 
+  const stakeBalances = mapStakeAccountsToBalances(stakeAccounts);
+
   const splBalances = mapTokenAccountsToBalances(
     splTokenAccounts,
     PARSED_PROGRAMS.SPL_TOKEN,
@@ -54,7 +56,38 @@ export async function getBalance(
     address,
   );
 
-  return [nativeBalance, ...splBalances, ...token2022Balances];
+  return [nativeBalance, ...stakeBalances, ...splBalances, ...token2022Balances];
+}
+
+function mapStakeAccountsToBalances(stakeAccounts: StakeAccount[]): Balance[] {
+  return stakeAccounts.map(({ account, activation }) => {
+    const delegation = account.info.stake?.delegation;
+    const delegateAddress = delegation?.voter.toBase58();
+    const amount = BigInt(account.onChainAcc.account.lamports);
+
+    const stake: Stake = {
+      uid: account.onChainAcc.pubkey.toBase58(),
+      address: account.onChainAcc.pubkey.toBase58(),
+      state: activation.state as StakeState,
+      asset: { type: "native" },
+      amount,
+    };
+
+    if (delegateAddress) {
+      stake.delegate = delegateAddress;
+    }
+    if (delegation) {
+      const deposited = BigInt(delegation.stake.toString());
+      stake.amountDeposited = deposited;
+      stake.amountRewarded = amount > deposited ? amount - deposited : 0n;
+    }
+
+    return {
+      value: amount,
+      asset: { type: "native" as const },
+      stake,
+    };
+  });
 }
 
 function mapTokenAccountsToBalances(

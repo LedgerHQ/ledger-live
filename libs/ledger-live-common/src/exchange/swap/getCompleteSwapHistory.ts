@@ -53,6 +53,16 @@ const getSwapOperationMap =
 
         if (account.type === "TokenAccount") {
           fromParentAccount = accounts.find(a => a.id === account.parentId);
+          if (fromParentAccount?.type !== "Account") return null;
+        }
+
+        if (toAccount.type === "TokenAccount" && !toParentAccount) {
+          const toAccountParentId = toAccount.parentId;
+          const foundParent = accounts.find(
+            a => a.type === "Account" && a.id === toAccountParentId,
+          );
+          if (foundParent?.type !== "Account") return null;
+          toParentAccount = foundParent;
         }
 
         const toCurrency = getAccountCurrency(toAccount);

@@ -1256,8 +1256,8 @@
             "description" : "まず「My Ledgerプロバイダー（{{providerNumber}}）」設定を無効化してください。無効にするには、Ledger Walletの「設定」を開き、「試験的機能」を選択して、「My Ledgerプロバイダー」をオフに切り替えます。"
           },
           "deviceNotGenuineError" : {
-            "title" : "この{{productName}}は正規品ではありません",
-            "description" : "この{{productName}}は安全に使用できません。\nLedgerサポートにご連絡ください。"
+            "title" : "この{{productName}}は、正規品チェックに失敗しました",
+            "description" : "このLedgerデバイスは安全ではありません。\nLedgerサポートにご連絡ください。"
           }
         },
         "whyPerformChecksLink" : "正規品チェックについて詳しく見る",
@@ -4606,6 +4606,27 @@
         "title" : "テーマ切り替え",
         "desc" : "テーマを素早く切り替えるためのフローティングオーバーレイを表示します。"
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "アナリティクスオプトイン同意（QA）",
+        "rowDesc" : "保存されているプライバシー同意バージョンと同意日を確認します。ポートフォリオ分析同意モーダルの古い状態をシミュレートします。",
+        "title" : "アナリティクスのオプトインに関する同意 — QA",
+        "readSection" : "現在の設定（読み取り専用）",
+        "storedPrivacyVersion" : "保存されているプライバシーポリシーのバージョン： {{version}}",
+        "currentPrivacyVersion" : "アプリの現在のプライバシーポリシーバージョン： {{version}}",
+        "consentDate" : "同意日：{{value}}",
+        "inlineOutdatePrivacyVersion" : "古いバージョン。",
+        "inlineRemoveConsentDate" : "日付を削除",
+        "actionResetForConsentFresh" : "同意を新たにリセット（同意データを削除し、分析とパーソナライゼーションをオフにする）",
+        "modalPreviewSection" : "ポートフォリオ（ホーム）に期待されるモーダル",
+        "modalPreviewNoModalUserOk" : "モーダルなし。プライバシーポリシーのバージョンと同意日は問題ありません。更新や再承認の必要はありません。",
+        "modalPreviewNoModalFeatureOff" : "モーダルなし。アナリティクスのオプトイン機能フラグがオフです。",
+        "modalPreviewNoModalOnboarding" : "モーダルなし。オンボーディングはまだ完了していません。",
+        "modalPreviewFresh" : "初回同意モーダル（新たな同意）。同意の更新が必要（欠落または無効な同意日）かつ共有分析がオフ（例：保存されたプライバシー確認なし／アナリティクス無効で同意日なし。",
+        "modalPreviewReconfirm" : "同意モーダルを再確認する。同意の更新が必要で、分析の共有がオンになっています。ユーザーは、初回コピーの代わりに、再確認／続行または停止のフローを選択します。",
+        "modalPreviewPrivacy" : "プライバシー更新モーダル。保存されているプライバシーポリシーのバージョンは最新ではありません（アプリよりもバージョンが低い）が、同意の更新はブロックされていません。ユーザーは最初にプライバシーポリシー更新のステップを確認します。",
+        "modalPreviewGoToHome" : "ポートフォリオのホームページを開き、モーダルが表示されるべき時に表示されます。",
+        "note" : "日付を削除すると、同意がnullに設定されます。古いバージョンは、保存されているプライバシーポリシーのバージョンを、アプリの現在のバージョンよりも低くします。リセットは、同意のメタデータを消去し、分析とパーソナライゼーションをオフにして、同意の新しいモーダルを再生成します。CONSENT_RENEWAL_INTERVAL_MSがlive-commonでnullである間、時間ベースの更新はオフのままです。"
+      },
       "brazeTools" : {
         "title" : "Brazeツール",
         "description" : "ローカルBrazeカードを生成",
@@ -4633,6 +4654,26 @@
             "path" : "パス"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "app.jsonを読み込む",
+        "desc" : "app.jsonファイルをドラッグ＆ドロップしてアカウントと設定をインポートします。",
+        "dropOrBrowse" : "app.jsonをこちらにドロップするか、クリックして選択してください。",
+        "importing" : "インポート中…",
+        "success" : "{{count}}アカウントを正常にインポートしました。",
+        "success_other" : "{{count}}アカウントが正常にインポートされました。",
+        "lastDeviceSeen" : "最後に確認されたデバイス：{{device}}",
+        "invalidFileType" : "無効なファイルタイプです。.jsonファイルが必要です。",
+        "missingDataField" : "無効なアプリ.json：トップレベルのデータフィールドがありません。",
+        "encryptedAccounts" : "暗号化されたアカウントが検出されました。まず、ファイルを復号化してください。",
+        "successLabel" : "成功",
+        "appJsonFile" : "App.jsonファイル",
+        "accountsImported" : "インポートされたアカウント",
+        "accountsFailed" : "失敗したアカウント",
+        "importFailed" : "インポート失敗：{{message}}",
+        "unknownError" : "インポート中に不明なエラーが発生しました。",
+        "failedCount" : "{{count}}アカウントを読み込みできませんでした。",
+        "failedCount_other" : "{{count}}アカウントを読み込みできませんでした。"
       },
       "mockAccounts" : {
         "title" : "モックアカウントの生成",
@@ -5872,6 +5913,10 @@
     },
     "recipientWording" : {
       "send" : "送付先",
+      "transfer_public" : "公開受取人",
+      "transfer_private" : "プライベートの受取人",
+      "convert_public_to_private" : "プライベートの受取人",
+      "convert_private_to_public" : "公開受取人",
       "delegate" : "バリデーター",
       "redelegate" : "バリデーター",
       "undelegate" : "バリデーター",
@@ -6313,6 +6358,11 @@
     "DeviceSocketFail" : {
       "title" : "Ledgerデバイスを再起動し、もう一度やり直してください。",
       "description" : "予期しないエラーが発生しました。もう一度お試しください。({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : "この{{productName}}は、正規品チェックに失敗しました",
+      "description" : "このLedgerデバイスは安全ではありません。Ledgerサポートにご連絡ください。",
+      "contactSupportCTA" : "Ledgerサポートへ問い合わせ"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "接続に失敗しました。",
@@ -7225,10 +7275,20 @@
       "title" : "資金が不足しています。最低必要残高は0.02TONです。"
     },
     "AleoAmountRecordRequired" : {
-      "title" : "数量についての有効なプライベート記録を選択します。"
+      "title" : "数量についての有効なプライベート記録を選択します。",
+      "description" : "送金金額は、利用可能な個人記録から1つ選択してください。"
     },
     "AleoFeeRecordRequired" : {
-      "title" : "手数料についての有効なプライベート記録を選択してください。"
+      "title" : "ネットワーク手数料を補うために、別のプライベート記録が必要です。",
+      "description" : "必要に応じて残高をチャージしてください。1つのプライベート記録が送金金額用に使用され、ネットワーク手数料をカバーできる別の記録が必要です。"
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "プライベート送付には少なくとも2つの記録が必要です",
+      "description" : "送金金額用の記録と、ネットワーク手数料用の記録が必要です。"
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "ネットワーク手数料を補うことができる記録はありません",
+      "description" : "送金金額の別のデータを選択するか、追加の資金で残高を補充してください。"
     },
     "BackupAppDataError" : {
       "title" : "アプリデータのバックアップ中にエラーが発生しました"
@@ -7393,8 +7453,8 @@
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "AlreadySendingApduError" : {
-      "title" : "通信エラー",
-      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      "title" : "Ledgerデバイスで操作が必要です",
+      "description" : "デバイスで操作を終了した後、以下の「Retry（再試行）」を選択してください。"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
@@ -7729,11 +7789,48 @@
     },
     "noAccounts" : {
       "title" : "このアプリにアクセスするにはアカウントが必要です。",
-      "add" : "アカウントを追加"
+      "select" : "アカウントを選択"
     }
   },
   "recoverRestore" : {
     "title" : "Ledgerを接続してロックを解除する"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "Ledgerの改善にご協力ください",
+      "description" : "お客様の同意のもと、当社は機能を向上させ、お客様の体験をパーソナライズするために使用状況データを収集します。",
+      "ctaAcceptAll" : "すべて受け入れる",
+      "ctaRefuseAll" : "すべて拒否する"
+    },
+    "reconfirm" : {
+      "title" : "Ledgerの改善を続けますか？",
+      "description" : "Ledgerの改善に役立てるために、引き続き使用状況データの共有を希望されますか？このデータは、機能を向上させ、エクスペリエンスをパーソナライズするために使用されます。",
+      "ctaContinue" : "はい、続行します",
+      "ctaStop" : "いいえ、やめます"
+    },
+    "privacy" : {
+      "title" : "プライバシーポリシーを更新しています",
+      "descriptionLead" : "当社の内容をご確認ください。 ",
+      "descriptionLinkLabel" : "プライバシーポリシー",
+      "descriptionTrail" : " 変更点を確認してください。設定はいつでも更新できます。",
+      "ctaGotIt" : "了解"
+    },
+    "setPreferences" : "設定を選択してください",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "アプリのパフォーマンス",
+        "description" : "Ledgerがアプリの使用状況を収集できるようにし、ユーザー体験を向上させる"
+      },
+      "personalizedExperience" : {
+        "title" : "好みに合わせてコンテンツをカスタマイズ",
+        "description" : "Ledgerがアプリの使用状況を収集して、パーソナライズされたコンテンツを提供できるようにします。"
+      },
+      "ctaConfirm" : "確認"
+    },
+    "footer" : {
+      "lead" : "同意は設定からいつでも取り消すことができます。",
+      "privacyLink" : "プライバシーポリシー"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -8248,7 +8345,7 @@
         "showBalance" : "残高を表示",
         "startSync" : "同期を開始",
         "stopSync" : "同期を停止",
-        "lastProcessedBlock" : "最後に処理されたブロック：{{block}}未処理のブロック：{{missing}}",
+        "upToDate" : "最新の状態",
         "lastSync" : "最終同期：{{date}}",
         "estimatedTimeRemaining" : "推定残り時間： {{hours}} : {{minutes}}"
       },

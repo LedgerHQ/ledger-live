@@ -8,7 +8,7 @@ export function ProfileSection() {
 
   return (
     <Box lx={{ alignItems: "center", gap: "s12" }}>
-      <UserAvatar />
+      <UserAvatar size="lg" />
       <Text typography="heading5SemiBold" lx={{ color: "base" }} testID="my-wallet-profile-title">
         {t("tabs.myWallet")}
       </Text>

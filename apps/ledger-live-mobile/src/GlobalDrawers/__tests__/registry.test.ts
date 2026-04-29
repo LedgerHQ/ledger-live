@@ -1,6 +1,7 @@
 import { DRAWER_REGISTRY, DRAWER_ENTRIES } from "../registry";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 import ReceiveDrawerWrapper from "LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer";
+import { NotificationsPromptWrapper } from "LLM/features/NotificationsPrompt";
 
 describe("GlobalDrawers Registry", () => {
   it("should contain all expected drawer entries with correct components", () => {
@@ -9,6 +10,9 @@ describe("GlobalDrawers Registry", () => {
 
     expect(DRAWER_REGISTRY.receive).toBeDefined();
     expect(DRAWER_REGISTRY.receive.component).toBe(ReceiveDrawerWrapper);
+
+    expect(DRAWER_REGISTRY.notificationsPrompt).toBeDefined();
+    expect(DRAWER_REGISTRY.notificationsPrompt.component).toBe(NotificationsPromptWrapper);
   });
 
   it("should have all entries with valid structure", () => {

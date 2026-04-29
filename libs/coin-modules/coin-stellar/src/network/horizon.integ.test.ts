@@ -1,5 +1,5 @@
 import coinConfig, { StellarCoinConfig } from "../config";
-import { fetchAllOperations } from "./horizon";
+import { fetchAllOperations, registerHorizonInterceptors } from "./horizon";
 
 describe("fetchAllOperations", () => {
   beforeAll(() => {
@@ -12,6 +12,7 @@ describe("fetchAllOperations", () => {
         },
       }),
     );
+    registerHorizonInterceptors();
   });
 
   it(

@@ -68,10 +68,7 @@ function extractReturnBlock(content) {
  */
 function extractMethodChunks(returnBlock) {
   const chunks = {};
-  const pattern = new RegExp(
-    `(?:^|[,{]\\s*\\n?)\\s*(${METHODS.join("|")})\\s*(?:[:,({])`,
-    "gm",
-  );
+  const pattern = new RegExp(`(?:^|[,{]\\s*\\n?)\\s*(${METHODS.join("|")})\\s*(?:[:,({])`, "gm");
 
   const matches = [];
   let m;
@@ -183,7 +180,9 @@ function main() {
 
   console.log(`  ${sep}`);
 
-  console.log(`\n  \x1b[1mLegend:\x1b[0m  \x1b[32m✓\x1b[0m implemented  \x1b[90m·\x1b[0m not supported  \x1b[31m✗\x1b[0m missing`);
+  console.log(
+    `\n  \x1b[1mLegend:\x1b[0m  \x1b[32m✓\x1b[0m implemented  \x1b[90m·\x1b[0m not supported  \x1b[31m✗\x1b[0m missing`,
+  );
 
   console.log();
 }

@@ -1331,6 +1331,37 @@
     }
   },
   "postOnboarding": {
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
+    "dialog": {
+      "title": "Next, finish wallet setup",
+      "titleCompleted": "You’re all set!",
+      "primaryLabel": "Got it",
+      "actionCompletedLabel": "Complete",
+      "actions": {
+        "deviceOnboarded": {
+          "title": "Set up your Ledger"
+        },
+        "assetsTransfer": {
+          "title": "Add crypto",
+          "description": "Receive or buy crypto to fund your wallet"
+        },
+        "syncAccounts": {
+          "title": "Sync your wallet",
+          "description": "Keep your crypto accounts synced"
+        },
+        "customImage": {
+          "title": "Customize the lock screen",
+          "description": "Display your favorite digital art or photo as your device’s lock screen."
+        },
+        "recover": {
+          "title": "Finish securing your backup",
+          "description": "Complete activating Ledger Recover"
+        }
+      }
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
@@ -4228,6 +4259,8 @@
         "activeTooltip": "Delegated amounts generate rewards",
         "inactiveTooltip": "Undelegated amounts do not generate rewards",
         "minSafeWarning": "Not enough funds",
+        "commission": "Commission",
+        "totalStake": "Total stake",
         "flow": {
           "title": "Delegate",
           "steps": {
@@ -4246,7 +4279,8 @@
               "title": "Amount"
             },
             "validator": {
-              "title": "Validators"
+              "title": "Validators",
+              "noResults": "No validators match your search"
             },
             "connectDevice": {
               "title": "Device"
@@ -4268,7 +4302,35 @@
       },
       "undelegation": {
         "header": "Undelegation(s)",
-        "inactiveTooltip": "Undelegated amounts do not generate rewards."
+        "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "flow": {
+          "title": "Stop staking",
+          "steps": {
+            "amount": {
+              "title": "Amount",
+              "subtitle": "The undelegation process takes <0>{{numberOfDays}} days</0> to finalize.",
+              "warningWithTimelock": "Rewards will be automatically claimed. The undelegated amount will be back in the available balance after the <0>{{numberOfDays}}-day timelock</0>.",
+              "warningInstant": "Rewards will be automatically claimed. The undelegated amount will be immediately available in your balance.",
+              "fields": {
+                "validator": "Validator",
+                "amount": "Amount to undelegate"
+              }
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully undelegated your assets.",
+                "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
       }
     }
   },
@@ -4659,7 +4721,7 @@
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions.",
       "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
@@ -4826,6 +4888,17 @@
         "openDrawer": "Open Drawer",
         "debugDialog": "Debug Dialog",
         "debugDuplicates": "Debug Duplicates"
+      },
+      "featuresAndFlowsDevTool": {
+        "title": "Features & Flows",
+        "description": "Developer tools for feature-related flows.",
+        "productTour": {
+          "title": "Product Tour",
+          "label": "Product Tour",
+          "completed": "Product tour is marked as completed.",
+          "notCompleted": "Product tour is not completed yet.",
+          "open": "Open"
+        }
       },
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
@@ -7365,6 +7438,9 @@
       "title": "No private record can cover the network fee.",
       "description": "Select a different record for the transfer amount or top up your balance with additional funds."
     },
+    "AleoApiConfigurationResetError": {
+      "title": "Record scanner configuration was reset, please sync your account again."
+    },
     "BackupAppDataError": {
       "title": "Error during app data backup"
     },
@@ -7898,7 +7974,7 @@
       },
       "personalizedExperience": {
         "title": "Personalized experience",
-        "description": "Enable Ledger to collect app usage to provide personalized contents"
+        "description": "Enable Ledger to collect app usage to provide personalized content"
       },
       "ctaConfirm": "Confirm"
     },
@@ -8570,7 +8646,8 @@
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",
-        "error": "Private sync failed. Please try again later."
+        "errorTitle": "Private sync failed",
+        "errorDesc": "Something went wrong, please try again"
       }
     }
   },
@@ -8598,6 +8675,17 @@
     "cta": {
       "continue": "Continue",
       "explore": "Explore my new portfolio"
+    }
+  },
+  "productTour": {
+    "cta": {
+      "continue": "Continue",
+      "done": "Done",
+      "fundYourWallet": "Fund your wallet",
+      "discoverSwap": "Discover swap",
+      "growYourRewards": "Grow your rewards",
+      "spendYourCrypto": "Spend your crypto",
+      "everythingAtAGlance": "Everything at a glance"
     }
   },
   "history": {
@@ -8638,6 +8726,12 @@
     }
   },
   "myWallet": {
+    "title": "My Wallet",
+    "avatar": {
+      "label": "Avatar",
+      "labelWithNotifications_one": "Avatar, {{count}} unseen notification",
+      "labelWithNotifications_other": "Avatar, {{count}} unseen notifications"
+    },
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",

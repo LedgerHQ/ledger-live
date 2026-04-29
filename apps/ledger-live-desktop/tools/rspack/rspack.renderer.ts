@@ -76,6 +76,10 @@ export function createRendererConfig(
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
         "styled-components": styledComponentsPath,
+        // Route `ZCashNative` to the IPC client in the renderer so the
+        // `zcash-utils` .node addon stays out of the bundle (see
+        // `@ledgerhq/zcash-shielded/ipc/main-host`).
+        "@ledgerhq/zcash-shielded/ZCashNative$": "@ledgerhq/zcash-shielded/ZCashNativeIPC",
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),

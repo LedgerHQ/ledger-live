@@ -16,7 +16,7 @@ type Props = {
 };
 
 function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: Props) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const isToken = currency.type === "TokenCurrency";
   const backgroundColorContrast = ensureContrast(
     color || rgba(getCurrencyColor(currency), isToken ? 1 : 1),
@@ -31,7 +31,6 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: 
   const ledgerId = currency.id;
   const tickerProp = currency.ticker;
   const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
-  const iconTheme = dark ? "dark" : "light";
   const iconSize = Math.round(size * sizeRatio);
   const validIconSize = getValidCryptoIconSizeNative(iconSize);
 
@@ -51,8 +50,6 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: 
         ledgerId={ledgerId}
         ticker={tickerProp}
         size={validIconSize}
-        theme={iconTheme}
-        backgroundColor={colors.background}
         {...(network && { network })}
       />
     </View>

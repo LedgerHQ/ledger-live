@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",
@@ -85,6 +85,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

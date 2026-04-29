@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
-import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
+import { SectionList, SectionListRenderItem } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Account, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
+import type { OperationsListSection } from "./useOperationsListViewModel";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
@@ -20,13 +21,20 @@ import { GRADIENT_HEIGHT } from "LLM/features/OperationsHistory/const";
 type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenName.OperationsList>;
 
 function keyExtractor(item: Operation) {
-  return `${item.accountId}_${item.id}`;
+  return `${item.accountId}_${item.id}_${item.type}`;
 }
 
 export default function OperationsList(_: Props) {
   const { bottom } = useSafeAreaInsets();
-  const { accounts, flattenedAccounts, sections, completed, isEmpty, onEndReached } =
-    useOperationsListViewModel();
+  const {
+    accounts,
+    flattenedAccounts,
+    accountByAddress,
+    sections,
+    completed,
+    isEmpty,
+    onEndReached,
+  } = useOperationsListViewModel();
 
   const listContentStyle = useMemo(
     () => ({
@@ -36,8 +44,8 @@ export default function OperationsList(_: Props) {
     [isEmpty, bottom],
   );
 
-  const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = useCallback(
-    ({ item }) => {
+  const renderItem: SectionListRenderItem<Operation, OperationsListSection> = useCallback(
+    ({ item, section }) => {
       const account = flattenedAccounts.find(a => a.id === item.accountId);
       const parentAccount: Account | undefined =
         account && account.type !== "Account"
@@ -47,15 +55,21 @@ export default function OperationsList(_: Props) {
       if (!account) return null;
 
       return (
-        <OperationsListItem operation={item} account={account} parentAccount={parentAccount} />
+        <OperationsListItem
+          operation={item}
+          account={account}
+          parentAccount={parentAccount}
+          accountByAddress={accountByAddress}
+          isPending={section.isPending ?? false}
+        />
       );
     },
-    [flattenedAccounts, accounts],
+    [flattenedAccounts, accounts, accountByAddress],
   );
 
   const renderSectionHeader = useCallback(
-    (info: { section: SectionListData<Operation, DailyOperationsSection> }) => (
-      <OperationsSectionHeader day={info.section.day} />
+    (info: { section: OperationsListSection }) => (
+      <OperationsSectionHeader day={info.section.day} isPending={info.section.isPending} />
     ),
     [],
   );
@@ -101,4 +115,4 @@ const rootStyle: LumenViewStyle = {
 };
 
 const listStyle = { flex: 1 } as const;
-const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16 } as const;
+const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16, paddingTop: 8 } as const;

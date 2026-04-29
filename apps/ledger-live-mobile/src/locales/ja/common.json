@@ -294,6 +294,11 @@
       "title" : "接続に失敗しました。",
       "description" : "もう一度お試しください。"
     },
+    "CounterfeitDevice" : {
+      "title" : "この{{productName}}は、正規品チェックに失敗しました",
+      "description" : "このLedgerデバイスは安全に使用できません。Ledgerサポートにご連絡ください。",
+      "contactSupportCTA" : "Ledgerサポートへお問い合わせ"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "接続に失敗しました。",
       "description" : "もう一度お試しください。"
@@ -415,8 +420,8 @@
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "AlreadySendingApduError" : {
-      "title" : "通信エラー",
-      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      "title" : "Ledgerデバイスで操作が必要です",
+      "description" : "デバイスで操作を完了する。"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "このアプリにアクセスするにはアカウントが必要です。",
-      "add" : "アカウントを追加"
+      "select" : "アカウントを選択"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "アカウント",
     "transfer" : "送金",
     "manager" : "My Ledger",
+    "myWallet" : "ウォレット",
     "settings" : "設定",
     "platform" : "Live Apps",
     "discover" : "アプリ一覧",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "アカウント更新"
     }
   },
+  "operationsList" : {
+    "to" : "送付先",
+    "from" : "送付元"
+  },
   "operationDetails" : {
     "title" : "トランザクションの詳細",
     "account" : "アカウント",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
+    "emptyTitle" : "まだトランザクションがありません",
+    "emptySubtitle" : "後ほど、トランザクションをご確認ください。",
     "noMoreTransactions" : "他のトランザクションはありません"
   },
   "selectableAccountsList" : {
@@ -8823,6 +8835,13 @@
     "error" : {
       "title" : "{{appName}}のインストールに失敗しました。",
       "description" : "インストール中に問題が発生しました。もう一度お試しください。"
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "help" : "ヘルプ",
+      "referral" : "紹介"
     }
   }
 }

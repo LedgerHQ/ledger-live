@@ -288,8 +288,10 @@ export type SettingsState = {
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
+  productTourCompleted: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;
+  hasClickedRecover: boolean;
 };
 
 export type AnalyticsConsentInfo = {

@@ -48,12 +48,26 @@ describe("withSpinner", () => {
 
   it("propagates errors (humanMode=false)", async () => {
     await expect(
-      withSpinner("loading", "done", async () => { throw new Error("fail"); }, false),
+      withSpinner(
+        "loading",
+        "done",
+        async () => {
+          throw new Error("fail");
+        },
+        false,
+      ),
     ).rejects.toThrow("fail");
   });
 
   it("returns the resolved value (humanMode=true, non-interactive env)", async () => {
-    const result = await withSpinner("loading", "done", async () => "ok", true);
-    expect(result).toBe("ok");
+    const savedClaudeCode = process.env.CLAUDECODE;
+    try {
+      process.env.CLAUDECODE = "1";
+      const result = await withSpinner("loading", "done", async () => "ok", true);
+      expect(result).toBe("ok");
+    } finally {
+      if (savedClaudeCode === undefined) delete process.env.CLAUDECODE;
+      else process.env.CLAUDECODE = savedClaudeCode;
+    }
   });
 });

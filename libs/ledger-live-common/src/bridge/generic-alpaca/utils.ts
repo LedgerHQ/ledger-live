@@ -9,6 +9,7 @@ import type {
   MapMemo,
   StakingOperation,
   TransactionIntent,
+  TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -22,6 +23,7 @@ import type {
   OperationCommon,
 } from "./types";
 import type { StellarMemo } from "@ledgerhq/coin-stellar/types/model";
+import { craftTransactionData as defaultCraftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 
 type BigNumberToBigIntDeep<T> = T extends BigNumber
   ? bigint
@@ -296,6 +298,7 @@ export function transactionToIntent(
   account: Account,
   transaction: GenericTransaction,
   computeIntentType?: (transaction: GenericTransaction) => string,
+  craftTransactionData?: (intent: TransactionIntent) => TxData,
 ): GenericAlpacaTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
   const isStaking = ["stake", "unstake"].includes(intentType);
@@ -312,9 +315,6 @@ export function transactionToIntent(
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount,
     feesStrategy: transaction.feesStrategy ?? undefined,
-    data: Buffer.isBuffer(transaction.data)
-      ? { type: "buffer", value: transaction.data }
-      : { type: "none" },
     sequence:
       transaction.nonce !== null && transaction.nonce !== undefined
         ? BigInt(transaction.nonce.toString())
@@ -336,6 +336,7 @@ export function transactionToIntent(
       assetOwner: transaction.assetOwner,
     };
   }
+
   if (transaction.memoType && transaction.memoValue) {
     res.memo = {
       type: transaction.memoType,
@@ -344,6 +345,9 @@ export function transactionToIntent(
   } else {
     res.memo = { type: "NO_MEMO" };
   }
+
+  const resolvedCraftTransactionData = craftTransactionData ?? defaultCraftTransactionData;
+  res.data = resolvedCraftTransactionData(res);
 
   return res;
 }

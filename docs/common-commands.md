@@ -56,6 +56,13 @@ pnpm mobile test:jest:watch
 # Library
 pnpm --filter <package-name> test
 pnpm --filter <package-name> test --watch
+
+# Family (run all tests for a coin/bridge family)
+pnpm test:family evm       # Runs @ledgerhq/coin-evm, @ledgerhq/coin-tester-evm,
+                            # @ledgerhq/live-signer-evm, @ledgerhq/evm-tools,
+                            # and generic-alpaca tests inside @ledgerhq/live-common
+pnpm test:family bitcoin   # All bitcoin-related packages
+pnpm test:family solana    # All solana-related packages
 ```
 
 ## Filtering / Scoping

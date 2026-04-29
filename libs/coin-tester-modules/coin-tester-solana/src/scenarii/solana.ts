@@ -12,6 +12,7 @@ import {
   initMSW,
   makeAccount,
 } from "../fixtures";
+import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@ledgerhq/live-env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
@@ -58,6 +59,68 @@ function computeSubAccountId(
     return encodeAccountIdWithTokenAccountAddress(parentAccountId, ata.toBase58());
   }
   return encodeTokenAccountId(parentAccountId, token);
+}
+
+function getSolanaStakes(account: Account): SolanaAccount["solanaResources"]["stakes"] {
+  return (account as SolanaAccount).solanaResources?.stakes ?? [];
+}
+
+interface StakingResourcesShape {
+  delegations: Array<{ validatorAddress: string; amount: BigNumber }>;
+  unbondings: Array<{ validatorAddress: string; amount: BigNumber }>;
+  delegatedBalance: BigNumber;
+  unbondingBalance: BigNumber;
+  pendingRewardsBalance: BigNumber;
+}
+
+/** Extract stakingResources set by the generic-alpaca bridge (not typed on Account). */
+function getStakingResources(account: Account): StakingResourcesShape | undefined {
+  const raw = (account as Account & { stakingResources?: StakingResourcesShape }).stakingResources;
+  return raw;
+}
+
+/**
+ * Strategy-agnostic staking assertions.
+ * Legacy exposes `solanaResources.stakes`, generic-adapter exposes `stakingResources`.
+ * These helpers verify the same semantic invariants regardless of strategy.
+ */
+function expectDelegationTo(
+  account: Account,
+  strat: BridgeStrategy,
+  validatorAddress: string,
+): void {
+  if (strat === "legacy") {
+    const stakes = getSolanaStakes(account);
+    const found = stakes.find(s => s.delegation?.voteAccAddr === validatorAddress);
+    expect(found).toBeDefined();
+  } else {
+    const sr = getStakingResources(account);
+    expect(sr).toBeDefined();
+    const found = sr!.delegations.find(d => d.validatorAddress === validatorAddress);
+    expect(found).toBeDefined();
+    expect(found!.amount.isGreaterThan(0)).toBe(true);
+  }
+}
+
+function expectStakeExists(account: Account, strat: BridgeStrategy, stakeAddress: string): void {
+  if (strat === "legacy") {
+    const found = getSolanaStakes(account).find(s => s.stakeAccAddr === stakeAddress);
+    expect(found).toBeDefined();
+  } else {
+    // generic-adapter doesn't expose individual stake addresses, check total staking > 0
+    const sr = getStakingResources(account);
+    expect(sr).toBeDefined();
+    const totalStaking = sr!.delegatedBalance.plus(sr!.unbondingBalance);
+    expect(totalStaking.isGreaterThan(0)).toBe(true);
+  }
+}
+
+function expectStakingResourcesDefined(account: Account, strat: BridgeStrategy): void {
+  if (strat === "legacy") {
+    expect(getSolanaStakes(account)).toBeDefined();
+  } else {
+    expect(getStakingResources(account)).toBeDefined();
+  }
 }
 
 function makeScenarioTransactions(
@@ -311,6 +374,8 @@ function makeScenarioTransactions(
       expect(currentAccount.spendableBalance).toStrictEqual(
         previousAccount.spendableBalance.minus(1e9 + 2297880),
       );
+      // Verify staking resources are populated after sync with delegation to the validator
+      expectDelegationTo(currentAccount, strategy, VOTE_ACCOUNT!.votePubkey);
     },
   };
 
@@ -333,6 +398,8 @@ function makeScenarioTransactions(
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
+      // Verify the stake account is now delegated
+      expectDelegationTo(currentAccount, strategy, VOTE_ACCOUNT!.votePubkey);
     },
   };
 
@@ -350,6 +417,9 @@ function makeScenarioTransactions(
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
+      // Verify the stake account still exists (state may be "deactivating" or still
+      // "active" depending on epoch boundary timing on the local validator)
+      expectStakeExists(currentAccount, strategy, STAKE_ACCOUNT!.publicKey.toBase58());
     },
   };
 
@@ -379,6 +449,9 @@ function makeScenarioTransactions(
       expect(currentAccount.spendableBalance).toStrictEqual(
         previousAccount.spendableBalance.plus(WITHDRAWABLE_AMOUNT),
       );
+      // Verify staking resources still exist after partial withdrawal
+      // (spendableBalance increase above already validates the withdraw landed)
+      expectStakingResourcesDefined(currentAccount, strategy);
     },
   };
 
@@ -403,6 +476,8 @@ function makeScenarioTransactions(
         previousAccount.balance.minus(latestOperation.value),
       );
       expect(currentAccount.spendableBalance).toStrictEqual(new BigNumber(0));
+      // Verify staking resources reflect the new stake
+      expectDelegationTo(currentAccount, strategy, VOTE_ACCOUNT!.votePubkey);
     },
   };
 

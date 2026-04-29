@@ -60,13 +60,13 @@ describe("useSettings", () => {
   it("uses the provided tracking source when navigating", () => {
     mockUseLocation.mockReturnValue(createLocation("/accounts"));
 
-    const { result } = renderHook(() => useSettings("mywallet"));
+    const { result } = renderHook(() => useSettings("My Wallet"));
 
     act(() => {
       result.current.handleSettings();
     });
 
-    expect(mockSetTrackingSource).toHaveBeenCalledWith("mywallet");
+    expect(mockSetTrackingSource).toHaveBeenCalledWith("My Wallet");
     expect(mockNavigate).toHaveBeenCalledWith("/settings");
   });
 

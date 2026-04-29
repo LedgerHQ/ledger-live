@@ -10,4 +10,5 @@ export {
   getLastBlock,
   getRecipientAccount,
   loadAccount,
+  registerHorizonInterceptors,
 } from "./horizon";

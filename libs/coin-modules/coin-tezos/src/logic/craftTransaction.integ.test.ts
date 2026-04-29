@@ -4,7 +4,10 @@ import { mockConfig } from "../test/config";
 import { craftTransaction } from ".";
 
 /**
- * https://teztnets.com/ghostnet-about
+ * Runs against Tezos mainnet via Ledger's vault explorer (see `mockConfig`).
+ * Despite the directory's other integ tests using Shadownet, this file does
+ * not query a testnet — Taquito reaches the mainnet RPC for counter / reveal
+ * estimation while ops themselves are forged locally and never broadcast.
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {

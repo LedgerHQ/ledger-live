@@ -6,8 +6,10 @@ import { withCurrencyDeviceSession } from "../../session/bridge-device-session";
 import { walletCliDebug } from "../../shared/log";
 import { colors } from "../../shared/ui";
 import { parseNetworkArg, currencyIdFromNetwork } from "../../shared/accountDescriptor";
+import type { AccountDescriptorV1 } from "../../shared/accountDescriptor";
 import { createCommandOutput } from "../../output";
-import { outputOption } from "../shared-options";
+import { outputOption } from "../inputs";
+import { Session } from "../../session/session-store";
 
 export default defineCommand({
   name: "discover",
@@ -33,10 +35,15 @@ export default defineCommand({
     const networkStr = `${network.name}:${network.env}`;
     walletCliDebug(`account discover: network=${networkStr}, output=${flags.output}`);
 
-    const out = createCommandOutput(flags.output, { command: "account discover", network: networkStr });
+    const out = createCommandOutput(flags.output, {
+      command: "account discover",
+      network: networkStr,
+    });
 
     await out.run(async () => {
       const spin = out.spin(`Connect device and open ${colors.bold(network.name)} app…`);
+      const discoveredDescriptors: AccountDescriptorV1[] = [];
+
       await withCurrencyDeviceSession(currencyId, async () => {
         spin?.success("Device session established");
 
@@ -48,6 +55,7 @@ export default defineCommand({
           wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID).subscribe({
             next: d => {
               out.discoveredAccount(d);
+              discoveredDescriptors.push(d.descriptor);
               count++;
               if (scanSpin) scanSpin.text = `Scanning… (${count} found so far)`;
             },
@@ -63,6 +71,17 @@ export default defineCommand({
         });
 
         out.flushDiscovery();
+
+        let added = 0;
+        try {
+          const session = await Session.read();
+          added = session.addDescriptors(discoveredDescriptors);
+          if (added > 0) await session.write();
+        } catch {
+          // Session persistence failure is non-fatal; discovery output is already flushed
+        }
+
+        if (added > 0) out.sessionSaved(added);
       });
     });
   },

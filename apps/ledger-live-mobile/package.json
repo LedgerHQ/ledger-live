@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -99,7 +99,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
-    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/crypto-icons": "2.0.1",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/context-module": "catalog:",

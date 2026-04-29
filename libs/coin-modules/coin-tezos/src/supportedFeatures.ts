@@ -2,5 +2,5 @@ import type { SupportedFeatures } from "@ledgerhq/coin-module-framework/features
 
 export const supportedFeatures: SupportedFeatures = {
   blockchain_txs: ["send"],
-  staking_txs: ["delegate", "undelegate"],
+  staking_txs: ["delegate", "undelegate", "stake", "unstake", "finalize_unstake"],
 };

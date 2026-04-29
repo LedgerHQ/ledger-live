@@ -202,6 +202,8 @@ apps/ledger-live-mobile/src/mvvm/features/Swap/                                 
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                     @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBorrowSection   @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -310,8 +312,10 @@ apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                      
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/tests/specs/onboarding/                                               @ledgerhq/engagement
 apps/ledger-live-desktop/tests/specs/postOnboarding/                                           @ledgerhq/engagement
@@ -346,6 +350,7 @@ apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarousel
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/hooks/**/useOnboardingWidgetVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                                     @ledgerhq/engagement
 
 # Common
 libs/ledger-live-common/src/analyticsConsent/                                                  @ledgerhq/engagement
@@ -388,6 +393,11 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 # CI — Turborepo & Nx
 /turbo.json                                           @ledgerhq/platform @ledgerhq/wallet-ci
 /nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci
+
+# Platform — Agent files
+AGENTS.md                         @ledgerhq/platform
+/CLAUDE.md                        @ledgerhq/platform
+.agents/                          @ledgerhq/platform
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 .github/copilot-instructions.md

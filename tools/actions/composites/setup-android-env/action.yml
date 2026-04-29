@@ -23,11 +23,20 @@ runs:
         distribution: ${{ inputs.jdk_distribution }}
         java-version: ${{ inputs.jdk_version }}
 
+    - name: Remove preinstalled cmdline-tools (force pinned install)
+      shell: bash
+      run: |
+        SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
+        if [ -d "$SDK/cmdline-tools" ]; then
+          echo "Removing $SDK/cmdline-tools so pinned cmdline-tools are not skipped."
+          rm -rf "$SDK/cmdline-tools" 2>/dev/null || sudo rm -rf "$SDK/cmdline-tools"
+        fi
+
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3.2.2
+      uses: android-actions/setup-android@v4.0.1
       with:
         packages: ${{ inputs.android_packages }}
-        cmdline-tools-version: 13114758
+        cmdline-tools-version: 14742923
 
     - name: Enable Hardware Acceleration
       shell: bash
