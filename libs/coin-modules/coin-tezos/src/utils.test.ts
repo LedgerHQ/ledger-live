@@ -65,13 +65,23 @@ describe("resolveTezosOperationMode", () => {
     expect(resolveTezosOperationMode("send", { type: "native" })).toBe("send");
   });
 
-  it("maps stake to delegate regardless of asset", () => {
+  it("maps staking intents to real staking modes regardless of asset", () => {
     expect(
       resolveTezosOperationMode("stake", {
         type: "token",
         assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:0",
       }),
-    ).toBe("delegate");
+    ).toBe("stake");
+
+    expect(resolveTezosOperationMode("unstake", { type: "native" })).toBe("unstake");
+    expect(resolveTezosOperationMode("finalize_unstake", { type: "native" })).toBe(
+      "finalize_unstake",
+    );
+  });
+
+  it("maps delegation intents to delegation modes", () => {
+    expect(resolveTezosOperationMode("delegate", { type: "native" })).toBe("delegate");
+    expect(resolveTezosOperationMode("undelegate", { type: "native" })).toBe("undelegate");
   });
 });
 

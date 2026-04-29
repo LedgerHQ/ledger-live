@@ -3,6 +3,7 @@ import { type OperationContents, OpKind } from "@taquito/rpc";
 import { getRevealFee, getRevealGasLimit } from "@taquito/taquito";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
+import type { TezosOperationMode } from "../types/model";
 import { createMockSigner } from "../utils";
 import { getTezosToolkit } from "./tezosToolkit";
 
@@ -19,7 +20,7 @@ export async function craftTransaction(
     counter?: number;
   },
   transaction: {
-    type: "send" | "delegate" | "undelegate" | "send_token";
+    type: TezosOperationMode;
     recipient: string;
     amount: bigint;
     fee: TransactionFee;
