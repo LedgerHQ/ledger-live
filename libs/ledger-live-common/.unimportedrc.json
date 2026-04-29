@@ -328,7 +328,6 @@
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
     "src/modularDrawer/index.ts",
     "src/test-helpers/cryptoAssetsStore.ts",
-    "src/bridge/generic-coin-framework/registerValidateAddress.ts",
     "src/cmc-client/index.ts",
     "src/cmc-client/__mocks__/fearAndGreed.mock.ts",
     "src/wallet-api/validation/validateUrl.ts",
