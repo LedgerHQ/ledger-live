@@ -3,8 +3,6 @@ import coinConfig from "../config";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { toHex } from "../logic/utils";
-import { getEnv } from "@ledgerhq/live-env";
 
 describe("Broadcast", () => {
   beforeAll(() => {
@@ -12,8 +10,8 @@ describe("Broadcast", () => {
       status: { type: "active" },
       networkType: "mainnet",
       apiUrls: {
-        node: getEnv("ALEO_MAINNET_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_MAINNET_SDK_ENDPOINT"),
+        node: "https://aleo.coin.ledger.com",
+        sdk: "https://aleo-backend.api.live.ledger.com/network/mainnet",
       },
       feeByTransactionType: {
         [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
@@ -51,10 +49,12 @@ describe("Broadcast", () => {
         privateKey: sender.privateKey(),
       });
 
-      const signedTx = toHex({
-        authorization: JSON.parse(authorization.toString()),
-        feeAuthorization: JSON.parse(feeAuthorization.toString()),
-      });
+      const signedTx = Buffer.from(
+        JSON.stringify({
+          authorization: JSON.parse(authorization.toString()),
+          feeAuthorization: JSON.parse(feeAuthorization.toString()),
+        }),
+      ).toString("hex");
 
       const account = getMockedAccount();
       const operation = getMockedOperation({ accountId: account.id, hash: "" });
@@ -68,7 +68,7 @@ describe("Broadcast", () => {
             operation,
           },
         }),
-      ).rejects.toThrow(/aleo: /);
+      ).rejects.toThrow(/the payer account balance is missing/);
     } finally {
       sender.destroy();
       receiver.destroy();
