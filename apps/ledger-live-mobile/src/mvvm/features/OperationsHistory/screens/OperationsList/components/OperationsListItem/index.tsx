@@ -42,6 +42,7 @@ function OperationsListItem({
     amount,
     amountColor,
     isOptimistic,
+    hasFailed,
     onPress,
   } = useOperationsListItemViewModel({ operation, account, parentAccount, accountByAddress });
 
@@ -61,16 +62,12 @@ function OperationsListItem({
   const subtitle = getSubtitle();
 
   return (
-    <LumenListItem
-      onPress={onPress}
-      disabled={isOptimistic}
-      lx={listItemStyle}
-      testID="operations-list-item"
-    >
+    <LumenListItem onPress={onPress} lx={listItemStyle} testID="operations-list-item">
       <ListItemLeading>
         <TransactionalIcon
           operationType={operationType}
           isOptimistic={isOptimistic}
+          hasFailed={hasFailed}
           currency={currency}
           mediaSize={48}
         />

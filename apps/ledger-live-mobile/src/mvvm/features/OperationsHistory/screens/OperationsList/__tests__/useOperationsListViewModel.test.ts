@@ -51,6 +51,70 @@ describe("useOperationsListViewModel", () => {
     expect(mockUseOperationsV1.mock.calls.length).toBe(callsBefore);
   });
 
+  describe("pending section", () => {
+    it("puts pending operations (blockHeight null) in a dedicated leading section", () => {
+      const confirmedOp = {
+        id: "op-confirmed",
+        blockHeight: 100,
+        date: new Date("2024-01-14"),
+        accountId: "acc1",
+      };
+      const pendingOp = {
+        id: "op-pending",
+        blockHeight: null,
+        date: new Date("2024-01-15"),
+        accountId: "acc1",
+      };
+      mockUseOperationsV1.mockReturnValue({
+        sections: [{ day: new Date("2024-01-15"), data: [pendingOp, confirmedOp] }],
+        completed: true,
+      });
+      const { result } = renderHook(() => useOperationsListViewModel());
+      const { sections } = result.current;
+
+      expect(sections[0].isPending).toBe(true);
+      expect(sections[0].data).toEqual([pendingOp]);
+      expect(sections[1].isPending).toBeUndefined();
+      expect(sections[1].data).toEqual([confirmedOp]);
+    });
+
+    it("omits the pending section when there are no pending operations", () => {
+      const confirmedOp = {
+        id: "op-confirmed",
+        blockHeight: 100,
+        date: new Date("2024-01-14"),
+        accountId: "acc1",
+      };
+      mockUseOperationsV1.mockReturnValue({
+        sections: [{ day: new Date("2024-01-14"), data: [confirmedOp] }],
+        completed: true,
+      });
+      const { result } = renderHook(() => useOperationsListViewModel());
+      const { sections } = result.current;
+
+      expect(sections).toHaveLength(1);
+      expect(sections[0].isPending).toBeUndefined();
+    });
+
+    it("drops a daily section entirely when all its operations are pending", () => {
+      const pendingOp = {
+        id: "op-pending",
+        blockHeight: null,
+        date: new Date("2024-01-15"),
+        accountId: "acc1",
+      };
+      mockUseOperationsV1.mockReturnValue({
+        sections: [{ day: new Date("2024-01-15"), data: [pendingOp] }],
+        completed: true,
+      });
+      const { result } = renderHook(() => useOperationsListViewModel());
+      const { sections } = result.current;
+
+      expect(sections).toHaveLength(1);
+      expect(sections[0].isPending).toBe(true);
+    });
+  });
+
   describe("accountByAddress", () => {
     // EVM chains share the same address format — Base, OP Mainnet, and Ethereum accounts
     // all have identical 0x addresses. The map must key by currencyId:address so that

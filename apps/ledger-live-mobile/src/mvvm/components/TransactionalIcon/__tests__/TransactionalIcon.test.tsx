@@ -33,4 +33,13 @@ describe("TransactionalIcon", () => {
     expect(screen.getByTestId(`transactional-icon-dot-NONE`)).toBeVisible();
     expect(screen.getByTestId(`transactional-icon-crypto-bitcoin`)).toBeVisible();
   });
+
+  it("should render dot wrapper when hasFailed regardless of operation type", () => {
+    render(
+      <TransactionalIcon operationType="NONE" isOptimistic={false} hasFailed currency={bitcoin} />,
+    );
+
+    expect(screen.getByTestId(`transactional-icon-dot-NONE`)).toBeVisible();
+    expect(screen.getByTestId(`transactional-icon-crypto-bitcoin`)).toBeVisible();
+  });
 });

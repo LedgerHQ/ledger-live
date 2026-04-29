@@ -5,10 +5,11 @@ import { useOperationsSectionHeaderViewModel } from "./useOperationsSectionHeade
 
 type Props = {
   day: Date;
+  isPending?: boolean;
 };
 
-function OperationsSectionHeader({ day }: Readonly<Props>) {
-  const { formattedDay } = useOperationsSectionHeaderViewModel(day);
+function OperationsSectionHeader({ day, isPending }: Readonly<Props>) {
+  const { formattedDay } = useOperationsSectionHeaderViewModel(day, isPending);
 
   return (
     <Box lx={containerStyle} testID="operations-section-header">

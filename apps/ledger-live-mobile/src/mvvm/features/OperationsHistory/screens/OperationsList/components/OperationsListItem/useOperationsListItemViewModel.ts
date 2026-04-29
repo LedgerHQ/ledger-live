@@ -34,6 +34,7 @@ export function useOperationsListItemViewModel({
   const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const amount = getOperationAmountNumber(operation);
   const isOptimistic = operation.blockHeight === null;
+  const hasFailed = !!operation.hasFailed;
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,
@@ -82,6 +83,7 @@ export function useOperationsListItemViewModel({
     amount,
     amountColor,
     isOptimistic,
+    hasFailed,
     onPress,
   };
 }

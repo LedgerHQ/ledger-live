@@ -8,6 +8,7 @@ import type { OperationType } from "@ledgerhq/types-live";
 export type TransactionalIconProps = {
   operationType: OperationType;
   isOptimistic: boolean;
+  hasFailed?: boolean;
   currency: CryptoCurrency | TokenCurrency;
   mediaSize?: keyof typeof mediaImageDotIconSizeMap;
 };
@@ -15,10 +16,11 @@ export type TransactionalIconProps = {
 function TransactionalIcon({
   operationType,
   isOptimistic,
+  hasFailed,
   currency,
   mediaSize = 48,
 }: Readonly<TransactionalIconProps>) {
-  const dot = getTransactionalDotConfig(operationType, isOptimistic);
+  const dot = getTransactionalDotConfig(operationType, isOptimistic, hasFailed);
   const cryptoIcon = (
     <CryptoIcon
       testID={`transactional-icon-crypto-${currency.name.toLowerCase()}`}

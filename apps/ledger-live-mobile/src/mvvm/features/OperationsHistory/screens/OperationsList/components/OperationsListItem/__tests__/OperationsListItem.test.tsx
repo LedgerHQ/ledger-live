@@ -176,9 +176,7 @@ describe("OperationsListItem", () => {
       );
 
       expect(getByText(`From ${counterpartyName}`)).toBeVisible();
-      expect(
-        queryByText(new RegExp(counterpartyEthAccount.freshAddress.slice(0, 6))),
-      ).toBeNull();
+      expect(queryByText(new RegExp(counterpartyEthAccount.freshAddress.slice(0, 6)))).toBeNull();
     });
   });
 
@@ -221,7 +219,25 @@ describe("OperationsListItem", () => {
     });
   });
 
-  it("should not navigate when the operation is optimistic", async () => {
+  it("should navigate to operation details when the operation is failed", async () => {
+    const operation = buildOperation({
+      type: "IN",
+      value: new BigNumber(1),
+      senders: ["s"],
+      hasFailed: true,
+    });
+    const { getByText, user } = renderItem(operation);
+    await user.press(getByText("Received"));
+    expect(track).toHaveBeenCalledWith("transaction_clicked", { transaction: "IN" });
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OperationDetails, {
+      accountId: account.id,
+      parentId: undefined,
+      operation,
+      key: operation.id,
+    });
+  });
+
+  it("should navigate to operation details when the operation is optimistic (pending)", async () => {
     const operation = buildOperation({
       type: "IN",
       value: new BigNumber(1),
@@ -230,8 +246,13 @@ describe("OperationsListItem", () => {
     });
     const { getByText, user } = renderItem(operation);
     await user.press(getByText("Received"));
-    expect(track).not.toHaveBeenCalled();
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("transaction_clicked", { transaction: "IN" });
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OperationDetails, {
+      accountId: account.id,
+      parentId: undefined,
+      operation,
+      key: operation.id,
+    });
   });
 
   it("should pass parentId when parentAccount is provided", async () => {

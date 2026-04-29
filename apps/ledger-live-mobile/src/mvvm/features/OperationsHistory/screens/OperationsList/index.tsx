@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
-import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
+import { SectionList, SectionListRenderItem } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Account, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
+import type { OperationsListSection } from "./useOperationsListViewModel";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
@@ -43,7 +44,7 @@ export default function OperationsList(_: Props) {
     [isEmpty, bottom],
   );
 
-  const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = useCallback(
+  const renderItem: SectionListRenderItem<Operation, OperationsListSection> = useCallback(
     ({ item }) => {
       const account = flattenedAccounts.find(a => a.id === item.accountId);
       const parentAccount: Account | undefined =
@@ -66,8 +67,8 @@ export default function OperationsList(_: Props) {
   );
 
   const renderSectionHeader = useCallback(
-    (info: { section: SectionListData<Operation, DailyOperationsSection> }) => (
-      <OperationsSectionHeader day={info.section.day} />
+    (info: { section: OperationsListSection }) => (
+      <OperationsSectionHeader day={info.section.day} isPending={info.section.isPending} />
     ),
     [],
   );
@@ -113,4 +114,4 @@ const rootStyle: LumenViewStyle = {
 };
 
 const listStyle = { flex: 1 } as const;
-const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16 } as const;
+const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16, paddingTop: 8 } as const;
