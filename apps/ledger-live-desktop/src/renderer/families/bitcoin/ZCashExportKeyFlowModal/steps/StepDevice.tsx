@@ -64,7 +64,9 @@ const StepExport = (props: StepProps) => {
           verify: true,
         }),
       ).finally(() => setUfvkRequestSent(true));
-      onUfvkChanged("ufvk");
+      onUfvkChanged(
+        "TODO: Once we have the GET_UFVK method on the device, we can pass the UFVK string here",
+      );
       transitionTo("confirmation");
     } catch (error) {
       onUfvkChanged("", error as Error);
