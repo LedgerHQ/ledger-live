@@ -4,9 +4,8 @@ import { selectMarketByCurrency } from "../entities/marketSelectors";
 import { ApiState } from "../entities/selectorUtils";
 import { nestedShallowEqual } from "./nestedShallowEqual";
 
-export type MarketByCurrencies = Record<
-  string,
-  { price: number; priceChangePercentage24h: number }
+export type MarketByCurrencies = Partial<
+  Record<string, { price: number; priceChangePercentage24h: number }>
 >;
 
 export const useMarketByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {

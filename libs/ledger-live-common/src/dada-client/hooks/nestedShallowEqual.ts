@@ -20,6 +20,7 @@ export function nestedShallowEqual(
   if (keysA.length !== keysB.length) return false;
 
   for (const key of keysA) {
+    if (!Object.prototype.hasOwnProperty.call(b, key)) return false;
     if (!shallowEqual(a[key], b[key])) return false;
   }
 
