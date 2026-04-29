@@ -34,6 +34,8 @@ describe("AssetDetail integration", () => {
 
     render(<AssetDetail />);
 
+    expect(screen.getByTestId("asset-detail-header")).toBeVisible();
+    expect(screen.getByText("Bitcoin")).toBeVisible();
     expect(screen.getByText("Market stats")).toBeVisible();
     expect(screen.getByText("Price performance")).toBeVisible();
     expect(screen.getByText("Placeholder market stats content")).toBeVisible();
@@ -60,6 +62,8 @@ describe("AssetDetail integration", () => {
 
     render(<AssetDetail />);
 
+    expect(screen.getByTestId("asset-detail-header")).toBeVisible();
+    expect(screen.getByText("Bitcoin Test")).toBeVisible();
     expect(screen.getByText("Market stats")).toBeVisible();
     expect(screen.getByText("Price performance")).toBeVisible();
     expect(screen.queryByText("Asset distribution item not found.")).not.toBeInTheDocument();

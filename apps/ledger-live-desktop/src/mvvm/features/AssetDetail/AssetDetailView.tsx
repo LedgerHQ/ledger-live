@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useNavigate } from "react-router";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { AssetDetailSection } from "./components/AssetDetailSection";
+import { AssetHeader } from "./components/AssetHeader/AssetHeader";
 import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
 import type { AssetDetailViewModel } from "./hooks/useAssetDetailViewModel";
 
 export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewModel>) {
+  const navigate = useNavigate();
+  const onBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
   const { topSections, sections, notFoundContent } = useAssetDetailSections(distributionItem);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-32">
+      {distributionItem ? (
+        <AssetHeader
+          assetLabel={distributionItem.currency.name}
+          icon={<CryptoCurrencyIcon currency={distributionItem.currency} size={24} />}
+          onBack={onBack}
+        />
+      ) : null}
+
       <section className="grid grid-cols-2 gap-24">
         {topSections.map(section => (
           <AssetDetailSection
