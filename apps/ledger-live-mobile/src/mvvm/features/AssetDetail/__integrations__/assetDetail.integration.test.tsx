@@ -24,7 +24,7 @@ function AssetDetailTestNavigator() {
 }
 
 describe("AssetDetail screen layout", () => {
-  it("renders all section placeholders", () => {
+  it("renders all section placeholders and BalanceGraph", () => {
     render(<AssetDetailTestNavigator />);
 
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
@@ -34,5 +34,13 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+  });
+
+  it("renders the market price section with title and chart placeholder", () => {
+    render(<AssetDetailTestNavigator />);
+
+    expect(screen.getByText("Market price")).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chartPlaceholder)).toBeVisible();
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
 });

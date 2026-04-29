@@ -8422,6 +8422,19 @@
       }
     }
   },
+  "assetDetail": {
+    "balanceGraph": {
+      "marketPrice": "Market price",
+      "timeframeSelector": "Timeframe",
+      "timeLabel": {
+        "24h": "1 day",
+        "7d": "1 week",
+        "30d": "1 month",
+        "1y": "1 year"
+      },
+      "chartPlaceholder": "Graphic"
+    }
+  },
   "assetSelection": {
     "selectCrypto": {
       "title": "Select Asset"
