@@ -1,16 +1,25 @@
+import type { DeviceContextInitializerComponentProps } from "@ledgerhq/device-intent";
+import { type EnsureAppReadyUseCaseDependencies } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import React from "react";
-import type { DeviceContextInitializerComponent } from "@ledgerhq/device-intent";
-import type { ConnectAppDeviceInitializationInput } from "../types";
+import type { InitializationInput } from "../types";
 import { DeviceContextInitializerComponentLWMView } from "./DeviceContextInitializerComponentLWMView";
 import { useDeviceContextInitializerComponentLWMViewModel } from "./useDeviceContextInitializerComponentLWMViewModel";
 
-const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
-  ConnectAppDeviceInitializationInput
-> = ({ connectionResult, deviceInitializationInput, onContextInitialized }) => {
+type Props = DeviceContextInitializerComponentProps<InitializationInput> & {
+  dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
+};
+
+const DeviceContextInitializerComponentLWM: React.FC<Props> = ({
+  connectionResult,
+  deviceInitializationInput,
+  onContextInitialized,
+  dependencies,
+}) => {
   const state = useDeviceContextInitializerComponentLWMViewModel({
     connectionResult,
     deviceInitializationInput,
     onContextInitialized,
+    dependencies,
   });
 
   return <DeviceContextInitializerComponentLWMView state={state} />;

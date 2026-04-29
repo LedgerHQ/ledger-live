@@ -14,7 +14,7 @@ import {
 import { ensureAppReadyUseCase } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useDeviceContextInitializerComponentLWMViewModel } from "../useDeviceContextInitializerComponentLWMViewModel";
-import type { ConnectAppDeviceInitializationInput } from "../../types";
+import type { InitializationInput } from "../../types";
 
 const mockDispatch = jest.fn();
 const mockUseSelector = jest.fn();
@@ -36,7 +36,7 @@ const connectionResult = {
   sessionId: "session-1",
 } as unknown as DeviceConnectionResult;
 
-const deviceInitializationInput: ConnectAppDeviceInitializationInput = {
+const deviceInitializationInput: InitializationInput = {
   appName: "Ethereum",
   dependencies: ["1inch"],
   requireLatestFirmware: false,

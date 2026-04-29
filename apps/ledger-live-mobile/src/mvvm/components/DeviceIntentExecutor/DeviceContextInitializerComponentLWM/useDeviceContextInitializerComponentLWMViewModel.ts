@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
-import { ensureAppReadyUseCase } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
+import {
+  ensureAppReadyUseCase,
+  type EnsureAppReadyUseCaseDependencies,
+} from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import type { ConnectAppInitSideEffects } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/types";
 import {
   FinalStateType,
@@ -11,18 +14,20 @@ import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { settingsStoreSelector } from "~/reducers/settings";
-import type { ConnectAppDeviceInitializationInput } from "../types";
+import type { InitializationInput } from "../types";
 
 type UseDeviceContextInitializerComponentLWMViewModelParams = {
   connectionResult: DeviceConnectionResult;
-  deviceInitializationInput: ConnectAppDeviceInitializationInput;
+  deviceInitializationInput: InitializationInput;
   onContextInitialized: (context: DeviceExtractedContext) => void;
+  dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
 };
 
 export function useDeviceContextInitializerComponentLWMViewModel({
   connectionResult,
   deviceInitializationInput,
   onContextInitialized,
+  dependencies,
 }: UseDeviceContextInitializerComponentLWMViewModelParams): EnsureAppReadyState {
   const dispatch = useDispatch();
   const deprecationDismissedCurrencyNames =
@@ -59,6 +64,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
       input: deviceInitializationInput,
       deprecationDismissedCurrencyNames,
       sideEffects,
+      dependencies,
     }).subscribe({
       next: nextState => {
         setState(nextState);
