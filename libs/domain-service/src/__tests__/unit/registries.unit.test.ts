@@ -19,6 +19,8 @@ describe("Domain Service", () => {
         expect(await getRegistriesForDomain("short.x")).toHaveLength(0);
         expect(await getRegistriesForDomain(".eth")).toHaveLength(0);
         expect(await getRegistriesForDomain("foo..com")).toHaveLength(0);
+        expect(await getRegistriesForDomain("random domain on.sui")).toHaveLength(0);
+        expect(await getRegistriesForDomain("random/domain.sui")).toHaveLength(0);
       });
     });
 
