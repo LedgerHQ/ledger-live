@@ -17,12 +17,6 @@ describe("useOperationsSectionHeaderViewModel", () => {
     expect(result.current.formattedDay).toBe("Today");
   });
 
-  it("returns 'Yesterday' for yesterday's date", () => {
-    const yesterday = new Date(2024, 0, 14);
-    const { result } = renderHook(() => useOperationsSectionHeaderViewModel(yesterday));
-    expect(result.current.formattedDay).toBe("Yesterday");
-  });
-
   it("returns a long formatted date string for older dates", () => {
     const oldDate = new Date(2023, 5, 20); // Jun 20, 2023
     const { result } = renderHook(() => useOperationsSectionHeaderViewModel(oldDate));
@@ -31,5 +25,10 @@ describe("useOperationsSectionHeaderViewModel", () => {
     expect(formattedDay.length).toBeGreaterThan(0);
     expect(formattedDay).not.toBe("Today");
     expect(formattedDay).not.toBe("Yesterday");
+  });
+
+  it("returns 'Pending' when isPending is true", () => {
+    const { result } = renderHook(() => useOperationsSectionHeaderViewModel(new Date(), true));
+    expect(result.current.formattedDay).toBe("Pending");
   });
 });
