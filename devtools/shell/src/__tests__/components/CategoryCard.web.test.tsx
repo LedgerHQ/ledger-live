@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen } from "jest/render";
 import { CategoryCard } from "../../components/CategoryCard.web";
 import { Category } from "../../types";
 
@@ -21,17 +22,19 @@ describe("CategoryCard", () => {
     expect(screen.getByText("2 tools")).toBeInTheDocument();
   });
 
-  it("calls onSelect with the first tool id when clicked", () => {
+  it("calls onSelect with the first tool id when clicked", async () => {
+    const user = userEvent.setup();
     const onSelect = jest.fn();
     render(<CategoryCard category={Category.CONFIGURATION} tools={[tool]} onSelect={onSelect} />);
-    fireEvent.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button"));
     expect(onSelect).toHaveBeenCalledWith("feature-flags");
   });
 
-  it("does not call onSelect when tools is empty", () => {
+  it("does not call onSelect when tools is empty", async () => {
+    const user = userEvent.setup();
     const onSelect = jest.fn();
     render(<CategoryCard category={Category.CONFIGURATION} tools={[]} onSelect={onSelect} />);
-    fireEvent.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button"));
     expect(onSelect).not.toHaveBeenCalled();
   });
 });

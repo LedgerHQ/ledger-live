@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen } from "jest/render";
 import { ToolRow } from "../../components/ToolRow.web";
 
 describe("ToolRow", () => {
@@ -27,20 +28,21 @@ describe("ToolRow", () => {
     expect(screen.queryByText("Platform")).not.toBeInTheDocument();
   });
 
-  it("calls onClick when clicked", () => {
+  it("calls onClick when clicked", async () => {
+    const user = userEvent.setup();
     const onClick = jest.fn();
     render(<ToolRow title="Feature Flags" onClick={onClick} />);
-    fireEvent.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button"));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it("sets aria-current to page when active", () => {
-    render(<ToolRow title="Feature Flags" isActive={true} />);
+    render(<ToolRow title="Feature Flags" isActive={true} onClick={jest.fn()} />);
     expect(screen.getByRole("button")).toHaveAttribute("aria-current", "page");
   });
 
   it("does not set aria-current when inactive", () => {
-    render(<ToolRow title="Feature Flags" isActive={false} />);
+    render(<ToolRow title="Feature Flags" isActive={false} onClick={jest.fn()} />);
     expect(screen.getByRole("button")).not.toHaveAttribute("aria-current");
   });
 });

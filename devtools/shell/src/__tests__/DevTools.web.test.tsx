@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "jest/render";
 import { DevTools } from "../DevTools.web";
 
 beforeEach(() => {

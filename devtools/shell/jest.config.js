@@ -19,9 +19,11 @@ module.exports = {
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   testPathIgnorePatterns: ["\\.native\\.test\\."],
   moduleNameMapper: {
-    "^@ledgerhq/lumen-ui-react$": "<rootDir>/jest/mocks/lumen-ui-react.tsx",
     "^@ledgerhq/lumen-ui-react/symbols$": "<rootDir>/jest/mocks/lumen-ui-react-symbols.tsx",
-    "^@ledgerhq/lumen-design-core$": "<rootDir>/jest/mocks/lumen-design-core.ts",
   },
+  modulePaths: ["<rootDir>"],
+  transformIgnorePatterns: [
+    "node_modules/.pnpm/(?!(@ledgerhq\\+lumen-ui-react|@ledgerhq\\+lumen-design-core))",
+  ],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };
