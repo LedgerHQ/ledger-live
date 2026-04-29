@@ -10,7 +10,7 @@ import {
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
 import { ValidatorsAppValidator } from "./network/validator-app";
-import coinConfig from "./config";
+import coinConfig, { type SolanaConfig } from "./config";
 
 const SIGNATURE_SIZE = 64;
 const DUMMY_SIGNATURE_FILL = 1;
@@ -78,7 +78,12 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
 }
 
 export function endpointByCurrencyId(currencyId: string): string {
-  const { rpcUrls } = coinConfig.getCoinConfig();
+  let rpcUrls: SolanaConfig["rpcUrls"];
+  try {
+    rpcUrls = coinConfig.getCoinConfig().rpcUrls;
+  } catch {
+    // coin config not initialized, fall back to defaults
+  }
   const endpoints: Record<string, string> = {
     solana: rpcUrls?.solana ?? getEnv("API_SOLANA_PROXY"),
     solana_devnet: rpcUrls?.solana_devnet ?? clusterApiUrl("devnet"),
