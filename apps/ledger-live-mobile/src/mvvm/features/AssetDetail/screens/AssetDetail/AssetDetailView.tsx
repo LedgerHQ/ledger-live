@@ -8,6 +8,7 @@ import { TrackScreen } from "~/analytics";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { SectionPlaceholder } from "./components/SectionPlaceholder";
 import { BalanceGraph } from "./components/BalanceGraph";
+import { Addresses } from "./components/Addresses";
 import { Footer } from "./components/Footer";
 import { CTAS_HEIGHT, SECTION_HEIGHT, PLACEHOLDER_COLORS } from "./utils/constants";
 
@@ -36,11 +37,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
             backgroundColor={PLACEHOLDER_COLORS.balanceDetails}
             height={SECTION_HEIGHT}
           />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.addresses}
-            backgroundColor={PLACEHOLDER_COLORS.addresses}
-            height={SECTION_HEIGHT}
-          />
+          <Addresses currency={currency} />
           <SectionPlaceholder
             testID={ASSET_DETAIL_TEST_IDS.marketStats}
             backgroundColor={PLACEHOLDER_COLORS.marketStats}

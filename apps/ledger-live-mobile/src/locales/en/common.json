@@ -8433,6 +8433,11 @@
         "1y": "1 year"
       },
       "chartPlaceholder": "Graphic"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "addAccount": "Add",
+      "empty": "No addresses yet. Tap Add to get started."
     }
   },
   "assetSelection": {
