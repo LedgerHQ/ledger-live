@@ -41,7 +41,7 @@ test("shared -> domain is forbidden (leaf-layer rule)", () => {
   const v = findViolations(graph);
   assert.equal(v.length, 1);
   assert.equal(v[0].sourceName, "a");
-  assert.equal(v[0].sourceTag, "scope:shared");
+  assert.deepEqual(v[0].sourceTags, ["scope:shared"]);
   assert.equal(v[0].target, "b");
 });
 
@@ -66,7 +66,7 @@ test("domain-entity -> domain-api is forbidden (intra-domain rule)", () => {
   );
   const v = findViolations(graph);
   assert.equal(v.length, 1);
-  assert.equal(v[0].sourceTag, "type:domain-entity");
+  assert.deepEqual(v[0].sourceTags, ["type:domain-entity"]);
   assert.equal(v[0].target, "b");
 });
 
@@ -124,7 +124,7 @@ test("features -> legacy libs is forbidden (features must stay in new arch)", ()
   );
   const v = findViolations(graph);
   assert.equal(v.length, 1);
-  assert.equal(v[0].sourceTag, "scope:features");
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
 });
 
 test("legacy source (no new-arch tags) is unconstrained", () => {
@@ -175,7 +175,26 @@ test("multiple violations are all reported", () => {
   );
   const v = findViolations(graph);
   assert.equal(v.length, 2);
-  assert.ok(v.every(x => x.sourceName === "a" && x.sourceTag === "scope:shared"));
+  assert.ok(v.every(x => x.sourceName === "a" && x.sourceTags.includes("scope:shared")));
+});
+
+test("multi-tag source emits one deduped violation per edge", () => {
+  // type:domain-api source also carries scope:domain — both rules match,
+  // both forbid scope:features targets. Should produce ONE violation
+  // listing both source tags.
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:domain", "type:domain-api"] },
+      { name: "b", tags: ["scope:features"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.equal(v[0].sourceName, "a");
+  assert.equal(v[0].target, "b");
+  assert.ok(v[0].sourceTags.includes("scope:domain"));
+  assert.ok(v[0].sourceTags.includes("type:domain-api"));
 });
 
 test("missing tags default to empty array (no crash)", () => {
