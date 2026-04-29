@@ -49,7 +49,7 @@ export async function broadcast({
     encryptedData,
   });
 
-  if (res.broadcast_result && res.broadcast_result.status_code === 422) {
+  if (res.broadcast_result && res.broadcast_result.status !== "Accepted") {
     throw new Error(`aleo: ${res.broadcast_result?.message ?? "Unknown error"}`);
   }
 
