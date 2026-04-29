@@ -1,5 +1,5 @@
 import React, { useEffect, lazy, Suspense } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { ipcRenderer } from "electron";
 import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -8,7 +8,7 @@ import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { WalletSyncProvider } from "LLD/features/WalletSync/components/WalletSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
-import Box from "~/renderer/components/Box/Box";
+import { cn } from "LLD/utils/cn";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import Idler from "~/renderer/components/Idler";
@@ -300,6 +300,7 @@ const MainAppContent = ({
 export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
+  const styledComponentsTheme = useTheme();
   const {
     shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
@@ -330,41 +331,30 @@ export const MainAppLayout = () => {
       )}
       <SyncNewAccounts priority={2} />
 
-      {useWallet40Layout ? (
-        <div
-          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat transition-[background-image] duration-200"
-          style={
-            backgroundImage
+      <div
+        className={cn(
+          "flex size-full min-w-0 grow flex-row",
+          useWallet40Layout &&
+            "bg-canvas bg-top-left bg-no-repeat transition-[background-image] duration-200",
+        )}
+        style={
+          useWallet40Layout
+            ? backgroundImage
               ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: BACKGROUND_SIZE }
               : undefined
-          }
-        >
-          <MainAppContent
-            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
-            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
-            shouldDisplayAssetSection={shouldDisplayAssetSection}
-            shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
-          />
-        </div>
-      ) : (
-        <Box
-          grow
-          horizontal
-          bg="background.default"
-          color="neutral.c70"
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <MainAppContent
-            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
-            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
-            shouldDisplayAssetSection={shouldDisplayAssetSection}
-            shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
-          />
-        </Box>
-      )}
+            : {
+                backgroundColor: styledComponentsTheme.colors.background.default,
+                color: styledComponentsTheme.colors.neutral.c70,
+              }
+        }
+      >
+        <MainAppContent
+          shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+          shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+          shouldDisplayAssetSection={shouldDisplayAssetSection}
+          shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
+        />
+      </div>
 
       {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
         <NightlyLayer />
