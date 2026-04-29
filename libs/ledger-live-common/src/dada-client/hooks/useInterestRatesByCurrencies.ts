@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import isEqual from "lodash/isEqual";
 import { selectInterestRateByCurrency } from "../entities/interestRateSelectors";
 import { ApyType } from "../types/trend";
 import { ApiState } from "../entities/selectorUtils";
-import { nestedShallowEqual } from "./nestedShallowEqual";
 
 const isValidApyType = (type: string): type is ApyType =>
   type === "NRR" || type === "APY" || type === "APR";
@@ -26,5 +26,5 @@ export const useInterestRatesByCurrencies = (currencies: CryptoOrTokenCurrency[]
       }
     }
     return rates;
-  }, nestedShallowEqual);
+  }, isEqual);
 };
