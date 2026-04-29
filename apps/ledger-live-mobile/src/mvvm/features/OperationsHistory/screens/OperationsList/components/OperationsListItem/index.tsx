@@ -22,6 +22,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | undefined;
   accountByAddress: Map<string, AccountLike>;
+  isPending: boolean;
 };
 
 function OperationsListItem({
@@ -29,6 +30,7 @@ function OperationsListItem({
   account,
   parentAccount,
   accountByAddress,
+  isPending,
 }: Readonly<Props>) {
   const { t } = useTranslation();
   const {
@@ -41,9 +43,14 @@ function OperationsListItem({
     unit,
     amount,
     amountColor,
-    isOptimistic,
+    hasFailed,
     onPress,
-  } = useOperationsListItemViewModel({ operation, account, parentAccount, accountByAddress });
+  } = useOperationsListItemViewModel({
+    operation,
+    account,
+    parentAccount,
+    accountByAddress,
+  });
 
   const title = t(`operations.types.${operationType}`);
   const directionLabel = isOutgoing ? t("operationsList.to") : t("operationsList.from");
@@ -61,16 +68,12 @@ function OperationsListItem({
   const subtitle = getSubtitle();
 
   return (
-    <LumenListItem
-      onPress={onPress}
-      disabled={isOptimistic}
-      lx={listItemStyle}
-      testID="operations-list-item"
-    >
+    <LumenListItem onPress={onPress} lx={listItemStyle} testID="operations-list-item">
       <ListItemLeading>
         <TransactionalIcon
           operationType={operationType}
-          isOptimistic={isOptimistic}
+          isPending={isPending}
+          hasFailed={hasFailed}
           currency={currency}
           mediaSize={48}
         />
