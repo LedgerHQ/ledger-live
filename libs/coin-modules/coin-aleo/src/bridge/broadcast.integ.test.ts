@@ -4,6 +4,7 @@ import { TRANSACTION_TYPE } from "../constants";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { toHex } from "../logic/utils";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("Broadcast", () => {
   beforeAll(() => {
@@ -11,8 +12,8 @@ describe("Broadcast", () => {
       status: { type: "active" },
       networkType: "mainnet",
       apiUrls: {
-        node: "https://aleo.coin.ledger.com",
-        sdk: "https://aleo-backend.api.live.ledger.com/network/mainnet",
+        node: getEnv("ALEO_MAINNET_NODE_ENDPOINT"),
+        sdk: getEnv("ALEO_MAINNET_SDK_ENDPOINT"),
       },
       feeByTransactionType: {
         [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,

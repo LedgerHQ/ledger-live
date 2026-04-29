@@ -20,6 +20,7 @@ export async function broadcast({
     feeAuthorization?: Record<string, unknown>;
   }>(signedTx);
 
+  // TODO: not used anymore, remove with https://ledgerhq.atlassian.net/browse/LIVE-29982
   if (!config.useEncryptedProve) {
     const res = await apiClient.submitDelegatedProvingRequest({
       currency: account.currency,
@@ -36,7 +37,7 @@ export async function broadcast({
   });
 
   const encryptedData = await sdkClient.encryptProvingRequest({
-    publicKey: publicKeyResponse.public_key,
+    publicKey: publicKeyResponse.data.public_key,
     currency: account.currency,
     authorization,
     ...(feeAuthorization && { feeAuthorization }),
@@ -45,12 +46,16 @@ export async function broadcast({
 
   const res = await apiClient.submitEncryptedDelegatedProvingRequest({
     currency: account.currency,
-    keyId: publicKeyResponse.key_id,
+    keyId: publicKeyResponse.data.key_id,
     encryptedData,
+    stickySessionCookie: publicKeyResponse.stickySessionCookie,
   });
 
   if (res.broadcast_result && res.broadcast_result.status !== "Accepted") {
-    throw new Error(`aleo: ${res.broadcast_result?.message ?? "Unknown error"}`);
+    const status = res.broadcast_result.status;
+    const error = "message" in res.broadcast_result ? res.broadcast_result.message : null;
+
+    throw new Error(`aleo: broadcast failed with status: ${status} (${error ?? "Unknown error"})`);
   }
 
   return res.transaction.id;
