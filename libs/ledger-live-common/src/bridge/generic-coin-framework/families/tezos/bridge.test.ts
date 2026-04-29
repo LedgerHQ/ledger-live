@@ -36,7 +36,7 @@ beforeAll(() => {
   setCryptoAssetsStore(mockStore);
 });
 
-describe("generic-alpaca Tezos token", () => {
+describe("generic-coin-framework Tezos token", () => {
   describe("Tezos token helpers", () => {
     it("computes the token of a known asset", async () => {
       const tezos = getCryptoCurrencyById("tezos");

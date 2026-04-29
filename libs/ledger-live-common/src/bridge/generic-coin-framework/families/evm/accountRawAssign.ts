@@ -6,7 +6,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-evm/sta
  * does not serialize family-specific account resources).
  *
  * Kept in a dedicated adapter module — like `families/evm/signer.ts` and
- * `families/evm/bridge.ts` — so that `generic-alpaca/accountBridge.ts`
+ * `families/evm/bridge.ts` — so that `generic-coin-framework/accountBridge.ts`
  * stays family-agnostic and does not need to reach into `@ledgerhq/coin-evm`
  * directly.
  */

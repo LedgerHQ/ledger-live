@@ -1,7 +1,7 @@
 import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { findCryptoCurrencyByNetwork } from "../utils";
-import { getNetworkAlpacaApi } from "./network/network-alpaca";
+import { getNetworkAlpacaApi } from "./network/network-coin-service";
 
 /**
  * Lazy-load coin Alpaca API modules so consumers (e.g. wallet-cli EVM-only) do not evaluate

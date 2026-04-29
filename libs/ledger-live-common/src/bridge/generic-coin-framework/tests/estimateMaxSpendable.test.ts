@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import { genericEstimateMaxSpendable } from "../estimateMaxSpendable";
-import * as alpaca from "../alpaca";
+import * as alpaca from "../api";
 import { Account } from "@ledgerhq/types-live";
 
 // Mock the alpaca API
-jest.mock("../alpaca", () => ({
+jest.mock("../api", () => ({
   getAlpacaApi: jest.fn(),
 }));
 

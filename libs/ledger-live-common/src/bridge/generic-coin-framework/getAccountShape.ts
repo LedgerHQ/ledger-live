@@ -3,7 +3,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bri
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
-import { getAlpacaApi } from "./alpaca";
+import { getAlpacaApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";

@@ -1,5 +1,5 @@
 import { genericPrepareTransaction } from "../prepareTransaction";
-import { getAlpacaApi } from "../alpaca";
+import { getAlpacaApi } from "../api";
 import { getBridgeApi } from "../bridge";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
@@ -8,7 +8,7 @@ import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/te
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
-jest.mock("../alpaca", () => ({
+jest.mock("../api", () => ({
   getAlpacaApi: jest.fn(),
 }));
 jest.mock("../bridge", () => ({

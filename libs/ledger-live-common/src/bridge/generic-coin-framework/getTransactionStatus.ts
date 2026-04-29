@@ -1,7 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { getAlpacaApi } from "./alpaca";
+import { getAlpacaApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,

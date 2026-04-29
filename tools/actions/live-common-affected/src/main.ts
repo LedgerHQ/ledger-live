@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { GENERIC_ALPACA_CHAINS } from "./constants";
+import { GENERIC_COIN_SERVICE_CHAINS } from "./constants";
 import * as core from "@actions/core";
 
 /**
@@ -47,9 +47,9 @@ function main(ref: string) {
                 if (second === "families") {
                   // in case of coin implementations, we will stop at the coin family level
                   return `${second}/${third}`;
-                } else if (second === "live-common/src/bridge/generic-alpaca") {
+                } else if (second === "live-common/src/bridge/generic-coin-framework") {
                   // in case of live-common/src, we consider the first src/* folder level to be relevant filter
-                  return GENERIC_ALPACA_CHAINS;
+                  return GENERIC_COIN_SERVICE_CHAINS;
                 } else {
                   // in any other case, we consider the second src/* folder level to be relevant filter
                   return second || first;
