@@ -27,16 +27,20 @@ export const MIN_SUGGESTED_FEE_SMALL_TRANSFER = 489;
 export const OP_SIZE_XTZ_TRANSFER = 154;
 
 /**
- * Helper function to map generic staking intents to Tezos operation modes
+ * Helper function to map generic intents to Tezos operation modes.
  */
-export function mapIntentTypeToTezosMode(intentType: string): "send" | "delegate" | "undelegate" {
+export function mapIntentTypeToTezosMode(intentType: string): TezosOperationMode {
   switch (intentType) {
-    case "stake":
     case "delegate":
       return "delegate";
-    case "unstake":
     case "undelegate":
       return "undelegate";
+    case "stake":
+      return "stake";
+    case "unstake":
+      return "unstake";
+    case "finalize_unstake":
+      return "finalize_unstake";
     default:
       return "send";
   }
