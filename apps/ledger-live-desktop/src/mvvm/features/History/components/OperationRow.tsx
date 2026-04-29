@@ -70,7 +70,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
                 <SquaredCryptoIcon
                   ledgerId={iconCurrency.id}
                   ticker={iconCurrency.ticker}
-                  size="20px"
+                  size={20}
                   network={iconNetwork}
                 />
               )}
