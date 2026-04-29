@@ -1,3 +1,5 @@
+import type { BroadcastResult } from "@provablehq/sdk/mainnet.js";
+
 export type AleoTransactionType = "public" | "private";
 
 export type AleoTransitionValue =
@@ -152,12 +154,7 @@ export interface DelegatedProvingResponse {
       fee: {
         transition: DelegatedProvingTransitionResponse;
       };
-      broadcast_result: string;
     };
   };
-  broadcast_result?: {
-    status: string;
-    status_code: number;
-    message: string;
-  };
+  broadcast_result?: BroadcastResult;
 }
