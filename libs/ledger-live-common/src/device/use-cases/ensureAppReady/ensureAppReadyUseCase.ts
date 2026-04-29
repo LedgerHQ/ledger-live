@@ -19,10 +19,10 @@ import { buildFinalState } from "./helpers/buildFinalState";
 import { ConnectAppSideEffectsHandler } from "./helpers/ConnectAppSideEffectsHandler";
 import type { ConnectAppInitSideEffects, EnsureAppReadyInput } from "./types";
 
-type EnsureAppReadyUseCaseDependencies = {
+export type EnsureAppReadyUseCaseDependencies = {
   getMinVersion: GetMinVersion;
   getDeprecationConfig: GetDeprecationConfig;
-  shouldUpgrade: typeof shouldUpgrade;
+  shouldUpgrade: (appName: string, appVersion: string) => boolean;
 };
 
 type EnsureAppReadyUseCaseParams = {
