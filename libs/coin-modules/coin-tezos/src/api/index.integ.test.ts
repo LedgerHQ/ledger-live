@@ -56,20 +56,33 @@ describe("Tezos Api", () => {
     });
   });
 
-  // Multi-curve recipient handling — sender is the persistent tz1 staker.
-  // Each row picks a recipient with a different curve prefix to verify estimation
-  // doesn't reject any standard tz address shape.
+  // Multi-curve sender handling — each row exercises estimateFees with a sender
+  // address + matching senderPublicKey for a different curve, covering the
+  // pubkey-normalization + sender-derivation path in api/index.ts.
   it.each([
-    ["ed25519 / tz1 recipient", "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY"],
-    ["secp256k1 / tz2 recipient", "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq"],
-    ["P256 / tz3 recipient", "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc"],
-  ])("does not fail when providing a %s", async (_, recipient) => {
+    [
+      "ed25519 / tz1",
+      "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY",
+      "edpkv2EJVgdvaK8TB5mMttfN93jRhHwoyKcy9sehANdeMDNY27zkjz",
+    ],
+    [
+      "secp256k1 / tz2",
+      "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq",
+      "sppk7cWw2W2H9Uf7zWAju13smtbETcPbLpDGFZtpB7TAoDsVFiAizhf",
+    ],
+    [
+      "P256 / tz3",
+      "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc",
+      "p2pk66gP3wq6k9QgNwAgaGLeXc3YFfrxgYdC7cdYuJWAHYBw4hExVHW",
+    ],
+  ])("does not fail when providing a %s sender with pub key", async (_, sender, pubKey) => {
     const result = await module.estimateFees({
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
-      sender: address,
-      recipient,
+      sender,
+      senderPublicKey: pubKey,
+      recipient: address,
       amount: BigInt(100),
     } as SendTransactionIntent);
 
