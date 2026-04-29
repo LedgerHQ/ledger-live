@@ -9,6 +9,7 @@ import {
   RetryableStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
+import { TranslatedError } from "~/components/TranslatedError";
 
 type DeviceContextInitializerComponentLWMViewProps = {
   state: EnsureAppReadyState;
@@ -26,13 +27,13 @@ function formatDate(date: Date): string {
   return date.toISOString();
 }
 
-function StateLine({ state, children }: { state: EnsureAppReadyState; children: React.ReactNode }) {
+const MutedText = ({ children }: { children: React.ReactNode }) => {
   return (
     <Text typography="body2" lx={{ color: "muted" }}>
-      [{String(state.type)}] {children}
+      {children}
     </Text>
   );
-}
+};
 
 function getEnsureAppReadyStateCategory(state: EnsureAppReadyState): string {
   switch (state.type) {
@@ -74,38 +75,34 @@ function getEnsureAppReadyStateCategory(state: EnsureAppReadyState): string {
 function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.ReactNode {
   switch (state.type) {
     case LoadingStateType.Loading:
-      return <StateLine state={state}>Loading</StateLine>;
+      return <MutedText>Loading</MutedText>;
 
     case LoadingStateType.InstallingApp:
       return (
         <>
-          <StateLine state={state}>Installing app: {state.appName}</StateLine>
-          <StateLine state={state}>
+          <MutedText>Installing app: {state.appName}</MutedText>
+          <MutedText>
             Progress: {state.index}/{state.total} ({Math.round(state.progress * 100)}%)
-          </StateLine>
+          </MutedText>
         </>
       );
 
     case DeviceInteractionRequiredType.UnlockDevice:
-      return <StateLine state={state}>Unlock device</StateLine>;
+      return <MutedText>Unlock device</MutedText>;
 
     case DeviceInteractionRequiredType.AllowSecureConnection:
-      return <StateLine state={state}>Allow secure connection</StateLine>;
+      return <MutedText>Allow secure connection</MutedText>;
 
     case DeviceInteractionRequiredType.ConfirmOpenApp:
-      return <StateLine state={state}>Confirm open app</StateLine>;
+      return <MutedText>Confirm open app</MutedText>;
 
     case AppInteractionRequiredStateType.DeviceDeprecatedNonBlocking:
       return (
         <>
-          <StateLine state={state}>
-            Device deprecated warning for {state.decision.currencyName}
-          </StateLine>
-          <StateLine state={state}>Device model: {state.decision.deviceModelId}</StateLine>
-          <StateLine state={state}>
-            Support end date: {formatDate(state.decision.supportEndDate)}
-          </StateLine>
-          <StateLine state={state}>Screens: {state.decision.screenSequence.join(", ")}</StateLine>
+          <MutedText>Device deprecated warning for {state.decision.currencyName}</MutedText>
+          <MutedText>Device model: {state.decision.deviceModelId}</MutedText>
+          <MutedText>Support end date: {formatDate(state.decision.supportEndDate)}</MutedText>
+          <MutedText>Screens: {state.decision.screenSequence.join(", ")}</MutedText>
           <Button appearance="base" size="sm" onPress={state.onContinue}>
             Continue
           </Button>
@@ -115,7 +112,7 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
     case AppInteractionRequiredStateType.OutdatedAppWarning:
       return (
         <>
-          <StateLine state={state}>Outdated app warning: {state.appName}</StateLine>
+          <MutedText>Outdated app warning: {state.appName}</MutedText>
           <Button appearance="base" size="sm" onPress={state.onContinue}>
             Continue
           </Button>
@@ -123,79 +120,75 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
       );
 
     case RetryableStateType.UserRefusedOnDevice:
-      return <StateLine state={state}>User refused on device</StateLine>;
+      return <MutedText>User refused on device</MutedText>;
 
     case RetryableStateType.DeviceLocked:
-      return <StateLine state={state}>Device locked</StateLine>;
+      return <MutedText>Device locked</MutedText>;
 
     case BlockingStateType.UnsupportedFirmwareVersion:
       return (
         <>
-          <StateLine state={state}>Unsupported firmware version</StateLine>
-          <StateLine state={state}>
-            Current version: {formatOptional(state.updateInfo?.currentVersion)}
-          </StateLine>
-          <StateLine state={state}>
-            Latest version: {formatOptional(state.updateInfo?.latestVersion)}
-          </StateLine>
+          <MutedText>Unsupported firmware version</MutedText>
+          <MutedText>Current version: {formatOptional(state.updateInfo?.currentVersion)}</MutedText>
+          <MutedText>Latest version: {formatOptional(state.updateInfo?.latestVersion)}</MutedText>
         </>
       );
 
     case BlockingStateType.UnsupportedApplication:
       return (
         <>
-          <StateLine state={state}>Unsupported application: {state.appName}</StateLine>
-          <StateLine state={state}>Device model: {state.deviceModelId}</StateLine>
+          <MutedText>Unsupported application: {state.appName}</MutedText>
+          <MutedText>Device model: {state.deviceModelId}</MutedText>
         </>
       );
 
     case BlockingStateType.UnsupportedFeature:
-      return <StateLine state={state}>Unsupported feature on {state.deviceModelId}</StateLine>;
+      return <MutedText>Unsupported feature on {state.deviceModelId}</MutedText>;
 
     case BlockingStateType.DeviceDeprecatedBlocking:
       return (
         <>
-          <StateLine state={state}>
-            Device deprecated blocking for {state.decision.currencyName}
-          </StateLine>
-          <StateLine state={state}>Device model: {state.decision.deviceModelId}</StateLine>
-          <StateLine state={state}>
-            Support end date: {formatDate(state.decision.supportEndDate)}
-          </StateLine>
+          <MutedText>Device deprecated blocking for {state.decision.currencyName}</MutedText>
+          <MutedText>Device model: {state.decision.deviceModelId}</MutedText>
+          <MutedText>Support end date: {formatDate(state.decision.supportEndDate)}</MutedText>
         </>
       );
 
     case BlockingStateType.WrongDeviceForAccount:
-      return <StateLine state={state}>Wrong device for account: {state.accountName}</StateLine>;
+      return <MutedText>Wrong device for account: {state.accountName}</MutedText>;
 
     case BlockingStateType.DeviceOutOfStorageSpace:
-      return (
-        <StateLine state={state}>
-          Device out of storage space: {state.appNames.join(", ")}
-        </StateLine>
-      );
+      return <MutedText>Device out of storage space: {state.appNames.join(", ")}</MutedText>;
 
     case BlockingStateType.DeviceNotOnboarded:
-      return <StateLine state={state}>Device not onboarded</StateLine>;
+      return <MutedText>Device not onboarded</MutedText>;
 
     case FinalStateType.Error:
-      return <StateLine state={state}>Error: {String(state.error)}</StateLine>;
+      return (
+        <>
+          <MutedText> Error: {JSON.stringify(state.error)}</MutedText>
+          <MutedText>
+            Title: <TranslatedError error={state.error as Error} field="title" />
+          </MutedText>
+          <MutedText>
+            Description: <TranslatedError error={state.error as Error} field="description" />
+          </MutedText>
+        </>
+      );
 
     case FinalStateType.Success:
       return (
         <>
-          <StateLine state={state}>Success</StateLine>
-          <StateLine state={state}>OS version: {state.extractedContext.currentOsVersion}</StateLine>
-          <StateLine state={state}>
+          <MutedText>Success</MutedText>
+          <MutedText>OS version: {state.extractedContext.currentOsVersion}</MutedText>
+          <MutedText>
             OS update available: {String(state.extractedContext.osUpdateAvailable)}
-          </StateLine>
-          <StateLine state={state}>App name: {state.extractedContext.currentAppName}</StateLine>
-          <StateLine state={state}>
-            App version: {state.extractedContext.currentAppVersion}
-          </StateLine>
-          <StateLine state={state}>
+          </MutedText>
+          <MutedText>App name: {state.extractedContext.currentAppName}</MutedText>
+          <MutedText>App version: {state.extractedContext.currentAppVersion}</MutedText>
+          <MutedText>
             Derived address: {formatOptional(state.extractedContext.derivedAddress)}
-          </StateLine>
+          </MutedText>
         </>
       );
 
@@ -207,7 +200,12 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
 function renderEnsureAppReadyState(state: EnsureAppReadyState): React.ReactNode {
   return (
     <>
-      <StateLine state={state}>Category: {getEnsureAppReadyStateCategory(state)}</StateLine>
+      <Text typography="body1" lx={{ color: "base" }}>
+        {getEnsureAppReadyStateCategory(state)}
+      </Text>
+      <Text typography="body2" lx={{ color: "muted" }}>
+        {state.type}
+      </Text>
       {renderEnsureAppReadyStateDetails(state)}
     </>
   );
