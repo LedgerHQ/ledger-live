@@ -55,7 +55,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "react-native-ble-plx": "3.4.0",
+    "react-native-ble-plx": "3.5.1",
     "rxjs": "catalog:",
     "ws": "catalog:"
   },

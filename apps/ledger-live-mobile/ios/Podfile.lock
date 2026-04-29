@@ -2070,7 +2070,7 @@ PODS:
     - SocketRocket
   - react-native-biometrics (3.0.1):
     - React-Core
-  - react-native-ble-plx (3.4.0):
+  - react-native-ble-plx (3.5.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3608,7 +3608,7 @@ DEPENDENCIES:
   - "React-Mapbuffer (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/ReactCommon`)"
   - "React-microtasksnativemodule (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)"
   - "react-native-biometrics (from `../../../node_modules/.pnpm/react-native-biometrics@3.0.1_react-native@0.81_bb8efc7f06a16f4c8b0d03b9a0aebc0a/node_modules/react-native-biometrics`)"
-  - "react-native-ble-plx (from `../../../node_modules/.pnpm/react-native-ble-plx@3.4.0_react-native@0.81.6__777c53d0f51b5aeee8d12091c1d7f728/node_modules/react-native-ble-plx`)"
+  - "react-native-ble-plx (from `../../../node_modules/.pnpm/react-native-ble-plx@3.5.1_react-native@0.81.6__6b2f71c989d7224b75a0149577d53b53/node_modules/react-native-ble-plx`)"
   - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.5.3_react-native@0.81.6_p_75ac357b2ba96a50e52b6dd3ffc7d776/node_modules/react-native-config`)"
   - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@3.0.0_react-native@0.8_7df8fc6bbea5dda6bb45689350dc8d85/node_modules/react-native-fast-crypto`)"
   - "react-native-fast-pbkdf2 (from `../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9dfb8_4ca0ce8af98686410ba603eeb159ad58/node_modules/react-native-fast-pbkdf2`)"
@@ -3842,7 +3842,7 @@ EXTERNAL SOURCES:
   react-native-biometrics:
     :path: "../../../node_modules/.pnpm/react-native-biometrics@3.0.1_react-native@0.81_bb8efc7f06a16f4c8b0d03b9a0aebc0a/node_modules/react-native-biometrics"
   react-native-ble-plx:
-    :path: "../../../node_modules/.pnpm/react-native-ble-plx@3.4.0_react-native@0.81.6__777c53d0f51b5aeee8d12091c1d7f728/node_modules/react-native-ble-plx"
+    :path: "../../../node_modules/.pnpm/react-native-ble-plx@3.5.1_react-native@0.81.6__6b2f71c989d7224b75a0149577d53b53/node_modules/react-native-ble-plx"
   react-native-config:
     :path: "../../../node_modules/.pnpm/react-native-config@1.5.3_react-native@0.81.6_p_75ac357b2ba96a50e52b6dd3ffc7d776/node_modules/react-native-config"
   react-native-fast-crypto:
@@ -4083,7 +4083,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: f137b397c7457f8fd7ca06dfaf543ccf5fc7dd56
   React-microtasksnativemodule: f4762eb5cc8d2287f2513c9e404e48b30bf9fc69
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
-  react-native-ble-plx: 8a36797600b65693660ecd0371507a9ecd536a46
+  react-native-ble-plx: 3badd256b90d238ff01addaa12c7a05b4ea62cda
   react-native-config: ea75335a7cca1d3326de1da384227e580a7c082e
   react-native-fast-crypto: ad4845c4dd1314c9c6e7272b91c09ff60439c6aa
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
