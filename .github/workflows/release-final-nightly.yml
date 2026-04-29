@@ -7,6 +7,9 @@ on:
 
 jobs:
   nightly-release:
+    permissions:
+      id-token: write
+
     name: Nightly Release
     runs-on: public-ledgerhq-shared-small
 
