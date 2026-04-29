@@ -132,7 +132,7 @@ async function awaitStartExchangeContext(
   out: CommandOutput,
   provider: string,
 ): Promise<StartExchangeContext> {
-  out.spin(
+  out.swapExecuteProgress(
     `[1/5] Starting new exchange transaction on the device (open the ${EXCHANGE_APP_NAME} app when prompted)…`,
   );
   const device = walletCliExchangeDevice();
@@ -156,7 +156,7 @@ async function awaitStartExchangeContext(
   );
   const transactionId = finalEvent.startExchangeResult.nonce;
   const deviceInfo = finalEvent.startExchangeResult.device;
-  out.spin(`[1/5] Device transaction id (nonce): ${transactionId}`);
+  out.swapExecuteProgress(`[1/5] Device transaction id (nonce): ${transactionId}`);
   return { transactionId, deviceInfo };
 }
 
@@ -187,8 +187,8 @@ async function awaitCompleteExchangeTransaction(
     };
   },
 ): Promise<Transaction> {
-  out.spin(
-    "[4/5] Completing exchange on device: partner checks, payout/refund validation, then confirm when the device asks…",
+  out.swapExecuteProgress(
+    "[3/5] Completing exchange on device: partner checks, payout/refund validation, then confirm when the device asks…",
   );
   const obs = completeExchange({
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
@@ -209,9 +209,7 @@ async function awaitCompleteExchangeTransaction(
           throw e.error;
         }
         if (e.type === "complete-exchange-requested") {
-          out.spin(
-            `[4/5] Exchange accepted fee estimate (~${e.estimatedFees} smallest units on refund chain).`,
-          );
+          out.swapExecuteProgress(`[4/5] Exchange accepted fee estimate`);
         }
       }),
       filter(
@@ -220,7 +218,9 @@ async function awaitCompleteExchangeTransaction(
       ),
     ),
   );
-  out.spin("[4/5] Exchange flow finished; transaction is ready for the coin-app signature step.");
+  out.swapExecuteProgress(
+    "[4/5] Exchange flow finished; transaction is ready for the coin-app signature step.",
+  );
   return txEvent.completeExchangeResult;
 }
 
@@ -232,7 +232,7 @@ async function signAndBroadcast(
 ): Promise<{ operationHash?: string }> {
   const mainAccount = getMainAccount(fromAccount, fromParentAccount);
   const bridge = getAccountBridge(fromAccount, fromParentAccount);
-  out.spin("[5/5] Signing and broadcasting — follow prompts on the device…");
+  out.swapExecuteProgress("[5/5] Signing and broadcasting — follow prompts on the device…");
 
   const sign$ = bridge.signOperation({
     account: mainAccount,
@@ -287,7 +287,7 @@ export async function runFullSwapPipeline(
 
   const { transactionId } = await startExchangeContext(out, provider);
 
-  out.spin("[2/5] Requesting swap payload from Ledger swap API…");
+  out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
   const payload = await retrieveSwapPayload({
     provider,
     deviceTransactionId: transactionId,
@@ -299,7 +299,9 @@ export async function runFullSwapPipeline(
     amountInAtomicUnit,
     ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
   });
-  out.spin(`[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`);
+  out.swapExecuteProgress(
+    `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
+  );
 
   const strategyTx = await buildStrategyTransaction({
     payinAddress: payload.payinAddress,

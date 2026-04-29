@@ -6,10 +6,6 @@ import {
 } from "../device/register-dmk-transport";
 import { walletCliDebug } from "../shared/log";
 
-/**
- * Runs `fn` with a USB DMK session and the given Ledger Manager app open (e.g. `"Exchange"`).
- * Does not use the currency-based helper so swap can open the Exchange app before APDU flows.
- */
 export async function withLedgerManagerAppSession<T>(
   managerAppName: string,
   fn: () => Promise<T>,

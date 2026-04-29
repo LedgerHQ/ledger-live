@@ -359,6 +359,11 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
   swapExecuteProgress(line: string): void {
+    if (this._activeSpin?.isSpinning) {
+      this._activeSpin.success(line);
+      this._activeSpin = null;
+      return;
+    }
     process.stderr.write(`${line}\n`);
   }
 

@@ -7,6 +7,7 @@ import { createGeneratedHelpers, registerGeneratedStore } from '@bunli/core'
 import Account from '../src/commands/account/index.js'
 import Balances from '../src/commands/balances.js'
 import Discover from '../src/commands/account/discover.js'
+import Execute from '../src/commands/swap/execute.js'
 import Operations from '../src/commands/operations.js'
 import Quote from '../src/commands/swap/quote.js'
 import Receive from '../src/commands/receive.js'
@@ -17,13 +18,14 @@ import Swap from '../src/commands/swap/index.js'
 import View from '../src/commands/session/view.js'
 
 // Narrow list of command names to avoid typeof-cycles in types
-const names = ['account', 'balances', 'discover', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
+const names = ['account', 'balances', 'discover', 'execute', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
 type GeneratedNames = typeof names[number]
 
 const modules: Record<GeneratedNames, Command<any>> = {
   'account': Account,
   'balances': Balances,
   'discover': Discover,
+  'execute': Execute,
   'operations': Operations,
   'quote': Quote,
   'receive': Receive,
@@ -45,7 +47,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
           options: {
             'network': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Network to scan, e.g. "bitcoin", "ethereum", "ethereum:goerli" (or first positional arg). No env = mainnet.', short: 'n', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
             'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-            'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
+            'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1278,"end":1284,"loc":{"start":{"line":30,"column":85,"index":1278},"end":{"line":30,"column":91,"index":1284}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
           },
           path: './src/commands/account/discover'
         }
@@ -67,9 +69,22 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       options: {
         'network': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Network to scan, e.g. "bitcoin", "ethereum", "ethereum:goerli" (or first positional arg). No env = mainnet.', short: 'n', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
+        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1278,"end":1284,"loc":{"start":{"line":30,"column":85,"index":1278},"end":{"line":30,"column":91,"index":1284}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/account/discover'
+    },
+  'execute': {
+      name: 'execute',
+      description: 'Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).',
+      options: {
+        'provider': { type: 'z.string.min', required: true, hasDefault: false, description: 'Swap provider name, e.g. changelly', short: 'p', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1000,"end":1001,"loc":{"start":{"line":26,"column":36,"index":1000},"end":{"line":26,"column":37,"index":1001}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Provider is required (--provider <name>)"}]}, validator: '(val) => true' },
+        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Swap source amount in human units (ignored if --amount-atomic is set)', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1167,"end":1168,"loc":{"start":{"line":30,"column":34,"index":1167},"end":{"line":30,"column":35,"index":1168}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required (--amount <value>)"}]}, validator: '(val) => true' },
+        'to-account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Destination account descriptor or session label (required for full pipeline)', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+        'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+        'fee-strategy': { type: 'z.enum.default', required: true, hasDefault: true, default: "medium", description: 'Fee strategy for the refund-chain transaction (full pipeline)', enumValues: ["slow","medium","fast"], schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"medium"}]}, validator: '(val) => true' },
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
+      },
+      path: './src/commands/swap/execute'
     },
   'operations': {
       name: 'operations',
@@ -102,7 +117,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'verify': { type: 'z.boolean.default', required: true, hasDefault: true, default: true, description: 'Verify address on device screen (default: true). Use --verify=false to skip device.', short: 'v', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":953,"end":957,"loc":{"start":{"line":27,"column":39,"index":953},"end":{"line":27,"column":43,"index":957}},"value":true}}]}, validator: '(val) => true' },
         'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
+        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1278,"end":1284,"loc":{"start":{"line":30,"column":85,"index":1278},"end":{"line":30,"column":91,"index":1284}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/receive'
     },
@@ -130,7 +145,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'data': { type: 'z.string.regex.optional', required: false, hasDefault: false, description: 'EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)', pattern: '^0x([0-9a-fA-F]{2})*$', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'dry-run': { type: 'z.boolean.default', required: true, hasDefault: true, default: false, description: 'Prepare and validate transaction but do not sign or broadcast', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":5779,"end":5784,"loc":{"start":{"line":193,"column":42,"index":5779},"end":{"line":193,"column":47,"index":5784}},"value":false}}]}, validator: '(val) => true' },
         'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
+        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1278,"end":1284,"loc":{"start":{"line":30,"column":85,"index":1278},"end":{"line":30,"column":91,"index":1284}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/send'
     },
@@ -161,6 +176,19 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       name: 'swap',
       description: 'Swap-related commands',
       commands: [
+        {
+          name: 'execute',
+          description: 'Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).',
+          options: {
+            'provider': { type: 'z.string.min', required: true, hasDefault: false, description: 'Swap provider name, e.g. changelly', short: 'p', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1000,"end":1001,"loc":{"start":{"line":26,"column":36,"index":1000},"end":{"line":26,"column":37,"index":1001}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Provider is required (--provider <name>)"}]}, validator: '(val) => true' },
+            'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Swap source amount in human units (ignored if --amount-atomic is set)', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1167,"end":1168,"loc":{"start":{"line":30,"column":34,"index":1167},"end":{"line":30,"column":35,"index":1168}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required (--amount <value>)"}]}, validator: '(val) => true' },
+            'to-account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Destination account descriptor or session label (required for full pipeline)', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+            'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+            'fee-strategy': { type: 'z.enum.default', required: true, hasDefault: true, default: "medium", description: 'Fee strategy for the refund-chain transaction (full pipeline)', enumValues: ["slow","medium","fast"], schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"medium"}]}, validator: '(val) => true' },
+            'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
+          },
+          path: './src/commands/swap/execute'
+        },
         {
           name: 'quote',
           description: 'Fetch swap quotes',

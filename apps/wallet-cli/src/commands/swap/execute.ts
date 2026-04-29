@@ -9,8 +9,12 @@ import {
 } from "@ledgerhq/live-common/lib-es/currencies/index";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
-import { outputOption, resolveAccountArg, resolveOutputFormat } from "../inputs";
-import { parseAccountDescriptor } from "../../wallet/models";
+import {
+  accountOption,
+  outputOption,
+  resolveAccountArg,
+  resolveAccountDescriptor,
+} from "../inputs";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { runFullSwapPipeline } from "./cli-swap-pipeline";
 
@@ -28,20 +32,18 @@ export default defineCommand({
       short: "a",
     }),
     "to-account": option(z.string().min(1).optional(), {
-      description: "Destination account descriptor (required for full pipeline)",
+      description: "Destination account descriptor or session label (required for full pipeline)",
     }),
-    account: option(z.string().min(1).optional(), {
-      description:
-        "Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.",
-      short: "a",
-    }),
+    account: accountOption,
     "fee-strategy": option(z.enum(["slow", "medium", "fast"]).default("medium"), {
       description: "Fee strategy for the refund-chain transaction (full pipeline)",
     }),
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
-    const fromDescriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
+    const fromDescriptor = await resolveAccountDescriptor(
+      resolveAccountArg(flags.account, positional),
+    );
     const fromCurrency = findCryptoCurrencyById(fromDescriptor.currencyId);
     if (!fromCurrency) {
       throw new Error(`Currency ${fromDescriptor.currencyId} not found`);
@@ -62,14 +64,13 @@ export default defineCommand({
         getData: async () => undefined,
       });
 
-      const fromDescriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
       const toAccountArg = flags["to-account"];
       if (!toAccountArg) {
-        throw new Error("Swap execute requires --to-account <descriptor>.");
+        throw new Error("Swap execute requires --to-account <descriptor-or-label>.");
       }
-      const toDescriptor = parseAccountDescriptor(toAccountArg);
+      const toDescriptor = await resolveAccountDescriptor(toAccountArg);
 
-      out.spin(
+      out.swapExecuteProgress(
         `[i] Syncing source (${fromDescriptor.id}) and destination (${toDescriptor.id}) accounts…`,
       );
       const [fromAccount, toAccount] = await Promise.all([
