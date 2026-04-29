@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { AssetDetailSection } from "./components/AssetDetailSection";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
+import { TotalBalance } from "./components/PortfolioSection/TotalBalance";
 import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
 import type { AssetDetailViewModel } from "./hooks/useAssetDetailViewModel";
 
@@ -23,6 +24,8 @@ export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewMo
           onBack={onBack}
         />
       ) : null}
+
+      {distributionItem ? <TotalBalance distributionItem={distributionItem} /> : null}
 
       <section className="grid grid-cols-2 gap-24">
         {topSections.map(section => (
