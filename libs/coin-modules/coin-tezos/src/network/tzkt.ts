@@ -171,19 +171,11 @@ const api = {
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getTokenTransfers(
-    level: number,
-    cursor?: number,
     apiQueryParams: Record<string, unknown> = {},
   ): Promise<APITokenTransfer[]> {
-    // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
-    // offset.cr cursor advancing forward regardless of the API's default ordering.;
-    const params: Record<string, unknown> = {
-      "level.gte": level,
-      limit: BLOCK_PAGE_SIZE,
-      "sort.asc": "id",
+    const params = {
       ...clearUndefined(apiQueryParams),
     };
-    if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
       params,
@@ -224,8 +216,8 @@ const api = {
   /**
    * Fetches FA2 token transfers (tokenId = 0 only) for a given account.
    * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
-   * Respects `query.sort` (unlike the lower-level `getTokenTransfers` helper which is
-   * fixed to ascending id for offset-based block pagination).
+   * Translates `query.sort` to TzKT's `sort.asc=id` / `sort.desc=id`.
+   * The lower-level `getTokenTransfers` helper is a generic pass-through and does not pin the sort.
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getAccountTokenTransfers(
@@ -242,15 +234,11 @@ const api = {
       "level.ge": query["level.ge"],
       "level.lt": query["level.lt"],
       "level.gt": query["level.gt"],
+      "id.lt": query["id.lt"],
+      "id.gt": query["id.gt"],
     };
-    Object.entries(params).forEach(
-      ([key, value]) => value === undefined && delete params[key as keyof typeof params],
-    );
 
-    const { data } = await network<APITokenTransfer[]>({
-      url: `${getExplorerUrl()}/v1/tokens/transfers`,
-      params,
-    });
+    const data = await api.getTokenTransfers(clearUndefined(params));
 
     const transactionIds = data
       .map(t => t.transactionId)
@@ -266,14 +254,14 @@ const api = {
 
     const transactions = transactionIds.length
       ? await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
-          "id.in": transactionIds.join(","),
-        })
+        "id.in": transactionIds.join(","),
+      })
       : [];
 
     const originations = originationIds.length
       ? await api.getOperationsOrigination(query["level.ge"] || 0, undefined, {
-          "id.in": originationIds.join(","),
-        })
+        "id.in": originationIds.join(","),
+      })
       : [];
 
     // Build id -> operation maps once so per-transfer lookups are O(1) instead of O(n).

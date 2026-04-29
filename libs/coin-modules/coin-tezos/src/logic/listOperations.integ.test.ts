@@ -149,7 +149,7 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
   });
 
   it("returns a pagination cursor with lastLevel boundary", async () => {
-    const [, nextToken] = await listOperations(ADDRESS, { ...baseOpts, limit: 20 });
+    const [, nextToken] = await listOperations(ADDRESS, { ...baseOpts, limit: 3 });
     expect(nextToken.length).toBeGreaterThan(0);
 
     const parsed: unknown = JSON.parse(nextToken);
@@ -161,7 +161,7 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
   });
 
   it("pagination returns disjoint operation ids across pages", async () => {
-    const limit = 10;
+    const limit = 3;
     const [page1, cursor] = await listOperations(ADDRESS, { ...baseOpts, limit });
     expect(cursor.length).toBeGreaterThan(0);
 
@@ -173,7 +173,7 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
   });
 
   it("second page accepts cursor with lastLevel for both streams", async () => {
-    const limit = 30;
+    const limit = 3;
     const [, cursor] = await listOperations(ADDRESS, { ...baseOpts, limit });
     expect(cursor.length).toBeGreaterThan(0);
 
@@ -189,8 +189,8 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     ).resolves.toBeDefined();
   });
 
-  it("does not split the same tx.hash across consecutive pages (limit 25)", async () => {
-    const limit = 25;
+  it("does not split the same tx.hash across consecutive pages (limit 3)", async () => {
+    const limit = 3;
     const [page1, cursor] = await listOperations(ADDRESS, { ...baseOpts, limit });
     if (cursor.length === 0) {
       return;

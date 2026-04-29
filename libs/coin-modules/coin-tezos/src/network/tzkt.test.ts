@@ -309,11 +309,12 @@ describe("tzkt network API", () => {
   // -------------------------------------------------------------------------
 
   describe("api.getTokenTransfers", () => {
-    it("fetches without cursor and strips undefined extra args", async () => {
+    it("passes through params and strips undefined extra args", async () => {
       const transfers: APITokenTransfer[] = [makeTokenItem(1)];
       mockedNetwork.mockReturnValue(networkResponse(transfers) as ReturnType<typeof network>);
 
-      const result = await api.getTokenTransfers(200, undefined, {
+      const result = await api.getTokenTransfers({
+        "level.gte": 200,
         unused: undefined,
         select: "id",
       });
@@ -322,8 +323,6 @@ describe("tzkt network API", () => {
       const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
       expect(params).toMatchObject({
         "level.gte": 200,
-        limit: 1000,
-        "sort.asc": "id",
         select: "id",
       });
       expect(params).not.toHaveProperty("unused");
@@ -332,15 +331,6 @@ describe("tzkt network API", () => {
           url: expect.stringContaining("/v1/tokens/transfers"),
         }),
       );
-    });
-
-    it("includes offset.cr when cursor is set", async () => {
-      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
-
-      await api.getTokenTransfers(1, 55);
-
-      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
-      expect(params["offset.cr"]).toBe(55);
     });
   });
 
