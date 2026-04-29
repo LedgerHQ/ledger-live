@@ -36,7 +36,6 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
  */
 const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
-  buyCryptoMock,
   syncAccountsMock,
   customImageMock,
   recoverMock,
@@ -44,7 +43,6 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
 
 const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
-  buyCryptoAction,
   syncAccountsAction,
   customImageAction,
   recoverAction,
@@ -55,7 +53,6 @@ const staxPostOnboardingActions: PostOnboardingAction[] = [
  */
 const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
-  buyCryptoMock,
   syncAccountsMock,
   customImageMock,
   recoverMock,
@@ -63,7 +60,6 @@ const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
 
 const europaPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
-  buyCryptoAction,
   syncAccountsAction,
   customImageAction,
   recoverAction,
@@ -74,7 +70,6 @@ const europaPostOnboardingActions: PostOnboardingAction[] = [
  */
 const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
-  buyCryptoMock,
   syncAccountsMock,
   customImageMock,
   recoverMock,
@@ -82,7 +77,6 @@ const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
 
 const apexPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
-  buyCryptoAction,
   syncAccountsAction,
   customImageAction,
   recoverAction,
@@ -106,13 +100,13 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.nanoS:
       // Post-onboarding actions for Nano S (no custom lock screen or sync step).
-      return [assetsTransferAction, buyCryptoAction];
+      return [assetsTransferAction];
     case DeviceModelId.nanoSP:
       // Post-onboarding actions for Nano S Plus (no custom lock screen step).
-      return [assetsTransferAction, buyCryptoAction, syncAccountsAction];
+      return [assetsTransferAction, syncAccountsAction];
     case DeviceModelId.nanoX:
       // Post-onboarding actions for Nano X (no custom lock screen step).
-      return [assetsTransferAction, buyCryptoAction, syncAccountsAction];
+      return [assetsTransferAction, syncAccountsAction];
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
       return staxPostOnboardingActions;
