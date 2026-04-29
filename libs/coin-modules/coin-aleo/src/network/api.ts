@@ -207,11 +207,15 @@ async function submitDelegatedProvingRequest({
   return res.data;
 }
 
-async function getProvePublicKey({
-  currency,
-}: {
-  currency: CryptoCurrency;
-}): Promise<AleoGetProvePublicKeyResponse> {
+/**
+ * TEE node that issued the public key must be the same node that receives the encrypted proving request.
+ * Browsers handle the cookie automatically (Electron renderer side),
+ * but Node.js does not - so it needs to be captured and forwarded manually.
+ */
+async function getProvePublicKey({ currency }: { currency: CryptoCurrency }): Promise<{
+  data: AleoGetProvePublicKeyResponse;
+  stickySessionCookie: string[] | null;
+}> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
 
   const res = await network<AleoGetProvePublicKeyResponse>({
@@ -219,22 +223,32 @@ async function getProvePublicKey({
     url: `${nodeUrl}/prove/${networkType}/pubkey`,
   });
 
-  return res.data;
+  const stickySessionCookie = res.headers?.["set-cookie"] ?? null;
+
+  return {
+    data: res.data,
+    stickySessionCookie,
+  };
 }
 
 async function submitEncryptedDelegatedProvingRequest({
   currency,
   keyId,
   encryptedData,
+  stickySessionCookie,
 }: {
   currency: CryptoCurrency;
   keyId: string;
   encryptedData: string;
+  stickySessionCookie: string[] | null;
 }): Promise<DelegatedProvingResponse> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
   const res = await network<DelegatedProvingResponse>({
     method: "POST",
     url: `${nodeUrl}/prove/${networkType}/prove/encrypted`,
+    ...(stickySessionCookie && {
+      headers: { Cookie: stickySessionCookie.join("; ") },
+    }),
     data: {
       key_id: keyId,
       ciphertext: encryptedData,
