@@ -66,13 +66,13 @@
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/index.ts",
-      "require": "./lib-es/index.js",
+      "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib-es/*.js",
+      "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
