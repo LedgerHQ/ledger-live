@@ -10,7 +10,7 @@ export function ProductTourSlideItem({ title, subtitle }: ProductTourSlideItemPr
     <div className="flex size-full flex-col">
       <div
         className="flex w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted/10"
-        style={{ height: 280, marginTop: -24 }}
+        style={{ height: 240, marginTop: -24 }}
       />
 
       <div

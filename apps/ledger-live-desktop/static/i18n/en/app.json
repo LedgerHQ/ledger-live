@@ -8679,7 +8679,13 @@
   },
   "productTour": {
     "cta": {
-      "continue": "Continue"
+      "continue": "Continue",
+      "done": "Done",
+      "fundYourWallet": "Fund your wallet",
+      "discoverSwap": "Discover swap",
+      "growYourRewards": "Grow your rewards",
+      "spendYourCrypto": "Spend your crypto",
+      "everythingAtAGlance": "Everything at a glance"
     }
   },
   "history": {

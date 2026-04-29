@@ -21,6 +21,8 @@ const FeaturesAndFlowsDevTool = () => {
     isDialogOpen: isProductTourOpen,
     openDialog: openProductTourDialog,
     closeDialog: closeProductTourDialog,
+    completeProductTour,
+    onPrimaryAction: onProductTourPrimaryAction,
     onSlideChange: onProductTourSlideChange,
   } = useProductTourDialogViewModel();
 
@@ -64,6 +66,8 @@ const FeaturesAndFlowsDevTool = () => {
       <ProductTourDialog
         isOpen={isProductTourOpen}
         onClose={closeProductTourDialog}
+        onComplete={completeProductTour}
+        onPrimaryAction={onProductTourPrimaryAction}
         onSlideChange={onProductTourSlideChange}
       />
     </>
