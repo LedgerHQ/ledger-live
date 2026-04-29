@@ -3,13 +3,19 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { selectInterestRateByCurrency } from "../entities/interestRateSelectors";
 import { ApyType } from "../types/trend";
 import { ApiState } from "../entities/selectorUtils";
+import { nestedShallowEqual } from "./nestedShallowEqual";
 
 const isValidApyType = (type: string): type is ApyType =>
   type === "NRR" || type === "APY" || type === "APR";
 
+export type InterestRatesByCurrencies = Record<
+  string,
+  { value: number; type: ApyType } | undefined
+>;
+
 export const useInterestRatesByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {
   return useSelector((state: ApiState) => {
-    const rates: Record<string, { value: number; type: ApyType } | undefined> = {};
+    const rates: InterestRatesByCurrencies = {};
     for (const currency of currencies) {
       const apiRate = selectInterestRateByCurrency(state, currency.id);
       if (apiRate && isValidApyType(apiRate.type)) {
@@ -20,5 +26,5 @@ export const useInterestRatesByCurrencies = (currencies: CryptoOrTokenCurrency[]
       }
     }
     return rates;
-  });
+  }, nestedShallowEqual);
 };
