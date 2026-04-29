@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
 import {
   buildDistributionItem,
   makeIntegrationTokenCurrency,
@@ -32,10 +32,12 @@ describe("AssetDetail integration", () => {
       list: [item],
     });
 
-    render(<AssetDetail />);
+    renderWithMockedCounterValuesProvider(<AssetDetail />);
 
     expect(screen.getByTestId("asset-detail-header")).toBeVisible();
     expect(screen.getByText("Bitcoin")).toBeVisible();
+    expect(screen.getByText("Total balance")).toBeVisible();
+    expect(screen.getByTestId("asset-detail-total-balance")).toBeVisible();
     expect(screen.getByText("Market stats")).toBeVisible();
     expect(screen.getByText("Price performance")).toBeVisible();
     expect(screen.getByText("Placeholder market stats content")).toBeVisible();
@@ -60,10 +62,11 @@ describe("AssetDetail integration", () => {
       list: [item],
     });
 
-    render(<AssetDetail />);
+    renderWithMockedCounterValuesProvider(<AssetDetail />);
 
     expect(screen.getByTestId("asset-detail-header")).toBeVisible();
     expect(screen.getByText("Bitcoin Test")).toBeVisible();
+    expect(screen.getByText("Total balance")).toBeVisible();
     expect(screen.getByText("Market stats")).toBeVisible();
     expect(screen.getByText("Price performance")).toBeVisible();
     expect(screen.queryByText("Asset distribution item not found.")).not.toBeInTheDocument();
