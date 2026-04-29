@@ -20,21 +20,21 @@ export type DeviceConnectionComponent = React.ComponentType<{
   onError: (error: unknown) => void;
 }>;
 
-export type DeviceContextInitializerComponentProps<InitInput = void> = {
-  connectionResult: DeviceConnectionResult;
-  deviceInitializationInput: InitInput;
-  onContextInitialized: (context: DeviceExtractedContext) => void;
-};
-
 /**
  * React component responsible for establishing the required device context
  * (installing/opening an app, performing derivation, etc.).
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
-export type DeviceContextInitializerComponent<InitInput = void> = React.ComponentType<
-  DeviceContextInitializerComponentProps<InitInput>
->;
+export type DeviceContextInitializerComponent<
+  InitInput = void,
+  InitializerConfig = void,
+> = React.ComponentType<{
+  connectionResult: DeviceConnectionResult;
+  deviceInitializationInput: InitInput;
+  onContextInitialized: (context: DeviceExtractedContext) => void;
+  config?: InitializerConfig;
+}>;
 
 /**
  * React component rendered when an error occurs during one of the executor
@@ -62,9 +62,12 @@ export type InvalidOperationComponent = React.ComponentType<{
  * Platform wrappers (`LwmDeviceIntentExecutor`, `LwdDeviceIntentExecutor`)
  * supply this configuration so the executor itself remains platform-agnostic.
  */
-export interface ExecutorPlatformConfiguration<InitInput = void> {
+export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConfig = void> {
   DeviceConnectionComponent: DeviceConnectionComponent;
-  DeviceContextInitializerComponent: DeviceContextInitializerComponent<InitInput>;
+  DeviceContextInitializerComponent: DeviceContextInitializerComponent<
+    InitInput,
+    InitializerConfig
+  >;
   ConnectionErrorComponent: ErrorComponent;
   IntentErrorComponent: ErrorComponent;
   InvalidOperationComponent: InvalidOperationComponent;

@@ -9,7 +9,7 @@ import {
   RetryableStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
-import { TranslatedError } from "~/components/TranslatedError";
+import TranslatedError from "~/components/TranslatedError";
 
 type DeviceContextInitializerComponentLWMViewProps = {
   state: EnsureAppReadyState;
