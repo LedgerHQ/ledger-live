@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen } from "jest/render";
 import { ToolCard } from "../../components/ToolCard.web";
 import { Category } from "../../types";
 
@@ -15,10 +16,11 @@ describe("ToolCard", () => {
     expect(screen.getByText("Configuration")).toBeInTheDocument();
   });
 
-  it("calls onSelect with the tool id when clicked", () => {
+  it("calls onSelect with the tool id when clicked", async () => {
+    const user = userEvent.setup();
     const onSelect = jest.fn();
     render(<ToolCard tool={tool} onSelect={onSelect} />);
-    fireEvent.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button"));
     expect(onSelect).toHaveBeenCalledWith("feature-flags");
   });
 });
