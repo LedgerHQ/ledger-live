@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen } from "jest/render";
 import { CategoryRow } from "../../components/CategoryRow.web";
 import { Category } from "../../types";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
@@ -45,10 +46,11 @@ describe("CategoryRow", () => {
     );
   });
 
-  it("calls onToggle when the header button is clicked", () => {
+  it("calls onToggle when the header button is clicked", async () => {
+    const user = userEvent.setup();
     const onToggle = jest.fn();
     render(<CategoryRow {...defaultProps} onToggle={onToggle} />);
-    fireEvent.click(screen.getByRole("button", { name: "Configuration" }));
+    await user.click(screen.getByRole("button", { name: "Configuration" }));
     expect(onToggle).toHaveBeenCalledTimes(1);
   });
 
@@ -63,10 +65,11 @@ describe("CategoryRow", () => {
     expect(screen.getByText("Another Tool")).toBeInTheDocument();
   });
 
-  it("calls onSelectTool with the tool id when a tool row is clicked", () => {
+  it("calls onSelectTool with the tool id when a tool row is clicked", async () => {
+    const user = userEvent.setup();
     const onSelectTool = jest.fn();
     render(<CategoryRow {...defaultProps} isExpanded={true} onSelectTool={onSelectTool} />);
-    fireEvent.click(screen.getByText("Feature Flags"));
+    await user.click(screen.getByText("Feature Flags"));
     expect(onSelectTool).toHaveBeenCalledWith("feature-flags");
   });
 });
