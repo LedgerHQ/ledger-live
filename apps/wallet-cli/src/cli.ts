@@ -2,6 +2,7 @@
 import "./embed-usb-native";
 import { createCLI } from "@bunli/core";
 import "./live-common-setup";
+import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
 // createCLI() normally tries to import .bunli/commands.gen.ts from process.cwd() via a file:// URL.
 // Our @bunli/core patch removes that dynamic import entirely because it can hang in Bun standalone
 // mode, this static import registers commands instead.
@@ -10,6 +11,8 @@ import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+
+emitTestingBuildBannerIfNeeded();
 
 /**
  * Runs the CLI in-process. Called by the test runner directly (no subprocess).
