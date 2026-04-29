@@ -57,6 +57,7 @@ describe("prepareTransaction", () => {
       mode: "send",
       coinType: DEFAULT_COIN_TYPE,
     });
+    expect(mockCalculateAmount).not.toHaveBeenCalled();
   });
 
   it("calculates amount when useAllAmount is true", async () => {
@@ -92,17 +93,15 @@ describe("prepareTransaction", () => {
     expect(newTx.mode).toEqual("token.send");
     expect(newTx.coinType).toEqual(TEST_TOKEN_COIN_TYPE);
     expect(newTx.fees).toEqual(fees);
+    expect(newTx.tokenId).toEqual("tokenSubAccountId");
   });
 
-  it("uses default fee of 0 when fee estimation fails", async () => {
+  it("rejects when fee estimation fails", async () => {
     // GIVEN
-    mockGetFeesForTransaction.mockRejectedValue(new Error("Fee estimation failed"));
+    mockGetFeesForTransaction.mockRejectedValue(new Error("fee estimation failed"));
     const tx = createFixtureTransaction();
 
-    // WHEN
-    const newTx = await prepareTransaction(createFixtureAccount(), tx);
-
-    // THEN
-    expect(newTx.fees).toEqual(new BigNumber(0));
+    // WHEN / THEN
+    await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow();
   });
 });

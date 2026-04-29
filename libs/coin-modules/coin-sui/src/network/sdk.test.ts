@@ -1,4 +1,5 @@
 import assert, { fail } from "assert";
+import { NotEnoughBalanceFees } from "@ledgerhq/errors";
 import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import type {
   BalanceChange,
@@ -671,8 +672,7 @@ describe("SDK Functions", () => {
         },
         {
           owner: {
-            AddressOwner:
-              "0x6E143FE0A8CA010A86580DAFAC44298E5B1B7D73EFC345356A59A15F0D7824F0",
+            AddressOwner: "0x6E143FE0A8CA010A86580DAFAC44298E5B1B7D73EFC345356A59A15F0D7824F0",
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "9998990120",
@@ -769,6 +769,50 @@ describe("SDK Functions", () => {
     expect(info).toHaveProperty("gasBudget");
     expect(info).toHaveProperty("totalGasUsed");
     expect(info).toHaveProperty("fees");
+  });
+
+  test("paymentInfo should throw NotEnoughBalanceFees when dryRunTransactionBlock fails with needed amount message", async () => {
+    const defaultImpl = (SuiJsonRpcClient as jest.Mock).getMockImplementation()!;
+    (SuiJsonRpcClient as jest.Mock).mockImplementationOnce((...args) => ({
+      ...defaultImpl(...args),
+      dryRunTransactionBlock: jest
+        .fn()
+        .mockRejectedValue(
+          new Error("Balance of gas object 10 is lower than the needed amount: 100"),
+        ),
+    }));
+
+    const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const fakeTransaction = {
+      mode: "send" as const,
+      coinType: sdk.DEFAULT_COIN_TYPE,
+      family: "sui" as const,
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+      errors: {},
+    };
+
+    await expect(sdk.paymentInfo(sender, fakeTransaction)).rejects.toThrow(NotEnoughBalanceFees);
+  });
+
+  test("paymentInfo should rethrow unrecognised errors from dryRunTransactionBlock", async () => {
+    const defaultImpl = (SuiJsonRpcClient as jest.Mock).getMockImplementation()!;
+    (SuiJsonRpcClient as jest.Mock).mockImplementationOnce((...args) => ({
+      ...defaultImpl(...args),
+      dryRunTransactionBlock: jest.fn().mockRejectedValue(new Error("Network timeout")),
+    }));
+
+    const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const fakeTransaction = {
+      mode: "send" as const,
+      coinType: sdk.DEFAULT_COIN_TYPE,
+      family: "sui" as const,
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+      errors: {},
+    };
+
+    await expect(sdk.paymentInfo(sender, fakeTransaction)).rejects.toThrow("Network timeout");
   });
 
   test("createTransaction should build a transaction", async () => {
