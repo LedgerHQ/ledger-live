@@ -194,6 +194,63 @@ export const buildSignOperation =
             return;
           }
 
+          if (transaction.properties?.amountRecordCommitments?.length === 14) {
+            console.log("DEBUG2", "Transaction with 14 amount record commitments");
+
+            const unspentRecords = account.aleoResources?.unspentPrivateRecords ?? [];
+            const commitments = transaction.properties.amountRecordCommitments;
+            const records = commitments.map(commitment => {
+              const record = unspentRecords.find(r => r.commitment === commitment);
+              if (!record) {
+                throw new Error(`Could not find record for commitment: ${commitment}`);
+              }
+              return record.decryptedData;
+            });
+
+            const intentResponse = await apiClient.createTransferIntent14({
+              intent: {
+                type: "transfer_private14",
+                amount: transaction.amount.toString(),
+                to: transaction.recipient,
+                records,
+              },
+              viewKey,
+              fee: {
+                max_base_fee: baseFee.toString(),
+                max_priority_fee: priorityFee.toString(),
+                function_name: "fee_private",
+              },
+            });
+
+            console.log("DEBUG2 intentResponse", intentResponse);
+
+            const authorizationResponse = await apiClient.createAuthorization({
+              request: intentResponse,
+              signatures: "",
+              viewKey,
+              tlvVersion: 1,
+            });
+
+            console.log("DEBUG2 authorizationResponse", authorizationResponse);
+
+            const signedTx = toHex({
+              authorization: JSON.stringify(authorizationResponse.authorization),
+              feeAuthorization: null,
+            } satisfies SignedAleoTransaction);
+
+            o.next({ type: "device-signature-granted" });
+
+            const operation = buildOptimisticOperation({ account, transaction });
+
+            o.next({
+              type: "signed",
+              signedOperation: { operation, signature: signedTx },
+            });
+
+            o.complete();
+            return;
+          }
+
           // const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
 
           // const signedTx = await signerContext(deviceId, signer =>

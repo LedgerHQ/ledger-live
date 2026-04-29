@@ -182,6 +182,17 @@ export interface AleoCreateTransferIntentRequest {
   fee: AleoTransferIntentFee;
 }
 
+export interface AleoCreateTransferIntentRequest14 {
+  intent: {
+    type: string;
+    amount: string;
+    to: string;
+    records: AleoRecordInput[];
+  };
+  view_key: string;
+  fee: AleoTransferIntentFee;
+}
+
 export interface AleoTransferIntentResponse {
   is_root: boolean;
   network_id: number;

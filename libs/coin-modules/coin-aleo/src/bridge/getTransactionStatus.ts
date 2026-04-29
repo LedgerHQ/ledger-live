@@ -206,6 +206,8 @@ export const getTransactionStatus: AccountBridge<
 >["getTransactionStatus"] = async (account, transaction) => {
   const allowSelfTransfer = isSelfTransferTransaction(transaction);
 
+  console.log("DEBUG - SELECTED RECORDS", transaction.properties?.amountRecordCommitments);
+
   return handleTransferTransaction({
     account,
     transaction,
