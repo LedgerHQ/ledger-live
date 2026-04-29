@@ -59,6 +59,8 @@ describe("calculateClauses", () => {
         "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
         "0x0000000000000000000000000000000000000000",
         "0xffffffffffffffffffffffffffffffffffffffff",
+        "0XABCDEFABCDEFABCDEFABCDEFABCDEFABCDEFABCD", // all uppercase
+        "0XABcdEFABcdEFABcdEFABcdEFABcdEFABcdEFABcd", // mixed uppercase
       ];
 
       for (const recipient of recipients) {
@@ -69,7 +71,7 @@ describe("calculateClauses", () => {
 
         // Verify the recipient is encoded correctly in the data
         const expectedData = ABIContract.ofAbi(VIP180_ABI)
-          .encodeFunctionInput("transfer", [recipient, testAmount.toFixed()])
+          .encodeFunctionInput("transfer", [recipient.toLowerCase(), testAmount.toFixed()])
           .toString();
         expect(clauses[0].data).toBe(expectedData);
       }
