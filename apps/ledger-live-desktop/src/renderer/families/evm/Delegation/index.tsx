@@ -197,7 +197,13 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
                   )
                 }
               >
-                <Button primary small disabled={!delegationEnabled} onClick={onEarnRewards}>
+                <Button
+                  data-testid="evm-earn-rewards-button"
+                  primary
+                  small
+                  disabled={!delegationEnabled}
+                  onClick={onEarnRewards}
+                >
                   <Box horizontal flow={1} alignItems="center">
                     <IconChartLine size={12} />
                     <Box>
