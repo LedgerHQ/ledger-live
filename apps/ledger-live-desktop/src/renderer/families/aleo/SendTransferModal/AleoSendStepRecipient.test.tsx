@@ -117,6 +117,7 @@ describe("AleoSendStepRecipient", () => {
       expect.objectContaining({ currencyName: "Aleo" }),
       true,
       true,
+      false,
     );
   });
 
