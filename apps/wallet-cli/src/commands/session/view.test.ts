@@ -15,7 +15,10 @@ const SAMPLE_ENTRIES = [
 ];
 
 let cleanup: (() => void) | undefined;
-afterEach(() => { cleanup?.(); cleanup = undefined; });
+afterEach(() => {
+  cleanup?.();
+  cleanup = undefined;
+});
 
 describe("session view — human", () => {
   it("shows empty message when accounts list is empty", async () => {
@@ -51,10 +54,7 @@ describe("session view — json", () => {
   it("returns empty accounts array when session is empty", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runCli(
-      ["session", "view", "--output", "json"],
-      fixture.env,
-    );
+    const { stdout, exitCode } = await runCli(["session", "view", "--output", "json"], fixture.env);
     expect(exitCode).toBe(0);
     const data = JSON.parse(stdout);
     expect(data.command).toBe("session view");
@@ -64,10 +64,7 @@ describe("session view — json", () => {
   it("returns envelope with all account entries", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout, exitCode } = await runCli(
-      ["session", "view", "--output", "json"],
-      fixture.env,
-    );
+    const { stdout, exitCode } = await runCli(["session", "view", "--output", "json"], fixture.env);
     expect(exitCode).toBe(0);
     const data = JSON.parse(stdout);
     expect(data.command).toBe("session view");
@@ -79,10 +76,7 @@ describe("session view — json", () => {
   it("includes timestamp in envelope", async () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
-    const { stdout } = await runCli(
-      ["session", "view", "--output", "json"],
-      fixture.env,
-    );
+    const { stdout } = await runCli(["session", "view", "--output", "json"], fixture.env);
     const data = JSON.parse(stdout);
     expect(data.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });

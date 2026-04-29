@@ -1,6 +1,6 @@
 import { defineCommand } from "@bunli/core";
 import { Session } from "../../session/session-store";
-import { outputOption } from "../inputs";
+import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
 
 export default defineCommand({
@@ -10,7 +10,10 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags }) => {
-    const out = createCommandOutput(flags.output, { command: "session view", network: "all" });
+    const out = createCommandOutput(resolveOutputFormat(flags.output), {
+      command: "session view",
+      network: "all",
+    });
 
     await out.run(async () => {
       const { accounts } = await Session.read();

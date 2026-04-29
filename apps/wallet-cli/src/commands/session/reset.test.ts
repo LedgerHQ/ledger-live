@@ -22,7 +22,10 @@ async function readSessionFile(xdgStateHome: string): Promise<unknown> {
 }
 
 let cleanup: (() => void) | undefined;
-afterEach(() => { cleanup?.(); cleanup = undefined; });
+afterEach(() => {
+  cleanup?.();
+  cleanup = undefined;
+});
 
 describe("session reset — human", () => {
   it("reports empty when accounts list is already empty", async () => {

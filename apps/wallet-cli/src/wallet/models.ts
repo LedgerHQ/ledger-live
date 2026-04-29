@@ -58,7 +58,6 @@ export function parseAccountDescriptor(input: string): AccountDescriptor {
   return parseShortAccountDescriptor(input);
 }
 
-
 export const CurrencyIdSchema = z.string().min(1);
 export type CurrencyId = z.infer<typeof CurrencyIdSchema>;
 

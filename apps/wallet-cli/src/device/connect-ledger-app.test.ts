@@ -1,12 +1,13 @@
-import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import {
   DeviceActionStatus,
   UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { Observable } from "rxjs";
-import * as log from "../shared/log";
 import { connectLedgerApp } from "./connect-ledger-app";
+import type { DeviceState } from "./device-state";
+import { WalletCliDeviceError } from "./wallet-cli-device-error";
 
 function makeDmk(
   executeDeviceAction: () => { observable: Observable<unknown>; cancel: () => void },
@@ -43,17 +44,22 @@ describe("connectLedgerApp", () => {
     await expect(connectLedgerApp(dmk as never, "sess-1", "evm")).resolves.toBeUndefined();
   });
 
-  it("throws a proper Error when the device action ends with a tagged error object", async () => {
+  it("throws a WalletCliDeviceError when the device action ends with a tagged DMK error", async () => {
     const err = new UnknownDAError("test");
     const dmk = makeDmk(() => errorAction(err));
 
-    await expect(connectLedgerApp(dmk as never, "sess-1", "bitcoin")).rejects.toThrow(
-      "UnknownDAError",
-    );
+    try {
+      await connectLedgerApp(dmk as never, "sess-1", "bitcoin");
+      throw new Error("expected connectLedgerApp to throw");
+    } catch (e) {
+      expect(e).toBeInstanceOf(WalletCliDeviceError);
+      const state = (e as WalletCliDeviceError).state;
+      expect(state.code).toBe("unknown");
+    }
   });
 
-  it("debug-logs pending UnlockDevice once when that interaction is required", async () => {
-    const spy = spyOn(log, "walletCliDebug").mockImplementation(() => {});
+  it("emits awaiting_approval.unlock when UnlockDevice interaction is required", async () => {
+    const states: DeviceState[] = [];
     const dmk = makeDmk(() => ({
       observable: new Observable(observer => {
         observer.next({
@@ -74,16 +80,37 @@ describe("connectLedgerApp", () => {
       cancel: () => {},
     }));
 
-    await connectLedgerApp(dmk as never, "sess-1", "evm");
+    await connectLedgerApp(dmk as never, "sess-1", "evm", {
+      onStateChange: s => states.push(s),
+    });
 
-    const pendingUnlock = spy.mock.calls.filter(
-      args =>
-        typeof args[0] === "string" &&
-        args[0].includes("ConnectApp pending") &&
-        args[1] === UserInteractionRequired.UnlockDevice,
+    const unlockStates = states.filter(
+      s => s.code === "awaiting_approval" && s.reason === "unlock",
     );
-    expect(pendingUnlock).toHaveLength(1);
-    spy.mockRestore();
+    expect(unlockStates).toHaveLength(1);
+  });
+
+  it("emits awaiting_approval.open_app when ConfirmOpenApp interaction is required", async () => {
+    const states: DeviceState[] = [];
+    const dmk = makeDmk(() => ({
+      observable: new Observable(observer => {
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp,
+          },
+        });
+        observer.next({ status: DeviceActionStatus.Completed, output: {} } as const);
+        observer.complete();
+      }),
+      cancel: () => {},
+    }));
+
+    await connectLedgerApp(dmk as never, "sess-1", "evm", {
+      onStateChange: s => states.push(s),
+    });
+
+    expect(states.some(s => s.code === "awaiting_approval" && s.reason === "open_app")).toBe(true);
   });
 
   describe("transport framing error retries", () => {
@@ -124,17 +151,21 @@ describe("connectLedgerApp", () => {
       expect(calls).toBe(2);
     });
 
-    it("throws a user-friendly error after exhausting retries on ReceiverApduError", async () => {
+    it("throws a WalletCliDeviceError (timeout) after exhausting retries on ReceiverApduError", async () => {
       let calls = 0;
       const dmk = makeDmk(() => {
         calls++;
         return errorAction({ _tag: "ReceiverApduError" as const });
       });
 
-      await expect(connectLedgerApp(dmk as never, "sess-1", "ethereum")).rejects.toThrow(
-        /could not communicate/i,
-      );
-      expect(calls).toBe(6); // 1 initial + 5 retries
+      try {
+        await connectLedgerApp(dmk as never, "sess-1", "ethereum");
+        throw new Error("expected to throw");
+      } catch (e) {
+        expect(e).toBeInstanceOf(WalletCliDeviceError);
+        expect((e as WalletCliDeviceError).state.code).toBe("timeout");
+      }
+      expect(calls).toBe(6);
     });
   });
 });
