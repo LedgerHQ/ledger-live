@@ -1,3 +1,14 @@
+import { act, renderHook, waitFor } from "tests/testSetup";
+import { useNavigate } from "react-router";
+import { track } from "~/renderer/analytics/segment";
+import { getStoreValue } from "~/renderer/store";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+
 /** Real `electron-store` is not usable in Jest; keep persistence at the boundary. */
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -14,17 +25,6 @@ jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
 }));
-
-import { act, renderHook, waitFor } from "tests/testSetup";
-import { useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
-import { getStoreValue } from "~/renderer/store";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 const mockNavigate = jest.fn();
 const mockUseNavigate = jest.mocked(useNavigate);
@@ -93,14 +93,14 @@ describe("useRecoverWidgetViewModel", () => {
     expect(result.current.isVisible).toBe(false);
   });
 
-  it("returns isVisible false when post-onboarding is not in progress", async () => {
+  it("returns isVisible true when post-onboarding hub is not in progress but recover criteria are met", async () => {
     setHub({ postOnboardingInProgress: false });
     const { result } = renderHook(() => useRecoverWidgetViewModel());
 
     await waitFor(() => {
       expect(mockGetStoreValue).toHaveBeenCalled();
     });
-    expect(result.current.isVisible).toBe(false);
+    expect(result.current.isVisible).toBe(true);
   });
 
   it("returns isVisible false when recover is not offered for this device", async () => {
