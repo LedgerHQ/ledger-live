@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen } from "jest/render";
 import { ToolShell } from "../../components/ToolShell.web";
 import { Category } from "../../types";
 
@@ -14,10 +15,11 @@ describe("ToolShell", () => {
     expect(screen.getByRole("heading", { name: "Feature Flags" })).toBeInTheDocument();
   });
 
-  it("calls onBack when the breadcrumb is clicked", () => {
+  it("calls onBack when the breadcrumb is clicked", async () => {
+    const user = userEvent.setup();
     const onBack = jest.fn();
     render(<ToolShell tool={baseTool} onBack={onBack} />);
-    fireEvent.click(screen.getByRole("button", { name: "Configuration / feature-flags" }));
+    await user.click(screen.getByRole("button", { name: "Configuration / feature-flags" }));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 

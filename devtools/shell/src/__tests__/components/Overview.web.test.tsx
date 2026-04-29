@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen } from "jest/render";
 import { Overview } from "../../components/Overview.web";
 import { Category } from "../../types";
 
@@ -40,14 +41,16 @@ describe("Overview", () => {
     expect(screen.getByText("Feature Flags")).toBeInTheDocument();
   });
 
-  it("calls onSelect with the first tool id when a category card is clicked", () => {
+  it("calls onSelect with the first tool id when a category card is clicked", async () => {
+    const user = userEvent.setup();
     const onSelect = jest.fn();
     render(<Overview categories={categories} recentToolIds={[]} onSelect={onSelect} />);
-    fireEvent.click(screen.getByRole("button", { name: /configuration/i }));
+    await user.click(screen.getByRole("button", { name: /configuration/i }));
     expect(onSelect).toHaveBeenCalledWith("feature-flags");
   });
 
-  it("calls onSelect with the tool id when a recent tool card is clicked", () => {
+  it("calls onSelect with the tool id when a recent tool card is clicked", async () => {
+    const user = userEvent.setup();
     const onSelect = jest.fn();
     render(
       <Overview
@@ -56,7 +59,7 @@ describe("Overview", () => {
         onSelect={onSelect}
       />,
     );
-    fireEvent.click(screen.getByRole("button", { name: /network inspector/i }));
+    await user.click(screen.getByRole("button", { name: /network inspector/i }));
     expect(onSelect).toHaveBeenCalledWith("network-inspector");
   });
 });
