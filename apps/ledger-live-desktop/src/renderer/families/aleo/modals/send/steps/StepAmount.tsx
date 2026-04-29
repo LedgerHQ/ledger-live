@@ -10,12 +10,8 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import type { StepProps } from "~/renderer/modals/Send/types";
-import { closeAllModal } from "~/renderer/actions/modals";
-import { useDispatch } from "LLD/hooks/redux";
-import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 
 const StepAmount = (props: StepProps) => {
-  const dispatch = useDispatch();
   const {
     t,
     account,
@@ -38,8 +34,6 @@ const StepAmount = (props: StepProps) => {
   invariant(mainAccount, "main account required");
 
   if (!status) return null;
-  const { errors } = status;
-  const { gasPrice } = errors;
 
   return (
     <Box flow={4} data-testid="aleo-step-amount">
@@ -79,12 +73,6 @@ const StepAmount = (props: StepProps) => {
           onChange={onChangeTransaction}
           bridgePending={bridgePending}
           updateTransaction={updateTransaction}
-        />
-        <LowGasAlertBuyMore
-          account={mainAccount}
-          handleRequestClose={() => dispatch(closeAllModal())}
-          gasPriceError={gasPrice}
-          trackingSource={"send flow"}
         />
       </Fragment>
     </Box>
