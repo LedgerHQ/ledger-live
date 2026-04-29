@@ -1,5 +1,5 @@
 import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
-import { StakingAccount } from "@ledgerhq/coin-evm/types/index";
+import { isStakingAccount, StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
@@ -23,7 +23,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo(account);
   const { spendableBalance, stakingResources } = account;
-  const { delegatedBalance, unbondingBalance } = stakingResources || {};
+  const { delegatedBalance, unbondingBalance } = stakingResources;
   const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
@@ -77,9 +77,17 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   );
 }
 
-export default function AccountBalanceFooter({ account }: Props) {
+type AccountBalanceFooterProps = {
+  account: Account;
+};
+
+export default function AccountBalanceFooter({ account }: AccountBalanceFooterProps) {
   const featureFlagEnabled = useFeature("evmNativeStaking")?.enabled === true;
   if (!featureFlagEnabled) {
+    return null;
+  }
+
+  if (!isStakingAccount(account)) {
     return null;
   }
 
@@ -99,6 +107,7 @@ export default function AccountBalanceFooter({ account }: Props) {
 function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const stakingContract = STAKING_CONTRACTS[account.currency.id];
+  const unbondingPeriodDays = stakingContract ? stakingContract.unbondingPeriodDays : undefined;
   return {
     available: [
       {
@@ -122,9 +131,12 @@ function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
     undelegating: [
       {
         title: t("stake.ethereum.info.undelegating.title"),
-        description: t("stake.ethereum.info.undelegating.description", {
-          numberOfDays: stakingContract.unbondingPeriodDays,
-        }),
+        description:
+          unbondingPeriodDays !== undefined
+            ? t("stake.ethereum.info.undelegating.description", {
+                numberOfDays: unbondingPeriodDays,
+              })
+            : t("stake.default.info.undelegating.description"),
       },
     ],
     claimable: [

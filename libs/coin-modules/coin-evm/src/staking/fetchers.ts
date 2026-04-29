@@ -1,4 +1,5 @@
 import { Stake } from "@ledgerhq/coin-module-framework/api/types";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
@@ -10,12 +11,17 @@ import type {
   StakingExtractor,
   StakingValidatorItem,
 } from "../types/staking";
-import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../utils";
+import {
+  extractSeiDelegation,
+  getCeloAmount,
+  getErrorCode,
+  getErrorMessage,
+  getSeiDelegationAmount,
+  isExpectedSeiNoDelegationError,
+} from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./transactionData";
 import { getValidators } from "./validators";
-import { log } from "@ledgerhq/logs";
-import { getErrorCode, getErrorMessage, isExpectedSeiNoDelegationError } from "../utils";
 
 const LOG_TYPE = "evm/staking";
 

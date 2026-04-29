@@ -8064,6 +8064,13 @@
     "getFundsModal": {
       "text": "Get {{coin}} to stake",
       "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Wallet."
+    },
+    "default": {
+      "info": {
+        "undelegating": {
+          "description": "This is the amount currently leaving staking. It will appear in your available balance once the withdrawal has finished."
+        }
+      }
     }
   },
   "analyticsOptIn": {
