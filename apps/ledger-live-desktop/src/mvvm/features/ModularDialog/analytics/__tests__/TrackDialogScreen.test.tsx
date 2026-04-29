@@ -6,6 +6,10 @@ import { MODULAR_DIALOG_PAGE_NAME } from "../modularDialog.types";
 import { trackPage } from "~/renderer/analytics/segment";
 
 describe("TrackDialogScreen", () => {
+  beforeEach(() => {
+    jest.mocked(trackPage).mockReset();
+  });
+
   it("calls track page with flow and source", () => {
     const page = MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
@@ -18,6 +22,7 @@ describe("TrackDialogScreen", () => {
       { flow: "flowtest", source: "sourcetest" },
       true,
       true,
+      false,
     );
   });
 
@@ -42,6 +47,7 @@ describe("TrackDialogScreen", () => {
       },
       true,
       true,
+      false,
     );
   });
 
@@ -70,6 +76,7 @@ describe("TrackDialogScreen", () => {
       },
       true,
       true,
+      false,
     );
   });
 });
