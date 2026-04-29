@@ -4721,7 +4721,7 @@
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions.",
       "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
