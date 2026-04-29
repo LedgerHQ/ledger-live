@@ -25,6 +25,8 @@ export interface ZCashNativeClient {
   readonly grpcUrl: string;
   readonly network: string;
   getChainTip(): Promise<number>;
+  /** @param timestamp - Unix timestamp in **seconds** (not milliseconds). */
+  findBlockHeight(timestamp: number): Promise<number>;
   estimatedSyncTime(totalBlocks: number): Promise<(processedBlocks: number) => SyncEstimatedTime>;
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult>;
 }

@@ -42,6 +42,8 @@ export type RequestId = string;
 export const ZCASH_IPC = {
   /** invoke → number (chain tip height) */
   getChainTip: "zcash:getChainTip",
+  /** invoke → number (block height for a given timestamp) */
+  findBlockHeight: "zcash:findBlockHeight",
   /** invoke → void once the start-sync message has been posted to the utility. Chunks arrive on `stream`. */
   startSync: "zcash:startSync",
   /** invoke → void. Propagates a cancel signal to the utility. */
@@ -57,6 +59,12 @@ export type ZcashIpcChannel = (typeof ZCASH_IPC)[keyof typeof ZCASH_IPC];
 export type GetChainTipArgs = {
   requestId: RequestId;
   grpcUrl: string;
+};
+
+export type FindBlockHeightArgs = {
+  requestId: RequestId;
+  grpcUrl: string;
+  timestamp: number;
 };
 
 export type StartSyncArgs = {
@@ -93,10 +101,13 @@ export type StreamEvent =
 
 export type UtilityInboundMessage =
   | { type: "get-chain-tip"; args: GetChainTipArgs }
+  | { type: "find-block-height"; args: FindBlockHeightArgs }
   | { type: "start-sync"; args: StartSyncArgs }
   | { type: "cancel-sync"; args: CancelSyncArgs };
 
 export type UtilityOutboundMessage =
   | { type: "chain-tip"; requestId: RequestId; height: number }
   | { type: "chain-tip-error"; requestId: RequestId; message: string }
+  | { type: "block-height"; requestId: RequestId; height: number }
+  | { type: "block-height-error"; requestId: RequestId; message: string }
   | { type: "stream"; event: StreamEvent };

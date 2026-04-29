@@ -11,21 +11,25 @@
 jest.mock("@ledgerhq/zcash-utils", () => ({
   startSync: jest.fn(),
   getChainTip: jest.fn(),
+  findBlockHeight: jest.fn(),
   deriveKeys: jest.fn(),
 }));
 
 import {
   getChainTipJob,
+  findBlockHeightJob,
   startSyncJob,
   validateStartSyncArgs,
   type StartSyncJobArgs,
 } from "../src/native-engine/engine";
 import * as nativeUtils from "@ledgerhq/zcash-utils";
+import type { ShieldedNote } from "@ledgerhq/zcash-utils";
 import { ZCASH_GRPC_URL_TESTNET } from "../src/constants";
 import type { ShieldedSyncResultRaw } from "../src/types";
 
-const mockGetChainTip = nativeUtils.getChainTip as jest.Mock;
-const mockStartSync = nativeUtils.startSync as jest.Mock;
+const mockGetChainTip = jest.mocked(nativeUtils.getChainTip);
+const mockFindBlockHeight = jest.mocked(nativeUtils.findBlockHeight);
+const mockStartSync = jest.mocked(nativeUtils.startSync);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -45,7 +49,7 @@ function baseNativeTx() {
     blockHash: "blockhash1",
     blockTime: 1700000000,
     fee: 5000,
-    saplingNotes: [] as { amount: number; transferType: string; memo: string }[],
+    saplingNotes: new Array<ShieldedNote>(),
     orchardNotes: [{ amount: 5000, transferType: "incoming", memo: "hello" }],
   };
 }
@@ -54,7 +58,7 @@ function makeStream(txs: ReturnType<typeof makeNativeTx>[], blocksScanned = 100)
   let index = 0;
   return {
     next: jest.fn(() => Promise.resolve(index < txs.length ? txs[index++] : null)),
-    stats: jest.fn(() => Promise.resolve({ blocksScanned })),
+    stats: jest.fn(() => Promise.resolve({ blocksScanned, elapsedMs: 0 })),
     cancel: jest.fn(),
   };
 }
@@ -71,7 +75,7 @@ function makeHangingStream() {
   return {
     stream: {
       next: jest.fn(() => pending),
-      stats: jest.fn(() => Promise.resolve({ blocksScanned: 0 })),
+      stats: jest.fn(() => Promise.resolve({ blocksScanned: 0, elapsedMs: 0 })),
       cancel: jest.fn(),
     },
     release: () => release(null),
@@ -133,6 +137,17 @@ describe("getChainTipJob", () => {
     const tip = await getChainTipJob(ZCASH_GRPC_URL_TESTNET);
     expect(tip).toBe(3_936_000);
     expect(mockGetChainTip).toHaveBeenCalledWith(ZCASH_GRPC_URL_TESTNET);
+  });
+});
+
+// ─── findBlockHeightJob ──────────────────────────────────────────────────────
+
+describe("findBlockHeightJob", () => {
+  it("should return the block height for the given timestamp", async () => {
+    mockFindBlockHeight.mockResolvedValue(2_634_000);
+    const height = await findBlockHeightJob(ZCASH_GRPC_URL_TESTNET, 1_700_000_000);
+    expect(height).toBe(2_634_000);
+    expect(mockFindBlockHeight).toHaveBeenCalledWith(ZCASH_GRPC_URL_TESTNET, 1_700_000_000);
   });
 });
 
@@ -326,17 +341,13 @@ describe("startSyncJob — onActiveStream hook", () => {
     mockStartSync.mockResolvedValue(stream);
 
     let cancelled = false;
-    let activeStream: { cancel: jest.Mock } | null = null;
-    const jobPromise = startSyncJob(
-      makeArgs({ maxBatchSize: 100 }),
-      () => {},
-      {
-        isCancelled: () => cancelled,
-        onActiveStream: s => {
-          activeStream = s as typeof activeStream;
-        },
+    let activeStream: { cancel: () => void } | null = null;
+    const jobPromise = startSyncJob(makeArgs({ maxBatchSize: 100 }), () => {}, {
+      isCancelled: () => cancelled,
+      onActiveStream: s => {
+        activeStream = s;
       },
-    );
+    });
 
     // Wait for the engine to enter stream.next()
     await waitFor(() => expect(stream.next).toHaveBeenCalled());

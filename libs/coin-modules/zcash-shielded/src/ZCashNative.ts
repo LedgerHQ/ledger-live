@@ -28,6 +28,7 @@ import { ZCASH_LOG_TYPE } from "./constants";
 import type { ShieldedSyncResult, SyncEstimatedTime, ZCashNativeClient } from "./types";
 import type { SyncShieldedArgs } from "./types";
 import {
+  findBlockHeightJob,
   getChainTipJob,
   startSyncJob,
   validateStartSyncArgs,
@@ -52,6 +53,14 @@ export class ZCashNative implements ZCashNativeClient {
    */
   async getChainTip(): Promise<number> {
     return getChainTipJob(this.grpcUrl);
+  }
+
+  /**
+   * Returns the block height corresponding to the given Unix timestamp,
+   * via the native gRPC client (interpolation search + streaming range).
+   */
+  async findBlockHeight(timestamp: number): Promise<number> {
+    return findBlockHeightJob(this.grpcUrl, timestamp);
   }
 
   /**
