@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 4.2.2-hotfix.0
+
+### Patch Changes
+
+- [#16963](https://github.com/LedgerHQ/ledger-live/pull/16963) [`c8c8e1f`](https://github.com/LedgerHQ/ledger-live/commit/c8c8e1f77d922918440cc3330480b67b3dcc87b2) Thanks [@thesan](https://github.com/thesan)! - Restrict UPDATE*CHECK*\* vars to prerelease builds only
+
+- [#16940](https://github.com/LedgerHQ/ledger-live/pull/16940) [`92fb524`](https://github.com/LedgerHQ/ledger-live/commit/92fb524d1bab5c02e9786ad52d11e6e35b4971d5) Thanks [@thesan](https://github.com/thesan)! - Check signatures on pre-release builds
+
 ## 4.2.1
 
 ### Patch Changes
