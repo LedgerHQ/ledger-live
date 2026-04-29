@@ -15,7 +15,6 @@ import type {
   AleoTransferIntentResponse,
   AleoCreateAuthorizationRequest,
   AleoAuthorizationResponse,
-  AleoCreateTransferIntentRequest14,
 } from "../types/api";
 import { getNetworkConfig } from "../logic/utils";
 import { PROGRAM_ID } from "../constants";
@@ -271,28 +270,6 @@ async function createTransferIntent({
   return res.data;
 }
 
-async function createTransferIntent14({
-  intent,
-  viewKey,
-  fee,
-}: {
-  intent: AleoCreateTransferIntentRequest14["intent"];
-  viewKey: string;
-  fee: AleoCreateTransferIntentRequest14["fee"];
-}): Promise<AleoTransferIntentResponse> {
-  const res = await network<AleoTransferIntentResponse>({
-    method: "POST",
-    url: `http://10.3.19.130/network/testnet/transactions/request`,
-    data: {
-      intent,
-      view_key: viewKey,
-      fee,
-    },
-  });
-
-  return res.data;
-}
-
 async function createAuthorization({
   request,
   signatures,
@@ -331,6 +308,5 @@ export const apiClient = {
   submitDelegatedProvingRequest,
   submitEncryptedDelegatedProvingRequest,
   createTransferIntent,
-  createTransferIntent14,
   createAuthorization,
 };

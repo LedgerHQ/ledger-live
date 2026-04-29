@@ -38,6 +38,7 @@ import type {
   TransactionPrivate,
   AleoCoinConfig,
   AleoUnspentRecord,
+  AleoPrivateTransferType,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -46,6 +47,16 @@ export function parseMicrocredits(microcreditsU64: string): string {
   const hasValidSuffix = value.endsWith(expectedSuffix);
   invariant(hasValidSuffix, `aleo: invalid microcredits format (${microcreditsU64})`);
   return value.replace(expectedSuffix, "");
+}
+
+export function selectPrivateTransferType(recordCount: number): AleoPrivateTransferType {
+  invariant(
+    recordCount >= 2 && recordCount <= 14,
+    `aleo: record count ${recordCount} is out of supported range (2–14)`,
+  );
+  if (recordCount <= 4) return "transfer_private2";
+  if (recordCount <= 8) return "transfer_private7";
+  return "transfer_private14";
 }
 
 export function getNetworkConfig(currency: CryptoCurrency) {

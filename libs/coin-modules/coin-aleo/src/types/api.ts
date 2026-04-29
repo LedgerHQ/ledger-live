@@ -170,21 +170,14 @@ export interface AleoTransferIntentFee {
   function_name: string;
 }
 
+export type AleoPrivateTransferType =
+  | "transfer_private14"
+  | "transfer_private7"
+  | "transfer_private2";
+
 export interface AleoCreateTransferIntentRequest {
   intent: {
-    type: string;
-    amount: string;
-    to: string;
-    record1: AleoRecordInput;
-    record2?: AleoRecordInput;
-  };
-  view_key: string;
-  fee: AleoTransferIntentFee;
-}
-
-export interface AleoCreateTransferIntentRequest14 {
-  intent: {
-    type: string;
+    type: AleoPrivateTransferType;
     amount: string;
     to: string;
     records: AleoRecordInput[];
