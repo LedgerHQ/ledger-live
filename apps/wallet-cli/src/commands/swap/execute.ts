@@ -25,13 +25,11 @@ export default defineCommand({
   options: {
     provider: option(z.string().min(1, "Provider is required (--provider <name>)"), {
       description: "Swap provider name, e.g. changelly",
-      short: "p",
     }),
     amount: option(z.string().min(1, "Amount is required (--amount <value>)"), {
-      description: "Swap source amount in human units (ignored if --amount-atomic is set)",
-      short: "a",
+      description: "Swap source amount in human units",
     }),
-    "to-account": option(z.string().min(1).optional(), {
+    "to-account": option(z.string().min(1), {
       description: "Destination account descriptor or session label (required for full pipeline)",
     }),
     account: accountOption,

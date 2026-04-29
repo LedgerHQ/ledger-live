@@ -2325,6 +2325,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
+      '@ledgerhq/hw-app-exchange':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-app-exchange
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport

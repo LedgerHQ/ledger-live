@@ -19,7 +19,7 @@ wallet-cli is **not production-ready**. Behavior and flags may change without no
 | `operations` | Given an account descriptor, **list operations**. **No device** required. For Alpaca-backed families, optional pagination via `--limit` and `--cursor`. |
 | `send` | Sign and broadcast a transaction. Requires `--amount` with ticker (e.g. `0.001 BTC`, `0.01 ETH`). Use `--dry-run` to validate without signing. |
 | `receive` | Get the receive address for an account (optionally verify on device). |
-| `swap execute` | Call the swap `/swap` payload endpoint with `--provider` and `--amount`, then print the payload result. |
+| `swap execute` | Execute the full swap flow with `--provider` and `--amount`: prepare the swap, interact with the connected device as needed, complete the exchange, then sign and broadcast the transaction. |
 
 Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the printed descriptor to `balances`, `operations`, or `send`.
 

@@ -16,7 +16,7 @@ import { transactionStrategy } from "@ledgerhq/live-common/lib-es/exchange/swap/
 import type { Transaction } from "@ledgerhq/live-common/lib-es/coin-modules/transaction-types";
 import type { ExchangeRequestEvent } from "@ledgerhq/live-common/lib-es/hw/actions/startExchange";
 import type { Device } from "@ledgerhq/live-common/lib-es/hw/actions/types";
-import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
+import { getWalletCliDeviceModelId, WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
 import { withLedgerManagerAppSession } from "../../session/exchange-device-session";
 import type {
   SwapPayloadRequestData,
@@ -32,9 +32,9 @@ const RATE_FLOATING: RateTypes = 0x01;
 const EXCHANGE_APP_NAME = "Exchange";
 
 /** Minimal device context for live-common exchange APDUs over wallet-cli DMK transport. */
-const walletCliExchangeDevice = (): Device => ({
+const walletCliExchangeDevice = async (): Promise<Device> => ({
   deviceId: WALLET_CLI_DMK_DEVICE_ID,
-  modelId: DeviceModelId.nanoX,
+  modelId: (await getWalletCliDeviceModelId())!,
   wired: true,
 });
 
@@ -135,7 +135,7 @@ async function awaitStartExchangeContext(
   out.swapExecuteProgress(
     `[1/5] Starting new exchange transaction on the device (open the ${EXCHANGE_APP_NAME} app when prompted)…`,
   );
-  const device = walletCliExchangeDevice();
+  const device = await walletCliExchangeDevice();
   const events = startExchange({
     device,
     exchangeType: EXCHANGE_SWAP,
