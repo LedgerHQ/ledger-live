@@ -6,18 +6,13 @@ import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { toHex } from "../logic/utils";
 
 describe("Broadcast", () => {
-  let consoleSpy: jest.SpyInstance;
-
   beforeAll(() => {
-    // @provablehq/wasm emits Rust-level log lines via console.log; suppress them
-    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
-      networkType: "testnet",
+      networkType: "mainnet",
       apiUrls: {
-        node: "https://aleo.coin.ledger-test.com",
-        sdk: "https://aleo-backend.api.live.ledger.com/network/testnet",
+        node: "https://aleo.coin.ledger.com",
+        sdk: "https://aleo-backend.api.live.ledger.com/network/mainnet",
       },
       feeByTransactionType: {
         [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
@@ -31,17 +26,10 @@ describe("Broadcast", () => {
     }));
   });
 
-  afterAll(() => {
-    consoleSpy.mockRestore();
-  });
-
   it("creates an offline transfer_public signature and fails to broadcast with zero balance", async () => {
-    // Dynamic import so the ESM-only @provablehq/sdk is loaded at runtime
-    const { Account, ProgramManager } = await import("@provablehq/sdk");
-
+    const { Account, ProgramManager } = await import("@provablehq/sdk/mainnet.js");
     const sender = new Account();
     const receiver = new Account();
-
     try {
       const programManager = new ProgramManager();
 
@@ -79,10 +67,14 @@ describe("Broadcast", () => {
             operation,
           },
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(/aleo: /);
     } finally {
       sender.destroy();
       receiver.destroy();
     }
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });
