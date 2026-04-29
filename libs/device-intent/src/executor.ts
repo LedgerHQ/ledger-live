@@ -20,17 +20,21 @@ export type DeviceConnectionComponent = React.ComponentType<{
   onError: (error: unknown) => void;
 }>;
 
+export type DeviceContextInitializerComponentProps<InitInput = void> = {
+  connectionResult: DeviceConnectionResult;
+  deviceInitializationInput: InitInput;
+  onContextInitialized: (context: DeviceExtractedContext) => void;
+};
+
 /**
  * React component responsible for establishing the required device context
  * (installing/opening an app, performing derivation, etc.).
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
-export type DeviceContextInitializerComponent<InitInput = void> = React.ComponentType<{
-  connectionResult: DeviceConnectionResult;
-  deviceInitializationInput: InitInput;
-  onContextInitialized: (context: DeviceExtractedContext) => void;
-}>;
+export type DeviceContextInitializerComponent<InitInput = void> = React.ComponentType<
+  DeviceContextInitializerComponentProps<InitInput>
+>;
 
 /**
  * React component rendered when an error occurs during one of the executor
