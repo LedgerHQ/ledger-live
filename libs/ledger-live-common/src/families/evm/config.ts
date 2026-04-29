@@ -1184,7 +1184,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://explorer.somnia.network/api",
+        uri: "https://mainnet.somnia.w3us.site/api",
       },
       showNfts: false,
     },
