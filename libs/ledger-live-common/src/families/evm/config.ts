@@ -986,7 +986,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.public.zkevm-test.net" },
+      node: { type: "external", uri: "https://polygon-zkevm-cardona.coin.ledger.com" },
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1442",
