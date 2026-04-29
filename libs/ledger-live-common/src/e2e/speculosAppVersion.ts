@@ -53,6 +53,9 @@ export async function getNanoAppCatalog(
 ): Promise<ApplicationV2Entity[]> {
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
   const targetId = getDeviceTargetId(device);
+  console.warn(`Getting catalog for device:`, device);
+  console.warn(`Firmware Version:`, deviceFirmware);
+  console.warn(`Target ID:`, targetId);
   return await repository.catalogForDevice({
     provider: 1,
     targetId: targetId,
@@ -75,6 +78,9 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
   const providerId = 1;
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
 
+  console.warn(`Getting device version for device: `, device);
+  console.warn(`Target ID : `, getDeviceTargetId(device));
+  console.warn(`Provider ID: `, providerId);
   const deviceVersion = await repository.getDeviceVersion({
     targetId: getDeviceTargetId(device),
     providerId,
