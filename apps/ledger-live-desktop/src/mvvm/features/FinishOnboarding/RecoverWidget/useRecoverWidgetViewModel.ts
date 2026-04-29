@@ -28,7 +28,7 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverServices);
-  const { postOnboardingInProgress, deviceModelId } = usePostOnboardingHubState();
+  const { deviceModelId } = usePostOnboardingHubState();
 
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
   const [subscriptionState, setSubscriptionState] = useState<LedgerRecoverSubscriptionStateEnum | undefined>(
@@ -54,9 +54,6 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
   const isRecoverOfferAvailable = isRecoverDisplayed(recoverServices, deviceModelId ?? undefined);
 
   const isVisible = useMemo(() => {
-    if (!postOnboardingInProgress) {
-      return false;
-    }
     if (!isRecoverOfferAvailable) {
       return false;
     }
@@ -67,7 +64,7 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
       return false;
     }
     return true;
-  }, [isRecoverOfferAvailable, postOnboardingInProgress, subscriptionState, upsellPath]);
+  }, [isRecoverOfferAvailable, subscriptionState, upsellPath]);
 
   const onOpenRecover = useCallback(() => {
     if (!upsellPath) {

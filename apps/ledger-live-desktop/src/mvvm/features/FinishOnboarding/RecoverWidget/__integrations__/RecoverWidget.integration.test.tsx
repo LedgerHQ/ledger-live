@@ -1,3 +1,19 @@
+import React from "react";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
+import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { render, screen, waitFor } from "tests/testSetup";
+import { useNavigate } from "react-router";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { getStoreValue } from "~/renderer/store";
+import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
+import dbMiddleware from "~/renderer/middlewares/db";
+import type { State } from "~/renderer/reducers";
+import createStore from "~/state-manager/configureStore";
+import RecoverWidget from "LLD/features/FinishOnboarding/RecoverWidget";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+
 /** Real `electron-store` is not usable in Jest. */
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -16,22 +32,6 @@ jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
   useFeature: jest.fn(),
 }));
-
-import React from "react";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
-import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { render, screen, waitFor } from "tests/testSetup";
-import { useNavigate } from "react-router";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { getStoreValue } from "~/renderer/store";
-import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
-import dbMiddleware from "~/renderer/middlewares/db";
-import type { State } from "~/renderer/reducers";
-import createStore from "~/state-manager/configureStore";
-import RecoverWidget from "LLD/features/FinishOnboarding/RecoverWidget";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 const mockNavigate = jest.fn();
 const mockUseNavigate = jest.mocked(useNavigate);
