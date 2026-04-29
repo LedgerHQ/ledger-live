@@ -98,14 +98,15 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Second-latest is chosen by second-highest numeric ID (falls back to sole entry if only one exists)
+  // Nano S uses latest firmware; other devices use n-1.
   const sortedByIdDesc = [...providerFirmwares].sort((a, b) => b.id - a.id);
-  const firmwareBeforeLatest = sortedByIdDesc.length >= 2 ? sortedByIdDesc[1]! : sortedByIdDesc[0]!;
+  const firmwareIndex = device === DeviceModelId.nanoS ? 0 : 1;
+  const firmware = sortedByIdDesc[firmwareIndex] ?? sortedByIdDesc[0]!;
 
-  firmwareVersionCache.set(device, firmwareBeforeLatest.version);
-  process.env.SPECULOS_FIRMWARE_VERSION = firmwareBeforeLatest.version;
+  firmwareVersionCache.set(device, firmware.version);
+  process.env.SPECULOS_FIRMWARE_VERSION = firmware.version;
 
-  return firmwareBeforeLatest.version;
+  return firmware.version;
 }
 
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {
