@@ -212,20 +212,26 @@ export const buildSignOperation =
                 viewKey,
               }),
             );
-            o.next({ type: "device-signature-granted" });
+            o.next({
+              type: "device-signature-granted",
+            });
 
-            const operation = buildOptimisticOperation({ account, transaction });
+            const operation = buildOptimisticOperation({
+              account,
+              transaction,
+            });
 
             o.next({
               type: "signed",
-              signedOperation: { operation, signature: signedTx },
+              signedOperation: {
+                operation,
+                signature: signedTx,
+              },
             });
 
             o.complete();
             return;
           }
-
-          throw new Error("Standard signing flow not yet enabled — only multi-record path active");
         } catch (err) {
           o.error(err);
         }
