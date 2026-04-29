@@ -7,7 +7,9 @@ import {
 import { Text } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
-import DeviceContextInitializerComponentLWM from "./DeviceContextInitializerComponentLWM";
+import DeviceContextInitializerComponentLWM, {
+  InitializerConfig,
+} from "./DeviceContextInitializerComponentLWM";
 import ErrorComponentLWM from "./ErrorComponentLWM";
 import InvalidOperationComponentLWM from "./InvalidOperationComponentLWM";
 import type { InitializationInput } from "./types";
@@ -17,9 +19,11 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   Input,
   ExtraProps,
   InitializationInput
->;
+> & {
+  initializerConfig?: InitializerConfig;
+};
 
-const platformConfig: ExecutorPlatformConfiguration<InitializationInput> = {
+const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
   ConnectionErrorComponent: ErrorComponentLWM,
@@ -51,7 +55,11 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
       <Text variant="h5" mb={4}>
         {"Device Intent Executor"}
       </Text>
-      <DeviceIntentExecutor {...props} platformConfig={platformConfig} />
+      <DeviceIntentExecutor
+        {...props}
+        platformConfig={platformConfig}
+        initializerConfig={props.initializerConfig}
+      />
     </QueuedDrawer>
   );
 }
