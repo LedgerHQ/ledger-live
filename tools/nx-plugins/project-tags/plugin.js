@@ -54,14 +54,6 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:tools");
   }
 
-  if (projectRoot.startsWith("shared/")) {
-    tags.add("scope:shared");
-  }
-
-  if (projectRoot.startsWith("domain/")) {
-    tags.add("scope:domain");
-  }
-
   if (!(projectRoot === "apps" || projectRoot.startsWith("apps/"))) {
     tags.add("scope:no-apps");
   }

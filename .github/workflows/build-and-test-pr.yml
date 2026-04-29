@@ -108,6 +108,13 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
     secrets: inherit
 
+  enforce-boundaries:
+    name: "Enforce Module Boundaries"
+    needs: determine-affected
+    if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features')) && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@ci/nx-enforce-module-boundaries-new-arch
+    secrets: inherit
+
   test-design-system:
     name: "Test UI Libs"
     needs: determine-affected
