@@ -11,19 +11,35 @@ import {
   isAPIDelegationType,
   isAPIRevealType,
   isAPITransactionType,
+  type TokenTransfersGetOptions,
 } from "../network/types";
 
-/** Single block-level boundary cursor shared by native + token streams (legacy cursors ignored). */
-type ListOperationsCursor = { lastLevel: number };
+/** Block-level boundary + optional per-stream id cursors for intra-level continuation. */
+type ListOperationsCursor = {
+  lastLevel: number;
+  nativeLastId?: number;
+  tokenLastId?: number;
+};
 
 function parseCursor(token?: string): ListOperationsCursor | undefined {
   if (!token) return undefined;
   try {
     const parsed: unknown = JSON.parse(token);
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      const o = parsed as { lastLevel?: unknown };
+      const o = parsed as {
+        lastLevel?: unknown;
+        nativeLastId?: unknown;
+        tokenLastId?: unknown;
+      };
       if (typeof o.lastLevel === "number" && Number.isFinite(o.lastLevel)) {
-        return { lastLevel: o.lastLevel };
+        const cursor: ListOperationsCursor = { lastLevel: o.lastLevel };
+        if (typeof o.nativeLastId === "number" && Number.isFinite(o.nativeLastId)) {
+          cursor.nativeLastId = o.nativeLastId;
+        }
+        if (typeof o.tokenLastId === "number" && Number.isFinite(o.tokenLastId)) {
+          cursor.tokenLastId = o.tokenLastId;
+        }
+        return cursor;
       }
     }
   } catch {
@@ -43,18 +59,103 @@ function maxLevel<T extends { level: number }>(items: T[]): number | undefined {
 }
 
 /** When the API returned a full page, the trailing block level may be incomplete — drop it. */
-function trimPartialLastLevel<T extends { level: number }>(items: T[], full: boolean): T[] {
-  if (!full || items.length === 0) return items;
-  const lastLevel = items[items.length - 1].level;
+function trimPartialLastLevel<T extends { level: number; id: number }>(
+  items: T[],
+  full: boolean,
+): { trimmed: T[]; intraLevelLastId?: number } {
+  if (!full || items.length === 0) return { trimmed: items };
+  const last = items.at(-1);
+  if (!last) return { trimmed: items };
+  const lastLevel = last.level;
   const filtered = items.filter(op => op.level !== lastLevel);
   if (filtered.length === 0) {
     log("coin:tezos", "listOperations: full page single level — keeping all rows", {
       lastLevel,
       count: items.length,
     });
-    return items;
+    return { trimmed: items, intraLevelLastId: last.id };
   }
-  return filtered;
+  return { trimmed: filtered };
+}
+
+function buildNativeOptions(
+  sort: "Ascending" | "Descending",
+  cursor: ListOperationsCursor | undefined,
+  minHeight: number,
+): AccountsGetOperationsOptions {
+  if (!cursor) {
+    return { sort, "level.ge": minHeight };
+  }
+
+  const { lastLevel, nativeLastId } = cursor;
+
+  if (sort === "Descending") {
+    if (nativeLastId !== undefined) {
+      return {
+        sort,
+        "level.ge": minHeight,
+        "level.lt": lastLevel + 1,
+        lastId: nativeLastId,
+      };
+    }
+    return {
+      sort,
+      "level.ge": minHeight,
+      "level.lt": lastLevel,
+    };
+  }
+
+  if (nativeLastId !== undefined) {
+    return {
+      sort,
+      "level.ge": Math.max(minHeight, lastLevel),
+      lastId: nativeLastId,
+    };
+  }
+  return {
+    sort,
+    "level.ge": Math.max(minHeight, lastLevel + 1),
+  };
+}
+
+function buildTokenOptions(
+  sort: "Ascending" | "Descending",
+  cursor: ListOperationsCursor | undefined,
+  minHeight: number,
+): TokenTransfersGetOptions {
+  if (!cursor) {
+    return { sort, "level.ge": minHeight };
+  }
+
+  const { lastLevel, tokenLastId } = cursor;
+
+  if (sort === "Descending") {
+    if (tokenLastId !== undefined) {
+      return {
+        sort,
+        "level.ge": minHeight,
+        "level.lt": lastLevel + 1,
+        "id.lt": tokenLastId,
+      };
+    }
+    return {
+      sort,
+      "level.ge": minHeight,
+      "level.lt": lastLevel,
+    };
+  }
+
+  if (tokenLastId !== undefined) {
+    return {
+      sort,
+      "level.ge": Math.max(minHeight, lastLevel),
+      "id.gt": tokenLastId,
+    };
+  }
+  return {
+    sort,
+    "level.ge": Math.max(minHeight, lastLevel + 1),
+  };
 }
 
 function computeBoundary(
@@ -89,6 +190,81 @@ function alignToBoundary<T extends { level: number }>(
   return items.filter(op => op.level <= boundary);
 }
 
+function clampPage<T>(raw: T[], limit?: number): { sliced: T[]; full: boolean } {
+  if (limit === undefined) {
+    return { sliced: raw, full: false };
+  }
+  return {
+    sliced: raw.slice(0, limit),
+    full: raw.length >= limit,
+  };
+}
+
+function buildParentMap(ops: APIOperation[]): Map<number, APITransactionType> {
+  const parentMap = new Map<number, APITransactionType>();
+  for (const op of ops) {
+    if (isAPITransactionType(op) && op.id !== null) {
+      parentMap.set(op.id, op);
+    }
+  }
+  return parentMap;
+}
+
+function keepNativeOp(
+  op: APIOperation,
+  address: string,
+): op is APITransactionType | APIDelegationType | APIRevealType {
+  if (!(isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))) {
+    return false;
+  }
+  if (op.status !== "applied" && isAPITransactionType(op)) {
+    const isIn = op.target?.address === address;
+    if (isIn) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function convertNativeOps(ops: APIOperation[], address: string): Operation[] {
+  return ops
+    .filter((op): op is APITransactionType | APIDelegationType | APIRevealType =>
+      keepNativeOp(op, address),
+    )
+    .map(op => convertOperation(address, op))
+    .flat();
+}
+
+function convertTokenOps(
+  transfers: (APITokenTransfer & { hash: string; block?: string })[],
+  parentMap: Map<number, APITransactionType>,
+  address: string,
+): Operation[] {
+  return transfers.map(transfer =>
+    convertTokenOperation(
+      address,
+      transfer,
+      transfer.transactionId ? parentMap.get(transfer.transactionId) : undefined,
+    ),
+  );
+}
+
+function computeNextToken(
+  boundary: number | undefined,
+  nativeFull: boolean,
+  tokenFull: boolean,
+  hasResults: boolean,
+  nativeIntraLastId?: number,
+  tokenIntraLastId?: number,
+): string {
+  const shouldEmitNext = boundary !== undefined && (nativeFull || tokenFull) && hasResults;
+  if (!shouldEmitNext) return "";
+  const payload: ListOperationsCursor = { lastLevel: boundary };
+  if (nativeIntraLastId !== undefined) payload.nativeLastId = nativeIntraLastId;
+  if (tokenIntraLastId !== undefined) payload.tokenLastId = tokenIntraLastId;
+  return JSON.stringify(payload);
+}
+
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
  * @param address Account address
@@ -112,26 +288,14 @@ export async function listOperations(
 ): Promise<[Operation[], string]> {
   const cursor = parseCursor(token);
 
-  const levelWindow =
-    sort === "Descending"
-      ? ({
-          "level.ge": minHeight,
-          ...(cursor ? { "level.lt": cursor.lastLevel } : {}),
-        } as const)
-      : ({
-          "level.ge": cursor ? Math.max(minHeight, cursor.lastLevel + 1) : minHeight,
-        } as const);
-
   const nativeOptions: AccountsGetOperationsOptions = {
     limit,
-    sort,
-    ...levelWindow,
+    ...buildNativeOptions(sort, cursor, minHeight),
   };
 
-  const tokenOptions = {
+  const tokenOptions: TokenTransfersGetOptions = {
     limit,
-    sort,
-    ...levelWindow,
+    ...buildTokenOptions(sort, cursor, minHeight),
   };
 
   const [nativeOpsRaw, tokenTransfersRaw] = await Promise.all([
@@ -139,63 +303,36 @@ export async function listOperations(
     tzkt.getAccountTokenTransfers(address, tokenOptions),
   ]);
 
-  const nativeSliced = limit !== undefined ? nativeOpsRaw.slice(0, limit) : nativeOpsRaw;
-  const tokenSliced = limit !== undefined ? tokenTransfersRaw.slice(0, limit) : tokenTransfersRaw;
+  const nativePage = clampPage(nativeOpsRaw, limit);
+  const tokenPage = clampPage(tokenTransfersRaw, limit);
 
-  const nativeFull = limit !== undefined && nativeOpsRaw.length >= limit;
-  const tokenFull = limit !== undefined && tokenTransfersRaw.length >= limit;
+  const nativeTrimmed = trimPartialLastLevel(nativePage.sliced, nativePage.full);
+  const tokenTrimmed = trimPartialLastLevel(tokenPage.sliced, tokenPage.full);
 
-  const nativeTrim = trimPartialLastLevel(nativeSliced, nativeFull);
-  const tokenTrim = trimPartialLastLevel(tokenSliced, tokenFull);
-
-  const boundary = computeBoundary(nativeTrim, tokenTrim, sort);
+  const boundary = computeBoundary(nativeTrimmed.trimmed, tokenTrimmed.trimmed, sort);
 
   const nativeAligned =
-    boundary !== undefined ? alignToBoundary(nativeTrim, boundary, sort) : nativeTrim;
+    boundary === undefined
+      ? nativeTrimmed.trimmed
+      : alignToBoundary(nativeTrimmed.trimmed, boundary, sort);
   const tokenAligned =
-    boundary !== undefined ? alignToBoundary(tokenTrim, boundary, sort) : tokenTrim;
+    boundary === undefined
+      ? tokenTrimmed.trimmed
+      : alignToBoundary(tokenTrimmed.trimmed, boundary, sort);
 
-  const parentMap = new Map<number, APITransactionType>();
-  for (const op of nativeAligned) {
-    if (isAPITransactionType(op) && op.id !== null) {
-      parentMap.set(op.id, op);
-    }
-  }
+  const parentMap = buildParentMap(nativeAligned);
 
-  const shouldEmitNext =
-    boundary !== undefined &&
-    (nativeFull || tokenFull) &&
-    (nativeAligned.length > 0 || tokenAligned.length > 0);
-
-  const nextToken = shouldEmitNext
-    ? JSON.stringify({ lastLevel: boundary } satisfies ListOperationsCursor)
-    : "";
-
-  const filteredNativeOps = nativeAligned
-    .filter(
-      (op: APIOperation) =>
-        isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op),
-    )
-    .filter(op => {
-      const hasFailed = op.status !== "applied";
-      if (hasFailed && isAPITransactionType(op)) {
-        const isIn = op.target?.address === address;
-        if (isIn) {
-          return false;
-        }
-      }
-      return true;
-    })
-    .map(op => convertOperation(address, op))
-    .flat();
-
-  const tokenConverted = tokenAligned.map(transfer =>
-    convertTokenOperation(
-      address,
-      transfer,
-      transfer.transactionId ? parentMap.get(transfer.transactionId) : undefined,
-    ),
+  const nextToken = computeNextToken(
+    boundary,
+    nativePage.full,
+    tokenPage.full,
+    nativeAligned.length > 0 || tokenAligned.length > 0,
+    nativeTrimmed.intraLevelLastId,
+    tokenTrimmed.intraLevelLastId,
   );
+
+  const filteredNativeOps = convertNativeOps(nativeAligned, address);
+  const tokenConverted = convertTokenOps(tokenAligned, parentMap, address);
 
   const sortedOperations = [...filteredNativeOps, ...tokenConverted].sort(
     (a, b) => b.tx.date.getTime() - a.tx.date.getTime(),

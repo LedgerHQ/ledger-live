@@ -239,7 +239,12 @@ describe("listOperations", () => {
       });
       // Then
       expect(results.length).toEqual(1);
-      expect(token).toEqual(JSON.stringify({ lastLevel: operation.level }));
+      expect(JSON.parse(token)).toEqual(
+        expect.objectContaining({
+          lastLevel: operation.level,
+          nativeLastId: operation.id,
+        }),
+      );
     },
   );
 
@@ -405,9 +410,13 @@ describe("listOperations", () => {
     });
     const tokenOp = results.find(o => o.asset.type === "fa2");
 
-    expect(JSON.parse(next)).toEqual({
-      lastLevel: 100,
-    });
+    expect(JSON.parse(next)).toEqual(
+      expect.objectContaining({
+        lastLevel: 100,
+        nativeLastId: transfer.id,
+        tokenLastId: 9001,
+      }),
+    );
 
     expect(tokenOp).toMatchObject({
       type: "IN",
@@ -688,6 +697,100 @@ describe("listOperations", () => {
     });
     expect(results).toHaveLength(1);
     expect(results[0]?.tx.block.height).toBe(2000);
+  });
+
+  it("emits nativeLastId on full single-level native page and forwards lastId on next request", async () => {
+    const op1 = { ...transfer, id: 900_001, level: 5000, status: "applied" as const };
+    const op2 = { ...transfer, id: 900_002, level: 5000, status: "applied" as const };
+    mockGetAccountOperations.mockResolvedValueOnce([op1, op2]).mockResolvedValueOnce([]);
+    mockGetAccountTokenTransfers.mockResolvedValue([]);
+
+    const [, token] = await listOperations(someSenderAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+    });
+
+    expect(JSON.parse(token)).toEqual(
+      expect.objectContaining({
+        lastLevel: 5000,
+        nativeLastId: 900_002,
+      }),
+    );
+
+    await listOperations(someSenderAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+      token,
+    });
+
+    expect(mockGetAccountOperations).toHaveBeenLastCalledWith(
+      someSenderAddress,
+      expect.objectContaining({
+        "level.lt": 5001,
+        lastId: 900_002,
+        sort: "Descending",
+        "level.ge": 0,
+        limit: 2,
+      }),
+    );
+  });
+
+  it("emits tokenLastId on full single-level token page and forwards id.lt on next request", async () => {
+    const fa2a: APITokenTransfer & { hash: string } = {
+      id: 9105,
+      level: 6000,
+      timestamp: "2023-06-01T17:00:00Z",
+      token: {
+        id: 6,
+        contract: { address: "KT1IntraTok" },
+        tokenId: "0",
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1",
+      hash: "ooTokA",
+    };
+    const fa2b: APITokenTransfer & { hash: string } = {
+      ...fa2a,
+      id: 9106,
+      hash: "ooTokB",
+    };
+    mockGetAccountOperations.mockResolvedValue([]);
+    mockGetAccountTokenTransfers.mockResolvedValueOnce([fa2b, fa2a]).mockResolvedValueOnce([]);
+
+    const [, cursor] = await listOperations(someDestinationAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+    });
+
+    expect(JSON.parse(cursor)).toEqual(
+      expect.objectContaining({
+        lastLevel: 6000,
+        tokenLastId: 9105,
+      }),
+    );
+
+    await listOperations(someDestinationAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+      token: cursor,
+    });
+
+    expect(mockGetAccountTokenTransfers).toHaveBeenLastCalledWith(
+      someDestinationAddress,
+      expect.objectContaining({
+        "level.lt": 6001,
+        "id.lt": 9105,
+        sort: "Descending",
+        "level.ge": 0,
+        limit: 2,
+      }),
+    );
   });
 
   it("aligns native and token streams to the same boundary level (descending)", async () => {
