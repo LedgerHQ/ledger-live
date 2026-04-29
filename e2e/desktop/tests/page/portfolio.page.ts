@@ -1,8 +1,10 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
-import { sanitizeAssetNameForTestId } from "~/mvvm/features/Assets/utils/assetTableHelpers";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
+import { CryptoAddressesBanner } from "../component/portfolio/cryptoAddressesBanner";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
+import { AssetsView } from "tests/component/portfolio/assetsView";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -12,21 +14,8 @@ export class PortfolioPage extends AppPage {
   private readonly stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private readonly chart = this.page.getByTestId("chart-container");
   private readonly operationList = this.page.locator("#operation-list");
-  private readonly assetAllocationTitle = this.page.getByText("Asset allocation");
-  private readonly assetRowElements = this.page.locator(
-    "[data-testid^='w40-asset-row-']:not([data-testid^='w40-asset-row-value-'])",
-  );
-  private readonly showAllButton = this.page.getByText("Show all");
   private readonly showMoreButton = this.page.getByText("Show more");
-  private readonly w40AssetRow = (asset: string) =>
-    this.page
-      .locator(`[data-testid^="w40-asset-row-${sanitizeAssetNameForTestId(asset)}-"]`)
-      .first();
-  private readonly w40AssetRowValue = (asset: string) =>
-    this.page
-      .locator(`[data-testid^="w40-asset-row-value-${sanitizeAssetNameForTestId(asset)}-"]`)
-      .first();
-  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private readonly operationRows = this.page.getByTestId(/operation-row-.*/);
 
   // Wallet 4.0 elements
   private readonly portfolioBalance = this.page.getByTestId("portfolio-balance");
@@ -40,27 +29,13 @@ export class PortfolioPage extends AppPage {
   private readonly buyALedgerQuickActionButton = this.page.getByTestId(
     "quick-action-button-buy-a-ledger",
   );
+  public readonly cryptoAddressesBanner = new CryptoAddressesBanner(this.page);
+  public readonly assetsView = new AssetsView(this.page);
+  // Legacy Wallet
   private readonly portfolioAddAccountButton = this.page.getByTestId(
     "portfolio-add-account-button",
   );
-  private readonly cryptoBannerAddAccountButton = this.page.getByTestId(
-    "crypto-addresses-banner-add-account-cta",
-  );
-  /** Prefer banner CTA when both exist in DOM; Playwright picks the actionable (visible) match. */
-  private readonly addAccountCta = this.cryptoBannerAddAccountButton.or(
-    this.portfolioAddAccountButton,
-  );
   private readonly noDeviceTitle = this.page.getByTestId("no-device-title");
-
-  private getExpectedCounterValuePattern(counterValue: string): RegExp {
-    const countervalueAliases: Record<string, RegExp> = {
-      "€": /€|EUR/,
-      $: /\$|USD/,
-    };
-
-    const escapedCounterValue = counterValue.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-    return countervalueAliases[counterValue] ?? new RegExp(escapedCounterValue);
-  }
 
   private async checkVisibility(locator: Locator) {
     await expect(locator).toBeVisible();
@@ -68,15 +43,16 @@ export class PortfolioPage extends AppPage {
 
   @step("Check add account button visibility")
   async checkAddAccountButtonVisibility() {
-    // Wallet 4.0 + asset section: CTA lives under the Assets block and may need scroll / extra settle time.
-    await this.addAccountCta.waitFor({ state: "attached" });
-    await this.addAccountCta.scrollIntoViewIfNeeded();
-    await expect(this.addAccountCta).toBeVisible();
+    await this.cryptoAddressesBanner.expectAddAccountCTAVisible();
   }
 
   @step("Click add account button")
   async clickAddAccountButton() {
-    await this.addAccountCta.click();
+    if (await isWallet40Enabled(this.page)) {
+      await this.cryptoAddressesBanner.clickAddAccountBannerCTA();
+    } else {
+      await this.portfolioAddAccountButton.click();
+    }
   }
 
   @step("Check 'Buy/Sell' button visibility")
@@ -102,27 +78,6 @@ export class PortfolioPage extends AppPage {
   @step("Check chart visibility")
   async checkChartVisibility() {
     await this.checkVisibility(this.chart);
-  }
-
-  @step("Check asset allocation section")
-  async checkAssetAllocationSection() {
-    await this.checkVisibility(this.assetAllocationTitle);
-    await expect(this.assetRowElements).toHaveCount(6);
-    await this.checkVisibility(this.showAllButton);
-    await this.showAllButton.click();
-    // Wait for the number of asset row elements to increase after clicking on show more button
-    await this.page.waitForFunction(() => {
-      return (
-        document.querySelectorAll(
-          "[data-testid^='w40-asset-row-']:not([data-testid^='w40-asset-row-value-'])",
-        ).length > 6
-      );
-    });
-  }
-
-  @step("Click on asset row $0")
-  async clickOnSelectedAssetRow(asset: string) {
-    await this.w40AssetRow(asset).click();
   }
 
   @step("Click stake button")
@@ -171,24 +126,6 @@ export class PortfolioPage extends AppPage {
       await expect(this.portfolioTrendPercentage).toContainText(/%|\*\*\*/);
     } else {
       await expect(this.portfolioTrendPercentage).toContainText(counterValue);
-    }
-  }
-
-  @step("Expect asset row $0 to be visible")
-  async expectAssetRowToBeVisible(asset: string) {
-    await expect(this.w40AssetRow(asset)).toBeVisible();
-  }
-
-  @step("Expect asset row $0 to have the correct counter value $1")
-  async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    const rowValue = this.w40AssetRowValue(asset);
-    await expect(rowValue).toBeVisible();
-
-    // W40 countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").
-    if (counterValue === "€" || counterValue === "$") {
-      await expect(rowValue).toContainText(this.getExpectedCounterValuePattern(counterValue));
-    } else {
-      await expect(rowValue).toContainText(counterValue);
     }
   }
 

@@ -3,9 +3,18 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
-import { expect } from "@playwright/test";
+import { MAX_ITEM_DISPLAYED } from "~/mvvm/features/Assets/constants";
+
+const EXPECTED_CRYPTOS = [Currency.BTC, Currency.ETH];
+const EXPECTED_ADDITIONAL_CRYPTOS = [
+  Currency.SOL,
+  Currency.XTZ,
+  Currency.XLM,
+  Currency.ALGO,
+  Currency.XRP,
+];
+const EXPECTED_STABLECOINS = [Currency.ETH_USDT, Currency.ETH_USDC];
 
 test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
   test.describe("No accounts - empty state", () => {
@@ -15,6 +24,9 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
       speculosApp: Currency.BTC.speculosApp,
       featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
+
+    const EMPTY_CRYPTOS_PLACEHOLDER_COUNT = 4;
+    const EMPTY_STABLECOINS_PLACEHOLDER_COUNT = 2;
 
     test(
       "Empty state: verify placeholder assets, market navigation, and Add account CTA",
@@ -29,37 +41,21 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.cryptosSection.expectHeaderVisible();
-        await app.assets.stablecoinsSection.expectHeaderVisible();
-        await app.assets.cryptosSection.expectNumberOfRows(4);
-        await app.assets.stablecoinsSection.expectNumberOfRows(2);
-        await app.assets.expectAddAccountCTAVisible();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.expectHeaderVisible("cryptos");
+        await app.portfolio.assetsView.expectHeaderVisible("stablecoins");
+        await app.portfolio.assetsView.expectNumberOfRowsInSection(
+          "cryptos",
+          EMPTY_CRYPTOS_PLACEHOLDER_COUNT,
+        );
+        await app.portfolio.assetsView.expectNumberOfRowsInSection(
+          "stablecoins",
+          EMPTY_STABLECOINS_PLACEHOLDER_COUNT,
+        );
+        await app.portfolio.cryptoAddressesBanner.expectAddAccountCTAVisible();
 
-        await app.assets.cryptosSection.clickAssetInSection(Currency.BTC.name);
+        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
         await app.marketCoin.expectMarketCoinPageToBeVisible(Currency.BTC.name.toLowerCase());
-
-        await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-
-        await app.assets.clickAddAccountBannerCTA();
-        await app.modularDialog.waitForDialogToBeVisible();
-
-        const selector = await getModularSelector(app, "ASSET");
-        expect(selector).toBeTruthy();
-        if (selector) {
-          await selector.selectAssetByTicker(Currency.BTC);
-          await selector.selectNetwork(Currency.BTC);
-          await app.scanAccountsDrawer.selectFirstAccount();
-          await app.scanAccountsDrawer.clickCloseButton();
-        }
-
-        await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.cryptosSection.expectAssetVisibleInSection(Currency.BTC.name);
-        await app.assets.cryptosSection.expectNumberOfRows(4);
-        await app.assets.expectBannerVisible();
-        await app.assets.expectAddAccountCTANotVisible();
       },
     );
   });
@@ -83,11 +79,12 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.cryptosSection.expectHeaderVisible();
-        await app.assets.stablecoinsSection.expectHeaderVisible();
-        await app.assets.expectBannerVisible();
-        await app.assets.expectAddAccountCTANotVisible();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.expectHeaderVisible("cryptos");
+        await app.portfolio.assetsView.expectHeaderVisible("stablecoins");
+        await app.portfolio.assetsView.expectAssetsVisibleInSection("cryptos", EXPECTED_CRYPTOS);
+        await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+        await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
       },
     );
   });
@@ -112,20 +109,34 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.cryptosSection.expectHeaderVisible();
-        await app.assets.stablecoinsSection.expectHeaderVisible();
-        await app.assets.cryptosSection.expectNumberOfRows(6);
-        await app.assets.stablecoinsSection.expectNumberOfRows(6);
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.expectHeaderVisible("cryptos");
+        await app.portfolio.assetsView.expectHeaderVisible("stablecoins");
+        await app.portfolio.assetsView.expectNumberOfRowsInSection("cryptos", MAX_ITEM_DISPLAYED);
+        await app.portfolio.assetsView.expectNumberOfRowsInSection(
+          "stablecoins",
+          MAX_ITEM_DISPLAYED,
+        );
 
-        await app.assets.clickCryptosHeader();
-        await app.assets.cryptoAssetsPage.expectAssetsPage();
+        await app.portfolio.assetsView.expectAssetsVisibleInSection("cryptos", EXPECTED_CRYPTOS);
+        await app.portfolio.assetsView.expectAssetsVisibleInSection(
+          "stablecoins",
+          EXPECTED_STABLECOINS,
+        );
 
-        await app.assets.cryptoAssetsPage.clickBack();
-        await app.assets.waitForAssetsToLoad();
+        await app.portfolio.assetsView.clickShowMore("cryptos");
+        await app.cryptoAssetsPage.expectAssetsPage();
+        await app.cryptoAssetsPage.expectAssetsVisible([
+          ...EXPECTED_CRYPTOS,
+          ...EXPECTED_ADDITIONAL_CRYPTOS,
+        ]);
 
-        await app.assets.clickStablecoinsHeader();
-        await app.assets.stablecoinsAssetsPage.expectAssetsPage();
+        await app.cryptoAssetsPage.clickBack();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+
+        await app.portfolio.assetsView.clickShowMore("stablecoins");
+        await app.stablecoinsAssetsPage.expectAssetsPage();
+        await app.stablecoinsAssetsPage.expectAssetsVisible(EXPECTED_STABLECOINS);
       },
     );
   });

@@ -29,7 +29,6 @@ test.describe.skip("Portfolio - legacy", () => {
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
       await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/);
       await app.portfolio.checkChartVisibility();
-      await app.portfolio.checkAssetAllocationSection();
     },
   );
 });
