@@ -6,6 +6,17 @@ import { Modal } from "../../component/modal.component";
 import { EvmDelegateModal } from "tests/page/modal/evmDelegate.modal";
 
 const SEI_EVM_RPC_ORIGIN = "https://sei-evm.coin.ledger.com";
+const SEI_VALIDATORS_ORIGIN = "https://rest.sei-apis.com";
+const SEI_VALIDATORS_PATHNAME = "/cosmos/staking/v1beta1/validators";
+const SEI_OPERATIONS_ORIGIN = "https://proxyetherscan.api.live.ledger.com";
+const SEI_OPERATIONS_PATHNAME = "/v2/api/1329";
+const SEI_OPERATIONS_ACTIONS = new Set([
+  "txlist",
+  "txlistinternal",
+  "tokentx",
+  "tokennfttx",
+  "token1155tx",
+]);
 const SEI_EVM_CHAIN_ID = 1329;
 const MOCKED_NATIVE_BALANCE_HEX = "0x8ac7230489e80000";
 const MOCKED_GAS_LIMIT_HEX = "0x186a0";
@@ -25,8 +36,19 @@ const STAKED_SEI_DELEGATION_RESULT_BY_VALIDATOR: Record<string, string> = {
   [MOCKED_SEI_VALIDATOR_3]: EMPTY_SEI_DELEGATION_RESULT,
 };
 
-type JsonRpcRequest = { id: number | string; jsonrpc?: string; method: string; params?: unknown[] };
-type JsonRpcResponse = { id: number | string; jsonrpc: "2.0"; result: unknown };
+type JsonRpcRequest = {
+  id?: number | string | null;
+  jsonrpc?: string;
+  method: string;
+  params?: unknown[];
+};
+type JsonRpcSuccessResponse = { id: number | string | null; jsonrpc: "2.0"; result: unknown };
+type JsonRpcErrorResponse = {
+  id: number | string | null;
+  jsonrpc: "2.0";
+  error: { code: number; message: string };
+};
+type JsonRpcResponse = JsonRpcSuccessResponse | JsonRpcErrorResponse;
 
 const asciiToHex = (value: string) =>
   Array.from(value)
@@ -54,7 +76,7 @@ function getMockedSeiDelegationResult(params?: unknown[]): string {
 
 function handleSeiEvmRpcCall(request: JsonRpcRequest): JsonRpcResponse {
   const { id, method, params } = request;
-  const respond = (result: unknown): JsonRpcResponse => ({ id, jsonrpc: "2.0", result });
+  const respond = (result: unknown): JsonRpcResponse => ({ id: id ?? null, jsonrpc: "2.0", result });
 
   switch (method) {
     case "eth_chainId":
@@ -102,7 +124,11 @@ function handleSeiEvmRpcCall(request: JsonRpcRequest): JsonRpcResponse {
     case "net_version":
       return respond(SEI_EVM_CHAIN_ID.toString());
     default:
-      return respond(null);
+      return {
+        id: id ?? null,
+        jsonrpc: "2.0",
+        error: { code: -32601, message: `Method not found: ${method}` },
+      };
   }
 }
 
@@ -112,12 +138,18 @@ const CORS_HEADERS = {
   "access-control-allow-headers": "*",
 };
 
+const normalizePathname = (pathname: string) => pathname.replace(/^\/+/, "/");
+
 function stringifySeiEvmRpcResponse(rawPostData: string): string {
   let payload: JsonRpcRequest | JsonRpcRequest[];
   try {
     payload = JSON.parse(rawPostData || "{}");
   } catch {
-    return "{}";
+    return JSON.stringify({
+      id: null,
+      jsonrpc: "2.0",
+      error: { code: -32700, message: "Parse error" },
+    });
   }
 
   const response = Array.isArray(payload)
@@ -189,7 +221,19 @@ const MOCKED_SEI_VALIDATORS = {
 };
 
 async function mockSeiValidatorsApi(page: Page) {
-  await page.route("https://rest.sei-apis.com/**", async route => {
+  await page.route(`${SEI_VALIDATORS_ORIGIN}/**`, async route => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const isExpectedRequest =
+      request.method() === "GET" &&
+      normalizePathname(url.pathname) === SEI_VALIDATORS_PATHNAME &&
+      url.searchParams.get("status") === "BOND_STATUS_BONDED" &&
+      url.searchParams.get("pagination.limit") === "200";
+
+    if (!isExpectedRequest) {
+      throw new Error(`Unexpected SEI validators request: ${request.method()} ${url.toString()}`);
+    }
+
     await route.fulfill({
       headers: { ...CORS_HEADERS, teststatus: "mocked" },
       contentType: "application/json",
@@ -199,7 +243,19 @@ async function mockSeiValidatorsApi(page: Page) {
 }
 
 async function mockSeiOperationsApi(page: Page) {
-  await page.route("https://proxyetherscan.api.live.ledger.com/**", async route => {
+  await page.route(`${SEI_OPERATIONS_ORIGIN}/**`, async route => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const isExpectedRequest =
+      request.method() === "GET" &&
+      normalizePathname(url.pathname) === SEI_OPERATIONS_PATHNAME &&
+      url.searchParams.get("module") === "account" &&
+      SEI_OPERATIONS_ACTIONS.has(url.searchParams.get("action") ?? "");
+
+    if (!isExpectedRequest) {
+      throw new Error(`Unexpected SEI operations request: ${request.method()} ${url.toString()}`);
+    }
+
     await route.fulfill({
       headers: { ...CORS_HEADERS, teststatus: "mocked" },
       contentType: "application/json",

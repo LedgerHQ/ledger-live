@@ -12,13 +12,13 @@ export class EvmDelegateModal extends delegateModal {
   }
 
   @step("Verify delegate continue button is enabled")
-  async verifyContinueEnabled() {
+  async verifyDelegateContinueEnabled() {
     await expect(this.delegateContinueButton).toBeEnabled();
   }
 
   @step("Click delegate continue button")
   async delegateContinue() {
-    await this.verifyContinueEnabled();
+    await this.verifyDelegateContinueEnabled();
     await this.delegateContinueButton.click();
   }
 }
