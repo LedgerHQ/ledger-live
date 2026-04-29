@@ -1,4 +1,4 @@
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
 import { ethers } from "ethers";
 
 const ethAddressRegex = /^(0x)?[0-9a-fA-F]{40}$/;

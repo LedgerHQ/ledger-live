@@ -18,7 +18,7 @@ describe("Domain Service", () => {
         expect(await getRegistriesForDomain("nodot")).toHaveLength(0);
         expect(await getRegistriesForDomain("short.x")).toHaveLength(0);
         expect(await getRegistriesForDomain(".eth")).toHaveLength(0);
-        expect(await getRegistriesForDomain("has space.eth")).toHaveLength(0);
+        expect(await getRegistriesForDomain("foo..com")).toHaveLength(0);
       });
     });
 
