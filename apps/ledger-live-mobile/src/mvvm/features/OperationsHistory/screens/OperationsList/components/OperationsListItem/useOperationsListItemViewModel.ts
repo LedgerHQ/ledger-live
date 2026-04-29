@@ -1,13 +1,12 @@
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
-import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
@@ -16,29 +15,26 @@ type Params = {
   account: AccountLike;
   parentAccount: Account | undefined;
   accountByAddress: Map<string, AccountLike>;
+  isPending: boolean;
 };
 
-type AmountColorType = "base" | "success" | "warning";
+type AmountColorType = "base" | "success";
 
 export function useOperationsListItemViewModel({
   operation,
   account,
   parentAccount,
   accountByAddress,
+  isPending,
 }: Params) {
   const navigation = useNavigation<BaseNavigation>();
 
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
-  const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const amount = getOperationAmountNumber(operation);
-  const isOptimistic = operation.blockHeight === null;
-  const isConfirmed = isConfirmedOperation(
-    operation,
-    mainAccount,
-    currencySettings.confirmationsNb,
-  );
+  const isOptimistic = isPending;
+  const hasFailed = !!operation.hasFailed;
 
   const operationType = operation.type;
   const isOutgoing = amount.isNegative();
@@ -56,9 +52,7 @@ export function useOperationsListItemViewModel({
   // For send/receive: prefer the counterparty's account name, fall back to the raw address
   const counterpartyLabel = counterpartyAccountName ?? formattedAddress;
 
-  let amountColor: AmountColorType = "warning";
-  if (isOutgoing) amountColor = "base";
-  else if (isConfirmed) amountColor = "success";
+  const amountColor: AmountColorType = isOutgoing ? "base" : "success";
 
   const onPress = useCallback(() => {
     track("transaction_clicked", { transaction: operation.type });
@@ -82,6 +76,7 @@ export function useOperationsListItemViewModel({
     amount,
     amountColor,
     isOptimistic,
+    hasFailed,
     onPress,
   };
 }

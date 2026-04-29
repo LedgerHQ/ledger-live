@@ -2946,7 +2946,8 @@
   },
   "operationsList": {
     "to": "To",
-    "from": "From"
+    "from": "From",
+    "pending": "Pending"
   },
   "operationDetails": {
     "title": "Transaction details",

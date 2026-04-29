@@ -6,6 +6,7 @@ import {
   ArrowDown,
   ArrowUp,
   Clock,
+  Close,
   Invoice,
   Link,
   Mailbox,
@@ -28,7 +29,11 @@ type TransactionalDotConfig = {
 export function getTransactionalDotConfig(
   operationType: OperationType,
   isOptimistic: boolean,
+  hasFailed?: boolean,
 ): TransactionalDotConfig | null {
+  if (hasFailed) {
+    return { icon: Close, appearance: "error" };
+  }
   if (isOptimistic) {
     return { icon: Clock, appearance: "muted" };
   }
