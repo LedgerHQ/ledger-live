@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import {
@@ -7,7 +8,7 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { log } from "@ledgerhq/logs";
-import { Observable, tap } from "rxjs";
+import { Observable, tap, distinctUntilChanged } from "rxjs";
 import { shouldUpgrade } from "../../../apps";
 import { buildConnectAppDeviceActionInput } from "./helpers/buildConnectAppDAInput";
 import { buildFinalState } from "./helpers/buildFinalState";
@@ -104,6 +105,8 @@ export function ensureAppReadyUseCase(
       execution.cancel();
     };
   }).pipe(
+    // deduplicate states
+    distinctUntilChanged(isEqual),
     tap((state: EnsureAppReadyState) => {
       log("[EnsureAppReadyUseCase]", "next state", { state });
     }),
