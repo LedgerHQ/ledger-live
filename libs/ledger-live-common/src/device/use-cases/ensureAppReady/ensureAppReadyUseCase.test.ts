@@ -1,6 +1,5 @@
 import { DeviceActionStatus, DeviceModelId } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
-import { getDeprecationConfig, getMinVersion } from "../../../apps";
 import { getCryptoCurrencyById } from "../../../currencies";
 import getAddress from "../../../hw/getAddress";
 import {
@@ -45,16 +44,6 @@ jest.mock("@ledgerhq/live-dmk-shared", () => ({
   }),
 }));
 
-jest.mock("../../../apps", () => {
-  const actual = jest.requireActual<typeof import("../../../apps")>("../../../apps");
-
-  return {
-    ...actual,
-    getDeprecationConfig: jest.fn(() => undefined),
-    getMinVersion: jest.fn(() => undefined),
-  };
-});
-
 jest.mock("../../../currencies", () => ({
   getCryptoCurrencyById: jest.fn((id: string) => ({ id })),
 }));
@@ -69,8 +58,9 @@ jest.mock("../../../hw/getAddress", () => ({
 const mockEnsureAppReadyDeviceAction = jest.mocked(EnsureAppReadyDeviceAction);
 const mockConnectAppDeviceAction = jest.mocked(ConnectAppDeviceAction);
 const mockDmkCompatTransport = jest.mocked(DmkCompatTransport);
-const mockGetDeprecationConfig = jest.mocked(getDeprecationConfig);
-const mockGetMinVersion = jest.mocked(getMinVersion);
+const mockGetDeprecationConfig = jest.fn();
+const mockGetMinVersion = jest.fn();
+const mockShouldUpgrade = jest.fn();
 const mockGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 const mockGetAddress = jest.mocked(getAddress);
 
@@ -79,6 +69,14 @@ function makeWrapperError(error: unknown) {
     status: DeviceActionStatus.Error,
     error,
   } as any;
+}
+
+function makeDependencies() {
+  return {
+    getDeprecationConfig: mockGetDeprecationConfig,
+    getMinVersion: mockGetMinVersion,
+    shouldUpgrade: mockShouldUpgrade,
+  };
 }
 
 function createHarness(initOverrides: Record<string, unknown> = {}) {
@@ -113,6 +111,7 @@ function createHarness(initOverrides: Record<string, unknown> = {}) {
     } as any,
     deprecationDismissedCurrencyNames: [],
     sideEffects,
+    dependencies: makeDependencies(),
   }).subscribe({
     next: state => states.push(state),
     complete: () => {
@@ -209,6 +208,7 @@ describe("ensureAppReadyUseCase", () => {
     expect(connectAppInput.allowMissingApplication).toBe(false);
     expect(connectAppInput.deprecationConfig).toBeUndefined();
     expect(connectAppInput.requiredDerivation).toBeDefined();
+    expect(harness.getDeviceActionDependencies().shouldUpgrade).toBe(mockShouldUpgrade);
 
     const { requiredDerivation } = connectAppInput;
 
@@ -336,6 +336,7 @@ describe("ensureAppReadyUseCase", () => {
         onDeviceIdObserved: jest.fn(),
         onLastSeenDeviceInfoObserved: jest.fn(),
       },
+      dependencies: makeDependencies(),
     }).subscribe({
       error: observedError => observedErrors.push(observedError),
     });

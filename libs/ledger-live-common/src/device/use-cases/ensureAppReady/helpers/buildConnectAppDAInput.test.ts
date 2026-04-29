@@ -1,6 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
-import { getDeprecationConfig, getMinVersion } from "../../../../apps";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import getAddress from "../../../../hw/getAddress";
 import type { EnsureAppReadyInput } from "../types";
@@ -12,16 +11,6 @@ jest.mock("@ledgerhq/live-dmk-shared", () => ({
     this.sessionId = sessionId;
   }),
 }));
-
-jest.mock("../../../../apps", () => {
-  const actual = jest.requireActual<typeof import("../../../../apps")>("../../../../apps");
-
-  return {
-    ...actual,
-    getDeprecationConfig: jest.fn(() => undefined),
-    getMinVersion: jest.fn(() => undefined),
-  };
-});
 
 jest.mock("../../../../currencies", () => ({
   getCryptoCurrencyById: jest.fn((id: string) => ({ id })),
@@ -35,8 +24,8 @@ jest.mock("../../../../hw/getAddress", () => ({
 }));
 
 const mockDmkCompatTransport = jest.mocked(DmkCompatTransport);
-const mockGetDeprecationConfig = jest.mocked(getDeprecationConfig);
-const mockGetMinVersion = jest.mocked(getMinVersion);
+const mockGetDeprecationConfig = jest.fn();
+const mockGetMinVersion = jest.fn();
 const mockGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 const mockGetAddress = jest.mocked(getAddress);
 
@@ -85,6 +74,8 @@ describe("buildConnectAppDeviceActionInput", () => {
         requireLatestFirmware: true,
         allowPartialDependencies: true,
       }),
+      getDeprecationConfig: mockGetDeprecationConfig,
+      getMinVersion: mockGetMinVersion,
     });
 
     // THEN
@@ -132,6 +123,8 @@ describe("buildConnectAppDeviceActionInput", () => {
           forceFormat: "eip55",
         },
       }),
+      getDeprecationConfig: mockGetDeprecationConfig,
+      getMinVersion: mockGetMinVersion,
     });
 
     // WHEN / THEN
@@ -169,6 +162,8 @@ describe("buildConnectAppDeviceActionInput", () => {
           path: "44'/60'/0'/0/0",
         },
       }),
+      getDeprecationConfig: mockGetDeprecationConfig,
+      getMinVersion: mockGetMinVersion,
     });
 
     // WHEN / THEN
