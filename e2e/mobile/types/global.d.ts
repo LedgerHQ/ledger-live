@@ -111,5 +111,6 @@ declare global {
   var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").parseTokenAllowanceCliOutput;
   var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").isTokenAllowanceSufficientCommand;
   var approveTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").approveTokenCommand;
+  var revokeTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").revokeTokenCommand;
   var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").setDisableTransactionBroadcastEnv;
 }

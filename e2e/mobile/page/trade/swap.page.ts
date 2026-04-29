@@ -238,4 +238,22 @@ export default class SwapPage extends CommonPage {
       }
     }
   }
+
+  @Step("Revoke token approval")
+  async revokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
+    if (!provider.contractAddress || !fromAccount.parentAccount) return;
+
+    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
+    await registerSpeculos(speculos.port);
+    try {
+      const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
+      await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
+    } finally {
+      await deleteSpeculos(speculos.id);
+      if (previousSpeculosPort > 0) {
+        await registerSpeculos(previousSpeculosPort);
+      }
+    }
+  }
 }
