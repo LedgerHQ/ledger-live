@@ -11,6 +11,7 @@ jest.mock("~/renderer/modals/Send/steps/StepAmount", () => ({
   default: () => null,
   StepAmountFooter: () => null,
 }));
+jest.mock("./modals/send/steps/StepAmount", () => ({ __esModule: true, default: () => null }));
 jest.mock("~/renderer/modals/Send/steps/StepSummary", () => ({
   __esModule: true,
   default: () => null,

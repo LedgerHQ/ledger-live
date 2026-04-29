@@ -1,9 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
-import DefaultStepAmount, {
-  StepAmountFooter as DefaultStepAmountFooter,
-} from "~/renderer/modals/Send/steps/StepAmount";
+import { StepAmountFooter as DefaultStepAmountFooter } from "~/renderer/modals/Send/steps/StepAmount";
 import DefaultStepSummary, {
   StepSummaryFooter as DefaultStepSummaryFooter,
 } from "~/renderer/modals/Send/steps/StepSummary";
@@ -11,6 +9,7 @@ import DefaultStepConnectDevice from "~/renderer/modals/Send/steps/StepConnectDe
 import DefaultStepConfirmation, {
   StepConfirmationFooter as DefaultStepConfirmationFooter,
 } from "~/renderer/modals/Send/steps/StepConfirmation";
+import StepAmount from "./modals/send/steps/StepAmount";
 import StepRecipient from "./modals/send/steps/StepRecipient";
 import StepRecipientFooter from "./modals/send/steps/StepRecipientFooter";
 import StepMandatoryPrivateSync from "./modals/send/steps/StepMandatoryPrivateSync";
@@ -57,7 +56,7 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
     {
       id: "amount",
       label: <Trans i18nKey="send.steps.amount.title" />,
-      component: DefaultStepAmount,
+      component: StepAmount,
       footer: DefaultStepAmountFooter,
       onBack: ({ transitionTo, transaction }) => {
         if (transaction?.family !== "aleo") return null;
