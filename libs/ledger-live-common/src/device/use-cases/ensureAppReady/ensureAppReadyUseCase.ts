@@ -9,11 +9,21 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import { log } from "@ledgerhq/logs";
 import { Observable, tap, distinctUntilChanged } from "rxjs";
-import { shouldUpgrade } from "../../../apps";
-import { buildConnectAppDeviceActionInput } from "./helpers/buildConnectAppDAInput";
+import { getDeprecationConfig, getMinVersion, shouldUpgrade } from "../../../apps";
+import {
+  buildConnectAppDeviceActionInput,
+  type GetDeprecationConfig,
+  type GetMinVersion,
+} from "./helpers/buildConnectAppDAInput";
 import { buildFinalState } from "./helpers/buildFinalState";
 import { ConnectAppSideEffectsHandler } from "./helpers/ConnectAppSideEffectsHandler";
 import type { ConnectAppInitSideEffects, EnsureAppReadyInput } from "./types";
+
+type EnsureAppReadyUseCaseDependencies = {
+  getMinVersion: GetMinVersion;
+  getDeprecationConfig: GetDeprecationConfig;
+  shouldUpgrade: typeof shouldUpgrade;
+};
 
 type EnsureAppReadyUseCaseParams = {
   dmk: DeviceManagementKit;
@@ -21,6 +31,13 @@ type EnsureAppReadyUseCaseParams = {
   input: EnsureAppReadyInput;
   deprecationDismissedCurrencyNames: string[];
   sideEffects: ConnectAppInitSideEffects;
+  dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
+};
+
+const defaultDependencies: EnsureAppReadyUseCaseDependencies = {
+  getDeprecationConfig,
+  getMinVersion,
+  shouldUpgrade,
 };
 
 /**
@@ -36,6 +53,10 @@ export function ensureAppReadyUseCase(
   params: EnsureAppReadyUseCaseParams,
 ): Observable<EnsureAppReadyState> {
   const { dmk, sessionId, input } = params;
+  const dependencies = {
+    ...defaultDependencies,
+    ...params.dependencies,
+  };
 
   log("[EnsureAppReadyUseCase]", "called with", { input, sessionId });
 
@@ -44,6 +65,8 @@ export function ensureAppReadyUseCase(
       dmk,
       sessionId,
       ensureAppReadyInput: input,
+      getMinVersion: dependencies.getMinVersion,
+      getDeprecationConfig: dependencies.getDeprecationConfig,
     });
     log("[EnsureAppReadyUseCase]", "connectAppInput", { connectAppInput });
     const connectAppDeviceAction = new ConnectAppDeviceAction({
@@ -66,7 +89,7 @@ export function ensureAppReadyUseCase(
         ],
       },
       dependencies: {
-        shouldUpgrade,
+        shouldUpgrade: dependencies.shouldUpgrade,
         buildFinalState: ({ deviceMetadata, currentApp, derivation }) =>
           buildFinalState({
             expectedAccount: input.expectedAccount,
