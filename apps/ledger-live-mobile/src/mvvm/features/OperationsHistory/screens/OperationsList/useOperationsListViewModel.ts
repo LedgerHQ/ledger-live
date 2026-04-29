@@ -4,6 +4,9 @@ import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/acc
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useOperationsSections } from "./hooks/useOperationsSections";
+
+export type { OperationsListSection } from "./hooks/useOperationsSections";
 
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
@@ -13,7 +16,7 @@ export function useOperationsListViewModel() {
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
 
-  const { sections, completed } = useOperationsV1(accounts, opCount);
+  const { sections: rawSections, completed } = useOperationsV1(accounts, opCount);
 
   const accountByAddress = useMemo(() => {
     const map = new Map<string, AccountLike>();
@@ -26,6 +29,8 @@ export function useOperationsListViewModel() {
     }
     return map;
   }, [accounts]);
+
+  const sections = useOperationsSections(rawSections);
 
   const onEndReached = useCallback(() => {
     if (!completed) {
