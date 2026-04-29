@@ -102,6 +102,7 @@ const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
 const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
 const Asset = lazy(() => import("~/renderer/screens/asset"));
+const AssetDetails = lazy(() => import("LLD/features/AssetDetail"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
 const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
@@ -128,7 +129,6 @@ const Fallback = () => (
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-// eslint-disable-next-line react/display-name
 const withSuspense = Component => props => (
   <Suspense fallback={<Fallback />}>
     <Component {...props} />
@@ -274,7 +274,10 @@ const MainAppContent = ({
         <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
         <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
         <Route path="/account/:id/*" element={withSuspense(Account)({})} />
-        <Route path="/asset/*" element={withSuspense(Asset)({})} />
+        <Route
+          path="/asset/*"
+          element={withSuspense(shouldDisplayAssetSection ? AssetDetails : Asset)({})}
+        />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
         <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
         <Route
