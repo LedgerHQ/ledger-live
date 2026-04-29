@@ -1,4 +1,7 @@
 export { useNotifications } from "./hooks/useNotifications";
+export { NotificationsPromptWrapper } from "./new/NotificationsPromptWrapper";
+export { NotificationsPromptProvider } from "./new/NotificationsPromptProvider";
+export { useNotificationsContext } from "./new/NotificationsPromptProvider";
 export { useNotificationsData } from "./hooks/useNotificationsData";
 export { useNotificationsPrompt } from "./hooks/useNotificationsPrompt";
 export { useNotificationsDrawer } from "./hooks/useNotificationsDrawer";
@@ -10,7 +13,7 @@ export {
   getNextRepromptDelay,
   shouldPromptOptInDrawerAfterAction,
 } from "./utils/notificationsPromptEngine";
-export type { DataOfUser } from "./types";
+export type { DataOfUser, InitPushNotificationsDataResult } from "./types";
 export type {
   AfterActionTriggerDecision,
   InactivityTriggerDecision,
