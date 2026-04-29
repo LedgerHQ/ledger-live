@@ -123,7 +123,17 @@ export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<vo
     const firmware = await getDeviceFirmwareVersion(device);
     const appCatalog = await getNanoAppCatalog(device, firmware);
 
-    fs.writeFileSync(jsonFilePath, JSON.stringify(appCatalog, null, 2), "utf8");
+    const tmpPath = `${jsonFilePath}.${process.pid}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(appCatalog, null, 2), "utf8");
+    try {
+      fs.renameSync(tmpPath, jsonFilePath);
+    } catch {
+      try {
+        fs.unlinkSync(tmpPath);
+      } catch {
+        // ignore
+      }
+    }
   } catch (error) {
     console.error("Unable to create app version file:", sanitizeError(error));
   }

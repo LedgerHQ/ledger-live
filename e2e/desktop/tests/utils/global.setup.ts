@@ -2,6 +2,7 @@ import { FullConfig } from "@playwright/test";
 import { responseLogfilePath } from "./networkResponseLogger";
 import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
 import {
+  createNanoAppJsonFile,
   getDeviceFirmwareVersion,
   getSpeculosModel,
 } from "@ledgerhq/live-common/e2e/speculosAppVersion";
@@ -23,6 +24,8 @@ export default async function globalSetup(_config: FullConfig) {
   }
   const SPECULOS_DEVICE = process.env.SPECULOS_DEVICE;
   const SPECULOS_FIRMWARE_VERSION = await getDeviceFirmwareVersion(getSpeculosModel());
+
+  await createNanoAppJsonFile(NANO_APP_CATALOG_PATH);
 
   const dir = path.dirname(environmentFilePath);
 
