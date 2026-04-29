@@ -29,13 +29,11 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
 const handleDownload = async (info: UpdateDownloadedEvent) => {
   try {
     sendStatus("checking");
-    if (!__PRERELEASE__) {
-      const appUpdater = await createElectronAppUpdater({
-        feedURL: UPDATE_CHECK_FEED,
-        info,
-      });
-      await appUpdater.verify();
-    }
+    const appUpdater = await createElectronAppUpdater({
+      feedURL: UPDATE_CHECK_FEED,
+      info,
+    });
+    await appUpdater.verify();
     sendStatus("check-success");
   } catch (err) {
     console.error(err);
