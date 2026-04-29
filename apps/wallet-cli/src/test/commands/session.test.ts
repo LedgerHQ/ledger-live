@@ -6,7 +6,10 @@ import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../helpers/constants";
 const ETH_DESCRIPTOR_2 = `account:1:address:ethereum:main:${ETH_ADDRESS}:m/44h/60h/1h/0/0`;
 
 let cleanup: (() => void) | undefined;
-afterEach(() => { cleanup?.(); cleanup = undefined; });
+afterEach(() => {
+  cleanup?.();
+  cleanup = undefined;
+});
 
 describe("session view", () => {
   it("empty session: prints empty message", async () => {

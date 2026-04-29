@@ -29,7 +29,10 @@ describe("balances command", () => {
   let sessionCleanup: (() => void) | undefined;
   beforeAll(() => server.start());
   afterAll(() => server.stop());
-  afterEach(() => { sessionCleanup?.(); sessionCleanup = undefined; });
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("human output: prints ETH balance line", async () => {
     const { stdout, exitCode, stderr } = await runCli(["balances", "--account", ETH_DESCRIPTOR], {

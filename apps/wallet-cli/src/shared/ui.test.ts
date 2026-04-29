@@ -13,7 +13,6 @@ describe("isInteractive", () => {
   ];
 
   let saved: Record<string, string | undefined> = {};
-
   beforeEach(() => {
     saved = {};
     for (const k of [...envVars, "AGENT"]) {

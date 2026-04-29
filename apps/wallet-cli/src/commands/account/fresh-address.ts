@@ -2,7 +2,13 @@ import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../../wallet";
 import { toV0, serializeNetwork, serializeV1 } from "../../shared/accountDescriptor";
 import { createCommandOutput } from "../../output";
-import { accountOption, outputOption, resolveAccountArg, resolveAccountDescriptorV1 } from "../inputs";
+import {
+  accountOption,
+  outputOption,
+  resolveAccountArg,
+  resolveAccountDescriptorV1,
+  resolveOutputFormat,
+} from "../inputs";
 
 export default defineCommand({
   name: "fresh-address",
@@ -13,9 +19,9 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     const ctx = { command: "account fresh-address", network: "", account: "" };
-    const out = createCommandOutput(flags.output, ctx);
+    const output = resolveOutputFormat(flags.output);
     const wallet = new WalletAdapter();
-
+    const out = createCommandOutput(output, ctx);
 
     await out.run(async () => {
       const v1 = await resolveAccountDescriptorV1(resolveAccountArg(flags.account, positional));
