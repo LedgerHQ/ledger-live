@@ -15,6 +15,7 @@ function main(ref: string) {
     "coin-modules\\/([^/]+)", // coin-modules/<coin>
     "coin-tester\\/([^/]+)", // coin-tester
     "coin-tester-modules\\/([^/]+)", // coin-tester-modules/<coin>
+    "ledger-wallet-framework\\/([^/]+)",
   ];
   const coins = new Set<string>();
 
