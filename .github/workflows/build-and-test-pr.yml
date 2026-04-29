@@ -94,6 +94,20 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets: inherit
 
+  test-shared:
+    name: "Test Shared"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    secrets: inherit
+
+  test-domain:
+    name: "Test Domain"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    secrets: inherit
+
   test-design-system:
     name: "Test UI Libs"
     needs: determine-affected
@@ -162,16 +176,20 @@ jobs:
       - test-mobile
       - test-libraries
       - test-features
+      - test-shared
+      - test-domain
       - build-wallet-cli
       - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
       should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
       should_download_libs_coverage: ${{ needs.test-libraries.outputs.coverage_generated }}
       should_download_features_coverage: ${{ needs.test-features.outputs.coverage_generated }}
+      should_download_shared_coverage: ${{ needs.test-shared.outputs.coverage_generated }}
+      should_download_domain_coverage: ${{ needs.test-domain.outputs.coverage_generated }}
       should_download_wallet_cli_coverage: ${{ needs.build-wallet-cli.outputs.coverage_generated }}
 
   # Final Check required
@@ -184,6 +202,8 @@ jobs:
       - build-test-mobile
       - test-libraries
       - test-features
+      - test-shared
+      - test-domain
       - test-design-system
       - build-web-tools
       - test-cli
