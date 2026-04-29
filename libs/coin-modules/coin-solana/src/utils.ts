@@ -78,7 +78,7 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
 }
 
 export function endpointByCurrencyId(currencyId: string): string {
-  let rpcUrls: SolanaConfig["rpcUrls"];
+  let rpcUrls: SolanaConfig["rpcUrls"] = undefined;
   try {
     rpcUrls = coinConfig.getCoinConfig().rpcUrls;
   } catch {
