@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { Platform } from "react-native";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
 import StakingAmount from "../shared/02-SelectAmount";
@@ -29,6 +29,7 @@ function StakingFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.NearStakingStarted}

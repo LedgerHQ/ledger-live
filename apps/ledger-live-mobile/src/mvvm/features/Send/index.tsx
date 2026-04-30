@@ -80,12 +80,14 @@ export default function SendWorkflow() {
 
   return (
     <DomainServiceProvider>
+      <React.Suspense fallback={null}>
       <SendFlowOrchestrator
         initParams={initParams}
         onClose={handleClose}
         stepRegistry={stepRegistry}
         flowConfig={SEND_FLOW_CONFIG}
       />
+      </React.Suspense>
     </DomainServiceProvider>
   );
 }

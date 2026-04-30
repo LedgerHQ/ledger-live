@@ -5,7 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import { Platform } from "react-native";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import DelegationConnectDevice from "~/screens/ConnectDevice";
 import DelegationSelectDevice from "~/screens/SelectDevice";
 import DelegationSelectValidator from "./SelectValidator";
@@ -28,6 +28,7 @@ function DelegationFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.SolanaDelegationStarted}

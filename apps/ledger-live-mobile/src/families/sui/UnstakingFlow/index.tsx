@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import UnstakingAmount from "./01-Amount";
@@ -25,6 +25,7 @@ function UnstakingFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.SuiUnstakingAmount}
