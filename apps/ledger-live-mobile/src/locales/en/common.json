@@ -169,6 +169,9 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloGroupNotVotable": {
+      "title": "This validator group cannot receive votes. It may be full or no longer eligible."
+    },
     "CeloMissingWithdrawalsError": {
       "title": "Something went wrong, cannot fetch any funds to withdraw"
     },

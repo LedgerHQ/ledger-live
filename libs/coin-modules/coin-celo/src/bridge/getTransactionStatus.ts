@@ -10,9 +10,10 @@ import {
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { CeloAllFundsWarning } from "../errors";
+import { CeloAllFundsWarning, CeloGroupNotVotable } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoKit } from "../network/sdk";
+import { getCurrentCeloPreloadData } from "./preload";
 import { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { isSameTokenAsFee, convertNumberDecimals, normalizeAndSubtract } from "./utils";
 
@@ -142,6 +143,21 @@ export const getTransactionStatus: AccountBridge<
           errors.fees = new NotEnoughBalance();
         }
       }
+    }
+  }
+
+  if (transaction.mode === "vote" && transaction.recipient && !errors.recipient) {
+    const { validatorGroups } = getCurrentCeloPreloadData();
+    // Groups with capacity ≤ 0 are filtered out during preload by getValidatorGroups().
+    // If the selected recipient is absent from the preload list, it cannot receive votes.
+    // Empty list means the preload hasn't run yet — skip the check to avoid false positives.
+    if (
+      validatorGroups.length > 0 &&
+      !validatorGroups.some(
+        vg => vg.address.toLowerCase() === (transaction.recipient as string).toLowerCase(),
+      )
+    ) {
+      errors.recipient = new CeloGroupNotVotable();
     }
   }
 
