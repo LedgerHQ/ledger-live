@@ -6,8 +6,8 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
-import FormattedVal from "~/renderer/components/FormattedVal";
-import CounterValue from "~/renderer/components/CounterValue";
+import { BalanceCell } from "LLD/components/Cells/BalanceCell";
+import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -31,8 +31,6 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
 
   const direction = getAddressDirection(type);
   const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
-
-  const unit = currency.units[0];
 
   const cryptoCurrency: CryptoCurrency | TokenCurrency | undefined =
     currency.type === "FiatCurrency" ? undefined : currency;
@@ -79,23 +77,20 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
         />
       </TableCell>
       <TableCell align="end" data-testid="history-operation-amount">
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
+        <BalanceCell
+          currency={currency}
+          balance={amount}
           alwaysShowSign
-          color={amount.isNegative() ? "neutral.c80" : undefined}
+          className={amount.isNegative() ? "text-base" : "text-success"}
         />
       </TableCell>
       <TableCell align="end" data-testid="history-operation-value">
-        <CounterValue
-          color="neutral.c80"
-          fontSize={3}
-          alwaysShowSign
-          date={operation.date}
+        <CounterValueCell
           currency={currency}
-          value={amount}
+          balance={amount}
+          date={operation.date}
+          alwaysShowSign
+          className="text-base"
         />
       </TableCell>
     </TableRow>
