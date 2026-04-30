@@ -1681,6 +1681,23 @@
     "title": "Thanks for trusting Ledger",
     "desc": "Your order is being processed. \nPlease check your email for your order’s confirmation."
   },
+  "productTour": {
+    "swap": {
+      "cta": "Discover swap"
+    },
+    "stake": {
+      "cta": "Discover earn"
+    },
+    "card": {
+      "cta": "Get your card"
+    },
+    "portfolio": {
+      "cta": "View your portfolio"
+    },
+    "done": {
+      "cta": "Start again"
+    }
+  },
   "discover": {
     "title": "Discover",
     "desc": "Explore the world of Web3 securely",

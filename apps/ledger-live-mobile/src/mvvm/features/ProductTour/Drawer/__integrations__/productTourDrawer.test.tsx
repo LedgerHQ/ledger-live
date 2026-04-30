@@ -1,11 +1,19 @@
 import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
+import { track } from "~/analytics";
 import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../index";
+import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_SLIDES } from "../const";
+import type { ProductTourPrimaryAction } from "../const";
 
-const TestComponent = () => {
-  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange } = useProductTourDrawer();
+type TestComponentProps = {
+  readonly onPrimaryActionOverride?: (action: ProductTourPrimaryAction) => void;
+};
+
+const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
+  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange, onPrimaryAction } =
+    useProductTourDrawer();
 
   return (
     <>
@@ -16,6 +24,7 @@ const TestComponent = () => {
           closeProductTour,
           onSlideChange,
           isDrawerOpen,
+          onPrimaryAction: onPrimaryActionOverride ?? onPrimaryAction,
         }}
       >
         <ProductTourDrawer />
@@ -26,21 +35,29 @@ const TestComponent = () => {
 
 describe("ProductTourDrawer integration", () => {
   function renderTestComponent(
-    { productTourCompleted, featureFlagEnabled } = {
+    {
+      productTourCompleted,
+      featureFlagEnabled,
+      onPrimaryActionOverride,
+    }: {
+      productTourCompleted?: boolean;
+      featureFlagEnabled?: boolean;
+      onPrimaryActionOverride?: (action: ProductTourPrimaryAction) => void;
+    } = {
       productTourCompleted: false,
       featureFlagEnabled: true,
     },
   ) {
-    const rendered = render(<TestComponent />, {
+    const rendered = render(<TestComponent onPrimaryActionOverride={onPrimaryActionOverride} />, {
       overrideInitialState: state => ({
         ...state,
         settings: {
           ...state.settings,
-          productTourCompleted,
+          productTourCompleted: productTourCompleted ?? false,
         },
         featureFlags: {
           ...state.featureFlags,
-          overrides: { lwmProductTour: { enabled: featureFlagEnabled } },
+          overrides: { lwmProductTour: { enabled: featureFlagEnabled ?? true } },
         },
       }),
     });
@@ -61,36 +78,19 @@ describe("ProductTourDrawer integration", () => {
     };
   }
 
-  it("should auto-open and display the first slide when the tour is not completed", async () => {
-    const { user, resizeScreenWidth } = renderTestComponent({
-      productTourCompleted: false,
-      featureFlagEnabled: true,
-    });
+  async function openTourOnFirstSlide(props?: Parameters<typeof renderTestComponent>[0]) {
+    const rendered = renderTestComponent(props);
+    await rendered.user.press(screen.getByText("Open Drawer"));
+    rendered.resizeScreenWidth();
+    await screen.findByText("Slide 1 title");
+    return rendered;
+  }
 
-    // The drawer is already open (isDrawerOpen starts as true when !productTourCompleted).
-    // Pressing "Open Drawer" is a no-op state-wise but the act() wrapper flushes bottom
-    // sheet portal timers so the Slides container becomes queryable.
-    await user.press(screen.getByText("Open Drawer"));
-    resizeScreenWidth();
+  it("should auto-open and display the first slide when the tour is not completed", async () => {
+    await openTourOnFirstSlide({ productTourCompleted: false, featureFlagEnabled: true });
 
     await waitFor(() => expect(screen.getByText("Slide 1 title")).toBeOnTheScreen());
     expect(screen.getByText("Slide 1 description")).toBeOnTheScreen();
-  });
-
-  it("should be able to press the Continue button on the first slide", async () => {
-    const { user, resizeScreenWidth } = renderTestComponent({
-      productTourCompleted: false,
-      featureFlagEnabled: true,
-    });
-
-    await user.press(screen.getByText("Open Drawer"));
-    resizeScreenWidth();
-
-    await screen.findByText("Slide 1 title");
-
-    // In test env both buttons are pressable; pressing Continue on slide 0
-    // calls goToNext which does not navigate in this simulated environment
-    await screen.findByRole("button", { name: "Continue" });
   });
 
   it("should not open the drawer when product tour is already completed", async () => {
@@ -112,5 +112,43 @@ describe("ProductTourDrawer integration", () => {
 
     expect(screen.queryByText("Slide 1 title")).not.toBeOnTheScreen();
     expect(screen.queryByText("Slide 1 description")).not.toBeOnTheScreen();
+  });
+
+  describe("footer buttons on the first slide", () => {
+    it("should call onPrimaryAction with the slide's action when the primary CTA is pressed", async () => {
+      const onPrimaryActionOverride = jest.fn();
+      const { user } = await openTourOnFirstSlide({ onPrimaryActionOverride });
+
+      const expectedAction = PRODUCT_TOUR_SLIDES[0].primaryAction;
+      await user.press(screen.getByRole("button", { name: "View your portfolio" }));
+
+      expect(onPrimaryActionOverride).toHaveBeenCalledTimes(1);
+      expect(onPrimaryActionOverride).toHaveBeenCalledWith(expectedAction);
+    });
+
+    it("should track button_clicked when the primary CTA is pressed", async () => {
+      const { user } = await openTourOnFirstSlide({ onPrimaryActionOverride: jest.fn() });
+
+      await user.press(screen.getByRole("button", { name: "View your portfolio" }));
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "CTA click",
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: 1,
+        action: PRODUCT_TOUR_SLIDES[0].primaryAction,
+      });
+    });
+
+    it("should track button_clicked when the Continue button is pressed", async () => {
+      const { user } = await openTourOnFirstSlide();
+
+      await user.press(screen.getByRole("button", { name: "Continue" }));
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Continue",
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: 1,
+      });
+    });
   });
 });

@@ -10,6 +10,7 @@ export const ProductTourPortfolioMountView = ({
   closeProductTour,
   onSlideChange,
   isDrawerOpen,
+  onPrimaryAction,
 }: UseProductTourPortfolioMountViewModelResult) => {
   if (!isProductTourEligible) {
     return null;
@@ -23,6 +24,7 @@ export const ProductTourPortfolioMountView = ({
           closeProductTour,
           onSlideChange,
           isDrawerOpen,
+          onPrimaryAction,
         }}
       >
         <ProductTourDrawer />
