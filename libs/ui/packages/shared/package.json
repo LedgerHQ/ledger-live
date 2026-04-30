@@ -31,12 +31,16 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.build.json && node scripts/transpile",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "lint": "oxlint -c ../../.oxlintrc.json ./src",
+    "lint:fix": "pnpm lint --fix",
     "prepublishOnly": "npm run build",
     "clean": "rimraf lib",
     "unimported": "unimported"
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "tiny-glob": "^0.2.9"
+    "tiny-glob": "^0.2.9",
+    "oxlint": "catalog:"
   }
 }

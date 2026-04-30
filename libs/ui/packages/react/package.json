@@ -82,7 +82,7 @@
     "format": "oxfmt ./src",
     "format:check": "oxfmt --check ./src",
     "typecheck": "tsc --p . --noEmit --customConditions node",
-    "test": "pnpm -w -F ui build-and-test",
+    "test": "jest",
     "test:jest": "jest --maxWorkers=50%",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",
     "unimported": "unimported"

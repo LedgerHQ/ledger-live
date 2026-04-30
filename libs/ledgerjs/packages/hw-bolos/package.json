@@ -35,6 +35,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage",
     "test-integ": "jest --config=jest.integ.config.ts --runInBand",

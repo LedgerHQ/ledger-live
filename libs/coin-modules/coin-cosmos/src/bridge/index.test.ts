@@ -31,7 +31,7 @@ describe("hydrate", () => {
     jest.clearAllMocks();
     LiveConfig.setConfig(cosmosConfig);
     cosmosCoinConfig.setCoinConfig(
-      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+      currency => LiveConfig.getValueByKey(`config_currency_${currency}`) ?? {},
     );
   });
 

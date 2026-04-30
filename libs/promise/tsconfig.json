@@ -7,7 +7,8 @@
     "noImplicitThis": false,
     "lib": ["es2020", "dom"],
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "src",
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

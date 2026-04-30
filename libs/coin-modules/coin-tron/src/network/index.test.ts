@@ -161,7 +161,6 @@ describe("fetchTronAccountTxs", () => {
     const results = await fetchTronAccountTxs(
       "ADDRESS",
       txs => txs.length < 100,
-      {},
       defaultFetchParams,
     );
 
@@ -215,7 +214,7 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
 
   it("retry several times until result is correct", async () => {
     // WHEN
-    const results = await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
+    const results = await fetchTronAccountTxs("ADDRESS", () => true, defaultFetchParams);
 
     // THEN
     expect(results).toContainEqual(expect.objectContaining({ txID: tx1Hash }));
@@ -248,7 +247,7 @@ describe("Failed TRC20 txs", () => {
     );
 
   const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
+    fetchTronAccountTxs(address, () => true, defaultFetchParams);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(doBeforeEach(mockServer));
@@ -320,7 +319,7 @@ describe("Transactions with internal_transactions", () => {
     );
 
   const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
+    fetchTronAccountTxs(address, () => true, defaultFetchParams);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(doBeforeEach(mockServer));
@@ -409,7 +408,7 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
 
   it("after several retry, it gives up on retry", async () => {
     await expect(
-      fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams),
+      fetchTronAccountTxs("ADDRESS", () => true, defaultFetchParams),
     ).rejects.toThrow(
       "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
     );

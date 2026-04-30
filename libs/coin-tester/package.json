@@ -12,7 +12,8 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "format": "oxfmt src",
-    "format:check": "oxfmt src --check"
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit --customConditions node"
   },
   "dependencies": {
     "axios": "catalog:",

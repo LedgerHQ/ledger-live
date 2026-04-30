@@ -153,7 +153,7 @@ export function createRendererConfig(
           "..",
           "node_modules",
           ".pnpm",
-          "@scure+bip39@2.0.1",
+          "@scure+bip39@2.2.0",
           "node_modules",
           "@scure",
           "bip39",

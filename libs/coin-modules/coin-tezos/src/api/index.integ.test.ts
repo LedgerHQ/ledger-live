@@ -1,7 +1,6 @@
 import { SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { localForger } from "@taquito/local-forging";
 import type { TezosConfig } from "../config";
-import type { TezosApi } from "./types";
 import { createApi } from ".";
 
 const defaultConfig: TezosConfig = {
@@ -23,7 +22,7 @@ const defaultConfig: TezosConfig = {
  * https://api.shadownet.tzkt.io
  */
 describe("Tezos Api", () => {
-  let module: TezosApi;
+  let module: ReturnType<typeof createApi>;
   // Persistent Shadownet test account — see LIVE-28763 PR for chain-of-custody.
   const address = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
   // Registered baker on Shadownet, distinct from `address`'s current delegate
@@ -252,7 +251,7 @@ describe("Tezos Api", () => {
   });
 
   describe("with custom fees settings", () => {
-    let moduleCustomFees: TezosApi;
+    let moduleCustomFees: ReturnType<typeof createApi>;
     const minFees = 600;
     const minEstimatedFees = 550;
 

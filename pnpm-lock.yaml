@@ -2660,6 +2660,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -6854,6 +6860,9 @@ importers:
       nock:
         specifier: 14.0.3
         version: 14.0.3
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
@@ -11320,9 +11329,12 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       jest:
         specifier: 'catalog:'
-        version: 30.2.0
+        version: 30.2.0(@types/node@24.12.0)
 
   libs/psbtv2:
     dependencies:
@@ -11413,6 +11425,12 @@ importers:
       '@types/serve-handler':
         specifier: ^6.1.1
         version: 6.1.4
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
 
   libs/ui:
     devDependencies:
@@ -11470,6 +11488,9 @@ importers:
       glob:
         specifier: ^7.2.0
         version: 7.2.3
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -12027,6 +12048,9 @@ importers:
       '@rspack/core':
         specifier: 'catalog:'
         version: 1.7.3
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
@@ -14958,20 +14982,17 @@ packages:
 
   '@dfinity/agent@2.4.1':
     resolution: {integrity: sha512-IczFFOUDGfMTdQ83yiCvGtvHr1IIB80lWBP0ZYRLogs6NVt8t6HYcMlu1sgT+9VivhT7iwX4pktPFxxOkO3COw==}
-    deprecated: 'This package has been deprecated. Use @icp-sdk/core/agent instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
     peerDependencies:
       '@dfinity/candid': ^2.4.1
       '@dfinity/principal': ^2.4.1
 
   '@dfinity/candid@2.4.1':
     resolution: {integrity: sha512-kOaIKfhR2PYN8vD4M0Pc4s/7wb1nKjlTJUw+5E9jh26T03fITIZmaafIuwlX+wmdxwIT9Xoy7PlsxOEpzv203A==}
-    deprecated: 'This package has been deprecated. Use @icp-sdk/core/candid instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
     peerDependencies:
       '@dfinity/principal': ^2.4.1
 
   '@dfinity/identity-secp256k1@2.4.1':
     resolution: {integrity: sha512-YP6AYObQc3bADwVhjqQ90V6mIKyN0vDISRBk9izKpiPStK29lbxF8zLkqY7wYhgrxDNvtSlmd+VMQrvbE7K3lg==}
-    deprecated: 'This package has been deprecated. Use @icp-sdk/core/identity/secp256k1 instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
 
   '@dfinity/ledger-icp@2.6.13':
     resolution: {integrity: sha512-Py/fpmT7+LVhrGYgKapuPz2l0+6HoVvuyN6xCr6MAu6DA8375cWJmXKeCWLz5qWPRu+D7zjKeitWdhUfxAy/cA==}
@@ -14992,7 +15013,6 @@ packages:
 
   '@dfinity/principal@2.4.1':
     resolution: {integrity: sha512-Cz6XQVOwq0TXDBClPbcidDd4SqK1lfr1/Kn34ruDD13xVQ4iaP1iCntzS9O97+vGpY/6jwDtKd32Gn5YJ9BQNw==}
-    deprecated: 'This package has been deprecated. Use @icp-sdk/core/principal instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
 
   '@dfinity/utils@2.14.0':
     resolution: {integrity: sha512-WGwME4891K9TU7SXchhUVtdSbU3jUxnndblcrNJH0/QLPuQGnvP/7YhFL1b6MhI5GRpTWh0qLsyvMpEpdw7Faw==}
@@ -16287,12 +16307,6 @@ packages:
       '@gql.tada/vue-support':
         optional: true
 
-  '@gql.tada/internal@1.0.8':
-    resolution: {integrity: sha512-XYdxJhtHC5WtZfdDqtKjcQ4d7R1s0d1rnlSs3OcBEUbYiPoJJfZU7tWsVXuv047Z6msvmr4ompJ7eLSK5Km57g==}
-    peerDependencies:
-      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
-      typescript: ^5.0.0
-
   '@gql.tada/internal@1.0.9':
     resolution: {integrity: sha512-Bp8yi+kLrzIJ3l5Dfxhz48H4OCH2LCX+pShaPcJgh+oiBt6clrjUKDYNDD3Z78aDQ3+Tyrxe4dd0MfLgpSLPPg==}
     peerDependencies:
@@ -16941,14 +16955,14 @@ packages:
   '@ledgerhq/errors@6.27.0':
     resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
 
-  '@ledgerhq/errors@6.32.0':
-    resolution: {integrity: sha512-BjjvhLM6UXYUbhllqAduo9PSneLt9FXZ3TBEUFQ3MMSZOCHt0gAgDySLwul99R8fdYWkXBza4DYQjUNckpN2lg==}
+  '@ledgerhq/errors@6.34.0':
+    resolution: {integrity: sha512-l16K56FzPoXBMT5J4EpnIBmRLTYkpSyYj3z4er+rmbwq0t9dDG/UaRvFeBpwB2gqGcYWcue14qF9Wkuos/43eA==}
 
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
 
-  '@ledgerhq/hw-bolos@6.35.1':
-    resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
+  '@ledgerhq/hw-bolos@6.36.1':
+    resolution: {integrity: sha512-0FljEsA+f7fw2zuORqbbxQdV+6SIl39YqcEaCC3MTdH9Vxr+vGy3ZWhxf4vgnwWsrgnwxZry690/wwwK9skMtw==}
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
@@ -16969,8 +16983,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/ledger-cal-service@1.15.1':
-    resolution: {integrity: sha512-fmg5kHzIdm1xcWpquWwf86o9QID4rtBItvD7ztSCUpAyCs4cRaOeu6/jV3pEAdjt14BFDIKSQBFZtQ9hCFAvCQ==}
+  '@ledgerhq/ledger-cal-service@1.16.0':
+    resolution: {integrity: sha512-s0rUjVubrv97M1AQ173DoAgqWxO3vZHIWgaaS2LHH1Ijft9qIjf7h3F7qmK0WTqw2F34HsOXJlAOefhlwORPbQ==}
 
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
@@ -16978,14 +16992,14 @@ packages:
   '@ledgerhq/live-env@2.22.0':
     resolution: {integrity: sha512-zOtxXQl0stQpNp/01nvClMyAdc5WLY8b4vAeP8KJvvoDPCY9VfKLNGvjfU7r/AGsTTmJqy8DOSlboQ24CNd+zg==}
 
-  '@ledgerhq/live-env@2.31.0':
-    resolution: {integrity: sha512-Hl5ldGa7lT7bKkNHruFepKhEWvb0hvjvQ1cXBbR7yp9I7EPceDXQt/uySOyaY41caWX0x27TUQIz3PVEv67HJA==}
+  '@ledgerhq/live-env@2.33.0':
+    resolution: {integrity: sha512-kDjMJp7zUTlxO6oNAiGV913jSg45GVPPybxG+RJKPyjdWtdBPD0LKGggx+zMzh8a2JAVAETG0+QLi0ZTYXkDtg==}
 
-  '@ledgerhq/live-network@2.4.3':
-    resolution: {integrity: sha512-o55Mas7QvjqlwFVX5CL8DVl199i8gTn6j9Ljj+2nPetrsKtIrf2mz6leiUAgB5opWU4VyZpxKn65hXv5VD0b0Q==}
+  '@ledgerhq/live-network@2.5.1':
+    resolution: {integrity: sha512-6syEnHSBsroFIQJF8ef7FYt+bZjHDBNy2/u/MEdFPNxWmsbVKdmIvxhhvcY7snv8C4i82e+38O3OSHDleOTqNQ==}
 
-  '@ledgerhq/live-promise@0.2.2':
-    resolution: {integrity: sha512-1ve8lWgXxhvWgAQ8Z+Ka6WhCVk7IZV997x2YXAblo24XB/8Rn6dqTxMosdZ+vqcPeb5wMwmbcJVi2PMOPRpRTw==}
+  '@ledgerhq/live-promise@0.2.3':
+    resolution: {integrity: sha512-f673XOCKL/foDCbsqx2AWYfI1ehc5rGKLh3gObfTQSu3+MDJzhdd/pvyuVLJ0e6iUzUQlwLW27qEyvA7sNKvVQ==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
@@ -16996,8 +17010,8 @@ packages:
   '@ledgerhq/logs@6.14.0':
     resolution: {integrity: sha512-kJFu1+asWQmU9XlfR1RM3lYR76wuEoPyZvkI/CNjpft78BQr3+MMf3Nu77ABzcKFnhIcmAkOLlDQ6B8L6hDXHA==}
 
-  '@ledgerhq/logs@6.16.0':
-    resolution: {integrity: sha512-v/PLfb1dq1En35kkpbfRWp8jLYgbPUXxGhmd4pmvPSIe0nRGkNTomsZASmWQAv6pRonVGqHIBVlte7j1MBbOww==}
+  '@ledgerhq/logs@6.17.0':
+    resolution: {integrity: sha512-yra33g5q/AU7+PwAws+GaVpQGUuxnDREjVBnviJjcaJLVKuLzI4pnj8Bd3nY3fypM5k1yZEYKEXfUuGFUjP2+w==}
 
   '@ledgerhq/lumen-design-core@0.1.11':
     resolution: {integrity: sha512-X+nwcaPtBX7yuoq/06/zr/pPd96xgX1zxdxFgFtI/8gx/rhfYj50GRcZ8114JxsExrmcOHK4CVpG/7tG0SOkIQ==}
@@ -17298,8 +17312,8 @@ packages:
     resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
     engines: {node: ^14.21.3 || >=16}
 
-  '@noble/curves@2.0.1':
-    resolution: {integrity: sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw==}
+  '@noble/curves@2.2.0':
+    resolution: {integrity: sha512-T/BoHgFXirb0ENSPBquzX0rcjXeM6Lo892a2jlYJkqk83LqZx0l1Of7DzlKJ6jkpvMrkHSnAcgb5JegL8SeIkQ==}
     engines: {node: '>= 20.19.0'}
 
   '@noble/ed25519@1.7.3':
@@ -17338,8 +17352,8 @@ packages:
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
     engines: {node: ^14.21.3 || >=16}
 
-  '@noble/hashes@2.0.1':
-    resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
+  '@noble/hashes@2.2.0':
+    resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
     engines: {node: '>= 20.19.0'}
 
   '@noble/secp256k1@1.7.1':
@@ -17724,9 +17738,19 @@ packages:
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
 
+  '@opentui/core-darwin-arm64@0.1.103':
+    resolution: {integrity: sha512-lxCyedDkcen12IgBtXjkJ7iY66xa7VC4nxRNKCUeLY2ZP9hUE1AsDtbyQzqY+BQadsI/ZME9STzaHDCUFg0TpA==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@opentui/core-darwin-arm64@0.1.97':
     resolution: {integrity: sha512-t7oMGEfMPQsqLEx7/rPqv/UGJ+vqhe4RWHRRQRYcuHuLKssZ2S8P9mSS7MBPtDqGcxg4PosCrh5nHYeZ94EXUw==}
     cpu: [arm64]
+    os: [darwin]
+
+  '@opentui/core-darwin-x64@0.1.103':
+    resolution: {integrity: sha512-QMYD+zUDGQliJ6m5nuNvA72jtluFeyVMoHkuA5m/Xmed/u8eLfahAKmDj3kY66ntUroPHWevcpbpvd7NCFEoFQ==}
+    cpu: [x64]
     os: [darwin]
 
   '@opentui/core-darwin-x64@0.1.97':
@@ -17734,9 +17758,19 @@ packages:
     cpu: [x64]
     os: [darwin]
 
+  '@opentui/core-linux-arm64@0.1.103':
+    resolution: {integrity: sha512-GzOvNr9dN6JaQ9qs7m8E75wLAHwT5CyxqkE6rEr1BO23/d2Ix7e3GYw/JRY5VnTge+eXrfDVbqNtPcQamUNiEA==}
+    cpu: [arm64]
+    os: [linux]
+
   '@opentui/core-linux-arm64@0.1.97':
     resolution: {integrity: sha512-QXxhz654vXgEu2wrFFFFnrSWbyk6/r6nXNnDTcMRWofdMZQLx87NhbcsErNmz9KmFdzoPiQSmlpYubLflKKzqQ==}
     cpu: [arm64]
+    os: [linux]
+
+  '@opentui/core-linux-x64@0.1.103':
+    resolution: {integrity: sha512-odywllco5zUKNc60uD3JKaCybK64u6BfmpScs4a8Qn89yH/yk23bzWXDRWaGgQdY65L2/VCbcGs1ezA1S/2YTw==}
+    cpu: [x64]
     os: [linux]
 
   '@opentui/core-linux-x64@0.1.97':
@@ -17744,9 +17778,19 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@opentui/core-win32-arm64@0.1.103':
+    resolution: {integrity: sha512-tZL5w3Y0JnO7RkIvfuNDAzJn0j6+JIYl6M8DgPM5p8AQt+162S8LmbumzmqQLZl4cEev2eN7/tw72WIk6b+/CQ==}
+    cpu: [arm64]
+    os: [win32]
+
   '@opentui/core-win32-arm64@0.1.97':
     resolution: {integrity: sha512-o/m9mD1dvOCwkxOUUyoEILl+d6tzh/85foJc4uqjXYi71NNcwg8u+Eq3/gdHuSKnlT1pusCPKoS1IDuBvZE24A==}
     cpu: [arm64]
+    os: [win32]
+
+  '@opentui/core-win32-x64@0.1.103':
+    resolution: {integrity: sha512-wqnibt/OE5ldSzVPxEbriA0TjI2B11CJl4uJoLxTZ47KDx7tAFIMdhBf9IRAGNCSbcDuZ8ZGEFhV+SLaftkrlw==}
+    cpu: [x64]
     os: [win32]
 
   '@opentui/core-win32-x64@0.1.97':
@@ -17754,10 +17798,22 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@opentui/core@0.1.103':
+    resolution: {integrity: sha512-PWVv/bDmlk1i6X1f0zXs+jSaTrQ/ByX8wFbP2WinOObTGf//UbcRP4dbWxPXvOyka9QlmRBG/7GbloQSIStyVw==}
+    peerDependencies:
+      web-tree-sitter: 0.25.10
+
   '@opentui/core@0.1.97':
     resolution: {integrity: sha512-2ENH0Dc4NUAeHeeQCQhF1lg68RuyntOUP68UvortvDqTz/hqLG0tIwF+DboCKtWi8Nmao4SAQEJ7lfmyQNEDOQ==}
     peerDependencies:
       web-tree-sitter: 0.25.10
+
+  '@opentui/react@0.1.103':
+    resolution: {integrity: sha512-hOPRM2A0u6L67nv6Op4mBkhYIPvYAC6lL+MRgjD2gBROOTipfyz4gRcjF9onHH6dPGA7w73ddSQrX4hTbxo6ug==}
+    peerDependencies:
+      react: 19.0.0
+      react-devtools-core: ^7.0.1
+      ws: ^8.18.0
 
   '@opentui/react@0.1.97':
     resolution: {integrity: sha512-YoWYx+v8PmfY/2y9PCLIlAmTrI8ISXNDDwOj66vMEQM1KFc/gQ6UqSUYdS/VA7tgAbwK6xxKOmCgId4M4+kJGA==}
@@ -19463,6 +19519,9 @@ packages:
   '@scure/base@2.0.0':
     resolution: {integrity: sha512-3E1kpuZginKkek01ovG8krQ0Z44E3DHPjc5S2rjJw9lZn3KSQOs8S7wqikF/AH7iRanHypj85uGyxk0XAyC37w==}
 
+  '@scure/base@2.2.0':
+    resolution: {integrity: sha512-b8XEupJibegiXV+tDUseI8oLQc8ei3d/4Jkb2RpbHh3MfE054ov3uIz2dhFkB3FI8iwYkEh0gGCApkrYggkPNg==}
+
   '@scure/bip32@1.1.5':
     resolution: {integrity: sha512-XyNh1rB0SkEqd3tXcXMi+Xe1fvg+kUIcoRIEujP1Jgv7DqW2r9lg3Ah0NkFaCs9sTkQAQA8kw7xiRXzENi9Rtw==}
 
@@ -19475,8 +19534,8 @@ packages:
   '@scure/bip32@1.7.0':
     resolution: {integrity: sha512-E4FFX/N3f4B80AKWp5dP6ow+flD1LQZo/w8UnLGYZO674jS6YnYeepycOOksv+vLPSpgN35wgKgy+ybfTb2SMw==}
 
-  '@scure/bip32@2.0.1':
-    resolution: {integrity: sha512-4Md1NI5BzoVP+bhyJaY3K6yMesEFzNS1sE/cP+9nuvE7p/b0kx9XbpDHHFl8dHtufcbdHRUUQdRqLIPHN/s7yA==}
+  '@scure/bip32@2.2.0':
+    resolution: {integrity: sha512-zFr7t2F+a9+5tB7QbarF2HQNYrgjCNaoLAupZdKkrFMYMozJf5zqH2WJCQibMzm1qQ0QogrxVGO3qXfQDYMaQg==}
 
   '@scure/bip39@1.1.1':
     resolution: {integrity: sha512-t+wDck2rVkh65Hmv280fYdVdY25J9YeEUIgn2LG1WM6gxFkGzcksoDiUkWVpVp3Oex9xGC68JU2dSbUfwZ2jPg==}
@@ -19490,8 +19549,8 @@ packages:
   '@scure/bip39@1.6.0':
     resolution: {integrity: sha512-+lF0BbLiJNwVlev4eKelw1WWLaiKXw7sSl8T6FvBlWkdX+94aGJ4o8XjUdlyhTCjd8c+B3KT3JfS8P0bLRNU6A==}
 
-  '@scure/bip39@2.0.1':
-    resolution: {integrity: sha512-PsxdFj/d2AcJcZDX1FXN3dDgitDDTmwf78rKZq1a6c1P1Nan1X/Sxc7667zU3U+AN60g7SxxP0YCVw2H/hBycg==}
+  '@scure/bip39@2.2.0':
+    resolution: {integrity: sha512-T/Bj/YvYMNkIPq6EENO6/rcs2e7qTNuyoUXf0KBFDmp0ZDu0H2X4Lq6yC3i0c8PcWkov5EbW+yQZZbdMmk154A==}
 
   '@scure/sr25519@0.2.0':
     resolution: {integrity: sha512-uUuLP7Z126XdSizKtrCGqYyR3b3hYtJ6Fg/XFUXmc2//k2aXHDLqZwFeXxL97gg4XydPROPVnuaHGF2+xriSKg==}
@@ -20646,6 +20705,9 @@ packages:
 
   '@stacks/transactions@6.17.0':
     resolution: {integrity: sha512-FUah2BRgV66ApLcEXGNGhwyFTRXqX5Zco3LpiM3essw8PF0NQlHwwdPgtDko5RfrJl3LhGXXe/30nwsfNnB3+g==}
+
+  '@standard-schema/spec@1.0.0':
+    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -23704,8 +23766,8 @@ packages:
   asciichart@1.5.25:
     resolution: {integrity: sha512-PNxzXIPPOtWq8T7bgzBtk9cI2lgS4SJZthUHEiQ1aoIc3lNzGfUvIvo9LiAnq26TACo9t1/4qP6KTGAUbzX9Xg==}
 
-  asn1-ts@11.0.6:
-    resolution: {integrity: sha512-DZvnRuOBGjT38jmYCHPGdp784X97n8UH912J89x2385bKslQkbNWtGfZEXNY69ebymK7h31TI1oG3SpkzlsLwA==}
+  asn1-ts@11.1.0:
+    resolution: {integrity: sha512-CpmMTBhSn3c9uCyT7GAui+VhplZLLvVAPWwcHgZKaeGDqx8R4OJfJGTenJZ0ZpGg70Q/OTd9TWUT8zDuBzb78w==}
 
   asn1.js@4.10.1:
     resolution: {integrity: sha512-p32cOF5q0Zqs9uBiONKYLm6BClCoBCM5O9JfeUSlnQLBTxYdTK+pW+nXflm8UkKd2UYlEbYz5qEi0JuZR9ckSw==}
@@ -28117,6 +28179,10 @@ packages:
 
   graphql@16.10.0:
     resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+
+  graphql@16.11.0:
+    resolution: {integrity: sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   graphql@16.13.2:
@@ -35324,8 +35390,8 @@ packages:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
     engines: {node: '>=8.0.0'}
 
-  teeny-request@10.1.0:
-    resolution: {integrity: sha512-3ZnLvgWF29jikg1sAQ1g0o+lr5JX6sVgYvfUJazn7ZjJroDBUTWp44/+cFVX0bULjv4vci+rBD+oGVAkWqhUbw==}
+  teeny-request@10.1.2:
+    resolution: {integrity: sha512-Xj0ZAQ0CeuQn6UxCDPLbFRlgcSTUEyO3+wiepr2grjIjyL/lMMs1Z4OwXn8kLvn/V1OuaEP0UY7Na6UDNNsYrQ==}
     engines: {node: '>=18'}
 
   teeny-request@9.0.0:
@@ -37238,7 +37304,7 @@ snapshots:
 
   '@0no-co/graphqlsp@1.12.16(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
-      '@gql.tada/internal': 1.0.8(graphql@16.13.2)(typescript@6.0.2)
+      '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       graphql: 16.13.2
       typescript: 6.0.2
 
@@ -37317,9 +37383,9 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@apollo/cache-control-types@1.0.3(graphql@16.13.2)':
+  '@apollo/cache-control-types@1.0.3(graphql@16.11.0)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.11.0
 
   '@apollo/client@3.12.6(graphql@16.10.0)(react@19.0.0)':
     dependencies:
@@ -37358,34 +37424,34 @@ snapshots:
       '@types/long': 4.0.2
       long: 4.0.0
 
-  '@apollo/server-gateway-interface@1.1.1(graphql@16.13.2)':
+  '@apollo/server-gateway-interface@1.1.1(graphql@16.11.0)':
     dependencies:
       '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.fetcher': 2.0.1
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
-      graphql: 16.13.2
+      graphql: 16.11.0
 
-  '@apollo/server@4.12.2(graphql@16.13.2)':
+  '@apollo/server@4.12.2(graphql@16.11.0)':
     dependencies:
-      '@apollo/cache-control-types': 1.0.3(graphql@16.13.2)
-      '@apollo/server-gateway-interface': 1.1.1(graphql@16.13.2)
+      '@apollo/cache-control-types': 1.0.3(graphql@16.11.0)
+      '@apollo/server-gateway-interface': 1.1.1(graphql@16.11.0)
       '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.createhash': 2.0.2
       '@apollo/utils.fetcher': 2.0.1
       '@apollo/utils.isnodelike': 2.0.1
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
-      '@apollo/utils.usagereporting': 2.1.0(graphql@16.13.2)
+      '@apollo/utils.usagereporting': 2.1.0(graphql@16.11.0)
       '@apollo/utils.withrequired': 2.0.1
-      '@graphql-tools/schema': 9.0.19(graphql@16.13.2)
+      '@graphql-tools/schema': 9.0.19(graphql@16.11.0)
       '@types/express': 4.17.21
       '@types/express-serve-static-core': 4.17.43
       '@types/node-fetch': 2.6.11
       async-retry: 1.3.1
       cors: 2.8.5
       express: 4.22.0
-      graphql: 16.13.2
+      graphql: 16.11.0
       loglevel: 1.9.2
       lru-cache: 7.18.3
       negotiator: 0.6.4
@@ -37406,9 +37472,9 @@ snapshots:
       '@apollo/utils.isnodelike': 2.0.1
       sha.js: 2.4.12
 
-  '@apollo/utils.dropunuseddefinitions@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.dropunuseddefinitions@2.0.1(graphql@16.11.0)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.11.0
 
   '@apollo/utils.fetcher@2.0.1': {}
 
@@ -37421,32 +37487,32 @@ snapshots:
 
   '@apollo/utils.logger@2.0.1': {}
 
-  '@apollo/utils.printwithreducedwhitespace@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.printwithreducedwhitespace@2.0.1(graphql@16.11.0)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.11.0
 
-  '@apollo/utils.removealiases@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.removealiases@2.0.1(graphql@16.11.0)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.11.0
 
-  '@apollo/utils.sortast@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.sortast@2.0.1(graphql@16.11.0)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.11.0
       lodash.sortby: 4.7.0
 
-  '@apollo/utils.stripsensitiveliterals@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.stripsensitiveliterals@2.0.1(graphql@16.11.0)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.11.0
 
-  '@apollo/utils.usagereporting@2.1.0(graphql@16.13.2)':
+  '@apollo/utils.usagereporting@2.1.0(graphql@16.11.0)':
     dependencies:
       '@apollo/usage-reporting-protobuf': 4.1.1
-      '@apollo/utils.dropunuseddefinitions': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.printwithreducedwhitespace': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.removealiases': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.sortast': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.stripsensitiveliterals': 2.0.1(graphql@16.13.2)
-      graphql: 16.13.2
+      '@apollo/utils.dropunuseddefinitions': 2.0.1(graphql@16.11.0)
+      '@apollo/utils.printwithreducedwhitespace': 2.0.1(graphql@16.11.0)
+      '@apollo/utils.removealiases': 2.0.1(graphql@16.11.0)
+      '@apollo/utils.sortast': 2.0.1(graphql@16.11.0)
+      '@apollo/utils.stripsensitiveliterals': 2.0.1(graphql@16.11.0)
+      graphql: 16.11.0
 
   '@apollo/utils.withrequired@2.0.1': {}
 
@@ -37474,9 +37540,9 @@ snapshots:
     transitivePeerDependencies:
       - got
 
-  '@as-integrations/express5@1.1.2(@apollo/server@4.12.2(graphql@16.13.2))(express@5.2.1)':
+  '@as-integrations/express5@1.1.2(@apollo/server@4.12.2(graphql@16.11.0))(express@5.2.1)':
     dependencies:
-      '@apollo/server': 4.12.2(graphql@16.13.2)
+      '@apollo/server': 4.12.2(graphql@16.11.0)
       express: 5.2.1
 
   '@asamuzakjp/css-color@2.8.3':
@@ -39779,7 +39845,7 @@ snapshots:
       '@babel/types': 7.28.5
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.3
+      debug: 4.3.4
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -39804,7 +39870,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@babel/helper-compilation-targets@7.27.2':
     dependencies:
@@ -39862,19 +39928,19 @@ snapshots:
 
   '@babel/helper-function-name@7.23.0':
     dependencies:
-      '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/template': 7.27.2
+      '@babel/types': 7.28.5
 
   '@babel/helper-globals@7.28.0': {}
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/traverse': 7.28.5
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39888,14 +39954,14 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.5
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.27.1(supports-color@5.5.0)':
     dependencies:
       '@babel/traverse': 7.28.5(supports-color@5.5.0)
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39910,7 +39976,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@babel/helper-plugin-utils@7.27.1': {}
 
@@ -39919,7 +39985,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-wrap-function': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39928,14 +39994,14 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-member-expression-to-functions': 7.28.5
       '@babel/helper-optimise-call-expression': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-simple-access@7.25.9':
     dependencies:
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/traverse': 7.28.5
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39948,7 +40014,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@babel/helper-string-parser@7.27.1': {}
 
@@ -39960,9 +40026,9 @@ snapshots:
 
   '@babel/helper-wrap-function@7.27.1':
     dependencies:
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/template': 7.27.2
+      '@babel/traverse': 7.28.5
+      '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -39980,7 +40046,7 @@ snapshots:
 
   '@babel/parser@7.24.1':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@babel/parser@7.27.0':
     dependencies:
@@ -39988,7 +40054,7 @@ snapshots:
 
   '@babel/parser@7.27.5':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@babel/parser@7.28.5':
     dependencies:
@@ -40356,7 +40422,7 @@ snapshots:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -40377,7 +40443,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/template': 7.28.6
+      '@babel/template': 7.27.2
 
   '@babel/plugin-transform-computed-properties@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -40457,7 +40523,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -40980,13 +41046,13 @@ snapshots:
 
   '@babel/template@7.27.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
-      '@babel/parser': 7.29.2
+      '@babel/code-frame': 7.27.1
+      '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
 
   '@babel/template@7.27.2':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
 
@@ -40998,14 +41064,14 @@ snapshots:
 
   '@babel/traverse@7.24.1':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.5
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
       debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
@@ -41013,10 +41079,10 @@ snapshots:
 
   '@babel/traverse@7.27.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
-      '@babel/template': 7.28.6
+      '@babel/parser': 7.28.5
+      '@babel/template': 7.27.2
       '@babel/types': 7.28.5
       debug: 4.4.3
       globals: 11.12.0
@@ -41025,7 +41091,7 @@ snapshots:
 
   '@babel/traverse@7.28.5':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.28.5
@@ -41037,7 +41103,7 @@ snapshots:
 
   '@babel/traverse@7.28.5(supports-color@5.5.0)':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.28.5
@@ -41193,8 +41259,8 @@ snapshots:
   '@bunli/tui@0.6.0(react@19.0.0)(typescript@6.0.2)':
     dependencies:
       '@bunli/runtime': 0.3.2(react@19.0.0)(typescript@6.0.2)
-      '@opentui/core': 0.1.97(typescript@6.0.2)
-      '@opentui/react': 0.1.97(react@19.0.0)(typescript@6.0.2)
+      '@opentui/core': 0.1.103(typescript@6.0.2)
+      '@opentui/react': 0.1.103(react@19.0.0)(typescript@6.0.2)
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       debug: 4.4.3
@@ -41216,7 +41282,7 @@ snapshots:
 
   '@callstack/repack-dev-server@5.2.3':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@fastify/middie': 8.3.3
       '@fastify/sensible': 5.6.0
       fastify: 4.29.1
@@ -42113,7 +42179,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.13.6
+      axios: 1.13.5
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -42330,7 +42396,7 @@ snapshots:
 
   '@electron/notarize@3.1.1':
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.1
       promise-retry: 2.0.1
     transitivePeerDependencies:
       - supports-color
@@ -43328,7 +43394,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
@@ -43352,8 +43418,8 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
       '@expo/json-file': 9.1.5
@@ -44307,41 +44373,39 @@ snapshots:
       graphql: 16.13.2
       typescript: 6.0.2
 
-  '@gql.tada/internal@1.0.8(graphql@16.13.2)(typescript@6.0.2)':
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
-      graphql: 16.13.2
-      typescript: 6.0.2
-
   '@gql.tada/internal@1.0.9(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
       graphql: 16.13.2
       typescript: 6.0.2
 
-  '@graphql-tools/merge@8.4.2(graphql@16.13.2)':
+  '@graphql-tools/merge@8.4.2(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/utils': 9.2.1(graphql@16.13.2)
-      graphql: 16.13.2
+      '@graphql-tools/utils': 9.2.1(graphql@16.11.0)
+      graphql: 16.11.0
       tslib: 2.6.2
 
-  '@graphql-tools/schema@9.0.19(graphql@16.13.2)':
+  '@graphql-tools/schema@9.0.19(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/merge': 8.4.2(graphql@16.13.2)
-      '@graphql-tools/utils': 9.2.1(graphql@16.13.2)
-      graphql: 16.13.2
+      '@graphql-tools/merge': 8.4.2(graphql@16.11.0)
+      '@graphql-tools/utils': 9.2.1(graphql@16.11.0)
+      graphql: 16.11.0
       tslib: 2.6.2
       value-or-promise: 1.0.12
 
-  '@graphql-tools/utils@9.2.1(graphql@16.13.2)':
+  '@graphql-tools/utils@9.2.1(graphql@16.11.0)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.13.2)
-      graphql: 16.13.2
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
+      graphql: 16.11.0
       tslib: 2.6.2
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
       graphql: 16.10.0
+
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.11.0)':
+    dependencies:
+      graphql: 16.11.0
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.13.2)':
     dependencies:
@@ -45409,7 +45473,7 @@ snapshots:
   '@ledgerhq/device-signer-kit-cosmos@1.0.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45434,7 +45498,7 @@ snapshots:
     dependencies:
       '@ledgerhq/context-module': 1.16.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45525,7 +45589,7 @@ snapshots:
 
   '@ledgerhq/errors@6.27.0': {}
 
-  '@ledgerhq/errors@6.32.0': {}
+  '@ledgerhq/errors@6.34.0': {}
 
   '@ledgerhq/evm-tools@1.3.0':
     dependencies:
@@ -45536,7 +45600,7 @@ snapshots:
       axios: 1.7.7
       crypto-js: 4.2.0
 
-  '@ledgerhq/hw-bolos@6.35.1':
+  '@ledgerhq/hw-bolos@6.36.1':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
@@ -45561,10 +45625,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
 
-  '@ledgerhq/ledger-cal-service@1.15.1':
+  '@ledgerhq/ledger-cal-service@1.16.0':
     dependencies:
-      '@ledgerhq/live-env': 2.31.0
-      '@ledgerhq/live-network': 2.4.3
+      '@ledgerhq/live-env': 2.33.0
+      '@ledgerhq/live-network': 2.5.1
 
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
@@ -45576,23 +45640,23 @@ snapshots:
       rxjs: 7.8.2
       utility-types: 3.11.0
 
-  '@ledgerhq/live-env@2.31.0':
+  '@ledgerhq/live-env@2.33.0':
     dependencies:
       rxjs: 7.8.2
       utility-types: 3.11.0
 
-  '@ledgerhq/live-network@2.4.3':
+  '@ledgerhq/live-network@2.5.1':
     dependencies:
-      '@ledgerhq/errors': 6.32.0
-      '@ledgerhq/live-env': 2.31.0
-      '@ledgerhq/live-promise': 0.2.2
-      '@ledgerhq/logs': 6.16.0
+      '@ledgerhq/errors': 6.34.0
+      '@ledgerhq/live-env': 2.33.0
+      '@ledgerhq/live-promise': 0.2.3
+      '@ledgerhq/logs': 6.17.0
       axios: 1.13.2
       lru-cache: 7.18.3
 
-  '@ledgerhq/live-promise@0.2.2':
+  '@ledgerhq/live-promise@0.2.3':
     dependencies:
-      '@ledgerhq/logs': 6.16.0
+      '@ledgerhq/logs': 6.17.0
 
   '@ledgerhq/logs@5.50.0': {}
 
@@ -45600,7 +45664,7 @@ snapshots:
 
   '@ledgerhq/logs@6.14.0': {}
 
-  '@ledgerhq/logs@6.16.0': {}
+  '@ledgerhq/logs@6.17.0': {}
 
   '@ledgerhq/lumen-design-core@0.1.11':
     dependencies:
@@ -45966,7 +46030,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.6
+      axios: 1.13.5
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -45983,10 +46047,10 @@ snapshots:
   '@mysten/ledgerjs-hw-app-sui@0.8.0':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.32.0
-      '@ledgerhq/hw-bolos': 6.35.1
+      '@ledgerhq/errors': 6.34.0
+      '@ledgerhq/hw-bolos': 6.36.1
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/ledger-cal-service': 1.15.1
+      '@ledgerhq/ledger-cal-service': 1.16.0
       fast-sha256: 1.3.0
       semver: 7.7.3
 
@@ -45995,9 +46059,9 @@ snapshots:
       '@google-cloud/kms': 5.4.0
       '@mysten/ledgerjs-hw-app-sui': 0.7.1
       '@mysten/sui': 2.9.0(typescript@6.0.2)
-      '@noble/curves': 2.0.1
-      '@noble/hashes': 2.0.1
-      asn1-ts: 11.0.6
+      '@noble/curves': 2.2.0
+      '@noble/hashes': 2.2.0
+      asn1-ts: 11.1.0
     transitivePeerDependencies:
       - supports-color
 
@@ -46006,14 +46070,14 @@ snapshots:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.13.2)
       '@mysten/bcs': 2.0.3
       '@mysten/utils': 0.3.1
-      '@noble/curves': 2.0.1
-      '@noble/hashes': 2.0.1
+      '@noble/curves': 2.2.0
+      '@noble/hashes': 2.2.0
       '@protobuf-ts/grpcweb-transport': 2.11.1
       '@protobuf-ts/runtime': 2.11.1
       '@protobuf-ts/runtime-rpc': 2.11.1
       '@scure/base': 2.0.0
-      '@scure/bip32': 2.0.1
-      '@scure/bip39': 2.0.1
+      '@scure/bip32': 2.2.0
+      '@scure/bip39': 2.2.0
       gql.tada: 1.9.2(graphql@16.13.2)(typescript@6.0.2)
       graphql: 16.13.2
       poseidon-lite: 0.2.1
@@ -46175,9 +46239,9 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
-  '@noble/curves@2.0.1':
+  '@noble/curves@2.2.0':
     dependencies:
-      '@noble/hashes': 2.0.1
+      '@noble/hashes': 2.2.0
 
   '@noble/ed25519@1.7.3': {}
 
@@ -46199,7 +46263,7 @@ snapshots:
 
   '@noble/hashes@1.8.0': {}
 
-  '@noble/hashes@2.0.1': {}
+  '@noble/hashes@2.2.0': {}
 
   '@noble/secp256k1@1.7.1': {}
 
@@ -46632,23 +46696,63 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
 
+  '@opentui/core-darwin-arm64@0.1.103':
+    optional: true
+
   '@opentui/core-darwin-arm64@0.1.97':
+    optional: true
+
+  '@opentui/core-darwin-x64@0.1.103':
     optional: true
 
   '@opentui/core-darwin-x64@0.1.97':
     optional: true
 
+  '@opentui/core-linux-arm64@0.1.103':
+    optional: true
+
   '@opentui/core-linux-arm64@0.1.97':
+    optional: true
+
+  '@opentui/core-linux-x64@0.1.103':
     optional: true
 
   '@opentui/core-linux-x64@0.1.97':
     optional: true
 
+  '@opentui/core-win32-arm64@0.1.103':
+    optional: true
+
   '@opentui/core-win32-arm64@0.1.97':
+    optional: true
+
+  '@opentui/core-win32-x64@0.1.103':
     optional: true
 
   '@opentui/core-win32-x64@0.1.97':
     optional: true
+
+  '@opentui/core@0.1.103(typescript@6.0.2)':
+    dependencies:
+      bun-ffi-structs: 0.1.2(typescript@6.0.2)
+      diff: 8.0.2
+      jimp: 1.6.0
+      marked: 17.0.1
+      yoga-layout: 3.2.1
+    optionalDependencies:
+      '@dimforge/rapier2d-simd-compat': 0.17.3
+      '@opentui/core-darwin-arm64': 0.1.103
+      '@opentui/core-darwin-x64': 0.1.103
+      '@opentui/core-linux-arm64': 0.1.103
+      '@opentui/core-linux-x64': 0.1.103
+      '@opentui/core-win32-arm64': 0.1.103
+      '@opentui/core-win32-x64': 0.1.103
+      bun-webgpu: 0.1.5
+      planck: 1.5.0
+      three: 0.177.0
+    transitivePeerDependencies:
+      - stage-js
+      - typescript
 
   '@opentui/core@0.1.97(typescript@6.0.2)':
     dependencies:
@@ -46671,6 +46775,16 @@ snapshots:
     transitivePeerDependencies:
       - stage-js
       - typescript
+
+  '@opentui/react@0.1.103(react@19.0.0)(typescript@6.0.2)':
+    dependencies:
+      '@opentui/core': 0.1.103(typescript@6.0.2)
+      react: 19.0.0
+      react-reconciler: 0.32.0(react@19.0.0)
+    transitivePeerDependencies:
+      - stage-js
+      - typescript
+      - web-tree-sitter
 
   '@opentui/react@0.1.97(react@19.0.0)(typescript@6.0.2)':
     dependencies:
@@ -47943,7 +48057,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
       '@react-native/codegen': 0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))
     transitivePeerDependencies:
       - '@babel/preset-env'
@@ -47951,7 +48065,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.2(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
       '@react-native/codegen': 0.79.2(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47959,7 +48073,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.6(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
       '@react-native/codegen': 0.79.6(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -47967,7 +48081,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.7':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
       '@react-native/codegen': 0.79.7
     transitivePeerDependencies:
       - '@babel/core'
@@ -47975,7 +48089,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.79.7(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.28.5
       '@react-native/codegen': 0.79.7(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -48023,7 +48137,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.28.6
+      '@babel/template': 7.27.2
       '@react-native/babel-plugin-codegen': 0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -48074,7 +48188,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.28.6
+      '@babel/template': 7.27.2
       '@react-native/babel-plugin-codegen': 0.79.2(@babel/core@7.28.5)
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -48124,7 +48238,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.28.6
+      '@babel/template': 7.27.2
       '@react-native/babel-plugin-codegen': 0.79.6(@babel/core@7.28.5)
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -48174,7 +48288,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.28.6
+      '@babel/template': 7.27.2
       '@react-native/babel-plugin-codegen': 0.79.7(@babel/core@7.28.5)
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -48184,7 +48298,7 @@ snapshots:
 
   '@react-native/codegen@0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@babel/preset-env': 7.28.5(@babel/core@7.28.5)
       glob: 7.2.3
       hermes-parser: 0.25.1
@@ -48207,7 +48321,7 @@ snapshots:
   '@react-native/codegen@0.79.6(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       glob: 7.2.3
       hermes-parser: 0.25.1
       invariant: 2.2.4
@@ -48216,7 +48330,7 @@ snapshots:
 
   '@react-native/codegen@0.79.7':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       glob: 7.2.3
       hermes-parser: 0.25.1
       invariant: 2.2.4
@@ -48226,7 +48340,7 @@ snapshots:
   '@react-native/codegen@0.79.7(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       glob: 7.2.3
       hermes-parser: 0.25.1
       invariant: 2.2.4
@@ -48584,8 +48698,8 @@ snapshots:
 
   '@redux-devtools/cli@4.0.4(@types/react@19.0.14)(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))':
     dependencies:
-      '@apollo/server': 4.12.2(graphql@16.13.2)
-      '@as-integrations/express5': 1.1.2(@apollo/server@4.12.2(graphql@16.13.2))(express@5.2.1)
+      '@apollo/server': 4.12.2(graphql@16.11.0)
+      '@as-integrations/express5': 1.1.2(@apollo/server@4.12.2(graphql@16.11.0))(express@5.2.1)
       '@emotion/react': 11.14.0(@types/react@19.0.14)(react@19.0.0)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@types/react@19.0.14)(react@19.0.0)
       '@redux-devtools/app': 7.0.0(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@types/react@19.0.14)(react@19.0.0))(@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -48597,7 +48711,7 @@ snapshots:
       electron: 31.7.7
       express: 5.2.1
       get-port: 7.1.0
-      graphql: 16.13.2
+      graphql: 16.11.0
       knex: 3.1.0(sqlite3@5.1.7)
       lodash-es: 4.17.21
       minimist: 1.2.8
@@ -48809,7 +48923,7 @@ snapshots:
 
   '@reduxjs/toolkit@2.11.2':
     dependencies:
-      '@standard-schema/spec': 1.1.0
+      '@standard-schema/spec': 1.0.0
       '@standard-schema/utils': 0.3.0
       immer: 11.1.3
       redux: 5.0.1
@@ -48818,7 +48932,7 @@ snapshots:
 
   '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)':
     dependencies:
-      '@standard-schema/spec': 1.1.0
+      '@standard-schema/spec': 1.0.0
       '@standard-schema/utils': 0.3.0
       immer: 11.1.3
       redux: 5.0.1
@@ -48830,7 +48944,7 @@ snapshots:
 
   '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@standard-schema/spec': 1.1.0
+      '@standard-schema/spec': 1.0.0
       '@standard-schema/utils': 0.3.0
       immer: 11.1.3
       redux: 5.0.1
@@ -49383,6 +49497,8 @@ snapshots:
 
   '@scure/base@2.0.0': {}
 
+  '@scure/base@2.2.0': {}
+
   '@scure/bip32@1.1.5':
     dependencies:
       '@noble/hashes': 1.2.0
@@ -49407,11 +49523,11 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
-  '@scure/bip32@2.0.1':
+  '@scure/bip32@2.2.0':
     dependencies:
-      '@noble/curves': 2.0.1
-      '@noble/hashes': 2.0.1
-      '@scure/base': 2.0.0
+      '@noble/curves': 2.2.0
+      '@noble/hashes': 2.2.0
+      '@scure/base': 2.2.0
 
   '@scure/bip39@1.1.1':
     dependencies:
@@ -49433,10 +49549,10 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
-  '@scure/bip39@2.0.1':
+  '@scure/bip39@2.2.0':
     dependencies:
-      '@noble/hashes': 2.0.1
-      '@scure/base': 2.0.0
+      '@noble/hashes': 2.2.0
+      '@scure/base': 2.2.0
 
   '@scure/sr25519@0.2.0':
     dependencies:
@@ -51271,6 +51387,8 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@standard-schema/spec@1.0.0': {}
+
   '@standard-schema/spec@1.1.0': {}
 
   '@standard-schema/utils@0.3.0': {}
@@ -51918,7 +52036,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.13.6
+      axios: 1.13.5
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -52638,7 +52756,7 @@ snapshots:
 
   '@testing-library/dom@10.4.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -52649,7 +52767,7 @@ snapshots:
 
   '@testing-library/dom@10.4.1':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -52660,7 +52778,7 @@ snapshots:
 
   '@testing-library/dom@9.3.4':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.1.3
@@ -52793,7 +52911,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.13.6
+      axios: 1.13.5
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -52845,24 +52963,24 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
       '@types/babel__traverse': 7.28.0
 
   '@types/babel__generator@7.6.8':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
 
   '@types/babel__traverse@7.28.0':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
 
   '@types/bchaddrjs@0.4.3': {}
 
@@ -53648,7 +53766,7 @@ snapshots:
       '@typescript-eslint/types': 8.48.1
       '@typescript-eslint/typescript-estree': 8.48.1(typescript@6.0.2)
       '@typescript-eslint/visitor-keys': 8.48.1
-      debug: 4.4.3
+      debug: 4.3.4
       eslint: 8.57.0
       typescript: 6.0.2
     transitivePeerDependencies:
@@ -54223,7 +54341,7 @@ snapshots:
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -54238,7 +54356,7 @@ snapshots:
 
   '@vue/compiler-sfc@2.7.16':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       postcss: 8.5.6
       source-map: 0.6.1
     optionalDependencies:
@@ -54246,7 +54364,7 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.21':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@vue/compiler-core': 3.4.21
       '@vue/compiler-dom': 3.4.21
       '@vue/compiler-ssr': 3.4.21
@@ -54942,7 +55060,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
-      axios: 1.13.6
+      axios: 1.13.5
 
   JSONStream@1.3.5:
     dependencies:
@@ -55378,7 +55496,7 @@ snapshots:
 
   asciichart@1.5.25: {}
 
-  asn1-ts@11.0.6: {}
+  asn1-ts@11.1.0: {}
 
   asn1.js@4.10.1:
     dependencies:
@@ -55663,8 +55781,8 @@ snapshots:
 
   babel-plugin-jest-hoist@29.6.3:
     dependencies:
-      '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/template': 7.27.2
+      '@babel/types': 7.28.5
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.28.0
 
@@ -56686,7 +56804,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.13.6
+      axios: 1.13.5
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -59303,7 +59421,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.3
+      debug: 4.3.4
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.2
@@ -60369,7 +60487,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.0)(typescript@6.0.2)(vue-template-compiler@2.7.16)(webpack@5.94.0(@swc/core@1.15.11)):
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -60982,6 +61100,8 @@ snapshots:
       tslib: 2.6.2
 
   graphql@16.10.0: {}
+
+  graphql@16.11.0: {}
 
   graphql@16.13.2: {}
 
@@ -62073,7 +62193,7 @@ snapshots:
   istanbul-lib-instrument@5.2.1:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 6.3.1
@@ -62083,7 +62203,7 @@ snapshots:
   istanbul-lib-instrument@6.0.3:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 7.7.3
@@ -62727,7 +62847,7 @@ snapshots:
 
   jest-message-util@29.7.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@jest/types': 29.6.3
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -62739,7 +62859,7 @@ snapshots:
 
   jest-message-util@30.2.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@jest/types': 30.2.0
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -62894,7 +63014,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.29.0
+      '@babel/types': 7.28.5
       '@jest/expect-utils': 30.2.0
       '@jest/get-type': 30.1.0
       '@jest/snapshot-utils': 30.2.0
@@ -63194,7 +63314,7 @@ snapshots:
   jscodeshift@17.3.0(@babel/preset-env@7.28.5(@babel/core@7.28.5)):
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.28.5)
@@ -63218,7 +63338,7 @@ snapshots:
 
   jsdoc@4.0.3:
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@jsdoc/salty': 0.2.8
       '@types/markdown-it': 14.1.1
       bluebird: 3.7.2
@@ -63610,7 +63730,7 @@ snapshots:
 
   konan@2.1.1:
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.28.5
       '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
@@ -64833,7 +64953,7 @@ snapshots:
   metro-source-map@0.81.5:
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.0'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.28.5'
       '@babel/types': 7.27.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -64847,9 +64967,9 @@ snapshots:
 
   metro-source-map@0.82.5:
     dependencies:
-      '@babel/traverse': 7.29.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.0'
-      '@babel/types': 7.29.0
+      '@babel/traverse': 7.28.5
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.28.5'
+      '@babel/types': 7.28.5
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
       metro-symbolicate: 0.82.5
@@ -64886,7 +65006,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/template': 7.28.6
+      '@babel/template': 7.27.2
       '@babel/traverse': 7.28.5
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
@@ -64897,8 +65017,8 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.29.0
+      '@babel/template': 7.27.2
+      '@babel/traverse': 7.28.5
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -64939,8 +65059,8 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
       flow-enums-runtime: 0.0.6
       metro: 0.82.5
       metro-babel-transformer: 0.82.5
@@ -65004,13 +65124,13 @@ snapshots:
 
   metro@0.82.5:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.28.5
+      '@babel/template': 7.27.2
+      '@babel/traverse': 7.28.5
+      '@babel/types': 7.28.5
       accepts: 1.3.8
       chalk: 4.1.2
       ci-info: 2.0.0
@@ -65602,7 +65722,7 @@ snapshots:
       '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.13.2
+      graphql: 16.11.0
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
@@ -65761,7 +65881,7 @@ snapshots:
 
   nock@13.5.4:
     dependencies:
-      debug: 4.4.3
+      debug: 4.3.4
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
     transitivePeerDependencies:
@@ -66019,7 +66139,7 @@ snapshots:
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.2
       '@zkochan/js-yaml': 0.0.7
-      axios: 1.13.6
+      axios: 1.13.5
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
       cliui: 8.0.1
@@ -67549,7 +67669,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/node': 24.12.0
-      long: 5.3.1
+      long: 5.2.3
 
   protobufjs@7.3.2:
     dependencies:
@@ -67564,7 +67684,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/node': 24.12.0
-      long: 5.3.1
+      long: 5.2.3
 
   protobufjs@7.5.4:
     dependencies:
@@ -67794,8 +67914,8 @@ snapshots:
   react-docgen@8.0.2:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/traverse': 7.28.5
+      '@babel/types': 7.28.5
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.28.0
       '@types/doctrine': 0.0.9
@@ -69127,7 +69247,7 @@ snapshots:
   retry-request@8.0.2:
     dependencies:
       extend: 3.0.2
-      teeny-request: 10.1.0
+      teeny-request: 10.1.2
     transitivePeerDependencies:
       - supports-color
 
@@ -70911,10 +71031,10 @@ snapshots:
 
   tarn@3.0.2: {}
 
-  teeny-request@10.1.0:
+  teeny-request@10.1.2:
     dependencies:
-      http-proxy-agent: 5.0.0
-      https-proxy-agent: 5.0.1
+      http-proxy-agent: 7.0.2
+      https-proxy-agent: 7.0.6
       node-fetch: 3.3.2
       stream-events: 1.0.5
     transitivePeerDependencies:
@@ -71264,7 +71384,7 @@ snapshots:
 
   ts-checker-rspack-plugin@1.2.6(@rspack/core@1.7.3)(typescript@6.0.2):
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@rspack/lite-tapable': 1.1.0
       chokidar: 3.6.0
       is-glob: 4.0.3
@@ -71277,7 +71397,7 @@ snapshots:
 
   ts-checker-rspack-plugin@1.2.6(typescript@6.0.2):
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       '@rspack/lite-tapable': 1.1.0
       chokidar: 3.6.0
       is-glob: 4.0.3

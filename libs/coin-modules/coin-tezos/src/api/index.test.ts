@@ -447,7 +447,7 @@ describe("estimateFees", () => {
       delegationTime: "2021-01-01T00:00:00Z",
       numTransactions: 0,
       firstActivityTime: "2021-01-01T00:00:00Z",
-    } as APIAccount);
+    } as unknown as APIAccount);
 
     const expectedTotalFees = 2000n;
     logicEstimateFees.mockResolvedValue({
@@ -466,8 +466,9 @@ describe("estimateFees", () => {
     } as TransactionIntent);
 
     expect(result.value).toBe(expectedTotalFees);
-    expect(result.parameters.gasLimit).toBe(DEFAULT_GAS_LIMIT);
-    expect(result.parameters.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+    expect(result.parameters).toBeDefined();
+    expect(result.parameters?.gasLimit).toBe(DEFAULT_GAS_LIMIT);
+    expect(result.parameters?.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
   });
 
   it("fallback when Taquito throws Public key not found returns total with minFees for reveal (unrevealed)", async () => {
@@ -523,7 +524,7 @@ describe("estimateFees", () => {
       delegationTime: "2021-01-01T00:00:00Z",
       numTransactions: 0,
       firstActivityTime: "2021-01-01T00:00:00Z",
-    } as APIAccount;
+    } as unknown as APIAccount;
     (networkApi.getAccountByAddress as jest.Mock)
       .mockImplementationOnce(() => Promise.resolve(defaultUserForTry))
       .mockImplementationOnce(() => Promise.resolve(recipientAccount))
@@ -661,7 +662,7 @@ describe("estimateFees", () => {
       delegationTime: "2021-01-01T00:00:00Z",
       numTransactions: 0,
       firstActivityTime: "2021-01-01T00:00:00Z",
-    } as APIAccount;
+    } as unknown as APIAccount;
     const recipientAccount = {
       type: "user" as const,
       balance: 1000000,

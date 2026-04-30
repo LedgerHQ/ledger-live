@@ -13,6 +13,8 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit --customConditions node"
   },
   "dependencies": {
@@ -109,6 +111,8 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "postcss": "^8.5.6",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }

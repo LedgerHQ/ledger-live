@@ -8,7 +8,8 @@
     "lib": ["es2020", "dom"],
     "jsx": "react",
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "src",
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

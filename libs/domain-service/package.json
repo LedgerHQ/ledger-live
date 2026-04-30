@@ -68,6 +68,7 @@
     "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "cross-env TZ=America/New_York jest",
     "unimported": "unimported",
     "coverage": "jest --coverage"

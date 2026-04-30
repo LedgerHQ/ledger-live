@@ -55,6 +55,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest --config=jest.config.ts",
     "test-integ": "jest --config=jest.integ.config.ts",
     "unimported": "unimported"
