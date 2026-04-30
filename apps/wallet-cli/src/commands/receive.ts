@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
+import { serializeNetwork, serializeV1, toV0, currencyIdFromNetwork } from "../shared/accountDescriptor";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import {
@@ -15,7 +15,7 @@ import {
   deviceTimeoutOption,
   outputOption,
   resolveAccountArg,
-  resolveAccountDescriptor,
+  resolveAccountDescriptorV1,
   resolveOutputFormat,
 } from "./inputs";
 
@@ -40,20 +40,21 @@ export default defineCommand({
     const out = createCommandOutput(output, ctx);
 
     await out.run(async () => {
-      const descriptor = await resolveAccountDescriptor(
+      const v1 = await resolveAccountDescriptorV1(
         resolveAccountArg(flags.account, positional),
       );
-      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
-      ctx.account = descriptor.id;
-      const managerAppName = getManagerAppNameForCurrencyId(descriptor.currencyId);
+      ctx.network = serializeNetwork(v1.network);
+      ctx.account = serializeV1(v1);
+      const currencyId = currencyIdFromNetwork(v1.network);
+      const managerAppName = getManagerAppNameForCurrencyId(currencyId);
       if (flags.verify) {
         const spin = out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
         await withCurrencyDeviceSession(
-          descriptor.currencyId,
+          currencyId,
           async () => {
             out.deviceState({ code: "awaiting_approval", reason: "verify_address" });
             try {
-              const address = await wallet.verifyAddress(descriptor, WALLET_CLI_DMK_DEVICE_ID);
+              const address = await wallet.verifyAddress(toV0(v1), WALLET_CLI_DMK_DEVICE_ID);
               spin?.success("Address verified");
               out.address(address);
             } catch (e) {
@@ -69,7 +70,15 @@ export default defineCommand({
           },
         );
       } else {
-        out.address(await wallet.getFreshAddress(descriptor));
+        const address =
+          v1.type === "address"
+            ? v1.address
+            : await out.withActivity(
+                `Scanning ${v1.network.name} blockchain for fresh address…`,
+                "Fresh address resolved",
+                () => wallet.getFreshAddress(toV0(v1)),
+              );
+        out.address(address);
       }
     });
   },
