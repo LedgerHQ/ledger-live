@@ -43,7 +43,10 @@ export type DeviceTransactionConfigFn = (arg: {
 }) => Promise<CommonDeviceTransactionField[]>;
 
 export type WalletApiAdapterModule = {
-  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<WalletAPITransaction, any>;
+  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
+    WalletAPITransaction,
+    any
+  >;
 };
 
 export type PlatformAdapterModule = {
@@ -115,9 +118,9 @@ export type CoinModuleLoader = {
   loadIsEditableOperation?: () => IsEditableOperationFn;
   loadIsStuckOperation?: () => IsStuckOperationFn;
   loadGetStuckAccountAndOperation?: () => GetStuckAccountAndOperationFn;
-  loadIsAccountEmpty?: () => (account: Account) => boolean;
-  loadGetVotesCount?: () => (account: Account) => number;
-  loadClearAccount?: () => (account: Account) => void;
+  loadIsAccountEmpty?: () => Promise<(account: Account) => boolean>;
+  loadGetVotesCount?: () => Promise<(account: Account) => number>;
+  loadClearAccount?: () => Promise<(account: Account) => void>;
   loadValidateAddress?: () => ValidateAddressFn;
   loadSigner?: () => AlpacaSigner;
 };

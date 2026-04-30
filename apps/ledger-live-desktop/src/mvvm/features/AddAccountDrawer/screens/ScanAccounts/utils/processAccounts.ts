@@ -15,7 +15,7 @@ export const getUnimportedAccounts = (scanned: Account[], existing: Account[]): 
   });
 };
 
-export const determineSelectedIds = (
+export const determineSelectedIds = async (
   accounts: Account[],
   onlyNewAccounts: boolean,
   currentSelectedIds: string[],
@@ -25,7 +25,7 @@ export const determineSelectedIds = (
   }
 
   const latestAccount = accounts.at(-1);
-  return latestAccount && !isAccountEmpty(latestAccount)
+  return latestAccount && !(await isAccountEmpty(latestAccount))
     ? [...currentSelectedIds, latestAccount.id]
     : currentSelectedIds;
 };

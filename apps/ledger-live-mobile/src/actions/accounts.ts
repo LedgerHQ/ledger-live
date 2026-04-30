@@ -11,6 +11,10 @@ import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { initAccounts } from "@ledgerhq/live-wallet/store";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { clearAccount } from "@ledgerhq/live-common/account/index";
+import { accountsSelector } from "../reducers/accounts";
+import type { AppDispatch } from "../state-manager/configureStore";
+import type { State } from "../reducers/types";
 
 const version = 0; // FIXME this needs to come from user data
 
@@ -64,4 +68,9 @@ export const replaceAccounts = createAction<AccountsReplacePayload>(
   AccountsActionTypes.SET_ACCOUNTS,
 );
 
-export const cleanCache = createAction(AccountsActionTypes.CLEAN_CACHE);
+export const cleanCache =
+  () => async (dispatch: AppDispatch, getState: () => State) => {
+    const accounts = accountsSelector(getState());
+    const cleared = await Promise.all(accounts.map(clearAccount));
+    dispatch(replaceAccounts(cleared));
+  };

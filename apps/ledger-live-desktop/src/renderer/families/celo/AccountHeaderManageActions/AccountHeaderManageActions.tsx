@@ -19,8 +19,8 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
   const dispatch = useDispatch();
   const label = useGetStakeLabelLocaleBased();
   const isRegistrationPending = isAccountRegistrationPending(account as CeloAccount);
-  const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+  const onClick = useCallback(async () => {
+    if (await isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

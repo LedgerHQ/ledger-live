@@ -4,6 +4,8 @@ import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { ThunkResult } from "./types";
+import { clearAccount } from "@ledgerhq/live-common/account/index";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 export const removeAccount = (payload: Account) => ({
   type: "REMOVE_ACCOUNT",
@@ -68,4 +70,8 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-export const cleanAccountsCache = () => ({ type: "CLEAN_ACCOUNTS_CACHE" });
+export const cleanAccountsCache = (): ThunkResult<Promise<void>> => async (dispatch, getState) => {
+  const accounts = accountsSelector(getState());
+  const cleared = await Promise.all(accounts.map(clearAccount));
+  dispatch(replaceAccounts(cleared));
+};

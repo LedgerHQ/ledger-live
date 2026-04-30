@@ -8,16 +8,16 @@ import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions
 import { NavigatorName, ScreenName } from "~/const";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
-const getMainActions = ({
+const getMainActions = async ({
   account,
   parentAccount,
 }: {
   account: CeloAccount;
   parentAccount: Account;
-}): ActionButtonEvent[] => {
+}): Promise<ActionButtonEvent[]> => {
   const label = getStakeLabelLocaleBased();
 
-  const navigationParams: NavigationParamsType = isAccountEmpty(account)
+  const navigationParams: NavigationParamsType = (await isAccountEmpty(account))
     ? [
         NavigatorName.NoFundsFlow,
         {

@@ -1,4 +1,5 @@
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -16,8 +17,8 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const { solanaResources } = mainAccount;
 
-  const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+  const onClick = useCallback(async () => {
+    if (await isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

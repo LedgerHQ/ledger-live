@@ -2,23 +2,24 @@ import React from "react";
 import { Trans } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
-const getMainActions = ({
+const getMainActions = async ({
   account,
   parentAccount,
 }: {
   account: BitcoinAccount | TokenAccount;
   parentAccount: BitcoinAccount | null | undefined;
-}): ActionButtonEvent[] => {
+}): Promise<ActionButtonEvent[]> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const label = getStakeLabelLocaleBased();
 
-  const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
+  const navigationParams: NavigationParamsType = (await isAccountEmpty(mainAccount))
     ? [
         NavigatorName.NoFundsFlow,
         {

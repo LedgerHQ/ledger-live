@@ -17,15 +17,12 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import isEqual from "lodash/isEqual";
 import {
-  isAccountEmpty,
   flattenAccounts,
   getAccountCurrency,
   isUpToDateAccount,
-  clearAccount,
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
-
 import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,
@@ -109,10 +106,6 @@ const handlers: ReducerMap<AccountsState, Payload> = {
     active: (action as Action<AccountsReplacePayload>).payload,
   }),
 
-  [AccountsActionTypes.CLEAN_CACHE]: (state: AccountsState) => ({
-    active: state.active.map(clearAccount),
-  }),
-
   [AccountsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
     state: AccountsState,
     action,
@@ -180,10 +173,6 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
 export const accountsCountSelector = createSelector(accountsSelector, acc => acc.length);
 /** Returns a boolean that is true if and only if there is no account */
 export const hasNoAccountsSelector = createSelector(accountsSelector, acc => acc.length <= 0);
-/** Returns a boolean that is true if and only if all accounts are empty */
-export const areAccountsEmptySelector = createSelector(accountsSelector, accounts =>
-  accounts.every(isAccountEmpty),
-);
 
 export const currenciesSelector = createSelector(accountsSelector, accounts =>
   uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>

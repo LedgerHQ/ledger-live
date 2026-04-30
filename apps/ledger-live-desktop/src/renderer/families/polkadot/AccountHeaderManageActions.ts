@@ -5,7 +5,8 @@ import {
   hasExternalStash,
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
@@ -30,7 +31,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
   const navigate = useNavigate();
   if (!polkadotResources || parentAccount) return null;
 
-  const onClick = () => {
+  const onClick = async () => {
     if (["polkadot", "assethub_polkadot"].includes(mainAccount.currency.id)) {
       navigate("/platform/stakekit", {
         state: {
@@ -43,7 +44,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
         },
       });
     } else {
-      if (isAccountEmpty(mainAccount)) {
+      if (await isAccountEmpty(mainAccount)) {
         dispatch(
           openModal("MODAL_NO_FUNDS_STAKE", {
             account: mainAccount,

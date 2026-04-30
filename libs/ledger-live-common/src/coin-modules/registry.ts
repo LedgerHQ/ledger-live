@@ -42,8 +42,7 @@ export function getRegisteredFamilies(): string[] {
  * Callers should already `await` this call so that no further changes are
  * needed once the function signature is updated.
  */
-export const loadSetupForFamily = (family: string): FamilySetup =>
-  getLoader(family).loadSetup();
+export const loadSetupForFamily = (family: string): FamilySetup => getLoader(family).loadSetup();
 
 export const loadTransactionForFamily = (family: string): TransactionModule =>
   getLoader(family).loadTransaction();
@@ -61,9 +60,8 @@ export const loadDeviceTxConfigForFamily = (
  * Callers should already `await` this call so that no further changes are
  * needed once the function signature is updated.
  */
-export const loadWalletApiAdapterForFamily = (
-  family: string,
-): WalletApiAdapterModule | undefined => loaders.get(family)?.loadWalletApiAdapter?.();
+export const loadWalletApiAdapterForFamily = (family: string): WalletApiAdapterModule | undefined =>
+  loaders.get(family)?.loadWalletApiAdapter?.();
 
 /**
  * Loads the platform adapter module for the given coin family.
@@ -74,9 +72,8 @@ export const loadWalletApiAdapterForFamily = (
  * Callers should already `await` this call so that no further changes are
  * needed once the function signature is updated.
  */
-export const loadPlatformAdapterForFamily = (
-  family: string,
-): PlatformAdapterModule | undefined => loaders.get(family)?.loadPlatformAdapter?.();
+export const loadPlatformAdapterForFamily = (family: string): PlatformAdapterModule | undefined =>
+  loaders.get(family)?.loadPlatformAdapter?.();
 
 export const loadAccountModuleForFamily = (family: string): AccountModule | undefined =>
   loaders.get(family)?.loadAccount?.();
@@ -89,15 +86,16 @@ export const loadMockAccountForFamily = (family: string): MockAccountModule | un
 
 export const loadIsAccountEmptyForFamily = (
   family: string,
-): ((account: Account) => boolean) | undefined => loaders.get(family)?.loadIsAccountEmpty?.();
+): Promise<(account: Account) => boolean> | undefined =>
+  loaders.get(family)?.loadIsAccountEmpty?.();
 
 export const loadGetVotesCountForFamily = (
   family: string,
-): ((account: Account) => number) | undefined => loaders.get(family)?.loadGetVotesCount?.();
+): Promise<(account: Account) => number> | undefined => loaders.get(family)?.loadGetVotesCount?.();
 
 export const loadClearAccountForFamily = (
   family: string,
-): ((account: Account) => void) | undefined => loaders.get(family)?.loadClearAccount?.();
+): Promise<(account: Account) => void> | undefined => loaders.get(family)?.loadClearAccount?.();
 
 export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
   loaders.get(family)?.loadValidateAddress?.();
@@ -109,9 +107,8 @@ export const loadIsEditableOperationForFamily = (
   family: string,
 ): IsEditableOperationFn | undefined => loaders.get(family)?.loadIsEditableOperation?.();
 
-export const loadIsStuckOperationForFamily = (
-  family: string,
-): IsStuckOperationFn | undefined => loaders.get(family)?.loadIsStuckOperation?.();
+export const loadIsStuckOperationForFamily = (family: string): IsStuckOperationFn | undefined =>
+  loaders.get(family)?.loadIsStuckOperation?.();
 
 export const loadGetStuckAccountAndOperationForFamily = (
   family: string,

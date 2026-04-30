@@ -342,10 +342,11 @@ export default function useScanDeviceAccountsViewModel({
   }, [startSubscription, stopSubscription]);
 
   useEffect(() => {
-    if (latestScannedAccount) {
+    if (!latestScannedAccount) return;
+    const run = async () => {
       const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
       const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
-      const isNewAccount = isAccountEmpty(latestScannedAccount);
+      const isNewAccount = await isAccountEmpty(latestScannedAccount);
 
       if (!isNewAccount && !hasAlreadyBeenImported) {
         setOnlyNewAccounts(false);
@@ -363,7 +364,8 @@ export default function useScanDeviceAccountsViewModel({
               : selectedIds,
         );
       }
-    }
+    };
+    run();
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {

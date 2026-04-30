@@ -30,9 +30,9 @@ export {
   shortAddressPreview,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 
-export const isAccountEmpty = (a: AccountLike): boolean => {
+export const isAccountEmpty = async (a: AccountLike): Promise<boolean> => {
   if (a.type === "Account") {
-    const fn = loadIsAccountEmptyForFamily(a.currency.family);
+    const fn = await loadIsAccountEmptyForFamily(a.currency.family);
     if (fn) return fn(a);
   }
   return commonIsAccountEmpty(a);
@@ -40,18 +40,23 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
 
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
-export function clearAccount<T extends AccountLike>(account: T): T {
-  return commonClearAccount(account, (account: Account) => {
-    loadClearAccountForFamily(account.currency.family)?.(account);
+export async function clearAccount<T extends AccountLike>(account: T): Promise<T> {
+  const clearFn =
+    account.type === "Account"
+      ? await loadClearAccountForFamily(account.currency.family)
+      : undefined;
+  return commonClearAccount(account, (acc: Account) => {
+    clearFn?.(acc);
   });
 }
 
-export const getVotesCount = (
+export const getVotesCount = async (
   account: AccountLike,
   parentAccount?: Account | null | undefined,
-): number => {
+): Promise<number> => {
   const mainAccount = getMainAccount(account, parentAccount);
-  return loadGetVotesCountForFamily(mainAccount.currency.family)?.(mainAccount) ?? 0;
+  const fn = await loadGetVotesCountForFamily(mainAccount.currency.family);
+  return fn?.(mainAccount) ?? 0;
 };
 
 /**

@@ -44,8 +44,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     [account.id, navigate],
   );
 
-  const onClickStakeModal = useCallback(() => {
-    if (isAccountEmpty(account)) {
+  const onClickStakeModal = useCallback(async () => {
+    if (await isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

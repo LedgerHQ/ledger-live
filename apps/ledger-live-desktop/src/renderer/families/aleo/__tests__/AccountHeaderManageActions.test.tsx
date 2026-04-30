@@ -1,10 +1,15 @@
 import invariant from "invariant";
 import { act } from "react";
-import type { TokenAccount } from "@ledgerhq/types-live";
-import { renderHook } from "tests/testSetup";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { renderHook, waitFor } from "tests/testSetup";
 import AccountHeaderActions from "../AccountHeaderManageActions";
 import { AleoCustomModal } from "../constants";
 import { ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT } from "../__mocks__/account.mock";
+
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  isAccountEmpty: jest.fn((a: AccountLike) => Promise.resolve(a.balance.isZero())),
+}));
 
 describe("AccountHeaderManageActions", () => {
   const hook = AccountHeaderActions;
@@ -20,35 +25,43 @@ describe("AccountHeaderManageActions", () => {
   });
 
   describe("when account has no balance (empty)", () => {
-    it("should return one action that is disabled", () => {
+    it("should return one action that is disabled", async () => {
       const { result } = renderHook(() => hook({ account: NEW_ALEO_ACCOUNT, parentAccount: null }));
-      const action = result.current?.[0];
 
-      expect(action).not.toBeUndefined();
-      expect(action?.disabled).toBe(true);
+      await waitFor(() => {
+        const action = result.current?.[0];
+        expect(action).not.toBeUndefined();
+        expect(action?.disabled).toBe(true);
+      });
     });
 
-    it("should include a tooltip when disabled", () => {
+    it("should include a tooltip when disabled", async () => {
       const { result } = renderHook(() => hook({ account: NEW_ALEO_ACCOUNT, parentAccount: null }));
-      const action = result.current?.[0];
 
-      expect(action?.tooltip).not.toBeUndefined();
+      await waitFor(() => {
+        const action = result.current?.[0];
+        expect(action?.tooltip).not.toBeUndefined();
+      });
     });
   });
 
   describe("when account has balance", () => {
-    it("should return one action that is enabled", () => {
+    it("should return one action that is enabled", async () => {
       const { result } = renderHook(() => hook({ account: ALEO_ACCOUNT_1, parentAccount: null }));
-      const action = result.current?.[0];
 
-      expect(action?.disabled).toBe(false);
+      await waitFor(() => {
+        const action = result.current?.[0];
+        expect(action?.disabled).toBe(false);
+      });
     });
 
-    it("should not include a tooltip when enabled", () => {
+    it("should not include a tooltip when enabled", async () => {
       const { result } = renderHook(() => hook({ account: ALEO_ACCOUNT_1, parentAccount: null }));
-      const action = result.current?.[0];
 
-      expect(action?.tooltip).toBeUndefined();
+      await waitFor(() => {
+        const action = result.current?.[0];
+        expect(action?.tooltip).toBeUndefined();
+      });
     });
 
     it("should dispatch openModal with SELF_TRANSFER and account when onClick is called", () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, PureComponent } from "react";
+import React, { useEffect, useState, PureComponent } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -150,11 +150,11 @@ class StepImport extends PureComponent<
           retry(2), //needs to retry to output proper error message
         )
         .subscribe({
-          next: account => {
+          next: async account => {
             const { scannedAccounts, checkedAccountsIds, existingAccounts } = this.props;
             const hasAlreadyBeenScanned = !!scannedAccounts.find(a => account.id === a.id);
             const hasAlreadyBeenImported = !!existingAccounts.find(a => account.id === a.id);
-            const isNewAccount = isAccountEmpty(account);
+            const isNewAccount = await isAccountEmpty(account);
             if (!isNewAccount && !hasAlreadyBeenImported) {
               onlyNewAccounts = false;
             }
@@ -387,14 +387,31 @@ export const StepImportFooter = ({
   editedNames,
 }: StepProps) => {
   const dispatch = useDispatch();
-  const willCreateAccount = checkedAccountsIds.some(id => {
-    const account = scannedAccounts.find(a => a.id === id);
-    return account && isAccountEmpty(account);
-  });
-  const willAddAccounts = checkedAccountsIds.some(id => {
-    const account = scannedAccounts.find(a => a.id === id);
-    return account && !isAccountEmpty(account);
-  });
+  const [willCreateAccount, setWillCreateAccount] = useState(false);
+  const [willAddAccounts, setWillAddAccounts] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      const results = await Promise.all(
+        checkedAccountsIds.map(async id => {
+          const account = scannedAccounts.find(a => a.id === id);
+          if (!account) return { create: false, add: false };
+          const empty = await isAccountEmpty(account);
+          return { create: empty, add: !empty };
+        }),
+      );
+      if (!cancelled) {
+        setWillCreateAccount(results.some(r => r.create));
+        setWillAddAccounts(results.some(r => r.add));
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [checkedAccountsIds, scannedAccounts]);
+
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
 

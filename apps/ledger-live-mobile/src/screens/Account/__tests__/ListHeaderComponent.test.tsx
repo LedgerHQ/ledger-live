@@ -8,16 +8,15 @@ import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { ActionButtonEvent } from "~/components/FabActions";
 import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";
-import * as accountIndex from "@ledgerhq/live-common/account/index";
+import * as lwfAccount from "@ledgerhq/ledger-wallet-framework/account";
 import type { TFunction } from "i18next";
+
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  isAccountEmpty: jest.fn().mockResolvedValue(false),
+}));
 import { render } from "@testing-library/react-native";
 import React from "react";
-
-/**
- * isAccountEmpty can not be spied because it is declared in multiple files
- * and overriden in ledger-live-common/src/account/helpers.ts
- */
-const mockIsAccountEmpty = jest.requireMock("@ledgerhq/live-common/account/index").isAccountEmpty;
 
 describe("Testing ListHeaderComponent Component", () => {
   describe("Testing disable delegation flag", () => {
@@ -33,10 +32,8 @@ describe("Testing ListHeaderComponent Component", () => {
 
       jest.spyOn(featureFlagsIndex, "useFeature").mockImplementation(jest.fn());
       jest
-        .spyOn(accountIndex, "getMainAccount")
+        .spyOn(lwfAccount, "getMainAccount")
         .mockImplementation((account: TokenAccount | Account, _: unknown) => account as Account);
-
-      mockIsAccountEmpty.mockImplementation(() => false);
     });
 
     const getUseListHeaderComponentsResult = (currencyConfig: CurrencyConfig) => {

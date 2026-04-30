@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { useSelector } from "./redux";
-import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
+import { hasAccountsSelector, accountsSelector } from "~/renderer/reducers/accounts";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 /**
  * Hook to determine the status of user accounts and funds.
@@ -7,9 +9,20 @@ import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reduce
  */
 export const useAccountStatus = () => {
   const hasAccount = useSelector(hasAccountsSelector);
-  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
-  const hasFunds = !areAccountsEmpty && hasAccount;
+  const accounts = useSelector(accountsSelector);
+  const [areAccountsEmpty, setAreAccountsEmpty] = useState(true);
 
+  useEffect(() => {
+    if (accounts.length === 0) {
+      setAreAccountsEmpty(true);
+      return;
+    }
+    Promise.all(accounts.map(isAccountEmpty)).then(results =>
+      setAreAccountsEmpty(results.every(Boolean)),
+    );
+  }, [accounts]);
+
+  const hasFunds = !areAccountsEmpty && hasAccount;
   return {
     hasAccount,
     hasFunds,

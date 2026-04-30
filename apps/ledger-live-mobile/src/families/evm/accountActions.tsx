@@ -2,7 +2,8 @@ import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
-import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
@@ -45,15 +46,15 @@ const getAccountType = (account: AccountLike): AccountTypeGetterProps => {
   return { isEthAccount, isPOLAccount, isBscAccount, isAvaxAccount, isStakekit };
 };
 
-function getNavigatorParams({
+async function getNavigatorParams({
   parentRoute,
   account,
   parentAccount,
   walletState,
-}: Props): NavigationParamsType {
+}: Props): Promise<NavigationParamsType> {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
 
-  if (isAccountEmpty(account)) {
+  if (await isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
       {
@@ -128,19 +129,19 @@ function getNavigatorParams({
   }
 }
 
-const getMainActions = ({
+const getMainActions = async ({
   account,
   parentAccount,
   parentRoute,
   walletState,
-}: Props): ActionButtonEvent[] => {
+}: Props): Promise<ActionButtonEvent[]> => {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
     getAccountType(account);
 
   if (isEthAccount || isStakekit) {
     const label = getStakeLabelLocaleBased();
 
-    const navigationParams = getNavigatorParams({
+    const navigationParams = await getNavigatorParams({
       account,
       parentAccount,
       parentRoute,

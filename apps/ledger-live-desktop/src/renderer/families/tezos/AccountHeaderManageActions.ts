@@ -18,8 +18,8 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
 
   const delegation = useDelegation(account);
 
-  const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+  const onClick = useCallback(async () => {
+    if (await isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

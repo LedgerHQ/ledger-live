@@ -25,7 +25,7 @@ export function useStakingDrawer({
   const { getRouteParamsForPlatformApp } = useStake();
 
   return useCallback(
-    (account: AccountLike, parentAccount?: Account) => {
+    async (account: AccountLike, parentAccount?: Account) => {
       if (alwaysShowNoFunds || getAccountSpendableBalance(account).isZero()) {
         // get funds to stake with
         navigation.navigate(NavigatorName.Base, {
@@ -62,16 +62,15 @@ export function useStakingDrawer({
       // get the stake flow for the specific currency
 
       const familySpecificMainActions =
-        (decorators &&
-          decorators.getMainActions &&
-          decorators.getMainActions({
+        (await Promise.resolve(
+          decorators?.getMainActions?.({
             walletState,
             account,
             parentAccount,
             colors: {},
             parentRoute,
-          })) ||
-        [];
+          }),
+        )) || [];
       const familyStakeFlow = familySpecificMainActions.find(
         (action: { id: string }) => action.id === "stake",
       )?.navigationParams;

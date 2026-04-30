@@ -1,8 +1,15 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, waitFor } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
 import { useAccountStatus } from "./useAccountStatus";
+
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  isAccountEmpty: jest.fn(account =>
+    Promise.resolve(!account.balance || (account.balance.isZero() && account.operationsCount === 0)),
+  ),
+}));
 
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
@@ -23,13 +30,14 @@ const createEmptyAccount = () => {
 };
 
 describe("useAccountStatus", () => {
-  it("returns hasFunds=true when user has at least one funded account", () => {
+  it("returns hasFunds=true when user has at least one funded account", async () => {
     const { result } = renderHook(() => useAccountStatus(), {
       initialState: {
         accounts: [createAccountWithFunds()],
       },
     });
 
+    await waitFor(() => expect(result.current.hasFunds).toBe(true));
     expect(result.current).toEqual({
       hasAccount: true,
       hasFunds: true,
