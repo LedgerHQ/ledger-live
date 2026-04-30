@@ -110,3 +110,35 @@ export const SUI_SYSTEM_STATE = graphql(`
 `);
 
 export type SuiSystemStateResult = ResultOf<typeof SUI_SYSTEM_STATE>;
+
+/**
+ * Look up a single entry of a pool's `exchange_rates` Move Table at a given
+ * epoch. Used both to compute per-stake `estimatedReward` (rate at the
+ * stake's activation epoch) and per-validator APY (rate ~30 epochs ago).
+ *
+ * The server parses the `literal` argument server-side (e.g. `"1234u64"`),
+ * so the client never has to BCS-encode anything. Returns the parsed
+ * `PoolTokenExchangeRate` Move struct as JSON:
+ *   { sui_amount: string, pool_token_amount: string }
+ *
+ * Returns `null` if the table has no entry at that epoch — the caller
+ * must treat that as a missing data point and degrade gracefully (zero
+ * reward / zero APY) rather than failing the whole sync.
+ */
+export const EXCHANGE_RATE_AT_EPOCH = graphql(`
+  query ExchangeRateAtEpoch($table: SuiAddress!, $literal: String!) {
+    address(address: $table) {
+      dynamicField(name: { literal: $literal }) {
+        value {
+          __typename
+          ... on MoveValue {
+            type { repr }
+            json
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type ExchangeRateAtEpochResult = ResultOf<typeof EXCHANGE_RATE_AT_EPOCH>;

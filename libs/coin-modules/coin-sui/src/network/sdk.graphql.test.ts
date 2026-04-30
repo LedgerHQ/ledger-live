@@ -2,15 +2,20 @@
  * Tests for the GraphQL transport branch of `sdk.ts`.
  *
  * These cover the routing introduced as part of the JSON-RPC → GraphQL
- * migration (see PR1 of the 2026-07-31 sunset plan):
- *   - `isGraphQLEndpoint` URL detection
- *   - `getAllBalancesCached` taking the GraphQL path when `node.url` is a
- *     GraphQL endpoint, including pagination and SIP-58 field remapping
- *     (`addressBalance` → `fundsInAddressBalance`)
- *   - `getLastBlock` issuing the typed CHECKPOINT queries and producing the
- *     same shape the JSON-RPC path produces
- *   - `getCheckpoint(seqNumber)` happy path
- *   - `getCheckpoint(digest)` rejecting with a clear error
+ * migration (see PR1 of the 2026-07-31 sunset plan). Routing is driven
+ * by the `features.graphql` flag in `SuiConfig`; tests flip the flag to
+ * force the GraphQL path.
+ *
+ * Coverage:
+ *   - `isGraphQLEnabled` reads the per-currency flag
+ *   - `getAllBalancesCached` GraphQL path: pagination + SIP-58 field
+ *     remapping (`addressBalance` → `fundsInAddressBalance`)
+ *   - `getLastBlock` issues typed CHECKPOINT queries
+ *   - `getCheckpoint(seqNumber)` happy path / digest-guard / error propagation
+ *   - `getStakesRaw` groups by pool + computes Active/Pending status
+ *   - `getValidators` maps active_validators to JSON-RPC-shaped Summary
+ *   - PR 1c: real `estimatedReward` and `apy` computed from
+ *     `EXCHANGE_RATE_AT_EPOCH` lookups.
  *
  * The existing `sdk.test.ts` exercises the JSON-RPC branch and is kept
  * separate so the two clients' mocks don't collide.
@@ -52,7 +57,7 @@ jest.mock("@mysten/sui/jsonRpc", () => ({
 // module sees the mocked clients.
 // eslint-disable-next-line import/first
 import {
-  isGraphQLEndpoint,
+  isGraphQLEnabled,
   getAllBalancesCached,
   getLastBlock,
   getCheckpoint,
@@ -80,23 +85,47 @@ function mockNextGraphQLClient(impl: Partial<MockGraphQLClient> = {}): MockGraph
 beforeEach(() => {
   SuiGraphQLClientMock.mockReset();
   unexpectedJsonRpc.mockClear();
+  // The GraphQL path is gated on `features.graphql`. Default-on for this
+  // suite — every individual test wants the GraphQL branch to run.
   coinConfig.setCoinConfig(() => ({
     node: { url: GRAPHQL_URL },
     status: { type: "active" },
+    features: { graphql: true },
   }));
 });
 
-describe("isGraphQLEndpoint", () => {
-  test.each([
-    ["https://graphql.mainnet.sui.io/graphql", true],
-    ["https://graphql.testnet.sui.io/graphql", true],
-    ["https://graphql.example.com/graphql/", true],
-    ["https://example.com/api/graphql?token=x", true],
-    ["https://fullnode.mainnet.sui.io:443/", false],
-    ["https://example.com/jsonrpc", false],
-    ["", false],
-  ])("isGraphQLEndpoint(%p) === %p", (url, expected) => {
-    expect(isGraphQLEndpoint(url)).toBe(expected);
+describe("isGraphQLEnabled", () => {
+  test("returns true when features.graphql === true", () => {
+    coinConfig.setCoinConfig(() => ({
+      node: { url: GRAPHQL_URL },
+      status: { type: "active" },
+      features: { graphql: true },
+    }));
+    expect(isGraphQLEnabled()).toBe(true);
+  });
+
+  test("returns false when features.graphql is missing or false", () => {
+    coinConfig.setCoinConfig(() => ({
+      node: { url: GRAPHQL_URL },
+      status: { type: "active" },
+    }));
+    expect(isGraphQLEnabled()).toBe(false);
+
+    coinConfig.setCoinConfig(() => ({
+      node: { url: GRAPHQL_URL },
+      status: { type: "active" },
+      features: { graphql: false },
+    }));
+    expect(isGraphQLEnabled()).toBe(false);
+  });
+
+  test("ignores the node.url heuristic — flag is the single source of truth", () => {
+    // Even with a GraphQL-shaped URL, the flag-off path should report false.
+    coinConfig.setCoinConfig(() => ({
+      node: { url: "https://graphql.mainnet.sui.io/graphql" },
+      status: { type: "active" },
+    }));
+    expect(isGraphQLEnabled()).toBe(false);
   });
 });
 
@@ -182,20 +211,20 @@ describe("getLastBlock on GraphQL transport", () => {
     const isoTimestamp = "2026-04-01T12:34:56.789Z";
     const query = jest
       .fn()
-      // 1. LATEST_CHECKPOINT_SEQUENCE
+      // 1. LATEST_CHECKPOINT_SEQUENCE — server returns UInt53 as a number
       .mockResolvedValueOnce({
-        data: { checkpoint: { sequenceNumber: "12345" } },
+        data: { checkpoint: { sequenceNumber: 12345 } },
       })
       // 2. CHECKPOINT_BY_SEQUENCE
       .mockResolvedValueOnce({
         data: {
           checkpoint: {
             digest: "AbCdEfDigestZ",
-            sequenceNumber: "12345",
+            sequenceNumber: 12345,
             timestamp: isoTimestamp,
-            networkTotalTransactions: "1000",
+            networkTotalTransactions: 1000,
             previousCheckpointDigest: null,
-            epoch: { epochId: "42" },
+            epoch: { epochId: 42 },
           },
         },
       });
@@ -205,12 +234,15 @@ describe("getLastBlock on GraphQL transport", () => {
 
     expect(result).toEqual({
       digest: "AbCdEfDigestZ",
+      // Returned shape converts UInt53 back to a string for downstream
+      // JSON-RPC compatibility.
       sequenceNumber: "12345",
       timestampMs: String(new Date(isoTimestamp).getTime()),
     });
     expect(query).toHaveBeenCalledTimes(2);
-    // First call has no variables, second carries the sequenceNumber
-    expect(query.mock.calls[1][0].variables).toEqual({ sequenceNumber: "12345" });
+    // CHECKPOINT_BY_SEQUENCE variable must be a number — the server
+    // rejects quoted-string UInt53 inputs in production.
+    expect(query.mock.calls[1][0].variables).toEqual({ sequenceNumber: 12345 });
   });
 });
 
@@ -221,11 +253,12 @@ describe("getCheckpoint on GraphQL transport", () => {
       data: {
         checkpoint: {
           digest: "DigestForSeq99",
-          sequenceNumber: "99",
+          // Server returns UInt53 as a JSON number.
+          sequenceNumber: 99,
           timestamp: isoTimestamp,
-          networkTotalTransactions: "1",
+          networkTotalTransactions: 1,
           previousCheckpointDigest: null,
-          epoch: { epochId: "1" },
+          epoch: { epochId: 1 },
         },
       },
     });
@@ -237,7 +270,8 @@ describe("getCheckpoint on GraphQL transport", () => {
     expect(result.sequenceNumber).toBe("99");
     expect(result.timestampMs).toBe(String(new Date(isoTimestamp).getTime()));
     expect(query).toHaveBeenCalledTimes(1);
-    expect(query.mock.calls[0][0].variables).toEqual({ sequenceNumber: "99" });
+    // Variable goes out as a number on the wire.
+    expect(query.mock.calls[0][0].variables).toEqual({ sequenceNumber: 99 });
   });
 
   test("digest lookup throws a clear error on GraphQL endpoint", async () => {
@@ -566,7 +600,7 @@ describe("getStakesRaw on GraphQL transport", () => {
 });
 
 describe("getValidators on GraphQL transport", () => {
-  test("maps active_validators to SuiValidatorSummary[] with apy=0 and converts numeric Move fields to strings", async () => {
+  test("maps active_validators to SuiValidatorSummary[] and falls back to apy=0 when rate fetch fails (PR 1b graceful degradation)", async () => {
     const query = jest.fn().mockResolvedValueOnce({
       data: {
         epoch: fakeSystemState("42", [
@@ -575,6 +609,12 @@ describe("getValidators on GraphQL transport", () => {
         ]),
       },
     });
+    // Both EXCHANGE_RATE_AT_EPOCH lookups will fail with no mock returns
+    // (default jest.fn() returns undefined → typed as MoveValue with no
+    // json → fetchExchangeRate returns null → APY degrades to 0).
+    query
+      .mockResolvedValueOnce({ data: { address: { dynamicField: null } } })
+      .mockResolvedValueOnce({ data: { address: { dynamicField: null } } });
     mockNextGraphQLClient({ query });
 
     const result = await getValidators("sui-graphql-validators-1");
@@ -589,10 +629,323 @@ describe("getValidators on GraphQL transport", () => {
     expect(v1.commissionRate).toBe("500");
     expect(typeof v1.stakingPoolSuiBalance).toBe("string");
     expect(v1.stakingPoolSuiBalance).toBe("1000000000000");
-    // PR 1b limitation: APY placeholder
+    // No rate available → APY falls through to 0.
     expect(v1.apy).toBe(0);
-    // Confirms the mapper preserved exchange rate references for PR 1c usage.
     expect(v1.exchangeRatesId).toBe("0xrates");
     expect(v1.exchangeRatesSize).toBe("100");
+  });
+});
+
+// ---- PR 1c: real estimatedReward + real APY via exchange-rate Table walk ----
+
+describe("getStakesRaw on GraphQL transport — PR 1c reward computation", () => {
+  test("fetches activation-epoch rate per Active stake and computes real estimatedReward", async () => {
+    const owner = "0x" + "66".repeat(32);
+    const POOL = "0xpoolReward";
+    const VAL = "0xvalReward";
+
+    // Pool current rate (sui_balance/pool_token_balance from system state):
+    //   sui_balance = 1_100_000 ; pool_token_balance = 1_000_000  → ratio 1.1
+    // Activation rate at epoch 50:
+    //   sui = 1_000_000 ; pt = 1_000_000  → ratio 1.0
+    // Stake of 100 principal:
+    //   pool_tokens = 100 * 1_000_000 / 1_000_000 = 100
+    //   current_value = 100 * 1_100_000 / 1_000_000 = 110
+    //   estimatedReward = 10
+    const customSystem = fakeSystemState("100", [
+      { poolId: POOL, validatorAddress: VAL, name: "ValReward" },
+    ]);
+    // Override the pool's sui/pt balance for predictable math
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.sui_balance =
+      1_100_000;
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.pool_token_balance =
+      1_000_000;
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
+      "0xratesReward";
+
+    const query = jest.fn();
+    // SUI_SYSTEM_STATE
+    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
+    // STAKED_SUI_OBJECTS_BY_OWNER
+    query.mockResolvedValueOnce({
+      data: {
+        address: {
+          objects: {
+            pageInfo: { hasNextPage: false, endCursor: null },
+            nodes: [
+              {
+                address: "0xstk",
+                version: "1",
+                digest: "d",
+                contents: {
+                  type: { repr: "0x3::staking_pool::StakedSui" },
+                  json: {
+                    id: "0xstk",
+                    pool_id: POOL,
+                    stake_activation_epoch: "50",
+                    principal: "100",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+    // EXCHANGE_RATE_AT_EPOCH for activation epoch 50 — returns ratio 1.0
+    query.mockResolvedValueOnce({
+      data: {
+        address: {
+          dynamicField: {
+            value: {
+              __typename: "MoveValue",
+              type: { repr: "PoolTokenExchangeRate" },
+              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
+            },
+          },
+        },
+      },
+    });
+    mockNextGraphQLClient({ query });
+
+    const result = await getStakesRaw(owner, "sui-graphql-stakes-pr1c-1");
+    expect(result).toHaveLength(1);
+    const stk = result[0].stakes[0];
+    expect(stk.status).toBe("Active");
+    if (stk.status === "Active") {
+      // Real reward — no longer the PR 1b "0" placeholder
+      expect(stk.estimatedReward).toBe("10");
+    }
+
+    // Confirm exactly one EXCHANGE_RATE_AT_EPOCH call was issued (the
+    // single Active stake) and that it carried the right `literal` arg.
+    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
+    expect(rateCalls).toHaveLength(1);
+    expect(rateCalls[0][0].variables).toEqual({
+      table: "0xratesReward",
+      literal: "50u64",
+    });
+  });
+
+  test("deduplicates rate lookups when multiple stakes share (pool, activation_epoch)", async () => {
+    const owner = "0x" + "77".repeat(32);
+    const POOL = "0xpoolDedup";
+    const VAL = "0xvalDedup";
+
+    const customSystem = fakeSystemState("100", [
+      { poolId: POOL, validatorAddress: VAL, name: "ValDedup" },
+    ]);
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
+      "0xratesDedup";
+
+    const query = jest.fn();
+    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
+    query.mockResolvedValueOnce({
+      data: {
+        address: {
+          objects: {
+            pageInfo: { hasNextPage: false, endCursor: null },
+            nodes: [
+              // Three stakes — A and B share (pool, epoch=50), C is different epoch
+              {
+                address: "0xa",
+                version: "1",
+                digest: "d",
+                contents: {
+                  type: { repr: "0x3::staking_pool::StakedSui" },
+                  json: {
+                    id: "0xa",
+                    pool_id: POOL,
+                    stake_activation_epoch: "50",
+                    principal: "100",
+                  },
+                },
+              },
+              {
+                address: "0xb",
+                version: "1",
+                digest: "d",
+                contents: {
+                  type: { repr: "0x3::staking_pool::StakedSui" },
+                  json: {
+                    id: "0xb",
+                    pool_id: POOL,
+                    stake_activation_epoch: "50",
+                    principal: "200",
+                  },
+                },
+              },
+              {
+                address: "0xc",
+                version: "1",
+                digest: "d",
+                contents: {
+                  type: { repr: "0x3::staking_pool::StakedSui" },
+                  json: {
+                    id: "0xc",
+                    pool_id: POOL,
+                    stake_activation_epoch: "60",
+                    principal: "300",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+    // The next two query calls are EXCHANGE_RATE_AT_EPOCH — order of the
+    // Promise.allSettled is deterministic in Map insertion order. Both
+    // succeed with arbitrary rates; we only care about call count.
+    query.mockResolvedValue({
+      data: {
+        address: {
+          dynamicField: {
+            value: {
+              __typename: "MoveValue",
+              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
+            },
+          },
+        },
+      },
+    });
+    mockNextGraphQLClient({ query });
+
+    await getStakesRaw(owner, "sui-graphql-stakes-pr1c-2");
+
+    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
+    // 3 stakes but only 2 unique (pool, epoch) tuples → 2 rate queries
+    expect(rateCalls).toHaveLength(2);
+    expect(rateCalls.map(c => c[0].variables.literal).sort()).toEqual(["50u64", "60u64"]);
+  });
+
+  test("Pending stakes don't trigger rate lookups", async () => {
+    const owner = "0x" + "88".repeat(32);
+    const POOL = "0xpoolPending";
+    const VAL = "0xvalPending";
+
+    const customSystem = fakeSystemState("100", [
+      { poolId: POOL, validatorAddress: VAL, name: "ValPending" },
+    ]);
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
+      "0xratesPending";
+
+    const query = jest.fn();
+    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
+    query.mockResolvedValueOnce({
+      data: {
+        address: {
+          objects: {
+            pageInfo: { hasNextPage: false, endCursor: null },
+            nodes: [
+              {
+                address: "0xpending",
+                version: "1",
+                digest: "d",
+                contents: {
+                  type: { repr: "0x3::staking_pool::StakedSui" },
+                  json: {
+                    id: "0xpending",
+                    pool_id: POOL,
+                    stake_activation_epoch: "200", // > current 100 → Pending
+                    principal: "1000",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+    mockNextGraphQLClient({ query });
+
+    const result = await getStakesRaw(owner, "sui-graphql-stakes-pr1c-pending");
+    expect(result[0].stakes[0].status).toBe("Pending");
+
+    // No rate calls — Pending stakes have no reward to compute.
+    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
+    expect(rateCalls).toHaveLength(0);
+  });
+});
+
+describe("getValidators on GraphQL transport — PR 1c APY computation", () => {
+  test("fetches a 30-epoch-lookback rate per validator and computes real APY", async () => {
+    const customSystem = fakeSystemState("1000", [
+      { poolId: "0xpA", validatorAddress: "0xvA", name: "VA" },
+    ]);
+    // Set the pool's current rate to ratio 1.01 (1% above past)
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.sui_balance =
+      1_010_000;
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.pool_token_balance =
+      1_000_000;
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
+      "0xratesV";
+
+    const query = jest.fn();
+    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
+    // Past rate: ratio 1.0
+    query.mockResolvedValueOnce({
+      data: {
+        address: {
+          dynamicField: {
+            value: {
+              __typename: "MoveValue",
+              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
+            },
+          },
+        },
+      },
+    });
+    mockNextGraphQLClient({ query });
+
+    const result = await getValidators("sui-graphql-validators-pr1c-1");
+    expect(result).toHaveLength(1);
+    const v = result[0];
+    // Past=1.0, current=1.01, 30 epochs → APY ≈ 1.01^(365/30) − 1 ≈ 0.1295
+    expect(v.apy).toBeGreaterThan(0.12);
+    expect(v.apy).toBeLessThan(0.14);
+
+    // Confirm the historical-rate lookup ran with the right literal.
+    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
+    expect(rateCalls).toHaveLength(1);
+    // current 1000 − APY_LOOKBACK_EPOCHS 30 = 970
+    expect(rateCalls[0][0].variables).toEqual({
+      table: "0xratesV",
+      literal: "970u64",
+    });
+  });
+
+  test("clamps the past epoch to the pool's activation_epoch for young pools", async () => {
+    const customSystem = fakeSystemState("100", [
+      { poolId: "0xpY", validatorAddress: "0xvY", name: "VY" },
+    ]);
+    // Pool only 5 epochs old — activation_epoch = 95.
+    // Desired lookback = 100 − 30 = 70, but pool didn't exist then, so
+    // the helper should clamp to activation_epoch = 95.
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.activation_epoch = 95;
+    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
+      "0xratesY";
+
+    const query = jest.fn();
+    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
+    query.mockResolvedValueOnce({
+      data: {
+        address: {
+          dynamicField: {
+            value: {
+              __typename: "MoveValue",
+              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
+            },
+          },
+        },
+      },
+    });
+    mockNextGraphQLClient({ query });
+
+    await getValidators("sui-graphql-validators-pr1c-young");
+
+    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
+    expect(rateCalls).toHaveLength(1);
+    expect(rateCalls[0][0].variables.literal).toBe("95u64");
   });
 });

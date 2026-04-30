@@ -17,6 +17,13 @@ import type { introspection } from "./graphql-env";
  * Custom-scalar mapping. Mirrors `@mysten/sui`'s built-in `CustomScalars`
  * shape so that values come out of queries with sensible TS types instead of
  * `unknown`.
+ *
+ * Verified against the live `graphql.mainnet.sui.io` endpoint:
+ *   - `UInt53` is sent and received as a JSON number (the server rejects
+ *     stringified values as `Expected input type "UInt53", found "100"`).
+ *   - `BigInt` is delivered as a string to dodge JS number precision loss
+ *     for u64+ values.
+ *   - `DateTime` arrives as an RFC3339 timestamp string.
  */
 type SuiScalars = {
   /** RFC3339 timestamp string. */
@@ -25,8 +32,8 @@ type SuiScalars = {
   SuiAddress: string;
   /** Stringified u64/u128 — large enough to overflow JS number. */
   BigInt: string;
-  /** Unsigned 53-bit int — fits in JS number; SDK exposes as string for safety. */
-  UInt53: string;
+  /** Unsigned 53-bit int — wire format is a JSON number on both directions. */
+  UInt53: number;
   /** Base64-encoded bytes. */
   Base64: string;
   /** Arbitrary JSON value. */

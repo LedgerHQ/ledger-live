@@ -116,6 +116,26 @@ const s = (v: string | number | null | undefined): string =>
 const sOrNull = (v: string | number | null | undefined): string | null =>
   v == null ? null : typeof v === "number" ? String(v) : v;
 
+/**
+ * Convert a SUI Move type tag from the long padded form returned by GraphQL
+ * to the short form returned by JSON-RPC.
+ *
+ *   long  → `0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI`
+ *   short → `0x2::sui::SUI`
+ *
+ * `coin-sui` compares against the JSON-RPC convention everywhere
+ * (`DEFAULT_COIN_TYPE = "0x2::sui::SUI"`), so the GraphQL transport
+ * normalises down to the short form for parity.
+ */
+export function shortenCoinType(coinType: string): string {
+  const m = /^0x([0-9a-fA-F]{1,64})(::.*)$/.exec(coinType);
+  if (!m) return coinType;
+  // Strip leading zeros, but always keep at least one character so the
+  // SUI native coin type comes out as `0x2`, not `0x` or `0x0`.
+  const trimmed = m[1].replace(/^0+/, "") || "0";
+  return `0x${trimmed}${m[2]}`;
+}
+
 // ----- SystemState → SuiValidatorSummary[] --------------------------------
 
 /**
@@ -185,6 +205,82 @@ export function fromSystemStateJson(state: SuiSystemStateInnerJson): {
   return { activeValidators, poolToValidator };
 }
 
+// ----- Pool exchange-rate math (PR 1c) ------------------------------------
+
+/** A single entry in a pool's `exchange_rates` Move Table. */
+export type ExchangeRate = {
+  sui_amount: string | number;
+  pool_token_amount: string | number;
+};
+
+/**
+ * Compute the unrealised reward for an Active stake.
+ *
+ * Pool-token model:
+ *   When a user stakes `principal` SUI at activation epoch E_a, they
+ *   receive `pool_tokens = principal × pt_a / sui_a` pool tokens, where
+ *   (sui_a, pt_a) is the pool's exchange rate at E_a.
+ *
+ *   At the current epoch E_c with rate (sui_c, pt_c), those same pool
+ *   tokens are now worth `pool_tokens × sui_c / pt_c` SUI.
+ *
+ *   `reward = max(0, current_value − principal)`.
+ *
+ * The clamp at 0 accounts for rounding — for stakes activated very
+ * recently, `current_value` can be off by a few μSUI vs `principal`
+ * because of integer division.
+ */
+export function computeEstimatedReward(
+  principal: string | number | bigint,
+  activationRate: ExchangeRate,
+  currentRate: ExchangeRate,
+): bigint {
+  const p = typeof principal === "bigint" ? principal : BigInt(principal);
+  const sui_a = BigInt(activationRate.sui_amount);
+  const pt_a = BigInt(activationRate.pool_token_amount);
+  const sui_c = BigInt(currentRate.sui_amount);
+  const pt_c = BigInt(currentRate.pool_token_amount);
+  if (sui_a === 0n || pt_c === 0n) return 0n;
+  const tokens = (p * pt_a) / sui_a;
+  const currentValue = (tokens * sui_c) / pt_c;
+  return currentValue > p ? currentValue - p : 0n;
+}
+
+/**
+ * Compute APY from a current and past pool exchange rate, mirroring the
+ * formula Mysten's JSON-RPC `getValidatorsApy` uses internally:
+ *
+ *   per_epoch_growth = (current_ratio / past_ratio) ^ (1 / epochsBetween)
+ *   APY              = per_epoch_growth ^ epochsPerYear − 1
+ *
+ * SUI epochs are ~24h, so `epochsPerYear ≈ 365`. Returns 0 when the inputs
+ * are degenerate (zero division, zero or negative growth window).
+ */
+export function computeApy(
+  currentRate: ExchangeRate,
+  pastRate: ExchangeRate,
+  epochsBetween: number,
+  epochsPerYear = 365,
+): number {
+  if (epochsBetween <= 0) return 0;
+  const past_sui = BigInt(pastRate.sui_amount);
+  const past_pt = BigInt(pastRate.pool_token_amount);
+  const cur_sui = BigInt(currentRate.sui_amount);
+  const cur_pt = BigInt(currentRate.pool_token_amount);
+  if (past_sui === 0n || past_pt === 0n || cur_pt === 0n) return 0;
+  // Convert ratios to floats with 1e18 precision before the exponential —
+  // BigInt math can't do non-integer exponents.
+  const SCALE = 10n ** 18n;
+  const pastRatioScaled = (past_sui * SCALE) / past_pt;
+  const curRatioScaled = (cur_sui * SCALE) / cur_pt;
+  if (pastRatioScaled === 0n) return 0;
+  const ratio = Number(curRatioScaled) / Number(pastRatioScaled);
+  if (!Number.isFinite(ratio) || ratio <= 0) return 0;
+  const perEpoch = Math.pow(ratio, 1 / epochsBetween);
+  const apy = Math.pow(perEpoch, epochsPerYear) - 1;
+  return Number.isFinite(apy) ? Math.max(apy, 0) : 0;
+}
+
 // ----- StakedSui[] → DelegatedStake[] -------------------------------------
 
 const UNKNOWN_VALIDATOR = "<unknown>";
@@ -196,13 +292,17 @@ const UNKNOWN_VALIDATOR = "<unknown>";
  * @param items     parsed `MoveValue.json` payloads from the StakedSuiObjects query
  * @param epoch     current epoch (number-or-string) — drives Active/Pending status
  * @param pools     pool_id → validator_address map from system state
- *
- * `estimatedReward` is intentionally `"0"` here — see file header.
+ * @param rewards   optional `stakedSuiId → reward` map. When provided,
+ *                  Active stakes use the real reward; when missing or
+ *                  the entry is undefined, fall back to "0" (PR 1b
+ *                  behaviour) so the function degrades gracefully if a
+ *                  particular exchange-rate lookup failed.
  */
 export function groupStakedSuiByPool(
   items: StakedSuiJson[],
   epoch: string | number,
   pools: Map<string, string>,
+  rewards?: Map<string, bigint>,
 ): DelegatedStake[] {
   const currentEpoch = BigInt(epoch);
   const byPool = new Map<string, DelegatedStake>();
@@ -215,6 +315,7 @@ export function groupStakedSuiByPool(
     const status: "Pending" | "Active" =
       stakeActiveEpoch > currentEpoch ? "Pending" : "Active";
 
+    const reward = rewards?.get(item.id);
     const stake: StakeObject =
       status === "Pending"
         ? {
@@ -230,9 +331,7 @@ export function groupStakedSuiByPool(
             stakeActiveEpoch: s(item.stake_activation_epoch),
             principal: s(item.principal),
             status: "Active",
-            // TODO(PR 1c): walk pool.exchange_rates Table for activation
-            // and current epochs to compute real estimated reward.
-            estimatedReward: "0",
+            estimatedReward: reward != null ? reward.toString() : "0",
           };
 
     let group = byPool.get(item.pool_id);
@@ -248,4 +347,40 @@ export function groupStakedSuiByPool(
   }
 
   return Array.from(byPool.values());
+}
+
+// ----- Pool current-rate map for stake reward + APY -----------------------
+
+/**
+ * Pool reference data needed to compute APY and per-stake rewards
+ * client-side: the address of the exchange-rates Table, the current
+ * exchange rate (read inline from system state), and the pool's
+ * activation epoch (used as a fallback past epoch when the desired
+ * APY-lookback predates the pool's existence).
+ */
+export type PoolRefs = {
+  exchangeRatesId: string;
+  currentRate: ExchangeRate;
+  activationEpoch: number;
+};
+
+/**
+ * Build a `pool_id → PoolRefs` map from a system-state JSON. The current
+ * exchange rate is derived from `staking_pool.{sui_balance, pool_token_balance}`
+ * which IS the pool's current rate — no extra query needed.
+ */
+export function poolRefsFromSystemState(state: SuiSystemStateInnerJson): Map<string, PoolRefs> {
+  const out = new Map<string, PoolRefs>();
+  for (const v of state.validators.active_validators) {
+    const p = v.staking_pool;
+    out.set(p.id, {
+      exchangeRatesId: p.exchange_rates.id,
+      currentRate: {
+        sui_amount: p.sui_balance,
+        pool_token_amount: p.pool_token_balance,
+      },
+      activationEpoch: Number(p.activation_epoch ?? 0),
+    });
+  }
+  return out;
 }
