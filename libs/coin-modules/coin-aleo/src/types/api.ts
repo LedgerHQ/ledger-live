@@ -156,7 +156,7 @@ export interface DelegatedProvingResponse {
   };
   broadcast_result?: {
     status: string;
-    status_code: number;
+    status_code?: number;
     message?: string;
   };
 }
