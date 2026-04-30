@@ -24,8 +24,8 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
   const { t } = useTranslation();
 
   const onGasLimitChange = useCallback(
-    (str: string) => {
-      const bridge = getAccountBridge(account);
+    async (str: string) => {
+      const bridge = await getAccountBridge(account);
       let gasLimit = new BigNumber(str || 0);
       if (!gasLimit.isFinite()) {
         gasLimit = DEFAULT_GAS_LIMIT;

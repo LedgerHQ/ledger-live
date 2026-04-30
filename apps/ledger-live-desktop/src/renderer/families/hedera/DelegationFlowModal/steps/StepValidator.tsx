@@ -24,8 +24,8 @@ export default function StepValidator({
   invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
   const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
 
-  const updateValidator = (validator: HederaValidator) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+  const updateValidator = async (validator: HederaValidator) => {
+    const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
         mode: HEDERA_TRANSACTION_MODES.Delegate,

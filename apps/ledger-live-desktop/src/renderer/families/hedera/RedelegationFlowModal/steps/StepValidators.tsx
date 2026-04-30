@@ -42,9 +42,9 @@ function StepValidators({
   const isValidatorRemoved =
     !enrichedDelegation.validator.address && typeof delegation.nodeId === "number";
 
-  const updateValidator = (validator: HederaValidator | null) => {
+  const updateValidator = async (validator: HederaValidator | null) => {
     if (!validator) return;
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
         mode: HEDERA_TRANSACTION_MODES.Redelegate,

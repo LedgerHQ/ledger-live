@@ -26,8 +26,8 @@ export default function StepDelegation({
   const { cosmosResources } = account;
   const delegations = cosmosResources.delegations || [];
   const updateValidator = useCallback(
-    ({ address }: { address: string }) => {
-      const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    async ({ address }: { address: string }) => {
+      const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
       onUpdateTransaction(_tx => {
         return bridge.updateTransaction(transaction, {
           validators: [

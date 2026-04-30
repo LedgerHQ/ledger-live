@@ -87,8 +87,9 @@ const VerifyOnDevice = ({
           },
         });
       } else {
+        const bridge = await getAccountBridge(mainAccount);
         await firstValueFrom(
-          getAccountBridge(mainAccount).receive(mainAccount, {
+          bridge.receive(mainAccount, {
             deviceId: device.deviceId,
             verify: true,
           }),
