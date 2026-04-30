@@ -421,6 +421,7 @@ export const StepImportFooter = ({
   const goCantonOnboard = () => {
     onCloseModal();
     const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    if (!mainCurrency) return;
     dispatch(
       openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
         currency: mainCurrency,
@@ -435,6 +436,7 @@ export const StepImportFooter = ({
   const goConcordiumOnboard = () => {
     onCloseModal();
     const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    if (!mainCurrency) return;
     dispatch(
       openModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT", {
         currency: mainCurrency,
