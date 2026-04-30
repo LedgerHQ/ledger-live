@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/hw-app-exchange": patch
 "@ledgerhq/live-common": patch
 ---
 
