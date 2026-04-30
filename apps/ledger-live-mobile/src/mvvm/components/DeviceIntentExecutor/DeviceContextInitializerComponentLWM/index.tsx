@@ -15,6 +15,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   InitializationInput,
   InitializerConfig
 > = ({ connectionResult, deviceInitializationInput, onContextInitialized, config }) => {
+  console.log("[DIE] initializer config", { config });
   const state = useDeviceContextInitializerComponentLWMViewModel({
     connectionResult,
     deviceInitializationInput,

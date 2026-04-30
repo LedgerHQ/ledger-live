@@ -20,6 +20,7 @@ describe("isRetryableState", () => {
   const retryableStates: Record<RetryableStateType, true> = {
     [RetryableStateType.DeviceLocked]: true,
     [RetryableStateType.UserRefusedOnDevice]: true,
+    [RetryableStateType.DeviceBusy]: true,
   };
 
   /**
