@@ -60,7 +60,7 @@ describe("useCounterValueCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       expect.anything(),
       new BigNumber(5000000),
-      { showCode: true, locale: "en-US", discreet: false },
+      expect.objectContaining({ showCode: true, locale: "en-US", discreet: false }),
     );
   });
 
@@ -74,7 +74,7 @@ describe("useCounterValueCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       expect.anything(),
       new BigNumber(5000000),
-      { showCode: true, locale: "fr-FR", discreet: true },
+      expect.objectContaining({ showCode: true, locale: "fr-FR", discreet: true }),
     );
     expect(result.current.formattedCounterValue).toBe("***");
   });
@@ -99,5 +99,45 @@ describe("useCounterValueCellViewModel", () => {
 
     expect(result.current.formattedCounterValue).toBe("-");
     expect(mockedFormatCurrencyUnit).not.toHaveBeenCalled();
+  });
+
+  it("should pass date option to useCalculate", () => {
+    const date = new Date("2024-01-15");
+    renderHook(() => useCounterValueCellViewModel(mockCurrency, 150000000, { date }), {
+      initialState,
+    });
+
+    expect(mockedUseCalculate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: mockCurrency,
+        value: 150000000,
+        disableRounding: true,
+        date,
+      }),
+    );
+  });
+
+  it("should forward alwaysShowSign option", () => {
+    renderHook(
+      () => useCounterValueCellViewModel(mockCurrency, 150000000, { alwaysShowSign: true }),
+      { initialState },
+    );
+
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+      expect.anything(),
+      new BigNumber(5000000),
+      expect.objectContaining({ showCode: true, alwaysShowSign: true }),
+    );
+  });
+
+  it("should accept BigNumber value", () => {
+    const bn = new BigNumber(150000000);
+    renderHook(() => useCounterValueCellViewModel(mockCurrency, bn), {
+      initialState,
+    });
+
+    expect(mockedUseCalculate).toHaveBeenCalledWith(
+      expect.objectContaining({ value: 150000000 }),
+    );
   });
 });
