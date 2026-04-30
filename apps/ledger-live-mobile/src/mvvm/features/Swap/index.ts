@@ -1,12 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { isAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -26,22 +26,22 @@ type AccountWithParent = {
   parentAccount?: Account;
 };
 
-function getAccountsForCurrency(
+async function getAccountsForCurrency(
   flattenedAccounts: AccountLike[],
   shallowAccounts: Account[],
   currency: CryptoOrTokenCurrency,
-): AccountWithParent[] {
-  return flattenedAccounts
-    .filter(account => {
+): Promise<AccountWithParent[]> {
+  const results = await Promise.all(
+    flattenedAccounts.map(async account => {
       const currencyId = account.type === "TokenAccount" ? account.token.id : account.currency.id;
-      return currencyId === currency.id && !isAccountEmpty(account);
-    })
-    .map(account => {
+      if (currencyId !== currency.id || (await isAccountEmpty(account))) return null;
       const parentId = isTokenAccount(account) ? account.parentId : undefined;
       const parent = parentId ? shallowAccounts.find(a => a.id === parentId) : undefined;
       const parentAccount = parent && isAccount(parent) ? parent : undefined;
       return { account, parentAccount };
-    });
+    }),
+  );
+  return results.filter((r): r is AccountWithParent => r !== null);
 }
 
 export function useOpenSwap({
@@ -56,19 +56,29 @@ export function useOpenSwap({
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
 
-  const accountsForCurrency = useMemo(() => {
-    if (!currency) return [];
-    return getAccountsForCurrency(flattenedAccounts, shallowAccounts, currency);
+  const [accountsForCurrency, setAccountsForCurrency] = useState<AccountWithParent[]>([]);
+  useEffect(() => {
+    if (!currency) {
+      setAccountsForCurrency([]);
+      return;
+    }
+    let cancelled = false;
+    getAccountsForCurrency(flattenedAccounts, shallowAccounts, currency).then(accounts => {
+      if (!cancelled) setAccountsForCurrency(accounts);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [currency, flattenedAccounts, shallowAccounts]);
 
   const navigateToSwap = useCallback(
-    (account?: AccountLike, parentAccount?: Account) => {
+    async (account?: AccountLike, parentAccount?: Account) => {
       const baseParams: DefaultAccountSwapParamList = {
         defaultCurrency: currency,
         fromPath: sourceScreenName,
       };
 
-      if (!account || isAccountEmpty(account)) {
+      if (!account || (await isAccountEmpty(account))) {
         const swapParams: DefaultAccountSwapParamList = {
           ...baseParams,
           ...(currency && isTokenCurrency(currency) && { toTokenId: currency.id }),
@@ -134,8 +144,8 @@ export function useOpenSwap({
     });
   }, [currency, openDrawer, sourceScreenName, navigateToSwap]);
 
-  const handleOpenSwap = useCallback(() => {
-    if (defaultAccount && !isAccountEmpty(defaultAccount)) {
+  const handleOpenSwap = useCallback(async () => {
+    if (defaultAccount && !(await isAccountEmpty(defaultAccount))) {
       navigateToSwap(defaultAccount, defaultParentAccount);
       return;
     }

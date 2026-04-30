@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef } from "react";
+import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -8,7 +8,7 @@ import Animated, {
 import { useTranslation } from "~/context/Locale";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "styled-components/native";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import VersionNumber from "react-native-version-number";
@@ -73,10 +73,16 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
-  const cryptoAccountsEmpty = useMemo(
-    () => cryptoAccounts.every(account => isAccountEmpty(account)),
-    [cryptoAccounts],
-  );
+  const [cryptoAccountsEmpty, setCryptoAccountsEmpty] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(cryptoAccounts.map(isAccountEmpty)).then(flags => {
+      if (!cancelled) setCryptoAccountsEmpty(flags.every(Boolean));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [cryptoAccounts]);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(60);
   const currentPositionY = useSharedValue(0);

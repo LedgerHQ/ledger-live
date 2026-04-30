@@ -7,16 +7,16 @@ import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/in
 import { TokenAccount } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-const getMainActions = ({
+const getMainActions = async ({
   account,
   parentAccount,
 }: {
   account: TronAccount | TokenAccount;
   parentAccount: TronAccount | null | undefined;
-}): ActionButtonEvent[] => {
+}): Promise<ActionButtonEvent[]> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const label = getStakeLabelLocaleBased();
-  const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
+  const navigationParams: NavigationParamsType = (await isAccountEmpty(mainAccount))
     ? [
         NavigatorName.NoFundsFlow,
         {

@@ -236,6 +236,17 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     };
   }, [account, parentAccount]);
 
+  const [isAccountEmptyResult, setIsAccountEmptyResult] = useState(true);
+  useEffect(() => {
+    let active = true;
+    isAccountEmpty(account).then(result => {
+      if (active) setIsAccountEmptyResult(result);
+    });
+    return () => {
+      active = false;
+    };
+  }, [account]);
+
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
   const availableOnSwap = currenciesAll.includes(currency.id);
@@ -381,7 +392,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} mt={15}>
-      {!isAccountEmpty(account) ? NonEmptyAccountHeader : null}
+      {!isAccountEmptyResult ? NonEmptyAccountHeader : null}
     </Box>
   );
 };

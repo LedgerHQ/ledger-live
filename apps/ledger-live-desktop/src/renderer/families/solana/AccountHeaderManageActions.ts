@@ -16,8 +16,8 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const { solanaResources } = mainAccount;
 
-  const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+  const onClick = useCallback(async () => {
+    if (await isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

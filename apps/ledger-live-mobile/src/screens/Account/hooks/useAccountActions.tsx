@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -257,17 +257,30 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     [canStakeUsingPlatformApp, platformStakeRoute, isZeroBalance, t, currency.ticker],
   );
 
-  const familySpecificMainActions: Array<ActionButtonEvent> = useMemo(
-    () =>
-      decorators?.getMainActions?.({
+  const [familySpecificMainActions, setFamilySpecificMainActions] = useState<
+    Array<ActionButtonEvent>
+  >([]);
+  useEffect(() => {
+    if (!decorators?.getMainActions) {
+      setFamilySpecificMainActions([]);
+      return;
+    }
+    let cancelled = false;
+    Promise.resolve(
+      decorators.getMainActions({
         walletState,
         account,
         parentAccount,
         colors,
         parentRoute: route,
-      }) ?? [],
-    [walletState, account, parentAccount, colors, route, decorators],
-  );
+      }),
+    ).then(actions => {
+      if (!cancelled) setFamilySpecificMainActions(actions);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [walletState, account, parentAccount, colors, route, decorators]);
 
   const mainActions = useMemo(
     () => [

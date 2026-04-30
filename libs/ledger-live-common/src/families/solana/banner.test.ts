@@ -129,8 +129,8 @@ describe("solana/banner", () => {
 
   it("should not display the banner is account is", async () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
-    mockedIsAccountEmpty.mockReturnValue(true);
-    const result = getAccountBannerState(account);
+    mockedIsAccountEmpty.mockResolvedValue(true);
+    const result = await getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: false,
       redelegate: false,
@@ -140,8 +140,8 @@ describe("solana/banner", () => {
   });
   it("should return display delegate mode is account is not empty", async () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
-    mockedIsAccountEmpty.mockReturnValue(false);
-    const result = getAccountBannerState(account);
+    mockedIsAccountEmpty.mockResolvedValue(false);
+    const result = await getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: true,
       redelegate: false,
@@ -164,9 +164,9 @@ describe("solana/banner", () => {
       withdrawable: 0,
     };
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
-    mockedIsAccountEmpty.mockReturnValue(false);
+    mockedIsAccountEmpty.mockResolvedValue(false);
     account.solanaResources?.stakes.push(badValidator);
-    const result = getAccountBannerState(account);
+    const result = await getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: true,
       redelegate: true,

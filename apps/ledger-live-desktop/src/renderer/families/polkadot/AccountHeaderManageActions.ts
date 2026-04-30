@@ -30,7 +30,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
   const navigate = useNavigate();
   if (!polkadotResources || parentAccount) return null;
 
-  const onClick = () => {
+  const onClick = async () => {
     if (["polkadot", "assethub_polkadot"].includes(mainAccount.currency.id)) {
       navigate("/platform/stakekit", {
         state: {
@@ -43,7 +43,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
         },
       });
     } else {
-      if (isAccountEmpty(mainAccount)) {
+      if (await isAccountEmpty(mainAccount)) {
         dispatch(
           openModal("MODAL_NO_FUNDS_STAKE", {
             account: mainAccount,

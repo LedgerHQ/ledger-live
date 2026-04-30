@@ -114,7 +114,7 @@ export function useCleanCache() {
   const dispatch = useDispatch();
   const { wipe } = useCountervaluesPolling();
   return useCallback(async () => {
-    dispatch(cleanCache());
+    await dispatch(cleanCache());
 
     await clearBridgeCache();
     wipe();

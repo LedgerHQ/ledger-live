@@ -24,8 +24,8 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
     return [];
   }
 
-  const onClick = () => {
-    const modalKey = isAccountEmpty(account) ? "MODAL_NO_FUNDS_STAKE" : "MODAL_HEDERA_DELEGATION";
+  const onClick = async () => {
+    const modalKey = (await isAccountEmpty(account)) ? "MODAL_NO_FUNDS_STAKE" : "MODAL_HEDERA_DELEGATION";
     dispatch(openModal(modalKey, { account }));
   };
 

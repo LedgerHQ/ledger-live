@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -117,6 +117,18 @@ const AccountPage = ({
 
   const currency = mainAccount?.currency;
 
+  const [isAccountEmptyResult, setIsAccountEmptyResult] = useState(true);
+  useEffect(() => {
+    if (!account) return;
+    let active = true;
+    isAccountEmpty(account).then(result => {
+      if (active) setIsAccountEmptyResult(result);
+    });
+    return () => {
+      active = false;
+    };
+  }, [account]);
+
   if (!account || !mainAccount || !currency) {
     return <Navigate to={fallbackPath} replace />;
   }
@@ -160,7 +172,7 @@ const AccountPage = ({
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
-      {!isAccountEmpty(account) ? (
+      {!isAccountEmptyResult ? (
         <>
           <Box mb={7}>
             <BalanceSummary

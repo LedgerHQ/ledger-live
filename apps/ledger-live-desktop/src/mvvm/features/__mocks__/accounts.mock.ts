@@ -123,7 +123,7 @@ export const userThemeSelector = () => "light";
 export const blacklistedTokenIdsSelector = () => {};
 
 export const getLLDCoinFamily = () => ({});
-export const isAccountEmpty = () => false;
+export const isAccountEmpty = () => Promise.resolve(false);
 export const languageSelector = () => ({});
 export const openURL = () => {};
 export const useCalculate = () => 100;

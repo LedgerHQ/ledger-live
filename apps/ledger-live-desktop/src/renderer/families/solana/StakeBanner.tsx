@@ -3,10 +3,13 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
-import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-common/families/solana/banner";
+import {
+  getAccountBannerState as getSolanaBannerState,
+  AccountBannerState,
+} from "@ledgerhq/live-common/families/solana/banner";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
@@ -21,7 +24,11 @@ const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
   );
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
-  const state = getSolanaBannerState(account);
+  const [state, setState] = useState<AccountBannerState | null>(null);
+  useEffect(() => {
+    getSolanaBannerState(account).then(setState);
+  }, [account]);
+  if (!state) return null;
   const { redelegate, display, ledgerValidator, stakeAccAddr } = state;
 
   if (redelegate && !stakeAccountBannerParams?.solana?.redelegate) return null;

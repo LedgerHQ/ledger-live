@@ -12,7 +12,7 @@ export interface AccountBannerState {
   ledgerValidator: ValidatorsAppValidator | undefined;
 }
 
-export function getAccountBannerState(account: SolanaAccount): AccountBannerState {
+export async function getAccountBannerState(account: SolanaAccount): Promise<AccountBannerState> {
   // Group current validator
   const solanaResources = account.solanaResources ? account.solanaResources : { stakes: [] };
   const delegations = solanaResources?.stakes.map(delegation => {
@@ -60,7 +60,7 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
   }
   if (worstValidator) {
     if (LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(worstValidator?.voteAccount)) {
-      if (!isAccountEmpty(account)) {
+      if (!(await isAccountEmpty(account))) {
         display = true;
       }
     } else {

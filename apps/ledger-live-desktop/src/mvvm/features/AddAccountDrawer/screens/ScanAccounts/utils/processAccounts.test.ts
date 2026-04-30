@@ -2,6 +2,13 @@ import { Account } from "@ledgerhq/types-live";
 import { determineSelectedIds, getUnimportedAccounts } from "./processAccounts";
 import BigNumber from "bignumber.js";
 
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  isAccountEmpty: jest.fn(
+    (account: { balance?: { isZero: () => boolean }; operationsCount?: number }) =>
+      Promise.resolve(!account.balance || (account.balance.isZero() && account.operationsCount === 0)),
+  ),
+}));
+
 describe("getUnimportedAccounts", () => {
   it("should return accounts that are not in the existing accounts", () => {
     const scannedAccounts = [{ id: "1" }, { id: "2" }] as Account[];
@@ -28,36 +35,36 @@ describe("getUnimportedAccounts", () => {
 });
 
 describe("determineSelectedIds", () => {
-  it("should return all accounts if onlyNewAccounts is true", () => {
+  it("should return all accounts if onlyNewAccounts is true", async () => {
     const accounts = [{ id: "1" }, { id: "2" }] as Account[];
-    const result = determineSelectedIds(accounts, true, []);
+    const result = await determineSelectedIds(accounts, true, []);
     expect(result).toEqual(["1", "2"]);
   });
 
-  it("should return current selected ids plus the latest account if not empty", () => {
+  it("should return current selected ids plus the latest account if not empty", async () => {
     const accounts = [
       { id: "1" },
       { id: "2", balance: BigNumber("100"), operationsCount: 1 },
     ] as Account[];
-    const result = determineSelectedIds(accounts, false, ["1"]);
+    const result = await determineSelectedIds(accounts, false, ["1"]);
     expect(result).toEqual(["1", "2"]);
   });
 
-  it("should return current selected ids if latest account is empty", () => {
+  it("should return current selected ids if latest account is empty", async () => {
     const accounts = [
       { id: "1" },
       { id: "2", balance: BigNumber("0"), operationsCount: 0 },
     ] as Account[];
-    const result = determineSelectedIds(accounts, false, ["1"]);
+    const result = await determineSelectedIds(accounts, false, ["1"]);
     expect(result).toEqual(["1"]);
   });
 
-  it("should exclude empty accounts from the selection", () => {
+  it("should exclude empty accounts from the selection", async () => {
     const accounts = [
       { id: "1", balance: BigNumber("0"), operationsCount: 0 },
       { id: "2", balance: BigNumber("100"), operationsCount: 1 },
     ] as Account[];
-    const result = determineSelectedIds(accounts, false, []);
+    const result = await determineSelectedIds(accounts, false, []);
     expect(result).toEqual(["2"]);
   });
 });

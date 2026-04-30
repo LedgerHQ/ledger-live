@@ -8,17 +8,17 @@ import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
-const getMainActions = ({
+const getMainActions = async ({
   account,
   parentAccount,
 }: {
   account: BitcoinAccount | TokenAccount;
   parentAccount: BitcoinAccount | null | undefined;
-}): ActionButtonEvent[] => {
+}): Promise<ActionButtonEvent[]> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const label = getStakeLabelLocaleBased();
 
-  const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
+  const navigationParams: NavigationParamsType = (await isAccountEmpty(mainAccount))
     ? [
         NavigatorName.NoFundsFlow,
         {

@@ -21,7 +21,6 @@ import {
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { WARNING_REASON, WarningReason } from "../../domain";
 import {
-  determineSelectedIds,
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
@@ -115,19 +114,23 @@ export function useScanAccounts({
   }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
 
   useEffect(() => {
-    const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
-    const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
+    let cancelled = false;
+    const run = async () => {
+      const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
+      const flags = await Promise.all(unimportedAccounts.map(isAccountEmpty));
+      if (cancelled) return;
+      const onlyNewAccounts = flags.every(Boolean);
 
-    const processedAccountIds = new Set<string>();
-    const freshAccounts = unimportedAccounts.filter(acc => {
-      if (processedAccountIds.has(acc.id)) {
-        return false;
-      }
-      processedAccountIds.add(acc.id);
-      return true;
-    });
-
-    setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
+      setSelectedIds(current => {
+        if (onlyNewAccounts) return unimportedAccounts.map(x => x.id);
+        const latestAccount = unimportedAccounts.at(-1);
+        return latestAccount && !flags.at(-1) ? [...current, latestAccount.id] : current;
+      });
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [existingAccounts, scannedAccounts]);
 
   const {

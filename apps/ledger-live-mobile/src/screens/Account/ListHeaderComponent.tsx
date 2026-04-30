@@ -1,6 +1,7 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo, useState, useEffect } from "react";
 import { LayoutChangeEvent } from "react-native";
-import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
   Account,
@@ -123,11 +124,15 @@ export function useListHeaderComponents({
         })[0];
   }, [account, mainAccount]);
 
+  const [empty, setEmpty] = useState(false);
+  useEffect(() => {
+    if (!account) return;
+    isAccountEmpty(account).then(setEmpty);
+  }, [account]);
+
   if (!account || !mainAccount) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const family: string = mainAccount.currency.family;
-
-  const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
   const AccountHeader = (perFamilyAccountHeader as Record<string, MaybeComponent>)[family];

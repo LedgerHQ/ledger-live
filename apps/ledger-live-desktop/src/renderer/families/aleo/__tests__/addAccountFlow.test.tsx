@@ -42,6 +42,13 @@ let progress$: Subject<unknown>;
 let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
 
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  isAccountEmpty: jest.fn((a: { balance: { isZero: () => boolean } }) =>
+    Promise.resolve(a.balance.isZero()),
+  ),
+}));
+
 jest.mock("@ledgerhq/crypto-icons", () => ({
   CryptoIcon: jest.fn(),
 }));
@@ -120,7 +127,9 @@ jest.mock("~/renderer/linking", () => ({
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
+  for (let i = 0; i < accounts.length; i++) {
+    await act(async () => triggerNext(accounts.slice(0, i + 1)));
+  }
   await act(() => triggerComplete());
 };
 

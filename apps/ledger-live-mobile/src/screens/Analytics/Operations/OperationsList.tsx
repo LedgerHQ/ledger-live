@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { flattenAccounts, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { Account, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
+import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Trans } from "~/context/Locale";
 
@@ -21,18 +22,6 @@ function keyExtractor(item: Operation) {
   return item.id;
 }
 
-function ListEmptyComponent({ accountsFiltered }: { accountsFiltered: AccountLike[] }) {
-  if (accountsFiltered.length === 0) {
-    return <EmptyStatePortfolio />;
-  }
-
-  if (accountsFiltered.every(isAccountEmpty)) {
-    return <NoOpStatePortfolio />;
-  }
-
-  return null;
-}
-
 export function OperationsList({
   accountsFiltered,
   allAccounts,
@@ -41,6 +30,17 @@ export function OperationsList({
   onEndReached,
   onTransactionButtonPress,
 }: ListProps) {
+  const [allAccountsEmpty, setAllAccountsEmpty] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(accountsFiltered.map(isAccountEmpty)).then(flags => {
+      if (!cancelled) setAllAccountsEmpty(flags.every(Boolean));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [accountsFiltered]);
+
   const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = ({
     item,
     index,
@@ -101,13 +101,19 @@ export function OperationsList({
             ) : (
               <LoadingFooter />
             )
-          ) : accountsFiltered.every(isAccountEmpty) ? null : sections.length ? (
+          ) : allAccountsEmpty ? null : sections.length ? (
             <NoMoreOperationFooter />
           ) : (
             <NoOperationFooter />
           )
         }
-        ListEmptyComponent={ListEmptyComponent}
+        ListEmptyComponent={
+          accountsFiltered.length === 0
+            ? EmptyStatePortfolio
+            : allAccountsEmpty
+              ? NoOpStatePortfolio
+              : undefined
+        }
       />
       <TrackScreen category="Analytics" name="Operations" />
     </Flex>

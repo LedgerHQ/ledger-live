@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, waitFor } from "tests/testSetup";
 import { useQuickActions } from "../hooks/useQuickActions";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
@@ -11,6 +11,13 @@ import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  isAccountEmpty: jest.fn(account =>
+    Promise.resolve(!account.balance || (account.balance.isZero() && account.operationsCount === 0)),
+  ),
+}));
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow");
@@ -117,7 +124,7 @@ describe("useQuickActions", () => {
       expect(sellAction.icon).toBe(Minus);
     });
 
-    it("should return send action with ArrowUp icon", () => {
+    it("should return send action with ArrowUp icon", async () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
@@ -125,6 +132,7 @@ describe("useQuickActions", () => {
         },
       });
 
+      await waitFor(() => expect(result.current.actionsList[3].disabled).toBe(false));
       const sendAction = result.current.actionsList[3];
       expect(sendAction.title).toBe("Send");
       expect(sendAction.icon).toBe(ArrowUp);
@@ -157,7 +165,7 @@ describe("useQuickActions", () => {
       expect(sellAction.disabled).toBe(true);
     });
 
-    it("should enable sell action when accounts have funds", () => {
+    it("should enable sell action when accounts have funds", async () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
@@ -165,11 +173,10 @@ describe("useQuickActions", () => {
         },
       });
 
-      const sellAction = result.current.actionsList[2];
-      expect(sellAction.disabled).toBe(false);
+      await waitFor(() => expect(result.current.actionsList[2].disabled).toBe(false));
     });
 
-    it("should enable sell action when at least one account has funds", () => {
+    it("should enable sell action when at least one account has funds", async () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount(), createAccountWithFunds()],
@@ -177,8 +184,7 @@ describe("useQuickActions", () => {
         },
       });
 
-      const sellAction = result.current.actionsList[2];
-      expect(sellAction.disabled).toBe(false);
+      await waitFor(() => expect(result.current.actionsList[2].disabled).toBe(false));
     });
   });
 
@@ -379,7 +385,7 @@ describe("useQuickActions", () => {
       expect(sendAction.disabled).toBe(true);
     });
 
-    it("should enable send action when user has at least one account with funds", () => {
+    it("should enable send action when user has at least one account with funds", async () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount(), createAccountWithFunds()],
@@ -387,8 +393,7 @@ describe("useQuickActions", () => {
         },
       });
 
-      const sendAction = result.current.actionsList[3];
-      expect(sendAction.disabled).toBe(false);
+      await waitFor(() => expect(result.current.actionsList[3].disabled).toBe(false));
     });
   });
 

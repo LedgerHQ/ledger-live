@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -9,12 +10,16 @@ import { AleoCustomModal } from "./constants";
 const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [isSelfTransferDisabled, setIsSelfTransferDisabled] = useState(true);
+
+  useEffect(() => {
+    if (account.type !== "Account") return;
+    isAccountEmpty(account).then(setIsSelfTransferDisabled);
+  }, [account]);
 
   if (account.type !== "Account") {
     return [];
   }
-
-  const isSelfTransferDisabled = isAccountEmpty(account);
 
   const onClick = () => {
     dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account }));

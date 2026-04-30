@@ -10,7 +10,8 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { switchCountervalueFirst } from "~/actions/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
@@ -91,7 +92,16 @@ const AccountScreenInner = ({
     useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const isEmpty = isAccountEmpty(account);
+  const [isEmpty, setIsEmpty] = useState(false);
+  useEffect(() => {
+    let active = true;
+    isAccountEmpty(account).then(result => {
+      if (active) setIsEmpty(result);
+    });
+    return () => {
+      active = false;
+    };
+  }, [account]);
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
