@@ -31,8 +31,8 @@ function StellarEditMemoValue({ navigation, route }: NavigationProps) {
   const onChangeMemoValue = useCallback((str: string) => {
     setMemoValue(str);
   }, []);
-  const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
+  const onValidateText = useCallback(async () => {
+    const bridge = await getAccountBridge(account);
     const { transaction, memoType } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,

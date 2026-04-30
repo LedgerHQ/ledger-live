@@ -49,11 +49,11 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
     setOwnSompiPerByte(text.replace(/\D/g, ""));
   }, []);
 
-  const onValidateText = useCallback(() => {
+  const onValidateText = useCallback(async () => {
     if (BigNumber(ownSompiPerByte || 0).isZero()) return;
     Keyboard.dismiss();
     setSompiPerByte && setSompiPerByte(BigNumber(ownSompiPerByte || 0));
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendSummary,
       params: {

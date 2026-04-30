@@ -52,9 +52,9 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
     setTag(newTag);
   }
 
-  const onValidateText = useCallback(() => {
+  const onValidateText = useCallback(async () => {
     if (!account) return;
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
