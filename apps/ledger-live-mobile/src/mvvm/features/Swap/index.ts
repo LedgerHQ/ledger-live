@@ -41,7 +41,7 @@ async function getAccountsForCurrency(
       return { account, parentAccount };
     }),
   );
-  return results.filter((r): r is AccountWithParent => r !== null);
+  return results.filter((r): r is NonNullable<typeof r> => r !== null);
 }
 
 export function useOpenSwap({

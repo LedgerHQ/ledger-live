@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -122,8 +122,28 @@ export default function Content({
     currencySettings.confirmationsNb,
   );
 
-  const isEditable = isEditableOperation({ account: mainAccount, operation });
-  const isOperationStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
+  const [isEditable, setIsEditable] = useState(false);
+  const [isOperationStuck, setIsOperationStuck] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    isEditableOperation({ account: mainAccount, operation }).then(editable => {
+      if (!cancelled) setIsEditable(editable);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [mainAccount, operation]);
+
+  useEffect(() => {
+    let cancelled = false;
+    isStuckOperation({ family: mainAccount.currency.family, operation }).then(stuck => {
+      if (!cancelled) setIsOperationStuck(stuck);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [mainAccount, operation]);
 
   const specificOperationDetails =
     byFamiliesOperationDetails[

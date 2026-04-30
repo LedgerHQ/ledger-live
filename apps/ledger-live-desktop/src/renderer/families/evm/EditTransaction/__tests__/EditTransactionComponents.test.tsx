@@ -187,8 +187,8 @@ describe("EVM EditTransaction components", () => {
     expect(transitionTo).toHaveBeenCalledWith("device");
   });
 
-  it("EditStuckTransactionPanelBodyHeader forwards feature/status to shared header", () => {
-    (getStuckAccountAndOperation as jest.Mock).mockReturnValue({
+  it("EditStuckTransactionPanelBodyHeader forwards feature/status to shared header", async () => {
+    (getStuckAccountAndOperation as jest.Mock).mockResolvedValue({
       operation: {},
       account,
       parentAccount: undefined,
@@ -198,6 +198,6 @@ describe("EVM EditTransaction components", () => {
       initialState: withFlagOverrides({ editEvmTx: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } } }),
     });
 
-    expect(screen.getByTestId("shared-stuck-header")).toHaveTextContent("true-true-true");
+    expect(await screen.findByTestId("shared-stuck-header")).toHaveTextContent("true-true-true");
   });
 });

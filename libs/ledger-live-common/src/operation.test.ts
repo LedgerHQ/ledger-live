@@ -20,45 +20,45 @@ const mockOperation = {} as any;
 beforeEach(() => jest.clearAllMocks());
 
 describe("isEditableOperation", () => {
-  it("delegates to loader and returns result", () => {
+  it("delegates to loader and returns result", async () => {
     const fn = jest.fn(() => true);
-    (loadIsEditableOperationForFamily as jest.Mock).mockReturnValue(fn);
-    expect(isEditableOperation({ account: mockAccount, operation: mockOperation })).toBe(true);
+    (loadIsEditableOperationForFamily as jest.Mock).mockResolvedValue(fn);
+    expect(await isEditableOperation({ account: mockAccount, operation: mockOperation })).toBe(true);
     expect(loadIsEditableOperationForFamily).toHaveBeenCalledWith("evm");
     expect(fn).toHaveBeenCalled();
   });
 
-  it("returns false when no loader", () => {
-    (loadIsEditableOperationForFamily as jest.Mock).mockReturnValue(undefined);
-    expect(isEditableOperation({ account: mockAccount, operation: mockOperation })).toBe(false);
+  it("returns false when no loader", async () => {
+    (loadIsEditableOperationForFamily as jest.Mock).mockResolvedValue(undefined);
+    expect(await isEditableOperation({ account: mockAccount, operation: mockOperation })).toBe(false);
   });
 });
 
 describe("isStuckOperation", () => {
-  it("delegates to loader", () => {
+  it("delegates to loader", async () => {
     const fn = jest.fn(() => true);
-    (loadIsStuckOperationForFamily as jest.Mock).mockReturnValue(fn);
-    expect(isStuckOperation({ family: "evm", operation: mockOperation })).toBe(true);
+    (loadIsStuckOperationForFamily as jest.Mock).mockResolvedValue(fn);
+    expect(await isStuckOperation({ family: "evm", operation: mockOperation })).toBe(true);
     expect(loadIsStuckOperationForFamily).toHaveBeenCalledWith("evm");
   });
 
-  it("returns false when no loader", () => {
-    (loadIsStuckOperationForFamily as jest.Mock).mockReturnValue(undefined);
-    expect(isStuckOperation({ family: "evm", operation: mockOperation })).toBe(false);
+  it("returns false when no loader", async () => {
+    (loadIsStuckOperationForFamily as jest.Mock).mockResolvedValue(undefined);
+    expect(await isStuckOperation({ family: "evm", operation: mockOperation })).toBe(false);
   });
 });
 
 describe("getStuckAccountAndOperation", () => {
-  it("delegates to loader", () => {
+  it("delegates to loader", async () => {
     const result = { account: mockAccount, parentAccount: undefined, operation: mockOperation };
     const fn = jest.fn(() => result);
-    (loadGetStuckAccountAndOperationForFamily as jest.Mock).mockReturnValue(fn);
-    expect(getStuckAccountAndOperation(mockAccount, null)).toBe(result);
+    (loadGetStuckAccountAndOperationForFamily as jest.Mock).mockResolvedValue(fn);
+    expect(await getStuckAccountAndOperation(mockAccount, null)).toBe(result);
     expect(loadGetStuckAccountAndOperationForFamily).toHaveBeenCalledWith("evm");
   });
 
-  it("returns undefined when no loader", () => {
-    (loadGetStuckAccountAndOperationForFamily as jest.Mock).mockReturnValue(undefined);
-    expect(getStuckAccountAndOperation(mockAccount, null)).toBeUndefined();
+  it("returns undefined when no loader", async () => {
+    (loadGetStuckAccountAndOperationForFamily as jest.Mock).mockResolvedValue(undefined);
+    expect(await getStuckAccountAndOperation(mockAccount, null)).toBeUndefined();
   });
 });

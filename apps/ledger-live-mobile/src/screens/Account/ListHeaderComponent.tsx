@@ -5,6 +5,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
   Account,
+  Operation,
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
@@ -99,30 +100,62 @@ export function useListHeaderComponents({
     () => (account ? getMainAccount(account, parentAccount) : undefined),
     [account, parentAccount],
   );
-  const oldestEditableOperation = useMemo(() => {
-    if (!account || !mainAccount) return undefined;
+  const pendingOperations = account?.pendingOperations;
+  const family = mainAccount?.currency.family ?? "";
 
-    const editablePendingOperations = account.pendingOperations.filter(pendingOperation =>
-      isEditableOperation({ account: mainAccount, operation: pendingOperation }),
-    );
+  const [oldestEditableOperation, setOldestEditableOperation] = useState<Operation | undefined>(
+    undefined,
+  );
+  const [isOperationStuck, setIsOperationStuck] = useState(false);
 
-    return mainAccount.currency.family === "bitcoin"
-      ? editablePendingOperations.sort(
-          (a, b) =>
-            (a.date instanceof Date ? a.date : new Date(a.date)).getTime() -
-            (b.date instanceof Date ? b.date : new Date(b.date)).getTime(),
-        )[0]
-      : editablePendingOperations.sort((a, b) => {
-          const aSeq = a.transactionSequenceNumber;
-          const bSeq = b.transactionSequenceNumber;
-          if (aSeq != null && bSeq != null) {
-            if (aSeq.isLessThan(bSeq)) return -1;
-            if (aSeq.isGreaterThan(bSeq)) return 1;
-            return 0;
-          }
-          return 0;
-        })[0];
-  }, [account, mainAccount]);
+  useEffect(() => {
+    if (!account || !mainAccount || !pendingOperations || !family) {
+      setOldestEditableOperation(undefined);
+      setIsOperationStuck(false);
+      return;
+    }
+    let cancelled = false;
+    Promise.all(
+      pendingOperations.map(op =>
+        isEditableOperation({ account: mainAccount, operation: op }).then(editable =>
+          editable ? op : null,
+        ),
+      ),
+    ).then(results => {
+      if (cancelled) return;
+      const editablePendingOperations = results.filter(
+        (op): op is NonNullable<typeof op> => op !== null,
+      );
+      const oldest =
+        family === "bitcoin"
+          ? editablePendingOperations.sort(
+              (a, b) =>
+                (a.date instanceof Date ? a.date : new Date(a.date)).getTime() -
+                (b.date instanceof Date ? b.date : new Date(b.date)).getTime(),
+            )[0]
+          : editablePendingOperations.sort((a, b) => {
+              const aSeq = a.transactionSequenceNumber;
+              const bSeq = b.transactionSequenceNumber;
+              if (aSeq != null && bSeq != null) {
+                if (aSeq.isLessThan(bSeq)) return -1;
+                if (aSeq.isGreaterThan(bSeq)) return 1;
+                return 0;
+              }
+              return 0;
+            })[0];
+      setOldestEditableOperation(oldest);
+      if (!oldest) {
+        setIsOperationStuck(false);
+        return;
+      }
+      isStuckOperation({ family, operation: oldest }).then(stuck => {
+        if (!cancelled) setIsOperationStuck(stuck);
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [account, mainAccount, pendingOperations, family]);
 
   const [empty, setEmpty] = useState(false);
   useEffect(() => {
@@ -132,7 +165,6 @@ export function useListHeaderComponents({
 
   if (!account || !mainAccount) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
-  const family: string = mainAccount.currency.family;
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
   const AccountHeader = (perFamilyAccountHeader as Record<string, MaybeComponent>)[family];
@@ -166,11 +198,6 @@ export function useListHeaderComponents({
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
-
-  const isOperationStuck = Boolean(
-    oldestEditableOperation &&
-    isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
-  );
 
   const disableDelegation =
     currencyConfig &&

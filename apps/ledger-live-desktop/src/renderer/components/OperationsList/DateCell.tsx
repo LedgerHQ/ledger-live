@@ -2,7 +2,7 @@ import { isStuckOperation } from "@ledgerhq/live-common/operation";
 import { InfiniteLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";
@@ -39,6 +39,10 @@ const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): Re
 };
 
 const DateCell = ({ t, family, operation, compact, text, editable }: Props): React.JSX.Element => {
+  const [isStuck, setIsStuck] = useState(false);
+  useEffect(() => {
+    isStuckOperation({ family, operation }).then(setIsStuck);
+  }, [family, operation]);
   const ellipsis = {
     display: "block",
     textOverflow: "ellipsis",
@@ -61,7 +65,7 @@ const DateCell = ({ t, family, operation, compact, text, editable }: Props): Rea
       {editable ? (
         <Box fontSize={3} color="neutral.c80">
           <Box ff="Inter|SemiBold" fontSize={3} color="neutral.c80" style={ellipsis}>
-            <PendingLoadingIcon displayWarning={isStuckOperation({ family, operation })} />
+            <PendingLoadingIcon displayWarning={isStuck} />
             <Box
               style={{
                 marginLeft: "4px",

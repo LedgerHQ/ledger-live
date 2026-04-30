@@ -15,38 +15,40 @@ function hasGasTracker(currency: CryptoCurrency): boolean {
   return !!config.gasTracker;
 }
 
-export const isEditableOperation = ({
+export const isEditableOperation = async ({
   account,
   operation,
 }: {
   account: Account;
   operation: Operation;
-}): boolean =>
-  loadIsEditableOperationForFamily(account.currency.family)?.(account, operation, hasGasTracker) ??
-  false;
+}): Promise<boolean> => {
+  const fn = await loadIsEditableOperationForFamily(account.currency.family);
+  return fn?.(account, operation, hasGasTracker) ?? false;
+};
 
-export const isStuckOperation = ({
+export const isStuckOperation = async ({
   family,
   operation,
 }: {
   family: string;
   operation: Operation;
-}): boolean => loadIsStuckOperationForFamily(family)?.(operation) ?? false;
+}): Promise<boolean> => {
+  const fn = await loadIsStuckOperationForFamily(family);
+  return fn?.(operation) ?? false;
+};
 
-export const getStuckAccountAndOperation = (
+export const getStuckAccountAndOperation = async (
   account: AccountLike,
   parentAccount: Account | undefined | null,
-):
+): Promise<
   | {
       account: AccountLike;
       parentAccount: Account | undefined;
       operation: Operation;
     }
-  | undefined => {
+  | undefined
+> => {
   const mainAccount = getMainAccount(account, parentAccount);
-  return loadGetStuckAccountAndOperationForFamily(mainAccount.currency.family)?.(
-    account,
-    parentAccount,
-    hasGasTracker,
-  );
+  const fn = await loadGetStuckAccountAndOperationForFamily(mainAccount.currency.family);
+  return fn?.(account, parentAccount, hasGasTracker);
 };
