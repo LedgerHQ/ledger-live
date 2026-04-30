@@ -44,11 +44,9 @@ export const useFromState = ({
         account?.type !== "Account" ? accounts?.find(a => a.id === account?.parentId) : undefined;
       const currency = getAccountCurrency(account as AccountLike);
 
-      bridgeTransaction.setAccount(
-        account as AccountLike,
-        parentAccount,
-        getAccountBridge(account as AccountLike, parentAccount),
-      );
+      void getAccountBridge(account as AccountLike, parentAccount).then(bridge => {
+        bridgeTransaction.setAccount(account as AccountLike, parentAccount, bridge);
+      });
       setFromState({
         ...selectorStateDefaultValues,
         currency,
