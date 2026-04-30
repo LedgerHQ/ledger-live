@@ -33,6 +33,7 @@ import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
+import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -72,6 +73,7 @@ const appReducer = combineReducers({
   portfolioRefresh,
   portfolioBalanceDisplay,
   recoverState,
+  liveAppModal,
   ...llmRTKApiReducers,
 });
 

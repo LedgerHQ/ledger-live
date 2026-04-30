@@ -74,26 +74,41 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
 }
 
 /**
- * Validates a URL by checking if it's on the same domain as the manifest URL.
- * Only HTTPS URLs are allowed.
+ * Validates a URL by checking it's on the same origin as the manifest URL.
+ * Scheme must match the manifest's scheme and must be http: or https: (never
+ * javascript:, data:, file:, ftp:, etc.). This permits http://localhost
+ * development when the manifest itself is http://localhost.
  * @param url - The URL to validate
- * @param manifestUrl - The manifest URL to check same domain against
- * @returns true if the URL is valid and is on the same domain as manifestUrl
+ * @param manifestUrl - The manifest URL to check same origin against
+ * @returns true if the URL is valid and is on the same origin as manifestUrl
  */
 const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
   try {
-    // Parse the URL
     const parsedUrl = new URL(url);
+    const parsedManifestUrl = new URL(manifestUrl);
 
-    // Only allow HTTPS scheme
-    if (parsedUrl.protocol !== "https:") {
-      log("wallet-api/helpers", "isWhitelistedDomain: non-HTTPS scheme blocked", {
-        protocol: parsedUrl.protocol,
-      });
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      console.error(
+        `#isWhitelistedDomain:: invalid URL: scheme '${parsedUrl.protocol}' is not allowed`,
+      );
       return false;
     }
 
-    // Check if URL is on the same domain as manifest URL
+    // Production builds only accept https. http is permitted in dev so local
+    // manifests (http://localhost) can be loaded; the dead branch is stripped
+    // at build time by the bundler's NODE_ENV inlining.
+    if (process.env.NODE_ENV === "production" && parsedUrl.protocol !== "https:") {
+      console.error(`#isWhitelistedDomain:: invalid URL: only https is allowed in production`);
+      return false;
+    }
+
+    if (parsedUrl.protocol !== parsedManifestUrl.protocol) {
+      console.error(
+        `#isWhitelistedDomain:: invalid URL: scheme '${parsedUrl.protocol}' does not match manifest scheme '${parsedManifestUrl.protocol}'`,
+      );
+      return false;
+    }
+
     if (!isSameDomain(url, manifestUrl)) {
       log("wallet-api/helpers", "isWhitelistedDomain: URL not on same domain as manifest");
       return false;
@@ -133,7 +148,8 @@ export const getInitialURL = (
 
     return url.toString();
   } catch (e) {
-    if (e instanceof Error) log("wallet-api/helpers", "getInitialURL error", { message: e.message });
+    if (e instanceof Error)
+      log("wallet-api/helpers", "getInitialURL error", { message: e.message });
 
     return manifest.url.toString();
   }

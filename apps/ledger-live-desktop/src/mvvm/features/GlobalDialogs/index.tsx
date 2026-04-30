@@ -3,6 +3,7 @@ import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
 import PerpsSignRoot from "LLD/features/Perps/screens/PerpsSign/PerpsSignDialog";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
+import LiveAppModal from "LLD/features/LiveAppModal";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
@@ -16,6 +17,7 @@ const GlobalDialogs = () => (
     <SendFlowRoot />
     <PerpsSignRoot />
     <ActionConfirmationDialog />
+    <LiveAppModal />
     <Suspense fallback={null}>
       <ReleaseNotes />
     </Suspense>
