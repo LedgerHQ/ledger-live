@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { FeePresetOption } from "./useFeePresetOptions";
@@ -47,7 +47,7 @@ type Params = Readonly<{
 }>;
 
 async function estimateFiatValuesForPresets(params: {
-  bridge: ReturnType<typeof getAccountBridge>;
+  bridge: AccountBridge<Transaction>;
   mainAccount: Account;
   transaction: Transaction;
   presetIds: readonly string[];
@@ -178,9 +178,8 @@ export function useFeePresetFiatValues({
     requestIdRef.current += 1;
     const requestId = requestIdRef.current;
 
-    const bridge = getAccountBridge(account, parentAccount ?? undefined);
-
-    queueMicrotask(() => {
+    queueMicrotask(async () => {
+      const bridge = await getAccountBridge(account, parentAccount ?? undefined);
       estimateFiatValuesForPresets({
         bridge,
         mainAccount,
