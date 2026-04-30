@@ -19,7 +19,7 @@ import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import GenericErrorView from "~/components/GenericErrorView";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { Web3AppWebview } from "~/components/Web3AppWebview";

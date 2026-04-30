@@ -13,13 +13,12 @@ import { buildLiveAppModalURL } from "@ledgerhq/live-common/wallet-api/LiveAppMo
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import type { LiveAppModalSize } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
-import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { openURL } from "~/renderer/linking";
 import { useSelector } from "LLD/hooks/redux";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
