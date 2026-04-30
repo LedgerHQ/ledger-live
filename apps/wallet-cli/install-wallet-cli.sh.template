@@ -1,19 +1,80 @@
 #!/bin/sh
-# Installs wallet-cli for the version embedded at publish time.
+# Installs wallet-cli from the channel manifest on the public CDN.
 # Public CDN: https://download.live.ledger.com
+# Requires: curl, openssl (or compatible digest output), sudo
+# Optional: jq (recommended). Without jq, a regex fallback parses the Ledger manifest shape only.
 
 set -eu
 
 BASE_URL='https://download.live.ledger.com'
-WALLET_CLI_VERSION='__WALLET_CLI_VERSION__'
+WALLET_CLI_CHANNEL='__WALLET_CLI_CHANNEL__'
 
 INSTALL_DIR="${INSTALL_DIR:-${PREFIX:-/usr/local/bin}}"
+
+CURL_OPTS='--proto =https --tlsv1.2 -fsS'
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT INT HUP
+MANIFEST_PATH="${TMPDIR}/wallet-cli-manifest.json"
+MANIFEST_URL="${BASE_URL}/wallet-cli-${WALLET_CLI_CHANNEL}.json"
+
+echo "Fetching manifest ${MANIFEST_URL}..."
+curl $CURL_OPTS "$MANIFEST_URL" -o "$MANIFEST_PATH"
+if ! [ -s "$MANIFEST_PATH" ]; then
+  echo 'Manifest download failed or empty.' >&2
+  exit 1
+fi
+
+# Minified single-line JSON for sed fallback (Ledger manifest: flat artifact objects, no nested braces in values).
+ws_cli_manifest_oneline() {
+  tr -d '\n' < "$MANIFEST_PATH" | tr -s ' '
+}
+
+# Args: artifact_key field — field is "url" or "sha256". Prefers jq; else regex on one-line JSON.
+ws_cli_json_artifact_field() {
+  ak="$1"
+  field="$2"
+  if command -v jq >/dev/null 2>&1; then
+    jq -r --arg k "$ak" --arg f "$field" '.artifacts[$k][$f] // empty' "$MANIFEST_PATH"
+  else
+    # Fallback assumes CI-built manifest key order: filename, url, sha256 inside each artifact object.
+    line=$(ws_cli_manifest_oneline)
+    case "$field" in
+      url)
+        printf '%s' "$line" | sed -n "s/.*\"${ak}\"[[:space:]]*:[[:space:]]*{[[:space:]]*\"filename\"[[:space:]]*:[[:space:]]*\"[^\"]*\"[[:space:]]*,[[:space:]]*\"url\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p"
+        ;;
+      sha256)
+        printf '%s' "$line" | sed -n "s/.*\"${ak}\"[[:space:]]*:[[:space:]]*{[[:space:]]*\"filename\"[[:space:]]*:[[:space:]]*\"[^\"]*\"[[:space:]]*,[[:space:]]*\"url\"[[:space:]]*:[[:space:]]*\"[^\"]*\"[[:space:]]*,[[:space:]]*\"sha256\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p"
+        ;;
+      *)
+        printf ''
+        ;;
+    esac
+  fi
+}
+
+ws_cli_json_version() {
+  if command -v jq >/dev/null 2>&1; then
+    jq -r '.version // empty' "$MANIFEST_PATH"
+  else
+    ws_cli_manifest_oneline | sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1
+  fi
+}
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo 'Note: jq not found; using built-in regex parsing for this manifest (install jq for a more robust parser).' >&2
+fi
 
 case "$(uname -s)" in
   *MINGW* | *MSYS* | *CYGWIN*)
     echo "This install script supports macOS and Linux only." >&2
     echo "Download the Windows build:" >&2
-    echo "${BASE_URL}/ledger-wallet-cli-${WALLET_CLI_VERSION}-windows-x64.exe" >&2
+    WIN_URL=$(ws_cli_json_artifact_field "windows-x64" "url")
+    if [ -n "$WIN_URL" ] && [ "$WIN_URL" != "null" ]; then
+      echo "$WIN_URL" >&2
+    else
+      echo "${MANIFEST_URL} (artifacts.windows-x64.url)" >&2
+    fi
     exit 1
     ;;
 esac
@@ -45,20 +106,47 @@ if [ "$OS" = "darwin" ] && [ "$ARCH" = "x64" ]; then
 fi
 
 if [ "$OS" = "darwin" ]; then
-  ASSET_SUFFIX="darwin-arm64"
+  ARTIFACT_KEY="darwin-arm64"
 else
-  ASSET_SUFFIX="linux-${ARCH}"
+  ARTIFACT_KEY="linux-${ARCH}"
 fi
 
-FILENAME="ledger-wallet-cli-${WALLET_CLI_VERSION}-${ASSET_SUFFIX}"
-URL="${BASE_URL}/${FILENAME}"
+URL=$(ws_cli_json_artifact_field "$ARTIFACT_KEY" "url")
+EXPECTED_SHA=$(ws_cli_json_artifact_field "$ARTIFACT_KEY" "sha256")
+CLI_VERSION=$(ws_cli_json_version)
 
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT INT HUP
+if [ -z "$URL" ] || [ "$URL" = "null" ]; then
+  echo "No download URL in manifest for ${ARTIFACT_KEY}." >&2
+  exit 1
+fi
+if [ -z "$EXPECTED_SHA" ] || [ "$EXPECTED_SHA" = "null" ]; then
+  echo "No sha256 in manifest for ${ARTIFACT_KEY}." >&2
+  exit 1
+fi
+
 DOWNLOAD_PATH="${TMPDIR}/wallet-cli.download"
+echo "Downloading wallet-cli ${CLI_VERSION} (${ARTIFACT_KEY})..."
+curl $CURL_OPTS "$URL" -o "$DOWNLOAD_PATH"
 
-echo "Downloading wallet-cli ${WALLET_CLI_VERSION} (${ASSET_SUFFIX})..."
-curl -fsSL "$URL" -o "$DOWNLOAD_PATH"
+if ! [ -s "$DOWNLOAD_PATH" ]; then
+  echo 'Binary download failed or empty.' >&2
+  exit 1
+fi
+
+ACTUAL_SHA=$(openssl dgst -sha256 "$DOWNLOAD_PATH" | awk '{print $NF}' | tr '[:upper:]' '[:lower:]')
+EXPECTED_SHA=$(printf '%s' "$EXPECTED_SHA" | tr '[:upper:]' '[:lower:]')
+if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
+  echo "SHA-256 mismatch for ${ARTIFACT_KEY} (manifest vs download)." >&2
+  exit 1
+fi
+
+if [ "$OS" = "darwin" ]; then
+  if ! codesign --verify --deep --strict=runtime "$DOWNLOAD_PATH"; then
+    echo 'Code signature verification failed for the downloaded binary.' >&2
+    exit 1
+  fi
+fi
+
 chmod +x "$DOWNLOAD_PATH"
 
 echo "Installing to ${INSTALL_DIR}/wallet-cli (sudo required)..."
