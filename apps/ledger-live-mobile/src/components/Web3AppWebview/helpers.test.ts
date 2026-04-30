@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-native";
+import { renderHook, act } from "@testing-library/react-native";
 import { useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -68,54 +68,63 @@ describe("useWebviewState", () => {
       });
     });
 
-    it("remains stable when inputs gets a new object reference after mount", () => {
-      // Regression test: getInitialURL is called once via useState initialiser so
-      // re-renders with a new inputs object reference do not re-invoke it.
+    it("updates when inputs.goToURL changes (deeplink navigation)", () => {
+      // When a live app is already open and the user taps a deeplink that targets
+      // a different path in the same app (e.g. Baanx card top-up → card details),
+      // the webview must navigate to the new URL.
+      // Bug: if initialURL is frozen via useState, the deeplink is silently ignored
+      // and the user stays on the original page.
       mockGetInitialURL
-        .mockReturnValueOnce("https://example.com/?theme=dark&lang=en")
-        .mockReturnValue("https://example.com/?theme=light&lang=fr");
+        .mockReturnValueOnce("https://example.com/")
+        .mockReturnValue("https://example.com/fund?accountId=123");
 
       const { result, rerender } = renderHook(
-        (props: { inputs: Record<string, string> }) =>
+        (props: { inputs?: Record<string, string> }) =>
           useWebviewState({ manifest: mockManifest, inputs: props.inputs }, null, undefined),
-        { initialProps: { inputs: { theme: "dark", lang: "en" } } },
+        { initialProps: { inputs: undefined } },
       );
 
-      expect(result.current.webviewProps.source).toMatchObject({
-        uri: "https://example.com/?theme=dark&lang=en",
+      expect(result.current.webviewProps.source).toMatchObject({ uri: "https://example.com/" });
+
+      act(() => {
+        rerender({ inputs: { goToURL: "https://example.com/fund?accountId=123" } });
       });
 
-      // Simulate a parent re-render caused by a Redux update (e.g. lastSeenDevice).
-      // inputs gets a new object reference — same values, different identity.
-      rerender({ inputs: { theme: "dark", lang: "en" } });
-
-      // The webview source uri must not change — no navigation should occur.
       expect(result.current.webviewProps.source).toMatchObject({
-        uri: "https://example.com/?theme=dark&lang=en",
+        uri: "https://example.com/fund?accountId=123",
       });
     });
 
-    it("remains stable even when inputs values change after mount", () => {
-      // The initial URL is intentionally frozen at mount time. Inputs are query
-      // parameters for the initial load; they are not a live binding to the webview.
+    it("updates when the manifest changes", () => {
+      // When the manifest is swapped (e.g. the platform catalog refreshes live app
+      // config from the server and a new manifest object is passed down), the webview
+      // must navigate to the URL derived from the new manifest.
+      // Bug: if initialURL is frozen via useState, the webview stays on the old URL
+      // and never reflects the updated manifest configuration.
+      const updatedManifest: LiveAppManifest = {
+        ...mockManifest,
+        url: "https://new.example.com",
+        domains: ["https://new.example.com"],
+      };
+
       mockGetInitialURL
-        .mockReturnValueOnce("https://example.com/?theme=dark")
-        .mockReturnValue("https://example.com/?theme=light");
+        .mockReturnValueOnce("https://example.com")
+        .mockReturnValue("https://new.example.com");
 
       const { result, rerender } = renderHook(
-        (props: { inputs: Record<string, string> }) =>
-          useWebviewState({ manifest: mockManifest, inputs: props.inputs }, null, undefined),
-        { initialProps: { inputs: { theme: "dark" } } },
+        (props: { manifest: LiveAppManifest }) =>
+          useWebviewState({ manifest: props.manifest }, null, undefined),
+        { initialProps: { manifest: mockManifest } },
       );
 
-      expect(result.current.webviewProps.source).toMatchObject({
-        uri: "https://example.com/?theme=dark",
+      expect(result.current.webviewProps.source).toMatchObject({ uri: "https://example.com" });
+
+      act(() => {
+        rerender({ manifest: updatedManifest });
       });
 
-      rerender({ inputs: { theme: "light" } });
-
       expect(result.current.webviewProps.source).toMatchObject({
-        uri: "https://example.com/?theme=dark",
+        uri: "https://new.example.com",
       });
     });
   });
