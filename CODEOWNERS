@@ -389,6 +389,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/.oxfmtrc.*                                         @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
 **/tsconfig*                                          @ledgerhq/platform
+**/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 
 # CI — Turborepo & Nx
