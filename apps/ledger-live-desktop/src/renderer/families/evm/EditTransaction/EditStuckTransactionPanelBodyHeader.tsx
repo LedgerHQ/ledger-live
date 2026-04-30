@@ -4,7 +4,7 @@ import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import React, { memo } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { SharedEditStuckTransactionPanelBodyHeader } from "~/renderer/components/SpeedUpCancel";
 
 type Props = {
@@ -20,11 +20,18 @@ const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) 
   const isCurrencySupported =
     params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
 
+  const [stuckAccountAndOperation, setStuckAccountAndOperation] = useState<
+    Awaited<ReturnType<typeof getStuckAccountAndOperation>>
+  >(undefined);
+
+  useEffect(() => {
+    if (!isEditEvmTxEnabled || !isCurrencySupported) return;
+    getStuckAccountAndOperation(account, parentAccount).then(setStuckAccountAndOperation);
+  }, [account, parentAccount, isEditEvmTxEnabled, isCurrencySupported]);
+
   if (!isEditEvmTxEnabled || !isCurrencySupported) {
     return null;
   }
-  // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
   return (
     <SharedEditStuckTransactionPanelBodyHeader

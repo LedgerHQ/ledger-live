@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
@@ -158,9 +158,19 @@ function OperationRow({
 
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
-  const isOperationStuck =
-    isEditableOperation({ account: mainAccount, operation }) &&
-    isStuckOperation({ family: mainAccount.currency.family, operation });
+  const [isOperationStuck, setIsOperationStuck] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    isEditableOperation({ account: mainAccount, operation }).then(editable => {
+      if (cancelled || !editable) return;
+      isStuckOperation({ family: mainAccount.currency.family, operation }).then(stuck => {
+        if (!cancelled) setIsOperationStuck(stuck);
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [mainAccount, operation]);
 
   const spinner = isOperationStuck ? (
     <WarningMedium />

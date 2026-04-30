@@ -1,5 +1,8 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { isEditableOperation } from "@ledgerhq/coin-evm/operation";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
@@ -30,7 +33,11 @@ const family: EvmFamily = {
 
     const isCurrencySupported =
       featureFlags.evm.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
-    const isEditable = isEditableOperation({ account: mainAccount, operation });
+    const hasGasTracker = (currency: CryptoCurrency): boolean => {
+      const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
+      return !!config.gasTracker;
+    };
+    const isEditable = isEditableOperation(mainAccount, operation, hasGasTracker);
 
     if (!featureFlags.evm.enabled || !isCurrencySupported || !isEditable) {
       return null;

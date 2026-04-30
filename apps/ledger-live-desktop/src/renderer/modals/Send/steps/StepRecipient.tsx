@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -68,13 +68,20 @@ export const DefaultStepRecipient = ({
     [isEnabledForFamily],
   );
 
+  const [stuckAccountAndOperation, setStuckAccountAndOperation] = useState<
+    Awaited<ReturnType<typeof getStuckAccountAndOperation>>
+  >(undefined);
+
+  useEffect(() => {
+    if (!account) return;
+    // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
+    getStuckAccountAndOperation(account, parentAccount).then(setStuckAccountAndOperation);
+  }, [account, parentAccount]);
+
   if (!status || !account) return null;
 
   const mainAccount = getMainAccount(account, parentAccount);
   const extensions = getTokenExtensions(account);
-
-  // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
   return (
     <Box flow={4}>

@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -26,6 +26,43 @@ import TableContainer, { TableHeader } from "../../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
+
+type OperationWithEditableProps = {
+  operation: Operation;
+  account: AccountLike;
+  parentAccount: Account | undefined;
+  mainAccount: Account;
+  onOperationClick: (operation: Operation, account: AccountLike, parentAccount?: Account) => void;
+  t: TFunction;
+  withAccount: boolean;
+};
+
+const OperationWithEditable = ({
+  operation,
+  account,
+  parentAccount,
+  mainAccount,
+  onOperationClick,
+  t,
+  withAccount,
+}: OperationWithEditableProps) => {
+  const [editable, setEditable] = useState(false);
+  useEffect(() => {
+    isEditableOperation({ account: mainAccount, operation }).then(setEditable);
+  }, [mainAccount, operation]);
+  return (
+    <OperationC
+      operation={operation}
+      account={account}
+      parentAccount={parentAccount}
+      key={`${account.id}_${operation.id}`}
+      onOperationClick={onOperationClick}
+      t={t}
+      withAccount={withAccount}
+      editable={editable}
+    />
+  );
+};
 
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
@@ -155,15 +192,15 @@ export class OperationsList extends PureComponent<Props, State> {
                 }
                 const mainAccount = getMainAccount(account, parentAccount);
                 return (
-                  <OperationC
+                  <OperationWithEditable
+                    key={`${account.id}_${operation.id}`}
                     operation={operation}
                     account={account}
                     parentAccount={parentAccount}
-                    key={`${account.id}_${operation.id}`}
+                    mainAccount={mainAccount}
                     onOperationClick={this.handleClickOperation}
                     t={t}
-                    withAccount={withAccount}
-                    editable={account && isEditableOperation({ account: mainAccount, operation })}
+                    withAccount={withAccount ?? false}
                   />
                 );
               })}
