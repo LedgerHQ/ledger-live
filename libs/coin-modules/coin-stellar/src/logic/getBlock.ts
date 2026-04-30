@@ -223,6 +223,7 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
 }
 
 async function blockTransactionForHash(hash: string, ops: RawOperation[]): Promise<BlockTransaction | null> {
+  if (ops.length === 0) return null;
   const failed = !ops[0].transaction_successful;
 
   let blockOperations: BlockOperation[] = [];

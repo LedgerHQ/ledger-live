@@ -14,8 +14,6 @@ import {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
 import coinConfig, { type StellarConfig } from "../config";
 import {
@@ -27,9 +25,9 @@ import {
   getBlock,
   getBlockInfo,
   lastBlock,
-  listOperations,
   validateIntent,
 } from "../logic";
+import { operationsFromHeight } from "../logic/operationsFromHeight";
 import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence, registerHorizonInterceptors } from "../network";
 import { StellarMemo } from "../types";
@@ -129,48 +127,6 @@ async function operations(
 ): Promise<Page<Operation>> {
   const { items, next } = await operationsFromHeight(address, minHeight);
   return { items, next: next || undefined };
-}
-
-type PaginationState = {
-  readonly pageSize: number;
-  readonly heightLimit: number;
-  continueIterations: boolean;
-  apiNextCursor?: string;
-  accumulator: Operation[];
-};
-
-async function operationsFromHeight(address: string, minHeight: number): Promise<Page<Operation>> {
-  const state: PaginationState = {
-    pageSize: 200,
-    heightLimit: minHeight,
-    continueIterations: true,
-    accumulator: [],
-  };
-
-  // unfortunately, the stellar API does not support an option to filter by min height
-  // so the only strategy to get ALL operations is to iterate over all of them in descending order
-  // until we reach the desired minHeight
-  while (state.continueIterations) {
-    const options: ListOperationsOptions = { limit: state.pageSize, order: "desc", minHeight };
-    if (state.apiNextCursor) {
-      options.cursor = state.apiNextCursor;
-    }
-    try {
-      const { items: operations, next: nextCursor } = await listOperations(address, options);
-      state.accumulator.push(...operations);
-      state.apiNextCursor = nextCursor ?? "";
-      state.continueIterations = !!nextCursor;
-    } catch (e: unknown) {
-      if (e instanceof LedgerAPI4xx && e.status === 429) {
-        log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");
-        await new Promise(resolve => setTimeout(resolve, 4000));
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  return { items: state.accumulator, next: state.apiNextCursor ? state.apiNextCursor : "" };
 }
 
 /**

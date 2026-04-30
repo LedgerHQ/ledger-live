@@ -1,5 +1,5 @@
 import nock from "nock";
-import { createApi } from "./index";
+import { createApi } from "../api";
 
 const HORIZON = "https://horizon-testnet.stellar.org";
 const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
@@ -48,25 +48,33 @@ describe("createApi listOperations / operationsFromHeight (no listOperations moc
     expect(page.next).toBeUndefined();
   });
 
-  it("retries listOperations after 429 without waiting 4s", async () => {
-    const emptyPage = {
-      _links: { self: { href: "" }, next: { href: "" }, prev: { href: "" } },
-      _embedded: { records: [] },
-    };
-    nock(HORIZON)
-      .get(uri => uri.includes(`/accounts/${ADDRESS}/operations`))
-      .reply(429, { status: 429 })
-      .get(uri => uri.includes(`/accounts/${ADDRESS}/operations`))
-      .reply(200, emptyPage);
+  describe("rate-limit retry", () => {
+    let setTimeoutSpy: jest.SpyInstance;
 
-    const setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation((fn: TimerHandler) => {
-      if (typeof fn === "function") {
-        (fn as () => void)();
-      }
-      return 0 as unknown as NodeJS.Timeout;
+    beforeEach(() => {
+      setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation((fn: TimerHandler) => {
+        if (typeof fn === "function") {
+          (fn as () => void)();
+        }
+        return 0 as unknown as NodeJS.Timeout;
+      });
     });
 
-    try {
+    afterEach(() => {
+      setTimeoutSpy.mockRestore();
+    });
+
+    it("retries listOperations after 429 without waiting 4s", async () => {
+      const emptyPage = {
+        _links: { self: { href: "" }, next: { href: "" }, prev: { href: "" } },
+        _embedded: { records: [] },
+      };
+      nock(HORIZON)
+        .get(uri => uri.includes(`/accounts/${ADDRESS}/operations`))
+        .reply(429, { status: 429 })
+        .get(uri => uri.includes(`/accounts/${ADDRESS}/operations`))
+        .reply(200, emptyPage);
+
       const api = createApi({
         explorer: {
           url: `${HORIZON}/`,
@@ -75,8 +83,6 @@ describe("createApi listOperations / operationsFromHeight (no listOperations moc
 
       const page = await api.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
       expect(page.items).toEqual([]);
-    } finally {
-      setTimeoutSpy.mockRestore();
-    }
+    });
   });
 });
