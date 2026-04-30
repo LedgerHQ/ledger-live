@@ -27,7 +27,8 @@ export function AddressMatchedSection({
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
 
-  const { matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } = searchResult;
+  const { accountName, matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } =
+    searchResult;
 
   const hasMatchedAccounts = matchedAccounts && matchedAccounts.length > 0;
   const hasENS = !!ensName;
@@ -52,13 +53,25 @@ export function AddressMatchedSection({
     return `${ensName} (${formattedAddress})`;
   };
 
-  const getRecentDescription = (): string | undefined => {
+  const getMatchedAccountDisplayTitle = (): string | undefined => {
+    if (hasMatchedAccounts && accountName) {
+      return accountName;
+    }
+    return undefined;
+  };
+
+  const getAlreadyUsedDescription = (): string | undefined => {
     if (matchedRecentAddress) {
       return t("newSendFlow.alreadyUsed", {
         date: formatRelativeDate(matchedRecentAddress.lastUsedAt),
       });
     }
-    return formattedAddress;
+    return undefined;
+  };
+
+  const getMatchedAddressDescription = (): string | undefined => {
+    const alreadyUsedDescription = getAlreadyUsedDescription();
+    return alreadyUsedDescription ?? formattedAddress;
   };
 
   return (
@@ -88,7 +101,8 @@ export function AddressMatchedSection({
         {!hasENS && (hasMatchedAccounts || hasRecentMatch) && (
           <AddressListItem
             address={resolvedAddress ?? searchValue}
-            description={getRecentDescription()}
+            name={getMatchedAccountDisplayTitle()}
+            description={getMatchedAddressDescription()}
             onSelect={() => onSelect(resolvedAddress ?? searchValue, matchedRecentAddress?.ensName)}
             showSendTo
             isLedgerAccount={hasMatchedAccounts}
