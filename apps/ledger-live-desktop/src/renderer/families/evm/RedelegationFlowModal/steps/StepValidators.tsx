@@ -66,8 +66,6 @@ export default function StepValidators({
   invariant(transaction, "transaction required");
 
   const bridge = getAccountBridge(account, parentAccount) as AccountBridge<GenericTransaction>;
-  const validators = account.stakingResources.validators ?? [];
-
   const updateRedelegation = useCallback(
     (patch: Partial<GenericTransaction>) => {
       onUpdateTransaction(tx => bridge.updateTransaction(tx, patch));
@@ -104,8 +102,12 @@ export default function StepValidators({
 
   const selectedDstValidator = useMemo(() => {
     if (!transaction.dstValAddress) return null;
-    return validators.find(v => v.validatorAddress === transaction.dstValAddress) ?? null;
-  }, [transaction.dstValAddress, validators]);
+    return (
+      (account.stakingResources.validators ?? []).find(
+        v => v.validatorAddress === transaction.dstValAddress,
+      ) ?? null
+    );
+  }, [transaction.dstValAddress, account.stakingResources.validators]);
 
   const sourceDelegationAmount = useMemo(() => {
     if (!transaction.valAddress) return BigNumber(0);

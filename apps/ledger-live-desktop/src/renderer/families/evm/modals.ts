@@ -10,10 +10,7 @@ import { Data as UndelegationProps } from "./UndelegationFlowModal/Body";
 import MODAL_EVM_REDELEGATE from "./RedelegationFlowModal";
 import { Data as RedelegationProps } from "./RedelegationFlowModal/Body";
 
-export type DelegationActionsModalName =
-  | "MODAL_EVM_CLAIM_REWARDS"
-  | "MODAL_EVM_REDELEGATE"
-  | "MODAL_EVM_UNDELEGATE";
+export type DelegationActionsModalName = "MODAL_EVM_REDELEGATE" | "MODAL_EVM_UNDELEGATE";
 
 export type ModalsData = {
   MODAL_EVM_STAKE: {

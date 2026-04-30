@@ -4,7 +4,7 @@ import type {
   StakingAccount,
   StakingMappedDelegation,
 } from "@ledgerhq/live-common/families/evm/staking/types";
-import { mapDelegations } from "@ledgerhq/live-common/families/evm/staking/logic";
+import { mapDelegations, canRedelegate } from "@ledgerhq/live-common/families/evm/staking/logic";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -41,12 +41,10 @@ type Props = {
 export default function RedelegationSelectorField({ account, transaction, onChange }: Props) {
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
-  const validators = account.stakingResources.validators ?? [];
-
-  const options = useMemo(
-    () => mapDelegations(account.stakingResources.delegations, validators, unit),
-    [account.stakingResources.delegations, unit, validators],
-  );
+  const options = useMemo(() => {
+    const filtered = account.stakingResources.delegations.filter(d => canRedelegate(account, d));
+    return mapDelegations(filtered, account.stakingResources.validators ?? [], unit);
+  }, [account, unit]);
 
   const value = useMemo(
     () => options.find(o => o.validatorAddress === transaction.valAddress) ?? null,
