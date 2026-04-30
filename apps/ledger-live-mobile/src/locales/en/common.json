@@ -7840,11 +7840,6 @@
       "viewWallet": "Explore my portfolio",
       "deviceStepComplete": "Complete"
     },
-    "entryPointCard": {
-      "title": "What's next for your {{productName}}?",
-      "description": "Secure your assets and go further.",
-      "buttonLabel": "See what's next"
-    },
     "drawer": {
       "title": "Next, finish wallet setup",
       "titleCompleted": "You’re all set!",
