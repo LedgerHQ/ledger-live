@@ -1169,7 +1169,7 @@ describe("createTransactionIntent", () => {
     });
   });
 
-  it("should throw when amountRecordCommitment is null for a private transaction", () => {
+  it("should throw when amountRecordCommitment is empty for a private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
@@ -1183,7 +1183,7 @@ describe("createTransactionIntent", () => {
     );
   });
 
-  it("should throw when amountRecordCommitment does not match any unspent record", () => {
+  it("should throw when amountRecordCommitment entry does not match any unspent record", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {

@@ -218,4 +218,126 @@ describe("prepareTransaction", () => {
       },
     });
   });
+
+  it("should keep selected amount record when recordPickingStrategy is manual", async () => {
+    const mockPrivateTransaction: Transaction = {
+      ...mockTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: null,
+      },
+    };
+
+    const accountWithPrivateRecords = getMockedAccount({
+      aleoResources: {
+        transparentBalance: mockAccount.aleoResources?.transparentBalance ?? new BigNumber(0),
+        provableApi: mockAccount.aleoResources?.provableApi ?? null,
+        privateBalance: mockAccount.aleoResources?.privateBalance ?? null,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+        lastPrivateSyncDate: mockAccount.aleoResources?.lastPrivateSyncDate ?? null,
+      },
+    });
+
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...mockConfig,
+      recordPickingStrategy: "manual",
+      isFeeSponsored: true,
+    });
+
+    const result = await prepareTransaction(accountWithPrivateRecords, mockPrivateTransaction);
+
+    expect(mockCalculateAmount).toHaveBeenCalledWith({
+      transaction: mockPrivateTransaction,
+      account: accountWithPrivateRecords,
+      estimatedFees: mockFees,
+    });
+    expect(result).toMatchObject({
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+      },
+    });
+  });
+
+  it("should auto-select the smallest sufficient amount record when recordPickingStrategy is auto", async () => {
+    const mockPrivateTransaction: Transaction = {
+      ...mockTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      amount: new BigNumber(550000),
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    };
+
+    const accountWithPrivateRecords = getMockedAccount({
+      aleoResources: {
+        transparentBalance: mockAccount.aleoResources?.transparentBalance ?? new BigNumber(0),
+        provableApi: mockAccount.aleoResources?.provableApi ?? null,
+        privateBalance: mockAccount.aleoResources?.privateBalance ?? null,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+        lastPrivateSyncDate: mockAccount.aleoResources?.lastPrivateSyncDate ?? null,
+      },
+    });
+
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...mockConfig,
+      recordPickingStrategy: "auto",
+      isFeeSponsored: true,
+    });
+
+    const result = await prepareTransaction(accountWithPrivateRecords, mockPrivateTransaction);
+
+    expect(mockCalculateAmount).toHaveBeenCalledWith({
+      transaction: expect.objectContaining({
+        mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        properties: expect.objectContaining({
+          amountRecordCommitment: mockUnspentRecord2.commitment,
+        }),
+      }),
+      account: accountWithPrivateRecords,
+      estimatedFees: mockFees,
+    });
+    expect(result).toMatchObject({
+      properties: {
+        amountRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+  });
+
+  it("should keep the first selected amount record when no single record can fully cover amount", async () => {
+    const mockPrivateTransaction: Transaction = {
+      ...mockTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      amount: new BigNumber(900000),
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    };
+
+    const accountWithPrivateRecords = getMockedAccount({
+      aleoResources: {
+        transparentBalance: mockAccount.aleoResources?.transparentBalance ?? new BigNumber(0),
+        provableApi: mockAccount.aleoResources?.provableApi ?? null,
+        privateBalance: mockAccount.aleoResources?.privateBalance ?? null,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+        lastPrivateSyncDate: mockAccount.aleoResources?.lastPrivateSyncDate ?? null,
+      },
+    });
+
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...mockConfig,
+      recordPickingStrategy: "auto",
+      isFeeSponsored: true,
+    });
+
+    const result = await prepareTransaction(accountWithPrivateRecords, mockPrivateTransaction);
+
+    expect(result).toMatchObject({
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+      },
+    });
+  });
 });

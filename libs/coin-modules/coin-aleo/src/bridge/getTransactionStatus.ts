@@ -39,7 +39,7 @@ function getValidRecord({
   commitment,
 }: {
   account: AleoAccount;
-  commitment: TransactionPrivate["properties"]["amountRecordCommitment"];
+  commitment: string | null | undefined;
 }) {
   if (!commitment) {
     return null;

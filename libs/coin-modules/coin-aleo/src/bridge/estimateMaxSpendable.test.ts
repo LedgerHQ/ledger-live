@@ -92,7 +92,7 @@ describe("estimateMaxSpendable", () => {
     expect(mockCreateTransaction).toHaveBeenCalledWith(mockAccount);
   });
 
-  it("should return zero for private tx when amountRecordCommitment is missing", async () => {
+  it("should return zero for private tx when amountRecordCommitment is empty", async () => {
     mockPrepareTransaction.mockResolvedValue({
       ...mockPreparedTransaction,
       amount: new BigNumber(0),
@@ -119,7 +119,7 @@ describe("estimateMaxSpendable", () => {
     expect(result).toEqual(new BigNumber(0));
   });
 
-  it("should return microcredits value for private tx when amountRecordCommitment exists", async () => {
+  it("should return microcredits value for private tx when amountRecordCommitment has an entry", async () => {
     const commitment = "record-1-commitment";
     const privateRecordAmount = "12345";
     const aleoResources = mockAccount.aleoResources!;
@@ -162,7 +162,7 @@ describe("estimateMaxSpendable", () => {
     expect(result).toEqual(new BigNumber(privateRecordAmount));
   });
 
-  it("should return zero for private tx when amountRecordCommitment exists but no record matches", async () => {
+  it("should return zero for private tx when amountRecordCommitment has an entry but no record matches", async () => {
     const commitment = "record-1-commitment";
     const aleoResources = mockAccount.aleoResources!;
     const accountWithoutMatchingRecord = getMockedAccount({
