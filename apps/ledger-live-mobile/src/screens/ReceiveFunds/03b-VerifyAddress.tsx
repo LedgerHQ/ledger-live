@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Subscription } from "rxjs";
-import { filter, first, map } from "rxjs/operators";
+import { from, Subscription } from "rxjs";
+import { filter, first, map, mergeMap } from "rxjs/operators";
 import { TouchableOpacity, Linking, LayoutChangeEvent } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, Trans } from "~/context/Locale";
@@ -92,7 +92,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { onSuccess, onError, device } = route.params;
 
   const verifyOnDevice = useCallback(
-    async (device: Device): Promise<void> => {
+    (device: Device): void => {
       if (!account) return;
       const mainAccount = getMainAccount(account, parentAccount);
 
@@ -104,10 +104,14 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               map(() => ({})),
               rejectionOp(),
             )
-          : getAccountBridge(mainAccount).receive(mainAccount, {
-              deviceId: device.deviceId,
-              verify: true,
-            })
+          : from(Promise.resolve(getAccountBridge(mainAccount))).pipe(
+              mergeMap(bridge =>
+                bridge.receive(mainAccount, {
+                  deviceId: device.deviceId,
+                  verify: true,
+                }),
+              ),
+            )
       ).subscribe({
         complete: () => {
           if (onSuccess) onSuccess(mainAccount.freshAddress);

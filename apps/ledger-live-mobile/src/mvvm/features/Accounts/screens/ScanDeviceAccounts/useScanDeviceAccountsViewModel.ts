@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
-import { ignoreElements } from "rxjs/operators";
+import { ignoreElements, mergeMap } from "rxjs/operators";
 import { useDispatch } from "~/context/hooks";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import uniq from "lodash/uniq";
@@ -79,7 +79,6 @@ export default function useScanDeviceAccountsViewModel({
   );
   const startSubscription = useCallback(() => {
     const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-    const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
         operations: 0,
@@ -87,23 +86,29 @@ export default function useScanDeviceAccountsViewModel({
       blacklistedTokenIds,
     };
     // will be set to false if an existing account is found
-    scanSubscription.current = concat(
-      from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
-      bridge.scanAccounts({
-        currency: cryptoCurrency,
-        deviceId,
-        syncConfig,
-      }),
-    ).subscribe({
-      next: ({ account }) => {
-        setLatestScannedAccount(account);
-      },
-      complete: () => setScanning(false),
-      error: error => {
-        logger.critical(error);
-        setError(error);
-      },
-    });
+    scanSubscription.current = from(Promise.resolve(getCurrencyBridge(cryptoCurrency)))
+      .pipe(
+        mergeMap(bridge =>
+          concat(
+            from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
+            bridge.scanAccounts({
+              currency: cryptoCurrency,
+              deviceId,
+              syncConfig,
+            }),
+          ),
+        ),
+      )
+      .subscribe({
+        next: ({ account }) => {
+          setLatestScannedAccount(account);
+        },
+        complete: () => setScanning(false),
+        error: error => {
+          logger.critical(error);
+          setError(error);
+        },
+      });
   }, [blacklistedTokenIds, currency, deviceId]);
 
   const restartSubscription = useCallback(() => {

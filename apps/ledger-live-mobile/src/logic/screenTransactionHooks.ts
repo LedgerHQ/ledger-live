@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { concat, of, from, Subscription } from "rxjs";
-import { concatMap, filter } from "rxjs/operators";
+import { concatMap, filter, mergeMap } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
@@ -95,7 +95,6 @@ export const useSignWithDevice = ({
   const mevProtected = useSelector(mevProtectionSelector);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
-    const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
     navigation.setOptions({
@@ -107,36 +106,42 @@ export const useSignWithDevice = ({
       "transaction-summary",
       `✔️ transaction ${transaction && formatTransaction(transaction, mainAccount)}`,
     );
-    subscription.current = bridge
-      .signOperation({
-        account: mainAccount,
-        transaction,
-        // FIXME: deviceId could be undefined apparently
-        deviceId: deviceId!,
-      })
+    subscription.current = from(Promise.resolve(getAccountBridge(account, parentAccount)))
       .pipe(
-        // FIXME later we will need to treat more events
-        filter(e => e.type === "signed"),
-        concatMap(
-          (
-            e, // later we will have more events
-          ) =>
-            concat(
-              of(e),
-              from(
-                bridge
-                  .broadcast({
-                    account: mainAccount,
-                    signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
-                    broadcastConfig: {
-                      mevProtected,
-                      source: { type: "coin-module", name: "ledger-live-mobile" },
-                    },
-                  })
-                  .then(operation => ({
-                    type: "broadcasted",
-                    operation,
-                  })),
+        mergeMap(bridge =>
+          bridge
+            .signOperation({
+              account: mainAccount,
+              transaction,
+              // FIXME: deviceId could be undefined apparently
+              deviceId: deviceId!,
+            })
+            .pipe(
+              // FIXME later we will need to treat more events
+              filter(e => e.type === "signed"),
+              concatMap(
+                (
+                  e, // later we will have more events
+                ) =>
+                  concat(
+                    of(e),
+                    from(
+                      bridge
+                        .broadcast({
+                          account: mainAccount,
+                          signedOperation: (e as { signedOperation: SignedOperation })
+                            .signedOperation,
+                          broadcastConfig: {
+                            mevProtected,
+                            source: { type: "coin-module", name: "ledger-live-mobile" },
+                          },
+                        })
+                        .then(operation => ({
+                          type: "broadcasted",
+                          operation,
+                        })),
+                    ),
+                  ),
               ),
             ),
         ),
@@ -231,7 +236,7 @@ export const broadcastSignedTx = async (
 ): Promise<Operation> => {
   invariant(account, "account not present");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = await getAccountBridge(account, parentAccount);
 
   if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
     return Promise.resolve(signedOperation.operation);
