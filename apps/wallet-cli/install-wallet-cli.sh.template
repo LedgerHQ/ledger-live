@@ -1,0 +1,69 @@
+#!/bin/sh
+# Installs wallet-cli for the version embedded at publish time.
+# Public CDN: https://download.live.ledger.com
+
+set -eu
+
+BASE_URL='https://download.live.ledger.com'
+WALLET_CLI_VERSION='__WALLET_CLI_VERSION__'
+
+INSTALL_DIR="${INSTALL_DIR:-${PREFIX:-/usr/local/bin}}"
+
+case "$(uname -s)" in
+  *MINGW* | *MSYS* | *CYGWIN*)
+    echo "This install script supports macOS and Linux only." >&2
+    echo "Download the Windows build:" >&2
+    echo "${BASE_URL}/ledger-wallet-cli-${WALLET_CLI_VERSION}-windows-x64.exe" >&2
+    exit 1
+    ;;
+esac
+
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m)
+
+case "$OS" in
+  darwin) OS=darwin ;;
+  linux) OS=linux ;;
+  *)
+    echo "Unsupported OS: $OS (expected Darwin or Linux)" >&2
+    exit 1
+    ;;
+esac
+
+case "$ARCH" in
+  x86_64) ARCH=x64 ;;
+  aarch64 | arm64) ARCH=arm64 ;;
+  *)
+    echo "Unsupported architecture: $ARCH" >&2
+    exit 1
+    ;;
+esac
+
+if [ "$OS" = "darwin" ] && [ "$ARCH" = "x64" ]; then
+  echo "Intel Mac (x86_64) is not supported; only Apple Silicon builds are published." >&2
+  exit 1
+fi
+
+if [ "$OS" = "darwin" ]; then
+  ASSET_SUFFIX="darwin-arm64"
+else
+  ASSET_SUFFIX="linux-${ARCH}"
+fi
+
+FILENAME="ledger-wallet-cli-${WALLET_CLI_VERSION}-${ASSET_SUFFIX}"
+URL="${BASE_URL}/${FILENAME}"
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT INT HUP
+DOWNLOAD_PATH="${TMPDIR}/wallet-cli.download"
+
+echo "Downloading wallet-cli ${WALLET_CLI_VERSION} (${ASSET_SUFFIX})..."
+curl -fsSL "$URL" -o "$DOWNLOAD_PATH"
+chmod +x "$DOWNLOAD_PATH"
+
+echo "Installing to ${INSTALL_DIR}/wallet-cli (sudo required)..."
+sudo mkdir -p "$INSTALL_DIR"
+sudo install -m 0755 "$DOWNLOAD_PATH" "${INSTALL_DIR}/wallet-cli"
+
+echo "wallet-cli installed successfully."
+"${INSTALL_DIR}/wallet-cli" --version

@@ -135,7 +135,6 @@ jobs:
               ref: "main",
               workflow_id: "nightly-wallet-cli.yml",
               inputs: {
-                  ref: "nightly",
                   version_override: "${{ steps.post-wallet-cli-version.outputs.version }}"
               }
             });
