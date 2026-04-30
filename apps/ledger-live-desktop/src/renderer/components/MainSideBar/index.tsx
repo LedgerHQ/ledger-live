@@ -163,8 +163,16 @@ const SideBarScrollContainer = styled(Box)`
   flex: 1;
 
   &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${p => p.theme.colors.neutral.c40};
+    border-radius: 3px;
   }
 `;
 
