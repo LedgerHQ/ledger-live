@@ -21,24 +21,28 @@ export default {
       filter(c => !blacklist.includes(c.id) && !c.isTestnetFor),
       map(currency =>
         defer(() =>
-          getCurrencyBridge(currency)
-            .scanAccounts({
-              currency,
-              deviceId: `speculos:nanos:${currency.id}`,
-              syncConfig: {
-                paginationConfig: {},
-              },
-            })
-            .pipe(
-              timeout({
-                each: 200 * 1000,
-                with: () => throwError(() => new Error("scan account timeout")),
-              }),
-              catchError(e => {
-                console.error("scan accounts failed for " + currency.id, e);
-                return from([]);
-              }),
+          defer(() => Promise.resolve(getCurrencyBridge(currency))).pipe(
+            mergeMap(bridge =>
+              bridge
+                .scanAccounts({
+                  currency,
+                  deviceId: `speculos:nanos:${currency.id}`,
+                  syncConfig: {
+                    paginationConfig: {},
+                  },
+                })
+                .pipe(
+                  timeout({
+                    each: 200 * 1000,
+                    with: () => throwError(() => new Error("scan account timeout")),
+                  }),
+                  catchError(e => {
+                    console.error("scan accounts failed for " + currency.id, e);
+                    return from([]);
+                  }),
+                ),
             ),
+          ),
         ),
       ),
       mergeAll(5),
