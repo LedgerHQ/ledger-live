@@ -38,7 +38,6 @@ export const MarketPriceIndicator = ({ percent, price }: { percent: number; pric
       data-testid="market-price-indicator"
       flexDirection="column"
       alignItems="flex-end"
-      width="fit-content"
     >
       <Text variant="body" fontWeight="semiBold" mb="4px">
         {price}

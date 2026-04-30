@@ -1,14 +1,16 @@
-import { shallowEqual, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import isEqual from "lodash/isEqual";
 import { selectMarketByCurrency } from "../entities/marketSelectors";
 import { ApiState } from "../entities/selectorUtils";
 
+export type MarketByCurrencies = Partial<
+  Record<string, { price: number; priceChangePercentage24h: number }>
+>;
+
 export const useMarketByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {
   return useSelector((state: ApiState) => {
-    const marketByCurrencies: Record<
-      string,
-      { price?: number; priceChangePercentage24h?: number }
-    > = {};
+    const marketByCurrencies: MarketByCurrencies = {};
     for (const currency of currencies) {
       const currencyMarket = selectMarketByCurrency(state, currency.id);
       if (
@@ -22,5 +24,5 @@ export const useMarketByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {
       }
     }
     return marketByCurrencies;
-  }, shallowEqual);
+  }, isEqual);
 };
