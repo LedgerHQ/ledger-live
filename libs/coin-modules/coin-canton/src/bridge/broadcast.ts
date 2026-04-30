@@ -9,5 +9,8 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
 }) => {
   const { operation, signature } = signedOperation;
   const hash = await broadcastLogic(account.currency, signature);
+  if (!hash) {
+    throw new Error("canton: broadcast returned no transaction id");
+  }
   return patchOperationWithHash(operation, hash);
 };
