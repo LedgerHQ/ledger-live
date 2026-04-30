@@ -1,5 +1,5 @@
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import type { TransactionType } from "./logic";
+import type { RecordPickingStrategy, TransactionType } from "./logic";
 
 export type AleoConfig = {
   networkType: "mainnet" | "testnet";
@@ -11,6 +11,7 @@ export type AleoConfig = {
   feeSafetyMultiplier: number;
   isFeeSponsored: boolean;
   useEncryptedProve: boolean;
+  recordPickingStrategy: RecordPickingStrategy;
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;
