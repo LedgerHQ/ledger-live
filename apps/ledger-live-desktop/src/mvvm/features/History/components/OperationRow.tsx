@@ -1,5 +1,5 @@
 import React, { useCallback, memo } from "react";
-import { TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
+import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
@@ -11,7 +11,6 @@ import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { UnreadIndicator } from "LLD/components/UnreadIndicator";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {
@@ -59,7 +58,9 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
           title={
             <div className="inline-flex items-center gap-12">
               {typeLabel}
-              {isUnread && <UnreadIndicator />}
+              {isUnread && (
+                <DotIndicator appearance="red" size="xs" data-testid="unread-indicator" />
+              )}
             </div>
           }
         />
