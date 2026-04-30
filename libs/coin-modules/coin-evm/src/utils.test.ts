@@ -1,4 +1,12 @@
-import { buildSmartContractDetails, isSmartContractInput, safeEncodeEIP55 } from "./utils";
+import { EtherscanAPIError } from "./errors";
+import {
+  buildSmartContractDetails,
+  getErrorCode,
+  getErrorMessage,
+  isExpectedSeiNoDelegationError,
+  isSmartContractInput,
+  safeEncodeEIP55,
+} from "./utils";
 
 describe("isSmartContractInput", () => {
   it.each([
@@ -57,3 +65,72 @@ describe("buildSmartContractDetails", () => {
     });
   });
 });
+
+describe("getErrorCode", () => {
+  it("should return error code", () => {
+    const expectedCode = 400;
+    const result = getErrorCode({
+      code: expectedCode,
+    });
+
+    expect(result).toEqual(String(expectedCode));
+  });
+
+  it.each([1, "", "filled string", {}, null, undefined, [], ["filled array"]])(
+    "should return undefined for %s",
+    (error: unknown) => {
+      expect(getErrorCode(error)).toBeUndefined();
+    },
+  );
+});
+
+describe("getErrorMessage", () => {
+  it("should return error message", () => {
+    const expectedMessage = "Type 'Account' is not assignable to type 'TokenAccount'.";
+    expect(getErrorMessage(new Error(expectedMessage))).toEqual(expectedMessage);
+  });
+
+  it.each([1, "", "filled string", {}, null, undefined, [], ["filled array"]])(
+    "should error stringified (%s)",
+    (error: unknown) => {
+      expect(getErrorMessage(error)).toEqual(String(error));
+    },
+  );
+});
+
+describe("isExpectedSeiNoDelegationError", () => {
+  it.each(["evm", "base", "arbitrum", "solana", "bitcoin"])(
+    "should return false when currency id is not sei (%s)",
+    (currencyId: string) => {
+      expect(isExpectedSeiNoDelegationError(currencyId, undefined)).toEqual(false);
+    },
+  );
+
+  it.each(["missing revert data", "execution reverted"])(
+    "should return true when it is sei no delegation error (message: %s)",
+    (message: string) => {
+      const error: Error = new SeiNoDelegationError(message);
+
+      expect(isExpectedSeiNoDelegationError("sei_evm", error)).toEqual(true);
+    },
+  );
+  it.each([
+    new Error("Type 'Account' is not assignable to type 'TokenAccount'."),
+    new EtherscanAPIError(),
+  ])("should return false when it not is sei no delegation error", (error: unknown) => {
+    expect(isExpectedSeiNoDelegationError("sei_evm", error)).toEqual(false);
+  });
+});
+
+class SeiNoDelegationError extends Error {
+  name: string = "SeiNoDelegationError";
+  private _code: string = "CALL_EXCEPTION";
+
+  constructor(message: string) {
+    super(message);
+  }
+
+  get code() {
+    return this._code;
+  }
+}
