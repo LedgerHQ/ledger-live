@@ -263,7 +263,6 @@ async function getGasEstimation(
   const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
   const value = BigInt(transaction.amount.toFixed(0));
   const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
-  console.log("getGasEstimation transaction", transaction);
   try {
     const gasEstimation = await api.estimateGas({
       ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
@@ -274,7 +273,6 @@ async function getGasEstimation(
 
     return new BigNumber(gasEstimation.toString());
   } catch (e) {
-    console.error("getGasEstimation error", e);
     log("error", "EVM Family: Gas Estimation Error", e);
     throw new GasEstimationError();
   }
