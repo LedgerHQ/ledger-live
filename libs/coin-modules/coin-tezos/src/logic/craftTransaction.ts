@@ -11,7 +11,13 @@ export type TransactionFee = {
   gasLimit?: string;
   storageLimit?: string;
 };
-export type TransactionType = "OUT" | "DELEGATE" | "UNDELEGATE";
+export type TransactionType =
+  | "OUT"
+  | "DELEGATE"
+  | "UNDELEGATE"
+  | "STAKE"
+  | "UNSTAKE"
+  | "FINALIZE_UNSTAKE";
 
 export async function craftTransaction(
   account: {
@@ -19,7 +25,14 @@ export async function craftTransaction(
     counter?: number;
   },
   transaction: {
-    type: "send" | "delegate" | "undelegate" | "send_token";
+    type:
+      | "send"
+      | "delegate"
+      | "undelegate"
+      | "send_token"
+      | "stake"
+      | "unstake"
+      | "finalize_unstake";
     recipient: string;
     amount: bigint;
     fee: TransactionFee;
@@ -161,6 +174,26 @@ export async function craftTransaction(
         kind: OpKind.DELEGATION,
         source: address,
         counter: (counter + 1).toString(),
+        ...transactionFees,
+      });
+      break;
+    }
+    case "stake":
+    case "unstake":
+    case "finalize_unstake": {
+      const typeMap = {
+        stake: "STAKE",
+        unstake: "UNSTAKE",
+        finalize_unstake: "FINALIZE_UNSTAKE",
+      } as const;
+      type = typeMap[transaction.type];
+      contents.push({
+        kind: OpKind.TRANSACTION,
+        amount: transaction.type === "finalize_unstake" ? "0" : transaction.amount.toString(),
+        destination: address,
+        source: address,
+        counter: (counter + 1 + contents.length).toString(),
+        parameters: { entrypoint: transaction.type, value: { prim: "Unit" } },
         ...transactionFees,
       });
       break;
