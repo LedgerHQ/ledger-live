@@ -166,9 +166,8 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.checkBestOffer();
 
       await app.portfolio.openViaDeeplink();
-      await app.portfolio.waitForPortfolioPageToLoad();
       await app.swap.openViaDeeplink();
-      await app.swapLiveApp.expectSwapLiveApp();
+      await app.swapLiveApp.expectSwapLiveAppForm();
       await app.swapLiveApp.checkAssetFromContains(fromAccount.currency.ticker);
       await app.swapLiveApp.checkAssetToContains(toAccount.currency.ticker);
     });

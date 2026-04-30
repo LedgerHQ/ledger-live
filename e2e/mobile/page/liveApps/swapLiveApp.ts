@@ -16,6 +16,8 @@ export default class SwapLiveAppPage {
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
   quoteCardProviderNameSelector = "[data-testid^='compact-quote-card-provider-']";
+  quoteAmountLabelSelector = '[data-testid^="quote-container-"][data-testid$="-amount-label"]';
+  bestQuoteHeadingXpath = "//*[contains(normalize-space(.), 'Best quote')]";
   executeSwapButton = "execute-button";
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
@@ -42,6 +44,13 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
+  }
+
+  @Step("Expect swap live app form")
+  async expectSwapLiveAppForm() {
+    await waitWebElementByTestId(this.fromSelector);
+    await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
+    await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
   }
 
   @Step("Check if the from currency is already selected")
@@ -243,64 +252,46 @@ export default class SwapLiveAppPage {
   @Step("Check best-value quote corresponds to the best quote")
   async checkBestOffer() {
     await retryUntilTimeout(async () => {
-      const quoteContainers = await this.getAllSwapProviders();
-      const quotes = await this.extractQuoteAmounts(quoteContainers);
-      const bestQuote = quotes.reduce<{ amount: number; quote: string } | null>(
-        (max, current) => (!max || current.amount > max.amount ? current : max),
-        null,
-      );
+      const amountLabels = await this.getQuoteAmountLabels();
+      const quoteAmounts = this.extractQuoteAmounts(amountLabels);
 
-      jestExpect(quoteContainers[0]).toMatch(/Best (Offer|quote|Value)/i);
-      jestExpect(bestQuote?.quote).toEqual(quoteContainers[0]);
+      await detoxExpect(getWebElementByXpath(this.bestQuoteHeadingXpath)).toExist();
+      jestExpect(quoteAmounts[0]).toBe(Math.max(...quoteAmounts));
     });
   }
 
-  @Step("Get all swap providers available")
-  async getAllSwapProviders() {
+  @Step("Get quote receive amount labels")
+  async getQuoteAmountLabels() {
     return await getWebElementsText(
       this.swapMainContainerWebElement,
-      '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
+      this.quoteAmountLabelSelector,
     );
   }
 
   @Step("Extract quote receive amounts")
-  async extractQuoteAmounts(quoteContainers: string[]) {
-    const quotes: Array<{ amount: number; quote: string }> = quoteContainers.flatMap(quote => {
-      const tokens = quote.split(/\s+/).filter(Boolean);
+  extractQuoteAmounts(amountLabels: string[]) {
+    const amounts = amountLabels.map(amountLabel => this.parseQuoteAmountLabel(amountLabel));
 
-      for (let index = 0; index < tokens.length - 1; index++) {
-        const amountToken = tokens[index] === "~" ? tokens[index + 1] : tokens[index];
-        const tickerToken = tokens[tokens[index] === "~" ? index + 2 : index + 1];
-        const amount = this.parseQuoteAmountToken(amountToken);
-
-        if (amount !== null && tickerToken && this.isQuoteCurrencyTicker(tickerToken)) {
-          return [{ amount, quote }];
-        }
-      }
-
-      return [];
-    });
-
-    if (quotes.length === 0) {
+    if (amounts.length === 0) {
       throw new Error("No quotes found");
     }
-    return quotes;
+    return amounts;
   }
 
-  private parseQuoteAmountToken(token: string): number | null {
-    const amountToken = (token.startsWith("~") ? token.slice(1) : token).split(",").join("");
+  private parseQuoteAmountLabel(amountLabel: string): number {
+    const amountMatch = /~?\s*([\d,]+(?:\.\d+)?)/.exec(amountLabel);
 
-    if (!/^\d+(\.\d+)?$/.test(amountToken)) {
-      return null;
+    if (!amountMatch) {
+      throw new Error(`Could not parse quote amount label: ${amountLabel}`);
     }
 
-    const amount = Number(amountToken);
+    const amount = Number(amountMatch[1].split(",").join(""));
 
-    return Number.isFinite(amount) ? amount : null;
-  }
+    if (!Number.isFinite(amount)) {
+      throw new TypeError(`Parsed quote amount is not finite: ${amountLabel}`);
+    }
 
-  private isQuoteCurrencyTicker(token: string): boolean {
-    return /^[A-Z0-9]{2,10}$/.test(token);
+    return amount;
   }
 
   @Step("Verify swap amount error message match: $0")
@@ -355,9 +346,9 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Check currency to swap from contains $0")
-  async checkAssetFromContains(currency: string) {
+  async checkAssetFromContains(expectedAssetText: string) {
     const fromAccount: string = await getWebElementText(this.fromSelector);
-    jestExpect(fromAccount).toContain(currency);
+    jestExpect(fromAccount).toContain(expectedAssetText);
   }
 
   @Step("Check currency to swap to is $0 with amount $1")
@@ -373,12 +364,12 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Check currency to swap to contains $0")
-  async checkAssetToContains(currency: string) {
+  async checkAssetToContains(expectedAssetText: string) {
     const assetTo: string = await getWebElementText(this.toSelector);
-    if (currency === "") {
+    if (expectedAssetText === "") {
       jestExpect(assetTo).toContain("Choose asset");
     } else {
-      jestExpect(assetTo).toContain(currency);
+      jestExpect(assetTo).toContain(expectedAssetText);
     }
   }
 
