@@ -309,6 +309,7 @@
     "src/wallet-api/Exchange/server.ts",
     "src/wallet-api/LiveAppModal/registry.ts",
     "src/wallet-api/LiveAppModal/server.ts",
+    "src/wallet-api/LiveAppModal/slice.ts",
     "src/wallet-api/LiveAppModal/types.ts",
     "src/wallet-api/LiveAppModal/url.ts",
     "src/wallet-api/Perps/server.ts",

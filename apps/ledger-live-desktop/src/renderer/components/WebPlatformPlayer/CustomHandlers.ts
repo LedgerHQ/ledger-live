@@ -19,6 +19,7 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
+import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -175,26 +176,8 @@ export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]
     return {
       ...liveAppModalHandlers({
         uiHooks: {
-          "custom.liveApp.modal.open": ({
-            requestId,
-            manifestId,
-            path,
-            title,
-            description,
-            size,
-            useCase,
-          }) => {
-            dispatch(
-              setLiveAppModal({
-                requestId,
-                manifestId: manifestId || manifest.id,
-                path,
-                title,
-                description,
-                size,
-                useCase,
-              }),
-            );
+          "custom.liveApp.modal.open": input => {
+            dispatch(setLiveAppModal(resolveLiveAppModalParams(input, manifest.id)));
           },
         },
       }),

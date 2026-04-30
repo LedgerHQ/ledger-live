@@ -39,7 +39,7 @@ export const handlers = ({ uiHooks }: { uiHooks: LiveAppModalUiHooks }) =>
   ({
     "custom.liveApp.modal.open": customWrapper<LiveAppModalOpenParams, LiveAppModalOpenResult>(
       async params => {
-        if (!params || !params.path) {
+        if (!params?.path) {
           throw new ServerError(createUnknownError({ message: "path is required" }));
         }
         const { requestId, promise } = registry.createRequest({ payload: params.payload });
@@ -74,7 +74,7 @@ export const handlers = ({ uiHooks }: { uiHooks: LiveAppModalUiHooks }) =>
       LiveAppModalGetInitialPayloadParams,
       LiveAppModalGetInitialPayloadResult
     >(async params => {
-      if (!params || !params.requestId) {
+      if (!params?.requestId) {
         throw new ServerError(createUnknownError({ message: "requestId is required" }));
       }
       const payload = registry.getPayload(params.requestId);
@@ -82,7 +82,7 @@ export const handlers = ({ uiHooks }: { uiHooks: LiveAppModalUiHooks }) =>
     }),
     "custom.liveApp.modal.close": customWrapper<LiveAppModalCloseParams, LiveAppModalCloseResult>(
       async params => {
-        if (!params || !params.requestId) {
+        if (!params?.requestId) {
           throw new ServerError(createUnknownError({ message: "requestId is required" }));
         }
         registry.close(params.requestId, params.result);

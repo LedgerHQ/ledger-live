@@ -140,9 +140,7 @@ const LiveAppModalContent = ({
         onClose={onClose}
       />
       <DialogBody className="flex min-h-0 grow flex-col p-0">
-        {!manifest ? (
-          <NetworkErrorScreen refresh={updateManifests} type="warning" />
-        ) : (
+        {manifest ? (
           <Web3AppWebview
             manifest={manifest}
             customHandlers={customHandlers}
@@ -161,6 +159,8 @@ const LiveAppModalContent = ({
               goToURL,
             }}
           />
+        ) : (
+          <NetworkErrorScreen refresh={updateManifests} type="warning" />
         )}
       </DialogBody>
     </>

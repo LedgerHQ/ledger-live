@@ -32,6 +32,34 @@ export type LiveAppModalCloseParams = {
 
 export type LiveAppModalCloseResult = void;
 
+export type LiveAppModalParams = {
+  requestId: string;
+  manifestId: string;
+  path: string;
+  title?: string;
+  description?: string;
+  size?: LiveAppModalSize;
+  useCase?: LiveAppModalUseCase;
+};
+
+export type LiveAppModalState = LiveAppModalParams | null;
+
+export function resolveLiveAppModalParams(
+  input: LiveAppModalOpenParams & { requestId: string },
+  fallbackManifestId: string,
+): LiveAppModalParams {
+  const { requestId, manifestId, path, title, description, size, useCase } = input;
+  return {
+    requestId,
+    manifestId: manifestId || fallbackManifestId,
+    path,
+    title,
+    description,
+    size,
+    useCase,
+  };
+}
+
 export class LiveAppModalAlreadyOpenError extends Error {
   constructor() {
     super("A live-app modal is already open");
