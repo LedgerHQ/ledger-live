@@ -40,11 +40,7 @@ describe("Swap - Revoke token approval", () => {
     await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
     await app.swap.revokeTokenApproval(fromAccount, provider);
 
-    const remaining = await isTokenAllowanceSufficientCommand(
-      fromAccount,
-      provider.contractAddress!,
-      "0.000001",
-    );
-    expect(remaining).toBe(0);
+    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
+    expect(remaining).toBe("0");
   });
 });
