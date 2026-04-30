@@ -59,13 +59,6 @@ export const useMainTabBarViewModel = ({
   const activeRouteName = state.routes[state.index].name;
   const { t } = useTranslation();
 
-  // React Navigation mutates route.state on tab focus/blur (popToTopOnBlur),
-  // which gives state.routes a new reference on every tab switch. Key this
-  // memo on a primitive of the route names so tabItems stays referentially
-  // stable — required so MainTabBarView can pass a stable children array to
-  // Lumen's <TabBar> (see MainTabBarView.tsx for the matching rationale).
-  const routeNamesKey = state.routes.map(r => r.name).join("|");
-
   const tabItems: readonly TabItemConfig[] = useMemo(
     () =>
       state.routes.map(route => ({
@@ -74,8 +67,7 @@ export const useMainTabBarViewModel = ({
         testID: TAB_TEST_IDS[route.name],
         ...TAB_ICONS[route.name],
       })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [routeNamesKey, t],
+    [state.routes, t],
   );
 
   const navigateToTab = useCallback(
