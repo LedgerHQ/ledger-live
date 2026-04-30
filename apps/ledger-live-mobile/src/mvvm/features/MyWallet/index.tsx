@@ -14,10 +14,13 @@ export function MyWalletScreen() {
   return (
     <Box style={{ flex: 1 }}>
       <TrackScreen category="My Wallet" />
-      <Box lx={{ paddingHorizontal: "s16", gap: "s24", paddingTop: "s24" }}>
-        <ProfileSection />
-        <QuickActionsRow />
+      <Box lx={{ paddingHorizontal: "s16", gap: "s24", paddingTop: "s16" }}>
+        <Box lx={{ alignItems: "center", gap: "s48" }}>
+          <ProfileSection />
+          <QuickActionsRow />
+        </Box>
       </Box>
+      {/* temporary hide the new UI until it's ready */}
       {shouldDisplayMyWallet ? (
         <Box lx={{ paddingTop: "s24" }} style={{ flex: 1 }}>
           <MyLedgerSection />
