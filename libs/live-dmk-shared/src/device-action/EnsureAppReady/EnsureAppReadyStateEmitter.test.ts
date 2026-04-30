@@ -65,11 +65,13 @@ function createHarness() {
     next: jest.fn((state: EnsureAppReadyState) => emittedStates.push(state)),
   };
   const getCurrentDeviceState = jest.fn(() => makeSessionState());
+  const retry = jest.fn();
   const emitter = new EnsureAppReadyStateEmitter({
     observer,
     appName,
     deprecationDismissedCurrencyNames,
     getCurrentDeviceState,
+    retry,
   });
 
   return {
@@ -77,6 +79,7 @@ function createHarness() {
     emitter,
     getCurrentDeviceState,
     observer,
+    retry,
   };
 }
 
@@ -147,6 +150,7 @@ describe("EnsureAppReadyStateEmitter", () => {
         appName,
         getCurrentDeviceState: harness.getCurrentDeviceState,
         latestInstallPlan: installPlan,
+        retry: harness.retry,
       });
     });
   });
@@ -172,6 +176,7 @@ describe("EnsureAppReadyStateEmitter", () => {
         appName,
         getCurrentDeviceState: harness.getCurrentDeviceState,
         latestInstallPlan: null,
+        retry: harness.retry,
       });
       expect(harness.emittedStates).toEqual([mappedState]);
     });
@@ -191,6 +196,7 @@ describe("EnsureAppReadyStateEmitter", () => {
         appName,
         getCurrentDeviceState: harness.getCurrentDeviceState,
         latestInstallPlan: null,
+        retry: harness.retry,
       });
       expect(harness.observer.next).not.toHaveBeenCalled();
     });

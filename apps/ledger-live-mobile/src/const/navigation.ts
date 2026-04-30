@@ -40,6 +40,8 @@ export enum ScreenName {
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
   DebugDeviceIntentExecutor = "DebugDeviceIntentExecutor",
+  DebugDeviceIntentExecutorInitialization = "DebugDeviceIntentExecutorInitialization",
+  DebugDeviceIntentExecutorOrchestration = "DebugDeviceIntentExecutorOrchestration",
   DebugQueuedDrawers = "DebugQueuedDrawers",
   DebugQueuedDrawerScreen0 = "DebugQueuedDrawerScreen0",
   DebugQueuedDrawerScreen1 = "DebugQueuedDrawerScreen1",

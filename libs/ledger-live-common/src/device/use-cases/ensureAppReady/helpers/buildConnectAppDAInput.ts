@@ -85,8 +85,16 @@ export function buildConnectAppDeviceActionInput(params: {
   ensureAppReadyInput: EnsureAppReadyInput;
   getMinVersion: GetMinVersion;
   getDeprecationConfig: GetDeprecationConfig;
+  unlockTimeout: number;
 }): ConnectAppDAInput {
-  const { dmk, sessionId, ensureAppReadyInput, getMinVersion, getDeprecationConfig } = params;
+  const {
+    dmk,
+    sessionId,
+    ensureAppReadyInput,
+    getMinVersion,
+    getDeprecationConfig,
+    unlockTimeout,
+  } = params;
 
   return {
     application: appNameToDependency(ensureAppReadyInput.appName, getMinVersion),
@@ -95,7 +103,7 @@ export function buildConnectAppDeviceActionInput(params: {
     ),
     requireLatestFirmware: ensureAppReadyInput.requireLatestFirmware,
     allowMissingApplication: ensureAppReadyInput.allowPartialDependencies,
-    unlockTimeout: 0,
+    unlockTimeout,
     requiredDerivation: createRequiredDerivation({
       dmk,
       sessionId,

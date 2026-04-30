@@ -40,6 +40,7 @@ export {
   BlockingStateType,
   DeviceInteractionRequiredType,
   FinalStateType,
+  isRetryableState,
   LoadingStateType,
   RetryableStateType,
 } from "./device-action/EnsureAppReady/state";

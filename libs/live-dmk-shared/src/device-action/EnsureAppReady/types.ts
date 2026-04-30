@@ -29,6 +29,7 @@ export type EnsureAppReadyDAInput = {
   deprecationDismissedCurrencyNames: string[];
   connectAppDeviceAction: ConnectAppDeviceActionExecutor;
   observer: StateEmitter;
+  retry: () => void;
   additionalSnapshotHandlers: ConnectAppDASnapshotHandler[];
 };
 

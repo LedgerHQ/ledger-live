@@ -1,23 +1,12 @@
-import isEqual from "lodash/isEqual";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
-import {
-  ConnectAppDeviceAction,
-  EnsureAppReadyDeviceAction,
-  FinalStateType,
-  type EnsureAppReadyState,
-} from "@ledgerhq/live-dmk-shared";
+import { type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { log } from "@ledgerhq/logs";
-import { Observable, tap, distinctUntilChanged } from "rxjs";
+import { Observable, tap } from "rxjs";
 import { getDeprecationConfig, getMinVersion, shouldUpgrade } from "../../../apps";
-import {
-  buildConnectAppDeviceActionInput,
-  type GetDeprecationConfig,
-  type GetMinVersion,
-} from "./helpers/buildConnectAppDAInput";
-import { buildFinalState } from "./helpers/buildFinalState";
-import { ConnectAppSideEffectsHandler } from "./helpers/ConnectAppSideEffectsHandler";
+import { type GetDeprecationConfig, type GetMinVersion } from "./helpers/buildConnectAppDAInput";
 import type { ConnectAppInitSideEffects, EnsureAppReadyInput } from "./types";
+import { withRetryableRepeat } from "./helpers/withRetryableRepeat";
+import { runEnsureAppReadyAttempt } from "./helpers/runEnsureAppReadyAttempt";
 
 export type EnsureAppReadyUseCaseDependencies = {
   getMinVersion: GetMinVersion;
@@ -41,18 +30,31 @@ const defaultDependencies: EnsureAppReadyUseCaseDependencies = {
 };
 
 /**
- * How to use this use case:
- * - the UI starts it in a useEffect.
- * - it consumes all the emitted states and puts them in a local state
- * - it displays the state.
- * - if the state is "type": "done", it gets the extracted context and calls the onSuccess callback.
- * - on error and completion, it does not do anything.
- *     -> TBD: not sure about error, but normally ALL errors should be emitted inside a EnsureAppReadyState
+ * Drives the "make a Ledger app ready" flow for the UI.
+ *
+ * Connects to the device through the given session, opens (or installs) the requested
+ * app and dependencies, and resolves any blocking situation along the way — unlocking the device,
+ * allowing the secure connection, deprecation or upgrade warnings, etc. The whole
+ * flow is exposed as a stream of states the UI just has to render.
+ *
+ * Typical UI usage:
+ * - start the use case from a `useEffect`;
+ * - subscribe and store each emitted state in local state, then render it;
+ * - on a `Success` state, read `state.extractedContext` and call `onSuccess`;
+ * - on a retryable state, render a retry button wired to `state.retry()`;
+ * - completion and observable errors don't need any handling: every meaningful failure
+ *   is emitted as a state (`Error` or one of the blocking states) before the observable
+ *   completes.
+ *
+ * @param params - Device session, target app, side effects to fire during the flow, and
+ *   optional overrides for the dependencies the use case relies on.
+ * @returns An observable of UI states. It completes once the flow ends in a non-retryable
+ *   state (`Success`, `Error`, or any blocking state).
  */
 export function ensureAppReadyUseCase(
   params: EnsureAppReadyUseCaseParams,
 ): Observable<EnsureAppReadyState> {
-  const { dmk, sessionId, input } = params;
+  const { input, sessionId } = params;
   const dependencies = {
     ...defaultDependencies,
     ...params.dependencies,
@@ -60,76 +62,13 @@ export function ensureAppReadyUseCase(
 
   log("[EnsureAppReadyUseCase]", "called with", { input, sessionId });
 
-  return new Observable<EnsureAppReadyState>(observer => {
-    const connectAppInput = buildConnectAppDeviceActionInput({
-      dmk,
-      sessionId,
-      ensureAppReadyInput: input,
-      getMinVersion: dependencies.getMinVersion,
-      getDeprecationConfig: dependencies.getDeprecationConfig,
-    });
-    log("[EnsureAppReadyUseCase]", "connectAppInput", { connectAppInput });
-    const connectAppDeviceAction = new ConnectAppDeviceAction({
-      input: connectAppInput,
-    });
-    const connectedDevice = dmk.getConnectedDevice({ sessionId });
-
-    const deviceAction = new EnsureAppReadyDeviceAction({
-      input: {
-        appName: input.appName,
-        deprecation: input.deprecation,
-        deprecationDismissedCurrencyNames: params.deprecationDismissedCurrencyNames,
-        connectAppDeviceAction,
-        observer,
-        additionalSnapshotHandlers: [
-          new ConnectAppSideEffectsHandler({
-            sideEffects: params.sideEffects,
-            deviceModelId: connectedDevice.modelId,
-          }),
-        ],
-      },
-      dependencies: {
-        shouldUpgrade: dependencies.shouldUpgrade,
-        buildFinalState: ({ deviceMetadata, currentApp, derivation }) =>
-          buildFinalState({
-            expectedAccount: input.expectedAccount,
-            deviceMetadata,
-            currentApp,
-            derivation,
-          }),
-      },
-    });
-
-    const execution = dmk.executeDeviceAction({
-      sessionId,
-      deviceAction,
-    });
-
-    const subscription = execution.observable.subscribe({
-      next: state => {
-        // Note: this can only happen with an unexpected error.
-        if (state.status === DeviceActionStatus.Error) {
-          log("[EnsureAppReadyUseCase]", "error state emitted", { state });
-          observer.next({
-            type: FinalStateType.Error,
-            error: state.error,
-          });
-        }
-      },
-      error: error => {
-        log("[EnsureAppReadyUseCase]", "error emitted", { error });
-        observer.error(error);
-      },
-      complete: () => observer.complete(),
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      execution.cancel();
-    };
-  }).pipe(
-    // deduplicate states
-    distinctUntilChanged(isEqual),
+  return withRetryableRepeat(retry =>
+    runEnsureAppReadyAttempt({
+      ...params,
+      dependencies,
+      retry,
+    }),
+  ).pipe(
     tap((state: EnsureAppReadyState) => {
       log("[EnsureAppReadyUseCase]", "next state", { state });
     }),

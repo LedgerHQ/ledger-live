@@ -214,6 +214,7 @@ function createHarness(params: {
   const buildFinalState = jest.fn(() => successState);
   const shouldUpgrade = jest.fn(() => false);
   const getCurrentDeviceState = jest.fn(() => sessionState);
+  const retry = jest.fn();
   const connectAppDeviceAction = makeConnectAppDeviceActionMock({
     failure: params.connectAppFailure,
     states: params.connectAppStates ?? [makePending(UserInteractionRequired.None), makeCompleted()],
@@ -225,6 +226,7 @@ function createHarness(params: {
     deprecationDismissedCurrencyNames: [],
     connectAppDeviceAction: connectAppDeviceAction.deviceAction,
     observer,
+    retry,
     additionalSnapshotHandlers: [snapshotHandler],
   };
 
@@ -264,6 +266,7 @@ function createHarness(params: {
     actionStates,
     emittedStates,
     observer,
+    retry,
     shouldUpgrade,
     snapshotHandler,
   };
@@ -282,6 +285,7 @@ function makeActionInput(overrides: Partial<EnsureAppReadyDAInput> = {}): Ensure
     observer: {
       next: jest.fn(),
     },
+    retry: jest.fn(),
     additionalSnapshotHandlers: [],
     ...overrides,
   };
