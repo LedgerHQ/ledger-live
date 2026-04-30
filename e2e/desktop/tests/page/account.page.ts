@@ -135,9 +135,7 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName), {
-      timeout: 30000,
-    });
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName));
     await expect(this.settingsButton).toBeVisible();
   }
 
@@ -215,14 +213,12 @@ export class AccountPage extends AppPage {
     const pattern = fallbackName
       ? this.accountHeaderNamePattern(headerName, fallbackName)
       : this.accountHeaderNamePattern(headerName);
-    await expect(this.accountName).toHaveValue(pattern, { timeout: 30000 });
+    await expect(this.accountName).toHaveValue(pattern);
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName), {
-      timeout: 30000,
-    });
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName));
   }
 
   @step("Check account chart is visible")

@@ -76,14 +76,11 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Check if Ledger Sync entry controls exist")
   async expectSyncAccountsButtonExist() {
     await expect
-      .poll(
-        async () => {
-          const hasContinue = await this.continueButton.isVisible();
-          const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton.isVisible();
-          return hasContinue || hasAlreadyTurnedOn;
-        },
-        { timeout: 30000 },
-      )
+      .poll(async () => {
+        const hasContinue = await this.continueButton.isVisible();
+        const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton.isVisible();
+        return hasContinue || hasAlreadyTurnedOn;
+      })
       .toBe(true);
   }
 
