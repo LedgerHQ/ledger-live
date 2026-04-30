@@ -126,7 +126,12 @@ describe("Session.addDescriptors", () => {
   });
 
   it("skips already-known descriptors", () => {
-    const existing = [{ label: "bitcoin-native-1", descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h" }];
+    const existing = [
+      {
+        label: "bitcoin-native-1",
+        descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h",
+      },
+    ];
     const session = Session.from(existing);
     const added = session.addDescriptors([btcNative]);
     expect(added).toBe(0);
@@ -134,7 +139,12 @@ describe("Session.addDescriptors", () => {
   });
 
   it("never removes existing entries", () => {
-    const existing = [{ label: "bitcoin-native-1", descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h" }];
+    const existing = [
+      {
+        label: "bitcoin-native-1",
+        descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h",
+      },
+    ];
     const session = Session.from(existing);
     session.addDescriptors([]);
     expect(session.accounts).toHaveLength(1);
@@ -142,7 +152,12 @@ describe("Session.addDescriptors", () => {
   });
 
   it("increments label counter to avoid collision with existing", () => {
-    const existing = [{ label: "bitcoin-native-1", descriptor: "account:1:utxo:bitcoin:main:xpubOTHER:m/84h/0h/0h" }];
+    const existing = [
+      {
+        label: "bitcoin-native-1",
+        descriptor: "account:1:utxo:bitcoin:main:xpubOTHER:m/84h/0h/0h",
+      },
+    ];
     const session = Session.from(existing);
     session.addDescriptors([btcNative]);
     expect(session.accounts).toHaveLength(2);

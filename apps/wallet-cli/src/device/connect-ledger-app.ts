@@ -10,8 +10,8 @@ import {
 import { EmptyError, lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";
 import { walletCliDebug } from "../shared/log";
-import { writeStderr } from "../shared/ui";
-import { toWalletCliDeviceError } from "./wallet-cli-device-error";
+import type { DeviceState } from "./device-state";
+import { WalletCliDeviceError } from "./wallet-cli-device-error";
 
 type ConnectAppState = DeviceActionState<
   ConnectAppDAOutput,
@@ -20,26 +20,28 @@ type ConnectAppState = DeviceActionState<
 >;
 
 /**
- * Unlike Live's connectApp (unlockTimeout: 0), the CLI uses a positive timeout so users can
- * unlock the device after starting a command.
+ * Default unlock timeout: how long ConnectApp waits for the user to unlock the device
+ * before giving up. Overridable per-call via the `deviceTimeoutMs` option (CLI flag
+ * `--device-timeout`).
  */
-const CONNECT_APP_UNLOCK_TIMEOUT_MS = 60_000;
+export const DEFAULT_DEVICE_TIMEOUT_MS = 60_000;
 
 /**
- * Abort ConnectApp if it makes no progress. RxJS `timeout()` alone is insufficient when DMK/USB work
- * blocks without scheduling timers; we call `executeDeviceAction().cancel()` on a wall-clock timer (same
- * pattern as Live unsubscribing from the device action).
+ * Silence timeout: abort the device action if it makes no progress at all (e.g. USB is
+ * dead before any APDU comes back). Always >= deviceTimeoutMs + buffer.
  */
-const CONNECT_APP_SILENCE_TIMEOUT_MS = CONNECT_APP_UNLOCK_TIMEOUT_MS + 60_000;
+const SILENCE_TIMEOUT_EXTRA_MS = 60_000;
 
 /**
- * When the device is locked inside an app (e.g. Ethereum), the DMK's `waitForDeviceUnlock` polling
- * may receive an unparseable APDU response (`ReceiverApduError`) instead of error code 5515.
- * The polling misidentifies this as "unlocked" and the action fails immediately.
+ * When the device is locked inside an app (e.g. Ethereum), the DMK's `waitForDeviceUnlock`
+ * polling may receive an unparseable APDU response (`ReceiverApduError`) instead of error
+ * code 5515. The polling misidentifies this as "unlocked" and the action fails immediately.
  * We retry the whole device action so the user has time to unlock.
  */
 const MAX_TRANSPORT_ERROR_RETRIES = 5;
 const TRANSPORT_ERROR_RETRY_DELAY_MS = 3_000;
+
+const RETRIABLE_TRANSPORT_TAGS = new Set(["ReceiverApduError", "UnknownDeviceExchangeError"]);
 
 function summarizeConnectAppError(error: ConnectAppDAError): Record<string, unknown> {
   if (error instanceof Error) {
@@ -48,33 +50,12 @@ function summarizeConnectAppError(error: ConnectAppDAError): Record<string, unkn
   if (typeof error === "object" && error !== null) {
     const o = error as unknown as Record<string, unknown>;
     const summary: Record<string, unknown> = {};
-    if ("_tag" in o) {
-      summary._tag = o._tag;
-    }
-    if ("errorCode" in o) {
-      summary.errorCode = o.errorCode;
-    }
+    if ("_tag" in o) summary._tag = o._tag;
+    if ("errorCode" in o) summary.errorCode = o.errorCode;
     return summary;
   }
   return { value: String(error) };
 }
-
-function toError(error: ConnectAppDAError): Error {
-  if (error instanceof Error) {
-    return toWalletCliDeviceError(error);
-  }
-  if ("_tag" in error && error._tag === "SendApduTimeoutError") {
-    return toWalletCliDeviceError(error);
-  }
-  if (isTransportFramingError(error)) {
-    return toWalletCliDeviceError(error);
-  }
-  const tag = "_tag" in error ? error._tag : "UnknownError";
-  const code = "errorCode" in error ? ` (${error.errorCode})` : "";
-  return new Error(`${tag}${code}`);
-}
-
-const RETRIABLE_TRANSPORT_TAGS = new Set(["ReceiverApduError", "UnknownDeviceExchangeError"]);
 
 function isTransportFramingError(error: ConnectAppDAError): boolean {
   return (
@@ -85,16 +66,33 @@ function isTransportFramingError(error: ConnectAppDAError): boolean {
   );
 }
 
+export type ConnectLedgerAppOptions = {
+  /** Observer invoked for each intermediate device-state transition (unlock, approve open). */
+  onStateChange?: (state: DeviceState) => void;
+  /** Max time to wait for the device to be unlocked. Defaults to DEFAULT_DEVICE_TIMEOUT_MS. */
+  deviceTimeoutMs?: number;
+};
+
 /**
- * Open the Ledger Manager app by name on an existing DMK USB session (same device action as Live LDk connectApp).
+ * Open the Ledger Manager app by name on an existing DMK USB session (same device action
+ * as Live LDk connectApp). Emits intermediate `DeviceState`s via `options.onStateChange`
+ * and throws `WalletCliDeviceError` for every failure path.
  */
 export async function connectLedgerApp(
   dmk: DeviceManagementKit,
   sessionId: string,
   managerAppName: string,
+  options: ConnectLedgerAppOptions = {},
 ): Promise<void> {
+  const deviceTimeoutMs = options.deviceTimeoutMs ?? DEFAULT_DEVICE_TIMEOUT_MS;
+  const silenceTimeoutMs = deviceTimeoutMs + SILENCE_TIMEOUT_EXTRA_MS;
+
   for (let attempt = 0; ; attempt++) {
-    const result = await connectLedgerAppOnce(dmk, sessionId, managerAppName);
+    const result = await connectLedgerAppOnce(dmk, sessionId, managerAppName, {
+      onStateChange: options.onStateChange,
+      deviceTimeoutMs,
+      silenceTimeoutMs,
+    });
     if (!result) return;
 
     if (isTransportFramingError(result) && attempt < MAX_TRANSPORT_ERROR_RETRIES) {
@@ -107,7 +105,7 @@ export async function connectLedgerApp(
       continue;
     }
 
-    throw toError(result);
+    throw WalletCliDeviceError.fromUnknown(result, { expectedApp: managerAppName });
   }
 }
 
@@ -119,6 +117,15 @@ async function connectLedgerAppOnce(
   dmk: DeviceManagementKit,
   sessionId: string,
   managerAppName: string,
+  {
+    onStateChange,
+    deviceTimeoutMs,
+    silenceTimeoutMs,
+  }: {
+    onStateChange?: (state: DeviceState) => void;
+    deviceTimeoutMs: number;
+    silenceTimeoutMs: number;
+  },
 ): Promise<ConnectAppDAError | undefined> {
   const deviceAction = new ConnectAppDeviceAction({
     input: {
@@ -126,7 +133,7 @@ async function connectLedgerAppOnce(
       dependencies: [],
       requireLatestFirmware: false,
       allowMissingApplication: false,
-      unlockTimeout: CONNECT_APP_UNLOCK_TIMEOUT_MS,
+      unlockTimeout: deviceTimeoutMs,
     },
   });
 
@@ -134,16 +141,14 @@ async function connectLedgerAppOnce(
   const { observable, cancel } = dmk.executeDeviceAction({ sessionId, deviceAction });
   const stallTimer = globalThis.setTimeout(() => {
     cancel();
-  }, CONNECT_APP_SILENCE_TIMEOUT_MS);
+  }, silenceTimeoutMs);
 
   let lastRequiredInteraction: ConnectAppDARequiredInteraction | undefined;
   try {
     finalState = await lastValueFrom(
       observable.pipe(
         tap((state: ConnectAppState) => {
-          if (state.status !== DeviceActionStatus.Pending) {
-            return;
-          }
+          if (state.status !== DeviceActionStatus.Pending) return;
           const r = state.intermediateValue?.requiredUserInteraction;
           if (r == null || r === UserInteractionRequired.None || r === lastRequiredInteraction) {
             return;
@@ -155,27 +160,19 @@ async function connectLedgerAppOnce(
             managerAppName,
           );
 
-          // Write user-visible messages to stderr
           if (r === UserInteractionRequired.UnlockDevice) {
-            writeStderr(
-              `[~] Waiting: Ledger detected but locked. Enter your PIN on the device.\n`,
-            );
+            onStateChange?.({ code: "awaiting_approval", reason: "unlock" });
           } else if (r === UserInteractionRequired.ConfirmOpenApp) {
-            writeStderr(
-              `[i] Opening ${managerAppName} app on your Ledger... ACTION REQUIRED: Confirm on device screen.\n`,
-            );
+            onStateChange?.({ code: "awaiting_approval", reason: "open_app" });
           }
         }),
       ),
     );
   } catch (e) {
     if (e instanceof EmptyError) {
-      throw new Error(
-        `[x] Error: Ledger device not detected. Plug in your Ledger via USB, enter your PIN, then run the command again.`,
-        { cause: e },
-      );
+      throw new WalletCliDeviceError({ code: "disconnected" }, { cause: e });
     }
-    throw toWalletCliDeviceError(e);
+    throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
   } finally {
     globalThis.clearTimeout(stallTimer);
   }
@@ -196,7 +193,10 @@ async function connectLedgerAppOnce(
     );
   }
   if (finalState.status !== DeviceActionStatus.Completed) {
-    throw new Error(`Connect app ended with status: ${finalState.status}`);
+    throw new WalletCliDeviceError({
+      code: "unknown",
+      cause: new Error(`Connect app ended with status: ${finalState.status}`),
+    });
   }
   return undefined;
 }

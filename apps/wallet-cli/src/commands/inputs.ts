@@ -1,5 +1,6 @@
 import { option } from "@bunli/core";
 import { z } from "zod";
+import { DEFAULT_DEVICE_TIMEOUT_MS } from "../device/connect-ledger-app";
 import { OutputFormatSchema, parseAccountDescriptor } from "../wallet/models";
 import type { AccountDescriptor } from "../wallet/models";
 import { parseV1 } from "../shared/accountDescriptor";
@@ -7,12 +8,33 @@ import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { Session } from "../session/session-store";
 
 export const accountOption = option(z.string().min(1).optional(), {
-  description: "Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.",
+  description:
+    "Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.",
   short: "a",
 });
 
-export const outputOption = option(OutputFormatSchema.default("human"), {
-  description: "Output format: human (default) or json",
+/**
+ * Shared --output option used by all commands. If omitted, the CLI keeps
+ * human-readable output.
+ */
+export const outputOption = option(OutputFormatSchema.optional(), {
+  description: "Output format: human or json (default: human)",
+});
+
+export function resolveOutputFormat(
+  output: z.infer<typeof OutputFormatSchema> | undefined,
+): z.infer<typeof OutputFormatSchema> {
+  return output ?? "human";
+}
+
+/**
+ * Shared --device-timeout option for every command that requires the device. Overrides the
+ * time (ms) ConnectApp waits for the user to unlock / confirm before giving up.
+ * Keep the literal Zod default in sync with DEFAULT_DEVICE_TIMEOUT_MS so Bunli can generate
+ * the concrete numeric default in command metadata.
+ */
+export const deviceTimeoutOption = option(z.coerce.number().int().positive().default(60_000), {
+  description: `Max time (ms) to wait for the device to unlock / confirm. Default: ${DEFAULT_DEVICE_TIMEOUT_MS}.`,
 });
 
 export function resolveAccountArg(

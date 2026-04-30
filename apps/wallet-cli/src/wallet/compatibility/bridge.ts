@@ -130,9 +130,7 @@ export class BridgeAdapter {
     options: SendOptions,
   ): Observable<SendEvent> {
     return new Observable(subscriber => {
-      this.executeSend(descriptor, intent, options, subscriber).catch(err =>
-        subscriber.error(err),
-      );
+      this.executeSend(descriptor, intent, options, subscriber).catch(err => subscriber.error(err));
     });
   }
 
