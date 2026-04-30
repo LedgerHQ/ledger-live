@@ -1,20 +1,18 @@
 import { ThemeProvider, Divider } from "@ledgerhq/lumen-ui-react";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { TOOLS } from "./tools.config";
-import { useDevToolsNavigation } from "./hooks";
-import { useDevToolsStorage } from "./hooks/useDevToolsStorage.web";
-import { Sidebar, ToolShell, Overview } from "./components";
+import { Sidebar, ToolShell, Overview } from "../components";
+import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
 
 type ColorScheme = "light" | "dark" | "system";
 
-interface DevToolsProps {
-  colorScheme?: ColorScheme;
-}
-
-export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
-  const { activeTool, setActiveToolId, clearActiveTool, categories } = useDevToolsNavigation(TOOLS);
-  const { recentToolIds } = useDevToolsStorage(activeTool?.id, setActiveToolId);
-
+function DevToolsView({
+  colorScheme,
+  categories,
+  activeTool,
+  recentToolIds,
+  onSelectTool,
+  onClearTool,
+}: DevToolsViewProps) {
   return (
     <ThemeProvider themes={ledgerLiveThemes} colorScheme={colorScheme}>
       <div data-testid="devtools" className="flex flex-col h-full bg-canvas text-base">
@@ -27,8 +25,8 @@ export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
           <Sidebar
             categories={categories}
             activeToolId={activeTool?.id}
-            onSelectTool={setActiveToolId}
-            onHome={clearActiveTool}
+            onSelectTool={onSelectTool}
+            onHome={onClearTool}
           />
 
           <Divider orientation="vertical" />
@@ -38,12 +36,12 @@ export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
             className="flex flex-col flex-1 min-w-0 overflow-auto bg-canvas"
           >
             {activeTool ? (
-              <ToolShell tool={activeTool} onBack={clearActiveTool} />
+              <ToolShell tool={activeTool} onBack={onClearTool} />
             ) : (
               <Overview
                 categories={categories}
                 recentToolIds={recentToolIds}
-                onSelect={setActiveToolId}
+                onSelect={onSelectTool}
                 data-testid="devtools-empty"
               />
             )}
@@ -52,4 +50,12 @@ export const DevTools = ({ colorScheme = "system" }: DevToolsProps) => {
       </div>
     </ThemeProvider>
   );
-};
+}
+
+interface DevToolsProps {
+  colorScheme?: ColorScheme;
+}
+
+export const DevTools = ({ colorScheme }: DevToolsProps) => (
+  <DevToolsView {...useDevToolsViewModel({ colorScheme })} />
+);

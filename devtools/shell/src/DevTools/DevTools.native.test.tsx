@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { DevTools } from "../DevTools.native";
+import { DevTools } from "./DevTools.native";
 
 describe("DevTools (native)", () => {
   it("renders the shell", () => {

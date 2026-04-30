@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
-import { ToolShell } from "../../components/ToolShell.web";
+import { ToolShell } from "./ToolShell.web";
 import { Category } from "../../types";
 
 const baseTool = {

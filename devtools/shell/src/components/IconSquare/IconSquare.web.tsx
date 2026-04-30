@@ -1,5 +1,5 @@
-import { Category } from "../types";
-import { CATEGORY_ICONS } from "../categoryConfig";
+import { Category } from "../../types";
+import { CATEGORY_ICONS } from "../../categoryConfig";
 
 interface IconSquareProps {
   category: Category;

@@ -1,5 +1,5 @@
 import { render, screen } from "jest/render";
-import { DevTools } from "../DevTools.web";
+import { DevTools } from "./DevTools.web";
 
 beforeEach(() => {
   localStorage.clear();

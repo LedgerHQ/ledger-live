@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
-import { Overview } from "../../components/Overview.web";
+import { Overview } from "./Overview.web";
 import { Category } from "../../types";
 
 const categories = [
