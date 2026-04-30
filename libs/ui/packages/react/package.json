@@ -88,7 +88,13 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/crypto-icons": "2.0.1",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-dropdown-menu": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@tanstack/react-virtual": "catalog:",
