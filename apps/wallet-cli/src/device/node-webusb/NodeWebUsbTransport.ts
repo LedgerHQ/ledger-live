@@ -140,6 +140,11 @@ export class NodeWebUsbTransport implements Transport {
     WebUSBDevice,
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
   >();
+  // Mirrors the values of _deviceConnectionsByWebUsbDevice so that membership
+  // checks (e.g. isConnectionMachineRoutable) are O(1) instead of O(n).
+  private readonly _activeConnectionMachines = new Set<
+    DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
+  >();
   private readonly _deviceConnectionsPendingReconnection = new Set<
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
   >();
@@ -198,8 +203,32 @@ export class NodeWebUsbTransport implements Transport {
   ): boolean {
     return (
       this._deviceConnectionsPendingReconnection.has(machine) ||
-      this._deviceConnectionsByWebUsbDevice.values().some(active => active === machine)
+      this._activeConnectionMachines.has(machine)
     );
+  }
+
+  private setActiveConnection(
+    device: WebUSBDevice,
+    machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+  ): void {
+    this._deviceConnectionsByWebUsbDevice.set(device, machine);
+    this._activeConnectionMachines.add(machine);
+  }
+
+  private deleteActiveConnection(device: WebUSBDevice): void {
+    const machine = this._deviceConnectionsByWebUsbDevice.get(device);
+    if (!machine) {
+      return;
+    }
+    this._deviceConnectionsByWebUsbDevice.delete(device);
+    // The same machine could (in transient states) sit under multiple keys; only
+    // drop the routable flag once no key references it anymore.
+    const stillReferenced = this._deviceConnectionsByWebUsbDevice
+      .values()
+      .some(other => other === machine);
+    if (!stillReferenced) {
+      this._activeConnectionMachines.delete(machine);
+    }
   }
 
   private makeTransportConnectedDevice({
@@ -497,13 +526,12 @@ export class NodeWebUsbTransport implements Transport {
         this._deviceConnectionsByWebUsbDevice.forEach((sm, dev) => {
           if (sm.getDeviceId() === deviceId) {
             this._deviceConnectionsPendingReconnection.add(sm);
-            this._deviceConnectionsByWebUsbDevice.delete(dev);
+            this.deleteActiveConnection(dev);
           }
         });
         this.resumeDiscoveryAfterDisconnect();
       },
       onTerminated: () => {
-        this.resumeDiscoveryAfterDisconnect();
         this._deviceConnectionsPendingReconnection.forEach(sm => {
           if (sm.getDeviceId() === deviceId) {
             this._deviceConnectionsPendingReconnection.delete(sm);
@@ -512,10 +540,11 @@ export class NodeWebUsbTransport implements Transport {
         });
         this._deviceConnectionsByWebUsbDevice.forEach((sm, dev) => {
           if (sm.getDeviceId() === deviceId) {
-            this._deviceConnectionsByWebUsbDevice.delete(dev);
+            this.deleteActiveConnection(dev);
             onDisconnect(sm.getDeviceId());
           }
         });
+        this.resumeDiscoveryAfterDisconnect();
       },
     });
 
@@ -526,7 +555,7 @@ export class NodeWebUsbTransport implements Transport {
       return Left(new OpeningConnectionError(e));
     }
 
-    this._deviceConnectionsByWebUsbDevice.set(row.webUsbDevice, machine);
+    this.setActiveConnection(row.webUsbDevice, machine);
 
     return Right(this.makeTransportConnectedDevice({ row, machine }));
   }
@@ -542,14 +571,7 @@ export class NodeWebUsbTransport implements Transport {
       });
       return Left(new UnknownDeviceError(`Unknown device ${params.connectedDevice.id}`));
     }
-    this._deviceConnectionsByWebUsbDevice.forEach((connection, device) => {
-      if (connection.getDeviceId() === params.connectedDevice.id) {
-        this._deviceConnectionsByWebUsbDevice.delete(device);
-      }
-    });
-    this._deviceConnectionsPendingReconnection.delete(sm);
     sm.closeConnection();
-    void this.updateTransportDiscoveredDevices();
     return Right(undefined);
   }
 
@@ -593,7 +615,7 @@ export class NodeWebUsbTransport implements Transport {
       this._deviceConnectionsPendingReconnection.delete(machine);
       machine.setDependencies({ device: web, interfaceNumber });
       await machine.setupConnection();
-      this._deviceConnectionsByWebUsbDevice.set(web, machine);
+      this.setActiveConnection(web, machine);
       machine.eventDeviceConnected();
     } catch (e) {
       this._logger.error("Error while reconnecting to device", { data: { error: e } });
@@ -613,19 +635,15 @@ export class NodeWebUsbTransport implements Transport {
 
     try {
       const web = await this._platformBindings.createWebUsbDevice(native);
-      const iface = getVendorInterfaceNumber(web);
-      if (iface === null) {
+      if (getVendorInterfaceNumber(web) === null) {
         this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
           data: { vendorId: idVendor, productId: idProduct },
         });
         return;
       }
 
-      const pending = this.findPendingReconnectionMachine(web);
-
-      if (pending) {
-        await this.handleDeviceReconnection(pending, web, iface);
-      }
+      // Reconnection of any pending machines happens inside the rescan via
+      // reconnectPendingMachines(), so the rescan is the single source of truth.
       await this.updateTransportDiscoveredDevices();
     } catch (e) {
       this._logger.error("Error while handling WebUSB connection event", { data: { error: e } });
@@ -636,6 +654,7 @@ export class NodeWebUsbTransport implements Transport {
     this.stopListeningToConnectionEvents();
     this._deviceConnectionsByWebUsbDevice.forEach(sm => sm.closeConnection());
     this._deviceConnectionsPendingReconnection.clear();
+    this._activeConnectionMachines.clear();
   }
 }
 

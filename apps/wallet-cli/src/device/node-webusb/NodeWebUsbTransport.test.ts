@@ -1,13 +1,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import type {
-  ApduReceiverServiceFactory,
-  ApduSenderServiceFactory,
-  DeviceConnectionStateMachine,
-  DeviceConnectionStateMachineParams,
-  DeviceModelDataSource,
-  DeviceId,
-  LoggerPublisherService,
-  TransportConnectedDevice,
+import {
+  DeviceDisconnectedBeforeSendingApdu,
+  type ApduReceiverServiceFactory,
+  type ApduSenderServiceFactory,
+  type DeviceConnectionStateMachine,
+  type DeviceConnectionStateMachineParams,
+  type DeviceModelDataSource,
+  type DeviceId,
+  type LoggerPublisherService,
+  type TransportConnectedDevice,
 } from "@ledgerhq/device-management-kit";
 import { Right } from "purify-ts";
 import type { Subscription } from "rxjs";
@@ -507,16 +508,19 @@ describe("NodeWebUsbTransport", () => {
       onDisconnect: () => {},
     });
 
-    currentDeviceList = [];
     tryToReconnect?.(0);
 
-    await transport.handleDeviceConnection(nativeDevice as never);
-    expect(setupConnectionCalls).toBe(2);
+    await waitFor(() => {
+      expect(setupConnectionCalls).toBe(2);
+    });
     expect(eventDeviceConnectedCalls).toBe(0);
     expect(closeConnectionCalls).toBe(0);
 
-    currentDeviceList = [nativeDevice];
-    await transport.updateTransportDiscoveredDevices();
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      await transport.updateTransportDiscoveredDevices();
+      if (setupConnectionCalls === 3) break;
+      await flushTasks();
+    }
     await waitFor(() => {
       expect(setupConnectionCalls).toBe(3);
       expect(eventDeviceConnectedCalls).toBe(1);
@@ -716,6 +720,7 @@ describe("NodeWebUsbTransport", () => {
           eventDeviceConnected: () => {},
           closeConnection: () => {
             closeConnectionCalls += 1;
+            params.onTerminated();
           },
         }) as unknown as DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
       () => createStubApduSender() as never,
@@ -748,9 +753,12 @@ describe("NodeWebUsbTransport", () => {
       expect(connectedDeviceId).toBeDefined();
     });
 
+    const onDisconnectCalls: DeviceId[] = [];
     const firstConnect = await transport.connect({
       deviceId: connectedDeviceId!,
-      onDisconnect: () => {},
+      onDisconnect: id => {
+        onDisconnectCalls.push(id);
+      },
     });
     let connectedDevice: TransportConnectedDevice | undefined;
     firstConnect.ifRight(device => {
@@ -761,12 +769,302 @@ describe("NodeWebUsbTransport", () => {
 
     await transport.disconnect({ connectedDevice: connectedDevice! });
     expect(closeConnectionCalls).toBe(1);
+    expect(onDisconnectCalls).toEqual([connectedDeviceId!]);
 
     await transport.connect({
       deviceId: connectedDeviceId!,
       onDisconnect: () => {},
     });
     expect(setupConnectionCalls).toBe(2);
+
+    transport.destroy();
+  });
+
+  it("rejects sendApdu with DeviceDisconnectedBeforeSendingApdu after the machine is unrouted", async () => {
+    const nativeDevice = {
+      deviceDescriptor: {
+        idVendor: 0x2c97,
+        idProduct: 0x5011,
+      },
+    };
+    const webUsbDevice = {
+      vendorId: 0x2c97,
+      productId: 0x5011,
+      serialNumber: "ledger-1",
+      configurations: [
+        {
+          interfaces: [
+            {
+              interfaceNumber: 1,
+              alternates: [{ interfaceClass: 255 }],
+            },
+          ],
+        },
+      ],
+    };
+
+    let connectedDeviceId: DeviceId | undefined;
+    let machineSendApduCalls = 0;
+
+    const transport = new NodeWebUsbTransport(
+      {
+        getAllDeviceModels: () => [
+          {
+            id: "nanoSP",
+            productName: "Ledger Nano S Plus",
+            usbProductId: 0x50,
+            bootloaderUsbProductId: 0x5011,
+          },
+        ],
+      } as DeviceModelDataSource,
+      () => createLogger(),
+      (() => {
+        throw new Error("unused apdu sender factory");
+      }) as ApduSenderServiceFactory,
+      (() => {
+        throw new Error("unused apdu receiver factory");
+      }) as ApduReceiverServiceFactory,
+      params =>
+        ({
+          setupConnection: async () => {},
+          sendApdu: async () => {
+            machineSendApduCalls += 1;
+            return Right({
+              data: new Uint8Array(),
+              statusCode: new Uint8Array([0x90, 0x00]),
+            }) as never;
+          },
+          getDeviceId: () => params.deviceId,
+          getDependencies: () => ({
+            device: webUsbDevice as never,
+            interfaceNumber: 1,
+          }),
+          setDependencies: () => {},
+          eventDeviceDisconnected: () => {},
+          eventDeviceConnected: () => {},
+          closeConnection: () => {
+            params.onTerminated();
+          },
+        }) as unknown as DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+      () => createStubApduSender() as never,
+      {
+        platform: "win32",
+        getDeviceList: () => [nativeDevice] as never[],
+        createWebUsbDevice: async () => webUsbDevice as never,
+        usbBindings: {
+          on: () => {},
+          removeListener: () => {},
+          unrefHotplugEvents: () => {},
+        },
+        setInterval: callback => {
+          queueMicrotask(callback);
+          return 0 as unknown as ReturnType<typeof globalThis.setInterval>;
+        },
+        clearInterval: () => {},
+      },
+    );
+
+    const emissions: Array<Array<{ id: string; transport: string }>> = [];
+    subscriptions.push(
+      transport.listenToAvailableDevices().subscribe(devices => {
+        emissions.push(devices.map(device => ({ id: device.id, transport: device.transport })));
+      }),
+    );
+
+    await waitFor(() => {
+      connectedDeviceId = emissions.at(-1)?.[0]?.id;
+      expect(connectedDeviceId).toBeDefined();
+    });
+
+    const connectResult = await transport.connect({
+      deviceId: connectedDeviceId!,
+      onDisconnect: () => {},
+    });
+    let connectedDevice: TransportConnectedDevice | undefined;
+    connectResult.ifRight(device => {
+      connectedDevice = device;
+    });
+    expect(connectedDevice).toBeDefined();
+
+    await transport.disconnect({ connectedDevice: connectedDevice! });
+
+    const callsBefore = machineSendApduCalls;
+    const result = await connectedDevice!.sendApdu(new Uint8Array([0xb0, 0x01]));
+
+    expect(machineSendApduCalls).toBe(callsBefore);
+    let leftError: unknown;
+    result.ifLeft(error => {
+      leftError = error;
+    });
+    expect(leftError).toBeInstanceOf(DeviceDisconnectedBeforeSendingApdu);
+
+    transport.destroy();
+  });
+
+  it("isolates onDisconnect callbacks and APDU routing per connected device", async () => {
+    const nativeDeviceA = {
+      deviceDescriptor: {
+        idVendor: 0x2c97,
+        idProduct: 0x5011,
+      },
+    };
+    const nativeDeviceB = {
+      deviceDescriptor: {
+        idVendor: 0x2c97,
+        idProduct: 0x5011,
+      },
+    };
+    const webUsbDeviceA = {
+      vendorId: 0x2c97,
+      productId: 0x5011,
+      serialNumber: "ledger-A",
+      configurations: [
+        {
+          interfaces: [
+            {
+              interfaceNumber: 1,
+              alternates: [{ interfaceClass: 255 }],
+            },
+          ],
+        },
+      ],
+    };
+    const webUsbDeviceB = {
+      vendorId: 0x2c97,
+      productId: 0x5011,
+      serialNumber: "ledger-B",
+      configurations: [
+        {
+          interfaces: [
+            {
+              interfaceNumber: 1,
+              alternates: [{ interfaceClass: 255 }],
+            },
+          ],
+        },
+      ],
+    };
+
+    const nativeToWeb = new Map<unknown, unknown>([
+      [nativeDeviceA, webUsbDeviceA],
+      [nativeDeviceB, webUsbDeviceB],
+    ]);
+
+    const machineSendApduCounts = new Map<DeviceId, number>();
+
+    const transport = new NodeWebUsbTransport(
+      {
+        getAllDeviceModels: () => [
+          {
+            id: "nanoSP",
+            productName: "Ledger Nano S Plus",
+            usbProductId: 0x50,
+            bootloaderUsbProductId: 0x5011,
+          },
+        ],
+      } as DeviceModelDataSource,
+      () => createLogger(),
+      (() => {
+        throw new Error("unused apdu sender factory");
+      }) as ApduSenderServiceFactory,
+      (() => {
+        throw new Error("unused apdu receiver factory");
+      }) as ApduReceiverServiceFactory,
+      params => {
+        let dependencies: NodeWebUsbApduSenderDependencies = {
+          device: webUsbDeviceA as never,
+          interfaceNumber: 1,
+        };
+        return {
+          setupConnection: async () => {},
+          sendApdu: async () => {
+            machineSendApduCounts.set(
+              params.deviceId,
+              (machineSendApduCounts.get(params.deviceId) ?? 0) + 1,
+            );
+            return Right({
+              data: new Uint8Array(),
+              statusCode: new Uint8Array([0x90, 0x00]),
+            }) as never;
+          },
+          getDeviceId: () => params.deviceId,
+          getDependencies: () => dependencies,
+          setDependencies: (next: NodeWebUsbApduSenderDependencies) => {
+            dependencies = next;
+          },
+          eventDeviceDisconnected: () => {},
+          eventDeviceConnected: () => {},
+          closeConnection: () => {
+            params.onTerminated();
+          },
+        } as unknown as DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>;
+      },
+      () => createStubApduSender() as never,
+      {
+        platform: "linux",
+        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
+        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
+        usbBindings: {
+          on: () => {},
+          removeListener: () => {},
+          unrefHotplugEvents: () => {},
+        },
+        setInterval: callback => {
+          queueMicrotask(callback);
+          return 0 as unknown as ReturnType<typeof globalThis.setInterval>;
+        },
+        clearInterval: () => {},
+      },
+    );
+
+    const emissions: Array<Array<{ id: string; transport: string }>> = [];
+    subscriptions.push(
+      transport.listenToAvailableDevices().subscribe(devices => {
+        emissions.push(devices.map(device => ({ id: device.id, transport: device.transport })));
+      }),
+    );
+
+    let deviceIdA: DeviceId | undefined;
+    let deviceIdB: DeviceId | undefined;
+    await waitFor(() => {
+      const last = emissions.at(-1) ?? [];
+      expect(last).toHaveLength(2);
+      [deviceIdA, deviceIdB] = [last[0]!.id, last[1]!.id];
+    });
+
+    const onDisconnectA: DeviceId[] = [];
+    const onDisconnectB: DeviceId[] = [];
+
+    const connectA = await transport.connect({
+      deviceId: deviceIdA!,
+      onDisconnect: id => onDisconnectA.push(id),
+    });
+    let connectedA: TransportConnectedDevice | undefined;
+    connectA.ifRight(d => {
+      connectedA = d;
+    });
+
+    const connectB = await transport.connect({
+      deviceId: deviceIdB!,
+      onDisconnect: id => onDisconnectB.push(id),
+    });
+    let connectedB: TransportConnectedDevice | undefined;
+    connectB.ifRight(d => {
+      connectedB = d;
+    });
+
+    expect(connectedA).toBeDefined();
+    expect(connectedB).toBeDefined();
+
+    await transport.disconnect({ connectedDevice: connectedA! });
+
+    expect(onDisconnectA).toEqual([deviceIdA!]);
+    expect(onDisconnectB).toEqual([]);
+
+    const apduOnB = await connectedB!.sendApdu(new Uint8Array([0xb0, 0x01]));
+    expect(apduOnB.isRight()).toBe(true);
+    expect(machineSendApduCounts.get(deviceIdB!)).toBe(1);
+    expect(machineSendApduCounts.get(deviceIdA!) ?? 0).toBe(0);
 
     transport.destroy();
   });
