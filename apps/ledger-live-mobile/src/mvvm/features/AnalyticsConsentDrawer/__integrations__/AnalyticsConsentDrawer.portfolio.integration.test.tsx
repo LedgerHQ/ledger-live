@@ -97,6 +97,14 @@ const overridePortfolioWithPrivacySheet = composePortfolioOverrides({
 });
 
 describe("AnalyticsConsentDrawer on Portfolio", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe("needs fresh consent", () => {
     it("should opt in and close the drawer when the user taps Accept all on the fresh consent sheet", async () => {
       const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
@@ -114,6 +122,53 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       expect(store.getState().settings.analyticsEnabled).toBe(true);
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
     });
+
+    it.each([
+      {
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: false,
+      },
+      {
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: false,
+      },
+      {
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: true,
+      },
+      {
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+      },
+    ])(
+      "should track the consent drawer page as mandatory telemetry when consent is $analyticsEnabled/$personalizedRecommendationsEnabled",
+      async ({ analyticsEnabled, personalizedRecommendationsEnabled }) => {
+        renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled,
+            personalizedRecommendationsEnabled,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        await waitFor(() => {
+          expect(analytics.screen).toHaveBeenCalledWith(
+            "AnalyticsConsentDrawer",
+            "Analytics consent",
+            expect.objectContaining({
+              type: "drawer",
+            }),
+            true,
+            false,
+            false,
+            true,
+          );
+        });
+      },
+    );
 
     it("should opt out and close the drawer when the user taps Refuse all on the fresh consent sheet", async () => {
       const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
@@ -146,35 +201,41 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         expect(screen.queryByText("Help us improve Ledger")).toBeNull();
       });
       expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+      expect(analytics.screen).toHaveBeenCalledWith(
+        "Analytics preferences settings",
+        "Set preferences",
+        {},
+        true,
+        true,
+        false,
+        true,
+      );
     });
 
     it("should return to Portfolio after Set preferences and Confirm with toggles left off", async () => {
-      const updateIdentifySpy = jest.spyOn(analytics, "updateIdentify").mockResolvedValue(undefined);
-      try {
-        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-          overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
-        });
+      jest.spyOn(analytics, "updateIdentify").mockResolvedValue(undefined);
 
-        await screen.findByTestId("PortfolioEmptyList");
-        await screen.findByText("Help us improve Ledger");
+      const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+        overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
+      });
 
-        await user.press(screen.getByText("Set preferences"));
+      await screen.findByTestId("PortfolioEmptyList");
+      await screen.findByText("Help us improve Ledger");
 
-        expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+      await user.press(screen.getByText("Set preferences"));
 
-        await user.press(screen.getByRole("button", { name: "Confirm" }));
+      expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
 
-        await waitFor(() => {
-          expect(screen.queryByTestId("analytics-preferences-screen-title")).toBeNull();
-        });
-        expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
+      await user.press(screen.getByRole("button", { name: "Confirm" }));
 
-        expect(store.getState().settings.analyticsEnabled).toBe(false);
-        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
-        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-      } finally {
-        updateIdentifySpy.mockRestore();
-      }
+      await waitFor(() => {
+        expect(screen.queryByTestId("analytics-preferences-screen-title")).toBeNull();
+      });
+      expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
+
+      expect(store.getState().settings.analyticsEnabled).toBe(false);
+      expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
     });
   });
 

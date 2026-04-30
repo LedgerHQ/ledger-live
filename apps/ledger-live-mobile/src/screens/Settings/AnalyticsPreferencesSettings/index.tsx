@@ -8,7 +8,12 @@ import {
   analyticsEnabledSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
-import { setAnalytics, setAnalyticsConsentInfo, setHasSeenAnalyticsOptInPrompt, setPersonalizedRecommendations } from "~/actions/settings";
+import {
+  setAnalytics,
+  setAnalyticsConsentInfo,
+  setHasSeenAnalyticsOptInPrompt,
+  setPersonalizedRecommendations,
+} from "~/actions/settings";
 import { ScreenName } from "~/const";
 import { TrackScreen, track, updateIdentify } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -19,7 +24,10 @@ import { ConsentFooter } from "LLM/features/AnalyticsConsentDrawer/components/Co
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 
-type Props = StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.AnalyticsPreferencesSettings>;
+type Props = StackNavigatorProps<
+  SettingsNavigatorStackParamList,
+  ScreenName.AnalyticsPreferencesSettings
+>;
 
 export default function AnalyticsPreferencesSettings({ navigation, route }: Props) {
   const { t } = useTranslation();
@@ -81,7 +89,7 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
 
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <TrackScreen category="Analytics preferences settings" name="Set preferences" />
+      <TrackScreen category="Analytics preferences settings" name="Set preferences" mandatory />
       <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s12" }}>
         <Text
           typography="heading3SemiBold"
