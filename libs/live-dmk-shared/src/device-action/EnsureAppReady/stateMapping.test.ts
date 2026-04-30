@@ -5,6 +5,7 @@ import type {
   InstallPlan,
 } from "@ledgerhq/device-management-kit";
 import {
+  AlreadySendingApduError,
   DeviceActionStatus,
   DeviceExchangeError,
   DeviceLockedError,
@@ -580,6 +581,32 @@ describe("mapConnectAppDAErrorStatus", () => {
     // THEN
     expect(result).toEqual({
       type: RetryableStateType.DeviceLocked,
+      retry,
+    });
+  });
+
+  it("GIVEN an already-sending-apdu error WHEN it is mapped THEN it returns a retryable busy state", () => {
+    // GIVEN
+    const err = new AlreadySendingApduError();
+    // eslint-disable-next-line no-console
+    console.log(
+      "AlreadySendingApduError debug",
+      err instanceof AlreadySendingApduError,
+      AlreadySendingApduError.toString(),
+    );
+
+    // WHEN
+    const result = mapConnectAppDAErrorStatus({
+      state: makeErrored(err as unknown as ConnectAppDAError),
+      appName,
+      getCurrentDeviceState: jest.fn(() => makeSessionState()),
+      latestInstallPlan: null,
+      retry,
+    });
+
+    // THEN
+    expect(result).toEqual({
+      type: RetryableStateType.DeviceBusy,
       retry,
     });
   });

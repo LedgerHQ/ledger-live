@@ -10,6 +10,11 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import TranslatedError from "~/components/TranslatedError";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "~/components/DeviceAction/Screen/DeviceDeprecationScreen";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 type DeviceContextInitializerComponentLWMViewProps = {
   state: EnsureAppReadyState;
@@ -52,6 +57,7 @@ function getEnsureAppReadyStateCategory(state: EnsureAppReadyState): string {
 
     case RetryableStateType.UserRefusedOnDevice:
     case RetryableStateType.DeviceLocked:
+    case RetryableStateType.DeviceBusy:
       return "Retryable";
 
     case BlockingStateType.UnsupportedFirmwareVersion:
@@ -106,6 +112,17 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
           <Button appearance="base" size="sm" onPress={state.onContinue}>
             Continue
           </Button>
+          <DeviceDeprecationScreen
+            coinName={state.decision.currencyName}
+            date={state.decision.supportEndDate}
+            onContinue={state.onContinue}
+            productName={getDeviceModel(state.decision.deviceModelId).productName}
+            screenName={
+              state.decision.screenSequence.includes("warning")
+                ? DeviceDeprecationScreens.warningScreen
+                : DeviceDeprecationScreens.clearSigningScreen
+            }
+          />
         </>
       );
 
@@ -139,6 +156,16 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
         </>
       );
 
+    case RetryableStateType.DeviceBusy:
+      return (
+        <>
+          <MutedText>Device busy, finish the action on the device</MutedText>
+          <Button appearance="base" size="sm" onPress={state.retry}>
+            Retry
+          </Button>
+        </>
+      );
+
     case BlockingStateType.UnsupportedFirmwareVersion:
       return (
         <>
@@ -165,6 +192,13 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
           <MutedText>Device deprecated blocking for {state.decision.currencyName}</MutedText>
           <MutedText>Device model: {state.decision.deviceModelId}</MutedText>
           <MutedText>Support end date: {formatDate(state.decision.supportEndDate)}</MutedText>
+          <DeviceDeprecationScreen
+            coinName={state.decision.currencyName}
+            date={state.decision.supportEndDate}
+            onContinue={() => {}}
+            productName={getDeviceModel(state.decision.deviceModelId).productName}
+            screenName={DeviceDeprecationScreens.errorScreen}
+          />
         </>
       );
 

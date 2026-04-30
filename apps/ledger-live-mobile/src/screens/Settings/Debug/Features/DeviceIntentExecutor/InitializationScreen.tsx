@@ -6,10 +6,14 @@ import {
   type ExecutorState,
 } from "@ledgerhq/device-intent";
 import { Text, Flex, Button, SelectableList } from "@ledgerhq/native-ui";
+import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 import { initializationEchoIntentLWMDefinition } from "./intents/initializationEchoIntent/intentLWMDefinition";
 import type { InitializationEchoIntentJobState } from "./intents/initializationEchoIntent/types";
 import { INITIALIZATION_SCENARIOS } from "./initializationScenarios";
+
+const SCENARIO_PICKER_SNAP_POINTS = ["90%"];
 
 const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
@@ -25,12 +29,22 @@ export default function DebugDeviceIntentExecutorInitialization() {
   );
   const [jobCompleted, setJobCompleted] = useState(false);
   const [jobError, setJobError] = useState<unknown>(null);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const selectedScenario =
     INITIALIZATION_SCENARIOS.find(scenario => scenario.id === selectedScenarioId) ??
     INITIALIZATION_SCENARIOS[0];
 
   const intent = useMemo(() => createIntent(initializationEchoIntentLWMDefinition), [runId]);
+
+  const openPicker = useCallback(() => {
+    if (enabled) return;
+    setIsPickerOpen(true);
+  }, [enabled]);
+
+  const closePicker = useCallback(() => {
+    setIsPickerOpen(false);
+  }, []);
 
   const selectScenario = useCallback(
     (scenarioId: string) => {
@@ -40,6 +54,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
       setLatestJobState(null);
       setJobCompleted(false);
       setJobError(null);
+      setIsPickerOpen(false);
     },
     [enabled],
   );
@@ -86,82 +101,119 @@ export default function DebugDeviceIntentExecutorInitialization() {
     [handleUserCancel, intent, selectedScenario],
   );
 
+  console.log("[DIE] executor props", { executorProps });
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Flex p={3} backgroundColor="primary.c10" borderRadius={8} mb={4}>
-        <Text variant="subtitle" mb={2}>
-          DIE Initialization Playground
-        </Text>
-        <Text variant="small" color="neutral.c70">
-          Runs the real initializer and then a single echo intent that prints the extracted device
-          context received by the job.
-        </Text>
-      </Flex>
-
-      <Flex mb={4}>
-        <Text variant="subtitle" mb={2}>
-          Scenarios
-        </Text>
-        <SelectableList currentValue={selectedScenario.id} onChange={selectScenario}>
-          {INITIALIZATION_SCENARIOS.map(scenario => (
-            <SelectableList.Element key={scenario.id} value={scenario.id} disabled={enabled}>
-              <Flex>
-                <Text variant="body" fontWeight="semiBold" mb={1}>
-                  {scenario.title}
-                </Text>
-                <Text variant="small" color="neutral.c70">
-                  {scenario.description}
-                </Text>
-              </Flex>
-            </SelectableList.Element>
-          ))}
-        </SelectableList>
-      </Flex>
-
-      <Flex p={3} backgroundColor="neutral.c20" borderRadius={8} mb={4}>
-        <Text variant="subtitle" mb={2}>
-          Selected Scenario
-        </Text>
-        <Text variant="body" mb={1}>
-          {selectedScenario.title}
-        </Text>
-        <Text variant="small" color="neutral.c70" mb={3}>
-          {selectedScenario.description}
-        </Text>
-        <StateRow label="Executor" value={executorState?.type ?? "-"} />
-        <StateRow label="Job completed" value={jobCompleted ? "YES" : "no"} />
-        <StateRow label="Job error" value={formatError(jobError)} />
-        <Text variant="small" color="neutral.c70" mt={3} mb={1}>
-          Initializer config
-        </Text>
-        <Text variant="small" fontFamily="monospace" color="neutral.c70" mb={3}>
-          {selectedScenario.initializerConfigSummary}
-        </Text>
-        <Text variant="small" color="neutral.c70" mb={1}>
-          Initialization input
-        </Text>
-        <Text variant="small" fontFamily="monospace" color="neutral.c70">
-          {JSON.stringify(selectedScenario.input, null, 2)}
-        </Text>
-      </Flex>
-
-      {latestJobState ? (
-        <Flex p={3} backgroundColor="neutral.c20" borderRadius={8} mb={4}>
+    <>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <Flex p={3} backgroundColor="primary.c10" borderRadius={8} mb={4}>
           <Text variant="subtitle" mb={2}>
-            Latest Echo Job State
+            DIE Initialization Playground
           </Text>
-          <Text variant="small" fontFamily="monospace" color="neutral.c70">
-            {JSON.stringify(latestJobState, null, 2)}
+          <Text variant="small" color="neutral.c70" mb={2}>
+            This playground runs the real Device Intent Executor initializer (connect → open app →
+            optional derivation → optional deprecation checks), and then runs a single
+            &quot;echo&quot; intent that simply prints the device context the job received once
+            initialization succeeded.
+          </Text>
+          <Text variant="small" color="neutral.c70">
+            Each scenario defines two things: an <Text fontWeight="semiBold">input</Text> (which app
+            to open, derivation path, deprecation flow, expected account…) and optionally an{" "}
+            <Text fontWeight="semiBold">injected initializer configuration</Text> (e.g. a forced
+            minimum app version, or a custom device deprecation config) used to exercise edge cases
+            without touching the real backend.
           </Text>
         </Flex>
-      ) : null}
 
-      <Button type={enabled ? "error" : "main"} mb={4} onPress={enabled ? stop : start}>
-        {enabled ? "Stop Initialization" : "Start Initialization"}
-      </Button>
+        <Flex p={3} backgroundColor="neutral.c20" borderRadius={8} mb={4}>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+            columnGap={3}
+          >
+            <Text variant="subtitle" flexShrink={1}>
+              Selected Scenario
+            </Text>
+            <Button type="shade" size="small" onPress={openPicker} disabled={enabled}>
+              Change
+            </Button>
+          </Flex>
+          <Text variant="body" mb={1}>
+            {selectedScenario.title}
+          </Text>
+          <Text variant="small" color="neutral.c70" mb={2}>
+            {selectedScenario.description}
+          </Text>
+          <SummaryBox label="Input" value={selectedScenario.inputSummary} />
+          <SummaryBox
+            label="Initializer config"
+            value={selectedScenario.initializerConfigSummary}
+            mt={2}
+          />
+          <Flex mt={3}>
+            <StateRow label="Executor" value={executorState?.type ?? "-"} />
+            <StateRow label="Job completed" value={jobCompleted ? "YES" : "no"} />
+            <StateRow label="Job error" value={formatError(jobError)} />
+          </Flex>
+          <Text variant="small" color="neutral.c70" mt={3} mb={1}>
+            Raw initialization input
+          </Text>
+          <Text variant="small" fontFamily="monospace" color="neutral.c70">
+            {JSON.stringify(selectedScenario.input, null, 2)}
+          </Text>
+        </Flex>
 
-      {enabled ? <DeviceIntentExecutorLWM {...executorProps} /> : null}
-    </ScrollView>
+        {latestJobState ? (
+          <Flex p={3} backgroundColor="neutral.c20" borderRadius={8} mb={4}>
+            <Text variant="subtitle" mb={2}>
+              Latest Echo Job State
+            </Text>
+            <Text variant="small" fontFamily="monospace" color="neutral.c70">
+              {JSON.stringify(latestJobState, null, 2)}
+            </Text>
+          </Flex>
+        ) : null}
+
+        <Button type={enabled ? "error" : "main"} mb={4} onPress={enabled ? stop : start}>
+          {enabled ? "Stop Initialization" : "Start Initialization"}
+        </Button>
+
+        {enabled ? <DeviceIntentExecutorLWM {...executorProps} /> : null}
+      </ScrollView>
+
+      <QueuedDrawerBottomSheet
+        isRequestingToBeOpened={isPickerOpen}
+        onClose={closePicker}
+        snapPoints={SCENARIO_PICKER_SNAP_POINTS}
+        enablePanDownToClose
+      >
+        <BottomSheetHeader title="Choose a scenario" spacing density="expanded" />
+        <BottomSheetScrollView contentContainerStyle={styles.pickerContent}>
+          <SelectableList currentValue={selectedScenario.id} onChange={selectScenario}>
+            {INITIALIZATION_SCENARIOS.map(scenario => (
+              <SelectableList.Element key={scenario.id} value={scenario.id} disabled={enabled}>
+                <Flex flex={1}>
+                  <Text variant="body" fontWeight="semiBold" mb={1}>
+                    {scenario.title}
+                  </Text>
+                  <Text variant="small" color="neutral.c70" mb={2}>
+                    {scenario.description}
+                  </Text>
+                  <SummaryBox label="Input" value={scenario.inputSummary} />
+                  <SummaryBox
+                    label="Initializer config"
+                    value={scenario.initializerConfigSummary}
+                    mt={2}
+                  />
+                </Flex>
+              </SelectableList.Element>
+            ))}
+          </SelectableList>
+        </BottomSheetScrollView>
+      </QueuedDrawerBottomSheet>
+    </>
   );
 }
 
@@ -178,6 +230,19 @@ function StateRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+function SummaryBox({ label, value, mt }: { label: string; value: string; mt?: number }) {
+  return (
+    <Flex p={2} backgroundColor="neutral.c30" borderRadius={4} mt={mt}>
+      <Text variant="tiny" color="neutral.c80" mb={1} fontWeight="semiBold">
+        {label}
+      </Text>
+      <Text variant="small" color="neutral.c100">
+        {value}
+      </Text>
+    </Flex>
+  );
+}
+
 function formatError(error: unknown): string {
   if (!error) return "-";
   return error instanceof Error ? error.message : String(error);
@@ -186,4 +251,5 @@ function formatError(error: unknown): string {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 16 },
+  pickerContent: { paddingBottom: 24 },
 });

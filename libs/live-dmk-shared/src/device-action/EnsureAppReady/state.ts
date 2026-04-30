@@ -9,11 +9,13 @@ export type DeviceExtractedContext = {
   derivedAddress: string | undefined;
 };
 
+/** For all user interactions required in Ledger Wallet to continue the flow */
 export enum AppInteractionRequiredStateType {
   DeviceDeprecatedNonBlocking = "device-deprecated-non-blocking",
   OutdatedAppWarning = "outdated-app-warning",
 }
 
+/** For all user interactions required on the device to continue the flow */
 export enum DeviceInteractionRequiredType {
   ConfirmOpenApp = "confirm-open-app",
   AllowSecureConnection = "allow-secure-connection",
@@ -23,25 +25,42 @@ export enum DeviceInteractionRequiredType {
 /** For all non recoverable errors (job retry won't fix) */
 export enum BlockingStateType {
   /** To map to DeviceDeprecationScreen */
-  DeviceDeprecatedBlocking,
+  DeviceDeprecatedBlocking = "blocking-device-deprecated-blocking",
   /** To map to wording of error.OutOfMemoryDAError */
-  DeviceOutOfStorageSpace,
-  /** To map to wording of error.LatestFirmwareVersionRequired */
-  UnsupportedFirmwareVersion,
-  /** To map to wording of error.NoSuchAppOnProvider */
-  UnsupportedApplication,
-  /** Map to wording of error.UnsupportedFeatureError */
-  UnsupportedFeature,
+  DeviceOutOfStorageSpace = "blocking-device-out-of-storage-space",
+  /**
+   * To use in case the min app version is not in the catalog apps for
+   * the current OS and apps catalog provider, and *THERE IS an OS* update available.
+   * TODO: we should refine this on DMK side to determine between 2 cases:
+   *  - app available on an up-to-date OS -> "must update OS".
+   *  - app not available on an up-to-date OS -> "app satisfying min app version not available".
+   *
+   * To map to wording of error.LatestFirmwareVersionRequired
+   */
+  UnsupportedFirmwareVersion = "blocking-unsupported-firmware-version",
+  /**
+   * To use in case the min app version is not in the catalog apps for
+   * the current OS and apps catalog provider, and *THERE ISN'T AN OS* update available.
+   *
+   * To map to wording of error.NoSuchAppOnProvider
+   */
+  UnsupportedApplication = "blocking-unsupported-application",
+  /**
+   * Same as UnsupportedApplication, but for Nano S.
+   * Map to wording of error.UnsupportedFeatureError
+   */
+  UnsupportedFeature = "blocking-unsupported-feature",
   /** To map to wording of error.WrongDeviceForAccount */
-  WrongDeviceForAccount,
+  WrongDeviceForAccount = "blocking-wrong-device-for-account",
   /** To map to wording of error.DeviceNotOnboarded */
-  DeviceNotOnboarded,
+  DeviceNotOnboarded = "blocking-device-not-onboarded",
 }
 
 /** For all recoverable errors (job retry will fix) */
 export enum RetryableStateType {
   DeviceLocked = "retryable-device-locked",
   UserRefusedOnDevice = "retryable-user-refused-on-device",
+  DeviceBusy = "retryable-device-busy",
 }
 
 export enum LoadingStateType {
@@ -85,6 +104,10 @@ export type EnsureAppReadyState =
       retry: () => void;
     }
   | {
+      type: RetryableStateType.DeviceBusy;
+      retry: () => void;
+    }
+  | {
       type: BlockingStateType.UnsupportedFirmwareVersion;
       updateInfo?: { currentVersion: string; latestVersion: string };
     }
@@ -119,6 +142,7 @@ export function isRetryableState(state: EnsureAppReadyState): boolean {
   switch (state.type) {
     case RetryableStateType.DeviceLocked:
     case RetryableStateType.UserRefusedOnDevice:
+    case RetryableStateType.DeviceBusy:
       return true;
     default:
       return false;
