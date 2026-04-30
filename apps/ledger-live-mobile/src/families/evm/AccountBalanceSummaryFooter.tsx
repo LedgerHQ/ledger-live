@@ -54,23 +54,29 @@ function AccountBalanceSummaryFooter({ account }: Props) {
           title={t("account.availableBalance")}
           onPress={onPressInfoCreator("available")}
           value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
-          isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
+          isLast={
+            configurationDisableDelegation || (delegatedBalance.lte(0) && unbondingBalance.lte(0))
+          }
         />
-        {delegatedBalance.gt(0) && !configurationDisableDelegation && (
-          <InfoItem
-            title={t("account.delegatedAssets")}
-            onPress={onPressInfoCreator("delegated")}
-            value={<CurrencyUnitValue unit={unit} value={delegatedBalance} disableRounding />}
-            isLast={!unbondingBalance.gt(0)}
-          />
-        )}
-        {unbondingBalance.gt(0) && !configurationDisableDelegation && (
-          <InfoItem
-            title={t("account.undelegating")}
-            onPress={onPressInfoCreator("undelegating")}
-            value={<CurrencyUnitValue unit={unit} value={unbondingBalance} disableRounding />}
-            isLast={true}
-          />
+        {!configurationDisableDelegation && (
+          <>
+            {delegatedBalance.gt(0) && (
+              <InfoItem
+                title={t("account.delegatedAssets")}
+                onPress={onPressInfoCreator("delegated")}
+                value={<CurrencyUnitValue unit={unit} value={delegatedBalance} disableRounding />}
+                isLast={unbondingBalance.lte(0)}
+              />
+            )}
+            {unbondingBalance.gt(0) && (
+              <InfoItem
+                title={t("account.undelegating")}
+                onPress={onPressInfoCreator("undelegating")}
+                value={<CurrencyUnitValue unit={unit} value={unbondingBalance} disableRounding />}
+                isLast={true}
+              />
+            )}
+          </>
         )}
       </ScrollView>
     </>

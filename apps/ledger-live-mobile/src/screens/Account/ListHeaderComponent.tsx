@@ -39,7 +39,6 @@ import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
 import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
-import { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 
 type Props = {
   account?: AccountLike;
@@ -159,8 +158,7 @@ export function useListHeaderComponents({
         PolkadotAccount &
         MultiversXAccount &
         HederaAccount &
-        NearAccount &
-        StakingAccount,
+        NearAccount,
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
