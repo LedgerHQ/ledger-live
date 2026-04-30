@@ -1,1 +1,1 @@
-export { DevTools } from "./DevTools.web";
+export { DevTools } from "./DevTools/DevTools.web";

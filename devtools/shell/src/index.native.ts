@@ -1,1 +1,1 @@
-export { DevTools } from "./DevTools.native";
+export { DevTools } from "./DevTools/DevTools.native";
