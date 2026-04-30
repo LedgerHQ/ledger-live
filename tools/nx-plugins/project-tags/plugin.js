@@ -33,20 +33,25 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:features");
   }
 
-  if (projectRoot.startsWith("e2e/")) {
-    tags.add("scope:e2e");
-  }
-
-  if (projectRoot.startsWith("tools/")) {
-    tags.add("scope:tools");
+  if (projectRoot.startsWith("domain/")) {
+    tags.add("scope:domain");
+    if (projectRoot.startsWith("domain/entity/")) {
+      tags.add("type:domain-entity");
+    } else if (projectRoot.startsWith("domain/api/")) {
+      tags.add("type:domain-api");
+    }
   }
 
   if (projectRoot.startsWith("shared/")) {
     tags.add("scope:shared");
   }
 
-  if (projectRoot.startsWith("domain/")) {
-    tags.add("scope:domain");
+  if (projectRoot.startsWith("e2e/")) {
+    tags.add("scope:e2e");
+  }
+
+  if (projectRoot.startsWith("tools/")) {
+    tags.add("scope:tools");
   }
 
   if (!(projectRoot === "apps" || projectRoot.startsWith("apps/"))) {
