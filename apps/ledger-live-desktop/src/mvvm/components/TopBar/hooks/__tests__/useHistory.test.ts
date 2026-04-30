@@ -30,12 +30,11 @@ describe("useHistory", () => {
     mockUseLocation.mockReturnValue(createLocation("/history"));
   });
 
-  it("returns handleHistory, historyIcon, tooltip, and cta", () => {
+  it("returns handleHistory, historyIcon, hasUnread, and cta", () => {
     const { result } = renderHook(() => useHistory());
 
     expect(result.current.handleHistory).toBeDefined();
     expect(result.current.historyIcon).toBe(Clock);
-    expect(result.current.tooltip).toBeDefined();
     expect(result.current.cta).toBeDefined();
   });
 

@@ -11,7 +11,6 @@ export const useHistory = (): {
   handleHistory: () => void;
   historyIcon: typeof Clock;
   hasUnread: boolean;
-  tooltip: string;
   cta: string;
 } => {
   const { t } = useTranslation();
@@ -35,7 +34,6 @@ export const useHistory = (): {
     handleHistory,
     historyIcon: Clock,
     hasUnread,
-    tooltip: t("topBar.history.tooltip"),
     cta: t("topBar.history.cta"),
   };
 };

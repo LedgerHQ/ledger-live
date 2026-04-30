@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { useSettings } from "LLD/components/TopBar/hooks/useSettings";
 import { useNotificationIndicator } from "LLD/components/TopBar/hooks/useNotificationIndicator";
 import type { TopBarAction } from "LLD/components/TopBar/types";
@@ -7,7 +6,6 @@ import { useContextMenuClose } from "../../ContextMenuContext";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 
 const useTopBarViewModel = () => {
-  const { t } = useTranslation();
   const close = useContextMenuClose();
   const {
     handleSettings,
@@ -56,7 +54,6 @@ const useTopBarViewModel = () => {
   };
 
   return {
-    title: t("myWallet.title"),
     settingsAction,
     notificationAction,
   };
