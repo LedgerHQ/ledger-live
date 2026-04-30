@@ -4,12 +4,11 @@ import { TopBarActionButton } from "./TopBarActionButton";
 import { useHistory } from "../hooks/useHistory";
 
 export function HistoryButton() {
-  const { handleHistory, historyIcon, hasUnread, tooltip, cta } = useHistory();
+  const { handleHistory, historyIcon, hasUnread, cta } = useHistory();
 
   const button = (
     <TopBarActionButton
       label="history"
-      tooltip={tooltip}
       icon={historyIcon}
       isInteractive={true}
       onClick={handleHistory}
