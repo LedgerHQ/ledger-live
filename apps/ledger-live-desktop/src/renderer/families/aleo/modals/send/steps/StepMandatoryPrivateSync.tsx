@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { Flex, IconsLegacy, InfiniteLoader } from "@ledgerhq/react-ui";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { useAleoPrivateSync } from "../../../hooks/useAleoPrivateSync";
+import { getAleoCurrencyConfig } from "../../../shared/utils";
 
 const TitleText = styled.p`
   font-size: 20px;
@@ -25,8 +27,18 @@ const ErrorIcon = ({ size }: { size?: number }) => (
   <IconsLegacy.WarningMedium size={size} color="error.c60" />
 );
 
-const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: StepProps) => {
+const StepMandatoryPrivateSync = ({
+  transitionTo,
+  account,
+  parentAccount,
+  updateAccount,
+}: StepProps) => {
   const { t } = useTranslation();
+  const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : null;
+  const config = mainAccount ? getAleoCurrencyConfig(mainAccount.currency) : undefined;
+  const nextStep =
+    !config || config.recordPickingStrategy === "manual" ? "record-picker" : "amount";
+
   const {
     progress,
     isSyncing,
@@ -40,9 +52,9 @@ const StepMandatoryPrivateSync = ({ transitionTo, account, updateAccount }: Step
 
   useEffect(() => {
     if (progress < 100 || isSyncing) return;
-    const timer = setTimeout(() => transitionTo("record-picker"), 500);
+    const timer = setTimeout(() => transitionTo(nextStep), 500);
     return () => clearTimeout(timer);
-  }, [progress, isSyncing, transitionTo]);
+  }, [progress, isSyncing, transitionTo, nextStep]);
 
   if (privateSyncError) {
     return (

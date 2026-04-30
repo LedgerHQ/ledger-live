@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { StepAmountFooter as DefaultStepAmountFooter } from "~/renderer/modals/Send/steps/StepAmount";
 import DefaultStepSummary, {
@@ -15,6 +16,7 @@ import StepRecipientFooter from "./modals/send/steps/StepRecipientFooter";
 import StepMandatoryPrivateSync from "./modals/send/steps/StepMandatoryPrivateSync";
 import StepRecordPicker from "./modals/send/steps/StepRecordPicker";
 import StepRecordPickerFooter from "./modals/send/steps/StepRecordPickerFooter";
+import { getAleoCurrencyConfig } from "./shared/utils";
 import type { St } from "./modals/send/types";
 import type { AleoFamily } from "./types";
 
@@ -58,10 +60,17 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
       label: <Trans i18nKey="send.steps.amount.title" />,
       component: StepAmount,
       footer: DefaultStepAmountFooter,
-      onBack: ({ transitionTo, transaction }) => {
-        if (transaction?.family !== "aleo") return null;
-        const targetStep = isPrivateTransaction(transaction) ? "record-picker" : "recipient";
-        transitionTo(targetStep);
+      onBack: ({ transitionTo, transaction, account, parentAccount }) => {
+        if (transaction?.family !== "aleo") return;
+        if (!isPrivateTransaction(transaction)) {
+          transitionTo("recipient");
+          return;
+        }
+
+        const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : null;
+        const config = mainAccount ? getAleoCurrencyConfig(mainAccount.currency) : undefined;
+        const isManualStrategy = !config || config.recordPickingStrategy === "manual";
+        transitionTo(isManualStrategy ? "record-picker" : "recipient");
       },
     },
     {
