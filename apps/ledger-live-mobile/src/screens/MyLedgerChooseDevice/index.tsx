@@ -150,7 +150,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
-          hasPostOnboardingEntryPointCard
         >
           <ContentCardsLocation
             key="contentCardsLocationMyLedger"

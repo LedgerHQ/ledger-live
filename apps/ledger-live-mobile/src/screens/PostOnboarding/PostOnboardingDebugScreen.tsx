@@ -1,10 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/devices/index";
-import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import PostOnboardingEntryPointCard from "~/components/PostOnboarding/PostOnboardingEntryPointCard";
 import SettingsRow from "~/components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { NavigatorName } from "~/const";
@@ -88,9 +86,6 @@ export default () => {
           desc="Set recover local state to being complete"
           onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)}
         />
-        <Flex m={6}>
-          <PostOnboardingEntryPointCard />
-        </Flex>
       </ScrollView>
     </SafeAreaViewFixed>
   );
