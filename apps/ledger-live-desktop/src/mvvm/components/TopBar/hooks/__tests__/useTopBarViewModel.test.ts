@@ -1,4 +1,4 @@
-import { Clock, Eye, Experiment, Refresh, Settings, Tools } from "@ledgerhq/lumen-ui-react/symbols";
+import { Eye, Experiment, Refresh, Settings, Tools } from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
@@ -8,7 +8,6 @@ import { useDiscreetMode } from "../useDiscreetMode";
 import { useExperimentalFeatures } from "../useExperimentalFeatures";
 import { useFeatureFlags } from "../useFeatureFlags";
 import { useSettings } from "../useSettings";
-import { useHistory } from "../useHistory";
 import type { TopBarSlot } from "../../types";
 
 jest.mock("../useActivityIndicator");
@@ -16,7 +15,6 @@ jest.mock("../useDiscreetMode");
 jest.mock("../useExperimentalFeatures");
 jest.mock("../useFeatureFlags");
 jest.mock("../useSettings");
-jest.mock("../useHistory");
 
 const defaults = {
   discreetMode: { handleDiscreet: jest.fn(), discreetIcon: Eye, tooltip: "Discreet" },
@@ -42,7 +40,6 @@ const defaults = {
     icon: Tools,
     tooltip: "Feature flags",
   },
-  history: { handleHistory: jest.fn(), historyIcon: Clock, tooltip: "History", cta: "History" },
 };
 
 type SetupOptions = {
@@ -79,7 +76,6 @@ const setup = ({
     ...defaults.featureFlags,
     isVisible: featureFlagsVisible,
   });
-  jest.mocked(useHistory).mockReturnValue(defaults.history);
 
   const needsFlags = operationsList || myWallet;
   const initialState = needsFlags
@@ -159,13 +155,11 @@ describe("useTopBarViewModel", () => {
       expect(findSlot(result.current.topBarSlots, "synchronize")?.action.isInteractive).toBe(false);
     });
 
-    it("history slot carries cta text and Clock icon", () => {
+    it("history slot is a dedicated slot type (not an action)", () => {
       const { result } = setup({ operationsList: true });
-      const historySlot = findSlot(result.current.topBarSlots, "history");
+      const historySlot = result.current.topBarSlots.find(s => s.type === "history");
 
-      expect(historySlot?.action.cta).toBe("History");
-      expect(historySlot?.action.icon).toBe(Clock);
-      expect(historySlot?.action.onClick).toBe(defaults.history.handleHistory);
+      expect(historySlot).toBeDefined();
     });
   });
 

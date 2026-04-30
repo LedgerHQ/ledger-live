@@ -11,6 +11,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { UnreadIndicator } from "LLD/components/UnreadIndicator";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {
@@ -23,7 +24,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const handleClick = useCallback(() => onRowClick(row), [onRowClick, row]);
   const item = row.original;
-  const { operation, currency, amount, address, type } = item;
+  const { operation, currency, amount, address, type, isUnread } = item;
 
   const typeLabel = operation.hasFailed
     ? t("operationDetails.failed")
@@ -57,7 +58,12 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
               <CryptoCurrencyIcon currency={currency} size={32} />
             )
           }
-          title={typeLabel}
+          title={
+            <div className="inline-flex items-center gap-12">
+              {typeLabel}
+              {isUnread && <UnreadIndicator />}
+            </div>
+          }
         />
       </TableCell>
       <TableCell align="end" data-testid="history-operation-address">

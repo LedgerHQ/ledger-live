@@ -45,4 +45,54 @@ describe("useHistoryOperations", () => {
     expect(items[0].currency).toBeDefined();
     expect(items[0].amount).toBeDefined();
   });
+
+  describe("isUnread flag", () => {
+    it("is false for all operations when lastSeenOperationDate is null", () => {
+      const accounts = [genAccount("btc-null", { currency: bitcoinCurrency, operationsSize: 3 })];
+
+      const { result } = renderHook(() => useHistoryOperations(), {
+        initialState: {
+          accounts,
+          settings: INITIAL_STATE,
+          history: { lastSeenOperationDate: null },
+        },
+      });
+
+      expect(result.current.length).toBeGreaterThan(0);
+      expect(result.current.every(item => item.isUnread === false)).toBe(true);
+    });
+
+    it("marks all operations as unread when lastSeenOperationDate is in the distant past", () => {
+      const accounts = [genAccount("btc-old", { currency: bitcoinCurrency, operationsSize: 3 })];
+      // epoch = older than any real operation genAccount produces
+      const epoch = new Date(0).toISOString();
+
+      const { result } = renderHook(() => useHistoryOperations(), {
+        initialState: {
+          accounts,
+          settings: INITIAL_STATE,
+          history: { lastSeenOperationDate: epoch },
+        },
+      });
+
+      expect(result.current.length).toBeGreaterThan(0);
+      expect(result.current.every(item => item.isUnread === true)).toBe(true);
+    });
+
+    it("marks no operations as unread when lastSeenOperationDate is in the future", () => {
+      const accounts = [genAccount("btc-future", { currency: bitcoinCurrency, operationsSize: 3 })];
+      const future = new Date("2099-01-01").toISOString();
+
+      const { result } = renderHook(() => useHistoryOperations(), {
+        initialState: {
+          accounts,
+          settings: INITIAL_STATE,
+          history: { lastSeenOperationDate: future },
+        },
+      });
+
+      expect(result.current.length).toBeGreaterThan(0);
+      expect(result.current.every(item => item.isUnread === false)).toBe(true);
+    });
+  });
 });
