@@ -65,7 +65,7 @@ export const NetworkItem = ({
 }: NetworkItemProps) => {
   return (
     <Wrapper onClick={onClick}>
-      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
           data-testid={`network-item-name-${name}`}

@@ -77,7 +77,7 @@
     "storybook-generate": "sb-rn-get-stories"
   },
   "dependencies": {
-    "@ledgerhq/crypto-icons": "2.0.1",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",
