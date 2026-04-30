@@ -221,10 +221,12 @@ const MainAppContent = ({
   shouldDisplayMarketBanner,
   shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
+  shouldDisplayAggregatedAssets,
 }: {
   shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
+  shouldDisplayAggregatedAssets: boolean;
 }) => (
   <>
     <Routes>
@@ -276,7 +278,7 @@ const MainAppContent = ({
         <Route path="/account/:id/*" element={withSuspense(Account)({})} />
         <Route
           path="/asset/*"
-          element={withSuspense(shouldDisplayAssetSection ? AssetDetails : Asset)({})}
+          element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
         />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
         <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
@@ -303,6 +305,7 @@ export const MainAppLayout = () => {
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
+    shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
@@ -340,6 +343,7 @@ export const MainAppLayout = () => {
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
             shouldDisplayAssetSection={shouldDisplayAssetSection}
+            shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
           />
         </div>
       ) : (
@@ -357,6 +361,7 @@ export const MainAppLayout = () => {
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
             shouldDisplayAssetSection={shouldDisplayAssetSection}
+            shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
           />
         </Box>
       )}
