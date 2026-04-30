@@ -1,5 +1,6 @@
 import {
   DeviceConnectionStateMachine,
+  DeviceDisconnectedBeforeSendingApdu,
   DeviceNotRecognizedError,
   LEDGER_VENDOR_ID,
   NoAccessibleDeviceError,
@@ -142,6 +143,10 @@ export class NodeWebUsbTransport implements Transport {
   private readonly _deviceConnectionsPendingReconnection = new Set<
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
   >();
+  private readonly _sendApduQueues = new WeakMap<
+    DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+    Promise<unknown>
+  >();
 
   private readonly _logger: LoggerPublisherService;
   private readonly connectionType = "USB" as const;
@@ -188,6 +193,47 @@ export class NodeWebUsbTransport implements Transport {
     return this._platformBindings.platform === "win32";
   }
 
+  private isConnectionMachineRoutable(
+    machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+  ): boolean {
+    return (
+      this._deviceConnectionsPendingReconnection.has(machine) ||
+      this._deviceConnectionsByWebUsbDevice.values().some(active => active === machine)
+    );
+  }
+
+  private makeTransportConnectedDevice({
+    row,
+    machine,
+  }: {
+    row: WebUsbDiscoveredInternal;
+    machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>;
+  }): TransportConnectedDevice {
+    const deviceId = row.id;
+
+    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = async (...args) => {
+      if (!this.isConnectionMachineRoutable(machine)) {
+        return Left(
+          new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+        );
+      }
+      return machine.sendApdu(...args);
+    };
+
+    return new TransportConnectedDevice({
+      id: deviceId,
+      deviceModel: row.deviceModel,
+      type: this.connectionType,
+      sendApdu: async (...args) => {
+        const previous = this._sendApduQueues.get(machine) ?? Promise.resolve();
+        const queued = previous.catch(() => undefined).then(() => sendApduToMachine(...args));
+        this._sendApduQueues.set(machine, queued.catch(() => undefined));
+        return queued;
+      },
+      transport: this.identifier,
+    });
+  }
+
   private startWindowsDiscoveryPolling(): void {
     if (!this.shouldUseWindowsDiscoveryPolling() || this._discoveryPollInterval !== null) {
       return;
@@ -208,6 +254,11 @@ export class NodeWebUsbTransport implements Transport {
     this._discoveryPollInterval = null;
   }
 
+  private resumeDiscoveryAfterDisconnect(): void {
+    this.startWindowsDiscoveryPolling();
+    void this.updateTransportDiscoveredDevices();
+  }
+
   private getDeviceModel(device: WebUSBDevice): Maybe<TransportDeviceModel> {
     const { productId } = device;
     const model = this._deviceModelDataSource
@@ -221,6 +272,30 @@ export class NodeWebUsbTransport implements Transport {
       Just: m => m.usbProductId,
       Nothing: () => device.productId >> 8,
     });
+  }
+
+  private findPendingReconnectionMachine(
+    web: WebUSBDevice,
+  ): DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies> | undefined {
+    return this._deviceConnectionsPendingReconnection.values().find(sm => {
+      const previousDevice = sm.getDependencies().device;
+      if (previousDevice.serialNumber && web.serialNumber) {
+        return previousDevice.serialNumber === web.serialNumber;
+      }
+
+      return this.getUsbProductIdForMatch(previousDevice) === this.getUsbProductIdForMatch(web);
+    });
+  }
+
+  private async reconnectPendingMachines(scanned: ScannedWebUsbDevice[]): Promise<void> {
+    for (const { device, interfaceNumber } of scanned) {
+      const pending = this.findPendingReconnectionMachine(device);
+      if (!pending) {
+        continue;
+      }
+
+      await this.handleDeviceReconnection(pending, device, interfaceNumber);
+    }
   }
 
   private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
@@ -290,6 +365,7 @@ export class NodeWebUsbTransport implements Transport {
     this._isRefreshingDiscoveredDevices = true;
     try {
       const scanned = await this.scanLedgerWebUsbDevices();
+      await this.reconnectPendingMachines(scanned);
       const next: WebUsbDiscoveredInternal[] = [];
       for (const { device, interfaceNumber } of scanned) {
         try {
@@ -403,15 +479,7 @@ export class NodeWebUsbTransport implements Transport {
 
     const existing = this._deviceConnectionsByWebUsbDevice.get(row.webUsbDevice);
     if (existing) {
-      return Right(
-        new TransportConnectedDevice({
-          id: deviceId,
-          deviceModel: row.deviceModel,
-          type: this.connectionType,
-          sendApdu: (...args) => existing.sendApdu(...args),
-          transport: this.identifier,
-        }),
-      );
+      return Right(this.makeTransportConnectedDevice({ row, machine: existing }));
     }
 
     const apduSender = this._deviceApduSenderFactory({
@@ -425,15 +493,17 @@ export class NodeWebUsbTransport implements Transport {
       deviceId,
       deviceApduSender: apduSender,
       timeoutDuration: RECONNECT_DEVICE_TIMEOUT_MS,
-      tryToReconnect: (_timeoutDuration: number) => {
+      tryToReconnect: () => {
         this._deviceConnectionsByWebUsbDevice.forEach((sm, dev) => {
           if (sm.getDeviceId() === deviceId) {
             this._deviceConnectionsPendingReconnection.add(sm);
             this._deviceConnectionsByWebUsbDevice.delete(dev);
           }
         });
+        this.resumeDiscoveryAfterDisconnect();
       },
       onTerminated: () => {
+        this.resumeDiscoveryAfterDisconnect();
         this._deviceConnectionsPendingReconnection.forEach(sm => {
           if (sm.getDeviceId() === deviceId) {
             this._deviceConnectionsPendingReconnection.delete(sm);
@@ -458,15 +528,7 @@ export class NodeWebUsbTransport implements Transport {
 
     this._deviceConnectionsByWebUsbDevice.set(row.webUsbDevice, machine);
 
-    return Right(
-      new TransportConnectedDevice({
-        sendApdu: machine.sendApdu.bind(machine),
-        deviceModel: row.deviceModel,
-        id: deviceId,
-        type: this.connectionType,
-        transport: this.identifier,
-      }),
-    );
+    return Right(this.makeTransportConnectedDevice({ row, machine }));
   }
 
   async disconnect(params: { connectedDevice: TransportConnectedDevice }) {
@@ -480,7 +542,14 @@ export class NodeWebUsbTransport implements Transport {
       });
       return Left(new UnknownDeviceError(`Unknown device ${params.connectedDevice.id}`));
     }
+    this._deviceConnectionsByWebUsbDevice.forEach((connection, device) => {
+      if (connection.getDeviceId() === params.connectedDevice.id) {
+        this._deviceConnectionsByWebUsbDevice.delete(device);
+      }
+    });
+    this._deviceConnectionsPendingReconnection.delete(sm);
     sm.closeConnection();
+    void this.updateTransportDiscoveredDevices();
     return Right(undefined);
   }
 
@@ -492,7 +561,7 @@ export class NodeWebUsbTransport implements Transport {
     this._logger.info("[handleDeviceDisconnection] Device disconnected (WebUSB)", {
       data: { vendorId: idVendor, productId: idProduct },
     });
-    void this.updateTransportDiscoveredDevices();
+    this.resumeDiscoveryAfterDisconnect();
 
     // Native detach events only expose vendorId/productId — serialNumber is
     // unavailable for a disconnecting device, so same-model disambiguation
@@ -519,6 +588,7 @@ export class NodeWebUsbTransport implements Transport {
     web: WebUSBDevice,
     interfaceNumber: number,
   ): Promise<void> {
+    const previousDependencies = machine.getDependencies();
     try {
       this._deviceConnectionsPendingReconnection.delete(machine);
       machine.setDependencies({ device: web, interfaceNumber });
@@ -527,7 +597,8 @@ export class NodeWebUsbTransport implements Transport {
       machine.eventDeviceConnected();
     } catch (e) {
       this._logger.error("Error while reconnecting to device", { data: { error: e } });
-      machine.closeConnection();
+      machine.setDependencies(previousDependencies);
+      this._deviceConnectionsPendingReconnection.add(machine);
     }
   }
 
@@ -550,13 +621,7 @@ export class NodeWebUsbTransport implements Transport {
         return;
       }
 
-      const pending = this._deviceConnectionsPendingReconnection.values().find(sm => {
-        const prev = sm.getDependencies().device;
-        if (prev.serialNumber && web.serialNumber) {
-          return prev.serialNumber === web.serialNumber;
-        }
-        return this.getUsbProductIdForMatch(prev) === this.getUsbProductIdForMatch(web);
-      });
+      const pending = this.findPendingReconnectionMachine(web);
 
       if (pending) {
         await this.handleDeviceReconnection(pending, web, iface);
