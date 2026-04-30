@@ -29,6 +29,7 @@ import { log } from "@ledgerhq/logs";
 import {
   ZCASH_IPC,
   type CancelSyncArgs,
+  type FindBlockHeightArgs,
   type GetChainTipArgs,
   type RequestId,
   type StartSyncArgs,
@@ -138,6 +139,7 @@ type HostState = {
    */
   resolvers: {
     chainTip: OneShotResolver<number>;
+    blockHeight: OneShotResolver<number>;
   };
 };
 
@@ -147,6 +149,7 @@ const state: HostState = {
   pendingSyncs: new Map(),
   resolvers: {
     chainTip: new OneShotResolver<number>("chain-tip"),
+    blockHeight: new OneShotResolver<number>("block-height"),
   },
 };
 
@@ -230,6 +233,18 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
       }
       return;
     }
+    case "block-height": {
+      if (!state.resolvers.blockHeight.resolve(msg.requestId, msg.height)) {
+        log(LOG_TYPE, "block-height reply for unknown requestId", { requestId: msg.requestId });
+      }
+      return;
+    }
+    case "block-height-error": {
+      if (!state.resolvers.blockHeight.reject(msg.requestId, new Error(msg.message))) {
+        log(LOG_TYPE, "block-height-error for unknown requestId", { requestId: msg.requestId });
+      }
+      return;
+    }
     case "stream": {
       const sync = state.pendingSyncs.get(msg.event.requestId);
       if (!sync) {
@@ -282,6 +297,14 @@ function registerHandlers(): void {
     (_event, args): Promise<number> =>
       state.resolvers.chainTip.register(args.requestId, () =>
         postToUtility({ type: "get-chain-tip", args }),
+      ),
+  );
+
+  ipcMain.handle<FindBlockHeightArgs, number>(
+    ZCASH_IPC.findBlockHeight,
+    (_event, args): Promise<number> =>
+      state.resolvers.blockHeight.register(args.requestId, () =>
+        postToUtility({ type: "find-block-height", args }),
       ),
   );
 

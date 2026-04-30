@@ -14,9 +14,10 @@
 
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "../constants";
-import { getChainTipJob, startSyncJob } from "../native-engine/engine";
+import { findBlockHeightJob, getChainTipJob, startSyncJob } from "../native-engine/engine";
 import type {
   CancelSyncArgs,
+  FindBlockHeightArgs,
   GetChainTipArgs,
   StartSyncArgs,
   UtilityInboundMessage,
@@ -52,6 +53,19 @@ async function handleGetChainTip(port: ParentPort, args: GetChainTipArgs): Promi
   } catch (err) {
     send(port, {
       type: "chain-tip-error",
+      requestId: args.requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+async function handleFindBlockHeight(port: ParentPort, args: FindBlockHeightArgs): Promise<void> {
+  try {
+    const height = await findBlockHeightJob(args.grpcUrl, args.timestamp);
+    send(port, { type: "block-height", requestId: args.requestId, height });
+  } catch (err) {
+    send(port, {
+      type: "block-height-error",
       requestId: args.requestId,
       message: err instanceof Error ? err.message : String(err),
     });
@@ -126,6 +140,9 @@ export function bootstrapUtility(port: ParentPort): void {
     switch (message.type) {
       case "get-chain-tip":
         void handleGetChainTip(port, message.args);
+        break;
+      case "find-block-height":
+        void handleFindBlockHeight(port, message.args);
         break;
       case "start-sync":
         void handleStartSync(port, message.args);

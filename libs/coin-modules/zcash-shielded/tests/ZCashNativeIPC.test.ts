@@ -50,7 +50,8 @@ import { ZCashNativeIPC } from "../src/ZCashNativeIPC";
  * can drive stream events without caring about how many times `on` was called.
  */
 function getLatestStreamListener(ipc: IpcRendererLike): (event: unknown, payload: unknown) => void {
-  const call = ipc.on.mock.calls.findLast(([channel]) => channel === ZCASH_IPC.stream);
+  const filtered = ipc.on.mock.calls.filter(([channel]) => channel === ZCASH_IPC.stream);
+  const call = filtered[filtered.length - 1];
   if (!call) throw new Error("no stream listener registered");
   return call[1] as (event: unknown, payload: unknown) => void;
 }
@@ -80,6 +81,23 @@ describe("ZCashNativeIPC (renderer IPC client)", () => {
       grpcUrl: string;
     };
     expect(payload.grpcUrl).toBe("grpc://node.example");
+    expect(payload.requestId).toMatch(/^zcash-/);
+  });
+
+  it("findBlockHeight forwards the grpcUrl and timestamp and returns the height", async () => {
+    mockIpcRenderer.invoke.mockResolvedValueOnce(1_800_000);
+
+    const native = new ZCashNativeIPC({ grpcUrl: "grpc://node.example", network: "mainnet" });
+    const height = await native.findBlockHeight(1_700_000_000);
+
+    expect(height).toBe(1_800_000);
+    const payload = expectInvoke(mockIpcRenderer, ZCASH_IPC.findBlockHeight) as {
+      requestId: string;
+      grpcUrl: string;
+      timestamp: number;
+    };
+    expect(payload.grpcUrl).toBe("grpc://node.example");
+    expect(payload.timestamp).toBe(1_700_000_000);
     expect(payload.requestId).toMatch(/^zcash-/);
   });
 
