@@ -29,7 +29,8 @@ type WorkflowParams = {
 export function useOpenSendFlow() {
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(state => accountsSelector(state).length === 0);
-  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
+  const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
+    useNewSendFlowFeature();
 
   const openSendFlow = useCallback(
     (params?: WorkflowParams) => {
@@ -74,7 +75,11 @@ export function useOpenSendFlow() {
         }
 
         const family = getFamilyFromAccount(nextParams.account, nextParams.parentAccount ?? null);
-        const shouldUseNewFlow = isEnabledForFamily(family);
+        const currencyId = getCurrencyIdFromAccount(
+          nextParams.account,
+          nextParams.parentAccount ?? null,
+        );
+        const shouldUseNewFlow = isEnabledForFamily(family, currencyId);
 
         if (shouldUseNewFlow) {
           let normalizedAmount: string | undefined;
@@ -111,7 +116,7 @@ export function useOpenSendFlow() {
 
       openSendFlowImpl(params);
     },
-    [hasNoAccounts, dispatch, isEnabledForFamily, getFamilyFromAccount],
+    [hasNoAccounts, dispatch, isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount],
   );
 
   return openSendFlow;

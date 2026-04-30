@@ -63,7 +63,7 @@ export const DefaultStepRecipient = ({
   const accountFilter = useMemo(
     () => (acc: Account) => {
       const family = acc.currency.family;
-      return !isEnabledForFamily(family);
+      return !isEnabledForFamily(family, acc.currency.id);
     },
     [isEnabledForFamily],
   );

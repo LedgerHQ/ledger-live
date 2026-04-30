@@ -62,7 +62,18 @@ export default function StepConnectDevice({
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
   const newSendFlowFeature = useNewSendFlowFeature();
-  const newSendFlow = newSendFlowFeature.isEnabledForFamily(parentAccount?.currency.family);
+  const newSendFlowFamily = newSendFlowFeature.getFamilyFromAccount(
+    account ?? undefined,
+    parentAccount ?? null,
+  );
+  const newSendFlowCurrencyId = newSendFlowFeature.getCurrencyIdFromAccount(
+    account ?? undefined,
+    parentAccount ?? null,
+  );
+  const newSendFlow = newSendFlowFeature.isEnabledForFamily(
+    newSendFlowFamily,
+    newSendFlowCurrencyId,
+  );
   const broadcastConfig = useMemo(
     () => ({
       mevProtected,
