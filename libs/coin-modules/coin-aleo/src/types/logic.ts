@@ -30,6 +30,8 @@ export interface ProvableApi {
   scannerStatus?: AleoRecordScannerStatusResponse;
 }
 
+export type RecordPickingStrategy = "manual" | "auto";
+
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
 
 export type AleoTransactionIntentData =
