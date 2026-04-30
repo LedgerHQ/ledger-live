@@ -8,5 +8,8 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { signature, operation },
 }) => {
   const hash = await broadcastLogic(signature, account.currency.id);
+  if (!hash) {
+    throw new Error("concordium: broadcast returned no transaction id");
+  }
   return patchOperationWithHash(operation, hash);
 };

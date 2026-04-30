@@ -10,6 +10,23 @@ import BigNumber from "bignumber.js";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "../network/types";
 import { Transaction } from "../types";
 
+export const signatureJsonToHex = (sig: { field: string; scalar: string }): string => {
+  const toLE32Hex = (decimal: string): string => {
+    let n = BigInt(decimal);
+    const bytes: string[] = [];
+    for (let i = 0; i < 32; i++) {
+      bytes.push(
+        Number(n & 0xffn)
+          .toString(16)
+          .padStart(2, "0"),
+      );
+      n >>= 8n;
+    }
+    return bytes.join("");
+  };
+  return toLE32Hex(sig.field) + toLE32Hex(sig.scalar);
+};
+
 // Mock account data
 export const mockAccountData = {
   blockHeight: 123,
@@ -222,5 +239,3 @@ export const createMockSignerContext = (
     };
     return cb(mockSigner);
   });
-
-// ... existing code ...
