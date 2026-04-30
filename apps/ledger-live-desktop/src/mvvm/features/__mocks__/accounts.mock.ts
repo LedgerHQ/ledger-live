@@ -122,7 +122,7 @@ export const userThemeSelector = () => "light";
 
 export const blacklistedTokenIdsSelector = () => {};
 
-export const getLLDCoinFamily = () => ({});
+export const useLLDCoinFamily = () => ({});
 export const isAccountEmpty = () => false;
 export const languageSelector = () => ({});
 export const openURL = () => {};

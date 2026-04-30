@@ -20,7 +20,7 @@ import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContext
 import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import AngleDown from "~/renderer/icons/AngleDown";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 
 type Props = {
@@ -54,14 +54,15 @@ function TokensList({ account }: Props) {
   }, [dispatch, account]);
   const [collapsed, setCollapsed] = useState(true);
   const toggleCollapse = useCallback(() => setCollapsed(s => !s), []);
+  const { currency } = account;
+  const family = currency.family;
+  const specific = useLLDCoinFamily(family)?.tokenList;
   if (!account.subAccounts) return null;
 
   const subAccounts = listSubAccounts(account).filter(subAccount => {
     return !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id);
   });
 
-  const { currency } = account;
-  const family = currency.family;
   const tokenTypes = currency.tokenTypes || [];
   const isTokenAccount = tokenTypes.length > 0;
   const isEmpty = subAccounts.length === 0;
@@ -72,7 +73,6 @@ function TokensList({ account }: Props) {
       ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
       : null;
-  const specific = getLLDCoinFamily(family)?.tokenList;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
   const ReceiveButtonComponent = specific?.ReceiveButton || ReceiveButton;
   const titleLabel = t(hasSpecificTokenWording ? `tokensList.${family}.title` : "tokensList.title");

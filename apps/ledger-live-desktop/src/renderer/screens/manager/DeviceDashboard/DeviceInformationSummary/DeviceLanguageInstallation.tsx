@@ -72,16 +72,16 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   }, [setInstalling, selectedLanguage]);
 
   const onWrappedError = useCallback(
-    (error: Error) => {
-      setError(error);
-      onError(error);
+    (installationError: Error) => {
+      setError(installationError);
+      onError(installationError);
     },
     [onError],
   );
 
   const onRetry = useCallback(() => {
     setError(null);
-    setNonce(nonce => nonce + 1);
+    setNonce(prev => prev + 1);
   }, []);
 
   return (

@@ -20,7 +20,7 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
-import { DelegationActionsModalName } from "../modals";
+type DelegationActionsModalName = "MODAL_COSMOS_CLAIM_REWARDS" | "MODAL_COSMOS_REDELEGATE" | "MODAL_COSMOS_UNDELEGATE";
 import Discreet from "~/renderer/components/Discreet";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 export const Wrapper = styled.div`

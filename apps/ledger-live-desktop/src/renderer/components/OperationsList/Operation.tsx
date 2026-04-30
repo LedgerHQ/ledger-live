@@ -13,7 +13,7 @@ import AddressCell from "./AddressCell";
 import AmountCell from "./AmountCell";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
 import { useAccountName } from "~/renderer/reducers/wallet";
@@ -71,7 +71,7 @@ function OperationComponent({
   const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
 
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const specific = getLLDCoinFamily(cryptoCurrency.family);
+  const specific = useLLDCoinFamily(cryptoCurrency.family);
   const CustomMetadataCell = specific ? specific.operationDetails?.customMetadataCell : null;
 
   return (

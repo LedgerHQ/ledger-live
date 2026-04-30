@@ -136,6 +136,8 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
 
   await test.step("choose ethereum account", async () => {
     await drawer.selectAccount("Ethereum", 0);
+    // Wait for the lazy-loaded MODAL_EVM_STAKE content to fully render before screenshotting
+    await page.getByTestId("stake-provider-container-kiln").waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 

@@ -29,7 +29,7 @@ import {
   MultiversXProvider,
   MultiversXAccount as AccountType,
 } from "@ledgerhq/live-common/families/multiversx/types";
-import { ModalsData } from "~/renderer/families/multiversx/modals";
+import type { CoinModalsData } from "~/renderer/families/modals-loaders";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -44,7 +44,7 @@ interface RenderDropdownItemType {
   };
 }
 interface DropDownItemType {
-  key: keyof ModalsData;
+  key: keyof CoinModalsData;
   label: string;
   divider?: boolean;
   parameters: {

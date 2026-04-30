@@ -20,7 +20,7 @@ import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import * as S from "./Row.styles";
 import ManageDropDown from "./ManageDropDown";
-import { ModalActions } from "../modals";
+type ModalActions = "MODAL_CELO_ACTIVATE" | "MODAL_CELO_REVOKE";
 import { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";

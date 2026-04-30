@@ -24,7 +24,7 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { DelegationActionsModalName } from "../modals";
+type DelegationActionsModalName = "MODAL_COSMOS_CLAIM_REWARDS" | "MODAL_COSMOS_REDELEGATE" | "MODAL_COSMOS_UNDELEGATE";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";

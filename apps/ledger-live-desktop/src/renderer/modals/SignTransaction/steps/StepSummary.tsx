@@ -25,7 +25,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
@@ -62,6 +62,7 @@ const StepSummary = (props: StepProps) => {
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(account);
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
   if (!mainAccount || !transaction) {
     return null;
@@ -78,8 +79,6 @@ const StepSummary = (props: StepProps) => {
   const hasNonEmptySubAccounts =
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
-
-  const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
   const memo = "memo" in transaction ? transaction.memo : undefined;

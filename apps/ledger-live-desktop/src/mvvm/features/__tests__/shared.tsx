@@ -11,27 +11,33 @@ export const mockDispatch = jest.fn();
 export const currencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
 
 export function mockDomMeasurements() {
+  // oxlint-disable-next-line no-extend-native
   Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
     configurable: true,
     value: 800,
   });
+  // oxlint-disable-next-line no-extend-native
   Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
     configurable: true,
     value: 800,
   });
-  HTMLElement.prototype.getBoundingClientRect = function () {
-    return {
-      width: 800,
-      height: 800,
-      top: 0,
-      left: 0,
-      bottom: 800,
-      right: 800,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
-    };
-  };
+  // oxlint-disable-next-line no-extend-native
+  Object.defineProperty(HTMLElement.prototype, "getBoundingClientRect", {
+    configurable: true,
+    value: function () {
+      return {
+        width: 800,
+        height: 800,
+        top: 0,
+        left: 0,
+        bottom: 800,
+        right: 800,
+        x: 0,
+        y: 0,
+        toJSON: () => {},
+      };
+    },
+  });
 }
 
 export function setRefCurrent<T>(ref: RefObject<T | null>, value: T | null): void {

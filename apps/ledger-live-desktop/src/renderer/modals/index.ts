@@ -1,5 +1,5 @@
 import { MakeModalsType, GlobalModalData, ModalData } from "./types";
-import { coinModals } from "../families/generated";
+import { coinModalLoaders } from "../families/modals-loaders";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
@@ -79,7 +79,7 @@ export type Modals = MakeModalsType<ModalData>;
 
 const modals: Modals = {
   ...globalModals,
-  ...coinModals,
+  ...(coinModalLoaders as unknown as Modals),
 };
 
 export default modals;

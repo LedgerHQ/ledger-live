@@ -29,7 +29,7 @@ import { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
@@ -64,6 +64,30 @@ const LoadingRow = styled(Box).attrs(() => ({
   height: 48px;
   border: 1px dashed ${p => p.theme.colors.neutral.c70};
 `;
+const CreatableForFamily = ({
+  mainCurrencyFamily,
+  currencyName,
+  stepProps,
+}: {
+  mainCurrencyFamily: string;
+  currencyName: string;
+  stepProps: StepProps;
+}) => {
+  const specific = useLLDCoinFamily(mainCurrencyFamily);
+  const NoAssociatedAccounts = specific?.NoAssociatedAccounts;
+  if (NoAssociatedAccounts) {
+    return <NoAssociatedAccounts {...stepProps} />;
+  }
+  return (
+    <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
+      {" "}
+      <Text ff="Inter|SemiBold" color="neutral.c100">
+        {currencyName}
+      </Text>{" "}
+    </Trans>
+  );
+};
+
 const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
   useEffect(() => {
@@ -292,9 +316,6 @@ class StepImport extends PureComponent<
         : [preferredNewAccountScheme!],
     });
     let creatable;
-    const NoAssociatedAccounts = mainCurrency
-      ? getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts
-      : null;
 
     if (alreadyEmptyAccount) {
       creatable = (
@@ -305,9 +326,15 @@ class StepImport extends PureComponent<
           </Text>{" "}
         </Trans>
       );
-    } else if (NoAssociatedAccounts) {
+    } else if (mainCurrency) {
       // custom family UI for "no associated accounts"
-      creatable = <NoAssociatedAccounts {...this.props} />;
+      creatable = (
+        <CreatableForFamily
+          mainCurrencyFamily={mainCurrency.family}
+          currencyName={currencyName}
+          stepProps={this.props}
+        />
+      );
     } else {
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">

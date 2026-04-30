@@ -20,7 +20,7 @@ import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { DelegateModalName } from "../modals";
+type DelegateModalName = "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW" | "MODAL_APTOS_RESTAKE";
 import { getEnv } from "@ledgerhq/live-env";
 
 const Wrapper = styled(Box).attrs(() => ({

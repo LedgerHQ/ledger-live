@@ -32,7 +32,7 @@ import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -90,7 +90,7 @@ const AccountPage = ({
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const fallbackPath = getAccountsSidebarPath(shouldDisplayAssetSection);
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;

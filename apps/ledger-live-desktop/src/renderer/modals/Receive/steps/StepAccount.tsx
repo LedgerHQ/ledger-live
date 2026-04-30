@@ -14,7 +14,7 @@ import SelectCurrency from "~/renderer/components/SelectCurrency";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { StepProps } from "../Body";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
@@ -140,7 +140,7 @@ export default function StepAccount(props: Readonly<StepProps>) {
       ? mainAccount.currency.name
       : tokenTypes.map(tt => tt.toUpperCase()).join("/");
   const url = supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType];
-  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
   const StepReceiveAccountCustomAlert = specific?.StepReceiveAccountCustomAlert;
   const receiveTokensConfig = specific?.receiveTokensConfig;
 
@@ -208,7 +208,7 @@ export function StepAccountFooter({
   parentAccount,
 }: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
   const receiveTokensConfig = specific?.receiveTokensConfig;
   const shouldRequireToken = receiveTokenMode && receiveTokensConfig;
 

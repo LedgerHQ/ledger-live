@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, Suspense } from "react";
 import styled from "styled-components";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { connect } from "react-redux";
@@ -27,8 +27,13 @@ const BackDrop = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
 function renderNameState<Name extends keyof ModalData>(name: Name, data: ModalData[Name]) {
   const ModalComponent = modals[name];
   if (ModalComponent) {
-    // @ts-expect-error unclear why it can't prove this part
-    return <ModalComponent key={name} name={name} {...data} />;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const C = ModalComponent as React.ComponentType<any>;
+    return (
+      <Suspense fallback={null}>
+        <C key={name} name={name} {...data} />
+      </Suspense>
+    );
   }
 }
 
