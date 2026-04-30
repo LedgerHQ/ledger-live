@@ -758,6 +758,7 @@ export type Feature_Noah = Feature<{
 
 export type Feature_NewSendFlow = Feature<{
   families?: string[];
+  excludedCurrencyIds?: string[];
 }>;
 
 export type Feature_AddressPoisoningOperationsFilter = Feature<{
