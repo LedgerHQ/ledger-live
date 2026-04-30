@@ -179,6 +179,32 @@ export const isTokenAllowanceSufficientCommand = async (
 };
 
 /**
+ * Returns the raw on-chain ERC-20 allowance as a decimal string in smallest
+ * units. Use when an exact-value assertion is needed (e.g. assert allowance
+ * is exactly zero after a revoke). Use {@link isTokenAllowanceSufficientCommand}
+ * when only a threshold check is needed.
+ */
+export const getTokenAllowanceCommand = async (
+  account: TokenAccount,
+  spenderAddress: string,
+): Promise<string> => {
+  const ownerAddress = account.parentAccount?.address ?? account.address;
+  if (!ownerAddress) throw new Error("Token allowance check requires the main account address");
+
+  const output = await runCliGetTokenAllowance({
+    currency: account.currency.speculosApp.name,
+    token: account.currency.id,
+    spenderAddress,
+    index: account.index,
+    format: "json",
+    ownerAddress,
+  });
+
+  const { allowanceStr } = parseTokenAllowanceCliOutput(output);
+  return allowanceStr;
+};
+
+/**
  * Runs ledger-live CLI token approval with Speculos device confirmation, managing
  * `DISABLE_TRANSACTION_BROADCAST` around the CLI call.
  */

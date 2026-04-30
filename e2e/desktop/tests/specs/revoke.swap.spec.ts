@@ -3,12 +3,13 @@ import { TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv } from "tests/utils/swapUtils";
 import {
-  isTokenAllowanceSufficientCommand,
+  getTokenAllowanceCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { expect } from "@playwright/test";
 
-// NOTE: QAA-615 spike: validate the CLI revoke hook resets allowance to zero on mobile.
+// NOTE: QAA-615 spike: validate the CLI revoke hook resets allowance to zero in this
+// desktop flow.
 
 const fromAccount = TokenAccount.ETH_USDT_1;
 const provider = Provider.OKX;
@@ -40,12 +41,8 @@ test.describe("Swap - Revoke token approval", () => {
       await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
       await app.swap.revokeTokenApproval(fromAccount, provider);
 
-      const remaining = await isTokenAllowanceSufficientCommand(
-        fromAccount,
-        provider.contractAddress!,
-        "1",
-      );
-      expect(remaining).toBe(0);
+      const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
+      expect(remaining).toBe("0");
     },
   );
 });
