@@ -7,7 +7,6 @@ import { createGeneratedHelpers, registerGeneratedStore } from '@bunli/core'
 import Account from '../src/commands/account/index.js'
 import Balances from '../src/commands/balances.js'
 import Discover from '../src/commands/account/discover.js'
-import FreshAddress from '../src/commands/account/fresh-address.js'
 import Operations from '../src/commands/operations.js'
 import Quote from '../src/commands/swap/quote.js'
 import Receive from '../src/commands/receive.js'
@@ -18,14 +17,13 @@ import Swap from '../src/commands/swap/index.js'
 import View from '../src/commands/session/view.js'
 
 // Narrow list of command names to avoid typeof-cycles in types
-const names = ['account', 'balances', 'discover', 'fresh-address', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
+const names = ['account', 'balances', 'discover', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
 type GeneratedNames = typeof names[number]
 
 const modules: Record<GeneratedNames, Command<any>> = {
   'account': Account,
   'balances': Balances,
   'discover': Discover,
-  'fresh-address': FreshAddress,
   'operations': Operations,
   'quote': Quote,
   'receive': Receive,
@@ -50,15 +48,6 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
             'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
           },
           path: './src/commands/account/discover'
-        },
-        {
-          name: 'fresh-address',
-          description: 'Resolve the fresh receive address for an account descriptor (no device required)',
-          options: {
-            'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-            'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
-          },
-          path: './src/commands/account/fresh-address'
         }
       ],
       path: './src/commands/account/index'
@@ -81,15 +70,6 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/account/discover'
-    },
-  'fresh-address': {
-      name: 'fresh-address',
-      description: 'Resolve the fresh receive address for an account descriptor (no device required)',
-      options: {
-        'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
-      },
-      path: './src/commands/account/fresh-address'
     },
   'operations': {
       name: 'operations',
@@ -120,7 +100,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       description: 'Get receive address for an account (optionally verify on device)',
       options: {
         'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'verify': { type: 'z.boolean.default', required: true, hasDefault: true, default: true, description: 'Verify address on device screen (default: true). Use --verify=false to skip device.', short: 'v', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":920,"end":924,"loc":{"start":{"line":27,"column":39,"index":920},"end":{"line":27,"column":43,"index":924}},"value":true}}]}, validator: '(val) => true' },
+        'verify': { type: 'z.boolean.default', required: true, hasDefault: true, default: true, description: 'Verify address on device screen (default: true). Use --verify=false to skip device.', short: 'v', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":953,"end":957,"loc":{"start":{"line":27,"column":39,"index":953},"end":{"line":27,"column":43,"index":957}},"value":true}}]}, validator: '(val) => true' },
         'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
