@@ -1,7 +1,6 @@
 import {
   ArrowDown,
   ArrowUp,
-  Clock,
   Close,
   Invoice,
   Link,
@@ -11,12 +10,13 @@ import {
   Star,
   Unlink,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { getTransactionalDotConfig } from "../getTransactionalDotConfig";
 
 describe("getTransactionalDotConfig", () => {
-  it("returns clock with muted appearance when optimistic", () => {
+  it("returns spinner with muted appearance when pending", () => {
     const config = getTransactionalDotConfig("OUT", true);
-    expect(config).toEqual({ icon: Clock, appearance: "muted" });
+    expect(config).toEqual({ icon: Spinner, appearance: "muted" });
   });
 
   it.each([
