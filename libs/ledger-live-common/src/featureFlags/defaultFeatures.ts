@@ -799,6 +799,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       families: [],
+      excludedCurrencyIds: [],
     },
   },
   zcashShielded: DEFAULT_FEATURE,
