@@ -1,3 +1,4 @@
+import type { OtherBlockOperation } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig, { type TezosCoinConfig } from "../config";
 import { getBlock } from "./getBlock";
 
@@ -79,4 +80,63 @@ describe("getBlock", () => {
       ]),
     );
   });
+});
+
+/**
+ * Shadownet integration tests for Paris-style staking operations.
+ *
+ * Pinned blocks come from a chain-of-custody on `tz1dKrT1...` (faucet-funded test address):
+ *   - 3106279: `stake` 500 XTZ to TF Test Baker
+ *   - 3106307: `unstake` 250 XTZ
+ *   - finalize: pending (`.todo` until the consensus-rights-delay window passes)
+ */
+const SHADOWNET_STAKER = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
+const SHADOWNET_BAKER = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
+const STAKE_BLOCK = 3106279;
+const UNSTAKE_BLOCK = 3106307;
+
+describe("getBlock — Shadownet Paris staking ops", () => {
+  beforeAll(() => {
+    if (originalGetCoinConfig === undefined) {
+      originalGetCoinConfig = coinConfig.getCoinConfig;
+    }
+    coinConfig.setCoinConfig(shadownetConfig);
+  });
+
+  afterAll(() => {
+    if (originalGetCoinConfig) {
+      coinConfig.setCoinConfig(originalGetCoinConfig);
+    }
+  });
+
+  it.each([
+    [STAKE_BLOCK, "STAKE", 500_000_000n],
+    [UNSTAKE_BLOCK, "UNSTAKE", 250_000_000n],
+  ])(
+    "block %s contains a staking op with operationType=%s and stakedAmount=%s",
+    async (height, expectedOpType, expectedAmount) => {
+      const block = await getBlock(height);
+      const stakingTx = block.transactions.find(tx =>
+        tx.operations.some(op => {
+          const details = (op as OtherBlockOperation).details as
+            | Record<string, unknown>
+            | undefined;
+          return details?.operationType === expectedOpType;
+        }),
+      );
+
+      if (!stakingTx) throw new Error(`No ${expectedOpType} op found in block ${height}`);
+      expect(stakingTx.feesPayer).toBe(SHADOWNET_STAKER);
+
+      const stakingOp = stakingTx.operations[0] as OtherBlockOperation;
+      const details = stakingOp.details as Record<string, unknown>;
+      expect(stakingOp.type).toBe("other");
+      expect(details.operationType).toBe(expectedOpType);
+      expect(details.stakedAmount).toBe(expectedAmount);
+      expect(details.delegate).toBe(SHADOWNET_BAKER);
+      expect(details.ledgerOpType).toBe(expectedOpType);
+    },
+  );
+
+  it.todo("block <FINALIZE_BLOCK> contains a FINALIZE_UNSTAKE op (enable once it lands)");
 });

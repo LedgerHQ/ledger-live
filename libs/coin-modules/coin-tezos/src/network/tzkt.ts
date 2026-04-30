@@ -108,6 +108,27 @@ const api = {
   },
 
   /**
+   * Resolves block hashes for the given levels in a single request.
+   * Uses `/v1/blocks?level.in=...&select.values=level,hash`, which TzKT honours
+   * (unlike `/v1/blocks/{level}?select=...`, where `select` is ignored). Used
+   * for cheap backfill of `block.hash` on operations whose level is known but
+   * whose response omits the block field (e.g. `/accounts/{addr}/operations`
+   * for staking ops). Levels that don't resolve are absent from the result map.
+   */
+  async getBlockHashesByLevels(levels: readonly number[]): Promise<Map<number, string>> {
+    if (levels.length === 0) return new Map();
+    const { data } = await network<[number, string][]>({
+      url: `${getExplorerUrl()}/v1/blocks`,
+      params: {
+        "level.in": levels.join(","),
+        "select.values": "level,hash",
+        limit: levels.length,
+      },
+    });
+    return new Map(data);
+  },
+
+  /**
    * Fetches a single page of `transaction` operations at the given block level.
    * Internal — used by `fetchBlockTransactions` which handles pagination.
    * https://api.tzkt.io/#operation/Operations_GetTransactions
@@ -254,14 +275,14 @@ const api = {
 
     const transactions = transactionIds.length
       ? await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
-        "id.in": transactionIds.join(","),
-      })
+          "id.in": transactionIds.join(","),
+        })
       : [];
 
     const originations = originationIds.length
       ? await api.getOperationsOrigination(query["level.ge"] || 0, undefined, {
-        "id.in": originationIds.join(","),
-      })
+          "id.in": originationIds.join(","),
+        })
       : [];
 
     // Build id -> operation maps once so per-transfer lookups are O(1) instead of O(n).

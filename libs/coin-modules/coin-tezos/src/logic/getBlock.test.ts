@@ -1,4 +1,10 @@
-import type { APIDelegationType, APITokenTransfer, APITransactionType } from "../network/types";
+import type { OtherBlockOperation } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  APIDelegationType,
+  APIStakingType,
+  APITokenTransfer,
+  APITransactionType,
+} from "../network/types";
 import { getBlock } from "./getBlock";
 
 // ---------------------------------------------------------------------------
@@ -11,12 +17,14 @@ const mockGetBlockByLevel = jest.fn();
 const mockFetchBlockTransactions = jest.fn();
 const mockFetchBlockTokenTransfers = jest.fn();
 const mockFetchBlockDelegations = jest.fn();
+const mockFetchBlockStaking = jest.fn();
 
 jest.mock("../network", () => ({
   tzkt: { getBlockByLevel: (...args: unknown[]) => mockGetBlockByLevel(...args) },
   fetchBlockTransactions: (...args: unknown[]) => mockFetchBlockTransactions(...args),
   fetchBlockTokenTransfers: (...args: unknown[]) => mockFetchBlockTokenTransfers(...args),
   fetchBlockDelegations: (...args: unknown[]) => mockFetchBlockDelegations(...args),
+  fetchBlockStaking: (...args: unknown[]) => mockFetchBlockStaking(...args),
 }));
 
 // ---------------------------------------------------------------------------
@@ -68,6 +76,31 @@ function makeTokenTransfer(overrides: Partial<APITokenTransfer> = {}): APITokenT
   };
 }
 
+function makeStaking(overrides: Partial<APIStakingType> = {}): APIStakingType {
+  return {
+    id: 300,
+    hash: "opStaking1",
+    type: "staking",
+    action: "stake",
+    amount: 500_000_000,
+    requestedAmount: 500_000_000,
+    sender: { address: "tz1Staker" },
+    staker: { address: "tz1Staker" },
+    baker: { address: "tz1Baker", alias: "TF Test Baker" },
+    counter: 1,
+    level: 5_000_000,
+    block: "BLockHash123",
+    timestamp: "2024-01-01T00:00:00Z",
+    bakerFee: 800,
+    storageFee: 0,
+    allocationFee: 0,
+    gasLimit: 3630,
+    storageLimit: 0,
+    status: "applied",
+    ...overrides,
+  } as APIStakingType;
+}
+
 function makeDelegation(overrides: Partial<APIDelegationType> = {}): APIDelegationType {
   return {
     id: 200,
@@ -95,10 +128,10 @@ function makeDelegation(overrides: Partial<APIDelegationType> = {}): APIDelegati
 
 beforeEach(() => {
   jest.clearAllMocks();
-  // Default: empty transactions, token transfers, and delegations so tests only set what they need
   mockFetchBlockTransactions.mockResolvedValue([]);
   mockFetchBlockTokenTransfers.mockResolvedValue([]);
   mockFetchBlockDelegations.mockResolvedValue([]);
+  mockFetchBlockStaking.mockResolvedValue([]);
 });
 
 // ---------------------------------------------------------------------------
@@ -984,9 +1017,122 @@ describe("delegation operations", () => {
     const result = await getBlock(5_000_000);
 
     // Then
-    const details = result.transactions[0].operations[0]?.details as Record<string, unknown>;
+    const details = (result.transactions[0].operations[0] as OtherBlockOperation).details as Record<
+      string,
+      unknown
+    >;
     expect(details).not.toHaveProperty("delegate");
     expect(details.operationType).toBe("UNDELEGATE");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 7b. Staking operations (Paris adaptive issuance)
+// ---------------------------------------------------------------------------
+
+describe("staking operations", () => {
+  it.each([
+    ["stake", "STAKE", 500_000_000n],
+    ["unstake", "UNSTAKE", 250_000_000n],
+    ["finalize", "FINALIZE_UNSTAKE", 0n],
+  ] as const)(
+    "creates a BlockTransaction for action=%s with operationType=%s",
+    async (action, expectedOpType, expectedStakedAmount) => {
+      mockGetBlockByLevel.mockResolvedValue(makeBlock());
+      mockFetchBlockStaking.mockResolvedValue([
+        makeStaking({ action, amount: Number(expectedStakedAmount) }),
+      ]);
+
+      const result = await getBlock(5_000_000);
+
+      expect(result.transactions).toHaveLength(1);
+      const tx = result.transactions[0];
+      expect(tx.hash).toBe("opStaking1");
+      expect(tx.failed).toBe(false);
+      expect(tx.feesPayer).toBe("tz1Staker");
+      expect(tx.fees).toBe(800n);
+      expect(tx.operations).toHaveLength(1);
+      expect(tx.operations[0]).toEqual({
+        type: "other",
+        address: "tz1Staker",
+        asset: { type: "native", name: "XTZ" },
+        amount: 0n,
+        details: {
+          operationType: expectedOpType,
+          stakedAmount: expectedStakedAmount,
+          delegate: "tz1Baker",
+          counter: 1,
+          gasLimit: 3630,
+          storageLimit: 0,
+          ledgerOpType: expectedOpType,
+        },
+      });
+    },
+  );
+
+  it("marks a staking op as failed and clears operations when status is not 'applied'", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockStaking.mockResolvedValue([makeStaking({ status: "failed" })]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions[0].failed).toBe(true);
+    expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("skips a staking op without sender (no operations emitted)", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockStaking.mockResolvedValue([makeStaking({ sender: null })]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("skips a staking op with no hash", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockStaking.mockResolvedValue([
+      makeStaking({ hash: undefined as unknown as string }),
+      makeStaking({ id: 301, hash: "opStaking2" }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("opStaking2");
+  });
+
+  it("merges a staking op into an existing transaction sharing the same hash", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opShared", amount: 1_000_000, bakerFee: 500 }),
+    ]);
+    mockFetchBlockStaking.mockResolvedValue([
+      makeStaking({ hash: "opShared", action: "stake", amount: 100, bakerFee: 300 }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.operations.some(op => op.type === "transfer")).toBe(true);
+    expect(tx.operations.some(op => op.type === "other")).toBe(true);
+    expect(tx.fees).toBe(800n);
+  });
+
+  it("omits delegate field from details when baker is missing", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockStaking.mockResolvedValue([makeStaking({ baker: null })]);
+
+    const result = await getBlock(5_000_000);
+
+    const details = (result.transactions[0].operations[0] as OtherBlockOperation).details as Record<
+      string,
+      unknown
+    >;
+    expect(details).not.toHaveProperty("delegate");
+    expect(details.operationType).toBe("STAKE");
   });
 });
 
@@ -995,7 +1141,7 @@ describe("delegation operations", () => {
 // ---------------------------------------------------------------------------
 
 describe("network calls", () => {
-  it("issues all five network calls with the correct heights", async () => {
+  it("issues all six network calls with the correct heights", async () => {
     // Given
     const height = 6_000_000;
     mockGetBlockByLevel.mockResolvedValue(makeBlock(height));
@@ -1013,6 +1159,8 @@ describe("network calls", () => {
     expect(mockFetchBlockTokenTransfers).toHaveBeenCalledWith(height);
     expect(mockFetchBlockDelegations).toHaveBeenCalledTimes(1);
     expect(mockFetchBlockDelegations).toHaveBeenCalledWith(height);
+    expect(mockFetchBlockStaking).toHaveBeenCalledTimes(1);
+    expect(mockFetchBlockStaking).toHaveBeenCalledWith(height);
   });
 
   it("propagates errors from getBlockByLevel", async () => {
