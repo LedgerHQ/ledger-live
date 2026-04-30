@@ -264,8 +264,9 @@ export function useSignedTxHandler({
   const mevProtected = useSelector(mevProtectionSelector);
   const navigation = useNavigation();
   const route = useRoute();
-  const newSendFlowFeature = useNewSendFlowFeature();
-  const newSendFlow = newSendFlowFeature.isEnabledForFamily(parentAccount?.currency.family);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { isEnabledForFamily } = useNewSendFlowFeature();
+  const newSendFlow = isEnabledForFamily(mainAccount.currency.family, mainAccount.currency.id);
   const broadcast = useBroadcast({
     account,
     parentAccount,
@@ -275,7 +276,6 @@ export function useSignedTxHandler({
     },
   });
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
   return useCallback(
     // TODO: fix type error
 

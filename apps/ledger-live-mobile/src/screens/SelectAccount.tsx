@@ -68,7 +68,8 @@ function ReceiveFunds({ navigation, route }: Props) {
     ? enhancedAccounts.filter(account => !isAccountEmpty(account))
     : enhancedAccounts;
 
-  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
+  const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
+    useNewSendFlowFeature();
 
   const handleSelectAccount = useCallback(
     (account: AccountLike) => {
@@ -81,7 +82,8 @@ function ReceiveFunds({ navigation, route }: Props) {
         if (next === ScreenName.SendSelectRecipient) {
           const parentAccount = getParentAccount(account, accounts);
           const accountFamily = getFamilyFromAccount(account, parentAccount);
-          const shouldUseNewFlow = isEnabledForFamily(accountFamily);
+          const accountCurrencyId = getCurrencyIdFromAccount(account, parentAccount);
+          const shouldUseNewFlow = isEnabledForFamily(accountFamily, accountCurrencyId);
 
           if (shouldUseNewFlow) {
             const mainAccount = getMainAccount(account, parentAccount);
@@ -121,6 +123,7 @@ function ReceiveFunds({ navigation, route }: Props) {
       route.params,
       isEnabledForFamily,
       getFamilyFromAccount,
+      getCurrencyIdFromAccount,
     ],
   );
 

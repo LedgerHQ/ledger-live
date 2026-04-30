@@ -174,9 +174,8 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     [isPtxServiceCtaScreensDisabled, currency, account, t, isZeroBalance],
   );
 
-  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
-  const accountFamily = getFamilyFromAccount(account, parentAccount);
-  const shouldUseNewFlow = isEnabledForFamily(accountFamily);
+  const { isEnabledForFamily } = useNewSendFlowFeature();
+  const shouldUseNewFlow = isEnabledForFamily(mainAccount.currency.family, mainAccount.currency.id);
 
   const SendAction = useMemo(
     () => ({
