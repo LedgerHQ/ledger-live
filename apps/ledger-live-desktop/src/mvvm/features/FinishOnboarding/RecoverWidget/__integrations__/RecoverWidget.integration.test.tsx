@@ -1,11 +1,10 @@
 import React from "react";
+import { Route, Routes } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { render, screen, waitFor } from "tests/testSetup";
-import { useNavigate } from "react-router";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { getStoreValue } from "~/renderer/store";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import dbMiddleware from "~/renderer/middlewares/db";
@@ -21,23 +20,29 @@ jest.mock("~/renderer/store", () => ({
   resetStore: jest.fn(),
 }));
 
-jest.mock("react-router", () => ({
-  ...jest.requireActual("react-router"),
-  useNavigate: jest.fn(),
-}));
-jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
-  useUpsellPath: jest.fn(),
-}));
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
-  useFeature: jest.fn(),
-}));
-
-const mockNavigate = jest.fn();
-const mockUseNavigate = jest.mocked(useNavigate);
-const mockUseFeature = jest.mocked(useFeature);
-const mockUseUpsellPath = jest.mocked(useUpsellPath);
 const mockGetStoreValue = jest.mocked(getStoreValue);
+
+/** Must match `useUpsellPath`: `ledgerlive://…` → same path with `/` prefix. */
+const RECOVER_UPSELL_PATH = "/protect/upsell";
+const RECOVER_UPSELL_LEDGER_LIVE_URI = "ledgerlive://protect/upsell";
+
+const protectDesktopDefaultParams = DEFAULT_FEATURES.protectServicesDesktop.params!;
+
+const protectServicesForStax = (onboardingUpsellUri: string) =>
+  withFlagOverrides({
+    protectServicesDesktop: {
+      enabled: true,
+      params: {
+        ...protectDesktopDefaultParams,
+        protectId: "protect-prod",
+        compatibleDevices: [{ name: DeviceModelId.stax, available: true, comingSoon: false }],
+        onboardingCompleted: {
+          ...protectDesktopDefaultParams.onboardingCompleted,
+          upsellURI: onboardingUpsellUri,
+        },
+      },
+    },
+  });
 
 function postOnboardingActive(
   deviceModelId: DeviceModelId = DeviceModelId.stax,
@@ -55,40 +60,44 @@ function postOnboardingActive(
   };
 }
 
-function renderWithProvider(postOnboarding: PostOnboardingState) {
+function renderWithProvider(postOnboarding: PostOnboardingState, featureFlagSlice: ReturnType<typeof withFlagOverrides>) {
   const store = createStore({
-    state: { postOnboarding } as State,
+    state: {
+      postOnboarding,
+      ...featureFlagSlice,
+    } as State,
     dbMiddleware,
   });
   return render(
-    <PostOnboardingProviderWrapped>
-      <RecoverWidget />
-    </PostOnboardingProviderWrapped>,
-    { store },
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <PostOnboardingProviderWrapped>
+            <RecoverWidget />
+          </PostOnboardingProviderWrapped>
+        }
+      />
+      <Route
+        path={RECOVER_UPSELL_PATH}
+        element={<div data-testid="recover-upsell-screen">Recover upsell</div>}
+      />
+    </Routes>,
+    { store, initialRoute: "/" },
   );
 }
 
 describe("RecoverWidget integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseNavigate.mockReturnValue(mockNavigate);
-    mockUseUpsellPath.mockReturnValue("/protect/upsell");
     mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE);
-    mockUseFeature.mockImplementation((id: string) =>
-      id === "protectServicesDesktop"
-        ? {
-            enabled: true,
-            params: {
-              protectId: "protect-prod",
-              compatibleDevices: [{ name: DeviceModelId.stax, available: true }],
-            },
-          }
-        : null,
-    ) as unknown as typeof useFeature;
   });
 
   it("renders the recover CTA and navigates to the upsell when clicked", async () => {
-    const { user } = renderWithProvider(postOnboardingActive());
+    const { user } = renderWithProvider(
+      postOnboardingActive(),
+      protectServicesForStax(RECOVER_UPSELL_LEDGER_LIVE_URI),
+    );
 
     const button = await screen.findByRole("button", {
       name: /Finish securing your backup/i,
@@ -97,24 +106,27 @@ describe("RecoverWidget integration", () => {
 
     await user.click(button);
 
-    expect(mockNavigate).toHaveBeenCalledWith("/protect/upsell");
+    expect(await screen.findByTestId("recover-upsell-screen")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Finish securing your backup/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders nothing for the recover widget when the upsell is unavailable", async () => {
-    mockUseUpsellPath.mockReturnValue(undefined);
-    const { container } = renderWithProvider(postOnboardingActive());
+    renderWithProvider(postOnboardingActive(), protectServicesForStax(""));
     await waitFor(() => {
-      expect(mockGetStoreValue).toHaveBeenCalled();
+      expect(screen.queryByTestId("recover-finish-onboarding-widget")).not.toBeInTheDocument();
     });
-    expect(container.querySelector('[data-testid="recover-finish-onboarding-widget"]')).toBeNull();
   });
 
   it("renders nothing when recover was never started (NO_SUBSCRIPTION)", async () => {
     mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
-    const { container } = renderWithProvider(postOnboardingActive());
+    renderWithProvider(
+      postOnboardingActive(),
+      protectServicesForStax(RECOVER_UPSELL_LEDGER_LIVE_URI),
+    );
     await waitFor(() => {
-      expect(mockGetStoreValue).toHaveBeenCalled();
+      expect(screen.queryByTestId("recover-finish-onboarding-widget")).not.toBeInTheDocument();
     });
-    expect(container.querySelector('[data-testid="recover-finish-onboarding-widget"]')).toBeNull();
   });
 });
