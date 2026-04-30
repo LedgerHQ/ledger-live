@@ -28,6 +28,7 @@ import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { broadcastLogger } from "~/datadog";
 import { getEnv } from "@ledgerhq/live-env";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -273,6 +274,7 @@ export function useSignedTxHandler({
       mevProtected,
       source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow } },
     },
+    logger: broadcastLogger,
   });
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
