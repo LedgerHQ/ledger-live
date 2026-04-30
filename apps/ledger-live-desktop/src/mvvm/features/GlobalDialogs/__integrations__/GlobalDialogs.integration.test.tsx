@@ -7,6 +7,11 @@ jest.mock("../../../../../release-notes.json", () => [
   { tag_name: "2.80.0", body: "## What's new\n\n- Feature A" },
 ]);
 
+jest.mock("LLD/features/LiveAppModal", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 describe("GlobalDialogs Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();

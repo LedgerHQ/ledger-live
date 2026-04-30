@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BackHandler, Platform, StyleSheet, View } from "react-native";
+import { BackHandler, Linking, Platform, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -20,7 +20,6 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
-import { Linking } from "react-native";
 import GenericErrorView from "~/components/GenericErrorView";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
