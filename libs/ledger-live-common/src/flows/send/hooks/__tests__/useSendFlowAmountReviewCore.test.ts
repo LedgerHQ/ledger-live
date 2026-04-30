@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
-import { renderHook } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import { useSendFlowAmountReviewCore } from "../useSendFlowAmountReviewCore";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -58,7 +58,7 @@ describe("useSendFlowAmountReviewCore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     const getAccountBridge = jest.requireMock("../../../../bridge/impl").getAccountBridge;
-    getAccountBridge.mockReturnValue({
+    getAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,
@@ -88,7 +88,7 @@ describe("useSendFlowAmountReviewCore", () => {
     expect(result.current.accountCurrency).toBeDefined();
   });
 
-  it("calls updateTransaction when updateTransactionWithPatch is invoked", () => {
+  it("calls updateTransaction when updateTransactionWithPatch is invoked", async () => {
     const account = createAccount();
     const transaction = createTransaction();
     const updateTransaction = jest.fn((fn: (tx: Transaction) => Transaction) => fn(transaction));
@@ -103,6 +103,9 @@ describe("useSendFlowAmountReviewCore", () => {
         labels: mockLabels,
       }),
     );
+
+    // Wait for the getAccountBridge Promise (from useEffect) to resolve
+    await act(async () => {});
 
     result.current.updateTransactionWithPatch({ amount: new BigNumber(200) });
     expect(updateTransaction).toHaveBeenCalledTimes(1);

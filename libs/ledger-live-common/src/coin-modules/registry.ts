@@ -25,6 +25,19 @@ function getLoader(family: string): CoinModuleLoader {
   return loader;
 }
 
+export function makeLoaderCache<T>(fn: (family: string) => Promise<T>): (family: string) => Promise<T>;
+export function makeLoaderCache<T>(fn: (family: string) => Promise<T> | undefined): (family: string) => Promise<T> | undefined;
+export function makeLoaderCache<T>(fn: (family: string) => Promise<T> | undefined) {
+  const cache = new Map<string, Promise<T>>();
+  return (family: string): Promise<T> | undefined => {
+    const hit = cache.get(family);
+    if (hit !== undefined) return hit;
+    const p = fn(family);
+    if (p !== undefined) cache.set(family, p);
+    return p;
+  };
+}
+
 export function registerCoinModules(modules: CoinModuleLoader[]): void {
   for (const mod of modules) loaders.set(mod.family, mod);
 }
@@ -33,84 +46,66 @@ export function getRegisteredFamilies(): string[] {
   return [...loaders.keys()];
 }
 
-/**
- * Loads the family setup (message signer, etc.) for the given coin family.
- *
- * @remarks
- * This function is currently synchronous but will become `async` in a future
- * migration step (part of the async loader series — LIVE-28411).
- * Callers should already `await` this call so that no further changes are
- * needed once the function signature is updated.
- */
-export const loadSetupForFamily = (family: string): FamilySetup => getLoader(family).loadSetup();
+export const loadSetupForFamily = makeLoaderCache((family) =>
+  getLoader(family).loadSetup()
+);
 
-export const loadTransactionForFamily = (family: string): TransactionModule =>
-  getLoader(family).loadTransaction();
+export const loadTransactionForFamily = makeLoaderCache((family) =>
+  getLoader(family).loadTransaction()
+);
 
-export const loadDeviceTxConfigForFamily = (
-  family: string,
-): DeviceTransactionConfigFn | undefined => loaders.get(family)?.loadDeviceTxConfig?.();
+export const loadDeviceTxConfigForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadDeviceTxConfig?.()
+);
 
-/**
- * Loads the Wallet API adapter module for the given coin family.
- *
- * @remarks
- * This function is currently synchronous but will become `async` in a future
- * migration step (part of the async loader series — LIVE-28411).
- * Callers should already `await` this call so that no further changes are
- * needed once the function signature is updated.
- */
-export const loadWalletApiAdapterForFamily = (family: string): WalletApiAdapterModule | undefined =>
-  loaders.get(family)?.loadWalletApiAdapter?.();
+export const loadWalletApiAdapterForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadWalletApiAdapter?.()
+);
 
-/**
- * Loads the platform adapter module for the given coin family.
- *
- * @remarks
- * This function is currently synchronous but will become `async` in a future
- * migration step (part of the async loader series — LIVE-28411).
- * Callers should already `await` this call so that no further changes are
- * needed once the function signature is updated.
- */
-export const loadPlatformAdapterForFamily = (family: string): PlatformAdapterModule | undefined =>
-  loaders.get(family)?.loadPlatformAdapter?.();
+export const loadPlatformAdapterForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadPlatformAdapter?.()
+);
 
-export const loadAccountModuleForFamily = (family: string): AccountModule | undefined =>
-  loaders.get(family)?.loadAccount?.();
+export const loadAccountModuleForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadAccount?.()
+);
 
-export const loadMockBridgeForFamily = (family: string): MockBridgeModule | undefined =>
-  loaders.get(family)?.loadMockBridge?.();
+export const loadMockBridgeForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadMockBridge?.()
+);
 
-export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined =>
-  loaders.get(family)?.loadMockAccount?.();
+export const loadMockAccountForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadMockAccount?.()
+);
 
-export const loadIsAccountEmptyForFamily = (
-  family: string,
-): Promise<(account: Account) => boolean> | undefined =>
-  loaders.get(family)?.loadIsAccountEmpty?.();
+export const loadIsAccountEmptyForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadIsAccountEmpty?.()
+);
 
-export const loadGetVotesCountForFamily = (
-  family: string,
-): Promise<(account: Account) => number> | undefined => loaders.get(family)?.loadGetVotesCount?.();
+export const loadGetVotesCountForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadGetVotesCount?.()
+);
 
-export const loadClearAccountForFamily = (
-  family: string,
-): Promise<(account: Account) => void> | undefined => loaders.get(family)?.loadClearAccount?.();
+export const loadClearAccountForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadClearAccount?.()
+);
 
-export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
-  loaders.get(family)?.loadValidateAddress?.();
+export const loadValidateAddressForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadValidateAddress?.()
+);
 
-export const loadSignerForFamily = (family: string): AlpacaSigner | undefined =>
-  loaders.get(family)?.loadSigner?.();
+export const loadSignerForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadSigner?.()
+);
 
-export const loadIsEditableOperationForFamily = (
-  family: string,
-): IsEditableOperationFn | undefined => loaders.get(family)?.loadIsEditableOperation?.();
+export const loadIsEditableOperationForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadIsEditableOperation?.()
+);
 
-export const loadIsStuckOperationForFamily = (family: string): IsStuckOperationFn | undefined =>
-  loaders.get(family)?.loadIsStuckOperation?.();
+export const loadIsStuckOperationForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadIsStuckOperation?.()
+);
 
-export const loadGetStuckAccountAndOperationForFamily = (
-  family: string,
-): GetStuckAccountAndOperationFn | undefined =>
-  loaders.get(family)?.loadGetStuckAccountAndOperation?.();
+export const loadGetStuckAccountAndOperationForFamily = makeLoaderCache((family) =>
+  loaders.get(family)?.loadGetStuckAccountAndOperation?.()
+);

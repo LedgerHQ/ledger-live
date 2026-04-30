@@ -75,23 +75,23 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onSuccess,
             onError,
           }) => {
-            const tx = prepareSignTransaction(account, parentAccount, liveTx);
-
-            navigation.navigate(NavigatorName.SignTransaction, {
-              screen: ScreenName.SignTransactionSummary,
-              params: {
-                currentNavigation: ScreenName.SignTransactionSummary,
-                nextNavigation: ScreenName.SignTransactionSelectDevice,
-                transaction: tx,
-                accountId: account.id,
-                parentId: parentAccount ? parentAccount.id : undefined,
-                appName: options?.hwAppId,
-                dependencies: options?.dependencies,
-                isACRE: true,
-                onSuccess,
+            prepareSignTransaction(account, parentAccount, liveTx).then(tx => {
+              navigation.navigate(NavigatorName.SignTransaction, {
+                screen: ScreenName.SignTransactionSummary,
+                params: {
+                  currentNavigation: ScreenName.SignTransactionSummary,
+                  nextNavigation: ScreenName.SignTransactionSelectDevice,
+                  transaction: tx,
+                  accountId: account.id,
+                  parentId: parentAccount ? parentAccount.id : undefined,
+                  appName: options?.hwAppId,
+                  dependencies: options?.dependencies,
+                  isACRE: true,
+                  onSuccess,
+                  onError,
+                },
                 onError,
-              },
-              onError,
+              });
             });
           },
           "custom.acre.registerAccount": ({

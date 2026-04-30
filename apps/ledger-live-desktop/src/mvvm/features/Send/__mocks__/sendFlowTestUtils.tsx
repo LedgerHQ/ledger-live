@@ -184,23 +184,23 @@ const mockBridgeUpdateTransaction = jest.fn(
 const mockPrepareTransaction = jest.fn((_account: unknown, tx: Transaction) => Promise.resolve(tx));
 const mockGetTransactionStatus = jest.fn(() => Promise.resolve(mockStatus));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
+const makeBridgePromise = () => {
+  const bridge = {
     updateTransaction: mockBridgeUpdateTransaction,
     prepareTransaction: mockPrepareTransaction,
     getTransactionStatus: mockGetTransactionStatus,
     estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
-  })),
+  };
+  return Object.assign(Promise.resolve(bridge), { status: "fulfilled" as const, value: bridge });
+};
+
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  getAccountBridge: jest.fn(() => makeBridgePromise()),
   getCurrencyBridge: jest.fn(() => ({})),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: mockBridgeUpdateTransaction,
-    prepareTransaction: mockPrepareTransaction,
-    getTransactionStatus: mockGetTransactionStatus,
-    estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
-  })),
+  getAccountBridge: jest.fn(() => makeBridgePromise()),
   getCurrencyBridge: jest.fn(() => ({})),
 }));
 

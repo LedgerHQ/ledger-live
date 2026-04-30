@@ -18,9 +18,7 @@ const mockObservable = () => ({
 const mockOnboardAccount = jest.fn(mockObservable);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: mockOnboardAccount,
-  })),
+  getCurrencyBridge: jest.fn(() => Promise.resolve({ onboardAccount: mockOnboardAccount })),
 }));
 jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   addAccountsAction: jest.fn(params => ({
@@ -129,10 +127,13 @@ describe("useOnboardModalViewModel", () => {
     expect(result.current.stepId).toBe(StepId.FINISH);
   });
 
-  it("should call bridge.onboardAccount when onOnboardAccount is called", () => {
+  it("should call bridge.onboardAccount when onOnboardAccount is called", async () => {
     const { result } = renderHook(() => useOnboardModalViewModel(defaultParams), {
       initialState,
     });
+
+    // Wait for getCurrencyBridge.then(setBridge) to resolve and update state.
+    await act(async () => {});
 
     act(() => {
       result.current.onOnboardAccount();

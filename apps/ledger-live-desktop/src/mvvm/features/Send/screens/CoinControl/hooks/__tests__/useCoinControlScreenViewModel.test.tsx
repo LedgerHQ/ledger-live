@@ -134,7 +134,7 @@ function buildBaseParams(overrides?: {
     return acc;
   });
   getAccountCurrency.mockReturnValue(currency);
-  getAccountBridge.mockReturnValue({
+  getAccountBridge.mockResolvedValue({
     updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
       ...tx,
       ...patch,

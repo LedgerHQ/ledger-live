@@ -11,7 +11,6 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { formatCurrencyUnit } from "../currencies";
 import { toAccountRaw } from "./serialization";
-import { getAccountBridge } from "../bridge";
 
 const isSignificantAccount = acc =>
   acc.balance.gt(10 ** (getAccountCurrency(acc).units[0].magnitude - 6));
@@ -86,12 +85,6 @@ const cliFormat = (account, level?: string) => {
     getAccountCurrency(account).units[0],
   );
 
-  const formatAccountSpecifics = getAccountBridge(account).formatAccountSpecifics;
-  if (formatAccountSpecifics) {
-    str += formatAccountSpecifics(account);
-    str += "\n";
-  }
-
   const subAccounts = account.subAccounts || [];
   str += subAccounts
     .map(
@@ -124,7 +117,7 @@ const cliFormat = (account, level?: string) => {
           console.error("unexpected missing token account " + id);
         },
         (operation, unit) => {
-          return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
+          return "";
         },
       ),
     )
@@ -211,11 +204,7 @@ export function formatOperation(account: Account | null | undefined): (arg0: Ope
     if (ta) return getAccountCurrency(ta).units[0];
   };
 
-  const familyExtra = (operation, unit) => {
-    if (!account) return "";
-
-    return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
-  };
+  const familyExtra = (_operation, _unit) => "";
 
   return formatOp(unitByAccountId, familyExtra);
 }

@@ -23,8 +23,11 @@ export default function StepDelegation({
   invariant(transaction, "transaction required");
 
   const updateValidator = useCallback(
-    (address: string) => {
-      const bridge = getAccountBridge(account, parentAccount) as AccountBridge<GenericTransaction>;
+    async (address: string) => {
+      const bridge = (await getAccountBridge(
+        account,
+        parentAccount,
+      )) as AccountBridge<GenericTransaction>;
       onUpdateTransaction(_tx =>
         bridge.updateTransaction(transaction, {
           mode: "delegate",

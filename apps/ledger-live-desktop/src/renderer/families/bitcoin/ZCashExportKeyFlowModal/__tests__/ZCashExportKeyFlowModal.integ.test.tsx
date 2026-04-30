@@ -139,7 +139,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         publicKey: "mock-public-key",
       }),
     );
-    jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockReturnValue({
+    jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockResolvedValue({
       receive: mockReceive,
     });
 

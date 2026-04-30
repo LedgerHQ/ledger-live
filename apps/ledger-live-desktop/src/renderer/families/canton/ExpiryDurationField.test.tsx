@@ -7,14 +7,13 @@ import ExpiryDurationField from "./ExpiryDurationField";
 import { createMockAccount } from "./__tests__/testUtils";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: () => ({
-    updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
-      ...tx,
-      ...patch,
-    }),
-  }),
-}));
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const bridge = {
+    updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({ ...tx, ...patch }),
+  };
+  const p = Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  return { getAccountBridge: () => p };
+});
 
 describe("ExpiryDurationField", () => {
   const mockOnChange = jest.fn();

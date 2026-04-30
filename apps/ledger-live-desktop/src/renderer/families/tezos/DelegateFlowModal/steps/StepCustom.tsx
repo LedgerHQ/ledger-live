@@ -81,16 +81,19 @@ export const StepCustomFooter = ({
   const initialTransaction = useRef(transaction);
   useEffect(() => {
     // empty the field
-    onChangeTransaction(
-      getAccountBridge(account, parentAccount).updateTransaction(initialTransaction.current, {
-        recipient: "",
-      }),
-    );
+    getAccountBridge(account, parentAccount).then(bridge => {
+      onChangeTransaction(
+        bridge.updateTransaction(initialTransaction.current, {
+          recipient: "",
+        }),
+      );
+    });
   }, [onChangeTransaction, account, parentAccount]);
-  const onBack = useCallback(() => {
+  const onBack = useCallback(async () => {
     // we need to revert
+    const bridge = await getAccountBridge(account, parentAccount);
     onChangeTransaction(
-      getAccountBridge(account, parentAccount).updateTransaction(transaction, {
+      bridge.updateTransaction(transaction, {
         recipient: initialTransaction.current.recipient,
       }),
     );

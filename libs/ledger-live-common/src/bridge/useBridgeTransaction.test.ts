@@ -48,7 +48,7 @@ const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
 describe("useBridgeTransaction", () => {
   test("initialize with a BTC account settles the transaction", async () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-    const bridge = getAccountBridge(mainAccount);
+    const bridge = await getAccountBridge(mainAccount);
     let result: ReturnType<typeof renderHook<ReturnType<typeof useBridgeTransaction>, void>>["result"];
     await act(async () => {
       ({ result } = renderHook(
@@ -70,7 +70,7 @@ describe("useBridgeTransaction", () => {
 
   test("bridgeError go through", async () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-    const bridge = getAccountBridge(mainAccount);
+    const bridge = await getAccountBridge(mainAccount);
     let result: ReturnType<typeof renderHook<ReturnType<typeof useBridgeTransaction>, void>>["result"];
     await act(async () => {
       ({ result } = renderHook(
@@ -93,7 +93,7 @@ describe("useBridgeTransaction", () => {
       const errors: Array<any> = [];
       setGlobalOnBridgeError(error => errors.push(error));
       const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-      const bridge = getAccountBridge(mainAccount);
+      const bridge = await getAccountBridge(mainAccount);
       await act(async () => {
         renderHook(
           () =>
@@ -173,7 +173,7 @@ describe("useBridgeTransaction", () => {
   describe("updateAccount", () => {
     test("updates account reference without resetting the transaction", async () => {
       const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-      const bridge = getAccountBridge(mainAccount);
+      const bridge = await getAccountBridge(mainAccount);
       let result: ReturnType<typeof renderHook<ReturnType<typeof useBridgeTransaction>, void>>["result"];
       await act(async () => {
         ({ result } = renderHook(
@@ -199,7 +199,7 @@ describe("useBridgeTransaction", () => {
 
     test("is a no-op when the account id does not match", async () => {
       const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-      const bridge = getAccountBridge(mainAccount);
+      const bridge = await getAccountBridge(mainAccount);
       let result: ReturnType<typeof renderHook<ReturnType<typeof useBridgeTransaction>, void>>["result"];
       await act(async () => {
         ({ result } = renderHook(
@@ -220,7 +220,7 @@ describe("useBridgeTransaction", () => {
 
     test("is a no-op when the account reference is identical", async () => {
       const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-      const bridge = getAccountBridge(mainAccount);
+      const bridge = await getAccountBridge(mainAccount);
       let result: ReturnType<typeof renderHook<ReturnType<typeof useBridgeTransaction>, void>>["result"];
       await act(async () => {
         ({ result } = renderHook(

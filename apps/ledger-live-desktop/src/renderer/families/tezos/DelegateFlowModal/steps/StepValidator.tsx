@@ -91,9 +91,10 @@ const StepValidator = ({
   const bakers = useBakers(bakersWhitelistDefault);
 
   const onBakerClick = useCallback(
-    (baker: Baker) => {
+    async (baker: Baker) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       onChangeTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, {
+        bridge.updateTransaction(transaction, {
           recipient: baker.address,
         }),
       );

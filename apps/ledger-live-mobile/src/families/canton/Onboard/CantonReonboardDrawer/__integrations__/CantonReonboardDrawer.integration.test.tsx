@@ -56,6 +56,19 @@ jest.mock("~/components/DeviceActionModal", () => ({
   default: () => null,
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  // Bypass the dynamic import chain in bridge/impl.ts by loading canton setup directly.
+  // canton/setup.ts uses only regular imports, no dynamic import().
+  // Use require (not requireActual) so the canton setup is wired with the mocked
+  // hw-app-canton and withDevice, enabling the full integration flow in Jest.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { bridge } = require("@ledgerhq/live-common/families/canton/setup") as typeof import("@ledgerhq/live-common/families/canton/setup");
+  const resolvedBridge = Promise.resolve(bridge.currencyBridge);
+  return {
+    getCurrencyBridge: jest.fn(() => resolvedBridge),
+  };
+});
+
 let previousCurrencyIds: string[] = [];
 let currency: CryptoCurrency;
 let accountToReonboard: Account;

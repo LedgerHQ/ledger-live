@@ -3,7 +3,7 @@ import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { accountsSelector } from "~/reducers/accounts";
@@ -31,13 +31,12 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   const dispatch = useDispatch();
 
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-  const bridge = useMemo(() => {
-    const currencyBridge = getCurrencyBridge(cryptoCurrency);
-    if (!currencyBridge) {
-      throw new Error(`Currency bridge not found for ${cryptoCurrency.id}`);
-    }
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return currencyBridge as CantonCurrencyBridge;
+  const [bridge, setBridge] = useState<CantonCurrencyBridge | null>(null);
+  useEffect(() => {
+    getCurrencyBridge(cryptoCurrency).then(b => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      setBridge(b as CantonCurrencyBridge);
+    });
   }, [cryptoCurrency]);
 
   const {
@@ -72,7 +71,8 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   });
 
   const { startOnboarding, unsubscribe } = useCantonBridge({
-    bridge,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    bridge: (bridge ?? {}) as CantonCurrencyBridge,
     cryptoCurrency,
     device,
     accountToOnboard,

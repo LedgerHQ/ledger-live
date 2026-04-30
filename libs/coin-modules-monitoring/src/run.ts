@@ -134,14 +134,16 @@ function toEmptyAccount(currency: CryptoCurrency, info: AccountInfo): Account {
 }
 
 function getSync(currency: CryptoCurrency) {
-  const bridge = getAccountBridgeByFamily(currency.family);
+  const bridgePromise = getAccountBridgeByFamily(currency.family);
 
-  return (account: Account) =>
-    firstValueFrom(
+  return async (account: Account): Promise<Account> => {
+    const bridge = await bridgePromise;
+    return firstValueFrom(
       bridge
         .sync(account, { paginationConfig: {} })
         .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
     );
+  };
 }
 
 export default async function (currencyIds: string[], accountTypes: AccountType[]) {

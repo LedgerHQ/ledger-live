@@ -22,6 +22,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: () => mockSync,
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  getCurrencyBridge: jest.fn().mockResolvedValue({}),
+}));
+
 jest.mock("~/components/DeviceActionModal", () => {
   const MockReact = jest.requireActual<typeof React>("react");
   const { View: RNView, Pressable: RNPressable } =

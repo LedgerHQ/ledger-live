@@ -82,21 +82,26 @@ jest.mock("~/renderer/reducers/devices", () => {
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
-  getCurrencyBridge: () => ({
-    scanAccounts: () =>
-      new Observable<{ account: Account }>(subscriber => {
-        triggerNext = accounts => {
-          const account = accounts[accounts.length - 1];
-          if (account) {
-            subscriber.next({ account });
-          }
-        };
-        triggerComplete = () => subscriber.complete();
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      scanAccounts: () => ({
+        pipe: () => ({
+          subscribe: ({
+            next,
+            complete,
+          }: {
+            next: (accounts: Account[]) => void;
+            complete: () => void;
+          }) => {
+            triggerNext = accounts => next(accounts);
+            triggerComplete = () => complete();
+          },
+        }),
       }),
-    preload: () => true,
-    hydrate: () => true,
-  }),
-  getAccountBridge: () => mockAccountBridge,
+      preload: () => true,
+      hydrate: () => true,
+    }),
+  getAccountBridge: () => Promise.resolve(mockAccountBridge),
 }));
 
 jest.mock("~/renderer/bridge/cache", () => ({

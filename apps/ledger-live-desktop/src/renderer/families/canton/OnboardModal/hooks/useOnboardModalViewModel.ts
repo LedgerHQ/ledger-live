@@ -29,10 +29,14 @@ export function useOnboardModalViewModel({
 
   const [stepId, setStepId] = useState<StepId>(StepId.ONBOARD);
 
-  const bridge = useMemo(() => {
-    if (!currency) return null;
+  const [bridge, setBridge] = useState<CantonCurrencyBridge | null>(null);
+  useEffect(() => {
+    if (!currency) {
+      setBridge(null);
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return getCurrencyBridge(currency) as CantonCurrencyBridge;
+    getCurrencyBridge(currency).then(b => setBridge(b as CantonCurrencyBridge));
   }, [currency]);
 
   const {

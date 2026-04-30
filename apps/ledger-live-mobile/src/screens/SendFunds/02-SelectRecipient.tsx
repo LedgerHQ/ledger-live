@@ -6,7 +6,6 @@ import {
   SyncOneAccountOnMount,
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

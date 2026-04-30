@@ -217,9 +217,9 @@ describe("Bitcoin Account Balance Summary Footer", () => {
         return subscription;
       },
     }));
-    mockedGetAccountBridge.mockReturnValue({
+    mockedGetAccountBridge.mockResolvedValue({
       sync: syncMock,
-    } as unknown as ReturnType<typeof getAccountBridge>);
+    } as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
     const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
 
     const { user, store } = render(

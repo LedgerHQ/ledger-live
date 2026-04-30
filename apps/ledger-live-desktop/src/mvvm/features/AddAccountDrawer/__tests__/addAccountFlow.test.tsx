@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
-import { act, render, screen, userEvent } from "tests/testSetup";
+import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
@@ -17,6 +17,7 @@ import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowMa
 
 beforeEach(async () => {
   mockDomMeasurements();
+  bridgeSubscribed = false;
 });
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
@@ -33,8 +34,9 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   }),
 }));
 
-let triggerNext: (account: Account) => void = () => null;
+let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
+let bridgeSubscribed = false;
 
 const mockAccountBridge = {
   assignToAccountRaw: () => {},
@@ -42,33 +44,37 @@ const mockAccountBridge = {
   toOperationExtraRaw: (extra: unknown) => extra,
 };
 
-jest.mock("~/renderer/bridge/cache", () => ({
-  prepareCurrency: jest.fn().mockResolvedValue(null),
-}));
-
-jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const { Observable } = require("rxjs");
-  return {
-    __esModule: true,
-    getCurrencyBridge: () => ({
-      scanAccounts: () =>
-        new Observable((subscriber: any) => {
-          triggerNext = (account: Account) => subscriber.next({ account });
-          triggerComplete = () => subscriber.complete();
-          return () => {};
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  __esModule: true,
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      scanAccounts: () => ({
+        pipe: () => ({
+          subscribe: ({
+            next,
+            complete,
+          }: {
+            next: (accounts: Account[]) => void;
+            complete: () => void;
+          }) => {
+            triggerNext = accounts => next(accounts);
+            triggerComplete = () => complete();
+            bridgeSubscribed = true;
+          },
         }),
-      preload: () => Promise.resolve(true),
+      }),
+      preload: () => true,
       hydrate: () => true,
     }),
-    getAccountBridge: () => mockAccountBridge,
-  };
-});
+  getAccountBridge: () => Promise.resolve(mockAccountBridge),
+}));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  // flush the prepareCurrency promise so concat subscribes to scanAccounts and triggerNext is set
-  await act(async () => {});
-  for (const account of accounts) {
-    await act(() => triggerNext(account));
+  await waitFor(() => expect(bridgeSubscribed).toBe(true));
+  for (let i = 0; i < accounts.length; i++) {
+    await act(() => triggerNext(accounts.slice(0, i + 1)));
+    // Flush async effects (e.g. async isAccountEmpty in useScanAccounts)
+    await act(async () => {});
   }
   await act(() => triggerComplete());
 };
@@ -183,6 +189,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   beforeEach(() => {
     jest.mocked(track).mockReset();
     jest.mocked(trackPage).mockReset();
+    bridgeSubscribed = false;
   });
 
   it("should find and add an account", async () => {

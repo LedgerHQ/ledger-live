@@ -104,7 +104,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               map(() => ({})),
               rejectionOp(),
             )
-          : getAccountBridge(mainAccount).receive(mainAccount, {
+          : (await getAccountBridge(mainAccount)).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,
             })

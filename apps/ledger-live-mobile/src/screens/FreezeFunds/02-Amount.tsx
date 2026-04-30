@@ -170,7 +170,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       if (!transaction) return;
       setTransaction(
         bridge.updateTransaction(transaction, {
-          resource: options[optionIndex].value,
+          resource: options[optionIndex].value as TronResource,
         }),
       );
     },

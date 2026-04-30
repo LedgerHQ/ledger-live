@@ -55,8 +55,8 @@ const StepValidatorGroup = ({
     account && account.celoResources && transaction,
     "celo account, resources and transaction required",
   );
-  const updateValidatorGroup = ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+  const updateValidatorGroup = async ({ address }: { address: string }) => {
+    const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
     onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         recipient: address,

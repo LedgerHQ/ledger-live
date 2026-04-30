@@ -10,8 +10,6 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
-import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
@@ -29,24 +27,17 @@ export type MessageSignerModule = {
 export type TransactionModule = {
   fromTransactionRaw(raw: any): TransactionCommon;
   toTransactionRaw(tx: any): Record<string, unknown>;
-  formatTransaction(tx: any, account: Account): string;
+  formatTransaction(tx: any, account: Account): string | Promise<string>;
   fromTransactionStatusRaw?(raw: any): TransactionStatusCommon;
   toTransactionStatusRaw?(status: any): Record<string, unknown>;
   formatTransactionStatus?(tx: any, status: any, mainAccount?: Account): string;
 };
 
-export type DeviceTransactionConfigFn = (arg: {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  transaction: any;
-  status: any;
-}) => Promise<CommonDeviceTransactionField[]>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DeviceTransactionConfigFn = (arg: any) => Promise<any[]>;
 
 export type WalletApiAdapterModule = {
-  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
-    WalletAPITransaction,
-    any
-  >;
+  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<any, any>;
 };
 
 export type PlatformAdapterModule = {
@@ -59,24 +50,27 @@ export type PlatformAdapterModule = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type AccountModule = {
-  injectGetAddressParams?: (account: Account) => Record<string, unknown>;
+  injectGetAddressParams?: (account: any) => Record<string, unknown>;
+  [key: string]: unknown;
 };
 
 export type MockBridgeModule = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<TransactionCommon>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  accountBridge: AccountBridge<any, any, any, any, any>;
   loadCoinConfig?: () => void;
 };
 
 export type MockAccountModule = {
   postSyncAccount?: (account: Account) => Account;
-  postScanAccount?: (account: Account, opts?: { isEmpty?: boolean }) => Account;
+  postScanAccount?: (account: Account, opts?: any) => Account;
 };
 
 export type FamilySetup = {
   bridge?: {
     currencyBridge: CurrencyBridge;
-    accountBridge: AccountBridge<TransactionCommon>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    accountBridge: AccountBridge<any, any, any, any, any>;
   };
   resolver?: Resolver;
   messageSigner?: MessageSignerModule;
@@ -107,20 +101,20 @@ export type GetStuckAccountAndOperationFn = (
 
 export type CoinModuleLoader = {
   family: string;
-  loadSetup: () => FamilySetup;
-  loadTransaction: () => TransactionModule;
-  loadDeviceTxConfig?: () => DeviceTransactionConfigFn;
-  loadWalletApiAdapter?: () => WalletApiAdapterModule;
-  loadPlatformAdapter?: () => PlatformAdapterModule;
-  loadAccount?: () => AccountModule;
-  loadMockBridge?: () => MockBridgeModule;
-  loadMockAccount?: () => MockAccountModule;
-  loadIsEditableOperation?: () => IsEditableOperationFn;
-  loadIsStuckOperation?: () => IsStuckOperationFn;
-  loadGetStuckAccountAndOperation?: () => GetStuckAccountAndOperationFn;
+  loadSetup: () => Promise<FamilySetup>;
+  loadTransaction: () => Promise<TransactionModule>;
+  loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn>;
+  loadWalletApiAdapter?: () => Promise<WalletApiAdapterModule>;
+  loadPlatformAdapter?: () => Promise<PlatformAdapterModule>;
+  loadAccount?: () => Promise<AccountModule>;
+  loadMockBridge?: () => Promise<MockBridgeModule>;
+  loadMockAccount?: () => Promise<MockAccountModule>;
+  loadIsEditableOperation?: () => Promise<IsEditableOperationFn>;
+  loadIsStuckOperation?: () => Promise<IsStuckOperationFn>;
+  loadGetStuckAccountAndOperation?: () => Promise<GetStuckAccountAndOperationFn>;
   loadIsAccountEmpty?: () => Promise<(account: Account) => boolean>;
   loadGetVotesCount?: () => Promise<(account: Account) => number>;
   loadClearAccount?: () => Promise<(account: Account) => void>;
-  loadValidateAddress?: () => ValidateAddressFn;
-  loadSigner?: () => AlpacaSigner;
+  loadValidateAddress?: () => Promise<ValidateAddressFn>;
+  loadSigner?: () => Promise<AlpacaSigner>;
 };

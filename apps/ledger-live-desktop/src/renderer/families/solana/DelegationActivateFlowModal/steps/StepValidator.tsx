@@ -18,8 +18,8 @@ export default function StepValidator({
   error,
 }: StepProps) {
   invariant(transaction, "transaction required");
-  const updateValidator = ({ address }: { address: string }) => {
-    const bridge = getAccountBridge(account);
+  const updateValidator = async ({ address }: { address: string }) => {
+    const bridge = await getAccountBridge(account);
     onUpdateTransaction(tx => {
       return bridge.updateTransaction(tx, {
         model: {

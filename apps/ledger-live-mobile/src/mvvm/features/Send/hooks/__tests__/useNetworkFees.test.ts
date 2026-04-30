@@ -28,6 +28,7 @@ jest.mock("~/context/Locale", () => ({
 jest.mock("../useFeePresetOptions");
 jest.mock("../useFeePresetFiatValues");
 jest.mock("@ledgerhq/live-common/bridge/impl");
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("@ledgerhq/live-countervalues-react");
@@ -49,6 +50,7 @@ const { getMainAccount, getAccountCurrency } = jest.requireMock(
   "@ledgerhq/ledger-wallet-framework/account/helpers",
 );
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
+const { useAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/useAccountBridge");
 const sendFeatures = jest.requireMock(
   "@ledgerhq/live-common/bridge/descriptor/send/features",
 ).sendFeatures;
@@ -145,12 +147,14 @@ describe("useNetworkFees", () => {
     jest
       .mocked(useSelector)
       .mockReturnValue(mockCounterValueCurrency as ReturnType<typeof useSelector>);
-    getAccountBridge.mockReturnValue({
+    const mockBridge = {
       updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,
       })),
-    });
+    };
+    getAccountBridge.mockResolvedValue(mockBridge);
+    useAccountBridge.mockReturnValue(mockBridge);
     sendFeatures.shouldEstimateFeePresetsWithBridge = jest.fn(() => false);
     mockUseFeePresetOptions.mockReturnValue(defaultPresetOptions);
     mockUseFeePresetFiatValues.mockReturnValue(defaultFiatValues);
@@ -223,7 +227,9 @@ describe("useNetworkFees", () => {
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      const mockBridgeForTest = { updateTransaction: bridgeUpdateTransaction };
+      getAccountBridge.mockResolvedValue(mockBridgeForTest);
+      useAccountBridge.mockReturnValue(mockBridgeForTest);
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
@@ -245,7 +251,9 @@ describe("useNetworkFees", () => {
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      const mockBridgeForTest = { updateTransaction: bridgeUpdateTransaction };
+      getAccountBridge.mockResolvedValue(mockBridgeForTest);
+      useAccountBridge.mockReturnValue(mockBridgeForTest);
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));

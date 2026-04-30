@@ -151,11 +151,11 @@ export async function getBridges(
   const alpacaGetAddress = solanaGetAddress(alpacaSignerContext);
 
   return {
-    currencyBridge: getAlpacaCurrencyBridge("solana", "local", {
+    currencyBridge: await getAlpacaCurrencyBridge("solana", "local", {
       context: alpacaSignerContext,
       getAddress: alpacaGetAddress,
     }),
-    accountBridge: getAlpacaAccountBridge("solana", "local", {
+    accountBridge: await getAlpacaAccountBridge("solana", "local", {
       context: alpacaSignerContext,
       getAddress: alpacaGetAddress,
     }),

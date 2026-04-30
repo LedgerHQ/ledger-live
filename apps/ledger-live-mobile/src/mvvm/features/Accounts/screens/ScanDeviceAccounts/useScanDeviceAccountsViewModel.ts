@@ -77,9 +77,9 @@ export default function useScanDeviceAccountsViewModel({
     () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
   );
-  const startSubscription = useCallback(() => {
+  const startSubscription = useCallback(async () => {
     const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-    const bridge = getCurrencyBridge(cryptoCurrency);
+    const bridge = await getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
         operations: 0,

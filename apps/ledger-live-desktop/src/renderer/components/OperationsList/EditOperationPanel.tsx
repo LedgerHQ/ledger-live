@@ -1,13 +1,14 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useState, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { EditTransactionModalConfig } from "~/renderer/families/types";
 
 type Props = {
   operation: Operation;
@@ -24,7 +25,13 @@ const EditOperationPanel = (props: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
   // Determine if transaction editing is supported and which modal to use
-  const editConfig = useMemo(() => {
+  const [editConfig, setEditConfig] = useState<{
+    modalName: EditTransactionModalConfig["modalName"];
+    isSupported: boolean;
+    params: EditTransactionModalConfig["params"];
+  } | null>(null);
+
+  useEffect(() => {
     const family = getLLDCoinFamily(mainAccount.currency.family);
     const familyEditConfig = family.handlesEditTransaction?.({
       account,
@@ -43,13 +50,15 @@ const EditOperationPanel = (props: Props) => {
       },
     });
 
-    return familyEditConfig
-      ? {
-          modalName: familyEditConfig.modalName,
-          isSupported: true,
-          params: familyEditConfig.params,
-        }
-      : null;
+    setEditConfig(
+      familyEditConfig
+        ? {
+            modalName: familyEditConfig.modalName,
+            isSupported: true,
+            params: familyEditConfig.params,
+          }
+        : null,
+    );
   }, [
     account,
     parentAccount,

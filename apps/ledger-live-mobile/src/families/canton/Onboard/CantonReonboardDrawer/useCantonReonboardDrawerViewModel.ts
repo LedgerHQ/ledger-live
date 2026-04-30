@@ -6,7 +6,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { accountsSelector } from "~/reducers/accounts";
@@ -39,9 +39,12 @@ export function useCantonReonboardDrawerViewModel({
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
 
-  const bridge = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return getCurrencyBridge(currency) as CantonCurrencyBridge;
+  const [bridge, setBridge] = useState<CantonCurrencyBridge | null>(null);
+  useEffect(() => {
+    getCurrencyBridge(currency).then(b => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      setBridge(b as CantonCurrencyBridge);
+    });
   }, [currency]);
 
   const {
@@ -81,7 +84,8 @@ export function useCantonReonboardDrawerViewModel({
   );
 
   const { startOnboarding, unsubscribe } = useCantonBridge({
-    bridge,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    bridge: (bridge ?? {}) as CantonCurrencyBridge,
     cryptoCurrency: currency,
     device,
     accountToOnboard: accountToReonboard,

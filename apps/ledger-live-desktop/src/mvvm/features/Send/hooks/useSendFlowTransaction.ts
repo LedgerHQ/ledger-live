@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { use, useCallback, useMemo } from "react";
 import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -24,13 +24,18 @@ export function useSendFlowTransaction({
   account,
   parentAccount,
 }: UseSendFlowTransactionParams): UseSendFlowTransactionResult {
-  // Use getAccountBridge directly (synchronous) so we can handle the null account case.
-  // useAccountBridge cannot be called conditionally and requires a non-null AccountLike.
-  const bridge = useMemo<AccountBridge<Transaction> | null>(
-    () => (account ? (getAccountBridge(account, parentAccount) as AccountBridge<Transaction>) : null),
+  // use() can be called conditionally (unlike hooks) — safe to gate on account nullability.
+  // The Promise is cached per family in getAccountBridge, so use() returns synchronously
+  // after the first render suspense.
+  const bridgePromise = useMemo(
+    () =>
+      account
+        ? (getAccountBridge(account, parentAccount) as Promise<AccountBridge<Transaction>>)
+        : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [account?.id, parentAccount?.id],
   );
+  const bridge: AccountBridge<Transaction> | null = bridgePromise ? use(bridgePromise) : null;
   const {
     transaction,
     setTransaction: bridgeSetTransaction,

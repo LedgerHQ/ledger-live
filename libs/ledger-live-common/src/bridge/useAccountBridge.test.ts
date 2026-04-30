@@ -8,6 +8,7 @@ import { renderHook, act } from "@testing-library/react";
 import { genAccount } from "../mock/account";
 import { setSupportedCurrencies } from "../currencies";
 import { useAccountBridge } from "./useAccountBridge";
+import { getAccountBridge } from ".";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 setSupportedCurrencies(["bitcoin"]);
@@ -16,17 +17,6 @@ const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(React.Suspense, { fallback: null }, children);
 
 describe("useAccountBridge", () => {
-  test("returns bridge synchronously without a Suspense boundary", () => {
-    const account = genAccount("mocked-account-sync", { currency: BTC });
-
-    // No suspenseWrapper — if useAccountBridge suspended it would throw here
-    const { result } = renderHook(() => useAccountBridge(account));
-
-    expect(typeof result.current.createTransaction).toBe("function");
-    expect(typeof result.current.updateTransaction).toBe("function");
-    expect(typeof result.current.prepareTransaction).toBe("function");
-  });
-
   test("returns a bridge with createTransaction for a BTC account", async () => {
     const account = genAccount("mocked-account-1", { currency: BTC });
 
@@ -41,5 +31,19 @@ describe("useAccountBridge", () => {
     expect(typeof result!.current.createTransaction).toBe("function");
     expect(typeof result!.current.updateTransaction).toBe("function");
     expect(typeof result!.current.prepareTransaction).toBe("function");
+  });
+
+  test("returns bridge synchronously after Promise is pre-settled (no Suspense needed)", async () => {
+    const account = genAccount("mocked-account-pre-settled", { currency: BTC });
+
+    // Pre-settle the bridge Promise before rendering
+    await getAccountBridge(account);
+
+    // The bridge Promise is now settled; use() should return synchronously — no Suspense needed.
+    const { result } = renderHook(() => useAccountBridge(account));
+
+    expect(typeof result.current.createTransaction).toBe("function");
+    expect(typeof result.current.updateTransaction).toBe("function");
+    expect(typeof result.current.prepareTransaction).toBe("function");
   });
 });

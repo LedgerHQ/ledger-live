@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "5193657",
+    "balance": "9199142",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,14 +12,14 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "3371656",
+    "spendableBalance": "7377141",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
     "xpub": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
   },
   {
-    "balance": "974371",
+    "balance": "971622",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
@@ -28,7 +28,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 1,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "791041",
+    "spendableBalance": "788292",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -3730,6 +3730,25 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": "25",
       "type": "UNDELEGATE",
       "value": "13927",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+      "blockHash": null,
+      "blockHeight": 30784483,
+      "extra": {},
+      "fee": "2748",
+      "hasFailed": false,
+      "hash": "588D8FA291F8E449DAD5EA12FA77CF0FACD303518A8E076CD6D7F0B7E8EA858B",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-588D8FA291F8E449DAD5EA12FA77CF0FACD303518A8E076CD6D7F0B7E8EA858B-OUT",
+      "recipients": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "senders": [
+        "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+      ],
+      "transactionSequenceNumber": "28",
+      "type": "OUT",
+      "value": "2749",
     },
     {
       "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",

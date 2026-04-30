@@ -76,9 +76,7 @@ describe("useFeePresetFiatValues", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest
-      .mocked(getAccountBridge)
-      .mockReturnValue(mockBridge as unknown as ReturnType<typeof getAccountBridge>);
+    jest.mocked(getAccountBridge).mockResolvedValue(mockBridge as never);
     jest
       .mocked(useCalculateCountervalueCallback)
       .mockReturnValue(

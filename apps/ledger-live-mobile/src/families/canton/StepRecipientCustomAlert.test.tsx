@@ -49,6 +49,29 @@ jest.mock("~/components/Alert", () => {
   };
 });
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  getCurrencyBridge: jest.fn(() =>
+    Promise.resolve({
+      onboardAccount: jest.fn(),
+      scanAccounts: jest.fn(),
+      preload: jest.fn(() => Promise.resolve({})),
+      hydrate: jest.fn(),
+    }),
+  ),
+  getAccountBridge: jest.fn(() =>
+    Promise.resolve({
+      createTransaction: jest.fn(() => ({})),
+      updateTransaction: jest.fn((tx: unknown, patch: unknown) => ({ ...tx as object, ...patch as object })),
+      getTransactionStatus: jest.fn(() => Promise.resolve({})),
+      prepareTransaction: jest.fn((_, tx: unknown) => Promise.resolve(tx)),
+      sync: jest.fn(() => ({ subscribe: jest.fn() })),
+      receive: jest.fn(),
+      broadcast: jest.fn(),
+      signOperation: jest.fn(),
+    }),
+  ),
+}));
+
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: jest.fn(() => createMockNavigation()),

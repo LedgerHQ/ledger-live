@@ -67,7 +67,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   const handleContinueClick = async () => {
     invariant(editType, "editType required");
 
-    const bridge: AccountBridge<BitcoinTransaction> = getAccountBridge(account, parentAccount);
+    const bridge: AccountBridge<BitcoinTransaction> = await getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
     const patch = await getEditTransactionPatch({

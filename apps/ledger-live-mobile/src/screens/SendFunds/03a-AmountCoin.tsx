@@ -101,14 +101,14 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
     [setTransaction, bridge, account, transaction],
   );
   const toggleUseAllAmount = useCallback(() => {
-    if (!transaction) return;
+    if (!account || !transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {
         amount: new BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
-  }, [setTransaction, bridge, transaction]);
+  }, [setTransaction, bridge, transaction, account]);
   const onContinue = useCallback(() => {
     if (!transaction) return;
     navigation.navigate(ScreenName.SendSummary, {

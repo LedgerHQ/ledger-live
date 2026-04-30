@@ -2,6 +2,7 @@ import { CurrencyNotSupported } from "@ledgerhq/errors";
 import {
   registerCoinModules,
   getRegisteredFamilies,
+  makeLoaderCache,
   loadSetupForFamily,
   loadTransactionForFamily,
   loadDeviceTxConfigForFamily,
@@ -30,8 +31,8 @@ const stubTxModule: TransactionModule = {
 
 const makeLoader = (family: string, overrides: Partial<CoinModuleLoader> = {}): CoinModuleLoader => ({
   family,
-  loadSetup: () => stubSetup,
-  loadTransaction: () => stubTxModule,
+  loadSetup: () => Promise.resolve(stubSetup),
+  loadTransaction: () => Promise.resolve(stubTxModule),
   ...overrides,
 });
 
@@ -68,10 +69,14 @@ const allLoaders: LoaderEntry[] = [
 ];
 
 describe.each(allLoaders)("$fn.name", ({ loaderKey, fn, required }) => {
-  it("returns module when loader has it", () => {
+  it("returns module when loader has it", async () => {
     const stub = jest.fn();
-    registerCoinModules([makeLoader("__test__", { [loaderKey]: () => stub })]);
-    expect(fn("__test__")).toBe(stub);
+    registerCoinModules([makeLoader("__test__", { [loaderKey]: () => Promise.resolve(stub) })]);
+    expect(await fn("__test__")).toBe(stub);
+  });
+  it("returns the same Promise reference on repeated calls (memoized)", () => {
+    registerCoinModules([makeLoader("__memo__", { [loaderKey]: () => Promise.resolve({}) })]);
+    expect(fn("__memo__")).toBe(fn("__memo__"));
   });
   if (required) {
     it("throws CurrencyNotSupported for unknown family", () => {
@@ -86,4 +91,38 @@ describe.each(allLoaders)("$fn.name", ({ loaderKey, fn, required }) => {
       expect(fn("__bare__")).toBeUndefined();
     });
   }
+});
+
+describe("makeLoaderCache", () => {
+  it("always returns the same Promise reference for a given family", () => {
+    const loader = jest.fn(() => Promise.resolve(42));
+    const cached = makeLoaderCache(loader);
+    const p1 = cached("bitcoin");
+    const p2 = cached("bitcoin");
+    expect(p1).toBe(p2);
+    expect(loader).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns different Promises for different families", () => {
+    const cached = makeLoaderCache(() => Promise.resolve(1));
+    expect(cached("bitcoin")).not.toBe(cached("ethereum"));
+  });
+
+  it("does not cache undefined — calls loader again on next call", () => {
+    const loader = jest.fn((): Promise<number> | undefined => undefined);
+    const cached = makeLoaderCache(loader);
+    expect(cached("bitcoin")).toBeUndefined();
+    expect(cached("bitcoin")).toBeUndefined();
+    expect(loader).toHaveBeenCalledTimes(2);
+  });
+
+  it("caches rejected Promises", async () => {
+    const loader = jest.fn(() => Promise.reject(new Error("fail")));
+    const cached = makeLoaderCache(loader);
+    const p1 = cached("bitcoin");
+    const p2 = cached("bitcoin");
+    expect(p1).toBe(p2);
+    expect(loader).toHaveBeenCalledTimes(1);
+    await expect(p1).rejects.toThrow("fail");
+  });
 });

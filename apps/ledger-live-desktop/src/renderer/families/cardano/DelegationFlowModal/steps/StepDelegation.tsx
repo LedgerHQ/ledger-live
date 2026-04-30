@@ -32,9 +32,9 @@ export default function StepDelegation({
   const { errors } = status;
   const displayError = errors.amount?.message ? errors.amount : "";
 
-  const selectPool = (stakePool: StakePool) => {
+  const selectPool = async (stakePool: StakePool) => {
     setSelectedPool(stakePool);
-    const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account);
+    const bridge: AccountBridge<CardanoTransaction> = await getAccountBridge(account);
     onUpdateTransaction(() => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const updatedTransaction = bridge.updateTransaction(transaction as CardanoTransaction, {

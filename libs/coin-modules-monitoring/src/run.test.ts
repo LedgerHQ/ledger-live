@@ -16,31 +16,33 @@ describe("Coin Modules Monitoring", () => {
 
   describe("run", () => {
     it("produces log entries to be submitted, skipping failures", async () => {
-      jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockReturnValue({
-        sync: makeSync({
-          getAccountShape: async info => {
-            if (info.address === "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S") {
-              throw new Error("Unavailable");
-            }
-            const accountId = encodeAccountId({
-              type: "js",
-              version: "2",
-              currencyId: info.currency.id,
-              xpubOrAddress: info.initialAccount?.xpub ?? info.address,
-              derivationMode: "",
-            });
-            const transactionCounts: Record<string, number> = {
-              Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp: 500,
-              Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv: 0,
-            };
-            return {
-              id: accountId,
-              balance: new BigNumber(0),
-              operationsCount: transactionCounts[info.address],
-            };
-          },
-        }),
-      } as AccountBridge<TransactionCommon>);
+      jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockReturnValue(
+        Promise.resolve({
+          sync: makeSync({
+            getAccountShape: async info => {
+              if (info.address === "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S") {
+                throw new Error("Unavailable");
+              }
+              const accountId = encodeAccountId({
+                type: "js",
+                version: "2",
+                currencyId: info.currency.id,
+                xpubOrAddress: info.initialAccount?.xpub ?? info.address,
+                derivationMode: "",
+              });
+              const transactionCounts: Record<string, number> = {
+                Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp: 500,
+                Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv: 0,
+              };
+              return {
+                id: accountId,
+                balance: new BigNumber(0),
+                operationsCount: transactionCounts[info.address],
+              };
+            },
+          }),
+        } as AccountBridge<TransactionCommon>),
+      );
 
       const logs = await run(["solana"], ["pristine", "average", "big"]);
 

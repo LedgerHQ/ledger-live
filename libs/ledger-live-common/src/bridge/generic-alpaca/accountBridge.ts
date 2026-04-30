@@ -20,12 +20,12 @@ import { getValidateAddress } from "./validateAddress";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
 import type { GenericTransaction, AlpacaSigner } from "./types";
 
-export function getAlpacaAccountBridge(
+export async function getAlpacaAccountBridge(
   network: string,
   kind: string,
   customSigner?: AlpacaSigner,
-): AccountBridge<GenericTransaction> {
-  const signer = customSigner ?? getSigner(network);
+): Promise<AccountBridge<GenericTransaction>> {
+  const signer = customSigner ?? (await getSigner(network));
   const { assignFromAccountRaw, assignToAccountRaw } = getAccountRawAssignHooks(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
@@ -41,6 +41,6 @@ export function getAlpacaAccountBridge(
     assignFromAccountRaw,
     assignToAccountRaw,
     getSerializedAddressParameters, // NOTE: check whether it should be exposed by coin-module's api instead?
-    validateAddress: getValidateAddress(network),
+    validateAddress: async (address, params) => (await getValidateAddress(network))(address, params),
   } satisfies Partial<AccountBridge<GenericTransaction>>;
 }

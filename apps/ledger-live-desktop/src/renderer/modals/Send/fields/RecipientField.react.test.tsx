@@ -19,6 +19,17 @@ jest.mock("../../../../sentry/install", () => ({
   init: () => null,
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(() => ({
+    updateTransaction: jest.fn(
+      (transaction: Record<string, unknown>, patch: Record<string, unknown>) => ({
+        ...transaction,
+        ...patch,
+      }),
+    ),
+  })),
+}));
+
 nock.disableNetConnect();
 
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);

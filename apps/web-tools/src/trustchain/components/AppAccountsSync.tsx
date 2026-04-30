@@ -310,18 +310,21 @@ function HeadlessAddAccounts({
       if (!currencyId) return;
       setDisabled(true);
       const currency = getCryptoCurrencyById(String(currencyId));
-      const currencyBridge = getCurrencyBridge(currency);
       const sub = appForCurrency(deviceId, currency, () =>
         concat(
           from(bridgeCache.prepareCurrency(currency)).pipe(ignoreElements()),
-          currencyBridge.scanAccounts({
-            currency,
-            deviceId,
-            syncConfig: {
-              paginationConfig: {},
-              blacklistedTokenIds: [],
-            },
-          }),
+          from(getCurrencyBridge(currency)).pipe(
+            mergeMap(currencyBridge =>
+              currencyBridge.scanAccounts({
+                currency,
+                deviceId,
+                syncConfig: {
+                  paginationConfig: {},
+                  blacklistedTokenIds: [],
+                },
+              }),
+            ),
+          ),
         ),
       ).subscribe({
         next: event => {

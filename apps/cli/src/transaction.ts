@@ -1,6 +1,5 @@
 import uniqBy from "lodash/uniqBy";
 import shuffle from "lodash/shuffle";
-import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
@@ -9,10 +8,7 @@ import type {
   AccountLikeArray,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import {
-  getRegisteredFamilies,
-  loadSetupForFamily,
-} from "@ledgerhq/live-common/coin-modules/registry";
+import { loadSetupForFamily } from "@ledgerhq/live-common/coin-modules/registry";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -93,13 +89,7 @@ export const inferTransactionsOpts = uniqBy(
       type: String,
       desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
     },
-  ].concat(
-    flatMap(
-      getRegisteredFamilies().map(family => loadSetupForFamily(family).cliTools),
-      (m: unknown) =>
-        (m && typeof m === "object" && "options" in m ? (m as any).options : []) || [],
-    ),
-  ),
+  ],
   "name",
 );
 export async function inferTransactions(
@@ -107,7 +97,7 @@ export async function inferTransactions(
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = await getAccountBridge(mainAccount, null);
-  const specific = loadSetupForFamily(mainAccount.currency.family).cliTools;
+  const specific = (await loadSetupForFamily(mainAccount.currency.family)).cliTools;
 
   const inferAccounts: (account: Account, opts: Record<string, unknown>) => AccountLikeArray =
     (specific && "inferAccounts" in specific && (specific.inferAccounts as any)) ||

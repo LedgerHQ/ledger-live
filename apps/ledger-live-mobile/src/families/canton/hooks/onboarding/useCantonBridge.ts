@@ -48,7 +48,7 @@ export function useCantonBridge({
   const { subscribe, unsubscribe } = useObservable();
 
   const startOnboarding = useCallback(() => {
-    if (!device || !accountToOnboard) {
+    if (!device || !accountToOnboard || !bridge.onboardAccount) {
       return;
     }
 

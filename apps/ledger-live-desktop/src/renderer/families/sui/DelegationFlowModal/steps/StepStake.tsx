@@ -20,8 +20,8 @@ export default function StepStake({
   error,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const updateValidator = ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+  const updateValidator = async ({ address }: { address: string }) => {
+    const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
         recipient: address,

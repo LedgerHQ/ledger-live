@@ -6,9 +6,9 @@ const networkToFamily = (network: string) => {
   return network;
 };
 
-export function getSigner(network: string): AlpacaSigner {
+export async function getSigner(network: string): Promise<AlpacaSigner> {
   const family = networkToFamily(network);
-  const signer = loadSignerForFamily(family);
+  const signer = await loadSignerForFamily(family);
   if (!signer) throw new Error(`No signer registered for network ${network}`);
   return signer;
 }

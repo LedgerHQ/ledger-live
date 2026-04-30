@@ -35,7 +35,7 @@ describe("StepMandatoryPrivateSync", () => {
     jest.clearAllMocks();
     syncSubject = new Subject();
     mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
-    getAccountBridge.mockReturnValue({ sync: mockSync });
+    getAccountBridge.mockResolvedValue({ sync: mockSync });
     mockGetAleoCurrencyConfig.mockReturnValue(mockAleoCoinConfig);
   });
 
@@ -105,6 +105,8 @@ describe("StepMandatoryPrivateSync", () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
 
+      await act(async () => {});
+
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());
       });
@@ -120,6 +122,9 @@ describe("StepMandatoryPrivateSync", () => {
 
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
+
+      // Allow the getAccountBridge Promise to resolve before emitting progress
+      await act(async () => {});
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());
@@ -149,6 +154,8 @@ describe("StepMandatoryPrivateSync", () => {
     it("should call updateAccount with the updated account on each sync emission", async () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
+
+      await act(async () => {});
 
       await act(async () => {
         syncSubject.next(() => ({

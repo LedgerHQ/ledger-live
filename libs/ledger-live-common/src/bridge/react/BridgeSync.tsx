@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import shuffle from "lodash/shuffle";
 import priorityQueue from "async/priorityQueue";
 import { concat, from } from "rxjs";
-import { ignoreElements } from "rxjs/operators";
+import { ignoreElements, switchMap } from "rxjs/operators";
 import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { getVotesCount, isUpToDateAccount, getAccountCurrency } from "../../account";
 import { getAccountBridge } from "..";
@@ -146,7 +146,6 @@ function useSyncQueue({
 
       // FIXME if we want to stop syncs for specific currency (e.g. api down) we would do it here
       try {
-        const bridge = getAccountBridge(account);
         setAccountSyncState(accountId, {
           pending: true,
           error: null,
@@ -198,7 +197,7 @@ function useSyncQueue({
         };
         concat(
           from(prepareCurrency(account.currency)).pipe(ignoreElements()),
-          bridge.sync(account, syncConfig),
+          from(getAccountBridge(account)).pipe(switchMap(bridge => bridge.sync(account, syncConfig))),
         ).subscribe({
           next: accountUpdater => {
             updateAccountWithUpdater(accountId, accountUpdater);

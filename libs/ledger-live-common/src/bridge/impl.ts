@@ -29,12 +29,25 @@ const alpacaized = {
 
 // Alpacaized currency bridges are created on demand; cache ensures referential stability.
 const currencyBridgeCache: Record<string, CurrencyBridge> = {};
-// All account bridges are wrapped (wrapAccountBridge); cache ensures referential stability.
-const accountBridgeCache: Record<string, AccountBridge<any>> = {};
 
-export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+// Promise cache per family — storing the Promise (not the value) means:
+//  1. Concurrent calls share the same in-flight Promise (no duplicate loading)
+//  2. Once settled, React's use() reads the annotated {status, value} and returns synchronously
+const accountBridgePromiseCache: Record<string, Promise<AccountBridge<any>>> = {};
+const mockBridgePromiseCache: Record<string, Promise<AccountBridge<any>> | undefined> = {};
+
+// Annotate a Promise with React's use() hint fields so it returns synchronously after settlement.
+function settleAnnotate<T>(p: Promise<T>): Promise<T> {
+  p.then(
+    value => Object.assign(p, { status: "fulfilled", value }),
+    reason => Object.assign(p, { status: "rejected", reason }),
+  );
+  return p;
+}
+
+export const getCurrencyBridge = async (currency: CryptoCurrency): Promise<CurrencyBridge> => {
   if (getEnv("MOCK")) {
-    const mockBridge = loadMockBridgeForFamily(currency.family);
+    const mockBridge = await loadMockBridgeForFamily(currency.family);
     // TODO Remove once we delete mock bridges tests
     if (mockBridge) {
       mockBridge.loadCoinConfig?.();
@@ -47,12 +60,12 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
 
   if (alpacaized[currency.family]) {
     if (!currencyBridgeCache[currency.family]) {
-      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
+      currencyBridgeCache[currency.family] = await getAlpacaCurrencyBridge(currency.family, "local");
     }
     return currencyBridgeCache[currency.family];
   }
 
-  const setup = loadSetupForFamily(currency.family);
+  const setup = await loadSetupForFamily(currency.family);
   if (!setup?.bridge) {
     throw new CurrencyNotSupported("no implementation available for currency " + currency.id, {
       currencyName: currency.id,
@@ -61,55 +74,75 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   return setup.bridge.currencyBridge;
 };
 
-export const getAccountBridge = (
+async function buildAccountBridgeForFamily(family: string): Promise<AccountBridge<any>> {
+  let rawBridge: AccountBridge<any>;
+  if (alpacaized[family]) {
+    rawBridge = await getAlpacaAccountBridge(family, "local");
+  } else {
+    const setup = await loadSetupForFamily(family);
+    if (!setup?.bridge) {
+      throw new CurrencyNotSupported("account bridge not found " + family);
+    }
+    rawBridge = setup.bridge.accountBridge;
+  }
+  return wrapAccountBridge(rawBridge);
+}
+
+function getCachedBridgePromise(family: string): Promise<AccountBridge<any>> {
+  if (!accountBridgePromiseCache[family]) {
+    accountBridgePromiseCache[family] = settleAnnotate(buildAccountBridgeForFamily(family));
+  }
+  return accountBridgePromiseCache[family];
+}
+
+// Returns the same Promise reference per family after the first call.
+// For non-mock accounts this is the settled, annotated Promise — React's use() returns synchronously.
+export function getAccountBridgeByFamily(
+  family: string,
+  accountId?: string,
+): Promise<AccountBridge<any>> {
+  if (accountId) {
+    const { type } = decodeAccountId(accountId);
+    if (type === "mock") {
+      if (!mockBridgePromiseCache[family]) {
+        const mockP = loadMockBridgeForFamily(family);
+        if (mockP) {
+          mockBridgePromiseCache[family] = settleAnnotate(
+            (async () => {
+              const mockBridge = await mockP;
+              if (mockBridge) {
+                // TODO Remove once we delete mock bridges tests
+                mockBridge.loadCoinConfig?.();
+                return wrapAccountBridge(mockBridge.accountBridge);
+              }
+              return getCachedBridgePromise(family);
+            })(),
+          );
+        }
+      }
+      const cachedMock = mockBridgePromiseCache[family];
+      if (cachedMock) {
+        return cachedMock;
+      }
+    }
+  }
+  return getCachedBridgePromise(family);
+}
+
+// Returns the same settled Promise for the same family so React's use() never suspends twice.
+export function getAccountBridge(
   account: AccountLike,
   parentAccount?: Account | null,
-): AccountBridge<any> => {
+): Promise<AccountBridge<any>> {
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
 
   if (supportedError) {
-    throw supportedError;
+    return Promise.reject(supportedError);
   }
 
-  try {
-    return getAccountBridgeByFamily(currency.family, mainAccount.id);
-  } catch {
-    throw new CurrencyNotSupported("currency not supported " + currency.id, {
-      currencyName: currency.id,
-    });
-  }
-};
-
-export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
-  if (accountId) {
-    const { type } = decodeAccountId(accountId);
-
-    if (type === "mock") {
-      const mockBridge = loadMockBridgeForFamily(family);
-      // TODO Remove once we delete mock bridges tests
-      if (mockBridge) {
-        mockBridge.loadCoinConfig?.();
-        return wrapAccountBridge(mockBridge.accountBridge);
-      }
-    }
-  }
-
-  if (!accountBridgeCache[family]) {
-    let rawBridge: AccountBridge<any>;
-    if (alpacaized[family]) {
-      rawBridge = getAlpacaAccountBridge(family, "local");
-    } else {
-      const setup = loadSetupForFamily(family);
-      if (!setup?.bridge) {
-        throw new CurrencyNotSupported("account bridge not found " + family);
-      }
-      rawBridge = setup.bridge.accountBridge;
-    }
-    accountBridgeCache[family] = wrapAccountBridge(rawBridge);
-  }
-  return accountBridgeCache[family];
+  return getAccountBridgeByFamily(currency.family, mainAccount.id);
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(

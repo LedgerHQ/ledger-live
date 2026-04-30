@@ -100,7 +100,7 @@ function buildBaseParams(overrides?: {
     return acc;
   });
   (getAccountCurrency as jest.Mock).mockReturnValue(currency);
-  (getAccountBridge as jest.Mock).mockReturnValue({
+  (getAccountBridge as jest.Mock).mockResolvedValue({
     updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
       ...tx,
       ...patch,

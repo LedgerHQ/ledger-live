@@ -9,10 +9,11 @@ import { CreateStatus, getConfirmationCode, useOnboarding } from "../hooks/useOn
 let onboardSubject: Subject<unknown>;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: () => ({
-    onboardAccount: () => onboardSubject.asObservable(),
-    pairWalletConnect: jest.fn(),
-  }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      onboardAccount: () => onboardSubject.asObservable(),
+      pairWalletConnect: jest.fn(),
+    }),
 }));
 
 const currency = getCryptoCurrencyById("concordium");

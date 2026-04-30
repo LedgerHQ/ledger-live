@@ -86,7 +86,7 @@ describe("useFeePresetFiatValues", () => {
         return { estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0), errors: {} };
       },
     };
-    mockedGetAccountBridge.mockReturnValue(bridge as never);
+    mockedGetAccountBridge.mockResolvedValue(bridge as never);
 
     const mainAccount = createMockAccount({
       id: "main",
@@ -155,7 +155,7 @@ describe("useFeePresetFiatValues", () => {
         return { estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0), errors: {} };
       },
     };
-    mockedGetAccountBridge.mockReturnValue(bridge as never);
+    mockedGetAccountBridge.mockResolvedValue(bridge as never);
 
     const mainAccount = createMockAccount({
       id: "main",

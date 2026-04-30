@@ -20,7 +20,7 @@ export function useFieldByFamily(
 }
 export function useEditTxFeeByFamily() {
   const transaction = useRoute<Navigation["route"]>().params?.transaction;
-  return ({
+  return async ({
     account,
     field,
     fee,
@@ -29,7 +29,7 @@ export function useEditTxFeeByFamily() {
     field: string;
     fee: BigNumber | null | undefined;
   }) => {
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     return bridge.updateTransaction(transaction, {
       [field]: fee,
     });

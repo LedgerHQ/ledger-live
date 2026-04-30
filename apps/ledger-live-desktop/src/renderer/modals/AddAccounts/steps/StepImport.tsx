@@ -126,7 +126,6 @@ class StepImport extends PureComponent<
         this.props;
       if (!currency || !device) throw new UnresponsiveDeviceError();
       const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      const bridge = getCurrencyBridge(mainCurrency);
 
       // will be set to false if an existing account is found
       let onlyNewAccounts = true;
@@ -136,14 +135,15 @@ class StepImport extends PureComponent<
         },
         blacklistedTokenIds,
       };
-      this.scanSubscription = concat(
-        from(prepareCurrency(mainCurrency)).pipe(ignoreElements()),
-        bridge.scanAccounts({
-          currency: mainCurrency,
-          deviceId: device.deviceId,
-          syncConfig,
-        }),
-      )
+      getCurrencyBridge(mainCurrency).then(bridge => {
+        this.scanSubscription = concat(
+          from(prepareCurrency(mainCurrency)).pipe(ignoreElements()),
+          bridge.scanAccounts({
+            currency: mainCurrency,
+            deviceId: device.deviceId,
+            syncConfig,
+          }),
+        )
         .pipe(
           filter(e => e.type === "discovered"),
           map(e => e.account),
@@ -180,6 +180,7 @@ class StepImport extends PureComponent<
             setScanStatus("error", error);
           },
         });
+      });
     } catch (err) {
       logger.critical(err);
       const { setScanStatus } = this.props;

@@ -12,11 +12,11 @@ jest.mock("@ledgerhq/live-common/families/evm/react", () => ({
   useGasOptions: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn().mockReturnValue({
-    updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
-  }),
-}));
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const bridge = { updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })) };
+  const p = Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  return { getAccountBridge: jest.fn().mockReturnValue(p) };
+});
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),

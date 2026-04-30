@@ -7,10 +7,11 @@ import { PairStatus, usePairing } from "../hooks/usePairing";
 let pairingSubject: Subject<unknown>;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: () => ({
-    pairWalletConnect: () => pairingSubject.asObservable(),
-    onboardAccount: jest.fn(),
-  }),
+  getCurrencyBridge: () =>
+    Promise.resolve({
+      pairWalletConnect: () => pairingSubject.asObservable(),
+      onboardAccount: jest.fn(),
+    }),
 }));
 
 const currency = getCryptoCurrencyById("concordium");

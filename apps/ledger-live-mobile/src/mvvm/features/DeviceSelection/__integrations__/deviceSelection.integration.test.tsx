@@ -27,6 +27,11 @@ jest.mock("@ledgerhq/live-common/hw/index", () => ({
   discoverDevices: jest.fn(),
 }));
 
+jest.mock("~/bridge/cache", () => ({
+  prepareCurrency: jest.fn().mockResolvedValue(undefined),
+  hydrateCurrency: jest.fn().mockResolvedValue(undefined),
+}));
+
 describe("Device Selection feature integration test", () => {
   beforeAll(() => {
     MockUseRoute.mockReturnValue({

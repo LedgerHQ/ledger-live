@@ -67,15 +67,11 @@ const withMockedAccountBridge = (
   account: Account,
   syncFactory: () => Observable<AccountUpdater>,
 ) => {
-  const originalBridge = originalGetAccountBridge(account);
-  const mockBridge = {
-    ...originalBridge,
-    sync: syncFactory,
-  };
+  const mockBridge = { sync: syncFactory };
 
   mockedGetAccountBridge.mockImplementation(acc => {
     if (acc.id === account.id) {
-      return mockBridge;
+      return Promise.resolve(mockBridge) as unknown as ReturnType<typeof originalGetAccountBridge>;
     }
     return originalGetAccountBridge(acc);
   });
@@ -113,12 +109,12 @@ describe("BridgeSync", () => {
     expect(screen.getByText("LOADED")).not.toBeNull();
   });
 
-  test("executes a sync at start tracked as reason=initial", done => {
+  test("executes a sync at start tracked as reason=initial", async () => {
     const account = createAccount("btc1", bitcoin);
     const futureOpLength = account.operations.length;
     // we remove the first operation to feed it back as a broadcasted one, the mock impl will make it go back to operations
     const lastOp = account.operations.splice(0, 1)[0];
-    Bridge.getAccountBridge(account).broadcast({
+    (await Bridge.getAccountBridge(account)).broadcast({
       account,
       signedOperation: {
         operation: lastOp,
@@ -128,17 +124,19 @@ describe("BridgeSync", () => {
     const accounts = [account];
     expect(accounts[0].operations.length).toBe(futureOpLength - 1);
 
-    function track(type, opts) {
-      if (type === "SyncSuccess") {
-        expect(opts).toMatchObject({
-          reason: "initial",
-          currencyName: "Bitcoin",
-          operationsLength: futureOpLength,
-        });
-        done();
+    await new Promise<void>(done => {
+      function track(type, opts) {
+        if (type === "SyncSuccess") {
+          expect(opts).toMatchObject({
+            reason: "initial",
+            currencyName: "Bitcoin",
+            operationsLength: futureOpLength,
+          });
+          done();
+        }
       }
-    }
-    renderBridgeSync({ accounts, trackAnalytics: track });
+      renderBridgeSync({ accounts, trackAnalytics: track });
+    });
   });
 
   test("sync all accounts in parallel at start tracked as reason=initial", done => {

@@ -45,8 +45,8 @@ export async function getBridges(signer: Signer): Promise<{
   const getAddress = resolver(context);
 
   return {
-    currencyBridge: getAlpacaCurrencyBridge("evm", "local", { context, getAddress }),
-    accountBridge: getAlpacaAccountBridge("evm", "local", { context, getAddress }),
+    currencyBridge: await getAlpacaCurrencyBridge("evm", "local", { context, getAddress }),
+    accountBridge: await getAlpacaAccountBridge("evm", "local", { context, getAddress }),
     getAddress,
   };
 }

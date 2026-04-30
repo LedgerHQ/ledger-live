@@ -10,7 +10,7 @@ import {
   isAccountEmpty,
   getAccountSpendableBalance,
   getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { ScreenName, NavigatorName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";

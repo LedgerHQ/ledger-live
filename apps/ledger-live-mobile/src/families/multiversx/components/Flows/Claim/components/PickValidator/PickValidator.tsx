@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
+import type { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 
 import BigNumber from "bignumber.js";

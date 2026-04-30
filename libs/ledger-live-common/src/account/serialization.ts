@@ -29,19 +29,7 @@ export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
 export const toOperationRaw = (
   operation: Operation,
   preserveSubOperation?: boolean,
-): OperationRaw => {
-  let toOperationRaw: AccountBridge<TransactionCommon>["toOperationExtraRaw"] | undefined;
-  if (operation.extra) {
-    const family = inferFamilyFromAccountId(operation.accountId);
-
-    if (family) {
-      const bridge = getAccountBridgeByFamily(family, operation.accountId);
-      toOperationRaw = bridge.toOperationExtraRaw;
-    }
-  }
-
-  return commonToOperationRaw(operation, preserveSubOperation, toOperationRaw);
-};
+): OperationRaw => commonToOperationRaw(operation, preserveSubOperation);
 
 export const fromOperationRaw = async (
   operationRaw: OperationRaw,
@@ -64,7 +52,7 @@ export const fromOperationRaw = async (
 
 export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
-  const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
+  const bridge = await getAccountBridgeByFamily(currency.family, rawAccount.id);
 
   return await commonFromAccountRaw(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,

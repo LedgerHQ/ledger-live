@@ -105,7 +105,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       if (!transaction) return;
       setTransaction(
         bridge.updateTransaction(transaction, {
-          resource,
+          resource: resource as TronResource,
         }),
       );
     },

@@ -93,9 +93,9 @@ export const useSignWithDevice = ({
   const [signed, setSigned] = useState(false);
   const subscription = useRef<null | Subscription>(null);
   const mevProtected = useSelector(mevProtectionSelector);
-  const signWithDevice = useCallback(() => {
+  const signWithDevice = useCallback(async () => {
     const { deviceId, transaction } = route.params || {};
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge = await getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
     navigation.setOptions({
@@ -231,7 +231,7 @@ export const broadcastSignedTx = async (
 ): Promise<Operation> => {
   invariant(account, "account not present");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = await getAccountBridge(account, parentAccount);
 
   if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
     return Promise.resolve(signedOperation.operation);

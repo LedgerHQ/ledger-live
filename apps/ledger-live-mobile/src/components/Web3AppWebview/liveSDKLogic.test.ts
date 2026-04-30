@@ -19,6 +19,45 @@ jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => ({
   isCurrencySupported: () => true,
 }));
 
+// Mock the coin-module registry to avoid dynamic imports in Jest CommonJS environment
+jest.mock("@ledgerhq/live-common/coin-modules/registry", () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const platformAdapter = require("@ledgerhq/live-common/families/evm/platformAdapter");
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const walletApiAdapter = require("@ledgerhq/live-common/families/evm/walletApiAdapter");
+  return {
+    ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
+    loadPlatformAdapterForFamily: () => Promise.resolve(platformAdapter.default),
+    loadWalletApiAdapterForFamily: () => Promise.resolve(walletApiAdapter.default),
+  };
+});
+
+// Mock getAccountBridge to avoid dynamic coin-module loading
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const BigNumber = require("bignumber.js").default;
+  return {
+    getAccountBridge: jest.fn().mockResolvedValue({
+      createTransaction: () => ({
+        family: "evm" as const,
+        amount: new BigNumber(0),
+        recipient: "",
+        feesStrategy: "medium",
+        gasLimit: new BigNumber(0),
+        customGasLimit: undefined,
+        maxFeePerGas: new BigNumber(0),
+        maxPriorityFeePerGas: new BigNumber(0),
+        type: 2,
+        nonce: -1,
+        data: Buffer.from([]),
+        chainId: 0,
+        mode: "send",
+        useAllAmount: false,
+      }),
+      updateTransaction: (t: object, patch: object) => ({ ...t, ...patch }),
+    }),
+  };
+});
+
 describe("prepareSignTransaction", () => {
   it("returns a Transaction for platform", async () => {
     // Given
@@ -48,7 +87,7 @@ describe("prepareSignTransaction", () => {
 
     const { liveTx } = await getPlatformTransactionSignFlowInfos(tx);
 
-    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -85,7 +124,7 @@ describe("prepareSignTransaction", () => {
       account: childAccount,
     });
 
-    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);

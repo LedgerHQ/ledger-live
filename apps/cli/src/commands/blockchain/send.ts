@@ -75,80 +75,83 @@ export default {
               (acc, [t, status]) =>
                 concat(
                   acc,
-                  from(
-                    defer(() => {
-                      formatTransaction(t, account).then(str => l(`✔️ transaction ${str}`));
-                      formatTransactionStatus(t, status, account).then(str =>
-                        l(`STATUS ${str}`),
-                      );
-                      const bridge = getAccountBridge(account);
-                      return bridge
-                        .signOperation({
-                          account,
-                          transaction: t,
-                          deviceId: opts.device || "",
-                        })
-                        .pipe(
-                          map(toSignOperationEventRaw),
-                          // @ts-expect-error more voodoo stuff
-                          ...(opts["disable-broadcast"] || getEnv("DISABLE_TRANSACTION_BROADCAST")
-                            ? []
-                            : [
-                                concatMap((e: any) => {
-                                  if (e.type === "signed") {
-                                    l(`✔️ has been signed! ${JSON.stringify(e.signedOperation)}`);
-                                    return from(
-                                      bridge
-                                        .broadcast({
-                                          account,
-                                          signedOperation: e.signedOperation,
-                                        })
-                                        .then(async op => {
-                                          l(
-                                            `✔️ broadcasted! optimistic operation: ${formatOperation(
-                                              account,
-                                            )(
-                                              // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
-                                              await fromOperationRaw(op, account.id),
-                                            )}`,
-                                          );
-                                          if (
-                                            opts["wait-confirmation"] &&
-                                            op.hash &&
-                                            getMainAccount(account).currency.family === "evm"
-                                          ) {
-                                            const timeoutMs = opts["wait-confirmation-timeout"];
-                                            await waitForTransactionConfirmation(
-                                              getMainAccount(account),
-                                              op.hash,
-                                              timeoutMs ? { timeoutMs } : {},
-                                            );
+                  defer(() => {
+                    formatTransaction(t, account).then(str => l(`✔️ transaction ${str}`));
+                    formatTransactionStatus(t, status, account).then(str => l(`STATUS ${str}`));
+                    return from(getAccountBridge(account)).pipe(
+                      mergeMap(bridge =>
+                        bridge
+                          .signOperation({
+                            account,
+                            transaction: t,
+                            deviceId: opts.device || "",
+                          })
+                          .pipe(
+                            map(toSignOperationEventRaw),
+                            // @ts-expect-error more voodoo stuff
+                            ...(opts["disable-broadcast"] ||
+                            getEnv("DISABLE_TRANSACTION_BROADCAST")
+                              ? []
+                              : [
+                                  concatMap((e: any) => {
+                                    if (e.type === "signed") {
+                                      l(
+                                        `✔️ has been signed! ${JSON.stringify(e.signedOperation)}`,
+                                      );
+                                      return from(
+                                        bridge
+                                          .broadcast({
+                                            account,
+                                            signedOperation: e.signedOperation,
+                                          })
+                                          .then(async op => {
                                             l(
-                                              `✔️ transaction confirmed on-chain (hash: ${op.hash})`,
+                                              `✔️ broadcasted! optimistic operation: ${formatOperation(
+                                                account,
+                                              )(
+                                                // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
+                                                await fromOperationRaw(op, account.id),
+                                              )}`,
                                             );
-                                          }
-                                          return op;
-                                        }),
-                                    );
-                                  }
+                                            if (
+                                              opts["wait-confirmation"] &&
+                                              op.hash &&
+                                              getMainAccount(account).currency.family === "evm"
+                                            ) {
+                                              const timeoutMs =
+                                                opts["wait-confirmation-timeout"];
+                                              await waitForTransactionConfirmation(
+                                                getMainAccount(account),
+                                                op.hash,
+                                                timeoutMs ? { timeoutMs } : {},
+                                              );
+                                              l(
+                                                `✔️ transaction confirmed on-chain (hash: ${op.hash})`,
+                                              );
+                                            }
+                                            return op;
+                                          }),
+                                      );
+                                    }
 
-                                  return of(e);
-                                }),
-                              ]),
-                          ...(opts["ignore-errors"]
-                            ? [
-                                catchError(e => {
-                                  return of({
-                                    type: "error",
-                                    error: e,
-                                    transaction: t,
-                                  });
-                                }),
-                              ]
-                            : []),
-                        );
-                    }),
-                  ),
+                                    return of(e);
+                                  }),
+                                ]),
+                            ...(opts["ignore-errors"]
+                              ? [
+                                  catchError(e => {
+                                    return of({
+                                      type: "error",
+                                      error: e,
+                                      transaction: t,
+                                    });
+                                  }),
+                                ]
+                              : []),
+                          ),
+                      ),
+                    );
+                  }),
                 ),
               EMPTY as Observable<any>,
             ),

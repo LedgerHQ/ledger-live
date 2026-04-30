@@ -14,9 +14,9 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
   const { account, parentAccount } = useAccountScreen(route);
 
   const onResult = useCallback(
-    (result: string) => {
+    async (result: string) => {
       if (!account) return;
-      const bridge = getAccountBridge(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
       const { amount, address, currency, ...rest } = decodeURIScheme(result);
       const transaction = route.params?.transaction;
       const patch: Record<string, unknown> = {};

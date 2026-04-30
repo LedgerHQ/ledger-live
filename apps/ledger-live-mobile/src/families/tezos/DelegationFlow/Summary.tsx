@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -15,7 +16,6 @@ import {
   useStakingPositions,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Icons } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
@@ -109,7 +109,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
   const [defaultBaker] = useBakers(whitelist);
-
   invariant(account, "account must be defined");
 
   const bridge = useAccountBridge<TezosTransaction>(account, parentAccount);

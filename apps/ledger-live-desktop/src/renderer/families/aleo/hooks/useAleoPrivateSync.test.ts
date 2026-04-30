@@ -40,7 +40,7 @@ describe("useAleoPrivateSync", () => {
     jest.clearAllMocks();
     syncSubject = new Subject();
     mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
-    getAccountBridge.mockReturnValue({ sync: mockSync });
+    getAccountBridge.mockResolvedValue({ sync: mockSync });
   });
 
   afterEach(() => {
@@ -172,8 +172,8 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.progress).toBe(100);
     });
 
-    it("should retry when complete fires without any result (scanner not yet ready)", () => {
-      jest.useFakeTimers();
+    it("should retry when complete fires without any result (scanner not yet ready)", async () => {
+      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       mockSync
@@ -182,7 +182,7 @@ describe("useAleoPrivateSync", () => {
 
       const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
 
-      act(() => {
+      await act(async () => {
         result.current.start();
       });
 
@@ -194,7 +194,7 @@ describe("useAleoPrivateSync", () => {
       expect(mockSync).toHaveBeenCalledTimes(1);
       expect(result.current.isSyncing).toBe(true);
 
-      act(() => {
+      await act(async () => {
         jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
       });
 
@@ -208,8 +208,8 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.isSyncing).toBe(false);
     });
 
-    it("should retry after polling delay when complete fires without any result", () => {
-      jest.useFakeTimers();
+    it("should retry after polling delay when complete fires without any result", async () => {
+      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       mockSync
@@ -218,7 +218,7 @@ describe("useAleoPrivateSync", () => {
 
       const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
 
-      act(() => {
+      await act(async () => {
         result.current.start();
       });
 
@@ -229,7 +229,7 @@ describe("useAleoPrivateSync", () => {
 
       expect(mockSync).toHaveBeenCalledTimes(1);
 
-      act(() => {
+      await act(async () => {
         jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
       });
 
@@ -241,11 +241,11 @@ describe("useAleoPrivateSync", () => {
       });
     });
 
-    it("should not retry when stop() is called before complete fires", () => {
-      jest.useFakeTimers();
+    it("should not retry when stop() is called before complete fires", async () => {
+      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
       const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
 
-      act(() => {
+      await act(async () => {
         result.current.start();
       });
 
@@ -298,8 +298,10 @@ describe("useAleoPrivateSync", () => {
   });
 
   describe("autoStart: true", () => {
-    it("should call sync immediately on mount", () => {
+    it("should call sync immediately on mount", async () => {
       renderHook(() => useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }));
+
+      await act(async () => {});
 
       expect(mockSync).toHaveBeenCalledTimes(1);
     });
@@ -316,6 +318,8 @@ describe("useAleoPrivateSync", () => {
       const { result } = renderHook(() =>
         useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }),
       );
+
+      await act(async () => {});
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccount(100, true));
@@ -615,7 +619,7 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should adopt registry state when component remounts while sync is running", async () => {
-      jest.useFakeTimers();
+      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
       const account = makeAleoAccount();
       const initialState = { accounts: [account] };
 
@@ -623,6 +627,8 @@ describe("useAleoPrivateSync", () => {
         () => useAleoPrivateSync({ account, keepAliveOnUnmount: true, autoStart: true }),
         { initialState },
       );
+
+      await act(async () => {});
 
       // Advance some progress via the progress subject
       act(() => {
@@ -721,6 +727,8 @@ describe("useAleoPrivateSync", () => {
         { initialState },
       );
 
+      await act(async () => {});
+
       expect(mockSync).toHaveBeenCalledTimes(2);
       expect(second.current.isSyncing).toBe(true);
     });
@@ -753,6 +761,8 @@ describe("useAleoPrivateSync", () => {
         () => useAleoPrivateSync({ account, keepAliveOnUnmount: true, autoStart: true }),
         { initialState },
       );
+
+      await act(async () => {});
 
       expect(mockSync).toHaveBeenCalledTimes(2);
       expect(second.current.isSyncing).toBe(true);

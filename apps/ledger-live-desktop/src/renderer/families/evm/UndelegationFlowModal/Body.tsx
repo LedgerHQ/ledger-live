@@ -25,7 +25,6 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 
 export type Data = {
   account: StakingAccount;
@@ -82,7 +81,8 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, validatorAddress, source = "Account Page" } = params;
-  const bridge = useAccountBridge<EvmTransaction>(account, undefined);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bridge = useAccountBridge<any>(account, undefined);
 
   const {
     transaction,
@@ -106,7 +106,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
       recipient: account.freshAddress,
       amount: delegation?.amount,
       useAllAmount: false,
-    } as unknown as Partial<EvmTransaction>);
+    });
     return {
       account,
       parentAccount: undefined,

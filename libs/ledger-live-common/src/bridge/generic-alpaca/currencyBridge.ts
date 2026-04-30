@@ -5,12 +5,12 @@ import { getSigner } from "./signer";
 import type { AlpacaSigner } from "./types";
 import { postSync } from "./postSync";
 
-export function getAlpacaCurrencyBridge(
+export async function getAlpacaCurrencyBridge(
   network: string,
   kind: string,
   customSigner?: AlpacaSigner,
-): CurrencyBridge {
-  const signer = customSigner ?? getSigner(network);
+): Promise<CurrencyBridge> {
+  const signer = customSigner ?? (await getSigner(network));
   return {
     preload: () => Promise.resolve({}),
     hydrate: () => undefined,
