@@ -104,7 +104,8 @@ export const useAleoPrivateSync = ({
 
     const currentAccountId = acc.id;
     let receivedFinalResult = false;
-    const bridge = getAccountBridge(acc);
+    (async () => {
+    const bridge = await getAccountBridge(acc);
     const sub = bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED }).subscribe({
       next: updater => {
         const currentAcc = accountRef.current;
@@ -164,6 +165,7 @@ export const useAleoPrivateSync = ({
         if (entry) entry.sub = sub;
       }
     }
+    })();
   }, [dispatch]);
 
   const start = useCallback(() => {
