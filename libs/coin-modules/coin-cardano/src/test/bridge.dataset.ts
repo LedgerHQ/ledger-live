@@ -18,7 +18,13 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     cardano_testnet: {
-      FIXME_ignoreAccountFields: ["syncHash"],
+      FIXME_ignoreAccountFields: [
+        "syncHash",
+        "cardanoResources.protocolParams", // protocol params can change anytime
+        "cardanoResources.delegation.rewards", // rewards will always be increasing
+        "balance", // Rewards are included in balance, so this will too keep changing
+        "spendableBalance", // rewards are included here too, same as above
+      ],
       scanAccounts: cardanoScanAccounts,
       accounts: [
         {
