@@ -34,7 +34,7 @@ describe("useBalanceCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCurrency.units[0],
       new BigNumber(150000000),
-      { showCode: true, locale: "en-US", discreet: false },
+      expect.objectContaining({ showCode: true, locale: "en-US", discreet: false }),
     );
   });
 
@@ -48,8 +48,33 @@ describe("useBalanceCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCurrency.units[0],
       new BigNumber(150000000),
-      { showCode: true, locale: "fr-FR", discreet: true },
+      expect.objectContaining({ showCode: true, locale: "fr-FR", discreet: true }),
     );
     expect(result.current.formattedBalance).toBe("***");
+  });
+
+  it("should forward alwaysShowSign option", () => {
+    renderHook(() => useBalanceCellViewModel(mockCurrency, 150000000, { alwaysShowSign: true }), {
+      initialState: { settings: { locale: "en-US", discreetMode: false } },
+    });
+
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+      mockCurrency.units[0],
+      new BigNumber(150000000),
+      expect.objectContaining({ showCode: true, alwaysShowSign: true }),
+    );
+  });
+
+  it("should accept BigNumber balance", () => {
+    const bn = new BigNumber(150000000);
+    renderHook(() => useBalanceCellViewModel(mockCurrency, bn), {
+      initialState: { settings: { locale: "en-US", discreetMode: false } },
+    });
+
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+      mockCurrency.units[0],
+      bn,
+      expect.objectContaining({ showCode: true }),
+    );
   });
 });

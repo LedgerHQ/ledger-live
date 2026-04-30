@@ -5,13 +5,13 @@ import { DataTable, DataTableRoot } from "@ledgerhq/lumen-ui-react";
 import type { AllocationTableItem } from "../../types";
 import { allocationItems } from "../../__fixtures__/allocationFixtures";
 
-jest.mock("../../../Assets/components/Cells/BalanceCell", () => ({
+jest.mock("LLD/components/Cells/BalanceCell", () => ({
   BalanceCell: ({ balance }: { balance: number }) => (
     <span data-testid="balance-cell">{balance}</span>
   ),
 }));
 
-jest.mock("../../../Assets/components/Cells/CounterValueCell", () => ({
+jest.mock("LLD/components/Cells/CounterValueCell", () => ({
   CounterValueCell: () => <span data-testid="counter-value-cell">CV</span>,
 }));
 
