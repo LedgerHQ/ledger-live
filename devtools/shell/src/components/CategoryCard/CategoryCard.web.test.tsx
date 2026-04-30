@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
-import { CategoryCard } from "../../components/CategoryCard.web";
+import { CategoryCard } from "./CategoryCard.web";
 import { Category } from "../../types";
 
 const tool = { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION };

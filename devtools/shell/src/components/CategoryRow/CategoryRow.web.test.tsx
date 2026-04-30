@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
-import { CategoryRow } from "../../components/CategoryRow.web";
+import { CategoryRow } from "./CategoryRow.web";
 import { Category } from "../../types";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
 

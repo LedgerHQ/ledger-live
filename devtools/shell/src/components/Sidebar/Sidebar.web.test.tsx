@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
-import { Sidebar } from "../../components/Sidebar.web";
+import { Sidebar } from "./Sidebar.web";
 import { Category } from "../../types";
 
 const categories = [

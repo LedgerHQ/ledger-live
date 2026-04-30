@@ -1,7 +1,7 @@
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import { Category } from "../types";
-import type { Tool } from "../types";
-import { IconSquare } from "./IconSquare";
+import { Category } from "../../types";
+import type { Tool } from "../../types";
+import { IconSquare } from "../IconSquare/IconSquare.web";
 
 interface CategoryCardProps {
   category: Category;
@@ -10,10 +10,12 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ category, tools, onSelect }: CategoryCardProps) {
+  const handleSelect = () => tools[0] && onSelect(tools[0].id);
+
   return (
     <button
       className="flex items-center gap-12 p-12 rounded-md bg-surface-hover hover:ring-1 hover:ring-muted text-left w-full border-none cursor-pointer"
-      onClick={() => tools[0] && onSelect(tools[0].id)}
+      onClick={handleSelect}
     >
       <IconSquare category={category} />
       <div className="flex-1 min-w-0">
