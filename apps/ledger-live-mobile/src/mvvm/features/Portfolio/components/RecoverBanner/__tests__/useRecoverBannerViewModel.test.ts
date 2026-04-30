@@ -155,8 +155,14 @@ describe("useRecoverBannerViewModel", () => {
         result.current.onCloseBanner();
       });
 
-      expect(mockSetStoreValue).toHaveBeenCalledWith("DISPLAY_BANNER", "false", expect.any(String));
-      expect(result.current.shouldDisplay).toBeFalsy();
+      await waitFor(() =>
+        expect(mockSetStoreValue).toHaveBeenCalledWith(
+          "DISPLAY_BANNER",
+          "false",
+          expect.any(String),
+        ),
+      );
+      await waitFor(() => expect(result.current.shouldDisplay).toBeFalsy());
     });
   });
 
@@ -222,7 +228,7 @@ describe("useRecoverBannerViewModel", () => {
       expect(mockDispatch).not.toHaveBeenCalled();
     });
 
-    it("does not dispatch when storageState is undefined", async () => {
+    it("does not dispatch when storage has no subscription state", async () => {
       mockGetStoreValue.mockResolvedValueOnce(undefined).mockResolvedValueOnce("true");
 
       renderHook(() => useRecoverBannerViewModel(), {
