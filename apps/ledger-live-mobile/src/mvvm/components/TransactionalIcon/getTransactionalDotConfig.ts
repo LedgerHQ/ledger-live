@@ -5,7 +5,6 @@ import type { OperationType } from "@ledgerhq/types-live";
 import {
   ArrowDown,
   ArrowUp,
-  Clock,
   Close,
   Invoice,
   Link,
@@ -15,6 +14,7 @@ import {
   Star,
   Unlink,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 
 type TransactionalDotIcon = ComponentType<{
   size?: IconSize;
@@ -35,7 +35,7 @@ export function getTransactionalDotConfig(
     return { icon: Close, appearance: "error" };
   }
   if (isPending) {
-    return { icon: Clock, appearance: "muted" };
+    return { icon: Spinner, appearance: "muted" };
   }
 
   switch (operationType) {
