@@ -2,7 +2,13 @@ import React from "react";
 import { View } from "react-native";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor, withFlagOverrides, act } from "@tests/test-renderer";
+import {
+  renderWithReactQuery,
+  screen,
+  waitFor,
+  withFlagOverrides,
+  act,
+} from "@tests/test-renderer";
 import storage from "LLM/storage";
 import ReceiveFundsNavigator from "~/components/RootNavigator/ReceiveFundsNavigator";
 import { NavigatorName, ScreenName } from "~/const";
@@ -148,7 +154,7 @@ describe("NotificationsPrompt receive flow", () => {
   }
 
   it("should prompt the notifications drawer when leaving the receive flow", async () => {
-    const { user } = render(<ReceiveFlowTestApp />, {
+    const { user } = renderWithReactQuery(<ReceiveFlowTestApp />, {
       navigationInitialState: receiveFlowNavigationState,
       overrideInitialState: withFlagOverrides(featureFlagsForReceivePrompt, state => ({
         ...state,
