@@ -7,9 +7,8 @@ lockfile = true
 ruby.compile = false
 
 [plugins]
-bundler = "jonathanmorley/asdf-bundler"
-cocoapods = "mise-plugins/mise-cocoapods"
-
+# bundler = "jonathanmorley/asdf-bundler"
+# cocoapods = "mise-plugins/mise-cocoapods"
 
 [tools]
 node = '24.14.0'
@@ -20,12 +19,12 @@ gitleaks = '8.30.1'
 hk = '1.40.0'
 pkl = '0.31.1'
 
-
 # Mobile dev ecosystem, this is only done on macos and linux. 
 # We can ignore these tools on Windows 
 # ruby = { version = "3.3.7", os = ["linux", "macos"] }
 # bundler = { version = "2.5.7", os = ["linux", "macos"] }
 # cocoapods = { version = "1.14.3", os = ["linux", "macos"] }
+# xcode = { version = "26.2.0", os = ["macos"] }
 # java = { version = "zulu-17.64.17.0", os = ["linux", "macos"] }
 
 # Fix activesupport version to resolve cocoapods compatibility
@@ -48,19 +47,21 @@ HK_MISE = 1
 
 [hooks]
 # hk + Nx cache config: local only (skip in CI; CI uses setup-caches / configure-nx-remote-cache-profile).
-postinstall = [
-  """
+postinstall = ["""
 {% if env.CI is defined %}
   # skip for CI
 {% else %}
   hk install --mise
   pnpm nx:write-cache-config
 {% endif %}
-""",
-]
+"""]
 
 [task_config]
-includes = [".mise/tasks/pnpm.toml", ".mise/tasks/nx.toml", ".mise/tasks"]
+includes = [
+  ".mise/tasks/pnpm.toml",
+  ".mise/tasks/nx.toml",
+  ".mise/tasks",
+]
 
 [tasks.info]
 description = "Display installed tools, versions, and project name"
@@ -96,8 +97,22 @@ run = [
 ]
 depends = ["clean"]
 
+
 [tasks.clean]
 description = "Removes build artifacts, untracked files, and dependencies (ignored files are preserved)"
 alias = "c"
 depends = ['pnpm:clean']
 run = "git clean -fd"
+
+[tasks."libs:test"]
+description = "Run tests for all non-UI libraries"
+alias = "lt"
+deny_net = true
+env = { NX_SKIP_NX_CACHE = "true" }
+run = "pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=4"
+
+[tasks."libs:test:coverage"]
+description = "Run tests with coverage for all non-UI libraries (mirrors CI)"
+deny_net = true
+env = { NX_SKIP_NX_CACHE = "true" }
+run = "pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=4 -- --runInBand=1"
