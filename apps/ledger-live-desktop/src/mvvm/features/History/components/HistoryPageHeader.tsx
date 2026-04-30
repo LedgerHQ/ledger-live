@@ -19,7 +19,13 @@ export default function HistoryPageHeader({ onBack, onExportClick }: Props) {
       onBack={onBack}
       trailing={
         <HistoryExportDialog>
-          <Button appearance="transparent" size="sm" icon={Csv} onClick={onExportClick}>
+          <Button
+            appearance="transparent"
+            size="sm"
+            icon={Csv}
+            onClick={onExportClick}
+            data-testid="history-export-csv-button"
+          >
             {t("history.actionsBar.csv")}
           </Button>
         </HistoryExportDialog>

@@ -7,10 +7,18 @@ function HistoryTableHeader() {
   return (
     <TableHeader>
       <TableHeaderRow className="z-10">
-        <TableHeaderCell>{t("history.columns.type")}</TableHeaderCell>
-        <TableHeaderCell align="end">{t("history.columns.address")}</TableHeaderCell>
-        <TableHeaderCell align="end">{t("history.columns.amount")}</TableHeaderCell>
-        <TableHeaderCell align="end">{t("history.columns.value")}</TableHeaderCell>
+        <TableHeaderCell data-testid="history-column-type">
+          {t("history.columns.type")}
+        </TableHeaderCell>
+        <TableHeaderCell align="end" data-testid="history-column-address">
+          {t("history.columns.address")}
+        </TableHeaderCell>
+        <TableHeaderCell align="end" data-testid="history-column-amount">
+          {t("history.columns.amount")}
+        </TableHeaderCell>
+        <TableHeaderCell align="end" data-testid="history-column-value">
+          {t("history.columns.value")}
+        </TableHeaderCell>
       </TableHeaderRow>
     </TableHeader>
   );
