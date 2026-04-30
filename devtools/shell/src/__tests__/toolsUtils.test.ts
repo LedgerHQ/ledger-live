@@ -1,4 +1,4 @@
-import { Category, type Tool } from "../types";
+import { Category } from "../types";
 import { filterToolsByQuery, findCategoryForToolId } from "../utils/toolsUtils";
 
 const categories = [
@@ -6,13 +6,23 @@ const categories = [
     category: Category.CONFIGURATION,
     tools: [
       { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION },
-      { id: "env-switcher", label: "Env Switcher", category: Category.CONFIGURATION, owner: "platform" },
+      {
+        id: "env-switcher",
+        label: "Env Switcher",
+        category: Category.CONFIGURATION,
+        owner: "platform",
+      },
     ],
   },
   {
     category: Category.CONNECTIVITY,
     tools: [
-      { id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY, owner: "wallet-api" },
+      {
+        id: "network-inspector",
+        label: "Network Inspector",
+        category: Category.CONNECTIVITY,
+        owner: "wallet-api",
+      },
     ],
   },
 ];

@@ -2,9 +2,9 @@ import { ThemeProvider, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { ScrollView, TextInput, Pressable } from "react-native";
 import { useState } from "react";
-import { TOOLS } from "./tools.config";
-import { Category } from "./types";
-import type { Tool } from "./types";
+import { TOOLS } from "../tools.config";
+import { Category } from "../types";
+import type { Tool } from "../types";
 
 type Screen = "home" | "category" | "tool";
 

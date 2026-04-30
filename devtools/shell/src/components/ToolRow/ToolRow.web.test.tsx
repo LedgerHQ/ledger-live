@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
-import { ToolRow } from "../../components/ToolRow.web";
+import { ToolRow } from "./ToolRow.web";
 
 describe("ToolRow", () => {
   it("renders the title", () => {
