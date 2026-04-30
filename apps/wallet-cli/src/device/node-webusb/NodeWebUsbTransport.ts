@@ -653,6 +653,11 @@ export class NodeWebUsbTransport implements Transport {
       machine.eventDeviceConnected();
     } catch (e) {
       this._logger.error("Error while reconnecting to device", { data: { error: e } });
+      // If we failed after publishing to the active maps (e.g. eventDeviceConnected
+      // threw), undo the publish so the machine isn't both "active" and "pending"
+      // and APDUs aren't routed to a machine whose dependencies were reverted.
+      // deleteActiveConnection is a no-op if the entry was never inserted.
+      this.deleteActiveConnection(web);
       machine.setDependencies(previousDependencies);
       this._deviceConnectionsPendingReconnection.add(machine);
     }

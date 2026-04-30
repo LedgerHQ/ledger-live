@@ -531,6 +531,151 @@ describe("NodeWebUsbTransport", () => {
     transport.destroy();
   });
 
+  it("keeps a machine pending and not active when eventDeviceConnected throws during reconnection", async () => {
+    const nativeDevice = {
+      deviceDescriptor: {
+        idVendor: 0x2c97,
+        idProduct: 0x5011,
+      },
+    };
+    const webUsbDevice = {
+      vendorId: 0x2c97,
+      productId: 0x5011,
+      serialNumber: "ledger-1",
+      configurations: [
+        {
+          interfaces: [
+            {
+              interfaceNumber: 1,
+              alternates: [{ interfaceClass: 255 }],
+            },
+          ],
+        },
+      ],
+    };
+
+    const currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    let tryToReconnect:
+      | DeviceConnectionStateMachineParams<NodeWebUsbApduSenderDependencies>["tryToReconnect"]
+      | undefined;
+    let connectedDeviceId: DeviceId | undefined;
+    let setupConnectionCalls = 0;
+    let eventDeviceConnectedCalls = 0;
+    let eventDeviceDisconnectedCalls = 0;
+    let closeConnectionCalls = 0;
+
+    const transport = new NodeWebUsbTransport(
+      {
+        getAllDeviceModels: () => [
+          {
+            id: "nanoSP",
+            productName: "Ledger Nano S Plus",
+            usbProductId: 0x50,
+            bootloaderUsbProductId: 0x5011,
+          },
+        ],
+      } as DeviceModelDataSource,
+      () => createLogger(),
+      (() => {
+        throw new Error("unused apdu sender factory");
+      }) as ApduSenderServiceFactory,
+      (() => {
+        throw new Error("unused apdu receiver factory");
+      }) as ApduReceiverServiceFactory,
+      params => {
+        tryToReconnect = params.tryToReconnect;
+
+        return {
+          setupConnection: async () => {
+            setupConnectionCalls += 1;
+          },
+          sendApdu: async () => Right(new Uint8Array()) as never,
+          getDeviceId: () => params.deviceId,
+          getDependencies: () => ({
+            device: webUsbDevice as never,
+            interfaceNumber: 1,
+          }),
+          setDependencies: () => {},
+          eventDeviceDisconnected: () => {
+            eventDeviceDisconnectedCalls += 1;
+          },
+          eventDeviceConnected: () => {
+            eventDeviceConnectedCalls += 1;
+            // eventDeviceConnected is only invoked from the reconnect path —
+            // configure it to always fail to keep the machine pending and
+            // expose any leak into the active map.
+            throw new Error("state machine refused connected event");
+          },
+          closeConnection: () => {
+            closeConnectionCalls += 1;
+          },
+        } as unknown as DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>;
+      },
+      () => createStubApduSender() as never,
+      {
+        platform: "win32",
+        getDeviceList: () => currentDeviceList as never[],
+        createWebUsbDevice: async () => webUsbDevice as never,
+        usbBindings: {
+          on: () => {},
+          removeListener: () => {},
+          unrefHotplugEvents: () => {},
+        },
+        setInterval: callback => {
+          queueMicrotask(callback);
+          return 0 as unknown as ReturnType<typeof globalThis.setInterval>;
+        },
+        clearInterval: () => {},
+      },
+    );
+
+    const emissions: Array<Array<{ id: string; transport: string }>> = [];
+    subscriptions.push(
+      transport.listenToAvailableDevices().subscribe(devices => {
+        emissions.push(devices.map(device => ({ id: device.id, transport: device.transport })));
+      }),
+    );
+
+    await waitFor(() => {
+      connectedDeviceId = emissions.at(-1)?.[0]?.id;
+      expect(connectedDeviceId).toBeDefined();
+    });
+
+    const connected = await transport.connect({
+      deviceId: connectedDeviceId!,
+      onDisconnect: () => {},
+    });
+
+    expect(setupConnectionCalls).toBe(1);
+    expect(eventDeviceConnectedCalls).toBe(0);
+    expect(tryToReconnect).toBeDefined();
+    expect(connected.isRight()).toBe(true);
+
+    // Trigger pending reconnection. handleDeviceReconnection will run
+    // setupConnection (success) then eventDeviceConnected (throws).
+    tryToReconnect?.(0);
+
+    await waitFor(() => {
+      expect(setupConnectionCalls).toBe(2);
+      expect(eventDeviceConnectedCalls).toBe(1);
+    });
+
+    // After the failed publish, the machine must NOT remain in the active
+    // device-by-webusb map. We probe that map externally via a detach event:
+    // handleDeviceDisconnection iterates _deviceConnectionsByWebUsbDevice and
+    // would call eventDeviceDisconnected on any entry it finds. With the leak,
+    // the broken machine would still be there and would receive the event;
+    // with the fix it has been removed and the detach is a no-op.
+    await transport.handleDeviceDisconnection(nativeDevice as never);
+    expect(eventDeviceDisconnectedCalls).toBe(0);
+
+    // The machine was never closed: the reconnect path should leave it
+    // recoverable rather than tearing it down on a transient failure.
+    expect(closeConnectionCalls).toBe(0);
+
+    transport.destroy();
+  });
+
   it("serializes APDU calls sent through the same connected device", async () => {
     const nativeDevice = {
       deviceDescriptor: {
