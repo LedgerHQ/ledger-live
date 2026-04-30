@@ -1,5 +1,4 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
