@@ -148,28 +148,20 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     expect(Array.isArray(conversionDetails.parentRecipients)).toBe(true);
   });
 
-  it("returns a pagination cursor with native and token last ids", async () => {
-    const [, nextToken] = await listOperations(ADDRESS, { ...baseOpts, limit: 20 });
+  it("returns a pagination cursor with lastLevel boundary", async () => {
+    const [, nextToken] = await listOperations(ADDRESS, { ...baseOpts, limit: 3 });
     expect(nextToken.length).toBeGreaterThan(0);
 
     const parsed: unknown = JSON.parse(nextToken);
     expect(parsed).toEqual(
       expect.objectContaining({
-        nativeLastId: expect.anything(),
-        tokenLastId: expect.anything(),
+        lastLevel: expect.any(Number),
       }),
     );
-    const { nativeLastId, tokenLastId } = parsed as {
-      nativeLastId?: unknown;
-      tokenLastId?: unknown;
-    };
-    expect(nativeLastId === undefined || typeof nativeLastId === "number").toBe(true);
-    expect(tokenLastId === undefined || typeof tokenLastId === "number").toBe(true);
-    expect(nativeLastId !== undefined || tokenLastId !== undefined).toBe(true);
   });
 
   it("pagination returns disjoint operation ids across pages", async () => {
-    const limit = 10;
+    const limit = 3;
     const [page1, cursor] = await listOperations(ADDRESS, { ...baseOpts, limit });
     expect(cursor.length).toBeGreaterThan(0);
 
@@ -180,21 +172,34 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     expect(overlap).toHaveLength(0);
   });
 
-  it("second page uses tokenLastId from cursor for token transfer pagination", async () => {
-    const limit = 30;
+  it("second page accepts cursor with lastLevel for both streams", async () => {
+    const limit = 3;
     const [, cursor] = await listOperations(ADDRESS, { ...baseOpts, limit });
     expect(cursor.length).toBeGreaterThan(0);
 
     const parsed: unknown = JSON.parse(cursor);
     expect(parsed).toEqual(
       expect.objectContaining({
-        tokenLastId: expect.any(Number),
+        lastLevel: expect.any(Number),
       }),
     );
 
     await expect(
       listOperations(ADDRESS, { ...baseOpts, limit, token: cursor }),
     ).resolves.toBeDefined();
+  });
+
+  it("does not split the same tx.hash across consecutive pages (limit 3)", async () => {
+    const limit = 3;
+    const [page1, cursor] = await listOperations(ADDRESS, { ...baseOpts, limit });
+    if (cursor.length === 0) {
+      return;
+    }
+    const [page2] = await listOperations(ADDRESS, { ...baseOpts, limit, token: cursor });
+    const hashesPage1 = new Set(page1.map(op => op.tx.hash));
+    const hashesPage2 = new Set(page2.map(op => op.tx.hash));
+    const overlap = [...hashesPage1].filter(h => hashesPage2.has(h));
+    expect(overlap).toHaveLength(0);
   });
 
   it("does not duplicate operation ids within the first page", async () => {

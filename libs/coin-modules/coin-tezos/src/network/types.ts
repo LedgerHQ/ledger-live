@@ -94,6 +94,10 @@ export type AccountsGetOperationsOptions = {
   sort?: "Descending" | "Ascending";
   // the minimum height of the block the operation is in
   "level.ge": number;
+  /** Exclusive upper bound on block level (pagination window). */
+  "level.lt"?: number;
+  /** Exclusive lower bound on block level (pagination window). */
+  "level.gt"?: number;
 };
 
 export type APIOperation =
@@ -167,10 +171,15 @@ export type APIBlock = {
 };
 
 export type TokenTransfersGetOptions = {
-  lastId?: number;
   limit?: number;
   sort?: "Descending" | "Ascending";
   "level.ge"?: number;
+  "level.lt"?: number;
+  "level.gt"?: number;
+  /** Exclusive upper bound on transfer id (TzKT `id.lt`). Used for intra-level pagination when sort is Descending. */
+  "id.lt"?: number;
+  /** Exclusive lower bound on transfer id (TzKT `id.gt`). Used for intra-level pagination when sort is Ascending. */
+  "id.gt"?: number;
 };
 
 /**
