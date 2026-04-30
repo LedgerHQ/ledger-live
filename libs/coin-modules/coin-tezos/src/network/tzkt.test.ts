@@ -743,6 +743,55 @@ describe("tzkt network API", () => {
   });
 
   // -------------------------------------------------------------------------
+  // api.getBlockHashesByLevels
+  // -------------------------------------------------------------------------
+
+  describe("api.getBlockHashesByLevels", () => {
+    it("returns an empty map without calling the network when given no levels", async () => {
+      const result = await api.getBlockHashesByLevels([]);
+
+      expect(result).toEqual(new Map());
+      expect(mockedNetwork).not.toHaveBeenCalled();
+    });
+
+    it("batches all levels in one request and returns a level→hash map", async () => {
+      mockedNetwork.mockReturnValue(
+        networkResponse([
+          [1234, "BL-hash-1234"],
+          [1235, "BL-hash-1235"],
+        ]) as ReturnType<typeof network>,
+      );
+
+      const result = await api.getBlockHashesByLevels([1234, 1235]);
+
+      expect(result).toEqual(
+        new Map([
+          [1234, "BL-hash-1234"],
+          [1235, "BL-hash-1235"],
+        ]),
+      );
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringMatching(/\/v1\/blocks$/),
+          params: { "level.in": "1234,1235", "select.values": "level,hash", limit: 2 },
+        }),
+      );
+    });
+
+    it("omits levels that the API did not return", async () => {
+      mockedNetwork.mockReturnValue(
+        networkResponse([[1234, "BL-hash-1234"]]) as ReturnType<typeof network>,
+      );
+
+      const result = await api.getBlockHashesByLevels([1234, 9999]);
+
+      expect(result).toEqual(new Map([[1234, "BL-hash-1234"]]));
+      expect(result.has(9999)).toBe(false);
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // api.getBlockTransactionsPage
   // -------------------------------------------------------------------------
 

@@ -1,6 +1,7 @@
 import type {
   APIDelegationType,
   APIRevealType,
+  APIStakingType,
   APITokenTransfer,
   APITransactionType,
 } from "../network/types";
@@ -8,6 +9,7 @@ import { listOperations } from "./listOperations";
 
 const mockGetAccountOperations = jest.fn();
 const mockGetAccountTokenTransfers = jest.fn();
+const mockGetBlockHashesByLevels = jest.fn();
 
 jest.mock("../network", () => ({
   tzkt: {
@@ -15,6 +17,7 @@ jest.mock("../network", () => ({
       mockGetAccountOperations(address, options),
     getAccountTokenTransfers: async (address: string, options: unknown) =>
       mockGetAccountTokenTransfers(address, options),
+    getBlockHashesByLevels: async (levels: number[]) => mockGetBlockHashesByLevels(levels),
   },
 }));
 
@@ -31,6 +34,7 @@ describe("listOperations", () => {
   afterEach(() => {
     mockGetAccountOperations.mockClear();
     mockGetAccountTokenTransfers.mockClear();
+    mockGetBlockHashesByLevels.mockClear();
   });
 
   beforeEach(() => {
@@ -523,7 +527,7 @@ describe("listOperations", () => {
     const row = results[0];
     expect(row).toBeDefined();
     expect(row!.type).toBe("IN");
-    expect(row!.details.ledgerOpType).toBeUndefined();
+    expect(row!.details?.ledgerOpType).toBeUndefined();
   });
 
   it("normalizes self-transfer as FEES with ledgerOpType FEES", async () => {
@@ -541,7 +545,7 @@ describe("listOperations", () => {
     const selfRow = results[0];
     expect(selfRow).toBeDefined();
     expect(selfRow!.type).toBe("FEES");
-    expect(selfRow!.details.ledgerOpType).toBe("FEES");
+    expect(selfRow!.details?.ledgerOpType).toBe("FEES");
   });
 
   it("normalizes zero-amount transfer as FEES", async () => {
@@ -559,7 +563,7 @@ describe("listOperations", () => {
     const zeroRow = results[0];
     expect(zeroRow).toBeDefined();
     expect(zeroRow!.type).toBe("FEES");
-    expect(zeroRow!.details.ledgerOpType).toBe("FEES");
+    expect(zeroRow!.details?.ledgerOpType).toBe("FEES");
   });
 
   it("applies limit to native operations returned from the explorer", async () => {
@@ -595,7 +599,7 @@ describe("listOperations", () => {
     const tokenOut = results.find(o => o.asset.type === "fa2");
     expect(tokenOut).toBeDefined();
     expect(tokenOut!.type).toBe("OUT");
-    expect(tokenOut!.details.ledgerOpType).toBe("OUT");
+    expect(tokenOut!.details?.ledgerOpType).toBe("OUT");
   });
 
   it("FA2 self-transfer (same from and to as account) is typed FEES", async () => {
@@ -620,7 +624,7 @@ describe("listOperations", () => {
     const tokenSelf = results.find(o => o.asset.type === "fa2");
     expect(tokenSelf).toBeDefined();
     expect(tokenSelf!.type).toBe("FEES");
-    expect(tokenSelf!.details.ledgerOpType).toBe("FEES");
+    expect(tokenSelf!.details?.ledgerOpType).toBe("FEES");
   });
 
   it("FA2 transfer without parent transaction omits fees and falls back to transfer.block hash", async () => {
@@ -840,5 +844,143 @@ describe("listOperations", () => {
     expect(results.filter(o => o.asset.type === "native")).toHaveLength(1);
     expect(results.filter(o => o.asset.type === "fa2")).toHaveLength(1);
     expect(results.find(o => o.asset.type === "fa2")?.tx.hash).toBe(someHash);
+  });
+
+  describe("staking operations (Paris adaptive issuance)", () => {
+    const stakerAddress = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
+    const bakerAddress = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
+
+    function makeStaking(action: APIStakingType["action"], amount: number): APIStakingType {
+      return {
+        ...commonTx,
+        id: 555_000 + (action === "stake" ? 1 : action === "unstake" ? 2 : 3),
+        type: "staking",
+        action,
+        amount,
+        requestedAmount: amount,
+        sender: { address: stakerAddress },
+        staker: { address: stakerAddress },
+        baker: { address: bakerAddress, alias: "TF Test Baker" },
+        counter: commonTx.counter + 1,
+        bakerFee: 800,
+        status: "applied",
+      };
+    }
+
+    it.each([
+      ["stake", "STAKE", 500_000_000n],
+      ["unstake", "UNSTAKE", 250_000_000n],
+      ["finalize", "FINALIZE_UNSTAKE", 0n],
+    ] as const)(
+      "maps action %s to operation type %s with amount as value",
+      async (action, expectedType, expectedAmount) => {
+        const op = makeStaking(action, Number(expectedAmount));
+        mockGetAccountOperations.mockResolvedValue([op]);
+
+        const [results] = await listOperations(stakerAddress, options);
+
+        expect(results).toHaveLength(1);
+        expect(results[0]).toMatchObject({
+          type: expectedType,
+          value: expectedAmount,
+          senders: [stakerAddress],
+          recipients: [bakerAddress],
+          details: expect.objectContaining({ ledgerOpType: expectedType }),
+        });
+      },
+    );
+
+    it("uses sender as feesPayer for staking operations", async () => {
+      mockGetAccountOperations.mockResolvedValue([makeStaking("stake", 100)]);
+      const [results] = await listOperations(stakerAddress, options);
+      expect(results[0].tx.feesPayer).toBe(stakerAddress);
+    });
+
+    it("includes staking ops alongside transfers in pagination", async () => {
+      const stake = makeStaking("stake", 100);
+      mockGetAccountOperations.mockResolvedValue([stake]);
+      const [results, token] = await listOperations(stakerAddress, options);
+      expect(results.length).toBe(1);
+      expect(token).toBe("");
+    });
+
+    it("backfills missing block hashes via a single batched request, deduped per level", async () => {
+      const stakeNoBlock = { ...makeStaking("stake", 100), block: undefined, level: 3106279 };
+      const unstakeNoBlock = { ...makeStaking("unstake", 50), block: undefined, level: 3106279 };
+      const finalizeNoBlock = { ...makeStaking("finalize", 0), block: undefined, level: 3106400 };
+
+      mockGetAccountOperations.mockResolvedValue([stakeNoBlock, unstakeNoBlock, finalizeNoBlock]);
+      mockGetBlockHashesByLevels.mockImplementation(
+        async (levels: number[]) =>
+          new Map(levels.map(level => [level, `BL-fetched-${level}`])),
+      );
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      expect(results).toHaveLength(3);
+      expect(results.map(r => r.tx.block.hash).sort()).toEqual([
+        "BL-fetched-3106279",
+        "BL-fetched-3106279",
+        "BL-fetched-3106400",
+      ]);
+
+      expect(mockGetBlockHashesByLevels).toHaveBeenCalledTimes(1);
+      expect(mockGetBlockHashesByLevels.mock.calls[0][0].sort()).toEqual([3106279, 3106400]);
+    });
+
+    it("does not call getBlockHashesByLevels when staking ops already carry a block (string)", async () => {
+      mockGetAccountOperations.mockResolvedValue([makeStaking("stake", 100)]);
+
+      await listOperations(stakerAddress, options);
+
+      expect(mockGetBlockHashesByLevels).not.toHaveBeenCalled();
+    });
+
+    it("uses block.hash when TzKT inlines the full block object on staking ops", async () => {
+      // /accounts/{addr}/operations returns staking ops with `block` as the
+      // full APIBlock object (with .hash + many other fields), not a string.
+      const inlineBlock = {
+        cycle: 1,
+        level: 3106307,
+        hash: "BLMaHTGtBfh7ZM2wk5rpFHQhNtx5LC7YMdYrnokzBcosrpgqNAe",
+        timestamp: "2026-04-28T20:54:09Z",
+      };
+      const stakeWithObjectBlock = {
+        ...makeStaking("stake", 100),
+        block: inlineBlock as unknown as string, // wire shape; APIStakingType allows string | APIBlock
+        level: 3106307,
+      };
+      mockGetAccountOperations.mockResolvedValue([stakeWithObjectBlock]);
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].tx.block.hash).toBe(inlineBlock.hash);
+      expect(mockGetBlockHashesByLevels).not.toHaveBeenCalled();
+    });
+
+    it("falls back to empty hash when the batched fetch fails", async () => {
+      const op = { ...makeStaking("stake", 100), block: undefined, level: 4_200_000 };
+      mockGetAccountOperations.mockResolvedValue([op]);
+      mockGetBlockHashesByLevels.mockRejectedValue(new Error("rpc 503"));
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].tx.block.hash).toBe("");
+    });
+
+    it("falls back to empty hash for levels missing from the batched response", async () => {
+      const present = { ...makeStaking("stake", 100), block: undefined, level: 4_200_000 };
+      const absent = { ...makeStaking("unstake", 50), block: undefined, level: 4_200_001 };
+      mockGetAccountOperations.mockResolvedValue([present, absent]);
+      mockGetBlockHashesByLevels.mockResolvedValue(new Map([[4_200_000, "BL-4200000"]]));
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      const byLevel = Object.fromEntries(results.map(r => [r.tx.block.height, r.tx.block.hash]));
+      expect(byLevel[4_200_000]).toBe("BL-4200000");
+      expect(byLevel[4_200_001]).toBe("");
+    });
   });
 });

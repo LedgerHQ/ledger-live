@@ -77,11 +77,22 @@ export function isAPIRevealType(op: APIOperation): op is APIRevealType {
   return op.type === "reveal";
 }
 
-export type APIStakingType = CommonOperationType & {
+export type APIStakingType = Omit<CommonOperationType, "block"> & {
   type: "staking";
-  kind: "stake" | "unstake" | "finalize";
+  action: "stake" | "unstake" | "finalize";
   amount: number;
+  requestedAmount?: number;
+  counter: number;
   sender: { address: string } | undefined | null;
+  staker?: { address: string } | undefined | null;
+  baker?: { address: string; alias?: string } | undefined | null;
+  stakingUpdatesCount?: number;
+  /**
+   * `/accounts/{addr}/operations` returns the full block object inline
+   * (with `.hash` and other fields); `/operations/staking` returns the
+   * hash as a plain string. Consumers must narrow before reading `.hash`.
+   */
+  block?: string | APIBlock;
 };
 export function isAPIStakingType(op: APIOperation): op is APIStakingType {
   return op.type === "staking";

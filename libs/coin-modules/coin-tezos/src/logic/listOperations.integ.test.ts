@@ -208,3 +208,63 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+/**
+ * Shadownet integration tests for Paris-style staking operations.
+ *
+ * Test address (`tz1dKrT1...`) was funded via the Shadownet faucet and put through:
+ *   1. delegate to TF Test Baker (`tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc`)
+ *   2. stake 500 XTZ
+ *   3. unstake 250 XTZ
+ *   4. finalize_unstake (after `consensus_rights_delay` ≈ 2 cycles ≈ 48h)
+ *
+ * Step 4 lands later than the others; the corresponding test stays `.todo` until then.
+ */
+const SHADOWNET_STAKER = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
+const SHADOWNET_BAKER = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
+
+const shadownetConfig = (): TezosCoinConfig =>
+  ({
+    status: { type: "active" },
+    baker: { url: "https://tezos-bakers.api.live.ledger.com" },
+    explorer: { url: "https://api.shadownet.tzkt.io", maxTxQuery: 100 },
+    node: { url: "https://rpc.shadownet.teztnets.com" },
+    fees: {
+      minGasLimit: 0,
+      minRevealGasLimit: 0,
+      minStorageLimit: 0,
+      minFees: 0,
+      minEstimatedFees: 0,
+    },
+  }) as TezosCoinConfig;
+
+describe("listOperations — Shadownet Paris staking ops", () => {
+  let originalGetCoinConfig: () => TezosCoinConfig;
+
+  beforeAll(() => {
+    originalGetCoinConfig = coinConfig.getCoinConfig;
+    coinConfig.setCoinConfig(shadownetConfig);
+  });
+
+  afterAll(() => {
+    if (originalGetCoinConfig) {
+      coinConfig.setCoinConfig(originalGetCoinConfig);
+    }
+  });
+
+  it.each([
+    ["STAKE", 500_000_000n],
+    ["UNSTAKE", 250_000_000n],
+  ])("contains a %s op with the expected amount and baker as recipient", async (type, amount) => {
+    const [operations] = await listOperations(SHADOWNET_STAKER, { ...baseOpts, limit: 100 });
+    const match = operations.find(op => op.type === type);
+    if (!match) throw new Error(`No ${type} op found at ${SHADOWNET_STAKER}`);
+
+    expect(match.value).toBe(amount);
+    expect(match.senders).toContain(SHADOWNET_STAKER);
+    expect(match.recipients).toContain(SHADOWNET_BAKER);
+    expect(match.details?.ledgerOpType).toBe(type);
+  });
+
+  it.todo("contains a FINALIZE_UNSTAKE op (enable once finalize_unstake lands on chain)");
+});
