@@ -6,7 +6,7 @@ import {
   isTokenAllowanceSufficientCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { expect } from "node_modules/@playwright/test";
+import { expect } from "@playwright/test";
 
 // NOTE: QAA-615 spike: validate the CLI revoke hook resets allowance to zero on mobile.
 
@@ -32,7 +32,7 @@ test.describe("Swap - Revoke token approval", () => {
   });
 
   test(
-    `Revoke - ${provider} ${fromAccount.currency.name} allowance returns to zero`,
+    `Revoke - ${provider.uiName} ${fromAccount.currency.name} allowance returns to zero`,
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
     },
