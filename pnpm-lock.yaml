@@ -5049,6 +5049,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      mina-signer:
+        specifier: 4.0.0
+        version: 4.0.0
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
@@ -21242,7 +21245,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24056,8 +24059,8 @@ packages:
     resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
     engines: {node: '>=6.0.0'}
 
-  baseline-browser-mapping@2.10.20:
-    resolution: {integrity: sha512-1AaXxEPfXT+GvTBJFuy4yXVHWJBXa4OdbIebGN/wX5DlsIkU0+wzGnd2lOzokSk51d5LUmqjgBLRLlypLUqInQ==}
+  baseline-browser-mapping@2.10.23:
+    resolution: {integrity: sha512-xwVXGqevyKPsiuQdLj+dZMVjidjJV508TBqexND5HrF89cGdCYCJFB3qhcxRHSeMctdCfbR1jrxBajhDy7o29g==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -24581,8 +24584,8 @@ packages:
   caniuse-lite@1.0.30001759:
     resolution: {integrity: sha512-Pzfx9fOKoKvevQf8oCXoyNRQ5QyxJj+3O0Rqx2V5oxT61KGx8+n6hV/IUyJeifUci2clnmmKVpvtiqRzgiWjSw==}
 
-  caniuse-lite@1.0.30001790:
-    resolution: {integrity: sha512-bOoxfJPyYo+ds6W0YfptaCWbFnJYjh2Y1Eow5lRv+vI2u8ganPZqNm1JwNh0t2ELQCqIWg4B3dWEusgAmsoyOw==}
+  caniuse-lite@1.0.30001791:
+    resolution: {integrity: sha512-yk0l/YSrOnFZk3UROpDLQD9+kC1l4meK/wed583AXrzoarMGJcbRi2Q4RaUYbKxYAsZ8sWmaSa/DsLmdBeI1vQ==}
 
   case-sensitive-paths-webpack-plugin@2.4.0:
     resolution: {integrity: sha512-roIFONhcxog0JSSWbvVAh3OocukmSgpqOH6YpMkCvav/ySIV3JKg4Dc8vYtQjYi/UxpNE36r/9v+VqTQqgkYmw==}
@@ -26434,8 +26437,8 @@ packages:
   electron-to-chromium@1.5.263:
     resolution: {integrity: sha512-DrqJ11Knd+lo+dv+lltvfMDLU27g14LMdH2b0O3Pio4uk0x+z7OR+JrmyacTPN2M8w3BrZ7/RTwG3R9B7irPlg==}
 
-  electron-to-chromium@1.5.343:
-    resolution: {integrity: sha512-YHnQ3MXI08icvL9ZKnEBy05F2EQ8ob01UaMOuMbM8l+4UcAq6MPPbBTJBbsBUg3H8JeZNt+O4fjsoWth3p6IFg==}
+  electron-to-chromium@1.5.344:
+    resolution: {integrity: sha512-4MxfbmNDm+KPh066EZy+eUnkcDPcZ35wNmOWzFuh/ijvHsve6kbLTLURy88uCNK5FbpN+yk2nQY6BYh1GEt+wg==}
 
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
@@ -26519,8 +26522,8 @@ packages:
     resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
     engines: {node: '>=10.0.0'}
 
-  engine.io@6.6.6:
-    resolution: {integrity: sha512-U2SN0w3OpjFRVlrc17E6TMDmH58Xl9rai1MblNjAdwWp07Kk+llmzX0hjDpQdrDGzwmvOtgM5yI+meYX6iZ2xA==}
+  engine.io@6.6.7:
+    resolution: {integrity: sha512-DgOngfDKM2EviOH3Mr9m7ks1q8roetLy/IMmYthAYzbpInMbYc/GS+fWFA3rl1gvwKVsQrVV61fo5emD1y3OJQ==}
     engines: {node: '>=10.2.0'}
 
   enhanced-resolve@5.12.0:
@@ -31101,6 +31104,9 @@ packages:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
     engines: {node: '>=4'}
 
+  mina-signer@4.0.0:
+    resolution: {integrity: sha512-vpPuA3OFrOL2mYTR8UyQHF/cRPJN2WbbvIS+L/FIk22TBT607SyJvXImX1XE9kTwnTO1LIDA/gOFrP3wQHHAZA==}
+
   mini-css-extract-plugin@2.8.1:
     resolution: {integrity: sha512-/1HDlyFRxWIZPI1ZpgqlZ8jMw/1Dp/dl3P0L1jtZ+zVcHqwPhGwaJwKL00WVgfnBy6PWCde9W65or7IIETImuA==}
     engines: {node: '>= 12.13.0'}
@@ -33047,6 +33053,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -39880,21 +39887,21 @@ snapshots:
 
   '@babel/helper-module-imports@7.25.9':
     dependencies:
-      '@babel/traverse': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/traverse': 7.29.0
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.27.1':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.27.1(supports-color@5.5.0)':
     dependencies:
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.29.0(supports-color@5.5.0)
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
@@ -39984,7 +39991,7 @@ snapshots:
 
   '@babel/parser@7.27.0':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
 
   '@babel/parser@7.27.5':
     dependencies:
@@ -40689,7 +40696,7 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -40982,7 +40989,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.29.0
       '@babel/parser': 7.29.2
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
 
   '@babel/template@7.27.2':
     dependencies:
@@ -41017,7 +41024,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
       debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
@@ -41056,6 +41063,18 @@ snapshots:
       '@babel/template': 7.28.6
       '@babel/types': 7.29.0
       debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/traverse@7.29.0(supports-color@5.5.0)':
+    dependencies:
+      '@babel/code-frame': 7.29.0
+      '@babel/generator': 7.29.1
+      '@babel/helper-globals': 7.28.0
+      '@babel/parser': 7.29.2
+      '@babel/template': 7.28.6
+      '@babel/types': 7.29.0
+      debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -43329,7 +43348,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
       '@expo/json-file': 9.1.5
@@ -52303,7 +52322,7 @@ snapshots:
 
   '@svgr/hast-util-to-babel-ast@5.5.0':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
 
   '@svgr/plugin-jsx@5.5.0':
     dependencies:
@@ -55941,7 +55960,7 @@ snapshots:
 
   base64url@3.0.1: {}
 
-  baseline-browser-mapping@2.10.20: {}
+  baseline-browser-mapping@2.10.23: {}
 
   baseline-browser-mapping@2.8.32: {}
 
@@ -56281,9 +56300,9 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.20
-      caniuse-lite: 1.0.30001790
-      electron-to-chromium: 1.5.343
+      baseline-browser-mapping: 2.10.23
+      caniuse-lite: 1.0.30001791
+      electron-to-chromium: 1.5.344
       node-releases: 2.0.38
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
 
@@ -56660,7 +56679,7 @@ snapshots:
 
   caniuse-lite@1.0.30001759: {}
 
-  caniuse-lite@1.0.30001790: {}
+  caniuse-lite@1.0.30001791: {}
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
 
@@ -58696,7 +58715,7 @@ snapshots:
 
   electron-to-chromium@1.5.263: {}
 
-  electron-to-chromium@1.5.343: {}
+  electron-to-chromium@1.5.344: {}
 
   electron-updater@6.6.2:
     dependencies:
@@ -58791,7 +58810,7 @@ snapshots:
 
   engine.io-parser@5.2.3: {}
 
-  engine.io@6.6.6:
+  engine.io@6.6.7:
     dependencies:
       '@types/cors': 2.8.17
       '@types/node': 24.12.0
@@ -63611,7 +63630,7 @@ snapshots:
   konan@2.1.1:
     dependencies:
       '@babel/parser': 7.29.2
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -64887,7 +64906,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/template': 7.28.6
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -65431,6 +65450,11 @@ snapshots:
       dom-walk: 0.1.2
 
   min-indent@1.0.1: {}
+
+  mina-signer@4.0.0:
+    dependencies:
+      '@noble/hashes': 1.8.0
+      blakejs: 1.2.1
 
   mini-css-extract-plugin@2.8.1(webpack@5.94.0(@swc/core@1.15.11)):
     dependencies:
@@ -66556,7 +66580,7 @@ snapshots:
 
   parse-json@5.2.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.27.1
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
@@ -69831,7 +69855,7 @@ snapshots:
       base64id: 2.0.0
       cors: 2.8.5
       debug: 4.3.4
-      engine.io: 6.6.6
+      engine.io: 6.6.7
       socket.io-adapter: 2.5.6
       socket.io-parser: 4.2.6
     transitivePeerDependencies:
