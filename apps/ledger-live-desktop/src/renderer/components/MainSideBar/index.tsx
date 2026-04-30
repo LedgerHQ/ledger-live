@@ -157,7 +157,7 @@ const SideBar = styled(Box).attrs(() => ({
   }
 `;
 const SideBarScrollContainer = styled(Box)`
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 
   flex: 1;
