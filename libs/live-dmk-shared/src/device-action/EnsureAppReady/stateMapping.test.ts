@@ -43,6 +43,7 @@ const FlowName = {
 } as const;
 
 const appName = "Ethereum";
+const retry = jest.fn();
 
 const currentApp: GetAppAndVersionResponse = {
   name: "Ethereum",
@@ -420,6 +421,7 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState,
       latestInstallPlan: makeInstallPlan(),
+      retry,
     });
 
     // THEN
@@ -437,6 +439,7 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -457,6 +460,7 @@ describe("mapConnectAppDAErrorStatus", () => {
         }),
       ),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -476,6 +480,7 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -496,6 +501,7 @@ describe("mapConnectAppDAErrorStatus", () => {
         }),
       ),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -517,6 +523,7 @@ describe("mapConnectAppDAErrorStatus", () => {
         }),
       ),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -533,6 +540,7 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -549,6 +557,7 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState,
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
@@ -565,11 +574,13 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
     expect(result).toEqual({
       type: RetryableStateType.DeviceLocked,
+      retry,
     });
   });
 
@@ -580,11 +591,13 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
     expect(result).toEqual({
       type: RetryableStateType.UserRefusedOnDevice,
+      retry,
     });
   });
 
@@ -597,11 +610,13 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN
     expect(result).toEqual({
       type: RetryableStateType.UserRefusedOnDevice,
+      retry,
     });
   });
 
@@ -615,6 +630,7 @@ describe("mapConnectAppDAErrorStatus", () => {
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
+      retry,
     });
 
     // THEN

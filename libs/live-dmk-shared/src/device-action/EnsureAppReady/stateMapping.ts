@@ -142,12 +142,14 @@ export function mapConnectAppDAErrorStatus(params: {
   appName: string;
   getCurrentDeviceState: () => DeviceSessionState;
   latestInstallPlan: InstallPlan | null;
+  retry: () => void;
 }): EnsureAppReadyState | null {
   const {
     state: { error },
     appName,
     getCurrentDeviceState,
     latestInstallPlan,
+    retry,
   } = params;
 
   if (error instanceof OutOfMemoryDAError) {
@@ -207,18 +209,21 @@ export function mapConnectAppDAErrorStatus(params: {
   if (error instanceof DeviceLockedError) {
     return {
       type: RetryableStateType.DeviceLocked,
+      retry,
     };
   }
 
   if (error instanceof RefusedByUserDAError) {
     return {
       type: RetryableStateType.UserRefusedOnDevice,
+      retry,
     };
   }
 
   if (error instanceof DeviceExchangeError && error.errorCode === "5501") {
     return {
       type: RetryableStateType.UserRefusedOnDevice,
+      retry,
     };
   }
 

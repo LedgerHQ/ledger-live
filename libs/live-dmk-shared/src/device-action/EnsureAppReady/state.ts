@@ -78,9 +78,11 @@ export type EnsureAppReadyState =
     }
   | {
       type: RetryableStateType.UserRefusedOnDevice;
+      retry: () => void;
     }
   | {
       type: RetryableStateType.DeviceLocked;
+      retry: () => void;
     }
   | {
       type: BlockingStateType.UnsupportedFirmwareVersion;
@@ -112,3 +114,13 @@ export type EnsureAppReadyState =
     }
   | { type: FinalStateType.Error; error: unknown }
   | { type: FinalStateType.Success; extractedContext: DeviceExtractedContext };
+
+export function isRetryableState(state: EnsureAppReadyState): boolean {
+  switch (state.type) {
+    case RetryableStateType.DeviceLocked:
+    case RetryableStateType.UserRefusedOnDevice:
+      return true;
+    default:
+      return false;
+  }
+}

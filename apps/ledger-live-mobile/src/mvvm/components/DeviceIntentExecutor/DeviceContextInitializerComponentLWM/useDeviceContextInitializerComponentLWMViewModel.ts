@@ -86,6 +86,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
   }, [
     connectionResult,
     deprecationDismissedCurrencyNames,
+    dependencies,
     deviceInitializationInput,
     onContextInitialized,
     sideEffects,

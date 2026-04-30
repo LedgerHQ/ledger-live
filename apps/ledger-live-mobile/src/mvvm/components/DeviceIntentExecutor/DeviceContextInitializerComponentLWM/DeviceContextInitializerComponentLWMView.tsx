@@ -120,10 +120,24 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
       );
 
     case RetryableStateType.UserRefusedOnDevice:
-      return <MutedText>User refused on device</MutedText>;
+      return (
+        <>
+          <MutedText>User refused on device</MutedText>
+          <Button appearance="base" size="sm" onPress={state.retry}>
+            Retry
+          </Button>
+        </>
+      );
 
     case RetryableStateType.DeviceLocked:
-      return <MutedText>Device locked</MutedText>;
+      return (
+        <>
+          <MutedText>Device locked</MutedText>
+          <Button appearance="base" size="sm" onPress={state.retry}>
+            Retry
+          </Button>
+        </>
+      );
 
     case BlockingStateType.UnsupportedFirmwareVersion:
       return (

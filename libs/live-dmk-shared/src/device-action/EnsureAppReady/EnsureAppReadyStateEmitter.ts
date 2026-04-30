@@ -15,6 +15,7 @@ export type EnsureAppReadyStateEmitterParams = {
   deprecation?: DeprecationPresentationInput;
   deprecationDismissedCurrencyNames: string[];
   getCurrentDeviceState: () => DeviceSessionState;
+  retry: () => void;
 };
 
 /**
@@ -48,6 +49,7 @@ export class EnsureAppReadyStateEmitter implements ConnectAppDASnapshotHandler {
       appName: this.params.appName,
       getCurrentDeviceState: this.params.getCurrentDeviceState,
       latestInstallPlan: this.latestInstallPlan,
+      retry: this.params.retry,
     });
     log("[EnsureAppReady]", "EnsureAppReadyStateEmitter: handleErrorState", { state, mappedState });
 

@@ -76,6 +76,7 @@ describe("buildConnectAppDeviceActionInput", () => {
       }),
       getDeprecationConfig: mockGetDeprecationConfig,
       getMinVersion: mockGetMinVersion,
+      unlockTimeout: 0,
     });
 
     // THEN
@@ -125,6 +126,7 @@ describe("buildConnectAppDeviceActionInput", () => {
       }),
       getDeprecationConfig: mockGetDeprecationConfig,
       getMinVersion: mockGetMinVersion,
+      unlockTimeout: 0,
     });
 
     // WHEN / THEN
@@ -164,6 +166,7 @@ describe("buildConnectAppDeviceActionInput", () => {
       }),
       getDeprecationConfig: mockGetDeprecationConfig,
       getMinVersion: mockGetMinVersion,
+      unlockTimeout: 0,
     });
 
     // WHEN / THEN
