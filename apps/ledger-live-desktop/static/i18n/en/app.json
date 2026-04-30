@@ -6185,6 +6185,36 @@
       "topologyChangeError": {
         "message": "Topology change detected. Re-onboarding required."
       },
+      "disclaimer": {
+        "title": "Set up Canton Network",
+        "intro": "Canton has unique properties that require your awareness before continuing:",
+        "bullets": {
+          "utxo": {
+            "title": "UTXO-based balance",
+            "body": "Balance exists as individual coin contracts, capped at 100 per transfer. Idle contracts lose value over time and expire if fees exceed their balance."
+          },
+          "offers": {
+            "title": "All transfers work via offers",
+            "body": "Nothing settles automatically. Sent transfers can be withdrawn; received transfers need manual accept or reject. Manage offers from your Canton dashboard."
+          },
+          "dualValidator": {
+            "title": "Dual-validator security",
+            "body": "Your account requires co-signing by both Ledger and Klin, an independent validator. Neither party can act on your behalf alone."
+          },
+          "tokenLiability": {
+            "title": "Standard token liability ⚠️",
+            "body": "In a disaster recovery scenario, token recovery is the responsibility of the token issuer, not Ledger."
+          }
+        },
+        "agreeLabel": "I agree to <1>Canton Network Terms and Ledger's liability exclusion</1>",
+        "cancel": "Cancel",
+        "agree": "Agree",
+        "terms": {
+          "title": "Canton Network Terms",
+          "sectionTitle": "Standard Token Liability & Recovery",
+          "body": "Ledger only supports standard tokens issued through the Digital Asset (DA) Registry. Ledger is not the issuer of these tokens and holds no liability for their value, management, or underlying smart contracts.\n\nIn the event of a Ledger service disruption or \"disaster recovery\" failure, Ledger cannot recover your assets. You must contact the specific Token Issuer (Asset Admin) directly to initiate recovery via their \"Asset Freeze\" or \"Registry Recovery\" protocols. Your recourse lies solely with the Token Issuer under their existing Service Level Agreements (SLAs). By proceeding, you acknowledge that Ledger and its affiliates are excluded from all liability arising from the loss, recovery, or inability to recover these tokens."
+        }
+      },
       "tooManyUtxos": {
         "title": "Action Needed: Too Many UTXOs",
         "description": "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
