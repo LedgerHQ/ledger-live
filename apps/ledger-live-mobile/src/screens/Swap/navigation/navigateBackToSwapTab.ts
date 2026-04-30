@@ -5,15 +5,16 @@ type NavigationStateWithRouteNames = {
   routeNames?: string[];
 };
 
+type ParentNavigation = {
+  dispatch(action: ReturnType<typeof CommonActions.reset>): void;
+  goBack(): void;
+  canGoBack?(): boolean;
+};
+
 type NavigationWithState = {
   dispatch(action: ReturnType<typeof CommonActions.reset>): void;
   getState(): NavigationStateWithRouteNames | undefined;
-  getParent():
-    | {
-        dispatch(action: ReturnType<typeof CommonActions.reset>): void;
-        goBack(): void;
-      }
-    | undefined;
+  getParent(): ParentNavigation | undefined;
   goBack(): void;
 };
 
@@ -85,6 +86,15 @@ export function navigateBackToSwapTab({
 
   if (!shouldDisplayWallet40MainNav) {
     parentNavigation.dispatch(getResetToLegacySwapAction());
+    return;
+  }
+
+  // Wallet 4.0: SwapSubScreens was pushed on top of Main (which already has
+  // Swap > SwapTab as the active tab), so popping it preserves the natural
+  // back animation (left-to-right) instead of the forward push animation
+  // produced by CommonActions.reset.
+  if (parentNavigation.canGoBack?.() ?? true) {
+    parentNavigation.goBack();
     return;
   }
 
