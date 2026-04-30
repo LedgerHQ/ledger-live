@@ -50,7 +50,18 @@ import type {
   Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
-import { CHECKPOINT_BY_SEQUENCE, LATEST_CHECKPOINT_SEQUENCE } from "./graphql/queries";
+import {
+  CHECKPOINT_BY_SEQUENCE,
+  LATEST_CHECKPOINT_SEQUENCE,
+  STAKED_SUI_OBJECTS_BY_OWNER,
+  SUI_SYSTEM_STATE,
+} from "./graphql/queries";
+import {
+  fromSystemStateJson,
+  groupStakedSuiByPool,
+  type StakedSuiJson,
+  type SuiSystemStateInnerJson,
+} from "./graphql/mappers";
 import { getCurrentSuiPreloadData } from "./preload-data";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
@@ -544,10 +555,85 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
 export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string | undefined =>
   transaction.transaction?.data?.gasData?.owner || undefined;
 
-export const getStakesRaw = (owner: string, currencyId?: string) =>
-  withApi(async api => {
-    return api.getStakes({ owner });
-  }, currencyId);
+/**
+ * Fetch a user's delegated stakes, returning the JSON-RPC `DelegatedStake[]`
+ * shape regardless of transport.
+ *
+ * JSON-RPC path: a single `suix_getStakes` call returns stakes already
+ * grouped by validator/pool, with server-computed `estimatedReward`.
+ *
+ * GraphQL path: SUI's GraphQL has no first-class `getStakes` query (the
+ * production schema does not expose `stakedSuis` on `Address` or any
+ * dedicated stake type). We reconstruct the same shape from two queries:
+ *   1. `Address.objects(filter:{type:"0x3::staking_pool::StakedSui"})` —
+ *      every `StakedSui` Move object the user owns. The Move struct is
+ *      delivered already-decoded as JSON via `MoveValue.json`.
+ *   2. `epoch.systemState.json` — the active validator set, used to build
+ *      a pool_id → validator_address map (and to read the current epoch
+ *      for Active/Pending status).
+ * The merge happens client-side in `groupStakedSuiByPool`.
+ *
+ * Trade-off accepted in PR 1b: `estimatedReward` is `"0"` for Active
+ * stakes on the GraphQL path. Computing the real value requires walking
+ * the pool's `exchange_rates` Move Table — tracked as a follow-up so
+ * principal display is accurate immediately while reward accuracy lags
+ * by one PR.
+ */
+export const getStakesRaw = async (
+  owner: string,
+  currencyId?: string,
+): Promise<DelegatedStake[]> => {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
+  if (isGraphQLEndpoint(url)) {
+    return withGraphQLApi(async api => {
+      // Run both queries in parallel — they're independent.
+      const [systemRes, stakesRes] = await Promise.all([
+        api.query({ query: SUI_SYSTEM_STATE }),
+        api.query({
+          query: STAKED_SUI_OBJECTS_BY_OWNER,
+          variables: { owner, first: 50, after: null },
+        }),
+      ]);
+
+      if (systemRes.errors?.length) {
+        throw new Error(`GraphQL SystemState failed: ${systemRes.errors[0].message}`);
+      }
+      if (stakesRes.errors?.length) {
+        throw new Error(`GraphQL StakedSuiObjects failed: ${stakesRes.errors[0].message}`);
+      }
+
+      const epoch = systemRes.data?.epoch;
+      const stateJson = epoch?.systemState?.json as SuiSystemStateInnerJson | undefined;
+      if (!epoch || !stateJson) {
+        throw new Error("GraphQL SystemState returned no epoch payload");
+      }
+      const { poolToValidator } = fromSystemStateJson(stateJson);
+
+      // Paginate through StakedSui objects. Page size 50 matches the
+      // server's default and our existing JSON-RPC chunking.
+      const items: StakedSuiJson[] = [];
+      let page = stakesRes.data?.address?.objects;
+      while (page) {
+        for (const node of page.nodes ?? []) {
+          const json = node.contents?.json as StakedSuiJson | undefined;
+          if (json) items.push(json);
+        }
+        if (!page.pageInfo.hasNextPage) break;
+        const next = await api.query({
+          query: STAKED_SUI_OBJECTS_BY_OWNER,
+          variables: { owner, first: 50, after: page.pageInfo.endCursor },
+        });
+        if (next.errors?.length) {
+          throw new Error(`GraphQL StakedSuiObjects (next) failed: ${next.errors[0].message}`);
+        }
+        page = next.data?.address?.objects;
+      }
+
+      return groupStakedSuiByPool(items, epoch.epochId, poolToValidator);
+    }, currencyId);
+  }
+  return withApi(async api => api.getStakes({ owner }), currencyId);
+};
 
 /**
  * Extract operation coin type from transaction
@@ -1773,8 +1859,45 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
   }
 };
 
-export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
-  withApi(async api => {
+/**
+ * Fetch the active validator set with APY annotated.
+ *
+ * JSON-RPC path: two parallel calls (`getLatestSuiSystemState` for the
+ * validator metadata, `getValidatorsApy` for per-validator APY) merged by
+ * `suiAddress`.
+ *
+ * GraphQL path: a single `epoch.systemState.json` query returns the entire
+ * `SuiSystemStateInnerV2` Move struct with all 127+ active validators
+ * inline. APY is *not* directly exposed on the GraphQL `Validator` type —
+ * properly computing it requires walking each pool's `exchange_rates`
+ * Move Table (one dynamic-field lookup per validator, ~127 round-trips).
+ *
+ * Trade-off accepted in PR 1b: APY is set to `0` on the GraphQL path.
+ * Validator metadata (name, address, commission, balance, image, etc.)
+ * is fully populated; only the APY annotation lags. The exchange-rate
+ * walk lands in PR 1c. Existing UI surfaces sort validators by stake
+ * size when APY is unavailable, so this degrades gracefully.
+ */
+export const getValidators = (currencyId?: string): Promise<SuiValidator[]> => {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
+  if (isGraphQLEndpoint(url)) {
+    return withGraphQLApi(async api => {
+      const res = await api.query({ query: SUI_SYSTEM_STATE });
+      if (res.errors?.length) {
+        throw new Error(`GraphQL SystemState failed: ${res.errors[0].message}`);
+      }
+      const stateJson = res.data?.epoch?.systemState?.json as
+        | SuiSystemStateInnerJson
+        | undefined;
+      if (!stateJson) {
+        throw new Error("GraphQL SystemState returned no payload");
+      }
+      const { activeValidators } = fromSystemStateJson(stateJson);
+      // APY = 0 placeholder — see JSDoc above. Real value lands in PR 1c.
+      return activeValidators.map(v => ({ ...v, apy: 0 }));
+    }, currencyId);
+  }
+  return withApi(async api => {
     const [{ activeValidators }, { apys }] = await Promise.all([
       api.getLatestSuiSystemState(),
       api.getValidatorsApy(),
@@ -1789,3 +1912,4 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
 
     return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
   }, currencyId);
+};
