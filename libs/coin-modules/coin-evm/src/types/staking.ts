@@ -85,6 +85,27 @@ export type StakingOperation =
   | "getStakedBalance"
   | "getUnstakedBalance";
 
+/**
+ * Per-chain strategy for fetching active redelegations from an off-chain source.
+ *
+ * Add a new member to this union when implementing redelegation for a chain
+ * that uses a different API or address format.
+ *
+ * - `cosmos-rest`: query the Cosmos REST API after converting the EVM address
+ *   to bech32 (Sei-style chains).
+ * - `none`: no off-chain source; rely solely on on-chain tx history
+ *   (`buildRedelegationsFromOps`).
+ */
+export type RedelegationStrategy =
+  | {
+      type: "cosmos-rest";
+      /** Cosmos bech32 human-readable part (e.g. "sei"). */
+      hrp: string;
+      /** REST endpoint template; `{address}` is replaced with the bech32 address. */
+      endpoint: string;
+    }
+  | { type: "none" };
+
 export type StakingContractConfig = {
   contractAddress: string;
   functions: Partial<Record<StakingOperation, string>> & {
@@ -97,10 +118,19 @@ export type StakingContractConfig = {
     baseUrl: string;
     validatorsEndpoint: string;
   };
+  /** How to fetch active redelegations from an off-chain source. Defaults to `"none"` when absent. */
+  redelegationStrategy?: RedelegationStrategy;
   explorerConfig?: {
     validatorUrl: string;
   };
   unbondingPeriodDays?: number;
+  /**
+   * Multiplier to convert amounts from the calldata unit back to the EVM-native
+   * 18-decimal unit (wei).  Needed for chains whose staking precompile encodes
+   * amounts in a smaller unit (e.g. SEI uses usei = 10^6, so the scale is 10^12).
+   * Defaults to 1n (no conversion) when omitted.
+   */
+  calldataAmountScale?: bigint;
 };
 
 export type StakeCreate = {

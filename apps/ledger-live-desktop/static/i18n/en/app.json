@@ -1777,6 +1777,8 @@
       "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
       "validators": "Validators",
       "redelegated": "Redelegated",
+      "delegatedTo": "Delegated to",
+      "delegatedAmount": "Delegated amount",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
       "redelegatedAmount": "Redelegated amount",
@@ -4305,7 +4307,7 @@
             "starter": {
               "title": "Redelegation",
               "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
-              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately.",
+              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>7 pending redelegations</0>.",
               "howDelegationWorks": "How delegation works?"
             },
             "validators": {

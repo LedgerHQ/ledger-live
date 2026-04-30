@@ -6,7 +6,6 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   mapDelegations,
   mapUnbondings,
-  mapRedelegations,
   canDelegate,
   getValidatorExplorerUrl,
   prefetchValidators,
@@ -23,8 +22,8 @@ import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import IconChartLine from "~/renderer/icons/ChartLine";
-import { Header, UnbondingHeader, RedelegationHeader } from "./Header";
-import { Row, UnbondingRow, RedelegationRow } from "./Row";
+import { Header, UnbondingHeader } from "./Header";
+import { Row, UnbondingRow } from "./Row";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
@@ -89,21 +88,20 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
 
   const { stakingResources } = account;
 
-  const { delegations, unbondings, redelegations, pendingRewardsBalance } = stakingResources;
+  const { delegations, unbondings, pendingRewardsBalance } = stakingResources;
 
   const delegationEnabled = canDelegate(account);
 
   const mappedDelegations = mapDelegations(delegations, validators, unit);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
-  const mappedRedelegations = mapRedelegations(redelegations, validators, unit);
-  const onClaimRewards = () => {};
+  const onClaimRewards = useCallback(() => {}, []);
+  const onRowClaimRewards = useCallback((_validatorAddress: string) => {}, []);
 
   const hasDelegations = delegations.length > 0;
   // Only surface the "Pending undelegation" section when the chain enforces an unbonding
   // period (Acceptance Criteria: Tracking). Instant-withdrawal chains never have pending
   // unbondings so showing the header would be misleading.
   const hasUnbondings = unbondings.length > 0 && hasUnbondingPeriod(account.currency.id);
-  const hasRedelegations = redelegations.length > 0;
   const hasRewards = pendingRewardsBalance.gt(0);
 
   return (
@@ -172,6 +170,7 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
                 account={account}
                 delegation={delegation}
                 onManageAction={onRedirect}
+                onClaimRewards={onRowClaimRewards}
                 onExternalLink={onExternalLink}
               />
             ))}
@@ -210,22 +209,6 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
           </Wrapper>
         )}
       </TableContainer>
-      {hasRedelegations ? (
-        <TableContainer mb={6}>
-          <TableHeader
-            title={<Trans i18nKey="ethereum.evmStaking.redelegation.header" />}
-            titleProps={{ "data-e2e": "title_Redelegation" }}
-          />
-          <RedelegationHeader />
-          {mappedRedelegations.map(redelegation => (
-            <RedelegationRow
-              key={`${redelegation.validatorSrcAddress}-${redelegation.validatorDstAddress}-${redelegation.completionDate.valueOf()}`}
-              redelegation={redelegation}
-              onExternalLink={onExternalLink}
-            />
-          ))}
-        </TableContainer>
-      ) : null}
       {hasUnbondings ? (
         <TableContainer mb={6}>
           <TableHeader
