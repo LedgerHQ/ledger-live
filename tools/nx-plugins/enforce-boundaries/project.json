@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "enforce-boundaries",
+  "projectType": "library",
+  "targets": {
+    "lint:boundaries": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
+        "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
+        "{workspaceRoot}/domain/**/package.json",
+        "{workspaceRoot}/shared/**/package.json",
+        "{workspaceRoot}/features/**/package.json",
+        "{workspaceRoot}/apps/**/package.json",
+        "{workspaceRoot}/libs/**/package.json",
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        "{workspaceRoot}/nx.cache-config.json"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node tools/nx-plugins/enforce-boundaries/validate.js"
+      }
+    }
+  }
+}
