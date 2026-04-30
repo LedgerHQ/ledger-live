@@ -19,6 +19,7 @@ import { getInputObjects } from "@mysten/signers/ledger";
 import {
   BalanceChange,
   Checkpoint,
+  CoinBalance,
   DelegatedStake,
   ExecuteTransactionBlockParams,
   JsonRpcHTTPTransport,
@@ -34,6 +35,7 @@ import {
   TransactionBlockData,
   TransactionEffects,
 } from "@mysten/sui/jsonRpc";
+import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
@@ -48,15 +50,31 @@ import type {
   Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
+import { CHECKPOINT_BY_SEQUENCE, LATEST_CHECKPOINT_SEQUENCE } from "./graphql/queries";
 import { getCurrentSuiPreloadData } from "./preload-data";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
+type AsyncGraphQLApiFunction<T> = (api: SuiGraphQLClient) => Promise<T>;
 
 function inferNetworkFromUrl(url: string): string {
   if (url.includes("testnet")) return "testnet";
   if (url.includes("devnet")) return "devnet";
   if (url.includes("127.0.0.1") || url.includes("localhost")) return "localnet";
   return "mainnet";
+}
+
+/**
+ * Identifies a node URL as the SUI GraphQL transport. Switching the
+ * remote-config `node.url` from `https://fullnode.<net>.sui.io:443/` to
+ * `https://graphql.<net>.sui.io/graphql` is what flips a deployment from
+ * JSON-RPC onto GraphQL. The check is intentionally permissive — any URL
+ * containing `/graphql` (with optional trailing path) is treated as GraphQL.
+ *
+ * NB: this is a read-side discriminator only. Transaction execution is still
+ * exclusively on JSON-RPC until PR 4 of the sunset migration.
+ */
+export function isGraphQLEndpoint(url: string): boolean {
+  return /\/graphql(\b|\/)/i.test(url);
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
@@ -110,6 +128,35 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
 }
 
 /**
+ * Connects to the Sui GraphQL endpoint. Mirrors {@link withApi} but instantiates
+ * a {@link SuiGraphQLClient} so callers can run GraphQL documents (or use the
+ * SDK-provided high-level methods like `listBalances`, `getTransaction`, etc.).
+ *
+ * Mysten will permanently shut down the JSON-RPC transport on 2026-07-31; this
+ * wrapper is the migration target. While the migration is staged across
+ * several PRs, both wrappers coexist and individual call sites dispatch on
+ * {@link isGraphQLEndpoint} so the same code works with either node URL.
+ */
+export async function withGraphQLApi<T>(
+  execute: AsyncGraphQLApiFunction<T>,
+  currencyId?: string,
+): Promise<T> {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
+  const network = inferNetworkFromUrl(url) as
+    | "mainnet"
+    | "testnet"
+    | "devnet"
+    | "localnet"
+    | "unknown";
+  const api = new SuiGraphQLClient({
+    url,
+    network,
+    fetch: fetcher as typeof fetch,
+  });
+  return execute(api);
+}
+
+/**
  * Wraps a SuiJsonRpcClient to batch multiGetObjects calls in chunks of 50,
  * working around the SUI RPC limit.
  */
@@ -143,22 +190,54 @@ export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpc
 }
 
 /**
- * Cached wrapper around `suix_getAllBalances`.
+ * Cached wrapper around `suix_getAllBalances` (JSON-RPC) /
+ * `Address.balances` (GraphQL).
  *
  * Post SIP-58 the response includes `fundsInAddressBalance` for each coin type,
  * allowing callers to distinguish between coin-object balances and address-level
- * balances. The RPC returns "fake coin" objects for backward compatibility so
- * existing `getCoins` callers continue to work transparently.
+ * balances. The JSON-RPC `getAllBalances` endpoint returns "fake coin" objects
+ * for backward compatibility so existing `getCoins` callers continue to work
+ * transparently.
+ *
+ * On the GraphQL transport (production endpoint, post 2026-07-31 sunset of
+ * JSON-RPC) the same data comes from `address.balances.nodes` where each
+ * `Balance` carries the SIP-58 split natively as `addressBalance`. The
+ * GraphQL path here paginates through `BalanceConnection` and remaps each
+ * node into the JSON-RPC `CoinBalance` shape so all downstream consumers
+ * (`getAccountBalances`, `hasGasCoinObjects`, …) remain transport-agnostic.
+ *
+ * Fields that exist on the JSON-RPC shape but have no GraphQL equivalent are
+ * filled with neutral defaults — they are not read by any production caller
+ * in this module (verified by grep): `coinObjectCount` (synthetic) and
+ * `lockedBalance` (always empty on GraphQL today).
  */
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string, currencyId?: string) =>
-    withApi(
-      async api =>
-        await api.getAllBalances({
-          owner,
-        }),
-      currencyId,
-    ),
+  async (owner: string, currencyId?: string): Promise<CoinBalance[]> => {
+    const url = coinConfig.getCoinConfig(currencyId).node.url;
+    if (isGraphQLEndpoint(url)) {
+      return withGraphQLApi(async api => {
+        const all: CoinBalance[] = [];
+        let cursor: string | null = null;
+        let hasNextPage = true;
+        while (hasNextPage) {
+          const res = await api.listBalances({ owner, cursor });
+          for (const b of res.balances) {
+            all.push({
+              coinType: b.coinType,
+              coinObjectCount: 0,
+              totalBalance: b.balance,
+              lockedBalance: {},
+              fundsInAddressBalance: b.addressBalance,
+            });
+          }
+          hasNextPage = res.hasNextPage;
+          cursor = res.cursor;
+        }
+        return all;
+      }, currencyId);
+    }
+    return withApi(async api => api.getAllBalances({ owner }), currencyId);
+  },
   (owner: string, currencyId?: string) => `${currencyId ?? "sui"}:${owner}`,
   minutes(1),
 );
@@ -775,13 +854,63 @@ export function toSuiAsset(coinType: string): AssetInfo {
   }
 }
 
-export const getLastBlock = (currencyId?: string) =>
-  withApi(async api => {
+export const getLastBlock = (
+  currencyId?: string,
+): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> => {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
+  if (isGraphQLEndpoint(url)) {
+    return withGraphQLApi(async api => {
+      const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
+      if (res.errors?.length) {
+        throw new Error(`GraphQL LatestCheckpointSequence failed: ${res.errors[0].message}`);
+      }
+      const seq = res.data?.checkpoint?.sequenceNumber;
+      if (seq == null) {
+        throw new Error("GraphQL LatestCheckpointSequence returned no checkpoint");
+      }
+      return fetchCheckpointFromGraphQL(api, String(seq));
+    }, currencyId);
+  }
+  return withApi(async api => {
     const checkpoint = await api.getLatestCheckpointSequenceNumber();
     const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
-
     return { digest, sequenceNumber, timestampMs };
   }, currencyId);
+};
+
+/**
+ * Fetch a checkpoint by sequence number from the GraphQL endpoint and remap
+ * to the JSON-RPC `Checkpoint` shape (subset). Internal helper shared by
+ * {@link getCheckpoint} and {@link getLastBlock} on the GraphQL transport.
+ *
+ * GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts a UInt53; digest
+ * lookups are not supported. Callers must guard against digest IDs before
+ * invoking this — see the digest check in {@link getCheckpoint}.
+ */
+async function fetchCheckpointFromGraphQL(
+  api: SuiGraphQLClient,
+  sequenceNumber: string,
+): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> {
+  const res = await api.query({
+    query: CHECKPOINT_BY_SEQUENCE,
+    variables: { sequenceNumber },
+  });
+  if (res.errors?.length) {
+    throw new Error(`GraphQL CheckpointBySequence failed: ${res.errors[0].message}`);
+  }
+  const cp = res.data?.checkpoint;
+  if (!cp) {
+    throw new Error(`GraphQL checkpoint not found: ${sequenceNumber}`);
+  }
+  // GraphQL `timestamp` is RFC3339 (DateTime); JSON-RPC `timestampMs` is
+  // milliseconds-since-epoch as a string. Normalise.
+  const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
+  return {
+    digest: cp.digest ?? "",
+    sequenceNumber: String(cp.sequenceNumber),
+    timestampMs,
+  };
+}
 
 /**
  * Fetch operation list
@@ -1094,9 +1223,43 @@ export const getListOperations = async (
  * Get a checkpoint (a.k.a, a block) metadata.
  *
  * @param id the checkpoint digest or sequence number (as a string)
+ *
+ * Transport behaviour:
+ *   - JSON-RPC: accepts either a sequence number or a 32-byte digest.
+ *   - GraphQL: only accepts a sequence number (numeric string). The
+ *     production GraphQL schema's `Query.checkpoint(sequenceNumber:)` has
+ *     no digest variant; callers that pass a digest receive an explicit
+ *     error so the limitation surfaces loudly rather than silently
+ *     producing wrong data. Digest-by-checkpoint lookups are deferred to
+ *     a follow-up PR (likely via `multiGetTransactions` + checkpoint
+ *     traversal once tx history is on GraphQL too).
+ *
+ * On the GraphQL path the returned object only fills `digest`,
+ * `sequenceNumber`, and `timestampMs` — the only fields read by the four
+ * downstream callers in this module ({@link getLastBlock}, the alpaca
+ * operations path, and the bridge sync). Callers that read additional
+ * fields will need to be migrated as part of a later PR.
  */
-export const getCheckpoint = async (id: string, currencyId?: string): Promise<Checkpoint> =>
-  withApi(async api => api.getCheckpoint({ id }), currencyId);
+export const getCheckpoint = async (id: string, currencyId?: string): Promise<Checkpoint> => {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
+  if (isGraphQLEndpoint(url)) {
+    if (!/^\d+$/.test(id)) {
+      throw new Error(
+        `getCheckpoint(${id}): digest-based lookups are not supported on the GraphQL transport. ` +
+          "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
+      );
+    }
+    return withGraphQLApi(async api => {
+      const partial = await fetchCheckpointFromGraphQL(api, id);
+      // Cast back to JSON-RPC `Checkpoint` so the public signature is
+      // unchanged. Callers that read fields outside the migrated subset
+      // (e.g. `transactions`, `epoch`, `validatorSignature`) will hit
+      // `undefined` — see the JSDoc above.
+      return partial as unknown as Checkpoint;
+    }, currencyId);
+  }
+  return withApi(async api => api.getCheckpoint({ id }), currencyId);
+};
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata only.
