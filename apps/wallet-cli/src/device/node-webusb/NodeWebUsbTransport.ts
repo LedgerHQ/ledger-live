@@ -159,7 +159,13 @@ export class NodeWebUsbTransport implements Transport {
   private _usbAttachHandler: ((d: NativeUsbDevice) => void) | null = null;
   private _usbDetachHandler: ((d: NativeUsbDevice) => void) | null = null;
   private _discoveryPollInterval: NodeWebUsbIntervalHandle | null = null;
-  private _isRefreshingDiscoveredDevices = false;
+  // In-flight discovery refresh promise. While a scan is running, additional
+  // callers (e.g. a Windows polling tick overlapping with startDiscovering()
+  // or with the attach handler) get a queued follow-up scan instead of an
+  // empty result — preventing promptDeviceAccess() from spuriously throwing
+  // NoAccessibleDeviceError when a refresh is already in progress.
+  private _refreshDiscoveredDevicesInFlight: Promise<ScannedWebUsbDevice[]> | null = null;
+  private _refreshDiscoveredDevicesQueued: Promise<ScannedWebUsbDevice[]> | null = null;
 
   constructor(
     deviceModelDataSource: DeviceModelDataSource,
@@ -256,7 +262,10 @@ export class NodeWebUsbTransport implements Transport {
       sendApdu: async (...args) => {
         const previous = this._sendApduQueues.get(machine) ?? Promise.resolve();
         const queued = previous.catch(() => undefined).then(() => sendApduToMachine(...args));
-        this._sendApduQueues.set(machine, queued.catch(() => undefined));
+        this._sendApduQueues.set(
+          machine,
+          queued.catch(() => undefined),
+        );
         return queued;
       },
       transport: this.identifier,
@@ -387,11 +396,38 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   async updateTransportDiscoveredDevices(): Promise<ScannedWebUsbDevice[]> {
-    if (this._isRefreshingDiscoveredDevices) {
-      return [];
+    if (this._refreshDiscoveredDevicesInFlight) {
+      // Coalesce concurrent callers onto a single fresh scan that starts
+      // *after* the in-flight one completes, so they don't observe stale
+      // results captured before their call.
+      if (!this._refreshDiscoveredDevicesQueued) {
+        const queued = this._refreshDiscoveredDevicesInFlight
+          .catch(() => undefined)
+          .then(() => {
+            if (this._refreshDiscoveredDevicesQueued === queued) {
+              this._refreshDiscoveredDevicesQueued = null;
+            }
+            return this.runDiscoveryRefresh();
+          });
+        this._refreshDiscoveredDevicesQueued = queued;
+      }
+      return this._refreshDiscoveredDevicesQueued;
     }
 
-    this._isRefreshingDiscoveredDevices = true;
+    return this.runDiscoveryRefresh();
+  }
+
+  private runDiscoveryRefresh(): Promise<ScannedWebUsbDevice[]> {
+    const refresh = this.scanAndPublishDiscoveredDevices().finally(() => {
+      if (this._refreshDiscoveredDevicesInFlight === refresh) {
+        this._refreshDiscoveredDevicesInFlight = null;
+      }
+    });
+    this._refreshDiscoveredDevicesInFlight = refresh;
+    return refresh;
+  }
+
+  private async scanAndPublishDiscoveredDevices(): Promise<ScannedWebUsbDevice[]> {
     try {
       const scanned = await this.scanLedgerWebUsbDevices();
       await this.reconnectPendingMachines(scanned);
@@ -421,8 +457,6 @@ export class NodeWebUsbTransport implements Transport {
     } catch (e) {
       this._logger.error("Error while scanning Ledger WebUSB devices", { data: { error: e } });
       return [];
-    } finally {
-      this._isRefreshingDiscoveredDevices = false;
     }
   }
 

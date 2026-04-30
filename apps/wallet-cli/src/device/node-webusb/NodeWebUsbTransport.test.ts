@@ -1068,4 +1068,103 @@ describe("NodeWebUsbTransport", () => {
 
     transport.destroy();
   });
+
+  it("does not return an empty list to a concurrent caller while a refresh is in-flight", async () => {
+    // Regression: previously, updateTransportDiscoveredDevices() returned []
+    // when a refresh was already running, which caused promptDeviceAccess() to
+    // throw NoAccessibleDeviceError when a Windows polling tick (or attach
+    // handler) overlapped with startDiscovering().
+    const nativeDevice = {
+      deviceDescriptor: {
+        idVendor: 0x2c97,
+        idProduct: 0x5011,
+      },
+    };
+    const webUsbDevice = {
+      vendorId: 0x2c97,
+      productId: 0x5011,
+      serialNumber: "ledger-1",
+      configurations: [
+        {
+          interfaces: [
+            {
+              interfaceNumber: 1,
+              alternates: [{ interfaceClass: 255 }],
+            },
+          ],
+        },
+      ],
+    };
+
+    let releaseFirstScan: (() => void) | undefined;
+    const firstScanGate = new Promise<void>(resolve => {
+      releaseFirstScan = resolve;
+    });
+    let createWebUsbDeviceCalls = 0;
+    let deviceListCalls = 0;
+
+    const transport = new NodeWebUsbTransport(
+      {
+        getAllDeviceModels: () => [
+          {
+            id: "nanoSP",
+            productName: "Ledger Nano S Plus",
+            usbProductId: 0x50,
+            bootloaderUsbProductId: 0x5011,
+          },
+        ],
+      } as DeviceModelDataSource,
+      () => createLogger(),
+      (() => {
+        throw new Error("unused apdu sender factory");
+      }) as ApduSenderServiceFactory,
+      (() => {
+        throw new Error("unused apdu receiver factory");
+      }) as ApduReceiverServiceFactory,
+      undefined,
+      undefined,
+      {
+        platform: "linux",
+        getDeviceList: () => {
+          deviceListCalls += 1;
+          return [nativeDevice] as never[];
+        },
+        createWebUsbDevice: async () => {
+          createWebUsbDeviceCalls += 1;
+          if (createWebUsbDeviceCalls === 1) {
+            await firstScanGate;
+          }
+          return webUsbDevice as never;
+        },
+        usbBindings: {
+          on: () => {},
+          removeListener: () => {},
+          unrefHotplugEvents: () => {},
+        },
+        setInterval: () => 0 as unknown as ReturnType<typeof globalThis.setInterval>,
+        clearInterval: () => {},
+      },
+    );
+
+    const first = transport.updateTransportDiscoveredDevices();
+    const secondConcurrent = transport.updateTransportDiscoveredDevices();
+    const thirdConcurrent = transport.updateTransportDiscoveredDevices();
+
+    releaseFirstScan?.();
+
+    const [firstResult, secondResult, thirdResult] = await Promise.all([
+      first,
+      secondConcurrent,
+      thirdConcurrent,
+    ]);
+
+    expect(firstResult).toHaveLength(1);
+    expect(secondResult).toHaveLength(1);
+    expect(thirdResult).toHaveLength(1);
+    // Concurrent callers coalesce onto a single fresh follow-up scan rather
+    // than triggering one rescan per caller.
+    expect(deviceListCalls).toBe(2);
+
+    transport.destroy();
+  });
 });
