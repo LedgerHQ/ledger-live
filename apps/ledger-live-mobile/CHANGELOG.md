@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.3.0-next.3
+
+### Minor Changes
+
+- [#16990](https://github.com/LedgerHQ/ledger-live/pull/16990) [`474f7ce`](https://github.com/LedgerHQ/ledger-live/commit/474f7ceb248a909fc19063c9c1798be536267f16) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Revert initialUrl changes
+
 ## 4.3.0-next.2
 
 ### Minor Changes
