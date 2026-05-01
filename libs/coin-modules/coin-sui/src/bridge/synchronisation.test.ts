@@ -15,8 +15,6 @@ import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { getAccountShape as getAccountShapeStream } from "./synchronisation";
 
-// Adapter so existing `await getAccountShape(...)` and `.rejects.toThrow(...)`
-// assertions keep working against the new Observable-returning shape.
 const getAccountShape = (...args: Parameters<typeof getAccountShapeStream>) =>
   firstValueFrom(getAccountShapeStream(...args));
 
@@ -85,8 +83,7 @@ describe("getAccountShape", () => {
     // GIVEN — getStakesRaw never resolves on its own; we stop it via the signal.
     const stakesGotSignal = new Promise<AbortSignal>(resolve => {
       mockGetStakesRaw.mockImplementation(
-        (_addr: string, _cur: string, signal: AbortSignal) =>
-          new Promise(() => resolve(signal)), // never resolve, just capture the signal
+        (_addr: string, _cur: string, signal: AbortSignal) => new Promise(() => resolve(signal)), // never resolve, just capture the signal
       );
     });
 
