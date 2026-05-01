@@ -1,7 +1,6 @@
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
 import { writeFileSync } from "fs";
-import { ElectronApplication } from "@playwright/test";
-import { OnboardingPage } from "tests/page/onboarding.page";
+import { ElectronApplication, expect } from "@playwright/test";
 import { launchApp } from "./electronUtils";
 import { getFeatureFlags } from "./featureFlagUtils";
 
@@ -22,16 +21,32 @@ export default async function globalTeardown() {
 
     // wait for app is loaded
     await page.waitForLoadState("domcontentloaded");
-    await page.waitForSelector("#loader-container", { state: "hidden" });
 
-    await new OnboardingPage(page).waitForLaunch();
-
+    // wait for feature flags to be available
     const featureFlags = await getFeatureFlags(page);
 
-    const appEnvs = await page.evaluate(() => {
-      return window.getAllEnvs();
-    });
+    // wait for env variables to be available
+    const getAppEnvsPromise = async () =>
+      page.evaluate(() => {
+        return window.getAllEnvs();
+      });
 
+    await expect
+      .poll(
+        async () => {
+          const appEnvsResult = await getAppEnvsPromise();
+          return Object.keys(appEnvsResult).length;
+        },
+        {
+          intervals: [1_000],
+          message: "Should have at least one env variable",
+        },
+      )
+      .toBeGreaterThanOrEqual(1);
+
+    const appEnvs = await getAppEnvsPromise();
+
+    // write to file for allure reporting
     writeFileSync(environmentFilePath, formatFlagsData(featureFlags) + formatEnvData(appEnvs), {
       encoding: "utf8",
       flag: "a",

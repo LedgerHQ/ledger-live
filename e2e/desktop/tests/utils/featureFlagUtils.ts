@@ -1,10 +1,24 @@
-import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { Page } from "@playwright/test";
+import type { OptionalFeatureMap } from "@ledgerhq/types-live";
+import { Page, expect } from "@playwright/test";
 
 export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
-  const featureFlags = await page.evaluate(() => {
-    return window.getAllFeatureFlags("en");
-  });
+  let featureFlags: OptionalFeatureMap = {};
+
+  await expect
+    .poll(
+      async () => {
+        featureFlags = await page.evaluate(() => {
+          return window.getAllFeatureFlags("en");
+        });
+        return Object.keys(featureFlags).length;
+      },
+      {
+        intervals: [1_000],
+        message: "Should have at least one feature flag",
+      },
+    )
+    .toBeGreaterThanOrEqual(1);
+
   return featureFlags;
 };
 
