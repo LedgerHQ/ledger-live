@@ -4,7 +4,6 @@ import { REQUEST_TIMEOUT_MS } from "./graphql/constants";
 type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
 export type Inputs = GenericInput<typeof fetch>;
 
-/** URL → Sui network identifier (mainnet/testnet/devnet/localnet). */
 export function inferNetworkFromUrl(url: string): string {
   if (url.includes("testnet")) return "testnet";
   if (url.includes("devnet")) return "devnet";
@@ -14,10 +13,9 @@ export function inferNetworkFromUrl(url: string): string {
 
 /**
  * Retry-aware fetch shared by both the JSON-RPC and GraphQL transports.
- * Per-attempt deadline (REQUEST_TIMEOUT_MS) plus caller-supplied `signal`
- * (e.g. sync teardown via `synchronisation.ts`) drive cancellation.
- * Recursion passes `options` (not `opts`) so each retry gets a fresh
- * per-attempt controller; reusing `opts` would race a stale/aborted signal.
+ * Each attempt races a per-attempt timeout against any caller-supplied `signal`
+ * via `AbortSignal.any` — whichever fires first wins.
+ * Recursion passes `options` (not `opts`) so each retry gets a fresh abort controller.
  */
 export const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
   const version = getEnv("LEDGER_CLIENT_VERSION") || "";
@@ -31,10 +29,10 @@ export const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  const opts: RequestInit = {
-    ...(options ?? {}),
-    signal: options?.signal ?? controller.signal,
-  };
+  const signal = options?.signal
+    ? AbortSignal.any([controller.signal, options.signal])
+    : controller.signal;
+  const opts: RequestInit = { ...(options ?? {}), signal };
   const finalize = (p: Promise<Response>): Promise<Response> =>
     p.finally(() => clearTimeout(timer));
 
