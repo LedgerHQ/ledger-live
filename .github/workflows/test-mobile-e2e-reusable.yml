@@ -125,6 +125,10 @@ on:
         required: false
         type: boolean
         default: false
+    secrets:
+      SPECULINHO_URL:
+        description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
+        required: false
 
 permissions:
   id-token: write
@@ -608,7 +612,7 @@ jobs:
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
