@@ -12,7 +12,7 @@ import {
   LedgerRecoverSubscriptionStateInProgressEnum,
 } from "~/types/recoverSubscriptionState";
 import { track } from "~/analytics";
-import useRecoverBannerStorage from "../../hooks/useRecoverBannerStorage";
+import useRecoverBannerState from "../../hooks/useRecoverBannerState";
 
 function useRecoverBannerViewModel() {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ function useRecoverBannerViewModel() {
     "recover-launch",
   );
 
-  const { data, dismissBanner } = useRecoverBannerStorage(protectID);
+  const { data, dismissBanner } = useRecoverBannerState(protectID);
 
   const subscriptionState =
     data?.subscriptionState ?? LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION;

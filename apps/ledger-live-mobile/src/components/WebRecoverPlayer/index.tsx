@@ -15,6 +15,7 @@ import { RightHeader } from "../WebPlatformPlayer/RightHeader";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 import SafeAreaView from "../SafeAreaView";
 import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
+import useRecoverStateSync from "./useRecoverStateSync";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -35,6 +36,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const dispatch = useDispatch();
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  useRecoverStateSync(manifest.id);
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 

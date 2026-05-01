@@ -36,6 +36,7 @@ import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
+import type { RecoverStateSliceState } from "./recoverState";
 
 // === ACCOUNT STATE ===
 
@@ -428,4 +429,5 @@ export type State = LLMRTKApiState & {
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
+  recoverState: RecoverStateSliceState;
 };
