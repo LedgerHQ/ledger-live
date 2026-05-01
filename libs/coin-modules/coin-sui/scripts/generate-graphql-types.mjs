@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 /**
  * Generate gql.tada-compatible introspection types from the SUI schema.
- * Pipeline: optionally re-fetch the live introspection (`--fetch`) or
- * read the bundled snapshot, then convert it into a `.d.ts` typed
- * introspection via @gql.tada/internal. The snapshot is committed so
- * builds stay hermetic. `--check` diffs live vs. snapshot and exits
- * non-zero on drift — meant for a scheduled CI job, not per-PR.
  *
- * Pruning: fetched introspection is tree-shaken to the types/fields
- * actually referenced by `graphql\`...\`` documents under `src/`.
- * The committed `introspection.json` is the pruned form.
+ * Modes:
+ *  `--fetch` re-pulls the live schema, default reads the committed snapshot
+ *  `--check` diffs live introspection versus local snapshot
+ *
+ * Fetched introspection is tree-shaken to types/fields
+ * referenced by `graphql(\`...\`)` documents under `src/`.
  */
 
 import { writeFileSync, readFileSync, mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
