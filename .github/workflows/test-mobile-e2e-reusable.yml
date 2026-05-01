@@ -407,7 +407,6 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
-      disable-nx-cache: false
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -422,7 +421,6 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
-      disable-nx-cache: false
       build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
