@@ -110,7 +110,7 @@ describe("unwrapGraphQL: error envelope handling", () => {
     mockNext({ query });
 
     await expect(getValidators("sui-graphql-errors-no-data")).rejects.toThrow(
-      /SystemState returned no data/,
+      /SystemState failed: no data/,
     );
   });
 
@@ -133,7 +133,7 @@ describe("unwrapGraphQL: error envelope handling", () => {
     mockNext({ query });
 
     await expect(getValidators("sui-graphql-errors-no-data-with-reqid")).rejects.toThrow(
-      /SystemState returned no data \[reqId=req-trace-xyz\]/,
+      /SystemState failed \[reqId=req-trace-xyz\]: no data/,
     );
   });
 });

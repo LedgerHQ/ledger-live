@@ -6,17 +6,28 @@
  * the Mysten side without a full `getStakesRaw` / `getValidators` integ.
  */
 import { ONE_SUI } from "../../constants";
+import { RATE_BATCH_CHUNK_SIZE } from "./constants";
+import { BATCH_RATES_15 } from "./queries";
 import {
   assertSystemStateJson,
   computeApy,
   computeEstimatedReward,
+  computeStakeRewards,
   fromSystemStateJson,
   groupStakedSuiByPool,
   isStakedSuiJson,
+  parseExchangeRateNode,
+  planActivationRateLookups,
   poolRefsFromSystemState,
   shortenCoinType,
   UNKNOWN_VALIDATOR,
+  validateStakedSuiNodes,
+  type ExchangeRate,
+  type ExchangeRateAddrNode,
+  type PoolRefs,
+  type RatePlan,
   type StakedSuiJson,
+  type StakeNode,
   type SuiSystemStateInnerJson,
 } from "./utils";
 
@@ -622,5 +633,248 @@ describe("computeApy", () => {
     );
     expect(apy).toBeGreaterThan(0.03);
     expect(apy).toBeLessThan(0.04);
+  });
+});
+
+// ----- validateStakedSuiNodes ---------------------------------------------
+
+describe("validateStakedSuiNodes", () => {
+  /** Convenience: wrap a `MoveValue.json` payload as the GraphQL StakeNode shape. */
+  const node = (json: unknown): StakeNode => ({ contents: { json } }) as unknown as StakeNode;
+  const validJson = (id: string): StakedSuiJson => ({
+    id,
+    pool_id: "0xpool",
+    stake_activation_epoch: "100",
+    principal: "1000",
+  });
+
+  test("returns empty arrays/zero malformed for empty input", () => {
+    expect(validateStakedSuiNodes([])).toEqual({ items: [], malformed: 0 });
+  });
+
+  test("collects well-formed nodes; malformed stays 0", () => {
+    const { items, malformed } = validateStakedSuiNodes([
+      node(validJson("0xs1")),
+      node(validJson("0xs2")),
+    ]);
+    expect(items.map(i => i.id)).toEqual(["0xs1", "0xs2"]);
+    expect(malformed).toBe(0);
+  });
+
+  test("counts malformed payloads (e.g. missing pool_id) as skipped", () => {
+    const { items, malformed } = validateStakedSuiNodes([
+      node(validJson("0xs1")),
+      node({ id: "0xs2", stake_activation_epoch: "100", principal: "1000" }), // no pool_id
+    ]);
+    expect(items.map(i => i.id)).toEqual(["0xs1"]);
+    expect(malformed).toBe(1);
+  });
+
+  test("ignores null/undefined contents without incrementing malformed", () => {
+    // Reflects an actual GraphQL response shape: `contents` may be absent
+    // when the indexer hasn't materialised the Move object yet.
+    const empty = { contents: { json: null } } as unknown as StakeNode;
+    const undef = { contents: { json: undefined } } as unknown as StakeNode;
+    const noContents = {} as unknown as StakeNode;
+    const { items, malformed } = validateStakedSuiNodes([empty, undef, noContents]);
+    expect(items).toEqual([]);
+    expect(malformed).toBe(0);
+  });
+});
+
+// ----- planActivationRateLookups -----------------------------------------
+
+describe("planActivationRateLookups", () => {
+  const refs = (id: string, ratesId: string, activationEpoch = 0): [string, PoolRefs] => [
+    id,
+    {
+      exchangeRatesId: ratesId,
+      currentRate: { sui_amount: 1, pool_token_amount: 1 },
+      activationEpoch,
+    },
+  ];
+
+  test("excludes Pending stakes (activation > currentEpoch) from activeStakes", () => {
+    const items: StakedSuiJson[] = [
+      { id: "0xActive", pool_id: "0xp", stake_activation_epoch: 50, principal: "100" },
+      { id: "0xPending", pool_id: "0xp", stake_activation_epoch: 200, principal: "100" },
+    ];
+    const { activeStakes } = planActivationRateLookups(
+      items,
+      100n,
+      new Map([refs("0xp", "0xrates")]),
+    );
+    expect(activeStakes.map(p => p.stakedSuiId)).toEqual(["0xActive"]);
+  });
+
+  test("treats activation == currentEpoch as Active (boundary)", () => {
+    const items: StakedSuiJson[] = [
+      { id: "0xs", pool_id: "0xp", stake_activation_epoch: 100, principal: "1" },
+    ];
+    const { activeStakes } = planActivationRateLookups(
+      items,
+      100n,
+      new Map([refs("0xp", "0xrates")]),
+    );
+    expect(activeStakes).toHaveLength(1);
+  });
+
+  test("dedupes (table, epoch) so two stakes in the same pool/epoch yield one wantedEntry", () => {
+    const items: StakedSuiJson[] = [
+      { id: "0xs1", pool_id: "0xp", stake_activation_epoch: 50, principal: "100" },
+      { id: "0xs2", pool_id: "0xp", stake_activation_epoch: 50, principal: "200" },
+    ];
+    const { wantedEntries } = planActivationRateLookups(
+      items,
+      100n,
+      new Map([refs("0xp", "0xrates")]),
+    );
+    expect(wantedEntries).toHaveLength(1);
+    expect(wantedEntries[0].table).toBe("0xrates");
+    expect(wantedEntries[0].epoch).toBe(50);
+  });
+
+  test("emits one wantedEntry per distinct (table, epoch) pair", () => {
+    const items: StakedSuiJson[] = [
+      { id: "0xs1", pool_id: "0xpA", stake_activation_epoch: 50, principal: "1" },
+      { id: "0xs2", pool_id: "0xpA", stake_activation_epoch: 60, principal: "1" }, // same table, new epoch
+      { id: "0xs3", pool_id: "0xpB", stake_activation_epoch: 50, principal: "1" }, // new table, same epoch
+    ];
+    const { wantedEntries } = planActivationRateLookups(
+      items,
+      100n,
+      new Map([refs("0xpA", "0xratesA"), refs("0xpB", "0xratesB")]),
+    );
+    expect(wantedEntries).toHaveLength(3);
+  });
+
+  test("drops orphan-pool stakes from wantedEntries; activeStakes still includes them", () => {
+    // activeStakes mirrors what `groupStakedSuiByPool` will iterate;
+    // orphans stay in the list with reward "0" (no rate to look up).
+    const items: StakedSuiJson[] = [
+      { id: "0xs", pool_id: "0xorphan", stake_activation_epoch: 50, principal: "100" },
+    ];
+    const { activeStakes, wantedEntries } = planActivationRateLookups(items, 100n, new Map());
+    expect(activeStakes).toHaveLength(1);
+    expect(wantedEntries).toHaveLength(0);
+  });
+});
+
+// ----- computeStakeRewards ------------------------------------------------
+
+describe("computeStakeRewards", () => {
+  const plan = (stakedSuiId: string, poolId: string, activationEpoch: string | number): RatePlan => ({
+    stakedSuiId,
+    principal: "100",
+    poolId,
+    activationEpoch,
+  });
+  const poolRef = (ratesId: string): PoolRefs => ({
+    exchangeRatesId: ratesId,
+    // 1 SUI = 1.1 pool tokens — current rate represents 10% pool growth.
+    currentRate: { sui_amount: 1100, pool_token_amount: 1000 },
+    activationEpoch: 0,
+  });
+
+  test("computes the pool-token reward for a stake whose rate is present", () => {
+    const rewards = computeStakeRewards(
+      [plan("0xs", "0xp", 50)],
+      new Map([["0xp", poolRef("0xrates")]]),
+      // Activation rate: 1 SUI = 1 pool token. Reward = 110 − 100 = 10.
+      new Map([["0xrates@50", { sui_amount: 1000, pool_token_amount: 1000 }]]),
+    );
+    expect(rewards.get("0xs")).toBe(10n);
+  });
+
+  test("skips stakes whose rate is null (entry absent → caller defaults to '0')", () => {
+    const rewards = computeStakeRewards(
+      [plan("0xs", "0xp", 50)],
+      new Map([["0xp", poolRef("0xrates")]]),
+      new Map<string, ExchangeRate | null>([["0xrates@50", null]]),
+    );
+    expect(rewards.has("0xs")).toBe(false);
+  });
+
+  test("skips stakes whose rate key is missing entirely", () => {
+    const rewards = computeStakeRewards(
+      [plan("0xs", "0xp", 50)],
+      new Map([["0xp", poolRef("0xrates")]]),
+      new Map(), // no rate at all
+    );
+    expect(rewards.has("0xs")).toBe(false);
+  });
+
+  test("skips orphan-pool stakes (no PoolRefs entry)", () => {
+    const rewards = computeStakeRewards(
+      [plan("0xs", "0xorphan", 50)],
+      new Map(), // orphan
+      new Map(),
+    );
+    expect(rewards.size).toBe(0);
+  });
+});
+
+// ----- parseExchangeRateNode ----------------------------------------------
+
+describe("parseExchangeRateNode", () => {
+  test("extracts a valid ExchangeRate from a MoveValue dynamicField", () => {
+    const node: ExchangeRateAddrNode = {
+      dynamicField: {
+        value: { __typename: "MoveValue", json: { sui_amount: "1100", pool_token_amount: "1000" } },
+      },
+    };
+    expect(parseExchangeRateNode(node)).toEqual({
+      sui_amount: "1100",
+      pool_token_amount: "1000",
+    });
+  });
+
+  test("returns null for a null root (no address)", () => {
+    expect(parseExchangeRateNode(null)).toBeNull();
+  });
+
+  test("returns null when dynamicField is absent", () => {
+    expect(parseExchangeRateNode({ dynamicField: null })).toBeNull();
+    expect(parseExchangeRateNode({})).toBeNull();
+  });
+
+  test("returns null when value typename is not MoveValue (union mismatch)", () => {
+    const node: ExchangeRateAddrNode = {
+      dynamicField: {
+        value: { __typename: "MoveObject", json: { sui_amount: 1, pool_token_amount: 1 } },
+      },
+    };
+    expect(parseExchangeRateNode(node)).toBeNull();
+  });
+
+  test("returns null when json fails the ExchangeRate predicate", () => {
+    const node: ExchangeRateAddrNode = {
+      dynamicField: {
+        // wrong field names — schema drift simulation
+        value: { __typename: "MoveValue", json: { sui: 1, pool_tokens: 1 } },
+      },
+    };
+    expect(parseExchangeRateNode(node)).toBeNull();
+  });
+});
+
+// ----- BATCH_RATES_15 structural invariant --------------------------------
+
+describe("BATCH_RATES_15 structural invariant", () => {
+  test("alias count stays in lock-step with RATE_BATCH_CHUNK_SIZE", () => {
+    // Guards the comment-only contract in `queries.ts`: `fetchRateChunk`
+    // builds a variable map of size RATE_BATCH_CHUNK_SIZE and the document
+    // must have exactly that many `vN:` aliases or the server rejects the
+    // request shape (caller-side TS can't see this, see `@ts-expect-error`).
+    const op = (BATCH_RATES_15 as { definitions: ReadonlyArray<unknown> }).definitions[0] as {
+      kind?: string;
+      selectionSet?: { selections: ReadonlyArray<{ kind: string; alias?: { value: string } }> };
+    };
+    expect(op.kind).toBe("OperationDefinition");
+    const aliases =
+      op.selectionSet?.selections.filter(
+        s => s.kind === "Field" && /^v\d+$/.test(s.alias?.value ?? ""),
+      ).length ?? 0;
+    expect(aliases).toBe(RATE_BATCH_CHUNK_SIZE);
   });
 });

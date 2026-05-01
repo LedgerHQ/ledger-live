@@ -6,6 +6,7 @@
  *   - Pool exchange-rate math (per-stake reward, per-validator APY)
  *   - Sequence-number / cursor-expiry predicates
  */
+import { log } from "@ledgerhq/logs";
 import type { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/jsonRpc";
 import type { StakedSuiObjectsResult } from "./queries";
 
@@ -115,8 +116,9 @@ export function assertSystemStateJson(x: unknown): asserts x is SuiSystemStateIn
 
 /**
  * Predicate (not throw) so the caller can skip a malformed entry
- * without tanking the whole stake list. Production telemetry should
- * track the skip count if this ever fires.
+ * without tanking the whole stake list. The skip count is surfaced
+ * via `validateStakedSuiNodes`'s `malformed` and logged through
+ * `sui-graphql:rate-fetch-degraded` in `sdk.graphql.ts`.
  */
 export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
   if (typeof x !== "object" || x === null) return false;
@@ -133,9 +135,11 @@ export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
 // ----- Helpers ------------------------------------------------------------
 
 const isNullish = (v: unknown): v is null | undefined => v === null || v === undefined;
-const s = (v: string | number | null | undefined): string =>
+/** Stringify a Move u64 wire value (`number | string | null | undefined`) → `""` on nullish. */
+const str = (v: string | number | null | undefined): string =>
   isNullish(v) ? "" : typeof v === "number" ? String(v) : v;
-const sOrNull = (v: string | number | null | undefined): string | null =>
+/** Same as {@link str} but preserves `null` (used for nullable wire fields like deactivation_epoch). */
+const strOrNull = (v: string | number | null | undefined): string | null =>
   isNullish(v) ? null : typeof v === "number" ? String(v) : v;
 
 /**
@@ -182,23 +186,23 @@ function validatorJsonToSummary(v: ValidatorJson): SuiValidatorSummary {
     nextEpochP2pAddress: m.next_epoch_p2p_address ?? null,
     nextEpochPrimaryAddress: m.next_epoch_primary_address ?? null,
     nextEpochWorkerAddress: m.next_epoch_worker_address ?? null,
-    votingPower: s(v.voting_power),
-    gasPrice: s(v.gas_price),
-    commissionRate: s(v.commission_rate),
-    nextEpochStake: s(v.next_epoch_stake),
-    nextEpochGasPrice: s(v.next_epoch_gas_price),
-    nextEpochCommissionRate: s(v.next_epoch_commission_rate),
+    votingPower: str(v.voting_power),
+    gasPrice: str(v.gas_price),
+    commissionRate: str(v.commission_rate),
+    nextEpochStake: str(v.next_epoch_stake),
+    nextEpochGasPrice: str(v.next_epoch_gas_price),
+    nextEpochCommissionRate: str(v.next_epoch_commission_rate),
     stakingPoolId: p.id,
-    stakingPoolActivationEpoch: sOrNull(p.activation_epoch),
-    stakingPoolDeactivationEpoch: sOrNull(p.deactivation_epoch),
-    stakingPoolSuiBalance: s(p.sui_balance),
-    rewardsPool: s(p.rewards_pool),
-    poolTokenBalance: s(p.pool_token_balance),
+    stakingPoolActivationEpoch: strOrNull(p.activation_epoch),
+    stakingPoolDeactivationEpoch: strOrNull(p.deactivation_epoch),
+    stakingPoolSuiBalance: str(p.sui_balance),
+    rewardsPool: str(p.rewards_pool),
+    poolTokenBalance: str(p.pool_token_balance),
     exchangeRatesId: p.exchange_rates.id,
-    exchangeRatesSize: s(p.exchange_rates.size),
-    pendingStake: s(p.pending_stake),
-    pendingTotalSuiWithdraw: s(p.pending_total_sui_withdraw),
-    pendingPoolTokenWithdraw: s(p.pending_pool_token_withdraw),
+    exchangeRatesSize: str(p.exchange_rates.size),
+    pendingStake: str(p.pending_stake),
+    pendingTotalSuiWithdraw: str(p.pending_total_sui_withdraw),
+    pendingPoolTokenWithdraw: str(p.pending_pool_token_withdraw),
   };
 }
 
@@ -238,6 +242,9 @@ export function groupStakedSuiByPool(
 ): DelegatedStake[] {
   const currentEpoch = BigInt(epoch);
   const byPool = new Map<string, DelegatedStake>();
+  // One warn per orphan pool per call: a removed-mid-epoch pool can shadow
+  // hundreds of stakes; deduping keeps the log line useful for triage.
+  const warnedOrphans = new Set<string>();
 
   for (const item of items) {
     const stakeActiveEpoch = BigInt(item.stake_activation_epoch);
@@ -245,8 +252,8 @@ export function groupStakedSuiByPool(
     const base = {
       stakedSuiId: item.id,
       stakeRequestEpoch: (stakeActiveEpoch - 1n).toString(),
-      stakeActiveEpoch: s(item.stake_activation_epoch),
-      principal: s(item.principal),
+      stakeActiveEpoch: str(item.stake_activation_epoch),
+      principal: str(item.principal),
     };
     const reward = rewards?.get(item.id);
     const stake: StakeObject =
@@ -260,8 +267,16 @@ export function groupStakedSuiByPool(
 
     let group = byPool.get(item.pool_id);
     if (!group) {
+      const validatorAddress = pools.get(item.pool_id);
+      if (validatorAddress === undefined && !warnedOrphans.has(item.pool_id)) {
+        warnedOrphans.add(item.pool_id);
+        log("warn", "sui-graphql:orphan-pool", {
+          poolId: item.pool_id,
+          firstStakeId: item.id,
+        });
+      }
       group = {
-        validatorAddress: pools.get(item.pool_id) ?? UNKNOWN_VALIDATOR,
+        validatorAddress: validatorAddress ?? UNKNOWN_VALIDATOR,
         stakingPool: item.pool_id,
         stakes: [],
       };

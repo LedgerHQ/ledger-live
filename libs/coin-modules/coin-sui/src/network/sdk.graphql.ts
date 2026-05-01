@@ -168,7 +168,7 @@ function unwrapGraphQL<T>(
     throw new Error(`GraphQL ${label} failed${reqId}: ${all}`);
   }
   if (res.data === null || res.data === undefined) {
-    throw new Error(`GraphQL ${label} returned no data${reqId}`);
+    throw new Error(`GraphQL ${label} failed${reqId}: no data`);
   }
   return res.data;
 }
@@ -185,7 +185,7 @@ function unwrapAndValidateSystemState(
   const data = unwrapGraphQL("SystemState", systemRes);
   const epoch = data.epoch;
   if (!epoch || !epoch.systemState?.json) {
-    throw new Error("GraphQL SystemState returned no epoch payload");
+    throw new Error("GraphQL SystemState failed: no epoch payload");
   }
   const json = epoch.systemState.json;
   assertSystemStateJson(json);
@@ -437,6 +437,7 @@ async function fetchRateChunk(
       plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal)),
     );
   }
+  // $t0/$l0…$t14/$l14 mirror BATCH_RATES_15's variable names: t = table address, l = epoch literal.
   const variables = Object.fromEntries(
     plans.flatMap((p, i) => [
       [`t${i}`, p.exchangeRatesId],
@@ -535,7 +536,7 @@ export const getCheckpointGraphQL = async (
   });
   const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
   if (!cp) {
-    throw new Error(`GraphQL checkpoint not found: ${id}`);
+    throw new Error(`GraphQL CheckpointBySequence failed: not found (id=${id})`);
   }
   // RFC3339 → epoch-ms string (JSON-RPC convention).
   const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
@@ -555,7 +556,7 @@ export const getLastBlockGraphQL = async (
   const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
   const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
   if (seq === null || seq === undefined) {
-    throw new Error("GraphQL LatestCheckpointSequence returned no checkpoint");
+    throw new Error("GraphQL LatestCheckpointSequence failed: no checkpoint");
   }
   return getCheckpointGraphQL(api, seq);
 };
