@@ -25,7 +25,6 @@ import InfiniteLoader from "~/components/InfiniteLoader";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
-import { useLocale } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useSettings } from "~/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
@@ -59,7 +58,6 @@ const LiveAppModalScreenContent = ({
   const { requestId, manifestId, path, title, description } = params;
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { locale } = useLocale();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
@@ -109,7 +107,7 @@ const LiveAppModalScreenContent = ({
       inputs: {
         theme,
         lang: language,
-        locale,
+        locale: language,
         countryLocale,
         currencyTicker,
         discreetMode: discreet ? "true" : "false",
@@ -123,7 +121,6 @@ const LiveAppModalScreenContent = ({
     requestId,
     theme,
     language,
-    locale,
     countryLocale,
     currencyTicker,
     discreet,
@@ -154,12 +151,13 @@ const LiveAppModalScreenContent = ({
   const inputs = useMemo<Record<string, string | undefined>>(
     () => ({
       theme,
-      lang: locale,
+      lang: language,
+      locale: language,
       isLiveAppModal: "true",
       liveAppModalRequestId: requestId,
       goToURL,
     }),
-    [theme, locale, requestId, goToURL],
+    [theme, language, requestId, goToURL],
   );
 
   if (!manifest) {
@@ -243,6 +241,7 @@ const EarnLiveAppModalScreenContent = ({
 
 const LiveAppModalScreen = ({ navigation }: Props) => {
   const params = useSelector(selectLiveAppModal);
+  const dispatch = useDispatch();
   const requestIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -252,13 +251,15 @@ const LiveAppModalScreen = ({ navigation }: Props) => {
   useEffect(() => {
     // Safety net: if the screen unmounts for any reason (system back,
     // swipe-to-dismiss, navigation reset), resolve the pending registry
-    // entry so the live-app's RPC promise settles.
+    // entry so the live-app's RPC promise settles, and clear Redux state
+    // so a later remount doesn't replay the previous modal.
     return () => {
       if (requestIdRef.current) {
         dismissRequest(requestIdRef.current);
       }
+      dispatch(setLiveAppModal(null));
     };
-  }, []);
+  }, [dispatch]);
 
   if (!params) return null;
 
