@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { selectRecoverStateByProtectId, setRecoverState } from "~/reducers/recoverState";
 import { getStoreValue } from "~/store";
@@ -17,8 +16,12 @@ function useRecoverStateSync(protectId: string): void {
   useEffect(() => {
     return () => {
       const state = currentStateRef.current;
-      getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId).then(
-        storedState => {
+      const syncFromStorage = async () => {
+        try {
+          const storedState = await getStoreValue<LedgerRecoverSubscriptionStateEnum>(
+            "SUBSCRIPTION_STATE",
+            protectId,
+          );
           if (storedState !== undefined && storedState !== state.subscriptionState) {
             dispatch(
               setRecoverState({
@@ -28,8 +31,11 @@ function useRecoverStateSync(protectId: string): void {
               }),
             );
           }
-        },
-      );
+        } catch {
+          console.warn("useRecoverStateSync: failed to read SUBSCRIPTION_STATE from storage");
+        }
+      };
+      syncFromStorage();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

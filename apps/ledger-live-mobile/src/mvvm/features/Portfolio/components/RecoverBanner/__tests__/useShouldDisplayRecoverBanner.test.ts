@@ -8,7 +8,7 @@ const PROTECT_ID = "protect-simu";
 const withBannerEnabled = withFlagOverrides({
   protectServicesMobile: {
     enabled: true,
-    params: { bannerSubscriptionNotification: true },
+    params: { bannerSubscriptionNotification: true, protectId: PROTECT_ID },
   },
 });
 

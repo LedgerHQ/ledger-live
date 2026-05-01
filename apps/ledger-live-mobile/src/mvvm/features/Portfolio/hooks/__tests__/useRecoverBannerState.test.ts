@@ -1,14 +1,14 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { setRecoverState } from "~/reducers/recoverState";
-import useRecoverBannerStorage from "../useRecoverBannerStorage";
+import useRecoverBannerState from "../useRecoverBannerState";
 
 const PROTECT_ID = "protect-prod";
 
-describe("useRecoverBannerStorage", () => {
+describe("useRecoverBannerState", () => {
   describe("reading state from Redux", () => {
     it("returns NO_SUBSCRIPTION and displayBanner false by default", () => {
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
+      const { result } = renderHook(() => useRecoverBannerState(PROTECT_ID));
 
       expect(result.current.data).toEqual({
         subscriptionState: LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
@@ -17,7 +17,7 @@ describe("useRecoverBannerStorage", () => {
     });
 
     it("reflects subscriptionState and displayBanner from Redux store", () => {
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+      const { result } = renderHook(() => useRecoverBannerState(PROTECT_ID), {
         overrideInitialState: state => ({
           ...state,
           recoverState: {
@@ -38,7 +38,7 @@ describe("useRecoverBannerStorage", () => {
     });
 
     it("updates reactively when the Redux store changes", () => {
-      const { result, store } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
+      const { result, store } = renderHook(() => useRecoverBannerState(PROTECT_ID));
 
       expect(result.current.data.displayBanner).toBe(false);
 
@@ -61,7 +61,7 @@ describe("useRecoverBannerStorage", () => {
 
   describe("dismissBanner", () => {
     it("dispatches setDisplayBanner false to Redux", () => {
-      const { result, store } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+      const { result, store } = renderHook(() => useRecoverBannerState(PROTECT_ID), {
         overrideInitialState: state => ({
           ...state,
           recoverState: {
@@ -81,7 +81,7 @@ describe("useRecoverBannerStorage", () => {
     });
 
     it("reflects dismissal immediately in data", () => {
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+      const { result } = renderHook(() => useRecoverBannerState(PROTECT_ID), {
         overrideInitialState: state => ({
           ...state,
           recoverState: {
@@ -103,7 +103,7 @@ describe("useRecoverBannerStorage", () => {
     });
 
     it("preserves subscriptionState when dismissing", () => {
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+      const { result } = renderHook(() => useRecoverBannerState(PROTECT_ID), {
         overrideInitialState: state => ({
           ...state,
           recoverState: {

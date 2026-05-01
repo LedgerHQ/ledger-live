@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { selectRecoverStateByProtectId, setDisplayBanner } from "~/reducers/recoverState";
 
@@ -8,7 +8,7 @@ export type RecoverBannerState = {
   displayBanner: boolean;
 };
 
-function useRecoverBannerStorage(protectId: string): {
+function useRecoverBannerState(protectId: string): {
   data: RecoverBannerState;
   dismissBanner: () => void;
 } {
@@ -22,4 +22,4 @@ function useRecoverBannerStorage(protectId: string): {
   return { data, dismissBanner };
 }
 
-export default useRecoverBannerStorage;
+export default useRecoverBannerState;
