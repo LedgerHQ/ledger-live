@@ -525,12 +525,7 @@ describe("poolRefsFromSystemState", () => {
 
 describe("computeEstimatedReward", () => {
   test("returns reward = current_value − principal in the steady-state case", () => {
-    // Activation rate: 1 SUI = 1 pool token (sui:1000, pt:1000)
-    // Current rate:    1 SUI = 1.1 pool tokens — pool earned 10% rewards
-    //                          since activation (sui:1100 with pt unchanged).
-    // 100 SUI staked → 100 * 1000/1000 = 100 pool tokens
-    // current_value = 100 * 1100/1000 = 110 SUI
-    // reward = 110 − 100 = 10
+    // Pool earned 10% over activation; reward = 110 − 100 = 10.
     const reward = computeEstimatedReward(
       100n,
       { sui_amount: 1000, pool_token_amount: 1000 },
@@ -653,11 +648,7 @@ describe("computeApy", () => {
   });
 
   test("matches known JSON-RPC values within tolerance for a realistic pool", () => {
-    // Approximate n1stake-like pool: ~10M SUI, ~3% over 30 epochs.
-    // Real on-chain APY for SUI mainnet validators usually sits in 2-4%.
-    // 3% growth over 30 days → APY ≈ (1.03)^(365/30) − 1 ≈ 0.4332 (43%)
-    // — except SUI compounds DAILY, so per-epoch is small. The test here
-    // uses 0.3% growth over 30 epochs, which annualises to ~3.7%.
+    // 0.3% growth over 30 epochs annualises to ~3.7%, in the 2-4% real-world band.
     const apy = computeApy(
       { sui_amount: "10030000000000000", pool_token_amount: "10000000000000000" },
       { sui_amount: "10000000000000000", pool_token_amount: "10000000000000000" },
