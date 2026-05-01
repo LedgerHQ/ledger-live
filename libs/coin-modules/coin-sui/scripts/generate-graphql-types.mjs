@@ -72,22 +72,12 @@ const INTROSPECTION_QUERY = `
   }
 `;
 
-/**
- * Custom-scalar names declared in `tada.ts`'s `SuiScalars`. Hard-coded
- * here (must mirror that file) so the prune never drops a scalar gql.tada
- * is configured to translate. A runtime check below errors if any
- * disappear from the schema.
- */
+/** Mirror of `tada.ts`'s `SuiScalars` — must stay in sync; checked at runtime below. */
 const CUSTOM_SCALARS = ["DateTime", "SuiAddress", "BigInt", "UInt53", "Base64", "JSON"];
 
-/** GraphQL built-in scalars — always retained. */
 const BUILTIN_SCALARS = ["Int", "Float", "String", "Boolean", "ID"];
 
-/**
- * Introspection meta-types — `buildClientSchema` requires them to be
- * present in `__schema.types`, even though no user query references
- * them. Kept unconditionally.
- */
+/** Required by `buildClientSchema` even when no user query references them. */
 const INTROSPECTION_TYPES = [
   "__Schema",
   "__Type",
@@ -99,12 +89,7 @@ const INTROSPECTION_TYPES = [
   "__DirectiveLocation",
 ];
 
-/**
- * Strip `description` and `deprecationReason` from the introspection
- * (in place). gql.tada doesn't consume them, and dropping them halves
- * snapshot size while keeping `--check` apples-to-apples against the
- * live response (which is stripped the same way).
- */
+/** gql.tada doesn't consume these fields, and stripping them keeps `--check` diffs structural. */
 function stripIntrospectionMetadata(node) {
   if (Array.isArray(node)) {
     for (const x of node) stripIntrospectionMetadata(x);
@@ -131,16 +116,7 @@ function* walkTsFiles(dir) {
   }
 }
 
-/**
- * Extract `graphql(\`...\`)` template-literal bodies from every `.ts`
- * file under `src/`. Matches the function-call form used in
- * `queries.ts`; the parenthesis requirement avoids false positives like
- * markdown ``\`graphql\`` `` in JSDoc comments. If a future query is
- * authored as a tagged template (`graphql\`...\``), gql.tada will still
- * type-check it but this script won't include its types — typecheck
- * will fail with a clear "unknown field" error and the regex can be
- * widened then.
- */
+/** Function-call form only; the `(` requirement skips markdown `` `graphql` `` in JSDoc. */
 function collectQuerySources() {
   const docs = [];
   const re = /\bgraphql\s*\(\s*`([\s\S]*?)`/g;
@@ -164,17 +140,7 @@ function namedTypeRefName(ref) {
   return t && t.name ? t.name : null;
 }
 
-/**
- * Prune the introspection JSON to only the types and fields that the
- * collected `documents` actually reference, plus a small unconditional
- * keep set (root types, built-in/custom scalars, introspection meta).
- *
- * Closure walks both directions:
- *   - Object/Interface field → return type + arg input types
- *   - Input field → field type
- *   - Object/Interface → interfaces it implements
- *   - Union/Interface → possibleTypes already in the closure
- */
+/** Tree-shake to types/fields referenced by `documents`, plus root types and scalars. */
 function pruneIntrospection(json, documents) {
   const root = json.data ?? json;
   const schema = buildClientSchema(root);
@@ -298,13 +264,10 @@ function pruneIntrospection(json, documents) {
           }
         }
       }
-      // UNION/INTERFACE possibleTypes: only kept ones are emitted in the
-      // filter step below; we don't pull *new* types in via possibleTypes,
-      // since a type only becomes "used" if a query selects on it.
+      // possibleTypes are filtered (not expanded) below — a type only enters the closure via selection.
     }
   }
 
-  // Build the pruned schema object.
   const prunedTypes = root.__schema.types
     .filter(t => usedTypes.has(t.name))
     .map(t => {
@@ -347,21 +310,14 @@ function pruneIntrospection(json, documents) {
     mutationType: root.__schema.mutationType,
     subscriptionType: root.__schema.subscriptionType,
     types: prunedTypes,
-    // gql.tada doesn't consume schema-level directives from the introspection;
-    // dropping them removes ~100 KB of noise.
+    // gql.tada doesn't consume schema-level directives from the introspection.
     directives: [],
   };
 
   return json.data ? { data: { __schema: prunedSchema } } : { __schema: prunedSchema };
 }
 
-/**
- * Fetch live introspection, apply description/deprecation strip, and
- * tree-shake to types/fields used by local `graphql\`...\`` documents.
- * Returned as the canonical pretty-printed JSON we write to
- * `introspection.json`. Shared between `--fetch` (persists) and
- * `--check` (diffs) so both apply identical transforms.
- */
+/** Shared by `--fetch` and `--check` so both sides apply identical transforms before diffing. */
 async function fetchIntrospectionAsString() {
   console.log(`[generate-graphql-types] Fetching introspection from ${endpoint}`);
   const res = await fetch(endpoint, {
@@ -389,11 +345,7 @@ async function fetchIntrospection() {
   console.log(`[generate-graphql-types] Wrote ${INTROSPECTION_PATH} (${body.length} bytes)`);
 }
 
-/**
- * Compare live introspection vs. the committed snapshot; non-zero exit
- * on drift. Both sides are pruned identically, so drift only fires when
- * upstream changes affect a type or field this package actually uses.
- */
+/** Drift only fires when upstream changes affect a type or field actually referenced here. */
 async function checkDrift() {
   if (!existsSync(INTROSPECTION_PATH)) {
     console.error(
@@ -411,8 +363,7 @@ async function checkDrift() {
     );
     return;
   }
-  // Counts only, no full diff — operator response is always the same:
-  // re-run :codegen:fetch and review the diff in a PR.
+  // Counts only — operator response is always to re-run :codegen:fetch and review the diff in a PR.
   const liveSize = Buffer.byteLength(live, "utf-8");
   const committedSize = Buffer.byteLength(committed, "utf-8");
   console.error(
@@ -435,17 +386,13 @@ async function generateTypes() {
     shouldPreprocess: true,
   });
 
-  // The default output appends a `declare module 'gql.tada'` block that
-  // collides with `@mysten/sui`'s own setupSchema declaration merging.
-  // Strip it — we use explicit `initGraphQLTada<{ ... }>()` instead.
+  // The default `declare module 'gql.tada'` block collides with `@mysten/sui`'s setupSchema.
   const stripStart = ts.indexOf("import * as gqlTada from 'gql.tada';");
   if (stripStart !== -1) {
     ts = ts.slice(0, stripStart).trimEnd() + "\n";
   }
 
-  // gql.tada emits `/* prettier-ignore */` so consumers can skip formatting,
-  // but we want the file prettier-clean (matches repo style and avoids
-  // mismatch on save). Strip the pragma before formatting.
+  // Strip gql.tada's `/* prettier-ignore */` so prettier formats the whole file.
   ts = ts.replace(/^\/\* prettier-ignore \*\/\s*\n?/m, "");
 
   const banner = `// This file is auto-generated by scripts/generate-graphql-types.mjs.
@@ -453,9 +400,7 @@ async function generateTypes() {
 // Source schema: ${endpoint}
 `;
 
-  // Format with the project's prettier config so the committed file matches
-  // what `prettier --write` would produce; this preserves double-quoted
-  // strings (repo default) and prevents save-on-format from mutating it.
+  // Match the committed file to `prettier --write` output so save-on-format never mutates it.
   const prettierConfig = (await resolveConfig(OUTPUT_PATH)) ?? {};
   const formatted = await format(banner + ts, {
     ...prettierConfig,
