@@ -1,5 +1,6 @@
 import { createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
-import { RPCHandler, customWrapper } from "@ledgerhq/wallet-api-server";
+import { customWrapper } from "@ledgerhq/wallet-api-server";
+import type { RPCHandler } from "@ledgerhq/wallet-api-server";
 import * as registry from "./registry";
 import {
   LiveAppModalCloseParams,
@@ -14,7 +15,6 @@ import {
 
 export type LiveAppModalUiHookOpenParams = {
   requestId: string;
-  manifestId?: string;
   path: string;
   title?: string;
   description?: string;
@@ -49,9 +49,12 @@ export const handlers = ({ uiHooks }: { uiHooks: LiveAppModalUiHooks }) =>
         // via `await promise` below (or via the explicit throw when uiHook fails).
         promise.catch(() => {});
         try {
+          // The modal opens a second instance of the *caller's* live-app. We deliberately
+          // do not forward `params.manifestId`: the host resolves the manifest from the
+          // calling app, so a compromised live-app cannot pivot into another one by
+          // requesting a different manifestId here.
           uiHooks["custom.liveApp.modal.open"]({
             requestId,
-            manifestId: params.manifestId,
             path: params.path,
             title: params.title,
             description: params.description,

@@ -20,6 +20,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useTranslation } from "~/context/Locale";
 import GenericErrorView from "~/components/GenericErrorView";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
@@ -56,6 +57,7 @@ const LiveAppModalScreenContent = ({
   extraInputs: ExtraInputs;
 }) => {
   const { requestId, manifestId, path, title, description } = params;
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { language } = useSettings();
@@ -181,6 +183,7 @@ const LiveAppModalScreenContent = ({
           onPress={handleClose}
           hitSlop={8}
           accessibilityRole="button"
+          accessibilityLabel={t("common.close")}
           style={styles.backButton}
         >
           <IconsLegacy.ArrowLeftMedium size={24} />

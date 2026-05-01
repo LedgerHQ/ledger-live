@@ -30,7 +30,7 @@ describe("LiveAppModal server handlers", () => {
       path: "/modal/popular",
       payload: { assets: ["BTC"] },
       title: "Crowd favourites",
-      manifestId: "earn",
+      manifestId: "another-app",
       size: "medium",
       useCase: "earn",
     });
@@ -40,10 +40,12 @@ describe("LiveAppModal server handlers", () => {
     expect(callArg).toMatchObject({
       path: "/modal/popular",
       title: "Crowd favourites",
-      manifestId: "earn",
       size: "medium",
       useCase: "earn",
     });
+    // A live-app must not be able to open a modal for a different manifest:
+    // the host resolves the manifest from the caller, so manifestId is not forwarded.
+    expect(callArg).not.toHaveProperty("manifestId");
     expect(typeof callArg.requestId).toBe("string");
 
     // Child fetches payload

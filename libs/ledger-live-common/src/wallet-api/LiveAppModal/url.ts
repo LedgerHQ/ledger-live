@@ -32,8 +32,14 @@ export function buildLiveAppModalURL(options: {
       const payload = getPayload(options.requestId);
       if (payload !== undefined) {
         const serialized = JSON.stringify(payload);
-        if (serialized.length <= INITIAL_PAYLOAD_URL_LIMIT) {
-          url.searchParams.set("liveAppModalInitialPayload", serialized);
+        // Set the param then measure the encoded URL — `serialized.length` is the
+        // raw JSON size, but URLSearchParams percent-encodes quotes/braces/etc.,
+        // so the encoded form is typically 1.5-3x larger. Remove the param if the
+        // final URL would exceed the platform-safe limit; the child webview will
+        // recover via custom.liveApp.modal.getInitialPayload.
+        url.searchParams.set("liveAppModalInitialPayload", serialized);
+        if (url.toString().length > INITIAL_PAYLOAD_URL_LIMIT) {
+          url.searchParams.delete("liveAppModalInitialPayload");
         }
       }
     } catch {

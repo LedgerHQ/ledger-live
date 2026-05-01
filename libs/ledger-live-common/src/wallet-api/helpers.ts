@@ -74,13 +74,22 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
 }
 
 /**
- * Validates a URL by checking it's on the same origin as the manifest URL.
+ * Validates a URL by checking it shares the manifest's registrable domain (eTLD+1)
+ * and protocol. Subdomains of the manifest's domain are allowed
+ * (e.g. https://cdn.example.com is accepted when the manifest is at
+ * https://app.example.com), which is intentional so live apps can navigate
+ * across their own subdomains. For hosts without a public suffix (localhost,
+ * raw IPs, .local) the check tightens to strict same-origin (host:port + protocol),
+ * preventing cross-port pivots like localhost:3000 → localhost:8080.
+ *
  * Scheme must match the manifest's scheme and must be http: or https: (never
- * javascript:, data:, file:, ftp:, etc.). This permits http://localhost
- * development when the manifest itself is http://localhost.
+ * javascript:, data:, file:, ftp:, etc.). In production builds, only https: is
+ * accepted; http: is permitted in development so http://localhost manifests
+ * can be loaded.
+ *
  * @param url - The URL to validate
- * @param manifestUrl - The manifest URL to check same origin against
- * @returns true if the URL is valid and is on the same origin as manifestUrl
+ * @param manifestUrl - The manifest URL to compare against
+ * @returns true if the URL passes the registrable-domain + protocol check
  */
 const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
   try {
