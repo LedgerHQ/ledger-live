@@ -14,11 +14,10 @@ export function inferNetworkFromUrl(url: string): string {
 
 /**
  * Retry-aware fetch shared by both the JSON-RPC and GraphQL transports.
- * Per-attempt deadline (REQUEST_TIMEOUT_MS) is the only cancellation
- * path wired today — no Sui caller threads `signal` through yet, so
- * `options?.signal` is dead until one does. Recursion passes `options`
- * (not `opts`) so each retry gets a fresh controller; reusing `opts`
- * would race a stale/aborted signal.
+ * Per-attempt deadline (REQUEST_TIMEOUT_MS) plus caller-supplied `signal`
+ * (e.g. sync teardown via `synchronisation.ts`) drive cancellation.
+ * Recursion passes `options` (not `opts`) so each retry gets a fresh
+ * per-attempt controller; reusing `opts` would race a stale/aborted signal.
  */
 export const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
   const version = getEnv("LEDGER_CLIENT_VERSION") || "";

@@ -7,12 +7,18 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
+import { firstValueFrom } from "rxjs";
 import coinConfig from "../config";
 import { mist, ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import { getAccountShape } from "./synchronisation";
+import { getAccountShape as getAccountShapeStream } from "./synchronisation";
+
+// Adapter so existing `await getAccountShape(...)` and `.rejects.toThrow(...)`
+// assertions keep working against the new Observable-returning shape.
+const getAccountShape = (...args: Parameters<typeof getAccountShapeStream>) =>
+  firstValueFrom(getAccountShapeStream(...args));
 
 jest.mock("../network", () => {
   const mockGetAccountBalances = jest.fn();
@@ -73,6 +79,39 @@ describe("getAccountShape", () => {
     // THEN
     expect(mockGetAccountBalances).toHaveBeenCalledTimes(1);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
+  });
+
+  it("threads an aborted signal into network helpers when unsubscribed", async () => {
+    // GIVEN — getStakesRaw never resolves on its own; we stop it via the signal.
+    const stakesGotSignal = new Promise<AbortSignal>(resolve => {
+      mockGetStakesRaw.mockImplementation(
+        (_addr: string, _cur: string, signal: AbortSignal) =>
+          new Promise(() => resolve(signal)), // never resolve, just capture the signal
+      );
+    });
+
+    // WHEN — subscribe, then immediately tear down. No emissions expected.
+    const subscriber = jest.fn();
+    const errorHandler = jest.fn();
+    const sub = getAccountShapeStream(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount: undefined,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    ).subscribe({ next: subscriber, error: errorHandler });
+
+    const capturedSignal = await stakesGotSignal;
+    sub.unsubscribe();
+
+    // THEN — signal is aborted, no value emitted, no error surfaced.
+    expect(capturedSignal.aborted).toBe(true);
+    expect(subscriber).not.toHaveBeenCalled();
+    expect(errorHandler).not.toHaveBeenCalled();
   });
 
   it("returns an AccountShapeInfo based on getAccountBalances API", async () => {
@@ -384,7 +423,7 @@ describe("getAccountShape", () => {
 
       // THEN
       expect(mockGetStakesRaw).toHaveBeenCalledTimes(1);
-      expect(mockGetStakesRaw).toHaveBeenCalledWith(address, "sui");
+      expect(mockGetStakesRaw).toHaveBeenCalledWith(address, "sui", expect.any(AbortSignal));
     });
 
     it("includes empty stakes in suiResources when no stakes are returned", async () => {

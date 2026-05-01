@@ -2,10 +2,14 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
+import { firstValueFrom } from "rxjs";
 import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { GRAPHQL_MAINNET_URL } from "../network/graphql/constants";
-import { getAccountShape } from "./synchronisation";
+import { getAccountShape as getAccountShapeStream } from "./synchronisation";
+
+const getAccountShape = (...args: Parameters<typeof getAccountShapeStream>) =>
+  firstValueFrom(getAccountShapeStream(...args));
 
 const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 

@@ -61,7 +61,7 @@ import {
   withGraphQLApi,
 } from "./sdk.graphql";
 
-type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
+type AsyncApiFunction<T> = (api: SuiJsonRpcClient, signal?: AbortSignal) => Promise<T>;
 
 /** Read-side feature flag; transaction execution always stays on JSON-RPC. */
 export function isGraphQLEnabled(currencyId?: string): boolean {
@@ -86,7 +86,11 @@ const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
 };
 
 /** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
-export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
+export async function withApi<T>(
+  execute: AsyncApiFunction<T>,
+  currencyId?: string,
+  signal?: AbortSignal,
+) {
   const url = coinConfig.getCoinConfig(currencyId).node.url;
   const network = inferNetworkFromUrl(url);
   const transport = new JsonRpcHTTPTransport({
@@ -95,7 +99,7 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
   });
 
   const api = new SuiJsonRpcClient({ transport, network });
-  return execute(api);
+  return execute(api, signal);
 }
 
 /** Dispatcher gated on `features.graphql`. No silent fallback — flip the flag to revert. */
@@ -105,10 +109,11 @@ export function withTransport<T>(
     jsonRpc: AsyncApiFunction<T>;
     graphql: AsyncGraphQLApiFunction<T>;
   },
+  signal?: AbortSignal,
 ): Promise<T> {
   return isGraphQLEnabled(currencyId)
-    ? withGraphQLApi(impls.graphql, currencyId)
-    : withApi(impls.jsonRpc, currencyId);
+    ? withGraphQLApi(impls.graphql, currencyId, signal)
+    : withApi(impls.jsonRpc, currencyId, signal);
 }
 
 /**
@@ -293,8 +298,13 @@ export type AccountBalance = {
 export const getAccountBalances = async (
   addr: string,
   currencyId?: string,
+  signal?: AbortSignal,
 ): Promise<AccountBalance[]> => {
+  // The cached `getAllBalancesCached` has no signal-aware key; cancellation
+  // is enforced post-await — the in-flight fetch runs to completion and
+  // populates the cache for future callers (1-min TTL bounds the leak).
   const balances = await getAllBalancesCached(addr, currencyId);
+  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
   return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -471,11 +481,19 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
  * `StakedSui` objects + system-state (one extra dynamicField per Active
  * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
  */
-export const getStakesRaw = (owner: string, currencyId?: string): Promise<DelegatedStake[]> =>
-  withTransport(currencyId, {
-    jsonRpc: api => api.getStakes({ owner }),
-    graphql: api => getStakesRawGraphQL(api, owner),
-  });
+export const getStakesRaw = (
+  owner: string,
+  currencyId?: string,
+  signal?: AbortSignal,
+): Promise<DelegatedStake[]> =>
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: (api, sig) => api.getStakes({ owner, ...(sig && { signal: sig }) }),
+      graphql: (api, sig) => getStakesRawGraphQL(api, owner, sig),
+    },
+    signal,
+  );
 
 /**
  * Extract operation coin type from transaction
@@ -803,38 +821,45 @@ export const getOperations = async (
   cursor?: QueryTransactionBlocksParams["cursor"],
   order?: "asc" | "desc",
   currencyId?: string,
+  signal?: AbortSignal,
 ): Promise<Operation[]> =>
-  withApi(async api => {
-    let rpcOrder: "ascending" | "descending";
-    if (order) {
-      rpcOrder = order === "asc" ? "ascending" : "descending";
-    } else {
-      rpcOrder = cursor ? "ascending" : "descending";
-    }
+  withApi(
+    async (api, sig) => {
+      let rpcOrder: "ascending" | "descending";
+      if (order) {
+        rpcOrder = order === "asc" ? "ascending" : "descending";
+      } else {
+        rpcOrder = cursor ? "ascending" : "descending";
+      }
 
-    const sendOps = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const receivedOps = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
-    const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
+      const sendOps = await loadOperations({
+        api,
+        addr,
+        type: "OUT",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+        ...(sig && { signal: sig }),
+      });
+      const receivedOps = await loadOperations({
+        api,
+        addr,
+        type: "IN",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+        ...(sig && { signal: sig }),
+      });
+      // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
+      const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
-    return rawTransactions.operations
-      .filter(tx => !isSettlementTransaction(tx))
-      .map(transaction => transactionToOperation(accountId, addr, transaction));
-  }, currencyId);
+      return rawTransactions.operations
+        .filter(tx => !isSettlementTransaction(tx))
+        .map(transaction => transactionToOperation(accountId, addr, transaction));
+    },
+    currencyId,
+    signal,
+  );
 
 export const filterOperations = (
   sendOps: LoadOperationResponse,
@@ -1519,6 +1544,7 @@ export const loadOperations = async ({
   operations: PaginatedTransactionResponse["data"];
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
+  signal?: AbortSignal;
 }): Promise<LoadOperationResponse> => {
   try {
     if (operations.length >= TRANSACTIONS_LIMIT) {
@@ -1561,8 +1587,9 @@ export const queryTransactions = async (params: {
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
   options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
+  signal?: AbortSignal;
 }): Promise<PaginatedTransactionResponse> => {
-  const { api, addr, type, cursor, order, options = {} } = params;
+  const { api, addr, type, cursor, order, options = {}, signal } = params;
   // what we really want is a FromOrToAddress filter, but it's not supported yet
   // it would relieve a lot of complexity in the merged/sorted pagination and cursor boundary filtering logic above
   const filter: QueryTransactionBlocksParams["filter"] =
@@ -1574,6 +1601,7 @@ export const queryTransactions = async (params: {
     order,
     options: { ...TRANSACTIONS_QUERY_OPTIONS, ...options },
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
+    ...(signal && { signal }),
   });
 };
 
@@ -1587,8 +1615,9 @@ export const queryTransactionsByDigest = async (params: {
   api: SuiJsonRpcClient;
   digests: string[];
   options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
+  signal?: AbortSignal;
 }): Promise<SuiTransactionBlockResponse[]> => {
-  const { api, digests, options = {} } = params;
+  const { api, digests, options = {}, signal } = params;
   const chunkSize = TRANSACTIONS_LIMIT_PER_QUERY;
   const responses: SuiTransactionBlockResponse[] = [];
 
@@ -1596,6 +1625,7 @@ export const queryTransactionsByDigest = async (params: {
     const chunk = await api.multiGetTransactionBlocks({
       digests: digests.slice(i, i + chunkSize),
       options: { ...TRANSACTIONS_QUERY_OPTIONS, ...options },
+      ...(signal && { signal }),
     });
     responses.push(...chunk);
   }

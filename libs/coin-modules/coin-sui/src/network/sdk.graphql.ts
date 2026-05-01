@@ -40,7 +40,10 @@ import {
   RATE_BATCH_CHUNK_SIZE,
   STAKES_PAGE_SIZE,
 } from "./graphql/constants";
-export type AsyncGraphQLApiFunction<T> = (api: SuiGraphQLClient) => Promise<T>;
+export type AsyncGraphQLApiFunction<T> = (
+  api: SuiGraphQLClient,
+  signal?: AbortSignal,
+) => Promise<T>;
 
 /**
  * Toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage`
@@ -127,6 +130,7 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
 export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
   currencyId?: string,
+  signal?: AbortSignal,
 ): Promise<T> {
   const url = coinConfig.getCoinConfig(currencyId).node.url;
   const network = inferNetworkFromUrl(url) as
@@ -140,7 +144,7 @@ export async function withGraphQLApi<T>(
     network,
     fetch: graphqlFetcher as typeof fetch,
   });
-  return execute(api);
+  return execute(api, signal);
 }
 
 /**
@@ -257,6 +261,7 @@ async function paginateWithCursorRecovery<T>(config: {
 async function fetchSystemStateAndStakesPage(
   api: SuiGraphQLClient,
   ownerAddr: string,
+  signal?: AbortSignal,
 ): Promise<{
   currentEpoch: bigint;
   epochId: string | number;
@@ -265,10 +270,11 @@ async function fetchSystemStateAndStakesPage(
   seedPage: CursorPage<StakeNode> | undefined;
 }> {
   const [systemRes, stakesRes] = await Promise.all([
-    api.query({ query: SUI_SYSTEM_STATE }),
+    api.query({ query: SUI_SYSTEM_STATE, ...(signal && { signal }) }),
     api.query({
       query: STAKED_SUI_OBJECTS_BY_OWNER,
       variables: { owner: ownerAddr, first: STAKES_PAGE_SIZE, after: null },
+      ...(signal && { signal }),
     }),
   ]);
   const { epoch, stateJson } = unwrapAndValidateSystemState(systemRes);
@@ -297,6 +303,7 @@ async function paginateRemainingStakes(
   api: SuiGraphQLClient,
   ownerAddr: string,
   seed: CursorPage<StakeNode> | undefined,
+  signal?: AbortSignal,
 ): Promise<StakeNode[]> {
   const { items } = await paginateWithCursorRecovery<StakeNode>({
     source: "stakes",
@@ -305,6 +312,7 @@ async function paginateRemainingStakes(
       const res = await api.query({
         query: STAKED_SUI_OBJECTS_BY_OWNER,
         variables: { owner: ownerAddr, first: STAKES_PAGE_SIZE, after: cursor },
+        ...(signal && { signal }),
       });
       const objs = unwrapGraphQL("StakedSuiObjects (page)", res).address?.objects;
       return {
@@ -327,11 +335,13 @@ async function fetchActivationRates(
   api: SuiGraphQLClient,
   plans: StakeRatePlans,
   malformed: number,
+  signal?: AbortSignal,
 ): Promise<Map<string, ExchangeRate | null>> {
   const { rates: rateArr, chunksFailed } = await fetchExchangeRatesBatched(
     api,
     plans.wantedEntries.map(({ table, epoch }) => ({ exchangeRatesId: table, epoch })),
     RATE_BATCH_CHUNK_SIZE,
+    signal,
   );
   const rates = new Map<string, ExchangeRate | null>();
   let missing = 0;
@@ -365,10 +375,12 @@ async function fetchExchangeRate(
   api: SuiGraphQLClient,
   exchangeRatesId: string,
   epoch: number | string,
+  signal?: AbortSignal,
 ): Promise<ExchangeRate | null> {
   const res = await api.query({
     query: EXCHANGE_RATE_AT_EPOCH,
     variables: { table: exchangeRatesId, literal: `${epoch}u64` },
+    ...(signal && { signal }),
   });
   return parseExchangeRateNode(unwrapGraphQL(`ExchangeRate(${epoch})`, res).address ?? null);
 }
@@ -381,6 +393,7 @@ async function fetchExchangeRatesBatched(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
   chunkSize: number,
+  signal?: AbortSignal,
 ): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number }> {
   if (plans.length === 0) return { rates: [], chunksFailed: 0 };
   const safeChunk = Math.max(1, Math.floor(chunkSize));
@@ -391,7 +404,7 @@ async function fetchExchangeRatesBatched(
   // `allSettled` so one chunk's failure doesn't tank the rest — failed
   // chunks degrade to `null`s; caller surfaces `chunksFailed`.
   const settled = await Promise.allSettled(
-    chunks.map(chunk => fetchRateChunk(api, chunk, safeChunk)),
+    chunks.map(chunk => fetchRateChunk(api, chunk, safeChunk, signal)),
   );
   const rates: Array<ExchangeRate | null> = [];
   let chunksFailed = 0;
@@ -417,9 +430,12 @@ async function fetchRateChunk(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
   fullChunkSize: number,
+  signal?: AbortSignal,
 ): Promise<Array<ExchangeRate | null>> {
   if (plans.length < fullChunkSize) {
-    return Promise.all(plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch)));
+    return Promise.all(
+      plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal)),
+    );
   }
   const variables = Object.fromEntries(
     plans.flatMap((p, i) => [
@@ -427,7 +443,11 @@ async function fetchRateChunk(
       [`l${i}`, `${p.epoch}u64`],
     ]),
   ) as VariablesOf<typeof BATCH_RATES_15>;
-  const res = await api.query({ query: BATCH_RATES_15, variables });
+  const res = await api.query({
+    query: BATCH_RATES_15,
+    variables,
+    ...(signal && { signal }),
+  });
   const data = unwrapGraphQL("BatchExchangeRates", res);
   return plans.map((_, i) => parseExchangeRateNode(data[`v${i}` as keyof typeof data] ?? null));
 }
@@ -446,6 +466,7 @@ async function fetchRateChunk(
 export const getAllBalancesCachedGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
+  signal?: AbortSignal,
 ): Promise<CoinBalance[]> => {
   // GraphQL's `SuiAddress!` requires the canonical 32-byte form;
   // JSON-RPC was tolerant. Normalise once at the boundary.
@@ -453,7 +474,11 @@ export const getAllBalancesCachedGraphQL = async (
   const { items } = await paginateWithCursorRecovery<CoinBalance>({
     source: "balances",
     fetchPage: async cursor => {
-      const res = await api.listBalances({ owner: ownerAddr, cursor });
+      const res = await api.listBalances({
+        owner: ownerAddr,
+        cursor,
+        ...(signal && { signal }),
+      });
       return {
         items: res.balances.map(b => ({
           // long → short coin type; consumers compare against `DEFAULT_COIN_TYPE`.
@@ -479,14 +504,15 @@ export const getAllBalancesCachedGraphQL = async (
 export const getStakesRawGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
+  signal?: AbortSignal,
 ): Promise<DelegatedStake[]> => {
   // Canonicalise once — GraphQL `SuiAddress!` rejects short forms.
   const ownerAddr = normalizeSuiAddress(owner);
-  const sys = await fetchSystemStateAndStakesPage(api, ownerAddr);
-  const rawNodes = await paginateRemainingStakes(api, ownerAddr, sys.seedPage);
+  const sys = await fetchSystemStateAndStakesPage(api, ownerAddr, signal);
+  const rawNodes = await paginateRemainingStakes(api, ownerAddr, sys.seedPage, signal);
   const { items, malformed } = validateStakedSuiNodes(rawNodes);
   const plans = planActivationRateLookups(items, sys.currentEpoch, sys.poolRefs);
-  const rates = await fetchActivationRates(api, plans, malformed);
+  const rates = await fetchActivationRates(api, plans, malformed, signal);
   const rewards = computeStakeRewards(plans.activeStakes, sys.poolRefs, rates);
   return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
 };
