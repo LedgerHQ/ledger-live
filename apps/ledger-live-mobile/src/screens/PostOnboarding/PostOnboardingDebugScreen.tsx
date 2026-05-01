@@ -15,6 +15,10 @@ import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionS
 import { removePostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useDispatch } from "~/context/hooks";
+import {
+  setDisplayBanner,
+  setRecoverState as setRecoverStateAction,
+} from "~/reducers/recoverState";
 
 export default () => {
   const navigation = useNavigation();
@@ -24,7 +28,8 @@ export default () => {
   const { protectId } = usePostOnboardingHubCompletionContext();
   const setRecoverState = async (input: LedgerRecoverSubscriptionStateEnum) => {
     await setStoreValue("SUBSCRIPTION_STATE", String(input), protectId);
-
+    dispatch(setDisplayBanner({ protectId, displayBanner: true }));
+    dispatch(setRecoverStateAction({ protectId, subscriptionState: input }));
     dispatch(removePostOnboardingActionCompleted({ actionId: PostOnboardingActionId.recover }));
   };
 

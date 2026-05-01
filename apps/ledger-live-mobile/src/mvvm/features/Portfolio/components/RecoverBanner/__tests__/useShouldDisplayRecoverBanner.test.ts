@@ -1,72 +1,73 @@
 import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { getStoreValue } from "~/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { State } from "~/reducers/types";
 import useShouldDisplayRecoverBanner from "../useShouldDisplayRecoverBanner";
 
-jest.mock("~/store", () => ({
-  getStoreValue: jest.fn(),
-}));
-
-const mockGetStoreValue = jest.mocked(getStoreValue);
+const PROTECT_ID = "protect-simu";
 
 const withBannerEnabled = withFlagOverrides({
   protectServicesMobile: {
     enabled: true,
-    params: { bannerSubscriptionNotification: true },
+    params: { bannerSubscriptionNotification: true, protectId: PROTECT_ID },
   },
 });
 
-describe("useShouldDisplayRecoverBanner", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+function withRecoverState(
+  subscriptionState: LedgerRecoverSubscriptionStateEnum,
+  displayBanner: boolean,
+) {
+  return (state: State): State => ({
+    ...state,
+    recoverState: {
+      protectIdState: {
+        [PROTECT_ID]: { subscriptionState, displayBanner },
+      },
+    },
   });
+}
 
-  it("returns true when recover banner conditions met", async () => {
-    mockGetStoreValue
-      .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-      .mockResolvedValueOnce("true");
-
+describe("useShouldDisplayRecoverBanner", () => {
+  it("returns true when all conditions are met", async () => {
     const { result } = renderHook(() => useShouldDisplayRecoverBanner(), {
-      overrideInitialState: withBannerEnabled,
+      overrideInitialState: state =>
+        withBannerEnabled(
+          withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, true)(state),
+        ),
     });
 
     await waitFor(() => expect(result.current).toBe(true));
   });
 
-  it("returns false when recover banner when display banner state false", async () => {
-    mockGetStoreValue
-      .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-      .mockResolvedValueOnce("false");
-
+  it("returns false when displayBanner is false in Redux", () => {
     const { result } = renderHook(() => useShouldDisplayRecoverBanner(), {
-      overrideInitialState: withBannerEnabled,
+      overrideInitialState: state =>
+        withBannerEnabled(
+          withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, false)(state),
+        ),
     });
 
-    await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
     expect(result.current).toBe(false);
   });
 
-  it("returns false when recover banner when recover state is not in progress", async () => {
-    mockGetStoreValue
-      .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION)
-      .mockResolvedValueOnce("true");
-
+  it("returns false when subscription state is not in progress", () => {
     const { result } = renderHook(() => useShouldDisplayRecoverBanner(), {
-      overrideInitialState: withBannerEnabled,
+      overrideInitialState: state =>
+        withBannerEnabled(
+          withRecoverState(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION, true)(state),
+        ),
     });
 
-    await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
     expect(result.current).toBe(false);
   });
 
-  it("returns false when recover banner when banner is not enabled", async () => {
-    mockGetStoreValue
-      .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-      .mockResolvedValueOnce("true");
+  it("returns false when banner feature flag is disabled", () => {
+    const { result } = renderHook(() => useShouldDisplayRecoverBanner(), {
+      overrideInitialState: withRecoverState(
+        LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+        true,
+      ),
+    });
 
-    const { result } = renderHook(() => useShouldDisplayRecoverBanner());
-
-    await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
     expect(result.current).toBe(false);
   });
 });
