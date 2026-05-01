@@ -8,8 +8,6 @@ import { SpeculosDevice } from "./speculos";
 import { sanitizeError } from "./index";
 import { v4 as uuid } from "uuid";
 
-const { SEED, SPECULOS_IMAGE_TAG } = process.env;
-
 /** Speculinho operator base URL (no trailing slash). In CI, set via the `SPECULINHO_URL` secret / env var. */
 function getSpeculinhoBaseUrl(): string | undefined {
   const raw = process.env.SPECULINHO_URL?.trim();
@@ -59,7 +57,7 @@ function buildAcquirePayload(deviceParams: DeviceParams, runId: string, seed: st
     throw new Error(`[speculosCI] Unsupported device model for Speculinho: ${String(model)}`);
   }
 
-  const rawTag = SPECULOS_IMAGE_TAG?.trim();
+  const rawTag = process.env.SPECULOS_IMAGE_TAG?.trim();
   const tag =
     rawTag && rawTag.includes(":")
       ? rawTag.slice(rawTag.lastIndexOf(":") + 1)
@@ -140,26 +138,33 @@ export async function waitForSpeculosReady(
   throw new Error(`Timeout: ${statusUrl} did not become ready within ${timeout}ms`);
 }
 
+function formatAcquireFailure(status: number, data: unknown): string {
+  const body = typeof data === "string" ? data : JSON.stringify(data);
+  return `Speculinho POST /acquire failed with HTTP ${status}${body ? `: ${body}` : ""}`;
+}
+
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
 ): Promise<SpeculosDevice | undefined> {
   const speculinhoUrl = getSpeculinhoBaseUrl();
   if (!speculinhoUrl) {
-    console.warn("[speculosCI] SPECULINHO_URL is not set — cannot acquire remote Speculos.");
-    return undefined;
+    throw new Error(
+      "[speculosCI] SPECULINHO_URL is not set. Set the env var (e.g. GitHub Actions secret SPECULINHO_URL on the iOS E2E job) to your Speculinho operator base URL.",
+    );
   }
 
-  if (!SEED) {
-    console.warn("[speculosCI] SEED is not set — cannot acquire remote Speculos.");
-    return undefined;
+  const seed = process.env.SEED?.trim();
+  if (!seed) {
+    throw new Error("[speculosCI] SEED is not set — required for Speculinho /acquire.");
   }
 
   let runId = makeRunId(deviceParams);
 
   for (let attempt = 0; attempt < 5; attempt++) {
+    const payload = buildAcquirePayload(deviceParams, runId, seed);
+    let res;
     try {
-      const payload = buildAcquirePayload(deviceParams, runId, SEED);
-      const res = await axios.post<SpeculinhoAcquireResponse>(
+      res = await axios.post<SpeculinhoAcquireResponse>(
         `${speculinhoUrl}/acquire`,
         payload,
         {
@@ -167,59 +172,34 @@ export async function createSpeculosDeviceCI(
           validateStatus: () => true,
         },
       );
-
-      if (res.status === 202) {
-        const finalRunId = res.data?.run_id ?? runId;
-        return {
-          id: finalRunId,
-          port: speculosPort,
-          appName: deviceParams.appName,
-          appVersion: deviceParams.appVersion,
-          dependencies: deviceParams.dependencies,
-        };
-      }
-
-      if (res.status === 409) {
-        runId = makeRunId(deviceParams);
-        continue;
-      }
-
-      console.warn(
-        `[speculosCI] Speculinho acquire failed (${res.status}): ${JSON.stringify(res.data)}`,
-      );
-      console.warn(
-        `Failed to create remote Speculos ${deviceParams.appName}:${deviceParams.appVersion}`,
-      );
-      return {
-        id: runId,
-        port: 0,
-        appName: deviceParams.appName,
-        appVersion: deviceParams.appVersion,
-        dependencies: deviceParams.dependencies,
-      };
     } catch (error: unknown) {
-      console.warn(
-        `Failed to create remote Speculos ${deviceParams.appName}:${deviceParams.appVersion}:`,
-        sanitizeError(error),
+      throw new Error(
+        `[speculosCI] Speculinho /acquire transport error (${speculinhoUrl}): ${sanitizeError(error)}`,
       );
+    }
+
+    if (res.status === 202) {
+      const finalRunId = res.data?.run_id ?? runId;
       return {
-        id: runId,
-        port: 0,
+        id: finalRunId,
+        port: speculosPort,
         appName: deviceParams.appName,
         appVersion: deviceParams.appVersion,
         dependencies: deviceParams.dependencies,
       };
     }
+
+    if (res.status === 409) {
+      runId = makeRunId(deviceParams);
+      continue;
+    }
+
+    throw new Error(formatAcquireFailure(res.status, res.data));
   }
 
-  console.warn(`Failed to create remote Speculos after retries for run_id collisions`);
-  return {
-    id: runId,
-    port: 0,
-    appName: deviceParams.appName,
-    appVersion: deviceParams.appVersion,
-    dependencies: deviceParams.dependencies,
-  };
+  throw new Error(
+    `[speculosCI] Speculinho /acquire failed after retries (run_id collisions). Last run_id: ${runId}`,
+  );
 }
 
 export async function releaseSpeculosDeviceCI(runId: string) {
