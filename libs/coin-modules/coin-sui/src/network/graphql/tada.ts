@@ -1,21 +1,13 @@
 /**
- * Typed `graphql` template tag bound to the SUI production schema. Use it
- * for every hand-written document so fields, args, and results are
- * checked at compile time. Regenerate via
- * `pnpm --filter @ledgerhq/coin-sui graphql:codegen:fetch`; the
- * introspection snapshot lives at `./introspection.json` and the typed
- * mirror at `./graphql-env.d.ts`.
+ * Typed `graphql` template tag bound to the SUI production schema. Use for
+ * every hand-written document so fields, args, and results are checked at
+ * compile time. Introspection lives at `./introspection.json`, typed mirror
+ * at `./graphql-env.d.ts`; regenerate via the `graphql:codegen:fetch` script.
  */
 import { initGraphQLTada, type ResultOf, type VariablesOf } from "gql.tada";
 import type { introspection } from "./graphql-env";
 
-/**
- * Custom-scalar mapping (mirrors `@mysten/sui`'s `CustomScalars`).
- * Verified against the live `graphql.mainnet.sui.io` endpoint:
- *   `UInt53` → number (server rejects stringified values),
- *   `BigInt` → string (avoids JS number precision loss for u64+),
- *   `DateTime` → RFC3339 string.
- */
+/** Custom-scalar mapping; mirrors `@mysten/sui`'s `CustomScalars`, verified against live mainnet. */
 type SuiScalars = {
   /** RFC3339 timestamp string. */
   DateTime: string;

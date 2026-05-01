@@ -141,25 +141,22 @@ export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
 // ----- Helpers ------------------------------------------------------------
 
 const isNullish = (v: unknown): v is null | undefined => v === null || v === undefined;
-/** Stringify a Move u64 wire value (`number | string | null | undefined`) → `""` on nullish. */
+/** Stringify a Move u64 wire value; nullish → `""`. */
 const str = (v: string | number | null | undefined): string =>
   isNullish(v) ? "" : typeof v === "number" ? String(v) : v;
-/** Same as {@link str} but preserves `null` (used for nullable wire fields like deactivation_epoch). */
+/** Same as {@link str} but preserves `null` for nullable wire fields. */
 const strOrNull = (v: string | number | null | undefined): string | null =>
   isNullish(v) ? null : typeof v === "number" ? String(v) : v;
 
 /**
- * Normalise Move type tags from GraphQL's long padded form
- * (`0x000…002::sui::SUI`) to the JSON-RPC short form (`0x2::sui::SUI`).
- * coin-sui compares against `DEFAULT_COIN_TYPE = "0x2::sui::SUI"`
- * everywhere, so any GraphQL response field carrying a Move type tag
- * MUST run through this — otherwise the long form silently misses
- * `=== DEFAULT_COIN_TYPE` checks.
+ * Normalise GraphQL's long padded Move type tags to JSON-RPC short form.
+ * coin-sui compares against `DEFAULT_COIN_TYPE` everywhere; long forms
+ * silently miss `===` checks if any GraphQL response skips this.
  */
 export function shortenCoinType(coinType: string): string {
   const m = /^0x([0-9a-fA-F]{1,64})(::.*)$/.exec(coinType);
   if (!m) return coinType;
-  // Keep at least one digit so SUI native ends as `0x2`, not `0x`.
+  // Keep at least one digit so the all-zero address normalises to `0x0`.
   const trimmed = m[1].replace(/^0+/, "") || "0";
   return `0x${trimmed}${m[2]}`;
 }
@@ -227,11 +224,7 @@ export function fromSystemStateJson(state: SuiSystemStateInnerJson): {
 
 // ----- StakedSui[] → DelegatedStake[] -------------------------------------
 
-/**
- * Sentinel for stakes whose `pool_id` isn't in the active set (orphan
- * pool removed mid-epoch, or system-state response raced ahead of the
- * StakedSui list). Exported so consumers compare against the constant.
- */
+/** Sentinel for stakes whose `pool_id` isn't in the active set; exported for caller equality checks. */
 export const UNKNOWN_VALIDATOR = "<unknown>";
 
 /**
