@@ -1,7 +1,6 @@
 /**
- * Hand-written GraphQL documents (typed via `gql.tada`); each export is
- * paired with a runtime mapper in `sdk.ts` that re-shapes the response to
- * the existing JSON-RPC types so downstream callers stay untouched.
+ * Hand-written GraphQL documents typed via `gql.tada`. Each export pairs
+ * with a runtime mapper in `sdk.graphql.ts` that re-shapes results to JSON-RPC types.
  */
 import { graphql, type ResultOf } from "./tada";
 

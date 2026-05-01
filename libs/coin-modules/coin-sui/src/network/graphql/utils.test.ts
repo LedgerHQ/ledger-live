@@ -1,9 +1,6 @@
 /**
- * Tests for the GraphQL pure-helpers in `./utils.ts`: drift guards, type
- * predicates, snake_case → camelCase mappers, and the pool exchange-rate
- * math (per-stake reward + per-validator APY). Unit coverage here pins
- * formulas against JSON-RPC parity and protects against schema drift on
- * the Mysten side without a full `getStakesRaw` / `getValidators` integ.
+ * Unit tests for `./utils.ts` — predicates, mappers, and pool exchange-rate math.
+ * Pins formulas against JSON-RPC parity and guards against Mysten schema drift.
  */
 import { ONE_SUI } from "../../constants";
 import { RATE_BATCH_CHUNK_SIZE } from "./constants";
@@ -34,7 +31,7 @@ import {
 // ----- shortenCoinType ----------------------------------------------------
 
 describe("shortenCoinType", () => {
-  test("collapses leading zeros for the SUI native coin type", () => {
+  it("should collapse leading zeros for the SUI native coin type", () => {
     expect(
       shortenCoinType(
         "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
@@ -42,12 +39,12 @@ describe("shortenCoinType", () => {
     ).toBe("0x2::sui::SUI");
   });
 
-  test("preserves non-zero address prefixes verbatim", () => {
+  it("should preserve non-zero address prefixes verbatim", () => {
     const ct = "0x9d49c70b621b618c7918468a7ac286e71cffe6e30c4e4175a4385516b121cb0e::usdc::USDC";
     expect(shortenCoinType(ct)).toBe(ct);
   });
 
-  test("collapses an all-zero address to 0x0", () => {
+  it("should collapse an all-zero address to 0x0", () => {
     expect(
       shortenCoinType(
         "0x0000000000000000000000000000000000000000000000000000000000000000::null::Null",
@@ -55,11 +52,11 @@ describe("shortenCoinType", () => {
     ).toBe("0x0::null::Null");
   });
 
-  test("leaves an already-short type unchanged (idempotent)", () => {
+  it("should leave an already-short type unchanged (idempotent)", () => {
     expect(shortenCoinType("0x2::sui::SUI")).toBe("0x2::sui::SUI");
   });
 
-  test("returns inputs that don't match the Move type pattern unchanged", () => {
+  it("should return inputs that don't match the Move type pattern unchanged", () => {
     expect(shortenCoinType("not-a-type")).toBe("not-a-type");
     expect(shortenCoinType("")).toBe("");
   });
@@ -75,39 +72,39 @@ describe("isStakedSuiJson", () => {
     principal: "1000",
   };
 
-  test("accepts a fully-formed StakedSui node", () => {
+  it("should accept a fully-formed StakedSui node", () => {
     expect(isStakedSuiJson(validNode)).toBe(true);
   });
 
-  test("accepts numeric principal and activation_epoch (Move u64 may arrive as JSON number)", () => {
+  it("should accept numeric principal and activation_epoch (Move u64 may arrive as JSON number)", () => {
     expect(isStakedSuiJson({ ...validNode, principal: 1000, stake_activation_epoch: 100 })).toBe(
       true,
     );
   });
 
-  test.each([null, undefined, "string", 42, true, []])(
-    "rejects non-object input: %p",
+  it.each([null, undefined, "string", 42, true, []])(
+    "should reject non-object input: %p",
     (input: unknown) => {
       expect(isStakedSuiJson(input)).toBe(false);
     },
   );
 
-  test("rejects when id is missing or non-string", () => {
+  it("should reject when id is missing or non-string", () => {
     expect(isStakedSuiJson({ ...validNode, id: undefined })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, id: 42 })).toBe(false);
   });
 
-  test("rejects when pool_id is missing or non-string", () => {
+  it("should reject when pool_id is missing or non-string", () => {
     expect(isStakedSuiJson({ ...validNode, pool_id: undefined })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, pool_id: 42 })).toBe(false);
   });
 
-  test("rejects when principal is neither string nor number", () => {
+  it("should reject when principal is neither string nor number", () => {
     expect(isStakedSuiJson({ ...validNode, principal: null })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, principal: true })).toBe(false);
   });
 
-  test("rejects non-integer numeric strings (BigInt() would throw downstream)", () => {
+  it("should reject non-integer numeric strings (BigInt() would throw downstream)", () => {
     // Predicate must filter values BigInt() can't parse; downstream fails closed.
     expect(isStakedSuiJson({ ...validNode, principal: "1.5" })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, principal: "-1" })).toBe(false);
@@ -117,14 +114,14 @@ describe("isStakedSuiJson", () => {
     expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: "abc" })).toBe(false);
   });
 
-  test("rejects negative or non-integer numbers (Move u64 is non-negative integer)", () => {
+  it("should reject negative or non-integer numbers (Move u64 is non-negative integer)", () => {
     expect(isStakedSuiJson({ ...validNode, principal: -1 })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, principal: 1.5 })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, principal: NaN })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: -5 })).toBe(false);
   });
 
-  test("accepts zero (degenerate but valid u64)", () => {
+  it("should accept zero (degenerate but valid u64)", () => {
     expect(isStakedSuiJson({ ...validNode, principal: 0 })).toBe(true);
     expect(isStakedSuiJson({ ...validNode, principal: "0" })).toBe(true);
   });
@@ -152,30 +149,30 @@ describe("assertSystemStateJson", () => {
     epoch_start_timestamp_ms: 0,
   });
 
-  test("passes on a minimal valid shape", () => {
+  it("should pass on a minimal valid shape", () => {
     expect(() => assertSystemStateJson(valid())).not.toThrow();
   });
 
-  test.each([null, undefined, "string", 42, []])(
-    "throws on non-object root: %p",
+  it.each([null, undefined, "string", 42, []])(
+    "should throw on non-object root: %p",
     (input: unknown) => {
       expect(() => assertSystemStateJson(input)).toThrow(/not an object/);
     },
   );
 
-  test("throws when validators is missing", () => {
+  it("should throw when validators is missing", () => {
     const v = valid() as Record<string, unknown>;
     delete v.validators;
     expect(() => assertSystemStateJson(v)).toThrow(/validators.* not an object/);
   });
 
-  test("throws when validators is not an object", () => {
+  it("should throw when validators is not an object", () => {
     const v = valid() as Record<string, unknown>;
     v.validators = "not-an-object";
     expect(() => assertSystemStateJson(v)).toThrow(/validators.* not an object/);
   });
 
-  test("throws when active_validators is not an array", () => {
+  it("should throw when active_validators is not an array", () => {
     const v = valid() as { validators: { active_validators: unknown } };
     v.validators.active_validators = { not: "an array" };
     expect(() => assertSystemStateJson(v)).toThrow(/active_validators is not an array/);
@@ -253,16 +250,26 @@ describe("fromSystemStateJson", () => {
     };
   }
 
-  test("returns empty arrays/maps for an empty active set", () => {
-    const { activeValidators, poolToValidator } = fromSystemStateJson(makeState([]));
+  it("should return empty arrays/maps for an empty active set", () => {
+    // GIVEN
+    const state = makeState([]);
+
+    // WHEN
+    const { activeValidators, poolToValidator } = fromSystemStateJson(state);
+
+    // THEN
     expect(activeValidators).toEqual([]);
     expect(poolToValidator.size).toBe(0);
   });
 
-  test("renames snake_case → camelCase and stringifies numeric u64 fields", () => {
+  it("should rename snake_case → camelCase and stringify numeric u64 fields", () => {
+    // GIVEN
     const state = makeState([makeValidator("0xv1", "0xpool1", "Alice")]);
+
+    // WHEN
     const { activeValidators } = fromSystemStateJson(state);
 
+    // THEN
     expect(activeValidators).toHaveLength(1);
     const v = activeValidators[0];
     expect(v.suiAddress).toBe("0xv1");
@@ -289,29 +296,44 @@ describe("fromSystemStateJson", () => {
     expect(v.exchangeRatesSize).toBe("100");
   });
 
-  test("preserves nullable next-epoch fields as null (not undefined)", () => {
+  it("should preserve nullable next-epoch fields as null (not undefined)", () => {
+    // GIVEN
     const state = makeState([makeValidator("0xv1", "0xpool1")]);
+
+    // WHEN
     const v = fromSystemStateJson(state).activeValidators[0];
+
+    // THEN
     expect(v.nextEpochProtocolPubkeyBytes).toBeNull();
     expect(v.nextEpochNetAddress).toBeNull();
     expect(v.nextEpochP2pAddress).toBeNull();
     expect(v.nextEpochWorkerAddress).toBeNull();
   });
 
-  test("builds pool_id → validator_address map", () => {
+  it("should build pool_id → validator_address map", () => {
+    // GIVEN
     const state = makeState([makeValidator("0xv1", "0xpoolA"), makeValidator("0xv2", "0xpoolB")]);
+
+    // WHEN
     const { poolToValidator } = fromSystemStateJson(state);
+
+    // THEN
     expect(poolToValidator.size).toBe(2);
     expect(poolToValidator.get("0xpoolA")).toBe("0xv1");
     expect(poolToValidator.get("0xpoolB")).toBe("0xv2");
   });
 
-  test("str/strOrNull collapse undefined defensively (unreachable from typed wire)", () => {
+  it("should let str/strOrNull collapse undefined defensively (unreachable from typed wire)", () => {
+    // GIVEN
     // Force runtime undefined past the typed shape to exercise the isNullish branch.
     const v = makeValidator("0xv", "0xp");
     (v.staking_pool as { activation_epoch: unknown }).activation_epoch = undefined;
     (v as { voting_power: unknown }).voting_power = undefined;
+
+    // WHEN
     const summary = fromSystemStateJson(makeState([v])).activeValidators[0];
+
+    // THEN
     expect(summary.stakingPoolActivationEpoch).toBeNull();
     expect(summary.votingPower).toBe("");
   });
@@ -327,20 +349,30 @@ describe("groupStakedSuiByPool", () => {
     principal: string | number = "1000",
   ): StakedSuiJson => ({ id, pool_id, stake_activation_epoch: activation, principal });
 
-  test("returns empty array for empty input", () => {
-    expect(groupStakedSuiByPool([], 100, new Map())).toEqual([]);
+  it("should return empty array for empty input", () => {
+    // GIVEN / WHEN
+    const result = groupStakedSuiByPool([], 100, new Map());
+
+    // THEN
+    expect(result).toEqual([]);
   });
 
-  test("groups stakes by pool_id, joining validator address from the pool map", () => {
+  it("should group stakes by pool_id, joining validator address from the pool map", () => {
+    // GIVEN
     const pools = new Map([
       ["0xpoolA", "0xvalA"],
       ["0xpoolB", "0xvalB"],
     ]);
-    const result = groupStakedSuiByPool(
-      [stake("0xs1", "0xpoolA", 50), stake("0xs2", "0xpoolA", 60), stake("0xs3", "0xpoolB", 70)],
-      100,
-      pools,
-    );
+    const items = [
+      stake("0xs1", "0xpoolA", 50),
+      stake("0xs2", "0xpoolA", 60),
+      stake("0xs3", "0xpoolB", 70),
+    ];
+
+    // WHEN
+    const result = groupStakedSuiByPool(items, 100, pools);
+
+    // THEN
     expect(result).toHaveLength(2);
     const a = result.find(g => g.stakingPool === "0xpoolA")!;
     const b = result.find(g => g.stakingPool === "0xpoolB")!;
@@ -350,17 +382,23 @@ describe("groupStakedSuiByPool", () => {
     expect(b.stakes.map(s => s.stakedSuiId)).toEqual(["0xs3"]);
   });
 
-  test("falls back to UNKNOWN_VALIDATOR for pools missing from the map (orphan pool)", () => {
+  it("should fall back to UNKNOWN_VALIDATOR for pools missing from the map (orphan pool)", () => {
+    // GIVEN / WHEN
     const result = groupStakedSuiByPool([stake("0xs1", "0xorphan", 50)], 100, new Map());
+
+    // THEN
     expect(result[0].validatorAddress).toBe(UNKNOWN_VALIDATOR);
   });
 
-  test("computes status: active when activation_epoch <= currentEpoch, pending when >", () => {
-    const result = groupStakedSuiByPool(
-      [stake("0xActive", "0xp", 50), stake("0xPending", "0xp", 200)],
-      100,
-      new Map([["0xp", "0xv"]]),
-    );
+  it("should compute status: Active when activation_epoch <= currentEpoch, Pending when >", () => {
+    // GIVEN
+    const items = [stake("0xActive", "0xp", 50), stake("0xPending", "0xp", 200)];
+    const pools = new Map([["0xp", "0xv"]]);
+
+    // WHEN
+    const result = groupStakedSuiByPool(items, 100, pools);
+
+    // THEN
     const stakes = result[0].stakes;
     const active = stakes.find(s => s.stakedSuiId === "0xActive")!;
     const pending = stakes.find(s => s.stakedSuiId === "0xPending")!;
@@ -368,25 +406,32 @@ describe("groupStakedSuiByPool", () => {
     expect(pending.status).toBe("Pending");
   });
 
-  test("treats activation_epoch === currentEpoch as Active (boundary)", () => {
+  it("should treat activation_epoch === currentEpoch as Active (boundary)", () => {
+    // GIVEN / WHEN
     const result = groupStakedSuiByPool([stake("0xs", "0xp", 100)], 100, new Map([["0xp", "0xv"]]));
+
+    // THEN
     expect(result[0].stakes[0].status).toBe("Active");
   });
 
-  test("derives stakeRequestEpoch as activation - 1 (JSON-RPC convention)", () => {
+  it("should derive stakeRequestEpoch as activation - 1 (JSON-RPC convention)", () => {
+    // GIVEN / WHEN
     const result = groupStakedSuiByPool([stake("0xs", "0xp", 50)], 100, new Map([["0xp", "0xv"]]));
+
+    // THEN
     expect(result[0].stakes[0].stakeRequestEpoch).toBe("49");
     expect(result[0].stakes[0].stakeActiveEpoch).toBe("50");
   });
 
-  test("active stakes pull estimatedReward from the rewards map; missing entries default to '0'", () => {
+  it("should pull estimatedReward from the rewards map for active stakes; missing entries default to '0'", () => {
+    // GIVEN
     const rewards = new Map([["0xWithReward", 12345n]]);
-    const result = groupStakedSuiByPool(
-      [stake("0xWithReward", "0xp", 50), stake("0xNoReward", "0xp", 50)],
-      100,
-      new Map([["0xp", "0xv"]]),
-      rewards,
-    );
+    const items = [stake("0xWithReward", "0xp", 50), stake("0xNoReward", "0xp", 50)];
+
+    // WHEN
+    const result = groupStakedSuiByPool(items, 100, new Map([["0xp", "0xv"]]), rewards);
+
+    // THEN
     const stakes = result[0].stakes;
     const withReward = stakes.find(s => s.stakedSuiId === "0xWithReward")!;
     const noReward = stakes.find(s => s.stakedSuiId === "0xNoReward")!;
@@ -397,12 +442,15 @@ describe("groupStakedSuiByPool", () => {
     expect(noReward.estimatedReward).toBe("0");
   });
 
-  test("pending stakes have no estimatedReward field (status-narrowed)", () => {
+  it("should narrow status so pending stakes have no estimatedReward field", () => {
+    // GIVEN / WHEN
     const result = groupStakedSuiByPool(
       [stake("0xpending", "0xp", 200)],
       100,
       new Map([["0xp", "0xv"]]),
     );
+
+    // THEN
     expect(result[0].stakes[0].status).toBe("Pending");
     expect("estimatedReward" in result[0].stakes[0]).toBe(false);
   });
@@ -475,46 +523,69 @@ describe("poolRefsFromSystemState", () => {
     };
   }
 
-  test("returns empty map for no validators", () => {
-    expect(poolRefsFromSystemState(stateWithPools([])).size).toBe(0);
+  it("should return empty map for no validators", () => {
+    // GIVEN / WHEN
+    const refs = poolRefsFromSystemState(stateWithPools([]));
+
+    // THEN
+    expect(refs.size).toBe(0);
   });
 
-  test("populates currentRate from staking_pool sui_balance and pool_token_balance", () => {
-    const refs = poolRefsFromSystemState(
-      stateWithPools([{ poolId: "0xpA", sui: 1_100, pt: 1_000 }]),
-    );
-    const a = refs.get("0xpA")!;
-    expect(a.currentRate).toEqual({ sui_amount: 1_100, pool_token_amount: 1_000 });
+  it("should populate currentRate from staking_pool sui_balance and pool_token_balance", () => {
+    // GIVEN
+    const state = stateWithPools([{ poolId: "0xpA", sui: 1_100, pt: 1_000 }]);
+
+    // WHEN
+    const refs = poolRefsFromSystemState(state);
+
+    // THEN
+    expect(refs.get("0xpA")!.currentRate).toEqual({ sui_amount: 1_100, pool_token_amount: 1_000 });
   });
 
-  test("uses exchange_rates.id verbatim", () => {
-    const refs = poolRefsFromSystemState(
-      stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, ratesId: "0xratesABC" }]),
-    );
+  it("should use exchange_rates.id verbatim", () => {
+    // GIVEN
+    const state = stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, ratesId: "0xratesABC" }]);
+
+    // WHEN
+    const refs = poolRefsFromSystemState(state);
+
+    // THEN
     expect(refs.get("0xpA")!.exchangeRatesId).toBe("0xratesABC");
   });
 
-  test("activationEpoch defaults to 0 when activation_epoch is null", () => {
-    const refs = poolRefsFromSystemState(
-      stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, activation: null }]),
-    );
+  it("should default activationEpoch to 0 when activation_epoch is null", () => {
+    // GIVEN
+    const state = stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, activation: null }]);
+
+    // WHEN
+    const refs = poolRefsFromSystemState(state);
+
+    // THEN
     expect(refs.get("0xpA")!.activationEpoch).toBe(0);
   });
 
-  test("converts string activation_epoch to number", () => {
-    const refs = poolRefsFromSystemState(
-      stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, activation: "42" }]),
-    );
+  it("should convert string activation_epoch to number", () => {
+    // GIVEN
+    const state = stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, activation: "42" }]);
+
+    // WHEN
+    const refs = poolRefsFromSystemState(state);
+
+    // THEN
     expect(refs.get("0xpA")!.activationEpoch).toBe(42);
   });
 
-  test("indexes by pool id (multiple pools)", () => {
-    const refs = poolRefsFromSystemState(
-      stateWithPools([
-        { poolId: "0xpA", sui: 1, pt: 1 },
-        { poolId: "0xpB", sui: 2, pt: 2 },
-      ]),
-    );
+  it("should index by pool id (multiple pools)", () => {
+    // GIVEN
+    const state = stateWithPools([
+      { poolId: "0xpA", sui: 1, pt: 1 },
+      { poolId: "0xpB", sui: 2, pt: 2 },
+    ]);
+
+    // WHEN
+    const refs = poolRefsFromSystemState(state);
+
+    // THEN
     expect(refs.size).toBe(2);
     expect(refs.has("0xpA")).toBe(true);
     expect(refs.has("0xpB")).toBe(true);
@@ -524,59 +595,76 @@ describe("poolRefsFromSystemState", () => {
 // ----- computeEstimatedReward (pool-token model) --------------------------
 
 describe("computeEstimatedReward", () => {
-  test("returns reward = current_value − principal in the steady-state case", () => {
+  it("should return reward = current_value − principal in the steady-state case", () => {
+    // GIVEN
     // Pool earned 10% over activation; reward = 110 − 100 = 10.
-    const reward = computeEstimatedReward(
-      100n,
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      { sui_amount: 1100, pool_token_amount: 1000 },
-    );
+    const principal = 100n;
+    const activationRate = { sui_amount: 1000, pool_token_amount: 1000 };
+    const currentRate = { sui_amount: 1100, pool_token_amount: 1000 };
+
+    // WHEN
+    const reward = computeEstimatedReward(principal, activationRate, currentRate);
+
+    // THEN
     expect(reward).toBe(10n);
   });
 
-  test("clamps to zero when current_value < principal (rounding)", () => {
+  it("should clamp to zero when current_value < principal (rounding)", () => {
+    // GIVEN
     // After rounding, current_value can come out 1 μSUI below principal
-    // for very recent stakes. The reward should clamp to 0, not be
-    // a negative bigint.
-    const reward = computeEstimatedReward(
-      100n,
-      { sui_amount: 1000, pool_token_amount: 1001 },
-      { sui_amount: 1000, pool_token_amount: 1001 },
-    );
+    // for very recent stakes. The reward should clamp to 0, not go negative.
+    const principal = 100n;
+    const activationRate = { sui_amount: 1000, pool_token_amount: 1001 };
+    const currentRate = { sui_amount: 1000, pool_token_amount: 1001 };
+
+    // WHEN
+    const reward = computeEstimatedReward(principal, activationRate, currentRate);
+
+    // THEN
     expect(reward).toBe(0n);
   });
 
-  test("returns 0 when activation rate has zero sui_amount (degenerate pool)", () => {
-    const reward = computeEstimatedReward(
-      100n,
-      { sui_amount: 0, pool_token_amount: 0 },
-      { sui_amount: 100, pool_token_amount: 100 },
-    );
+  it("should return 0 when activation rate has zero sui_amount (degenerate pool)", () => {
+    // GIVEN
+    const principal = 100n;
+    const activationRate = { sui_amount: 0, pool_token_amount: 0 };
+    const currentRate = { sui_amount: 100, pool_token_amount: 100 };
+
+    // WHEN
+    const reward = computeEstimatedReward(principal, activationRate, currentRate);
+
+    // THEN
     expect(reward).toBe(0n);
   });
 
-  test("accepts string and number principals identically", () => {
-    const fromString = computeEstimatedReward(
-      "100",
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      { sui_amount: 1100, pool_token_amount: 1000 },
-    );
-    const fromNumber = computeEstimatedReward(
-      100,
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      { sui_amount: 1100, pool_token_amount: 1000 },
-    );
+  it("should accept string and number principals identically", () => {
+    // GIVEN
+    const activationRate = { sui_amount: 1000, pool_token_amount: 1000 };
+    const currentRate = { sui_amount: 1100, pool_token_amount: 1000 };
+
+    // WHEN
+    const fromString = computeEstimatedReward("100", activationRate, currentRate);
+    const fromNumber = computeEstimatedReward(100, activationRate, currentRate);
+
+    // THEN
     expect(fromString).toBe(fromNumber);
     expect(fromString).toBe(10n);
   });
 
-  test("scales correctly for realistic mainnet pool sizes", () => {
+  it("should scale correctly for realistic mainnet pool sizes", () => {
+    // GIVEN
     // Numbers approximating a real pool (~10M SUI), with ~5% growth.
-    const reward = computeEstimatedReward(
-      BigInt(ONE_SUI), // 1 SUI principal in MIST
-      { sui_amount: "10000000000000000", pool_token_amount: "9500000000000000" }, // sui = 1.0526… pt
-      { sui_amount: "10500000000000000", pool_token_amount: "9500000000000000" }, // sui = 1.1053…
-    );
+    const principal = BigInt(ONE_SUI); // 1 SUI principal in MIST
+    const activationRate = {
+      sui_amount: "10000000000000000",
+      pool_token_amount: "9500000000000000",
+    }; // sui = 1.0526… pt
+    const currentRate = { sui_amount: "10500000000000000", pool_token_amount: "9500000000000000" }; // sui = 1.1053…
+
+    // WHEN
+    const reward = computeEstimatedReward(principal, activationRate, currentRate);
+
+    // THEN
     // pool_tokens_owned = 1e9 * 9.5e15 / 10e15 = 9.5e8
     // current_value     = 9.5e8 * 1.05e16 / 9.5e15 = 1.05e9
     // reward            = 5e7
@@ -587,73 +675,78 @@ describe("computeEstimatedReward", () => {
 // ----- computeApy ---------------------------------------------------------
 
 describe("computeApy", () => {
-  test("computes annualised growth from a 30-epoch window", () => {
-    // Past rate: ratio = 1.0 (sui:1000, pt:1000).
-    // Now:       ratio = 1.01 (sui:1010, pt:1000) — 1% growth over 30 epochs.
-    // per-epoch growth = 1.01^(1/30)
-    // APY              = (1.01^(1/30))^365 − 1 = 1.01^(365/30) − 1 ≈ 0.1295
-    const apy = computeApy(
-      { sui_amount: 1010, pool_token_amount: 1000 },
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      30,
-    );
+  it("should compute annualised growth from a 30-epoch window", () => {
+    // GIVEN
+    // Past ratio = 1.0; current ratio = 1.01 → 1% growth over 30 epochs.
+    // APY = (1.01)^(365/30) − 1 ≈ 0.1295.
+    const currentRate = { sui_amount: 1010, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
     expect(apy).toBeGreaterThan(0.12);
     expect(apy).toBeLessThan(0.14);
   });
 
-  test("returns 0 when current_ratio == past_ratio (no growth)", () => {
-    const apy = computeApy(
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      30,
-    );
+  it("should return 0 when current_ratio == past_ratio (no growth)", () => {
+    // GIVEN
+    const rate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(rate, rate, 30);
+
+    // THEN
     expect(apy).toBe(0);
   });
 
-  test("clamps negative growth to 0", () => {
+  it("should clamp negative growth to 0", () => {
+    // GIVEN
     // Past rate higher than current — pool effectively bled value.
     // Real wallets shouldn't show a negative APY; clamp to 0.
-    const apy = computeApy(
-      { sui_amount: 990, pool_token_amount: 1000 },
-      { sui_amount: 1000, pool_token_amount: 1000 },
-      30,
-    );
+    const currentRate = { sui_amount: 990, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
     expect(apy).toBe(0);
   });
 
-  test("returns 0 for non-positive epochsBetween", () => {
-    expect(
-      computeApy(
-        { sui_amount: 1010, pool_token_amount: 1000 },
-        { sui_amount: 1000, pool_token_amount: 1000 },
-        0,
-      ),
-    ).toBe(0);
-    expect(
-      computeApy(
-        { sui_amount: 1010, pool_token_amount: 1000 },
-        { sui_amount: 1000, pool_token_amount: 1000 },
-        -5,
-      ),
-    ).toBe(0);
+  it("should return 0 for non-positive epochsBetween", () => {
+    // GIVEN
+    const currentRate = { sui_amount: 1010, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN / THEN
+    expect(computeApy(currentRate, pastRate, 0)).toBe(0);
+    expect(computeApy(currentRate, pastRate, -5)).toBe(0);
   });
 
-  test("returns 0 when past rate has zero pool_token_amount (degenerate)", () => {
-    const apy = computeApy(
-      { sui_amount: 1010, pool_token_amount: 1000 },
-      { sui_amount: 1000, pool_token_amount: 0 },
-      30,
-    );
+  it("should return 0 when past rate has zero pool_token_amount (degenerate)", () => {
+    // GIVEN
+    const currentRate = { sui_amount: 1010, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 0 };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
     expect(apy).toBe(0);
   });
 
-  test("matches known JSON-RPC values within tolerance for a realistic pool", () => {
+  it("should match known JSON-RPC values within tolerance for a realistic pool", () => {
+    // GIVEN
     // 0.3% growth over 30 epochs annualises to ~3.7%, in the 2-4% real-world band.
-    const apy = computeApy(
-      { sui_amount: "10030000000000000", pool_token_amount: "10000000000000000" },
-      { sui_amount: "10000000000000000", pool_token_amount: "10000000000000000" },
-      30,
-    );
+    const currentRate = { sui_amount: "10030000000000000", pool_token_amount: "10000000000000000" };
+    const pastRate = { sui_amount: "10000000000000000", pool_token_amount: "10000000000000000" };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
     expect(apy).toBeGreaterThan(0.03);
     expect(apy).toBeLessThan(0.04);
   });
@@ -671,35 +764,53 @@ describe("validateStakedSuiNodes", () => {
     principal: "1000",
   });
 
-  test("returns empty arrays/zero malformed for empty input", () => {
-    expect(validateStakedSuiNodes([])).toEqual({ items: [], malformed: 0 });
+  it("should return empty arrays/zero malformed for empty input", () => {
+    // GIVEN / WHEN
+    const result = validateStakedSuiNodes([]);
+
+    // THEN
+    expect(result).toEqual({ items: [], malformed: 0 });
   });
 
-  test("collects well-formed nodes; malformed stays 0", () => {
-    const { items, malformed } = validateStakedSuiNodes([
-      node(validJson("0xs1")),
-      node(validJson("0xs2")),
-    ]);
+  it("should collect well-formed nodes; malformed stays 0", () => {
+    // GIVEN
+    const nodes = [node(validJson("0xs1")), node(validJson("0xs2"))];
+
+    // WHEN
+    const { items, malformed } = validateStakedSuiNodes(nodes);
+
+    // THEN
     expect(items.map(i => i.id)).toEqual(["0xs1", "0xs2"]);
     expect(malformed).toBe(0);
   });
 
-  test("counts malformed payloads (e.g. missing pool_id) as skipped", () => {
-    const { items, malformed } = validateStakedSuiNodes([
+  it("should count malformed payloads (e.g. missing pool_id) as skipped", () => {
+    // GIVEN
+    const nodes = [
       node(validJson("0xs1")),
       node({ id: "0xs2", stake_activation_epoch: "100", principal: "1000" }), // no pool_id
-    ]);
+    ];
+
+    // WHEN
+    const { items, malformed } = validateStakedSuiNodes(nodes);
+
+    // THEN
     expect(items.map(i => i.id)).toEqual(["0xs1"]);
     expect(malformed).toBe(1);
   });
 
-  test("ignores null/undefined contents without incrementing malformed", () => {
+  it("should ignore null/undefined contents without incrementing malformed", () => {
+    // GIVEN
     // Reflects an actual GraphQL response shape: `contents` may be absent
     // when the indexer hasn't materialised the Move object yet.
     const empty = { contents: { json: null } } as unknown as StakeNode;
     const undef = { contents: { json: undefined } } as unknown as StakeNode;
     const noContents = {} as unknown as StakeNode;
+
+    // WHEN
     const { items, malformed } = validateStakedSuiNodes([empty, undef, noContents]);
+
+    // THEN
     expect(items).toEqual([]);
     expect(malformed).toBe(0);
   });
@@ -717,67 +828,80 @@ describe("planActivationRateLookups", () => {
     },
   ];
 
-  test("excludes Pending stakes (activation > currentEpoch) from activeStakes", () => {
+  it("should exclude Pending stakes (activation > currentEpoch) from activeStakes", () => {
+    // GIVEN
     const items: StakedSuiJson[] = [
       { id: "0xActive", pool_id: "0xp", stake_activation_epoch: 50, principal: "100" },
       { id: "0xPending", pool_id: "0xp", stake_activation_epoch: 200, principal: "100" },
     ];
-    const { activeStakes } = planActivationRateLookups(
-      items,
-      100n,
-      new Map([refs("0xp", "0xrates")]),
-    );
+    const poolRefs = new Map([refs("0xp", "0xrates")]);
+
+    // WHEN
+    const { activeStakes } = planActivationRateLookups(items, 100n, poolRefs);
+
+    // THEN
     expect(activeStakes.map(p => p.stakedSuiId)).toEqual(["0xActive"]);
   });
 
-  test("treats activation == currentEpoch as Active (boundary)", () => {
+  it("should treat activation == currentEpoch as Active (boundary)", () => {
+    // GIVEN
     const items: StakedSuiJson[] = [
       { id: "0xs", pool_id: "0xp", stake_activation_epoch: 100, principal: "1" },
     ];
-    const { activeStakes } = planActivationRateLookups(
-      items,
-      100n,
-      new Map([refs("0xp", "0xrates")]),
-    );
+    const poolRefs = new Map([refs("0xp", "0xrates")]);
+
+    // WHEN
+    const { activeStakes } = planActivationRateLookups(items, 100n, poolRefs);
+
+    // THEN
     expect(activeStakes).toHaveLength(1);
   });
 
-  test("dedupes (table, epoch) so two stakes in the same pool/epoch yield one wantedEntry", () => {
+  it("should dedupe (table, epoch) so two stakes in the same pool/epoch yield one wantedEntry", () => {
+    // GIVEN
     const items: StakedSuiJson[] = [
       { id: "0xs1", pool_id: "0xp", stake_activation_epoch: 50, principal: "100" },
       { id: "0xs2", pool_id: "0xp", stake_activation_epoch: 50, principal: "200" },
     ];
-    const { wantedEntries } = planActivationRateLookups(
-      items,
-      100n,
-      new Map([refs("0xp", "0xrates")]),
-    );
+    const poolRefs = new Map([refs("0xp", "0xrates")]);
+
+    // WHEN
+    const { wantedEntries } = planActivationRateLookups(items, 100n, poolRefs);
+
+    // THEN
     expect(wantedEntries).toHaveLength(1);
     expect(wantedEntries[0].table).toBe("0xrates");
     expect(wantedEntries[0].epoch).toBe(50);
   });
 
-  test("emits one wantedEntry per distinct (table, epoch) pair", () => {
+  it("should emit one wantedEntry per distinct (table, epoch) pair", () => {
+    // GIVEN
     const items: StakedSuiJson[] = [
       { id: "0xs1", pool_id: "0xpA", stake_activation_epoch: 50, principal: "1" },
       { id: "0xs2", pool_id: "0xpA", stake_activation_epoch: 60, principal: "1" }, // same table, new epoch
       { id: "0xs3", pool_id: "0xpB", stake_activation_epoch: 50, principal: "1" }, // new table, same epoch
     ];
-    const { wantedEntries } = planActivationRateLookups(
-      items,
-      100n,
-      new Map([refs("0xpA", "0xratesA"), refs("0xpB", "0xratesB")]),
-    );
+    const poolRefs = new Map([refs("0xpA", "0xratesA"), refs("0xpB", "0xratesB")]);
+
+    // WHEN
+    const { wantedEntries } = planActivationRateLookups(items, 100n, poolRefs);
+
+    // THEN
     expect(wantedEntries).toHaveLength(3);
   });
 
-  test("drops orphan-pool stakes from wantedEntries; activeStakes still includes them", () => {
+  it("should drop orphan-pool stakes from wantedEntries; activeStakes still includes them", () => {
+    // GIVEN
     // activeStakes mirrors what `groupStakedSuiByPool` will iterate;
     // orphans stay in the list with reward "0" (no rate to look up).
     const items: StakedSuiJson[] = [
       { id: "0xs", pool_id: "0xorphan", stake_activation_epoch: 50, principal: "100" },
     ];
+
+    // WHEN
     const { activeStakes, wantedEntries } = planActivationRateLookups(items, 100n, new Map());
+
+    // THEN
     expect(activeStakes).toHaveLength(1);
     expect(wantedEntries).toHaveLength(0);
   });
@@ -803,40 +927,53 @@ describe("computeStakeRewards", () => {
     activationEpoch: 0,
   });
 
-  test("computes the pool-token reward for a stake whose rate is present", () => {
-    const rewards = computeStakeRewards(
-      [plan("0xs", "0xp", 50)],
-      new Map([["0xp", poolRef("0xrates")]]),
-      // Activation rate: 1 SUI = 1 pool token. Reward = 110 − 100 = 10.
-      new Map([["0xrates@50", { sui_amount: 1000, pool_token_amount: 1000 }]]),
-    );
+  it("should compute the pool-token reward for a stake whose rate is present", () => {
+    // GIVEN
+    // Activation rate: 1 SUI = 1 pool token. Reward = 110 − 100 = 10.
+    const plans = [plan("0xs", "0xp", 50)];
+    const poolRefs = new Map([["0xp", poolRef("0xrates")]]);
+    const rates = new Map([["0xrates@50", { sui_amount: 1000, pool_token_amount: 1000 }]]);
+
+    // WHEN
+    const rewards = computeStakeRewards(plans, poolRefs, rates);
+
+    // THEN
     expect(rewards.get("0xs")).toBe(10n);
   });
 
-  test("skips stakes whose rate is null (entry absent → caller defaults to '0')", () => {
-    const rewards = computeStakeRewards(
-      [plan("0xs", "0xp", 50)],
-      new Map([["0xp", poolRef("0xrates")]]),
-      new Map<string, ExchangeRate | null>([["0xrates@50", null]]),
-    );
+  it("should skip stakes whose rate is null (entry absent → caller defaults to '0')", () => {
+    // GIVEN
+    const plans = [plan("0xs", "0xp", 50)];
+    const poolRefs = new Map([["0xp", poolRef("0xrates")]]);
+    const rates = new Map<string, ExchangeRate | null>([["0xrates@50", null]]);
+
+    // WHEN
+    const rewards = computeStakeRewards(plans, poolRefs, rates);
+
+    // THEN
     expect(rewards.has("0xs")).toBe(false);
   });
 
-  test("skips stakes whose rate key is missing entirely", () => {
-    const rewards = computeStakeRewards(
-      [plan("0xs", "0xp", 50)],
-      new Map([["0xp", poolRef("0xrates")]]),
-      new Map(), // no rate at all
-    );
+  it("should skip stakes whose rate key is missing entirely", () => {
+    // GIVEN
+    const plans = [plan("0xs", "0xp", 50)];
+    const poolRefs = new Map([["0xp", poolRef("0xrates")]]);
+
+    // WHEN
+    const rewards = computeStakeRewards(plans, poolRefs, new Map());
+
+    // THEN
     expect(rewards.has("0xs")).toBe(false);
   });
 
-  test("skips orphan-pool stakes (no PoolRefs entry)", () => {
-    const rewards = computeStakeRewards(
-      [plan("0xs", "0xorphan", 50)],
-      new Map(), // orphan
-      new Map(),
-    );
+  it("should skip orphan-pool stakes (no PoolRefs entry)", () => {
+    // GIVEN
+    const plans = [plan("0xs", "0xorphan", 50)];
+
+    // WHEN
+    const rewards = computeStakeRewards(plans, new Map(), new Map());
+
+    // THEN
     expect(rewards.size).toBe(0);
   });
 });
@@ -844,53 +981,65 @@ describe("computeStakeRewards", () => {
 // ----- parseExchangeRateNode ----------------------------------------------
 
 describe("parseExchangeRateNode", () => {
-  test("extracts a valid ExchangeRate from a MoveValue dynamicField", () => {
+  it("should extract a valid ExchangeRate from a MoveValue dynamicField", () => {
+    // GIVEN
     const node: ExchangeRateAddrNode = {
       dynamicField: {
         value: { __typename: "MoveValue", json: { sui_amount: "1100", pool_token_amount: "1000" } },
       },
     };
-    expect(parseExchangeRateNode(node)).toEqual({
-      sui_amount: "1100",
-      pool_token_amount: "1000",
-    });
+
+    // WHEN
+    const result = parseExchangeRateNode(node);
+
+    // THEN
+    expect(result).toEqual({ sui_amount: "1100", pool_token_amount: "1000" });
   });
 
-  test("returns null for a null root (no address)", () => {
+  it("should return null for a null root (no address)", () => {
     expect(parseExchangeRateNode(null)).toBeNull();
   });
 
-  test("returns null when dynamicField is absent", () => {
+  it("should return null when dynamicField is absent", () => {
     expect(parseExchangeRateNode({ dynamicField: null })).toBeNull();
     expect(parseExchangeRateNode({})).toBeNull();
   });
 
-  test("returns null when value typename is not MoveValue (union mismatch)", () => {
+  it("should return null when value typename is not MoveValue (union mismatch)", () => {
+    // GIVEN
     const node: ExchangeRateAddrNode = {
       dynamicField: {
         value: { __typename: "MoveObject", json: { sui_amount: 1, pool_token_amount: 1 } },
       },
     };
+
+    // WHEN / THEN
     expect(parseExchangeRateNode(node)).toBeNull();
   });
 
-  test("returns null when json fails the ExchangeRate predicate", () => {
+  it("should return null when json fails the ExchangeRate predicate", () => {
+    // GIVEN
+    // Wrong field names — schema-drift simulation.
     const node: ExchangeRateAddrNode = {
       dynamicField: {
-        // wrong field names — schema drift simulation
         value: { __typename: "MoveValue", json: { sui: 1, pool_tokens: 1 } },
       },
     };
+
+    // WHEN / THEN
     expect(parseExchangeRateNode(node)).toBeNull();
   });
 
-  test("returns null on non-integer numeric strings (would crash BigInt() downstream)", () => {
+  it("should return null on non-integer numeric strings (would crash BigInt() downstream)", () => {
+    // GIVEN
     // Schema-drift safety: malformed numerics → null, not a thrown sync.
     const make = (sui: unknown, pt: unknown): ExchangeRateAddrNode => ({
       dynamicField: {
         value: { __typename: "MoveValue", json: { sui_amount: sui, pool_token_amount: pt } },
       },
     });
+
+    // WHEN / THEN
     expect(parseExchangeRateNode(make("1.5", "1000"))).toBeNull();
     expect(parseExchangeRateNode(make("1000", "abc"))).toBeNull();
     expect(parseExchangeRateNode(make("-1", "1000"))).toBeNull();
@@ -903,7 +1052,8 @@ describe("parseExchangeRateNode", () => {
 // ----- BATCH_RATES_15 structural invariant --------------------------------
 
 describe("BATCH_RATES_15 structural invariant", () => {
-  test("alias count stays in lock-step with RATE_BATCH_CHUNK_SIZE", () => {
+  it("should keep alias count in lock-step with RATE_BATCH_CHUNK_SIZE", () => {
+    // GIVEN
     // Guards the comment-only contract in `queries.ts`: `fetchRateChunk`
     // builds a variable map of size RATE_BATCH_CHUNK_SIZE and the document
     // must have exactly that many `vN:` aliases or the server rejects the
@@ -912,11 +1062,15 @@ describe("BATCH_RATES_15 structural invariant", () => {
       kind?: string;
       selectionSet?: { selections: ReadonlyArray<{ kind: string; alias?: { value: string } }> };
     };
-    expect(op.kind).toBe("OperationDefinition");
+
+    // WHEN
     const aliases =
       op.selectionSet?.selections.filter(
         s => s.kind === "Field" && /^v\d+$/.test(s.alias?.value ?? ""),
       ).length ?? 0;
+
+    // THEN
+    expect(op.kind).toBe("OperationDefinition");
     expect(aliases).toBe(RATE_BATCH_CHUNK_SIZE);
   });
 });

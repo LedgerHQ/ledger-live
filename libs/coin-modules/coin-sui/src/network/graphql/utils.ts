@@ -1,11 +1,4 @@
-/**
- * Pure helpers backing the GraphQL pipelines:
- *   - JSON shape adapters (`MoveValue.json` → JSON-RPC parity shapes;
- *     snake_case → camelCase, numeric Move values stringified)
- *   - Drift guards / type predicates at the GraphQL→TS boundary
- *   - Pool exchange-rate math (per-stake reward, per-validator APY)
- *   - Sequence-number / cursor-expiry predicates
- */
+/** Pure helpers backing the GraphQL pipelines: shape adapters, drift guards, pool math, and predicates. */
 import { log } from "@ledgerhq/logs";
 import type { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/jsonRpc";
 import type { StakedSuiObjectsResult } from "./queries";

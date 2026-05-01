@@ -1,8 +1,6 @@
 /**
- * Typed `graphql` template tag bound to the SUI production schema. Use for
- * every hand-written document so fields, args, and results are checked at
- * compile time. Introspection lives at `./introspection.json`, typed mirror
- * at `./graphql-env.d.ts`; regenerate via the `graphql:codegen:fetch` script.
+ * Typed `graphql` template tag bound to the SUI production schema. Introspection
+ * lives at `./introspection.json` (mirrored at `./graphql-env.d.ts`); regenerate via codegen.
  */
 import { initGraphQLTada, type ResultOf, type VariablesOf } from "gql.tada";
 import type { introspection } from "./graphql-env";
