@@ -37,7 +37,7 @@ import {
 } from "@mysten/sui/jsonRpc";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
-import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
+import { normalizeSuiAddress, SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
 import coinConfig from "../config";
@@ -56,18 +56,26 @@ import {
   LATEST_CHECKPOINT_SEQUENCE,
   STAKED_SUI_OBJECTS_BY_OWNER,
   SUI_SYSTEM_STATE,
+  type StakedSuiObjectsResult,
 } from "./graphql/queries";
 import {
-  computeApy,
-  computeEstimatedReward,
-  type ExchangeRate,
+  assertSystemStateJson,
   fromSystemStateJson,
   groupStakedSuiByPool,
+  isStakedSuiJson,
+  type PoolRefs,
   poolRefsFromSystemState,
   shortenCoinType,
   type StakedSuiJson,
-  type SuiSystemStateInnerJson,
 } from "./graphql/mappers";
+import { computeApy, computeEstimatedReward, type ExchangeRate } from "./graphql/math";
+import {
+  APY_LOOKBACK_EPOCHS,
+  MAX_CURSOR_RETRIES,
+  RATE_BATCH_CHUNK_SIZE,
+  REQUEST_TIMEOUT_MS,
+  STAKES_PAGE_SIZE,
+} from "./graphql/constants";
 import { getCurrentSuiPreloadData } from "./preload-data";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
@@ -81,16 +89,10 @@ function inferNetworkFromUrl(url: string): string {
 }
 
 /**
- * Returns `true` when the GraphQL transport feature flag is set for the
- * given currency. The flag lives in `SuiConfig.features.graphql` (see
- * `../config.ts`) — a read-side discriminator that decides whether the
- * dual-path read functions (`getAllBalancesCached`, `getLastBlock`,
- * `getCheckpoint`, `getStakesRaw`, `getValidators`) talk to the
- * `SuiGraphQLClient` or fall through to the legacy `SuiJsonRpcClient`.
- *
- * Default is OFF: the flag must be explicitly enabled via the currency
- * config until the staged migration completes. Transaction execution
- * (dryRun + broadcast) is unaffected — it stays on JSON-RPC until PR 4.
+ * Read-side feature flag (`SuiConfig.features.graphql`). Routes the
+ * dual-path reads (`getAllBalancesCached`, `getLastBlock`,
+ * `getCheckpoint`, `getStakesRaw`, `getValidators`) through GraphQL
+ * when true; default OFF. Transaction execution stays on JSON-RPC.
  */
 export function isGraphQLEnabled(currencyId?: string): boolean {
   return coinConfig.getCoinConfig(currencyId).features?.graphql === true;
@@ -125,9 +127,22 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
       "X-Ledger-Client-Version": isCI ? "lld/2.124.0-dev" : version, // for integration cli tests
     };
   }
-  if (retry === 1) return fetch(url, options);
 
-  return fetch(url, options).catch(() => fetcher(url, options, retry - 1));
+  // Honour caller signal if any; otherwise install our own per-attempt
+  // deadline. Recursion passes `options` (not `opts`), so each retry
+  // gets a fresh controller.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const opts: RequestInit = {
+    ...(options ?? {}),
+    signal: options?.signal ?? controller.signal,
+  };
+  const finalize = (p: Promise<Response>): Promise<Response> =>
+    p.finally(() => clearTimeout(timer));
+
+  if (retry === 1) return finalize(fetch(url, opts));
+
+  return finalize(fetch(url, opts).catch(() => fetcher(url, options, retry - 1)));
 };
 
 /**
@@ -147,15 +162,10 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
 }
 
 /**
- * Connects to the Sui GraphQL endpoint. Mirrors {@link withApi} but instantiates
- * a {@link SuiGraphQLClient} so callers can run GraphQL documents (or use the
- * SDK-provided high-level methods like `listBalances`, `getTransaction`, etc.).
- *
- * Mysten will permanently shut down the JSON-RPC transport on 2026-07-31; this
- * wrapper is the migration target. While the migration is staged across
- * several PRs, both wrappers coexist and individual call sites dispatch on
- * {@link isGraphQLEnabled} (the per-currency feature flag) so the same code
- * works with either transport without changing `node.url`.
+ * GraphQL counterpart of {@link withApi}. Mysten sunsets JSON-RPC on
+ * 2026-07-31; both wrappers coexist and call sites dispatch via
+ * {@link isGraphQLEnabled} so the same code works with either transport
+ * without changing `node.url`.
  */
 export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
@@ -171,9 +181,206 @@ export async function withGraphQLApi<T>(
   const api = new SuiGraphQLClient({
     url,
     network,
-    fetch: fetcher as typeof fetch,
+    fetch: graphqlFetcher as typeof fetch,
   });
   return execute(api);
+}
+
+/**
+ * Toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage`
+ * (input/output nodes, depth) for tuning against complexity caps. Off
+ * by default (small server cost). Enable via `DEBUG_SUI_GRAPHQL`.
+ */
+function isGraphqlDebugEnabled(): boolean {
+  // Read at call time so test env tweaks take effect without a rebuild.
+  const v = (typeof process !== "undefined" && process.env?.DEBUG_SUI_GRAPHQL) || "";
+  return v !== "" && v !== "0" && v.toLowerCase() !== "false";
+}
+
+/**
+ * GraphQL wrapper over {@link fetcher}: optional `x-sui-rpc-show-usage`
+ * header (debug) plus always-on `x-sui-rpc-request-id` logging. Clones
+ * the body so the GraphQL `200 OK + errors[]` failure shape is detected
+ * without fighting the SDK's body reader.
+ *
+ * @internal Exported for the request-ID logging unit test only.
+ */
+export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Response> => {
+  const debug = isGraphqlDebugEnabled();
+  const opts: RequestInit | undefined = debug
+    ? {
+        ...(options ?? {}),
+        headers: {
+          ...(options?.headers ?? {}),
+          "x-sui-rpc-show-usage": "true",
+        },
+      }
+    : options;
+  return fetcher(url, opts).then(async res => {
+    const requestId = res.headers.get("x-sui-rpc-request-id");
+    if (!requestId) return res;
+
+    // HTTP failure: log and pass through. Body may not be JSON.
+    if (!res.ok) {
+      log("coin:sui", "(network/sdk): GraphQL response", {
+        url: String(url),
+        status: res.status,
+        requestId,
+      });
+      return res;
+    }
+
+    // 200 OK: parse, log any `errors[]`, stamp `__requestId` into the
+    // body, and re-emit a real Response. Synchronous from the SDK's POV
+    // — no microtask race between thrown error and request-ID log.
+    const text = await res.text();
+    let body: { errors?: { message?: string }[]; [k: string]: unknown };
+    try {
+      body = JSON.parse(text);
+    } catch {
+      return new Response(text, {
+        status: res.status,
+        statusText: res.statusText,
+        headers: res.headers,
+      });
+    }
+    if (body?.errors?.length) {
+      log("coin:sui", "(network/sdk): GraphQL response with errors", {
+        url: String(url),
+        status: res.status,
+        requestId,
+        errorCount: body.errors.length,
+        firstError: body.errors[0]?.message ?? "",
+      });
+    } else if (debug) {
+      log("coin:sui", "(network/sdk): GraphQL response", {
+        url: String(url),
+        status: res.status,
+        requestId,
+      });
+    }
+    body.__requestId = requestId;
+    return new Response(JSON.stringify(body), {
+      status: res.status,
+      statusText: res.statusText,
+      headers: res.headers,
+    });
+  });
+};
+
+/**
+ * Read-call dispatcher gated on `features.graphql`. NO silent fallback:
+ * GraphQL errors propagate by design — flip the flag via remote config
+ * to revert. A try/catch here would mask schema regressions during the
+ * 2026-07-31 sunset migration.
+ */
+export function withTransport<T>(
+  currencyId: string | undefined,
+  impls: {
+    jsonRpc: AsyncApiFunction<T>;
+    graphql: AsyncGraphQLApiFunction<T>;
+  },
+): Promise<T> {
+  return isGraphQLEnabled(currencyId)
+    ? withGraphQLApi(impls.graphql, currencyId)
+    : withApi(impls.jsonRpc, currencyId);
+}
+
+/**
+ * Envelope handler for `SuiGraphQLClient.query()`: throws on populated
+ * `errors[]` (joined) or missing `data`. Centralised so every caller
+ * emits all messages — pairs with the request-ID stamping above for
+ * client↔server trace correlation.
+ */
+function unwrapGraphQL<T>(
+  label: string,
+  res: {
+    data?: T | null;
+    errors?: readonly { message: string }[] | null;
+    /**
+     * Stamped by {@link graphqlFetcher} when `x-sui-rpc-request-id` is
+     * present; included in thrown errors for support-trace correlation.
+     */
+    __requestId?: string;
+  },
+): T {
+  const reqId = res.__requestId ? ` [reqId=${res.__requestId}]` : "";
+  if (res.errors?.length) {
+    const all = res.errors.map(e => e.message).join("; ");
+    throw new Error(`GraphQL ${label} failed${reqId}: ${all}`);
+  }
+  if (res.data == null) {
+    throw new Error(`GraphQL ${label} returned no data${reqId}`);
+  }
+  return res.data;
+}
+
+/**
+ * Heuristic substring match for the cursor-outside-retention-window
+ * error (server wording is uncontrolled; permissive is safe — false
+ * positive only costs one restart-from-page-1 retry).
+ * https://docs.sui.io/develop/accessing-data/graphql/query-with-graphql
+ */
+function isCursorExpiredError(e: unknown): boolean {
+  if (!(e instanceof Error)) return false;
+  return /outside (?:the )?available range/i.test(e.message);
+}
+
+type CursorPage<T> = {
+  items: ReadonlyArray<T>;
+  endCursor: string | null;
+  hasNextPage: boolean;
+};
+
+/**
+ * Forward pagination with single drop-and-restart on cursor expiry.
+ * `seed` lets a caller hand in a first page already fetched in parallel
+ * (e.g. with system state); the seed is dropped on retry — it expired
+ * with the cursor. Caller validates items AFTER this returns so retry
+ * doesn't redo validation for pages it's about to discard.
+ */
+async function paginateWithCursorRecovery<T>(config: {
+  source: string;
+  fetchPage: (cursor: string | null) => Promise<CursorPage<T>>;
+  /** Pre-fetched first page. `undefined` allowed (exactOptionalPropertyTypes). */
+  seed?: CursorPage<T> | undefined;
+  maxRetries?: number | undefined;
+}): Promise<{ items: T[]; retries: number }> {
+  const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
+  let totalRetries = 0;
+  let useSeed = config.seed != null;
+
+  while (true) {
+    const items: T[] = [];
+    let cursor: string | null = null;
+    let hasMore = true;
+    try {
+      while (hasMore) {
+        let page: CursorPage<T>;
+        if (useSeed && config.seed) {
+          page = config.seed;
+          useSeed = false;
+        } else {
+          page = await config.fetchPage(cursor);
+        }
+        items.push(...page.items);
+        cursor = page.endCursor;
+        hasMore = page.hasNextPage && cursor != null;
+      }
+      return { items, retries: totalRetries };
+    } catch (e) {
+      if (totalRetries < maxRetries && isCursorExpiredError(e)) {
+        totalRetries++;
+        log("warn", "sui-graphql:cursor-expired", {
+          source: config.source,
+          retry: totalRetries,
+        });
+        useSeed = false; // seed is captured at the original timestamp; also expired
+        continue; // outer-loop restart resets `items`, `cursor`, `hasMore`
+      }
+      throw e;
+    }
+  }
 }
 
 /**
@@ -210,58 +417,45 @@ export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpc
 }
 
 /**
- * Cached wrapper around `suix_getAllBalances` (JSON-RPC) /
- * `Address.balances` (GraphQL).
- *
- * Post SIP-58 the response includes `fundsInAddressBalance` for each coin type,
- * allowing callers to distinguish between coin-object balances and address-level
- * balances. The JSON-RPC `getAllBalances` endpoint returns "fake coin" objects
- * for backward compatibility so existing `getCoins` callers continue to work
- * transparently.
- *
- * On the GraphQL transport (production endpoint, post 2026-07-31 sunset of
- * JSON-RPC) the same data comes from `address.balances.nodes` where each
- * `Balance` carries the SIP-58 split natively as `addressBalance`. The
- * GraphQL path here paginates through `BalanceConnection` and remaps each
- * node into the JSON-RPC `CoinBalance` shape so all downstream consumers
- * (`getAccountBalances`, `hasGasCoinObjects`, …) remain transport-agnostic.
- *
- * Fields that exist on the JSON-RPC shape but have no GraphQL equivalent are
- * filled with neutral defaults — they are not read by any production caller
- * in this module (verified by grep): `coinObjectCount` (synthetic) and
- * `lockedBalance` (always empty on GraphQL today).
+ * Cached `suix_getAllBalances` / `Address.balances`. Post-SIP-58 surfaces
+ * `fundsInAddressBalance`; the GraphQL path paginates `BalanceConnection`
+ * and remaps each node into `CoinBalance`. JSON-RPC-only fields with no
+ * GraphQL equivalent (`coinObjectCount`, `lockedBalance`) are filled
+ * with neutral defaults — verified unused by callers.
  */
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string, currencyId?: string): Promise<CoinBalance[]> => {
-    if (isGraphQLEnabled(currencyId)) {
-      return withGraphQLApi(async api => {
-        const all: CoinBalance[] = [];
-        let cursor: string | null = null;
-        let hasNextPage = true;
-        while (hasNextPage) {
-          const res = await api.listBalances({ owner, cursor });
-          for (const b of res.balances) {
-            all.push({
-              // GraphQL returns the long padded coin type
-              // (`0x000…0002::sui::SUI`); JSON-RPC consumers throughout
-              // coin-sui compare against the short form
-              // (`DEFAULT_COIN_TYPE === "0x2::sui::SUI"`). Normalise here.
-              coinType: shortenCoinType(b.coinType),
-              coinObjectCount: 0,
-              totalBalance: b.balance,
-              lockedBalance: {},
-              fundsInAddressBalance: b.addressBalance,
-            });
-          }
-          hasNextPage = res.hasNextPage;
-          cursor = res.cursor;
-        }
-        return all;
-      }, currencyId);
-    }
-    return withApi(async api => api.getAllBalances({ owner }), currencyId);
-  },
-  (owner: string, currencyId?: string) => `${currencyId ?? "sui"}:${owner}`,
+  (owner: string, currencyId?: string): Promise<CoinBalance[]> =>
+    withTransport(currencyId, {
+      jsonRpc: api => api.getAllBalances({ owner }),
+      graphql: async api => {
+        // GraphQL's `SuiAddress!` requires the canonical 32-byte form;
+        // JSON-RPC was tolerant. Normalise once at the boundary.
+        const ownerAddr = normalizeSuiAddress(owner);
+        const { items } = await paginateWithCursorRecovery<CoinBalance>({
+          source: "balances",
+          fetchPage: async cursor => {
+            const res = await api.listBalances({ owner: ownerAddr, cursor });
+            return {
+              items: res.balances.map(b => ({
+                // long → short coin type; consumers compare against `DEFAULT_COIN_TYPE`.
+                coinType: shortenCoinType(b.coinType),
+                coinObjectCount: 0,
+                totalBalance: b.balance,
+                lockedBalance: {},
+                fundsInAddressBalance: b.addressBalance,
+              })),
+              endCursor: res.cursor,
+              hasNextPage: res.hasNextPage,
+            };
+          },
+        });
+        return items;
+      },
+    }),
+  // Key includes the transport so flipping the flag mid-rollout doesn't
+  // cross-pollinate cached entries between JSON-RPC and GraphQL.
+  (owner: string, currencyId?: string) =>
+    `${currencyId ?? "sui"}:${isGraphQLEnabled(currencyId) ? "g" : "j"}:${owner}`,
   minutes(1),
 );
 
@@ -568,139 +762,227 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
   transaction.transaction?.data?.gasData?.owner || undefined;
 
 /**
- * Fetch a user's delegated stakes, returning the JSON-RPC `DelegatedStake[]`
- * shape regardless of transport.
- *
- * JSON-RPC path: a single `suix_getStakes` call returns stakes already
- * grouped by validator/pool, with server-computed `estimatedReward`.
- *
- * GraphQL path: SUI's GraphQL has no first-class `getStakes` query (the
- * production schema does not expose `stakedSuis` on `Address` or any
- * dedicated stake type). We reconstruct the same shape from two queries:
- *   1. `Address.objects(filter:{type:"0x3::staking_pool::StakedSui"})` —
- *      every `StakedSui` Move object the user owns. The Move struct is
- *      delivered already-decoded as JSON via `MoveValue.json`.
- *   2. `epoch.systemState.json` — the active validator set, used to build
- *      a pool_id → validator_address map (and to read the current epoch
- *      for Active/Pending status).
- * The merge happens client-side in `groupStakedSuiByPool`.
- *
- * Active-stake `estimatedReward` is computed client-side using the pool
- * exchange-rate ratio at the stake's activation epoch vs. the current
- * epoch (the latter is read inline from system state). One extra
- * `dynamicField` query per Active stake — typically 1-3 for a wallet
- * user. Lookups failing for any one stake degrade gracefully to a
- * `"0"` reward rather than failing the whole call.
+ * `DelegatedStake[]` regardless of transport. JSON-RPC: one
+ * `suix_getStakes` with server-computed reward. GraphQL: reconstruct
+ * from `StakedSui` objects + `epoch.systemState`, merged client-side
+ * via `groupStakedSuiByPool`. Active-stake reward is the pool exchange
+ * rate at activation vs. now (1 extra dynamicField per Active stake,
+ * deduped); failures degrade to `"0"`.
  */
-export const getStakesRaw = async (
+export const getStakesRaw = (
   owner: string,
   currencyId?: string,
-): Promise<DelegatedStake[]> => {
-  if (isGraphQLEnabled(currencyId)) {
-    return withGraphQLApi(async api => {
-      // Run both queries in parallel — they're independent.
-      const [systemRes, stakesRes] = await Promise.all([
-        api.query({ query: SUI_SYSTEM_STATE }),
-        api.query({
-          query: STAKED_SUI_OBJECTS_BY_OWNER,
-          variables: { owner, first: 50, after: null },
-        }),
-      ]);
+): Promise<DelegatedStake[]> =>
+  withTransport(currencyId, {
+    jsonRpc: api => api.getStakes({ owner }),
+    graphql: async api => {
+      // Canonicalise once — GraphQL `SuiAddress!` rejects short forms.
+      const ownerAddr = normalizeSuiAddress(owner);
+      const sys = await fetchSystemStateAndStakesPage(api, ownerAddr);
+      const rawNodes = await paginateRemainingStakes(api, ownerAddr, sys.seedPage);
+      const { items, malformed } = validateStakedSuiNodes(rawNodes);
+      const plans = planActivationRateLookups(items, sys.currentEpoch, sys.poolRefs);
+      const rates = await fetchActivationRates(api, plans, sys.poolRefs, malformed);
+      const rewards = computeStakeRewards(plans.activeStakes, sys.poolRefs, rates);
+      return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
+    },
+  });
 
-      if (systemRes.errors?.length) {
-        throw new Error(`GraphQL SystemState failed: ${systemRes.errors[0].message}`);
-      }
-      if (stakesRes.errors?.length) {
-        throw new Error(`GraphQL StakedSuiObjects failed: ${stakesRes.errors[0].message}`);
-      }
+type StakeNode = NonNullable<
+  NonNullable<NonNullable<StakedSuiObjectsResult["address"]>["objects"]>["nodes"]
+>[number];
 
-      const epoch = systemRes.data?.epoch;
-      const stateJson = epoch?.systemState?.json as SuiSystemStateInnerJson | undefined;
-      if (!epoch || !stateJson) {
-        throw new Error("GraphQL SystemState returned no epoch payload");
-      }
-      const { poolToValidator } = fromSystemStateJson(stateJson);
-      const poolRefs = poolRefsFromSystemState(stateJson);
-      const currentEpoch = BigInt(epoch.epochId);
-
-      // Paginate through StakedSui objects. Page size 50 matches the
-      // server's default and our existing JSON-RPC chunking.
-      const items: StakedSuiJson[] = [];
-      let page = stakesRes.data?.address?.objects;
-      while (page) {
-        for (const node of page.nodes ?? []) {
-          const json = node.contents?.json as StakedSuiJson | undefined;
-          if (json) items.push(json);
-        }
-        if (!page.pageInfo.hasNextPage) break;
-        const next = await api.query({
-          query: STAKED_SUI_OBJECTS_BY_OWNER,
-          variables: { owner, first: 50, after: page.pageInfo.endCursor },
-        });
-        if (next.errors?.length) {
-          throw new Error(`GraphQL StakedSuiObjects (next) failed: ${next.errors[0].message}`);
-        }
-        page = next.data?.address?.objects;
-      }
-
-      // Plan one exchange-rate lookup per Active stake. De-duplicate by
-      // (table, epoch) so two stakes activated in the same epoch in the
-      // same pool share a single network round-trip.
-      type RatePlan = {
-        stakedSuiId: string;
-        principal: string | number;
-        poolId: string;
-        activationEpoch: string | number;
-      };
-      const activeStakes: RatePlan[] = items
-        .filter(it => BigInt(it.stake_activation_epoch) <= currentEpoch)
-        .map(it => ({
-          stakedSuiId: it.id,
-          principal: it.principal,
-          poolId: it.pool_id,
-          activationEpoch: it.stake_activation_epoch,
-        }));
-
-      const rateKey = (table: string, epoch: string | number) => `${table}@${epoch}`;
-      const wantedRates = new Map<string, { table: string; epoch: string | number }>();
-      for (const plan of activeStakes) {
-        const refs = poolRefs.get(plan.poolId);
-        if (!refs) continue; // orphan pool — no rate to fetch, reward stays "0"
-        wantedRates.set(rateKey(refs.exchangeRatesId, plan.activationEpoch), {
-          table: refs.exchangeRatesId,
-          epoch: plan.activationEpoch,
-        });
-      }
-
-      const rateResults = await Promise.allSettled(
-        Array.from(wantedRates.entries()).map(async ([k, { table, epoch }]) => {
-          const rate = await fetchExchangeRate(api, table, epoch);
-          return [k, rate] as const;
-        }),
-      );
-      const rates = new Map<string, ExchangeRate | null>();
-      for (const r of rateResults) {
-        if (r.status === "fulfilled") rates.set(r.value[0], r.value[1]);
-        // Rejected lookups silently fall through to a 0-reward stake.
-      }
-
-      const rewards = new Map<string, bigint>();
-      for (const plan of activeStakes) {
-        const refs = poolRefs.get(plan.poolId);
-        if (!refs) continue;
-        const activationRate = rates.get(rateKey(refs.exchangeRatesId, plan.activationEpoch));
-        if (!activationRate) continue;
-        rewards.set(
-          plan.stakedSuiId,
-          computeEstimatedReward(plan.principal, activationRate, refs.currentRate),
-        );
-      }
-
-      return groupStakedSuiByPool(items, epoch.epochId, poolToValidator, rewards);
-    }, currencyId);
-  }
-  return withApi(async api => api.getStakes({ owner }), currencyId);
+type RatePlan = {
+  stakedSuiId: string;
+  principal: string | number;
+  poolId: string;
+  activationEpoch: string | number;
 };
+
+type StakeRatePlans = {
+  activeStakes: RatePlan[];
+  /** Deduped (table, epoch) lookups; index aligns with `fetchActivationRates` output. */
+  wantedEntries: Array<{ key: string; table: string; epoch: string | number }>;
+};
+
+const rateKey = (table: string, epoch: string | number) => `${table}@${epoch}`;
+
+/**
+ * Parallel fetch of system state + first stakes page, with drift guard.
+ * Returns the seed page so the pagination helper can skip a round-trip
+ * on the happy path.
+ */
+async function fetchSystemStateAndStakesPage(
+  api: SuiGraphQLClient,
+  ownerAddr: string,
+): Promise<{
+  currentEpoch: bigint;
+  epochId: string | number;
+  poolToValidator: Map<string, string>;
+  poolRefs: Map<string, PoolRefs>;
+  seedPage: CursorPage<StakeNode> | undefined;
+}> {
+  const [systemRes, stakesRes] = await Promise.all([
+    api.query({ query: SUI_SYSTEM_STATE }),
+    api.query({
+      query: STAKED_SUI_OBJECTS_BY_OWNER,
+      variables: { owner: ownerAddr, first: STAKES_PAGE_SIZE, after: null },
+    }),
+  ]);
+  const systemData = unwrapGraphQL("SystemState", systemRes);
+  const stakesData = unwrapGraphQL("StakedSuiObjects", stakesRes);
+  const epoch = systemData.epoch;
+  if (!epoch || !epoch.systemState?.json) {
+    throw new Error("GraphQL SystemState returned no epoch payload");
+  }
+  // Drift guard at the GraphQL→TS boundary.
+  assertSystemStateJson(epoch.systemState.json);
+  const stateJson = epoch.systemState.json;
+  const { poolToValidator } = fromSystemStateJson(stateJson);
+  const poolRefs = poolRefsFromSystemState(stateJson);
+  const initialObjs = stakesData.address?.objects;
+  const seedPage: CursorPage<StakeNode> | undefined = initialObjs
+    ? {
+        items: initialObjs.nodes ?? [],
+        endCursor: initialObjs.pageInfo.endCursor ?? null,
+        hasNextPage: initialObjs.pageInfo.hasNextPage,
+      }
+    : undefined;
+  return {
+    currentEpoch: BigInt(epoch.epochId),
+    epochId: epoch.epochId,
+    poolToValidator,
+    poolRefs,
+    seedPage,
+  };
+}
+
+/** Page size 50 matches server default + JSON-RPC chunking. */
+async function paginateRemainingStakes(
+  api: SuiGraphQLClient,
+  ownerAddr: string,
+  seed: CursorPage<StakeNode> | undefined,
+): Promise<StakeNode[]> {
+  const { items } = await paginateWithCursorRecovery<StakeNode>({
+    source: "stakes",
+    seed,
+    fetchPage: async cursor => {
+      const res = await api.query({
+        query: STAKED_SUI_OBJECTS_BY_OWNER,
+        variables: { owner: ownerAddr, first: STAKES_PAGE_SIZE, after: cursor },
+      });
+      const objs = unwrapGraphQL("StakedSuiObjects (page)", res).address?.objects;
+      return {
+        items: objs?.nodes ?? [],
+        endCursor: objs?.pageInfo.endCursor ?? null,
+        hasNextPage: objs?.pageInfo.hasNextPage ?? false,
+      };
+    },
+  });
+  return items;
+}
+
+/** Split nodes into validated `StakedSuiJson` and a malformed-count. */
+function validateStakedSuiNodes(rawNodes: ReadonlyArray<StakeNode>): {
+  items: StakedSuiJson[];
+  malformed: number;
+} {
+  const items: StakedSuiJson[] = [];
+  let malformed = 0;
+  for (const node of rawNodes) {
+    const json = node.contents?.json;
+    if (isStakedSuiJson(json)) items.push(json);
+    else if (json != null) malformed++;
+  }
+  return { items, malformed };
+}
+
+/**
+ * Derive (a) the per-stake activation-rate plan and (b) deduped
+ * (table, epoch) lookups. Orphan pools (not in the active set) are
+ * excluded — their rewards stay `"0"`.
+ */
+function planActivationRateLookups(
+  items: ReadonlyArray<StakedSuiJson>,
+  currentEpoch: bigint,
+  poolRefs: Map<string, PoolRefs>,
+): StakeRatePlans {
+  const activeStakes: RatePlan[] = items
+    .filter(it => BigInt(it.stake_activation_epoch) <= currentEpoch)
+    .map(it => ({
+      stakedSuiId: it.id,
+      principal: it.principal,
+      poolId: it.pool_id,
+      activationEpoch: it.stake_activation_epoch,
+    }));
+  const wanted = new Map<string, { key: string; table: string; epoch: string | number }>();
+  for (const plan of activeStakes) {
+    const refs = poolRefs.get(plan.poolId);
+    if (!refs) continue;
+    const key = rateKey(refs.exchangeRatesId, plan.activationEpoch);
+    if (!wanted.has(key)) {
+      wanted.set(key, { key, table: refs.exchangeRatesId, epoch: plan.activationEpoch });
+    }
+  }
+  return { activeStakes, wantedEntries: Array.from(wanted.values()) };
+}
+
+/**
+ * Batched activation-rate fetch. Per-chunk failures and missing rates
+ * surface via the `sui-graphql:rate-fetch-degraded` telemetry channel
+ * so a Mysten dynamic-field grammar change is visible before it shows
+ * up as support tickets.
+ */
+async function fetchActivationRates(
+  api: SuiGraphQLClient,
+  plans: StakeRatePlans,
+  poolRefs: Map<string, PoolRefs>,
+  malformed: number,
+): Promise<Map<string, ExchangeRate | null>> {
+  void poolRefs; // reserved for future per-pool diagnostics
+  const { rates: rateArr, chunksFailed } = await fetchExchangeRatesBatched(
+    api,
+    plans.wantedEntries.map(({ table, epoch }) => ({ exchangeRatesId: table, epoch })),
+    RATE_BATCH_CHUNK_SIZE,
+  );
+  const rates = new Map<string, ExchangeRate | null>();
+  let missing = 0;
+  plans.wantedEntries.forEach(({ key }, idx) => {
+    const rate = rateArr[idx] ?? null;
+    rates.set(key, rate);
+    if (rate === null) missing++;
+  });
+  if (chunksFailed > 0 || missing > 0 || malformed > 0) {
+    log("warn", "sui-graphql:rate-fetch-degraded", {
+      source: "stakes-reward",
+      chunksFailed,
+      missing,
+      malformed,
+      total: plans.wantedEntries.length,
+    });
+  }
+  return rates;
+}
+
+/** Apply the pool-token model to each Active stake; orphans skip silently. */
+function computeStakeRewards(
+  activeStakes: ReadonlyArray<RatePlan>,
+  poolRefs: Map<string, PoolRefs>,
+  rates: Map<string, ExchangeRate | null>,
+): Map<string, bigint> {
+  const rewards = new Map<string, bigint>();
+  for (const plan of activeStakes) {
+    const refs = poolRefs.get(plan.poolId);
+    if (!refs) continue;
+    const activationRate = rates.get(rateKey(refs.exchangeRatesId, plan.activationEpoch));
+    if (!activationRate) continue;
+    rewards.set(
+      plan.stakedSuiId,
+      computeEstimatedReward(plan.principal, activationRate, refs.currentRate),
+    );
+  }
+  return rewards;
+}
 
 /**
  * Extract operation coin type from transaction
@@ -1009,58 +1291,49 @@ export function toSuiAsset(coinType: string): AssetInfo {
 
 export const getLastBlock = (
   currencyId?: string,
-): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> => {
-  if (isGraphQLEnabled(currencyId)) {
-    return withGraphQLApi(async api => {
+): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> =>
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      const checkpoint = await api.getLatestCheckpointSequenceNumber();
+      const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
+      return { digest, sequenceNumber, timestampMs };
+    },
+    graphql: async api => {
       const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
-      if (res.errors?.length) {
-        throw new Error(`GraphQL LatestCheckpointSequence failed: ${res.errors[0].message}`);
-      }
-      const seq = res.data?.checkpoint?.sequenceNumber;
+      const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
       if (seq == null) {
         throw new Error("GraphQL LatestCheckpointSequence returned no checkpoint");
       }
       return fetchCheckpointFromGraphQL(api, String(seq));
-    }, currencyId);
-  }
-  return withApi(async api => {
-    const checkpoint = await api.getLatestCheckpointSequenceNumber();
-    const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
-    return { digest, sequenceNumber, timestampMs };
-  }, currencyId);
-};
+    },
+  });
+
+/** Sequence numbers fit in UInt53 (≤16 digits); digests are base58, ~44 chars. */
+function isSequenceNumber(id: string): boolean {
+  return id.length > 0 && id.length <= 16 && /^\d+$/.test(id);
+}
 
 /**
- * Fetch a checkpoint by sequence number from the GraphQL endpoint and remap
- * to the JSON-RPC `Checkpoint` shape (subset). Internal helper shared by
- * {@link getCheckpoint} and {@link getLastBlock} on the GraphQL transport.
- *
- * GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts a UInt53; digest
- * lookups are not supported. Callers must guard against digest IDs before
- * invoking this — see the digest check in {@link getCheckpoint}.
+ * GraphQL checkpoint by sequence number, remapped to the JSON-RPC
+ * `Checkpoint` subset. UInt53 only — callers must guard against digest
+ * IDs (see {@link getCheckpoint}).
  */
 async function fetchCheckpointFromGraphQL(
   api: SuiGraphQLClient,
   sequenceNumber: string | number,
 ): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> {
-  // The schema's `UInt53` is wired as a JSON number on both directions —
-  // the server rejects quoted-string inputs (`Expected input type
-  // "UInt53"`). Coerce here so callers can pass either form.
+  // UInt53 is a JSON number both directions; server rejects quoted strings.
   const seq =
     typeof sequenceNumber === "number" ? sequenceNumber : Number(sequenceNumber);
   const res = await api.query({
     query: CHECKPOINT_BY_SEQUENCE,
     variables: { sequenceNumber: seq },
   });
-  if (res.errors?.length) {
-    throw new Error(`GraphQL CheckpointBySequence failed: ${res.errors[0].message}`);
-  }
-  const cp = res.data?.checkpoint;
+  const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
   if (!cp) {
     throw new Error(`GraphQL checkpoint not found: ${sequenceNumber}`);
   }
-  // GraphQL `timestamp` is RFC3339 (DateTime); JSON-RPC `timestampMs` is
-  // milliseconds-since-epoch as a string. Normalise.
+  // RFC3339 → epoch-ms string (JSON-RPC convention).
   const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
   return {
     digest: cp.digest ?? "",
@@ -1069,43 +1342,100 @@ async function fetchCheckpointFromGraphQL(
   };
 }
 
-/**
- * Lookback window (in epochs) used when computing per-validator APY from
- * pool exchange-rate growth. SUI epochs are ~24h, so 30 epochs ≈ 30 days
- * — this matches the window Mysten's JSON-RPC `getValidatorsApy`
- * implementation uses internally.
- */
-const APY_LOOKBACK_EPOCHS = 30;
+
+/** Shape returned by `address.dynamicField(...).value` — single + batched lookups. */
+type ExchangeRateAddrNode = {
+  dynamicField?: {
+    value?: { __typename?: string; json?: unknown } | null;
+  } | null;
+} | null;
+
+/** Project an `address.dynamicField` payload to an `ExchangeRate` or null. */
+function parseExchangeRateNode(node: ExchangeRateAddrNode): ExchangeRate | null {
+  if (!node) return null;
+  const value = node.dynamicField?.value;
+  if (!value || value.__typename !== "MoveValue") return null;
+  const json = value.json as { sui_amount?: string; pool_token_amount?: string } | undefined;
+  if (!json?.sui_amount || !json?.pool_token_amount) return null;
+  return { sui_amount: json.sui_amount, pool_token_amount: json.pool_token_amount };
+}
 
 /**
- * Fetch a single entry from a pool's `exchange_rates` Move Table.
- * Returns null when the table has no entry at that epoch (e.g. the pool
- * is younger than the requested epoch). Errors propagate so the caller
- * can decide whether to abort or degrade — `getStakesRaw` and
- * `getValidators` use Promise.allSettled to keep one bad pool from
- * tanking a whole sync.
+ * One entry from a pool's `exchange_rates` Move Table. `null` when the
+ * table has no entry at that epoch; errors propagate so the caller can
+ * decide whether to abort or degrade.
  */
 async function fetchExchangeRate(
   api: SuiGraphQLClient,
   exchangeRatesId: string,
   epoch: number | string,
 ): Promise<ExchangeRate | null> {
-  const literal = `${epoch}u64`;
   const res = await api.query({
     query: EXCHANGE_RATE_AT_EPOCH,
-    variables: { table: exchangeRatesId, literal },
+    variables: { table: exchangeRatesId, literal: `${epoch}u64` },
   });
-  if (res.errors?.length) {
-    throw new Error(`GraphQL ExchangeRate(${epoch}) failed: ${res.errors[0].message}`);
+  return parseExchangeRateNode(unwrapGraphQL(`ExchangeRate(${epoch})`, res).address ?? null);
+}
+
+/**
+ * Batched variant of {@link fetchExchangeRate}: collapses N lookups
+ * into ⌈N/chunkSize⌉ HTTP round-trips. Hand-built (gql.tada validates
+ * static docs only), but every input rides as a GraphQL variable —
+ * no injection surface. Output is 1:1 with `plans`; `null` means the
+ * table had no entry at that epoch. Per-chunk transport failures
+ * degrade their entries to `null` and surface via `chunksFailed`.
+ */
+async function fetchExchangeRatesBatched(
+  api: SuiGraphQLClient,
+  plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
+  chunkSize: number,
+): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number }> {
+  if (plans.length === 0) return { rates: [], chunksFailed: 0 };
+  const safeChunk = Math.max(1, Math.floor(chunkSize));
+  const chunks: Array<typeof plans> = [];
+  for (let i = 0; i < plans.length; i += safeChunk) {
+    chunks.push(plans.slice(i, i + safeChunk));
   }
-  const value = res.data?.address?.dynamicField?.value;
-  if (!value || value.__typename !== "MoveValue") return null;
-  const json = value.json as { sui_amount?: string; pool_token_amount?: string } | undefined;
-  if (!json?.sui_amount || !json?.pool_token_amount) return null;
-  return {
-    sui_amount: json.sui_amount,
-    pool_token_amount: json.pool_token_amount,
-  };
+  // `allSettled` so one chunk's failure doesn't tank the rest — failed
+  // chunks degrade to `null`s; caller surfaces `chunksFailed`.
+  const settled = await Promise.allSettled(chunks.map(chunk => fetchOneRateChunk(api, chunk)));
+  const rates: Array<ExchangeRate | null> = [];
+  let chunksFailed = 0;
+  settled.forEach((res, idx) => {
+    if (res.status === "fulfilled") {
+      rates.push(...res.value);
+    } else {
+      // Pad with `null`s so output stays 1:1 with input order.
+      chunksFailed++;
+      for (let i = 0; i < chunks[idx].length; i++) rates.push(null);
+    }
+  });
+  return { rates, chunksFailed };
+}
+
+/** One aliased-batch document; caller chunks (see {@link fetchExchangeRatesBatched}). */
+async function fetchOneRateChunk(
+  api: SuiGraphQLClient,
+  plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
+): Promise<Array<ExchangeRate | null>> {
+  const variableDecls: string[] = [];
+  const aliases: string[] = [];
+  const variables: Record<string, string> = {};
+  plans.forEach((p, i) => {
+    variableDecls.push(`$t${i}: SuiAddress!, $l${i}: String!`);
+    aliases.push(
+      `v${i}: address(address: $t${i}) { dynamicField(name: { literal: $l${i} }) { value { __typename ... on MoveValue { json } } } }`,
+    );
+    variables[`t${i}`] = p.exchangeRatesId;
+    variables[`l${i}`] = `${p.epoch}u64`;
+  });
+  const query = `query BatchExchangeRates(${variableDecls.join(", ")}) {\n  ${aliases.join("\n  ")}\n}`;
+  const res = await api.query<Record<string, ExchangeRateAddrNode>, Record<string, string>>({
+    query,
+    variables,
+  });
+  const data = unwrapGraphQL("BatchExchangeRates", res);
+  return plans.map((_, i) => parseExchangeRateNode(data[`v${i}`] ?? null));
 }
 
 /**
@@ -1416,44 +1746,43 @@ export const getListOperations = async (
   }, currencyId);
 
 /**
- * Get a checkpoint (a.k.a, a block) metadata.
+ * Subset of `Checkpoint` populated by both transports. Narrowed at the
+ * public surface so flipping the flag can't silently null out a wider
+ * field — callers needing more should route through {@link withApi}.
+ */
+export type MinimalCheckpoint = Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">;
+
+/**
+ * Get a checkpoint (a.k.a, a block) metadata. JSON-RPC accepts either a
+ * sequence number or a digest; GraphQL only accepts a sequence number
+ * — digest IDs throw. Returns the narrow {@link MinimalCheckpoint}.
  *
  * @param id the checkpoint digest or sequence number (as a string)
- *
- * Transport behaviour:
- *   - JSON-RPC: accepts either a sequence number or a 32-byte digest.
- *   - GraphQL: only accepts a sequence number (numeric string). The
- *     production GraphQL schema's `Query.checkpoint(sequenceNumber:)` has
- *     no digest variant; callers that pass a digest receive an explicit
- *     error so the limitation surfaces loudly rather than silently
- *     producing wrong data. Digest-by-checkpoint lookups are deferred to
- *     a follow-up PR (likely via `multiGetTransactions` + checkpoint
- *     traversal once tx history is on GraphQL too).
- *
- * On the GraphQL path the returned object only fills `digest`,
- * `sequenceNumber`, and `timestampMs` — the only fields read by the four
- * downstream callers in this module ({@link getLastBlock}, the alpaca
- * operations path, and the bridge sync). Callers that read additional
- * fields will need to be migrated as part of a later PR.
  */
-export const getCheckpoint = async (id: string, currencyId?: string): Promise<Checkpoint> => {
-  if (isGraphQLEnabled(currencyId)) {
-    if (!/^\d+$/.test(id)) {
-      throw new Error(
-        `getCheckpoint(${id}): digest-based lookups are not supported on the GraphQL transport. ` +
-          "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
-      );
-    }
-    return withGraphQLApi(async api => {
-      const partial = await fetchCheckpointFromGraphQL(api, id);
-      // Cast back to JSON-RPC `Checkpoint` so the public signature is
-      // unchanged. Callers that read fields outside the migrated subset
-      // (e.g. `transactions`, `epoch`, `validatorSignature`) will hit
-      // `undefined` — see the JSDoc above.
-      return partial as unknown as Checkpoint;
-    }, currencyId);
+export const getCheckpoint = async (
+  id: string,
+  currencyId?: string,
+): Promise<MinimalCheckpoint> => {
+  // Digest guard for GraphQL: sequence numbers fit in 16 digits;
+  // anything else is a digest, which `Query.checkpoint(sequenceNumber:)`
+  // can't handle. Throw rather than mis-route.
+  if (isGraphQLEnabled(currencyId) && !isSequenceNumber(id)) {
+    throw new Error(
+      `getCheckpoint(${id}): digest-based lookups are not supported on the GraphQL transport. ` +
+        "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
+    );
   }
-  return withApi(async api => api.getCheckpoint({ id }), currencyId);
+  return withTransport(currencyId, {
+    jsonRpc: async api => {
+      const cp = await api.getCheckpoint({ id });
+      return {
+        digest: cp.digest,
+        sequenceNumber: cp.sequenceNumber,
+        timestampMs: cp.timestampMs,
+      };
+    },
+    graphql: api => fetchCheckpointFromGraphQL(api, id),
+  });
 };
 
 /**
@@ -1969,41 +2298,39 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
 };
 
 /**
- * Fetch the active validator set with APY annotated.
- *
- * JSON-RPC path: two parallel calls (`getLatestSuiSystemState` for the
- * validator metadata, `getValidatorsApy` for per-validator APY) merged by
- * `suiAddress`.
- *
- * GraphQL path: a single `epoch.systemState.json` query returns the entire
- * `SuiSystemStateInnerV2` Move struct with all 127+ active validators
- * inline. APY is *not* directly exposed on the GraphQL `Validator` type —
- * properly computing it requires walking each pool's `exchange_rates`
- * Move Table (one dynamic-field lookup per validator, ~127 round-trips).
- *
- * APY is computed client-side from each pool's exchange-rate growth over
- * a {@link APY_LOOKBACK_EPOCHS}-epoch window — the same formula Mysten's
- * JSON-RPC `getValidatorsApy` uses internally. Per validator we fetch
- * one historical exchange-rate entry (the current rate is read inline
- * from system state), so a refresh costs ~127 parallel `dynamicField`
- * queries on mainnet. `getValidators` is loaded once at preload time
- * and cached in memory by `bridge/preload.ts`, so this is amortised.
- *
- * Pools younger than `APY_LOOKBACK_EPOCHS` epochs use their activation
- * epoch as the past datapoint. Failed lookups degrade to `apy = 0`.
+ * Active validator set with APY. JSON-RPC: two parallel calls merged by
+ * `suiAddress`. GraphQL: one `epoch.systemState.json` plus a batched
+ * aliased exchange-rate query (one round-trip for all ~127 validators)
+ * — APY is computed client-side from pool exchange-rate growth over
+ * {@link APY_LOOKBACK_EPOCHS} (mirroring Mysten's formula). Pools
+ * younger than the window clamp to their activation epoch; per-rate
+ * nulls degrade to apy=0 and surface via telemetry.
  */
-export const getValidators = (currencyId?: string): Promise<SuiValidator[]> => {
-  if (isGraphQLEnabled(currencyId)) {
-    return withGraphQLApi(async api => {
+export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      const [{ activeValidators }, { apys }] = await Promise.all([
+        api.getLatestSuiSystemState(),
+        api.getValidatorsApy(),
+      ]);
+      const hash = apys.reduce(
+        (acc, item) => {
+          acc[item.address] = item.apy;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+      return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
+    },
+    graphql: async api => {
       const res = await api.query({ query: SUI_SYSTEM_STATE });
-      if (res.errors?.length) {
-        throw new Error(`GraphQL SystemState failed: ${res.errors[0].message}`);
-      }
-      const epoch = res.data?.epoch;
-      const stateJson = epoch?.systemState?.json as SuiSystemStateInnerJson | undefined;
-      if (!epoch || !stateJson) {
+      const epoch = unwrapGraphQL("SystemState", res).epoch;
+      if (!epoch || !epoch.systemState?.json) {
         throw new Error("GraphQL SystemState returned no payload");
       }
+      // Schema-drift guard — see `getStakesRaw` for the rationale.
+      assertSystemStateJson(epoch.systemState.json);
+      const stateJson = epoch.systemState.json;
       const { activeValidators } = fromSystemStateJson(stateJson);
       const poolRefs = poolRefsFromSystemState(stateJson);
       const currentEpoch = Number(epoch.epochId);
@@ -2019,9 +2346,7 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> => {
       for (const v of activeValidators) {
         const refs = poolRefs.get(v.stakingPoolId);
         if (!refs) continue;
-        // Use a 30-epoch lookback; clamp to the pool's activation epoch
-        // for pools younger than the window so we still get a non-trivial
-        // growth ratio (otherwise the past rate equals current and apy=0).
+        // 30-epoch lookback; clamp to activation epoch for young pools.
         const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
         const pastEpoch = Math.max(desired, refs.activationEpoch);
         plans.push({
@@ -2032,40 +2357,35 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> => {
         });
       }
 
-      const rateResults = await Promise.allSettled(
-        plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.pastEpoch)),
+      // Per-chunk failures and missing rates both degrade to apy=0.
+      const { rates, chunksFailed } = await fetchExchangeRatesBatched(
+        api,
+        plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
+        RATE_BATCH_CHUNK_SIZE,
       );
 
       const apyByAddress = new Map<string, number>();
+      let rateMissing = 0;
       plans.forEach((p, idx) => {
-        const r = rateResults[idx];
-        if (r.status !== "fulfilled" || !r.value) return; // degrade to 0
+        const rate = rates[idx];
+        if (rate == null) {
+          rateMissing++;
+          return; // degrade to 0
+        }
         const epochsBetween = currentEpoch - p.pastEpoch;
-        apyByAddress.set(
-          p.suiAddress,
-          computeApy(p.currentRate, r.value, epochsBetween),
-        );
+        apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
       });
+      // Surface aggregate degradation; alert if many validators drop
+      // to apy=0 (typical cause: dynamicField schema change).
+      if (rateMissing > 0 || chunksFailed > 0) {
+        log("warn", "sui-graphql:rate-fetch-degraded", {
+          source: "validator-apy",
+          missing: rateMissing,
+          chunksFailed,
+          total: plans.length,
+        });
+      }
 
-      return activeValidators.map(v => ({
-        ...v,
-        apy: apyByAddress.get(v.suiAddress) ?? 0,
-      }));
-    }, currencyId);
-  }
-  return withApi(async api => {
-    const [{ activeValidators }, { apys }] = await Promise.all([
-      api.getLatestSuiSystemState(),
-      api.getValidatorsApy(),
-    ]);
-    const hash = apys.reduce(
-      (acc, item) => {
-        acc[item.address] = item.apy;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
-    return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
-  }, currencyId);
-};
+      return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
+    },
+  });

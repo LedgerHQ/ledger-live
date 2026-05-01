@@ -143,6 +143,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "graphql:codegen": "node scripts/generate-graphql-types.mjs",
     "graphql:codegen:fetch": "node scripts/generate-graphql-types.mjs --fetch",
+    "graphql:codegen:check": "node scripts/generate-graphql-types.mjs --check",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",

@@ -1,0 +1,40 @@
+// Constants for the GraphQL transport and SUI network tests.
+// To refresh server-side limits, query the live endpoint with:
+//   curl -s -X POST -H 'Content-Type: application/json' \
+//     https://graphql.mainnet.sui.io/graphql \
+//     -d '{"query":"{ serviceConfig { maxQueryPayloadSize maxQueryNodes maxOutputNodes } }"}'
+
+/** Public mainnet GraphQL endpoint — default for the transport, shared by tests. */
+export const GRAPHQL_MAINNET_URL = "https://graphql.mainnet.sui.io/graphql";
+
+/**
+ * Synthetic address that never holds balances or stakes. Exercises
+ * the empty / zero-result paths where REST and GraphQL pagination
+ * semantics tend to diverge silently.
+ */
+export const ACCOUNT_EMPTY = "0xdead00000000000000000000000000000000000000000000000000000000beef";
+
+/** Per-attempt deadline. 30 s × 3 retries ≈ 90 s worst case for the ~50 KB system-state payload. */
+export const REQUEST_TIMEOUT_MS = 30_000;
+
+/**
+ * One retry suffices: the only meaningful recovery is restart-from-
+ * page-1, and a second expiry means the call can't make progress.
+ */
+export const MAX_CURSOR_RETRIES = 1;
+
+/**
+ * APY lookback in epochs. SUI epochs ~24 h → 30 ≈ 30 days, matching
+ * Mysten's `getValidatorsApy`. Diverging would drift APY between
+ * transports.
+ */
+export const APY_LOOKBACK_EPOCHS = 30;
+
+/** Page size for `STAKED_SUI_OBJECTS_BY_OWNER` — matches server default. */
+export const STAKES_PAGE_SIZE = 50;
+
+/**
+ * Per-batch chunk for `fetchExchangeRatesBatched`. Bound by SUI's
+ * undocumented limits (~5000 B payload); each alias ≈ 250 B → 15 ≈ 3.5 KB.
+ */
+export const RATE_BATCH_CHUNK_SIZE = 15;

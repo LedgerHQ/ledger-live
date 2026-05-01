@@ -8,6 +8,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
@@ -115,8 +116,8 @@ describe("getAccountShape", () => {
     // GIVEN — all funds are in address balance, coinObjectCount = 0
     const initialAccount = undefined;
     const accountBalance = createAccountBalance({
-      balance: new BigNumber("5000000000"),
-      fundsInAddressBalance: new BigNumber("5000000000"),
+      balance: new BigNumber(5 * ONE_SUI),
+      fundsInAddressBalance: new BigNumber(5 * ONE_SUI),
     });
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
     mockGetOperations.mockResolvedValue([]);
@@ -136,16 +137,16 @@ describe("getAccountShape", () => {
     );
 
     // THEN — balance and spendableBalance reflect the full amount
-    expect(shape.balance).toEqual(new BigNumber("5000000000"));
-    expect(shape.spendableBalance).toEqual(new BigNumber("5000000000"));
+    expect(shape.balance).toEqual(new BigNumber(5 * ONE_SUI));
+    expect(shape.spendableBalance).toEqual(new BigNumber(5 * ONE_SUI));
   });
 
   it("handles mixed balance (coin objects + address balance)", async () => {
     // GIVEN — 6 SUI total: 4 in address balance, 2 in coin objects
     const initialAccount = undefined;
     const accountBalance = createAccountBalance({
-      balance: new BigNumber("6000000000"),
-      fundsInAddressBalance: new BigNumber("4000000000"),
+      balance: new BigNumber(6 * ONE_SUI),
+      fundsInAddressBalance: new BigNumber(4 * ONE_SUI),
     });
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
     mockGetOperations.mockResolvedValue([]);
@@ -165,8 +166,8 @@ describe("getAccountShape", () => {
     );
 
     // THEN — totalBalance is the aggregated amount
-    expect(shape.balance).toEqual(new BigNumber("6000000000"));
-    expect(shape.spendableBalance).toEqual(new BigNumber("6000000000"));
+    expect(shape.balance).toEqual(new BigNumber(6 * ONE_SUI));
+    expect(shape.spendableBalance).toEqual(new BigNumber(6 * ONE_SUI));
   });
 
   it("returns an AccountShapeInfo with operations from initialAccount", async () => {
@@ -422,7 +423,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: String(ONE_SUI),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -434,7 +435,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake2",
               status: "Pending" as const,
-              principal: "2000000000",
+              principal: String(2 * ONE_SUI),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "100",
             },
@@ -474,14 +475,14 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: String(ONE_SUI),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
             {
               stakedSuiId: "0xstake2",
               status: "Active" as const,
-              principal: "1500000000",
+              principal: String(1.5 * ONE_SUI),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -520,21 +521,21 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xactive",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: String(ONE_SUI),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
             {
               stakedSuiId: "0xpending",
               status: "Pending" as const,
-              principal: "2000000000",
+              principal: String(2 * ONE_SUI),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "100",
             },
             {
               stakedSuiId: "0xunstaked",
               status: "Unstaked" as const,
-              principal: "3000000000",
+              principal: String(3 * ONE_SUI),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "0",
             },
@@ -600,7 +601,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xexistingStake",
               status: "Active" as const,
-              principal: "500000000",
+              principal: String(0.5 * ONE_SUI),
               stakeActiveEpoch: "90",
               stakeRequestEpoch: "85",
             },
@@ -617,7 +618,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xnewStake",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: String(ONE_SUI),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },

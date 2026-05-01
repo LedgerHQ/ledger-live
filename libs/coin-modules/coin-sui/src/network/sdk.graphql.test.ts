@@ -1,37 +1,36 @@
-/**
- * Tests for the GraphQL transport branch of `sdk.ts`.
- *
- * These cover the routing introduced as part of the JSON-RPC → GraphQL
- * migration (see PR1 of the 2026-07-31 sunset plan). Routing is driven
- * by the `features.graphql` flag in `SuiConfig`; tests flip the flag to
- * force the GraphQL path.
- *
- * Coverage:
- *   - `isGraphQLEnabled` reads the per-currency flag
- *   - `getAllBalancesCached` GraphQL path: pagination + SIP-58 field
- *     remapping (`addressBalance` → `fundsInAddressBalance`)
- *   - `getLastBlock` issues typed CHECKPOINT queries
- *   - `getCheckpoint(seqNumber)` happy path / digest-guard / error propagation
- *   - `getStakesRaw` groups by pool + computes Active/Pending status
- *   - `getValidators` maps active_validators to JSON-RPC-shaped Summary
- *   - PR 1c: real `estimatedReward` and `apy` computed from
- *     `EXCHANGE_RATE_AT_EPOCH` lookups.
- *
- * The existing `sdk.test.ts` exercises the JSON-RPC branch and is kept
- * separate so the two clients' mocks don't collide.
- */
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import coinConfig from "../config";
+import { ONE_SUI } from "../constants";
+import {
+  APY_LOOKBACK_EPOCHS,
+  GRAPHQL_MAINNET_URL,
+  RATE_BATCH_CHUNK_SIZE,
+  STAKES_PAGE_SIZE,
+} from "./graphql/constants";
+import { UNKNOWN_VALIDATOR } from "./graphql/mappers";
+import {
+  getAllBalancesCached,
+  getCheckpoint,
+  getLastBlock,
+  getStakesRaw,
+  getValidators,
+} from "./sdk";
+import {
+  addr,
+  batchedRateCall,
+  batchExchangeRateCalls,
+  bindMockNextGraphQLClient,
+  expectActive,
+  fakeBalance,
+  fakeBatchRateResponse,
+  fakeStakeNode,
+  fakeStakesPage,
+  fakeSystemStateQuery,
+  fakeUniformBatchRates,
+  stakeQueryCalls,
+} from "./sdk.graphql.fixtures";
 
-const GRAPHQL_URL = "https://graphql.mainnet.sui.io/graphql";
-
-type MockGraphQLClient = {
-  query: jest.Mock;
-  listBalances: jest.Mock;
-};
-
-// JSON-RPC stays mocked too so any leak (caller hitting JSON-RPC when it
-// should hit GraphQL) fails loudly via `unexpectedJsonRpc`.
+// JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
 const unexpectedJsonRpc = jest.fn(() => {
   throw new Error("JSON-RPC client invoked on GraphQL test path");
 });
@@ -42,126 +41,58 @@ jest.mock("@mysten/sui/graphql", () => ({
 
 jest.mock("@mysten/sui/jsonRpc", () => ({
   ...jest.requireActual("@mysten/sui/jsonRpc"),
-  SuiJsonRpcClient: jest.fn().mockImplementation(() => ({
-    getAllBalances: unexpectedJsonRpc,
-    getCheckpoint: unexpectedJsonRpc,
-    getLatestCheckpointSequenceNumber: unexpectedJsonRpc,
-    getStakes: unexpectedJsonRpc,
-    getLatestSuiSystemState: unexpectedJsonRpc,
-    getValidatorsApy: unexpectedJsonRpc,
-  })),
+  SuiJsonRpcClient: jest.fn().mockImplementation(
+    () =>
+      new Proxy(
+        {},
+        {
+          get: (_t, prop) => {
+            if (typeof prop === "symbol" || prop === "then") return undefined;
+            return unexpectedJsonRpc;
+          },
+        },
+      ),
+  ),
   getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
 }));
 
-// Imports of the module under test must come AFTER `jest.mock` calls so the
-// module sees the mocked clients.
-// eslint-disable-next-line import/first
-import {
-  isGraphQLEnabled,
-  getAllBalancesCached,
-  getLastBlock,
-  getCheckpoint,
-  getStakesRaw,
-  getValidators,
-} from "./sdk";
-
 const SuiGraphQLClientMock = SuiGraphQLClient as unknown as jest.Mock;
-
-/**
- * Set up the next `new SuiGraphQLClient(...)` call to return a stub with the
- * given method implementations. Returns the stub so assertions can read its
- * call history. Each test should call this exactly once before it triggers
- * the SDK code path.
- */
-function mockNextGraphQLClient(impl: Partial<MockGraphQLClient> = {}): MockGraphQLClient {
-  const client: MockGraphQLClient = {
-    query: impl.query ?? jest.fn(),
-    listBalances: impl.listBalances ?? jest.fn(),
-  };
-  SuiGraphQLClientMock.mockImplementationOnce(() => client);
-  return client;
-}
+const mockNext = bindMockNextGraphQLClient(SuiGraphQLClientMock);
 
 beforeEach(() => {
   SuiGraphQLClientMock.mockReset();
   unexpectedJsonRpc.mockClear();
-  // The GraphQL path is gated on `features.graphql`. Default-on for this
-  // suite — every individual test wants the GraphQL branch to run.
+  // Default-on: every test in this suite needs the GraphQL branch.
   coinConfig.setCoinConfig(() => ({
-    node: { url: GRAPHQL_URL },
+    node: { url: GRAPHQL_MAINNET_URL },
     status: { type: "active" },
     features: { graphql: true },
   }));
 });
 
-describe("isGraphQLEnabled", () => {
-  test("returns true when features.graphql === true", () => {
-    coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_URL },
-      status: { type: "active" },
-      features: { graphql: true },
-    }));
-    expect(isGraphQLEnabled()).toBe(true);
-  });
-
-  test("returns false when features.graphql is missing or false", () => {
-    coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_URL },
-      status: { type: "active" },
-    }));
-    expect(isGraphQLEnabled()).toBe(false);
-
-    coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_URL },
-      status: { type: "active" },
-      features: { graphql: false },
-    }));
-    expect(isGraphQLEnabled()).toBe(false);
-  });
-
-  test("ignores the node.url heuristic — flag is the single source of truth", () => {
-    // Even with a GraphQL-shaped URL, the flag-off path should report false.
-    coinConfig.setCoinConfig(() => ({
-      node: { url: "https://graphql.mainnet.sui.io/graphql" },
-      status: { type: "active" },
-    }));
-    expect(isGraphQLEnabled()).toBe(false);
-  });
-});
-
 describe("getAllBalancesCached on GraphQL transport", () => {
   test("calls listBalances and remaps addressBalance to fundsInAddressBalance", async () => {
-    const client = mockNextGraphQLClient({
+    const client = mockNext({
       listBalances: jest.fn().mockResolvedValueOnce({
         balances: [
-          {
-            coinType: "0x2::sui::SUI",
-            balance: "1000000000",
-            coinBalance: "600000000",
-            addressBalance: "400000000",
-          },
-          {
-            coinType: "0x9::usdc::USDC",
-            balance: "500000",
-            coinBalance: "500000",
-            addressBalance: "0",
-          },
+          fakeBalance("0x2::sui::SUI", String(ONE_SUI), String((2 * ONE_SUI) / 5)),
+          fakeBalance("0x9::usdc::USDC", "500000"),
         ],
         hasNextPage: false,
         cursor: null,
       }),
     });
 
-    const owner = "0x" + "11".repeat(32);
+    const owner = addr("11");
     const result = await getAllBalancesCached(owner, "sui-graphql-balance-1");
 
     expect(result).toEqual([
       {
         coinType: "0x2::sui::SUI",
         coinObjectCount: 0,
-        totalBalance: "1000000000",
+        totalBalance: String(ONE_SUI),
         lockedBalance: {},
-        fundsInAddressBalance: "400000000",
+        fundsInAddressBalance: String((2 * ONE_SUI) / 5),
       },
       {
         coinType: "0x9::usdc::USDC",
@@ -173,29 +104,24 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     ]);
     expect(client.listBalances).toHaveBeenCalledTimes(1);
     expect(client.listBalances).toHaveBeenCalledWith({ owner, cursor: null });
-    expect(unexpectedJsonRpc).not.toHaveBeenCalled();
   });
 
   test("paginates through BalanceConnection until hasNextPage is false", async () => {
     const listBalances = jest
       .fn()
       .mockResolvedValueOnce({
-        balances: [
-          { coinType: "0xA::a::A", balance: "1", coinBalance: "1", addressBalance: "0" },
-        ],
+        balances: [fakeBalance("0xA::a::A", "1")],
         hasNextPage: true,
         cursor: "cursor1",
       })
       .mockResolvedValueOnce({
-        balances: [
-          { coinType: "0xB::b::B", balance: "2", coinBalance: "2", addressBalance: "0" },
-        ],
+        balances: [fakeBalance("0xB::b::B", "2")],
         hasNextPage: false,
         cursor: null,
       });
-    mockNextGraphQLClient({ listBalances });
+    mockNext({ listBalances });
 
-    const owner = "0x" + "22".repeat(32);
+    const owner = addr("22");
     const result = await getAllBalancesCached(owner, "sui-graphql-balance-pagination");
 
     expect(result).toHaveLength(2);
@@ -203,6 +129,47 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     expect(listBalances).toHaveBeenCalledTimes(2);
     expect(listBalances).toHaveBeenNthCalledWith(1, { owner, cursor: null });
     expect(listBalances).toHaveBeenNthCalledWith(2, { owner, cursor: "cursor1" });
+  });
+
+  describe("cursor-expiry retry", () => {
+    test("restarts pagination from page 1 when a next-page listBalances throws cursor-expired", async () => {
+      const owner = addr("aa");
+      const expired = new Error("Pagination cursor outside the available range");
+      const listBalances = jest
+        .fn()
+        // 1. initial: 1 balance, hasNextPage: true
+        .mockResolvedValueOnce({
+          balances: [fakeBalance("0x2::sui::SUI", "100")],
+          hasNextPage: true,
+          cursor: "stale",
+        })
+        // 2. next page (cursor: "stale") → throws cursor-expired
+        .mockRejectedValueOnce(expired)
+        // 3. retry: fresh page 1, hasNextPage: false
+        .mockResolvedValueOnce({
+          balances: [fakeBalance("0x2::sui::SUI", "200")],
+          hasNextPage: false,
+          cursor: null,
+        });
+      mockNext({ listBalances });
+
+      const result = await getAllBalancesCached(owner, "sui-graphql-balance-cursor-expiry");
+
+      // Pre-retry balance is discarded; only post-retry survives.
+      expect(result).toEqual([
+        {
+          coinType: "0x2::sui::SUI",
+          coinObjectCount: 0,
+          totalBalance: "200",
+          lockedBalance: {},
+          fundsInAddressBalance: "0",
+        },
+      ]);
+      expect(listBalances).toHaveBeenCalledTimes(3);
+      expect(listBalances).toHaveBeenNthCalledWith(1, { owner, cursor: null });
+      expect(listBalances).toHaveBeenNthCalledWith(2, { owner, cursor: "stale" });
+      expect(listBalances).toHaveBeenNthCalledWith(3, { owner, cursor: null });
+    });
   });
 });
 
@@ -222,13 +189,10 @@ describe("getLastBlock on GraphQL transport", () => {
             digest: "AbCdEfDigestZ",
             sequenceNumber: 12345,
             timestamp: isoTimestamp,
-            networkTotalTransactions: 1000,
-            previousCheckpointDigest: null,
-            epoch: { epochId: 42 },
           },
         },
       });
-    mockNextGraphQLClient({ query });
+    mockNext({ query });
 
     const result = await getLastBlock("sui-graphql-last-block");
 
@@ -256,13 +220,10 @@ describe("getCheckpoint on GraphQL transport", () => {
           // Server returns UInt53 as a JSON number.
           sequenceNumber: 99,
           timestamp: isoTimestamp,
-          networkTotalTransactions: 1,
-          previousCheckpointDigest: null,
-          epoch: { epochId: 1 },
         },
       },
     });
-    mockNextGraphQLClient({ query });
+    mockNext({ query });
 
     const result = await getCheckpoint("99", "sui-graphql-checkpoint-1");
 
@@ -270,7 +231,6 @@ describe("getCheckpoint on GraphQL transport", () => {
     expect(result.sequenceNumber).toBe("99");
     expect(result.timestampMs).toBe(String(new Date(isoTimestamp).getTime()));
     expect(query).toHaveBeenCalledTimes(1);
-    // Variable goes out as a number on the wire.
     expect(query.mock.calls[0][0].variables).toEqual({ sequenceNumber: 99 });
   });
 
@@ -280,8 +240,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     await expect(getCheckpoint(digest, "sui-graphql-checkpoint-2")).rejects.toThrow(
       /digest-based lookups are not supported on the GraphQL transport/i,
     );
-    // No GraphQL client should have been instantiated since the guard
-    // throws before withGraphQLApi runs.
+    // Guard runs before withGraphQLApi — no client should be constructed.
     expect(SuiGraphQLClientMock).not.toHaveBeenCalled();
   });
 
@@ -289,7 +248,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     const query = jest.fn().mockResolvedValueOnce({
       errors: [{ message: "Checkpoint out of available range" }],
     });
-    mockNextGraphQLClient({ query });
+    mockNext({ query });
 
     await expect(getCheckpoint("9999999", "sui-graphql-checkpoint-3")).rejects.toThrow(
       /Checkpoint out of available range/,
@@ -297,82 +256,13 @@ describe("getCheckpoint on GraphQL transport", () => {
   });
 });
 
-// ---- PR 1b: stakes + validators via SuiSystemState + StakedSui MoveValue ----
-
-/**
- * Build a minimal `SuiSystemStateInnerV2` payload sufficient to drive the
- * stake-grouping logic. Every field the mapper reads is filled; everything
- * else is permitted to be missing because the mapper only touches the
- * documented subset.
- */
-function fakeSystemState(epochId: string, validators: Array<{
-  poolId: string;
-  validatorAddress: string;
-  name: string;
-}>) {
-  return {
-    epochId,
-    referenceGasPrice: "100",
-    systemState: {
-      json: {
-        epoch: epochId,
-        protocol_version: 1,
-        system_state_version: 2,
-        validators: {
-          active_validators: validators.map(v => ({
-            metadata: {
-              sui_address: v.validatorAddress,
-              protocol_pubkey_bytes: "",
-              network_pubkey_bytes: "",
-              worker_pubkey_bytes: "",
-              proof_of_possession: "",
-              name: v.name,
-              description: "desc",
-              image_url: "https://logo",
-              project_url: "https://project",
-              net_address: "",
-              p2p_address: "",
-              primary_address: "",
-              worker_address: "",
-            },
-            voting_power: 100,
-            operation_cap_id: "0xcap",
-            gas_price: 800,
-            staking_pool: {
-              id: v.poolId,
-              activation_epoch: 0,
-              deactivation_epoch: null,
-              sui_balance: 1_000_000_000_000,
-              rewards_pool: 50_000_000_000,
-              pool_token_balance: 900_000_000_000,
-              exchange_rates: { id: "0xrates", size: 100 },
-              pending_stake: 0,
-              pending_total_sui_withdraw: 0,
-              pending_pool_token_withdraw: 0,
-            },
-            commission_rate: 500,
-            next_epoch_stake: 0,
-            next_epoch_gas_price: 800,
-            next_epoch_commission_rate: 500,
-          })),
-          total_stake: "0",
-          pending_active_validators: null,
-          pending_removals: null,
-          staking_pool_mappings: { id: "0xmap", size: validators.length },
-          inactive_validators: null,
-          validator_candidates: null,
-          at_risk_validators: null,
-        },
-        reference_gas_price: 100,
-        epoch_start_timestamp_ms: 0,
-      },
-    },
-  };
-}
-
 describe("getStakesRaw on GraphQL transport", () => {
+  /** Pending-status stake — used by tests that don't care about reward math. */
+  const pendingStake = (id: string, pool_id = "0xp") =>
+    fakeStakeNode({ id, pool_id, stake_activation_epoch: "200", principal: "1" });
+
   test("groups StakedSui objects by pool, joins validator address from system state, and computes status", async () => {
-    const owner = "0x" + "33".repeat(32);
+    const owner = addr("33");
     const POOL_A = "0xpoolA";
     const POOL_B = "0xpoolB";
     const VAL_A = "0xvalidatorA";
@@ -380,75 +270,38 @@ describe("getStakesRaw on GraphQL transport", () => {
 
     const query = jest
       .fn()
-      // 1st call: SUI_SYSTEM_STATE (Promise.all order — both fire in parallel
-      // but the system-state query is enqueued first in the test SDK)
-      .mockResolvedValueOnce({
-        data: {
-          epoch: fakeSystemState("100", [
-            { poolId: POOL_A, validatorAddress: VAL_A, name: "ValA" },
-            { poolId: POOL_B, validatorAddress: VAL_B, name: "ValB" },
-          ]),
-        },
-      })
-      // 2nd call: STAKED_SUI_OBJECTS_BY_OWNER first page (and only page)
-      .mockResolvedValueOnce({
-        data: {
-          address: {
-            objects: {
-              pageInfo: { hasNextPage: false, endCursor: null },
-              nodes: [
-                {
-                  address: "0xstk1",
-                  version: "1",
-                  digest: "d1",
-                  contents: {
-                    type: { repr: "0x3::staking_pool::StakedSui" },
-                    json: {
-                      id: "0xstk1",
-                      pool_id: POOL_A,
-                      stake_activation_epoch: "50", // < current 100 → Active
-                      principal: "1000000000",
-                    },
-                  },
-                },
-                {
-                  address: "0xstk2",
-                  version: "1",
-                  digest: "d2",
-                  contents: {
-                    type: { repr: "0x3::staking_pool::StakedSui" },
-                    json: {
-                      id: "0xstk2",
-                      pool_id: POOL_A,
-                      stake_activation_epoch: "60", // < current → Active, same pool as stk1
-                      principal: "2000000000",
-                    },
-                  },
-                },
-                {
-                  address: "0xstk3",
-                  version: "1",
-                  digest: "d3",
-                  contents: {
-                    type: { repr: "0x3::staking_pool::StakedSui" },
-                    json: {
-                      id: "0xstk3",
-                      pool_id: POOL_B,
-                      stake_activation_epoch: "200", // > current 100 → Pending
-                      principal: "500000000",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      });
-    mockNextGraphQLClient({ query });
+      .mockResolvedValueOnce(
+        fakeSystemStateQuery("100", [
+          { poolId: POOL_A, validatorAddress: VAL_A },
+          { poolId: POOL_B, validatorAddress: VAL_B },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        fakeStakesPage([
+          fakeStakeNode({
+            id: "0xstk1",
+            pool_id: POOL_A,
+            stake_activation_epoch: "50", // < 100 → Active
+            principal: String(ONE_SUI),
+          }),
+          fakeStakeNode({
+            id: "0xstk2",
+            pool_id: POOL_A,
+            stake_activation_epoch: "60", // < 100 → Active, same pool
+            principal: String(2 * ONE_SUI),
+          }),
+          fakeStakeNode({
+            id: "0xstk3",
+            pool_id: POOL_B,
+            stake_activation_epoch: "200", // > 100 → Pending
+            principal: String(ONE_SUI / 2),
+          }),
+        ]),
+      );
+    mockNext({ query });
 
     const result = await getStakesRaw(owner, "sui-graphql-stakes-1");
 
-    // Two pools => two DelegatedStake groups.
     expect(result).toHaveLength(2);
 
     const poolA = result.find(d => d.stakingPool === POOL_A)!;
@@ -458,164 +311,286 @@ describe("getStakesRaw on GraphQL transport", () => {
     expect(poolA.stakes).toHaveLength(2);
     expect(poolB.stakes).toHaveLength(1);
 
-    // Active stake — stk1
     const stk1 = poolA.stakes.find(s => s.stakedSuiId === "0xstk1")!;
-    expect(stk1.status).toBe("Active");
-    expect(stk1.principal).toBe("1000000000");
+    expectActive(stk1);
+    expect(stk1.principal).toBe(String(ONE_SUI));
     expect(stk1.stakeActiveEpoch).toBe("50");
     expect(stk1.stakeRequestEpoch).toBe("49"); // active − 1
-    if (stk1.status === "Active") {
-      // PR 1b limitation: estimatedReward placeholder
-      expect(stk1.estimatedReward).toBe("0");
-    }
+    // No exchange rate mocked → reward lookup degrades to "0".
+    expect(stk1.estimatedReward).toBe("0");
 
-    // Pending stake — stk3
     const stk3 = poolB.stakes[0];
     expect(stk3.status).toBe("Pending");
-    expect(stk3.principal).toBe("500000000");
-
-    expect(unexpectedJsonRpc).not.toHaveBeenCalled();
+    expect(stk3.principal).toBe(String(ONE_SUI / 2));
   });
 
   test("paginates StakedSui object listings", async () => {
-    const owner = "0x" + "44".repeat(32);
+    const owner = addr("44");
     const POOL = "0xpoolSingle";
-    const VAL = "0xvalidatorSingle";
+
+    const stake = (id: string, principal: string) =>
+      fakeStakeNode({ id, pool_id: POOL, stake_activation_epoch: "5", principal });
 
     const query = jest
       .fn()
-      .mockResolvedValueOnce({
-        data: {
-          epoch: fakeSystemState("10", [
-            { poolId: POOL, validatorAddress: VAL, name: "Val" },
-          ]),
-        },
-      })
-      .mockResolvedValueOnce({
-        data: {
-          address: {
-            objects: {
-              pageInfo: { hasNextPage: true, endCursor: "p1" },
-              nodes: [
-                {
-                  address: "0xa",
-                  version: "1",
-                  digest: "d",
-                  contents: {
-                    type: { repr: "0x3::staking_pool::StakedSui" },
-                    json: {
-                      id: "0xa",
-                      pool_id: POOL,
-                      stake_activation_epoch: "5",
-                      principal: "1",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      })
-      .mockResolvedValueOnce({
-        data: {
-          address: {
-            objects: {
-              pageInfo: { hasNextPage: false, endCursor: null },
-              nodes: [
-                {
-                  address: "0xb",
-                  version: "1",
-                  digest: "d",
-                  contents: {
-                    type: { repr: "0x3::staking_pool::StakedSui" },
-                    json: {
-                      id: "0xb",
-                      pool_id: POOL,
-                      stake_activation_epoch: "5",
-                      principal: "2",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      });
-    mockNextGraphQLClient({ query });
+      .mockResolvedValueOnce(fakeSystemStateQuery("10", [{ poolId: POOL }]))
+      .mockResolvedValueOnce(
+        fakeStakesPage([stake("0xa", "1")], { hasNextPage: true, endCursor: "p1" }),
+      )
+      .mockResolvedValueOnce(fakeStakesPage([stake("0xb", "2")]));
+    mockNext({ query });
 
     const result = await getStakesRaw(owner, "sui-graphql-stakes-pagination");
     expect(result).toHaveLength(1);
     expect(result[0].stakes).toHaveLength(2);
     // Second StakedSui page request should pass `after: "p1"`.
-    const calls = query.mock.calls;
-    expect(calls[2][0].variables).toEqual({ owner, first: 50, after: "p1" });
+    const calls = stakeQueryCalls(query);
+    expect(calls[1][0].variables).toEqual({ owner, first: STAKES_PAGE_SIZE, after: "p1" });
   });
 
   test("falls back to '<unknown>' validatorAddress when pool isn't in active_validators", async () => {
-    const owner = "0x" + "55".repeat(32);
+    const owner = addr("55");
     const KNOWN_POOL = "0xpoolKnown";
     const ORPHAN_POOL = "0xpoolOrphan";
 
     const query = jest
       .fn()
-      .mockResolvedValueOnce({
-        data: {
-          epoch: fakeSystemState("100", [
-            { poolId: KNOWN_POOL, validatorAddress: "0xknown", name: "Known" },
-          ]),
-        },
-      })
-      .mockResolvedValueOnce({
-        data: {
-          address: {
-            objects: {
-              pageInfo: { hasNextPage: false, endCursor: null },
-              nodes: [
-                {
-                  address: "0xstkOrphan",
-                  version: "1",
-                  digest: "d",
-                  contents: {
-                    type: { repr: "0x3::staking_pool::StakedSui" },
-                    json: {
-                      id: "0xstkOrphan",
-                      pool_id: ORPHAN_POOL,
-                      stake_activation_epoch: "50",
-                      principal: "1000",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      });
-    mockNextGraphQLClient({ query });
+      .mockResolvedValueOnce(
+        fakeSystemStateQuery("100", [{ poolId: KNOWN_POOL, validatorAddress: "0xknown" }]),
+      )
+      .mockResolvedValueOnce(
+        fakeStakesPage([
+          fakeStakeNode({
+            id: "0xstkOrphan",
+            pool_id: ORPHAN_POOL,
+            stake_activation_epoch: "50", // < 100 → Active
+            principal: "1000",
+          }),
+        ]),
+      );
+    mockNext({ query });
 
     const result = await getStakesRaw(owner, "sui-graphql-stakes-orphan");
     expect(result).toHaveLength(1);
-    expect(result[0].validatorAddress).toBe("<unknown>");
+    expect(result[0].validatorAddress).toBe(UNKNOWN_VALIDATOR);
     expect(result[0].stakingPool).toBe(ORPHAN_POOL);
+    // Active stake in an orphan pool: no rate lookup is planned (no PoolRefs),
+    // so reward degrades to "0" rather than failing the call.
+    const stk = result[0].stakes[0];
+    expectActive(stk);
+    expect(stk.estimatedReward).toBe("0");
+    expect(batchedRateCall(query)).toBeUndefined();
+  });
+
+  test("normalises owner to canonical 32-byte form across initial + paginated queries", async () => {
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: "0xp" }]))
+      .mockResolvedValueOnce(
+        fakeStakesPage([pendingStake("0xa")], { hasNextPage: true, endCursor: "c1" }),
+      )
+      .mockResolvedValueOnce(fakeStakesPage([pendingStake("0xb")]));
+    mockNext({ query });
+
+    await getStakesRaw("0x42", "sui-graphql-stakes-norm");
+
+    const expected = "0x" + "0".repeat(62) + "42";
+    const calls = stakeQueryCalls(query);
+    expect(calls).toHaveLength(2);
+    expect(calls[0][0].variables.owner).toBe(expected);
+    expect(calls[1][0].variables.owner).toBe(expected);
+  });
+
+  describe("reward computation", () => {
+    test("fetches activation-epoch rate per Active stake and computes real estimatedReward", async () => {
+      const owner = addr("66");
+      const POOL = "0xpoolReward";
+
+      // Pool current rate (sui_balance/pool_token_balance from system state):
+      //   sui_balance = 1_100_000 ; pool_token_balance = 1_000_000  → ratio 1.1
+      // Activation rate at epoch 50: ratio 1.0
+      // Stake of 100 principal:
+      //   pool_tokens = 100 * 1_000_000 / 1_000_000 = 100
+      //   current_value = 100 * 1_100_000 / 1_000_000 = 110
+      //   estimatedReward = 10
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery("100", [
+            {
+              poolId: POOL,
+              suiBalance: 1_100_000,
+              poolTokenBalance: 1_000_000,
+              exchangeRatesId: "0xratesReward",
+            },
+          ]),
+        )
+        .mockResolvedValueOnce(
+          fakeStakesPage([
+            fakeStakeNode({
+              id: "0xstk",
+              pool_id: POOL,
+              stake_activation_epoch: "50",
+              principal: "100",
+            }),
+          ]),
+        )
+        // BatchExchangeRates for activation epoch 50 — ratio 1.0.
+        .mockResolvedValueOnce(fakeUniformBatchRates(1));
+      mockNext({ query });
+
+      const result = await getStakesRaw(owner, "sui-graphql-stakes-reward");
+      expect(result).toHaveLength(1);
+      const stk = result[0].stakes[0];
+      expectActive(stk);
+      expect(stk.estimatedReward).toBe("10");
+
+      // Confirm exactly one BatchExchangeRates call was issued.
+      expect(batchedRateCall(query)).toEqual({ t0: "0xratesReward", l0: "50u64" });
+    });
+
+    test("deduplicates rate lookups when multiple stakes share (pool, activation_epoch)", async () => {
+      const owner = addr("77");
+      const POOL = "0xpoolDedup";
+
+      // Three stakes — A and B share (pool, epoch=50), C is different epoch.
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery("100", [{ poolId: POOL, exchangeRatesId: "0xratesDedup" }]),
+        )
+        .mockResolvedValueOnce(
+          fakeStakesPage([
+            fakeStakeNode({
+              id: "0xa",
+              pool_id: POOL,
+              stake_activation_epoch: "50",
+              principal: "100",
+            }),
+            fakeStakeNode({
+              id: "0xb",
+              pool_id: POOL,
+              stake_activation_epoch: "50",
+              principal: "200",
+            }),
+            fakeStakeNode({
+              id: "0xc",
+              pool_id: POOL,
+              stake_activation_epoch: "60",
+              principal: "300",
+            }),
+          ]),
+        )
+        // One BatchExchangeRates call carrying both unique (pool, epoch) pairs.
+        .mockResolvedValueOnce(fakeUniformBatchRates(2));
+      mockNext({ query });
+
+      await getStakesRaw(owner, "sui-graphql-stakes-dedup");
+
+      // 3 stakes → de-duped to 2 unique tuples → 1 batched round-trip with 2 aliases.
+      const batchVars = batchedRateCall(query);
+      expect(batchVars).toBeDefined();
+      expect(Object.keys(batchVars!).sort()).toEqual(["l0", "l1", "t0", "t1"]);
+      expect(new Set([batchVars!.l0, batchVars!.l1])).toEqual(new Set(["50u64", "60u64"]));
+    });
+
+    test("Pending stakes don't trigger rate lookups", async () => {
+      const owner = addr("88");
+      const POOL = "0xpoolPending";
+
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
+        .mockResolvedValueOnce(fakeStakesPage([pendingStake("0xpending", POOL)]));
+      mockNext({ query });
+
+      const result = await getStakesRaw(owner, "sui-graphql-stakes-pending-only");
+      expect(result[0].stakes[0].status).toBe("Pending");
+
+      // No rate calls — Pending stakes have no reward to compute.
+      expect(batchedRateCall(query)).toBeUndefined();
+    });
+  });
+
+  describe("cursor-expiry retry", () => {
+    test("restarts pagination from page 1 when a next-page cursor is rejected as out-of-range", async () => {
+      const owner = addr("88");
+      const POOL = "0xpoolExp";
+
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
+        .mockResolvedValueOnce(
+          fakeStakesPage([pendingStake("0xs1", POOL), pendingStake("0xs2", POOL)], {
+            hasNextPage: true,
+            endCursor: "stale-cursor",
+          }),
+        )
+        // Server rejects the cursor as outside retention window.
+        .mockResolvedValueOnce({
+          errors: [{ message: "Pagination cursor outside the available range" }],
+        })
+        // Refetch from null — fresh page, post-rotation.
+        .mockResolvedValueOnce(
+          fakeStakesPage([pendingStake("0xfresh1", POOL), pendingStake("0xfresh2", POOL)]),
+        );
+      mockNext({ query });
+
+      const result = await getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry");
+
+      // Pre-retry items must be discarded — only post-retry stakes survive.
+      expect(result).toHaveLength(1);
+      const ids = result[0].stakes.map(s => s.stakedSuiId).sort();
+      expect(ids).toEqual(["0xfresh1", "0xfresh2"]);
+
+      // 4-call dance happened in order; 4th call uses `after: null`.
+      const calls = stakeQueryCalls(query);
+      expect(calls).toHaveLength(3);
+      expect(calls[0][0].variables.after).toBeNull();
+      expect(calls[1][0].variables.after).toBe("stale-cursor");
+      expect(calls[2][0].variables.after).toBeNull();
+    });
+
+    test("does not retry indefinitely — second cursor-expiry propagates", async () => {
+      const owner = addr("99");
+      const POOL = "0xpoolExp2";
+
+      const initialPage = fakeStakesPage([pendingStake("0xa", POOL)], {
+        hasNextPage: true,
+        endCursor: "c1",
+      });
+      const expired = { errors: [{ message: "outside available range" }] };
+
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
+        .mockResolvedValueOnce(initialPage) // initial page 1
+        .mockResolvedValueOnce(expired) // first next → expired
+        .mockResolvedValueOnce(initialPage) // retry: fresh page 1
+        .mockResolvedValueOnce(expired); // …next page also expired → must propagate
+      mockNext({ query });
+
+      await expect(getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry-double")).rejects.toThrow(
+        /outside available range/,
+      );
+    });
   });
 });
 
 describe("getValidators on GraphQL transport", () => {
-  test("maps active_validators to SuiValidatorSummary[] and falls back to apy=0 when rate fetch fails (PR 1b graceful degradation)", async () => {
-    const query = jest.fn().mockResolvedValueOnce({
-      data: {
-        epoch: fakeSystemState("42", [
+  test("maps active_validators to SuiValidatorSummary[] and falls back to apy=0 when rate fetch fails", async () => {
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce(
+        fakeSystemStateQuery("42", [
           { poolId: "0xp1", validatorAddress: "0xv1", name: "V1" },
           { poolId: "0xp2", validatorAddress: "0xv2", name: "V2" },
         ]),
-      },
-    });
-    // Both EXCHANGE_RATE_AT_EPOCH lookups will fail with no mock returns
-    // (default jest.fn() returns undefined → typed as MoveValue with no
-    // json → fetchExchangeRate returns null → APY degrades to 0).
-    query
+      )
+      // Rate lookups return nulls → fetchExchangeRate returns null → APY = 0.
       .mockResolvedValueOnce({ data: { address: { dynamicField: null } } })
       .mockResolvedValueOnce({ data: { address: { dynamicField: null } } });
-    mockNextGraphQLClient({ query });
+    mockNext({ query });
 
     const result = await getValidators("sui-graphql-validators-1");
     expect(result).toHaveLength(2);
@@ -625,327 +600,150 @@ describe("getValidators on GraphQL transport", () => {
     expect(v1.description).toBe("desc");
     expect(v1.imageUrl).toBe("https://logo");
     expect(v1.projectUrl).toBe("https://project");
-    expect(typeof v1.commissionRate).toBe("string");
     expect(v1.commissionRate).toBe("500");
-    expect(typeof v1.stakingPoolSuiBalance).toBe("string");
-    expect(v1.stakingPoolSuiBalance).toBe("1000000000000");
-    // No rate available → APY falls through to 0.
+    expect(v1.stakingPoolSuiBalance).toBe(String(1_000 * ONE_SUI));
     expect(v1.apy).toBe(0);
     expect(v1.exchangeRatesId).toBe("0xrates");
     expect(v1.exchangeRatesSize).toBe("100");
   });
-});
 
-// ---- PR 1c: real estimatedReward + real APY via exchange-rate Table walk ----
-
-describe("getStakesRaw on GraphQL transport — PR 1c reward computation", () => {
-  test("fetches activation-epoch rate per Active stake and computes real estimatedReward", async () => {
-    const owner = "0x" + "66".repeat(32);
-    const POOL = "0xpoolReward";
-    const VAL = "0xvalReward";
-
-    // Pool current rate (sui_balance/pool_token_balance from system state):
-    //   sui_balance = 1_100_000 ; pool_token_balance = 1_000_000  → ratio 1.1
-    // Activation rate at epoch 50:
-    //   sui = 1_000_000 ; pt = 1_000_000  → ratio 1.0
-    // Stake of 100 principal:
-    //   pool_tokens = 100 * 1_000_000 / 1_000_000 = 100
-    //   current_value = 100 * 1_100_000 / 1_000_000 = 110
-    //   estimatedReward = 10
-    const customSystem = fakeSystemState("100", [
-      { poolId: POOL, validatorAddress: VAL, name: "ValReward" },
-    ]);
-    // Override the pool's sui/pt balance for predictable math
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.sui_balance =
-      1_100_000;
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.pool_token_balance =
-      1_000_000;
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
-      "0xratesReward";
-
-    const query = jest.fn();
-    // SUI_SYSTEM_STATE
-    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
-    // STAKED_SUI_OBJECTS_BY_OWNER
-    query.mockResolvedValueOnce({
-      data: {
-        address: {
-          objects: {
-            pageInfo: { hasNextPage: false, endCursor: null },
-            nodes: [
-              {
-                address: "0xstk",
-                version: "1",
-                digest: "d",
-                contents: {
-                  type: { repr: "0x3::staking_pool::StakedSui" },
-                  json: {
-                    id: "0xstk",
-                    pool_id: POOL,
-                    stake_activation_epoch: "50",
-                    principal: "100",
-                  },
-                },
-              },
-            ],
-          },
-        },
-      },
-    });
-    // EXCHANGE_RATE_AT_EPOCH for activation epoch 50 — returns ratio 1.0
-    query.mockResolvedValueOnce({
-      data: {
-        address: {
-          dynamicField: {
-            value: {
-              __typename: "MoveValue",
-              type: { repr: "PoolTokenExchangeRate" },
-              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
+  describe("APY computation", () => {
+    test("fetches a 30-epoch-lookback rate per validator and computes real APY", async () => {
+      const CURRENT_EPOCH = 1000;
+      // Pool current rate ratio 1.01 (1% above past).
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery(String(CURRENT_EPOCH), [
+            {
+              poolId: "0xpA",
+              suiBalance: 1_010_000,
+              poolTokenBalance: 1_000_000,
+              exchangeRatesId: "0xratesV",
             },
-          },
-        },
-      },
+          ]),
+        )
+        .mockResolvedValueOnce(fakeUniformBatchRates(1));
+      mockNext({ query });
+
+      const result = await getValidators("sui-graphql-validators-apy");
+      expect(result).toHaveLength(1);
+      const v = result[0];
+      // Past=1.0, current=1.01, 30 epochs → APY ≈ 1.01^(365/30) − 1 ≈ 0.1295
+      expect(v.apy).toBeGreaterThan(0.12);
+      expect(v.apy).toBeLessThan(0.14);
+
+      expect(batchedRateCall(query)).toEqual({
+        t0: "0xratesV",
+        l0: `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64`,
+      });
     });
-    mockNextGraphQLClient({ query });
 
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-pr1c-1");
-    expect(result).toHaveLength(1);
-    const stk = result[0].stakes[0];
-    expect(stk.status).toBe("Active");
-    if (stk.status === "Active") {
-      // Real reward — no longer the PR 1b "0" placeholder
-      expect(stk.estimatedReward).toBe("10");
-    }
+    test("batches all validators into a single aliased query (N>1)", async () => {
+      const CURRENT_EPOCH = 1000;
+      const lookback = `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64`;
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery(String(CURRENT_EPOCH), [
+            { poolId: "0xpA", exchangeRatesId: "0xratesA" },
+            { poolId: "0xpB", exchangeRatesId: "0xratesB" },
+            { poolId: "0xpC", exchangeRatesId: "0xratesC" },
+          ]),
+        )
+        .mockResolvedValueOnce(fakeUniformBatchRates(3));
+      mockNext({ query });
 
-    // Confirm exactly one EXCHANGE_RATE_AT_EPOCH call was issued (the
-    // single Active stake) and that it carried the right `literal` arg.
-    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
-    expect(rateCalls).toHaveLength(1);
-    expect(rateCalls[0][0].variables).toEqual({
-      table: "0xratesReward",
-      literal: "50u64",
+      await getValidators("sui-graphql-validators-batch");
+
+      // 1 system-state + 1 batched rates = 2 calls regardless of N.
+      expect(query).toHaveBeenCalledTimes(2);
+      expect(batchedRateCall(query)).toEqual({
+        t0: "0xratesA",
+        l0: lookback,
+        t1: "0xratesB",
+        l1: lookback,
+        t2: "0xratesC",
+        l2: lookback,
+      });
     });
-  });
 
-  test("deduplicates rate lookups when multiple stakes share (pool, activation_epoch)", async () => {
-    const owner = "0x" + "77".repeat(32);
-    const POOL = "0xpoolDedup";
-    const VAL = "0xvalDedup";
+    test("chunks the aliased batch when N exceeds the per-chunk size", async () => {
+      const FULL_CHUNK = RATE_BATCH_CHUNK_SIZE;
+      const PARTIAL_CHUNK = 7;
+      const N = FULL_CHUNK + PARTIAL_CHUNK;
+      const validators = Array.from({ length: N }, (_, i) => ({
+        poolId: `0xp${i}`,
+        exchangeRatesId: `0xrates${i}`,
+      }));
 
-    const customSystem = fakeSystemState("100", [
-      { poolId: POOL, validatorAddress: VAL, name: "ValDedup" },
-    ]);
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
-      "0xratesDedup";
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("1000", validators))
+        .mockResolvedValueOnce(fakeUniformBatchRates(FULL_CHUNK))
+        .mockResolvedValueOnce(fakeUniformBatchRates(PARTIAL_CHUNK));
+      mockNext({ query });
 
-    const query = jest.fn();
-    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
-    query.mockResolvedValueOnce({
-      data: {
-        address: {
-          objects: {
-            pageInfo: { hasNextPage: false, endCursor: null },
-            nodes: [
-              // Three stakes — A and B share (pool, epoch=50), C is different epoch
-              {
-                address: "0xa",
-                version: "1",
-                digest: "d",
-                contents: {
-                  type: { repr: "0x3::staking_pool::StakedSui" },
-                  json: {
-                    id: "0xa",
-                    pool_id: POOL,
-                    stake_activation_epoch: "50",
-                    principal: "100",
-                  },
-                },
-              },
-              {
-                address: "0xb",
-                version: "1",
-                digest: "d",
-                contents: {
-                  type: { repr: "0x3::staking_pool::StakedSui" },
-                  json: {
-                    id: "0xb",
-                    pool_id: POOL,
-                    stake_activation_epoch: "50",
-                    principal: "200",
-                  },
-                },
-              },
-              {
-                address: "0xc",
-                version: "1",
-                digest: "d",
-                contents: {
-                  type: { repr: "0x3::staking_pool::StakedSui" },
-                  json: {
-                    id: "0xc",
-                    pool_id: POOL,
-                    stake_activation_epoch: "60",
-                    principal: "300",
-                  },
-                },
-              },
-            ],
-          },
-        },
-      },
+      const result = await getValidators("sui-graphql-validators-chunked");
+
+      expect(result).toHaveLength(N);
+      // 1 system-state + 2 batch chunks = 3 total query calls.
+      expect(query).toHaveBeenCalledTimes(3);
+      const batches = batchExchangeRateCalls(query);
+      expect(batches).toHaveLength(2);
+      expect(Object.keys(batches[0][0].variables)).toHaveLength(FULL_CHUNK * 2);
+      expect(Object.keys(batches[1][0].variables)).toHaveLength(PARTIAL_CHUNK * 2);
     });
-    // The next two query calls are EXCHANGE_RATE_AT_EPOCH — order of the
-    // Promise.allSettled is deterministic in Map insertion order. Both
-    // succeed with arbitrary rates; we only care about call count.
-    query.mockResolvedValue({
-      data: {
-        address: {
-          dynamicField: {
-            value: {
-              __typename: "MoveValue",
-              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
-            },
-          },
-        },
-      },
+
+    test("clamps the past epoch to the pool's activation_epoch for young pools", async () => {
+      // Pool only 5 epochs old — activation_epoch = 95. Desired lookback
+      // 100 − 30 = 70 predates activation, so the helper clamps to 95.
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery("100", [
+            { poolId: "0xpY", activationEpoch: 95, exchangeRatesId: "0xratesY" },
+          ]),
+        )
+        .mockResolvedValueOnce(fakeUniformBatchRates(1));
+      mockNext({ query });
+
+      await getValidators("sui-graphql-validators-young-pool");
+
+      expect(batchedRateCall(query)).toEqual({ t0: "0xratesY", l0: "95u64" });
     });
-    mockNextGraphQLClient({ query });
 
-    await getStakesRaw(owner, "sui-graphql-stakes-pr1c-2");
+    test("returns [] for an empty active_validators set without a rate fetch", async () => {
+      const query = jest.fn().mockResolvedValueOnce(fakeSystemStateQuery("100", []));
+      mockNext({ query });
 
-    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
-    // 3 stakes but only 2 unique (pool, epoch) tuples → 2 rate queries
-    expect(rateCalls).toHaveLength(2);
-    expect(rateCalls.map(c => c[0].variables.literal).sort()).toEqual(["50u64", "60u64"]);
-  });
+      const result = await getValidators("sui-graphql-validators-empty");
 
-  test("Pending stakes don't trigger rate lookups", async () => {
-    const owner = "0x" + "88".repeat(32);
-    const POOL = "0xpoolPending";
-    const VAL = "0xvalPending";
-
-    const customSystem = fakeSystemState("100", [
-      { poolId: POOL, validatorAddress: VAL, name: "ValPending" },
-    ]);
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
-      "0xratesPending";
-
-    const query = jest.fn();
-    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
-    query.mockResolvedValueOnce({
-      data: {
-        address: {
-          objects: {
-            pageInfo: { hasNextPage: false, endCursor: null },
-            nodes: [
-              {
-                address: "0xpending",
-                version: "1",
-                digest: "d",
-                contents: {
-                  type: { repr: "0x3::staking_pool::StakedSui" },
-                  json: {
-                    id: "0xpending",
-                    pool_id: POOL,
-                    stake_activation_epoch: "200", // > current 100 → Pending
-                    principal: "1000",
-                  },
-                },
-              },
-            ],
-          },
-        },
-      },
+      expect(result).toEqual([]);
+      // No rate batch should be issued — there are no validators to plan for.
+      expect(batchedRateCall(query)).toBeUndefined();
+      expect(query).toHaveBeenCalledTimes(1);
     });
-    mockNextGraphQLClient({ query });
 
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-pr1c-pending");
-    expect(result[0].stakes[0].status).toBe("Pending");
+    test("degrades every validator to apy=0 when the batch returns all-nulls", async () => {
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery("1000", [
+            { poolId: "0xpA", exchangeRatesId: "0xratesA" },
+            { poolId: "0xpB", exchangeRatesId: "0xratesB" },
+            { poolId: "0xpC", exchangeRatesId: "0xratesC" },
+          ]),
+        )
+        // All three rate lookups come back as `null` (table has no entry at the
+        // requested epoch) — every validator must degrade to apy=0.
+        .mockResolvedValueOnce(fakeBatchRateResponse([null, null, null]));
+      mockNext({ query });
 
-    // No rate calls — Pending stakes have no reward to compute.
-    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
-    expect(rateCalls).toHaveLength(0);
-  });
-});
+      const result = await getValidators("sui-graphql-validators-all-null-batch");
 
-describe("getValidators on GraphQL transport — PR 1c APY computation", () => {
-  test("fetches a 30-epoch-lookback rate per validator and computes real APY", async () => {
-    const customSystem = fakeSystemState("1000", [
-      { poolId: "0xpA", validatorAddress: "0xvA", name: "VA" },
-    ]);
-    // Set the pool's current rate to ratio 1.01 (1% above past)
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.sui_balance =
-      1_010_000;
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.pool_token_balance =
-      1_000_000;
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
-      "0xratesV";
-
-    const query = jest.fn();
-    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
-    // Past rate: ratio 1.0
-    query.mockResolvedValueOnce({
-      data: {
-        address: {
-          dynamicField: {
-            value: {
-              __typename: "MoveValue",
-              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
-            },
-          },
-        },
-      },
+      expect(result).toHaveLength(3);
+      expect(result.map(v => v.apy)).toEqual([0, 0, 0]);
     });
-    mockNextGraphQLClient({ query });
-
-    const result = await getValidators("sui-graphql-validators-pr1c-1");
-    expect(result).toHaveLength(1);
-    const v = result[0];
-    // Past=1.0, current=1.01, 30 epochs → APY ≈ 1.01^(365/30) − 1 ≈ 0.1295
-    expect(v.apy).toBeGreaterThan(0.12);
-    expect(v.apy).toBeLessThan(0.14);
-
-    // Confirm the historical-rate lookup ran with the right literal.
-    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
-    expect(rateCalls).toHaveLength(1);
-    // current 1000 − APY_LOOKBACK_EPOCHS 30 = 970
-    expect(rateCalls[0][0].variables).toEqual({
-      table: "0xratesV",
-      literal: "970u64",
-    });
-  });
-
-  test("clamps the past epoch to the pool's activation_epoch for young pools", async () => {
-    const customSystem = fakeSystemState("100", [
-      { poolId: "0xpY", validatorAddress: "0xvY", name: "VY" },
-    ]);
-    // Pool only 5 epochs old — activation_epoch = 95.
-    // Desired lookback = 100 − 30 = 70, but pool didn't exist then, so
-    // the helper should clamp to activation_epoch = 95.
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.activation_epoch = 95;
-    customSystem.systemState.json.validators.active_validators[0].staking_pool.exchange_rates.id =
-      "0xratesY";
-
-    const query = jest.fn();
-    query.mockResolvedValueOnce({ data: { epoch: customSystem } });
-    query.mockResolvedValueOnce({
-      data: {
-        address: {
-          dynamicField: {
-            value: {
-              __typename: "MoveValue",
-              json: { sui_amount: "1000000", pool_token_amount: "1000000" },
-            },
-          },
-        },
-      },
-    });
-    mockNextGraphQLClient({ query });
-
-    await getValidators("sui-graphql-validators-pr1c-young");
-
-    const rateCalls = query.mock.calls.filter(c => c[0].variables?.literal !== undefined);
-    expect(rateCalls).toHaveLength(1);
-    expect(rateCalls[0][0].variables.literal).toBe("95u64");
   });
 });

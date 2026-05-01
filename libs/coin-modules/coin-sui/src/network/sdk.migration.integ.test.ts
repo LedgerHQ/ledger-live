@@ -1,28 +1,9 @@
-/**
- * Live-endpoint parity test for the JSON-RPC → GraphQL migration.
- *
- * Each migrated read function runs on both transports against the same
- * mainnet account and the outputs are compared field-by-field with
- * documented tolerances for fields that legitimately differ
- * (rounding-prone reward math, chain-advancing checkpoint counters).
- *
- * Two coin configs coexist via distinct `currencyId`s — the per-call
- * `currencyId` arg is what coin-sui already uses to select between coin
- * variants, so we don't need a custom dispatch hack: each transport
- * gets its own currency entry, and the LRU cache key built from
- * `currencyId` keeps results separated.
- *
- * Run:
- *   API_SUI_NODE_PROXY=<jsonrpc-fullnode-url> pnpm jest --config=jest.integ.config.js \
- *       src/network/sdk.migration.integ.test.ts
- *
- * The suite skips automatically when `API_SUI_NODE_PROXY` is unset, so
- * `pnpm test-integ` doesn't fail in environments without the secret.
- */
-import { getEnv } from "@ledgerhq/live-env";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
+import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
+import { ACCOUNT_EMPTY, GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import {
+  getAccountBalances,
   getAllBalancesCached,
   getCheckpoint,
   getLastBlock,
@@ -33,26 +14,21 @@ import {
 const JSON_RPC_ID = "sui-jsonrpc-mig";
 const GRAPHQL_ID = "sui-graphql-mig";
 
-// Mainnet GraphQL endpoint — public, no SLA but adequate for parity
-// testing. Override via env if a managed provider is preferred.
-const GRAPHQL_URL =
-  getEnv("API_SUI_GRAPHQL_URL" as never) || "https://graphql.mainnet.sui.io/graphql";
-const JSON_RPC_URL = getEnv("API_SUI_NODE_PROXY") || getJsonRpcFullnodeUrl("mainnet");
+const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 
-// Address with a non-trivial set of stakes — also referenced by other
-// coin-sui integ tests so we keep the surface stable.
-const ACCOUNT_WITH_STAKES = "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
+/**
+ * Lookback for the parity checkpoint. Two constraints: past finality
+ * across both transports (digests/timestamps stable between reads a few
+ * seconds apart) and well within the GraphQL retention window.
+ * 1000 checkpoints ≈ 5 minutes at ~3 cps.
+ */
+const STABLE_CHECKPOINT_LOOKBACK = 1000n;
 
-// A mainnet checkpoint sequence that's old enough to be stable across
-// reorg-free history. Far below current epoch's totalCheckpoints.
-const STABLE_CHECKPOINT_SEQUENCE = "100";
+// Resolved at suite startup against the live JSON-RPC endpoint — see
+// STABLE_CHECKPOINT_LOOKBACK above for the rationale.
+let stableCheckpointSequence: string;
 
-// Skip the whole suite locally when the JSON-RPC URL secret isn't set so
-// `pnpm test-integ` doesn't fail in clean environments.
-const SHOULD_RUN = Boolean(JSON_RPC_URL);
-const describeLive = SHOULD_RUN ? describe : describe.skip;
-
-beforeAll(() => {
+beforeAll(async () => {
   coinConfig.setCoinConfig(id => {
     if (id === JSON_RPC_ID) {
       return {
@@ -63,22 +39,24 @@ beforeAll(() => {
     }
     if (id === GRAPHQL_ID) {
       return {
-        node: { url: GRAPHQL_URL },
+        node: { url: GRAPHQL_MAINNET_URL },
         status: { type: "active" },
         features: { graphql: true },
       };
     }
     throw new Error(`Unknown currency id in migration integ test: ${id}`);
   });
+
+  const latest = await getLastBlock(JSON_RPC_ID);
+  stableCheckpointSequence = (
+    BigInt(latest.sequenceNumber) - STABLE_CHECKPOINT_LOOKBACK
+  ).toString();
 });
 
-// ----- Helpers ------------------------------------------------------------
-
 /**
- * Compare two BigInts as strings/numbers/bigints with absolute and
- * relative tolerances. Used for `estimatedReward` and APY-derived fields
- * where the JSON-RPC server and our client do the same math but may
- * round differently.
+ * BigInt-equivalent compare with absolute and relative tolerances —
+ * for `estimatedReward` and APY-derived fields where server and
+ * client do the same math but may round differently.
  */
 function expectClose(
   actual: bigint | string | number,
@@ -90,22 +68,18 @@ function expectClose(
   const diff = a > e ? a - e : e - a;
   // Allow whichever tolerance is larger — small absolute floor for
   // tiny values, percentage-based above that.
-  const relTol = (e < 0n ? -e : e) * relativeBps / 10_000n;
+  const relTol = ((e < 0n ? -e : e) * relativeBps) / 10_000n;
   const tol = relTol > absolute ? relTol : absolute;
   if (diff > tol) {
-    throw new Error(
-      `expectClose: actual=${a} expected=${e} diff=${diff} tolerance=${tol}`,
-    );
+    throw new Error(`expectClose: actual=${a} expected=${e} diff=${diff} tolerance=${tol}`);
   }
 }
 
-// ----- Tests --------------------------------------------------------------
-
-describeLive("JSON-RPC vs GraphQL parity (live mainnet)", () => {
+describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   describe("getAllBalancesCached", () => {
     test("balances match across transports", async () => {
-      const rpc = await getAllBalancesCached(ACCOUNT_WITH_STAKES, JSON_RPC_ID);
-      const gql = await getAllBalancesCached(ACCOUNT_WITH_STAKES, GRAPHQL_ID);
+      const rpc = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
+      const gql = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
       const sort = (xs: typeof rpc) => [...xs].sort((a, b) => a.coinType.localeCompare(b.coinType));
       const r = sort(rpc);
@@ -118,8 +92,8 @@ describeLive("JSON-RPC vs GraphQL parity (live mainnet)", () => {
         // SIP-58 split — rename `addressBalance` (GraphQL) →
         // `fundsInAddressBalance` (JSON-RPC) is exercised here.
         expect(g[i].fundsInAddressBalance ?? "0").toBe(r[i].fundsInAddressBalance ?? "0");
-        // `coinObjectCount` and `lockedBalance` are GraphQL gaps documented
-        // in the migration plan — intentionally NOT compared.
+        // `coinObjectCount` and `lockedBalance` are GraphQL gaps —
+        // intentionally NOT compared. See `getAllBalancesCached` in `sdk.ts`.
       }
     });
   });
@@ -151,19 +125,32 @@ describeLive("JSON-RPC vs GraphQL parity (live mainnet)", () => {
 
   describe("getCheckpoint(stable sequence)", () => {
     test("digest, sequenceNumber, timestampMs match exactly for a finalised historical checkpoint", async () => {
-      const rpc = await getCheckpoint(STABLE_CHECKPOINT_SEQUENCE, JSON_RPC_ID);
-      const gql = await getCheckpoint(STABLE_CHECKPOINT_SEQUENCE, GRAPHQL_ID);
+      const rpc = await getCheckpoint(stableCheckpointSequence, JSON_RPC_ID);
+      const gql = await getCheckpoint(stableCheckpointSequence, GRAPHQL_ID);
 
       expect(gql.digest).toBe(rpc.digest);
       expect(gql.sequenceNumber).toBe(rpc.sequenceNumber);
       expect(gql.timestampMs).toBe(rpc.timestampMs);
     });
+
+    test("GraphQL rejects digest input; JSON-RPC accepts it", async () => {
+      // sdk.ts:1769 throws on the GraphQL path when `id` is a digest
+      // because `Query.checkpoint(sequenceNumber:)` can't accept digests.
+      // JSON-RPC accepts both. Asserting the asymmetry live protects the
+      // guard against being silently relaxed (or a future GraphQL schema
+      // change that would mis-route).
+      const latest = await getLastBlock(JSON_RPC_ID);
+      await expect(getCheckpoint(latest.digest, JSON_RPC_ID)).resolves.toMatchObject({
+        digest: latest.digest,
+      });
+      await expect(getCheckpoint(latest.digest, GRAPHQL_ID)).rejects.toThrow(/sequence number/i);
+    });
   });
 
   describe("getStakesRaw", () => {
     test("delegated stakes group, status, principal match; estimatedReward within tolerance", async () => {
-      const rpc = await getStakesRaw(ACCOUNT_WITH_STAKES, JSON_RPC_ID);
-      const gql = await getStakesRaw(ACCOUNT_WITH_STAKES, GRAPHQL_ID);
+      const rpc = await getStakesRaw(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
+      const gql = await getStakesRaw(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
       const sortGroups = (xs: typeof rpc) =>
         [...xs].sort((a, b) => a.stakingPool.localeCompare(b.stakingPool));
@@ -176,7 +163,7 @@ describeLive("JSON-RPC vs GraphQL parity (live mainnet)", () => {
         expect(g[i].stakingPool).toBe(r[i].stakingPool);
         expect(g[i].validatorAddress).toBe(r[i].validatorAddress);
 
-        const sortStakes = (xs: typeof r[number]["stakes"]) =>
+        const sortStakes = (xs: (typeof r)[number]["stakes"]) =>
           [...xs].sort((a, b) => a.stakedSuiId.localeCompare(b.stakedSuiId));
         const rs = sortStakes(r[i].stakes);
         const gs = sortStakes(g[i].stakes);
@@ -249,13 +236,55 @@ describeLive("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       }
     });
   });
-});
 
-// Make the suite file self-explanatory in CI logs.
-if (!SHOULD_RUN) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    "[sdk.migration.integ] Skipped: set API_SUI_NODE_PROXY (and optionally " +
-      "API_SUI_GRAPHQL_URL) to run the JSON-RPC ↔ GraphQL parity suite.",
-  );
-}
+  describe("getAccountBalances (bridge wrapper)", () => {
+    // Wrapper around `getAllBalancesCached` (sdk.ts:588) — does the field
+    // rename + BigNumber conversion the bridge consumes via
+    // synchronisation.ts:55. Its dual-path behaviour is inherited from
+    // `getAllBalancesCached`, but we assert the bridge-shaped output here
+    // so any future divergence in the wrapper itself surfaces immediately.
+    test("balances match across transports as consumed by the bridge", async () => {
+      const rpc = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
+      const gql = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
+
+      const sort = (xs: typeof rpc) => [...xs].sort((a, b) => a.coinType.localeCompare(b.coinType));
+      const r = sort(rpc);
+      const g = sort(gql);
+
+      expect(g.length).toBe(r.length);
+      for (let i = 0; i < r.length; i++) {
+        expect(g[i].coinType).toBe(r[i].coinType);
+        expect(g[i].balance.toFixed()).toBe(r[i].balance.toFixed());
+        expect(g[i].fundsInAddressBalance.toFixed()).toBe(r[i].fundsInAddressBalance.toFixed());
+      }
+    });
+  });
+
+  describe("unused-address parity", () => {
+    // Empty / zero-result code path. The fixture address has stakes and
+    // multi-token balances, so it never exercises an empty page response.
+    // GraphQL pagination empty-page semantics are the path most likely
+    // to diverge silently from JSON-RPC for fresh accounts.
+    test("getStakesRaw returns equivalent results across transports for an unused address", async () => {
+      const rpc = await getStakesRaw(ACCOUNT_EMPTY, JSON_RPC_ID);
+      const gql = await getStakesRaw(ACCOUNT_EMPTY, GRAPHQL_ID);
+      expect(gql).toEqual(rpc);
+    });
+
+    test("getAllBalancesCached returns equivalent results across transports for an unused address", async () => {
+      const rpc = await getAllBalancesCached(ACCOUNT_EMPTY, JSON_RPC_ID);
+      const gql = await getAllBalancesCached(ACCOUNT_EMPTY, GRAPHQL_ID);
+
+      const sort = (xs: typeof rpc) => [...xs].sort((a, b) => a.coinType.localeCompare(b.coinType));
+      const r = sort(rpc);
+      const g = sort(gql);
+
+      expect(g.length).toBe(r.length);
+      for (let i = 0; i < r.length; i++) {
+        expect(g[i].coinType).toBe(r[i].coinType);
+        expect(g[i].totalBalance).toBe(r[i].totalBalance);
+        expect(g[i].fundsInAddressBalance ?? "0").toBe(r[i].fundsInAddressBalance ?? "0");
+      }
+    });
+  });
+});
