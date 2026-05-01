@@ -132,10 +132,11 @@ export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
 
 // ----- Helpers ------------------------------------------------------------
 
+const isNullish = (v: unknown): v is null | undefined => v === null || v === undefined;
 const s = (v: string | number | null | undefined): string =>
-  v == null ? "" : typeof v === "number" ? String(v) : v;
+  isNullish(v) ? "" : typeof v === "number" ? String(v) : v;
 const sOrNull = (v: string | number | null | undefined): string | null =>
-  v == null ? null : typeof v === "number" ? String(v) : v;
+  isNullish(v) ? null : typeof v === "number" ? String(v) : v;
 
 /**
  * Normalise Move type tags from GraphQL's long padded form
@@ -254,7 +255,7 @@ export function groupStakedSuiByPool(
         : {
             ...base,
             status: "Active",
-            estimatedReward: reward != null ? reward.toString() : "0",
+            estimatedReward: reward !== undefined ? reward.toString() : "0",
           };
 
     let group = byPool.get(item.pool_id);

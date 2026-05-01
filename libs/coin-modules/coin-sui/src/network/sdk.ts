@@ -289,7 +289,7 @@ function unwrapGraphQL<T>(
     const all = res.errors.map(e => e.message).join("; ");
     throw new Error(`GraphQL ${label} failed${reqId}: ${all}`);
   }
-  if (res.data == null) {
+  if (res.data === null || res.data === undefined) {
     throw new Error(`GraphQL ${label} returned no data${reqId}`);
   }
   return res.data;
@@ -340,7 +340,7 @@ async function paginateWithCursorRecovery<T>(config: {
 }): Promise<{ items: T[]; retries: number }> {
   const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
   let totalRetries = 0;
-  let useSeed = config.seed != null;
+  let useSeed = config.seed !== undefined;
 
   while (true) {
     const items: T[] = [];
@@ -357,7 +357,7 @@ async function paginateWithCursorRecovery<T>(config: {
         }
         items.push(...page.items);
         cursor = page.endCursor;
-        hasMore = page.hasNextPage && cursor != null;
+        hasMore = page.hasNextPage && cursor !== null;
       }
       return { items, retries: totalRetries };
     } catch (e) {
@@ -871,7 +871,7 @@ function validateStakedSuiNodes(rawNodes: ReadonlyArray<StakeNode>): {
   for (const node of rawNodes) {
     const json = node.contents?.json;
     if (isStakedSuiJson(json)) items.push(json);
-    else if (json != null) malformed++;
+    else if (json !== null && json !== undefined) malformed++;
   }
   return { items, malformed };
 }
@@ -1278,7 +1278,7 @@ export const getLastBlock = (
     graphql: async api => {
       const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
       const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
-      if (seq == null) {
+      if (seq === null || seq === undefined) {
         throw new Error("GraphQL LatestCheckpointSequence returned no checkpoint");
       }
       return fetchCheckpointFromGraphQL(api, String(seq));
@@ -2363,7 +2363,7 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
       let rateMissing = 0;
       plans.forEach((p, idx) => {
         const rate = rates[idx];
-        if (rate == null) {
+        if (rate === null || rate === undefined) {
           rateMissing++;
           return; // degrade to 0
         }
