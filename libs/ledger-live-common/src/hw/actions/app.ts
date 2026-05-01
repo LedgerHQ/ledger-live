@@ -1,13 +1,7 @@
-import invariant from "invariant";
 import { interval, Observable, of } from "rxjs";
 import { scan, debounce, tap, takeWhile } from "rxjs/operators";
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { log } from "@ledgerhq/logs";
-import {
-  getDerivationScheme,
-  getDerivationModesForCurrency,
-  runDerivationScheme,
-} from "@ledgerhq/ledger-wallet-framework/derivation";
 import type {
   AppAndVersion,
   ConnectAppEvent,
@@ -19,12 +13,19 @@ import { useReplaySubject } from "../../observable";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
-import { loadAccountModuleForFamily } from "../../coin-modules/registry";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import {
+  resolveAppRequestRequirements,
+  toConnectAppRequest,
+} from "../deviceInitialization/resolveAppRequestRequirements";
+import type { AppRequestInput } from "../deviceInitialization/types";
+import {
+  buildExpectedAccountIdentity,
+  validateDerivedAddress,
+} from "../deviceInitialization/wrongDeviceValidation";
 
 export type State = {
   isLoading: boolean;
@@ -81,16 +82,7 @@ export type AppState = State & {
     | undefined;
 };
 
-export type AppRequest = {
-  appName?: string;
-  currency?: CryptoCurrency | null;
-  account?: Account;
-  tokenCurrency?: TokenCurrency;
-  dependencies?: AppRequest[];
-  withInlineInstallProgress?: boolean;
-  requireLatestFirmware?: boolean;
-  allowPartialDependencies?: boolean;
-};
+export type AppRequest = AppRequestInput;
 
 export type AppResult = {
   device: Device;
@@ -379,85 +371,6 @@ const reducer = (state: State, e: Event): State => {
   return state;
 };
 
-/**
- * Map between an AppRequest and a ConnectAppRequest, allowing us to
- * specify an account or a currency without resolving manually the actual
- * applications we depend on in order to access the flow.
- */
-async function inferCommandParams(appRequest: AppRequest): Promise<ConnectAppRequest> {
-  let derivationMode;
-  let derivationPath;
-
-  const {
-    account,
-    requireLatestFirmware,
-    allowPartialDependencies = false,
-    dependencies: appDependencies,
-  } = appRequest;
-  let { appName, currency } = appRequest;
-
-  if (!currency && account) {
-    currency = account.currency;
-  }
-
-  if (!appName && currency) {
-    appName = currency.managerAppName;
-  }
-
-  invariant(appName, "appName or currency or account is missing");
-
-  let dependencies: string[] | undefined = undefined;
-  if (appDependencies) {
-    dependencies = (await Promise.all(appDependencies.map(d => inferCommandParams(d)))).map(
-      p => p.appName,
-    );
-  }
-
-  if (!currency) {
-    return {
-      appName,
-      dependencies,
-      requireLatestFirmware,
-      allowPartialDependencies,
-    };
-  }
-
-  let extra;
-
-  if (account) {
-    derivationMode = account.derivationMode;
-    derivationPath = account.freshAddressPath;
-    const m = await loadAccountModuleForFamily(account.currency.family);
-
-    if (m && m.injectGetAddressParams) {
-      extra = m.injectGetAddressParams(account);
-    }
-  } else {
-    const modes = getDerivationModesForCurrency(currency);
-    derivationMode = modes[modes.length - 1];
-    derivationPath = runDerivationScheme(
-      getDerivationScheme({
-        currency,
-        derivationMode,
-      }),
-      currency,
-    );
-  }
-
-  return {
-    appName,
-    dependencies,
-    requireLatestFirmware,
-    requiresDerivation: {
-      derivationMode,
-      path: derivationPath,
-      currencyId: currency.id,
-      ...extra,
-    },
-    allowPartialDependencies,
-  };
-}
-
 export let currentMode: keyof typeof ImplementationType = "event";
 export function setDeviceMode(mode: keyof typeof ImplementationType): void {
   currentMode = mode;
@@ -475,7 +388,14 @@ export const createAction = (
     const [request, setRequest] = useState<ConnectAppRequest | null>(null);
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-      inferCommandParams(appRequest).then(setRequest);
+      let dead = false;
+      resolveAppRequestRequirements(appRequest).then(requirements => {
+        if (dead) return;
+        setRequest(toConnectAppRequest(requirements));
+      });
+      return () => {
+        dead = true;
+      };
     }, [
       appRequest.appName,
       appRequest.account?.id,
@@ -557,16 +477,23 @@ export const createAction = (
         displayUpgradeWarning: false,
       }));
     }, []);
+
+    const wrongDeviceCheck = useMemo(
+      () =>
+        validateDerivedAddress(
+          appRequest.account ? buildExpectedAccountIdentity(appRequest.account) : undefined,
+          state.derivation?.address,
+        ),
+      [appRequest.account, state.derivation?.address],
+    );
+
     return {
       ...state,
       inWrongDeviceForAccount:
-        state.derivation && appRequest.account
-          ? state.derivation.address !== appRequest.account.freshAddress &&
-            state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
-            ? {
-                accountName: getDefaultAccountName(appRequest.account),
-              }
-            : null
+        wrongDeviceCheck.status === "mismatch"
+          ? {
+              accountName: wrongDeviceCheck.accountName,
+            }
           : null,
       onRetry,
       passWarning,

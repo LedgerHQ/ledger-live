@@ -31,6 +31,41 @@ const SEND_ROUTES = [
   },
 ];
 
+describe("send (non-dry-run): device model resolution", () => {
+  const server = new MockServer([]);
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  it("exits with a clear error when deviceModelId cannot be resolved from the DMK session", async () => {
+    const { stdout, exitCode } = await runCli(
+      [
+        "send",
+        "--account",
+        MOCK_ETH_DESCRIPTOR,
+        "--to",
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "--amount",
+        "0.001 ETH",
+        "--output",
+        "json",
+      ],
+      {
+        WALLET_CLI_MOCK_PORT: String(server.port),
+        WALLET_CLI_MOCK_DMK: "1",
+        WALLET_CLI_MOCK_DMK_STATE: "no-device-model",
+        WALLET_CLI_MOCK_APP_RESULTS: JSON.stringify({
+          Ethereum: { publicKey: MOCK_ETH_PUBKEY, address: MOCK_ETH_ADDRESS },
+        }),
+      },
+    );
+    expect(exitCode).toBe(1);
+    const data = JSON.parse(stdout);
+    expect(data.ok).toBe(false);
+    expect(data.error.message).toContain("Could not determine device model");
+  });
+});
+
 describe("send --dry-run command", () => {
   const server = new MockServer(SEND_ROUTES);
 

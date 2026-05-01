@@ -6,11 +6,13 @@ import { DeveloperToggleRow } from "../components/DeveloperToggleRow";
 interface ProductTourSectionProps {
   readonly productTourCompleted: boolean;
   readonly onToggleProductTourCompleted: () => void;
+  readonly onOpenProductTour: () => void;
 }
 
 export const ProductTourSection = ({
   productTourCompleted,
   onToggleProductTourCompleted,
+  onOpenProductTour,
 }: ProductTourSectionProps) => {
   const { t } = useTranslation();
 
@@ -31,7 +33,7 @@ export const ProductTourSection = ({
             : t("settings.developer.featuresAndFlowsDevTool.productTour.notCompleted")
         }
       />
-      <Button appearance="accent" size="sm" onClick={() => undefined}>
+      <Button appearance="accent" size="sm" onClick={onOpenProductTour}>
         {t("settings.developer.featuresAndFlowsDevTool.productTour.open")}
       </Button>
     </div>

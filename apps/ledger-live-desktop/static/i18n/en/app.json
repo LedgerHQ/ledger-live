@@ -4721,7 +4721,7 @@
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions.",
       "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
@@ -6399,6 +6399,9 @@
     },
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
+    },
+    "CeloGroupNotVotable": {
+      "title": "This validator group cannot receive votes. It may be full or no longer eligible."
     },
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them",
@@ -8675,6 +8678,17 @@
     "cta": {
       "continue": "Continue",
       "explore": "Explore my new portfolio"
+    }
+  },
+  "productTour": {
+    "cta": {
+      "continue": "Continue",
+      "done": "Done",
+      "fundYourWallet": "Fund your wallet",
+      "discoverSwap": "Discover swap",
+      "growYourRewards": "Grow your rewards",
+      "spendYourCrypto": "Spend your crypto",
+      "everythingAtAGlance": "Everything at a glance"
     }
   },
   "history": {

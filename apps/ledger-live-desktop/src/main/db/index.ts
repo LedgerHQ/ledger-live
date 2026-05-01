@@ -60,6 +60,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "featureFlags",
   "discover",
   "ptx",
+  "history",
   "PLAYWRIGHT_RUN", // e2e fixtures: localStorage seed (e.g. acceptedTermsVersion) and env overrides
 ]);
 

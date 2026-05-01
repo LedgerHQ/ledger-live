@@ -5,6 +5,7 @@ import { PostOnboardingActionId, type PostOnboardingHubState } from "@ledgerhq/t
 import i18n from "~/renderer/i18n/init";
 import { getLumenSymbolForActionId } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/utils";
 import useFinishOnboardingDialogViewModel from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialogViewModel";
+import { track } from "~/renderer/analytics/segment";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
 
@@ -129,6 +130,11 @@ describe("useFinishOnboardingDialogViewModel", () => {
     });
 
     expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
+    expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked2", {
+      button: "Close",
+      deviceModelId: DeviceModelId.nanoX,
+      flow: "post-onboarding",
+    });
   });
 
   it("should close the dialog and dismiss the post-onboarding wallet entry point when onGotIt runs", () => {
@@ -142,5 +148,10 @@ describe("useFinishOnboardingDialogViewModel", () => {
 
     expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
     expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(true);
+    expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked2", {
+      button: "Got it",
+      deviceModelId: DeviceModelId.nanoX,
+      flow: "post-onboarding",
+    });
   });
 });

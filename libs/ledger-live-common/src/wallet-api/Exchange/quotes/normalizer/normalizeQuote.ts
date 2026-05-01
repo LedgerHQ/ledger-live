@@ -3,13 +3,20 @@ import type { Quote } from "../types";
 import type { ProviderData } from "../lookupProviderConfig";
 import { buildProviderDetails } from "./buildProviderDetails";
 import { buildQuoteDetails } from "./buildQuoteDetails";
-import { computeError, computeWarning } from "./computeQuoteStatus";
+import { computeError, computeWarning, type NormalizationContext } from "./computeQuoteStatus";
 import { isGasLess, normalizedProviderId, resolveQuoteId } from "./quoteHelpers";
 
-/**
- * Enrich one raw HTTP quote row using the full swap `providerData` catalog (CAL + CDN).
- */
-export function normalizeQuote(rawQuote: RawQuote, providerData: ProviderData): Quote {
+const EMPTY_CONTEXT: NormalizationContext = {
+  sendCurrencyId: "",
+  receiveCurrencyId: "",
+  spotPrices: {},
+};
+
+export function normalizeQuote(
+  rawQuote: RawQuote,
+  providerData: ProviderData,
+  context: NormalizationContext = EMPTY_CONTEXT,
+): Quote {
   const provider = normalizedProviderId(rawQuote.provider);
   const gasLess = isGasLess(rawQuote);
 
@@ -19,7 +26,7 @@ export function normalizeQuote(rawQuote: RawQuote, providerData: ProviderData): 
     provider,
     providerDetails: buildProviderDetails(rawQuote, providerData),
     quoteDetails: buildQuoteDetails(rawQuote, gasLess),
-    warning: computeWarning(rawQuote),
-    error: computeError(rawQuote),
+    warning: computeWarning(rawQuote, context),
+    error: computeError(rawQuote, context),
   };
 }

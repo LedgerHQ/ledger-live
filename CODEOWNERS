@@ -312,8 +312,10 @@ apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                      
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/tests/specs/onboarding/                                               @ledgerhq/engagement
 apps/ledger-live-desktop/tests/specs/postOnboarding/                                           @ledgerhq/engagement
@@ -336,6 +338,7 @@ apps/ledger-live-mobile/src/contentCards/                                       
 apps/ledger-live-mobile/src/dynamicContent/                                                    @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Onboarding/                                          @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
@@ -387,6 +390,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/.oxfmtrc.*                                         @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
 **/tsconfig*                                          @ledgerhq/platform
+**/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 
 # CI — Turborepo & Nx
@@ -396,6 +400,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 # Platform — Agent files
 AGENTS.md                         @ledgerhq/platform
 /CLAUDE.md                        @ledgerhq/platform
+.agents/                          @ledgerhq/platform
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 .github/copilot-instructions.md

@@ -1,9 +1,9 @@
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
-import { DeviceStatus } from "@ledgerhq/device-management-kit";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { firstValueFrom } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
-import { createDeviceManagementKit } from "./dmk";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
 
 /** Device id passed to live-common `withDevice` / bridge methods for the first USB Ledger (DMK node WebUSB). */
@@ -20,7 +20,7 @@ type Singleton = {
 
 let singleton: Singleton | null = null;
 /** One DMK per CLI process: each `createDeviceManagementKit()` adds node-usb hotplug listeners; closing + recreating stacks listeners and breaks the 3rd+ in-process connect (same pattern as the former node-hid kit). */
-let persistentDmk: DeviceManagementKit | null = null;
+let persistentDmk: Promise<DeviceManagementKit> | null = null;
 let exitHooksRegistered = false;
 
 let _testTransport: WalletCliDmkTransport | null = null;
@@ -39,11 +39,13 @@ function closeDmkQuietly(dmk: DeviceManagementKit): void {
   }
 }
 
-function getOrCreatePersistentDmk(): DeviceManagementKit {
-  if (!persistentDmk) {
-    persistentDmk = createDeviceManagementKit();
-  }
-  return persistentDmk;
+function getOrCreatePersistentDmk(): Promise<DeviceManagementKit> {
+  return (persistentDmk ??= import("./dmk")
+    .then(({ createDeviceManagementKit }) => createDeviceManagementKit())
+    .catch(error => {
+      persistentDmk = null;
+      throw error;
+    }));
 }
 
 async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> {
@@ -67,6 +69,7 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
       ? sessionState.deviceStatus
       : null;
 
+  const { DeviceStatus } = await import("@ledgerhq/device-management-kit");
   if (status === DeviceStatus.BUSY) {
     await dmk.disconnect({ sessionId }).catch(() => {});
     throw new Error(
@@ -94,7 +97,7 @@ export async function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTranspo
     return singleton.transport;
   }
 
-  const dmk = getOrCreatePersistentDmk();
+  const dmk = await getOrCreatePersistentDmk();
   const sessionId = await connectFirstUsbDevice(dmk);
   const transport = new WalletCliDmkTransport(dmk, sessionId);
   singleton = { dmk, transport };
@@ -114,11 +117,25 @@ export async function resetWalletCliDmkSession(): Promise<void> {
   await held.dmk.disconnect({ sessionId: held.transport.sessionId }).catch(() => {});
 }
 
+/**
+ * Returns the live-common DeviceModelId for the active DMK session, or undefined if unavailable.
+ * Must be called while a session is active (inside a withCurrencyDeviceSession callback).
+ */
+export async function getWalletCliDeviceModelId(): Promise<DeviceModelId | undefined> {
+  if (!singleton) return undefined;
+  const { dmk, transport } = singleton;
+  const state = await firstValueFrom(
+    dmk.getDeviceSessionState({ sessionId: transport.sessionId }),
+  ).catch(() => null);
+  if (!state?.deviceModelId) return undefined;
+  return dmkToLedgerDeviceIdMap[state.deviceModelId];
+}
+
 /** Disconnect any live session and `dmk.close()` the persistent kit (USB hotplug listeners). */
 export async function disposeWalletCliDmkTransportFully(): Promise<void> {
   await resetWalletCliDmkSession();
   if (persistentDmk) {
-    closeDmkQuietly(persistentDmk);
+    closeDmkQuietly(await persistentDmk);
     persistentDmk = null;
   }
 }

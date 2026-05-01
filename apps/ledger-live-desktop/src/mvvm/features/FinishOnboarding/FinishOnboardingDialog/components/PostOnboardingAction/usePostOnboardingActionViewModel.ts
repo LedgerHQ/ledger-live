@@ -22,7 +22,6 @@ export function usePostOnboardingActionViewModel(
     description,
     deviceModelId,
     lumenSymbol,
-    onAction,
     postOnboardingActionId,
     shouldCompleteOnStart,
     startAction,
@@ -34,12 +33,12 @@ export function usePostOnboardingActionViewModel(
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
-
   const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.postOnboarding,
     needEligibleDevice: true,
   });
 
+  const isActionCompleted = completed;
   const completeAction = useCompleteActionCallback();
 
   const handleStartAction = useCallback(() => {
@@ -49,7 +48,6 @@ export function usePostOnboardingActionViewModel(
     const navigationCallback = (location: Record<string, unknown> | string) => {
       navigate(location);
     };
-
     if (deviceModelId !== null) {
       startAction({
         openModalCallback,
@@ -66,7 +64,7 @@ export function usePostOnboardingActionViewModel(
         });
       }
     }
-    if (shouldCompleteOnStart) completeAction(postOnboardingActionId);
+    if (shouldCompleteOnStart) { completeAction(postOnboardingActionId); }
   }, [
     buttonLabelForAnalyticsEvent,
     completeAction,
@@ -81,18 +79,14 @@ export function usePostOnboardingActionViewModel(
   ]);
 
   const onRowActivate = useCallback(() => {
-    if (completed) return;
+    if (isActionCompleted) return;
+    handleStartAction();
     dispatch(closeFinishPostOnboarding());
-    if (onAction) {
-      onAction();
-    } else {
-      handleStartAction();
-    }
-  }, [completed, dispatch, onAction, handleStartAction]);
+  }, [dispatch, handleStartAction, isActionCompleted]);
 
   return useMemo(
     () => ({
-      completed,
+      completed: isActionCompleted,
       description,
       lumenSymbol,
       onRowActivate,
@@ -101,7 +95,7 @@ export function usePostOnboardingActionViewModel(
       title,
     }),
     [
-      completed,
+      isActionCompleted,
       description,
       lumenSymbol,
       onRowActivate,

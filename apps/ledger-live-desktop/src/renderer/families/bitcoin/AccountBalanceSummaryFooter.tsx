@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -163,13 +163,16 @@ const SyncProgress = ({
 const EstimatedTimeRemaining = ({
   syncState,
   estimatedTimeRemaining,
+  disabled = true,
 }: {
   syncState: ZcashSyncState;
   estimatedTimeRemaining: { hours: number; minutes: number };
+  disabled?: boolean;
 }) => {
   if (
     syncState !== "running" ||
-    (estimatedTimeRemaining.hours === 0 && estimatedTimeRemaining.minutes === 0)
+    (estimatedTimeRemaining.hours === 0 && estimatedTimeRemaining.minutes === 0) ||
+    !!disabled
   ) {
     return null;
   }
@@ -189,18 +192,29 @@ const EstimatedTimeRemaining = ({
   );
 };
 
+function usePrevious<T>(val: T): T {
+  const ref = useRef<T>(val);
+  const prevVal = ref.current;
+  ref.current = val;
+  return prevVal;
+}
+
 type Props = {
   account: ZcashAccount | TokenAccount;
 };
 
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const { balance } = account;
-  const privateInfo = account.type === "Account" ? account.privateInfo : null;
+  const { getFeature } = useFeatureFlags();
+  const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
+
+  const privateInfo = "privateInfo" in account ? account.privateInfo : null;
   const { orchardBalance, saplingBalance } = privateInfo ?? {
     orchardBalance: BigNumber(0),
     saplingBalance: BigNumber(0),
   };
   const syncState = privateInfo?.syncState ?? "disabled";
+  const previousSyncState = usePrevious(syncState);
   const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
   const progress = privateInfo?.progress ?? 0;
   const estimatedTimeRemaining = privateInfo?.estimatedTimeRemaining ?? { hours: 0, minutes: 0 };
@@ -210,7 +224,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
-  const { getFeature } = useFeatureFlags();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -221,6 +234,83 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     },
     [account, dispatch],
   );
+
+  const updateSyncState = () => {
+    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
+      return;
+    }
+
+    switch (syncState) {
+      case "disabled":
+        // Open modal to import UFVK
+        dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account: account as ZcashAccount }));
+        break;
+      case "ready":
+        // Start
+        startShieldedSync();
+        break;
+      case "running":
+        // Stop
+        stopShieldedSync();
+        break;
+      case "stopped":
+        // Start
+        startShieldedSync();
+        break;
+      case "outdated":
+        // Start sync from the last known block
+        startShieldedSync();
+        break;
+    }
+  };
+
+  const startShieldedSync = useCallback(() => {
+    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
+      return;
+    }
+
+    saveSyncState({
+      syncState: "running",
+      progress: 0,
+    });
+
+    const syncConfig = {
+      paginationConfig: {},
+      syncType: SYNC_TYPE_SHIELDED,
+    };
+
+    const shieldedSync = getAccountBridge(account as ZcashAccount)
+      .sync(account as ZcashAccount, syncConfig)
+      .subscribe({
+        next(accountUpdater) {
+          dispatch(updateAccountWithUpdater(account.id, accountUpdater));
+        },
+        error(err) {
+          console.error(err);
+        },
+        complete() {
+          console.log(`Zcash shielded sync completed on account ${account.id}`);
+        },
+      });
+
+    dispatch(upsertShieldedSubscription({ accountId: account.id, subscription: shieldedSync }));
+  }, [account, dispatch, saveSyncState]);
+
+  const stopShieldedSync = useCallback(() => {
+    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
+      return;
+    }
+
+    const subscriptionToStop = shieldedSubscriptions.find(s => s.accountId === account.id);
+    if (subscriptionToStop) {
+      subscriptionToStop.subscription.unsubscribe();
+      dispatch(removeShieldedSubscription(account.id));
+    }
+    saveSyncState({
+      syncState: "stopped",
+      progress: 0,
+    });
+  }, [account, dispatch, shieldedSubscriptions, saveSyncState]);
 
   // Check if sync is outdated
   const outdatedSyncCheck = useCallback(() => {
@@ -235,6 +325,13 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     }
   }, [privateInfo?.lastSyncTimestamp, saveSyncState]);
 
+  // Check if private balance has been activated
+  useEffect(() => {
+    if (previousSyncState === "disabled" && syncState === "running") {
+      startShieldedSync();
+    }
+  }, [previousSyncState, syncState, startShieldedSync]);
+
   // Check if sync is outdated (every 5 seconds)
   useEffect(() => {
     if (syncState === "complete") {
@@ -246,14 +343,23 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     }
   }, [syncState, outdatedSyncCheck]);
 
-  const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
+  // Check on mount if there is a subscription for this account, if not update the sync state to "stopped"
+  useEffect(() => {
+    const hasShieldedSubscription = shieldedSubscriptions.some(s => s.accountId === account.id);
+    const justEnteredRunning = syncState === "running" && previousSyncState !== "running";
+
+    if (syncState === "running" && !hasShieldedSubscription && !justEnteredRunning) {
+      stopShieldedSync();
+    }
+  }, [account.id, previousSyncState, shieldedSubscriptions, syncState, stopShieldedSync]);
 
   if (
     account.type !== "Account" ||
     (account.currency.id as Currency) !== "zcash" ||
     !showPrivateBalanceComponent
-  )
+  ) {
     return null;
+  }
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -269,78 +375,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);
   const availableBalanceLabel = formatCurrencyUnit(unit, _availableBalance, formatConfig);
-
-  const updateSyncState = () => {
-    switch (syncState) {
-      case "disabled":
-        // Open modal to import UFVK
-        dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account }));
-        break;
-      case "ready":
-        // Start
-        startShieldedSync(account);
-        break;
-      case "running":
-        // Stop
-        stopShieldedSync();
-        break;
-      case "stopped":
-        // Start
-        startShieldedSync(account);
-        break;
-      case "outdated":
-        // Start sync from the last known block
-        startShieldedSync(account);
-        break;
-    }
-  };
-
-  const startShieldedSync = (account: ZcashAccount) => {
-    saveSyncState({
-      syncState: "running",
-      progress: 0,
-    });
-
-    const syncConfig = {
-      paginationConfig: {},
-      syncType: SYNC_TYPE_SHIELDED,
-    };
-
-    const shieldedSync = getAccountBridge(account)
-      .sync(account, syncConfig)
-      .subscribe({
-        next(accountUpdater) {
-          dispatch(updateAccountWithUpdater(account.id, accountUpdater));
-        },
-        error(err) {
-          console.error(err);
-        },
-        complete() {
-          console.log(`Zcash shielded sync completed on account ${account.id}`);
-        },
-      });
-
-    dispatch(upsertShieldedSubscription({ accountId: account.id, subscription: shieldedSync }));
-  };
-
-  const stopShieldedSync = () => {
-    const subscriptionToStop = shieldedSubscriptions.find(s => s.accountId === account.id);
-    if (subscriptionToStop) {
-      subscriptionToStop.subscription.unsubscribe();
-      dispatch(removeShieldedSubscription(account.id));
-    }
-    saveSyncState({
-      syncState: "stopped",
-      progress: 0,
-    });
-  };
-
-  // Check on mount if there is a subscription for this account, if not update the sync state to "stopped"
-  useEffect(() => {
-    if (syncState === "running" && !shieldedSubscriptions.find(s => s.accountId === account.id)) {
-      stopShieldedSync();
-    }
-  });
 
   return (
     <Wrapper>

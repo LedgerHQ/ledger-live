@@ -46,6 +46,7 @@ import {
   isRebornSelector,
   isOnboardingFlowSelector,
   isPostOnboardingFlowSelector,
+  analyticsConsentInfoSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -189,6 +190,7 @@ const getMandatoryProperties = (store: AppStore) => {
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
   const readOnlyMode = readOnlyModeEnabledSelector(state);
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
+  const analyticsInfo = analyticsConsentInfoSelector(state);
 
   return {
     userId: userIdStr,
@@ -198,6 +200,7 @@ const getMandatoryProperties = (store: AppStore) => {
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
+    analyticsInfo,
   };
 };
 

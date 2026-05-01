@@ -122,8 +122,12 @@ describe("getBalance", () => {
       {
         value: 15n,
         asset: { type: "native" },
+      },
+      {
+        value: 15n,
+        asset: { type: "native" },
         stake: {
-          uid: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
+          uid: "delegation-tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
           address: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
           delegate: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
           state: "active",
@@ -148,5 +152,146 @@ describe("getBalance", () => {
         },
       },
     ]);
+  });
+
+  describe("staking positions (Paris upgrade)", () => {
+    const address = "tz1StakingAddr";
+    const delegateAddress = "tz1BakerAddr";
+
+    function mockAccount(account: Record<string, unknown>) {
+      mockServer.use(
+        http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
+          HttpResponse.json({ type: "user", ...account }),
+        ),
+        http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
+      );
+    }
+
+    it("attaches a delegation Stake when only delegate is set", async () => {
+      mockAccount({ balance: 100, delegate: { address: delegateAddress } });
+
+      expect(await getBalance(address)).toEqual([
+        { value: 100n, asset: { type: "native" } },
+        {
+          value: 100n,
+          asset: {
+            type: "native",
+          },
+          stake: {
+            uid: `delegation-${address}`,
+            address,
+            delegate: delegateAddress,
+            state: "active",
+            asset: {
+              type: "native",
+            },
+            amount: 100n,
+          },
+        },
+      ]);
+    });
+
+    it("attaches a stake Stake when stakedBalance > 0 (no delegate)", async () => {
+      mockAccount({ balance: 100, stakedBalance: 30 });
+
+      expect(await getBalance(address)).toEqual([
+        { value: 100n, asset: { type: "native" } },
+        {
+          value: 30n,
+          asset: {
+            type: "native",
+          },
+          stake: {
+            uid: `stake-${address}`,
+            address,
+            state: "active",
+            asset: {
+              type: "native",
+            },
+            amount: 30n,
+          },
+        },
+      ]);
+    });
+
+    it("splits delegation and stake amounts when both delegate and stakedBalance are set", async () => {
+      mockAccount({
+        balance: 100,
+        stakedBalance: 30,
+        delegate: { address: delegateAddress },
+      });
+
+      expect(await getBalance(address)).toEqual([
+        { value: 100n, asset: { type: "native" } },
+        {
+          value: 70n,
+          asset: {
+            type: "native",
+          },
+          stake: {
+            uid: `delegation-${address}`,
+            address,
+            delegate: delegateAddress,
+            state: "active",
+            asset: {
+              type: "native",
+            },
+            amount: 70n,
+          },
+        },
+        {
+          value: 30n,
+          asset: {
+            type: "native",
+          },
+          stake: {
+            uid: `stake-${address}`,
+            address,
+            delegate: delegateAddress,
+            state: "active",
+            asset: {
+              type: "native",
+            },
+            amount: 30n,
+          },
+        },
+      ]);
+    });
+
+    it("attaches an unstaking Stake with state 'deactivating' when unstakedBalance > 0", async () => {
+      mockAccount({
+        balance: 100,
+        stakedBalance: 30,
+        unstakedBalance: 10,
+        delegate: { address: delegateAddress },
+      });
+
+      const result = await getBalance(address);
+
+      expect(result).toHaveLength(4);
+      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
+      expect(result[3]).toEqual({
+        value: 10n,
+        asset: {
+          type: "native",
+        },
+        stake: {
+          uid: `unstaking-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "deactivating",
+          asset: {
+            type: "native",
+          },
+          amount: 10n,
+        },
+      });
+    });
+
+    it("returns only the primary native Balance when no staking activity", async () => {
+      mockAccount({ balance: 50 });
+
+      expect(await getBalance(address)).toEqual([{ value: 50n, asset: { type: "native" } }]);
+    });
   });
 });

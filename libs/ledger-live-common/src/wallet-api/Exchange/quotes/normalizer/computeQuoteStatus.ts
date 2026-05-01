@@ -1,16 +1,20 @@
 import type { RawQuote } from "../service/types";
 import type { QuoteError, QuoteWarning } from "../types";
+import { computeUnrealisticQuote } from "./unrealisticQuote";
 
-/** Above this ratio we flag `highSpread` (same order of magnitude as legacy swap checks). */
-const HIGH_SPREAD_EXCHANGE_RATE_THRESHOLD = 1_000_000;
+export type NormalizationContext = {
+  sendCurrencyId: string;
+  receiveCurrencyId: string;
+  spotPrices: Record<string, number>;
+};
 
-export function computeWarning(quote: RawQuote): QuoteWarning | null {
-  if (quote.exchangeRate > HIGH_SPREAD_EXCHANGE_RATE_THRESHOLD) {
-    return { code: "highSpread" };
-  }
-  return null;
+export function computeWarning(
+  quote: RawQuote,
+  context: NormalizationContext,
+): QuoteWarning | null {
+  return computeUnrealisticQuote(quote, context);
 }
 
-export function computeError(_quote: RawQuote): QuoteError | null {
+export function computeError(_quote: RawQuote, _context: NormalizationContext): QuoteError | null {
   return null;
 }

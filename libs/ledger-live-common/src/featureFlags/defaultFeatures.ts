@@ -799,6 +799,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       families: [],
+      excludedCurrencyIds: [],
     },
   },
   zcashShielded: DEFAULT_FEATURE,
@@ -813,6 +814,8 @@ export const DEFAULT_FEATURES: Features = {
       touchscreens: false,
     },
   }),
+  lwdGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmGenericAwarenessModal: DEFAULT_FEATURE,
   lwmProductTour: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,

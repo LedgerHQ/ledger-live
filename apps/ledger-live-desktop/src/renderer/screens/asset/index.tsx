@@ -28,7 +28,6 @@ export default function AssetPage() {
   const counterValue = useSelector(counterValueCurrencySelector);
   const countervalueFirst = useSelector(countervalueFirstSelector);
   const allAccounts = useSelector(accountsSelector);
-
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
   }).filter(a => getAccountCurrency(a).id === assetId);

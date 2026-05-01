@@ -40,6 +40,10 @@ export class ZCashNative implements ZCashNativeClient {
     throw new Error(UNSUPPORTED_ERROR_MESSAGE);
   }
 
+  async findBlockHeight(_timestamp: number): Promise<number> {
+    throw new Error(UNSUPPORTED_ERROR_MESSAGE);
+  }
+
   syncShielded(_args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
     return throwError(() => new Error(UNSUPPORTED_ERROR_MESSAGE));
   }

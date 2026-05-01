@@ -98,15 +98,15 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Latest is chosen by highest numeric ID
-  const latestFirmware = providerFirmwares.reduce((latest, current) =>
-    current.id > latest.id ? current : latest,
-  );
+  // Nano S uses latest firmware; other devices use n-1.
+  const sortedByIdDesc = [...providerFirmwares].sort((a, b) => b.id - a.id);
+  const firmwareIndex = device === DeviceModelId.nanoS ? 0 : 1;
+  const firmware = sortedByIdDesc[firmwareIndex] ?? sortedByIdDesc[0]!;
 
-  firmwareVersionCache.set(device, latestFirmware.version);
-  process.env.SPECULOS_FIRMWARE_VERSION = latestFirmware.version;
+  firmwareVersionCache.set(device, firmware.version);
+  process.env.SPECULOS_FIRMWARE_VERSION = firmware.version;
 
-  return latestFirmware.version;
+  return firmware.version;
 }
 
 export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {
@@ -123,7 +123,17 @@ export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<vo
     const firmware = await getDeviceFirmwareVersion(device);
     const appCatalog = await getNanoAppCatalog(device, firmware);
 
-    fs.writeFileSync(jsonFilePath, JSON.stringify(appCatalog, null, 2), "utf8");
+    const tmpPath = `${jsonFilePath}.${process.pid}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(appCatalog, null, 2), "utf8");
+    try {
+      fs.renameSync(tmpPath, jsonFilePath);
+    } catch {
+      try {
+        fs.unlinkSync(tmpPath);
+      } catch {
+        // ignore
+      }
+    }
   } catch (error) {
     console.error("Unable to create app version file:", sanitizeError(error));
   }

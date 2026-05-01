@@ -382,4 +382,93 @@ describe("normalizeQuote", () => {
       expect(quote.quoteDetails.permitData).toEqual({ priceRoute });
     });
   });
+
+  describe("warning.unrealisticQuote — fiat gain detection", () => {
+    // Canonical "doubled in fiat" fixture: 1 unit from × 1.0 / 1 unit to × 2.0.
+    // Keeps spot values symmetric and gainPercent expressible as an exact
+    // integer (100%) so the tests assert on precise numeric output.
+    const doubledInFiat = {
+      sendCurrencyId: "ethereum",
+      receiveCurrencyId: "bitcoin",
+      spotPrices: { ethereum: 1, bitcoin: 2 },
+    };
+
+    it("returns no warning when `spotPrices` is empty (legacy missing-prices branch)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 10, amountTo: 10 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: {},
+        },
+      );
+      expect(quote.warning).toBeNull();
+    });
+
+    it("returns no warning when only the `from` spot price is available", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 10, amountTo: 100 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: { ethereum: 1 },
+        },
+      );
+      expect(quote.warning).toBeNull();
+    });
+
+    it("returns no warning when `amountFrom` is zero (division guard)", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 0, amountTo: 100 }),
+        emptyProviderData,
+        doubledInFiat,
+      );
+      expect(quote.warning).toBeNull();
+    });
+
+    it("returns no warning when `amountFrom` is missing", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: undefined, amountTo: 100 }),
+        emptyProviderData,
+        doubledInFiat,
+      );
+      expect(quote.warning).toBeNull();
+    });
+
+    it("returns no warning when the gain is non-positive (output fiat ≤ input fiat)", () => {
+      // amountFromFiat = 10 * 1 = 10, amountToFiat = 5 * 2 = 10 → gain = 0%
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 10, amountTo: 5 }),
+        emptyProviderData,
+        doubledInFiat,
+      );
+      expect(quote.warning).toBeNull();
+    });
+
+    it("emits `unrealisticQuote` with a positive `gainPercent` when output fiat exceeds input fiat", () => {
+      // amountFromFiat = 1 * 1 = 1, amountToFiat = 1 * 2 = 2 → gain = 100%
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 1 }),
+        emptyProviderData,
+        doubledInFiat,
+      );
+      expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 100 });
+    });
+
+    it("preserves fractional `gainPercent` values", () => {
+      // amountFromFiat = 100, amountToFiat = 101.5 → gain = 1.5%
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 100, amountTo: 101.5 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: { ethereum: 1, bitcoin: 1 },
+        },
+      );
+      expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 1.5 });
+    });
+  });
 });

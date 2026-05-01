@@ -39,6 +39,7 @@ import type { SyncShieldedArgs } from "./types";
 import {
   ZCASH_IPC,
   type CancelSyncArgs,
+  type FindBlockHeightArgs,
   type GetChainTipArgs,
   type RequestId,
   type StartSyncArgs,
@@ -106,6 +107,20 @@ export class ZCashNativeIPC implements ZCashNativeClient {
     const ipc = getIpcRenderer();
     const payload: GetChainTipArgs = { requestId: nextRequestId(), grpcUrl: this.grpcUrl };
     return (await ipc.invoke(ZCASH_IPC.getChainTip, payload)) as number;
+  }
+
+  /**
+   * Returns the block height corresponding to the given Unix timestamp,
+   * via the UtilityProcess (interpolation search + streaming range).
+   */
+  async findBlockHeight(timestamp: number): Promise<number> {
+    const ipc = getIpcRenderer();
+    const payload: FindBlockHeightArgs = {
+      requestId: nextRequestId(),
+      grpcUrl: this.grpcUrl,
+      timestamp,
+    };
+    return (await ipc.invoke(ZCASH_IPC.findBlockHeight, payload)) as number;
   }
 
   /**

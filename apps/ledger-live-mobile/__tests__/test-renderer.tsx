@@ -32,6 +32,7 @@ import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
 import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modularDrawer";
 import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notifications";
+import { INITIAL_STATE as POST_ONBOARDING_HUB_DRAWER_INITIAL_STATE } from "~/reducers/postOnboardingHubDrawer";
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
 import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
@@ -71,6 +72,7 @@ const INITIAL_STATE: State = {
   transferDrawer: TRANSFER_DRAWER_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
+  postOnboardingHubDrawer: POST_ONBOARDING_HUB_DRAWER_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
   ratings: RATINGS_INITIAL_STATE,
   settings: SETTINGS_INITIAL_STATE,

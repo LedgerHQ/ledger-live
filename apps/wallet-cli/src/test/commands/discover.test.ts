@@ -41,7 +41,10 @@ describe("account discover — session persistence", () => {
 
   beforeAll(() => server.start());
   afterAll(() => server.stop());
-  afterEach(() => { cleanup?.(); cleanup = undefined; });
+  afterEach(() => {
+    cleanup?.();
+    cleanup = undefined;
+  });
 
   it("writes discovered accounts to session.yaml with generated labels", async () => {
     const fixture = makeSessionDir([]);
@@ -54,7 +57,9 @@ describe("account discover — session persistence", () => {
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
     const sessionPath = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
-    const session = YAML.parse(await Bun.file(sessionPath).text()) as { accounts: Array<{ label: string; descriptor: string }> };
+    const session = YAML.parse(await Bun.file(sessionPath).text()) as {
+      accounts: Array<{ label: string; descriptor: string }>;
+    };
     expect(Array.isArray(session.accounts)).toBe(true);
     expect(session.accounts.length).toBeGreaterThan(0);
     expect(session.accounts[0].label).toMatch(/^ethereum-\d+$/);

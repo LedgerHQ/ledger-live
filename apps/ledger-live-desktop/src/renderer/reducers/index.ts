@@ -4,6 +4,7 @@ import accounts, { AccountsState } from "./accounts";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
 import dynamicContent, { DynamicContentState } from "./dynamicContent";
+import history, { HistoryState } from "./history";
 import modals, { ModalsState } from "./modals";
 import UI, { UIState } from "./UI";
 import settings, { SettingsState } from "./settings";
@@ -41,6 +42,7 @@ export type State = LLDRTKApiState & {
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   featureFlags: FeatureFlagsState;
+  history: HistoryState;
   identities: IdentitiesState;
   market: MarketState;
   modals: ModalsState;
@@ -68,6 +70,7 @@ const appReducer = combineReducers({
   devices,
   dynamicContent,
   featureFlags,
+  history,
   identities: identitiesSlice.reducer,
   modals,
   modularDialog,

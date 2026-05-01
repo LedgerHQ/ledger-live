@@ -61,6 +61,18 @@ export async function getChainTipJob(grpcUrl: string): Promise<number> {
 }
 
 /**
+ * Returns the block height corresponding to the given Unix timestamp
+ * using the native gRPC client (interpolation search + streaming range).
+ *
+ * @param timestamp - Unix timestamp in **seconds** (not milliseconds).
+ *   Use `Math.floor(Date.getTime() / 1000)` to convert from a JS `Date`.
+ */
+export async function findBlockHeightJob(grpcUrl: string, timestamp: number): Promise<number> {
+  const native = await getNativeModule();
+  return native.findBlockHeight(grpcUrl, timestamp);
+}
+
+/**
  * Runs the shielded sync loop.
  *
  * Drives the native tonic gRPC stream in `maxBatchSize`-block chunks, emitting

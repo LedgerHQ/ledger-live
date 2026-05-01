@@ -6,19 +6,49 @@ import type {
   AccountLike,
   Account,
   BroadcastConfig,
+  TransactionSource,
 } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { formatOperation, getMainAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { execAndWaitAtLeast } from "../promise";
 
-type SignTransactionArgs = {
+type CommonLogEvent = {
+  appVersion: string;
+  source?: TransactionSource;
+  currencyId: string;
+  tokenId?: string;
+};
+
+type ErrorLogEvent = { status: "failure"; error: Error; txPayload: string } & CommonLogEvent;
+
+type SuccessLogEvent = { status: "success" } & CommonLogEvent;
+
+type LogEvent = SuccessLogEvent | ErrorLogEvent;
+
+export type SignTransactionArgs = {
   account?: AccountLike | null;
   parentAccount?: Account | null;
   broadcastConfig?: BroadcastConfig;
+  logger?: (event: LogEvent) => void;
 };
 
-export const useBroadcast = ({ account, parentAccount, broadcastConfig }: SignTransactionArgs) => {
+function toError(err: unknown): Error {
+  if (err instanceof Error) return err;
+  if (typeof err === "string") return new Error(err);
+  try {
+    return new Error(JSON.stringify(err));
+  } catch {
+    return new Error(String(err));
+  }
+}
+
+export const useBroadcast = ({
+  account,
+  parentAccount,
+  broadcastConfig,
+  logger,
+}: SignTransactionArgs) => {
   const broadcast = useCallback(
     async (signedOperation: SignedOperation): Promise<Operation> => {
       if (!account) throw new Error("account not present");
@@ -29,20 +59,46 @@ export const useBroadcast = ({ account, parentAccount, broadcastConfig }: SignTr
         return Promise.resolve(signedOperation.operation);
       }
 
+      const commonLogEvent: CommonLogEvent = {
+        appVersion: getEnv("LEDGER_CLIENT_VERSION"),
+        source: broadcastConfig?.source,
+        currencyId: mainAccount.currency.id,
+        ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
+      };
+
       return execAndWaitAtLeast(3000, async () => {
-        const operation = await bridge.broadcast({
-          account: mainAccount,
-          signedOperation,
-          broadcastConfig,
-        });
-        log(
-          "transaction-summary",
-          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
-        );
-        return operation;
+        try {
+          const operation = await bridge.broadcast({
+            account: mainAccount,
+            signedOperation,
+            broadcastConfig,
+          });
+          log(
+            "transaction-summary",
+            `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
+          );
+          if (logger) {
+            logger({
+              status: "success",
+              ...commonLogEvent,
+            });
+          }
+          return operation;
+        } catch (err) {
+          const error = toError(err);
+          if (logger) {
+            logger({
+              status: "failure",
+              error,
+              txPayload: signedOperation.signature,
+              ...commonLogEvent,
+            });
+          }
+          throw err;
+        }
       });
     },
-    [account, parentAccount, broadcastConfig],
+    [account, parentAccount, broadcastConfig, logger],
   );
 
   return broadcast;

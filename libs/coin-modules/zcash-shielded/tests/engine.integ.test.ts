@@ -12,7 +12,7 @@
  * string) — BigNumber rehydration is verified in the client-side test.
  */
 
-import { getChainTipJob, startSyncJob } from "../src/native-engine/engine";
+import { getChainTipJob, findBlockHeightJob, startSyncJob } from "../src/native-engine/engine";
 import { ZCASH_GRPC_URL_MAINNET } from "../src/constants";
 import type { ShieldedSyncResultRaw, ShieldedTransactionRaw } from "../src/types";
 
@@ -88,6 +88,16 @@ describe("ZCash native engine integration (real gRPC, mainnet)", () => {
     });
   });
 
+  describe("findBlockHeightJob", () => {
+    it("should return the block height closest to the given timestamp", async () => {
+      const height = await findBlockHeightJob(
+        ZCASH_GRPC_URL_MAINNET,
+        Math.floor(new Date("2024-01-01T00:00:00Z").getTime() / 1000),
+      );
+      expect(height).toBe(2_351_031);
+    });
+  });
+
   describe("startSyncJob — empty range", () => {
     it("should emit one chunk with no transactions when already at tip", async () => {
       const tip = await getChainTipJob(ZCASH_GRPC_URL_MAINNET);
@@ -114,7 +124,7 @@ describe("ZCash native engine integration (real gRPC, mainnet)", () => {
         maxBatchSize: 10_000,
       });
       txMap = new Map(result.transactions.map(tx => [tx.id, tx]));
-    }, 30_000);
+    }, 60_000);
 
     it("should find all three known Orchard transactions", () => {
       expect(txMap.has(TX1.txid)).toBe(true);

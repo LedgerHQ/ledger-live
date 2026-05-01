@@ -83,6 +83,7 @@ describe("SelfTransferStepRecipient", () => {
       expect.objectContaining({ currencyName: "Aleo" }),
       true,
       true,
+      false,
     );
   });
 

@@ -14,14 +14,11 @@ export function ContextMenuTrigger({ popoverOpen }: ContextMenuTriggerProps) {
   return (
     <PopoverTrigger
       render={
-        <button
-          aria-label={label}
-          className="cursor-pointer items-center justify-center rounded-full hover:bg-muted-hover"
-        >
+        <button aria-label={label} className="cursor-pointer items-center justify-center">
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="inline-flex">
-                <UserAvatar showNotification />
+                <UserAvatar showNotification size="sm" />
               </span>
             </TooltipTrigger>
             {!popoverOpen && <TooltipContent side="bottom">{label}</TooltipContent>}

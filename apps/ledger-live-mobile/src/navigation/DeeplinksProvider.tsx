@@ -422,6 +422,14 @@ export const DeeplinksProvider = ({
                           },
                         },
                       }),
+                      /**
+                       * ie: "ledgerlive://perps" -> will redirect to the perps page
+                       */
+                      [NavigatorName.Perps]: {
+                        screens: {
+                          [ScreenName.PerpsTab]: "perps",
+                        },
+                      },
                       [NavigatorName.Main]: {
                         initialRouteName: ScreenName.Portfolio,
                         screens: {

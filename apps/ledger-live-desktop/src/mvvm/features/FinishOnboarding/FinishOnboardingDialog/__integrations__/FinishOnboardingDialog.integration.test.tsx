@@ -39,7 +39,9 @@ function postOnboardingActiveState(
   };
 }
 
-function renderWithStore(reduxState: { postOnboarding: PostOnboardingState } & Pick<State, "dialogs">) {
+function renderWithStore(
+  reduxState: { postOnboarding: PostOnboardingState } & Pick<State, "dialogs">,
+) {
   const store = createStore({
     state: {
       postOnboarding: reduxState.postOnboarding,

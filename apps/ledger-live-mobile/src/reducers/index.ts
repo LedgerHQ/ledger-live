@@ -1,4 +1,5 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
+import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
@@ -55,6 +56,7 @@ const appReducer = combineReducers({
   transferDrawer,
   notifications,
   postOnboarding,
+  postOnboardingHubDrawer,
   protect,
   ratings,
   settings,

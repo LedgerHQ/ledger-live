@@ -48,7 +48,6 @@ describe("MyWalletScreen", () => {
   it("should render the profile section with avatar and title", () => {
     renderScreen();
     expect(screen.getByTestId("my-wallet-avatar")).toBeVisible();
-    expect(screen.getByTestId("my-wallet-profile-title")).toBeVisible();
   });
 
   it("should render the quick actions row with all action buttons", () => {

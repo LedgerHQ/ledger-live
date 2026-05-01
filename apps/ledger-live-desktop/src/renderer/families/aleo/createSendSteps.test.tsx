@@ -1,16 +1,27 @@
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import type { AleoCoinConfig } from "@ledgerhq/live-common/families/aleo/types";
 import createSendSteps from "./createSendSteps";
+import { getAleoCurrencyConfig } from "./shared/utils";
+import { mockAleoCoinConfig } from "./__mocks__/config.mock";
+import { ALEO_ACCOUNT_1 } from "./__mocks__/account.mock";
 import type { StepProps } from "~/renderer/modals/Send/types";
 
 jest.mock("@ledgerhq/live-common/families/aleo/utils", () => ({
   isPrivateTransaction: jest.fn(),
 }));
 
+jest.mock("./shared/utils", () => ({
+  getAleoCurrencyConfig: jest.fn(),
+}));
+
+const mockGetAleoCurrencyConfig = jest.mocked(getAleoCurrencyConfig);
+
 jest.mock("~/renderer/modals/Send/steps/StepAmount", () => ({
   __esModule: true,
   default: () => null,
   StepAmountFooter: () => null,
 }));
+jest.mock("./modals/send/steps/StepAmount", () => ({ __esModule: true, default: () => null }));
 jest.mock("~/renderer/modals/Send/steps/StepSummary", () => ({
   __esModule: true,
   default: () => null,
@@ -46,6 +57,11 @@ jest.mock("./modals/send/steps/StepRecordPickerFooter", () => ({
 describe("createSendSteps", () => {
   const steps = createSendSteps();
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // default: config returns undefined → isManualStrategy = true (manual behaviour)
+    mockGetAleoCurrencyConfig.mockReturnValue(undefined);
+  });
   it("should return all expected step ids in correct order", () => {
     const ids = steps.map(s => s.id);
 
@@ -148,5 +164,42 @@ describe("createSendSteps", () => {
     const publicTransaction = { family: "aleo", mode: "transfer_public" };
     const result = updater(publicTransaction);
     expect(result).toBe(publicTransaction);
+  });
+
+  it("should navigate to record-picker when going back from amount on a private tx with manual strategy", () => {
+    jest.mocked(isPrivateTransaction).mockReturnValue(true);
+    mockGetAleoCurrencyConfig.mockReturnValue(mockAleoCoinConfig);
+
+    const step = steps.find(s => s.id === "amount");
+    const transitionTo = jest.fn();
+    const stepProps = {
+      transitionTo,
+      updateTransaction: jest.fn(),
+      transaction: { family: "aleo" },
+      account: ALEO_ACCOUNT_1,
+      parentAccount: null,
+    } as unknown as StepProps;
+    step?.onBack?.(stepProps);
+
+    expect(transitionTo).toHaveBeenCalledWith("record-picker");
+  });
+
+  it("should navigate to recipient when going back from amount on a private tx with auto strategy", () => {
+    jest.mocked(isPrivateTransaction).mockReturnValue(true);
+    const autoConfig: AleoCoinConfig = { ...mockAleoCoinConfig, recordPickingStrategy: "auto" };
+    mockGetAleoCurrencyConfig.mockReturnValue(autoConfig);
+
+    const step = steps.find(s => s.id === "amount");
+    const transitionTo = jest.fn();
+    const stepProps = {
+      transitionTo,
+      updateTransaction: jest.fn(),
+      transaction: { family: "aleo" },
+      account: ALEO_ACCOUNT_1,
+      parentAccount: null,
+    } as unknown as StepProps;
+    step?.onBack?.(stepProps);
+
+    expect(transitionTo).toHaveBeenCalledWith("recipient");
   });
 });

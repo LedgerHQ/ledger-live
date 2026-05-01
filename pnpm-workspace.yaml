@@ -20,7 +20,7 @@ packages:
 catalog:
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 1.16.0
-  "@ledgerhq/crypto-icons": "1.4.0"
+  "@ledgerhq/crypto-icons": "2.0.1"
   "@ledgerhq/device-management-kit": 1.2.0
   "@ledgerhq/device-signer-kit-ethereum": 1.14.0
   "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
@@ -33,9 +33,9 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
   "@ledgerhq/lumen-design-core": 0.1.11
-  "@ledgerhq/lumen-ui-react": 0.1.24
-  "@ledgerhq/lumen-ui-rnative": 0.1.25
-  "@ledgerhq/zcash-utils": 0.1.5
+  "@ledgerhq/lumen-ui-react": 0.1.25
+  "@ledgerhq/lumen-ui-rnative": 0.1.26
+  "@ledgerhq/zcash-utils": 0.2.0
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
@@ -68,6 +68,7 @@ catalog:
   "@rsbuild/plugin-node-polyfill": 1.4.3
   "@rsbuild/plugin-react": 1.4.3
   "@rsbuild/plugin-styled-components": 1.6.1
+  "@rsdoctor/rspack-plugin": "1.5.2"
   "@rspack/cli": 1.7.3
   "@rspack/core": 1.7.3
   "@rspack/dev-server": 1.1.5
@@ -120,6 +121,7 @@ catalog:
   babel-jest: 30.2.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
+  class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 40.6.0
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
@@ -173,7 +175,14 @@ catalog:
   "styled-components": 6.1.19
   "styled-system": 5.1.5
   "stylis": 4.0.0
+  "@tanstack/react-table": 8.21.3
   "@tanstack/react-virtual": 3.13.16
+  "@radix-ui/react-checkbox": 1.3.2
+  "@radix-ui/react-dialog": 1.1.15
+  "@radix-ui/react-dropdown-menu": 2.1.16
+  "@radix-ui/react-slot": 1.2.4
+  "@radix-ui/react-switch": 1.2.6
+  "@radix-ui/react-tooltip": 1.2.8
   "@playwright/test": 1.53.0
   playwright: 1.53.0
   allure-playwright: 3.2.1

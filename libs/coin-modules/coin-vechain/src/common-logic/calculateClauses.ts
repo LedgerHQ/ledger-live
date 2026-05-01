@@ -15,7 +15,7 @@ export const calculateClausesVtho = async (
     data: "0x",
   };
   updatedClause.data = ABIContract.ofAbi(VIP180_ABI)
-    .encodeFunctionInput("transfer", [recipient, amount.toFixed()])
+    .encodeFunctionInput("transfer", [recipient.toLowerCase(), amount.toFixed()])
     .toString();
 
   clauses.push(updatedClause);

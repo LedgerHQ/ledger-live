@@ -13,7 +13,6 @@ describe("isInteractive", () => {
   ];
 
   let saved: Record<string, string | undefined> = {};
-
   beforeEach(() => {
     saved = {};
     for (const k of [...envVars, "AGENT"]) {
@@ -60,7 +59,14 @@ describe("withSpinner", () => {
   });
 
   it("returns the resolved value (humanMode=true, non-interactive env)", async () => {
-    const result = await withSpinner("loading", "done", async () => "ok", true);
-    expect(result).toBe("ok");
+    const savedClaudeCode = process.env.CLAUDECODE;
+    try {
+      process.env.CLAUDECODE = "1";
+      const result = await withSpinner("loading", "done", async () => "ok", true);
+      expect(result).toBe("ok");
+    } finally {
+      if (savedClaudeCode === undefined) delete process.env.CLAUDECODE;
+      else process.env.CLAUDECODE = savedClaudeCode;
+    }
   });
 });

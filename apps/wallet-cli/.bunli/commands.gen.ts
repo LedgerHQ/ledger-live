@@ -7,7 +7,6 @@ import { createGeneratedHelpers, registerGeneratedStore } from '@bunli/core'
 import Account from '../src/commands/account/index.js'
 import Balances from '../src/commands/balances.js'
 import Discover from '../src/commands/account/discover.js'
-import FreshAddress from '../src/commands/account/fresh-address.js'
 import Operations from '../src/commands/operations.js'
 import Quote from '../src/commands/swap/quote.js'
 import Receive from '../src/commands/receive.js'
@@ -18,14 +17,13 @@ import Swap from '../src/commands/swap/index.js'
 import View from '../src/commands/session/view.js'
 
 // Narrow list of command names to avoid typeof-cycles in types
-const names = ['account', 'balances', 'discover', 'fresh-address', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
+const names = ['account', 'balances', 'discover', 'operations', 'quote', 'receive', 'reset', 'send', 'session', 'swap', 'view'] as const
 type GeneratedNames = typeof names[number]
 
 const modules: Record<GeneratedNames, Command<any>> = {
   'account': Account,
   'balances': Balances,
   'discover': Discover,
-  'fresh-address': FreshAddress,
   'operations': Operations,
   'quote': Quote,
   'receive': Receive,
@@ -46,18 +44,10 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
           description: 'Discover accounts for a network on the connected device',
           options: {
             'network': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Network to scan, e.g. "bitcoin", "ethereum", "ethereum:goerli" (or first positional arg). No env = mainnet.', short: 'n', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-            'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+            'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+            'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
           },
           path: './src/commands/account/discover'
-        },
-        {
-          name: 'fresh-address',
-          description: 'Resolve the fresh receive address for an account descriptor (no device required)',
-          options: {
-            'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-            'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
-          },
-          path: './src/commands/account/fresh-address'
         }
       ],
       path: './src/commands/account/index'
@@ -67,7 +57,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       description: 'Fetch native and token balances for an account descriptor (no device required)',
       options: {
         'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
       },
       path: './src/commands/balances'
     },
@@ -76,18 +66,10 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       description: 'Discover accounts for a network on the connected device',
       options: {
         'network': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Network to scan, e.g. "bitcoin", "ethereum", "ethereum:goerli" (or first positional arg). No env = mainnet.', short: 'n', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/account/discover'
-    },
-  'fresh-address': {
-      name: 'fresh-address',
-      description: 'Resolve the fresh receive address for an account descriptor (no device required)',
-      options: {
-        'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
-      },
-      path: './src/commands/account/fresh-address'
     },
   'operations': {
       name: 'operations',
@@ -96,7 +78,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'limit': { type: 'z.coerce.number.int.min.optional', required: false, hasDefault: false, description: 'Max number of operations to return (Alpaca families only)', short: 'l', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'cursor': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Pagination cursor from a previous call\'s nextCursor (Alpaca families only)', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
       },
       path: './src/commands/operations'
     },
@@ -104,12 +86,12 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       name: 'quote',
       description: 'Fetch swap quotes',
       options: {
-        'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":571,"end":572,"loc":{"start":{"line":15,"column":32,"index":571},"end":{"line":15,"column":33,"index":572}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
-        'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":705,"end":706,"loc":{"start":{"line":19,"column":30,"index":705},"end":{"line":19,"column":31,"index":706}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
-        'from-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":867,"end":868,"loc":{"start":{"line":23,"column":48,"index":867},"end":{"line":23,"column":49,"index":868}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
-        'to-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":998,"end":999,"loc":{"start":{"line":26,"column":46,"index":998},"end":{"line":26,"column":47,"index":999}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
-        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1122,"end":1123,"loc":{"start":{"line":29,"column":34,"index":1122},"end":{"line":29,"column":35,"index":1123}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":592,"end":593,"loc":{"start":{"line":15,"column":32,"index":592},"end":{"line":15,"column":33,"index":593}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
+        'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":726,"end":727,"loc":{"start":{"line":19,"column":30,"index":726},"end":{"line":19,"column":31,"index":727}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
+        'from-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":888,"end":889,"loc":{"start":{"line":23,"column":48,"index":888},"end":{"line":23,"column":49,"index":889}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+        'to-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1019,"end":1020,"loc":{"start":{"line":26,"column":46,"index":1019},"end":{"line":26,"column":47,"index":1020}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1143,"end":1144,"loc":{"start":{"line":29,"column":34,"index":1143},"end":{"line":29,"column":35,"index":1144}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' },
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
       },
       path: './src/commands/swap/quote'
     },
@@ -118,8 +100,9 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       description: 'Get receive address for an account (optionally verify on device)',
       options: {
         'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'verify': { type: 'z.boolean.default', required: true, hasDefault: true, default: true, description: 'Verify address on device screen (default: true). Use --verify=false to skip device.', short: 'v', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":754,"end":758,"loc":{"start":{"line":16,"column":39,"index":754},"end":{"line":16,"column":43,"index":758}},"value":true}}]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'verify': { type: 'z.boolean.default', required: true, hasDefault: true, default: true, description: 'Verify address on device screen (default: true). Use --verify=false to skip device.', short: 'v', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":953,"end":957,"loc":{"start":{"line":27,"column":39,"index":953},"end":{"line":27,"column":43,"index":957}},"value":true}}]}, validator: '(val) => true' },
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/receive'
     },
@@ -127,7 +110,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       name: 'reset',
       description: 'Wipe all accounts from the current session',
       options: {
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
       },
       path: './src/commands/session/reset'
     },
@@ -136,8 +119,8 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       description: 'Sign and broadcast a transaction (bridge only, no Alpaca)',
       options: {
         'account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.', short: 'a', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Recipient address', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1834,"end":1835,"loc":{"start":{"line":62,"column":30,"index":1834},"end":{"line":62,"column":31,"index":1835}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Recipient address is required (--to <address>)"}]}, validator: '(val) => true' },
-        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount including ticker, e.g. \'0.001 BTC\', \'0.01 ETH\', \'0.4 USDT\'', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1997,"end":1998,"loc":{"start":{"line":67,"column":21,"index":1997},"end":{"line":67,"column":22,"index":1998}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required (--amount '<value> <TICKER>', e.g. '0.01 ETH')"}]}, validator: '(val) => true' },
+        'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Recipient address', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":4273,"end":4274,"loc":{"start":{"line":151,"column":30,"index":4273},"end":{"line":151,"column":31,"index":4274}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Recipient address is required (--to <address>)"}]}, validator: '(val) => true' },
+        'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount including ticker, e.g. \'0.001 BTC\', \'0.01 ETH\', \'0.4 USDT\'', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":4436,"end":4437,"loc":{"start":{"line":156,"column":21,"index":4436},"end":{"line":156,"column":22,"index":4437}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required (--amount '<value> <TICKER>', e.g. '0.01 ETH')"}]}, validator: '(val) => true' },
         'fee-per-byte': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Fee per byte in satoshis (Bitcoin only)', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'rbf': { type: 'z.boolean.optional', required: false, hasDefault: false, description: 'Enable Replace-By-Fee (Bitcoin only)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'mode': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Transaction mode for Solana: send, stake.createAccount, stake.delegate, stake.undelegate, stake.withdraw', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
@@ -145,8 +128,9 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
         'stake-account': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Stake account address (Solana staking only)', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'memo': { type: 'z.string.min.optional', required: false, hasDefault: false, description: 'Memo/tag (Solana only)', min: 1, minLength: 1, schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
         'data': { type: 'z.string.regex.optional', required: false, hasDefault: false, description: 'EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)', pattern: '^0x([0-9a-fA-F]{2})*$', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
-        'dry-run': { type: 'z.boolean.default', required: true, hasDefault: true, default: false, description: 'Prepare and validate transaction but do not sign or broadcast', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":3340,"end":3345,"loc":{"start":{"line":104,"column":42,"index":3340},"end":{"line":104,"column":47,"index":3345}},"value":false}}]}, validator: '(val) => true' },
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'dry-run': { type: 'z.boolean.default', required: true, hasDefault: true, default: false, description: 'Prepare and validate transaction but do not sign or broadcast', schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"BooleanLiteral","start":5779,"end":5784,"loc":{"start":{"line":193,"column":42,"index":5779},"end":{"line":193,"column":47,"index":5784}},"value":false}}]}, validator: '(val) => true' },
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' },
+        'device-timeout': { type: 'z.coerce.number.int.positive.default', required: true, hasDefault: true, default: 60000, schema: {"type":"zod","method":"default","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1480,"end":1486,"loc":{"start":{"line":36,"column":85,"index":1480},"end":{"line":36,"column":91,"index":1486}},"extra":{"rawValue":60000,"raw":"60_000"},"value":60000}}]}, validator: '(val) => true' }
       },
       path: './src/commands/send'
     },
@@ -158,7 +142,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
           name: 'view',
           description: 'Display all accounts stored in the current session',
           options: {
-            'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+            'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
           },
           path: './src/commands/session/view'
         },
@@ -166,7 +150,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
           name: 'reset',
           description: 'Wipe all accounts from the current session',
           options: {
-            'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+            'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
           },
           path: './src/commands/session/reset'
         }
@@ -181,12 +165,12 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
           name: 'quote',
           description: 'Fetch swap quotes',
           options: {
-            'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":571,"end":572,"loc":{"start":{"line":15,"column":32,"index":571},"end":{"line":15,"column":33,"index":572}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
-            'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":705,"end":706,"loc":{"start":{"line":19,"column":30,"index":705},"end":{"line":19,"column":31,"index":706}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
-            'from-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":867,"end":868,"loc":{"start":{"line":23,"column":48,"index":867},"end":{"line":23,"column":49,"index":868}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
-            'to-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":998,"end":999,"loc":{"start":{"line":26,"column":46,"index":998},"end":{"line":26,"column":47,"index":999}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
-            'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1122,"end":1123,"loc":{"start":{"line":29,"column":34,"index":1122},"end":{"line":29,"column":35,"index":1123}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' },
-            'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+            'from': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source currency ID', short: 'f', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":592,"end":593,"loc":{"start":{"line":15,"column":32,"index":592},"end":{"line":15,"column":33,"index":593}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Source currency is required"}]}, validator: '(val) => true' },
+            'to': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination currency ID', short: 't', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":726,"end":727,"loc":{"start":{"line":19,"column":30,"index":726},"end":{"line":19,"column":31,"index":727}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Destination currency is required"}]}, validator: '(val) => true' },
+            'from-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Source account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":888,"end":889,"loc":{"start":{"line":23,"column":48,"index":888},"end":{"line":23,"column":49,"index":889}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+            'to-fresh-address': { type: 'z.string.min', required: true, hasDefault: false, description: 'Destination account fresh receive address is required', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1019,"end":1020,"loc":{"start":{"line":26,"column":46,"index":1019},"end":{"line":26,"column":47,"index":1020}},"extra":{"rawValue":1,"raw":"1"},"value":1}}]}, validator: '(val) => true' },
+            'amount': { type: 'z.string.min', required: true, hasDefault: false, description: 'Amount to swap in source currency', min: 1, minLength: 1, schema: {"type":"zod","method":"min","args":[{"type":"unknown","raw":{"type":"NumericLiteral","start":1143,"end":1144,"loc":{"start":{"line":29,"column":34,"index":1143},"end":{"line":29,"column":35,"index":1144}},"extra":{"rawValue":1,"raw":"1"},"value":1}},{"type":"literal","value":"Amount is required"}]}, validator: '(val) => true' },
+            'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
           },
           path: './src/commands/swap/quote'
         }
@@ -197,7 +181,7 @@ const metadata: Record<GeneratedNames, GeneratedCommandMeta> = {
       name: 'view',
       description: 'Display all accounts stored in the current session',
       options: {
-        'output': { type: 'OutputFormatSchema.default', required: true, hasDefault: true, default: "human", description: 'Output format: human (default) or json', schema: {"type":"zod","method":"default","args":[{"type":"literal","value":"human"}]}, validator: '(val) => true' }
+        'output': { type: 'OutputFormatSchema.optional', required: false, hasDefault: false, description: 'Output format: human or json (default: human)', schema: {"type":"zod","method":"optional","args":[]}, validator: '(val) => true' }
       },
       path: './src/commands/session/view'
     }

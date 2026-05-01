@@ -4,7 +4,10 @@ import { mockConfig } from "../test/config";
 import { craftTransaction } from ".";
 
 /**
- * https://teztnets.com/ghostnet-about
+ * Runs against Tezos mainnet via Ledger's vault explorer (see `mockConfig`).
+ * Despite the directory's other integ tests using Shadownet, this file does
+ * not query a testnet — Taquito reaches the mainnet RPC for counter / reveal
+ * estimation while ops themselves are forged locally and never broadcast.
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
@@ -95,6 +98,37 @@ describe("Tezos Api", () => {
           fee: "1",
           gas_limit: "200",
           storage_limit: "300",
+        }),
+      ]),
+    );
+  });
+
+  it("should craft a stake transaction", async () => {
+    // When
+    const result = await craftTransaction(
+      { address },
+      {
+        type: "stake",
+        recipient: "",
+        amount: BigInt(1000),
+        fee: { fees: BigInt(1).toString(), gasLimit: "200", storageLimit: "0" },
+      },
+    );
+
+    // Then
+    expect(result.type).toBe("STAKE");
+    expect(result.contents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: OpKind.TRANSACTION,
+          amount: "1000",
+          destination: address,
+          source: address,
+          counter: expect.any(String),
+          fee: "1",
+          gas_limit: "200",
+          storage_limit: "0",
+          parameters: { entrypoint: "stake", value: { prim: "Unit" } },
         }),
       ]),
     );

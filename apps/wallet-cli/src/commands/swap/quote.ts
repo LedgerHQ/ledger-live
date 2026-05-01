@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
-import { outputOption } from "../inputs";
+import { outputOption, resolveOutputFormat } from "../inputs";
 import { mapSwapQuoteLine } from "./quote-shared";
 
 const DEFAULT_PROVIDERS = ["changelly_v2", "oneinch", "paraswap", "exodus", "swapsxyz"];
@@ -32,25 +32,29 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags }) => {
-    walletCliDebug(`quote: from=${flags.from} to=${flags.to} output=${flags.output}`);
-    const out = createCommandOutput(flags.output, { command: "swap quote", network: flags.from });
+    const output = resolveOutputFormat(flags.output);
+    walletCliDebug(`quote: from=${flags.from} to=${flags.to} output=${output}`);
+    const out = createCommandOutput(output, { command: "swap quote", network: flags.from });
 
     await out.run(async () => {
       const s = out.spin("Fetching swap quotes…");
-      const result = await getQuotes({
-        providers: DEFAULT_PROVIDERS,
-        data: {
-          amount: flags.amount,
-          counterValueCurrency: "USD",
-          uniswapOrderType: "classic",
-          sendCurrencyId: flags.from,
-          receiveCurrencyId: flags.to,
-          sendAddress: flags["from-fresh-address"],
-          receiveAddress: flags["to-fresh-address"],
-          sendAccountId: "",
-          receiveAccountId: "",
+      const result = await getQuotes(
+        {
+          providers: DEFAULT_PROVIDERS,
+          data: {
+            amount: flags.amount,
+            counterValueCurrency: "USD",
+            uniswapOrderType: "classic",
+            sendCurrencyId: flags.from,
+            receiveCurrencyId: flags.to,
+            sendAddress: flags["from-fresh-address"],
+            receiveAddress: flags["to-fresh-address"],
+            sendAccountId: "",
+            receiveAccountId: "",
+          },
         },
-      });
+        { accounts: [], spotPrices: {} },
+      );
 
       if (result.quotes.length === 0 && result.errors.length > 0) {
         out.swapQuotesUnavailable("No quotes available", result.errors);

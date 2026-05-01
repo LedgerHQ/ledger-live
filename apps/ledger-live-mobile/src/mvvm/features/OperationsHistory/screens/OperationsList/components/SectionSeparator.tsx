@@ -25,9 +25,9 @@ export function SectionSeparator({ leadingItem, trailingItem, trailingSection }:
 }
 
 const afterSectionHeaderSpacingStyle: LumenViewStyle = {
-  height: "s4",
+  height: "s12",
 };
 
 const betweenSectionsSpacingStyle: LumenViewStyle = {
-  height: "s16",
+  height: "s24",
 };

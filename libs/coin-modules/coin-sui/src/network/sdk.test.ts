@@ -432,10 +432,28 @@ const defaultGetCoinsResponse = {
   hasNextPage: false,
 };
 
+const defaultGetAllBalancesResponse = [
+  {
+    coinType: "0x2::sui::SUI",
+    coinObjectCount: 1,
+    totalBalance: "1000000000",
+    lockedBalance: {},
+    fundsInAddressBalance: "400000000",
+  },
+  {
+    coinType: "0x123::test::TOKEN",
+    coinObjectCount: 1,
+    totalBalance: "500000",
+    lockedBalance: {},
+  },
+];
+
 beforeEach(() => {
   mockApi.queryTransactionBlocks.mockReset();
   mockApi.getCoins.mockReset();
   mockApi.getCoins.mockResolvedValue(defaultGetCoinsResponse);
+  mockApi.getAllBalances.mockReset();
+  mockApi.getAllBalances.mockResolvedValue(defaultGetAllBalancesResponse);
 });
 
 describe("SDK Functions", () => {
@@ -766,9 +784,16 @@ describe("SDK Functions", () => {
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
-  test("createTransaction sets empty gas payment when sender has no coin objects", async () => {
-    mockApi.getCoins.mockReset();
-    mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+  test("createTransaction sets empty gas payment when sender's funds are in address balance", async () => {
+    mockApi.getAllBalances.mockResolvedValueOnce([
+      {
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        coinObjectCount: 0,
+        totalBalance: "1000000000",
+        lockedBalance: {},
+        fundsInAddressBalance: "1000000000",
+      },
+    ]);
 
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const transaction = {
@@ -780,8 +805,8 @@ describe("SDK Functions", () => {
 
     const tx = await sdk.createTransaction(address, transaction);
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
-    expect(mockApi.getCoins).toHaveBeenCalledWith(
-      expect.objectContaining({ coinType: sdk.DEFAULT_COIN_TYPE, limit: 1 }),
+    expect(mockApi.getAllBalances).toHaveBeenCalledWith(
+      expect.objectContaining({ owner: address }),
     );
     const MockTransaction = Transaction as unknown as jest.Mock;
     const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
@@ -1014,9 +1039,16 @@ describe("Staking Operations", () => {
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
-    test("createTransaction sets empty gas payment for delegate when no coin objects", async () => {
-      mockApi.getCoins.mockReset();
-      mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+    test("createTransaction sets empty gas payment for delegate when funds are in address balance", async () => {
+      mockApi.getAllBalances.mockResolvedValueOnce([
+        {
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          coinObjectCount: 0,
+          totalBalance: "1000000000",
+          lockedBalance: {},
+          fundsInAddressBalance: "1000000000",
+        },
+      ]);
 
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       const transaction = {
@@ -1028,17 +1060,24 @@ describe("Staking Operations", () => {
 
       const tx = await sdk.createTransaction(address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
-      expect(mockApi.getCoins).toHaveBeenCalledWith(
-        expect.objectContaining({ coinType: sdk.DEFAULT_COIN_TYPE, limit: 1 }),
+      expect(mockApi.getAllBalances).toHaveBeenCalledWith(
+        expect.objectContaining({ owner: address }),
       );
       const MockTransaction = Transaction as unknown as jest.Mock;
       const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
       expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
     });
 
-    test("createTransaction sets empty gas payment for undelegate when no coin objects", async () => {
-      mockApi.getCoins.mockReset();
-      mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+    test("createTransaction sets empty gas payment for undelegate when funds are in address balance", async () => {
+      mockApi.getAllBalances.mockResolvedValueOnce([
+        {
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          coinObjectCount: 0,
+          totalBalance: "1000000000",
+          lockedBalance: {},
+          fundsInAddressBalance: "1000000000",
+        },
+      ]);
 
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       const transaction = {

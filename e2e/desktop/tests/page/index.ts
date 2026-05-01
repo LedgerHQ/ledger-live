@@ -37,6 +37,7 @@ import { MarketBannerPage } from "./marketBanner.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
 import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
+import { HistoryPage } from "./history.page";
 import { MainNavigationPage } from "./mainNavigation.page";
 
 export class Application extends PageHolder {
@@ -77,6 +78,7 @@ export class Application extends PageHolder {
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
+  public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
   public assets = new AssetsPage(this.page);
 }

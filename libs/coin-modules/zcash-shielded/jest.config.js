@@ -2,8 +2,9 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
   coveragePathIgnorePatterns: [
     "test/cli.ts",
-    "src/stubs/",
-    "src/ipc/",
+    "/src/stubs/",
+    "/src/ipc/",
+    "/src/types\\.ts",
     ".*\\.integration\\.test\\.[tj]s",
     ".*\\.integ\\.test\\.[tj]s",
   ],
@@ -11,9 +12,15 @@ module.exports = {
   coverageDirectory: "coverage",
   testEnvironment: "node",
   roots: ["<rootDir>/src", "<rootDir>/tests"],
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s", ".*\\.integ\\.test\\.[tj]s"],
+  testPathIgnorePatterns: [
+    "lib/",
+    "lib-es/",
+    ".*\\.integration\\.test\\.[tj]s",
+    ".*\\.integ\\.test\\.[tj]s",
+  ],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   transformIgnorePatterns: ["node_modules/(?!cipherscan)/"],

@@ -1,3 +1,4 @@
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
@@ -34,6 +35,10 @@ function buildCurrencyLookups(cryptoAssets: AssetsDataLike["cryptoAssets"]): Cur
     for (const assetId of assetIds) currencyToMetaId[assetId] = metaId;
   }
   return { currencyToMetaId, primaryAssets };
+}
+
+function resolveNormalizedCurrency(metaCurrencyId: string): CryptoCurrency | undefined {
+  return findCryptoCurrencyById(toSlug(metaCurrencyId));
 }
 
 function computeDistribution(countervalue: number, sum: number, fallback: number): number {
@@ -117,9 +122,15 @@ export function buildAssetDistribution(
   let sum = 0;
   for (const group of groups.values()) {
     const primaryAssetId = primaryAssets[group.metaCurrencyId];
+    const normalizedCurrency = resolveNormalizedCurrency(group.metaCurrencyId);
     const primaryCurrency = currencyById.get(primaryAssetId);
-    if (primaryCurrency) group.currency = primaryCurrency;
-    group.marketId ??= assetsData.markets[primaryAssetId]?.id;
+    if (normalizedCurrency) {
+      group.currency = normalizedCurrency;
+      group.marketId = assetsData.markets[normalizedCurrency.id]?.id ?? normalizedCurrency.id;
+    } else {
+      if (primaryCurrency) group.currency = primaryCurrency;
+      group.marketId ??= assetsData.markets[primaryAssetId]?.id;
+    }
 
     let groupCountervalue = 0;
     for (const network of group.networks.values()) {

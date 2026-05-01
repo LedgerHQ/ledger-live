@@ -64,6 +64,21 @@ const getJsonRpcModule = () => {
   return jsonRpcModuleCache;
 };
 
+async function resolveStartBlockHeight(
+  lastProcessedBlock: number | null | undefined,
+  birthday: string | null | undefined,
+  findBlockHeight: (timestamp: number) => Promise<number>,
+): Promise<number> {
+  if (lastProcessedBlock !== null && lastProcessedBlock !== undefined) {
+    return lastProcessedBlock + 1;
+  }
+  if (birthday) {
+    const ts = Math.floor(new Date(birthday).getTime() / 1000);
+    return findBlockHeight(ts);
+  }
+  return 0;
+}
+
 const zcashSyncShielded = (
   acc: AccountShapeInfo<ZcashAccount>,
   _syncConfig: SyncConfig,
@@ -73,22 +88,27 @@ const zcashSyncShielded = (
     if (!viewingKey) {
       throw new Error("Missing unified full viewing key (ufvk) for ZCash shielded sync");
     }
-    const startBlockHeight = (() => {
-      const blockHeight = acc.initialAccount?.privateInfo?.lastProcessedBlock;
-      return blockHeight !== null && blockHeight !== undefined ? blockHeight + 1 : 0;
-    })();
+    const { lastProcessedBlock, birthday } = acc.initialAccount?.privateInfo ?? {};
+
     if (useNative) {
       // Native Rust engine: only loads ZCashNative — no WASM dependency
       return from(getNativeModule()).pipe(
-        mergeMap(({ ZCashNative }) =>
-          new ZCashNative({
+        mergeMap(({ ZCashNative }) => {
+          const client = new ZCashNative({
             grpcUrl: ZCASH_GRPC_URL_CUSTOM ?? ZCASH_GRPC_URL_MAINNET,
-          }).syncShielded({
-            startBlockHeight,
-            viewingKey,
-            maxBatchSize: ZCASH_NATIVE_CHUNK_SIZE,
-          }),
-        ),
+          });
+          return from(
+            resolveStartBlockHeight(lastProcessedBlock, birthday, ts => client.findBlockHeight(ts)),
+          ).pipe(
+            mergeMap(startBlockHeight =>
+              client.syncShielded({
+                startBlockHeight,
+                viewingKey,
+                maxBatchSize: ZCASH_NATIVE_CHUNK_SIZE,
+              }),
+            ),
+          );
+        }),
       );
     }
 
@@ -98,11 +118,20 @@ const zcashSyncShielded = (
         const zcash = new ZCash({
           nodeUrl: ZCASH_JSON_RPC_SERVER_CUSTOM ?? ZCASH_JSON_RPC_SERVER_MAINNET,
         });
-        return zcash.syncShielded({
-          startBlockHeight,
-          viewingKey,
-          maxBatchSize: ZCASH_MAX_BATCH_SIZE,
-        });
+        return from(
+          resolveStartBlockHeight(lastProcessedBlock, birthday, async ts => {
+            const height = await zcash.findBlockHeight(ts);
+            return height ?? 0;
+          }),
+        ).pipe(
+          mergeMap(startBlockHeight =>
+            zcash.syncShielded({
+              startBlockHeight,
+              viewingKey,
+              maxBatchSize: ZCASH_MAX_BATCH_SIZE,
+            }),
+          ),
+        );
       }),
     );
   });

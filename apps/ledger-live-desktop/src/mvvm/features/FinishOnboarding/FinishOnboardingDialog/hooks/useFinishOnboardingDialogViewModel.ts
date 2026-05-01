@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { Account, type StartActionArgs } from "@ledgerhq/types-live";
+import { type StartActionArgs } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { track } from "~/renderer/analytics/segment";
 import {
   closeFinishPostOnboarding,
   selectIsFinishPostOnboardingOpen,
@@ -25,7 +26,6 @@ export type FinishOnboardingDialogAction = Omit<FinishPostOnboardingListItem, "s
 export interface FinishOnboardingDialogViewProps {
   /** True when every listed post-onboarding action (excl. device row) is completed. */
   readonly allActionsCompleted: boolean;
-  readonly accounts: Account[];
   /**
    * Rows from {@link usePostOnboardingFinishProgress} with `startAction` resolved for the dialog
    * (see {@link resolveFinishPostOnboardingStartAction} in `./utils`).
@@ -36,7 +36,6 @@ export interface FinishOnboardingDialogViewProps {
   /** From the hook: `actionList`.length + 1 (same implicit device step in the stepper). */
   readonly totalActionsAmount: number;
   readonly deviceModelId: DeviceModelId | null;
-  readonly isLedgerSyncActive: boolean;
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly onGotIt: () => void;
@@ -61,27 +60,41 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
     usePostOnboardingFinishProgress(actionsState);
 
   const onGotIt = useCallback(() => {
+    track("button_clicked2", {
+      button: "Got it",
+      deviceModelId,
+      flow: "post-onboarding",
+    });
     dispatch(closeFinishPostOnboarding());
     dispatch(hidePostOnboardingWalletEntryPoint());
-  }, [dispatch]);
+  }, [deviceModelId, dispatch]);
 
   const onClose = useCallback(() => {
+    track("button_clicked2", {
+      button: "Close",
+      deviceModelId,
+      flow: "post-onboarding",
+    });
     dispatch(closeFinishPostOnboarding());
-  }, [dispatch]);
+  }, [deviceModelId, dispatch]);
 
   return useMemo(
     () => ({
       allActionsCompleted,
-      accounts,
       actions: actionList.map(
         (item): FinishOnboardingDialogAction => ({
           ...item,
+          completed:
+            item.completed ||
+            !!item.getIsAlreadyCompletedByState?.({
+              isLedgerSyncActive,
+              accounts,
+            }),
           startAction: resolveFinishPostOnboardingStartAction(item),
         }),
       ),
       completedActionsAmount,
       deviceModelId,
-      isLedgerSyncActive,
       isOpen: isDialogOpen,
       onClose,
       onGotIt,
@@ -96,10 +109,10 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
       deviceModelId,
       actionList,
       isDialogOpen,
-      isLedgerSyncActive,
       onClose,
       onGotIt,
       t,
+      isLedgerSyncActive,
       totalActionsAmount,
     ],
   );

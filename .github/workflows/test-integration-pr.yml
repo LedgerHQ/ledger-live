@@ -76,7 +76,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-common..." --filter="ledger-live"
+        run: pnpm i --filter="live-common..." --filter="ledger-live" --filter="@ledgerhq/ledger-wallet-framework"
 
       - name: Build
         env:
@@ -95,6 +95,10 @@ jobs:
             echo "families/$COIN" | xargs pnpm common ci-test-integration
             git diff --exit-code libs/ledger-live-common/src
           done
+      - name: Test Ledger Wallet framework
+        shell: bash
+        if: ${{ contains(needs.is-affected.outputs.paths, 'ledger-wallet-framework/') }}
+        run: pnpm --filter @ledgerhq/ledger-wallet-framework test-integ
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
