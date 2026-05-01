@@ -1,7 +1,6 @@
 /**
- * Hand-written GraphQL documents (typed via `gql.tada`); each export is
- * paired with a runtime mapper in `sdk.ts` that re-shapes the response to
- * the existing JSON-RPC types so downstream callers stay untouched.
+ * Hand-written GraphQL documents typed via `gql.tada`. Each export pairs
+ * with a runtime mapper in `sdk.graphql.ts` that re-shapes results to JSON-RPC types.
  */
 import { graphql, type ResultOf } from "./tada";
 
@@ -97,14 +96,14 @@ export const EXCHANGE_RATE_AT_EPOCH = graphql(`
 export type ExchangeRateAtEpochResult = ResultOf<typeof EXCHANGE_RATE_AT_EPOCH>;
 
 /**
- * 15-aliased batch of {@link EXCHANGE_RATE_AT_EPOCH}: collapses 15 lookups
- * into one HTTP round-trip via GraphQL aliasing. Fixed-N (gql.tada
- * validates static docs only) — full chunks of {@link EXCHANGE_RATE_AT_EPOCH}-
- * sized requests use this; smaller tail chunks fall back to parallel
- * single-query calls. Variable count and alias count must stay in sync
- * with `RATE_BATCH_CHUNK_SIZE` in `./constants.ts`.
+ * 15-aliased batch of {@link EXCHANGE_RATE_AT_EPOCH} — one HTTP round-trip
+ * per 15 lookups. Tail chunks below 15 fall back to parallel single-query
+ * calls. Alias count must stay in sync with `RATE_BATCH_CHUNK_SIZE`.
  */
-// @ts-expect-error -- gql.tada + large aliased query triggers TS2589 (type instantiation too deep)
+// @ts-expect-error TS2589 — gql.tada's type-instantiation depth overflows for 15 aliases.
+// SAFETY: structurally identical to 15× EXCHANGE_RATE_AT_EPOCH; tsc width limit, not a
+// correctness issue. Drift is caught at runtime via `parseExchangeRateNode` →
+// `isExchangeRateJson`. Alias count vs `RATE_BATCH_CHUNK_SIZE` is asserted in `utils.test.ts`.
 // prettier-ignore
 export const BATCH_RATES_15 = graphql(`
   query BatchExchangeRates(

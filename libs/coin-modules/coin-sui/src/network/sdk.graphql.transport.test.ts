@@ -2,7 +2,8 @@ import { log } from "@ledgerhq/logs";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import coinConfig from "../config";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
-import { getAllBalancesCached, getValidators, graphqlFetcher, isGraphQLEnabled } from "./sdk";
+import { getAllBalancesCached, getValidators, isGraphQLEnabled } from "./sdk";
+import { graphqlFetcher } from "./sdk.graphql";
 import { bindMockNextGraphQLClient } from "./sdk.graphql.fixtures";
 
 // JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
@@ -109,7 +110,7 @@ describe("unwrapGraphQL: error envelope handling", () => {
     mockNext({ query });
 
     await expect(getValidators("sui-graphql-errors-no-data")).rejects.toThrow(
-      /SystemState returned no data/,
+      /SystemState failed: no data/,
     );
   });
 
@@ -132,7 +133,7 @@ describe("unwrapGraphQL: error envelope handling", () => {
     mockNext({ query });
 
     await expect(getValidators("sui-graphql-errors-no-data-with-reqid")).rejects.toThrow(
-      /SystemState returned no data \[reqId=req-trace-xyz\]/,
+      /SystemState failed \[reqId=req-trace-xyz\]: no data/,
     );
   });
 });

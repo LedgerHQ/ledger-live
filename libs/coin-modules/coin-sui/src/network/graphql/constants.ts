@@ -1,5 +1,5 @@
 // Constants for the GraphQL transport and SUI network tests.
-// To refresh server-side limits, query the live endpoint with:
+// Server-side limits come from the live query:
 //   curl -s -X POST -H 'Content-Type: application/json' \
 //     https://graphql.mainnet.sui.io/graphql \
 //     -d '{"query":"{ serviceConfig { maxQueryPayloadSize maxQueryNodes maxOutputNodes } }"}'

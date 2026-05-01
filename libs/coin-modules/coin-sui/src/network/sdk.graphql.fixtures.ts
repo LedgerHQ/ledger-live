@@ -1,5 +1,5 @@
 import { BATCH_RATES_15, EXCHANGE_RATE_AT_EPOCH } from "./graphql/queries";
-import type { StakedSuiJson } from "./graphql/mappers";
+import type { StakedSuiJson } from "./graphql/utils";
 
 /** Test-only convenience: `addr("33") === "0x" + "33".repeat(32)`. */
 export const addr = (byte: string) => "0x" + byte.repeat(32);

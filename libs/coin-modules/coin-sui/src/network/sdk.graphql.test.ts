@@ -7,7 +7,7 @@ import {
   RATE_BATCH_CHUNK_SIZE,
   STAKES_PAGE_SIZE,
 } from "./graphql/constants";
-import { UNKNOWN_VALIDATOR } from "./graphql/mappers";
+import { UNKNOWN_VALIDATOR } from "./graphql/utils";
 import {
   getAllBalancesCached,
   getCheckpoint,
@@ -581,6 +581,39 @@ describe("getStakesRaw on GraphQL transport", () => {
       await expect(getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry-double")).rejects.toThrow(
         /outside available range/,
       );
+    });
+  });
+
+  describe("AbortSignal mid-pagination", () => {
+    test("rejects without retrying when aborted between pages", async () => {
+      // Outer-loop abort gate must propagate without entering a new fetch.
+      const owner = addr("ab");
+      const POOL = "0xpoolAbort";
+      const controller = new AbortController();
+
+      const firstStakesPage = fakeStakesPage([pendingStake("0xa", POOL)], {
+        hasNextPage: true,
+        endCursor: "c1",
+      });
+
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
+        .mockResolvedValueOnce(firstStakesPage)
+        // 3+ must not fire; if it does, the gate failed.
+        .mockImplementation(() => {
+          controller.abort();
+          throw new Error("post-abort fetch should never run");
+        });
+      mockNext({ query });
+
+      controller.abort(new DOMException("teardown", "AbortError"));
+
+      await expect(
+        getStakesRaw(owner, "sui-graphql-stakes-abort-mid-pagination", controller.signal),
+      ).rejects.toThrow(/teardown|aborted/i);
+
+      expect(query).toHaveBeenCalledTimes(2);
     });
   });
 });
