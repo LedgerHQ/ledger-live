@@ -76,7 +76,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       return;
     }
 
-    dispatch(openModal("MODAL_RECEIVE", undefined));
+    dispatch(openModal("MODAL_RECEIVE", { sourcePage: trackingPageName }));
   }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow, trackingPageName]);
 
   const onBuy = useCallback(() => {

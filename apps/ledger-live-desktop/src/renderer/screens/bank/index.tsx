@@ -37,7 +37,7 @@ const Bank = () => {
 
   function handleClose() {
     navigate(-1);
-    dispatch(openModal("MODAL_RECEIVE", undefined));
+    dispatch(openModal("MODAL_RECEIVE", { sourcePage: "bank" }));
   }
 
   return (

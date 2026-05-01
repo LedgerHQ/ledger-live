@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "../Body";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 
@@ -46,13 +46,16 @@ const Content = styled(Box)`
 `;
 
 export default function StepOptions(props: Readonly<StepProps>) {
-  const { transitionTo, closeModal } = props;
+  const { transitionTo, closeModal, sourcePage } = props;
   const navigate = useNavigate();
+
+  const { pathname } = useLocation();
+  const page = sourcePage ?? pathname;
 
   function handleGoToBankProvider() {
     track("button_clicked", {
       button: "fiat",
-      page: "receive_drawer",
+      page,
     });
     closeModal();
     navigate("/bank");
@@ -61,7 +64,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
   function handleGoToReceiveAccount() {
     track("button_clicked", {
       button: "crypto",
-      page: "receive_drawer",
+      page,
     });
     transitionTo("account");
   }

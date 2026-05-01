@@ -143,6 +143,7 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
       <ReceiveOptionsDialog
         onClose={() => handleClose(false)}
         onGoToAccount={() => setStepId("account")}
+        sourcePage={props?.sourcePage}
       />
     );
   }

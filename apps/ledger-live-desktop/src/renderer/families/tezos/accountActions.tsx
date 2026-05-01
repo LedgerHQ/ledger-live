@@ -42,6 +42,7 @@ const ReceiveAction = ({ account, parentAccount, onClick }: Props) => {
           parentAccount,
           account,
           startWithWarning: receiveShouldWarnDelegation,
+          sourcePage: "tezos",
         }),
       );
     } else {
