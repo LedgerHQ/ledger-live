@@ -303,9 +303,11 @@ apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts            
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                                 @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts                                        @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts                     @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/images/lns-upsell-banner.webp                            @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ActionContentCards.tsx                 @ledgerhq/engagement
-apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/hooks/**/useBannersVisibility*.ts @ledgerhq/engagement
-apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/PortfolioBannerContent/ @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/                    @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/reducers/dynamicContent.ts                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
@@ -313,7 +315,13 @@ apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                           
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                                   @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/Onboarding/                                         @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/BrazeTools/          @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeaturesAndFlowsDevTool/  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/components/TourSection.tsx  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/General/ShareAnalyticsButton.tsx  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/General/ShareAnalyticsButtonFF.tsx  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
@@ -327,6 +335,7 @@ apps/ledger-live-mobile/src/analytics/                                          
 apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/__integrations__/pushNotificationOptIn.integration.test.tsx @ledgerhq/engagement
 apps/ledger-live-mobile/e2e/specs/onboarding.spec.ts                                           @ledgerhq/engagement
 apps/ledger-live-mobile/e2e/specs/onboardingReadOnly.spec.ts                                   @ledgerhq/engagement
 apps/ledger-live-mobile/e2e/page/onboarding/                                                   @ledgerhq/engagement
@@ -359,6 +368,10 @@ libs/ledger-live-common/src/onboarding/                                         
 libs/ledger-live-common/src/postOnboarding/                                                    @ledgerhq/engagement
 libs/ledger-live-common/src/transactionsAlerts/                                                @ledgerhq/engagement
 libs/ui/packages/native/src/components/Layout/Slides/                                          @ledgerhq/engagement
+
+# Libs
+libs/ledgerjs/packages/types-live/src/lnsUpsell.ts                                             @ledgerhq/engagement
+libs/ledgerjs/packages/types-live/src/postOnboarding.ts                                        @ledgerhq/engagement
 
 
 # UI tests
