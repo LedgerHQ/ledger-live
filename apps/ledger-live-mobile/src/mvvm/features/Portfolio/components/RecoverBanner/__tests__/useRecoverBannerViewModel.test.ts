@@ -2,14 +2,9 @@ import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-rendere
 import { Linking } from "react-native";
 import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { getStoreValue, setStoreValue } from "~/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { State } from "~/reducers/types";
 import useRecoverBannerViewModel from "../useRecoverBannerViewModel";
-
-jest.mock("~/store", () => ({
-  getStoreValue: jest.fn(),
-  setStoreValue: jest.fn(),
-}));
 
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -35,18 +30,33 @@ jest.mock("@ledgerhq/live-common/postOnboarding/actions", () => ({
   addPostOnboardingAction: jest.fn(args => ({ type: "ADD_POST_ONBOARDING_ACTION", ...args })),
 }));
 
-const mockGetStoreValue = jest.mocked(getStoreValue);
-const mockSetStoreValue = jest.mocked(setStoreValue);
 const mockAddPostOnboardingAction = jest.mocked(addPostOnboardingAction);
 
 const mockRecoverUri = "ledgerlive://recover/test";
 
+const PROTECT_ID = "protect-simu";
+
 const withBannerEnabled = withFlagOverrides({
   protectServicesMobile: {
     enabled: true,
-    params: { bannerSubscriptionNotification: true },
+    params: { bannerSubscriptionNotification: true, protectId: PROTECT_ID },
   },
 });
+
+function withRecoverState(
+  subscriptionState: LedgerRecoverSubscriptionStateEnum,
+  displayBanner: boolean,
+  protectId = PROTECT_ID,
+) {
+  return (state: State): State => ({
+    ...state,
+    recoverState: {
+      protectIdState: {
+        [protectId]: { subscriptionState, displayBanner },
+      },
+    },
+  });
+}
 
 describe("useRecoverBannerViewModel", () => {
   beforeEach(() => {
@@ -59,94 +69,82 @@ describe("useRecoverBannerViewModel", () => {
 
   describe("shouldDisplay", () => {
     it("returns truthy when all conditions are met", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
-
       const { result } = renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
+        overrideInitialState: state =>
+          withBannerEnabled(
+            withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, true)(state),
+          ),
       });
 
       await waitFor(() => expect(result.current.shouldDisplay).toBeTruthy());
     });
 
-    it("returns falsy when banner feature flag is disabled", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
+    it("returns falsy when banner feature flag is disabled", () => {
+      const { result } = renderHook(() => useRecoverBannerViewModel(), {
+        overrideInitialState: withRecoverState(
+          LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+          true,
+        ),
+      });
 
-      const { result } = renderHook(() => useRecoverBannerViewModel());
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
       expect(result.current.shouldDisplay).toBeFalsy();
     });
 
-    it("returns falsy when bannerSubscriptionNotification is explicitly false", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
-
+    it("returns falsy when bannerSubscriptionNotification is explicitly false", () => {
       const { result } = renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withFlagOverrides({
-          protectServicesMobile: {
-            enabled: true,
-            params: { bannerSubscriptionNotification: false },
-          },
-        }),
+        overrideInitialState: state =>
+          withFlagOverrides({
+            protectServicesMobile: {
+              enabled: true,
+              params: { bannerSubscriptionNotification: false },
+            },
+          })(withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, true)(state)),
       });
 
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
       expect(result.current.shouldDisplay).toBeFalsy();
     });
 
-    it("returns falsy when display banner state is false in storage", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("false");
-
+    it("returns falsy when displayBanner is false in Redux", () => {
       const { result } = renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
+        overrideInitialState: state =>
+          withBannerEnabled(
+            withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, false)(state),
+          ),
       });
 
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
       expect(result.current.shouldDisplay).toBeFalsy();
     });
 
-    it("returns falsy when subscription state is NO_SUBSCRIPTION", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION)
-        .mockResolvedValueOnce("true");
-
+    it("returns falsy when subscription state is NO_SUBSCRIPTION", () => {
       const { result } = renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
+        overrideInitialState: state =>
+          withBannerEnabled(
+            withRecoverState(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION, true)(state),
+          ),
       });
 
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
       expect(result.current.shouldDisplay).toBeFalsy();
     });
 
-    it("returns falsy when subscription state is BACKUP_DONE", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)
-        .mockResolvedValueOnce("true");
-
+    it("returns falsy when subscription state is BACKUP_DONE", () => {
       const { result } = renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
+        overrideInitialState: state =>
+          withBannerEnabled(
+            withRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE, true)(state),
+          ),
       });
 
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
       expect(result.current.shouldDisplay).toBeFalsy();
     });
   });
 
   describe("onCloseBanner", () => {
-    it("persists DISPLAY_BANNER as false and clears shouldDisplay", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
-
+    it("clears shouldDisplay when called", async () => {
       const { result } = renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
+        overrideInitialState: state =>
+          withBannerEnabled(
+            withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, true)(state),
+          ),
       });
 
       await waitFor(() => expect(result.current.shouldDisplay).toBeTruthy());
@@ -155,24 +153,13 @@ describe("useRecoverBannerViewModel", () => {
         result.current.onCloseBanner();
       });
 
-      await waitFor(() =>
-        expect(mockSetStoreValue).toHaveBeenCalledWith(
-          "DISPLAY_BANNER",
-          "false",
-          expect.any(String),
-        ),
-      );
-      await waitFor(() => expect(result.current.shouldDisplay).toBeFalsy());
+      expect(result.current.shouldDisplay).toBeFalsy();
     });
   });
 
   describe("onRedirectRecover", () => {
     it("opens the recover URI via Linking", async () => {
-      mockGetStoreValue.mockResolvedValue(undefined);
-
       const { result } = renderHook(() => useRecoverBannerViewModel());
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
 
       result.current.onRedirectRecover();
 
@@ -182,11 +169,8 @@ describe("useRecoverBannerViewModel", () => {
 
     it("does nothing when recoverResumeActivatePath is undefined", async () => {
       mockUseCustomURI.mockReturnValue(undefined);
-      mockGetStoreValue.mockResolvedValue(undefined);
 
       const { result } = renderHook(() => useRecoverBannerViewModel());
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
 
       result.current.onRedirectRecover();
 
@@ -199,11 +183,16 @@ describe("useRecoverBannerViewModel", () => {
     it.each([
       LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
       LedgerRecoverSubscriptionStateEnum.BACKUP_DONE,
-    ])("dispatches for valid state %s", async state => {
-      mockGetStoreValue.mockResolvedValueOnce(state).mockResolvedValueOnce("true");
-
+    ])("dispatches for valid state %s", async subscriptionState => {
       renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: { subscriptionState: subscriptionState, displayBanner: true },
+            },
+          },
+        }),
       });
 
       await waitFor(() => expect(mockDispatch).toHaveBeenCalled());
@@ -212,65 +201,44 @@ describe("useRecoverBannerViewModel", () => {
       });
     });
 
-    it("does not dispatch when actionStateRecover already exists", async () => {
+    it("does not dispatch when actionStateRecover already exists", () => {
       mockActionsState.mockReturnValue({
         actionsState: [{ id: PostOnboardingActionId.recover }],
       });
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
 
       renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
-      });
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
-      expect(mockDispatch).not.toHaveBeenCalled();
-    });
-
-    it("does not dispatch when storage has no subscription state", async () => {
-      mockGetStoreValue.mockResolvedValueOnce(undefined).mockResolvedValueOnce("true");
-
-      renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
-      });
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
-      expect(mockDispatch).not.toHaveBeenCalled();
-    });
-
-    it("does not dispatch when subscription state is NO_SUBSCRIPTION", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION)
-        .mockResolvedValueOnce("true");
-
-      renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withBannerEnabled,
-      });
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalledTimes(2));
-      expect(mockDispatch).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("storage integration", () => {
-    it("queries storage with correct keys and protectId from feature flag params", async () => {
-      const customProtectId = "protect-custom";
-      mockGetStoreValue.mockResolvedValue(undefined);
-
-      renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: withFlagOverrides({
-          protectServicesMobile: {
-            enabled: true,
-            params: { bannerSubscriptionNotification: true, protectId: customProtectId },
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: {
+                subscriptionState: LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+                displayBanner: true,
+              },
+            },
           },
         }),
       });
 
-      await waitFor(() => {
-        expect(mockGetStoreValue).toHaveBeenCalledWith("SUBSCRIPTION_STATE", customProtectId);
-        expect(mockGetStoreValue).toHaveBeenCalledWith("DISPLAY_BANNER", customProtectId);
+      expect(mockDispatch).not.toHaveBeenCalled();
+    });
+
+    it("does not dispatch when subscriptionState is NO_SUBSCRIPTION", () => {
+      renderHook(() => useRecoverBannerViewModel(), {
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: {
+                subscriptionState: LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
+                displayBanner: true,
+              },
+            },
+          },
+        }),
       });
+
+      expect(mockDispatch).not.toHaveBeenCalled();
     });
   });
 });

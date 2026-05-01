@@ -8,7 +8,7 @@ import {
   LedgerRecoverSubscriptionStateEnum,
   LedgerRecoverSubscriptionStateInProgressEnum,
 } from "~/types/recoverSubscriptionState";
-import useRecoverBannerStorage from "../../hooks/useRecoverBannerStorage";
+import useRecoverBannerState from "../../hooks/useRecoverBannerState";
 
 function useShouldDisplayRecoverBanner() {
   const recoverServices = useFeature("protectServicesMobile");
@@ -22,7 +22,7 @@ function useShouldDisplayRecoverBanner() {
     action => action.id === PostOnboardingActionId.recover,
   );
 
-  const { data } = useRecoverBannerStorage(protectID);
+  const { data } = useRecoverBannerState(protectID);
 
   useEffect(() => {
     if (
