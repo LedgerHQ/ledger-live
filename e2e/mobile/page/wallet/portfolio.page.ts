@@ -65,7 +65,7 @@ export default class PortfolioPage {
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
-  operationByType = (operationType: string, accountName?: string) =>
+  operationByType = (operationType: string | RegExp, accountName?: string) =>
     accountName
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
       : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
@@ -267,7 +267,7 @@ export default class PortfolioPage {
   }
 
   @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation(operationType: string, accountName?: string) {
+  async selectAndClickOnLastOperation(operationType: string | RegExp, accountName?: string) {
     await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 

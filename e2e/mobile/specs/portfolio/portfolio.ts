@@ -29,7 +29,7 @@ export function runPortfolioTransactionsHistoryTest(
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.ticker}] Transaction history displayed when user added his accounts`, async () => {
       await app.portfolio.checkTransactionHistorySection();
-      await app.portfolio.selectAndClickOnLastOperation("Fees", operationRowAccountName);
+      await app.portfolio.selectAndClickOnLastOperation(/(Fees|Sent).*/i, operationRowAccountName);
       await app.operationDetails.checkTransactionDetailsVisibility(account.accountName);
     });
   });
