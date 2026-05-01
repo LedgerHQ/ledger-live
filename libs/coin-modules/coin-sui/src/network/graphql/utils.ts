@@ -1,13 +1,13 @@
 /**
- * Adapt SUI GraphQL `MoveValue.json` payloads to the existing JSON-RPC
- * shapes so `sdk.ts` only has to dispatch, not also reshape:
- *   `SuiSystemStateInnerV2` → `SuiValidatorSummary[]`
- *   `StakedSui[]`           → `DelegatedStake[]`
- * snake_case → camelCase; numeric Move values are stringified to match
- * JSON-RPC's u64-as-string convention.
+ * Pure helpers backing the GraphQL pipelines:
+ *   - JSON shape adapters (`MoveValue.json` → JSON-RPC parity shapes;
+ *     snake_case → camelCase, numeric Move values stringified)
+ *   - Drift guards / type predicates at the GraphQL→TS boundary
+ *   - Pool exchange-rate math (per-stake reward, per-validator APY)
+ *   - Sequence-number / cursor-expiry predicates
  */
 import type { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/jsonRpc";
-import type { ExchangeRate } from "./math";
+import type { StakedSuiObjectsResult } from "./queries";
 
 // ----- JSON shape coming out of `MoveValue.json` --------------------------
 
@@ -273,6 +273,66 @@ export function groupStakedSuiByPool(
   return Array.from(byPool.values());
 }
 
+// ----- Pool exchange-rate math --------------------------------------------
+
+export type ExchangeRate = {
+  sui_amount: string | number;
+  pool_token_amount: string | number;
+};
+
+/**
+ * Unrealised reward for an Active stake (pool-token model):
+ *   tokens = principal × pt_a / sui_a
+ *   value  = tokens × sui_c / pt_c
+ *   reward = max(0, value − principal)
+ * Clamp at 0 absorbs integer-division rounding for very-recent stakes.
+ */
+export function computeEstimatedReward(
+  principal: string | number | bigint,
+  activationRate: ExchangeRate,
+  currentRate: ExchangeRate,
+): bigint {
+  const p = typeof principal === "bigint" ? principal : BigInt(principal);
+  const sui_a = BigInt(activationRate.sui_amount);
+  const pt_a = BigInt(activationRate.pool_token_amount);
+  const sui_c = BigInt(currentRate.sui_amount);
+  const pt_c = BigInt(currentRate.pool_token_amount);
+  if (sui_a === 0n || pt_c === 0n) return 0n;
+  const tokens = (p * pt_a) / sui_a;
+  const currentValue = (tokens * sui_c) / pt_c;
+  return currentValue > p ? currentValue - p : 0n;
+}
+
+/**
+ * APY mirroring Mysten's `getValidatorsApy`:
+ *   APY = (cur_ratio / past_ratio) ^ (epochsPerYear / epochsBetween) − 1
+ * SUI epochs ~24h → `epochsPerYear ≈ 365`. Returns 0 for degenerate
+ * inputs (zero division, non-positive growth window).
+ */
+export function computeApy(
+  currentRate: ExchangeRate,
+  pastRate: ExchangeRate,
+  epochsBetween: number,
+  epochsPerYear = 365,
+): number {
+  if (epochsBetween <= 0) return 0;
+  const past_sui = BigInt(pastRate.sui_amount);
+  const past_pt = BigInt(pastRate.pool_token_amount);
+  const cur_sui = BigInt(currentRate.sui_amount);
+  const cur_pt = BigInt(currentRate.pool_token_amount);
+  if (past_sui === 0n || past_pt === 0n || cur_pt === 0n) return 0;
+  // 1e18-scaled BigInt → float (BigInt has no fractional power).
+  const SCALE = 10n ** 18n;
+  const pastRatioScaled = (past_sui * SCALE) / past_pt;
+  const curRatioScaled = (cur_sui * SCALE) / cur_pt;
+  if (pastRatioScaled === 0n) return 0;
+  const ratio = Number(curRatioScaled) / Number(pastRatioScaled);
+  if (!Number.isFinite(ratio) || ratio <= 0) return 0;
+  const perEpoch = Math.pow(ratio, 1 / epochsBetween);
+  const apy = Math.pow(perEpoch, epochsPerYear) - 1;
+  return Number.isFinite(apy) ? Math.max(apy, 0) : 0;
+}
+
 // ----- Pool current-rate map for stake reward + APY -----------------------
 
 /**
@@ -305,4 +365,131 @@ export function poolRefsFromSystemState(state: SuiSystemStateInnerJson): Map<str
     });
   }
   return out;
+}
+
+// ----- Pipeline helpers (consumed by network/sdk.graphql.ts) --------------
+
+/** One stake node from `STAKED_SUI_OBJECTS_BY_OWNER`'s paginated `nodes`. */
+export type StakeNode = NonNullable<
+  NonNullable<NonNullable<StakedSuiObjectsResult["address"]>["objects"]>["nodes"]
+>[number];
+
+export type RatePlan = {
+  stakedSuiId: string;
+  principal: string | number;
+  poolId: string;
+  activationEpoch: string | number;
+};
+
+export type StakeRatePlans = {
+  activeStakes: RatePlan[];
+  /** Deduped (table, epoch) lookups; index aligns with the rate-fetch output. */
+  wantedEntries: Array<{ key: string; table: string; epoch: string | number }>;
+};
+
+/** Composite key for the activation-epoch rate cache. */
+export const rateKey = (table: string, epoch: string | number): string => `${table}@${epoch}`;
+
+/** Sequence numbers fit in UInt53 (≤16 digits); digests are base58, ~44 chars. */
+export function isSequenceNumber(id: string): boolean {
+  return id.length > 0 && id.length <= 16 && /^\d+$/.test(id);
+}
+
+/** Permissive match for cursor-expiry errors — false positive only costs a restart-from-page-1 retry. */
+export function isCursorExpiredError(e: unknown): boolean {
+  if (!(e instanceof Error)) return false;
+  return /outside (?:the )?available range/i.test(e.message);
+}
+
+/** Split nodes into validated `StakedSuiJson` and a malformed-count. */
+export function validateStakedSuiNodes(rawNodes: ReadonlyArray<StakeNode>): {
+  items: StakedSuiJson[];
+  malformed: number;
+} {
+  const items: StakedSuiJson[] = [];
+  let malformed = 0;
+  for (const node of rawNodes) {
+    const json = node.contents?.json;
+    if (isStakedSuiJson(json)) items.push(json);
+    else if (json !== null && json !== undefined) malformed++;
+  }
+  return { items, malformed };
+}
+
+/**
+ * Derive (a) the per-stake activation-rate plan and (b) deduped
+ * (table, epoch) lookups. Orphan pools (not in the active set) are
+ * excluded — their rewards stay `"0"`.
+ */
+export function planActivationRateLookups(
+  items: ReadonlyArray<StakedSuiJson>,
+  currentEpoch: bigint,
+  poolRefs: Map<string, PoolRefs>,
+): StakeRatePlans {
+  const activeStakes: RatePlan[] = items
+    .filter(it => BigInt(it.stake_activation_epoch) <= currentEpoch)
+    .map(it => ({
+      stakedSuiId: it.id,
+      principal: it.principal,
+      poolId: it.pool_id,
+      activationEpoch: it.stake_activation_epoch,
+    }));
+  const wanted = new Map<string, { key: string; table: string; epoch: string | number }>();
+  for (const plan of activeStakes) {
+    const refs = poolRefs.get(plan.poolId);
+    if (!refs) continue;
+    const key = rateKey(refs.exchangeRatesId, plan.activationEpoch);
+    if (!wanted.has(key)) {
+      wanted.set(key, { key, table: refs.exchangeRatesId, epoch: plan.activationEpoch });
+    }
+  }
+  return { activeStakes, wantedEntries: Array.from(wanted.values()) };
+}
+
+/** Apply the pool-token model to each Active stake; orphans skip silently. */
+export function computeStakeRewards(
+  activeStakes: ReadonlyArray<RatePlan>,
+  poolRefs: Map<string, PoolRefs>,
+  rates: Map<string, ExchangeRate | null>,
+): Map<string, bigint> {
+  const rewards = new Map<string, bigint>();
+  for (const plan of activeStakes) {
+    const refs = poolRefs.get(plan.poolId);
+    if (!refs) continue;
+    const activationRate = rates.get(rateKey(refs.exchangeRatesId, plan.activationEpoch));
+    if (!activationRate) continue;
+    rewards.set(
+      plan.stakedSuiId,
+      computeEstimatedReward(plan.principal, activationRate, refs.currentRate),
+    );
+  }
+  return rewards;
+}
+
+// ----- Exchange-rate dynamic-field shape ----------------------------------
+
+/** Shape returned by `address.dynamicField(...).value` — single + batched lookups. */
+export type ExchangeRateAddrNode = {
+  dynamicField?: {
+    value?: { __typename?: string; json?: unknown } | null;
+  } | null;
+} | null;
+
+/** Predicate over `unknown`, no casts. Mirrors {@link isStakedSuiJson}. */
+export function isExchangeRateJson(x: unknown): x is ExchangeRate {
+  if (typeof x !== "object" || x === null) return false;
+  const o = x as Record<string, unknown>;
+  return (
+    (typeof o.sui_amount === "string" || typeof o.sui_amount === "number") &&
+    (typeof o.pool_token_amount === "string" || typeof o.pool_token_amount === "number")
+  );
+}
+
+/** Project an `address.dynamicField` payload to an `ExchangeRate` or null. */
+export function parseExchangeRateNode(node: ExchangeRateAddrNode): ExchangeRate | null {
+  if (!node) return null;
+  const value = node.dynamicField?.value;
+  if (!value || value.__typename !== "MoveValue") return null;
+  if (!isExchangeRateJson(value.json)) return null;
+  return { sui_amount: value.json.sui_amount, pool_token_amount: value.json.pool_token_amount };
 }

@@ -7,7 +7,7 @@ import {
   RATE_BATCH_CHUNK_SIZE,
   STAKES_PAGE_SIZE,
 } from "./graphql/constants";
-import { UNKNOWN_VALIDATOR } from "./graphql/mappers";
+import { UNKNOWN_VALIDATOR } from "./graphql/utils";
 import {
   getAllBalancesCached,
   getCheckpoint,

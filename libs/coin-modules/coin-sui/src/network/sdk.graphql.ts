@@ -1,10 +1,10 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { CoinBalance, Checkpoint, DelegatedStake } from "@mysten/sui/jsonRpc";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { normalizeSuiAddress } from "@mysten/sui/utils";
 import coinConfig from "../config";
 import type { SuiValidator } from "../types";
+import { fetcher, inferNetworkFromUrl, type Inputs } from "./fetcher";
 import {
   BATCH_RATES_15,
   CHECKPOINT_BY_SEQUENCE,
@@ -12,63 +12,35 @@ import {
   LATEST_CHECKPOINT_SEQUENCE,
   STAKED_SUI_OBJECTS_BY_OWNER,
   SUI_SYSTEM_STATE,
-  type StakedSuiObjectsResult,
   type SuiSystemStateResult,
 } from "./graphql/queries";
 import {
   assertSystemStateJson,
+  computeStakeRewards,
   fromSystemStateJson,
   groupStakedSuiByPool,
-  isStakedSuiJson,
-  type PoolRefs,
+  isCursorExpiredError,
+  isSequenceNumber,
+  parseExchangeRateNode,
+  planActivationRateLookups,
   poolRefsFromSystemState,
   shortenCoinType,
-  type StakedSuiJson,
-} from "./graphql/mappers";
-import { computeApy, computeEstimatedReward, type ExchangeRate } from "./graphql/math";
+  validateStakedSuiNodes,
+  type PoolRefs,
+  type StakeNode,
+  type StakeRatePlans,
+  type SuiSystemStateInnerJson,
+  computeApy,
+  type ExchangeRate,
+} from "./graphql/utils";
 import type { VariablesOf } from "./graphql/tada";
 import {
   APY_LOOKBACK_EPOCHS,
   MAX_CURSOR_RETRIES,
   RATE_BATCH_CHUNK_SIZE,
-  REQUEST_TIMEOUT_MS,
   STAKES_PAGE_SIZE,
 } from "./graphql/constants";
-import { inferNetworkFromUrl } from "./sdk";
-
-type AsyncGraphQLApiFunction<T> = (api: SuiGraphQLClient) => Promise<T>;
-
-type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
-type Inputs = GenericInput<typeof fetch>;
-
-const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
-  const version = getEnv("LEDGER_CLIENT_VERSION") || "";
-  const isCI = version.includes("ll-ci") || version === "";
-  if (options) {
-    options.headers = {
-      ...options.headers,
-      "X-Ledger-Client-Version": isCI ? "lld/2.124.0-dev" : version, // for integration cli tests
-    };
-  }
-
-  // Per-attempt deadline (REQUEST_TIMEOUT_MS) is the only cancellation
-  // path wired today — no Sui caller threads `signal` through yet, so
-  // `options?.signal` is dead until one does. Recursion passes `options`
-  // (not `opts`) so each retry gets a fresh controller; reusing `opts`
-  // would race a stale/aborted signal.
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  const opts: RequestInit = {
-    ...(options ?? {}),
-    signal: options?.signal ?? controller.signal,
-  };
-  const finalize = (p: Promise<Response>): Promise<Response> =>
-    p.finally(() => clearTimeout(timer));
-
-  if (retry === 1) return finalize(fetch(url, opts));
-
-  return finalize(fetch(url, opts).catch(() => fetcher(url, options, retry - 1)));
-};
+export type AsyncGraphQLApiFunction<T> = (api: SuiGraphQLClient) => Promise<T>;
 
 /**
  * Toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage`
@@ -205,7 +177,7 @@ function unwrapGraphQL<T>(
  */
 function unwrapAndValidateSystemState(
   systemRes: Parameters<typeof unwrapGraphQL<SuiSystemStateResult>>[1],
-) {
+): { epoch: NonNullable<SuiSystemStateResult["epoch"]>; stateJson: SuiSystemStateInnerJson } {
   const data = unwrapGraphQL("SystemState", systemRes);
   const epoch = data.epoch;
   if (!epoch || !epoch.systemState?.json) {
@@ -214,12 +186,6 @@ function unwrapAndValidateSystemState(
   const json = epoch.systemState.json;
   assertSystemStateJson(json);
   return { epoch, stateJson: json };
-}
-
-/** Permissive match for cursor-expiry errors — false positive only costs a restart-from-page-1 retry. */
-function isCursorExpiredError(e: unknown): boolean {
-  if (!(e instanceof Error)) return false;
-  return /outside (?:the )?available range/i.test(e.message);
 }
 
 type CursorPage<T> = {
@@ -244,7 +210,7 @@ async function paginateWithCursorRecovery<T>(config: {
 }): Promise<{ items: T[]; retries: number }> {
   const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
   let totalRetries = 0;
-  let useSeed = config.seed !== undefined;
+  let seed: CursorPage<T> | undefined = config.seed;
 
   while (true) {
     const items: T[] = [];
@@ -253,9 +219,9 @@ async function paginateWithCursorRecovery<T>(config: {
     try {
       while (hasMore) {
         let page: CursorPage<T>;
-        if (useSeed && config.seed) {
-          page = config.seed;
-          useSeed = false;
+        if (seed !== undefined) {
+          page = seed;
+          seed = undefined;
         } else {
           page = await config.fetchPage(cursor);
         }
@@ -271,7 +237,7 @@ async function paginateWithCursorRecovery<T>(config: {
           source: config.source,
           retry: totalRetries,
         });
-        useSeed = false; // seed is captured at the original timestamp; also expired
+        seed = undefined; // expired with the original cursor
         continue; // outer-loop restart resets `items`, `cursor`, `hasMore`
       }
       throw e;
@@ -279,33 +245,9 @@ async function paginateWithCursorRecovery<T>(config: {
   }
 }
 
-/** Sequence numbers fit in UInt53 (≤16 digits); digests are base58, ~44 chars. */
-export function isSequenceNumber(id: string): boolean {
-  return id.length > 0 && id.length <= 16 && /^\d+$/.test(id);
-}
-
 // ============================================================================
 // Stakes pipeline
 // ============================================================================
-
-type StakeNode = NonNullable<
-  NonNullable<NonNullable<StakedSuiObjectsResult["address"]>["objects"]>["nodes"]
->[number];
-
-type RatePlan = {
-  stakedSuiId: string;
-  principal: string | number;
-  poolId: string;
-  activationEpoch: string | number;
-};
-
-type StakeRatePlans = {
-  activeStakes: RatePlan[];
-  /** Deduped (table, epoch) lookups; index aligns with `fetchActivationRates` output. */
-  wantedEntries: Array<{ key: string; table: string; epoch: string | number }>;
-};
-
-const rateKey = (table: string, epoch: string | number) => `${table}@${epoch}`;
 
 /**
  * Parallel fetch of system state + first stakes page, with drift guard.
@@ -375,51 +317,6 @@ async function paginateRemainingStakes(
   return items;
 }
 
-/** Split nodes into validated `StakedSuiJson` and a malformed-count. */
-function validateStakedSuiNodes(rawNodes: ReadonlyArray<StakeNode>): {
-  items: StakedSuiJson[];
-  malformed: number;
-} {
-  const items: StakedSuiJson[] = [];
-  let malformed = 0;
-  for (const node of rawNodes) {
-    const json = node.contents?.json;
-    if (isStakedSuiJson(json)) items.push(json);
-    else if (json !== null && json !== undefined) malformed++;
-  }
-  return { items, malformed };
-}
-
-/**
- * Derive (a) the per-stake activation-rate plan and (b) deduped
- * (table, epoch) lookups. Orphan pools (not in the active set) are
- * excluded — their rewards stay `"0"`.
- */
-function planActivationRateLookups(
-  items: ReadonlyArray<StakedSuiJson>,
-  currentEpoch: bigint,
-  poolRefs: Map<string, PoolRefs>,
-): StakeRatePlans {
-  const activeStakes: RatePlan[] = items
-    .filter(it => BigInt(it.stake_activation_epoch) <= currentEpoch)
-    .map(it => ({
-      stakedSuiId: it.id,
-      principal: it.principal,
-      poolId: it.pool_id,
-      activationEpoch: it.stake_activation_epoch,
-    }));
-  const wanted = new Map<string, { key: string; table: string; epoch: string | number }>();
-  for (const plan of activeStakes) {
-    const refs = poolRefs.get(plan.poolId);
-    if (!refs) continue;
-    const key = rateKey(refs.exchangeRatesId, plan.activationEpoch);
-    if (!wanted.has(key)) {
-      wanted.set(key, { key, table: refs.exchangeRatesId, epoch: plan.activationEpoch });
-    }
-  }
-  return { activeStakes, wantedEntries: Array.from(wanted.values()) };
-}
-
 /**
  * Batched activation-rate fetch. Per-chunk failures and missing rates
  * surface via the `sui-graphql:rate-fetch-degraded` telemetry channel
@@ -455,55 +352,9 @@ async function fetchActivationRates(
   return rates;
 }
 
-/** Apply the pool-token model to each Active stake; orphans skip silently. */
-function computeStakeRewards(
-  activeStakes: ReadonlyArray<RatePlan>,
-  poolRefs: Map<string, PoolRefs>,
-  rates: Map<string, ExchangeRate | null>,
-): Map<string, bigint> {
-  const rewards = new Map<string, bigint>();
-  for (const plan of activeStakes) {
-    const refs = poolRefs.get(plan.poolId);
-    if (!refs) continue;
-    const activationRate = rates.get(rateKey(refs.exchangeRatesId, plan.activationEpoch));
-    if (!activationRate) continue;
-    rewards.set(
-      plan.stakedSuiId,
-      computeEstimatedReward(plan.principal, activationRate, refs.currentRate),
-    );
-  }
-  return rewards;
-}
-
 // ============================================================================
 // Exchange-rate dynamic-field lookups
 // ============================================================================
-
-/** Shape returned by `address.dynamicField(...).value` — single + batched lookups. */
-type ExchangeRateAddrNode = {
-  dynamicField?: {
-    value?: { __typename?: string; json?: unknown } | null;
-  } | null;
-} | null;
-
-/** Mirrors `isStakedSuiJson` in `mappers.ts` — predicate over `unknown`, no casts. */
-function isExchangeRateJson(x: unknown): x is ExchangeRate {
-  if (typeof x !== "object" || x === null) return false;
-  const o = x as Record<string, unknown>;
-  return (
-    (typeof o.sui_amount === "string" || typeof o.sui_amount === "number") &&
-    (typeof o.pool_token_amount === "string" || typeof o.pool_token_amount === "number")
-  );
-}
-
-/** Project an `address.dynamicField` payload to an `ExchangeRate` or null. */
-function parseExchangeRateNode(node: ExchangeRateAddrNode): ExchangeRate | null {
-  if (!node) return null;
-  const value = node.dynamicField?.value;
-  if (!value || value.__typename !== "MoveValue") return null;
-  if (!isExchangeRateJson(value.json)) return null;
-  return { sui_amount: value.json.sui_amount, pool_token_amount: value.json.pool_token_amount };
-}
 
 /**
  * One entry from a pool's `exchange_rates` Move Table. `null` when the
@@ -577,59 +428,8 @@ async function fetchRateChunk(
     ]),
   ) as VariablesOf<typeof BATCH_RATES_15>;
   const res = await api.query({ query: BATCH_RATES_15, variables });
-  const d = unwrapGraphQL("BatchExchangeRates", res);
-  // Explicit alias list — keeps `parseExchangeRateNode` calls fully typed
-  // off `ResultOf<typeof BATCH_RATES_15>`, no `keyof` lookup gymnastics.
-  const aliases = [
-    d.v0,
-    d.v1,
-    d.v2,
-    d.v3,
-    d.v4,
-    d.v5,
-    d.v6,
-    d.v7,
-    d.v8,
-    d.v9,
-    d.v10,
-    d.v11,
-    d.v12,
-    d.v13,
-    d.v14,
-  ];
-  return plans.map((_, i) => parseExchangeRateNode(aliases[i] ?? null));
-}
-
-// ============================================================================
-// Checkpoint
-// ============================================================================
-
-/**
- * GraphQL checkpoint by sequence number, remapped to the JSON-RPC
- * `Checkpoint` subset. UInt53 only — callers must guard against digest
- * IDs (see `getCheckpoint` dispatcher).
- */
-async function fetchCheckpointFromGraphQL(
-  api: SuiGraphQLClient,
-  sequenceNumber: string | number,
-): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> {
-  // UInt53 is a JSON number both directions; server rejects quoted strings.
-  const seq = typeof sequenceNumber === "number" ? sequenceNumber : Number(sequenceNumber);
-  const res = await api.query({
-    query: CHECKPOINT_BY_SEQUENCE,
-    variables: { sequenceNumber: seq },
-  });
-  const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
-  if (!cp) {
-    throw new Error(`GraphQL checkpoint not found: ${sequenceNumber}`);
-  }
-  // RFC3339 → epoch-ms string (JSON-RPC convention).
-  const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
-  return {
-    digest: cp.digest ?? "",
-    sequenceNumber: String(cp.sequenceNumber),
-    timestampMs,
-  };
+  const data = unwrapGraphQL("BatchExchangeRates", res);
+  return plans.map((_, i) => parseExchangeRateNode(data[`v${i}` as keyof typeof data] ?? null));
 }
 
 // ============================================================================
@@ -692,30 +492,110 @@ export const getStakesRawGraphQL = async (
 };
 
 /**
- * Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `CHECKPOINT_BY_SEQUENCE`.
- * Returns the JSON-RPC `Checkpoint` subset shape.
+ * Checkpoint by sequence number, remapped to the JSON-RPC `Checkpoint`
+ * subset. The dispatcher is responsible for the digest guard
+ * ({@link isSequenceNumber}) — GraphQL's `Query.checkpoint(sequenceNumber:)`
+ * only accepts UInt53.
+ */
+export const getCheckpointGraphQL = async (
+  api: SuiGraphQLClient,
+  id: string | number,
+): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
+  // UInt53 is a JSON number both directions; server rejects quoted strings.
+  const seq = typeof id === "number" ? id : Number(id);
+  const res = await api.query({
+    query: CHECKPOINT_BY_SEQUENCE,
+    variables: { sequenceNumber: seq },
+  });
+  const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
+  if (!cp) {
+    throw new Error(`GraphQL checkpoint not found: ${id}`);
+  }
+  // RFC3339 → epoch-ms string (JSON-RPC convention).
+  const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
+  return {
+    digest: cp.digest ?? "",
+    sequenceNumber: String(cp.sequenceNumber),
+    timestampMs,
+  };
+};
+
+/**
+ * Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`.
  */
 export const getLastBlockGraphQL = async (
   api: SuiGraphQLClient,
-): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> => {
+): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
   const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
   const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
   if (seq === null || seq === undefined) {
     throw new Error("GraphQL LatestCheckpointSequence returned no checkpoint");
   }
-  return fetchCheckpointFromGraphQL(api, String(seq));
+  return getCheckpointGraphQL(api, seq);
 };
 
+type ApyPlan = {
+  suiAddress: string;
+  exchangeRatesId: string;
+  currentRate: ExchangeRate;
+  pastEpoch: number;
+};
+
+/** One historical-rate plan per active validator with a known pool; orphans are skipped. */
+function planValidatorApyLookups(
+  activeValidators: ReadonlyArray<{ suiAddress: string; stakingPoolId: string }>,
+  poolRefs: Map<string, PoolRefs>,
+  currentEpoch: number,
+): ApyPlan[] {
+  const plans: ApyPlan[] = [];
+  for (const v of activeValidators) {
+    const refs = poolRefs.get(v.stakingPoolId);
+    if (!refs) continue;
+    // 30-epoch lookback; clamp to activation epoch for young pools.
+    const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
+    const pastEpoch = Math.max(desired, refs.activationEpoch);
+    plans.push({
+      suiAddress: v.suiAddress,
+      exchangeRatesId: refs.exchangeRatesId,
+      currentRate: refs.currentRate,
+      pastEpoch,
+    });
+  }
+  return plans;
+}
+
 /**
- * Checkpoint by sequence number. The dispatcher is responsible for the
- * digest guard ({@link isSequenceNumber}) — GraphQL's
- * `Query.checkpoint(sequenceNumber:)` only accepts UInt53.
+ * Apply rate→APY math, degrading missing/failed entries to apy=0 and
+ * surfacing aggregate degradation via telemetry (typical cause of a
+ * sudden spike in `missing`: dynamicField schema change).
  */
-export const getCheckpointGraphQL = (
-  api: SuiGraphQLClient,
-  id: string,
-): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> =>
-  fetchCheckpointFromGraphQL(api, id);
+function applyValidatorApy(
+  plans: ReadonlyArray<ApyPlan>,
+  rates: ReadonlyArray<ExchangeRate | null>,
+  currentEpoch: number,
+  chunksFailed: number,
+): Map<string, number> {
+  const apyByAddress = new Map<string, number>();
+  let rateMissing = 0;
+  plans.forEach((p, idx) => {
+    const rate = rates[idx];
+    if (rate === null || rate === undefined) {
+      rateMissing++;
+      return; // degrade to 0
+    }
+    const epochsBetween = currentEpoch - p.pastEpoch;
+    apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
+  });
+  if (rateMissing > 0 || chunksFailed > 0) {
+    log("warn", "sui-graphql:rate-fetch-degraded", {
+      source: "validator-apy",
+      missing: rateMissing,
+      chunksFailed,
+      total: plans.length,
+    });
+  }
+  return apyByAddress;
+}
 
 /**
  * Active validator set with APY. One `epoch.systemState.json` plus a
@@ -731,57 +611,12 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
   const { activeValidators } = fromSystemStateJson(stateJson);
   const poolRefs = poolRefsFromSystemState(stateJson);
   const currentEpoch = Number(epoch.epochId);
-
-  // Plan one historical exchange-rate fetch per validator pool.
-  type ApyPlan = {
-    suiAddress: string;
-    exchangeRatesId: string;
-    currentRate: ExchangeRate;
-    pastEpoch: number;
-  };
-  const plans: ApyPlan[] = [];
-  for (const v of activeValidators) {
-    const refs = poolRefs.get(v.stakingPoolId);
-    if (!refs) continue;
-    // 30-epoch lookback; clamp to activation epoch for young pools.
-    const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
-    const pastEpoch = Math.max(desired, refs.activationEpoch);
-    plans.push({
-      suiAddress: v.suiAddress,
-      exchangeRatesId: refs.exchangeRatesId,
-      currentRate: refs.currentRate,
-      pastEpoch,
-    });
-  }
-
-  // Per-chunk failures and missing rates both degrade to apy=0.
+  const plans = planValidatorApyLookups(activeValidators, poolRefs, currentEpoch);
   const { rates, chunksFailed } = await fetchExchangeRatesBatched(
     api,
     plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
     RATE_BATCH_CHUNK_SIZE,
   );
-
-  const apyByAddress = new Map<string, number>();
-  let rateMissing = 0;
-  plans.forEach((p, idx) => {
-    const rate = rates[idx];
-    if (rate === null || rate === undefined) {
-      rateMissing++;
-      return; // degrade to 0
-    }
-    const epochsBetween = currentEpoch - p.pastEpoch;
-    apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
-  });
-  // Surface aggregate degradation; alert if many validators drop
-  // to apy=0 (typical cause: dynamicField schema change).
-  if (rateMissing > 0 || chunksFailed > 0) {
-    log("warn", "sui-graphql:rate-fetch-degraded", {
-      source: "validator-apy",
-      missing: rateMissing,
-      chunksFailed,
-      total: plans.length,
-    });
-  }
-
+  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed);
   return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
 };

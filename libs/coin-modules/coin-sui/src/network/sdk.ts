@@ -11,7 +11,6 @@ import type {
   Cursor,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -35,7 +34,6 @@ import {
   TransactionBlockData,
   TransactionEffects,
 } from "@mysten/sui/jsonRpc";
-import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
@@ -50,32 +48,20 @@ import type {
   Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
-import { REQUEST_TIMEOUT_MS } from "./graphql/constants";
+import { fetcher, inferNetworkFromUrl } from "./fetcher";
+import { isSequenceNumber } from "./graphql/utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
 import {
+  type AsyncGraphQLApiFunction,
   getAllBalancesCachedGraphQL,
   getCheckpointGraphQL,
   getLastBlockGraphQL,
   getStakesRawGraphQL,
   getValidatorsGraphQL,
-  graphqlFetcher,
-  isSequenceNumber,
   withGraphQLApi,
 } from "./sdk.graphql";
 
-// Re-exported so `sdk.graphql.transport.test.ts` and any other caller can
-// keep the historical `from "./sdk"` import path through the migration.
-export { graphqlFetcher };
-
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
-type AsyncGraphQLApiFunction<T> = (api: SuiGraphQLClient) => Promise<T>;
-
-export function inferNetworkFromUrl(url: string): string {
-  if (url.includes("testnet")) return "testnet";
-  if (url.includes("devnet")) return "devnet";
-  if (url.includes("127.0.0.1") || url.includes("localhost")) return "localnet";
-  return "mainnet";
-}
 
 /** Read-side feature flag; transaction execution always stays on JSON-RPC. */
 export function isGraphQLEnabled(currencyId?: string): boolean {
@@ -97,38 +83,6 @@ const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
   showInput: true,
   showBalanceChanges: true,
   showEffects: true, // To get transaction status and gas fee details
-};
-
-type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
-type Inputs = GenericInput<typeof fetch>;
-
-const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
-  const version = getEnv("LEDGER_CLIENT_VERSION") || "";
-  const isCI = version.includes("ll-ci") || version === "";
-  if (options) {
-    options.headers = {
-      ...options.headers,
-      "X-Ledger-Client-Version": isCI ? "lld/2.124.0-dev" : version, // for integration cli tests
-    };
-  }
-
-  // Per-attempt deadline (REQUEST_TIMEOUT_MS) is the only cancellation
-  // path wired today — no Sui caller threads `signal` through yet, so
-  // `options?.signal` is dead until one does. Recursion passes `options`
-  // (not `opts`) so each retry gets a fresh controller; reusing `opts`
-  // would race a stale/aborted signal.
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  const opts: RequestInit = {
-    ...(options ?? {}),
-    signal: options?.signal ?? controller.signal,
-  };
-  const finalize = (p: Promise<Response>): Promise<Response> =>
-    p.finally(() => clearTimeout(timer));
-
-  if (retry === 1) return finalize(fetch(url, opts));
-
-  return finalize(fetch(url, opts).catch(() => fetcher(url, options, retry - 1)));
 };
 
 /** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
