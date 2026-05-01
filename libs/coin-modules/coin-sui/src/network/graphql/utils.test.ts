@@ -106,6 +106,28 @@ describe("isStakedSuiJson", () => {
     expect(isStakedSuiJson({ ...validNode, principal: null })).toBe(false);
     expect(isStakedSuiJson({ ...validNode, principal: true })).toBe(false);
   });
+
+  test("rejects non-integer numeric strings (BigInt() would throw downstream)", () => {
+    // Predicate must filter values BigInt() can't parse; downstream fails closed.
+    expect(isStakedSuiJson({ ...validNode, principal: "1.5" })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, principal: "-1" })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, principal: "abc" })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, principal: "" })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: "1.5" })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: "abc" })).toBe(false);
+  });
+
+  test("rejects negative or non-integer numbers (Move u64 is non-negative integer)", () => {
+    expect(isStakedSuiJson({ ...validNode, principal: -1 })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, principal: 1.5 })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, principal: NaN })).toBe(false);
+    expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: -5 })).toBe(false);
+  });
+
+  test("accepts zero (degenerate but valid u64)", () => {
+    expect(isStakedSuiJson({ ...validNode, principal: 0 })).toBe(true);
+    expect(isStakedSuiJson({ ...validNode, principal: "0" })).toBe(true);
+  });
 });
 
 // ----- assertSystemStateJson ---------------------------------------------
@@ -282,6 +304,16 @@ describe("fromSystemStateJson", () => {
     expect(poolToValidator.size).toBe(2);
     expect(poolToValidator.get("0xpoolA")).toBe("0xv1");
     expect(poolToValidator.get("0xpoolB")).toBe("0xv2");
+  });
+
+  test("str/strOrNull collapse undefined defensively (unreachable from typed wire)", () => {
+    // Force runtime undefined past the typed shape to exercise the isNullish branch.
+    const v = makeValidator("0xv", "0xp");
+    (v.staking_pool as { activation_epoch: unknown }).activation_epoch = undefined;
+    (v as { voting_power: unknown }).voting_power = undefined;
+    const summary = fromSystemStateJson(makeState([v])).activeValidators[0];
+    expect(summary.stakingPoolActivationEpoch).toBeNull();
+    expect(summary.votingPower).toBe("");
   });
 });
 
@@ -763,7 +795,11 @@ describe("planActivationRateLookups", () => {
 // ----- computeStakeRewards ------------------------------------------------
 
 describe("computeStakeRewards", () => {
-  const plan = (stakedSuiId: string, poolId: string, activationEpoch: string | number): RatePlan => ({
+  const plan = (
+    stakedSuiId: string,
+    poolId: string,
+    activationEpoch: string | number,
+  ): RatePlan => ({
     stakedSuiId,
     principal: "100",
     poolId,
@@ -855,6 +891,21 @@ describe("parseExchangeRateNode", () => {
       },
     };
     expect(parseExchangeRateNode(node)).toBeNull();
+  });
+
+  test("returns null on non-integer numeric strings (would crash BigInt() downstream)", () => {
+    // Schema-drift safety: malformed numerics → null, not a thrown sync.
+    const make = (sui: unknown, pt: unknown): ExchangeRateAddrNode => ({
+      dynamicField: {
+        value: { __typename: "MoveValue", json: { sui_amount: sui, pool_token_amount: pt } },
+      },
+    });
+    expect(parseExchangeRateNode(make("1.5", "1000"))).toBeNull();
+    expect(parseExchangeRateNode(make("1000", "abc"))).toBeNull();
+    expect(parseExchangeRateNode(make("-1", "1000"))).toBeNull();
+    expect(parseExchangeRateNode(make(1.5, 1000))).toBeNull();
+    expect(parseExchangeRateNode(make(-1, 1000))).toBeNull();
+    expect(parseExchangeRateNode(make("", "1000"))).toBeNull();
   });
 });
 

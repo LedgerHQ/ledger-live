@@ -114,6 +114,13 @@ export function assertSystemStateJson(x: unknown): asserts x is SuiSystemStateIn
   }
 }
 
+/** Move u64 wire form (number or base-10 integer string); rejects anything BigInt() can't parse. */
+function isU64Numeric(v: unknown): boolean {
+  if (typeof v === "number") return Number.isInteger(v) && v >= 0;
+  if (typeof v === "string") return /^\d+$/.test(v);
+  return false;
+}
+
 /**
  * Predicate (not throw) so the caller can skip a malformed entry
  * without tanking the whole stake list. The skip count is surfaced
@@ -126,9 +133,8 @@ export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
   return (
     typeof obj.id === "string" &&
     typeof obj.pool_id === "string" &&
-    (typeof obj.principal === "string" || typeof obj.principal === "number") &&
-    (typeof obj.stake_activation_epoch === "string" ||
-      typeof obj.stake_activation_epoch === "number")
+    isU64Numeric(obj.principal) &&
+    isU64Numeric(obj.stake_activation_epoch)
   );
 }
 
@@ -494,10 +500,8 @@ export type ExchangeRateAddrNode = {
 export function isExchangeRateJson(x: unknown): x is ExchangeRate {
   if (typeof x !== "object" || x === null) return false;
   const o = x as Record<string, unknown>;
-  return (
-    (typeof o.sui_amount === "string" || typeof o.sui_amount === "number") &&
-    (typeof o.pool_token_amount === "string" || typeof o.pool_token_amount === "number")
-  );
+  // Same strict u64 check as isStakedSuiJson; downstream BigInt() throws on bad strings.
+  return isU64Numeric(o.sui_amount) && isU64Numeric(o.pool_token_amount);
 }
 
 /** Project an `address.dynamicField` payload to an `ExchangeRate` or null. */

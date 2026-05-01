@@ -20,7 +20,6 @@ import {
   fromSystemStateJson,
   groupStakedSuiByPool,
   isCursorExpiredError,
-  isSequenceNumber,
   parseExchangeRateNode,
   planActivationRateLookups,
   poolRefsFromSystemState,
@@ -177,18 +176,25 @@ function unwrapGraphQL<T>(
  * Unwrap a {@link SUI_SYSTEM_STATE} response and run the schema-drift
  * guard on its `MoveValue.json`. Centralised so every caller exits with
  * the same narrowed `stateJson` and a future site can't forget the
- * `assertSystemStateJson` boundary check.
+ * `assertSystemStateJson` boundary check. Drift errors carry `[reqId=…]`
+ * matching `unwrapGraphQL`'s format.
  */
 function unwrapAndValidateSystemState(
   systemRes: Parameters<typeof unwrapGraphQL<SuiSystemStateResult>>[1],
 ): { epoch: NonNullable<SuiSystemStateResult["epoch"]>; stateJson: SuiSystemStateInnerJson } {
   const data = unwrapGraphQL("SystemState", systemRes);
+  const reqId = systemRes.__requestId ? ` [reqId=${systemRes.__requestId}]` : "";
   const epoch = data.epoch;
   if (!epoch || !epoch.systemState?.json) {
-    throw new Error("GraphQL SystemState failed: no epoch payload");
+    throw new Error(`GraphQL SystemState failed${reqId}: no epoch payload`);
   }
   const json = epoch.systemState.json;
-  assertSystemStateJson(json);
+  try {
+    assertSystemStateJson(json);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`GraphQL SystemState failed${reqId}: ${msg}`);
+  }
   return { epoch, stateJson: json };
 }
 
@@ -203,7 +209,8 @@ type CursorPage<T> = {
  * `seed` lets a caller hand in a first page already fetched in parallel
  * (e.g. with system state); the seed is dropped on retry — it expired
  * with the cursor. Caller validates items AFTER this returns so retry
- * doesn't redo validation for pages it's about to discard.
+ * doesn't redo validation for pages it's about to discard. Outer-loop
+ * abort gate prevents retrying after teardown.
  */
 async function paginateWithCursorRecovery<T>(config: {
   source: string;
@@ -211,12 +218,15 @@ async function paginateWithCursorRecovery<T>(config: {
   /** Pre-fetched first page. `undefined` allowed (exactOptionalPropertyTypes). */
   seed?: CursorPage<T> | undefined;
   maxRetries?: number | undefined;
+  signal?: AbortSignal | undefined;
 }): Promise<{ items: T[]; retries: number }> {
   const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
   let totalRetries = 0;
   let seed: CursorPage<T> | undefined = config.seed;
 
+  // eslint-disable-next-line no-constant-condition -- exits via return/throw; retry budget in catch.
   while (true) {
+    config.signal?.throwIfAborted?.();
     const items: T[] = [];
     let cursor: string | null = null;
     let hasMore = true;
@@ -277,6 +287,8 @@ async function fetchSystemStateAndStakesPage(
       ...(signal && { signal }),
     }),
   ]);
+  // Skip validation/mapping if caller unsubscribed mid-flight.
+  signal?.throwIfAborted?.();
   const { epoch, stateJson } = unwrapAndValidateSystemState(systemRes);
   const stakesData = unwrapGraphQL("StakedSuiObjects", stakesRes);
   const { poolToValidator } = fromSystemStateJson(stateJson);
@@ -308,6 +320,7 @@ async function paginateRemainingStakes(
   const { items } = await paginateWithCursorRecovery<StakeNode>({
     source: "stakes",
     seed,
+    ...(signal && { signal }),
     fetchPage: async cursor => {
       const res = await api.query({
         query: STAKED_SUI_OBJECTS_BY_OWNER,
@@ -403,6 +416,8 @@ async function fetchExchangeRatesBatched(
   }
   // `allSettled` so one chunk's failure doesn't tank the rest — failed
   // chunks degrade to `null`s; caller surfaces `chunksFailed`.
+  // INVARIANT: fetchRateChunk uses Promise.all (throws on any failure);
+  // null-padding sizes by input chunk — switching to allSettled breaks 1:1.
   const settled = await Promise.allSettled(
     chunks.map(chunk => fetchRateChunk(api, chunk, safeChunk, signal)),
   );
@@ -433,9 +448,7 @@ async function fetchRateChunk(
   signal?: AbortSignal,
 ): Promise<Array<ExchangeRate | null>> {
   if (plans.length < fullChunkSize) {
-    return Promise.all(
-      plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal)),
-    );
+    return Promise.all(plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal)));
   }
   // $t0/$l0…$t14/$l14 mirror BATCH_RATES_15's variable names: t = table address, l = epoch literal.
   const variables = Object.fromEntries(
@@ -460,9 +473,8 @@ async function fetchRateChunk(
 /**
  * Cached `Address.balances` (post-SIP-58 surfaces `fundsInAddressBalance`).
  * Paginates `BalanceConnection` and remaps each node into `CoinBalance`.
- * JSON-RPC-only fields with no GraphQL equivalent (`coinObjectCount`,
- * `lockedBalance`) are filled with neutral defaults — verified unused by
- * callers.
+ * JSON-RPC-only fields (`coinObjectCount`, `lockedBalance`) are stubbed.
+
  */
 export const getAllBalancesCachedGraphQL = async (
   api: SuiGraphQLClient,
@@ -474,6 +486,7 @@ export const getAllBalancesCachedGraphQL = async (
   const ownerAddr = normalizeSuiAddress(owner);
   const { items } = await paginateWithCursorRecovery<CoinBalance>({
     source: "balances",
+    ...(signal && { signal }),
     fetchPage: async cursor => {
       const res = await api.listBalances({
         owner: ownerAddr,
