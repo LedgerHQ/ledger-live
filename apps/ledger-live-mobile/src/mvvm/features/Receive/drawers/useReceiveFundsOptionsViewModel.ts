@@ -32,7 +32,7 @@ function useReceiveFundsOptionsViewModel() {
   const handleGoToFiat = useCallback(() => {
     track("button_clicked", {
       button: "fiat",
-      page: "receive_drawer",
+      page: sourceScreenName,
     });
     handleClose();
     navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -42,16 +42,16 @@ function useReceiveFundsOptionsViewModel() {
         fromMenu: true,
       },
     });
-  }, [navigation, handleClose]);
+  }, [navigation, handleClose, sourceScreenName]);
 
   const handleGoToCrypto = useCallback(() => {
     track("button_clicked", {
       button: "crypto",
-      page: "receive_drawer",
+      page: sourceScreenName,
     });
     handleClose();
     handleOpenReceiveDrawer(true);
-  }, [handleOpenReceiveDrawer, handleClose]);
+  }, [handleOpenReceiveDrawer, handleClose, sourceScreenName]);
 
   return {
     t,
