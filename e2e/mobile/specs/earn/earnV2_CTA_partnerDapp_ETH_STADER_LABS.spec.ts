@@ -4,10 +4,10 @@ import { runPartnerDappCTATest } from "./earnV2";
 
 const testConfig = {
   account: Account.ETH_1,
-  provider: Provider.LIDO,
-  // Lido dapp loads from stake.lido.fi inside the platform webview.
-  dappUrlSubstring: "stake.lido.fi",
-  tmsLinks: ["B2CQA-4722", "B2CQA-4644"],
+  provider: Provider.STADER_LABS,
+  // Stader Labs dapp loads from staderlabs.com/{ticker} inside the platform webview.
+  dappUrlSubstring: `staderlabs.com/${Account.ETH_1.currency.ticker}`,
+  tmsLinks: ["B2CQA-4723"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
