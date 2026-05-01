@@ -51,12 +51,14 @@ import type {
 } from "../types";
 import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
 import {
+  BATCH_RATES_15,
   CHECKPOINT_BY_SEQUENCE,
   EXCHANGE_RATE_AT_EPOCH,
   LATEST_CHECKPOINT_SEQUENCE,
   STAKED_SUI_OBJECTS_BY_OWNER,
   SUI_SYSTEM_STATE,
   type StakedSuiObjectsResult,
+  type SuiSystemStateResult,
 } from "./graphql/queries";
 import {
   assertSystemStateJson,
@@ -69,6 +71,7 @@ import {
   type StakedSuiJson,
 } from "./graphql/mappers";
 import { computeApy, computeEstimatedReward, type ExchangeRate } from "./graphql/math";
+import type { VariablesOf } from "./graphql/tada";
 import {
   APY_LOOKBACK_EPOCHS,
   MAX_CURSOR_RETRIES,
@@ -88,12 +91,7 @@ function inferNetworkFromUrl(url: string): string {
   return "mainnet";
 }
 
-/**
- * Read-side feature flag (`SuiConfig.features.graphql`). Routes the
- * dual-path reads (`getAllBalancesCached`, `getLastBlock`,
- * `getCheckpoint`, `getStakesRaw`, `getValidators`) through GraphQL
- * when true; default OFF. Transaction execution stays on JSON-RPC.
- */
+/** Read-side feature flag; transaction execution always stays on JSON-RPC. */
 export function isGraphQLEnabled(currencyId?: string): boolean {
   return coinConfig.getCoinConfig(currencyId).features?.graphql === true;
 }
@@ -145,10 +143,7 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
   return finalize(fetch(url, opts).catch(() => fetcher(url, options, retry - 1)));
 };
 
-/**
- * Connects to Sui Api.
- * A fresh client is created each call — SuiJsonRpcClient is stateless (HTTP JSON-RPC)
- */
+/** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
 export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
   const url = coinConfig.getCoinConfig(currencyId).node.url;
   const network = inferNetworkFromUrl(url);
@@ -161,12 +156,7 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
   return execute(api);
 }
 
-/**
- * GraphQL counterpart of {@link withApi}. Mysten sunsets JSON-RPC on
- * 2026-07-31; both wrappers coexist and call sites dispatch via
- * {@link isGraphQLEnabled} so the same code works with either transport
- * without changing `node.url`.
- */
+/** GraphQL counterpart of {@link withApi}; coexists until the JSON-RPC sunset on 2026-07-31. */
 export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
   currencyId?: string,
@@ -198,10 +188,8 @@ function isGraphqlDebugEnabled(): boolean {
 }
 
 /**
- * GraphQL wrapper over {@link fetcher}: optional `x-sui-rpc-show-usage`
- * header (debug) plus always-on `x-sui-rpc-request-id` logging. Clones
- * the body so the GraphQL `200 OK + errors[]` failure shape is detected
- * without fighting the SDK's body reader.
+ * GraphQL wrapper over {@link fetcher}: stamps `x-sui-rpc-request-id`
+ * logging and detects the `200 OK + errors[]` failure shape.
  *
  * @internal Exported for the request-ID logging unit test only.
  */
@@ -268,12 +256,7 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
   });
 };
 
-/**
- * Read-call dispatcher gated on `features.graphql`. NO silent fallback:
- * GraphQL errors propagate by design — flip the flag via remote config
- * to revert. A try/catch here would mask schema regressions during the
- * 2026-07-31 sunset migration.
- */
+/** Dispatcher gated on `features.graphql`. No silent fallback — flip the flag to revert. */
 export function withTransport<T>(
   currencyId: string | undefined,
   impls: {
@@ -297,10 +280,7 @@ function unwrapGraphQL<T>(
   res: {
     data?: T | null;
     errors?: readonly { message: string }[] | null;
-    /**
-     * Stamped by {@link graphqlFetcher} when `x-sui-rpc-request-id` is
-     * present; included in thrown errors for support-trace correlation.
-     */
+    /** Stamped by {@link graphqlFetcher} for trace correlation. */
     __requestId?: string;
   },
 ): T {
@@ -316,11 +296,23 @@ function unwrapGraphQL<T>(
 }
 
 /**
- * Heuristic substring match for the cursor-outside-retention-window
- * error (server wording is uncontrolled; permissive is safe — false
- * positive only costs one restart-from-page-1 retry).
- * https://docs.sui.io/develop/accessing-data/graphql/query-with-graphql
+ * Unwrap a {@link SUI_SYSTEM_STATE} response and run the schema-drift
+ * guard on its `MoveValue.json`. Centralised so every caller exits with
+ * the same narrowed `stateJson` and a future site can't forget the
+ * `assertSystemStateJson` boundary check.
  */
+function unwrapAndValidateSystemState(systemRes: Parameters<typeof unwrapGraphQL<SuiSystemStateResult>>[1]) {
+  const data = unwrapGraphQL("SystemState", systemRes);
+  const epoch = data.epoch;
+  if (!epoch || !epoch.systemState?.json) {
+    throw new Error("GraphQL SystemState returned no epoch payload");
+  }
+  const json = epoch.systemState.json;
+  assertSystemStateJson(json);
+  return { epoch, stateJson: json };
+}
+
+/** Permissive match for cursor-expiry errors — false positive only costs a restart-from-page-1 retry. */
 function isCursorExpiredError(e: unknown): boolean {
   if (!(e instanceof Error)) return false;
   return /outside (?:the )?available range/i.test(e.message);
@@ -762,17 +754,11 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
   transaction.transaction?.data?.gasData?.owner || undefined;
 
 /**
- * `DelegatedStake[]` regardless of transport. JSON-RPC: one
- * `suix_getStakes` with server-computed reward. GraphQL: reconstruct
- * from `StakedSui` objects + `epoch.systemState`, merged client-side
- * via `groupStakedSuiByPool`. Active-stake reward is the pool exchange
- * rate at activation vs. now (1 extra dynamicField per Active stake,
- * deduped); failures degrade to `"0"`.
+ * `DelegatedStake[]` regardless of transport. GraphQL reconstructs from
+ * `StakedSui` objects + system-state (one extra dynamicField per Active
+ * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
  */
-export const getStakesRaw = (
-  owner: string,
-  currencyId?: string,
-): Promise<DelegatedStake[]> =>
+export const getStakesRaw = (owner: string, currencyId?: string): Promise<DelegatedStake[]> =>
   withTransport(currencyId, {
     jsonRpc: api => api.getStakes({ owner }),
     graphql: async api => {
@@ -782,7 +768,7 @@ export const getStakesRaw = (
       const rawNodes = await paginateRemainingStakes(api, ownerAddr, sys.seedPage);
       const { items, malformed } = validateStakedSuiNodes(rawNodes);
       const plans = planActivationRateLookups(items, sys.currentEpoch, sys.poolRefs);
-      const rates = await fetchActivationRates(api, plans, sys.poolRefs, malformed);
+      const rates = await fetchActivationRates(api, plans, malformed);
       const rewards = computeStakeRewards(plans.activeStakes, sys.poolRefs, rates);
       return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
     },
@@ -829,15 +815,8 @@ async function fetchSystemStateAndStakesPage(
       variables: { owner: ownerAddr, first: STAKES_PAGE_SIZE, after: null },
     }),
   ]);
-  const systemData = unwrapGraphQL("SystemState", systemRes);
+  const { epoch, stateJson } = unwrapAndValidateSystemState(systemRes);
   const stakesData = unwrapGraphQL("StakedSuiObjects", stakesRes);
-  const epoch = systemData.epoch;
-  if (!epoch || !epoch.systemState?.json) {
-    throw new Error("GraphQL SystemState returned no epoch payload");
-  }
-  // Drift guard at the GraphQL→TS boundary.
-  assertSystemStateJson(epoch.systemState.json);
-  const stateJson = epoch.systemState.json;
   const { poolToValidator } = fromSystemStateJson(stateJson);
   const poolRefs = poolRefsFromSystemState(stateJson);
   const initialObjs = stakesData.address?.objects;
@@ -936,10 +915,8 @@ function planActivationRateLookups(
 async function fetchActivationRates(
   api: SuiGraphQLClient,
   plans: StakeRatePlans,
-  poolRefs: Map<string, PoolRefs>,
   malformed: number,
 ): Promise<Map<string, ExchangeRate | null>> {
-  void poolRefs; // reserved for future per-pool diagnostics
   const { rates: rateArr, chunksFailed } = await fetchExchangeRatesBatched(
     api,
     plans.wantedEntries.map(({ table, epoch }) => ({ exchangeRatesId: table, epoch })),
@@ -1323,8 +1300,7 @@ async function fetchCheckpointFromGraphQL(
   sequenceNumber: string | number,
 ): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> {
   // UInt53 is a JSON number both directions; server rejects quoted strings.
-  const seq =
-    typeof sequenceNumber === "number" ? sequenceNumber : Number(sequenceNumber);
+  const seq = typeof sequenceNumber === "number" ? sequenceNumber : Number(sequenceNumber);
   const res = await api.query({
     query: CHECKPOINT_BY_SEQUENCE,
     variables: { sequenceNumber: seq },
@@ -1342,7 +1318,6 @@ async function fetchCheckpointFromGraphQL(
   };
 }
 
-
 /** Shape returned by `address.dynamicField(...).value` — single + batched lookups. */
 type ExchangeRateAddrNode = {
   dynamicField?: {
@@ -1350,14 +1325,23 @@ type ExchangeRateAddrNode = {
   } | null;
 } | null;
 
+/** Mirrors `isStakedSuiJson` in `mappers.ts` — predicate over `unknown`, no casts. */
+function isExchangeRateJson(x: unknown): x is ExchangeRate {
+  if (typeof x !== "object" || x === null) return false;
+  const o = x as Record<string, unknown>;
+  return (
+    (typeof o.sui_amount === "string" || typeof o.sui_amount === "number") &&
+    (typeof o.pool_token_amount === "string" || typeof o.pool_token_amount === "number")
+  );
+}
+
 /** Project an `address.dynamicField` payload to an `ExchangeRate` or null. */
 function parseExchangeRateNode(node: ExchangeRateAddrNode): ExchangeRate | null {
   if (!node) return null;
   const value = node.dynamicField?.value;
   if (!value || value.__typename !== "MoveValue") return null;
-  const json = value.json as { sui_amount?: string; pool_token_amount?: string } | undefined;
-  if (!json?.sui_amount || !json?.pool_token_amount) return null;
-  return { sui_amount: json.sui_amount, pool_token_amount: json.pool_token_amount };
+  if (!isExchangeRateJson(value.json)) return null;
+  return { sui_amount: value.json.sui_amount, pool_token_amount: value.json.pool_token_amount };
 }
 
 /**
@@ -1378,12 +1362,8 @@ async function fetchExchangeRate(
 }
 
 /**
- * Batched variant of {@link fetchExchangeRate}: collapses N lookups
- * into ⌈N/chunkSize⌉ HTTP round-trips. Hand-built (gql.tada validates
- * static docs only), but every input rides as a GraphQL variable —
- * no injection surface. Output is 1:1 with `plans`; `null` means the
- * table had no entry at that epoch. Per-chunk transport failures
- * degrade their entries to `null` and surface via `chunksFailed`.
+ * Batched variant of {@link fetchExchangeRate}: 1:1 output with `plans`,
+ * `null` for missing entries, transport failures surface via `chunksFailed`.
  */
 async function fetchExchangeRatesBatched(
   api: SuiGraphQLClient,
@@ -1398,7 +1378,9 @@ async function fetchExchangeRatesBatched(
   }
   // `allSettled` so one chunk's failure doesn't tank the rest — failed
   // chunks degrade to `null`s; caller surfaces `chunksFailed`.
-  const settled = await Promise.allSettled(chunks.map(chunk => fetchOneRateChunk(api, chunk)));
+  const settled = await Promise.allSettled(
+    chunks.map(chunk => fetchRateChunk(api, chunk, safeChunk)),
+  );
   const rates: Array<ExchangeRate | null> = [];
   let chunksFailed = 0;
   settled.forEach((res, idx) => {
@@ -1413,29 +1395,48 @@ async function fetchExchangeRatesBatched(
   return { rates, chunksFailed };
 }
 
-/** One aliased-batch document; caller chunks (see {@link fetchExchangeRatesBatched}). */
-async function fetchOneRateChunk(
+/**
+ * Fetch one chunk of rates. Full-size chunks ride the static
+ * {@link BATCH_RATES_15} aliased document (compile-time validated by
+ * gql.tada); shorter tail chunks fall back to parallel single-query
+ * {@link fetchExchangeRate} calls.
+ */
+async function fetchRateChunk(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
+  fullChunkSize: number,
 ): Promise<Array<ExchangeRate | null>> {
-  const variableDecls: string[] = [];
-  const aliases: string[] = [];
-  const variables: Record<string, string> = {};
-  plans.forEach((p, i) => {
-    variableDecls.push(`$t${i}: SuiAddress!, $l${i}: String!`);
-    aliases.push(
-      `v${i}: address(address: $t${i}) { dynamicField(name: { literal: $l${i} }) { value { __typename ... on MoveValue { json } } } }`,
-    );
-    variables[`t${i}`] = p.exchangeRatesId;
-    variables[`l${i}`] = `${p.epoch}u64`;
-  });
-  const query = `query BatchExchangeRates(${variableDecls.join(", ")}) {\n  ${aliases.join("\n  ")}\n}`;
-  const res = await api.query<Record<string, ExchangeRateAddrNode>, Record<string, string>>({
-    query,
-    variables,
-  });
-  const data = unwrapGraphQL("BatchExchangeRates", res);
-  return plans.map((_, i) => parseExchangeRateNode(data[`v${i}`] ?? null));
+  if (plans.length < fullChunkSize) {
+    return Promise.all(plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch)));
+  }
+  const variables = Object.fromEntries(
+    plans.flatMap((p, i) => [
+      [`t${i}`, p.exchangeRatesId],
+      [`l${i}`, `${p.epoch}u64`],
+    ]),
+  ) as VariablesOf<typeof BATCH_RATES_15>;
+  const res = await api.query({ query: BATCH_RATES_15, variables });
+  const d = unwrapGraphQL("BatchExchangeRates", res);
+  // Explicit alias list — keeps `parseExchangeRateNode` calls fully typed
+  // off `ResultOf<typeof BATCH_RATES_15>`, no `keyof` lookup gymnastics.
+  const aliases = [
+    d.v0,
+    d.v1,
+    d.v2,
+    d.v3,
+    d.v4,
+    d.v5,
+    d.v6,
+    d.v7,
+    d.v8,
+    d.v9,
+    d.v10,
+    d.v11,
+    d.v12,
+    d.v13,
+    d.v14,
+  ];
+  return plans.map((_, i) => parseExchangeRateNode(aliases[i] ?? null));
 }
 
 /**
@@ -2324,13 +2325,7 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
     },
     graphql: async api => {
       const res = await api.query({ query: SUI_SYSTEM_STATE });
-      const epoch = unwrapGraphQL("SystemState", res).epoch;
-      if (!epoch || !epoch.systemState?.json) {
-        throw new Error("GraphQL SystemState returned no payload");
-      }
-      // Schema-drift guard — see `getStakesRaw` for the rationale.
-      assertSystemStateJson(epoch.systemState.json);
-      const stateJson = epoch.systemState.json;
+      const { epoch, stateJson } = unwrapAndValidateSystemState(res);
       const { activeValidators } = fromSystemStateJson(stateJson);
       const poolRefs = poolRefsFromSystemState(stateJson);
       const currentEpoch = Number(epoch.epochId);

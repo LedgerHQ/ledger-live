@@ -1,6 +1,6 @@
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import coinConfig from "../config";
-import { ONE_SUI } from "../constants";
+import { mist } from "../constants";
 import {
   APY_LOOKBACK_EPOCHS,
   GRAPHQL_MAINNET_URL,
@@ -17,16 +17,18 @@ import {
 } from "./sdk";
 import {
   addr,
-  batchedRateCall,
   batchExchangeRateCalls,
   bindMockNextGraphQLClient,
   expectActive,
   fakeBalance,
-  fakeBatchRateResponse,
+  fakeSingleRate,
   fakeStakeNode,
   fakeStakesPage,
   fakeSystemStateQuery,
   fakeUniformBatchRates,
+  fakeUniformSingleRate,
+  singleRateCalls,
+  singleRateVars,
   stakeQueryCalls,
 } from "./sdk.graphql.fixtures";
 
@@ -75,7 +77,7 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     const client = mockNext({
       listBalances: jest.fn().mockResolvedValueOnce({
         balances: [
-          fakeBalance("0x2::sui::SUI", String(ONE_SUI), String((2 * ONE_SUI) / 5)),
+          fakeBalance("0x2::sui::SUI", mist(1), mist(0.4)),
           fakeBalance("0x9::usdc::USDC", "500000"),
         ],
         hasNextPage: false,
@@ -90,9 +92,9 @@ describe("getAllBalancesCached on GraphQL transport", () => {
       {
         coinType: "0x2::sui::SUI",
         coinObjectCount: 0,
-        totalBalance: String(ONE_SUI),
+        totalBalance: mist(1),
         lockedBalance: {},
-        fundsInAddressBalance: String((2 * ONE_SUI) / 5),
+        fundsInAddressBalance: mist(0.4),
       },
       {
         coinType: "0x9::usdc::USDC",
@@ -282,19 +284,19 @@ describe("getStakesRaw on GraphQL transport", () => {
             id: "0xstk1",
             pool_id: POOL_A,
             stake_activation_epoch: "50", // < 100 → Active
-            principal: String(ONE_SUI),
+            principal: mist(1),
           }),
           fakeStakeNode({
             id: "0xstk2",
             pool_id: POOL_A,
             stake_activation_epoch: "60", // < 100 → Active, same pool
-            principal: String(2 * ONE_SUI),
+            principal: mist(2),
           }),
           fakeStakeNode({
             id: "0xstk3",
             pool_id: POOL_B,
             stake_activation_epoch: "200", // > 100 → Pending
-            principal: String(ONE_SUI / 2),
+            principal: mist(0.5),
           }),
         ]),
       );
@@ -313,7 +315,7 @@ describe("getStakesRaw on GraphQL transport", () => {
 
     const stk1 = poolA.stakes.find(s => s.stakedSuiId === "0xstk1")!;
     expectActive(stk1);
-    expect(stk1.principal).toBe(String(ONE_SUI));
+    expect(stk1.principal).toBe(mist(1));
     expect(stk1.stakeActiveEpoch).toBe("50");
     expect(stk1.stakeRequestEpoch).toBe("49"); // active − 1
     // No exchange rate mocked → reward lookup degrades to "0".
@@ -321,7 +323,7 @@ describe("getStakesRaw on GraphQL transport", () => {
 
     const stk3 = poolB.stakes[0];
     expect(stk3.status).toBe("Pending");
-    expect(stk3.principal).toBe(String(ONE_SUI / 2));
+    expect(stk3.principal).toBe(mist(0.5));
   });
 
   test("paginates StakedSui object listings", async () => {
@@ -379,7 +381,8 @@ describe("getStakesRaw on GraphQL transport", () => {
     const stk = result[0].stakes[0];
     expectActive(stk);
     expect(stk.estimatedReward).toBe("0");
-    expect(batchedRateCall(query)).toBeUndefined();
+    expect(singleRateCalls(query)).toHaveLength(0);
+    expect(batchExchangeRateCalls(query)).toHaveLength(0);
   });
 
   test("normalises owner to canonical 32-byte form across initial + paginated queries", async () => {
@@ -435,8 +438,9 @@ describe("getStakesRaw on GraphQL transport", () => {
             }),
           ]),
         )
-        // BatchExchangeRates for activation epoch 50 — ratio 1.0.
-        .mockResolvedValueOnce(fakeUniformBatchRates(1));
+        // Single-query rate fetch for activation epoch 50 — ratio 1.0.
+        // Tail chunks (size 1 < RATE_BATCH_CHUNK_SIZE) skip BATCH_RATES_15.
+        .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
       const result = await getStakesRaw(owner, "sui-graphql-stakes-reward");
@@ -445,8 +449,9 @@ describe("getStakesRaw on GraphQL transport", () => {
       expectActive(stk);
       expect(stk.estimatedReward).toBe("10");
 
-      // Confirm exactly one BatchExchangeRates call was issued.
-      expect(batchedRateCall(query)).toEqual({ t0: "0xratesReward", l0: "50u64" });
+      // Exactly one EXCHANGE_RATE_AT_EPOCH call, no batch.
+      expect(singleRateVars(query)).toEqual([{ table: "0xratesReward", literal: "50u64" }]);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
     test("deduplicates rate lookups when multiple stakes share (pool, activation_epoch)", async () => {
@@ -481,17 +486,19 @@ describe("getStakesRaw on GraphQL transport", () => {
             }),
           ]),
         )
-        // One BatchExchangeRates call carrying both unique (pool, epoch) pairs.
-        .mockResolvedValueOnce(fakeUniformBatchRates(2));
+        // 2 single-query rate fetches (deduped tail chunk < RATE_BATCH_CHUNK_SIZE).
+        .mockResolvedValueOnce(fakeUniformSingleRate())
+        .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
       await getStakesRaw(owner, "sui-graphql-stakes-dedup");
 
-      // 3 stakes → de-duped to 2 unique tuples → 1 batched round-trip with 2 aliases.
-      const batchVars = batchedRateCall(query);
-      expect(batchVars).toBeDefined();
-      expect(Object.keys(batchVars!).sort()).toEqual(["l0", "l1", "t0", "t1"]);
-      expect(new Set([batchVars!.l0, batchVars!.l1])).toEqual(new Set(["50u64", "60u64"]));
+      // 3 stakes → de-duped to 2 unique tuples → 2 parallel single-query round-trips.
+      const vars = singleRateVars(query);
+      expect(vars).toHaveLength(2);
+      expect(new Set(vars.map(v => v.literal))).toEqual(new Set(["50u64", "60u64"]));
+      expect(vars.every(v => v.table === "0xratesDedup")).toBe(true);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
     test("Pending stakes don't trigger rate lookups", async () => {
@@ -507,8 +514,9 @@ describe("getStakesRaw on GraphQL transport", () => {
       const result = await getStakesRaw(owner, "sui-graphql-stakes-pending-only");
       expect(result[0].stakes[0].status).toBe("Pending");
 
-      // No rate calls — Pending stakes have no reward to compute.
-      expect(batchedRateCall(query)).toBeUndefined();
+      // No rate calls (single or batched) — Pending stakes have no reward.
+      expect(singleRateCalls(query)).toHaveLength(0);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
   });
 
@@ -601,7 +609,7 @@ describe("getValidators on GraphQL transport", () => {
     expect(v1.imageUrl).toBe("https://logo");
     expect(v1.projectUrl).toBe("https://project");
     expect(v1.commissionRate).toBe("500");
-    expect(v1.stakingPoolSuiBalance).toBe(String(1_000 * ONE_SUI));
+    expect(v1.stakingPoolSuiBalance).toBe(mist(1_000));
     expect(v1.apy).toBe(0);
     expect(v1.exchangeRatesId).toBe("0xrates");
     expect(v1.exchangeRatesSize).toBe("100");
@@ -623,7 +631,7 @@ describe("getValidators on GraphQL transport", () => {
             },
           ]),
         )
-        .mockResolvedValueOnce(fakeUniformBatchRates(1));
+        .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
       const result = await getValidators("sui-graphql-validators-apy");
@@ -633,13 +641,14 @@ describe("getValidators on GraphQL transport", () => {
       expect(v.apy).toBeGreaterThan(0.12);
       expect(v.apy).toBeLessThan(0.14);
 
-      expect(batchedRateCall(query)).toEqual({
-        t0: "0xratesV",
-        l0: `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64`,
-      });
+      // 1 plan < RATE_BATCH_CHUNK_SIZE → tail path (single query).
+      expect(singleRateVars(query)).toEqual([
+        { table: "0xratesV", literal: `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64` },
+      ]);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
-    test("batches all validators into a single aliased query (N>1)", async () => {
+    test("fans out a tail-sized validator set into parallel single-query rate fetches", async () => {
       const CURRENT_EPOCH = 1000;
       const lookback = `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64`;
       const query = jest
@@ -651,24 +660,24 @@ describe("getValidators on GraphQL transport", () => {
             { poolId: "0xpC", exchangeRatesId: "0xratesC" },
           ]),
         )
-        .mockResolvedValueOnce(fakeUniformBatchRates(3));
+        .mockResolvedValueOnce(fakeUniformSingleRate())
+        .mockResolvedValueOnce(fakeUniformSingleRate())
+        .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
       await getValidators("sui-graphql-validators-batch");
 
-      // 1 system-state + 1 batched rates = 2 calls regardless of N.
-      expect(query).toHaveBeenCalledTimes(2);
-      expect(batchedRateCall(query)).toEqual({
-        t0: "0xratesA",
-        l0: lookback,
-        t1: "0xratesB",
-        l1: lookback,
-        t2: "0xratesC",
-        l2: lookback,
-      });
+      // 1 system-state + 3 parallel single-query rate fetches (N<RATE_BATCH_CHUNK_SIZE).
+      expect(query).toHaveBeenCalledTimes(4);
+      expect(singleRateVars(query)).toEqual([
+        { table: "0xratesA", literal: lookback },
+        { table: "0xratesB", literal: lookback },
+        { table: "0xratesC", literal: lookback },
+      ]);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
-    test("chunks the aliased batch when N exceeds the per-chunk size", async () => {
+    test("chunks N>RATE_BATCH_CHUNK_SIZE: full chunks ride BATCH_RATES_15, tail uses parallel singles", async () => {
       const FULL_CHUNK = RATE_BATCH_CHUNK_SIZE;
       const PARTIAL_CHUNK = 7;
       const N = FULL_CHUNK + PARTIAL_CHUNK;
@@ -677,22 +686,25 @@ describe("getValidators on GraphQL transport", () => {
         exchangeRatesId: `0xrates${i}`,
       }));
 
-      const query = jest
-        .fn()
-        .mockResolvedValueOnce(fakeSystemStateQuery("1000", validators))
-        .mockResolvedValueOnce(fakeUniformBatchRates(FULL_CHUNK))
-        .mockResolvedValueOnce(fakeUniformBatchRates(PARTIAL_CHUNK));
+      const query = jest.fn().mockResolvedValueOnce(fakeSystemStateQuery("1000", validators));
+      // Chunk 0 (size FULL_CHUNK) → one BATCH_RATES_15 round-trip.
+      query.mockResolvedValueOnce(fakeUniformBatchRates(FULL_CHUNK));
+      // Chunk 1 (size PARTIAL_CHUNK) → PARTIAL_CHUNK parallel single-query round-trips.
+      for (let i = 0; i < PARTIAL_CHUNK; i++) {
+        query.mockResolvedValueOnce(fakeUniformSingleRate());
+      }
       mockNext({ query });
 
       const result = await getValidators("sui-graphql-validators-chunked");
 
       expect(result).toHaveLength(N);
-      // 1 system-state + 2 batch chunks = 3 total query calls.
-      expect(query).toHaveBeenCalledTimes(3);
-      const batches = batchExchangeRateCalls(query);
-      expect(batches).toHaveLength(2);
-      expect(Object.keys(batches[0][0].variables)).toHaveLength(FULL_CHUNK * 2);
-      expect(Object.keys(batches[1][0].variables)).toHaveLength(PARTIAL_CHUNK * 2);
+      // 1 system-state + 1 batched + PARTIAL_CHUNK singles.
+      expect(query).toHaveBeenCalledTimes(1 + 1 + PARTIAL_CHUNK);
+      expect(batchExchangeRateCalls(query)).toHaveLength(1);
+      expect(singleRateCalls(query)).toHaveLength(PARTIAL_CHUNK);
+      // The single batch carries every variable for the full chunk.
+      const batch = batchExchangeRateCalls(query)[0];
+      expect(Object.keys(batch[0].variables)).toHaveLength(FULL_CHUNK * 2);
     });
 
     test("clamps the past epoch to the pool's activation_epoch for young pools", async () => {
@@ -705,12 +717,12 @@ describe("getValidators on GraphQL transport", () => {
             { poolId: "0xpY", activationEpoch: 95, exchangeRatesId: "0xratesY" },
           ]),
         )
-        .mockResolvedValueOnce(fakeUniformBatchRates(1));
+        .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
       await getValidators("sui-graphql-validators-young-pool");
 
-      expect(batchedRateCall(query)).toEqual({ t0: "0xratesY", l0: "95u64" });
+      expect(singleRateVars(query)).toEqual([{ table: "0xratesY", literal: "95u64" }]);
     });
 
     test("returns [] for an empty active_validators set without a rate fetch", async () => {
@@ -720,12 +732,13 @@ describe("getValidators on GraphQL transport", () => {
       const result = await getValidators("sui-graphql-validators-empty");
 
       expect(result).toEqual([]);
-      // No rate batch should be issued — there are no validators to plan for.
-      expect(batchedRateCall(query)).toBeUndefined();
+      // No rate calls (single or batched) — no validators to plan for.
+      expect(singleRateCalls(query)).toHaveLength(0);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
       expect(query).toHaveBeenCalledTimes(1);
     });
 
-    test("degrades every validator to apy=0 when the batch returns all-nulls", async () => {
+    test("degrades every validator to apy=0 when every rate lookup returns null", async () => {
       const query = jest
         .fn()
         .mockResolvedValueOnce(
@@ -737,7 +750,9 @@ describe("getValidators on GraphQL transport", () => {
         )
         // All three rate lookups come back as `null` (table has no entry at the
         // requested epoch) — every validator must degrade to apy=0.
-        .mockResolvedValueOnce(fakeBatchRateResponse([null, null, null]));
+        .mockResolvedValueOnce(fakeSingleRate(null))
+        .mockResolvedValueOnce(fakeSingleRate(null))
+        .mockResolvedValueOnce(fakeSingleRate(null));
       mockNext({ query });
 
       const result = await getValidators("sui-graphql-validators-all-null-batch");

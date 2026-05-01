@@ -68,10 +68,7 @@ type ValidatorJson = {
   next_epoch_commission_rate: string | number;
 };
 
-/**
- * Subset we read; other top-level fields (storage_fund, parameters,
- * stake_subsidy, …) are intentionally omitted to keep the surface small.
- */
+/** Subset we read; other top-level fields (storage_fund, parameters, …) are omitted. */
 export type SuiSystemStateInnerJson = {
   epoch: string | number;
   protocol_version: string | number;

@@ -1,3 +1,4 @@
+import { BATCH_RATES_15, EXCHANGE_RATE_AT_EPOCH } from "./graphql/queries";
 import type { StakedSuiJson } from "./graphql/mappers";
 
 /** Test-only convenience: `addr("33") === "0x" + "33".repeat(32)`. */
@@ -7,11 +8,12 @@ export const addr = (byte: string) => "0x" + byte.repeat(32);
  * One row of `Address.balances.nodes`. `coinBalance` is unused by `sdk.ts`
  * but mirrored from `balance` so fixtures look like real wire shapes.
  */
-export const fakeBalance = (
-  coinType: string,
-  balance: string,
-  addressBalance: string = "0",
-) => ({ coinType, balance, coinBalance: balance, addressBalance });
+export const fakeBalance = (coinType: string, balance: string, addressBalance: string = "0") => ({
+  coinType,
+  balance,
+  coinBalance: balance,
+  addressBalance,
+});
 
 /** Subset of `SuiGraphQLClient` the dual-path tests stub. */
 export type MockGraphQLClient = {
@@ -127,19 +129,17 @@ function fakeSystemState(epochId: string, validators: ReadonlyArray<FakeValidato
 export const stakeQueryCalls = (query: jest.Mock) =>
   query.mock.calls.filter(c => c[0]?.variables && "first" in c[0].variables);
 
-/** All `BatchExchangeRates` (dynamic-N aliased) calls in order. */
+/** All `BATCH_RATES_15` (15-aliased) calls in order. Identity-matched against the imported document. */
 export const batchExchangeRateCalls = (query: jest.Mock) =>
-  query.mock.calls.filter(
-    c => typeof c[0]?.query === "string" && c[0].query.startsWith("query BatchExchangeRates"),
-  );
+  query.mock.calls.filter(c => c[0]?.query === BATCH_RATES_15);
 
-/**
- * Find a `BatchExchangeRates` call (the aliased dynamic-N document)
- * and return its variables for assertion, or `undefined` if absent.
- */
-export function batchedRateCall(query: jest.Mock): Record<string, string> | undefined {
-  return batchExchangeRateCalls(query)[0]?.[0]?.variables;
-}
+/** All `EXCHANGE_RATE_AT_EPOCH` (single-query) calls in order. */
+export const singleRateCalls = (query: jest.Mock) =>
+  query.mock.calls.filter(c => c[0]?.query === EXCHANGE_RATE_AT_EPOCH);
+
+/** Variables of every single-rate call, in invocation order. */
+export const singleRateVars = (query: jest.Mock): Array<{ table: string; literal: string }> =>
+  singleRateCalls(query).map(c => c[0].variables);
 
 /** Neutral 1.0 ratio — use when a test needs a successful rate but doesn't care about value. */
 export const IDENTITY_RATE = { sui: 1_000_000, pt: 1_000_000 } as const;
@@ -173,16 +173,40 @@ export const fakeUniformBatchRates = (n: number) =>
   fakeBatchRateResponse(Array.from({ length: n }, () => IDENTITY_RATE));
 
 /**
+ * Fake single-query response for {@link EXCHANGE_RATE_AT_EPOCH}.
+ * `null` simulates "table has no entry at that epoch" (the graceful-
+ * degradation path).
+ */
+export function fakeSingleRate(rate: { sui: number | string; pt: number | string } | null) {
+  return {
+    data: {
+      address: rate
+        ? {
+            dynamicField: {
+              value: {
+                __typename: "MoveValue",
+                json: { sui_amount: String(rate.sui), pool_token_amount: String(rate.pt) },
+              },
+            },
+          }
+        : null,
+    },
+  };
+}
+
+/** Shortcut: single-query response with the neutral 1.0 ratio. */
+export const fakeUniformSingleRate = () => fakeSingleRate(IDENTITY_RATE);
+
+/**
  * One `StakedSui` GraphQL node — only `contents.json` is consumed by
  * the mapper, so other Object fields are intentionally omitted.
  */
 export const fakeStakeNode = (json: StakedSuiJson) => ({ contents: { json } });
 
 /** Build a `SUI_SYSTEM_STATE` query response in one call. */
-export const fakeSystemStateQuery = (
-  epoch: string,
-  validators: ReadonlyArray<FakeValidator>,
-) => ({ data: { epoch: fakeSystemState(epoch, validators) } });
+export const fakeSystemStateQuery = (epoch: string, validators: ReadonlyArray<FakeValidator>) => ({
+  data: { epoch: fakeSystemState(epoch, validators) },
+});
 
 /** Wraps stake nodes into a `STAKED_SUI_OBJECTS_BY_OWNER` page response. */
 export function fakeStakesPage(

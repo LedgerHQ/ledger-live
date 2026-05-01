@@ -8,7 +8,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
-import { ONE_SUI } from "../constants";
+import { mist, ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
@@ -423,7 +423,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
-              principal: String(ONE_SUI),
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -435,7 +435,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake2",
               status: "Pending" as const,
-              principal: String(2 * ONE_SUI),
+              principal: mist(2),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "100",
             },
@@ -475,14 +475,14 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
-              principal: String(ONE_SUI),
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
             {
               stakedSuiId: "0xstake2",
               status: "Active" as const,
-              principal: String(1.5 * ONE_SUI),
+              principal: mist(1.5),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -521,21 +521,21 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xactive",
               status: "Active" as const,
-              principal: String(ONE_SUI),
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
             {
               stakedSuiId: "0xpending",
               status: "Pending" as const,
-              principal: String(2 * ONE_SUI),
+              principal: mist(2),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "100",
             },
             {
               stakedSuiId: "0xunstaked",
               status: "Unstaked" as const,
-              principal: String(3 * ONE_SUI),
+              principal: mist(3),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "0",
             },
@@ -601,7 +601,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xexistingStake",
               status: "Active" as const,
-              principal: String(0.5 * ONE_SUI),
+              principal: mist(0.5),
               stakeActiveEpoch: "90",
               stakeRequestEpoch: "85",
             },
@@ -618,7 +618,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xnewStake",
               status: "Active" as const,
-              principal: String(ONE_SUI),
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },

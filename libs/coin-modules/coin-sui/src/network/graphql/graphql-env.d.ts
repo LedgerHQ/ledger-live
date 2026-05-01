@@ -240,8 +240,8 @@ export type introspection_types = {
  */
 export type introspection = {
   name: never;
-  query: 'Query';
-  mutation: 'Mutation';
+  query: "Query";
+  mutation: "Mutation";
   subscription: never;
   types: introspection_types;
 };
