@@ -1,135 +1,127 @@
-import { act, renderHook, waitFor } from "@tests/test-renderer";
-import { getStoreValue, setStoreValue } from "~/store";
+import { act, renderHook } from "@tests/test-renderer";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { setRecoverState } from "~/reducers/recoverState";
 import useRecoverBannerStorage from "../useRecoverBannerStorage";
-
-jest.mock("~/store", () => ({
-  getStoreValue: jest.fn(),
-  setStoreValue: jest.fn(),
-}));
-
-const mockGetStoreValue = jest.mocked(getStoreValue);
-const mockSetStoreValue = jest.mocked(setStoreValue);
 
 const PROTECT_ID = "protect-prod";
 
 describe("useRecoverBannerStorage", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+  describe("reading state from Redux", () => {
+    it("returns NO_SUBSCRIPTION and displayBanner false by default", () => {
+      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
 
-  describe("loading from storage", () => {
-    it("reads SUBSCRIPTION_STATE and DISPLAY_BANNER with the given protectId", async () => {
-      mockGetStoreValue.mockResolvedValue(undefined);
-
-      renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-
-      await waitFor(() => {
-        expect(mockGetStoreValue).toHaveBeenCalledWith("SUBSCRIPTION_STATE", PROTECT_ID);
-        expect(mockGetStoreValue).toHaveBeenCalledWith("DISPLAY_BANNER", PROTECT_ID);
+      expect(result.current.data).toEqual({
+        subscriptionState: LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
+        displayBanner: false,
       });
     });
 
-    it("populates data with mapped storage values", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
-
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-
-      await waitFor(() =>
-        expect(result.current.data).toEqual({
-          subscriptionState: LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
-          displayBanner: true,
+    it("reflects subscriptionState and displayBanner from Redux store", () => {
+      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: {
+                subscriptionState: LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+                displayBanner: true,
+              },
+            },
+          },
         }),
-      );
+      });
+
+      expect(result.current.data).toEqual({
+        subscriptionState: LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+        displayBanner: true,
+      });
     });
 
-    it("defaults subscriptionState to NO_SUBSCRIPTION when storage is empty", async () => {
-      mockGetStoreValue.mockResolvedValueOnce(undefined).mockResolvedValueOnce("true");
+    it("updates reactively when the Redux store changes", () => {
+      const { result, store } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
 
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
+      expect(result.current.data.displayBanner).toBe(false);
 
-      await waitFor(() =>
-        expect(result.current.data?.subscriptionState).toBe(
-          LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
-        ),
-      );
-    });
+      act(() => {
+        store.dispatch(
+          setRecoverState({
+            protectId: PROTECT_ID,
+            subscriptionState: LedgerRecoverSubscriptionStateEnum.BACKUP_DONE,
+            displayBanner: true,
+          }),
+        );
+      });
 
-    it.each(["false", undefined])(
-      "sets displayBanner to false when storage value is %s",
-      async value => {
-        mockGetStoreValue
-          .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-          .mockResolvedValueOnce(value);
-
-        const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-
-        await waitFor(() => expect(result.current.data?.displayBanner).toBe(false));
-      },
-    );
-
-    it("keeps data undefined when storage throws", async () => {
-      mockGetStoreValue.mockRejectedValue(new Error("storage error"));
-
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-
-      await waitFor(() => expect(mockGetStoreValue).toHaveBeenCalled());
-      expect(result.current.data).toBeUndefined();
+      expect(result.current.data).toEqual({
+        subscriptionState: LedgerRecoverSubscriptionStateEnum.BACKUP_DONE,
+        displayBanner: true,
+      });
     });
   });
 
   describe("dismissBanner", () => {
-    it("writes DISPLAY_BANNER as false to storage", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
-
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-      await waitFor(() => expect(result.current.data?.displayBanner).toBe(true));
+    it("dispatches setDisplayBanner false to Redux", () => {
+      const { result, store } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: {
+                subscriptionState: LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+                displayBanner: true,
+              },
+            },
+          },
+        }),
+      });
 
       act(() => result.current.dismissBanner());
 
-      expect(mockSetStoreValue).toHaveBeenCalledWith("DISPLAY_BANNER", "false", PROTECT_ID);
+      expect(store.getState().recoverState.protectIdState[PROTECT_ID].displayBanner).toBe(false);
     });
 
-    it("optimistically sets displayBanner to false without waiting for storage", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE)
-        .mockResolvedValueOnce("true");
+    it("reflects dismissal immediately in data", () => {
+      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: {
+                subscriptionState: LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+                displayBanner: true,
+              },
+            },
+          },
+        }),
+      });
 
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-      await waitFor(() => expect(result.current.data?.displayBanner).toBe(true));
+      expect(result.current.data.displayBanner).toBe(true);
 
       act(() => result.current.dismissBanner());
 
-      expect(result.current.data?.displayBanner).toBe(false);
+      expect(result.current.data.displayBanner).toBe(false);
     });
 
-    it("preserves other state fields when dismissing", async () => {
-      mockGetStoreValue
-        .mockResolvedValueOnce(LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION)
-        .mockResolvedValueOnce("true");
-
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-      await waitFor(() => expect(result.current.data).toBeDefined());
+    it("preserves subscriptionState when dismissing", () => {
+      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID), {
+        overrideInitialState: state => ({
+          ...state,
+          recoverState: {
+            protectIdState: {
+              [PROTECT_ID]: {
+                subscriptionState: LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION,
+                displayBanner: true,
+              },
+            },
+          },
+        }),
+      });
 
       act(() => result.current.dismissBanner());
 
-      expect(result.current.data?.subscriptionState).toBe(
+      expect(result.current.data.subscriptionState).toBe(
         LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION,
       );
-    });
-
-    it("does not modify data when called before storage has loaded", () => {
-      mockGetStoreValue.mockImplementation(() => new Promise(() => {}));
-
-      const { result } = renderHook(() => useRecoverBannerStorage(PROTECT_ID));
-
-      act(() => result.current.dismissBanner());
-
-      expect(result.current.data).toBeUndefined();
     });
   });
 });

@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { getStoreValue, setStoreValue } from "~/store";
+import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { selectRecoverStateByProtectId, setDisplayBanner } from "~/reducers/recoverState";
 
 export type RecoverBannerState = {
   subscriptionState: LedgerRecoverSubscriptionStateEnum;
@@ -8,41 +9,15 @@ export type RecoverBannerState = {
 };
 
 function useRecoverBannerStorage(protectId: string): {
-  data: RecoverBannerState | undefined;
+  data: RecoverBannerState;
   dismissBanner: () => void;
 } {
-  const [data, setData] = useState<RecoverBannerState | undefined>(undefined);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        const subscriptionState = await getStoreValue<LedgerRecoverSubscriptionStateEnum>(
-          "SUBSCRIPTION_STATE",
-          protectId,
-        );
-        const displayBannerRaw = await getStoreValue<string>("DISPLAY_BANNER", protectId);
-        if (!cancelled) {
-          setData({
-            subscriptionState:
-              subscriptionState ?? LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
-            displayBanner: displayBannerRaw === "true",
-          });
-        }
-      } catch {
-        // storage errors are non-fatal; banner simply won't show
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [protectId]);
+  const dispatch = useDispatch();
+  const data = useSelector(selectRecoverStateByProtectId(protectId));
 
   const dismissBanner = useCallback(() => {
-    setStoreValue("DISPLAY_BANNER", "false", protectId);
-    setData(prev => (prev ? { ...prev, displayBanner: false } : prev));
-  }, [protectId]);
+    dispatch(setDisplayBanner({ protectId, displayBanner: false }));
+  }, [dispatch, protectId]);
 
   return { data, dismissBanner };
 }
