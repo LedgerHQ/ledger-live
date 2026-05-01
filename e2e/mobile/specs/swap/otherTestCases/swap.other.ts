@@ -175,7 +175,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   quotesVisible: boolean,
   tags: string[],
 ) {
-  describe("Swap - with too low amount (throwing UI errors)", () => {
+  describe(`Swap - with too low amount (throwing UI errors) - ${swap.amount} ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({

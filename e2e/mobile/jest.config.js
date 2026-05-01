@@ -23,6 +23,8 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   return jestPaths;
 }
 
+const platform = process.env.DETOX_CONFIGURATION?.startsWith("ios") ? "ios" : "android";
+
 const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
@@ -35,6 +37,7 @@ const jestAllure2ReporterOptions = {
       host: process.env.RUNNER_NAME,
     },
     status: ({ value }) => (value === "broken" ? "failed" : value),
+    historyId: ({ value }) => `${value}:${platform}`,
   },
   overwrite: false,
   environment: async ({ $ }) => ({
