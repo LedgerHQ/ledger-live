@@ -17,8 +17,6 @@ export function useReceiveOptionsViewModel({
   const { pathname } = useLocation();
   const page = sourcePage ?? pathname;
 
-  console.log("useReceiveOptionsViewModel", { page });
-
   const handleGoToBank = useCallback(() => {
     track("button_clicked", {
       button: "fiat",
