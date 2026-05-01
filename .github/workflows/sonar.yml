@@ -33,7 +33,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -181,13 +180,9 @@ jobs:
           bun-version: "1.3.11"
 
       - name: Generate Unit test coverage for wallet-cli
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
         run: |
           pnpm i --filter="@ledgerhq/wallet-cli..." --no-frozen-lockfile --unsafe-perm
-          pnpm turbo build --filter="@ledgerhq/wallet-cli^..."
+          pnpm exec nx run @ledgerhq/wallet-cli:build
           mkdir -p apps/wallet-cli/coverage
           touch apps/wallet-cli/coverage/lcov.info
           pnpm --filter="@ledgerhq/wallet-cli" coverage

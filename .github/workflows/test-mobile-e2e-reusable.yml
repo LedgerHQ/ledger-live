@@ -214,7 +214,6 @@ jobs:
           use-mise: true
           skip-pnpm-cache: "true"
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-nx-cache: "true"
 
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -404,7 +403,7 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
-      disable-turbo-cache: false
+      disable-nx-cache: false
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -419,7 +418,7 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
-      disable-turbo-cache: false
+      disable-nx-cache: false
       build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
@@ -495,7 +494,6 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -666,7 +664,6 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
-          skip-turbo-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}

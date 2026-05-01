@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       affected_paths:
-        description: "Newline/comma-separated list of affected paths from Nx/Turbo"
+        description: "Newline/comma-separated list of affected paths from Nx"
         required: true
         type: string
 
