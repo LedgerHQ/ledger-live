@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import coinConfig from "../config";
+import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import { getAllBalancesCached, getValidators, isGraphQLEnabled } from "./sdk";
 import { graphqlFetcher } from "./sdk.graphql";
@@ -316,5 +317,52 @@ describe("graphqlFetcher: request-ID logging", () => {
       c => c[0] === "coin:sui" && String(c[1] ?? "").startsWith("(network/sdk):"),
     );
     expect(sdkLogs).toHaveLength(0);
+  });
+});
+
+// ---- fetcher: caller-signal abort propagation ----
+
+describe("fetcher: caller-signal abort propagation", () => {
+  let originalFetch: typeof fetch;
+  let mockFetch: jest.Mock;
+
+  beforeEach(() => {
+    originalFetch = global.fetch;
+    mockFetch = jest.fn();
+    global.fetch = mockFetch as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it("should not retry when the caller signal is aborted before the call lands", async () => {
+    // GIVEN
+    // Pre-aborted signal — `AbortSignal.any` makes fetch reject immediately,
+    // and the catch handler must propagate rather than re-issue the request.
+    mockFetch.mockRejectedValue(new DOMException("aborted by caller", "AbortError"));
+    const controller = new AbortController();
+    controller.abort(new DOMException("teardown", "AbortError"));
+
+    // WHEN / THEN
+    await expect(
+      fetcher("https://endpoint/graphql", { signal: controller.signal }, 3),
+    ).rejects.toThrow(/aborted/i);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("should retry up to the budget when the failure is not caller-driven", async () => {
+    // GIVEN
+    // Three rejections in a row — caller never aborts, so all retries fire.
+    mockFetch
+      .mockRejectedValueOnce(new TypeError("network error 1"))
+      .mockRejectedValueOnce(new TypeError("network error 2"))
+      .mockRejectedValueOnce(new TypeError("network error 3"));
+
+    // WHEN / THEN
+    await expect(fetcher("https://endpoint/graphql", { method: "POST" }, 3)).rejects.toThrow(
+      /network error/,
+    );
+    expect(mockFetch).toHaveBeenCalledTimes(3);
   });
 });

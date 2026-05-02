@@ -171,6 +171,7 @@ export const getAllBalancesCached = makeLRUCache(
     }),
   // Key includes the transport so flipping the flag mid-rollout doesn't
   // cross-pollinate cached entries between JSON-RPC and GraphQL.
+  // Inputs are colon-free (owner = `0x` + hex; currencyId is wallet-set).
   (owner: string, currencyId?: string) =>
     `${currencyId ?? "sui"}:${isGraphQLEnabled(currencyId) ? "g" : "j"}:${owner}`,
   minutes(1),

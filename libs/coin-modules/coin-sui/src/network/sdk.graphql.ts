@@ -352,7 +352,11 @@ async function fetchActivationRates(
   malformed: number,
   signal?: AbortSignal,
 ): Promise<Map<string, ExchangeRate | null>> {
-  const { rates: rateArr, chunksFailed } = await fetchExchangeRatesBatched(
+  const {
+    rates: rateArr,
+    chunksFailed,
+    firstError,
+  } = await fetchExchangeRatesBatched(
     api,
     plans.wantedEntries.map(({ table, epoch }) => ({ exchangeRatesId: table, epoch })),
     RATE_BATCH_CHUNK_SIZE,
@@ -372,6 +376,7 @@ async function fetchActivationRates(
       missing,
       malformed,
       total: plans.wantedEntries.length,
+      ...(firstError !== undefined && { firstError }),
     });
   }
   return rates;
@@ -425,14 +430,15 @@ async function fetchExchangeRate(
 
 /**
  * Batched variant of {@link fetchExchangeRate}: 1:1 output with `plans`,
- * `null` for missing entries, transport failures surface via `chunksFailed`.
+ * `null` for missing entries, transport failures surface via `chunksFailed`
+ * and the first error message via `firstError` for on-call triage.
  */
 async function fetchExchangeRatesBatched(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
   chunkSize: number,
   signal?: AbortSignal,
-): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number }> {
+): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number; firstError?: string }> {
   if (plans.length === 0) return { rates: [], chunksFailed: 0 };
   const safeChunk = Math.max(1, Math.floor(chunkSize));
   const chunks: Array<typeof plans> = [];
@@ -445,21 +451,27 @@ async function fetchExchangeRatesBatched(
   const settled = await mapWithLimit(chunks, RATE_CHUNK_CONCURRENCY, async chunk => {
     try {
       return { ok: true as const, value: await fetchRateChunk(api, chunk, safeChunk, signal) };
-    } catch {
-      return { ok: false as const, size: chunk.length };
+    } catch (err) {
+      return {
+        ok: false as const,
+        size: chunk.length,
+        message: err instanceof Error ? err.message : String(err),
+      };
     }
   });
   const rates: Array<ExchangeRate | null> = [];
   let chunksFailed = 0;
+  let firstError: string | undefined;
   for (const res of settled) {
     if (res.ok) {
       rates.push(...res.value);
     } else {
       chunksFailed++;
+      if (firstError === undefined) firstError = res.message;
       for (let i = 0; i < res.size; i++) rates.push(null);
     }
   }
-  return { rates, chunksFailed };
+  return firstError !== undefined ? { rates, chunksFailed, firstError } : { rates, chunksFailed };
 }
 
 /**
@@ -656,6 +668,7 @@ function applyValidatorApy(
   rates: ReadonlyArray<ExchangeRate | null>,
   currentEpoch: number,
   chunksFailed: number,
+  firstError?: string,
 ): Map<string, number> {
   const apyByAddress = new Map<string, number>();
   let rateMissing = 0;
@@ -674,6 +687,7 @@ function applyValidatorApy(
       missing: rateMissing,
       chunksFailed,
       total: plans.length,
+      ...(firstError !== undefined && { firstError }),
     });
   }
   return apyByAddress;
@@ -685,7 +699,7 @@ function applyValidatorApy(
  * APY is computed client-side from pool exchange-rate growth over
  * {@link APY_LOOKBACK_EPOCHS} (mirroring Mysten's formula). Pools younger
  * than the window clamp to their activation epoch; per-rate nulls degrade
- * to apy=0 and surface via telemetry.
+ * to apy=0 and surface via telemetry. Honors `signal`.
  */
 export const getValidatorsGraphQL = async (
   api: SuiGraphQLClient,
@@ -700,12 +714,12 @@ export const getValidatorsGraphQL = async (
   const poolRefs = poolRefsFromSystemState(stateJson);
   const currentEpoch = Number(epoch.epochId);
   const plans = planValidatorApyLookups(activeValidators, poolRefs, currentEpoch);
-  const { rates, chunksFailed } = await fetchExchangeRatesBatched(
+  const { rates, chunksFailed, firstError } = await fetchExchangeRatesBatched(
     api,
     plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
     RATE_BATCH_CHUNK_SIZE,
     signal,
   );
-  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed);
+  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed, firstError);
   return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
 };
