@@ -168,7 +168,7 @@ describe("assertSystemStateJson", () => {
   });
 });
 
-// ----- fromSystemStateJson + validatorJsonToSummary (via fromSystemStateJson) ---
+// ----- fromSystemStateJson + validatorJsonToSummary ---
 
 describe("fromSystemStateJson", () => {
   it("should return empty arrays/maps for an empty active set", () => {
@@ -191,11 +191,9 @@ describe("fromSystemStateJson", () => {
           poolId: "0xpool1",
           validatorAddress: "0xv1",
           name: "Alice",
-          netAddress: "/ip4/1.2.3.4",
           suiBalance: 1_000,
           poolTokenBalance: 900,
           activationEpoch: 50,
-          nextEpochStake: 1_000,
         },
       ],
     });
@@ -208,40 +206,11 @@ describe("fromSystemStateJson", () => {
     const v = activeValidators[0];
     expect(v.suiAddress).toBe("0xv1");
     expect(v.name).toBe("Alice");
+    expect(v.description).toBe("desc");
     expect(v.imageUrl).toBe("https://logo");
     expect(v.projectUrl).toBe("https://project");
-    expect(v.protocolPubkeyBytes).toBe("0xpk");
-    expect(v.networkPubkeyBytes).toBe("0xnk");
-    expect(v.workerPubkeyBytes).toBe("0xwk");
-    expect(v.proofOfPossessionBytes).toBe("0xpp");
-    expect(v.netAddress).toBe("/ip4/1.2.3.4");
-    expect(v.operationCapId).toBe("0xcap");
-    // numeric → string
-    expect(v.votingPower).toBe("100");
-    expect(v.gasPrice).toBe("800");
     expect(v.commissionRate).toBe("500");
-    expect(v.nextEpochStake).toBe("1000");
-    // pool fields
-    expect(v.stakingPoolId).toBe("0xpool1");
-    expect(v.stakingPoolActivationEpoch).toBe("50");
-    expect(v.stakingPoolDeactivationEpoch).toBeNull();
     expect(v.stakingPoolSuiBalance).toBe("1000");
-    expect(v.exchangeRatesId).toBe("0xrates");
-    expect(v.exchangeRatesSize).toBe("100");
-  });
-
-  it("should preserve nullable next-epoch fields as null (not undefined)", () => {
-    // GIVEN
-    const state = makeSystemStateJson({ validators: [{ poolId: "0xpool1" }] });
-
-    // WHEN
-    const v = fromSystemStateJson(state).activeValidators[0];
-
-    // THEN
-    expect(v.nextEpochProtocolPubkeyBytes).toBeNull();
-    expect(v.nextEpochNetAddress).toBeNull();
-    expect(v.nextEpochP2pAddress).toBeNull();
-    expect(v.nextEpochWorkerAddress).toBeNull();
   });
 
   it("should build pool_id → validator_address map", () => {
@@ -260,22 +229,6 @@ describe("fromSystemStateJson", () => {
     expect(poolToValidator.size).toBe(2);
     expect(poolToValidator.get("0xpoolA")).toBe("0xv1");
     expect(poolToValidator.get("0xpoolB")).toBe("0xv2");
-  });
-
-  it("should let str/strOrNull collapse undefined defensively (unreachable from typed wire)", () => {
-    // GIVEN
-    // Force runtime undefined past the typed shape to exercise the isNullish branch.
-    const state = makeSystemStateJson({ validators: [{ poolId: "0xp", validatorAddress: "0xv" }] });
-    const v = state.validators.active_validators[0];
-    (v.staking_pool as { activation_epoch: unknown }).activation_epoch = undefined;
-    (v as { voting_power: unknown }).voting_power = undefined;
-
-    // WHEN
-    const summary = fromSystemStateJson(state).activeValidators[0];
-
-    // THEN
-    expect(summary.stakingPoolActivationEpoch).toBeNull();
-    expect(summary.votingPower).toBe("");
   });
 });
 

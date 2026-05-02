@@ -580,19 +580,19 @@ type ApyPlan = {
 
 /** One historical-rate plan per active validator with a known pool; orphans are skipped. */
 function planValidatorApyLookups(
-  activeValidators: ReadonlyArray<{ suiAddress: string; stakingPoolId: string }>,
   poolRefs: Map<string, PoolRefs>,
+  poolToValidator: Map<string, string>,
   currentEpoch: number,
 ): ApyPlan[] {
   const plans: ApyPlan[] = [];
-  for (const v of activeValidators) {
-    const refs = poolRefs.get(v.stakingPoolId);
-    if (!refs) continue;
+  for (const [stakingPoolId, refs] of poolRefs) {
+    const suiAddress = poolToValidator.get(stakingPoolId);
+    if (!suiAddress) continue;
     // 30-epoch lookback; clamp to activation epoch for young pools.
     const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
     const pastEpoch = Math.max(desired, refs.activationEpoch);
     plans.push({
-      suiAddress: v.suiAddress,
+      suiAddress,
       exchangeRatesId: refs.exchangeRatesId,
       currentRate: refs.currentRate,
       pastEpoch,
@@ -645,10 +645,10 @@ export const getValidatorsGraphQL = async (
     ...(signal && { signal }),
   });
   const { epoch, stateJson } = unwrapAndValidateSystemState(res);
-  const { activeValidators } = fromSystemStateJson(stateJson);
+  const { activeValidators, poolToValidator } = fromSystemStateJson(stateJson);
   const poolRefs = poolRefsFromSystemState(stateJson);
   const currentEpoch = Number(epoch.epochId);
-  const plans = planValidatorApyLookups(activeValidators, poolRefs, currentEpoch);
+  const plans = planValidatorApyLookups(poolRefs, poolToValidator, currentEpoch);
   const { rates, chunksFailed, firstError } = await fetchExchangeRatesBatched(
     api,
     plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),

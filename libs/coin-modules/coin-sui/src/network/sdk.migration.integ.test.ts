@@ -209,8 +209,6 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
           expect(g.name).toBe(r.name);
           expect(g.commissionRate).toBe(r.commissionRate);
           expect(g.stakingPoolSuiBalance).toBe(r.stakingPoolSuiBalance);
-          expect(g.stakingPoolId).toBe(r.stakingPoolId);
-          expect(g.exchangeRatesId).toBe(r.exchangeRatesId);
 
           // JSON-RPC `getValidatorsApy` is indexer-smoothed; we read a live 30-epoch snapshot — drift up to ~2pp.
           if (Number.isFinite(r.apy) && Number.isFinite(g.apy)) {

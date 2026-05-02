@@ -1,6 +1,6 @@
 /** Pure helpers backing the GraphQL pipelines: shape adapters, drift guards, pool math, and predicates. */
 import { log } from "@ledgerhq/logs";
-import type { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/jsonRpc";
+import type { DelegatedStake, StakeObject } from "@mysten/sui/jsonRpc";
 import type { StakedSuiObjectsResult } from "./queries";
 
 // ----- JSON shape coming out of `MoveValue.json` --------------------------
@@ -15,70 +15,30 @@ export type StakedSuiJson = {
 
 type ValidatorMetadataJson = {
   sui_address: string;
-  protocol_pubkey_bytes: string;
-  network_pubkey_bytes: string;
-  worker_pubkey_bytes: string;
-  proof_of_possession: string;
   name: string;
   description: string;
   image_url: string;
   project_url: string;
-  net_address: string;
-  p2p_address: string;
-  primary_address: string;
-  worker_address: string;
-  next_epoch_protocol_pubkey_bytes?: string | null;
-  next_epoch_proof_of_possession?: string | null;
-  next_epoch_network_pubkey_bytes?: string | null;
-  next_epoch_worker_pubkey_bytes?: string | null;
-  next_epoch_net_address?: string | null;
-  next_epoch_p2p_address?: string | null;
-  next_epoch_primary_address?: string | null;
-  next_epoch_worker_address?: string | null;
 };
 
 type StakingPoolJson = {
   id: string;
   activation_epoch: string | number | null;
-  deactivation_epoch: string | number | null;
   sui_balance: string | number;
-  rewards_pool: string | number;
   pool_token_balance: string | number;
-  exchange_rates: { id: string; size: string | number };
-  pending_stake: string | number;
-  pending_total_sui_withdraw: string | number;
-  pending_pool_token_withdraw: string | number;
+  exchange_rates: { id: string };
 };
 
 type ValidatorJson = {
   metadata: ValidatorMetadataJson;
-  voting_power: string | number;
-  operation_cap_id: string;
-  gas_price: string | number;
   staking_pool: StakingPoolJson;
   commission_rate: string | number;
-  next_epoch_stake: string | number;
-  next_epoch_gas_price: string | number;
-  next_epoch_commission_rate: string | number;
 };
 
-/** Subset we read; other top-level fields (storage_fund, parameters, …) are omitted. */
+/** Narrowed to fields the mapper + drift guards + `poolRefsFromSystemState` actually read. */
 export type SuiSystemStateInnerJson = {
   epoch: string | number;
-  protocol_version: string | number;
-  system_state_version: string | number;
-  validators: {
-    active_validators: ValidatorJson[];
-    total_stake: string | number;
-    pending_active_validators: unknown;
-    pending_removals: unknown;
-    staking_pool_mappings: { id: string; size: string | number };
-    inactive_validators: unknown;
-    validator_candidates: unknown;
-    at_risk_validators: unknown;
-  };
-  reference_gas_price: string | number;
-  epoch_start_timestamp_ms: string | number;
+  validators: { active_validators: ValidatorJson[] };
 };
 
 // ----- Runtime guards -----------------------------------------------------
@@ -133,13 +93,9 @@ export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
 
 // ----- Helpers ------------------------------------------------------------
 
-const isNullish = (v: unknown): v is null | undefined => v === null || v === undefined;
 /** Stringify a Move u64 wire value; nullish → `""`. */
 const str = (v: string | number | null | undefined): string =>
-  isNullish(v) ? "" : typeof v === "number" ? String(v) : v;
-/** Same as {@link str} but preserves `null` for nullable wire fields. */
-const strOrNull = (v: string | number | null | undefined): string | null =>
-  isNullish(v) ? null : typeof v === "number" ? String(v) : v;
+  v === null || v === undefined ? "" : typeof v === "number" ? String(v) : v;
 
 /**
  * Normalise GraphQL's long padded Move type tags to JSON-RPC short form.
@@ -156,49 +112,27 @@ export function shortenCoinType(coinType: string): string {
 
 // ----- SystemState → SuiValidatorSummary[] --------------------------------
 
+/** Narrow validator shape — only fields any data consumer (logic / hooks / UI) reads. */
+export type SuiValidatorSummary = {
+  suiAddress: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  projectUrl: string;
+  stakingPoolSuiBalance: string;
+  commissionRate: string;
+};
+
 function validatorJsonToSummary(v: ValidatorJson): SuiValidatorSummary {
   const m = v.metadata;
-  const p = v.staking_pool;
   return {
     suiAddress: m.sui_address,
-    protocolPubkeyBytes: m.protocol_pubkey_bytes,
-    networkPubkeyBytes: m.network_pubkey_bytes,
-    workerPubkeyBytes: m.worker_pubkey_bytes,
-    proofOfPossessionBytes: m.proof_of_possession,
-    operationCapId: v.operation_cap_id,
     name: m.name,
     description: m.description,
     imageUrl: m.image_url,
     projectUrl: m.project_url,
-    netAddress: m.net_address,
-    p2pAddress: m.p2p_address,
-    primaryAddress: m.primary_address,
-    workerAddress: m.worker_address,
-    nextEpochProtocolPubkeyBytes: m.next_epoch_protocol_pubkey_bytes ?? null,
-    nextEpochProofOfPossession: m.next_epoch_proof_of_possession ?? null,
-    nextEpochNetworkPubkeyBytes: m.next_epoch_network_pubkey_bytes ?? null,
-    nextEpochWorkerPubkeyBytes: m.next_epoch_worker_pubkey_bytes ?? null,
-    nextEpochNetAddress: m.next_epoch_net_address ?? null,
-    nextEpochP2pAddress: m.next_epoch_p2p_address ?? null,
-    nextEpochPrimaryAddress: m.next_epoch_primary_address ?? null,
-    nextEpochWorkerAddress: m.next_epoch_worker_address ?? null,
-    votingPower: str(v.voting_power),
-    gasPrice: str(v.gas_price),
+    stakingPoolSuiBalance: str(v.staking_pool.sui_balance),
     commissionRate: str(v.commission_rate),
-    nextEpochStake: str(v.next_epoch_stake),
-    nextEpochGasPrice: str(v.next_epoch_gas_price),
-    nextEpochCommissionRate: str(v.next_epoch_commission_rate),
-    stakingPoolId: p.id,
-    stakingPoolActivationEpoch: strOrNull(p.activation_epoch),
-    stakingPoolDeactivationEpoch: strOrNull(p.deactivation_epoch),
-    stakingPoolSuiBalance: str(p.sui_balance),
-    rewardsPool: str(p.rewards_pool),
-    poolTokenBalance: str(p.pool_token_balance),
-    exchangeRatesId: p.exchange_rates.id,
-    exchangeRatesSize: str(p.exchange_rates.size),
-    pendingStake: str(p.pending_stake),
-    pendingTotalSuiWithdraw: str(p.pending_total_sui_withdraw),
-    pendingPoolTokenWithdraw: str(p.pending_pool_token_withdraw),
   };
 }
 

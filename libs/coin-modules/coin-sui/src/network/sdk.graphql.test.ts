@@ -718,8 +718,6 @@ describe("getValidators on GraphQL transport", () => {
     expect(v1.commissionRate).toBe("500");
     expect(v1.stakingPoolSuiBalance).toBe(mist(1_000));
     expect(v1.apy).toBe(0);
-    expect(v1.exchangeRatesId).toBe("0xrates");
-    expect(v1.exchangeRatesSize).toBe("100");
   });
 
   describe("APY computation", () => {
