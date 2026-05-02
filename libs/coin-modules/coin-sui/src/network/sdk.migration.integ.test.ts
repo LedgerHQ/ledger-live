@@ -106,11 +106,9 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
         (g, r) => {
           expect(g.coinType).toBe(r.coinType);
           expect(g.totalBalance).toBe(r.totalBalance);
-          // SIP-58 split — rename `addressBalance` (GraphQL) →
-          // `fundsInAddressBalance` (JSON-RPC) is exercised here.
+          // SIP-58 `addressBalance` → `fundsInAddressBalance` rename exercised here.
           expect(g.fundsInAddressBalance ?? "0").toBe(r.fundsInAddressBalance ?? "0");
-          // `coinObjectCount` and `lockedBalance` are GraphQL gaps —
-          // intentionally NOT compared. See `getAllBalancesCached` in `sdk.ts`.
+          // `coinObjectCount` and `lockedBalance` are GraphQL gaps — intentionally not compared.
         },
       );
     });
@@ -180,16 +178,13 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
               expect(gStake.status).toBe(rStake.status);
               expect(gStake.stakeActiveEpoch).toBe(rStake.stakeActiveEpoch);
 
-              // `stakeRequestEpoch` may differ by 1 between transports —
-              // GraphQL computes it as activeEpoch − 1 since the on-chain
-              // StakedSui struct only stores `stake_activation_epoch`.
+              // GraphQL derives `stakeRequestEpoch` as `activeEpoch − 1`; transports may differ by 1.
               const reqDiff = Math.abs(
                 Number(gStake.stakeRequestEpoch) - Number(rStake.stakeRequestEpoch),
               );
               expect(reqDiff).toBeLessThanOrEqual(TOLERANCE.stakeRequestEpochDelta);
 
-              // Active stake reward — both compute via the same pool-token
-              // exchange-rate formula but may round differently.
+              // Same pool-token formula on both sides; integer-division rounding may differ.
               if (gStake.status === "Active" && rStake.status === "Active") {
                 expectClose(gStake.estimatedReward, rStake.estimatedReward);
               }

@@ -44,11 +44,7 @@ export type AsyncGraphQLApiFunction<T> = (
   signal?: AbortSignal,
 ) => Promise<T>;
 
-/**
- * Toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage`
- * (input/output nodes, depth) for tuning against complexity caps. Off
- * by default (small server cost). Enable via `DEBUG_SUI_GRAPHQL`.
- */
+/** `DEBUG_SUI_GRAPHQL` toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage` for tuning. */
 function isGraphqlDebugEnabled(): boolean {
   // Read at call time so test env tweaks take effect without a rebuild.
   const v = (typeof process !== "undefined" && process.env?.DEBUG_SUI_GRAPHQL) || "";
@@ -56,10 +52,8 @@ function isGraphqlDebugEnabled(): boolean {
 }
 
 /**
- * GraphQL wrapper over the shared retry-aware fetcher: stamps
- * `x-sui-rpc-request-id` logging and detects the `200 OK + errors[]`
- * failure shape.
- *
+ * GraphQL wrapper over the shared retry-aware fetcher: stamps `x-sui-rpc-request-id` logging
+ * and detects the `200 OK + errors[]` failure shape.
  * @internal Exported for the request-ID logging unit test only.
  */
 export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Response> => {
@@ -87,9 +81,7 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
       return res;
     }
 
-    // 200 OK: parse, log any `errors[]`, stamp `__requestId` into the
-    // body, and re-emit a real Response. Synchronous from the SDK's POV
-    // — no microtask race between thrown error and request-ID log.
+    // 200 OK: parse, stamp `__requestId`, re-emit synchronously so the request-ID log can't race a thrown error.
     const text = await res.text();
     let body: { errors?: { message?: string }[]; [k: string]: unknown };
     try {
@@ -172,13 +164,7 @@ function unwrapGraphQL<T>(
   return res.data as NonNullable<T>;
 }
 
-/**
- * Unwrap a {@link SUI_SYSTEM_STATE} response and run the schema-drift
- * guard on its `MoveValue.json`. Centralised so every caller exits with
- * the same narrowed `stateJson` and a future site can't forget the
- * `assertSystemStateJson` boundary check. Drift errors carry `[reqId=…]`
- * matching `unwrapGraphQL`'s format.
- */
+/** Centralised so every caller exits with the same narrowed `stateJson` and the drift guard can't be skipped. */
 function unwrapAndValidateSystemState(
   systemRes: Parameters<typeof unwrapGraphQL<SuiSystemStateResult>>[1],
 ): { epoch: NonNullable<SuiSystemStateResult["epoch"]>; stateJson: SuiSystemStateInnerJson } {
@@ -206,11 +192,8 @@ type CursorPage<T> = {
 
 /**
  * Forward pagination with single drop-and-restart on cursor expiry.
- * `seed` lets a caller hand in a first page already fetched in parallel
- * (e.g. with system state); the seed is dropped on retry — it expired
- * with the cursor. Caller validates items AFTER this returns so retry
- * doesn't redo validation for pages it's about to discard. Outer-loop
- * abort gate prevents retrying after teardown.
+ * `seed` (a pre-fetched first page) is dropped on retry along with the cursor.
+ * Caller validates AFTER return so retry doesn't redo validation for pages it discards.
  */
 async function paginateWithCursorRecovery<T>(config: {
   source: string;
@@ -265,11 +248,7 @@ async function paginateWithCursorRecovery<T>(config: {
 // Stakes pipeline
 // ============================================================================
 
-/**
- * Parallel fetch of system state + first stakes page, with drift guard.
- * Returns the seed page so the pagination helper can skip a round-trip
- * on the happy path.
- */
+/** Parallel system-state + first-page fetch; seed lets pagination skip the happy-path round-trip. */
 async function fetchSystemStateAndStakesPage(
   api: SuiGraphQLClient,
   ownerAddr: string,
@@ -340,12 +319,7 @@ async function paginateRemainingStakes(
   return items;
 }
 
-/**
- * Batched activation-rate fetch. Per-chunk failures and missing rates
- * surface via the `sui-graphql:rate-fetch-degraded` telemetry channel
- * so a Mysten dynamic-field grammar change is visible before it shows
- * up as support tickets.
- */
+/** Per-chunk failures + missing rates surface via `sui-graphql:rate-fetch-degraded` for early drift signal. */
 async function fetchActivationRates(
   api: SuiGraphQLClient,
   plans: StakeRatePlans,
@@ -409,11 +383,7 @@ async function mapWithLimit<T, R>(
 /** Concurrent in-flight rate-chunk requests; bounded to avoid bursty fan-out under heavy validator sets. */
 const RATE_CHUNK_CONCURRENCY = 4;
 
-/**
- * One entry from a pool's `exchange_rates` Move Table. `null` when the
- * table has no entry at that epoch; errors propagate so the caller can
- * decide whether to abort or degrade.
- */
+/** `null` when the rates table has no entry at that epoch; errors propagate for caller-side triage. */
 async function fetchExchangeRate(
   api: SuiGraphQLClient,
   exchangeRatesId: string,
@@ -428,11 +398,7 @@ async function fetchExchangeRate(
   return parseExchangeRateNode(unwrapGraphQL(`ExchangeRate(${epoch})`, res).address ?? null);
 }
 
-/**
- * Batched variant of {@link fetchExchangeRate}: 1:1 output with `plans`,
- * `null` for missing entries, transport failures surface via `chunksFailed`
- * and the first error message via `firstError` for on-call triage.
- */
+/** Batched {@link fetchExchangeRate}: 1:1 output, `null` on miss, transport failures via `chunksFailed`/`firstError`. */
 async function fetchExchangeRatesBatched(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
@@ -445,8 +411,6 @@ async function fetchExchangeRatesBatched(
   for (let i = 0; i < plans.length; i += safeChunk) {
     chunks.push(plans.slice(i, i + safeChunk));
   }
-  // Bounded worker pool isolates per-chunk failures (returned as `null`-padded chunks)
-  // and caps in-flight requests so a 127-validator set doesn't fire ~9 batches in lockstep.
   // INVARIANT: each chunk's result length matches its input length — null-pad on failure preserves 1:1.
   const settled = await mapWithLimit(chunks, RATE_CHUNK_CONCURRENCY, async chunk => {
     try {
@@ -474,12 +438,7 @@ async function fetchExchangeRatesBatched(
   return firstError !== undefined ? { rates, chunksFailed, firstError } : { rates, chunksFailed };
 }
 
-/**
- * Fetch one chunk of rates. Full-size chunks ride the static
- * {@link BATCH_RATES_15} aliased document (compile-time validated by
- * gql.tada); shorter tail chunks fall back to parallel single-query
- * {@link fetchExchangeRate} calls.
- */
+/** Full chunks ride {@link BATCH_RATES_15}; tail chunks fall back to parallel {@link fetchExchangeRate}. */
 async function fetchRateChunk(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
@@ -512,12 +471,7 @@ async function fetchRateChunk(
 // Public per-function GraphQL handlers (passed to `withTransport` from sdk.ts)
 // ============================================================================
 
-/**
- * Cached `Address.balances` (post-SIP-58 surfaces `fundsInAddressBalance`).
- * Paginates `BalanceConnection` and remaps each node into `CoinBalance`.
- * JSON-RPC-only fields (`coinObjectCount`, `lockedBalance`) are stubbed.
-
- */
+/** Paginates `BalanceConnection`; JSON-RPC-only `coinObjectCount`/`lockedBalance` are stubbed. */
 export const getAllBalancesCachedGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
@@ -552,11 +506,7 @@ export const getAllBalancesCachedGraphQL = async (
   return items;
 };
 
-/**
- * `DelegatedStake[]` reconstructed from `StakedSui` objects + system-state
- * (one extra dynamicField per Active stake, deduped); rate failures degrade
- * `estimatedReward` to `"0"`.
- */
+/** Reconstructs `DelegatedStake[]` from `StakedSui` + system-state; rate failures degrade `estimatedReward` to `"0"`. */
 export const getDelegatedStakesGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
@@ -573,12 +523,7 @@ export const getDelegatedStakesGraphQL = async (
   return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
 };
 
-/**
- * Checkpoint by sequence number, remapped to the JSON-RPC `Checkpoint`
- * subset. The dispatcher is responsible for the digest guard
- * ({@link isSequenceNumber}) — GraphQL's `Query.checkpoint(sequenceNumber:)`
- * only accepts UInt53.
- */
+/** GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts UInt53; digests must route to JSON-RPC. */
 export const getCheckpointGraphQL = async (
   api: SuiGraphQLClient,
   id: string | number,
@@ -610,9 +555,7 @@ export const getCheckpointGraphQL = async (
   };
 };
 
-/**
- * Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`.
- */
+/** Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`. */
 export const getLastBlockGraphQL = async (
   api: SuiGraphQLClient,
   signal?: AbortSignal,
@@ -658,11 +601,7 @@ function planValidatorApyLookups(
   return plans;
 }
 
-/**
- * Apply rate→APY math, degrading missing/failed entries to apy=0 and
- * surfacing aggregate degradation via telemetry (typical cause of a
- * sudden spike in `missing`: dynamicField schema change).
- */
+/** Missing/failed rates degrade to apy=0; aggregate degradation surfaces via telemetry. */
 function applyValidatorApy(
   plans: ReadonlyArray<ApyPlan>,
   rates: ReadonlyArray<ExchangeRate | null>,
@@ -694,12 +633,8 @@ function applyValidatorApy(
 }
 
 /**
- * Active validator set with APY. One `epoch.systemState.json` plus a
- * batched aliased exchange-rate query (one round-trip for ~127 validators).
- * APY is computed client-side from pool exchange-rate growth over
- * {@link APY_LOOKBACK_EPOCHS} (mirroring Mysten's formula). Pools younger
- * than the window clamp to their activation epoch; per-rate nulls degrade
- * to apy=0 and surface via telemetry. Honors `signal`.
+ * Active validator set with client-side APY over {@link APY_LOOKBACK_EPOCHS} (Mysten's formula).
+ * Young pools clamp the past epoch to activation; per-rate nulls degrade to apy=0. Honors `signal`.
  */
 export const getValidatorsGraphQL = async (
   api: SuiGraphQLClient,

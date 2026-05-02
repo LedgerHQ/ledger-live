@@ -7,10 +7,7 @@ export type { FakeValidator };
 /** Test-only convenience: replicates a single byte across all 32 address bytes. */
 export const addr = (byte: string) => "0x" + byte.repeat(32);
 
-/**
- * One row of `Address.balances.nodes`. `coinBalance` is unused by `sdk.ts`
- * but mirrored from `balance` so fixtures look like real wire shapes.
- */
+/** One `Address.balances.nodes` row; mirrors `balance` into `coinBalance` to match real wire shape. */
 export const fakeBalance = (coinType: string, balance: string, addressBalance: string = "0") => ({
   coinType,
   balance,
@@ -24,11 +21,7 @@ export type MockGraphQLClient = {
   listBalances: jest.Mock;
 };
 
-/**
- * Stub the next `new SuiGraphQLClient(...)` call to return a client
- * with the given method implementations. Returns the stub so assertions
- * can read its call history.
- */
+/** Stub the next `new SuiGraphQLClient(...)` and return the stub for call-history assertions. */
 export function bindMockNextGraphQLClient(ctorMock: jest.Mock) {
   return (impl: Partial<MockGraphQLClient> = {}): MockGraphQLClient => {
     const client: MockGraphQLClient = {
@@ -74,11 +67,7 @@ export const singleRateVars = (query: jest.Mock): Array<{ table: string; literal
 /** Neutral 1.0 ratio — use when a test needs a successful rate but doesn't care about value. */
 export const IDENTITY_RATE = { sui: 1_000_000, pt: 1_000_000 } as const;
 
-/**
- * Fake aliased-batch response (`v0`, `v1`, …). Pass `null` at an index
- * to simulate "not found in the exchange-rates Move Table" — exercises
- * the graceful-degradation path.
- */
+/** Aliased-batch response; pass `null` at an index to simulate the missing-rate degradation path. */
 export function fakeBatchRateResponse(
   rates: Array<{ sui: number | string; pt: number | string } | null>,
 ) {
@@ -102,11 +91,7 @@ export function fakeBatchRateResponse(
 export const fakeUniformBatchRates = (n: number) =>
   fakeBatchRateResponse(Array.from({ length: n }, () => IDENTITY_RATE));
 
-/**
- * Fake single-query response for {@link EXCHANGE_RATE_AT_EPOCH}.
- * `null` simulates "table has no entry at that epoch" (the graceful-
- * degradation path).
- */
+/** Single-query rate response; `null` simulates the missing-rate degradation path. */
 export function fakeSingleRate(rate: { sui: number | string; pt: number | string } | null) {
   return {
     data: {
@@ -127,10 +112,7 @@ export function fakeSingleRate(rate: { sui: number | string; pt: number | string
 /** Shortcut: single-query response with the neutral 1.0 ratio. */
 export const fakeUniformSingleRate = () => fakeSingleRate(IDENTITY_RATE);
 
-/**
- * One `StakedSui` GraphQL node — only `contents.json` is consumed by
- * the mapper, so other Object fields are intentionally omitted.
- */
+/** Minimal `StakedSui` node — only `contents.json` is consumed by the mapper. */
 export const fakeStakeNode = (json: StakedSuiJson) => ({ contents: { json } });
 
 /** Build a `SUI_SYSTEM_STATE` query response in one call. */
