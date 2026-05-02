@@ -16,12 +16,7 @@ const GRAPHQL_ID = "sui-graphql-mig";
 
 const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 
-/**
- * Lookback for the parity checkpoint. Two constraints: past finality
- * across both transports (digests/timestamps stable between reads a few
- * seconds apart) and well within the GraphQL retention window.
- * 1000 checkpoints ≈ 5 minutes at ~3 cps.
- */
+/** ~5 min lookback at ~3 cps: past finality on both transports, inside the GraphQL retention window. */
 const STABLE_CHECKPOINT_LOOKBACK = 1000n;
 
 const TOLERANCE = {
@@ -36,8 +31,7 @@ const TOLERANCE = {
   validatorApyAbsolute: 0.05,
 } as const;
 
-// Resolved at suite startup against the live JSON-RPC endpoint — see
-// STABLE_CHECKPOINT_LOOKBACK above for the rationale.
+// Resolved at suite startup against the live JSON-RPC endpoint.
 let stableCheckpointSequence: string;
 
 beforeAll(async () => {
@@ -65,11 +59,7 @@ beforeAll(async () => {
   ).toString();
 });
 
-/**
- * BigInt-equivalent compare with absolute and relative tolerances —
- * for `estimatedReward` and APY-derived fields where server and
- * client do the same math but may round differently.
- */
+/** BigInt compare with abs+relative tolerance for fields where transports do the same math but round differently. */
 function expectClose(
   actual: bigint | string | number,
   expected: bigint | string | number,
@@ -81,8 +71,7 @@ function expectClose(
   const a = typeof actual === "bigint" ? actual : BigInt(actual);
   const e = typeof expected === "bigint" ? expected : BigInt(expected);
   const diff = a > e ? a - e : e - a;
-  // Allow whichever tolerance is larger — small absolute floor for
-  // tiny values, percentage-based above that.
+  // Whichever tolerance is larger — absolute floor catches tiny values, percentage above.
   const relTol = ((e < 0n ? -e : e) * relativeBps) / 10_000n;
   const tol = relTol > absolute ? relTol : absolute;
   if (diff > tol) {
@@ -90,12 +79,7 @@ function expectClose(
   }
 }
 
-/**
- * Cross-transport list parity: sort both sides by `key`, assert
- * `length` matches, run `assertPair` per index. Field-level
- * assertions stay inside `assertPair` so the per-test contract stays
- * visible at the call site.
- */
+/** Sort both sides by `key`, assert length, run `assertPair` per index; per-test contract stays in the lambda. */
 function assertParityList<T>(
   rpc: ReadonlyArray<T>,
   gql: ReadonlyArray<T>,
@@ -137,7 +121,6 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       const rpc = await getLastBlock(JSON_RPC_ID);
       const gql = await getLastBlock(GRAPHQL_ID);
 
-      // Shape sanity
       expect(rpc.digest).toEqual(expect.stringMatching(/.+/));
       expect(gql.digest).toEqual(expect.stringMatching(/.+/));
       expect(BigInt(rpc.sequenceNumber)).toBeGreaterThan(0n);
@@ -149,7 +132,6 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       const diff = a > b ? a - b : b - a;
       expect(diff).toBeLessThan(TOLERANCE.lastBlockSequenceWindow);
 
-      // timestampMs should be a parseable epoch-millis string
       expect(Number.isFinite(Number(rpc.timestampMs))).toBe(true);
       expect(Number.isFinite(Number(gql.timestampMs))).toBe(true);
     });
@@ -166,11 +148,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
     });
 
     it("GraphQL rejects digest input; JSON-RPC accepts it", async () => {
-      // sdk.ts:1769 throws on the GraphQL path when `id` is a digest
-      // because `Query.checkpoint(sequenceNumber:)` can't accept digests.
-      // JSON-RPC accepts both. Asserting the asymmetry live protects the
-      // guard against being silently relaxed (or a future GraphQL schema
-      // change that would mis-route).
+      // Live-asserts the dispatcher's digest guard so it can't be silently relaxed.
       const latest = await getLastBlock(JSON_RPC_ID);
       await expect(getCheckpoint(latest.digest, JSON_RPC_ID)).resolves.toMatchObject({
         digest: latest.digest,
@@ -239,12 +217,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
           expect(g.stakingPoolId).toBe(r.stakingPoolId);
           expect(g.exchangeRatesId).toBe(r.exchangeRatesId);
 
-          // APY drift between JSON-RPC and our GraphQL path observed on
-          // mainnet at ~1-2 percentage points: JSON-RPC's
-          // `getValidatorsApy` is fed by an indexer that smooths across
-          // multiple epochs, while we read a single 30-epoch lookback
-          // snapshot live. Tolerance covers observed drift with headroom
-          // for occasional reward-event skew at epoch boundaries.
+          // JSON-RPC `getValidatorsApy` is indexer-smoothed; we read a live 30-epoch snapshot — drift up to ~2pp.
           if (Number.isFinite(r.apy) && Number.isFinite(g.apy)) {
             expect(Math.abs(g.apy - r.apy)).toBeLessThan(TOLERANCE.validatorApyAbsolute);
           }
@@ -254,11 +227,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getAccountBalances (bridge wrapper)", () => {
-    // Wrapper around `getAllBalancesCached` (sdk.ts:588) — does the field
-    // rename + BigNumber conversion the bridge consumes via
-    // synchronisation.ts:55. Its dual-path behaviour is inherited from
-    // `getAllBalancesCached`, but we assert the bridge-shaped output here
-    // so any future divergence in the wrapper itself surfaces immediately.
+    // Asserts the bridge-shaped output so divergence in the wrapper itself surfaces here.
     it("balances match across transports as consumed by the bridge", async () => {
       const rpc = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
@@ -277,10 +246,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("unused-address parity", () => {
-    // Empty / zero-result code path. The fixture address has stakes and
-    // multi-token balances, so it never exercises an empty page response.
-    // GraphQL pagination empty-page semantics are the path most likely
-    // to diverge silently from JSON-RPC for fresh accounts.
+    // Empty-page semantics are the most likely silent divergence between transports.
     it("getDelegatedStakes returns equivalent results across transports for an unused address", async () => {
       const rpc = await getDelegatedStakes(ACCOUNT_EMPTY, JSON_RPC_ID);
       const gql = await getDelegatedStakes(ACCOUNT_EMPTY, GRAPHQL_ID);

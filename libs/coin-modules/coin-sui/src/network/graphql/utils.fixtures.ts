@@ -1,10 +1,6 @@
 import type { SuiSystemStateInnerJson } from "./utils";
 
-/**
- * Per-validator overrides for {@link makeSystemStateJson}. `poolId` is
- * required; everything else falls back to a stable default so tests only
- * spell out the fields they actually assert on.
- */
+/** Per-validator overrides; `poolId` required, everything else defaults to a stable mainnet-shape value. */
 export type FakeValidator = {
   poolId: string;
   validatorAddress?: string;
@@ -34,12 +30,7 @@ export type FakeValidator = {
   nextEpochStake?: number | string;
 };
 
-/**
- * Single source of truth for the `SuiSystemStateInnerJson` test shape:
- * fixtures + unit tests + integ helpers all build through this. Defaults
- * mirror a healthy mainnet-style validator (~1 SUI staking pool with
- * 5% commission). Override only the fields a given test asserts on.
- */
+/** Single source of truth for the `SuiSystemStateInnerJson` test shape; tests override only what they assert on. */
 export function makeSystemStateJson(opts: {
   epoch?: number | string;
   validators?: ReadonlyArray<FakeValidator>;
