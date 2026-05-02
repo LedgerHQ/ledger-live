@@ -90,26 +90,45 @@ function expectClose(
   }
 }
 
+/**
+ * Cross-transport list parity: sort both sides by `key`, assert
+ * `length` matches, run `assertPair` per index. Field-level
+ * assertions stay inside `assertPair` so the per-test contract stays
+ * visible at the call site.
+ */
+function assertParityList<T>(
+  rpc: ReadonlyArray<T>,
+  gql: ReadonlyArray<T>,
+  key: (x: T) => string,
+  assertPair: (gqlItem: T, rpcItem: T, index: number) => void,
+) {
+  const cmp = (xs: ReadonlyArray<T>) => [...xs].sort((a, b) => key(a).localeCompare(key(b)));
+  const r = cmp(rpc);
+  const g = cmp(gql);
+  expect(g.length).toBe(r.length);
+  for (let i = 0; i < r.length; i++) assertPair(g[i], r[i], i);
+}
+
 describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   describe("getAllBalancesCached", () => {
     it("balances match across transports", async () => {
       const rpc = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
-      const sort = (xs: typeof rpc) => [...xs].sort((a, b) => a.coinType.localeCompare(b.coinType));
-      const r = sort(rpc);
-      const g = sort(gql);
-
-      expect(g.length).toBe(r.length);
-      for (let i = 0; i < r.length; i++) {
-        expect(g[i].coinType).toBe(r[i].coinType);
-        expect(g[i].totalBalance).toBe(r[i].totalBalance);
-        // SIP-58 split — rename `addressBalance` (GraphQL) →
-        // `fundsInAddressBalance` (JSON-RPC) is exercised here.
-        expect(g[i].fundsInAddressBalance ?? "0").toBe(r[i].fundsInAddressBalance ?? "0");
-        // `coinObjectCount` and `lockedBalance` are GraphQL gaps —
-        // intentionally NOT compared. See `getAllBalancesCached` in `sdk.ts`.
-      }
+      assertParityList(
+        rpc,
+        gql,
+        x => x.coinType,
+        (g, r) => {
+          expect(g.coinType).toBe(r.coinType);
+          expect(g.totalBalance).toBe(r.totalBalance);
+          // SIP-58 split — rename `addressBalance` (GraphQL) →
+          // `fundsInAddressBalance` (JSON-RPC) is exercised here.
+          expect(g.fundsInAddressBalance ?? "0").toBe(r.fundsInAddressBalance ?? "0");
+          // `coinObjectCount` and `lockedBalance` are GraphQL gaps —
+          // intentionally NOT compared. See `getAllBalancesCached` in `sdk.ts`.
+        },
+      );
     });
   });
 
@@ -165,52 +184,41 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       const rpc = await getDelegatedStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getDelegatedStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
-      const sortGroups = (xs: typeof rpc) =>
-        [...xs].sort((a, b) => a.stakingPool.localeCompare(b.stakingPool));
-      const r = sortGroups(rpc);
-      const g = sortGroups(gql);
+      assertParityList(
+        rpc,
+        gql,
+        x => x.stakingPool,
+        (g, r) => {
+          expect(g.stakingPool).toBe(r.stakingPool);
+          expect(g.validatorAddress).toBe(r.validatorAddress);
 
-      expect(g.length).toBe(r.length);
+          assertParityList(
+            r.stakes,
+            g.stakes,
+            s => s.stakedSuiId,
+            (gStake, rStake) => {
+              expect(gStake.stakedSuiId).toBe(rStake.stakedSuiId);
+              expect(gStake.principal).toBe(rStake.principal);
+              expect(gStake.status).toBe(rStake.status);
+              expect(gStake.stakeActiveEpoch).toBe(rStake.stakeActiveEpoch);
 
-      for (let i = 0; i < r.length; i++) {
-        expect(g[i].stakingPool).toBe(r[i].stakingPool);
-        expect(g[i].validatorAddress).toBe(r[i].validatorAddress);
+              // `stakeRequestEpoch` may differ by 1 between transports —
+              // GraphQL computes it as activeEpoch − 1 since the on-chain
+              // StakedSui struct only stores `stake_activation_epoch`.
+              const reqDiff = Math.abs(
+                Number(gStake.stakeRequestEpoch) - Number(rStake.stakeRequestEpoch),
+              );
+              expect(reqDiff).toBeLessThanOrEqual(TOLERANCE.stakeRequestEpochDelta);
 
-        const sortStakes = (xs: (typeof r)[number]["stakes"]) =>
-          [...xs].sort((a, b) => a.stakedSuiId.localeCompare(b.stakedSuiId));
-        const rs = sortStakes(r[i].stakes);
-        const gs = sortStakes(g[i].stakes);
-
-        expect(gs.length).toBe(rs.length);
-        for (let j = 0; j < rs.length; j++) {
-          // Bind locally so TS narrows each variable independently after
-          // the `status === "Active"` check.
-          const gStake = gs[j];
-          const rStake = rs[j];
-
-          expect(gStake.stakedSuiId).toBe(rStake.stakedSuiId);
-          expect(gStake.principal).toBe(rStake.principal);
-          expect(gStake.status).toBe(rStake.status);
-          expect(gStake.stakeActiveEpoch).toBe(rStake.stakeActiveEpoch);
-
-          // `stakeRequestEpoch` may differ by 1 between transports —
-          // GraphQL computes it as activeEpoch − 1 since the on-chain
-          // StakedSui struct only stores `stake_activation_epoch`.
-          const reqDiff = Math.abs(
-            Number(gStake.stakeRequestEpoch) - Number(rStake.stakeRequestEpoch),
+              // Active stake reward — both compute via the same pool-token
+              // exchange-rate formula but may round differently.
+              if (gStake.status === "Active" && rStake.status === "Active") {
+                expectClose(gStake.estimatedReward, rStake.estimatedReward);
+              }
+            },
           );
-          expect(reqDiff).toBeLessThanOrEqual(TOLERANCE.stakeRequestEpochDelta);
-
-          // Active stake reward — both compute via the same pool-token
-          // exchange-rate formula but may round differently.
-          if (gStake.status === "Active" && rStake.status === "Active") {
-            expectClose(gStake.estimatedReward, rStake.estimatedReward, {
-              absolute: TOLERANCE.stakeRewardAbsoluteMist,
-              relativeBps: TOLERANCE.stakeRewardRelativeBps,
-            });
-          }
-        }
-      }
+        },
+      );
     });
   });
 
@@ -219,31 +227,29 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       const rpc = await getValidators(JSON_RPC_ID);
       const gql = await getValidators(GRAPHQL_ID);
 
-      const sort = (xs: typeof rpc) =>
-        [...xs].sort((a, b) => a.suiAddress.localeCompare(b.suiAddress));
-      const r = sort(rpc);
-      const g = sort(gql);
+      assertParityList(
+        rpc,
+        gql,
+        x => x.suiAddress,
+        (g, r) => {
+          expect(g.suiAddress).toBe(r.suiAddress);
+          expect(g.name).toBe(r.name);
+          expect(g.commissionRate).toBe(r.commissionRate);
+          expect(g.stakingPoolSuiBalance).toBe(r.stakingPoolSuiBalance);
+          expect(g.stakingPoolId).toBe(r.stakingPoolId);
+          expect(g.exchangeRatesId).toBe(r.exchangeRatesId);
 
-      expect(g.length).toBe(r.length);
-
-      for (let i = 0; i < r.length; i++) {
-        expect(g[i].suiAddress).toBe(r[i].suiAddress);
-        expect(g[i].name).toBe(r[i].name);
-        expect(g[i].commissionRate).toBe(r[i].commissionRate);
-        expect(g[i].stakingPoolSuiBalance).toBe(r[i].stakingPoolSuiBalance);
-        expect(g[i].stakingPoolId).toBe(r[i].stakingPoolId);
-        expect(g[i].exchangeRatesId).toBe(r[i].exchangeRatesId);
-
-        // APY drift between JSON-RPC and our GraphQL path observed on
-        // mainnet at ~1-2 percentage points: JSON-RPC's
-        // `getValidatorsApy` is fed by an indexer that smooths across
-        // multiple epochs, while we read a single 30-epoch lookback
-        // snapshot live. Tolerance covers observed drift with headroom
-        // for occasional reward-event skew at epoch boundaries.
-        if (Number.isFinite(r[i].apy) && Number.isFinite(g[i].apy)) {
-          expect(Math.abs(g[i].apy - r[i].apy)).toBeLessThan(TOLERANCE.validatorApyAbsolute);
-        }
-      }
+          // APY drift between JSON-RPC and our GraphQL path observed on
+          // mainnet at ~1-2 percentage points: JSON-RPC's
+          // `getValidatorsApy` is fed by an indexer that smooths across
+          // multiple epochs, while we read a single 30-epoch lookback
+          // snapshot live. Tolerance covers observed drift with headroom
+          // for occasional reward-event skew at epoch boundaries.
+          if (Number.isFinite(r.apy) && Number.isFinite(g.apy)) {
+            expect(Math.abs(g.apy - r.apy)).toBeLessThan(TOLERANCE.validatorApyAbsolute);
+          }
+        },
+      );
     });
   });
 
@@ -257,16 +263,16 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       const rpc = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
-      const sort = (xs: typeof rpc) => [...xs].sort((a, b) => a.coinType.localeCompare(b.coinType));
-      const r = sort(rpc);
-      const g = sort(gql);
-
-      expect(g.length).toBe(r.length);
-      for (let i = 0; i < r.length; i++) {
-        expect(g[i].coinType).toBe(r[i].coinType);
-        expect(g[i].balance.toFixed()).toBe(r[i].balance.toFixed());
-        expect(g[i].fundsInAddressBalance.toFixed()).toBe(r[i].fundsInAddressBalance.toFixed());
-      }
+      assertParityList(
+        rpc,
+        gql,
+        x => x.coinType,
+        (g, r) => {
+          expect(g.coinType).toBe(r.coinType);
+          expect(g.balance.toFixed()).toBe(r.balance.toFixed());
+          expect(g.fundsInAddressBalance.toFixed()).toBe(r.fundsInAddressBalance.toFixed());
+        },
+      );
     });
   });
 
@@ -285,16 +291,16 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       const rpc = await getAllBalancesCached(ACCOUNT_EMPTY, JSON_RPC_ID);
       const gql = await getAllBalancesCached(ACCOUNT_EMPTY, GRAPHQL_ID);
 
-      const sort = (xs: typeof rpc) => [...xs].sort((a, b) => a.coinType.localeCompare(b.coinType));
-      const r = sort(rpc);
-      const g = sort(gql);
-
-      expect(g.length).toBe(r.length);
-      for (let i = 0; i < r.length; i++) {
-        expect(g[i].coinType).toBe(r[i].coinType);
-        expect(g[i].totalBalance).toBe(r[i].totalBalance);
-        expect(g[i].fundsInAddressBalance ?? "0").toBe(r[i].fundsInAddressBalance ?? "0");
-      }
+      assertParityList(
+        rpc,
+        gql,
+        x => x.coinType,
+        (g, r) => {
+          expect(g.coinType).toBe(r.coinType);
+          expect(g.totalBalance).toBe(r.totalBalance);
+          expect(g.fundsInAddressBalance ?? "0").toBe(r.fundsInAddressBalance ?? "0");
+        },
+      );
     });
   });
 });

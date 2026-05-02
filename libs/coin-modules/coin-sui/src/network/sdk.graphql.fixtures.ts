@@ -1,5 +1,8 @@
 import { BATCH_RATES_15, EXCHANGE_RATE_AT_EPOCH } from "./graphql/queries";
 import type { StakedSuiJson } from "./graphql/utils";
+import { type FakeValidator, makeSystemStateJson } from "./graphql/utils.fixtures";
+
+export type { FakeValidator };
 
 /** Test-only convenience: replicates a single byte across all 32 address bytes. */
 export const addr = (byte: string) => "0x" + byte.repeat(32);
@@ -44,84 +47,11 @@ export function expectActive<T extends { status: string }>(
   expect(stake.status).toBe("Active");
 }
 
-/**
- * One validator entry. `poolId` drives grouping; everything else has a
- * sane default so tests only spell out fields they actually assert on.
- */
-export type FakeValidator = {
-  poolId: string;
-  validatorAddress?: string;
-  name?: string;
-  suiBalance?: number | string;
-  poolTokenBalance?: number | string;
-  exchangeRatesId?: string;
-  /** `null` deactivates a pool. */
-  activationEpoch?: number | string | null;
-  commissionRate?: number | string;
-};
-
-/**
- * Minimal `SuiSystemStateInnerV2` payload — every field the mapper
- * reads is filled, with sane defaults a test can override per-validator
- * via {@link FakeValidator}. Module-private; tests use {@link fakeSystemStateQuery}.
- */
+/** GraphQL `epoch.systemState` envelope around the inner Move JSON. */
 function fakeSystemState(epochId: string, validators: ReadonlyArray<FakeValidator>) {
   return {
     epochId,
-    systemState: {
-      json: {
-        epoch: epochId,
-        protocol_version: 1,
-        system_state_version: 2,
-        validators: {
-          active_validators: validators.map(v => ({
-            metadata: {
-              sui_address: v.validatorAddress ?? "0xv",
-              protocol_pubkey_bytes: "",
-              network_pubkey_bytes: "",
-              worker_pubkey_bytes: "",
-              proof_of_possession: "",
-              name: v.name ?? "V",
-              description: "desc",
-              image_url: "https://logo",
-              project_url: "https://project",
-              net_address: "",
-              p2p_address: "",
-              primary_address: "",
-              worker_address: "",
-            },
-            voting_power: 100,
-            operation_cap_id: "0xcap",
-            gas_price: 800,
-            staking_pool: {
-              id: v.poolId,
-              activation_epoch: v.activationEpoch ?? 0,
-              deactivation_epoch: null,
-              sui_balance: v.suiBalance ?? 1_000_000_000_000,
-              rewards_pool: 50_000_000_000,
-              pool_token_balance: v.poolTokenBalance ?? 900_000_000_000,
-              exchange_rates: { id: v.exchangeRatesId ?? "0xrates", size: 100 },
-              pending_stake: 0,
-              pending_total_sui_withdraw: 0,
-              pending_pool_token_withdraw: 0,
-            },
-            commission_rate: v.commissionRate ?? 500,
-            next_epoch_stake: 0,
-            next_epoch_gas_price: 800,
-            next_epoch_commission_rate: v.commissionRate ?? 500,
-          })),
-          total_stake: "0",
-          pending_active_validators: null,
-          pending_removals: null,
-          staking_pool_mappings: { id: "0xmap", size: validators.length },
-          inactive_validators: null,
-          validator_candidates: null,
-          at_risk_validators: null,
-        },
-        reference_gas_price: 100,
-        epoch_start_timestamp_ms: 0,
-      },
-    },
+    systemState: { json: makeSystemStateJson({ epoch: epochId, validators }) },
   };
 }
 
