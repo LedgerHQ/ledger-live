@@ -13,11 +13,7 @@ const getAccountShape = (...args: Parameters<typeof getAccountShapeStream>) =>
 
 const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 
-/**
- * Bridge-layer dispatch is keyed on `currency.id` (always "sui" here), so
- * — unlike the SDK-layer integ test that splits by id — we re-bind the
- * config between runs rather than dispatching by id.
- */
+/** Bridge dispatch is keyed on `currency.id` (always "sui"), so we re-bind the config between runs. */
 function configureTransport(useGraphQL: boolean) {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
@@ -57,11 +53,7 @@ describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
     expect(gql.spendableBalance!.toFixed()).toBe(rpc.spendableBalance!.toFixed());
     expect(gql.blockHeight).toBe(rpc.blockHeight);
 
-    // Stakes — composed from `getDelegatedStakes` and stored in
-    // `suiResources.stakes`, the surface the UI hook
-    // `useSuiMappedStakingPositions` reads. Reward drift is exercised
-    // at the SDK layer; here we only need stable identity + principal
-    // + status to assert the bridge didn't reorder or drop anything.
+    // Reward drift is exercised at the SDK layer; here we just check the bridge didn't reorder or drop stakes.
     const flat = (groups: NonNullable<typeof rpc.suiResources>["stakes"]) =>
       (groups ?? []).flatMap(g => g.stakes.map(s => ({ ...s, pool: g.stakingPool })));
     const sortStakes = (xs: ReturnType<typeof flat>) =>
@@ -79,14 +71,8 @@ describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
 
     expect(gql.subAccounts).toEqual(rpc.subAccounts);
 
-    // TODO: re-enable once `getOperations` is migrated to GraphQL
-    // (sdk.ts:1444). Today it goes through `withApi()` which reads
-    // `node.url` — and `node.url` is swapped to the GraphQL endpoint
-    // on the `useGraphQL = true` run, so the JSON-RPC call lands on
-    // the GraphQL host and returns 0 ops. The two counts can't be
-    // compared meaningfully until the operations path is on GraphQL.
-    // expect(Math.abs((gql.operationsCount ?? 0) - (rpc.operationsCount ?? 0))).toBeLessThanOrEqual(
-    //   2,
-    // );
+    // TODO: re-enable once `getOperations` is migrated to GraphQL — its JSON-RPC call currently lands
+    // on the GraphQL host on the `useGraphQL = true` run and returns 0 ops, so counts aren't comparable.
+    // expect(Math.abs((gql.operationsCount ?? 0) - (rpc.operationsCount ?? 0))).toBeLessThanOrEqual(2);
   });
 });

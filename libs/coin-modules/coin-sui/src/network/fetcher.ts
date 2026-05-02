@@ -15,10 +15,8 @@ export function inferNetworkFromUrl(url: string): string {
 }
 
 /**
- * Retry-aware fetch shared by both the JSON-RPC and GraphQL transports.
- * Each attempt races a per-attempt timeout against any caller-supplied `signal`
- * via `AbortSignal.any` — whichever fires first wins.
- * Recursion passes `options` (not `opts`) so each retry gets a fresh abort controller.
+ * Retry-aware fetch shared by JSON-RPC and GraphQL transports. Per-attempt timeout races caller `signal`
+ * via `AbortSignal.any`; recursion passes `options` so each retry gets a fresh abort controller.
  * Caller-signal aborts propagate immediately; only timeout / transport errors retry.
  */
 export const fetcher = (
@@ -28,7 +26,7 @@ export const fetcher = (
 ): Promise<Response> => {
   const version = getEnv("LEDGER_CLIENT_VERSION") || "";
   const isCI = version.includes("ll-ci") || version === "";
-  // Bind to a local so the header path runs even when caller passes no `options`.
+  // Local bind so the header path runs even when caller passes no `options`.
   const baseOptions: RequestInit = options ?? {};
   baseOptions.headers = {
     ...baseOptions.headers,
@@ -48,10 +46,8 @@ export const fetcher = (
 
   return finalize(
     fetch(url, opts).catch(async err => {
-      // Caller-signal abort must terminate immediately; retrying after teardown
-      // re-issues GraphQL traffic the wallet has already unsubscribed from.
+      // Caller-signal abort terminates immediately; retrying after teardown re-issues unsubscribed traffic.
       if (baseOptions.signal?.aborted) throw err;
-      // Linear backoff before the next attempt — `attempt` grows from 1 upward.
       const attempt = RETRY_BUDGET_DEFAULT - retry + 1;
       await new Promise(resolve => setTimeout(resolve, RETRY_BACKOFF_BASE_MS * attempt));
       return fetcher(url, options, retry - 1);
