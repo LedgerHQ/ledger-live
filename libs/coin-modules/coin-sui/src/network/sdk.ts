@@ -39,7 +39,7 @@ import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
 import coinConfig from "../config";
-import { ONE_SUI } from "../constants";
+import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {
   CoreTransaction,
   CreateExtrinsicArg,
@@ -56,7 +56,7 @@ import {
   getAllBalancesCachedGraphQL,
   getCheckpointGraphQL,
   getLastBlockGraphQL,
-  getStakesRawGraphQL,
+  getDelegatedStakesGraphQL,
   getValidatorsGraphQL,
   withGraphQLApi,
 } from "./sdk.graphql";
@@ -71,7 +71,6 @@ export function isGraphQLEnabled(currencyId?: string): boolean {
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
 const MULTI_GET_OBJECTS_LIMIT = 50;
-const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
@@ -150,14 +149,22 @@ export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpc
 }
 
 /**
+ * Subset both transports populate. Narrows the dispatcher's surface so the
+ * GraphQL path's neutral fillers for JSON-RPC-only fields (`coinObjectCount`,
+ * `lockedBalance`) can't leak to a future caller via the cached value.
+ */
+export type DispatchedCoinBalance = Pick<
+  CoinBalance,
+  "coinType" | "totalBalance" | "fundsInAddressBalance"
+>;
+
+/**
  * Cached `suix_getAllBalances` / `Address.balances`. Post-SIP-58 surfaces
  * `fundsInAddressBalance`; the GraphQL path paginates `BalanceConnection`
- * and remaps each node into `CoinBalance`. JSON-RPC-only fields with no
- * GraphQL equivalent (`coinObjectCount`, `lockedBalance`) are filled
- * with neutral defaults — verified unused by callers.
+ * and remaps each node into the shared {@link DispatchedCoinBalance} shape.
  */
 export const getAllBalancesCached = makeLRUCache(
-  (owner: string, currencyId?: string): Promise<CoinBalance[]> =>
+  (owner: string, currencyId?: string): Promise<DispatchedCoinBalance[]> =>
     withTransport(currencyId, {
       jsonRpc: api => api.getAllBalances({ owner }),
       graphql: api => getAllBalancesCachedGraphQL(api, owner),
@@ -481,7 +488,7 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
  * `StakedSui` objects + system-state (one extra dynamicField per Active
  * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
  */
-export const getStakesRaw = (
+export const getDelegatedStakes = (
   owner: string,
   currencyId?: string,
   signal?: AbortSignal,
@@ -490,7 +497,7 @@ export const getStakesRaw = (
     currencyId,
     {
       jsonRpc: (api, sig) => api.getStakes({ owner, ...(sig && { signal: sig }) }),
-      graphql: (api, sig) => getStakesRawGraphQL(api, owner, sig),
+      graphql: (api, sig) => getDelegatedStakesGraphQL(api, owner, sig),
     },
     signal,
   );

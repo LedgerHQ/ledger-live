@@ -12,7 +12,7 @@ import {
   getAllBalancesCached,
   getCheckpoint,
   getLastBlock,
-  getStakesRaw,
+  getDelegatedStakes,
   getValidators,
 } from "./sdk";
 import {
@@ -273,7 +273,7 @@ describe("getCheckpoint on GraphQL transport", () => {
   });
 });
 
-describe("getStakesRaw on GraphQL transport", () => {
+describe("getDelegatedStakes on GraphQL transport", () => {
   /** Pending-status stake — used by tests that don't care about reward math. */
   const pendingStake = (id: string, pool_id = "0xp") =>
     fakeStakeNode({ id, pool_id, stake_activation_epoch: "200", principal: "1" });
@@ -318,7 +318,7 @@ describe("getStakesRaw on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-1");
+    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-1");
 
     // THEN
     expect(result).toHaveLength(2);
@@ -359,7 +359,7 @@ describe("getStakesRaw on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-pagination");
+    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-pagination");
 
     // THEN
     expect(result).toHaveLength(1);
@@ -392,7 +392,7 @@ describe("getStakesRaw on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-orphan");
+    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-orphan");
 
     // THEN
     expect(result).toHaveLength(1);
@@ -419,7 +419,7 @@ describe("getStakesRaw on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    await getStakesRaw("0x42", "sui-graphql-stakes-norm");
+    await getDelegatedStakes("0x42", "sui-graphql-stakes-norm");
 
     // THEN
     const expected = "0x" + "0".repeat(62) + "42";
@@ -463,7 +463,7 @@ describe("getStakesRaw on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getStakesRaw(owner, "sui-graphql-stakes-reward");
+      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-reward");
 
       // THEN
       expect(result).toHaveLength(1);
@@ -514,7 +514,7 @@ describe("getStakesRaw on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      await getStakesRaw(owner, "sui-graphql-stakes-dedup");
+      await getDelegatedStakes(owner, "sui-graphql-stakes-dedup");
 
       // THEN
       const vars = singleRateVars(query);
@@ -535,7 +535,7 @@ describe("getStakesRaw on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getStakesRaw(owner, "sui-graphql-stakes-pending-only");
+      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-pending-only");
 
       // THEN
       expect(result[0].stakes[0].status).toBe("Pending");
@@ -571,7 +571,7 @@ describe("getStakesRaw on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry");
+      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-cursor-expiry");
 
       // THEN
       // Pre-retry items must be discarded — only post-retry stakes survive.
@@ -606,9 +606,9 @@ describe("getStakesRaw on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN / THEN
-      await expect(getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry-double")).rejects.toThrow(
-        /outside available range/,
-      );
+      await expect(
+        getDelegatedStakes(owner, "sui-graphql-stakes-cursor-expiry-double"),
+      ).rejects.toThrow(/outside available range/);
     });
   });
 
@@ -616,7 +616,7 @@ describe("getStakesRaw on GraphQL transport", () => {
     it("should reject before paginating when the signal is already aborted at entry", async () => {
       // GIVEN
       // Mock client ignores `signal`, so both initial queries still fire; the
-      // throwIfAborted gate inside `getStakesRaw` is what must short-circuit
+      // throwIfAborted gate inside `getDelegatedStakes` is what must short-circuit
       // before pagination enters.
       const owner = addr("ac");
       const POOL = "0xpoolPreAbort";
@@ -632,7 +632,7 @@ describe("getStakesRaw on GraphQL transport", () => {
 
       // WHEN / THEN
       await expect(
-        getStakesRaw(owner, "sui-graphql-stakes-pre-abort", controller.signal),
+        getDelegatedStakes(owner, "sui-graphql-stakes-pre-abort", controller.signal),
       ).rejects.toThrow(/preabort|aborted/i);
 
       // Only the parallel initial pair — pagination must never enter.
@@ -665,7 +665,7 @@ describe("getStakesRaw on GraphQL transport", () => {
 
       // WHEN / THEN
       await expect(
-        getStakesRaw(owner, "sui-graphql-stakes-abort-mid-pagination", controller.signal),
+        getDelegatedStakes(owner, "sui-graphql-stakes-abort-mid-pagination", controller.signal),
       ).rejects.toThrow(/teardown|aborted/i);
 
       expect(query).toHaveBeenCalledTimes(2);

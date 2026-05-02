@@ -13,7 +13,18 @@ const getAccountShape = (...args: Parameters<typeof getAccountShapeStream>) =>
 
 const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 
-let useGraphQL = false;
+/**
+ * Bridge-layer dispatch is keyed on `currency.id` (always "sui" here), so
+ * — unlike the SDK-layer integ test that splits by id — we re-bind the
+ * config between runs rather than dispatching by id.
+ */
+function configureTransport(useGraphQL: boolean) {
+  coinConfig.setCoinConfig(() => ({
+    status: { type: "active" },
+    node: { url: useGraphQL ? GRAPHQL_MAINNET_URL : JSON_RPC_URL },
+    features: { graphql: useGraphQL },
+  }));
+}
 
 beforeAll(() => {
   setCryptoAssetsStore({
@@ -21,12 +32,6 @@ beforeAll(() => {
     findTokenById: async () => undefined,
     getTokensSyncHash: async () => "0",
   } as unknown as CryptoAssetsStore);
-
-  coinConfig.setCoinConfig(() => ({
-    status: { type: "active" },
-    node: { url: useGraphQL ? GRAPHQL_MAINNET_URL : JSON_RPC_URL },
-    features: { graphql: useGraphQL },
-  }));
 });
 
 const SHAPE_INFO = {
@@ -42,17 +47,17 @@ const SYNC_CONFIG = { blacklistedTokenIds: [], paginationConfig: {} };
 
 describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
   test("balance, spendable and suiResources.stakes match across transports", async () => {
-    useGraphQL = false;
+    configureTransport(false);
     const rpc = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
 
-    useGraphQL = true;
+    configureTransport(true);
     const gql = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
 
     expect(gql.balance!.toFixed()).toBe(rpc.balance!.toFixed());
     expect(gql.spendableBalance!.toFixed()).toBe(rpc.spendableBalance!.toFixed());
     expect(gql.blockHeight).toBe(rpc.blockHeight);
 
-    // Stakes — composed from `getStakesRaw` and stored in
+    // Stakes — composed from `getDelegatedStakes` and stored in
     // `suiResources.stakes`, the surface the UI hook
     // `useSuiMappedStakingPositions` reads. Reward drift is exercised
     // at the SDK layer; here we only need stable identity + principal

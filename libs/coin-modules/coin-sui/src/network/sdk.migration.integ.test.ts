@@ -7,7 +7,7 @@ import {
   getAllBalancesCached,
   getCheckpoint,
   getLastBlock,
-  getStakesRaw,
+  getDelegatedStakes,
   getValidators,
 } from "./sdk";
 
@@ -27,7 +27,7 @@ const STABLE_CHECKPOINT_LOOKBACK = 1000n;
 const TOLERANCE = {
   /** Max checkpoint-sequence delta between transports for `getLastBlock`; chain advances ~3 cps. */
   lastBlockSequenceWindow: 100n,
-  /** `getStakesRaw` reward parity: 1 % relative or 0.0001 SUI absolute floor (whichever larger). */
+  /** `getDelegatedStakes` reward parity: 1 % relative or 0.0001 SUI absolute floor (whichever larger). */
   stakeRewardAbsoluteMist: 100_000n,
   stakeRewardRelativeBps: 100n,
   /** Max `stakeRequestEpoch` delta — GraphQL derives it as `activeEpoch − 1`. */
@@ -160,10 +160,10 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
     });
   });
 
-  describe("getStakesRaw", () => {
+  describe("getDelegatedStakes", () => {
     it("delegated stakes group, status, principal match; estimatedReward within tolerance", async () => {
-      const rpc = await getStakesRaw(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
-      const gql = await getStakesRaw(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
+      const rpc = await getDelegatedStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
+      const gql = await getDelegatedStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
       const sortGroups = (xs: typeof rpc) =>
         [...xs].sort((a, b) => a.stakingPool.localeCompare(b.stakingPool));
@@ -275,9 +275,9 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
     // multi-token balances, so it never exercises an empty page response.
     // GraphQL pagination empty-page semantics are the path most likely
     // to diverge silently from JSON-RPC for fresh accounts.
-    it("getStakesRaw returns equivalent results across transports for an unused address", async () => {
-      const rpc = await getStakesRaw(ACCOUNT_EMPTY, JSON_RPC_ID);
-      const gql = await getStakesRaw(ACCOUNT_EMPTY, GRAPHQL_ID);
+    it("getDelegatedStakes returns equivalent results across transports for an unused address", async () => {
+      const rpc = await getDelegatedStakes(ACCOUNT_EMPTY, JSON_RPC_ID);
+      const gql = await getDelegatedStakes(ACCOUNT_EMPTY, GRAPHQL_ID);
       expect(gql).toEqual(rpc);
     });
 

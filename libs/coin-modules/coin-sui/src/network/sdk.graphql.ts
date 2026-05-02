@@ -545,7 +545,7 @@ export const getAllBalancesCachedGraphQL = async (
  * (one extra dynamicField per Active stake, deduped); rate failures degrade
  * `estimatedReward` to `"0"`.
  */
-export const getStakesRawGraphQL = async (
+export const getDelegatedStakesGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
   signal?: AbortSignal,
