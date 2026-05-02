@@ -315,6 +315,10 @@ export function computeEstimatedReward(
  *   APY = (cur_ratio / past_ratio) ^ (epochsPerYear / epochsBetween) − 1
  * SUI epochs ~24h → `epochsPerYear ≈ 365`. Returns 0 for degenerate
  * inputs (zero division, non-positive growth window).
+ *
+ * Precision: the 1e18-scaled BigInt → Number ratio loses precision once
+ * either ratio exceeds ~2^53. Safe for SUI exchange rates (≈ 1.0–1.x);
+ * not safe for high-magnitude ratio sources without rescaling.
  */
 export function computeApy(
   currentRate: ExchangeRate,

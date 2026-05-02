@@ -15,8 +15,9 @@ import { type Operation } from "@ledgerhq/types-live";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { getAccountBalances, getOperations, getStakesRaw } from "../network";
-import { AccountBalance, DEFAULT_COIN_TYPE } from "../network/sdk";
+import { BLOCK_HEIGHT } from "../constants";
+import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 
 /**
@@ -42,7 +43,7 @@ export const getAccountShape: GetAccountShapeStream<SuiAccount> = (info, syncCon
       });
 
       let operations: Operation[] = [];
-      const stakes = await getStakesRaw(address, currency.id, signal);
+      const stakes = await getDelegatedStakes(address, currency.id, signal);
 
       let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
       const newOperations = await getOperations(
@@ -65,22 +66,14 @@ export const getAccountShape: GetAccountShapeStream<SuiAccount> = (info, syncCon
         accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ??
         BigNumber(0);
 
-      const subAccountsBalances: AccountBalance[] = [];
-      for (const accountBalance of accountBalances) {
-        const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-          accountBalance.coinType,
-          currency.id,
-        );
-        if (token) {
-          subAccountsBalances.push(accountBalance);
-        }
-      }
-
+      // `buildSubAccounts` filters non-token entries internally with a batched
+      // `findTokenByAddressInCurrency` (concurrency 3); pre-filtering here used
+      // to serialise the same lookup per balance.
       const subAccounts =
         (await buildSubAccounts({
           accountId,
           operations,
-          subAccountsBalances,
+          subAccountsBalances: accountBalances,
           syncConfig,
           currencyId: currency.id,
           subAccounts: initialAccount?.subAccounts ?? [],
@@ -92,7 +85,7 @@ export const getAccountShape: GetAccountShapeStream<SuiAccount> = (info, syncCon
         balance,
         spendableBalance: balance,
         operationsCount: mainAccountOperations.length,
-        blockHeight: 5,
+        blockHeight: BLOCK_HEIGHT,
         subAccounts,
         suiResources: {
           stakes,
@@ -100,14 +93,15 @@ export const getAccountShape: GetAccountShapeStream<SuiAccount> = (info, syncCon
         operations: mainAccountOperations,
       };
     })().then(
+      // Two abort windows: (a) abort fires during the inner await and surfaces
+      // as a signal-derived error → caught below and reclassified as `complete()`;
+      // (b) abort fires after resolve but before this `.next()` → caught here.
       shape => {
         if (signal.aborted) return; // already torn down — don't emit stale data
         subscriber.next(shape);
         subscriber.complete();
       },
       err => {
-        // Abort during await rejects with a signal-derived error; treat that as
-        // a clean teardown rather than propagating it to the framework.
         if (signal.aborted) subscriber.complete();
         else subscriber.error(err);
       },
@@ -222,7 +216,7 @@ function buildSubAccount({
     operations: tokenOperations,
     creationDate:
       tokenOperations.length > 0 ? tokenOperations[tokenOperations.length - 1].date : new Date(),
-    blockHeight: 5,
+    blockHeight: BLOCK_HEIGHT,
     pendingOperations: initialTokenAccount?.pendingOperations || [],
     balanceHistoryCache: initialTokenAccount?.balanceHistoryCache || emptyHistoryCache,
     swapHistory: [],

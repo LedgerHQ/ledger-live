@@ -25,8 +25,8 @@ import {
   type RatePlan,
   type StakedSuiJson,
   type StakeNode,
-  type SuiSystemStateInnerJson,
 } from "./utils";
+import { makeSystemStateJson } from "./fixtures";
 
 // ----- shortenCoinType ----------------------------------------------------
 
@@ -82,43 +82,32 @@ describe("isStakedSuiJson", () => {
     );
   });
 
-  it.each([null, undefined, "string", 42, true, []])(
-    "should reject non-object input: %p",
-    (input: unknown) => {
-      expect(isStakedSuiJson(input)).toBe(false);
-    },
-  );
-
-  it("should reject when id is missing or non-string", () => {
-    expect(isStakedSuiJson({ ...validNode, id: undefined })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, id: 42 })).toBe(false);
-  });
-
-  it("should reject when pool_id is missing or non-string", () => {
-    expect(isStakedSuiJson({ ...validNode, pool_id: undefined })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, pool_id: 42 })).toBe(false);
-  });
-
-  it("should reject when principal is neither string nor number", () => {
-    expect(isStakedSuiJson({ ...validNode, principal: null })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, principal: true })).toBe(false);
-  });
-
-  it("should reject non-integer numeric strings (BigInt() would throw downstream)", () => {
-    // Predicate must filter values BigInt() can't parse; downstream fails closed.
-    expect(isStakedSuiJson({ ...validNode, principal: "1.5" })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, principal: "-1" })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, principal: "abc" })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, principal: "" })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: "1.5" })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: "abc" })).toBe(false);
-  });
-
-  it("should reject negative or non-integer numbers (Move u64 is non-negative integer)", () => {
-    expect(isStakedSuiJson({ ...validNode, principal: -1 })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, principal: 1.5 })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, principal: NaN })).toBe(false);
-    expect(isStakedSuiJson({ ...validNode, stake_activation_epoch: -5 })).toBe(false);
+  // Predicate must filter values BigInt() can't parse; downstream fails closed.
+  it.each<[label: string, input: unknown]>([
+    ["null root", null],
+    ["undefined root", undefined],
+    ["string root", "string"],
+    ["number root", 42],
+    ["boolean root", true],
+    ["array root", []],
+    ["missing id", { ...validNode, id: undefined }],
+    ["non-string id", { ...validNode, id: 42 }],
+    ["missing pool_id", { ...validNode, pool_id: undefined }],
+    ["non-string pool_id", { ...validNode, pool_id: 42 }],
+    ["null principal", { ...validNode, principal: null }],
+    ["boolean principal", { ...validNode, principal: true }],
+    ["fractional-string principal", { ...validNode, principal: "1.5" }],
+    ["negative-string principal", { ...validNode, principal: "-1" }],
+    ["alpha-string principal", { ...validNode, principal: "abc" }],
+    ["empty-string principal", { ...validNode, principal: "" }],
+    ["fractional-string epoch", { ...validNode, stake_activation_epoch: "1.5" }],
+    ["alpha-string epoch", { ...validNode, stake_activation_epoch: "abc" }],
+    ["negative number principal", { ...validNode, principal: -1 }],
+    ["fractional number principal", { ...validNode, principal: 1.5 }],
+    ["NaN principal", { ...validNode, principal: NaN }],
+    ["negative number epoch", { ...validNode, stake_activation_epoch: -5 }],
+  ])("should reject %s", (_label, input) => {
+    expect(isStakedSuiJson(input)).toBe(false);
   });
 
   it("should accept zero (degenerate but valid u64)", () => {
@@ -182,77 +171,9 @@ describe("assertSystemStateJson", () => {
 // ----- fromSystemStateJson + validatorJsonToSummary (via fromSystemStateJson) ---
 
 describe("fromSystemStateJson", () => {
-  /** One fully-populated active validator entry — all fields the mapper reads. */
-  function makeValidator(suiAddress: string, poolId: string, name = "V") {
-    return {
-      metadata: {
-        sui_address: suiAddress,
-        protocol_pubkey_bytes: "0xpk",
-        network_pubkey_bytes: "0xnk",
-        worker_pubkey_bytes: "0xwk",
-        proof_of_possession: "0xpp",
-        name,
-        description: "desc",
-        image_url: "https://logo",
-        project_url: "https://project",
-        net_address: "/ip4/1.2.3.4",
-        p2p_address: "/ip4/1.2.3.5",
-        primary_address: "/ip4/1.2.3.6",
-        worker_address: "/ip4/1.2.3.7",
-        next_epoch_protocol_pubkey_bytes: null,
-        next_epoch_proof_of_possession: null,
-        next_epoch_network_pubkey_bytes: null,
-        next_epoch_worker_pubkey_bytes: null,
-        next_epoch_net_address: null,
-        next_epoch_p2p_address: null,
-        next_epoch_primary_address: null,
-        next_epoch_worker_address: null,
-      },
-      voting_power: 100,
-      operation_cap_id: "0xcap",
-      gas_price: 800,
-      staking_pool: {
-        id: poolId,
-        activation_epoch: 50,
-        deactivation_epoch: null,
-        sui_balance: 1_000,
-        rewards_pool: 50,
-        pool_token_balance: 900,
-        exchange_rates: { id: "0xrates", size: 100 },
-        pending_stake: 0,
-        pending_total_sui_withdraw: 0,
-        pending_pool_token_withdraw: 0,
-      },
-      commission_rate: 500,
-      next_epoch_stake: 1_000,
-      next_epoch_gas_price: 800,
-      next_epoch_commission_rate: 500,
-    };
-  }
-
-  function makeState(active: ReturnType<typeof makeValidator>[]): SuiSystemStateInnerJson {
-    return {
-      epoch: 100,
-      protocol_version: 1,
-      system_state_version: 2,
-      validators: {
-        active_validators: active,
-        total_stake: "0",
-        pending_active_validators: null,
-        pending_removals: null,
-        staking_pool_mappings: { id: "0xmap", size: active.length },
-        inactive_validators: null,
-        validator_candidates: null,
-        at_risk_validators: null,
-      },
-      reference_gas_price: 100,
-      epoch_start_timestamp_ms: 0,
-    };
-  }
-
   it("should return empty arrays/maps for an empty active set", () => {
     // GIVEN
-    const state = makeState([]);
+    const state = makeSystemStateJson({});
 
     // WHEN
     const { activeValidators, poolToValidator } = fromSystemStateJson(state);
@@ -264,7 +185,20 @@ describe("fromSystemStateJson", () => {
 
   it("should rename snake_case → camelCase and stringify numeric u64 fields", () => {
     // GIVEN
-    const state = makeState([makeValidator("0xv1", "0xpool1", "Alice")]);
+    const state = makeSystemStateJson({
+      validators: [
+        {
+          poolId: "0xpool1",
+          validatorAddress: "0xv1",
+          name: "Alice",
+          netAddress: "/ip4/1.2.3.4",
+          suiBalance: 1_000,
+          poolTokenBalance: 900,
+          activationEpoch: 50,
+          nextEpochStake: 1_000,
+        },
+      ],
+    });
 
     // WHEN
     const { activeValidators } = fromSystemStateJson(state);
@@ -298,7 +232,7 @@ describe("fromSystemStateJson", () => {
 
   it("should preserve nullable next-epoch fields as null (not undefined)", () => {
     // GIVEN
-    const state = makeState([makeValidator("0xv1", "0xpool1")]);
+    const state = makeSystemStateJson({ validators: [{ poolId: "0xpool1" }] });
 
     // WHEN
     const v = fromSystemStateJson(state).activeValidators[0];
@@ -312,7 +246,12 @@ describe("fromSystemStateJson", () => {
 
   it("should build pool_id → validator_address map", () => {
     // GIVEN
-    const state = makeState([makeValidator("0xv1", "0xpoolA"), makeValidator("0xv2", "0xpoolB")]);
+    const state = makeSystemStateJson({
+      validators: [
+        { poolId: "0xpoolA", validatorAddress: "0xv1" },
+        { poolId: "0xpoolB", validatorAddress: "0xv2" },
+      ],
+    });
 
     // WHEN
     const { poolToValidator } = fromSystemStateJson(state);
@@ -326,12 +265,13 @@ describe("fromSystemStateJson", () => {
   it("should let str/strOrNull collapse undefined defensively (unreachable from typed wire)", () => {
     // GIVEN
     // Force runtime undefined past the typed shape to exercise the isNullish branch.
-    const v = makeValidator("0xv", "0xp");
+    const state = makeSystemStateJson({ validators: [{ poolId: "0xp", validatorAddress: "0xv" }] });
+    const v = state.validators.active_validators[0];
     (v.staking_pool as { activation_epoch: unknown }).activation_epoch = undefined;
     (v as { voting_power: unknown }).voting_power = undefined;
 
     // WHEN
-    const summary = fromSystemStateJson(makeState([v])).activeValidators[0];
+    const summary = fromSystemStateJson(state).activeValidators[0];
 
     // THEN
     expect(summary.stakingPoolActivationEpoch).toBeNull();
@@ -459,73 +399,9 @@ describe("groupStakedSuiByPool", () => {
 // ----- poolRefsFromSystemState --------------------------------------------
 
 describe("poolRefsFromSystemState", () => {
-  /** Tiny system-state with N pools, varying sui/pool_token balances. */
-  function stateWithPools(
-    pools: Array<{
-      poolId: string;
-      sui: string | number;
-      pt: string | number;
-      activation?: string | number | null;
-      ratesId?: string;
-    }>,
-  ): SuiSystemStateInnerJson {
-    return {
-      epoch: 100,
-      protocol_version: 1,
-      system_state_version: 2,
-      validators: {
-        active_validators: pools.map(p => ({
-          metadata: {
-            sui_address: "0xv",
-            protocol_pubkey_bytes: "",
-            network_pubkey_bytes: "",
-            worker_pubkey_bytes: "",
-            proof_of_possession: "",
-            name: "V",
-            description: "",
-            image_url: "",
-            project_url: "",
-            net_address: "",
-            p2p_address: "",
-            primary_address: "",
-            worker_address: "",
-          },
-          voting_power: 0,
-          operation_cap_id: "0xcap",
-          gas_price: 0,
-          staking_pool: {
-            id: p.poolId,
-            activation_epoch: p.activation === undefined ? 0 : p.activation,
-            deactivation_epoch: null,
-            sui_balance: p.sui,
-            rewards_pool: 0,
-            pool_token_balance: p.pt,
-            exchange_rates: { id: p.ratesId ?? "0xrates", size: 0 },
-            pending_stake: 0,
-            pending_total_sui_withdraw: 0,
-            pending_pool_token_withdraw: 0,
-          },
-          commission_rate: 0,
-          next_epoch_stake: 0,
-          next_epoch_gas_price: 0,
-          next_epoch_commission_rate: 0,
-        })),
-        total_stake: "0",
-        pending_active_validators: null,
-        pending_removals: null,
-        staking_pool_mappings: { id: "0xmap", size: pools.length },
-        inactive_validators: null,
-        validator_candidates: null,
-        at_risk_validators: null,
-      },
-      reference_gas_price: 0,
-      epoch_start_timestamp_ms: 0,
-    };
-  }
-
   it("should return empty map for no validators", () => {
     // GIVEN / WHEN
-    const refs = poolRefsFromSystemState(stateWithPools([]));
+    const refs = poolRefsFromSystemState(makeSystemStateJson({}));
 
     // THEN
     expect(refs.size).toBe(0);
@@ -533,7 +409,9 @@ describe("poolRefsFromSystemState", () => {
 
   it("should populate currentRate from staking_pool sui_balance and pool_token_balance", () => {
     // GIVEN
-    const state = stateWithPools([{ poolId: "0xpA", sui: 1_100, pt: 1_000 }]);
+    const state = makeSystemStateJson({
+      validators: [{ poolId: "0xpA", suiBalance: 1_100, poolTokenBalance: 1_000 }],
+    });
 
     // WHEN
     const refs = poolRefsFromSystemState(state);
@@ -544,7 +422,9 @@ describe("poolRefsFromSystemState", () => {
 
   it("should use exchange_rates.id verbatim", () => {
     // GIVEN
-    const state = stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, ratesId: "0xratesABC" }]);
+    const state = makeSystemStateJson({
+      validators: [{ poolId: "0xpA", exchangeRatesId: "0xratesABC" }],
+    });
 
     // WHEN
     const refs = poolRefsFromSystemState(state);
@@ -555,7 +435,9 @@ describe("poolRefsFromSystemState", () => {
 
   it("should default activationEpoch to 0 when activation_epoch is null", () => {
     // GIVEN
-    const state = stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, activation: null }]);
+    const state = makeSystemStateJson({
+      validators: [{ poolId: "0xpA", activationEpoch: null }],
+    });
 
     // WHEN
     const refs = poolRefsFromSystemState(state);
@@ -566,7 +448,9 @@ describe("poolRefsFromSystemState", () => {
 
   it("should convert string activation_epoch to number", () => {
     // GIVEN
-    const state = stateWithPools([{ poolId: "0xpA", sui: 1, pt: 1, activation: "42" }]);
+    const state = makeSystemStateJson({
+      validators: [{ poolId: "0xpA", activationEpoch: "42" }],
+    });
 
     // WHEN
     const refs = poolRefsFromSystemState(state);
@@ -577,10 +461,9 @@ describe("poolRefsFromSystemState", () => {
 
   it("should index by pool id (multiple pools)", () => {
     // GIVEN
-    const state = stateWithPools([
-      { poolId: "0xpA", sui: 1, pt: 1 },
-      { poolId: "0xpB", sui: 2, pt: 2 },
-    ]);
+    const state = makeSystemStateJson({
+      validators: [{ poolId: "0xpA" }, { poolId: "0xpB" }],
+    });
 
     // WHEN
     const refs = poolRefsFromSystemState(state);
@@ -1030,22 +913,21 @@ describe("parseExchangeRateNode", () => {
     expect(parseExchangeRateNode(node)).toBeNull();
   });
 
-  it("should return null on non-integer numeric strings (would crash BigInt() downstream)", () => {
-    // GIVEN
-    // Schema-drift safety: malformed numerics → null, not a thrown sync.
-    const make = (sui: unknown, pt: unknown): ExchangeRateAddrNode => ({
-      dynamicField: {
-        value: { __typename: "MoveValue", json: { sui_amount: sui, pool_token_amount: pt } },
-      },
-    });
-
-    // WHEN / THEN
-    expect(parseExchangeRateNode(make("1.5", "1000"))).toBeNull();
-    expect(parseExchangeRateNode(make("1000", "abc"))).toBeNull();
-    expect(parseExchangeRateNode(make("-1", "1000"))).toBeNull();
-    expect(parseExchangeRateNode(make(1.5, 1000))).toBeNull();
-    expect(parseExchangeRateNode(make(-1, 1000))).toBeNull();
-    expect(parseExchangeRateNode(make("", "1000"))).toBeNull();
+  // Schema-drift safety: malformed numerics → null, not a thrown sync.
+  const malformedRate = (sui: unknown, pt: unknown): ExchangeRateAddrNode => ({
+    dynamicField: {
+      value: { __typename: "MoveValue", json: { sui_amount: sui, pool_token_amount: pt } },
+    },
+  });
+  it.each<[label: string, sui: unknown, pt: unknown]>([
+    ["fractional-string sui", "1.5", "1000"],
+    ["alpha-string pt", "1000", "abc"],
+    ["negative-string sui", "-1", "1000"],
+    ["fractional-number sui", 1.5, 1000],
+    ["negative-number sui", -1, 1000],
+    ["empty-string sui", "", "1000"],
+  ])("should return null on %s (would crash BigInt() downstream)", (_label, sui, pt) => {
+    expect(parseExchangeRateNode(malformedRate(sui, pt))).toBeNull();
   });
 });
 

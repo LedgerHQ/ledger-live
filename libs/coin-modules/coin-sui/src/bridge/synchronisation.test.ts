@@ -25,7 +25,7 @@ jest.mock("../network", () => {
   return {
     getAccountBalances: mockGetAccountBalances,
     getOperations: mockGetOperations,
-    getStakesRaw: mockGetStakesRaw,
+    getDelegatedStakes: mockGetStakesRaw,
     createTransaction: jest.fn(),
   };
 });
@@ -41,7 +41,7 @@ setCryptoAssetsStore({
 describe("getAccountShape", () => {
   const mockGetAccountBalances = networkModule.getAccountBalances as jest.Mock;
   const mockGetOperations = networkModule.getOperations as jest.Mock;
-  const mockGetStakesRaw = networkModule.getStakesRaw as jest.Mock;
+  const mockGetStakesRaw = networkModule.getDelegatedStakes as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -80,7 +80,7 @@ describe("getAccountShape", () => {
   });
 
   it("threads an aborted signal into network helpers when unsubscribed", async () => {
-    // GIVEN — getStakesRaw never resolves on its own; we stop it via the signal.
+    // GIVEN — getDelegatedStakes never resolves on its own; we stop it via the signal.
     const stakesGotSignal = new Promise<AbortSignal>(resolve => {
       mockGetStakesRaw.mockImplementation(
         (_addr: string, _cur: string, signal: AbortSignal) => new Promise(() => resolve(signal)), // never resolve, just capture the signal
@@ -397,7 +397,7 @@ describe("getAccountShape", () => {
   });
 
   describe("stakes functionality", () => {
-    it("calls getStakesRaw with the correct address", async () => {
+    it("calls getDelegatedStakes with the correct address", async () => {
       // GIVEN
       const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
       const initialAccount = undefined;
@@ -604,7 +604,7 @@ describe("getAccountShape", () => {
       expect(stakes.find(s => s.stakedSuiId === "0xunstaked")?.status).toBe("Unstaked");
     });
 
-    it("handles getStakesRaw throwing an error gracefully", async () => {
+    it("handles getDelegatedStakes throwing an error gracefully", async () => {
       // GIVEN
       const initialAccount = undefined;
       const error = new Error("Network error");
@@ -726,7 +726,7 @@ describe("getAccountShape", () => {
       expect(stake?.stakeRequestEpoch).toBe("995");
     });
 
-    it("handles getStakesRaw returning null or undefined", async () => {
+    it("handles getDelegatedStakes returning null or undefined", async () => {
       // GIVEN
       const initialAccount = undefined;
       mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);

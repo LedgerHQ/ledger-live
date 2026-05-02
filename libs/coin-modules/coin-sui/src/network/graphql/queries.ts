@@ -4,11 +4,7 @@
  */
 import { graphql, type ResultOf } from "./tada";
 
-/**
- * Checkpoint by sequence number; `null` returns the latest. Unlike
- * JSON-RPC `sui_getCheckpoint`, GraphQL only accepts a UInt53 — digest
- * lookups must stay on JSON-RPC for now.
- */
+/** GraphQL accepts only UInt53; digest lookups must stay on JSON-RPC. `null` sequence returns latest. */
 export const CHECKPOINT_BY_SEQUENCE = graphql(`
   query CheckpointBySequence($sequenceNumber: UInt53) {
     checkpoint(sequenceNumber: $sequenceNumber) {
@@ -32,12 +28,7 @@ export const LATEST_CHECKPOINT_SEQUENCE = graphql(`
 
 export type LatestCheckpointSequenceResult = ResultOf<typeof LATEST_CHECKPOINT_SEQUENCE>;
 
-/**
- * All `StakedSui` (`0x3::staking_pool::StakedSui`) Move objects owned by
- * an address. Contents come back as parsed JSON via `MoveValue.json` —
- * no BCS decoder needed. Mapper joins `pool_id` against the system-state
- * pool→validator map to build `DelegatedStake[]`.
- */
+/** `StakedSui` Move objects owned by an address; `MoveValue.json` returns parsed JSON, no BCS decoder needed. */
 export const STAKED_SUI_OBJECTS_BY_OWNER = graphql(`
   query StakedSuiObjects($owner: SuiAddress!, $first: Int, $after: String) {
     address(address: $owner) {
@@ -72,12 +63,7 @@ export const SUI_SYSTEM_STATE = graphql(`
 
 export type SuiSystemStateResult = ResultOf<typeof SUI_SYSTEM_STATE>;
 
-/**
- * One entry of a pool's `exchange_rates` Move Table at a given epoch
- * (server-parsed via `literal`, no BCS). Used for per-stake reward and
- * per-validator APY. `null` when the table has no entry at that epoch —
- * caller must degrade gracefully (zero reward / zero APY).
- */
+/** One `exchange_rates` Move Table entry; server-parses `literal`. `null` when missing — caller degrades to zero. */
 export const EXCHANGE_RATE_AT_EPOCH = graphql(`
   query ExchangeRateAtEpoch($table: SuiAddress!, $literal: String!) {
     address(address: $table) {
@@ -95,15 +81,10 @@ export const EXCHANGE_RATE_AT_EPOCH = graphql(`
 
 export type ExchangeRateAtEpochResult = ResultOf<typeof EXCHANGE_RATE_AT_EPOCH>;
 
-/**
- * 15-aliased batch of {@link EXCHANGE_RATE_AT_EPOCH} — one HTTP round-trip
- * per 15 lookups. Tail chunks below 15 fall back to parallel single-query
- * calls. Alias count must stay in sync with `RATE_BATCH_CHUNK_SIZE`.
- */
+/** 15-aliased batch of {@link EXCHANGE_RATE_AT_EPOCH}; alias count must stay in sync with `RATE_BATCH_CHUNK_SIZE`. */
 // @ts-expect-error TS2589 — gql.tada's type-instantiation depth overflows for 15 aliases.
-// SAFETY: structurally identical to 15× EXCHANGE_RATE_AT_EPOCH; tsc width limit, not a
-// correctness issue. Drift is caught at runtime via `parseExchangeRateNode` →
-// `isExchangeRateJson`. Alias count vs `RATE_BATCH_CHUNK_SIZE` is asserted in `utils.test.ts`.
+// SAFETY: structurally identical to 15× EXCHANGE_RATE_AT_EPOCH; runtime drift caught via
+// `parseExchangeRateNode`. Alias count vs `RATE_BATCH_CHUNK_SIZE` asserted in `utils.test.ts`.
 // prettier-ignore
 export const BATCH_RATES_15 = graphql(`
   query BatchExchangeRates(

@@ -5,3 +5,6 @@ export const ONE_SUI = 1000000000;
 
 /** SUI → mist string. `mist(1.5)` → `"1500000000"`. `Math.round` absorbs FP epsilon. */
 export const mist = (n: number): string => String(Math.round(n * ONE_SUI));
+
+/** SUI has no block-height metainfo; this synthetic value drives icon-status code in apps. */
+export const BLOCK_HEIGHT = 5;

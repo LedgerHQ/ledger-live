@@ -12,7 +12,7 @@ import {
   getAllBalancesCached,
   getCheckpoint,
   getLastBlock,
-  getStakesRaw,
+  getDelegatedStakes,
   getValidators,
 } from "./sdk";
 import {
@@ -73,7 +73,8 @@ beforeEach(() => {
 });
 
 describe("getAllBalancesCached on GraphQL transport", () => {
-  test("calls listBalances and remaps addressBalance to fundsInAddressBalance", async () => {
+  it("should remap addressBalance to fundsInAddressBalance", async () => {
+    // GIVEN
     const client = mockNext({
       listBalances: jest.fn().mockResolvedValueOnce({
         balances: [
@@ -84,10 +85,12 @@ describe("getAllBalancesCached on GraphQL transport", () => {
         cursor: null,
       }),
     });
-
     const owner = addr("11");
+
+    // WHEN
     const result = await getAllBalancesCached(owner, "sui-graphql-balance-1");
 
+    // THEN
     expect(result).toEqual([
       {
         coinType: "0x2::sui::SUI",
@@ -108,7 +111,8 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     expect(client.listBalances).toHaveBeenCalledWith({ owner, cursor: null });
   });
 
-  test("paginates through BalanceConnection until hasNextPage is false", async () => {
+  it("should paginate until hasNextPage is false", async () => {
+    // GIVEN
     const listBalances = jest
       .fn()
       .mockResolvedValueOnce({
@@ -122,10 +126,12 @@ describe("getAllBalancesCached on GraphQL transport", () => {
         cursor: null,
       });
     mockNext({ listBalances });
-
     const owner = addr("22");
+
+    // WHEN
     const result = await getAllBalancesCached(owner, "sui-graphql-balance-pagination");
 
+    // THEN
     expect(result).toHaveLength(2);
     expect(result.map(b => b.coinType)).toEqual(["0xA::a::A", "0xB::b::B"]);
     expect(listBalances).toHaveBeenCalledTimes(2);
@@ -134,7 +140,8 @@ describe("getAllBalancesCached on GraphQL transport", () => {
   });
 
   describe("cursor-expiry retry", () => {
-    test("restarts pagination from page 1 when a next-page listBalances throws cursor-expired", async () => {
+    it("should restart pagination from page 1 when a next-page listBalances throws cursor-expired", async () => {
+      // GIVEN
       const owner = addr("aa");
       const expired = new Error("Pagination cursor outside the available range");
       const listBalances = jest
@@ -155,8 +162,10 @@ describe("getAllBalancesCached on GraphQL transport", () => {
         });
       mockNext({ listBalances });
 
+      // WHEN
       const result = await getAllBalancesCached(owner, "sui-graphql-balance-cursor-expiry");
 
+      // THEN
       // Pre-retry balance is discarded; only post-retry survives.
       expect(result).toEqual([
         {
@@ -176,7 +185,8 @@ describe("getAllBalancesCached on GraphQL transport", () => {
 });
 
 describe("getLastBlock on GraphQL transport", () => {
-  test("queries latest checkpoint then resolves digest+timestamp via sequence", async () => {
+  it("should resolve digest and timestamp from the latest checkpoint", async () => {
+    // GIVEN
     const isoTimestamp = "2026-04-01T12:34:56.789Z";
     const query = jest
       .fn()
@@ -196,8 +206,10 @@ describe("getLastBlock on GraphQL transport", () => {
       });
     mockNext({ query });
 
+    // WHEN
     const result = await getLastBlock("sui-graphql-last-block");
 
+    // THEN
     expect(result).toEqual({
       digest: "AbCdEfDigestZ",
       // Returned shape converts UInt53 back to a string for downstream
@@ -213,7 +225,8 @@ describe("getLastBlock on GraphQL transport", () => {
 });
 
 describe("getCheckpoint on GraphQL transport", () => {
-  test("sequence-number lookup happy path", async () => {
+  it("should return digest, sequence and timestamp for a valid sequence number", async () => {
+    // GIVEN
     const isoTimestamp = "2026-05-01T00:00:00.000Z";
     const query = jest.fn().mockResolvedValueOnce({
       data: {
@@ -227,8 +240,10 @@ describe("getCheckpoint on GraphQL transport", () => {
     });
     mockNext({ query });
 
+    // WHEN
     const result = await getCheckpoint("99", "sui-graphql-checkpoint-1");
 
+    // THEN
     expect(result.digest).toBe("DigestForSeq99");
     expect(result.sequenceNumber).toBe("99");
     expect(result.timestampMs).toBe(String(new Date(isoTimestamp).getTime()));
@@ -236,7 +251,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     expect(query.mock.calls[0][0].variables).toEqual({ sequenceNumber: 99 });
   });
 
-  test("digest lookup throws a clear error on GraphQL endpoint", async () => {
+  it("should reject digest input with a clear error", async () => {
     // 32-byte digest, base58-ish — anything non-numeric.
     const digest = "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt";
     await expect(getCheckpoint(digest, "sui-graphql-checkpoint-2")).rejects.toThrow(
@@ -246,7 +261,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     expect(SuiGraphQLClientMock).not.toHaveBeenCalled();
   });
 
-  test("propagates GraphQL errors with a descriptive message", async () => {
+  it("should propagate the server's error message", async () => {
     const query = jest.fn().mockResolvedValueOnce({
       errors: [{ message: "Checkpoint out of available range" }],
     });
@@ -258,18 +273,18 @@ describe("getCheckpoint on GraphQL transport", () => {
   });
 });
 
-describe("getStakesRaw on GraphQL transport", () => {
+describe("getDelegatedStakes on GraphQL transport", () => {
   /** Pending-status stake — used by tests that don't care about reward math. */
   const pendingStake = (id: string, pool_id = "0xp") =>
     fakeStakeNode({ id, pool_id, stake_activation_epoch: "200", principal: "1" });
 
-  test("groups StakedSui objects by pool, joins validator address from system state, and computes status", async () => {
+  it("should group stakes by pool, join validator addresses, and label status", async () => {
+    // GIVEN
     const owner = addr("33");
     const POOL_A = "0xpoolA";
     const POOL_B = "0xpoolB";
     const VAL_A = "0xvalidatorA";
     const VAL_B = "0xvalidatorB";
-
     const query = jest
       .fn()
       .mockResolvedValueOnce(
@@ -302,8 +317,10 @@ describe("getStakesRaw on GraphQL transport", () => {
       );
     mockNext({ query });
 
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-1");
+    // WHEN
+    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-1");
 
+    // THEN
     expect(result).toHaveLength(2);
 
     const poolA = result.find(d => d.stakingPool === POOL_A)!;
@@ -326,13 +343,12 @@ describe("getStakesRaw on GraphQL transport", () => {
     expect(stk3.principal).toBe(mist(0.5));
   });
 
-  test("paginates StakedSui object listings", async () => {
+  it("should paginate stake listings using the cursor", async () => {
+    // GIVEN
     const owner = addr("44");
     const POOL = "0xpoolSingle";
-
     const stake = (id: string, principal: string) =>
       fakeStakeNode({ id, pool_id: POOL, stake_activation_epoch: "5", principal });
-
     const query = jest
       .fn()
       .mockResolvedValueOnce(fakeSystemStateQuery("10", [{ poolId: POOL }]))
@@ -342,7 +358,10 @@ describe("getStakesRaw on GraphQL transport", () => {
       .mockResolvedValueOnce(fakeStakesPage([stake("0xb", "2")]));
     mockNext({ query });
 
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-pagination");
+    // WHEN
+    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-pagination");
+
+    // THEN
     expect(result).toHaveLength(1);
     expect(result[0].stakes).toHaveLength(2);
     // Second StakedSui page request should pass `after: "p1"`.
@@ -350,11 +369,11 @@ describe("getStakesRaw on GraphQL transport", () => {
     expect(calls[1][0].variables).toEqual({ owner, first: STAKES_PAGE_SIZE, after: "p1" });
   });
 
-  test("falls back to '<unknown>' validatorAddress when pool isn't in active_validators", async () => {
+  it("should fall back to '<unknown>' validatorAddress for an orphan pool", async () => {
+    // GIVEN
     const owner = addr("55");
     const KNOWN_POOL = "0xpoolKnown";
     const ORPHAN_POOL = "0xpoolOrphan";
-
     const query = jest
       .fn()
       .mockResolvedValueOnce(
@@ -372,7 +391,10 @@ describe("getStakesRaw on GraphQL transport", () => {
       );
     mockNext({ query });
 
-    const result = await getStakesRaw(owner, "sui-graphql-stakes-orphan");
+    // WHEN
+    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-orphan");
+
+    // THEN
     expect(result).toHaveLength(1);
     expect(result[0].validatorAddress).toBe(UNKNOWN_VALIDATOR);
     expect(result[0].stakingPool).toBe(ORPHAN_POOL);
@@ -385,7 +407,8 @@ describe("getStakesRaw on GraphQL transport", () => {
     expect(batchExchangeRateCalls(query)).toHaveLength(0);
   });
 
-  test("normalises owner to canonical 32-byte form across initial + paginated queries", async () => {
+  it("should send the canonical 32-byte owner across initial and paginated queries", async () => {
+    // GIVEN
     const query = jest
       .fn()
       .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: "0xp" }]))
@@ -395,8 +418,10 @@ describe("getStakesRaw on GraphQL transport", () => {
       .mockResolvedValueOnce(fakeStakesPage([pendingStake("0xb")]));
     mockNext({ query });
 
-    await getStakesRaw("0x42", "sui-graphql-stakes-norm");
+    // WHEN
+    await getDelegatedStakes("0x42", "sui-graphql-stakes-norm");
 
+    // THEN
     const expected = "0x" + "0".repeat(62) + "42";
     const calls = stakeQueryCalls(query);
     expect(calls).toHaveLength(2);
@@ -405,17 +430,11 @@ describe("getStakesRaw on GraphQL transport", () => {
   });
 
   describe("reward computation", () => {
-    test("fetches activation-epoch rate per Active stake and computes real estimatedReward", async () => {
+    it("should compute estimatedReward from the activation-epoch exchange rate", async () => {
+      // GIVEN
+      // Pool ratio 1.1 vs activation ratio 1.0 → 100 principal grows to 110 → reward 10.
       const owner = addr("66");
       const POOL = "0xpoolReward";
-
-      // Pool current rate (sui_balance/pool_token_balance from system state):
-      //   sui_balance = 1_100_000 ; pool_token_balance = 1_000_000  → ratio 1.1
-      // Activation rate at epoch 50: ratio 1.0
-      // Stake of 100 principal:
-      //   pool_tokens = 100 * 1_000_000 / 1_000_000 = 100
-      //   current_value = 100 * 1_100_000 / 1_000_000 = 110
-      //   estimatedReward = 10
       const query = jest
         .fn()
         .mockResolvedValueOnce(
@@ -443,7 +462,10 @@ describe("getStakesRaw on GraphQL transport", () => {
         .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
-      const result = await getStakesRaw(owner, "sui-graphql-stakes-reward");
+      // WHEN
+      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-reward");
+
+      // THEN
       expect(result).toHaveLength(1);
       const stk = result[0].stakes[0];
       expectActive(stk);
@@ -454,11 +476,11 @@ describe("getStakesRaw on GraphQL transport", () => {
       expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
-    test("deduplicates rate lookups when multiple stakes share (pool, activation_epoch)", async () => {
+    it("should deduplicate rate lookups for stakes sharing (pool, activation_epoch)", async () => {
+      // GIVEN
+      // Three stakes — A and B share (pool, epoch=50), C is different epoch.
       const owner = addr("77");
       const POOL = "0xpoolDedup";
-
-      // Three stakes — A and B share (pool, epoch=50), C is different epoch.
       const query = jest
         .fn()
         .mockResolvedValueOnce(
@@ -491,9 +513,10 @@ describe("getStakesRaw on GraphQL transport", () => {
         .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
-      await getStakesRaw(owner, "sui-graphql-stakes-dedup");
+      // WHEN
+      await getDelegatedStakes(owner, "sui-graphql-stakes-dedup");
 
-      // 3 stakes → de-duped to 2 unique tuples → 2 parallel single-query round-trips.
+      // THEN
       const vars = singleRateVars(query);
       expect(vars).toHaveLength(2);
       expect(new Set(vars.map(v => v.literal))).toEqual(new Set(["50u64", "60u64"]));
@@ -501,17 +524,20 @@ describe("getStakesRaw on GraphQL transport", () => {
       expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
-    test("Pending stakes don't trigger rate lookups", async () => {
+    it("should not trigger rate lookups for Pending stakes", async () => {
+      // GIVEN
       const owner = addr("88");
       const POOL = "0xpoolPending";
-
       const query = jest
         .fn()
         .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
         .mockResolvedValueOnce(fakeStakesPage([pendingStake("0xpending", POOL)]));
       mockNext({ query });
 
-      const result = await getStakesRaw(owner, "sui-graphql-stakes-pending-only");
+      // WHEN
+      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-pending-only");
+
+      // THEN
       expect(result[0].stakes[0].status).toBe("Pending");
 
       // No rate calls (single or batched) — Pending stakes have no reward.
@@ -521,10 +547,10 @@ describe("getStakesRaw on GraphQL transport", () => {
   });
 
   describe("cursor-expiry retry", () => {
-    test("restarts pagination from page 1 when a next-page cursor is rejected as out-of-range", async () => {
+    it("should restart pagination from page 1 when a cursor is rejected", async () => {
+      // GIVEN
       const owner = addr("88");
       const POOL = "0xpoolExp";
-
       const query = jest
         .fn()
         .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
@@ -544,8 +570,10 @@ describe("getStakesRaw on GraphQL transport", () => {
         );
       mockNext({ query });
 
-      const result = await getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry");
+      // WHEN
+      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-cursor-expiry");
 
+      // THEN
       // Pre-retry items must be discarded — only post-retry stakes survive.
       expect(result).toHaveLength(1);
       const ids = result[0].stakes.map(s => s.stakedSuiId).sort();
@@ -559,16 +587,15 @@ describe("getStakesRaw on GraphQL transport", () => {
       expect(calls[2][0].variables.after).toBeNull();
     });
 
-    test("does not retry indefinitely — second cursor-expiry propagates", async () => {
+    it("should propagate the error when a second cursor-expiry occurs", async () => {
+      // GIVEN
       const owner = addr("99");
       const POOL = "0xpoolExp2";
-
       const initialPage = fakeStakesPage([pendingStake("0xa", POOL)], {
         hasNextPage: true,
         endCursor: "c1",
       });
       const expired = { errors: [{ message: "outside available range" }] };
-
       const query = jest
         .fn()
         .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
@@ -578,24 +605,52 @@ describe("getStakesRaw on GraphQL transport", () => {
         .mockResolvedValueOnce(expired); // …next page also expired → must propagate
       mockNext({ query });
 
-      await expect(getStakesRaw(owner, "sui-graphql-stakes-cursor-expiry-double")).rejects.toThrow(
-        /outside available range/,
-      );
+      // WHEN / THEN
+      await expect(
+        getDelegatedStakes(owner, "sui-graphql-stakes-cursor-expiry-double"),
+      ).rejects.toThrow(/outside available range/);
+    });
+  });
+
+  describe("AbortSignal", () => {
+    it("should reject before paginating when the signal is already aborted at entry", async () => {
+      // GIVEN
+      // Mock client ignores `signal`, so both initial queries still fire; the
+      // throwIfAborted gate inside `getDelegatedStakes` is what must short-circuit
+      // before pagination enters.
+      const owner = addr("ac");
+      const POOL = "0xpoolPreAbort";
+      const controller = new AbortController();
+      controller.abort(new DOMException("preabort", "AbortError"));
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
+        .mockResolvedValueOnce(
+          fakeStakesPage([pendingStake("0xa", POOL)], { hasNextPage: true, endCursor: "c1" }),
+        );
+      mockNext({ query });
+
+      // WHEN / THEN
+      await expect(
+        getDelegatedStakes(owner, "sui-graphql-stakes-pre-abort", controller.signal),
+      ).rejects.toThrow(/preabort|aborted/i);
+
+      // Only the parallel initial pair — pagination must never enter.
+      expect(query).toHaveBeenCalledTimes(2);
     });
   });
 
   describe("AbortSignal mid-pagination", () => {
-    test("rejects without retrying when aborted between pages", async () => {
+    it("should reject without retrying when aborted between pages", async () => {
+      // GIVEN
       // Outer-loop abort gate must propagate without entering a new fetch.
       const owner = addr("ab");
       const POOL = "0xpoolAbort";
       const controller = new AbortController();
-
       const firstStakesPage = fakeStakesPage([pendingStake("0xa", POOL)], {
         hasNextPage: true,
         endCursor: "c1",
       });
-
       const query = jest
         .fn()
         .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
@@ -606,11 +661,11 @@ describe("getStakesRaw on GraphQL transport", () => {
           throw new Error("post-abort fetch should never run");
         });
       mockNext({ query });
-
       controller.abort(new DOMException("teardown", "AbortError"));
 
+      // WHEN / THEN
       await expect(
-        getStakesRaw(owner, "sui-graphql-stakes-abort-mid-pagination", controller.signal),
+        getDelegatedStakes(owner, "sui-graphql-stakes-abort-mid-pagination", controller.signal),
       ).rejects.toThrow(/teardown|aborted/i);
 
       expect(query).toHaveBeenCalledTimes(2);
@@ -619,7 +674,24 @@ describe("getStakesRaw on GraphQL transport", () => {
 });
 
 describe("getValidators on GraphQL transport", () => {
-  test("maps active_validators to SuiValidatorSummary[] and falls back to apy=0 when rate fetch fails", async () => {
+  it("should propagate errors[] from SUI_SYSTEM_STATE without attempting any rate fetches", async () => {
+    // GIVEN
+    const query = jest.fn().mockResolvedValueOnce({
+      errors: [{ message: "system state unavailable" }, { message: "epoch boundary" }],
+    });
+    mockNext({ query });
+
+    // WHEN / THEN
+    await expect(getValidators("sui-graphql-validators-state-error")).rejects.toThrow(
+      /system state unavailable; epoch boundary/,
+    );
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(singleRateCalls(query)).toHaveLength(0);
+    expect(batchExchangeRateCalls(query)).toHaveLength(0);
+  });
+
+  it("should map active_validators to SuiValidatorSummary[] and fall back to apy=0 on rate-fetch failure", async () => {
+    // GIVEN
     const query = jest
       .fn()
       .mockResolvedValueOnce(
@@ -633,9 +705,11 @@ describe("getValidators on GraphQL transport", () => {
       .mockResolvedValueOnce({ data: { address: { dynamicField: null } } });
     mockNext({ query });
 
+    // WHEN
     const result = await getValidators("sui-graphql-validators-1");
-    expect(result).toHaveLength(2);
 
+    // THEN
+    expect(result).toHaveLength(2);
     const v1 = result.find(v => v.suiAddress === "0xv1")!;
     expect(v1.name).toBe("V1");
     expect(v1.description).toBe("desc");
@@ -649,9 +723,10 @@ describe("getValidators on GraphQL transport", () => {
   });
 
   describe("APY computation", () => {
-    test("fetches a 30-epoch-lookback rate per validator and computes real APY", async () => {
-      const CURRENT_EPOCH = 1000;
+    it("should compute APY from a 30-epoch lookback rate per validator", async () => {
+      // GIVEN
       // Pool current rate ratio 1.01 (1% above past).
+      const CURRENT_EPOCH = 1000;
       const query = jest
         .fn()
         .mockResolvedValueOnce(
@@ -667,7 +742,10 @@ describe("getValidators on GraphQL transport", () => {
         .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
+      // WHEN
       const result = await getValidators("sui-graphql-validators-apy");
+
+      // THEN
       expect(result).toHaveLength(1);
       const v = result[0];
       // Past=1.0, current=1.01, 30 epochs → APY ≈ 1.01^(365/30) − 1 ≈ 0.1295
@@ -681,7 +759,8 @@ describe("getValidators on GraphQL transport", () => {
       expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
-    test("fans out a tail-sized validator set into parallel single-query rate fetches", async () => {
+    it("should fan out a tail-sized validator set into parallel single-query rate fetches", async () => {
+      // GIVEN
       const CURRENT_EPOCH = 1000;
       const lookback = `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64`;
       const query = jest
@@ -698,8 +777,10 @@ describe("getValidators on GraphQL transport", () => {
         .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
+      // WHEN
       await getValidators("sui-graphql-validators-batch");
 
+      // THEN
       // 1 system-state + 3 parallel single-query rate fetches (N<RATE_BATCH_CHUNK_SIZE).
       expect(query).toHaveBeenCalledTimes(4);
       expect(singleRateVars(query)).toEqual([
@@ -710,7 +791,8 @@ describe("getValidators on GraphQL transport", () => {
       expect(batchExchangeRateCalls(query)).toHaveLength(0);
     });
 
-    test("chunks N>RATE_BATCH_CHUNK_SIZE: full chunks ride BATCH_RATES_15, tail uses parallel singles", async () => {
+    it("should ride BATCH_RATES_15 for full chunks and parallel singles for the tail", async () => {
+      // GIVEN
       const FULL_CHUNK = RATE_BATCH_CHUNK_SIZE;
       const PARTIAL_CHUNK = 7;
       const N = FULL_CHUNK + PARTIAL_CHUNK;
@@ -718,7 +800,6 @@ describe("getValidators on GraphQL transport", () => {
         poolId: `0xp${i}`,
         exchangeRatesId: `0xrates${i}`,
       }));
-
       const query = jest.fn().mockResolvedValueOnce(fakeSystemStateQuery("1000", validators));
       // Chunk 0 (size FULL_CHUNK) → one BATCH_RATES_15 round-trip.
       query.mockResolvedValueOnce(fakeUniformBatchRates(FULL_CHUNK));
@@ -728,10 +809,11 @@ describe("getValidators on GraphQL transport", () => {
       }
       mockNext({ query });
 
+      // WHEN
       const result = await getValidators("sui-graphql-validators-chunked");
 
+      // THEN
       expect(result).toHaveLength(N);
-      // 1 system-state + 1 batched + PARTIAL_CHUNK singles.
       expect(query).toHaveBeenCalledTimes(1 + 1 + PARTIAL_CHUNK);
       expect(batchExchangeRateCalls(query)).toHaveLength(1);
       expect(singleRateCalls(query)).toHaveLength(PARTIAL_CHUNK);
@@ -740,7 +822,8 @@ describe("getValidators on GraphQL transport", () => {
       expect(Object.keys(batch[0].variables)).toHaveLength(FULL_CHUNK * 2);
     });
 
-    test("clamps the past epoch to the pool's activation_epoch for young pools", async () => {
+    it("should clamp the past epoch to the pool's activation_epoch for young pools", async () => {
+      // GIVEN
       // Pool only 5 epochs old — activation_epoch = 95. Desired lookback
       // 100 − 30 = 70 predates activation, so the helper clamps to 95.
       const query = jest
@@ -753,17 +836,22 @@ describe("getValidators on GraphQL transport", () => {
         .mockResolvedValueOnce(fakeUniformSingleRate());
       mockNext({ query });
 
+      // WHEN
       await getValidators("sui-graphql-validators-young-pool");
 
+      // THEN
       expect(singleRateVars(query)).toEqual([{ table: "0xratesY", literal: "95u64" }]);
     });
 
-    test("returns [] for an empty active_validators set without a rate fetch", async () => {
+    it("should return [] for an empty active_validators set without any rate fetch", async () => {
+      // GIVEN
       const query = jest.fn().mockResolvedValueOnce(fakeSystemStateQuery("100", []));
       mockNext({ query });
 
+      // WHEN
       const result = await getValidators("sui-graphql-validators-empty");
 
+      // THEN
       expect(result).toEqual([]);
       // No rate calls (single or batched) — no validators to plan for.
       expect(singleRateCalls(query)).toHaveLength(0);
@@ -771,7 +859,8 @@ describe("getValidators on GraphQL transport", () => {
       expect(query).toHaveBeenCalledTimes(1);
     });
 
-    test("degrades every validator to apy=0 when every rate lookup returns null", async () => {
+    it("should degrade every validator to apy=0 when every rate lookup returns null", async () => {
+      // GIVEN
       const query = jest
         .fn()
         .mockResolvedValueOnce(
@@ -788,8 +877,10 @@ describe("getValidators on GraphQL transport", () => {
         .mockResolvedValueOnce(fakeSingleRate(null));
       mockNext({ query });
 
+      // WHEN
       const result = await getValidators("sui-graphql-validators-all-null-batch");
 
+      // THEN
       expect(result).toHaveLength(3);
       expect(result.map(v => v.apy)).toEqual([0, 0, 0]);
     });

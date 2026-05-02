@@ -13,7 +13,14 @@ const getAccountShape = (...args: Parameters<typeof getAccountShapeStream>) =>
 
 const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 
-let useGraphQL = false;
+/** Bridge dispatch is keyed on `currency.id` (always "sui"), so we re-bind the config between runs. */
+function configureTransport(useGraphQL: boolean) {
+  coinConfig.setCoinConfig(() => ({
+    status: { type: "active" },
+    node: { url: useGraphQL ? GRAPHQL_MAINNET_URL : JSON_RPC_URL },
+    features: { graphql: useGraphQL },
+  }));
+}
 
 beforeAll(() => {
   setCryptoAssetsStore({
@@ -21,12 +28,6 @@ beforeAll(() => {
     findTokenById: async () => undefined,
     getTokensSyncHash: async () => "0",
   } as unknown as CryptoAssetsStore);
-
-  coinConfig.setCoinConfig(() => ({
-    status: { type: "active" },
-    node: { url: useGraphQL ? GRAPHQL_MAINNET_URL : JSON_RPC_URL },
-    features: { graphql: useGraphQL },
-  }));
 });
 
 const SHAPE_INFO = {
@@ -42,21 +43,17 @@ const SYNC_CONFIG = { blacklistedTokenIds: [], paginationConfig: {} };
 
 describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
   test("balance, spendable and suiResources.stakes match across transports", async () => {
-    useGraphQL = false;
+    configureTransport(false);
     const rpc = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
 
-    useGraphQL = true;
+    configureTransport(true);
     const gql = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
 
     expect(gql.balance!.toFixed()).toBe(rpc.balance!.toFixed());
     expect(gql.spendableBalance!.toFixed()).toBe(rpc.spendableBalance!.toFixed());
     expect(gql.blockHeight).toBe(rpc.blockHeight);
 
-    // Stakes — composed from `getStakesRaw` and stored in
-    // `suiResources.stakes`, the surface the UI hook
-    // `useSuiMappedStakingPositions` reads. Reward drift is exercised
-    // at the SDK layer; here we only need stable identity + principal
-    // + status to assert the bridge didn't reorder or drop anything.
+    // Reward drift is exercised at the SDK layer; here we just check the bridge didn't reorder or drop stakes.
     const flat = (groups: NonNullable<typeof rpc.suiResources>["stakes"]) =>
       (groups ?? []).flatMap(g => g.stakes.map(s => ({ ...s, pool: g.stakingPool })));
     const sortStakes = (xs: ReturnType<typeof flat>) =>
@@ -74,14 +71,8 @@ describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
 
     expect(gql.subAccounts).toEqual(rpc.subAccounts);
 
-    // TODO: re-enable once `getOperations` is migrated to GraphQL
-    // (sdk.ts:1444). Today it goes through `withApi()` which reads
-    // `node.url` — and `node.url` is swapped to the GraphQL endpoint
-    // on the `useGraphQL = true` run, so the JSON-RPC call lands on
-    // the GraphQL host and returns 0 ops. The two counts can't be
-    // compared meaningfully until the operations path is on GraphQL.
-    // expect(Math.abs((gql.operationsCount ?? 0) - (rpc.operationsCount ?? 0))).toBeLessThanOrEqual(
-    //   2,
-    // );
+    // TODO: re-enable once `getOperations` is migrated to GraphQL — its JSON-RPC call currently lands
+    // on the GraphQL host on the `useGraphQL = true` run and returns 0 ops, so counts aren't comparable.
+    // expect(Math.abs((gql.operationsCount ?? 0) - (rpc.operationsCount ?? 0))).toBeLessThanOrEqual(2);
   });
 });

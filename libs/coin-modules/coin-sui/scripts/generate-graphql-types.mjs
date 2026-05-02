@@ -2,12 +2,8 @@
 /**
  * Generate gql.tada-compatible introspection types from the SUI schema.
  *
- * Modes:
- *  `--fetch` re-pulls the live schema, default reads the committed snapshot
- *  `--check` diffs live introspection versus local snapshot
- *
  * Fetched introspection is tree-shaken to types/fields
- * referenced by `graphql(\`...\`)` documents under `src/`.
+ * referenced by `graphql(\`...\`)` in `src/network`.
  */
 
 import { writeFileSync, readFileSync, mkdirSync, existsSync, readdirSync, statSync } from "node:fs";

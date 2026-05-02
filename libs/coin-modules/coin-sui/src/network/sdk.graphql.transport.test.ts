@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import coinConfig from "../config";
+import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import { getAllBalancesCached, getValidators, isGraphQLEnabled } from "./sdk";
 import { graphqlFetcher } from "./sdk.graphql";
@@ -53,7 +54,7 @@ beforeEach(() => {
 // ---- isGraphQLEnabled: feature-flag plumbing ----
 
 describe("isGraphQLEnabled", () => {
-  test("returns true when features.graphql === true", () => {
+  it("should return true when features.graphql === true", () => {
     coinConfig.setCoinConfig(() => ({
       node: { url: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
@@ -62,7 +63,7 @@ describe("isGraphQLEnabled", () => {
     expect(isGraphQLEnabled()).toBe(true);
   });
 
-  test("returns false when features.graphql is missing or false", () => {
+  it("should return false when features.graphql is missing or false", () => {
     coinConfig.setCoinConfig(() => ({
       node: { url: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
@@ -77,7 +78,7 @@ describe("isGraphQLEnabled", () => {
     expect(isGraphQLEnabled()).toBe(false);
   });
 
-  test("ignores the node.url heuristic — flag is the single source of truth", () => {
+  it("should treat the feature flag as the single source of truth, not node.url", () => {
     // Even with a GraphQL-shaped URL, the flag-off path should report false.
     coinConfig.setCoinConfig(() => ({
       node: { url: GRAPHQL_MAINNET_URL },
@@ -90,7 +91,8 @@ describe("isGraphQLEnabled", () => {
 // ---- unwrapGraphQL: response-envelope error handling ----
 
 describe("unwrapGraphQL: error envelope handling", () => {
-  test("aggregates ALL errors[i].message in the thrown message, not just errors[0]", async () => {
+  it("should join every errors[i].message into the thrown message", async () => {
+    // GIVEN
     const query = jest.fn().mockResolvedValueOnce({
       errors: [
         { message: "first thing went wrong" },
@@ -100,21 +102,25 @@ describe("unwrapGraphQL: error envelope handling", () => {
     });
     mockNext({ query });
 
+    // WHEN / THEN
     await expect(getValidators("sui-graphql-errors-aggregate")).rejects.toThrow(
       /first thing went wrong; second thing went wrong; third thing went wrong/,
     );
   });
 
-  test("throws a clear 'no data' error when the response has neither data nor errors", async () => {
+  it("should throw 'no data' when the response has neither data nor errors", async () => {
+    // GIVEN
     const query = jest.fn().mockResolvedValueOnce({});
     mockNext({ query });
 
+    // WHEN / THEN
     await expect(getValidators("sui-graphql-errors-no-data")).rejects.toThrow(
       /SystemState failed: no data/,
     );
   });
 
-  test("includes [reqId=...] in error message when graphqlFetcher stamps __requestId", async () => {
+  it("should include [reqId=...] in the error message when __requestId is stamped", async () => {
+    // GIVEN
     // SuiGraphQLClient is mocked, so graphqlFetcher never runs here.
     // Simulate the stamp directly via `__requestId` in the response.
     const query = jest.fn().mockResolvedValueOnce({
@@ -123,15 +129,18 @@ describe("unwrapGraphQL: error envelope handling", () => {
     });
     mockNext({ query });
 
+    // WHEN / THEN
     await expect(getValidators("sui-graphql-errors-with-reqid")).rejects.toThrow(
       /\[reqId=req-trace-abc\].*boom/,
     );
   });
 
-  test("includes [reqId=...] in 'no data' error too", async () => {
+  it("should include [reqId=...] in the 'no data' error too", async () => {
+    // GIVEN
     const query = jest.fn().mockResolvedValueOnce({ __requestId: "req-trace-xyz" });
     mockNext({ query });
 
+    // WHEN / THEN
     await expect(getValidators("sui-graphql-errors-no-data-with-reqid")).rejects.toThrow(
       /SystemState failed \[reqId=req-trace-xyz\]: no data/,
     );
@@ -141,7 +150,10 @@ describe("unwrapGraphQL: error envelope handling", () => {
 // ---- SuiAddress normalisation ----
 
 describe("SuiAddress normalisation at GraphQL entry points", () => {
-  test("getAllBalancesCached pads short addresses to canonical 32-byte form before querying", async () => {
+  it("should pad short addresses to canonical 32-byte form before querying", async () => {
+    // GIVEN
+    // `0x1` is a short, valid Sui address; the GraphQL `SuiAddress!`
+    // scalar requires full 32-byte canonical form.
     const listBalances = jest.fn().mockResolvedValueOnce({
       balances: [],
       hasNextPage: false,
@@ -149,25 +161,28 @@ describe("SuiAddress normalisation at GraphQL entry points", () => {
     });
     mockNext({ listBalances });
 
-    // `0x1` is a short, valid Sui address; the GraphQL `SuiAddress!`
-    // scalar requires full 32-byte canonical form.
+    // WHEN
     await getAllBalancesCached("0x1", "sui-graphql-norm-1");
 
+    // THEN
     const expected = "0x" + "0".repeat(63) + "1";
     expect(listBalances).toHaveBeenCalledWith({ owner: expected, cursor: null });
   });
 
-  test("getAllBalancesCached lowercases mixed-case addresses", async () => {
+  it("should lowercase mixed-case addresses before querying", async () => {
+    // GIVEN
     const listBalances = jest.fn().mockResolvedValueOnce({
       balances: [],
       hasNextPage: false,
       cursor: null,
     });
     mockNext({ listBalances });
-
     const mixed = "0xABCDEF" + "0".repeat(58); // 64 hex chars after `0x`
+
+    // WHEN
     await getAllBalancesCached(mixed, "sui-graphql-norm-2");
 
+    // THEN
     expect(listBalances).toHaveBeenCalledWith({
       owner: mixed.toLowerCase(),
       cursor: null,
@@ -199,7 +214,8 @@ describe("graphqlFetcher: request-ID logging", () => {
     global.fetch = originalFetch;
   });
 
-  test("emits enriched log with first error message on 200 OK + errors[]", async () => {
+  it("should emit an enriched log with the first error message on 200 OK + errors[]", async () => {
+    // GIVEN
     const headers = new Headers({ "x-sui-rpc-request-id": "req-200-with-errors" });
     mockFetch.mockResolvedValue(
       new Response(JSON.stringify({ errors: [{ message: "Query out of available range" }] }), {
@@ -208,11 +224,13 @@ describe("graphqlFetcher: request-ID logging", () => {
       }),
     );
 
+    // WHEN
     await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
     await flushMicrotasks();
 
+    // THEN
     const errorLog = logMock.mock.calls.find(
-      c => c[1] === "(network/sdk): GraphQL response with errors",
+      c => c[0] === "coin:sui" && c[1] === "(network/sdk): GraphQL response with errors",
     );
     expect(errorLog).toBeDefined();
     expect(errorLog?.[2]).toMatchObject({
@@ -223,7 +241,8 @@ describe("graphqlFetcher: request-ID logging", () => {
     });
   });
 
-  test("counts every entry in errors[] (not just errors[0])", async () => {
+  it("should count every entry in errors[]", async () => {
+    // GIVEN
     const headers = new Headers({ "x-sui-rpc-request-id": "req-multi-errors" });
     mockFetch.mockResolvedValue(
       new Response(
@@ -234,54 +253,116 @@ describe("graphqlFetcher: request-ID logging", () => {
       ),
     );
 
+    // WHEN
     await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
     await flushMicrotasks();
 
+    // THEN
     const errorLog = logMock.mock.calls.find(
-      c => c[1] === "(network/sdk): GraphQL response with errors",
+      c => c[0] === "coin:sui" && c[1] === "(network/sdk): GraphQL response with errors",
     );
     expect(errorLog?.[2]).toMatchObject({ errorCount: 3, firstError: "first" });
   });
 
-  test("does not emit the error variant on a clean 200 OK", async () => {
+  it("should not emit the error log variant on a clean 200 OK", async () => {
+    // GIVEN
     const headers = new Headers({ "x-sui-rpc-request-id": "req-200-clean" });
     mockFetch.mockResolvedValue(
       new Response(JSON.stringify({ data: { foo: "bar" } }), { status: 200, headers }),
     );
 
+    // WHEN
     await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
     await flushMicrotasks();
 
+    // THEN
     const errorLog = logMock.mock.calls.find(
-      c => c[1] === "(network/sdk): GraphQL response with errors",
+      c => c[0] === "coin:sui" && c[1] === "(network/sdk): GraphQL response with errors",
     );
     expect(errorLog).toBeUndefined();
   });
 
-  test("logs request-ID synchronously on HTTP-level failure (no body peek)", async () => {
+  it("should log request-ID synchronously on HTTP-level failure", async () => {
+    // GIVEN
     const headers = new Headers({ "x-sui-rpc-request-id": "req-500" });
     mockFetch.mockResolvedValue(new Response("Internal Server Error", { status: 500, headers }));
 
-    await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
+    // WHEN
     // No microtask flush needed — HTTP-error path logs before returning.
+    await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
 
+    // THEN
     const httpLog = logMock.mock.calls.find(
       c =>
-        c[1] === "(network/sdk): GraphQL response" && (c[2] as { status?: number })?.status === 500,
+        c[0] === "coin:sui" &&
+        c[1] === "(network/sdk): GraphQL response" &&
+        (c[2] as { status?: number })?.status === 500,
     );
     expect(httpLog).toBeDefined();
     expect((httpLog?.[2] as { requestId?: string }).requestId).toBe("req-500");
   });
 
-  test("emits no log when the response has no x-sui-rpc-request-id header", async () => {
+  it("should emit no log when the response has no x-sui-rpc-request-id header", async () => {
+    // GIVEN
     mockFetch.mockResolvedValue(
       new Response(JSON.stringify({ data: { foo: "bar" } }), { status: 200 }),
     );
 
+    // WHEN
     await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
     await flushMicrotasks();
 
-    const sdkLogs = logMock.mock.calls.filter(c => String(c[1] ?? "").startsWith("(network/sdk):"));
+    // THEN
+    const sdkLogs = logMock.mock.calls.filter(
+      c => c[0] === "coin:sui" && String(c[1] ?? "").startsWith("(network/sdk):"),
+    );
     expect(sdkLogs).toHaveLength(0);
+  });
+});
+
+// ---- fetcher: caller-signal abort propagation ----
+
+describe("fetcher: caller-signal abort propagation", () => {
+  let originalFetch: typeof fetch;
+  let mockFetch: jest.Mock;
+
+  beforeEach(() => {
+    originalFetch = global.fetch;
+    mockFetch = jest.fn();
+    global.fetch = mockFetch as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it("should not retry when the caller signal is aborted before the call lands", async () => {
+    // GIVEN
+    // Pre-aborted signal — `AbortSignal.any` makes fetch reject immediately,
+    // and the catch handler must propagate rather than re-issue the request.
+    mockFetch.mockRejectedValue(new DOMException("aborted by caller", "AbortError"));
+    const controller = new AbortController();
+    controller.abort(new DOMException("teardown", "AbortError"));
+
+    // WHEN / THEN
+    await expect(
+      fetcher("https://endpoint/graphql", { signal: controller.signal }, 3),
+    ).rejects.toThrow(/aborted/i);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("should retry up to the budget when the failure is not caller-driven", async () => {
+    // GIVEN
+    // Three rejections in a row — caller never aborts, so all retries fire.
+    mockFetch
+      .mockRejectedValueOnce(new TypeError("network error 1"))
+      .mockRejectedValueOnce(new TypeError("network error 2"))
+      .mockRejectedValueOnce(new TypeError("network error 3"));
+
+    // WHEN / THEN
+    await expect(fetcher("https://endpoint/graphql", { method: "POST" }, 3)).rejects.toThrow(
+      /network error/,
+    );
+    expect(mockFetch).toHaveBeenCalledTimes(3);
   });
 });

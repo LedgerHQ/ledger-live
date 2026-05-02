@@ -44,11 +44,7 @@ export type AsyncGraphQLApiFunction<T> = (
   signal?: AbortSignal,
 ) => Promise<T>;
 
-/**
- * Toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage`
- * (input/output nodes, depth) for tuning against complexity caps. Off
- * by default (small server cost). Enable via `DEBUG_SUI_GRAPHQL`.
- */
+/** `DEBUG_SUI_GRAPHQL` toggles `x-sui-rpc-show-usage` so responses carry `extensions.usage` for tuning. */
 function isGraphqlDebugEnabled(): boolean {
   // Read at call time so test env tweaks take effect without a rebuild.
   const v = (typeof process !== "undefined" && process.env?.DEBUG_SUI_GRAPHQL) || "";
@@ -56,10 +52,8 @@ function isGraphqlDebugEnabled(): boolean {
 }
 
 /**
- * GraphQL wrapper over the shared retry-aware fetcher: stamps
- * `x-sui-rpc-request-id` logging and detects the `200 OK + errors[]`
- * failure shape.
- *
+ * GraphQL wrapper over the shared retry-aware fetcher: stamps `x-sui-rpc-request-id` logging
+ * and detects the `200 OK + errors[]` failure shape.
  * @internal Exported for the request-ID logging unit test only.
  */
 export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Response> => {
@@ -87,9 +81,7 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
       return res;
     }
 
-    // 200 OK: parse, log any `errors[]`, stamp `__requestId` into the
-    // body, and re-emit a real Response. Synchronous from the SDK's POV
-    // — no microtask race between thrown error and request-ID log.
+    // 200 OK: parse, stamp `__requestId`, re-emit synchronously so the request-ID log can't race a thrown error.
     const text = await res.text();
     let body: { errors?: { message?: string }[]; [k: string]: unknown };
     try {
@@ -160,7 +152,7 @@ function unwrapGraphQL<T>(
     /** Stamped by {@link graphqlFetcher} for trace correlation. */
     __requestId?: string;
   },
-): T {
+): NonNullable<T> {
   const reqId = res.__requestId ? ` [reqId=${res.__requestId}]` : "";
   if (res.errors?.length) {
     const all = res.errors.map(e => e.message).join("; ");
@@ -169,16 +161,10 @@ function unwrapGraphQL<T>(
   if (res.data === null || res.data === undefined) {
     throw new Error(`GraphQL ${label} failed${reqId}: no data`);
   }
-  return res.data;
+  return res.data as NonNullable<T>;
 }
 
-/**
- * Unwrap a {@link SUI_SYSTEM_STATE} response and run the schema-drift
- * guard on its `MoveValue.json`. Centralised so every caller exits with
- * the same narrowed `stateJson` and a future site can't forget the
- * `assertSystemStateJson` boundary check. Drift errors carry `[reqId=…]`
- * matching `unwrapGraphQL`'s format.
- */
+/** Centralised so every caller exits with the same narrowed `stateJson` and the drift guard can't be skipped. */
 function unwrapAndValidateSystemState(
   systemRes: Parameters<typeof unwrapGraphQL<SuiSystemStateResult>>[1],
 ): { epoch: NonNullable<SuiSystemStateResult["epoch"]>; stateJson: SuiSystemStateInnerJson } {
@@ -206,11 +192,8 @@ type CursorPage<T> = {
 
 /**
  * Forward pagination with single drop-and-restart on cursor expiry.
- * `seed` lets a caller hand in a first page already fetched in parallel
- * (e.g. with system state); the seed is dropped on retry — it expired
- * with the cursor. Caller validates items AFTER this returns so retry
- * doesn't redo validation for pages it's about to discard. Outer-loop
- * abort gate prevents retrying after teardown.
+ * `seed` (a pre-fetched first page) is dropped on retry along with the cursor.
+ * Caller validates AFTER return so retry doesn't redo validation for pages it discards.
  */
 async function paginateWithCursorRecovery<T>(config: {
   source: string;
@@ -221,17 +204,18 @@ async function paginateWithCursorRecovery<T>(config: {
   signal?: AbortSignal | undefined;
 }): Promise<{ items: T[]; retries: number }> {
   const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
-  let totalRetries = 0;
   let seed: CursorPage<T> | undefined = config.seed;
 
-  // eslint-disable-next-line no-constant-condition -- exits via return/throw; retry budget in catch.
-  while (true) {
+  // attempt 0 = initial walk; attempt 1..maxRetries = post-cursor-expiry restarts.
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     config.signal?.throwIfAborted?.();
     const items: T[] = [];
     let cursor: string | null = null;
     let hasMore = true;
     try {
       while (hasMore) {
+        // Per-page abort gate so a long pagination short-circuits without relying on transport cooperation.
+        config.signal?.throwIfAborted?.();
         let page: CursorPage<T>;
         if (seed !== undefined) {
           page = seed;
@@ -243,31 +227,28 @@ async function paginateWithCursorRecovery<T>(config: {
         cursor = page.endCursor;
         hasMore = page.hasNextPage && cursor !== null;
       }
-      return { items, retries: totalRetries };
+      return { items, retries: attempt };
     } catch (e) {
-      if (totalRetries < maxRetries && isCursorExpiredError(e)) {
-        totalRetries++;
+      if (attempt < maxRetries && isCursorExpiredError(e)) {
         log("warn", "sui-graphql:cursor-expired", {
           source: config.source,
-          retry: totalRetries,
+          retry: attempt + 1,
         });
         seed = undefined; // expired with the original cursor
-        continue; // outer-loop restart resets `items`, `cursor`, `hasMore`
+        continue;
       }
       throw e;
     }
   }
+  // Unreachable: the loop body always returns or throws.
+  throw new Error(`paginateWithCursorRecovery: exhausted ${maxRetries} retries without resolution`);
 }
 
 // ============================================================================
 // Stakes pipeline
 // ============================================================================
 
-/**
- * Parallel fetch of system state + first stakes page, with drift guard.
- * Returns the seed page so the pagination helper can skip a round-trip
- * on the happy path.
- */
+/** Parallel system-state + first-page fetch; seed lets pagination skip the happy-path round-trip. */
 async function fetchSystemStateAndStakesPage(
   api: SuiGraphQLClient,
   ownerAddr: string,
@@ -338,19 +319,18 @@ async function paginateRemainingStakes(
   return items;
 }
 
-/**
- * Batched activation-rate fetch. Per-chunk failures and missing rates
- * surface via the `sui-graphql:rate-fetch-degraded` telemetry channel
- * so a Mysten dynamic-field grammar change is visible before it shows
- * up as support tickets.
- */
+/** Per-chunk failures + missing rates surface via `sui-graphql:rate-fetch-degraded` for early drift signal. */
 async function fetchActivationRates(
   api: SuiGraphQLClient,
   plans: StakeRatePlans,
   malformed: number,
   signal?: AbortSignal,
 ): Promise<Map<string, ExchangeRate | null>> {
-  const { rates: rateArr, chunksFailed } = await fetchExchangeRatesBatched(
+  const {
+    rates: rateArr,
+    chunksFailed,
+    firstError,
+  } = await fetchExchangeRatesBatched(
     api,
     plans.wantedEntries.map(({ table, epoch }) => ({ exchangeRatesId: table, epoch })),
     RATE_BATCH_CHUNK_SIZE,
@@ -370,6 +350,7 @@ async function fetchActivationRates(
       missing,
       malformed,
       total: plans.wantedEntries.length,
+      ...(firstError !== undefined && { firstError }),
     });
   }
   return rates;
@@ -379,11 +360,30 @@ async function fetchActivationRates(
 // Exchange-rate dynamic-field lookups
 // ============================================================================
 
-/**
- * One entry from a pool's `exchange_rates` Move Table. `null` when the
- * table has no entry at that epoch; errors propagate so the caller can
- * decide whether to abort or degrade.
- */
+/** Worker-pool style: at most `limit` concurrent `fn` invocations; returns results in input order. */
+async function mapWithLimit<T, R>(
+  items: ReadonlyArray<T>,
+  limit: number,
+  fn: (x: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let cursor = 0;
+  const workerCount = Math.max(1, Math.min(limit, items.length));
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (cursor < items.length) {
+        const i = cursor++;
+        out[i] = await fn(items[i], i);
+      }
+    }),
+  );
+  return out;
+}
+
+/** Concurrent in-flight rate-chunk requests; bounded to avoid bursty fan-out under heavy validator sets. */
+const RATE_CHUNK_CONCURRENCY = 4;
+
+/** `null` when the rates table has no entry at that epoch; errors propagate for caller-side triage. */
 async function fetchExchangeRate(
   api: SuiGraphQLClient,
   exchangeRatesId: string,
@@ -398,49 +398,47 @@ async function fetchExchangeRate(
   return parseExchangeRateNode(unwrapGraphQL(`ExchangeRate(${epoch})`, res).address ?? null);
 }
 
-/**
- * Batched variant of {@link fetchExchangeRate}: 1:1 output with `plans`,
- * `null` for missing entries, transport failures surface via `chunksFailed`.
- */
+/** Batched {@link fetchExchangeRate}: 1:1 output, `null` on miss, transport failures via `chunksFailed`/`firstError`. */
 async function fetchExchangeRatesBatched(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
   chunkSize: number,
   signal?: AbortSignal,
-): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number }> {
+): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number; firstError?: string }> {
   if (plans.length === 0) return { rates: [], chunksFailed: 0 };
   const safeChunk = Math.max(1, Math.floor(chunkSize));
   const chunks: Array<typeof plans> = [];
   for (let i = 0; i < plans.length; i += safeChunk) {
     chunks.push(plans.slice(i, i + safeChunk));
   }
-  // `allSettled` so one chunk's failure doesn't tank the rest — failed
-  // chunks degrade to `null`s; caller surfaces `chunksFailed`.
-  // INVARIANT: fetchRateChunk uses Promise.all (throws on any failure);
-  // null-padding sizes by input chunk — switching to allSettled breaks 1:1.
-  const settled = await Promise.allSettled(
-    chunks.map(chunk => fetchRateChunk(api, chunk, safeChunk, signal)),
-  );
-  const rates: Array<ExchangeRate | null> = [];
-  let chunksFailed = 0;
-  settled.forEach((res, idx) => {
-    if (res.status === "fulfilled") {
-      rates.push(...res.value);
-    } else {
-      // Pad with `null`s so output stays 1:1 with input order.
-      chunksFailed++;
-      for (let i = 0; i < chunks[idx].length; i++) rates.push(null);
+  // INVARIANT: each chunk's result length matches its input length — null-pad on failure preserves 1:1.
+  const settled = await mapWithLimit(chunks, RATE_CHUNK_CONCURRENCY, async chunk => {
+    try {
+      return { ok: true as const, value: await fetchRateChunk(api, chunk, safeChunk, signal) };
+    } catch (err) {
+      return {
+        ok: false as const,
+        size: chunk.length,
+        message: err instanceof Error ? err.message : String(err),
+      };
     }
   });
-  return { rates, chunksFailed };
+  const rates: Array<ExchangeRate | null> = [];
+  let chunksFailed = 0;
+  let firstError: string | undefined;
+  for (const res of settled) {
+    if (res.ok) {
+      rates.push(...res.value);
+    } else {
+      chunksFailed++;
+      if (firstError === undefined) firstError = res.message;
+      for (let i = 0; i < res.size; i++) rates.push(null);
+    }
+  }
+  return firstError !== undefined ? { rates, chunksFailed, firstError } : { rates, chunksFailed };
 }
 
-/**
- * Fetch one chunk of rates. Full-size chunks ride the static
- * {@link BATCH_RATES_15} aliased document (compile-time validated by
- * gql.tada); shorter tail chunks fall back to parallel single-query
- * {@link fetchExchangeRate} calls.
- */
+/** Full chunks ride {@link BATCH_RATES_15}; tail chunks fall back to parallel {@link fetchExchangeRate}. */
 async function fetchRateChunk(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
@@ -448,7 +446,10 @@ async function fetchRateChunk(
   signal?: AbortSignal,
 ): Promise<Array<ExchangeRate | null>> {
   if (plans.length < fullChunkSize) {
-    return Promise.all(plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal)));
+    // Same cap applies: tail fan-out can be ~14 single queries; smooth them through a worker pool.
+    return mapWithLimit(plans, RATE_CHUNK_CONCURRENCY, p =>
+      fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal),
+    );
   }
   // $t0/$l0…$t14/$l14 mirror BATCH_RATES_15's variable names: t = table address, l = epoch literal.
   const variables = Object.fromEntries(
@@ -470,12 +471,7 @@ async function fetchRateChunk(
 // Public per-function GraphQL handlers (passed to `withTransport` from sdk.ts)
 // ============================================================================
 
-/**
- * Cached `Address.balances` (post-SIP-58 surfaces `fundsInAddressBalance`).
- * Paginates `BalanceConnection` and remaps each node into `CoinBalance`.
- * JSON-RPC-only fields (`coinObjectCount`, `lockedBalance`) are stubbed.
-
- */
+/** Paginates `BalanceConnection`; JSON-RPC-only `coinObjectCount`/`lockedBalance` are stubbed. */
 export const getAllBalancesCachedGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
@@ -510,12 +506,8 @@ export const getAllBalancesCachedGraphQL = async (
   return items;
 };
 
-/**
- * `DelegatedStake[]` reconstructed from `StakedSui` objects + system-state
- * (one extra dynamicField per Active stake, deduped); rate failures degrade
- * `estimatedReward` to `"0"`.
- */
-export const getStakesRawGraphQL = async (
+/** Reconstructs `DelegatedStake[]` from `StakedSui` + system-state; rate failures degrade `estimatedReward` to `"0"`. */
+export const getDelegatedStakesGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
   signal?: AbortSignal,
@@ -531,21 +523,24 @@ export const getStakesRawGraphQL = async (
   return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
 };
 
-/**
- * Checkpoint by sequence number, remapped to the JSON-RPC `Checkpoint`
- * subset. The dispatcher is responsible for the digest guard
- * ({@link isSequenceNumber}) — GraphQL's `Query.checkpoint(sequenceNumber:)`
- * only accepts UInt53.
- */
+/** GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts UInt53; digests must route to JSON-RPC. */
 export const getCheckpointGraphQL = async (
   api: SuiGraphQLClient,
   id: string | number,
+  signal?: AbortSignal,
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
   // UInt53 is a JSON number both directions; server rejects quoted strings.
   const seq = typeof id === "number" ? id : Number(id);
+  if (!Number.isFinite(seq)) {
+    // Defence in depth: the dispatcher in sdk.ts already routes digests to JSON-RPC.
+    throw new Error(
+      `getCheckpointGraphQL: not a sequence number (id=${id}); digest lookups must route to JSON-RPC.`,
+    );
+  }
   const res = await api.query({
     query: CHECKPOINT_BY_SEQUENCE,
     variables: { sequenceNumber: seq },
+    ...(signal && { signal }),
   });
   const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
   if (!cp) {
@@ -560,18 +555,20 @@ export const getCheckpointGraphQL = async (
   };
 };
 
-/**
- * Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`.
- */
+/** Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`. */
 export const getLastBlockGraphQL = async (
   api: SuiGraphQLClient,
+  signal?: AbortSignal,
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
-  const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
+  const res = await api.query({
+    query: LATEST_CHECKPOINT_SEQUENCE,
+    ...(signal && { signal }),
+  });
   const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
   if (seq === null || seq === undefined) {
     throw new Error("GraphQL LatestCheckpointSequence failed: no checkpoint");
   }
-  return getCheckpointGraphQL(api, seq);
+  return getCheckpointGraphQL(api, seq, signal);
 };
 
 type ApyPlan = {
@@ -604,16 +601,13 @@ function planValidatorApyLookups(
   return plans;
 }
 
-/**
- * Apply rate→APY math, degrading missing/failed entries to apy=0 and
- * surfacing aggregate degradation via telemetry (typical cause of a
- * sudden spike in `missing`: dynamicField schema change).
- */
+/** Missing/failed rates degrade to apy=0; aggregate degradation surfaces via telemetry. */
 function applyValidatorApy(
   plans: ReadonlyArray<ApyPlan>,
   rates: ReadonlyArray<ExchangeRate | null>,
   currentEpoch: number,
   chunksFailed: number,
+  firstError?: string,
 ): Map<string, number> {
   const apyByAddress = new Map<string, number>();
   let rateMissing = 0;
@@ -632,31 +626,35 @@ function applyValidatorApy(
       missing: rateMissing,
       chunksFailed,
       total: plans.length,
+      ...(firstError !== undefined && { firstError }),
     });
   }
   return apyByAddress;
 }
 
 /**
- * Active validator set with APY. One `epoch.systemState.json` plus a
- * batched aliased exchange-rate query (one round-trip for ~127 validators).
- * APY is computed client-side from pool exchange-rate growth over
- * {@link APY_LOOKBACK_EPOCHS} (mirroring Mysten's formula). Pools younger
- * than the window clamp to their activation epoch; per-rate nulls degrade
- * to apy=0 and surface via telemetry.
+ * Active validator set with client-side APY over {@link APY_LOOKBACK_EPOCHS} (Mysten's formula).
+ * Young pools clamp the past epoch to activation; per-rate nulls degrade to apy=0. Honors `signal`.
  */
-export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiValidator[]> => {
-  const res = await api.query({ query: SUI_SYSTEM_STATE });
+export const getValidatorsGraphQL = async (
+  api: SuiGraphQLClient,
+  signal?: AbortSignal,
+): Promise<SuiValidator[]> => {
+  const res = await api.query({
+    query: SUI_SYSTEM_STATE,
+    ...(signal && { signal }),
+  });
   const { epoch, stateJson } = unwrapAndValidateSystemState(res);
   const { activeValidators } = fromSystemStateJson(stateJson);
   const poolRefs = poolRefsFromSystemState(stateJson);
   const currentEpoch = Number(epoch.epochId);
   const plans = planValidatorApyLookups(activeValidators, poolRefs, currentEpoch);
-  const { rates, chunksFailed } = await fetchExchangeRatesBatched(
+  const { rates, chunksFailed, firstError } = await fetchExchangeRatesBatched(
     api,
     plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
     RATE_BATCH_CHUNK_SIZE,
+    signal,
   );
-  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed);
+  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed, firstError);
   return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
 };
