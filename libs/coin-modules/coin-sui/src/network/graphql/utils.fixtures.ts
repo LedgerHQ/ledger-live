@@ -1,31 +1,16 @@
 import type { SuiSystemStateInnerJson } from "./utils";
 
-/** Per-validator overrides; `poolId` required, everything else defaults to a stable mainnet-shape value. */
+/** Per-validator overrides; only the fields any current test actually exercises are tunable. */
 export type FakeValidator = {
   poolId: string;
   validatorAddress?: string;
   name?: string;
-  description?: string;
-  imageUrl?: string;
-  projectUrl?: string;
-  protocolPubkeyBytes?: string;
-  networkPubkeyBytes?: string;
-  workerPubkeyBytes?: string;
-  proofOfPossession?: string;
   netAddress?: string;
-  p2pAddress?: string;
-  primaryAddress?: string;
-  workerAddress?: string;
-  votingPower?: number | string;
-  gasPrice?: number | string;
   suiBalance?: number | string;
   poolTokenBalance?: number | string;
-  rewardsPool?: number | string;
   exchangeRatesId?: string;
-  exchangeRatesSize?: number | string;
   /** `null` deactivates the pool. */
   activationEpoch?: number | string | null;
-  deactivationEpoch?: number | string | null;
   commissionRate?: number | string;
   nextEpochStake?: number | string;
 };
@@ -45,33 +30,30 @@ export function makeSystemStateJson(opts: {
       active_validators: validators.map(v => ({
         metadata: {
           sui_address: v.validatorAddress ?? "0xv",
-          protocol_pubkey_bytes: v.protocolPubkeyBytes ?? "0xpk",
-          network_pubkey_bytes: v.networkPubkeyBytes ?? "0xnk",
-          worker_pubkey_bytes: v.workerPubkeyBytes ?? "0xwk",
-          proof_of_possession: v.proofOfPossession ?? "0xpp",
+          protocol_pubkey_bytes: "0xpk",
+          network_pubkey_bytes: "0xnk",
+          worker_pubkey_bytes: "0xwk",
+          proof_of_possession: "0xpp",
           name: v.name ?? "V",
-          description: v.description ?? "desc",
-          image_url: v.imageUrl ?? "https://logo",
-          project_url: v.projectUrl ?? "https://project",
+          description: "desc",
+          image_url: "https://logo",
+          project_url: "https://project",
           net_address: v.netAddress ?? "",
-          p2p_address: v.p2pAddress ?? "",
-          primary_address: v.primaryAddress ?? "",
-          worker_address: v.workerAddress ?? "",
+          p2p_address: "",
+          primary_address: "",
+          worker_address: "",
         },
-        voting_power: v.votingPower ?? 100,
+        voting_power: 100,
         operation_cap_id: "0xcap",
-        gas_price: v.gasPrice ?? 800,
+        gas_price: 800,
         staking_pool: {
           id: v.poolId,
           activation_epoch: v.activationEpoch === undefined ? 0 : v.activationEpoch,
-          deactivation_epoch: v.deactivationEpoch ?? null,
+          deactivation_epoch: null,
           sui_balance: v.suiBalance ?? 1_000_000_000_000,
-          rewards_pool: v.rewardsPool ?? 50_000_000_000,
+          rewards_pool: 50_000_000_000,
           pool_token_balance: v.poolTokenBalance ?? 900_000_000_000,
-          exchange_rates: {
-            id: v.exchangeRatesId ?? "0xrates",
-            size: v.exchangeRatesSize ?? 100,
-          },
+          exchange_rates: { id: v.exchangeRatesId ?? "0xrates", size: 100 },
           pending_stake: 0,
           pending_total_sui_withdraw: 0,
           pending_pool_token_withdraw: 0,
