@@ -92,7 +92,7 @@ function expectClose(
 
 describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   describe("getAllBalancesCached", () => {
-    test("balances match across transports", async () => {
+    it("balances match across transports", async () => {
       const rpc = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
@@ -114,7 +114,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getLastBlock", () => {
-    test("both transports return matching shape; sequence numbers track within window", async () => {
+    it("both transports return matching shape; sequence numbers track within window", async () => {
       const rpc = await getLastBlock(JSON_RPC_ID);
       const gql = await getLastBlock(GRAPHQL_ID);
 
@@ -137,7 +137,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getCheckpoint(stable sequence)", () => {
-    test("digest, sequenceNumber, timestampMs match exactly for a finalised historical checkpoint", async () => {
+    it("digest, sequenceNumber, timestampMs match exactly for a finalised historical checkpoint", async () => {
       const rpc = await getCheckpoint(stableCheckpointSequence, JSON_RPC_ID);
       const gql = await getCheckpoint(stableCheckpointSequence, GRAPHQL_ID);
 
@@ -146,7 +146,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       expect(gql.timestampMs).toBe(rpc.timestampMs);
     });
 
-    test("GraphQL rejects digest input; JSON-RPC accepts it", async () => {
+    it("GraphQL rejects digest input; JSON-RPC accepts it", async () => {
       // sdk.ts:1769 throws on the GraphQL path when `id` is a digest
       // because `Query.checkpoint(sequenceNumber:)` can't accept digests.
       // JSON-RPC accepts both. Asserting the asymmetry live protects the
@@ -161,7 +161,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getStakesRaw", () => {
-    test("delegated stakes group, status, principal match; estimatedReward within tolerance", async () => {
+    it("delegated stakes group, status, principal match; estimatedReward within tolerance", async () => {
       const rpc = await getStakesRaw(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getStakesRaw(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
@@ -215,7 +215,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getValidators", () => {
-    test("active set + metadata match; APY within tolerance", async () => {
+    it("active set + metadata match; APY within tolerance", async () => {
       const rpc = await getValidators(JSON_RPC_ID);
       const gql = await getValidators(GRAPHQL_ID);
 
@@ -253,7 +253,7 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
     // synchronisation.ts:55. Its dual-path behaviour is inherited from
     // `getAllBalancesCached`, but we assert the bridge-shaped output here
     // so any future divergence in the wrapper itself surfaces immediately.
-    test("balances match across transports as consumed by the bridge", async () => {
+    it("balances match across transports as consumed by the bridge", async () => {
       const rpc = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
       const gql = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
 
@@ -275,13 +275,13 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
     // multi-token balances, so it never exercises an empty page response.
     // GraphQL pagination empty-page semantics are the path most likely
     // to diverge silently from JSON-RPC for fresh accounts.
-    test("getStakesRaw returns equivalent results across transports for an unused address", async () => {
+    it("getStakesRaw returns equivalent results across transports for an unused address", async () => {
       const rpc = await getStakesRaw(ACCOUNT_EMPTY, JSON_RPC_ID);
       const gql = await getStakesRaw(ACCOUNT_EMPTY, GRAPHQL_ID);
       expect(gql).toEqual(rpc);
     });
 
-    test("getAllBalancesCached returns equivalent results across transports for an unused address", async () => {
+    it("getAllBalancesCached returns equivalent results across transports for an unused address", async () => {
       const rpc = await getAllBalancesCached(ACCOUNT_EMPTY, JSON_RPC_ID);
       const gql = await getAllBalancesCached(ACCOUNT_EMPTY, GRAPHQL_ID);
 
