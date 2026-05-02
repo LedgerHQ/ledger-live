@@ -802,15 +802,20 @@ export function toSuiAsset(coinType: string): AssetInfo {
 
 export const getLastBlock = (
   currencyId?: string,
+  signal?: AbortSignal,
 ): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> =>
-  withTransport(currencyId, {
-    jsonRpc: async api => {
-      const checkpoint = await api.getLatestCheckpointSequenceNumber();
-      const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
-      return { digest, sequenceNumber, timestampMs };
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        const checkpoint = await api.getLatestCheckpointSequenceNumber();
+        const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
+        return { digest, sequenceNumber, timestampMs };
+      },
+      graphql: getLastBlockGraphQL,
     },
-    graphql: getLastBlockGraphQL,
-  });
+    signal,
+  );
 
 /**
  * Fetch operation list
@@ -1143,6 +1148,7 @@ export type MinimalCheckpoint = Pick<Checkpoint, "digest" | "sequenceNumber" | "
 export const getCheckpoint = async (
   id: string,
   currencyId?: string,
+  signal?: AbortSignal,
 ): Promise<MinimalCheckpoint> => {
   // Digest guard for GraphQL: sequence numbers fit in 16 digits;
   // anything else is a digest, which `Query.checkpoint(sequenceNumber:)`
@@ -1153,17 +1159,21 @@ export const getCheckpoint = async (
         "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
     );
   }
-  return withTransport(currencyId, {
-    jsonRpc: async api => {
-      const cp = await api.getCheckpoint({ id });
-      return {
-        digest: cp.digest,
-        sequenceNumber: cp.sequenceNumber,
-        timestampMs: cp.timestampMs,
-      };
+  return withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        const cp = await api.getCheckpoint({ id });
+        return {
+          digest: cp.digest,
+          sequenceNumber: cp.sequenceNumber,
+          timestampMs: cp.timestampMs,
+        };
+      },
+      graphql: (api, sig) => getCheckpointGraphQL(api, id, sig),
     },
-    graphql: api => getCheckpointGraphQL(api, id),
-  });
+    signal,
+  );
 };
 
 /**
@@ -1687,21 +1697,25 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
  * Active validator set with APY. JSON-RPC: two parallel calls merged by
  * `suiAddress`. GraphQL: see {@link getValidatorsGraphQL}.
  */
-export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
-  withTransport(currencyId, {
-    jsonRpc: async api => {
-      const [{ activeValidators }, { apys }] = await Promise.all([
-        api.getLatestSuiSystemState(),
-        api.getValidatorsApy(),
-      ]);
-      const hash = apys.reduce(
-        (acc, item) => {
-          acc[item.address] = item.apy;
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
-      return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
+export const getValidators = (currencyId?: string, signal?: AbortSignal): Promise<SuiValidator[]> =>
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        const [{ activeValidators }, { apys }] = await Promise.all([
+          api.getLatestSuiSystemState(),
+          api.getValidatorsApy(),
+        ]);
+        const hash = apys.reduce(
+          (acc, item) => {
+            acc[item.address] = item.apy;
+            return acc;
+          },
+          {} as Record<string, number>,
+        );
+        return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
+      },
+      graphql: getValidatorsGraphQL,
     },
-    graphql: getValidatorsGraphQL,
-  });
+    signal,
+  );

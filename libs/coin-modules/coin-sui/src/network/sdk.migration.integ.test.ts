@@ -73,7 +73,10 @@ beforeAll(async () => {
 function expectClose(
   actual: bigint | string | number,
   expected: bigint | string | number,
-  { absolute = 100_000n, relativeBps = 100n }: { absolute?: bigint; relativeBps?: bigint } = {},
+  {
+    absolute = TOLERANCE.stakeRewardAbsoluteMist,
+    relativeBps = TOLERANCE.stakeRewardRelativeBps,
+  }: { absolute?: bigint; relativeBps?: bigint } = {},
 ) {
   const a = typeof actual === "bigint" ? actual : BigInt(actual);
   const e = typeof expected === "bigint" ? expected : BigInt(expected);

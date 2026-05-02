@@ -231,6 +231,8 @@ async function paginateWithCursorRecovery<T>(config: {
     let hasMore = true;
     try {
       while (hasMore) {
+        // Per-page abort gate so a long pagination short-circuits without relying on transport cooperation.
+        config.signal?.throwIfAborted?.();
         let page: CursorPage<T>;
         if (seed !== undefined) {
           page = seed;
@@ -379,6 +381,29 @@ async function fetchActivationRates(
 // Exchange-rate dynamic-field lookups
 // ============================================================================
 
+/** Worker-pool style: at most `limit` concurrent `fn` invocations; returns results in input order. */
+async function mapWithLimit<T, R>(
+  items: ReadonlyArray<T>,
+  limit: number,
+  fn: (x: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let cursor = 0;
+  const workerCount = Math.max(1, Math.min(limit, items.length));
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (cursor < items.length) {
+        const i = cursor++;
+        out[i] = await fn(items[i], i);
+      }
+    }),
+  );
+  return out;
+}
+
+/** Concurrent in-flight rate-chunk requests; bounded to avoid bursty fan-out under heavy validator sets. */
+const RATE_CHUNK_CONCURRENCY = 4;
+
 /**
  * One entry from a pool's `exchange_rates` Move Table. `null` when the
  * table has no entry at that epoch; errors propagate so the caller can
@@ -414,24 +439,26 @@ async function fetchExchangeRatesBatched(
   for (let i = 0; i < plans.length; i += safeChunk) {
     chunks.push(plans.slice(i, i + safeChunk));
   }
-  // `allSettled` so one chunk's failure doesn't tank the rest — failed
-  // chunks degrade to `null`s; caller surfaces `chunksFailed`.
-  // INVARIANT: fetchRateChunk uses Promise.all (throws on any failure);
-  // null-padding sizes by input chunk — switching to allSettled breaks 1:1.
-  const settled = await Promise.allSettled(
-    chunks.map(chunk => fetchRateChunk(api, chunk, safeChunk, signal)),
-  );
-  const rates: Array<ExchangeRate | null> = [];
-  let chunksFailed = 0;
-  settled.forEach((res, idx) => {
-    if (res.status === "fulfilled") {
-      rates.push(...res.value);
-    } else {
-      // Pad with `null`s so output stays 1:1 with input order.
-      chunksFailed++;
-      for (let i = 0; i < chunks[idx].length; i++) rates.push(null);
+  // Bounded worker pool isolates per-chunk failures (returned as `null`-padded chunks)
+  // and caps in-flight requests so a 127-validator set doesn't fire ~9 batches in lockstep.
+  // INVARIANT: each chunk's result length matches its input length — null-pad on failure preserves 1:1.
+  const settled = await mapWithLimit(chunks, RATE_CHUNK_CONCURRENCY, async chunk => {
+    try {
+      return { ok: true as const, value: await fetchRateChunk(api, chunk, safeChunk, signal) };
+    } catch {
+      return { ok: false as const, size: chunk.length };
     }
   });
+  const rates: Array<ExchangeRate | null> = [];
+  let chunksFailed = 0;
+  for (const res of settled) {
+    if (res.ok) {
+      rates.push(...res.value);
+    } else {
+      chunksFailed++;
+      for (let i = 0; i < res.size; i++) rates.push(null);
+    }
+  }
   return { rates, chunksFailed };
 }
 
@@ -448,7 +475,10 @@ async function fetchRateChunk(
   signal?: AbortSignal,
 ): Promise<Array<ExchangeRate | null>> {
   if (plans.length < fullChunkSize) {
-    return Promise.all(plans.map(p => fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal)));
+    // Same cap applies: tail fan-out can be ~14 single queries; smooth them through a worker pool.
+    return mapWithLimit(plans, RATE_CHUNK_CONCURRENCY, p =>
+      fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal),
+    );
   }
   // $t0/$l0…$t14/$l14 mirror BATCH_RATES_15's variable names: t = table address, l = epoch literal.
   const variables = Object.fromEntries(
@@ -540,6 +570,7 @@ export const getStakesRawGraphQL = async (
 export const getCheckpointGraphQL = async (
   api: SuiGraphQLClient,
   id: string | number,
+  signal?: AbortSignal,
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
   // UInt53 is a JSON number both directions; server rejects quoted strings.
   const seq = typeof id === "number" ? id : Number(id);
@@ -552,6 +583,7 @@ export const getCheckpointGraphQL = async (
   const res = await api.query({
     query: CHECKPOINT_BY_SEQUENCE,
     variables: { sequenceNumber: seq },
+    ...(signal && { signal }),
   });
   const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
   if (!cp) {
@@ -571,13 +603,17 @@ export const getCheckpointGraphQL = async (
  */
 export const getLastBlockGraphQL = async (
   api: SuiGraphQLClient,
+  signal?: AbortSignal,
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
-  const res = await api.query({ query: LATEST_CHECKPOINT_SEQUENCE });
+  const res = await api.query({
+    query: LATEST_CHECKPOINT_SEQUENCE,
+    ...(signal && { signal }),
+  });
   const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
   if (seq === null || seq === undefined) {
     throw new Error("GraphQL LatestCheckpointSequence failed: no checkpoint");
   }
-  return getCheckpointGraphQL(api, seq);
+  return getCheckpointGraphQL(api, seq, signal);
 };
 
 type ApyPlan = {
@@ -651,8 +687,14 @@ function applyValidatorApy(
  * than the window clamp to their activation epoch; per-rate nulls degrade
  * to apy=0 and surface via telemetry.
  */
-export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiValidator[]> => {
-  const res = await api.query({ query: SUI_SYSTEM_STATE });
+export const getValidatorsGraphQL = async (
+  api: SuiGraphQLClient,
+  signal?: AbortSignal,
+): Promise<SuiValidator[]> => {
+  const res = await api.query({
+    query: SUI_SYSTEM_STATE,
+    ...(signal && { signal }),
+  });
   const { epoch, stateJson } = unwrapAndValidateSystemState(res);
   const { activeValidators } = fromSystemStateJson(stateJson);
   const poolRefs = poolRefsFromSystemState(stateJson);
@@ -662,6 +704,7 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
     api,
     plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
     RATE_BATCH_CHUNK_SIZE,
+    signal,
   );
   const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed);
   return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
