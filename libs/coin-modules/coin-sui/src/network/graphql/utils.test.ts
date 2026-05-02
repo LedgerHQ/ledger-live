@@ -26,7 +26,7 @@ import {
   type StakedSuiJson,
   type StakeNode,
 } from "./utils";
-import { makeSystemStateJson } from "./utils.fixtures";
+import { makeSystemStateJson } from "./fixtures";
 
 // ----- shortenCoinType ----------------------------------------------------
 
