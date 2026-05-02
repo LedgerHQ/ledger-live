@@ -160,7 +160,7 @@ function unwrapGraphQL<T>(
     /** Stamped by {@link graphqlFetcher} for trace correlation. */
     __requestId?: string;
   },
-): T {
+): NonNullable<T> {
   const reqId = res.__requestId ? ` [reqId=${res.__requestId}]` : "";
   if (res.errors?.length) {
     const all = res.errors.map(e => e.message).join("; ");
@@ -169,7 +169,7 @@ function unwrapGraphQL<T>(
   if (res.data === null || res.data === undefined) {
     throw new Error(`GraphQL ${label} failed${reqId}: no data`);
   }
-  return res.data;
+  return res.data as NonNullable<T>;
 }
 
 /**
@@ -221,11 +221,10 @@ async function paginateWithCursorRecovery<T>(config: {
   signal?: AbortSignal | undefined;
 }): Promise<{ items: T[]; retries: number }> {
   const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
-  let totalRetries = 0;
   let seed: CursorPage<T> | undefined = config.seed;
 
-  // eslint-disable-next-line no-constant-condition -- exits via return/throw; retry budget in catch.
-  while (true) {
+  // attempt 0 = initial walk; attempt 1..maxRetries = post-cursor-expiry restarts.
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     config.signal?.throwIfAborted?.();
     const items: T[] = [];
     let cursor: string | null = null;
@@ -243,20 +242,21 @@ async function paginateWithCursorRecovery<T>(config: {
         cursor = page.endCursor;
         hasMore = page.hasNextPage && cursor !== null;
       }
-      return { items, retries: totalRetries };
+      return { items, retries: attempt };
     } catch (e) {
-      if (totalRetries < maxRetries && isCursorExpiredError(e)) {
-        totalRetries++;
+      if (attempt < maxRetries && isCursorExpiredError(e)) {
         log("warn", "sui-graphql:cursor-expired", {
           source: config.source,
-          retry: totalRetries,
+          retry: attempt + 1,
         });
         seed = undefined; // expired with the original cursor
-        continue; // outer-loop restart resets `items`, `cursor`, `hasMore`
+        continue;
       }
       throw e;
     }
   }
+  // Unreachable: the loop body always returns or throws.
+  throw new Error(`paginateWithCursorRecovery: exhausted ${maxRetries} retries without resolution`);
 }
 
 // ============================================================================
@@ -543,6 +543,12 @@ export const getCheckpointGraphQL = async (
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
   // UInt53 is a JSON number both directions; server rejects quoted strings.
   const seq = typeof id === "number" ? id : Number(id);
+  if (!Number.isFinite(seq)) {
+    // Defence in depth: the dispatcher in sdk.ts already routes digests to JSON-RPC.
+    throw new Error(
+      `getCheckpointGraphQL: not a sequence number (id=${id}); digest lookups must route to JSON-RPC.`,
+    );
+  }
   const res = await api.query({
     query: CHECKPOINT_BY_SEQUENCE,
     variables: { sequenceNumber: seq },

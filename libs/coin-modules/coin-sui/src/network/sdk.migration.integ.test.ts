@@ -24,6 +24,18 @@ const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
  */
 const STABLE_CHECKPOINT_LOOKBACK = 1000n;
 
+const TOLERANCE = {
+  /** Max checkpoint-sequence delta between transports for `getLastBlock`; chain advances ~3 cps. */
+  lastBlockSequenceWindow: 100n,
+  /** `getStakesRaw` reward parity: 1 % relative or 0.0001 SUI absolute floor (whichever larger). */
+  stakeRewardAbsoluteMist: 100_000n,
+  stakeRewardRelativeBps: 100n,
+  /** Max `stakeRequestEpoch` delta — GraphQL derives it as `activeEpoch − 1`. */
+  stakeRequestEpochDelta: 1,
+  /** APY drift between JSON-RPC indexer and our 30-epoch live snapshot — see `getValidators`. */
+  validatorApyAbsolute: 0.05,
+} as const;
+
 // Resolved at suite startup against the live JSON-RPC endpoint — see
 // STABLE_CHECKPOINT_LOOKBACK above for the rationale.
 let stableCheckpointSequence: string;
@@ -109,13 +121,11 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
       expect(BigInt(rpc.sequenceNumber)).toBeGreaterThan(0n);
       expect(BigInt(gql.sequenceNumber)).toBeGreaterThan(0n);
 
-      // The chain may advance a few checkpoints between calls. SUI
-      // produces ~3 checkpoints/sec, so a 100-checkpoint window covers
-      // network latency + retries comfortably.
+      // Chain advances ~3 cps between calls; window covers latency + retries.
       const a = BigInt(rpc.sequenceNumber);
       const b = BigInt(gql.sequenceNumber);
       const diff = a > b ? a - b : b - a;
-      expect(diff).toBeLessThan(100n);
+      expect(diff).toBeLessThan(TOLERANCE.lastBlockSequenceWindow);
 
       // timestampMs should be a parseable epoch-millis string
       expect(Number.isFinite(Number(rpc.timestampMs))).toBe(true);
@@ -186,16 +196,14 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
           const reqDiff = Math.abs(
             Number(gStake.stakeRequestEpoch) - Number(rStake.stakeRequestEpoch),
           );
-          expect(reqDiff).toBeLessThanOrEqual(1);
+          expect(reqDiff).toBeLessThanOrEqual(TOLERANCE.stakeRequestEpochDelta);
 
           // Active stake reward — both compute via the same pool-token
-          // exchange-rate formula but may round differently. Allow
-          // 1% relative tolerance and a 100k MIST (0.0001 SUI) absolute
-          // floor for very small stakes.
+          // exchange-rate formula but may round differently.
           if (gStake.status === "Active" && rStake.status === "Active") {
             expectClose(gStake.estimatedReward, rStake.estimatedReward, {
-              absolute: 100_000n,
-              relativeBps: 100n, // 1%
+              absolute: TOLERANCE.stakeRewardAbsoluteMist,
+              relativeBps: TOLERANCE.stakeRewardRelativeBps,
             });
           }
         }
@@ -227,11 +235,10 @@ describe("JSON-RPC vs GraphQL parity (live mainnet)", () => {
         // mainnet at ~1-2 percentage points: JSON-RPC's
         // `getValidatorsApy` is fed by an indexer that smooths across
         // multiple epochs, while we read a single 30-epoch lookback
-        // snapshot live. 5 percentage-point absolute tolerance covers
-        // observed drift with headroom for occasional reward-event
-        // skew at epoch boundaries.
+        // snapshot live. Tolerance covers observed drift with headroom
+        // for occasional reward-event skew at epoch boundaries.
         if (Number.isFinite(r[i].apy) && Number.isFinite(g[i].apy)) {
-          expect(Math.abs(g[i].apy - r[i].apy)).toBeLessThan(0.05);
+          expect(Math.abs(g[i].apy - r[i].apy)).toBeLessThan(TOLERANCE.validatorApyAbsolute);
         }
       }
     });

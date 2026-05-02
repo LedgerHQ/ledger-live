@@ -212,7 +212,7 @@ describe("graphqlFetcher: request-ID logging", () => {
     await flushMicrotasks();
 
     const errorLog = logMock.mock.calls.find(
-      c => c[1] === "(network/sdk): GraphQL response with errors",
+      c => c[0] === "coin:sui" && c[1] === "(network/sdk): GraphQL response with errors",
     );
     expect(errorLog).toBeDefined();
     expect(errorLog?.[2]).toMatchObject({
@@ -238,7 +238,7 @@ describe("graphqlFetcher: request-ID logging", () => {
     await flushMicrotasks();
 
     const errorLog = logMock.mock.calls.find(
-      c => c[1] === "(network/sdk): GraphQL response with errors",
+      c => c[0] === "coin:sui" && c[1] === "(network/sdk): GraphQL response with errors",
     );
     expect(errorLog?.[2]).toMatchObject({ errorCount: 3, firstError: "first" });
   });
@@ -253,7 +253,7 @@ describe("graphqlFetcher: request-ID logging", () => {
     await flushMicrotasks();
 
     const errorLog = logMock.mock.calls.find(
-      c => c[1] === "(network/sdk): GraphQL response with errors",
+      c => c[0] === "coin:sui" && c[1] === "(network/sdk): GraphQL response with errors",
     );
     expect(errorLog).toBeUndefined();
   });
@@ -267,7 +267,9 @@ describe("graphqlFetcher: request-ID logging", () => {
 
     const httpLog = logMock.mock.calls.find(
       c =>
-        c[1] === "(network/sdk): GraphQL response" && (c[2] as { status?: number })?.status === 500,
+        c[0] === "coin:sui" &&
+        c[1] === "(network/sdk): GraphQL response" &&
+        (c[2] as { status?: number })?.status === 500,
     );
     expect(httpLog).toBeDefined();
     expect((httpLog?.[2] as { requestId?: string }).requestId).toBe("req-500");
@@ -281,7 +283,9 @@ describe("graphqlFetcher: request-ID logging", () => {
     await graphqlFetcher("https://endpoint/graphql", { method: "POST", body: "{}" });
     await flushMicrotasks();
 
-    const sdkLogs = logMock.mock.calls.filter(c => String(c[1] ?? "").startsWith("(network/sdk):"));
+    const sdkLogs = logMock.mock.calls.filter(
+      c => c[0] === "coin:sui" && String(c[1] ?? "").startsWith("(network/sdk):"),
+    );
     expect(sdkLogs).toHaveLength(0);
   });
 });

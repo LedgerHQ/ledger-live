@@ -409,13 +409,7 @@ describe("getStakesRaw on GraphQL transport", () => {
       const owner = addr("66");
       const POOL = "0xpoolReward";
 
-      // Pool current rate (sui_balance/pool_token_balance from system state):
-      //   sui_balance = 1_100_000 ; pool_token_balance = 1_000_000  → ratio 1.1
-      // Activation rate at epoch 50: ratio 1.0
-      // Stake of 100 principal:
-      //   pool_tokens = 100 * 1_000_000 / 1_000_000 = 100
-      //   current_value = 100 * 1_100_000 / 1_000_000 = 110
-      //   estimatedReward = 10
+      // Pool ratio 1.1 vs activation ratio 1.0 → 100 principal grows to 110 → reward 10.
       const query = jest
         .fn()
         .mockResolvedValueOnce(
@@ -493,7 +487,6 @@ describe("getStakesRaw on GraphQL transport", () => {
 
       await getStakesRaw(owner, "sui-graphql-stakes-dedup");
 
-      // 3 stakes → de-duped to 2 unique tuples → 2 parallel single-query round-trips.
       const vars = singleRateVars(query);
       expect(vars).toHaveLength(2);
       expect(new Set(vars.map(v => v.literal))).toEqual(new Set(["50u64", "60u64"]));
@@ -584,6 +577,33 @@ describe("getStakesRaw on GraphQL transport", () => {
     });
   });
 
+  describe("AbortSignal", () => {
+    test("rejects before paginating when the signal is already aborted at entry", async () => {
+      // Mock client ignores `signal`, so both initial queries still fire; the
+      // throwIfAborted gate inside `getStakesRaw` is what must short-circuit
+      // before pagination enters.
+      const owner = addr("ac");
+      const POOL = "0xpoolPreAbort";
+      const controller = new AbortController();
+      controller.abort(new DOMException("preabort", "AbortError"));
+
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(fakeSystemStateQuery("100", [{ poolId: POOL }]))
+        .mockResolvedValueOnce(
+          fakeStakesPage([pendingStake("0xa", POOL)], { hasNextPage: true, endCursor: "c1" }),
+        );
+      mockNext({ query });
+
+      await expect(
+        getStakesRaw(owner, "sui-graphql-stakes-pre-abort", controller.signal),
+      ).rejects.toThrow(/preabort|aborted/i);
+
+      // Only the parallel initial pair — pagination must never enter.
+      expect(query).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe("AbortSignal mid-pagination", () => {
     test("rejects without retrying when aborted between pages", async () => {
       // Outer-loop abort gate must propagate without entering a new fetch.
@@ -619,6 +639,20 @@ describe("getStakesRaw on GraphQL transport", () => {
 });
 
 describe("getValidators on GraphQL transport", () => {
+  test("propagates errors[] from SUI_SYSTEM_STATE without attempting any rate fetches", async () => {
+    const query = jest.fn().mockResolvedValueOnce({
+      errors: [{ message: "system state unavailable" }, { message: "epoch boundary" }],
+    });
+    mockNext({ query });
+
+    await expect(getValidators("sui-graphql-validators-state-error")).rejects.toThrow(
+      /system state unavailable; epoch boundary/,
+    );
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(singleRateCalls(query)).toHaveLength(0);
+    expect(batchExchangeRateCalls(query)).toHaveLength(0);
+  });
+
   test("maps active_validators to SuiValidatorSummary[] and falls back to apy=0 when rate fetch fails", async () => {
     const query = jest
       .fn()
@@ -731,7 +765,6 @@ describe("getValidators on GraphQL transport", () => {
       const result = await getValidators("sui-graphql-validators-chunked");
 
       expect(result).toHaveLength(N);
-      // 1 system-state + 1 batched + PARTIAL_CHUNK singles.
       expect(query).toHaveBeenCalledTimes(1 + 1 + PARTIAL_CHUNK);
       expect(batchExchangeRateCalls(query)).toHaveLength(1);
       expect(singleRateCalls(query)).toHaveLength(PARTIAL_CHUNK);
