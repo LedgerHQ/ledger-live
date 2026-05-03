@@ -3130,21 +3130,10 @@ describe("filterOperations", () => {
 
     test("toBlockInfo should map checkpoints correctly", async () => {
       const result = await sdk.toBlockInfo({
-        checkpointCommitments: [],
         digest: "0xaaaaaaaaa",
         previousDigest: "0xbbbbbbbbbb",
-        epoch: "",
-        epochRollingGasCostSummary: {
-          computationCost: "",
-          nonRefundableStorageFee: "",
-          storageCost: "",
-          storageRebate: "",
-        },
-        networkTotalTransactions: "",
         sequenceNumber: "42",
         timestampMs: "1751696298663",
-        transactions: [],
-        validatorSignature: "",
       });
       expect(result).toEqual({
         height: 42,

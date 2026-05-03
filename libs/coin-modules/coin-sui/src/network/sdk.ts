@@ -703,11 +703,16 @@ export function alpacaTransactionToOp(
 }
 
 /**
- * Convert a SUI RPC checkpoint info to a {@link BlockInfo}.
- *
- * @param checkpoint SUI RPC checkpoint info
+ * Convert a SUI RPC checkpoint info to a {@link BlockInfo}. Param is narrowed
+ * to the four fields actually read so the GraphQL helper output flows through
+ * the same mapper without an inline duplicate.
  */
-export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
+export function toBlockInfo(
+  checkpoint: Pick<
+    Checkpoint,
+    "digest" | "sequenceNumber" | "timestampMs" | "previousDigest"
+  >,
+): BlockInfo {
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
@@ -1310,14 +1315,7 @@ export const getBlockInfo = async (
         }
         const cp = await getBlockInfoFieldsGraphQL(api, Number(id), sig);
         if (!cp) throw new Error(`GraphQL Checkpoint not found: ${id}`);
-        return {
-          height: Number(cp.sequenceNumber),
-          hash: cp.digest,
-          time: new Date(Number(cp.timestampMs)),
-          ...(cp.previousDigest && {
-            parent: { height: Number(cp.sequenceNumber) - 1, hash: cp.previousDigest },
-          }),
-        };
+        return toBlockInfo(cp);
       },
     },
     signal,
@@ -1350,17 +1348,7 @@ export const getBlock = async (
         const block = await getBlockGraphQL(api, Number(id), sig);
         if (!block) throw new Error(`GraphQL Block not found: ${id}`);
         return {
-          info: {
-            height: Number(block.info.sequenceNumber),
-            hash: block.info.digest,
-            time: new Date(Number(block.info.timestampMs)),
-            ...(block.info.previousDigest && {
-              parent: {
-                height: Number(block.info.sequenceNumber) - 1,
-                hash: block.info.previousDigest,
-              },
-            }),
-          },
+          info: toBlockInfo(block.info),
           transactions: block.transactions
             .filter(tx => !isSettlementTransaction(tx))
             .map(toBlockTransaction),
@@ -1902,13 +1890,7 @@ export const getValidators = (currencyId?: string, signal?: AbortSignal): Promis
           api.getLatestSuiSystemState(),
           api.getValidatorsApy(),
         ]);
-        const hash = apys.reduce(
-          (acc, item) => {
-            acc[item.address] = item.apy;
-            return acc;
-          },
-          {} as Record<string, number>,
-        );
+        const hash = Object.fromEntries(apys.map(({ address, apy }) => [address, apy]));
         return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
       },
       graphql: getValidatorsGraphQL,
