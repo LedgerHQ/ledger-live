@@ -8,7 +8,6 @@ import {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
-  getStakes,
   getValidators,
 } from "./sdk";
 
@@ -22,7 +21,6 @@ export {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
-  getStakes,
   getValidators,
 };
 
@@ -36,6 +34,5 @@ export default {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
-  getStakes,
   getValidators,
 };

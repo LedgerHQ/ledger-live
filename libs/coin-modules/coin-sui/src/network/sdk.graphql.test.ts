@@ -1,13 +1,20 @@
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import coinConfig from "../config";
 import { mist } from "../constants";
-import { GRAPHQL_MAINNET_URL, STAKES_PAGE_SIZE } from "./graphql/constants";
+import {
+  APY_LOOKBACK_EPOCHS,
+  GRAPHQL_MAINNET_URL,
+  RATE_BATCH_CHUNK_SIZE,
+  STAKES_PAGE_SIZE,
+} from "./graphql/constants";
 import { UNKNOWN_VALIDATOR } from "./graphql/utils";
 import {
+  executeTransactionBlock,
   getAllBalancesCached,
   getCheckpoint,
   getLastBlock,
   getDelegatedStakes,
+  getValidators,
 } from "./sdk";
 import {
   addr,
@@ -15,9 +22,11 @@ import {
   bindMockNextGraphQLClient,
   expectActive,
   fakeBalance,
+  fakeSingleRate,
   fakeStakeNode,
   fakeStakesPage,
   fakeSystemStateQuery,
+  fakeUniformBatchRates,
   fakeUniformSingleRate,
   singleRateCalls,
   singleRateVars,
@@ -58,7 +67,7 @@ beforeEach(() => {
   unexpectedJsonRpc.mockClear();
   // Default-on: every test in this suite needs the GraphQL branch.
   coinConfig.setCoinConfig(() => ({
-    node: { url: GRAPHQL_MAINNET_URL },
+    node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
     status: { type: "active" },
     features: { graphql: true },
   }));
@@ -662,5 +671,267 @@ describe("getDelegatedStakes on GraphQL transport", () => {
 
       expect(query).toHaveBeenCalledTimes(2);
     });
+  });
+});
+
+describe("getValidators on GraphQL transport", () => {
+  it("should propagate errors[] from SUI_SYSTEM_STATE without attempting any rate fetches", async () => {
+    // GIVEN
+    const query = jest.fn().mockResolvedValueOnce({
+      errors: [{ message: "system state unavailable" }, { message: "epoch boundary" }],
+    });
+    mockNext({ query });
+
+    // WHEN / THEN
+    await expect(getValidators("sui-graphql-validators-state-error")).rejects.toThrow(
+      /system state unavailable; epoch boundary/,
+    );
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(singleRateCalls(query)).toHaveLength(0);
+    expect(batchExchangeRateCalls(query)).toHaveLength(0);
+  });
+
+  it("should map active_validators to SuiValidatorSummary[] and fall back to apy=0 on rate-fetch failure", async () => {
+    // GIVEN
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce(
+        fakeSystemStateQuery("42", [
+          { poolId: "0xp1", validatorAddress: "0xv1", name: "V1" },
+          { poolId: "0xp2", validatorAddress: "0xv2", name: "V2" },
+        ]),
+      )
+      // Rate lookups return nulls → fetchExchangeRate returns null → APY = 0.
+      .mockResolvedValueOnce({ data: { address: { dynamicField: null } } })
+      .mockResolvedValueOnce({ data: { address: { dynamicField: null } } });
+    mockNext({ query });
+
+    // WHEN
+    const result = await getValidators("sui-graphql-validators-1");
+
+    // THEN
+    expect(result).toHaveLength(2);
+    const v1 = result.find(v => v.suiAddress === "0xv1")!;
+    expect(v1.name).toBe("V1");
+    expect(v1.description).toBe("desc");
+    expect(v1.imageUrl).toBe("https://logo");
+    expect(v1.projectUrl).toBe("https://project");
+    expect(v1.commissionRate).toBe("500");
+    expect(v1.stakingPoolSuiBalance).toBe(mist(1_000));
+    expect(v1.apy).toBe(0);
+  });
+
+  describe("APY computation", () => {
+    it("should compute APY from a 30-epoch lookback rate per validator", async () => {
+      // GIVEN
+      // Pool current rate ratio 1.01 (1% above past).
+      const CURRENT_EPOCH = 1000;
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery(String(CURRENT_EPOCH), [
+            {
+              poolId: "0xpA",
+              suiBalance: 1_010_000,
+              poolTokenBalance: 1_000_000,
+              exchangeRatesId: "0xratesV",
+            },
+          ]),
+        )
+        .mockResolvedValueOnce(fakeUniformSingleRate());
+      mockNext({ query });
+
+      // WHEN
+      const result = await getValidators("sui-graphql-validators-apy");
+
+      // THEN
+      expect(result).toHaveLength(1);
+      const v = result[0];
+      // Past=1.0, current=1.01, 30 epochs → APY ≈ 1.01^(365/30) − 1 ≈ 0.1295
+      expect(v.apy).toBeGreaterThan(0.12);
+      expect(v.apy).toBeLessThan(0.14);
+
+      // 1 plan < RATE_BATCH_CHUNK_SIZE → tail path (single query).
+      expect(singleRateVars(query)).toEqual([
+        { table: "0xratesV", literal: `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64` },
+      ]);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
+    });
+
+    it("should fan out a tail-sized validator set into parallel single-query rate fetches", async () => {
+      // GIVEN
+      const CURRENT_EPOCH = 1000;
+      const lookback = `${CURRENT_EPOCH - APY_LOOKBACK_EPOCHS}u64`;
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery(String(CURRENT_EPOCH), [
+            { poolId: "0xpA", exchangeRatesId: "0xratesA" },
+            { poolId: "0xpB", exchangeRatesId: "0xratesB" },
+            { poolId: "0xpC", exchangeRatesId: "0xratesC" },
+          ]),
+        )
+        .mockResolvedValueOnce(fakeUniformSingleRate())
+        .mockResolvedValueOnce(fakeUniformSingleRate())
+        .mockResolvedValueOnce(fakeUniformSingleRate());
+      mockNext({ query });
+
+      // WHEN
+      await getValidators("sui-graphql-validators-batch");
+
+      // THEN
+      // 1 system-state + 3 parallel single-query rate fetches (N<RATE_BATCH_CHUNK_SIZE).
+      expect(query).toHaveBeenCalledTimes(4);
+      expect(singleRateVars(query)).toEqual([
+        { table: "0xratesA", literal: lookback },
+        { table: "0xratesB", literal: lookback },
+        { table: "0xratesC", literal: lookback },
+      ]);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
+    });
+
+    it("should ride BATCH_RATES_15 for full chunks and parallel singles for the tail", async () => {
+      // GIVEN
+      const FULL_CHUNK = RATE_BATCH_CHUNK_SIZE;
+      const PARTIAL_CHUNK = 7;
+      const N = FULL_CHUNK + PARTIAL_CHUNK;
+      const validators = Array.from({ length: N }, (_, i) => ({
+        poolId: `0xp${i}`,
+        exchangeRatesId: `0xrates${i}`,
+      }));
+      const query = jest.fn().mockResolvedValueOnce(fakeSystemStateQuery("1000", validators));
+      // Chunk 0 (size FULL_CHUNK) → one BATCH_RATES_15 round-trip.
+      query.mockResolvedValueOnce(fakeUniformBatchRates(FULL_CHUNK));
+      // Chunk 1 (size PARTIAL_CHUNK) → PARTIAL_CHUNK parallel single-query round-trips.
+      for (let i = 0; i < PARTIAL_CHUNK; i++) {
+        query.mockResolvedValueOnce(fakeUniformSingleRate());
+      }
+      mockNext({ query });
+
+      // WHEN
+      const result = await getValidators("sui-graphql-validators-chunked");
+
+      // THEN
+      expect(result).toHaveLength(N);
+      expect(query).toHaveBeenCalledTimes(1 + 1 + PARTIAL_CHUNK);
+      expect(batchExchangeRateCalls(query)).toHaveLength(1);
+      expect(singleRateCalls(query)).toHaveLength(PARTIAL_CHUNK);
+      // The single batch carries every variable for the full chunk.
+      const batch = batchExchangeRateCalls(query)[0];
+      expect(Object.keys(batch[0].variables)).toHaveLength(FULL_CHUNK * 2);
+    });
+
+    it("should clamp the past epoch to the pool's activation_epoch for young pools", async () => {
+      // GIVEN
+      // Pool only 5 epochs old — activation_epoch = 95. Desired lookback
+      // 100 − 30 = 70 predates activation, so the helper clamps to 95.
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery("100", [
+            { poolId: "0xpY", activationEpoch: 95, exchangeRatesId: "0xratesY" },
+          ]),
+        )
+        .mockResolvedValueOnce(fakeUniformSingleRate());
+      mockNext({ query });
+
+      // WHEN
+      await getValidators("sui-graphql-validators-young-pool");
+
+      // THEN
+      expect(singleRateVars(query)).toEqual([{ table: "0xratesY", literal: "95u64" }]);
+    });
+
+    it("should return [] for an empty active_validators set without any rate fetch", async () => {
+      // GIVEN
+      const query = jest.fn().mockResolvedValueOnce(fakeSystemStateQuery("100", []));
+      mockNext({ query });
+
+      // WHEN
+      const result = await getValidators("sui-graphql-validators-empty");
+
+      // THEN
+      expect(result).toEqual([]);
+      // No rate calls (single or batched) — no validators to plan for.
+      expect(singleRateCalls(query)).toHaveLength(0);
+      expect(batchExchangeRateCalls(query)).toHaveLength(0);
+      expect(query).toHaveBeenCalledTimes(1);
+    });
+
+    it("should degrade every validator to apy=0 when every rate lookup returns null", async () => {
+      // GIVEN
+      const query = jest
+        .fn()
+        .mockResolvedValueOnce(
+          fakeSystemStateQuery("1000", [
+            { poolId: "0xpA", exchangeRatesId: "0xratesA" },
+            { poolId: "0xpB", exchangeRatesId: "0xratesB" },
+            { poolId: "0xpC", exchangeRatesId: "0xratesC" },
+          ]),
+        )
+        // All three rate lookups come back as `null` (table has no entry at the
+        // requested epoch) — every validator must degrade to apy=0.
+        .mockResolvedValueOnce(fakeSingleRate(null))
+        .mockResolvedValueOnce(fakeSingleRate(null))
+        .mockResolvedValueOnce(fakeSingleRate(null));
+      mockNext({ query });
+
+      // WHEN
+      const result = await getValidators("sui-graphql-validators-all-null-batch");
+
+      // THEN
+      expect(result).toHaveLength(3);
+      expect(result.map(v => v.apy)).toEqual([0, 0, 0]);
+    });
+  });
+});
+
+// Unit-only by design: live broadcast has irreversible chain effects, so the
+// mutation handler is exercised via mocks here. The integ suite never invokes
+// `executeTransactionBlock` with `features.graphql=true` against mainnet.
+describe("executeTransactionBlock on GraphQL transport (mock)", () => {
+  it("should encode the BCS bytes as Base64 and forward the signatures verbatim", async () => {
+    // GIVEN
+    const txBytes = new Uint8Array([0xde, 0xad, 0xbe, 0xef]); // 4-byte fixture
+    const signatures = ["sig0-base64", "sig1-base64"];
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        executeTransaction: {
+          effects: { digest: "0xabc123", status: "SUCCESS" },
+        },
+      },
+    });
+    mockNext({ query });
+
+    // WHEN
+    const result = await executeTransactionBlock(
+      { transactionBlock: txBytes, signature: signatures } as never,
+      "sui-graphql-execute-tx",
+    );
+
+    // THEN
+    expect(query).toHaveBeenCalledTimes(1);
+    const variables = query.mock.calls[0][0].variables;
+    // BCS bytes 0xdeadbeef → "3q2+7w==" in standard Base64.
+    expect(variables.transactionDataBcs).toBe("3q2+7w==");
+    expect(variables.signatures).toEqual(signatures);
+    expect(result).toMatchObject({ digest: "0xabc123" });
+  });
+
+  it("should accept a single signature string and lift it into the array form", async () => {
+    // GIVEN
+    const query = jest.fn().mockResolvedValueOnce({
+      data: { executeTransaction: { effects: { digest: "0xfff", status: "SUCCESS" } } },
+    });
+    mockNext({ query });
+
+    // WHEN
+    await executeTransactionBlock(
+      { transactionBlock: new Uint8Array([0]), signature: "single-sig" } as never,
+      "sui-graphql-execute-tx-single",
+    );
+
+    // THEN
+    expect(query.mock.calls[0][0].variables.signatures).toEqual(["single-sig"]);
   });
 });

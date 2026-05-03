@@ -21,22 +21,32 @@ describe("Configuration", () => {
     coinConfig.setCoinConfig(() => ({
       node: {
         url: "123",
+        graphqlUrl: "456",
       },
       status: {
         type: "active",
       },
+      features: { graphql: false },
     }));
   });
 
   describe("getCoinConfig", () => {
     it("should return default config when no currency is provided", () => {
       const config = coinConfig.getCoinConfig();
-      expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
+      expect(config).toEqual({
+        node: { url: "123", graphqlUrl: "456" },
+        status: { type: "active" },
+        features: { graphql: false },
+      });
     });
 
     it("should return config for specific currency", () => {
       const config = coinConfig.getCoinConfig(mockCurrency.id);
-      expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
+      expect(config).toEqual({
+        node: { url: "123", graphqlUrl: "456" },
+        status: { type: "active" },
+        features: { graphql: false },
+      });
     });
   });
 });

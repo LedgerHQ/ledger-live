@@ -1,21 +1,36 @@
 import { log } from "@ledgerhq/logs";
-import { CoinBalance, Checkpoint, DelegatedStake } from "@mysten/sui/jsonRpc";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
+import {
+  CoinBalance,
+  Checkpoint,
+  DelegatedStake,
+  type SuiTransactionBlockResponse,
+} from "@mysten/sui/jsonRpc";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
-import { normalizeSuiAddress } from "@mysten/sui/utils";
+import { normalizeSuiAddress, toBase64 } from "@mysten/sui/utils";
 import coinConfig from "../config";
+import type { SuiValidator } from "../types";
 import { fetcher, inferNetworkFromUrl, type Inputs } from "./fetcher";
 import {
   BATCH_RATES_15,
+  BLOCK_BY_SEQUENCE,
   CHECKPOINT_BY_SEQUENCE,
   EXCHANGE_RATE_AT_EPOCH,
+  EXECUTE_TRANSACTION,
   LATEST_CHECKPOINT_SEQUENCE,
+  SIMULATE_TRANSACTION,
   STAKED_SUI_OBJECTS_BY_OWNER,
   SUI_SYSTEM_STATE,
+  TRANSACTION_BY_DIGEST,
+  TRANSACTIONS_BY_AFFECTED_ADDRESS,
   type SuiSystemStateResult,
 } from "./graphql/queries";
+import { graphqlTxToJsonRpcResponse } from "./graphql/transactions";
 import {
   assertSystemStateJson,
+  computeApy,
   computeStakeRewards,
+  extractFailureError,
   fromSystemStateJson,
   groupStakedSuiByPool,
   isCursorExpiredError,
@@ -32,8 +47,13 @@ import {
 } from "./graphql/utils";
 import type { VariablesOf } from "./graphql/tada";
 import {
+  APY_LOOKBACK_EPOCHS,
+  BLOCK_TXS_PAGE_SIZE,
+  EVENTS_PAGE_SIZE,
   MAX_CURSOR_RETRIES,
+  MAX_PAGES,
   RATE_BATCH_CHUNK_SIZE,
+  RATE_CHUNK_CONCURRENCY,
   STAKES_PAGE_SIZE,
 } from "./graphql/constants";
 export type AsyncGraphQLApiFunction<T> = (
@@ -106,30 +126,35 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
       });
     }
     body.__requestId = requestId;
+    // Body has been decompressed and re-stringified — drop the upstream
+    // content-encoding/length so middleware doesn't try to re-decode.
+    const headers = new Headers(res.headers);
+    const stripped = headers.get("content-encoding");
+    headers.delete("content-encoding");
+    headers.delete("content-length");
+    if (debug && stripped) {
+      log("coin:sui", "(network/sdk): GraphQL response stripped content-encoding", {
+        encoding: stripped,
+        requestId,
+      });
+    }
     return new Response(JSON.stringify(body), {
       status: res.status,
       statusText: res.statusText,
-      headers: res.headers,
+      headers,
     });
   });
 };
 
-/** GraphQL counterpart of `withApi`; coexists until the JSON-RPC sunset on 2026-07-31. */
 export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
   currencyId?: string,
   signal?: AbortSignal,
 ): Promise<T> {
-  const url = coinConfig.getCoinConfig(currencyId).node.url;
-  const network = inferNetworkFromUrl(url) as
-    | "mainnet"
-    | "testnet"
-    | "devnet"
-    | "localnet"
-    | "unknown";
+  const url = coinConfig.getCoinConfig(currencyId).node.graphqlUrl;
   const api = new SuiGraphQLClient({
     url,
-    network,
+    network: inferNetworkFromUrl(url),
     fetch: graphqlFetcher as typeof fetch,
   });
   return execute(api, signal);
@@ -209,10 +234,16 @@ async function paginateWithCursorRecovery<T>(config: {
     const items: T[] = [];
     let cursor: string | null = null;
     let hasMore = true;
+    let pages = 0;
     try {
       while (hasMore) {
         // Per-page abort gate so a long pagination short-circuits without relying on transport cooperation.
         config.signal?.throwIfAborted?.();
+        if (pages >= MAX_PAGES) {
+          throw new Error(
+            `paginateWithCursorRecovery(${config.source}): exceeded ${MAX_PAGES} pages — server hasNextPage may be misreporting.`,
+          );
+        }
         let page: CursorPage<T>;
         if (seed !== undefined) {
           page = seed;
@@ -223,6 +254,7 @@ async function paginateWithCursorRecovery<T>(config: {
         items.push(...page.items);
         cursor = page.endCursor;
         hasMore = page.hasNextPage && cursor !== null;
+        pages++;
       }
       return { items, retries: attempt };
     } catch (e) {
@@ -357,29 +389,6 @@ async function fetchActivationRates(
 // Exchange-rate dynamic-field lookups
 // ============================================================================
 
-/** Worker-pool style: at most `limit` concurrent `fn` invocations; returns results in input order. */
-async function mapWithLimit<T, R>(
-  items: ReadonlyArray<T>,
-  limit: number,
-  fn: (x: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const out: R[] = new Array(items.length);
-  let cursor = 0;
-  const workerCount = Math.max(1, Math.min(limit, items.length));
-  await Promise.all(
-    Array.from({ length: workerCount }, async () => {
-      while (cursor < items.length) {
-        const i = cursor++;
-        out[i] = await fn(items[i], i);
-      }
-    }),
-  );
-  return out;
-}
-
-/** Concurrent in-flight rate-chunk requests; bounded to avoid bursty fan-out under heavy validator sets. */
-const RATE_CHUNK_CONCURRENCY = 4;
-
 /** `null` when the rates table has no entry at that epoch; errors propagate for caller-side triage. */
 async function fetchExchangeRate(
   api: SuiGraphQLClient,
@@ -409,7 +418,7 @@ async function fetchExchangeRatesBatched(
     chunks.push(plans.slice(i, i + safeChunk));
   }
   // INVARIANT: each chunk's result length matches its input length — null-pad on failure preserves 1:1.
-  const settled = await mapWithLimit(chunks, RATE_CHUNK_CONCURRENCY, async chunk => {
+  const settled = await promiseAllBatched(RATE_CHUNK_CONCURRENCY, chunks, async chunk => {
     try {
       return { ok: true as const, value: await fetchRateChunk(api, chunk, safeChunk, signal) };
     } catch (err) {
@@ -443,8 +452,8 @@ async function fetchRateChunk(
   signal?: AbortSignal,
 ): Promise<Array<ExchangeRate | null>> {
   if (plans.length < fullChunkSize) {
-    // Same cap applies: tail fan-out can be ~14 single queries; smooth them through a worker pool.
-    return mapWithLimit(plans, RATE_CHUNK_CONCURRENCY, p =>
+    // Same cap applies: tail fan-out can be ~14 single queries; smooth them through the batched runner.
+    return promiseAllBatched(RATE_CHUNK_CONCURRENCY, [...plans], p =>
       fetchExchangeRate(api, p.exchangeRatesId, p.epoch, signal),
     );
   }
@@ -568,3 +577,361 @@ export const getLastBlockGraphQL = async (
   return getCheckpointGraphQL(api, seq, signal);
 };
 
+type ApyPlan = {
+  suiAddress: string;
+  exchangeRatesId: string;
+  currentRate: ExchangeRate;
+  pastEpoch: number;
+};
+
+/** One historical-rate plan per active validator with a known pool; orphans are skipped. */
+function planValidatorApyLookups(
+  poolRefs: Map<string, PoolRefs>,
+  poolToValidator: Map<string, string>,
+  currentEpoch: number,
+): ApyPlan[] {
+  const plans: ApyPlan[] = [];
+  for (const [stakingPoolId, refs] of poolRefs) {
+    const suiAddress = poolToValidator.get(stakingPoolId);
+    if (!suiAddress) continue;
+    // 30-epoch lookback; clamp to activation epoch for young pools.
+    const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
+    const pastEpoch = Math.max(desired, refs.activationEpoch);
+    plans.push({
+      suiAddress,
+      exchangeRatesId: refs.exchangeRatesId,
+      currentRate: refs.currentRate,
+      pastEpoch,
+    });
+  }
+  return plans;
+}
+
+/** Missing/failed rates degrade to apy=0; aggregate degradation surfaces via telemetry. */
+function applyValidatorApy(
+  plans: ReadonlyArray<ApyPlan>,
+  rates: ReadonlyArray<ExchangeRate | null>,
+  currentEpoch: number,
+  chunksFailed: number,
+  firstError?: string,
+): Map<string, number> {
+  const apyByAddress = new Map<string, number>();
+  let rateMissing = 0;
+  plans.forEach((p, idx) => {
+    const rate = rates[idx];
+    if (rate === null || rate === undefined) {
+      rateMissing++;
+      return; // degrade to 0
+    }
+    const epochsBetween = currentEpoch - p.pastEpoch;
+    apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
+  });
+  if (rateMissing > 0 || chunksFailed > 0) {
+    log("warn", "sui-graphql:rate-fetch-degraded", {
+      source: "validator-apy",
+      missing: rateMissing,
+      chunksFailed,
+      total: plans.length,
+      ...(firstError !== undefined && { firstError }),
+    });
+  }
+  return apyByAddress;
+}
+
+/**
+ * Active validator set with client-side APY over {@link APY_LOOKBACK_EPOCHS} (Mysten's formula).
+ * Young pools clamp the past epoch to activation; per-rate nulls degrade to apy=0. Honors `signal`.
+ */
+export const getValidatorsGraphQL = async (
+  api: SuiGraphQLClient,
+  signal?: AbortSignal,
+): Promise<SuiValidator[]> => {
+  const res = await api.query({
+    query: SUI_SYSTEM_STATE,
+    ...(signal && { signal }),
+  });
+  const { epoch, stateJson } = unwrapAndValidateSystemState(res);
+  const { activeValidators, poolToValidator } = fromSystemStateJson(stateJson);
+  const poolRefs = poolRefsFromSystemState(stateJson);
+  const currentEpoch = Number(epoch.epochId);
+  const plans = planValidatorApyLookups(poolRefs, poolToValidator, currentEpoch);
+  const { rates, chunksFailed, firstError } = await fetchExchangeRatesBatched(
+    api,
+    plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
+    RATE_BATCH_CHUNK_SIZE,
+    signal,
+  );
+  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed, firstError);
+  return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
+};
+
+// ============================================================================
+// Transaction history (`getOperations` + `getOperationExtra` paths)
+// ============================================================================
+
+/** Fetch a single transaction by digest, projected to JSON-RPC shape; null on miss. */
+export const getTransactionByDigestGraphQL = async (
+  api: SuiGraphQLClient,
+  digest: string,
+  signal?: AbortSignal,
+): Promise<SuiTransactionBlockResponse | null> => {
+  const res = await api.query({
+    query: TRANSACTION_BY_DIGEST,
+    variables: { digest, eventsFirst: EVENTS_PAGE_SIZE },
+    ...(signal && { signal }),
+  });
+  const tx = unwrapGraphQL("TransactionByDigest", res).transaction;
+  return tx ? graphqlTxToJsonRpcResponse(tx) : null;
+};
+
+/**
+ * Paginated transaction history via the `affectedAddress` filter — covers
+ * sender, sponsor, and recipient in one query. Backward pagination
+ * (`last`/`before`) yields newest-first order. `beforeCheckpoint`/
+ * `afterCheckpoint` translate alpaca-style cursors to a server-side filter.
+ */
+export const getTransactionsByAddressGraphQL = async (
+  api: SuiGraphQLClient,
+  address: string,
+  limit: number,
+  pageSize: number,
+  cursor: string | null = null,
+  signal?: AbortSignal,
+  filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
+): Promise<{ items: SuiTransactionBlockResponse[]; startCursor: string | null }> => {
+  const ownerAddr = normalizeSuiAddress(address);
+  const accumulated: SuiTransactionBlockResponse[] = [];
+  let nextBefore: string | null = cursor;
+  let pages = 0;
+
+  while (accumulated.length < limit) {
+    signal?.throwIfAborted?.();
+    if (pages >= MAX_PAGES) {
+      throw new Error(
+        `getTransactionsByAddressGraphQL: exceeded ${MAX_PAGES} pages — server hasPreviousPage may be misreporting.`,
+      );
+    }
+    const res = await api.query({
+      query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
+      variables: {
+        address: ownerAddr,
+        last: pageSize,
+        before: nextBefore,
+        eventsFirst: EVENTS_PAGE_SIZE,
+        ...(filter?.beforeCheckpoint !== undefined && {
+          beforeCheckpoint: filter.beforeCheckpoint,
+        }),
+        ...(filter?.afterCheckpoint !== undefined && { afterCheckpoint: filter.afterCheckpoint }),
+      },
+      ...(signal && { signal }),
+    });
+    const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
+    if (!conn) break;
+    // `last/before` returns ascending-within-page; reverse so the accumulated array
+    // stays newest-first across pages, matching the JSON-RPC contract.
+    const nodes = (conn.nodes ?? []).slice().reverse();
+    for (const node of nodes) {
+      accumulated.push(graphqlTxToJsonRpcResponse(node));
+      if (accumulated.length >= limit) break;
+    }
+    if (!conn.pageInfo.hasPreviousPage || !conn.pageInfo.startCursor) {
+      nextBefore = null;
+      break;
+    }
+    nextBefore = conn.pageInfo.startCursor;
+    pages++;
+  }
+
+  return { items: accumulated, startCursor: nextBefore };
+};
+
+/**
+ * Resolve a transaction digest to its checkpoint sequence number. Used to
+ * translate `getListOperations`' alpaca-style `timestamp:digest` cursor into
+ * a server-side `beforeCheckpoint`/`afterCheckpoint` filter. Returns `null`
+ * if the digest isn't found or hasn't been finalised.
+ */
+export const resolveCheckpointSequenceForDigestGraphQL = async (
+  api: SuiGraphQLClient,
+  digest: string,
+  signal?: AbortSignal,
+): Promise<number | null> => {
+  const res = await api.query({
+    query: TRANSACTION_BY_DIGEST,
+    variables: { digest, eventsFirst: EVENTS_PAGE_SIZE },
+    ...(signal && { signal }),
+  });
+  const seq = unwrapGraphQL("TransactionByDigest", res).transaction?.effects?.checkpoint
+    ?.sequenceNumber;
+  return seq === undefined || seq === null ? null : Number(seq);
+};
+
+/**
+ * Per-page transaction history with the per-tx checkpoint digest exposed
+ * alongside (which `alpacaTransactionToOp` needs as a synthetic blockHash).
+ * Cheaper than the JSON-RPC version's separate per-checkpoint lookup —
+ * `checkpoint.digest` is fetched in the same `transactions` round-trip.
+ */
+export const getTransactionsWithCheckpointDigestsGraphQL = async (
+  api: SuiGraphQLClient,
+  address: string,
+  pageSize: number,
+  filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
+  signal?: AbortSignal,
+): Promise<{ tx: SuiTransactionBlockResponse; checkpointDigest: string | undefined }[]> => {
+  const ownerAddr = normalizeSuiAddress(address);
+  const res = await api.query({
+    query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
+    variables: {
+      address: ownerAddr,
+      last: pageSize,
+      before: null,
+      eventsFirst: EVENTS_PAGE_SIZE,
+      ...(filter?.beforeCheckpoint !== undefined && { beforeCheckpoint: filter.beforeCheckpoint }),
+      ...(filter?.afterCheckpoint !== undefined && { afterCheckpoint: filter.afterCheckpoint }),
+    },
+    ...(signal && { signal }),
+  });
+  const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
+  const nodes = (conn?.nodes ?? []).slice().reverse(); // newest-first across the page
+  return nodes.map(node => ({
+    tx: graphqlTxToJsonRpcResponse(node),
+    checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
+  }));
+};
+
+/**
+ * Checkpoint metadata only — `digest`, `sequenceNumber`, `timestampMs`,
+ * `previousDigest`. Caller (`getBlockInfo`) reshapes to `BlockInfo`.
+ */
+export const getBlockInfoFieldsGraphQL = async (
+  api: SuiGraphQLClient,
+  sequenceNumber: number,
+  signal?: AbortSignal,
+): Promise<{
+  digest: string;
+  sequenceNumber: string;
+  timestampMs: string;
+  previousDigest: string | null;
+} | null> => {
+  const res = await api.query({
+    query: CHECKPOINT_BY_SEQUENCE,
+    variables: { sequenceNumber },
+    ...(signal && { signal }),
+  });
+  const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
+  if (!cp) return null;
+  return {
+    digest: cp.digest ?? "",
+    sequenceNumber: String(cp.sequenceNumber),
+    timestampMs: cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0",
+    previousDigest: cp.previousCheckpointDigest ?? null,
+  };
+};
+
+/**
+ * Checkpoint + every transaction in the block. Each tx is run through the
+ * shared `graphqlTxToJsonRpcResponse` adapter so `toBlockTransaction` works
+ * unchanged. The server caps `transactions(first:)` per page; this handler
+ * returns the first page only — sufficient for typical block sizes.
+ */
+export const getBlockGraphQL = async (
+  api: SuiGraphQLClient,
+  sequenceNumber: number,
+  signal?: AbortSignal,
+): Promise<{
+  info: {
+    digest: string;
+    sequenceNumber: string;
+    timestampMs: string;
+    previousDigest: string | null;
+  };
+  transactions: SuiTransactionBlockResponse[];
+} | null> => {
+  const res = await api.query({
+    query: BLOCK_BY_SEQUENCE,
+    variables: {
+      sequenceNumber,
+      txFirst: BLOCK_TXS_PAGE_SIZE,
+      eventsFirst: EVENTS_PAGE_SIZE,
+    },
+    ...(signal && { signal }),
+  });
+  const cp = unwrapGraphQL("BlockBySequence", res).checkpoint;
+  if (!cp) return null;
+  return {
+    info: {
+      digest: cp.digest ?? "",
+      sequenceNumber: String(cp.sequenceNumber),
+      timestampMs: cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0",
+      previousDigest: cp.previousCheckpointDigest ?? null,
+    },
+    transactions: (cp.transactions?.nodes ?? []).map(graphqlTxToJsonRpcResponse),
+  };
+};
+
+// ============================================================================
+// Write side (`paymentInfo` dry-run + `executeTransactionBlock` broadcast)
+// ============================================================================
+
+/** Uint8Array BCS → Base64 for `simulateTransaction`/`executeTransaction`; pass through if already encoded. */
+function bcsToBase64(transactionBlock: Uint8Array | string): string {
+  return typeof transactionBlock === "string" ? transactionBlock : toBase64(transactionBlock);
+}
+
+/** Dry-run via `simulateTransaction`; returns the gas summary in the shape `paymentInfo` consumes from JSON-RPC. */
+export const simulateTransactionGraphQL = async (
+  api: SuiGraphQLClient,
+  transactionBlock: Uint8Array | string,
+  signal?: AbortSignal,
+): Promise<{
+  gasBudget: string;
+  computationCost: string;
+  storageCost: string;
+  storageRebate: string;
+}> => {
+  const res = await api.query({
+    query: SIMULATE_TRANSACTION,
+    variables: { transaction: { bcs: { value: bcsToBase64(transactionBlock) } } },
+    ...(signal && { signal }),
+  });
+  const sim = unwrapGraphQL("SimulateTransaction", res).simulateTransaction;
+  const gas = sim.effects?.gasEffects?.gasSummary;
+  const budget = sim.effects?.transaction?.gasInput?.gasBudget;
+  return {
+    gasBudget: String(budget ?? "0"),
+    computationCost: String(gas?.computationCost ?? "0"),
+    storageCost: String(gas?.storageCost ?? "0"),
+    storageRebate: String(gas?.storageRebate ?? "0"),
+  };
+};
+
+/**
+ * Broadcast via the `executeTransaction` mutation; returns the digest + status subset that
+ * `executeTransactionBlock` consumes. GraphQL waits for finality but indexing of effects may lag —
+ * callers needing post-finality state must poll `transaction(digest:)` separately.
+ */
+export const executeTransactionGraphQL = async (
+  api: SuiGraphQLClient,
+  transactionBlock: Uint8Array | string,
+  signatures: string[],
+  signal?: AbortSignal,
+): Promise<{ digest: string; status: "SUCCESS" | "FAILURE" | null; error?: string }> => {
+  const res = await api.query({
+    query: EXECUTE_TRANSACTION,
+    variables: { transactionDataBcs: bcsToBase64(transactionBlock), signatures },
+    ...(signal && { signal }),
+  });
+  const eff = unwrapGraphQL("ExecuteTransaction", res).executeTransaction.effects;
+  const status = (eff?.status ?? null) as "SUCCESS" | "FAILURE" | null;
+  // Mine the error string for FAILURE so broadcast.ts can surface it; same shape as the read-side adapter.
+  const error =
+    status === "FAILURE"
+      ? extractFailureError((eff?.effectsJson ?? {}) as Record<string, unknown>)
+      : undefined;
+  return {
+    digest: eff?.digest ?? "",
+    status,
+    ...(error !== undefined && { error }),
+  };
+};

@@ -11,6 +11,8 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
+    "**/*.fixture.ts",
+    "**/*.fixtures.ts",
     "**/__tests__/**/*",
     "**/tests/**/*",
     "**/__mocks__/**/*",

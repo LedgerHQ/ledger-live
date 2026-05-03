@@ -1,4 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import { REQUEST_TIMEOUT_MS } from "./graphql/constants";
 
 export type Inputs = Parameters<typeof fetch>;
@@ -7,7 +8,7 @@ export type Inputs = Parameters<typeof fetch>;
 const RETRY_BACKOFF_BASE_MS = 200;
 const RETRY_BUDGET_DEFAULT = 3;
 
-export function inferNetworkFromUrl(url: string): string {
+export function inferNetworkFromUrl(url: string): SuiClientTypes.Network {
   if (url.includes("testnet")) return "testnet";
   if (url.includes("devnet")) return "devnet";
   if (url.includes("127.0.0.1") || url.includes("localhost")) return "localnet";

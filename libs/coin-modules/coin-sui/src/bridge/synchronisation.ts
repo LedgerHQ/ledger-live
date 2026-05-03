@@ -109,12 +109,6 @@ export const getAccountShape: GetAccountShapeStream<SuiAccount> = (info, syncCon
     return () => controller.abort();
   });
 
-/**
- * Synchronise the account with the latest operations and balance.
- * @function sync
- * @param {Object} params - The parameters for synchronisation.
- * @returns {Promise<void>} A promise that resolves when synchronisation is complete.
- */
 export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 async function buildSubAccounts({

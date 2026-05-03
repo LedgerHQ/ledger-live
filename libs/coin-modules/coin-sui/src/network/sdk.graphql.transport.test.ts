@@ -1,10 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
+import { JsonRpcHTTPTransport } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
 import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
-import { getAllBalancesCached, getCheckpoint, isGraphQLEnabled } from "./sdk";
-import { graphqlFetcher } from "./sdk.graphql";
+import { getAllBalancesCached, getCheckpoint, isGraphQLEnabled, withApi } from "./sdk";
+import { graphqlFetcher, withGraphQLApi } from "./sdk.graphql";
 import { bindMockNextGraphQLClient } from "./sdk.graphql.fixtures";
 
 // JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
@@ -23,6 +24,8 @@ jest.mock("@ledgerhq/logs", () => ({
 
 jest.mock("@mysten/sui/jsonRpc", () => ({
   ...jest.requireActual("@mysten/sui/jsonRpc"),
+  // Captures the `{ url }` arg so the dual-URL routing test can assert it.
+  JsonRpcHTTPTransport: jest.fn(),
   SuiJsonRpcClient: jest.fn().mockImplementation(
     () =>
       new Proxy(
@@ -39,13 +42,15 @@ jest.mock("@mysten/sui/jsonRpc", () => ({
 }));
 
 const SuiGraphQLClientMock = SuiGraphQLClient as unknown as jest.Mock;
+const JsonRpcHTTPTransportMock = JsonRpcHTTPTransport as unknown as jest.Mock;
 const mockNext = bindMockNextGraphQLClient(SuiGraphQLClientMock);
 
 beforeEach(() => {
   SuiGraphQLClientMock.mockReset();
+  JsonRpcHTTPTransportMock.mockReset();
   unexpectedJsonRpc.mockClear();
   coinConfig.setCoinConfig(() => ({
-    node: { url: GRAPHQL_MAINNET_URL },
+    node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
     status: { type: "active" },
     features: { graphql: true },
   }));
@@ -56,22 +61,16 @@ beforeEach(() => {
 describe("isGraphQLEnabled", () => {
   it("should return true when features.graphql === true", () => {
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
+      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
       features: { graphql: true },
     }));
     expect(isGraphQLEnabled()).toBe(true);
   });
 
-  it("should return false when features.graphql is missing or false", () => {
+  it("should return false when features.graphql === false", () => {
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
-      status: { type: "active" },
-    }));
-    expect(isGraphQLEnabled()).toBe(false);
-
-    coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
+      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
       features: { graphql: false },
     }));
@@ -81,8 +80,9 @@ describe("isGraphQLEnabled", () => {
   it("should treat the feature flag as the single source of truth, not node.url", () => {
     // Even with a GraphQL-shaped URL, the flag-off path should report false.
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
+      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
+      features: { graphql: false },
     }));
     expect(isGraphQLEnabled()).toBe(false);
   });
@@ -364,5 +364,60 @@ describe("fetcher: caller-signal abort propagation", () => {
       /network error/,
     );
     expect(mockFetch).toHaveBeenCalledTimes(3);
+  });
+});
+
+// ---- dual-URL routing invariant ----
+//
+// Locks in the round-1 architectural fix: `withApi` (build path) MUST read `node.url`
+// (JSON-RPC fullnode) and `withGraphQLApi` MUST read `node.graphqlUrl`, regardless of
+// `features.graphql`. A future config refactor that conflated the two would silently
+// reintroduce the original `paymentInfo` failure documented in `sdk.migration.integ.test.ts`.
+
+describe("dispatcher dual-URL routing", () => {
+  const JSON_RPC_URL = "https://json-rpc.example.test";
+  const GRAPHQL_URL = "https://graphql.example.test/graphql";
+
+  beforeEach(() => {
+    coinConfig.setCoinConfig(() => ({
+      node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
+      status: { type: "active" },
+      features: { graphql: true },
+    }));
+  });
+
+  it("withApi reads node.url even when features.graphql is true", async () => {
+    // GIVEN
+    const captured = jest.fn();
+
+    // WHEN
+    await withApi(async () => {
+      captured();
+      return null;
+    });
+
+    // THEN
+    expect(captured).toHaveBeenCalledTimes(1);
+    expect(JsonRpcHTTPTransportMock).toHaveBeenCalledTimes(1);
+    expect(JsonRpcHTTPTransportMock.mock.calls[0][0]).toMatchObject({ url: JSON_RPC_URL });
+    expect(SuiGraphQLClientMock).not.toHaveBeenCalled();
+  });
+
+  it("withGraphQLApi reads node.graphqlUrl, not node.url", async () => {
+    // GIVEN
+    const captured = jest.fn();
+    mockNext();
+
+    // WHEN
+    await withGraphQLApi(async () => {
+      captured();
+      return null;
+    });
+
+    // THEN
+    expect(captured).toHaveBeenCalledTimes(1);
+    expect(SuiGraphQLClientMock).toHaveBeenCalledTimes(1);
+    expect(SuiGraphQLClientMock.mock.calls[0][0]).toMatchObject({ url: GRAPHQL_URL });
+    expect(JsonRpcHTTPTransportMock).not.toHaveBeenCalled();
   });
 });

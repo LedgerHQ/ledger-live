@@ -4,11 +4,20 @@
  */
 import { ONE_SUI } from "../../constants";
 import { RATE_BATCH_CHUNK_SIZE } from "./constants";
-import { BATCH_RATES_15 } from "./queries";
+import {
+  BATCH_RATES_15,
+  CHECKPOINT_BY_SEQUENCE,
+  EXCHANGE_RATE_AT_EPOCH,
+  LATEST_CHECKPOINT_SEQUENCE,
+  STAKED_SUI_OBJECTS_BY_OWNER,
+  SUI_SYSTEM_STATE,
+} from "./queries";
 import {
   assertSystemStateJson,
+  computeApy,
   computeEstimatedReward,
   computeStakeRewards,
+  extractFailureError,
   fromSystemStateJson,
   groupStakedSuiByPool,
   isStakedSuiJson,
@@ -507,6 +516,86 @@ describe("computeEstimatedReward", () => {
   });
 });
 
+// ----- computeApy ---------------------------------------------------------
+
+describe("computeApy", () => {
+  it("should compute annualised growth from a 30-epoch window", () => {
+    // GIVEN
+    // Past ratio = 1.0; current ratio = 1.01 → 1% growth over 30 epochs.
+    // APY = (1.01)^(365/30) − 1 ≈ 0.1295.
+    const currentRate = { sui_amount: 1010, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
+    expect(apy).toBeGreaterThan(0.12);
+    expect(apy).toBeLessThan(0.14);
+  });
+
+  it("should return 0 when current_ratio == past_ratio (no growth)", () => {
+    // GIVEN
+    const rate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(rate, rate, 30);
+
+    // THEN
+    expect(apy).toBe(0);
+  });
+
+  it("should clamp negative growth to 0", () => {
+    // GIVEN
+    // Past rate higher than current — pool effectively bled value.
+    // Real wallets shouldn't show a negative APY; clamp to 0.
+    const currentRate = { sui_amount: 990, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
+    expect(apy).toBe(0);
+  });
+
+  it("should return 0 for non-positive epochsBetween", () => {
+    // GIVEN
+    const currentRate = { sui_amount: 1010, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 1000 };
+
+    // WHEN / THEN
+    expect(computeApy(currentRate, pastRate, 0)).toBe(0);
+    expect(computeApy(currentRate, pastRate, -5)).toBe(0);
+  });
+
+  it("should return 0 when past rate has zero pool_token_amount (degenerate)", () => {
+    // GIVEN
+    const currentRate = { sui_amount: 1010, pool_token_amount: 1000 };
+    const pastRate = { sui_amount: 1000, pool_token_amount: 0 };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
+    expect(apy).toBe(0);
+  });
+
+  it("should match known JSON-RPC values within tolerance for a realistic pool", () => {
+    // GIVEN
+    // 0.3% growth over 30 epochs annualises to ~3.7%, in the 2-4% real-world band.
+    const currentRate = { sui_amount: "10030000000000000", pool_token_amount: "10000000000000000" };
+    const pastRate = { sui_amount: "10000000000000000", pool_token_amount: "10000000000000000" };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
+    expect(apy).toBeGreaterThan(0.03);
+    expect(apy).toBeLessThan(0.04);
+  });
+});
+
 // ----- validateStakedSuiNodes ---------------------------------------------
 
 describe("validateStakedSuiNodes", () => {
@@ -826,5 +915,62 @@ describe("BATCH_RATES_15 structural invariant", () => {
     // THEN
     expect(op.kind).toBe("OperationDefinition");
     expect(aliases).toBe(RATE_BATCH_CHUNK_SIZE);
+  });
+});
+
+// ----- extractFailureError ------------------------------------------------
+
+describe("extractFailureError", () => {
+  it("prefers status.error.description when present", () => {
+    expect(extractFailureError({ status: { error: { description: "out of gas" } } })).toBe(
+      "out of gas",
+    );
+  });
+
+  it("falls back to a prettified status.error.kind enum", () => {
+    expect(extractFailureError({ status: { error: { kind: "INSUFFICIENT_GAS" } } })).toBe(
+      "insufficient gas",
+    );
+  });
+
+  it("returns the generic placeholder when neither description nor kind is present", () => {
+    expect(extractFailureError({ status: { error: {} } })).toBe("transaction execution failed");
+    expect(extractFailureError({})).toBe("transaction execution failed");
+    expect(extractFailureError({ status: "FAILURE" })).toBe("transaction execution failed");
+  });
+
+  it("treats empty-string description/kind as missing and falls through", () => {
+    expect(
+      extractFailureError({ status: { error: { description: "", kind: "INVARIANT_VIOLATION" } } }),
+    ).toBe("invariant violation");
+    expect(extractFailureError({ status: { error: { description: "", kind: "" } } })).toBe(
+      "transaction execution failed",
+    );
+  });
+});
+
+// ----- Schema-availability invariant --------------------------------------
+
+describe("graphql query availability", () => {
+  // Guards against Mysten removing or renaming a query we depend on.
+  // Re-running `pnpm graphql:codegen:fetch` regenerates `introspection.json` —
+  // a structural drift will trip the parser before this test even runs.
+  const op = (doc: unknown): { kind?: string; name?: { value: string } } =>
+    (doc as { definitions: ReadonlyArray<unknown> }).definitions[0] as {
+      kind?: string;
+      name?: { value: string };
+    };
+
+  it.each([
+    ["CHECKPOINT_BY_SEQUENCE", CHECKPOINT_BY_SEQUENCE, "CheckpointBySequence"],
+    ["LATEST_CHECKPOINT_SEQUENCE", LATEST_CHECKPOINT_SEQUENCE, "LatestCheckpointSequence"],
+    ["STAKED_SUI_OBJECTS_BY_OWNER", STAKED_SUI_OBJECTS_BY_OWNER, "StakedSuiObjects"],
+    ["SUI_SYSTEM_STATE", SUI_SYSTEM_STATE, "SuiSystemState"],
+    ["EXCHANGE_RATE_AT_EPOCH", EXCHANGE_RATE_AT_EPOCH, "ExchangeRateAtEpoch"],
+    ["BATCH_RATES_15", BATCH_RATES_15, "BatchExchangeRates"],
+  ])("%s parses as a typed OperationDefinition", (_label, doc, expectedName) => {
+    const def = op(doc);
+    expect(def.kind).toBe("OperationDefinition");
+    expect(def.name?.value).toBe(expectedName);
   });
 });

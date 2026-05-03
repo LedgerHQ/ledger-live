@@ -11,11 +11,67 @@ export const CHECKPOINT_BY_SEQUENCE = graphql(`
       digest
       sequenceNumber
       timestamp
+      previousCheckpointDigest
     }
   }
 `);
 
 export type CheckpointBySequenceResult = ResultOf<typeof CHECKPOINT_BY_SEQUENCE>;
+
+/**
+ * Block-explorer view: checkpoint metadata + all transactions in the block.
+ * Reuses the same per-transaction field set as
+ * {@link TRANSACTIONS_BY_AFFECTED_ADDRESS} so the adapter is shared.
+ */
+export const BLOCK_BY_SEQUENCE = graphql(`
+  query BlockBySequence($sequenceNumber: UInt53, $txFirst: Int!, $eventsFirst: Int!) {
+    checkpoint(sequenceNumber: $sequenceNumber) {
+      digest
+      sequenceNumber
+      timestamp
+      previousCheckpointDigest
+      transactions(first: $txFirst) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          digest
+          transactionJson
+          effects {
+            status
+            timestamp
+            balanceChangesJson
+            effectsJson
+            gasEffects {
+              gasSummary {
+                computationCost
+                storageCost
+                storageRebate
+                nonRefundableStorageFee
+              }
+            }
+            events(first: $eventsFirst) {
+              nodes {
+                contents {
+                  type {
+                    repr
+                  }
+                  json
+                }
+              }
+            }
+            checkpoint {
+              sequenceNumber
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type BlockBySequenceResult = ResultOf<typeof BLOCK_BY_SEQUENCE>;
 
 /** Latest checkpoint's sequence number (`sui_getLatestCheckpointSequenceNumber` equivalent). */
 export const LATEST_CHECKPOINT_SEQUENCE = graphql(`
@@ -123,3 +179,151 @@ export const BATCH_RATES_15 = graphql(`
 `);
 
 export type BatchRates15Result = ResultOf<typeof BATCH_RATES_15>;
+
+/**
+ * Single transaction by digest. JSON blobs (`transactionJson`, `effectsJson`,
+ * `balanceChangesJson`) carry the gRPC-proto shapes the existing JSON-RPC
+ * mappers consume; typed `gasEffects` and `events` are read directly.
+ */
+export const TRANSACTION_BY_DIGEST = graphql(`
+  query TransactionByDigest($digest: String!, $eventsFirst: Int!) {
+    transaction(digest: $digest) {
+      digest
+      transactionJson
+      effects {
+        status
+        timestamp
+        balanceChangesJson
+        effectsJson
+        gasEffects {
+          gasSummary {
+            computationCost
+            storageCost
+            storageRebate
+            nonRefundableStorageFee
+          }
+        }
+        events(first: $eventsFirst) {
+          nodes {
+            contents {
+              type {
+                repr
+              }
+              json
+            }
+          }
+        }
+        checkpoint {
+          sequenceNumber
+        }
+      }
+    }
+  }
+`);
+
+export type TransactionByDigestResult = ResultOf<typeof TRANSACTION_BY_DIGEST>;
+
+/**
+ * Paginated transaction history for an address. `affectedAddress` matches sender, sponsor, OR
+ * recipient — collapsing the JSON-RPC IN+OUT merge into a single query. Backward pagination
+ * (`last`/`before`) yields newest-first order; `beforeCheckpoint`/`afterCheckpoint` pin the
+ * page boundary for `getListOperations`'s cursor translation.
+ */
+export const TRANSACTIONS_BY_AFFECTED_ADDRESS = graphql(`
+  query TransactionsByAffectedAddress(
+    $address: SuiAddress!
+    $last: Int
+    $before: String
+    $beforeCheckpoint: UInt53
+    $afterCheckpoint: UInt53
+    $eventsFirst: Int!
+  ) {
+    transactions(
+      filter: {
+        affectedAddress: $address
+        beforeCheckpoint: $beforeCheckpoint
+        afterCheckpoint: $afterCheckpoint
+      }
+      last: $last
+      before: $before
+    ) {
+      pageInfo {
+        hasPreviousPage
+        startCursor
+      }
+      nodes {
+        digest
+        transactionJson
+        effects {
+          status
+          timestamp
+          balanceChangesJson
+          effectsJson
+          gasEffects {
+            gasSummary {
+              computationCost
+              storageCost
+              storageRebate
+              nonRefundableStorageFee
+            }
+          }
+          events(first: $eventsFirst) {
+            nodes {
+              contents {
+                type {
+                  repr
+                }
+                json
+              }
+            }
+          }
+          checkpoint {
+            sequenceNumber
+            digest
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type TransactionsByAffectedAddressResult = ResultOf<typeof TRANSACTIONS_BY_AFFECTED_ADDRESS>;
+
+/** Dry-run a transaction (replaces JSON-RPC `dryRunTransactionBlock`); accepts already-built BCS. */
+export const SIMULATE_TRANSACTION = graphql(`
+  query SimulateTransaction($transaction: JSON!) {
+    simulateTransaction(transaction: $transaction, doGasSelection: false) {
+      effects {
+        gasEffects {
+          gasSummary {
+            computationCost
+            storageCost
+            storageRebate
+          }
+        }
+        transaction {
+          gasInput {
+            gasBudget
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type SimulateTransactionResult = ResultOf<typeof SIMULATE_TRANSACTION>;
+
+/** Broadcast a signed transaction (replaces JSON-RPC `executeTransactionBlock`); returns after finality on chain. */
+export const EXECUTE_TRANSACTION = graphql(`
+  mutation ExecuteTransaction($transactionDataBcs: Base64!, $signatures: [Base64!]!) {
+    executeTransaction(transactionDataBcs: $transactionDataBcs, signatures: $signatures) {
+      effects {
+        digest
+        status
+        effectsJson
+      }
+    }
+  }
+`);
+
+export type ExecuteTransactionResult = ResultOf<typeof EXECUTE_TRANSACTION>;

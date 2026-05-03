@@ -166,11 +166,77 @@
               "isDeprecated": false
             },
             {
+              "name": "previousCheckpointDigest",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
               "name": "timestamp",
               "args": [],
               "type": {
                 "kind": "SCALAR",
                 "name": "DateTime",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "transactions",
+              "args": [
+                {
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "filter",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TransactionFilter",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "TransactionConnection",
                 "ofType": null
               },
               "isDeprecated": false
@@ -317,11 +383,191 @@
           "possibleTypes": null
         },
         {
+          "kind": "OBJECT",
+          "name": "Event",
+          "fields": [
+            {
+              "name": "contents",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "MoveValue",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "EventConnection",
+          "fields": [
+            {
+              "name": "nodes",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "Event",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ExecutionResult",
+          "fields": [
+            {
+              "name": "effects",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "TransactionEffects",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "ExecutionStatus",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "SUCCESS",
+              "isDeprecated": false
+            },
+            {
+              "name": "FAILURE",
+              "isDeprecated": false
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
           "kind": "SCALAR",
           "name": "Float",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "GasCostSummary",
+          "fields": [
+            {
+              "name": "computationCost",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "UInt53",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "storageCost",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "UInt53",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "storageRebate",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "UInt53",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "nonRefundableStorageFee",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "UInt53",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "GasEffects",
+          "fields": [
+            {
+              "name": "gasSummary",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "GasCostSummary",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "GasInput",
+          "fields": [
+            {
+              "name": "gasBudget",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
           "enumValues": null,
           "possibleTypes": null
         },
@@ -506,6 +752,30 @@
         },
         {
           "kind": "OBJECT",
+          "name": "MoveType",
+          "fields": [
+            {
+              "name": "repr",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
           "name": "MoveValue",
           "fields": [
             {
@@ -514,6 +784,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "JSON",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "type",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "MoveType",
                 "ofType": null
               },
               "isDeprecated": false
@@ -527,7 +807,57 @@
         {
           "kind": "OBJECT",
           "name": "Mutation",
-          "fields": [],
+          "fields": [
+            {
+              "name": "executeTransaction",
+              "args": [
+                {
+                  "name": "transactionDataBcs",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Base64",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "signatures",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "LIST",
+                      "name": null,
+                      "ofType": {
+                        "kind": "NON_NULL",
+                        "name": null,
+                        "ofType": {
+                          "kind": "SCALAR",
+                          "name": "Base64",
+                          "ofType": null
+                        }
+                      }
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ExecutionResult",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            }
+          ],
           "inputFields": null,
           "interfaces": [],
           "enumValues": null,
@@ -565,6 +895,11 @@
               "kind": "OBJECT",
               "name": "MoveObject",
               "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "Transaction",
+              "ofType": null
             }
           ]
         },
@@ -592,6 +927,20 @@
           "name": "PageInfo",
           "fields": [
             {
+              "name": "hasPreviousPage",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            },
+            {
               "name": "hasNextPage",
               "args": [],
               "type": {
@@ -602,6 +951,16 @@
                   "name": "Boolean",
                   "ofType": null
                 }
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "startCursor",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               },
               "isDeprecated": false
             },
@@ -711,6 +1070,152 @@
                 "ofType": null
               },
               "isDeprecated": false
+            },
+            {
+              "name": "transaction",
+              "args": [
+                {
+                  "name": "digest",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Transaction",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "transactions",
+              "args": [
+                {
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "filter",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TransactionFilter",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "TransactionConnection",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "simulateTransaction",
+              "args": [
+                {
+                  "name": "transaction",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "JSON",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "checksEnabled",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "doGasSelection",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SimulationResult",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SimulationResult",
+          "fields": [
+            {
+              "name": "effects",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "TransactionEffects",
+                "ofType": null
+              },
+              "isDeprecated": false
             }
           ],
           "inputFields": null,
@@ -732,6 +1237,290 @@
           "name": "SuiAddress",
           "fields": null,
           "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Transaction",
+          "fields": [
+            {
+              "name": "digest",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "effects",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "TransactionEffects",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "gasInput",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "GasInput",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "transactionJson",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "Node",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "TransactionConnection",
+          "fields": [
+            {
+              "name": "pageInfo",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PageInfo",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "nodes",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "Transaction",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "TransactionEffects",
+          "fields": [
+            {
+              "name": "digest",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "transaction",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Transaction",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "checkpoint",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Checkpoint",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "status",
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "ExecutionStatus",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "timestamp",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "events",
+              "args": [
+                {
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "EventConnection",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "balanceChangesJson",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "effectsJson",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "isDeprecated": false
+            },
+            {
+              "name": "gasEffects",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "GasEffects",
+                "ofType": null
+              },
+              "isDeprecated": false
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "INPUT_OBJECT",
+          "name": "TransactionFilter",
+          "fields": null,
+          "inputFields": [
+            {
+              "name": "afterCheckpoint",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UInt53",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "beforeCheckpoint",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UInt53",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "affectedAddress",
+              "type": {
+                "kind": "SCALAR",
+                "name": "SuiAddress",
+                "ofType": null
+              },
+              "defaultValue": null
+            }
+          ],
           "interfaces": null,
           "enumValues": null,
           "possibleTypes": null
