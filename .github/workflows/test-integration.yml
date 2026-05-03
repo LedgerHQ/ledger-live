@@ -1,8 +1,8 @@
 name: "[Common] - Integration - Scheduled"
 
 on:
-  schedule:
-    - cron: 20 9 * * *
+  # schedule:  # DISABLED 2026-05-04: 100% failure rate since Apr 23 (27 runs), re-enable after root cause fixed
+  #   - cron: 20 9 * * *
 
   workflow_dispatch:
     inputs:

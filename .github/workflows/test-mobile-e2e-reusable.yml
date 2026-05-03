@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  schedule:
-    - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
+  # schedule:  # DISABLED 2026-05-04: 76% failure rate (Apr 22–May 1), re-enable after root cause fixed
+  #   - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
   workflow_dispatch:
     inputs:
       ref:
