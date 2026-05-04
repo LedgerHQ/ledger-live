@@ -12,12 +12,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import UnstakingValidationError from "./03-ValidationError";
 import UnstakingValidationSuccess from "./03-ValidationSuccess";
 import { SuiUnstakingFlowParamList } from "./types";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function UnstakingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -86,6 +88,11 @@ function UnstakingFlow() {
           headerTitle: "",
           headerRight: undefined,
           gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
     </Stack.Navigator>

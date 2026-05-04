@@ -12,12 +12,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import ValidationSuccess from "./04-ValidationSuccess";
 import ValidationError from "./04-ValidationError";
 import type { PolkadotBondFlowParamList } from "./types";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function BondFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavigatorConfig}>
@@ -82,6 +84,11 @@ function BondFlow() {
           gestureEnabled: false,
           headerLeft: undefined,
           headerRight: undefined,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
       <Stack.Screen

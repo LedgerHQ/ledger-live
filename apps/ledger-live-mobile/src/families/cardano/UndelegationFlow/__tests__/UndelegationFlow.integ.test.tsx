@@ -15,6 +15,7 @@ import { CardanoUndelegationFlowParamList } from "../types";
 import * as useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { http, HttpResponse } from "msw";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 let mockRewardsValue = new BigNumber("0");
 let mockDepositValue = "2000000";
@@ -88,16 +89,18 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const TestNavigator = () => (
   <QueryClientProvider client={new QueryClient()}>
-    <Stack.Navigator initialRouteName="Delegations">
-      <Stack.Screen name="Delegations">
-        {() => <CardanoDelegations account={mockAccount} />}
-      </Stack.Screen>
-      <Stack.Screen
-        name={NavigatorName.CardanoUndelegationFlow}
-        component={UndelegationFlow}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
+    <NotificationsPromptProvider>
+      <Stack.Navigator initialRouteName="Delegations">
+        <Stack.Screen name="Delegations">
+          {() => <CardanoDelegations account={mockAccount} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name={NavigatorName.CardanoUndelegationFlow}
+          component={UndelegationFlow}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>
   </QueryClientProvider>
 );
 

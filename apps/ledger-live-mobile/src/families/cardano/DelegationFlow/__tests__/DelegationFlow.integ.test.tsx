@@ -17,6 +17,7 @@ import { CardanoDelegationFlowParamList } from "../types";
 import { http, HttpResponse } from "msw";
 import { ScreenName } from "~/const";
 import * as useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 const mockAccount: CardanoAccount = getCardanoAccountFixture({
   delegation: {
@@ -99,10 +100,12 @@ const DummyScreen = ({
 
 const TestNavigator = () => (
   <QueryClientProvider client={new QueryClient()}>
-    <Stack.Navigator initialRouteName="Dummy">
-      <Stack.Screen name="Dummy" component={DummyScreen} />
-      <Stack.Screen name="FlowRoot" component={DelegationFlow} options={{ headerShown: false }} />
-    </Stack.Navigator>
+    <NotificationsPromptProvider>
+      <Stack.Navigator initialRouteName="Dummy">
+        <Stack.Screen name="Dummy" component={DummyScreen} />
+        <Stack.Screen name="FlowRoot" component={DelegationFlow} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>
   </QueryClientProvider>
 );
 
