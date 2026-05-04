@@ -38,7 +38,7 @@ export type StepProps = {
 
 // Props passed to OnboardModal from parent (e.g., modal data).
 export type UserProps = {
-  currency: CryptoCurrency | null;
+  currency: CryptoCurrency;
   editedNames: { [accountId: string]: string };
   selectedAccounts: Account[];
   isReonboarding?: boolean;
