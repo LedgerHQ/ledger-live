@@ -15,6 +15,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { track } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
 export interface DeviceSectionDevice {
@@ -69,21 +70,21 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   const hasDevices = devices.length > 0;
 
   const onAddDevice = useCallback(() => {
-    track("button_clicked", { button: "Add", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "Add", page: MY_WALLET_TRACKING_PAGE_NAME });
     navigation.navigate(ScreenName.BleDevicePairingFlow);
   }, [navigation]);
 
   const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
 
   const onExploreDevices = useCallback(() => {
-    track("button_clicked", { button: "ExploreDevices", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "ExploreDevices", page: MY_WALLET_TRACKING_PAGE_NAME });
     Linking.openURL(exploreDevicesUrl);
   }, [exploreDevicesUrl]);
 
   const onDevicePress = useCallback((device: DeviceSectionDevice) => {
     track("button_clicked", {
       button: "Device",
-      page: ScreenName.MyWallet,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
       deviceModelId: device.modelId,
     });
     setSelectedDevice({
