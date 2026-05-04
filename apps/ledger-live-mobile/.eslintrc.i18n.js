@@ -36,7 +36,7 @@ module.exports = {
         "src/screens/Settings/Experimental/**/*",
         "src/components/PerformanceConsole/**/*",
         "src/components/CustomImage/TestImage.tsx",
-        "src/mvvm/components/device-intent-executor/**/*",
+        "src/mvvm/components/DeviceIntentExecutor/**/*",
         "**/*Mock*",
         "__tests__/**/*",
         "e2e/**/*",
