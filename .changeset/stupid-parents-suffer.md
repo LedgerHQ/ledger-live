@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": minor
+"@ledgerhq/coin-aleo": minor
 ---
 
 getEstimatedSigningTime util function for Aleo
