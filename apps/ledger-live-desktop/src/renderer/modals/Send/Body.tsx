@@ -14,8 +14,8 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
@@ -180,6 +180,8 @@ const Body = ({
 
   invariant(account, "account required");
 
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+
   // make sure step id is in sync
   useEffect(() => {
     const stepId = params?.startWithWarning ? "warning" : null;
@@ -190,35 +192,31 @@ const Body = ({
   useEffect(() => {
     if (!transaction) return;
 
-    (async () => {
-      const bridge = await getAccountBridge(account, parentAccount);
-      let updatedTransaction = transaction;
-      let hasChanges = false;
+    let updatedTransaction = transaction;
+    let hasChanges = false;
 
-      if (maybeRecipient && !transaction.recipient) {
-        updatedTransaction = bridge.updateTransaction(updatedTransaction, {
-          recipient: maybeRecipient,
-        });
-        hasChanges = true;
-        onResetMaybeRecipient();
-      }
+    if (maybeRecipient && !transaction.recipient) {
+      updatedTransaction = bridge.updateTransaction(updatedTransaction, {
+        recipient: maybeRecipient,
+      });
+      hasChanges = true;
+      onResetMaybeRecipient();
+    }
 
-      if (maybeAmount && !maybeAmount.eq(transaction.amount || new BigNumber(0))) {
-        updatedTransaction = bridge.updateTransaction(updatedTransaction, { amount: maybeAmount });
-        hasChanges = true;
-        onResetMaybeAmount();
-      }
+    if (maybeAmount && !maybeAmount.eq(transaction.amount || new BigNumber(0))) {
+      updatedTransaction = bridge.updateTransaction(updatedTransaction, { amount: maybeAmount });
+      hasChanges = true;
+      onResetMaybeAmount();
+    }
 
-      if (hasChanges) {
-        setTransaction(updatedTransaction);
-      }
-    })();
+    if (hasChanges) {
+      setTransaction(updatedTransaction);
+    }
   }, [
+    bridge,
     maybeRecipient,
     maybeAmount,
     transaction,
-    account,
-    parentAccount,
     setTransaction,
     onResetMaybeRecipient,
     onResetMaybeAmount,
