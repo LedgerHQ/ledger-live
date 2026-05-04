@@ -6,7 +6,11 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import {
+  setupEnv,
+  performSwapUntilQuoteSelectionStep,
+  ensureTokenApproval,
+} from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
@@ -417,7 +421,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
-        await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
+        await ensureTokenApproval(fromAccount, provider, minAmount);
 
         if (provider.app) {
           if (provider.app !== exchangeApp) {
