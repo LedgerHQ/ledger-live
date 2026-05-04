@@ -61,7 +61,7 @@ export function assertSystemStateJson(x: unknown): asserts x is SuiSystemStateIn
   const root = ensureObject(x, "SuiSystemState payload");
   const validators = ensureObject(root.validators, "SuiSystemState.validators");
   if (!Array.isArray(validators.active_validators)) {
-    throw new Error(
+    throw new TypeError(
       "SuiSystemState.validators.active_validators is not an array — GraphQL schema may have drifted.",
     );
   }
@@ -94,8 +94,10 @@ export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
 // ----- Helpers ------------------------------------------------------------
 
 /** Stringify a Move u64 wire value; nullish → `""`. */
-const str = (v: string | number | null | undefined): string =>
-  v === null || v === undefined ? "" : typeof v === "number" ? String(v) : v;
+const str = (v: string | number | null | undefined): string => {
+  if (v === null || v === undefined) return "";
+  return typeof v === "number" ? String(v) : v;
+};
 
 /**
  * Normalise GraphQL's long padded Move type tags to JSON-RPC short form.
@@ -188,7 +190,7 @@ export function groupStakedSuiByPool(
         : {
             ...base,
             status: "Active",
-            estimatedReward: reward !== undefined ? reward.toString() : "0",
+            estimatedReward: reward?.toString() ?? "0",
           };
 
     let group = byPool.get(item.pool_id);
@@ -387,7 +389,7 @@ function isExchangeRateJson(x: unknown): x is ExchangeRate {
 export function parseExchangeRateNode(node: ExchangeRateAddrNode): ExchangeRate | null {
   if (!node) return null;
   const value = node.dynamicField?.value;
-  if (!value || value.__typename !== "MoveValue") return null;
+  if (value?.__typename !== "MoveValue") return null;
   if (!isExchangeRateJson(value.json)) return null;
   return { sui_amount: value.json.sui_amount, pool_token_amount: value.json.pool_token_amount };
 }

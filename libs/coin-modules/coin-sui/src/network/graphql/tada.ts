@@ -2,7 +2,7 @@
  * Typed `graphql` template tag bound to the SUI production schema. Introspection
  * lives at `./introspection.json` (mirrored at `./graphql-env.d.ts`); regenerate via codegen.
  */
-import { initGraphQLTada, type ResultOf, type VariablesOf } from "gql.tada";
+import { initGraphQLTada } from "gql.tada";
 import type { introspection } from "./graphql-env";
 
 /** Custom-scalar mapping; mirrors `@mysten/sui`'s `CustomScalars`, verified against live mainnet. */
@@ -26,4 +26,4 @@ export const graphql = initGraphQLTada<{
   scalars: SuiScalars;
 }>();
 
-export type { ResultOf, VariablesOf };
+export type { ResultOf, VariablesOf } from "gql.tada";

@@ -24,7 +24,7 @@ export {
   executeTransactionBlock,
   getStakes,
   getValidators,
-};
+} from "./sdk";
 
 export default {
   getAccountBalances,

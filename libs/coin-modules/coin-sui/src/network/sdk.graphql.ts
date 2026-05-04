@@ -74,7 +74,7 @@ function unwrapAndValidateSystemState(
 ): { epoch: NonNullable<SuiSystemStateResult["epoch"]>; stateJson: SuiSystemStateInnerJson } {
   const data = unwrapGraphQL("SystemState", systemRes);
   const epoch = data.epoch;
-  if (!epoch || !epoch.systemState?.json) {
+  if (!epoch?.systemState?.json) {
     throw new Error("GraphQL SystemState failed: no epoch payload");
   }
   const json = epoch.systemState.json;
@@ -101,10 +101,10 @@ type CursorPage<T> = {
 async function paginateWithCursorRecovery<T>(config: {
   source: string;
   fetchPage: (cursor: string | null) => Promise<CursorPage<T>>;
-  /** Pre-fetched first page. `undefined` allowed (exactOptionalPropertyTypes). */
-  seed?: CursorPage<T> | undefined;
-  maxRetries?: number | undefined;
-  signal?: AbortSignal | undefined;
+  /** Pre-fetched first page. Omit (don't pass `undefined`) under exactOptionalPropertyTypes. */
+  seed?: CursorPage<T>;
+  maxRetries?: number;
+  signal?: AbortSignal;
 }): Promise<{ items: T[]; retries: number }> {
   const maxRetries = config.maxRetries ?? MAX_CURSOR_RETRIES;
   let seed: CursorPage<T> | undefined = config.seed;
@@ -120,11 +120,11 @@ async function paginateWithCursorRecovery<T>(config: {
         // Per-page abort gate so a long pagination short-circuits without relying on transport cooperation.
         config.signal?.throwIfAborted?.();
         let page: CursorPage<T>;
-        if (seed !== undefined) {
+        if (seed === undefined) {
+          page = await config.fetchPage(cursor);
+        } else {
           page = seed;
           seed = undefined;
-        } else {
-          page = await config.fetchPage(cursor);
         }
         items.push(...page.items);
         cursor = page.endCursor;
@@ -206,7 +206,7 @@ async function paginateRemainingStakes(
 ): Promise<StakeNode[]> {
   const { items } = await paginateWithCursorRecovery<StakeNode>({
     source: "stakes",
-    seed,
+    ...(seed !== undefined && { seed }),
     ...(signal && { signal }),
     fetchPage: async cursor => {
       const res = await api.query({
@@ -337,11 +337,11 @@ async function fetchExchangeRatesBatched(
       rates.push(...res.value);
     } else {
       chunksFailed++;
-      if (firstError === undefined) firstError = res.message;
+      firstError ??= res.message;
       for (let i = 0; i < res.size; i++) rates.push(null);
     }
   }
-  return firstError !== undefined ? { rates, chunksFailed, firstError } : { rates, chunksFailed };
+  return firstError === undefined ? { rates, chunksFailed } : { rates, chunksFailed, firstError };
 }
 
 /** Full chunks ride {@link BATCH_RATES_15}; tail chunks fall back to parallel {@link fetchExchangeRate}. */
@@ -439,7 +439,7 @@ export const getCheckpointGraphQL = async (
   const seq = typeof id === "number" ? id : Number(id);
   if (!Number.isFinite(seq)) {
     // Defence in depth: the dispatcher in sdk.ts already routes digests to JSON-RPC.
-    throw new Error(
+    throw new TypeError(
       `getCheckpointGraphQL: not a sequence number (id=${id}); digest lookups must route to JSON-RPC.`,
     );
   }
