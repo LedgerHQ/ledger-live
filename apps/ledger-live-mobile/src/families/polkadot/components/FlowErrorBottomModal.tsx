@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigationProp } from "@react-navigation/native";
@@ -25,6 +25,7 @@ const FlowErrorBottomModal = ({
   parentAccount,
   bridgeError,
 }: Props) => {
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
   const onBridgeErrorCancel = useCallback(() => {
@@ -35,9 +36,8 @@ const FlowErrorBottomModal = ({
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
-  }, [setTransaction, account, parentAccount, transaction]);
+  }, [setTransaction, bridge, transaction]);
   return (
     <GenericErrorBottomModal
       error={bridgeErr}

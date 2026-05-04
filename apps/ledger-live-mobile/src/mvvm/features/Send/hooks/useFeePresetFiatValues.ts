@@ -1,8 +1,8 @@
 import { useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { FeePresetOption } from "./useFeePresetOptions";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -47,7 +47,7 @@ type Params = Readonly<{
 }>;
 
 async function estimateFiatValuesForPresets(params: {
-  bridge: ReturnType<typeof getAccountBridge>;
+  bridge: AccountBridge<Transaction>;
   mainAccount: Account;
   transaction: Transaction;
   presetIds: readonly string[];
@@ -111,6 +111,7 @@ export function useFeePresetFiatValues({
   enabled,
   shouldEstimateWithBridge,
 }: Params): FeeFiatMap {
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const convertCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   const [fiatByPreset, setFiatByPreset] = useState<FeeFiatMap>({});
 
@@ -178,21 +179,17 @@ export function useFeePresetFiatValues({
     requestIdRef.current += 1;
     const requestId = requestIdRef.current;
 
-    const bridge = getAccountBridge(account, parentAccount ?? undefined);
-
-    queueMicrotask(() => {
-      estimateFiatValuesForPresets({
-        bridge,
-        mainAccount,
-        transaction,
-        presetIds,
-        convertCountervalue,
-        fiatUnit,
-        locale,
-        requestId,
-        requestIdRef,
-        setFiatByPreset,
-      });
+    estimateFiatValuesForPresets({
+      bridge,
+      mainAccount,
+      transaction,
+      presetIds,
+      convertCountervalue,
+      fiatUnit,
+      locale,
+      requestId,
+      requestIdRef,
+      setFiatByPreset,
     });
   }
 

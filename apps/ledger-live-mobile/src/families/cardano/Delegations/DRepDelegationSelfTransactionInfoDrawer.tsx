@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
+import type { CardanoAccount, Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
 import { StyleSheet } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "~/const";
@@ -10,7 +10,7 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { Trans } from "~/context/Locale";
 import Button from "~/components/wrappedUi/Button";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import BigNumber from "bignumber.js";
 
 // It is to cover minimum utxo amount for internal transaction
@@ -26,9 +26,9 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
   onClose: () => void;
 }>) {
   const navigation = useNavigation();
+  const bridge = useAccountBridge<CardanoTransaction>(account);
 
   const onContinue = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       recipient: account.freshAddress,
@@ -44,7 +44,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
         transaction: updatedTransaction,
       },
     });
-  }, [account, navigation, onClose]);
+  }, [account, bridge, navigation, onClose]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
