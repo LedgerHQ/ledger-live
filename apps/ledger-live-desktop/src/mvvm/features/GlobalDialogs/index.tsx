@@ -3,12 +3,12 @@ import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
 import PerpsSignRoot from "LLD/features/Perps/screens/PerpsSign/PerpsSignDialog";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
-import LiveAppModal from "LLD/features/LiveAppModal";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
 const FinishOnboardingDialog = lazy(() => import("LLD/features/FinishOnboarding/FinishOnboardingDialog"));
 const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
+const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -17,7 +17,6 @@ const GlobalDialogs = () => (
     <SendFlowRoot />
     <PerpsSignRoot />
     <ActionConfirmationDialog />
-    <LiveAppModal />
     <Suspense fallback={null}>
       <ReleaseNotes />
     </Suspense>
@@ -29,6 +28,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <PtxInfoDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <LiveAppModal />
     </Suspense>
   </>
 );

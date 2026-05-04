@@ -102,7 +102,7 @@ import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
-import LiveAppModalScreen from "~/screens/LiveAppModal";
+import LiveAppModalScreen from "LLM/features/LiveAppModal";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 

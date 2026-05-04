@@ -1,6 +1,5 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
-import type { LiveAppModalSize } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import type { LiveAppModalParams } from "~/renderer/reducers/liveAppModal";
@@ -9,11 +8,6 @@ import useLiveAppModalContentViewModel, {
 } from "./useLiveAppModalContentViewModel";
 import useEarnLiveAppModalContentViewModel from "./useEarnLiveAppModalContentViewModel";
 import type { LiveAppModalViewProps } from "./useLiveAppModalViewModel";
-
-const DIALOG_SIZE_CLASSES: Record<LiveAppModalSize, string> = {
-  medium: "w-[500px] max-w-[calc(100%-2rem)] h-[60vh] max-h-[60vh]",
-  full: "w-[720px] max-w-[calc(100%-2rem)] h-[75vh] max-h-[75vh]",
-};
 
 const LiveAppModalContent = ({
   params,
@@ -68,11 +62,10 @@ const EarnLiveAppModalContent = ({
 
 const LiveAppModalView = ({ isOpen, params, onOpenChange, onClose }: LiveAppModalViewProps) => {
   if (!isOpen || !params) return null;
-  const size = params.size ?? "full";
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className={DIALOG_SIZE_CLASSES[size]}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange} height="fixed">
+      <DialogContent>
         {params.useCase === "earn" ? (
           <EarnLiveAppModalContent params={params} onClose={onClose} />
         ) : (
