@@ -982,7 +982,10 @@ describe("apiClient", () => {
         method: "GET",
         url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/pubkey`,
       });
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual({
+        data: mockResponse,
+        stickySessionCookie: null,
+      });
     });
 
     it("should use the correct network type in the URL", async () => {
@@ -996,6 +999,24 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledWith({
         method: "GET",
         url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/pubkey`,
+      });
+    });
+
+    it("should return stickySessionCookie from set-cookie response header", async () => {
+      const mockResponse = { key_id: "key-id-123", public_key: "pubkey-abc-456" };
+      const setCookieValue = ["AWSALB=abc123; Path=/; HttpOnly", "AWSALBCORS=abc123; Path=/"];
+
+      jest.mocked(network).mockResolvedValue({
+        data: mockResponse,
+        status: 200,
+        headers: { "set-cookie": setCookieValue },
+      });
+
+      const result = await apiClient.getProvePublicKey({ currency: mockCurrency });
+
+      expect(result).toEqual({
+        data: mockResponse,
+        stickySessionCookie: setCookieValue,
       });
     });
 
@@ -1125,6 +1146,7 @@ describe("apiClient", () => {
         currency: mockCurrency,
         keyId: mockKeyId,
         encryptedData: mockEncryptedData,
+        stickySessionCookie: null,
       });
 
       expect(getNetworkConfig).toHaveBeenCalledTimes(1);
@@ -1149,6 +1171,7 @@ describe("apiClient", () => {
         currency: mockCurrency,
         keyId: mockKeyId,
         encryptedData: mockEncryptedData,
+        stickySessionCookie: null,
       });
 
       expect(network).toHaveBeenCalledTimes(1);
@@ -1168,8 +1191,28 @@ describe("apiClient", () => {
           currency: mockCurrency,
           keyId: mockKeyId,
           encryptedData: mockEncryptedData,
+          stickySessionCookie: null,
         }),
       ).rejects.toThrow("Proving request failed");
+    });
+
+    it("should forward stickySessionCookie as Cookie header when provided", async () => {
+      const setCookieValue = ["AWSALB=abc123; Path=/; HttpOnly", "AWSALBCORS=abc123; Path=/"];
+
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      await apiClient.submitEncryptedDelegatedProvingRequest({
+        currency: mockCurrency,
+        keyId: mockKeyId,
+        encryptedData: mockEncryptedData,
+        stickySessionCookie: setCookieValue,
+      });
+
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: { Cookie: setCookieValue.join("; ") },
+        }),
+      );
     });
   });
 });
