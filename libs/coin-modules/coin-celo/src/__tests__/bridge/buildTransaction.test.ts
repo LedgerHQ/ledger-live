@@ -19,11 +19,13 @@ const VALID_RECIPIENT = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
 const estimateGasMock = jest.fn(async () => BigInt(3));
 const getChainIdMock = jest.fn(async () => 42220);
 const getTransactionCountMock = jest.fn(async () => 1);
-const readContractMock = jest.fn(async ({ functionName }: { functionName: string }) => {
-  if (functionName === "canReceiveVotes") return true;
-  if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
-  return "0x0000000000000000000000000000000000000000";
-});
+const readContractMock = jest.fn<Promise<unknown>, [{ functionName: string }]>(
+  async ({ functionName }) => {
+    if (functionName === "canReceiveVotes") return true;
+    if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+    return "0x0000000000000000000000000000000000000000";
+  },
+);
 
 jest.mock("../../network/client", () => ({
   getCeloClient: jest.fn(() => ({
@@ -55,7 +57,7 @@ describe("buildTransaction", () => {
     getChainIdMock.mockClear();
     getTransactionCountMock.mockClear();
     readContractMock.mockReset();
-    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+    readContractMock.mockImplementation(async ({ functionName }) => {
       if (functionName === "canReceiveVotes") return true;
       if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
       return "0x0000000000000000000000000000000000000000";

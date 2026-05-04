@@ -11,10 +11,12 @@ import getFeesForTransaction from "../../bridge/getFeesForTransaction";
 
 const VALID_RECIPIENT = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
 
-const celoGasPriceMock = jest.fn(async () => BigInt(2));
-const estimateGasMock = jest.fn(async () => BigInt(3));
-const estimateMaxPriorityFeePerGasMock = jest.fn(async () => BigInt(1));
-const getBlockMock = jest.fn(async () => ({ baseFeePerGas: BigInt(10) }));
+const celoGasPriceMock = jest.fn(async (..._args: unknown[]) => BigInt(2));
+const estimateGasMock = jest.fn(async (..._args: unknown[]) => BigInt(3));
+const estimateMaxPriorityFeePerGasMock = jest.fn(async (..._args: unknown[]) => BigInt(1));
+const getBlockMock = jest.fn<Promise<{ baseFeePerGas: bigint | undefined }>, unknown[]>(
+  async () => ({ baseFeePerGas: BigInt(10) }),
+);
 const readContractMock = jest.fn(async ({ functionName }: { functionName: string }) => {
   if (functionName === "getAccountNonvotingLockedGold") return BigInt(0);
   if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];

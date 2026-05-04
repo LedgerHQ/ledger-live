@@ -167,7 +167,7 @@ describe("signOperation", () => {
     const operation = buildSignOperation(signerContext as never);
 
     await expect(
-      new Promise((resolve, reject) => {
+      new Promise<void>((resolve, reject) => {
         operation({
           account: accountFixture,
           transaction: {
@@ -177,8 +177,8 @@ describe("signOperation", () => {
           },
           deviceId: "device-id",
         }).subscribe({
-          next: resolve,
-          complete: resolve,
+          next: () => resolve(),
+          complete: () => resolve(),
           error: reject,
         });
       }),
