@@ -20,34 +20,43 @@ describe("useAccordion", () => {
     expect(result.current.isExpanded("a")).toBe(false);
   });
 
-  describe("expand", () => {
-    it("opens a collapsed key", () => {
-      const { result } = renderHook(() => useAccordion<string>());
-      act(() => result.current.expand("a"));
+  describe("openKey", () => {
+    it("expands the given key without toggling", () => {
+      const { result } = renderHook(() => useAccordion<string>({ openKey: "a" }));
       expect(result.current.isExpanded("a")).toBe(true);
+      expect(result.current.isExpanded("b")).toBe(false);
     });
 
-    it("does not close an already-open key", () => {
-      const { result } = renderHook(() => useAccordion<string>());
-      act(() => result.current.expand("a"));
-      act(() => result.current.expand("a"));
+    it("changing openKey expands the new key and collapses the old one (when untouched by toggle)", () => {
+      const { result, rerender } = renderHook(({ openKey }) => useAccordion<string>({ openKey }), {
+        initialProps: { openKey: "a" as string | undefined },
+      });
       expect(result.current.isExpanded("a")).toBe(true);
-    });
 
-    it("in single mode: closes the open key when a different key is expanded", () => {
-      const { result } = renderHook(() => useAccordion<string>());
-      act(() => result.current.expand("a"));
-      act(() => result.current.expand("b"));
+      rerender({ openKey: "b" });
       expect(result.current.isExpanded("a")).toBe(false);
       expect(result.current.isExpanded("b")).toBe(true);
     });
 
-    it("in multi mode: opens multiple keys independently", () => {
-      const { result } = renderHook(() => useAccordion<string>({ mode: "multi" }));
-      act(() => result.current.expand("a"));
-      act(() => result.current.expand("b"));
-      expect(result.current.isExpanded("a")).toBe(true);
+    it("the openKey can be closed by toggling it", () => {
+      const { result } = renderHook(() => useAccordion<string>({ openKey: "a" }));
+      act(() => result.current.toggle("a"));
+      expect(result.current.isExpanded("a")).toBe(false);
+    });
+
+    it("toggling another key closes the openKey in single mode", () => {
+      const { result } = renderHook(() => useAccordion<string>({ openKey: "a" }));
+      act(() => result.current.toggle("b"));
+      expect(result.current.isExpanded("a")).toBe(false);
       expect(result.current.isExpanded("b")).toBe(true);
+    });
+
+    it("works without openKey: toggle state is used directly", () => {
+      const { result } = renderHook(({ openKey }) => useAccordion<string>({ openKey }), {
+        initialProps: { openKey: undefined as string | undefined },
+      });
+      act(() => result.current.toggle("a"));
+      expect(result.current.isExpanded("a")).toBe(true);
     });
   });
 
