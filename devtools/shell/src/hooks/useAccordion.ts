@@ -1,21 +1,30 @@
 import { useCallback, useState } from "react";
 
-type AccordionOptions = {
+type AccordionOptions<T> = {
   mode?: "single" | "multi";
+  openKey?: T | null;
 };
 
-export const useAccordion = <T>({ mode = "single" }: AccordionOptions = {}) => {
-  const [expanded, setExpanded] = useState<Set<T>>(new Set());
+export const useAccordion = <T>({ mode = "single", openKey }: AccordionOptions<T> = {}) => {
+  const [expanded, setExpanded] = useState<Set<T>>(() =>
+    openKey != null ? new Set([openKey]) : new Set<T>(),
+  );
+  const [prevOpenKey, setPrevOpenKey] = useState<T | null | undefined>(openKey);
 
-  const openKey = useCallback(
+  // When openKey changes, reset expanded to the new key during render
+  // React re-renders immediately with the updated state before painting.
+  if (prevOpenKey !== openKey) {
+    setPrevOpenKey(openKey);
+    setExpanded(openKey != null ? new Set([openKey]) : new Set<T>());
+  }
+
+  const buildOpenSet = useCallback(
     (prev: Set<T>, key: T): Set<T> => {
       if (prev.has(key)) return prev;
       return mode === "single" ? new Set<T>([key]) : new Set(prev).add(key);
     },
     [mode],
   );
-
-  const expand = useCallback((key: T) => setExpanded(prev => openKey(prev, key)), [openKey]);
 
   const toggle = useCallback(
     (key: T) => {
@@ -25,13 +34,13 @@ export const useAccordion = <T>({ mode = "single" }: AccordionOptions = {}) => {
           next.delete(key);
           return next;
         }
-        return openKey(prev, key);
+        return buildOpenSet(prev, key);
       });
     },
-    [openKey],
+    [buildOpenSet],
   );
 
   const isExpanded = useCallback((key: T) => expanded.has(key), [expanded]);
 
-  return { isExpanded, toggle, expand };
+  return { isExpanded, toggle };
 };

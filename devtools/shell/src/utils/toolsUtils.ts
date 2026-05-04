@@ -6,14 +6,13 @@ type CategoryEntry = { category: Category; tools: Tool[] };
 export function filterToolsByQuery(categories: CategoryEntry[], query: string): CategoryEntry[] {
   const q = query.trim().toLowerCase();
   if (!q) return categories;
-  return categories
-    .map(({ category, tools }) => ({
-      category,
-      tools: tools.filter(
-        t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
-      ),
-    }))
-    .filter(({ tools }) => tools.length > 0);
+  return categories.reduce<CategoryEntry[]>((acc, { category, tools }) => {
+    const matched = tools.filter(
+      t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
+    );
+    if (matched.length > 0) acc.push({ category, tools: matched });
+    return acc;
+  }, []);
 }
 
 export function findCategoryForToolId(
