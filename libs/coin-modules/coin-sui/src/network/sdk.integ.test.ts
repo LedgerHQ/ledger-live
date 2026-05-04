@@ -499,22 +499,15 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
-  // Pin both transfer flows to immutable on-chain testnet transactions and
-  // verify the SDK maps each correctly. Asserts flow-specific on-chain shape
+  // Pin both transfer flows to immutable on-chain transactions and verify the
+  // SDK maps each correctly. Asserts flow-specific on-chain shape
   // (gasData.payment, accumulatorEvents) AND the resulting Operation values,
   // so both code paths in sdk.ts are exercised end-to-end against live RPC.
   //
-  // The fixtures below live on testnet, so this block overrides the coin-sui
-  // network config to testnet for the duration of these tests, then restores
-  // the suite-level config in afterAll so other tests are unaffected.
+  // Legacy flow pins to mainnet (long retention); SIP-58 stays on testnet
+  // since the accumulator-event shape is testnet-only at the moment. Each
+  // inner block sets its own RPC URL; afterAll restores the suite default.
   describe("Transfer flow comparison: legacy coin vs SIP-58 address balance", () => {
-    beforeAll(() => {
-      coinConfig.setCoinConfig(() => ({
-        status: { type: "active" },
-        node: { url: getJsonRpcFullnodeUrl("testnet") },
-      }));
-    });
-
     afterAll(() => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
@@ -523,14 +516,21 @@ describe("SUI SDK Integration tests", () => {
     });
 
     describe("legacy flow (coin-object-funded)", () => {
-      // https://suiscan.xyz/testnet/tx/93XR6Y2bfrTFKaRa4zQTA3tMeHGb6W3tKJy23a7TTREU
-      // Plain SUI transfer of 0.1 SUI; gas paid from a real coin object.
+      // https://suiscan.xyz/mainnet/tx/rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg
+      // Plain SUI transfer of 0.15 SUI; gas paid from a real coin object.
       const SENDER = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-      const RECIPIENT = "0x48e76327eeb7232abc5e9cb870334a2abe8a2e00140eba2b59b2b4af735ec732";
-      const TX_DIGEST = "93XR6Y2bfrTFKaRa4zQTA3tMeHGb6W3tKJy23a7TTREU";
-      const TRANSFER_AMOUNT = "100000000";
-      const FEE_AMOUNT = "1997880"; // 1_000_000 + 1_976_000 - 978_120
-      const SENDER_TOTAL_OUT = "101997880";
+      const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+      const TX_DIGEST = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
+      const TRANSFER_AMOUNT = "150000000";
+      const FEE_AMOUNT = "1747880"; // 750_000 + 1_976_000 - 978_120
+      const SENDER_TOTAL_OUT = "151747880";
+
+      beforeAll(() => {
+        coinConfig.setCoinConfig(() => ({
+          status: { type: "active" },
+          node: { url: getEnv("API_SUI_NODE_PROXY") },
+        }));
+      });
 
       const fetchTx = () =>
         withApi(api =>
@@ -613,6 +613,13 @@ describe("SUI SDK Integration tests", () => {
       const TRANSFER_AMOUNT = "10000000";
       const FEE_AMOUNT = "1988000"; // 1_000_000 + 988_000 - 0
       const SENDER_TOTAL_OUT = "11988000";
+
+      beforeAll(() => {
+        coinConfig.setCoinConfig(() => ({
+          status: { type: "active" },
+          node: { url: getJsonRpcFullnodeUrl("testnet") },
+        }));
+      });
 
       const fetchTx = () =>
         withApi(api =>
