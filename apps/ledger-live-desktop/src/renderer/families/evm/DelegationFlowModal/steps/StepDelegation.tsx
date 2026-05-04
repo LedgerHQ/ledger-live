@@ -1,5 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { AccountBridge } from "@ledgerhq/types-live";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -22,12 +21,9 @@ export default function StepDelegation({
 }: Readonly<StepProps>) {
   invariant(transaction, "transaction required");
 
+  const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
   const updateValidator = useCallback(
-    async (address: string) => {
-      const bridge = (await getAccountBridge(
-        account,
-        parentAccount,
-      )) as AccountBridge<GenericTransaction>;
+    (address: string) => {
       onUpdateTransaction(_tx =>
         bridge.updateTransaction(transaction, {
           mode: "delegate",
@@ -35,7 +31,7 @@ export default function StepDelegation({
         }),
       );
     },
-    [onUpdateTransaction, account, transaction, parentAccount],
+    [bridge, onUpdateTransaction, transaction],
   );
 
   const chosenVoteAccAddr = transaction.valAddress || "";

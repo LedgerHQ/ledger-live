@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import RecipientField from "~/renderer/modals/Send/fields/RecipientField";
 import Button from "~/renderer/components/Button";
@@ -79,35 +80,22 @@ export const StepCustomFooter = ({
   const { errors } = status;
   const canNext = !bridgePending && !Object.keys(errors).length;
   const initialTransaction = useRef(transaction);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      try {
-        const bridge = await getAccountBridge(account, parentAccount);
-        if (cancelled) return;
-        onChangeTransaction(
-          bridge.updateTransaction(initialTransaction.current, {
-            recipient: "",
-          }),
-        );
-      } catch (err) {
-        if (!cancelled) console.error(err);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [onChangeTransaction, account, parentAccount]);
-  const onBack = useCallback(async () => {
-    // we need to revert
-    const bridge = await getAccountBridge(account, parentAccount);
+    onChangeTransaction(
+      bridge.updateTransaction(initialTransaction.current, {
+        recipient: "",
+      }),
+    );
+  }, [bridge, onChangeTransaction]);
+  const onBack = useCallback(() => {
     onChangeTransaction(
       bridge.updateTransaction(transaction, {
         recipient: initialTransaction.current.recipient,
       }),
     );
     transitionTo("summary");
-  }, [account, parentAccount, onChangeTransaction, transaction, transitionTo]);
+  }, [bridge, onChangeTransaction, transaction, transitionTo]);
   const onNext = useCallback(() => {
     transitionTo("summary");
   }, [transitionTo]);

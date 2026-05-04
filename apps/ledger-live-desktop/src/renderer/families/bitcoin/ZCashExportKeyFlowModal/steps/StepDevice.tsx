@@ -4,7 +4,7 @@ import { firstValueFrom } from "rxjs";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -53,12 +53,12 @@ const StepExport = (props: StepProps) => {
   const mainAccount = account ? getMainAccount(account) : null;
   invariant(account && mainAccount, "No account given");
 
+  const bridge = useAccountBridge(mainAccount);
   const requestUfvkFromDevice = useCallback(async () => {
     try {
       if (!device) {
         throw new DisconnectedDevice();
       }
-      const bridge = await getAccountBridge(mainAccount);
       await firstValueFrom(
         bridge.receive(mainAccount, {
           deviceId: device.deviceId,
@@ -72,7 +72,7 @@ const StepExport = (props: StepProps) => {
     } catch (error) {
       onUfvkChanged("", error as Error);
     }
-  }, [device, mainAccount, transitionTo, onUfvkChanged]);
+  }, [bridge, device, mainAccount, transitionTo, onUfvkChanged]);
 
   useEffect(() => {
     if (!ufvk && !ufvkExportError && !ufvkRequestSent) {

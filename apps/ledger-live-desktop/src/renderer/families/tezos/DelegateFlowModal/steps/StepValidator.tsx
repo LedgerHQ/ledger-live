@@ -2,9 +2,9 @@ import React, { useCallback, useRef } from "react";
 import invariant from "invariant";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
-import { Baker } from "@ledgerhq/live-common/families/tezos/types";
+import { Baker, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import { whitelist as bakersWhitelistDefault } from "@ledgerhq/live-common/families/tezos/staking";
 import { openURL } from "~/renderer/linking";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -89,10 +89,10 @@ const StepValidator = ({
   invariant(account, "account is required");
   const contentRef = useRef(null);
   const bakers = useBakers(bakersWhitelistDefault);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
   const onBakerClick = useCallback(
-    async (baker: Baker) => {
-      const bridge = await getAccountBridge(account, parentAccount);
+    (baker: Baker) => {
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: baker.address,
@@ -100,7 +100,7 @@ const StepValidator = ({
       );
       transitionTo("summary");
     },
-    [account, onChangeTransaction, parentAccount, transaction, transitionTo],
+    [bridge, onChangeTransaction, transaction, transitionTo],
   );
 
   const openPartner = useCallback(() => {

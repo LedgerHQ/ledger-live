@@ -1,9 +1,8 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   StakeCreateAccountTransaction,
   Transaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -27,8 +26,8 @@ export default function StepValidator({
     account && account.solanaResources && transaction,
     "solana account, resources and transaction required",
   );
-  const updateValidator = async ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+  const updateValidator = ({ address }: { address: string }) => {
     onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         model: {

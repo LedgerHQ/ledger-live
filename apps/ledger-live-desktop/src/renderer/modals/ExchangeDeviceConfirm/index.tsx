@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
@@ -77,6 +77,7 @@ const VerifyOnDevice = ({
 }: VerifyOnDeviceProps) => {
   const name = useAccountName(mainAccount);
   const address = mainAccount.freshAddress;
+  const bridge = useAccountBridge(mainAccount);
   const confirmAddress = useCallback(async () => {
     if (!device || skipDevice) return null;
     try {
@@ -87,7 +88,6 @@ const VerifyOnDevice = ({
           },
         });
       } else {
-        const bridge = await getAccountBridge(mainAccount);
         await firstValueFrom(
           bridge.receive(mainAccount, {
             deviceId: device.deviceId,
@@ -99,7 +99,7 @@ const VerifyOnDevice = ({
     } catch (err) {
       onAddressVerified(false, err);
     }
-  }, [device, onAddressVerified, mainAccount, skipDevice]);
+  }, [bridge, device, onAddressVerified, mainAccount, skipDevice]);
   useEffect(() => {
     confirmAddress();
   }, [confirmAddress]);
