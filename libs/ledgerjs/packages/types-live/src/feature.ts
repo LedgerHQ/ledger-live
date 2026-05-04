@@ -326,6 +326,8 @@ export type Features = CurrencyFeatures & {
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
+  lldTezosStaking: DefaultFeature;
+  llmTezosStaking: DefaultFeature;
 };
 
 /**
