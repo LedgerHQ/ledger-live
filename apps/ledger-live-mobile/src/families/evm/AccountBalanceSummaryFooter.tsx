@@ -2,7 +2,7 @@ import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
 import { isStakingAccount, StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useState } from "react";
@@ -117,9 +117,7 @@ function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
   return {
     available: [
       {
-        Icon: () => (
-          <CryptoIcon ledgerId={account.currency.id} ticker={account.currency.ticker} size={20} />
-        ),
+        Icon: () => <CurrencyIcon currency={account.currency} size={20} />,
         title: t("stake.ethereum.info.available.title", {
           currencyTicker: account.currency.ticker,
         }),
