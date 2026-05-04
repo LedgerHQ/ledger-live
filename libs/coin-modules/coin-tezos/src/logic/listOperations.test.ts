@@ -1,4 +1,5 @@
 import type {
+  APIBlock,
   APIDelegationType,
   APIRevealType,
   APIStakingType,
@@ -956,17 +957,15 @@ describe("listOperations", () => {
     });
 
     it("uses block.hash when TzKT inlines the full block object on staking ops", async () => {
-      // /accounts/{addr}/operations returns staking ops with `block` as the
-      // full APIBlock object (with .hash + many other fields), not a string.
       const inlineBlock = {
         cycle: 1,
         level: 3106307,
         hash: "BLMaHTGtBfh7ZM2wk5rpFHQhNtx5LC7YMdYrnokzBcosrpgqNAe",
         timestamp: "2026-04-28T20:54:09Z",
-      };
+      } as unknown as APIBlock;
       const stakeWithObjectBlock = {
         ...makeStaking("stake", 100),
-        block: inlineBlock as unknown as string, // wire shape; APIStakingType allows string | APIBlock
+        block: inlineBlock,
         level: 3106307,
       };
       mockGetAccountOperations.mockResolvedValue([stakeWithObjectBlock]);
