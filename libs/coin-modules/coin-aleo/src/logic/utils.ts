@@ -18,6 +18,7 @@ import {
   EXPLORER_TRANSFER_TYPES,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
+  SINGLE_CALL_SIGNING_TIME,
   TRANSACTION_TYPE,
 } from "../constants";
 import type {
@@ -686,3 +687,20 @@ export function selectPrivateRecordsForAmount({
   // Target could not be covered within the record cap or with the available funds.
   return [];
 }
+
+// Helper function to get estimated signing time based on the number of records being signed.
+export const getEstimatedSigningTime = (
+  recordCount: number,
+  secondShort: string,
+  minuteShort: string,
+): string => {
+  const totalSeconds = (recordCount * SINGLE_CALL_SIGNING_TIME) / 1000;
+
+  if (totalSeconds < 60) {
+    return `~${Math.round(totalSeconds)} ${secondShort}`;
+  }
+
+  const flooredSeconds = Math.floor(totalSeconds / 30) * 30;
+  const minutes = flooredSeconds / 60;
+  return `~${minutes} ${minuteShort}`;
+};
