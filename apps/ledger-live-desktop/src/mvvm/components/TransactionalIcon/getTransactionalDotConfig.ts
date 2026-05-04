@@ -1,6 +1,4 @@
-import type { ComponentType } from "react";
-import type { StyleProp, TextStyle } from "react-native";
-import type { DotIconAppearance, IconSize } from "@ledgerhq/lumen-ui-rnative";
+import type { DotIconAppearance, DotIconProps } from "@ledgerhq/lumen-ui-react";
 import type { OperationType } from "@ledgerhq/types-live";
 import {
   ArrowDown,
@@ -13,17 +11,14 @@ import {
   Snow,
   Star,
   Unlink,
-} from "@ledgerhq/lumen-ui-rnative/symbols";
-import { Spinner } from "@ledgerhq/lumen-ui-rnative";
+} from "@ledgerhq/lumen-ui-react/symbols";
+import { Spinner } from "@ledgerhq/lumen-ui-react";
 import {
   getTransactionalDotConfig as getConfig,
   type TransactionalDotSymbol,
 } from "@ledgerhq/live-common/helpers/transactionalDotConfig";
 
-type TransactionalDotIcon = ComponentType<{
-  size?: IconSize;
-  style?: StyleProp<TextStyle>;
-}>;
+type TransactionalDotIcon = DotIconProps["icon"];
 
 type TransactionalDotConfig = {
   icon: TransactionalDotIcon;

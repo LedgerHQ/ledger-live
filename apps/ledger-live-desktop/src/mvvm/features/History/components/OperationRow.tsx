@@ -2,9 +2,7 @@ import React, { useCallback, memo } from "react";
 import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
@@ -45,15 +43,20 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
       <TableCell data-testid="history-operation-type">
         <TableCellContent
           leadingContent={
-            shouldDisplayAggregatedAssets && cryptoCurrency ? (
-              <CryptoIcon
-                ledgerId={cryptoCurrency.id}
-                ticker={cryptoCurrency.ticker}
-                size={getValidCryptoIconSize(32)}
+            cryptoCurrency ? (
+              <TransactionalIcon
+                operationType={operation.type}
+                isPending={item.isPending}
+                hasFailed={operation.hasFailed}
+                currency={cryptoCurrency}
+                mediaSize={40}
+                network={
+                  !shouldDisplayAggregatedAssets && isToken
+                    ? cryptoCurrency.parentCurrency.id
+                    : undefined
+                }
               />
-            ) : (
-              <CryptoCurrencyIcon currency={currency} size={32} />
-            )
+            ) : undefined
           }
           title={
             <div className="inline-flex items-center gap-12">
