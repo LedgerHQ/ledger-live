@@ -22,6 +22,7 @@ describe("Broadcast", () => {
       feeSafetyMultiplier: 1.0,
       isFeeSponsored: false,
       useEncryptedProve: true,
+      recordPickingStrategy: "manual",
     }));
   });
 
