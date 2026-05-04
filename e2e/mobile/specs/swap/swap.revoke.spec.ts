@@ -1,6 +1,7 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "./swap.setup";
+import { ensureTokenApproval, revokeTokenApproval } from "../../utils/swapUtils";
 
 // NOTE: QAA-615 spike: validate the CLI revoke hook resets allowance to zero on mobile.
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -37,10 +38,8 @@ describe("Swap - Revoke token approval", () => {
   tags.forEach(tag => $Tag(tag));
 
   it(`Revoke - ${provider.uiName} ${fromAccount.currency.name} allowance returns to zero`, async () => {
-    await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
-    await app.swap.revokeTokenApproval(fromAccount, provider);
-
-    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
-    expect(remaining).toBe("0");
+    await ensureTokenApproval(fromAccount, provider, minAmount);
+    await revokeTokenApproval(fromAccount, provider);
+    await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
   });
 });

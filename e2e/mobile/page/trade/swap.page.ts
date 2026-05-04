@@ -1,5 +1,5 @@
 import CommonPage from "../common.page";
-import { allure, Step } from "jest-allure2-reporter/api";
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -11,10 +11,6 @@ import {
   getParentAccountName,
   TokenAccount,
 } from "@ledgerhq/live-common/e2e/enum/Account";
-import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
-import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
-import { log } from "detox";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -255,5 +251,14 @@ export default class SwapPage extends CommonPage {
         await registerSpeculos(previousSpeculosPort);
       }
     }
+  @Step("Wait for swap navigation header title completed")
+  async waitForSwapHeaderCompleted() {
+    await waitForElementById(this.swapCloseButtonCompletedTestId);
+  }
+
+  @Step("Ensure token approval has been revoked")
+  async ensureRevokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
+    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
+    jestExpect(remaining).toBe("0");
   }
 }
